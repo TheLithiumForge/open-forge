@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
@@ -64,7 +65,7 @@ internal sealed record RecoveryBundleInput
         {
             ArgumentNullException.ThrowIfNull(target);
             ValidateTarget(workspace, target);
-            if (!paths.Add(target.Change.LogicalPath))
+            if (!paths.Add(TargetPath(workspace, target)))
             {
                 throw new ArgumentException(
                     "A recovery operation cannot contain the same target more than once.",
@@ -91,7 +92,14 @@ internal sealed record RecoveryBundleInput
     internal string GetRelativeTarget(PlannedFileChange change)
     {
         ArgumentNullException.ThrowIfNull(change);
-        var relative = Path.GetRelativePath(Workspace.LexicalRoot, change.LogicalPath);
+        return RelativeTarget(Workspace, change.LogicalPath);
+    }
+
+    private static string RelativeTarget(
+        CliWorkspace workspace,
+        string logicalPath)
+    {
+        var relative = Path.GetRelativePath(workspace.LexicalRoot, logicalPath);
         if (Path.IsPathFullyQualified(relative)
             || relative == ".."
             || relative.StartsWith($"..{Path.DirectorySeparatorChar}", StringComparison.Ordinal)
@@ -99,7 +107,7 @@ internal sealed record RecoveryBundleInput
         {
             throw new ArgumentException(
                 "A recovery target must be contained by its selected workspace.",
-                nameof(change));
+                nameof(logicalPath));
         }
 
         return relative
@@ -107,10 +115,50 @@ internal sealed record RecoveryBundleInput
             .Replace(Path.AltDirectorySeparatorChar, '/');
     }
 
+    internal static string GetRelativeTarget(RelativeFileLinkEffect effect)
+    {
+        ArgumentNullException.ThrowIfNull(effect);
+        return CanonicalRelativePath.Create(effect.LogicalPath.Value).Value;
+    }
+
+    private static string TargetPath(
+        CliWorkspace workspace,
+        RecoveryBundleTarget target)
+        => target.LinkEffect is { } effect
+            ? effect.LogicalPath.Value
+            : RelativeTarget(workspace, target.Change.LogicalPath);
+
     private static void ValidateTarget(
         CliWorkspace workspace,
         RecoveryBundleTarget target)
     {
+        if (target.LinkEffect is { } effect
+            && target.LinkBefore is { } linkBefore)
+        {
+            var logicalPath = Path.GetFullPath(Path.Combine(
+                workspace.LexicalRoot,
+                effect.LogicalPath.Value.Replace('/', Path.DirectorySeparatorChar)));
+            if (!PhysicalContainment.Contains(workspace.LexicalRoot, logicalPath)
+                || !string.Equals(
+                    linkBefore.LogicalPath,
+                    logicalPath,
+                    PathComparison()))
+            {
+                throw new ArgumentException(
+                    "A relative file-link recovery target must be contained by its selected workspace.",
+                    nameof(target));
+            }
+
+            return;
+        }
+
+        if (target.LinkEffect is not null || target.LinkBefore is not null)
+        {
+            throw new ArgumentException(
+                "A relative file-link recovery target requires both its effect and prior observation.",
+                nameof(target));
+        }
+
         if (!PhysicalContainment.Contains(workspace.LexicalRoot, target.Change.LogicalPath))
         {
             throw new ArgumentException(
@@ -129,6 +177,9 @@ internal sealed record RecoveryBundleInput
 
     private static StringComparer PathComparer()
         => OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
+
+    private static StringComparison PathComparison()
+        => OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
     private sealed record RecoveryBundleOperationIdentity(
         CliWorkspace Workspace,

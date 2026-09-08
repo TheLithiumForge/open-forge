@@ -8,10 +8,9 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion.Models;
 
 namespace OpenForge.Cli.Core.Commands.Cleanup.Shared.Application;
 
-internal sealed class CleanupApplicationOperation(WorkspaceLockManager lockManager, RecoveryBundleDeletionGuard guard)
+internal sealed class CleanupApplicationOperation(WorkspaceLockManager lockManager)
 {
     private readonly WorkspaceLockManager _lockManager = lockManager;
-    private readonly RecoveryBundleDeletionGuard _guard = guard;
 
     internal async ValueTask ApplyAsync(
         CleanupResultBuilder result,
@@ -38,7 +37,7 @@ internal sealed class CleanupApplicationOperation(WorkspaceLockManager lockManag
 
         await using (lease.ConfigureAwait(false))
         {
-            var opened = await _guard.OpenSessionAsync(lease, frozenCatalogue, cancellationToken).ConfigureAwait(false);
+            var opened = await RecoveryBundleDeletionGuard.OpenSessionAsync(lease, frozenCatalogue, cancellationToken).ConfigureAwait(false);
             result.Revalidation = new CleanupCatalogueComparison
             {
                 State = ReadComparison(opened.State),

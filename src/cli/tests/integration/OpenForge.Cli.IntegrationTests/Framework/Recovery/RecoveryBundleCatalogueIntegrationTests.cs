@@ -28,7 +28,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
         var created = new List<string>();
         try
         {
-            var prepared = await RecoveryBundleStoreIntegrationTests.Store().PrepareAsync(
+            var prepared = await RecoveryBundleStore.PrepareAsync(
                 input,
                 TestContext.Current.CancellationToken);
             preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
@@ -62,7 +62,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
                 TestContext.Current.CancellationToken);
             created.AddRange([draftPath, malformedPath, unsupportedPath, unavailablePath, unknownPath]);
 
-            var result = await new RecoveryBundleCatalogue(new RecoveryBundleReader()).ReadAsync(
+            var result = await RecoveryBundleCatalogue.ReadAsync(
                 workspace,
                 TestContext.Current.CancellationToken);
 
@@ -112,7 +112,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
             TestContext.Current.CancellationToken);
         try
         {
-            var result = await new RecoveryBundleCatalogue(new RecoveryBundleReader()).ReadAsync(
+            var result = await RecoveryBundleCatalogue.ReadAsync(
                 workspace,
                 TestContext.Current.CancellationToken);
 
@@ -137,7 +137,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
             temporary,
             workspace,
             Guid.NewGuid());
-        var prepared = await RecoveryBundleStoreIntegrationTests.Store().PrepareAsync(
+        var prepared = await RecoveryBundleStore.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
@@ -151,22 +151,20 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
             TestContext.Current.CancellationToken);
         try
         {
-            var reader = new RecoveryBundleReader();
-            var catalogue = new RecoveryBundleCatalogue(reader);
-            var initial = await catalogue.ReadAsync(workspace, TestContext.Current.CancellationToken);
+            var initial = await RecoveryBundleCatalogue.ReadAsync(
+                workspace,
+                TestContext.Current.CancellationToken);
             var finalCandidate = Candidate(initial, preparation.BundlePath);
             var draftCandidate = Candidate(initial, draftPath);
             var lockResult = await lockStore.AcquireAsync(
                 new WorkspaceLockRequest(workspace, input.Command, input.OperationId),
                 TestContext.Current.CancellationToken);
             await using var lease = Assert.IsType<WorkspaceLockLease>(lockResult.Lease);
-            var guard = new RecoveryBundleDeletionGuard(catalogue, reader);
-
-            var finalDeletion = await guard.DeleteAsync(
+            var finalDeletion = await RecoveryBundleDeletionGuard.DeleteAsync(
                 lease,
                 finalCandidate,
                 TestContext.Current.CancellationToken);
-            var draftDeletion = await guard.DeleteAsync(
+            var draftDeletion = await RecoveryBundleDeletionGuard.DeleteAsync(
                 lease,
                 draftCandidate,
                 TestContext.Current.CancellationToken);
@@ -198,15 +196,15 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
             temporary,
             workspace,
             Guid.NewGuid());
-        var prepared = await RecoveryBundleStoreIntegrationTests.Store().PrepareAsync(
+        var prepared = await RecoveryBundleStore.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         try
         {
-            var reader = new RecoveryBundleReader();
-            var catalogue = new RecoveryBundleCatalogue(reader);
-            var initial = await catalogue.ReadAsync(workspace, TestContext.Current.CancellationToken);
+            var initial = await RecoveryBundleCatalogue.ReadAsync(
+                workspace,
+                TestContext.Current.CancellationToken);
             var candidate = Candidate(initial, preparation.BundlePath);
             var first = await lockStore.AcquireAsync(
                 new WorkspaceLockRequest(workspace, input.Command, input.OperationId),
@@ -219,7 +217,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
             Assert.True(File.Exists(preparation.BundlePath));
 
             await lease.DisposeAsync();
-            var disposed = await new RecoveryBundleDeletionGuard(catalogue, reader).DeleteAsync(
+            var disposed = await RecoveryBundleDeletionGuard.DeleteAsync(
                 lease,
                 candidate,
                 TestContext.Current.CancellationToken);
@@ -231,7 +229,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
             {
                 await using var payload = archive.Entries[1].Open();
                 await payload.WriteAsync(
-                    new byte[] { 42 },
+                    "*"u8.ToArray(),
                     TestContext.Current.CancellationToken);
             }
 
@@ -239,7 +237,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
                 new WorkspaceLockRequest(workspace, "cleanup", Guid.NewGuid()),
                 TestContext.Current.CancellationToken);
             await using var held = Assert.IsType<WorkspaceLockLease>(reacquired.Lease);
-            var changed = await new RecoveryBundleDeletionGuard(catalogue, reader).DeleteAsync(
+            var changed = await RecoveryBundleDeletionGuard.DeleteAsync(
                 held,
                 candidate,
                 TestContext.Current.CancellationToken);

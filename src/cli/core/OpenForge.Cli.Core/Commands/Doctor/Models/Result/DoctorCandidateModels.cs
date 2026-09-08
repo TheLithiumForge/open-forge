@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Models.Result;
@@ -37,33 +38,56 @@ internal sealed record DoctorCandidateSet
 internal enum DoctorProposalKind
 {
     ReferenceCanonicalization,
+    LibraryResidualRecovery,
 }
 
 internal enum DoctorProposalVerificationKind
 {
     SameTargetIdentity,
     ResultingBytes,
+    NoFollowPriorState,
 }
 
 internal enum DoctorProposalRecoveryKind
 {
     NoPersistentState,
     RepairReceiptRequired,
+    VerifiedLibraryResidual,
 }
 
 internal sealed record DoctorExactProposal
 {
-    public required DoctorProposalKind Kind { get; init; }
+    internal DoctorExactProposal(DoctorProposalKind kind, DoctorReferenceProposal? reference, LibraryResidualEvidence? libraryRecovery)
+    {
+        var coherent = kind switch
+        {
+            DoctorProposalKind.ReferenceCanonicalization => reference is not null && libraryRecovery is null,
+            DoctorProposalKind.LibraryResidualRecovery => reference is null && libraryRecovery is not null,
+            _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The Doctor proposal kind is not defined."),
+        };
+        if (!coherent)
+        {
+            throw new ArgumentException("A Doctor proposal requires exactly its finite typed payload.", nameof(kind));
+        }
 
+        if (reference is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(reference.ExpectedValue);
+            ArgumentException.ThrowIfNullOrWhiteSpace(reference.IntendedValue);
+        }
+
+        Kind = kind;
+        Reference = reference;
+        LibraryRecovery = libraryRecovery;
+    }
+
+    public DoctorProposalKind Kind { get; }
+    public DoctorReferenceProposal? Reference { get; }
+    public LibraryResidualEvidence? LibraryRecovery { get; }
     public required DoctorSubject Subject { get; init; }
-
-    public required string ExpectedValue { get; init; }
-
-    public required string IntendedValue { get; init; }
-
     public required DoctorBoundary Boundary { get; init; }
-
     public required DoctorProposalVerificationKind Verification { get; init; }
-
     public required DoctorProposalRecoveryKind Recovery { get; init; }
 }
+
+internal sealed record DoctorReferenceProposal(string ExpectedValue, string IntendedValue);

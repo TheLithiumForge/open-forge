@@ -21,12 +21,12 @@ internal static class DoctorJsonProjection
                 : null,
             Result = new DoctorJsonResult
             {
-                ReadOnly = result.Diagnosis.ReadOnly,
-                ChangesMade = result.Diagnosis.ChangesMade,
+                ReadOnly = DoctorDiagnosis.ReadOnly,
+                ChangesMade = DoctorDiagnosis.ChangesMade,
                 Coverage = DoctorWireVocabulary.Coverage(result.Diagnosis.Coverage),
                 Counts = Counts(result.Diagnosis.Counts),
-                Actions = result.Diagnosis.Actions.Select(Action).ToArray(),
-                Domains = result.Diagnosis.Domains.Select(Domain).ToArray(),
+                Actions = [.. result.Diagnosis.Actions.Select(Action)],
+                Domains = [.. result.Diagnosis.Domains.Select(Domain)],
             },
             Next = result.Next is { } next
                 ? new DoctorJsonEnvelopeNext { Command = next.Command, Reason = next.Reason }
@@ -65,6 +65,7 @@ internal static class DoctorJsonProjection
     private static DoctorJsonDomain Domain(DoctorDomainReport domain)
         => new()
         {
+            Libraries = domain.Libraries is { } libraries ? DoctorLibraryPresentation.Project(libraries) : null,
             Domain = DoctorWireVocabulary.Domain(domain.Domain),
             Boundary = Boundary(domain.Boundary),
             Coverage = DoctorWireVocabulary.Coverage(domain.Coverage),
@@ -74,14 +75,14 @@ internal static class DoctorJsonProjection
             SourceAvailability = domain.SourceAvailability is { } sourceAvailability
                 ? DoctorWireVocabulary.SourceAvailability(sourceAvailability)
                 : null,
-            Limitations = domain.Limitations.Select(limitation => new DoctorJsonLimitation
+            Limitations = [.. domain.Limitations.Select(limitation => new DoctorJsonLimitation
             {
                 Kind = DoctorWireVocabulary.Limitation(limitation.Kind),
                 Message = limitation.Message,
-            }).ToArray(),
+            })],
             Counts = Counts(domain.Counts),
-            Findings = domain.Findings.Select(DoctorJsonFindingProjection.Finding).ToArray(),
-            Actions = domain.Actions.Select(Action).ToArray(),
+            Findings = [.. domain.Findings.Select(DoctorJsonFindingProjection.Finding)],
+            Actions = [.. domain.Actions.Select(Action)],
         };
 
     private static DoctorJsonCounts Counts(DoctorFindingCounts counts)

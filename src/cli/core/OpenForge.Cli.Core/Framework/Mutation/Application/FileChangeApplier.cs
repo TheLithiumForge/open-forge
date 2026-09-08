@@ -210,7 +210,7 @@ internal sealed partial class FileChangeApplier(
         => state switch
         {
             MutationValidationState.Mismatched => FilesystemNotStartedReason.TargetChanged,
-            MutationValidationState.Blocked => FilesystemNotStartedReason.ContractRejected,
+            MutationValidationState.Blocked => FilesystemNotStartedReason.TargetChanged,
             MutationValidationState.Failed => FilesystemNotStartedReason.ApplicationFailed,
             MutationValidationState.Cancelled => FilesystemNotStartedReason.Cancelled,
             MutationValidationState.Valid => throw new ArgumentOutOfRangeException(
@@ -267,7 +267,13 @@ internal sealed partial class FileChangeApplier(
                 return true;
             }
 
-            cause = "Create file application must not receive recovery bundle preparation.";
+            if (preparation.Attribution.Producer == RecoveryBundleProducer.Library
+                && preparation.MatchesChange(lease.Request, change))
+            {
+                return true;
+            }
+
+            cause = "Create file application accepts only exact Library recovery preparation for a reversible record create.";
             return false;
         }
 

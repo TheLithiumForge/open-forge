@@ -7,20 +7,13 @@ using OpenForge.Cli.Core.Framework.Recovery.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Application;
 
-internal sealed class ExtensionInstallRecoveryOperation(
-    RecoveryBundleStore store,
-    RecoveryBundleCatalogue catalogue,
-    RecoveryBundleDeletionGuard deletionGuard)
+internal static class ExtensionInstallRecoveryOperation
 {
-    private readonly RecoveryBundleStore _store = store;
-    private readonly RecoveryBundleCatalogue _catalogue = catalogue;
-    private readonly RecoveryBundleDeletionGuard _deletionGuard = deletionGuard;
-
-    internal ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
+    internal static ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
         ExtensionInstallPlan plan,
         Guid operationId,
         CancellationToken cancellationToken)
-        => _store.PrepareAsync(
+        => RecoveryBundleStore.PrepareAsync(
             RecoveryBundleInput.Create(
                 plan.Request.Workspace,
                 ExtensionInstallDefinitions.CommandIdentity,
@@ -32,14 +25,14 @@ internal sealed class ExtensionInstallRecoveryOperation(
                 plan.RecoveryTargets),
             cancellationToken);
 
-    internal async ValueTask<ExtensionInstallRecoveryCleanupResult> CleanupAsync(
+    internal static async ValueTask<ExtensionInstallRecoveryCleanupResult> CleanupAsync(
         ExtensionInstallRecoveryCleanupRequest request,
         CancellationToken cancellationToken)
     {
         RecoveryBundleCatalogueResult catalogue;
         try
         {
-            catalogue = await _catalogue.ReadAsync(
+            catalogue = await RecoveryBundleCatalogue.ReadAsync(
                 request.Plan.Request.Workspace,
                 cancellationToken).ConfigureAwait(false);
         }
@@ -87,7 +80,7 @@ internal sealed class ExtensionInstallRecoveryOperation(
         RecoveryBundleDeletionResult deletion;
         try
         {
-            deletion = await _deletionGuard.DeleteAsync(
+            deletion = await RecoveryBundleDeletionGuard.DeleteAsync(
                 request.Lease,
                 candidates[0],
                 cancellationToken).ConfigureAwait(false);
@@ -181,12 +174,11 @@ internal sealed class ExtensionInstallRecoveryOperation(
                 residualPath),
             new ExtensionInstallFinding(code, cause));
 
-    private static IReadOnlyList<string> ProtectedPaths(
+    private static string[] ProtectedPaths(
         RecoveryBundlePreparation preparation)
-        => preparation.Entries
+        => [.. preparation.Entries
             .OrderBy(entry => entry.Ordinal)
-            .Select(entry => entry.TargetPath)
-            .ToArray();
+            .Select(entry => entry.TargetPath)];
 
     private static bool Matches(
         RecoveryBundleCandidateSnapshot candidate,

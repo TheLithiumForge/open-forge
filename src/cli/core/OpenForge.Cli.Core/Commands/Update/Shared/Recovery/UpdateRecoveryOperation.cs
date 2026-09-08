@@ -9,16 +9,9 @@ using OpenForge.Cli.Core.Framework.Recovery.Models;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Recovery;
 
-internal sealed class UpdateRecoveryOperation(
-    RecoveryBundleStore store,
-    RecoveryBundleCatalogue catalogue,
-    RecoveryBundleDeletionGuard deletionGuard)
+internal static class UpdateRecoveryOperation
 {
-    private readonly RecoveryBundleStore _store = store;
-    private readonly RecoveryBundleCatalogue _catalogue = catalogue;
-    private readonly RecoveryBundleDeletionGuard _deletionGuard = deletionGuard;
-
-    internal ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
+    internal static ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
         UpdatePlanExecution execution,
         Guid operationId,
         CancellationToken cancellationToken)
@@ -37,7 +30,7 @@ internal sealed class UpdateRecoveryOperation(
                         "A planned Update lifecycle change requires its exact source snapshot.")));
         }
 
-        return _store.PrepareAsync(
+        return RecoveryBundleStore.PrepareAsync(
             RecoveryBundleInput.Create(
                 execution.Request.Workspace,
                 UpdateDefinitions.CommandIdentity,
@@ -50,7 +43,7 @@ internal sealed class UpdateRecoveryOperation(
             cancellationToken);
     }
 
-    internal async ValueTask<UpdateRecoveryCleanup> CleanupAsync(
+    internal static async ValueTask<UpdateRecoveryCleanup> CleanupAsync(
         WorkspaceLockLease lease,
         RecoveryBundlePreparation preparation,
         IReadOnlyList<string> protectedPaths,
@@ -59,8 +52,8 @@ internal sealed class UpdateRecoveryOperation(
         RecoveryBundleCatalogueResult catalogue;
         try
         {
-            catalogue = await _catalogue
-                .ReadAsync(lease.Request.Workspace, cancellationToken)
+            catalogue = await RecoveryBundleCatalogue.ReadAsync(
+                lease.Request.Workspace, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -101,8 +94,10 @@ internal sealed class UpdateRecoveryOperation(
         RecoveryBundleDeletionResult deletion;
         try
         {
-            deletion = await _deletionGuard
-                .DeleteAsync(lease, candidate, cancellationToken)
+            deletion = await RecoveryBundleDeletionGuard.DeleteAsync(
+                    lease,
+                    candidate,
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

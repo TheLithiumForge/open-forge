@@ -63,11 +63,10 @@ public sealed class RouteRemoveDefinitionsAndBindingContractTests
         var revalidator = RouteRemovePlanRevalidator.Create();
         Func<RouteRemovePlan, WorkspaceLockLease, CancellationToken, ValueTask<RouteRemovePlanRevalidation>> revalidate =
             revalidator.RevalidateAsync;
-        var recovery = RouteRemoveRecoveryLifecycle.Create();
         Func<RouteRemoveRecoveryPreparationInput, CancellationToken, ValueTask<RouteRemoveRecoveryPreparationResult>> prepare =
-            recovery.PrepareAsync;
+            RouteRemoveRecoveryLifecycle.PrepareAsync;
         Func<RouteRemoveRecoveryDeletionInput, CancellationToken, ValueTask<RouteRemoveRecoveryDeletionResult>> delete =
-            recovery.DeleteExactAsync;
+            RouteRemoveRecoveryLifecycle.DeleteExactAsync;
         var effects = RouteRemoveEffectApplication.Create();
         Func<RouteRemoveEffectApplicationInput, CancellationToken, ValueTask<RouteRemoveApplicationProgress>> apply =
             effects.ApplyAsync;
@@ -81,7 +80,6 @@ public sealed class RouteRemoveDefinitionsAndBindingContractTests
         Assert.NotNull(build);
         Assert.NotNull(revalidator);
         Assert.NotNull(revalidate);
-        Assert.NotNull(recovery);
         Assert.NotNull(prepare);
         Assert.NotNull(delete);
         Assert.NotNull(effects);

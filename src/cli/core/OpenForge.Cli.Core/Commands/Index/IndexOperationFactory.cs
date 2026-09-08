@@ -7,8 +7,6 @@ using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Recovery;
-
 namespace OpenForge.Cli.Core.Commands.Index;
 
 internal static class IndexOperationFactory
@@ -18,23 +16,14 @@ internal static class IndexOperationFactory
         var physicalPathResolver = new PhysicalPathResolver();
         var validator = new FileExpectationValidator(physicalPathResolver);
         var revalidator = new MutationRevalidator(validator);
-        var recoveryReader = new RecoveryBundleReader();
-        var recoveryCatalogue = new RecoveryBundleCatalogue(recoveryReader);
         var projectionReader = new IndexProjectionReader(physicalPathResolver);
-        var recoveryLifecycle = new IndexRecoveryLifecycle(
-            store: new RecoveryBundleStore(recoveryReader),
-            catalogue: recoveryCatalogue,
-            deletionGuard: new RecoveryBundleDeletionGuard(
-                recoveryCatalogue,
-                recoveryReader));
         var applicationOperation = new IndexApplicationOperation(
             lockManager: lockStoreRoot is null
                 ? WorkspaceLockManager.CreateForCurrentUser()
                 : new WorkspaceLockManager(lockStoreRoot),
             revalidator: revalidator,
             fileChangeApplier: new FileChangeApplier(revalidator, validator),
-            projectionReader: projectionReader,
-            recoveryLifecycle: recoveryLifecycle);
+            projectionReader: projectionReader);
         return new IndexOperation(
             projectionReader: projectionReader,
             planBuilder: new IndexPlanBuilder(),

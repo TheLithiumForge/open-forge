@@ -271,6 +271,24 @@ The operation never silently replaces a destination. It does not normalize a
 compatibility filename, merge an overwrite into a base, or use current generated
 lines as proof that the destination is free.
 
+## Final-Leaf Safety Boundary
+
+Every file leaf that `route move` would change or remove, including the selected
+source, destination, authored-reference, and generated-navigation leaves, has a
+caller-visible no-follow observation of its immediate final filesystem component.
+A filesystem link, reparse point, or special final leaf, including a relative
+file link that is an exact Workspace Library projection, is separately owned and
+unsafe for ordinary Route Move mutation. The command keeps its existing
+`blocked` target-safety result, identifies the affected path, and performs no
+effect.
+
+This boundary does not consult `.agents/open-forge.libraries.json`. A missing,
+malformed, stale, or otherwise unreadable Library record neither makes the
+final leaf ordinary nor grants Route Move mutation authority. Route Move never
+resolves a final filesystem leaf and then deletes or moves its physical source
+target. The guard concerns each final component addressed by the move plan;
+ordinary directory-ancestry rules remain defined by the filesystem contract.
+
 ## Complete Reference Pass
 
 Move performs one complete physically contained pass over the supported Markdown
@@ -368,6 +386,9 @@ projection, plan, expected-state checks, and preflight as application. It shows
 every moved, created, removed, rewritten, detached, and generated effect needed
 to review the complete operation, then writes nothing. Planned changes alone do
 not create `attention`.
+
+When the final-leaf safety boundary fails, dry-run and application retain the
+same existing `blocked` target-safety result and produce no effect.
 
 Omitting `--dry-run` selects application. The command path and the exact source
 and destination subjects are sufficient consent in human, JSON, and other
@@ -544,6 +565,9 @@ The command rejects or blocks:
 - incomplete supported-Markdown enumeration or inspection;
 - an unsupported or ambiguous potentially applicable move reference;
 - an invalid or ambiguous generated boundary or required Index projection;
+- a filesystem link or reparse point at any planned final file leaf, including
+  an exact Workspace Library projection with or without a valid Library record;
+  this is the existing `blocked` target-safety result and prevents every effect;
 - unavailable or unsafe recovery-bundle storage (`incomplete`), an unverified
   bundle, or a bundle collision (`blocked`); or
 - a changed expected source, destination, reference, generated region, ownership
@@ -602,6 +626,9 @@ when the ID is colliding or the category/leaf shape is otherwise ambiguous.
 - overwrite, merge, or silently delete a destination or overwrite companion;
 - rewrite external URLs, unsupported or ambiguous reference forms, or unrelated
   authored prose;
+- resolve a final filesystem link or reparse point and then delete or move its
+  physical source target, write through a Workspace Library projection, or adopt
+  or manage a Library record;
 - treat generated `Entries` as authored authority or run a hidden `index` command;
 - create a receipt, tombstone, journal, saved plan, session, or automatic
   recovery history;
@@ -627,6 +654,10 @@ Gate 5 executable proof must cover:
   ambiguous subjects;
 - complete category physical inventory, relative-layout preservation, descendant
   classification, and all-or-nothing planning;
+- Final filesystem link and reparse-point leaves, including exact Workspace
+  Library projections with and without a valid Library record, are reported as
+  unsafe and block before effects; Route Move never resolves then deletes or
+  moves their physical source targets.
 - complete trusted Framework and Extension lifecycle-ownership proof, including
   missing, malformed, conflicting, stale, incomplete, and source-claim cases;
 - exact leaf and category destination shapes, existing-parent requirement,

@@ -21,15 +21,13 @@ public sealed class RecoveryBundleDeletionAttributionIntegrationTests
             temporary,
             workspace,
             Guid.NewGuid());
-        var prepared = await RecoveryBundleStoreIntegrationTests.Store().PrepareAsync(
+        var prepared = await RecoveryBundleStore.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         try
         {
-            var reader = new RecoveryBundleReader();
-            var catalogue = new RecoveryBundleCatalogue(reader);
-            var initial = await catalogue.ReadAsync(
+            var initial = await RecoveryBundleCatalogue.ReadAsync(
                 workspace,
                 TestContext.Current.CancellationToken);
             var candidate = Assert.Single(initial.Candidates, item => string.Equals(
@@ -50,7 +48,7 @@ public sealed class RecoveryBundleDeletionAttributionIntegrationTests
                 TestContext.Current.CancellationToken);
             await using var lease = Assert.IsType<WorkspaceLockLease>(lockResult.Lease);
 
-            var deletion = await new RecoveryBundleDeletionGuard(catalogue, reader).DeleteAsync(
+            var deletion = await RecoveryBundleDeletionGuard.DeleteAsync(
                 lease,
                 candidate,
                 TestContext.Current.CancellationToken);

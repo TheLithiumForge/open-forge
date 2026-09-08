@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Move.Shared.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -17,7 +18,6 @@ public sealed class RouteMoveApplicationIntegrationTests
         var plan = await workspace.BuildApplicationPlanAsync();
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var lifecycle = RouteMoveIntegrationWorkspace.CreateRecoveryLifecycle();
         var before = workspace.SnapshotHashes();
         var lifecycleBytes = workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath);
         var input = new RouteMoveRecoveryPreparationInput
@@ -27,12 +27,12 @@ public sealed class RouteMoveApplicationIntegrationTests
             Lease = lease,
         };
 
-        var prepared = await lifecycle.PrepareAsync(
+        var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         workspace.TrackRecovery(preparation);
-        var collision = await lifecycle.PrepareAsync(
+        var collision = await RouteMoveRecoveryLifecycle.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
 
@@ -62,8 +62,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var blockedPath = workspace.BlockRecoveryWorkspaceDirectory();
         var before = workspace.SnapshotHashes();
 
-        var result = await RouteMoveIntegrationWorkspace.CreateRecoveryLifecycle()
-            .PrepareAsync(
+        var result = await RouteMoveRecoveryLifecycle.PrepareAsync(
                 new RouteMoveRecoveryPreparationInput
                 {
                     Plan = plan,
@@ -91,8 +90,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var plan = await workspace.BuildApplicationPlanAsync();
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var lifecycle = RouteMoveIntegrationWorkspace.CreateRecoveryLifecycle();
-        var prepared = await lifecycle.PrepareAsync(
+        var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
             new RouteMoveRecoveryPreparationInput
             {
                 Plan = plan,
@@ -151,8 +149,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var plan = await workspace.BuildApplicationPlanAsync();
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var lifecycle = RouteMoveIntegrationWorkspace.CreateRecoveryLifecycle();
-        var prepared = await lifecycle.PrepareAsync(
+        var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
             new RouteMoveRecoveryPreparationInput
             {
                 Plan = plan,
@@ -196,9 +193,8 @@ public sealed class RouteMoveApplicationIntegrationTests
         var plan = await workspace.BuildApplicationPlanAsync();
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var lifecycle = RouteMoveIntegrationWorkspace.CreateRecoveryLifecycle();
         var lifecycleBefore = workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath);
-        var prepared = await lifecycle.PrepareAsync(
+        var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
             new RouteMoveRecoveryPreparationInput
             {
                 Plan = plan,
@@ -242,7 +238,7 @@ public sealed class RouteMoveApplicationIntegrationTests
 
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
-        var deletion = await lifecycle.DeleteExactAsync(
+        var deletion = await RouteMoveRecoveryLifecycle.DeleteExactAsync(
             new RouteMoveRecoveryDeletionInput
             {
                 Plan = plan,
@@ -269,8 +265,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var plan = await workspace.BuildApplicationPlanAsync();
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var lifecycle = RouteMoveIntegrationWorkspace.CreateRecoveryLifecycle();
-        var prepared = await lifecycle.PrepareAsync(
+        var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
             new RouteMoveRecoveryPreparationInput
             {
                 Plan = plan,
@@ -318,8 +313,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var plan = await workspace.BuildApplicationPlanAsync();
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var lifecycle = RouteMoveIntegrationWorkspace.CreateRecoveryLifecycle();
-        var prepared = await lifecycle.PrepareAsync(
+        var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
             new RouteMoveRecoveryPreparationInput
             {
                 Plan = plan,
@@ -380,8 +374,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var plan = await workspace.BuildApplicationPlanAsync();
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var lifecycle = RouteMoveIntegrationWorkspace.CreateRecoveryLifecycle();
-        var prepared = await lifecycle.PrepareAsync(
+        var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
             new RouteMoveRecoveryPreparationInput
             {
                 Plan = plan,
@@ -393,7 +386,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         workspace.ReplaceRecoveryWithDirectory(preparation);
         var lifecycleBefore = workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath);
 
-        var deletion = await lifecycle.DeleteExactAsync(
+        var deletion = await RouteMoveRecoveryLifecycle.DeleteExactAsync(
             new RouteMoveRecoveryDeletionInput
             {
                 Plan = plan,

@@ -12,13 +12,11 @@ internal sealed class InstallApplicationOperation(
     WorkspaceLockManager lockManager,
     InstallApplicationPreconditionValidator preconditionValidator,
     InstallApplicationEffectApplier effectApplier,
-    InstallRecoveryOperation recoveryOperation,
     InstallAppliedVerifier verifier)
 {
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly InstallApplicationPreconditionValidator _preconditionValidator = preconditionValidator;
     private readonly InstallApplicationEffectApplier _effectApplier = effectApplier;
-    private readonly InstallRecoveryOperation _recoveryOperation = recoveryOperation;
     private readonly InstallAppliedVerifier _verifier = verifier;
 
     internal async ValueTask<InstallApplicationOutcome> ExecuteAsync(
@@ -143,7 +141,7 @@ internal sealed class InstallApplicationOperation(
         RecoveryBundlePreparationResult preparationResult;
         try
         {
-            preparationResult = await _recoveryOperation.PrepareAsync(
+            preparationResult = await InstallRecoveryOperation.PrepareAsync(
                     plan,
                     context.OperationId,
                     cancellationToken)
@@ -463,7 +461,7 @@ internal sealed class InstallApplicationOperation(
                     InstallRecoveryState.NotRequired));
         }
 
-        var cleanup = await _recoveryOperation.CleanupAsync(
+        var cleanup = await InstallRecoveryOperation.CleanupAsync(
                 new InstallRecoveryCleanupRequest
                 {
                     Workspace = plan.Request.Workspace,
@@ -575,11 +573,11 @@ internal sealed class InstallApplicationOperation(
         InstallEffectOutcome outcome)
         => progress with
         {
-            Effects = progress.Effects.Append(new InstallEffectApplication
+            Effects = [.. progress.Effects.Append(new InstallEffectApplication
             {
                 Identity = identity,
                 Outcome = outcome,
-            }).ToArray(),
+            })],
         };
 
     private static InstallEffectOutcome ReadOutcome(

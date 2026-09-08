@@ -148,6 +148,17 @@ Reject payload targets under the lifecycle document, repository metadata,
 recovery/temporary artifacts, workspace overwrite companions, Framework blocks,
 or another manager's paths. Source remains read-only.
 
+An exact destination path claim in the consumer Library record
+`.agents/open-forge.libraries.json`, or a real relative projection link at that
+destination, is separately owned by Library management. Update never adopts,
+overwrites, updates, or removes that destination in any mode, including normal
+operation, `--force`, `--prune`, and combined `--force --prune`. The neutral
+no-follow final-leaf guard blocks ordinary Extension `Create`, `Replace`,
+`Delete`, or `ReplaceGeneratedRegion` when the leaf is a link or reparse point,
+independently of whether the Library record is present, readable, valid, or
+claims the path. Update does not reinterpret the Library record or invoke a
+Library operation.
+
 ## Normal, Force, Prune, And Automatic Plans
 
 Normal mode may update baseline-unchanged current expected paths and add safe new
@@ -273,8 +284,9 @@ streams, and one-result JSON rule.
 
 Conformance must cover source and selection, dependency-first closure, Framework
 anchor and route-host gates, trusted/untrusted/absent/source-unavailable facts,
-semantic identity, shared owners and retained dependents, normal/force/prune/
-automatic effects, generated navigation, reserved paths, complete plan,
+semantic identity, shared owners and retained dependents, Library-record and
+projection collisions, independent no-follow final-leaf guards,
+normal/force/prune/automatic effects, generated navigation, reserved paths, complete plan,
 recovery-bundle behavior, expected-state revalidation, verification, interruption,
 dry-run parity, no-op repetition, human/JSON parity, and no formatter or source
 mutation. The [Shared Result

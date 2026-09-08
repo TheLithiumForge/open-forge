@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Operational.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
@@ -11,4 +12,5 @@ internal sealed record StatusObservationSet(
     RecoveryResidualStatusView RecoveryResiduals,
     RouteStatusView Routes,
     FrameworkLifecycleStatusView FrameworkLifecycle,
-    ExtensionLifecycleStatusView ExtensionLifecycle);
+    ExtensionLifecycleStatusView ExtensionLifecycle,
+    LibraryStatusView Libraries);

@@ -69,23 +69,23 @@ public sealed class RecoveryBundleContractTests
             ]);
 
         var entries = input.RecoveryTargets
-            .Select((target, ordinal) => RecoveryBundleEntry.FromTarget(input, target, ordinal))
+            .Select((target, ordinal) => RecoveryEntry.FromTarget(input, target, ordinal))
             .ToArray();
 
         Assert.Equal(4, input.Targets.Length);
         Assert.Equal(3, input.RecoveryTargets.Length);
         Assert.Equal(
             [
-                PlannedFileChangeKind.Replace,
-                PlannedFileChangeKind.Delete,
-                PlannedFileChangeKind.ReplaceGeneratedRegion,
+                RecoveryEntryKind.OrdinaryReplace,
+                RecoveryEntryKind.OrdinaryDelete,
+                RecoveryEntryKind.OrdinaryReplaceGeneratedRegion,
             ],
-            entries.Select(entry => entry.ChangeKind));
+            entries.Select(entry => entry.Kind));
         Assert.Equal(["replace.bin", "delete.bin", "generated.bin"], entries.Select(entry => entry.TargetPath));
-        Assert.True(entries[0].Prior.Matches([0, 1, 2, 255]));
-        Assert.True(entries[0].Intended?.Matches([3, 4, 5]));
-        Assert.Null(entries[1].Intended);
-        Assert.True(entries[2].Intended?.Matches([10, 11]));
+        Assert.True(entries[0].Prior.OrdinaryFile?.Matches([0, 1, 2, 255]));
+        Assert.True(entries[0].Intended.OrdinaryFile?.Matches([3, 4, 5]));
+        Assert.Equal(RecoveryEntryStateKind.Missing, entries[1].Intended.Kind);
+        Assert.True(entries[2].Intended.OrdinaryFile?.Matches([10, 11]));
     }
 
     [Fact(DisplayName = "Recovery targets reject mismatched prior snapshots"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
@@ -103,13 +103,13 @@ public sealed class RecoveryBundleContractTests
         Assert.Throws<ArgumentException>(() => RecoveryBundleTarget.Create(
             change,
             FileStateSnapshot.Missing(path)));
-        Assert.Throws<ArgumentException>(() => RecoveryBundleEntry.Create(
+        Assert.Throws<ArgumentException>(() => RecoveryEntry.Create(
             ordinal: 0,
             targetPath: "existing.bin",
             changeKind: PlannedFileChangeKind.Delete,
             prior: RecoveryContentIdentity.FromBytes("before"u8),
             intended: RecoveryContentIdentity.FromBytes("after"u8)));
-        Assert.Throws<ArgumentException>(() => RecoveryBundleEntry.Create(
+        Assert.Throws<ArgumentException>(() => RecoveryEntry.Create(
             ordinal: 0,
             targetPath: "existing.bin",
             changeKind: PlannedFileChangeKind.ReplaceGeneratedRegion,
@@ -289,18 +289,18 @@ public sealed class RecoveryBundleContractTests
             (RecoveryBundleDeletionState.Cancelled, RecoveryBundleDisposition.Removed),
         ];
 
-        foreach (var value in impossible)
+        foreach (var (state, disposition) in impossible)
         {
-            var cause = value.State is RecoveryBundleDeletionState.Failed
+            var cause = state is RecoveryBundleDeletionState.Failed
                 or RecoveryBundleDeletionState.Blocked
                     ? "Deletion did not complete."
                     : null;
-            var residualPath = value.Disposition == RecoveryBundleDisposition.Retained
+            var residualPath = disposition == RecoveryBundleDisposition.Retained
                 ? path
                 : null;
             Assert.Throws<ArgumentException>(() => new RecoveryBundleDeletionResult(
-                state: value.State,
-                disposition: value.Disposition,
+                state: state,
+                disposition: disposition,
                 residualPath: residualPath,
                 failure: null,
                 cause: cause));
@@ -332,7 +332,7 @@ public sealed class RecoveryBundleContractTests
             cause: "Deletion was blocked."));
     }
 
-    private static (RecoveryBundleInput Input, RecoveryBundleEntry Entry) ManifestInput()
+    private static (RecoveryBundleInput Input, RecoveryEntry Entry) ManifestInput()
     {
         var workspace = Workspace();
         var path = Path.Combine(workspace.LexicalRoot, "existing.bin");
@@ -349,7 +349,7 @@ public sealed class RecoveryBundleContractTests
             targets: [RecoveryBundleTarget.Create(change, before)]);
         return (
             input,
-            RecoveryBundleEntry.FromTarget(input, input.RecoveryTargets[0], ordinal: 0));
+            RecoveryEntry.FromTarget(input, input.RecoveryTargets[0], ordinal: 0));
     }
 
     private static CliWorkspace Workspace()

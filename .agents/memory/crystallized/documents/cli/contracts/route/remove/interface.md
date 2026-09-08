@@ -185,6 +185,24 @@ complete subject. The command does not flatten, reorder, or independently
 commit descendants. The Loader itself and any item whose physical identity
 cannot remain contained are outside this boundary.
 
+## Final-Leaf Safety Boundary
+
+Every file leaf that `route remove` would change or remove, including the
+selected subject, incoming-reference, and generated-navigation leaves, has a
+caller-visible no-follow observation of its immediate final filesystem component.
+A filesystem link, reparse point, or special final leaf, including a relative
+file link that is an exact Workspace Library projection, is separately owned and
+unsafe for ordinary Route Remove mutation. The command keeps its existing
+`blocked` target-safety result, identifies the affected path, and performs no
+effect.
+
+This boundary does not consult `.agents/open-forge.libraries.json`. A missing,
+malformed, stale, or otherwise unreadable Library record neither makes the
+final leaf ordinary nor grants Route Remove mutation authority. Route Remove
+never resolves a final filesystem leaf and then deletes its physical source
+target. The guard concerns each final component addressed by the remove plan;
+ordinary directory-ancestry rules remain defined by the filesystem contract.
+
 ## Positive Unmanaged Proof
 
 Before a leaf or category can enter a mutation plan, the command must successfully
@@ -307,6 +325,9 @@ complete category inventory, reference catalogue, intended detachments, generate
 projection, plan, expected-state checks, and preflight as application. It shows
 every removed, detached, and generated effect needed to review the complete
 operation, then writes nothing. Planned changes alone do not create `attention`.
+
+When the final-leaf safety boundary fails, dry-run and application retain the
+same existing `blocked` target-safety result and produce no effect.
 
 Omitting `--dry-run` selects application. The command path and the exact source
 subject are sufficient consent in human, JSON, and other non-interactive use.
@@ -502,6 +523,9 @@ The command rejects or blocks:
   unsupported or ambiguous form, or would lose surrounding prose;
 - incomplete supported-Markdown enumeration or inspection;
 - an invalid or ambiguous generated boundary or required Index projection;
+- a filesystem link or reparse point at any planned final file leaf, including
+  an exact Workspace Library projection with or without a valid Library record;
+  this is the existing `blocked` target-safety result and prevents every effect;
 - unavailable recovery-bundle storage (`incomplete`); an unverified, malformed,
   mismatched, or colliding bundle (`blocked`); or
 - a changed expected source, reference, generated region, ownership fact, or
@@ -557,6 +581,9 @@ leaf.
   unsupported or ambiguous link forms, or unrelated authored prose;
 - delete an incoming link's surrounding prose or silently leave a supported
   incoming link broken;
+- resolve a final filesystem link or reparse point and then delete its physical
+  source target, write through a Workspace Library projection, or adopt or manage
+  a Library record;
 - treat generated `Entries` as authored authority or run a hidden `index` command;
 - create a receipt, tombstone, journal, saved plan, session, or automatic
   recovery history;
@@ -583,6 +610,10 @@ Gate 5 executable proof must cover:
   ambiguous subjects;
 - complete category physical inventory, descendant classification, and
   all-or-nothing planning;
+- Final filesystem link and reparse-point leaves, including exact Workspace
+  Library projections with and without a valid Library record, are reported as
+  unsafe and block before effects; Route Remove never resolves then deletes
+  their physical source targets.
 - complete positive unmanaged proof from the Framework baseline and all
   applicable Extension claims, including every missing, malformed, conflicting,
   stale, incomplete, and source-claim case;

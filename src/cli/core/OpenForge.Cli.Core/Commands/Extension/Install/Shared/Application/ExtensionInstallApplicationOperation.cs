@@ -10,12 +10,10 @@ namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Application;
 internal sealed class ExtensionInstallApplicationOperation(
     WorkspaceLockManager lockManager,
     ExtensionInstallApplicationPreconditionValidator preconditionValidator,
-    ExtensionInstallRecoveryOperation recoveryOperation,
     ExtensionInstallEffectApplication effectApplication)
 {
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly ExtensionInstallApplicationPreconditionValidator _preconditionValidator = preconditionValidator;
-    private readonly ExtensionInstallRecoveryOperation _recoveryOperation = recoveryOperation;
     private readonly ExtensionInstallEffectApplication _effectApplication = effectApplication;
 
     internal async ValueTask<ExtensionInstallApplicationStageResult> ExecuteAsync(
@@ -109,7 +107,7 @@ internal sealed class ExtensionInstallApplicationOperation(
         RecoveryBundlePreparationResult preparation;
         try
         {
-            preparation = await _recoveryOperation.PrepareAsync(
+            preparation = await ExtensionInstallRecoveryOperation.PrepareAsync(
                 context.Plan,
                 context.OperationId,
                 cancellationToken).ConfigureAwait(false);
@@ -159,7 +157,7 @@ internal sealed class ExtensionInstallApplicationOperation(
             return application;
         }
 
-        var cleanup = await _recoveryOperation.CleanupAsync(
+        var cleanup = await ExtensionInstallRecoveryOperation.CleanupAsync(
             new ExtensionInstallRecoveryCleanupRequest(
                 context.Plan,
                 context.Lease,

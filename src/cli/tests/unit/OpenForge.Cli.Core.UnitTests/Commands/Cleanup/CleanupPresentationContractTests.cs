@@ -71,10 +71,10 @@ public sealed class CleanupPresentationContractTests
             ["not-requested", "verified", "failed", "unknown"],
             Enum.GetValues<CleanupVerificationState>().Select(CleanupWireVocabulary.Verification));
         Assert.Equal(
-            ["framework", "extension", "index", "route", "repair"],
+            ["framework", "extension", "index", "route", "repair", "library"],
             Enum.GetValues<RecoveryBundleProducer>().Select(CleanupWireVocabulary.RecoveryProducer));
         Assert.Equal(
-            ["install", "index", "create", "init", "move", "update", "remove", "repair"],
+            ["install", "index", "create", "init", "move", "update", "remove", "repair", "attach", "sync", "detach"],
             Enum.GetValues<RecoveryBundleOperation>().Select(CleanupWireVocabulary.RecoveryOperation));
         Assert.Equal(
             ["workspace"],

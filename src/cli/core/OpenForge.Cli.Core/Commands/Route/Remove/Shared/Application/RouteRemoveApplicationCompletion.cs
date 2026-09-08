@@ -4,10 +4,8 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 
 internal sealed class RouteRemoveApplicationCompletion(
-    RouteRemoveRecoveryLifecycle recoveryLifecycle,
     RouteRemoveAppliedVerifier verifier)
 {
-    private readonly RouteRemoveRecoveryLifecycle _recoveryLifecycle = recoveryLifecycle;
     private readonly RouteRemoveAppliedVerifier _verifier = verifier;
 
     internal async ValueTask<RouteRemoveApplicationProgress> CompleteAsync(
@@ -76,7 +74,7 @@ internal sealed class RouteRemoveApplicationCompletion(
         }
     }
 
-    private async ValueTask<RouteRemoveApplicationProgress> DeleteRecoveryAsync(
+    private static async ValueTask<RouteRemoveApplicationProgress> DeleteRecoveryAsync(
         RouteRemoveHeldApplication held,
         RouteRemoveRecoveryPreparationResult preparation,
         RouteRemoveApplicationProgress verified,
@@ -87,7 +85,7 @@ internal sealed class RouteRemoveApplicationCompletion(
             var prepared = preparation.Preparation
                 ?? throw new InvalidOperationException(
                     "Prepared Route Remove recovery requires its verified bundle identity.");
-            var deletion = await _recoveryLifecycle.DeleteExactAsync(
+            var deletion = await RouteRemoveRecoveryLifecycle.DeleteExactAsync(
                 new RouteRemoveRecoveryDeletionInput
                 {
                     Plan = held.Plan,

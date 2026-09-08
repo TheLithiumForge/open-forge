@@ -16,16 +16,13 @@ internal sealed class InstallPlanBuilder
 
     internal InstallPlanBuilder(
         PhysicalPathResolver physicalPathResolver,
-        LifecycleStore lifecycleStore,
-        RecoveryBundleCatalogue recoveryCatalogue)
+        LifecycleStore lifecycleStore)
     {
         ArgumentNullException.ThrowIfNull(physicalPathResolver);
         ArgumentNullException.ThrowIfNull(lifecycleStore);
-        ArgumentNullException.ThrowIfNull(recoveryCatalogue);
         _inspector = new InstallPlanningInspector(
             physicalPathResolver,
-            lifecycleStore,
-            recoveryCatalogue);
+            lifecycleStore);
         _basisBuilder = new InstallPlanningBasisBuilder(physicalPathResolver);
         _managedStateEvaluator = new InstallManagedStateEvaluator(physicalPathResolver);
         _establishmentPlanner = new InstallEstablishmentPlanner(
@@ -66,10 +63,14 @@ internal sealed class InstallPlanBuilder
                 _resultProjector.ProjectTrustedExact(trustedExact.Context),
             InstallManagedStateEstablishment establishment =>
                 _resultProjector.Project(_establishmentPlanner.Build(establishment.Input)),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(managedState),
-                managedState,
-                "The Install managed-state result is not defined."),
+            _ => throw InvalidManagedState(managedState),
         };
     }
+
+    private static ArgumentOutOfRangeException InvalidManagedState(
+        InstallManagedStateResult state)
+        => new(
+            nameof(state),
+            state,
+            "The Install managed-state result is not defined.");
 }

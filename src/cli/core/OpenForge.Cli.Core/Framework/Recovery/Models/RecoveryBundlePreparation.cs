@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
@@ -32,7 +33,7 @@ internal sealed record RecoveryBundlePreparation
 
     internal Guid OperationId { get; }
 
-    internal ImmutableArray<RecoveryBundleEntry> Entries { get; }
+    internal ImmutableArray<RecoveryEntry> Entries { get; }
 
     internal bool MatchesWorkspace(CliWorkspace workspace)
     {
@@ -60,7 +61,7 @@ internal sealed record RecoveryBundlePreparation
         PlannedFileChange change)
     {
         ArgumentNullException.ThrowIfNull(change);
-        if (!MatchesOperation(request) || change.Kind == PlannedFileChangeKind.Create)
+        if (!MatchesOperation(request))
         {
             return false;
         }
@@ -79,27 +80,34 @@ internal sealed record RecoveryBundlePreparation
             item.TargetPath,
             targetPath,
             StringComparison.Ordinal));
-        if (entry is null
-            || entry.ChangeKind != change.Kind
-            || !string.Equals(entry.Prior.Sha256, change.Expectation.ContentHash, StringComparison.Ordinal))
+        return entry is not null && entry.Matches(targetPath, change);
+    }
+
+    internal bool MatchesRelativeFileLink(
+        WorkspaceLockRequest request,
+        RelativeFileLinkEffect effect)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(effect);
+        if (!MatchesOperation(request))
         {
             return false;
         }
 
-        if (change.Kind == PlannedFileChangeKind.Delete)
-        {
-            return entry.Intended is null;
-        }
-
-        return entry.Intended?.Matches(change.IntendedBytes.AsSpan()) == true;
+        var entry = Entries.SingleOrDefault(item => string.Equals(
+            item.TargetPath,
+            effect.LogicalPath.Value,
+            StringComparison.Ordinal));
+        return entry is not null
+            && entry.Matches(effect.LogicalPath.Value, effect);
     }
 
     private static string RelativeTarget(CliWorkspace workspace, string logicalPath)
     {
         var relative = Path.GetRelativePath(workspace.LexicalRoot, logicalPath);
-        return RecoveryBundleEntry.ValidateRelativeTarget(relative
+        return CanonicalRelativePath.Create(relative
             .Replace(Path.DirectorySeparatorChar, '/')
-            .Replace(Path.AltDirectorySeparatorChar, '/'));
+            .Replace(Path.AltDirectorySeparatorChar, '/')).Value;
     }
 
     private static StringComparison PathComparison()

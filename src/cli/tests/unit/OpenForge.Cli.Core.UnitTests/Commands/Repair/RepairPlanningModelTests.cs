@@ -263,10 +263,12 @@ public sealed class RepairPlanningModelTests
         var emptySelection = new RepairSelection(
             RepairSelectionMode.Automatic,
             [],
-            []);
+            [],
+            RepairLibrarySelection.Empty);
         var emptyPlan = new RepairPlan(
             RepairTestData.Request(),
             emptySelection,
+            [],
             [],
             []);
         Assert.True(emptyPlan.IsNoOp);

@@ -198,7 +198,7 @@ internal sealed class CleanupIntegrationWorkspace : IDisposable
             [RecoveryBundleTarget.Create(
                 PlannedFileChange.Delete(prior.Expectation),
                 prior)]);
-        var prepared = await RecoveryBundleStoreIntegrationTests.Store().PrepareAsync(
+        var prepared = await RecoveryBundleStore.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
         if (prepared.State != RecoveryBundlePreparationState.Prepared
@@ -387,14 +387,25 @@ internal sealed class CleanupIntegrationWorkspace : IDisposable
                 new RecoveryBundleManifestEntryV1
                 {
                     Ordinal = 0,
-                    Target = "mismatched-target.bin",
-                    Kind = "delete",
-                    PriorLength = priorBytes.Length,
-                    PriorSha256 = Convert.ToHexStringLower(SHA256.HashData(priorBytes)),
-                    Payload = RecoveryBundleFormatV1.PayloadName(0),
-                    IntendedAbsent = true,
-                    IntendedLength = null,
-                    IntendedSha256 = null,
+                    LogicalPath = "mismatched-target.bin",
+                    Kind = "ordinary-delete",
+                    Prior = new RecoveryBundleManifestStateV1
+                    {
+                        Kind = "ordinary-file",
+                        Length = priorBytes.Length,
+                        Sha256 = Convert.ToHexStringLower(SHA256.HashData(priorBytes)),
+                        LinkKind = null,
+                        RawRelativeTarget = null,
+                    },
+                    Intended = new RecoveryBundleManifestStateV1
+                    {
+                        Kind = "missing",
+                        Length = null,
+                        Sha256 = null,
+                        LinkKind = null,
+                        RawRelativeTarget = null,
+                    },
+                    PriorPayload = RecoveryBundleFormatV1.PayloadName(0),
                 },
             ],
         };
@@ -481,14 +492,25 @@ internal sealed class CleanupIntegrationWorkspace : IDisposable
                 new RecoveryBundleManifestEntryV1
                 {
                     Ordinal = 0,
-                    Target = $"cleanup-variant-target-{operationId:N}.bin",
-                    Kind = "delete",
-                    PriorLength = declaredLength ?? payload.Length,
-                    PriorSha256 = declaredHash ?? payloadHash,
-                    Payload = RecoveryBundleFormatV1.PayloadName(0),
-                    IntendedAbsent = true,
-                    IntendedLength = null,
-                    IntendedSha256 = null,
+                    LogicalPath = $"cleanup-variant-target-{operationId:N}.bin",
+                    Kind = "ordinary-delete",
+                    Prior = new RecoveryBundleManifestStateV1
+                    {
+                        Kind = "ordinary-file",
+                        Length = declaredLength ?? payload.Length,
+                        Sha256 = declaredHash ?? payloadHash,
+                        LinkKind = null,
+                        RawRelativeTarget = null,
+                    },
+                    Intended = new RecoveryBundleManifestStateV1
+                    {
+                        Kind = "missing",
+                        Length = null,
+                        Sha256 = null,
+                        LinkKind = null,
+                        RawRelativeTarget = null,
+                    },
+                    PriorPayload = RecoveryBundleFormatV1.PayloadName(0),
                 },
             ],
         };

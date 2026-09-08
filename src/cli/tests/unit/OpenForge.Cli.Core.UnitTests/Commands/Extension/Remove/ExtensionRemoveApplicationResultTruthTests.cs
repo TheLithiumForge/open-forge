@@ -145,7 +145,7 @@ public sealed class ExtensionRemoveApplicationResultTruthTests
             Guid.NewGuid(),
             [RecoveryBundleTarget.Create(change, before)]);
 
-        var result = await new RecoveryBundleStore(new RecoveryBundleReader()).PrepareAsync(
+        var result = await RecoveryBundleStore.PrepareAsync(
             input,
             CancellationToken.None);
         return Assert.IsType<RecoveryBundlePreparation>(result.Preparation);

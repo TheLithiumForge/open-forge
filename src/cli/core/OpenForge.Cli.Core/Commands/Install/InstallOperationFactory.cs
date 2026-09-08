@@ -27,8 +27,7 @@ internal static class InstallOperationFactory
             interactiveSession: interactiveSession,
             planBuilder: new InstallPlanBuilder(
                 physicalPathResolver,
-                lifecycleStore,
-                application.RecoveryCatalogue),
+                lifecycleStore),
             preflight: preflight,
             applicationOperation: application.Operation);
     }

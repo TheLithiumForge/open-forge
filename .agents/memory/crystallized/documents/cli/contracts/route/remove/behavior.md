@@ -63,6 +63,14 @@ The operation satisfies these invariants:
   authority.
 - No persistent effect begins until the subject, ownership proof, reference
   coverage, generated projection, complete plan, and preflight are complete.
+- Every ordinary source, detachment, generated, and removal effect target
+  consumes the neutral no-follow final-leaf observation before ordinary
+  physical resolution, at initial preflight, during under-lease revalidation,
+  and immediately before its effect. A present link, reparse point, or special
+  final leaf blocks the ordinary delete or replacement; Route Remove never
+  follows, writes, or deletes a Library projection. Stable contained
+  directory-link ancestry remains governed by the current ordinary path
+  contract, and this guard does not consult Library record authority.
 - A category is one recovery and verification boundary, never a sequence of
   independently committed leaf removals.
 - A repeated remove is `complete` as a verified no-op only when exact intended
@@ -120,6 +128,13 @@ Classification does not use generated entries, tags, filenames that merely look
 like categories, route proximity, or a recommendation as ownership or subject
 proof.
 
+Before ordinary physical resolution of a selected source or any intended effect
+target, the resolver obtains its neutral no-follow observation of the logical
+final leaf. A present link, reparse point, or special final leaf is not admitted
+as an ordinary Route Remove subject or effect target. This is a filesystem
+safety fact, not a Library-record lookup; a missing record cannot make a
+projection writable or removable.
+
 ## Current Facts And Coverage
 
 Before planning, the operation establishes the complete facts required by the
@@ -132,6 +147,8 @@ For a leaf, current facts include:
 - requested and resolved source identity, base path, and valid overwrite layer;
 - ordinary routed Markdown kind, exposing parent, route identity, and
   compatibility representation;
+- no-follow final-leaf fact for the source, its overwrite companion, and each
+  resolved effect target;
 - lexical and physical containment and exact physical identity;
 - complete trusted lifecycle-ownership inventory and the proof that neither the
   base nor overwrite is claimed;
@@ -166,6 +183,12 @@ been inspected. An item that is neither a regular file nor a directory, or that
 is unreadable, externally resolving, ambiguous, or unsafe, blocks; an unfamiliar
 extension does not exclude an otherwise safe regular file. The resolver does not
 list a safe prefix and call the category complete.
+
+The neutral final-leaf observation is part of that inspection. A contained link,
+reparse point, or special final leaf blocks the complete ordinary category plan
+instead of being traversed or treated as source bytes. Stable directory-link
+ancestry that remains within the ordinary path contract is not newly rejected by
+this rule.
 
 ### Ownership inventory
 
@@ -323,6 +346,10 @@ The complete plan contains all effects before the first persistent effect:
 - complete-file replacements for every required incoming-link detachment; and
 - old parent and applicable Loader generated-region replacements.
 
+Initial preflight rechecks the no-follow final-leaf fact for every ordinary
+effect target before any effect is admitted. A present link, reparse point, or
+special final leaf blocks all effects; no safe subset is applied.
+
 Compatible changes to one physical path coalesce. A category's many contained
 files are still one operation with one preflight, one application result, one
 verification boundary, and one recovery-bundle preparation/retention boundary. A blocker prevents
@@ -340,6 +367,8 @@ resolution, category inventory, lifecycle-ownership proof, reference catalogue,
 intended detachments, generated projection, ordered plan, expected-state facts,
 and preflight. Dry-run stops before recovery-bundle creation, deletion, replacement,
 reference detachment, generated-region write, or any other persistent effect.
+It performs the same no-follow final-leaf observations and reports the same
+blocking facts as application.
 
 Dry-run result evidence contains every planned path and exact bounded effect:
 selected and removed paths, detachment old/new content, generated-region diffs,
@@ -399,8 +428,11 @@ proves the exact intended absence and checks the complete current boundaries:
 Immediately before application, the operation rechecks every source item,
 ownership fact, reference occurrence, generated boundary, expected byte state,
 containment fact, and recovery condition in the complete plan. Volatile effect
-targets are rechecked before their effect is applied. A changed fact prevents
-stale intent from writing.
+targets are rechecked under the held lease, including each no-follow final-leaf
+observation, before their effect is applied. Immediately before every ordinary
+delete or replacement, it repeats the final-leaf observation. A changed fact or
+a present link, reparse point, or special leaf prevents stale intent from
+writing, following, or deleting.
 
 Application verifies each selected removed path, each incoming-link detachment,
 and each generated region. Final verification rebuilds the complete intended
@@ -479,6 +511,10 @@ A conforming implementation must additionally prove:
   and fresh-plan rerun;
 - exact intended-absence proof for verified no-op repeats and invalid,
   incomplete, or blocked results when that proof is unavailable;
+- no-follow final-leaf observations before physical resolution, at initial
+  preflight, under-lease revalidation, and immediately before every ordinary
+  effect, including refusal to follow, write, or delete an eligible `.agents/...`
+  Library projection without consulting its record;
 - all seven semantic statuses, including `Failed`/positively observed `Retained`
   recovery `attention` and `Failed`/`Unknown` recovery `failed`; and
 - human/JSON parity, stream assignment, compact retention, structured

@@ -56,6 +56,8 @@ internal sealed record ExtensionRemovePathPlan
         Action = action;
     }
 
+    internal ExtensionRemoveLibraryBoundary? LibraryBoundary { get; init; }
+
     internal string Path { get; }
 
     internal ExtensionRemovePathClassification Classification { get; }
@@ -97,7 +99,7 @@ internal sealed record ExtensionRemovePathPlan
         }
     }
 
-    private static IReadOnlyList<string> SnapshotOwnerIds(
+    private static ReadOnlyCollection<string> SnapshotOwnerIds(
         IEnumerable<string> values,
         string parameterName)
     {
@@ -117,6 +119,6 @@ internal sealed record ExtensionRemovePathPlan
         }
 
         result.Sort(StringComparer.Ordinal);
-        return new ReadOnlyCollection<string>(result.ToArray());
+        return new ReadOnlyCollection<string>([.. result]);
     }
 }

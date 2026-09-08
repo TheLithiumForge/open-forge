@@ -82,7 +82,7 @@ public sealed class RecoveryBundleAttributionContractTests
         Assert.Empty(decoded.Entries);
     }
 
-    private static (RecoveryBundleInput Input, RecoveryBundleEntry Entry) ManifestInput()
+    private static (RecoveryBundleInput Input, RecoveryEntry Entry) ManifestInput()
     {
         var root = Path.GetFullPath(Path.Combine(
             Path.GetTempPath(),
@@ -109,6 +109,6 @@ public sealed class RecoveryBundleAttributionContractTests
             ]);
         return (
             input,
-            RecoveryBundleEntry.FromTarget(input, input.RecoveryTargets[0], ordinal: 0));
+            RecoveryEntry.FromTarget(input, input.RecoveryTargets[0], ordinal: 0));
     }
 }

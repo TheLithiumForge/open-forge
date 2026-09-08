@@ -15,7 +15,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
     [InlineData(RouteUpdateIntegrationWorkspace.TargetPath, (int)RouteUpdateTargetSelection.BasePath)]
     [InlineData(RouteUpdateIntegrationWorkspace.OverwritePath, (int)RouteUpdateTargetSelection.OverwritePath)]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
-    public async Task LogicalTargetSelectionNeverRedirectsMutation(
+    public static async Task LogicalTargetSelectionNeverRedirectsMutation(
         string reference,
         int expectedSelectionValue)
     {
@@ -53,7 +53,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
     [InlineData(".agents/memory/project-alpha/overview/references.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint)]
     [InlineData(".agents/memory/project-alpha/overview/_references.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint)]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
-    public async Task SupportedFormsRetainTheirActualBasePath(
+    public static async Task SupportedFormsRetainTheirActualBasePath(
         string path,
         int expectedFormValue)
     {
@@ -81,7 +81,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
     [InlineData(false, (int)RouteUpdateFindingCode.WorkspaceUnavailable)]
     [InlineData(true, (int)RouteUpdateFindingCode.WorkspaceUnsafe)]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
-    public async Task RootFailureIsTypedAndWriteFree(
+    public static async Task RootFailureIsTypedAndWriteFree(
         bool unsafeRoot,
         int expectedFindingValue)
     {
@@ -119,7 +119,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
             "This integration case requires real symbolic-link support.");
         var before = workspace.SnapshotHashes();
 
-        var build = await workspace.BuildPlanAsync(workspace.Request(
+        var build = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request(
             patch: RouteUpdateIntegrationWorkspace.ResponsibilityPatch("After")));
 
         Assert.Null(build.Plan);
@@ -152,7 +152,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
     [InlineData("memory/project-alpha/missing")]
     [InlineData(".agents/memory/project-alpha/missing.md")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
-    public async Task MissingTargetReferencesAreInvalidAndWriteFree(string reference)
+    public static async Task MissingTargetReferencesAreInvalidAndWriteFree(string reference)
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             "route-update-target-missing");

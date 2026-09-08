@@ -22,7 +22,7 @@ public sealed class RouteRemoveStatusDoctorIntegrationTests
         var plan = await workspace.BuildApplicationPlanAsync();
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var prepared = await RouteRemoveRecoveryLifecycle.Create().PrepareAsync(
+        var prepared = await RouteRemoveRecoveryLifecycle.PrepareAsync(
             new RouteRemoveRecoveryPreparationInput
             {
                 Plan = plan,
@@ -32,13 +32,13 @@ public sealed class RouteRemoveStatusDoctorIntegrationTests
             TestContext.Current.CancellationToken);
         Assert.Equal(RouteRemoveRecoveryPreparationState.Prepared, prepared.State);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
-        var verified = await new RecoveryBundleReader().ReadFinalAsync(
+        var verified = await RecoveryBundleReader.ReadFinalAsync(
             workspace.Workspace,
             preparation.BundlePath,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, verified.State);
         Assert.NotNull(verified.Verified);
-        Assert.Equal(RecoveryBundleProducer.Route, verified.Verified!.Attribution.Producer);
+        Assert.Equal(RecoveryBundleProducer.Route, verified.Verified.Attribution.Producer);
         Assert.Equal(RecoveryBundleOperation.Remove, verified.Verified.Attribution.Operation);
 
         var status = await CliHostCapture.RunAsync(

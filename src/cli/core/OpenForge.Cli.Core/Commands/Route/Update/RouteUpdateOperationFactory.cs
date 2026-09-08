@@ -9,7 +9,6 @@ using OpenForge.Cli.Core.Framework.Documents.Yaml;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
@@ -50,19 +49,10 @@ internal static class RouteUpdateOperationFactory
             physicalPathResolver);
         var mutationRevalidator = new MutationRevalidator(expectationValidator);
         var resultBuilder = new RouteUpdateResultBuilder();
-        var recoveryReader = new RecoveryBundleReader();
-        var recoveryCatalogue = new RecoveryBundleCatalogue(recoveryReader);
-        var recoveryPreparer = new RouteUpdateRecoveryPreparer(
-            recoveryCatalogue,
-            new RecoveryBundleStore(recoveryReader));
-        var recoveryCompleter = new RouteUpdateRecoveryCompleter(
-            recoveryCatalogue,
-            new RecoveryBundleDeletionGuard(recoveryCatalogue, recoveryReader));
         var preparer = new RouteUpdateApplicationPreparer(
             new RouteUpdatePlanRevalidator(
                 planBuilder,
                 new RouteUpdatePlanEquivalence()),
-            recoveryPreparer,
             mutationRevalidator);
         var applicationPipeline = new RouteUpdateApplicationPipeline(
             preparer,
@@ -72,8 +62,7 @@ internal static class RouteUpdateOperationFactory
                     expectationValidator)),
             new RouteUpdateAppliedVerifier(
                 planBuilder,
-                expectationValidator),
-            recoveryCompleter);
+                expectationValidator));
         return new RouteUpdateOperation(
             planBuilder,
             new RouteUpdateApplicationOperation(

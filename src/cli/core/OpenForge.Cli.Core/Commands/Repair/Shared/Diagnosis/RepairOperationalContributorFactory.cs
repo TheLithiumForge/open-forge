@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
+using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Lifecycle;
@@ -26,8 +27,8 @@ internal static class RepairOperationalContributorFactory
         return new OperationalContributorCatalogue(
             new WorkspaceEntryOperationalContributor(new WorkspacePathObserver(physicalPathResolver)),
             new RecoveryResidualOperationalContributor(
-                new RecoveryBundleCatalogue(new RecoveryBundleReader()),
-                new RecoveryBundleTargetStateReader(physicalPathResolver)),
+                new RecoveryBundleTargetStateReader(physicalPathResolver),
+                physicalPathResolver),
             new RouteOperationalContributor(
                 new RouteObservationReader(
                     routeSourceInspector,
@@ -50,6 +51,7 @@ internal static class RepairOperationalContributorFactory
                 new LifecycleDocumentReader(physicalPathResolver),
                 new ExtensionSourceReader(physicalPathResolver),
                 new ExtensionLifecycleTargetReader(physicalPathResolver),
-                new LifecycleOwnershipReader(physicalPathResolver)));
+                new LifecycleOwnershipReader(physicalPathResolver)),
+            new LibraryOperationalContributor());
     }
 }

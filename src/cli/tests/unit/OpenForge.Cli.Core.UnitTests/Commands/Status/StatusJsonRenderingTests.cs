@@ -1,6 +1,7 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Status;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
+using OpenForge.Cli.Core.Commands.Status.Shared.Aggregation;
 using OpenForge.Cli.Core.Commands.Status.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
@@ -78,7 +79,7 @@ public sealed class StatusJsonRenderingTests
         var managedFiles = extensionsJson.GetProperty("managedFiles");
         AssertPropertyOrder(root, "schemaVersion", "command", "status", "workspace", "result", "next");
         AssertPropertyOrder(root.GetProperty("workspace"), "path", "selectedBy");
-        AssertPropertyOrder(commandResult, "installation", "context", "structure", "lifecycle", "recovery", "findings");
+        AssertPropertyOrder(commandResult, "installation", "context", "structure", "lifecycle", "library", "recovery", "findings");
         AssertPropertyOrder(commandResult.GetProperty("installation"), "state", "entryPath", "loaderPath");
         AssertPropertyOrder(
             context,
@@ -132,6 +133,17 @@ public sealed class StatusJsonRenderingTests
             "baselineFingerprint",
             "fingerprintKind",
             "state");
+        var library = commandResult.GetProperty("library");
+        AssertPropertyOrder(library, "state", "record", "records", "counts");
+        AssertPropertyOrder(library.GetProperty("record"), "path", "state");
+        AssertPropertyOrder(
+            library.GetProperty("counts"),
+            "registered",
+            "current",
+            "missing",
+            "changed",
+            "blocked",
+            "unavailable");
         var recovery = commandResult.GetProperty("recovery");
         AssertPropertyOrder(recovery, "verifiedFinals", "incompleteDrafts", "candidates");
         AssertPropertyOrder(recovery.GetProperty("candidates")[0], "path", "kind", "integrity");
@@ -184,6 +196,40 @@ public sealed class StatusJsonRenderingTests
         Assert.Equal("/recovery/final.zip", candidate.Path);
         Assert.Equal("final", candidate.Kind);
         Assert.Equal("verified", candidate.Integrity);
+    }
+
+    [Theory, Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
+    [InlineData((int)StatusFindingCode.InvalidInput, "invalid")]
+    [InlineData((int)StatusFindingCode.OperationFailed, "failed")]
+    [InlineData((int)StatusFindingCode.Interrupted, "interrupted")]
+    public void EventJsonRetainsAnHonestUnavailableLibraryGraph(int findingCode, string expectedStatus)
+    {
+        var result = StatusResultBuilder.Event(
+            workspace: null,
+            (StatusFindingCode)findingCode,
+            subject: null,
+            "A bounded Status event occurred.");
+        var document = StatusJsonProjection.Create(result);
+        var library = document.Result.Library;
+
+        Assert.Equal(expectedStatus, document.Status);
+        Assert.NotNull(result.Facts.Library);
+        Assert.Equal("incomplete", library.State);
+        Assert.Equal("unavailable", library.Record.State);
+        Assert.Empty(library.Records);
+        foreach (var count in new[]
+        {
+            library.Counts.Registered,
+            library.Counts.Current,
+            library.Counts.Missing,
+            library.Counts.Changed,
+            library.Counts.Blocked,
+            library.Counts.Unavailable,
+        })
+        {
+            Assert.Equal("unavailable", count.State);
+            Assert.Null(count.Value);
+        }
     }
 
     private static void AssertMeasurementOrder(JsonElement measurement)

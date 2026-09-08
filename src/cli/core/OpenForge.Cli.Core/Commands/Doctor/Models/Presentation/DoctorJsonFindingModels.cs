@@ -25,6 +25,9 @@ internal sealed class DoctorJsonFinding
 
 internal sealed class DoctorJsonSubject
 {
+    [System.Text.Json.Serialization.JsonIgnore]
+    public required DoctorJsonLibrarySubject? Library { get; init; }
+
     public required string Kind { get; init; }
 
     public required string? Path { get; init; }

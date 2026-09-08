@@ -162,6 +162,11 @@ BCL-first filesystem boundary. Canonical output uses workspace-relative `/`
 paths; the implementation may not add compatibility or alias behavior that
 changes the public identity rules.
 
+A filesystem symlink projection at an eligible `.agents/...` destination is
+identified and reported under that canonical destination path. It retains the
+normal automatic source ID derived from the destination path; the source root
+named by the separate Library record does not replace that ID.
+
 ## ID Resolution
 
 The CLI derives source IDs from the current workspace and matches the complete
@@ -266,7 +271,8 @@ shapes, creation blocks and asks for an exact path.
 
 External Extension catalogues, formatter executables, workspace roots, and
 other filesystem values use their own purpose-specific operands. They are not
-source references.
+source references. A Workspace Library ID is likewise a separate management
+identity and is never a source-reference operand.
 
 ## Result Display
 
@@ -281,9 +287,12 @@ Structured results expose the same automatic ID and canonical path as separate
 fields. A source with an ID collision keeps its path and reports the ambiguous
 ID state.
 
-Content reached through an explicit local link may live outside `.agents`. It
-has no automatic Open Forge ID. Human output reports `ID: none`; structured
-output uses a null ID. The canonical workspace-relative path remains required.
+Only content reached through an `AUTHORED LOCAL MARKDOWN REFERENCE` outside
+`.agents` has no automatic Open Forge ID. Human output reports `ID: none`;
+structured output uses a null ID. The canonical workspace-relative path remains
+required. A filesystem symlink projection at an eligible `.agents/...`
+destination retains its canonical destination path and normal destination-derived
+automatic source ID.
 
 ## Errors
 

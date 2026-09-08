@@ -6,7 +6,6 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair;
@@ -138,11 +137,7 @@ public sealed class RepairCompletionIntegrationTests
             new WorkspaceLockRequest(workspace.Workspace, RepairDefinitions.CommandIdentity, operationId),
             TestContext.Current.CancellationToken);
         await using var lease = Assert.IsType<WorkspaceLockLease>(acquired.Lease);
-        var reader = new RecoveryBundleReader();
-        var catalogue = new RecoveryBundleCatalogue(reader);
-        var lifecycle = new RepairRecoveryLifecycle(new RecoveryBundleStore(reader), catalogue,
-            new RecoveryBundleDeletionGuard(catalogue, reader));
-        var prepared = await lifecycle.PrepareAsync(plan, operationId, TestContext.Current.CancellationToken);
+        var prepared = await RepairRecoveryLifecycle.PrepareAsync(plan, operationId, TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         var validator = new FileExpectationValidator(new PhysicalPathResolver());
         var revalidator = new MutationRevalidator(validator);
@@ -153,7 +148,7 @@ public sealed class RepairCompletionIntegrationTests
         Assert.Equal(FilesystemVerificationState.Verified, receipt.VerificationState);
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
-        var result = await new RepairApplicationCompletion(new RepairPostVerifier(components.DiagnosisReader), lifecycle)
+        var result = await new RepairApplicationCompletion(new RepairPostVerifier(components.DiagnosisReader))
             .CompleteAsync(new RepairPreparedApplication(plan, lease, preparation, [receipt]), cancellation.Token);
         Assert.Equal(RepairRecoveryState.Retained, result.Recovery.State);
         Assert.Equal(preparation.BundlePath, result.Recovery.ResidualPath);

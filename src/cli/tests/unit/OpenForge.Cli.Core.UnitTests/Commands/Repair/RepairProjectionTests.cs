@@ -61,6 +61,7 @@ public sealed class RepairProjectionTests
             document.RootElement.EnumerateObject().Select(property => property.Name));
         Assert.Equal(
             [
+                "libraryExecution",
                 "mode",
                 "automatic",
                 "selectionMode",
@@ -123,7 +124,7 @@ public sealed class RepairProjectionTests
             selected,
             noOp: RepairTestData.NoOp(),
             outcome: RepairStepOutcome.NoOp);
-        var plan = new RepairPlan(request, selection, [step], []);
+        var plan = new RepairPlan(request, selection, [step], [], []);
         var facts = RepairTestData.CompleteFacts(
             selection: selection,
             plan: plan,

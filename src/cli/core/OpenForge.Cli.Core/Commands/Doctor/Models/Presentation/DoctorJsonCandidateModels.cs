@@ -31,13 +31,16 @@ internal sealed class DoctorJsonProposal
 
     public required DoctorJsonSubject Subject { get; init; }
 
-    public required string Expected { get; init; }
+    public required string? Expected { get; init; }
 
-    public required string Intended { get; init; }
+    public required string? Intended { get; init; }
 
     public required DoctorJsonBoundary Boundary { get; init; }
 
     public required string Verification { get; init; }
 
     public required string Recovery { get; init; }
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    public required DoctorJsonLibraryRecovery? LibraryRecovery { get; init; }
 }

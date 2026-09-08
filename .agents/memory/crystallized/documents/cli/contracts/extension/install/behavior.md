@@ -226,6 +226,16 @@ or trusted; safe unavailable coverage is `incomplete` and unsafe ambiguity is
 Manual copying, idless packages, direct overlays, and external native Skills
 remain unmanaged. Path, route, byte, or semantic coincidence never adopts them.
 
+An exact destination path claim in the consumer Library record
+`.agents/open-forge.libraries.json`, or a real relative projection link at that
+destination, is separately owned by Library management. Install never adopts,
+overwrites, updates, or removes that destination, including when `--force` is
+supplied. The neutral no-follow final-leaf guard blocks ordinary Extension
+`Create`, `Replace`, `Delete`, or `ReplaceGeneratedRegion` when the leaf is a
+link or reparse point, independently of whether the Library record is present,
+readable, valid, or claims the path. Install does not reinterpret the Library
+record or invoke a Library operation.
+
 ## Semantic Fingerprints And Shared Owners
 
 For supported parseable kinds, compute the `open-forge-markdown-v1` conservative
@@ -382,7 +392,8 @@ Interface.
 Conformance must cover source and selection rules, dependency failures and
 ordering, Framework-anchor gating, trusted/untrusted/absent/unavailable state,
 initial force and managed-divergence block, exact bounded prompt outcomes,
-shared owners, semantic fingerprints, generated navigation, strict
+shared owners, Library-record and projection collisions, independent no-follow
+final-leaf guards, semantic fingerprints, generated navigation, strict
 `.agents/`-descendant payload validation before planning, directory effects
 limited to missing descendants beneath the established anchor, reserved paths,
 complete planning, dependency-first target/generated application,

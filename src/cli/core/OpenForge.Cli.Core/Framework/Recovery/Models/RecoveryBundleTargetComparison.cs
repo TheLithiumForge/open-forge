@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using System.Collections.Immutable;
 
 namespace OpenForge.Cli.Core.Framework.Recovery.Models;
@@ -19,7 +20,7 @@ internal sealed record RecoveryBundleTargetComparison
         RecoveryContentIdentity? observed,
         string? cause)
     {
-        TargetPath = RecoveryBundleEntry.ValidateRelativeTarget(targetPath);
+        TargetPath = CanonicalRelativePath.Create(targetPath).Value;
         State = state;
         Observed = observed;
         Cause = cause;

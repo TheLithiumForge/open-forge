@@ -28,21 +28,9 @@ internal sealed record RouteInitRecoveryDeletionResult(
     RouteInitFindingCode? FindingCode,
     string? Cause);
 
-internal sealed class RouteInitRecoveryLifecycle
+internal static class RouteInitRecoveryLifecycle
 {
-    private readonly RecoveryBundleCatalogue _catalogue;
-    private readonly RecoveryBundleStore _store;
-    private readonly RecoveryBundleDeletionGuard _deletionGuard;
-
-    internal RouteInitRecoveryLifecycle()
-    {
-        var reader = new RecoveryBundleReader();
-        _catalogue = new RecoveryBundleCatalogue(reader);
-        _store = new RecoveryBundleStore(reader);
-        _deletionGuard = new RecoveryBundleDeletionGuard(_catalogue, reader);
-    }
-
-    internal async ValueTask<RouteInitRecoveryPreparationResult> PrepareAsync(
+    internal static async ValueTask<RouteInitRecoveryPreparationResult> PrepareAsync(
         RouteInitPlan plan,
         Guid operationId,
         CancellationToken cancellationToken)
@@ -60,7 +48,7 @@ internal sealed class RouteInitRecoveryLifecycle
         RecoveryBundleCatalogueResult catalogue;
         try
         {
-            catalogue = await _catalogue.ReadAsync(
+            catalogue = await RecoveryBundleCatalogue.ReadAsync(
                     plan.Request.Workspace,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -100,7 +88,7 @@ internal sealed class RouteInitRecoveryLifecycle
         RecoveryBundlePreparationResult preparation;
         try
         {
-            preparation = await _store.PrepareAsync(
+            preparation = await RecoveryBundleStore.PrepareAsync(
                     RecoveryBundleInput.Create(
                         plan.Request.Workspace,
                         RouteInitDefinitions.CommandIdentity,
@@ -151,7 +139,7 @@ internal sealed class RouteInitRecoveryLifecycle
                 "Route Init recovery preparation returned an incoherent result.",
                 preparation.ResidualPath),
             _ => throw new ArgumentOutOfRangeException(
-                nameof(resultState),
+                null,
                 resultState,
                 "The Route Init recovery preparation result state is not defined."),
         };
@@ -174,7 +162,7 @@ internal sealed class RouteInitRecoveryLifecycle
                 "The recovery bundle preparation state is not defined."),
         };
 
-    internal async ValueTask<RouteInitRecoveryDeletionResult> DeleteAsync(
+    internal static async ValueTask<RouteInitRecoveryDeletionResult> DeleteAsync(
         WorkspaceLockLease lease,
         RecoveryBundlePreparation? preparation,
         CancellationToken cancellationToken)
@@ -191,7 +179,7 @@ internal sealed class RouteInitRecoveryLifecycle
         RecoveryBundleCatalogueResult catalogue;
         try
         {
-            catalogue = await _catalogue.ReadAsync(
+            catalogue = await RecoveryBundleCatalogue.ReadAsync(
                     lease.Request.Workspace,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -232,7 +220,7 @@ internal sealed class RouteInitRecoveryLifecycle
         RecoveryBundleDeletionResult deletion;
         try
         {
-            deletion = await _deletionGuard.DeleteAsync(
+            deletion = await RecoveryBundleDeletionGuard.DeleteAsync(
                     lease,
                     candidates[0],
                     cancellationToken)
@@ -247,8 +235,10 @@ internal sealed class RouteInitRecoveryLifecycle
             return Unknown(preparation, RouteInitFindingCode.RecoveryFailed, "Recovery deletion failed unexpectedly.");
         }
 
-        var outcome = ReadDeletionOutcome(deletion.State, deletion.Disposition);
-        if (outcome.State == RouteInitRecoveryState.Removed)
+        var (outcomeState, outcomeFindingCode) = ReadDeletionOutcome(
+            deletion.State,
+            deletion.Disposition);
+        if (outcomeState == RouteInitRecoveryState.Removed)
         {
             return new RouteInitRecoveryDeletionResult(
                 new RouteInitRecovery(RouteInitRecoveryState.Removed, ResidualPath: null),
@@ -256,7 +246,7 @@ internal sealed class RouteInitRecoveryLifecycle
                 Cause: null);
         }
 
-        if (outcome.State == RouteInitRecoveryState.Retained
+        if (outcomeState == RouteInitRecoveryState.Retained
             && deletion.State == RecoveryBundleDeletionState.Failed)
         {
             return new RouteInitRecoveryDeletionResult(
@@ -267,7 +257,7 @@ internal sealed class RouteInitRecoveryLifecycle
                 deletion.Cause ?? "The verified Route Init recovery artifact was retained.");
         }
 
-        if (outcome.State == RouteInitRecoveryState.Retained)
+        if (outcomeState == RouteInitRecoveryState.Retained)
         {
             return Retained(
                 preparation,
@@ -279,7 +269,7 @@ internal sealed class RouteInitRecoveryLifecycle
             new RouteInitRecovery(
                 RouteInitRecoveryState.Unknown,
                 deletion.ResidualPath ?? preparation.BundlePath),
-            outcome.FindingCode,
+                outcomeFindingCode,
             deletion.Cause ?? "The Route Init recovery artifact disposition is unknown.");
     }
 

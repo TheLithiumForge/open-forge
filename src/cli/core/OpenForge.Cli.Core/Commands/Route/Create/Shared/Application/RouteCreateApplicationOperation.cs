@@ -17,7 +17,6 @@ internal sealed class RouteCreateApplicationOperation
     private readonly WorkspaceLockManager _lockManager;
     private readonly MutationRevalidator _mutationRevalidator;
     private readonly RouteCreatePlanRevalidator _planRevalidator;
-    private readonly RouteCreateRecoveryLifecycle _recoveryLifecycle;
     private readonly RouteCreateEffectApplication _effectApplication;
     private readonly RouteCreateAppliedVerifier _appliedVerifier;
 
@@ -32,7 +31,6 @@ internal sealed class RouteCreateApplicationOperation
             : new WorkspaceLockManager(lockStoreRoot);
         var planBuilder = new RouteCreatePlanBuilder();
         _planRevalidator = new RouteCreatePlanRevalidator(planBuilder);
-        _recoveryLifecycle = new RouteCreateRecoveryLifecycle();
         _effectApplication = new RouteCreateEffectApplication(
             new FileChangeApplier(_mutationRevalidator, expectationValidator));
         _appliedVerifier = new RouteCreateAppliedVerifier(
@@ -85,7 +83,7 @@ internal sealed class RouteCreateApplicationOperation
                 WorkspaceLockState.Failed => RouteCreateFindingCode.WorkspaceLockUnavailable,
                 WorkspaceLockState.Acquired => RouteCreateFindingCode.OperationFailed,
                 _ => throw new ArgumentOutOfRangeException(
-                    nameof(lockResult),
+                    null,
                     lockResult.State,
                     "The workspace lock state is not defined."),
             };
@@ -152,11 +150,11 @@ internal sealed class RouteCreateApplicationOperation
 
         if (!HasExactChecks(plan, validation))
         {
-            var boundary = ValidationBoundary(validation);
-            return Failure(plan, boundary.Code, boundary.Cause);
+            var (code, cause) = ValidationBoundary(validation);
+            return Failure(plan, code, cause);
         }
 
-        var recovery = await _recoveryLifecycle.PrepareAsync(
+        var recovery = await RouteCreateRecoveryLifecycle.PrepareAsync(
                 plan,
                 operationId,
                 cancellationToken)
@@ -218,7 +216,7 @@ internal sealed class RouteCreateApplicationOperation
                 FindingCode = null,
                 Cause = null,
             }
-            : await _recoveryLifecycle.DeleteAsync(
+            : await RouteCreateRecoveryLifecycle.DeleteAsync(
                     lease,
                     recovery.Preparation,
                     cancellationToken)

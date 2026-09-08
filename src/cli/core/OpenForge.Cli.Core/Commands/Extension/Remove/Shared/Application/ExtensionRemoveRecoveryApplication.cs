@@ -7,20 +7,13 @@ using OpenForge.Cli.Core.Framework.Recovery.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application;
 
-internal sealed class ExtensionRemoveRecoveryApplication(
-    RecoveryBundleStore recoveryStore,
-    RecoveryBundleCatalogue recoveryCatalogue,
-    RecoveryBundleDeletionGuard recoveryDeletionGuard)
+internal static class ExtensionRemoveRecoveryApplication
 {
-    private readonly RecoveryBundleStore _recoveryStore = recoveryStore;
-    private readonly RecoveryBundleCatalogue _recoveryCatalogue = recoveryCatalogue;
-    private readonly RecoveryBundleDeletionGuard _recoveryDeletionGuard = recoveryDeletionGuard;
-
-    internal ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
+    internal static ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
         ExtensionRemovePlan plan,
         Guid operationId,
         CancellationToken cancellationToken)
-        => _recoveryStore.PrepareAsync(
+        => RecoveryBundleStore.PrepareAsync(
             RecoveryBundleInput.Create(
                 plan.Request.Workspace,
                 ExtensionRemoveDefinitions.CommandIdentity,
@@ -29,17 +22,16 @@ internal sealed class ExtensionRemoveRecoveryApplication(
                     RecoveryBundleOperation.Remove,
                     plan.Request.Workspace),
                 operationId,
-                plan.Effects
+                [.. plan.Effects
                     .Select(effect => effect.RecoveryTarget)
                     .Where(target => target is not null)
                     .Cast<RecoveryBundleTarget>()
                     .Append(plan.LifecycleRecoveryTarget)
                     .Where(target => target is not null)
-                    .Cast<RecoveryBundleTarget>()
-                    .ToArray()),
+                    .Cast<RecoveryBundleTarget>()]),
             cancellationToken);
 
-    internal async ValueTask<ExtensionRemoveRecoveryCleanup> CleanupAsync(
+    internal static async ValueTask<ExtensionRemoveRecoveryCleanup> CleanupAsync(
         ExtensionRemovePlan plan,
         WorkspaceLockLease lease,
         RecoveryBundlePreparation? preparation,
@@ -58,7 +50,7 @@ internal sealed class ExtensionRemoveRecoveryApplication(
         RecoveryBundleCatalogueResult catalogue;
         try
         {
-            catalogue = await _recoveryCatalogue.ReadAsync(
+            catalogue = await RecoveryBundleCatalogue.ReadAsync(
                 plan.Request.Workspace,
                 cancellationToken).ConfigureAwait(false);
         }
@@ -99,7 +91,7 @@ internal sealed class ExtensionRemoveRecoveryApplication(
         RecoveryBundleDeletionResult deletion;
         try
         {
-            deletion = await _recoveryDeletionGuard.DeleteAsync(
+            deletion = await RecoveryBundleDeletionGuard.DeleteAsync(
                 lease,
                 candidate,
                 cancellationToken).ConfigureAwait(false);
@@ -201,12 +193,11 @@ internal sealed class ExtensionRemoveRecoveryApplication(
                 preparation.BundlePath),
             new ExtensionRemoveFinding(code, cause, preparation.BundlePath));
 
-    private static IReadOnlyList<string> ProtectedPaths(
+    private static string[] ProtectedPaths(
         RecoveryBundlePreparation preparation)
-        => preparation.Entries
+        => [.. preparation.Entries
             .OrderBy(entry => entry.Ordinal)
-            .Select(entry => entry.TargetPath)
-            .ToArray();
+            .Select(entry => entry.TargetPath)];
 }
 
 internal sealed record ExtensionRemoveRecoveryCleanup(

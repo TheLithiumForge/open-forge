@@ -14,15 +14,12 @@ namespace OpenForge.Cli.Core.Commands.Cleanup;
 
 internal sealed class CleanupOperation
 {
-    private readonly RecoveryBundleCatalogue _catalogue;
     private readonly CleanupApplicationOperation _application;
 
     internal CleanupOperation(WorkspaceLockStoreRoot? lockStoreRoot = null)
     {
-        var reader = new RecoveryBundleReader();
-        _catalogue = new RecoveryBundleCatalogue(reader);
         var manager = lockStoreRoot is null ? WorkspaceLockManager.CreateForCurrentUser() : new WorkspaceLockManager(lockStoreRoot);
-        _application = new CleanupApplicationOperation(manager, new RecoveryBundleDeletionGuard(_catalogue, reader));
+        _application = new CleanupApplicationOperation(manager);
     }
 
     internal async ValueTask<CleanupResult> ExecuteAsync(CleanupRequest request, CancellationToken cancellationToken)
@@ -82,7 +79,7 @@ internal sealed class CleanupOperation
         }
     }
 
-    private async ValueTask<RecoveryBundleCatalogueResult> ReadCatalogueAsync(CleanupRequest request, CancellationToken cancellationToken)
+    private static async ValueTask<RecoveryBundleCatalogueResult> ReadCatalogueAsync(CleanupRequest request, CancellationToken cancellationToken)
     {
         var failure = RecoveryDeletionStorageBoundary.ReadWorkspace(request.Workspace);
         if (failure is not null)
@@ -90,7 +87,7 @@ internal sealed class CleanupOperation
             return RecoveryBundleCatalogueResult.Unavailable(failure.DirectCause, failure);
         }
 
-        var catalogue = await _catalogue.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        var catalogue = await RecoveryBundleCatalogue.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
         failure = RecoveryDeletionStorageBoundary.ReadWorkspace(request.Workspace);
         if (failure is not null)
         {

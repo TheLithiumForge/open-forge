@@ -12,7 +12,6 @@ using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.References;
@@ -28,13 +27,11 @@ internal static class RouteMoveOperationFactory
         var physicalPathResolver = new PhysicalPathResolver();
         var expectationValidator = new FileExpectationValidator(physicalPathResolver);
         var planBuilder = CreatePlanBuilder(physicalPathResolver, expectationValidator);
-        var recoveryLifecycle = CreateRecoveryLifecycle();
         var resultBuilder = new RouteMoveResultBuilder();
         var applicationOperation = CreateApplicationOperation(
             planBuilder,
             physicalPathResolver,
             expectationValidator,
-            recoveryLifecycle,
             lockStoreRoot);
         return new RouteMoveOperation(planBuilder, applicationOperation, resultBuilder);
     }
@@ -98,21 +95,10 @@ internal static class RouteMoveOperationFactory
             new GeneratedNavigationRegionPlanner(),
             new RouteMoveNavigationSourceProjector());
 
-    private static RouteMoveRecoveryLifecycle CreateRecoveryLifecycle()
-    {
-        var reader = new RecoveryBundleReader();
-        var catalogue = new RecoveryBundleCatalogue(reader);
-        return new RouteMoveRecoveryLifecycle(
-            catalogue,
-            new RecoveryBundleStore(reader),
-            new RecoveryBundleDeletionGuard(catalogue, reader));
-    }
-
     private static RouteMoveApplicationOperation CreateApplicationOperation(
         RouteMovePlanBuilder planBuilder,
         PhysicalPathResolver physicalPathResolver,
         FileExpectationValidator expectationValidator,
-        RouteMoveRecoveryLifecycle recoveryLifecycle,
         WorkspaceLockStoreRoot? lockStoreRoot)
     {
         var appliedVerifier = new RouteMoveAppliedVerifier(
@@ -121,9 +107,8 @@ internal static class RouteMoveOperationFactory
         return new RouteMoveApplicationOperation(
             CreateLockManager(lockStoreRoot),
             new RouteMovePlanRevalidator(planBuilder),
-            recoveryLifecycle,
             CreateEffectApplication(expectationValidator),
-            new RouteMoveApplicationCompletion(recoveryLifecycle, appliedVerifier));
+            new RouteMoveApplicationCompletion(appliedVerifier));
     }
 
     private static RouteMovePostMoveObserver CreatePostMoveObserver(

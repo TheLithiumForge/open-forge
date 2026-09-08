@@ -1,7 +1,10 @@
+using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
 
@@ -9,16 +12,23 @@ namespace OpenForge.Cli.Core.Framework.Recovery.Serialization;
 
 internal static class RecoveryBundleManifestCodec
 {
-    private const string ReplaceKind = "replace";
-    private const string DeleteKind = "delete";
-    private const string ReplaceGeneratedRegionKind = "replace-generated-region";
+    private const string OrdinaryCreateKind = "ordinary-create";
+    private const string OrdinaryReplaceKind = "ordinary-replace";
+    private const string OrdinaryDeleteKind = "ordinary-delete";
+    private const string OrdinaryReplaceGeneratedRegionKind = "ordinary-replace-generated-region";
+    private const string RelativeFileLinkCreateKind = "relative-file-link-create";
+    private const string RelativeFileLinkDeleteKind = "relative-file-link-delete";
+    private const string MissingStateKind = "missing";
+    private const string OrdinaryFileStateKind = "ordinary-file";
+    private const string RelativeFileLinkStateKind = "relative-file-link";
+    private const string RelativeFileSymbolicLinkKind = "relative-file-symbolic-link";
 
     private static readonly JsonSerializerOptions SerializerOptions = CreateSerializerOptions();
     private static readonly RecoveryBundleJsonContext SerializerContext = new(SerializerOptions);
 
     internal static byte[] Serialize(
         RecoveryBundleInput input,
-        ImmutableArray<RecoveryBundleEntry> entries)
+        ImmutableArray<RecoveryEntry> entries)
     {
         ArgumentNullException.ThrowIfNull(input);
         return Serialize(CreateDocument(input, entries));
@@ -78,7 +88,6 @@ internal static class RecoveryBundleManifestCodec
         RecoveryBundleManifestV1 document,
         out Guid operationId)
     {
-        operationId = Guid.Empty;
         return Guid.TryParseExact(
                 document.OperationId,
                 RecoveryBundleFormatV1.OperationIdFormat,
@@ -91,12 +100,12 @@ internal static class RecoveryBundleManifestCodec
 
     private static RecoveryBundleManifestV1 CreateDocument(
         RecoveryBundleInput input,
-        ImmutableArray<RecoveryBundleEntry> entries)
+        ImmutableArray<RecoveryEntry> entries)
     {
         if (entries.IsDefaultOrEmpty || entries.Length != input.RecoveryTargets.Length)
         {
             throw new ArgumentException(
-                "A recovery manifest requires the complete existing-target entry set.",
+                "A recovery manifest requires the complete target entry set.",
                 nameof(entries));
         }
 
@@ -114,14 +123,11 @@ internal static class RecoveryBundleManifestCodec
             serializedEntries[index] = new RecoveryBundleManifestEntryV1
             {
                 Ordinal = entry.Ordinal,
-                Target = entry.TargetPath,
-                Kind = Kind(entry.ChangeKind),
-                PriorLength = entry.Prior.Length,
-                PriorSha256 = entry.Prior.Sha256,
-                Payload = entry.PayloadName,
-                IntendedAbsent = entry.IntendedAbsent,
-                IntendedLength = entry.Intended?.Length,
-                IntendedSha256 = entry.Intended?.Sha256,
+                LogicalPath = entry.LogicalPath.Value,
+                Kind = Kind(entry.Kind),
+                Prior = State(entry.Prior),
+                Intended = State(entry.Intended),
+                PriorPayload = entry.PriorPayload,
             };
         }
 
@@ -192,7 +198,7 @@ internal static class RecoveryBundleManifestCodec
             return Malformed("The recovery manifest requires a non-empty target set.");
         }
 
-        var builder = ImmutableArray.CreateBuilder<RecoveryBundleEntry>(document.Entries.Length);
+        var builder = ImmutableArray.CreateBuilder<RecoveryEntry>(document.Entries.Length);
         var targetPaths = new HashSet<string>(PathComparer());
         for (var index = 0; index < document.Entries.Length; index++)
         {
@@ -202,47 +208,38 @@ internal static class RecoveryBundleManifestCodec
                 return Malformed("The recovery manifest target order is invalid.");
             }
 
-            if (!TryKind(serialized.Kind, out var kind))
+            if (!TryKind(serialized.Kind, out var kind)
+                || serialized.Prior is null
+                || serialized.Intended is null)
             {
-                return Malformed("The recovery manifest change kind is invalid.");
+                return Malformed("The recovery manifest entry kind or state identity is invalid.");
             }
 
-            var prior = RecoveryContentIdentity.Create(
-                serialized.PriorLength,
-                serialized.PriorSha256);
-            RecoveryContentIdentity? intended = null;
-            if (serialized.IntendedAbsent)
+            if (!TryState(serialized.Prior, out var prior)
+                || !TryState(serialized.Intended, out var intended))
             {
-                if (serialized.IntendedLength is not null
-                    || serialized.IntendedSha256 is not null)
-                {
-                    return Malformed(
-                        "An absent intended recovery identity cannot carry content facts.");
-                }
-            }
-            else
-            {
-                if (serialized.IntendedLength is not { } intendedLength
-                    || serialized.IntendedSha256 is null)
-                {
-                    return Malformed("A replacement recovery entry requires intended content identity.");
-                }
-
-                intended = RecoveryContentIdentity.Create(
-                    intendedLength,
-                    serialized.IntendedSha256);
+                return Malformed("The recovery manifest state identity is invalid.");
             }
 
-            var entry = RecoveryBundleEntry.Create(
-                ordinal: serialized.Ordinal,
-                targetPath: serialized.Target,
-                changeKind: kind,
-                prior: prior,
-                intended: intended);
-            if (!string.Equals(entry.PayloadName, serialized.Payload, StringComparison.Ordinal)
-                || !targetPaths.Add(entry.TargetPath))
+            RecoveryEntry entry;
+            try
             {
-                return Malformed("The recovery manifest payload or target identity is invalid.");
+                entry = RecoveryEntry.Create(
+                    ordinal: serialized.Ordinal,
+                    logicalPath: CanonicalRelativePath.Create(serialized.LogicalPath),
+                    kind: kind,
+                    prior: prior,
+                    intended: intended,
+                    priorPayload: serialized.PriorPayload);
+            }
+            catch (ArgumentException exception)
+            {
+                return Malformed(exception.Message);
+            }
+
+            if (!targetPaths.Add(entry.TargetPath))
+            {
+                return Malformed("The recovery manifest target identity is duplicated.");
             }
 
             builder.Add(entry);
@@ -265,29 +262,160 @@ internal static class RecoveryBundleManifestCodec
             Cause = cause,
         };
 
-    private static string Kind(PlannedFileChangeKind kind)
+    private static string Kind(RecoveryEntryKind kind)
         => kind switch
         {
-            PlannedFileChangeKind.Replace => ReplaceKind,
-            PlannedFileChangeKind.Delete => DeleteKind,
-            PlannedFileChangeKind.ReplaceGeneratedRegion => ReplaceGeneratedRegionKind,
+            RecoveryEntryKind.OrdinaryCreate => OrdinaryCreateKind,
+            RecoveryEntryKind.OrdinaryReplace => OrdinaryReplaceKind,
+            RecoveryEntryKind.OrdinaryReplaceGeneratedRegion =>
+                OrdinaryReplaceGeneratedRegionKind,
+            RecoveryEntryKind.OrdinaryDelete => OrdinaryDeleteKind,
+            RecoveryEntryKind.RelativeFileLinkCreate => RelativeFileLinkCreateKind,
+            RecoveryEntryKind.RelativeFileLinkDelete => RelativeFileLinkDeleteKind,
             _ => throw new ArgumentOutOfRangeException(
                 nameof(kind),
                 kind,
-                "The recovery change kind is not defined."),
+                "The recovery entry kind is not defined."),
         };
 
-    private static bool TryKind(string value, out PlannedFileChangeKind kind)
+    private static RecoveryBundleManifestStateV1 State(RecoveryEntryState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        return state.Kind switch
+        {
+            RecoveryEntryStateKind.Missing => new RecoveryBundleManifestStateV1
+            {
+                Kind = MissingStateKind,
+                Length = null,
+                Sha256 = null,
+                LinkKind = null,
+                RawRelativeTarget = null,
+            },
+            RecoveryEntryStateKind.OrdinaryFile when state.OrdinaryFile is { } ordinary =>
+                new RecoveryBundleManifestStateV1
+                {
+                    Kind = OrdinaryFileStateKind,
+                    Length = ordinary.Length,
+                    Sha256 = ordinary.Sha256,
+                    LinkKind = null,
+                    RawRelativeTarget = null,
+                },
+            RecoveryEntryStateKind.RelativeFileLink when state.RelativeFileLink is { } link =>
+                new RecoveryBundleManifestStateV1
+                {
+                    Kind = RelativeFileLinkStateKind,
+                    Length = null,
+                    Sha256 = null,
+                    LinkKind = LinkKind(link.LinkKind),
+                    RawRelativeTarget = link.RawRelativeTarget,
+                },
+            _ => throw new ArgumentException(
+                "A recovery entry state does not carry its typed identity.",
+                nameof(state)),
+        };
+    }
+
+    private static bool TryKind(string value, out RecoveryEntryKind kind)
     {
         kind = value switch
         {
-            ReplaceKind => PlannedFileChangeKind.Replace,
-            DeleteKind => PlannedFileChangeKind.Delete,
-            ReplaceGeneratedRegionKind => PlannedFileChangeKind.ReplaceGeneratedRegion,
+            OrdinaryCreateKind => RecoveryEntryKind.OrdinaryCreate,
+            OrdinaryReplaceKind => RecoveryEntryKind.OrdinaryReplace,
+            OrdinaryReplaceGeneratedRegionKind => RecoveryEntryKind.OrdinaryReplaceGeneratedRegion,
+            OrdinaryDeleteKind => RecoveryEntryKind.OrdinaryDelete,
+            RelativeFileLinkCreateKind => RecoveryEntryKind.RelativeFileLinkCreate,
+            RelativeFileLinkDeleteKind => RecoveryEntryKind.RelativeFileLinkDelete,
             _ => default,
         };
-        return value is ReplaceKind or DeleteKind or ReplaceGeneratedRegionKind;
+        return value is OrdinaryCreateKind
+            or OrdinaryReplaceKind
+            or OrdinaryReplaceGeneratedRegionKind
+            or OrdinaryDeleteKind
+            or RelativeFileLinkCreateKind
+            or RelativeFileLinkDeleteKind;
     }
+
+    private static bool TryState(
+        RecoveryBundleManifestStateV1 serialized,
+        [NotNullWhen(true)] out RecoveryEntryState? state)
+    {
+        state = null;
+        if (serialized is null)
+        {
+            return false;
+        }
+
+        switch (serialized.Kind)
+        {
+            case MissingStateKind:
+                if (serialized.Length is not null
+                    || serialized.Sha256 is not null
+                    || serialized.LinkKind is not null
+                    || serialized.RawRelativeTarget is not null)
+                {
+                    return false;
+                }
+
+                state = RecoveryEntryState.Missing;
+                return true;
+
+            case OrdinaryFileStateKind:
+                if (serialized.Length is not { } length
+                    || length < 0
+                    || serialized.Sha256 is null
+                    || serialized.LinkKind is not null
+                    || serialized.RawRelativeTarget is not null)
+                {
+                    return false;
+                }
+
+                try
+                {
+                    state = RecoveryEntryState.Ordinary(
+                        RecoveryContentIdentity.Create(length, serialized.Sha256));
+                    return true;
+                }
+                catch (ArgumentException)
+                {
+                    return false;
+                }
+
+            case RelativeFileLinkStateKind:
+                if (serialized.Length is not null
+                    || serialized.Sha256 is not null
+                    || serialized.LinkKind != RelativeFileSymbolicLinkKind
+                    || serialized.RawRelativeTarget is null)
+                {
+                    return false;
+                }
+
+                try
+                {
+                    state = RecoveryEntryState.RelativeLink(
+                        RelativeFileLinkIdentity.Create(
+                            NoFollowLinkKind.SymbolicLink,
+                            serialized.RawRelativeTarget));
+                    return true;
+                }
+                catch (ArgumentException)
+                {
+                    return false;
+                }
+
+            default:
+                return false;
+        }
+    }
+
+    private static string LinkKind(NoFollowLinkKind kind)
+        => kind switch
+        {
+            NoFollowLinkKind.SymbolicLink => RelativeFileSymbolicLinkKind,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(kind),
+                kind,
+                "The recovery link kind is not defined."),
+        };
 
     private static JsonSerializerOptions CreateSerializerOptions()
         => new()

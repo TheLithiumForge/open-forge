@@ -47,12 +47,12 @@ internal static class LocalReferenceDoctorCanonicalizationProjector
                 new DoctorAuthoredValueEvidence(correction.Expected, correction.DestinationLocation),
                 new DoctorComparisonEvidence(correction.Intended, correction.Expected),
             ],
-            new DoctorExactProposal
+            new DoctorExactProposal(
+                DoctorProposalKind.ReferenceCanonicalization,
+                new DoctorReferenceProposal(correction.Expected, correction.Intended),
+                libraryRecovery: null)
             {
-                Kind = DoctorProposalKind.ReferenceCanonicalization,
                 Subject = subject,
-                ExpectedValue = correction.Expected,
-                IntendedValue = correction.Intended,
                 Boundary = new DoctorBoundary
                 {
                     Kind = DoctorBoundaryKind.LocalReferenceUniverse,

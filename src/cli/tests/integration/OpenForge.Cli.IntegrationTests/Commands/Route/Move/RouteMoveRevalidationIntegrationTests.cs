@@ -15,12 +15,12 @@ public sealed class RouteMoveRevalidationIntegrationTests
         InlineData("destination", (int)RouteMovePlanRevalidationState.Changed),
         InlineData("cancelled", (int)RouteMovePlanRevalidationState.Interrupted)]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
-    public async Task RevalidationRejectsEveryStaleObservation(
+    public static async Task RevalidationRejectsEveryStaleObservation(
         string scenario,
         int expectedStateValue)
     {
         using var workspace = RouteMoveIntegrationWorkspace.Create($"move-revalidation-{scenario}");
-        var builder = workspace.CreatePlanBuilder();
+        var builder = RouteMoveIntegrationWorkspace.CreatePlanBuilder();
         var build = await builder.BuildAsync(
             workspace.Request(mode: OpenForge.Cli.Core.Commands.Route.Move.Models.Request.RouteMoveMode.Apply),
             TestContext.Current.CancellationToken);

@@ -50,6 +50,9 @@ It answers:
   or lifecycle-coverage state do they report?
 - How many Extensions and managed files are recorded, including installed facts
   whose package source is unavailable?
+- What bounded Workspace Library record, source-root availability, and registered
+  projection-link facts are readable, including their IDs and current, missing,
+  changed, blocked, and unavailable counts?
 - Which exact-name recovery candidates are present, what path and integrity
   condition does each have, and how many verified finals and incomplete drafts
   are there?
@@ -100,6 +103,9 @@ non-directory workspace is blocked.
 - The current `Loader`'s direct root categories.
 - The exact `.agents/open-forge.lifecycle.json` lifecycle document, schema v1,
   with isolated `framework` and `extensions` sections.
+- The exact `.agents/open-forge.libraries.json` Workspace Library record, schema
+  v1, including its typed Library IDs, source-root facts, and registered path
+  mappings.
 - The current user's external recovery store at
   `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
 Environment.SpecialFolderOption.None)/OpenForge/recovery/v1`, limited to
@@ -145,6 +151,14 @@ installed Extension IDs, ownership, recorded paths, or lifecycle facts. Status
 marks source-dependent comparison as unavailable or incomplete instead of
 claiming a current source, update plan, or managed no-op. A path, matching bytes,
 matching fingerprint, or familiar route never promotes an untrusted state.
+
+Workspace Library records and registered projections remain a separate
+consumer-local authority from Framework and Extension lifecycle state. Status
+observes only the exact record and the bounded source-root and destination-entry
+facts needed for its Library summary. It does not adopt an unregistered link,
+infer a record or mapping from paths or bytes, read source-target bytes, or
+perform a complete current source inventory when the bounded profile does not
+allow it.
 
 ## Context Inventory
 
@@ -373,6 +387,44 @@ Framework and first-party Extension assets with deterministic inventory and hash
 proof; that proof is distributed-source identity, not evidence of a selected
 workspace's current installation or of a proven runtime implementation.
 
+### Workspace Libraries
+
+Status reads the exact consumer-owned `.agents/open-forge.libraries.json`
+record, schema v1, as a bounded projection catalogue. The record is separate
+from `.agents/open-forge.lifecycle.json` and does not grant Framework or
+Extension ownership. A readable record reports its exact `id`, `sourceRoot`, and
+ordered `paths` entries. Status derives bounded mapping facts for each entry—
+`sourcePath`, `destinationPath`, and `expectedRelativeLink`—without changing the
+record. A missing record is an absent Library record, not an inference that
+source content or projections are absent; malformed, unavailable, or unsafe
+record identity is reported as the corresponding bounded condition.
+
+For each recorded Library, Status observes the source root only far enough to
+establish workspace-relative lexical and physical containment, an ordinary
+directory, and its direct ordinary `.agents` child. It does not enumerate that
+source tree to discover unregistered files. `sourceAvailability` is
+`available`, `unavailable`, or `not-applicable` and remains separate from
+record state.
+
+For each registered mapping, Status observes the destination directory entry
+without following it. `current` means a relative file link with the exact raw
+target derived from the recorded mapping; `missing` means no destination entry;
+`changed` means a safely observed occupant or different target; `blocked` means
+unsafe or ambiguous identity, containment, alias, or collision; and
+`unavailable` means a required fact could not be read. The observation retains
+the destination-derived automatic source ID separately from the Library ID. It
+never reads source bytes,
+follows a source target, creates or removes a link, or adopts an exact-looking
+unregistered link.
+
+The bounded summary exposes the record state, Library IDs, source-root and
+source-availability facts, registered-link count, and counts partitioned into
+`current`, `missing`, `changed`, `blocked`, and `unavailable`. A safely observed
+missing or changed registered link is projection drift and maps to
+`attention`; unavailable coverage maps to `incomplete`; unsafe or ambiguous
+identity maps to `blocked`. These counts do not claim complete source inventory,
+source additions, retirements, or adoption.
+
 ### Recovery Bundles
 
 Recovery accounting considers only exact-name final and draft candidates in the
@@ -446,6 +498,11 @@ may combine that state with its Extension and managed-file summaries. Zero value
 remain visible. An absent section uses `0 recorded` Extensions, while a trusted
 empty section uses `0`; both use `none recorded` managed files.
 
+Both views retain the bounded Workspace Library record state, IDs, source-root
+availability, registered-link states, and the current/missing/changed/blocked/
+unavailable counts. They do not render a complete source inventory or turn a
+registered-link drift observation into a repair action.
+
 When the typed semantic status is `attention`, human output renders it as
 `requires attention` because the phrase is clearer on first read.
 
@@ -496,6 +553,7 @@ Workspace structure
   Removed categories: templates
   Extensions:         1
   Managed files:      9 current, 11 changed, 1 missing
+  Library projections: 4 registered, 3 current, 1 missing, 0 changed, 0 blocked, 0 unavailable
   Verified recovery finals:  0
   Incomplete recovery drafts: 0
 ```
@@ -524,6 +582,9 @@ never fabricates zero for an unavailable or not-applicable fact.
 - Extension and managed-file states
 - Framework and Extension lifecycle trust, ownership, and source-
   availability observations
+- Bounded Workspace Library record state, IDs, source-root availability,
+  registered-link observations, destination-derived source IDs, and partitioned
+  current/missing/changed/blocked/unavailable counts
 - Separate verified-final and incomplete-draft counts, plus every exact-name
   candidate's path, kind, and integrity condition; malformed, unsupported, and
   unavailable finals remain issue items and are not counted as verified
@@ -539,6 +600,7 @@ result: {
   context,
   structure,
   lifecycle,
+  library,
   recovery,
   findings
 }
@@ -623,6 +685,29 @@ lifecycle: {
   }
 }
 
+library: {
+  state,
+  record: { path, state },
+  records: [{
+    id,
+    sourceRoot,
+    sourceRootState,
+    sourceAvailability,
+    registeredLinks: {
+      registered,
+      counts: { current, missing, changed, blocked, unavailable },
+      links: [{
+        sourcePath,
+        destinationPath,
+        expectedRelativeLink,
+        sourceId,
+        state
+      }]
+    }
+  }],
+  counts: { registered, current, missing, changed, blocked, unavailable }
+}
+
 recovery: {
   verifiedFinals,
   incompleteDrafts,
@@ -670,6 +755,11 @@ The remaining command-local finite values are:
 | generated-navigation `state`   | `current`, `changed`, `missing`, `unavailable`, `blocked`, `not-applicable` |
 | recovery candidate `kind`      | `final`, `draft`                                                            |
 | recovery candidate `integrity` | `verified`, `incomplete`, `malformed`, `unsupported`, `unavailable`         |
+| Library `state`                | `absent`, `trusted`, `incomplete`, `blocked`                                |
+| Library record `state`         | `missing`, `complete`, `invalid`, `unavailable`, `blocked`                  |
+| Library `sourceRootState`      | `available`, `missing`, `unavailable`, `invalid`, `blocked`                 |
+| Library `sourceAvailability`   | `available`, `unavailable`, `not-applicable`                                |
+| registered-link `state`        | `current`, `missing`, `changed`, `blocked`, `unavailable`                   |
 | finding `status`               | the seven exact shared semantic status values                               |
 
 Continuity sources follow their contracted contribution order. Their layers
@@ -677,8 +767,10 @@ remain in base-then-overwrite order. Root `added` and `removed` arrays retain
 their contracted source order. Framework and Extension targets are ordered by
 canonical path. Installed Extensions are ordered by ID; their dependencies,
 paths, and target owners use deterministic ordinal order. Recovery candidates
-are ordered by path, then kind, then integrity. Findings are ordered by finding
-code, subject, and cause after semantic precedence is formed.
+are ordered by path, then kind, then integrity. Library records are ordered by
+Library ID; registered links are ordered by canonical destination path, then
+source path. Findings are ordered by finding code, subject, and cause after
+semantic precedence is formed.
 
 The exact finite Status finding codes and their status are:
 
@@ -719,6 +811,16 @@ The exact finite Status finding codes and their status are:
 | `recovery-final-unsupported`       | `incomplete`  |
 | `recovery-final-unavailable`       | `incomplete`  |
 | `recovery-catalogue-unavailable`   | `incomplete`  |
+| `library-record-malformed`         | `blocked`     |
+| `library-record-unavailable`       | `incomplete`  |
+| `library-source-root-invalid`      | `blocked`     |
+| `library-source-root-aliased`      | `blocked`     |
+| `library-source-root-unavailable`  | `incomplete`  |
+| `library-projection-missing`       | `attention`   |
+| `library-projection-changed`       | `attention`   |
+| `library-projection-unavailable`   | `incomplete`  |
+| `library-projection-blocked`       | `blocked`     |
+| `library-extension-collision`     | `blocked`     |
 | `operation-failed`                 | `failed`      |
 | `interrupted`                      | `interrupted` |
 
@@ -790,8 +892,8 @@ attention`. Numeric process-exit mapping follows the [Shared Result
 | Result        | Meaning                                                                                                                                                             | Process completion status        |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
 | `complete`    | Every applicable status fact was measured and no attention condition exists                                                                                         | Shared result-coordinate mapping |
-| `attention`   | Measurement completed, but trusted managed files are changed or missing, a verified recovery final is present, or a finite lifecycle/source observation remains     | Shared result-coordinate mapping |
-| `incomplete`  | Safe facts are available, but one or more applicable measurements are unavailable or incomplete, including an incomplete draft or a safely reportable invalid final | Shared result-coordinate mapping |
+| `attention`   | Measurement completed, but trusted managed files are changed or missing, a registered Library projection is safely missing or changed, a verified recovery final is present, or a finite lifecycle/source observation remains | Shared result-coordinate mapping |
+| `incomplete`  | Safe facts are available, but one or more applicable measurements or bounded Library facts are unavailable or incomplete, including an incomplete draft or a safely reportable invalid final | Shared result-coordinate mapping |
 | `invalid`     | Command input does not follow the accepted grammar                                                                                                                  | Shared result-coordinate mapping |
 | `blocked`     | The command cannot establish the selected workspace or a safe inspection boundary                                                                                   | Shared result-coordinate mapping |
 | `failed`      | An unexpected internal failure prevents normal completion                                                                                                           | Shared result-coordinate mapping |
@@ -800,6 +902,12 @@ attention`. Numeric process-exit mapping follows the [Shared Result
 An uninstalled workspace is a valid completed state when its absence can be
 established safely. Differences in context size and added or removed root
 categories do not produce `attention` by themselves.
+
+A safely observed Library projection drift (`missing` or `changed`) produces
+`attention` only when the bounded record, source-root, and link coverage is
+complete. Unavailable Library facts produce `incomplete`; malformed, aliased,
+colliding, or otherwise unsafe Library identity produces `blocked`. Status does
+not treat the bounded record view as a complete source inventory.
 
 Recovery follows the same existing result precedence: an unavailable recovery
 fact, an exact-name draft, or a safely bounded malformed or unsupported final
@@ -820,6 +928,10 @@ and a useful next action when one exists.
   incomplete result when safe facts remain available.
 - A malformed, unsupported, or unavailable lifecycle section produces an
   incomplete or blocked managed-state summary rather than guessed counts.
+- A malformed or unavailable `.agents/open-forge.libraries.json` record, source
+  root, or registered destination produces the typed Library `blocked` or
+  `incomplete` finding; a safely observed missing or changed projection is
+  reported as `attention` and never repaired or adopted by Status.
 - Installed Extension facts remain reportable as source-unavailable facts when
   package source bytes cannot be read; they are not presented as
   trusted current source or mutation authority.
@@ -851,8 +963,9 @@ open-forge status
 The command uses the exact current working directory and the default expanded
 human presentation. It returns the workspace, startup comparison, total and
 continuity measurements, root changes, Framework and Extension lifecycle trust
-and managed-file summary, separate verified-final and incomplete-draft counts,
-every exact-name recovery candidate, and the applicable semantic result.
+and managed-file summary, the bounded Workspace Library record and registered-
+link summary, separate verified-final and incomplete-draft counts, every
+exact-name recovery candidate, and the applicable semantic result.
 
 ### Explicit workspace
 
@@ -912,6 +1025,12 @@ malformed or unsupported final selects `incomplete`; an unsafe or ambiguous
 recovery boundary selects `blocked`. The command does not replace an unavailable
 fact with a partial or trusted count.
 
+A safely observed missing or changed registered Library projection is also
+`attention` when its bounded record, source-root, and link observations are
+complete. Unavailable Library coverage is `incomplete`; malformed, aliased,
+colliding, or unsafe Library identity is `blocked`. Status does not enumerate a
+complete source tree or infer unregistered mappings.
+
 ### Invalid and blocked states
 
 Unexpected operands or operation-specific flags produce `invalid`. A missing,
@@ -934,6 +1053,8 @@ exists.
 - Claim that continuity content reloads on every request.
 - Use a model-specific tokenizer, billing calculation, or performance estimate.
 - Mutate, repair, clean, install, or restore anything.
+- Enumerate a complete Library source tree, discover unregistered mappings, adopt
+  an existing link, or infer Library ownership from filenames, paths, or bytes.
 - Inspect target-adjacent files or report version-control facts.
 - Auto-bind a bundle from an original workspace path after the workspace moves.
 - Roll back or restore a target from a recovery bundle.
@@ -986,6 +1107,11 @@ Implementation evidence must cover:
   workspace bytes.
 - Evidence that status does not parse ordinary links, build the complete content
   graph, inspect unrelated workspace files, or mutate anything.
+- Bounded Workspace Library record, source-root, and registered-link facts,
+  including destination-derived source IDs kept separate from Library IDs,
+  complete safely observed drift as `attention`, unavailable coverage as
+  `incomplete`, unsafe ambiguity or Library/Extension collision as `blocked`,
+  and no complete source inventory or adoption.
 
 Direct tests should prove measurement, comparison, ordering, classifications, and
 semantic results. Focused integration tests should use real temporary workspaces,

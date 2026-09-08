@@ -47,6 +47,11 @@ internal static class DoctorHumanRenderer
             builder.AppendLine($"  source availability: {DoctorWireVocabulary.SourceAvailability(source)}");
         }
 
+        if (domain.Libraries is { } libraries)
+        {
+            DoctorLibraryPresentation.Append(builder, libraries);
+        }
+
         DoctorCountsHumanRenderer.Append(builder, domain.Counts, "  ");
         foreach (var limitation in domain.Limitations)
         {

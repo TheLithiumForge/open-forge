@@ -1,3 +1,7 @@
+using OpenForge.Cli.Core.Framework.Libraries;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Commands.Status.Models.Operation;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
@@ -166,5 +170,20 @@ internal static class StatusAggregationObservationSeed
                         State = OperationalTargetState.Changed,
                     },
                 ],
+            },
+            new LibraryStatusView
+            {
+                State = OperationalViewState.Complete,
+                Ownership = null,
+                LinkCapability = null,
+                Record = new LibrariesRecordRead
+                {
+                    State = LibrariesRecordReadState.Missing,
+                    Record = null,
+                    Snapshot = FileStateSnapshot.Missing(LibraryPathIdentity.RecordPath(StatusObservationSeeds.Workspace().LexicalRoot)),
+                    Cause = null,
+                },
+                Sources = [],
+                Mappings = [],
             });
 }

@@ -10,12 +10,10 @@ namespace OpenForge.Cli.Core.Commands.Install.Shared.Operation;
 
 internal sealed class InstallApplicationPreconditionValidator(
     MutationRevalidator mutationRevalidator,
-    InstallIntendedStateBuilder intendedStateBuilder,
-    RecoveryBundleCatalogue recoveryCatalogue)
+    InstallIntendedStateBuilder intendedStateBuilder)
 {
     private readonly MutationRevalidator _mutationRevalidator = mutationRevalidator;
     private readonly InstallIntendedStateBuilder _intendedStateBuilder = intendedStateBuilder;
-    private readonly RecoveryBundleCatalogue _recoveryCatalogue = recoveryCatalogue;
 
     internal async ValueTask<InstallApplicationPreconditionResult> ValidateUnderLeaseAsync(
         WorkspaceLockLease lease,
@@ -45,7 +43,7 @@ internal sealed class InstallApplicationPreconditionValidator(
                 InstallFindingCode.TargetUnsafe);
         }
 
-        var recovery = await _recoveryCatalogue.ReadAsync(
+        var recovery = await RecoveryBundleCatalogue.ReadAsync(
                 plan.Request.Workspace,
                 cancellationToken)
             .ConfigureAwait(false);
@@ -72,12 +70,16 @@ internal sealed class InstallApplicationPreconditionValidator(
                 or MutationValidationState.Failed => InstallApplicationPreconditionResult.Boundary(
                     validation,
                     InstallFindingCode.TargetUnsafe),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(validation),
-                validation.State,
-                "The mutation validation state is not defined."),
+            _ => throw InvalidValidationState(validation.State),
         };
     }
+
+    private static ArgumentOutOfRangeException InvalidValidationState(
+        MutationValidationState state)
+        => new(
+            nameof(state),
+            state,
+            "The mutation validation state is not defined.");
 
     private static InstallApplicationPreconditionResult? ReadRecoveryBoundary(
         RecoveryBundleCatalogueResult recovery)

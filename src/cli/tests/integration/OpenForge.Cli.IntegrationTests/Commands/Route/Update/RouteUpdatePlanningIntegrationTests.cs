@@ -10,7 +10,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
     [InlineData(true)]
     [InlineData(false)]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
-    public async Task NavigationDependenciesAreMinimal(bool updateDescription)
+    public static async Task NavigationDependenciesAreMinimal(bool updateDescription)
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             updateDescription
@@ -21,7 +21,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
             : RouteUpdateIntegrationWorkspace.TagsPatch("After", "Memory");
         var before = workspace.SnapshotHashes();
 
-        var build = await workspace.BuildPlanAsync(workspace.Request(patch: patch));
+        var build = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request(patch: patch));
 
         var plan = Assert.IsType<RouteUpdatePlan>(build.Plan);
         Assert.Equal(
@@ -44,7 +44,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             "route-update-responsibility-minimal");
 
-        var build = await workspace.BuildPlanAsync(workspace.Request(
+        var build = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request(
             patch: RouteUpdateIntegrationWorkspace.ResponsibilityPatch(
                 "Owns the revised overview")));
 
@@ -69,7 +69,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
             "route-update-self-region-coalescing");
         workspace.SeedSelfRegionTarget();
 
-        var build = await workspace.BuildPlanAsync(workspace.Request(
+        var build = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request(
             sourceReference: ".agents/memory/project-alpha/overview/_overview.md"));
 
         var plan = Assert.IsType<RouteUpdatePlan>(build.Plan);
@@ -97,7 +97,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
         workspace.SeedOverwrite();
         var overwriteBefore = workspace.ReadText(RouteUpdateIntegrationWorkspace.OverwritePath);
 
-        var build = await workspace.BuildPlanAsync(workspace.Request(
+        var build = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request(
             sourceReference: RouteUpdateIntegrationWorkspace.OverwritePath));
 
         var plan = Assert.IsType<RouteUpdatePlan>(build.Plan);
@@ -124,7 +124,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
     [InlineData(true, (int)RouteUpdateBodyState.TemplateCopied, (int)RouteUpdateTemplateDecision.Copied)]
     [InlineData(false, (int)RouteUpdateBodyState.AuthoredBodyProtected, (int)RouteUpdateTemplateDecision.AuthoredBodyProtected)]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
-    public async Task TemplateDecisionDependsOnlyOnExistingBody(
+    public static async Task TemplateDecisionDependsOnlyOnExistingBody(
         bool emptyTargetBody,
         int expectedBodyValue,
         int expectedDecisionValue)
@@ -141,7 +141,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
             workspace.SeedEmptyBodyTarget();
         }
 
-        var build = await workspace.BuildPlanAsync(workspace.Request(
+        var build = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request(
             templateReference: RouteUpdateIntegrationWorkspace.TemplateId));
 
         var plan = Assert.IsType<RouteUpdatePlan>(build.Plan);
@@ -163,7 +163,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
         workspace.SeedTemplate();
         var before = workspace.SnapshotHashes();
 
-        var build = await workspace.BuildPlanAsync(workspace.Request(
+        var build = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request(
             patch: RouteUpdateIntegrationWorkspace.Patch(),
             templateReference: RouteUpdateIntegrationWorkspace.TemplateId));
 
@@ -183,7 +183,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
     [InlineData(false, "Before overview", true)]
     [InlineData(true, "After overview", false)]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
-    public async Task PlanningModesAreWriteFree(
+    public static async Task PlanningModesAreWriteFree(
         bool dryRun,
         string description,
         bool expectedNoOp)
@@ -193,7 +193,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
             $"route-update-plan-{mode.ToString().ToLowerInvariant()}");
         var before = workspace.SnapshotHashes();
 
-        var build = await workspace.BuildPlanAsync(workspace.Request(
+        var build = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request(
             patch: RouteUpdateIntegrationWorkspace.DescriptionPatch(description),
             mode: mode));
 

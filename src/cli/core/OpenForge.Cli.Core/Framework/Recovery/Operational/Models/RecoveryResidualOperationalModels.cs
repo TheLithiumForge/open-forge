@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 
 namespace OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
 
@@ -12,7 +13,8 @@ internal sealed class RecoveryDoctorCandidateObservation
 {
     private RecoveryDoctorCandidateObservation(
         RecoveryBundleCandidateSnapshot candidate,
-        RecoveryBundleComparison? comparison)
+        RecoveryBundleComparison? comparison,
+        RecoveryEntrySetObservation? entryComparisons)
     {
         var attribution = candidate.Verified?.Attribution;
         if (candidate.Verified is null && comparison is not null
@@ -33,6 +35,14 @@ internal sealed class RecoveryDoctorCandidateObservation
                 nameof(comparison));
         }
 
+        if (attribution?.Producer == RecoveryBundleProducer.Library
+                ? entryComparisons is null || entryComparisons.Candidate != candidate
+                : entryComparisons is not null)
+        {
+            throw new ArgumentException("Library residual observations require their exact verified entry comparisons.", nameof(entryComparisons));
+        }
+
+        EntryComparisons = entryComparisons;
         Path = candidate.Path;
         Kind = candidate.Kind;
         Integrity = candidate.Integrity;
@@ -51,12 +61,15 @@ internal sealed class RecoveryDoctorCandidateObservation
 
     internal RecoveryBundleComparison? Comparison { get; }
 
+    internal RecoveryEntrySetObservation? EntryComparisons { get; }
+
     internal string? Cause { get; }
 
     internal static RecoveryDoctorCandidateObservation Create(
         RecoveryBundleCandidateSnapshot candidate,
-        RecoveryBundleComparison? comparison)
-        => new(candidate, comparison);
+        RecoveryBundleComparison? comparison,
+        RecoveryEntrySetObservation? entryComparisons = null)
+        => new(candidate, comparison, entryComparisons);
 }
 
 internal sealed record RecoveryResidualStatusView(

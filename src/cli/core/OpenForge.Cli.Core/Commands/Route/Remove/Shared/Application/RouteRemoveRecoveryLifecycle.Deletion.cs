@@ -1,14 +1,15 @@
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 
-internal sealed partial class RouteRemoveRecoveryLifecycle
+internal static partial class RouteRemoveRecoveryLifecycle
 {
-    internal async ValueTask<RouteRemoveRecoveryDeletionResult> DeleteExactAsync(
+    internal static async ValueTask<RouteRemoveRecoveryDeletionResult> DeleteExactAsync(
         RouteRemoveRecoveryDeletionInput input,
         CancellationToken cancellationToken)
     {
@@ -35,13 +36,13 @@ internal sealed partial class RouteRemoveRecoveryLifecycle
             .ConfigureAwait(false);
     }
 
-    private async ValueTask<RecoveryBundleCatalogueResult> ReadDeletionCatalogueAsync(
+    private static async ValueTask<RecoveryBundleCatalogueResult> ReadDeletionCatalogueAsync(
         RouteRemoveRecoveryDeletionInput input,
         CancellationToken cancellationToken)
     {
         try
         {
-            return await _catalogue.ReadAsync(input.Plan.Request.Workspace, cancellationToken)
+            return await RecoveryBundleCatalogue.ReadAsync(input.Plan.Request.Workspace, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -55,14 +56,14 @@ internal sealed partial class RouteRemoveRecoveryLifecycle
         }
     }
 
-    private async ValueTask<RouteRemoveRecoveryDeletionResult> DeleteCandidateAsync(
+    private static async ValueTask<RouteRemoveRecoveryDeletionResult> DeleteCandidateAsync(
         RouteRemoveRecoveryDeletionInput input,
         RecoveryBundleCandidateSnapshot candidate,
         CancellationToken cancellationToken)
     {
         try
         {
-            var deletion = await _deletionGuard.DeleteAsync(
+            var deletion = await RecoveryBundleDeletionGuard.DeleteAsync(
                 input.Lease,
                 candidate,
                 cancellationToken).ConfigureAwait(false);

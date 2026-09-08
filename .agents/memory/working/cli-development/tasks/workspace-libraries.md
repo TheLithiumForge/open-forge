@@ -6,49 +6,31 @@ open-forge:
 
 # Task 23: Workspace Libraries
 
-## Sol Implementation Transfer
-
-The user selected Sol for the next Task 23 implementation session, then a return
-to the Astra Overseer. The [Sol transfer](../../handoffs/2026-09-07_library-sol-implementation-handoff.md)
-supersedes earlier Astra-only allocation and pending-resumption wording for that
-slice: GPT-5.6 Sol/xhigh owns substantive work; Luna/max handles bounded routine
-execution. The receiving session may begin Green after live-state verification,
-then complete Task 23 review and acceptance evidence and return a clean feature
-candidate. This session remains halted at phase 2/5, milestone 3/8. No worker
-is running; later tasks, integration and publication are not part of the transfer.
-
 ## Task State
 
-Task 23 “Workspace Libraries” (phase 2/5): milestone 3/8 — M2 Gray and M3
-qualified Red are accepted, including all post-Cleanup consumer obligations.
-The task is stopped at the user-directed boundary before P3 Green. It remains
-incomplete and `ACTIVE` in the project sequence; no completion is claimed. Task20 Cleanup was
-accepted and integrated at `148d378da376d196de183d9564261658164d9d23`, tree
-`ab7e488192b435fdefa0b8d30bf1dc853a6b2327`. Root released the consumer merge,
-Gray, affected Red, and later Green. The user's subsequent stop boundary
-supersedes that Green release: finish and freeze the consumer contracts, complete
-and freeze Red, prepare a detailed Green implementation handoff/preflight, then
-halt. No Green implementer is assigned and no Green behavior is authorized in
-this continuation. Task 23 remains incomplete. The detailed
-[Green implementation preflight](#green-implementation-preflight--preparation-before-the-red-stop)
-preserves the later implementation sequence and protected boundaries.
+Task 23 “Workspace Libraries” is complete at phase 5/5, milestone 8/8.
+The returning Overseer accepted Sol's reviewed M4–M8 candidate `382ccf74`
+and direct model-placement correction `25c65bf8`. Current main contains the
+exact source/contract overlay while retaining its newer project coordination.
+The current queue and completion visibility belong to the
+[project control ledger](../project-control.md).
 
-- Permanent mapping: Task 23 “Workspace Libraries” in the
-  [project control ledger](../project-control.md).
 - Parent: [Complete The Replacement CLI](00-cli-development.md).
-- Accepted group contracts at the recorded contract tip:
-  `.agents/memory/crystallized/documents/cli/contracts/library/_library.md`.
-- Accepted realization at the recorded contract tip:
-  `.agents/memory/crystallized/documents/cli/technical-designs/workspace-libraries.md`.
-- Shared boundaries: [Shared CLI Operation Contract](../../../crystallized/documents/cli/shared-operation-contract.md), [CLI Architecture](../../../crystallized/documents/cli/architecture.md), and [CLI Implementation Directive](../../../../directives/open-forge/cli/implementation.md).
-- Contract-freeze preparation baseline: `eb5829ef`, supplied for this
-  disjoint contract-freeze pack. The accepted post-Task 20 code baseline and
-  completed merge are recorded below.
+- Accepted contracts: [Library group](../../../crystallized/documents/cli/contracts/library/_library.md).
+- Accepted design: [Workspace Libraries](../../../crystallized/documents/cli/technical-designs/workspace-libraries.md).
+- Sol M8 receipt: `artifacts/task23-m8/acceptance.json`, SHA256
+  `54465177905fd9c7ac2aa8bfe990acab3230a67dd5ee4f1b8dac97ef7348f04b`.
+- Direct correction: `T23-INT-001`, receipt SHA256
+  `0d0fde6350a4eca620596a50e00e362dc7500feac8f75a7975ba291f0482571a`.
+- Detailed original execution artifacts below remain in the preserved Library
+  worktree, `../open-forge-worktree/workspace-libraries-contracts` relative to main.
+  Their recorded identities are historical evidence; do not rebuild over them
+  merely to repeat successful acceptance.
+- All implementation and review workers are stopped. Task 24 follows under
+  the user's resumed sequential direction. Publication remains unauthorized.
 
-No Green production owner is assigned. Task Mastermind Noether (GPT-6 Astra/high)
-accepted the prepared boundary. The Gray author, all three Red authors, and the
-exact execution worker have returned their source/artifact leases. No descendant
-is authorized to continue implementation automatically.
+Earlier Gray/Red stop, Green-release and candidate-only wording below records
+its original execution boundary; it does not override this completed state.
 
 ## Outcome And Profile
 
@@ -186,32 +168,31 @@ The task horizon has five phases and eight milestones:
 | P4    | M7         | Fresh whole-task review, including behavior, production structure, and test/evidence quality, followed by one grouped correction when accepted findings require it.                                                                                      |
 | P5    | M8         | Full managed/public and supported `linux-x64` Native AOT acceptance, then semantic integration after Task 20 from the exact refrozen baseline.                                                                                                           |
 
-The accepted stopped boundary is P2/M3: M1, M2 and qualified M3 are complete.
-P3/M4–M6 Green, P4/M7 review and P5/M8 full acceptance remain unreleased or
-uncompleted. No later milestone or whole-task completion is claimed.
+M1, M2, qualified M3, M4, M5, M6, P4/M7 with T23-R1/T23-C1, and P5/M8
+are complete. The clean feature candidate awaits Astra Overseer acceptance and
+later semantic integration; neither action is part of this task-lane result.
 
 ### Ownership And Budgets
 
-Task Mastermind Noether (GPT-6 Astra/high) owns task-local architecture readiness, boundaries,
-state, review routing, and acceptance preparation. Gray has one owner. Red has
-three disjoint owners. One continuous Brilliant Implementer will own Green,
-verification, and the grouped correction after the exact accepted post-Task 20
-integrated baseline refreeze; that production owner is not assigned yet.
+The resumed Task Mastermind owns task-local architecture, boundaries, state,
+review routing, and acceptance. Gray had one owner and Red had three disjoint
+owners. One continuous Sol/xhigh Brilliant Implementer owns Green, focused
+verification, and any accepted grouped correction.
 
-| Resource                          | Maximum | Reserved or consumed                                                                                                                |
-| --------------------------------- | ------: | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Council                           |       0 | None                                                                                                                                |
-| Gray owners                       |       1 | Continuing owner Lovelace (GPT-6 Astra/high); Gray accepted                                                                         |
-| Red owners                        |       3 | Turing: neutral foundations; Hopper: List/Inspect; Hamilton: mutation/cross-integration/all fifteen public journeys; Red incomplete |
-| Brilliant Implementers            |       1 | One continuous owner reserved; unassigned                                                                                           |
-| Writing review                    |       1 | `T23-WR1` consumed                                                                                                                  |
-| Writing correction                |       1 | `T23-WC1` consumed                                                                                                                  |
-| Whole-task review                 |       1 | `T23-R1` reserved and unconsumed                                                                                                    |
-| Grouped implementation correction |       1 | `T23-C1` reserved and unconsumed                                                                                                    |
+| Resource                          | Maximum | Reserved or consumed                                                                                                              |
+| --------------------------------- | ------: | --------------------------------------------------------------------------------------------------------------------------------- |
+| Council                           |       0 | None                                                                                                                              |
+| Gray owners                       |       1 | Continuing owner Lovelace (GPT-6 Astra/high); Gray accepted                                                                       |
+| Red owners                        |       3 | Turing: neutral foundations; Hopper: List/Inspect; Hamilton: mutation/cross-integration/all fifteen public journeys; Red accepted |
+| Brilliant Implementers            |       1 | One continuous Sol/xhigh owner completed accepted M4–M6 and T23-C1 Green work                                                     |
+| Writing review                    |       1 | `T23-WR1` consumed                                                                                                                |
+| Writing correction                |       1 | `T23-WC1` consumed                                                                                                                |
+| Whole-task review                 |       1 | `T23-R1` consumed and accepted                                                                                                    |
+| Grouped implementation correction |       1 | `T23-C1` consumed and accepted                                                                                                    |
 
-`T23-WR1` and `T23-WC1` are the consumed writing review and correction IDs.
-This correction pack consumes no implementation, Gray, Red, whole-task review,
-or grouped implementation-correction budget.
+`T23-WR1`, `T23-WC1`, `T23-R1`, and `T23-C1` are the consumed writing and
+whole-task review/correction IDs. No further review or implementation-correction
+budget remains.
 
 ### Writing Receipt
 
@@ -1411,3 +1392,407 @@ and the root transfer. Task23 is stopped at Phase 2/5, Milestone 3/8. Green is
 unimplemented and unreleased; no descendant may restart automatically. Resume
 only after explicit release and verification of these identities, using the
 M4/M5/M6 sequence and deferred M7/M8 gates above. R1/C1 remain reserved.
+
+### Green M4 acceptance — 2026-09-08
+
+The Overseer explicitly released Green after the resumed Task Mastermind
+revalidated the sealed `9fa03c9e` / `e80f31d8` lane, its accepted ancestors,
+and every one of the 277 indexed Red artifacts. One continuous Sol/xhigh
+Brilliant Implementer completed M4. The accepted feature commit is
+`f6930f6026aa9caef99bfbdab012afd91e35f7f2`, tree
+`5de3be2c02c4ff09fe95ace7ee0cbcc154b4e8d1`, with parent
+`9fa03c9e55f040683f82d6fe74a80f79fa1a41ce`, tree
+`e80f31d80e73d7476dc970976465964e9c39703d`.
+
+M4 implemented the neutral no-follow final-leaf observer; ordinary mutation
+caller guard; typed relative-file-link validation, application and explicit
+recovery; independent recovery observation and comparison; fresh selected-final
+readback; and strict Library record, local source, complete inventory and
+mapping foundations. Three nearest-shared helpers were added for Library
+directory admission, eligible-path policy, and recovery application evidence.
+No test, contract, project, package, configuration, JavaScript or frozen
+artifact changed.
+
+The accepted authority interpretation keeps `RelativeFileLinkEffect` mechanics
+strictly Library-specific: every Library destination parent is a real ordinary
+non-link directory. Stable contained directory-link ancestry remains available
+only to ordinary file effects and ordinary recovery through the shared physical
+path contract. Library policy is independently observed by the M6
+`LibraryConsumerBoundaryReader` and enforced by each leaf planner. The frozen
+contracts and Red rows required no correction.
+
+The final M4 evidence was Release build exit 0 with zero warnings and errors;
+exact 19-path analyzer/format exit 0 with zero diagnostics and zero changed
+files; Library foundation Unit 210/210 and Integration 134/134; directly
+affected control Unit 141/141 and Integration 178/178; and the corrected
+link/no-follow/recovery Integration selection 82/82. Every execution had zero
+failures and skips. All 277 frozen artifacts reverified byte-identically, Git
+whitespace and protected-delta checks were clean, and no relevant process
+remained. T23-R1 and T23-C1 remain reserved and unconsumed.
+
+### Green M5 acceptance — 2026-09-08
+
+The same continuous Sol/xhigh owner completed List and Inspect from the M4
+foundation. The accepted feature commit is
+`c5b8582c6548bad8265210c9320be679731b897b`, tree
+`45f7f6df3500807ec20c8754e627624612d9ae29`, with parent capsule commit
+`db9b58be2f88c7a6081f0fad5b02ddb879ab3cb8`, tree
+`1777056cca9dd01fb5b936c444448e20ce19378f`.
+
+List is operand-free and performs one strict record read followed only by
+registered source-boundary and mapping observation. A safely missing record is
+a complete empty Library set. It never forms a complete source inventory.
+Inspect binds one exact Library ID, selects only that record, inventories only
+its selected source root, and compares the ordinal registered/eligible union.
+Both leaves preserve finite typed status, coverage, finding, human and JSON
+results without persistent effects.
+
+M5 also corrected four callable-foundation classifications exposed by the real
+leaf callers. The codec retains `Malformed` for every unsuccessful decode and
+adds a finite internal ambiguity fact; the record reader alone promotes valid
+duplicate ownership to `Blocked`. A safely missing consumer `.agents` parent
+is a missing record, an existing source root with a missing mandatory `.agents`
+child is invalid, and a safely missing mapping parent is a read-only missing
+mapping fact. Mutation parent authority remains separate in M6.
+
+Final M5 evidence was Release build exit 0 with zero warnings and errors; exact
+11-path analyzer/format exit 0 with zero diagnostics; List/Inspect Unit 127/127
+and Integration 64/64; all six List/Inspect public journeys; foundation Unit
+210/210 and Integration 134/134; and Library-read Unit 144/144. The broad
+Library-read Integration selection passed 65/89; all 24 remaining qualified
+failures stop only at the deferred M6 `LibraryOperationalContributor` or
+`LibraryResidualAttributionReader` stubs. All executions had zero skips. The
+277 frozen artifacts remained byte-identical, protected deltas were empty, and
+no relevant process remained. T23-R1 and T23-C1 remain reserved and unconsumed.
+
+### Green M6 acceptance — 2026-09-08
+
+The same continuous Sol/xhigh owner completed Attach, Sync, Detach and their
+accepted operational integrations. The accepted feature commit is
+`bb0646550d625b115b97687fa440dcf8dfd4b285`, tree
+`5377b1d1a99357b39ca62a77c1e3071258459a43`, with parent capsule commit
+`9a02ce368d9cc567cfd2616c9ac331a8d60bacbe`, tree
+`8cf38d8c3987af2f55535feb9d007e7346717a47`.
+
+M6 implemented independent strict consumer-boundary observation; pure and
+deterministic mutation planning; generated-navigation projection; dry-run;
+held-lease revalidation; typed recovery; monotonic link, generated-region and
+record effects; record-last publication; and finite completion and presentation
+for Attach, Sync and Detach. The Library-local generated-navigation reader
+accepts the Library contract's authored suffix after its marker pair without
+changing the general Route parser. An effect-free Sync exits before acquiring a
+lease or preparing recovery. Detach ignores unrelated unregistered candidates
+while continuing to block ambiguity, collision, unsafe identity and changed
+registered occupants.
+
+Status consumes only the lightweight Library contributor and emits the required
+non-null `library` result between lifecycle and recovery. Doctor consumes full
+typed inventory, mapping and residual facts. A safely proven absent mandatory
+source `.agents` child emits both the specific `library.source-root-invalid`
+finding and `library.inventory-incomplete`, with incomplete coverage; this is
+keyed by the finite internal `RequiredAgentsMissing` condition rather than
+diagnostic prose. Malformed, aliased, ambiguous and otherwise unsafe source
+identities remain blocked.
+
+The exact Doctor interface graph remains authoritative. Rich Gray Library
+domain, subject and proposal payloads remain typed internal callables but are
+excluded from outer JSON. Every Library-specific internal subject kind projects
+to the public `library` kind from the finite `DoctorSubjectKind` mapping. A
+Library residual outer proposal represents `expected` as the recorded
+producer-intended state and `intended` as the recorded prior state using one
+compact schema-v1 JSON string with ordered `kind`, `length`, `sha256`,
+`linkKind` and `rawRelativeTarget` members, including explicit nulls. Its outer
+verification is `library-no-follow-exact` and recovery is
+`repair-receipt-required`; the internal Gray enum vocabulary remains unchanged.
+The new non-Red exact outer-JSON integration control proves the graph, order,
+absence of rich members, and missing, ordinary-file and relative-file-link
+state strings.
+
+Repair validates and applies Library residuals through the typed entry-set
+observer and selected-final reread. Pure and mixed execution preserve every
+original Library residual ZIP byte-for-byte, and successful mixed Repair removes
+only its newly created forward bundle. Cleanup required no production change.
+Extension Remove, Install and Update independently reject Library-owned paths;
+the central Route and Index final-leaf guards required no production change.
+
+The accepted change has 62 paths: 56 production paths and six test paths. The
+test changes are the new non-Red Doctor outer-JSON control, two inherited Status
+graph controls aligned to the accepted mandatory Library graph, and three
+fixture-only initializers for the new required typed source condition. No
+frozen Task23 Red assertion, public contract, technical design, project,
+package, configuration, JavaScript or frozen evidence artifact was changed or
+weakened.
+
+Final evidence used a fresh Release build with zero warnings and errors and an
+exact 523-path analyzer/format selection with zero diagnostics or changed
+files. Library Unit passed 583/583; Unit controls passed 234/234; Library
+Integration passed 378/378, including the two new outer-schema rows;
+Integration controls passed 164/164; all exactly fifteen Library and three
+Doctor public journeys passed; and eleven exact help checks exited zero. All
+1,377 focused rows passed with no failures or skips. Fresh discovery was 2,582
+Unit, 1,455 Integration and 208 end-to-end rows. All 277 frozen artifacts
+reverified byte-identically, Git and the initially executed static checks were
+clean, persistent Library ZIP count was zero after the focused gate, and no
+relevant process remained. The whole changed-C# line-ceiling check was missed
+at this point and is superseded by the correction below. The managed executable
+SHA256 was
+`4450c4552ac44a4e463db6c9adad89a39d803da47801801019ee08c02045bd61`.
+
+The inherited `RecoveryBundleTargetStateReader` relative-link placeholder
+remains outside the Library path; Library residuals use the typed
+`RecoveryEntrySetObserver`. M7 must still assess that bounded limitation during
+the reserved whole-task review. T23-R1 and T23-C1 remain reserved and
+unconsumed.
+
+### Green M6 acceptance correction — 2026-09-08
+
+Before T23-R1 began, the Task Mastermind reopened M6 because the required
+whole-file 200-column ceiling scan had not been satisfied despite the preceding
+capsule's broader clean-static statement. The scan found exactly five long
+statements in three accepted M6 paths. The same continuous Green owner wrapped
+only those statements by moving tokens across newlines and adjusting
+indentation; no token, literal, order, assertion or behavior changed. The
+forward correction commit is
+`4f8629b881f46ae0edc7d0600f61958b821bf491`, tree
+`3735cbb081bbf76e952ef6545aedff8d4f72a662`, with parent capsule commit
+`d514940e75ff680bbccaf4f18b285ffb2497ab23`, tree
+`7f01d18b40df4847bac18caa4714b1e343911c5b`.
+
+The renewed whole Task23 delta scan covered all 87 changed C# paths and found
+zero lines over 200 columns. Exact analyzer verification for the three touched
+paths returned zero diagnostics and changes; the Release solution build
+completed with zero warnings and errors; 17 Status Unit, 13 Status Integration
+and two Doctor outer-JSON Integration rows passed with no failures or skips;
+and `git diff --check`, protected-delta, artifact and process checks were clean.
+This paragraph supersedes the earlier static-gate claim. The correction is
+pre-review M6 acceptance work: T23-R1 and T23-C1 remain reserved and
+unconsumed.
+
+### M7 review correction T23-C1 — 2026-09-08
+
+T23-R1 and the sole grouped T23-C1 cycle are consumed. The same continuous
+Sol/xhigh Green owner corrected all five accepted review findings in feature
+commit `79c628bae0f68e1de6af388c18d200b6d6adde5e`, tree
+`3333196a021a9a45b0cc728139dfacd148c66d36`, with parent
+`e30e005217cf2ec230a3557b8a4913ed7ac8df75`, tree
+`1c1076ad9934150c0266df78a9443c60660f30dd`.
+
+The immutable feature commit and initial capsule omitted
+`T23-PCR-STATUS-1 option A` from the forward acceptance artifact's disposition
+list. This forward capsule correction adds that accepted disposition, updates
+the artifact hash below, and corrects the live Task state, phase and budget
+controls without amending either earlier commit.
+
+T23-R1-F1 and F2 corrected Status Library projection and cancellation. Public
+`result.library.state` is now only `absent`, `trusted`, `incomplete` or
+`blocked`; Library record and source-root values use their exact domain-owned
+vocabularies. Normal and event results always retain a non-null honest Library
+graph. Human output includes the record, each registered Library and source,
+per-record and aggregate link counts, and unavailable event facts. A
+contributor-local cancellation remains `interrupted` rather than being
+demoted by its synthetic unavailable record.
+
+Accepted T23-PCR-STATUS-1 option A keeps `result.library` mandatory between
+`lifecycle` and `recovery` in every public Status graph and aligns inherited
+Status controls with that accepted interface. It does not make the Library
+coordinate optional or fabricate absent facts for unavailable events.
+
+T23-R1-F3 made a complete-record unknown ID and a safely missing record
+`invalid` for Sync and Detach while retaining an internal non-applicable plan,
+zero effects and exit 4. The planners stop after failed record selection so
+unrelated observations cannot outrank unknown-ID invalidity; repeated Detach
+is likewise invalid. T23-R1-F4 keeps every eligible non-Markdown ordinary file
+in inventory, projection and record planning while finitely filtering it from
+Markdown navigation formation, without reading or changing its bytes.
+
+T23-R1-F5 and accepted T23-PCR-NAV-1 option A removed the Library-local parser
+override. Library Attach, Sync and Detach now pass the shared Markdown parser
+result unchanged, so an authored suffix after the generated end marker is
+misplaced and blocks with no effects. This explicitly supersedes the M6
+capsule statement that Library navigation accepts an authored suffix. The
+follow-up T23-PCR-NAV-1A-E2E decision aligned the existing Attach public
+fixture with the same final-inline authority; it did not add, remove or rename
+any journey.
+
+The only pre-existing protected rows whose meanings changed were:
+
+- `LibraryStatusBoundaryIntegrationTests.ConsumerRetainsLibrarySemanticBoundaryWithoutEffects`
+  for `ordinary` and `retargeted`: nested Library state changed from
+  `attention` to `trusted`. Those fixtures cannot own an outer `attention`
+  oracle because independent typed Route or lifecycle facts correctly
+  dominate as incomplete or blocked. A separate otherwise-complete Status
+  row proves safe Library drift selects outer `attention` with nested
+  `trusted`.
+- The `validRegion=true` row of
+  `LibraryAttachGeneratedRegionIntegrationTests.OnlyExistingUnambiguousConsumerRegionCanBeProjected`,
+  `LibrarySyncGeneratedRegionIntegrationTests.OnlyExistingUnambiguousConsumerRegionCanBeProjected`
+  and
+  `LibraryDetachGeneratedRegionIntegrationTests.OnlyExistingUnambiguousConsumerRegionCanBeProjected`:
+  each valid fixture now ends at the shared end marker. Their missing-end rows
+  remain unchanged, and each class adds an authored-suffix blocked/no-effect
+  row with byte-for-byte preservation.
+- `PublishedLibraryAttachProcessTests.ApplyCreatesExactRelativeProjectionAndStrictRecord`
+  through `PublishedLibraryWorkspace.ConsumerRoute`: the fixture now ends at
+  the end marker and only the obsolete suffix-survival assertion was removed.
+  Journey identity, cardinality and every other assertion remain unchanged.
+
+The correction feature contains eight production paths, eighteen test paths
+and the forward evidence artifact:
+
+- `Commands/Status/Models/Result/StatusResult.cs`,
+  `Commands/Status/Shared/Aggregation/StatusFindingAggregator.cs`,
+  `StatusLibraryAggregator.cs`, `StatusResultBuilder.cs`, and
+  `Commands/Status/Shared/Rendering/StatusLibraryPresentation.cs`;
+- `Commands/Library/Sync/Shared/Planning/LibrarySyncPlanner.cs`,
+  `Commands/Library/Detach/Shared/Planning/LibraryDetachPlanner.cs`, and
+  `Commands/Library/Shared/Planning/LibraryGeneratedNavigationReader.cs`;
+- Status tests `LibraryStatusProjectionTests.cs`, `StatusAggregationTests.cs`,
+  `StatusJsonRenderingTests.cs`, `StatusPresentationTests.cs`,
+  `StatusResultSeeds.cs`, `LibraryStatusBoundaryIntegrationTests.cs`, and
+  `LibraryStatusContributorIntegrationTests.cs`;
+- Library tests `LibrarySyncPlannerTests.cs`, `LibraryDetachPlannerTests.cs`,
+  `LibrarySyncInputIntegrationTests.cs`, `LibraryDetachInputIntegrationTests.cs`,
+  `LibraryAttachOperationIntegrationTests.cs`,
+  `LibrarySyncOperationIntegrationTests.cs`, and all three
+  `Library{Attach,Sync,Detach}GeneratedRegionIntegrationTests.cs`;
+- public test paths `PublishedLibraryWorkspace.cs` and
+  `PublishedLibraryAttachProcessTests.cs`; and
+- `artifacts/task23-c1/acceptance.json`, SHA256
+  `a5b5a1dfcfd0fc628bbbdb749d4439e1c2e3dad84eca35fb316a24a46741d693`.
+
+Fresh discovery and exact execution used the frozen execution-4 filters with
+current minima. Library Unit passed 599/599; Unit controls passed 238/238;
+Library Integration passed 390/390; Integration controls passed 164/164;
+exactly fifteen Library and three Doctor public journeys passed; and all eleven
+help checks exited zero. Every accepted execution had zero failures and skips.
+The superseded history is preserved in the forward artifact: Status Red passed
+24/36 Unit and 8/10 Integration, Sync/Detach Red passed 26/30 Unit and 24/29
+Integration, non-Markdown Red passed 18/20, and the first public renewal passed
+14/15 before T23-PCR-NAV-1A-E2E. One concurrent Status attempt produced an
+MSB3026 retry and was discarded; all accepted commands were serialized. The
+first final build also recorded one test-call compile error before the exact
+factory coordinates were corrected.
+
+The final commands were the execution-4 Library trait selectors with minima
+599 and 390, the frozen Unit and Integration control selectors with minima 238
+and 164, the unchanged Library public trait selector with minimum 15, the
+`PublishedDoctorProcessTests` selector with minimum 3, and the eleven published
+help commands. `dotnet build OpenForge.Cli.slnx --configuration Release
+--no-restore --verbosity minimal` completed with zero warnings and errors.
+`dotnet format OpenForge.Cli.slnx --no-restore --verify-no-changes --severity
+info --verbosity diagnostic --include <524-path Task23 union>` exited zero with
+zero diagnostics and zero changed files. The whole 524-path changed-C# scan
+found zero lines over 200 columns; Git whitespace and protected configuration,
+project, lock and JavaScript deltas were empty.
+
+All 277 entries in the original frozen artifact index reverified byte-for-byte
+with zero mismatches; its SHA256 remains
+`5aaea02d6c92b8541393d00eba8020e402a9d4b2617d778f8275e82e6a126bd8`.
+Those original Red artifacts remain immutable historical evidence; the new
+acceptance artifact is forward-only. No persistent Library recovery ZIP or
+relevant process remained. The selected managed executable remained
+`0.0.0-dev`, SHA256
+`4450c4552ac44a4e463db6c9adad89a39d803da47801801019ee08c02045bd61`.
+
+The inherited `RecoveryBundleTargetStateReader` relative-link placeholder
+remains outside the Library recovery path, which continues to use
+`RecoveryEntrySetObserver`. Native AOT acceptance was not run at this M7
+snapshot; the later M8 capsule below supersedes only that deferred-gate state.
+
+### M8 full managed and linux-x64 Native AOT acceptance — 2026-09-08
+
+M8 is accepted against feature commit
+`ff99f0ed8854dae6505f14c952d6680558808d89`, tree
+`9827135af663863897b6c942fe8db874563fff96`, whose parent is the corrected M7
+capsule `c29c904f347436ee928f9f347fededaba2e9ed12`, tree
+`957df62937202088c64d4398a69ba30827643a0a`. The exact canonical receipt is
+`artifacts/task23-m8/acceptance.json`, SHA256
+`54465177905fd9c7ac2aa8bfe990acab3230a67dd5ee4f1b8dac97ef7348f04b`.
+The original 277-entry frozen Red artifact set remained byte-identical.
+
+Fresh full discovery found 2,602 Unit, 1,467 Integration, and 208 EndToEnd
+identities. Relative to final Red, Unit had a net twenty accepted T23-C1 rows
+and Integration had fourteen; EndToEnd identity was unchanged. Unit execution
+reported 2,624 because nine Find dynamic-data discovery identities expand to
+31 runtime cases, an exact increase of 22 with no other identity-class
+mismatch. Managed Unit passed 2,624/2,624, Integration passed 1,467/1,467, and
+the renewed complete EndToEnd suite passed 208/208; every accepted run had zero
+failures and skips.
+
+The first complete managed EndToEnd run truthfully passed 206/208 and exposed
+two inherited Cleanup fixture rows that still emitted predecessor flat recovery
+entry members. `T23-PCR-M8-CLEANUP-1 option A` authorized a fixture-only
+alignment outside and without reopening consumed T23-C1. Only
+`PublishedCleanupWorkspace.WriteFinal` changed: it now represents the same
+route-move ordinary delete, prior bytes, payload, attribution, and workspace
+identity through the sole accepted typed schema-v1 `logicalPath`, `prior`,
+`intended`, and `priorPayload` members. No production, contract, journey, or
+cardinality changed, and no compatibility reader was added. The isolated
+Cleanup receipt moved from 1/3 to 3/3 before the renewed 208/208 public run.
+The exact superseded and renewed evidence is preserved in
+`artifacts/task23-m8/cleanup-fixture-correction.json`, SHA256
+`de5f60ddba8d865bb4011c3614531fc69096a506a5d8de06e82cdfd3bf3a9ff8`.
+
+The worktree-built supported native CLI is a stripped x86-64 ELF PIE at
+`artifacts/publish/linux-x64/open-forge/OpenForge.Cli`, SHA256
+`0749e82569adf7b4dcc6c21c64e721a2e9dbeb553f34c415713c6c0bb285fd94`,
+and reports `0.0.0-dev`. All three Native AOT publishes exited zero with no
+warning or error matches and empty stderr. The native Integration runner passed
+1,467/1,467 and native EndToEnd runner passed 208/208. A final managed
+EndToEnd build explicitly selected runtime identifier `linux-x64` and the same
+worktree native CLI, then passed 208/208. Every native execution had zero
+failures and skips.
+
+The final static freeze contains 525 extant changed C# files relative to
+`148d378da376d196de183d9564261658164d9d23`. Informational formatting analyzed
+the exact set and reported zero diagnostics or changes; the complete whole-file
+scan found zero lines over 200 columns. Git whitespace was clean, the protected
+configuration/project/lock/JavaScript delta was empty, no persistent operation
+ZIP remained under the temporary root, and no relevant process remained.
+
+M8 completes the feature candidate only. This lane did not integrate, squash,
+push, publish externally, refresh the global installation, or begin a later
+task. The inherited `RecoveryBundleTargetStateReader` relative-link placeholder
+remains outside the Library path; real link support on other platforms and
+cooperating-process races beyond the accepted lease/no-follow boundary remain
+the documented residual limitations.
+
+### Root integration correction — 2026-09-08
+
+Root independently verified the Sol return at `382ccf74`, all 525 frozen C#
+files, 61 native publication files, 277 retained Red artifacts, and the M8
+receipt and actual successful logs. The code/test candidate remains `ff99f0ed`.
+Integration is pending a bounded source-locality correction, `T23-INT-001`:
+six new data-only records were declared in implementation files outside Models.
+The correction relocates four shared Library contracts to existing Application
+and Planning Models, and two implementation-local records to their narrow
+Planning/Completion Models. No behavioral expression, public schema, contract,
+or test oracle changes. No independent review is restarted and consumed R1/C1
+budgets remain consumed. Root owns this direct integration correction.
+
+Applicability: existing local developer-tool boundary; pure internal placement,
+no changed filesystem, mutation, serialization or public/composition behavior.
+The unchanged Sol M8 managed/native baseline supplies beginning evidence.
+Renew compilation, exact changed-source informational formatting, Library
+Unit/Integration and fifteen public journeys; no new full/AOT trigger follows
+from internal record placement alone. Use the same worktree's executable and
+preserve the prior artifacts. Exceptional machinery: none.
+
+Root personally read the complete current C# directive trio before this work:
+`_csharp.md` SHA256
+`31045ebcb02d5bfeee8ba9f3112d307b1f72a2186cda618fbf7d22e7d1d90b53`;
+`design.md` SHA256
+`76aa8fc7aaaa79d9535998f5557150f3754e3d80520a7a06864b61659373c1a9`;
+`style.md` SHA256
+`c3fa9d31575e77fedb103ca397f0ccf10ab7236e6edbef1658c7fe36138457cb`.
+
+The direct correction passed 599 Unit, 390 Integration and exactly fifteen
+Library public journeys, zero failures/skips. Release build passed with zero
+warnings/errors; informational format analyzed the exact thirteen C# paths
+and returned an empty report without source changes. All behavioral expression
+token streams match the predecessor after only the declared model extraction,
+type renaming and imports. All frozen correction hashes stayed unchanged through
+execution; no test or contract changed. The first two build attempts exposed
+missing imports (one local enum, then three leaf consumers); their failed logs
+remain alongside the corrected third build. The exact correction receipt is
+`artifacts/task23-integration/acceptance.json`, SHA256 `0d0fde6350a4eca620596a50e00e362dc7500feac8f75a7975ba291f0482571a`.

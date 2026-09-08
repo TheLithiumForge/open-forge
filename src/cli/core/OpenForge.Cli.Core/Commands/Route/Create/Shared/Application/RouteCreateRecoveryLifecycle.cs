@@ -8,21 +8,9 @@ using OpenForge.Cli.Core.Framework.Recovery.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Shared.Application;
 
-internal sealed class RouteCreateRecoveryLifecycle
+internal static class RouteCreateRecoveryLifecycle
 {
-    private readonly RecoveryBundleCatalogue _catalogue;
-    private readonly RecoveryBundleStore _store;
-    private readonly RecoveryBundleDeletionGuard _deletionGuard;
-
-    internal RouteCreateRecoveryLifecycle()
-    {
-        var reader = new RecoveryBundleReader();
-        _catalogue = new RecoveryBundleCatalogue(reader);
-        _store = new RecoveryBundleStore(reader);
-        _deletionGuard = new RecoveryBundleDeletionGuard(_catalogue, reader);
-    }
-
-    internal async ValueTask<RouteCreateRecoveryPreparationResult> PrepareAsync(
+    internal static async ValueTask<RouteCreateRecoveryPreparationResult> PrepareAsync(
         RouteCreatePlan plan,
         Guid operationId,
         CancellationToken cancellationToken)
@@ -42,7 +30,7 @@ internal sealed class RouteCreateRecoveryLifecycle
         RecoveryBundleCatalogueResult catalogue;
         try
         {
-            catalogue = await _catalogue.ReadAsync(
+            catalogue = await RecoveryBundleCatalogue.ReadAsync(
                     plan.Request.Workspace,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -89,7 +77,7 @@ internal sealed class RouteCreateRecoveryLifecycle
         RecoveryBundlePreparationResult preparation;
         try
         {
-            preparation = await _store.PrepareAsync(
+            preparation = await RecoveryBundleStore.PrepareAsync(
                     RecoveryBundleInput.Create(
                         plan.Request.Workspace,
                         RouteCreateDefinitions.CommandIdentity,
@@ -146,14 +134,11 @@ internal sealed class RouteCreateRecoveryLifecycle
             RecoveryBundlePreparationState.NotNeeded => Failed(
                 "Route Create recovery preparation unexpectedly reported no need.",
                 preparation.ResidualPath),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(preparation),
-                preparation.State,
-                "The recovery preparation state is not defined."),
+            _ => throw InvalidPreparationState(preparation.State),
         };
     }
 
-    internal async ValueTask<RouteCreateRecoveryDeletionResult> DeleteAsync(
+    internal static async ValueTask<RouteCreateRecoveryDeletionResult> DeleteAsync(
         WorkspaceLockLease lease,
         RecoveryBundlePreparation? preparation,
         CancellationToken cancellationToken)
@@ -172,7 +157,7 @@ internal sealed class RouteCreateRecoveryLifecycle
         RecoveryBundleCatalogueResult catalogue;
         try
         {
-            catalogue = await _catalogue.ReadAsync(
+            catalogue = await RecoveryBundleCatalogue.ReadAsync(
                     lease.Request.Workspace,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -223,7 +208,7 @@ internal sealed class RouteCreateRecoveryLifecycle
         RecoveryBundleDeletionResult deletion;
         try
         {
-            deletion = await _deletionGuard.DeleteAsync(
+            deletion = await RecoveryBundleDeletionGuard.DeleteAsync(
                     lease,
                     candidates[0],
                     cancellationToken)
@@ -293,10 +278,7 @@ internal sealed class RouteCreateRecoveryLifecycle
                         : RouteCreateFindingCode.RecoveryFailed,
                     deletion.Cause
                         ?? "The Route Create recovery artifact disposition is unknown."),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(deletion),
-                deletion.State,
-                "The recovery deletion state or disposition is not defined."),
+            _ => throw InvalidDeletionState(deletion.State, deletion.Disposition),
         };
     }
 
@@ -367,6 +349,21 @@ internal sealed class RouteCreateRecoveryLifecycle
 
     private static RouteCreateRecovery Residual(string? residualPath)
         => residualPath is null ? NotCreated() : Unknown(residualPath);
+
+    private static ArgumentOutOfRangeException InvalidPreparationState(
+        RecoveryBundlePreparationState state)
+        => new(
+            nameof(state),
+            state,
+            "The recovery preparation state is not defined.");
+
+    private static ArgumentOutOfRangeException InvalidDeletionState(
+        RecoveryBundleDeletionState state,
+        RecoveryBundleDisposition disposition)
+        => new(
+            nameof(state),
+            (state, disposition),
+            "The recovery deletion state or disposition is not defined.");
 
     private static RouteCreateRecovery NotCreated()
         => new()

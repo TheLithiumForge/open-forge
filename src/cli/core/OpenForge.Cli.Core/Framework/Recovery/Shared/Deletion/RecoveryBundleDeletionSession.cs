@@ -9,25 +9,20 @@ namespace OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion;
 internal sealed class RecoveryBundleDeletionSession
 {
     private readonly WorkspaceLockLease _lease;
-    private readonly RecoveryBundleReader _reader;
     private readonly ImmutableArray<RecoveryBundleCandidateSnapshot> _candidates;
     private readonly HashSet<string> _removed = new(StringComparer.Ordinal);
 
     private RecoveryBundleDeletionSession(
         WorkspaceLockLease lease,
-        RecoveryBundleReader reader,
         ImmutableArray<RecoveryBundleCandidateSnapshot> candidates)
     {
         _lease = lease;
-        _reader = reader;
         _candidates = candidates;
     }
 
     internal static async ValueTask<RecoveryBundleDeletionSessionOpenResult> OpenAsync(
         WorkspaceLockLease lease,
         RecoveryBundleCatalogueResult frozenCatalogue,
-        RecoveryBundleCatalogue catalogue,
-        RecoveryBundleReader reader,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(lease);
@@ -55,7 +50,7 @@ internal sealed class RecoveryBundleDeletionSession
             return Closed(RecoveryBundleDeletionSessionOpenState.Cancelled);
         }
 
-        var observed = await catalogue.ReadAsync(lease.Request.Workspace, cancellationToken).ConfigureAwait(false);
+        var observed = await RecoveryBundleCatalogue.ReadAsync(lease.Request.Workspace, cancellationToken).ConfigureAwait(false);
         if (!lease.IsHeldFor(lease.Request.Workspace))
         {
             return Closed(RecoveryBundleDeletionSessionOpenState.Blocked, "The workspace lease was released during session opening.", observed);
@@ -91,7 +86,7 @@ internal sealed class RecoveryBundleDeletionSession
         {
             State = RecoveryBundleDeletionSessionOpenState.Opened,
             ObservedCatalogue = observed,
-            Session = new RecoveryBundleDeletionSession(lease, reader, frozenCatalogue.Candidates),
+            Session = new RecoveryBundleDeletionSession(lease, frozenCatalogue.Candidates),
             Failure = null,
             Cause = null,
         };
@@ -129,7 +124,7 @@ internal sealed class RecoveryBundleDeletionSession
 
         if (candidate.Kind == RecoveryBundleCandidateKind.Final)
         {
-            var read = await _reader.ReadFinalAsync(_lease.Request.Workspace, candidate.Path, cancellationToken).ConfigureAwait(false);
+            var read = await RecoveryBundleReader.ReadFinalAsync(_lease.Request.Workspace, candidate.Path, cancellationToken).ConfigureAwait(false);
             if (!_lease.IsHeldFor(_lease.Request.Workspace))
             {
                 return RecoveryBundleDeletionResult.BlockedUnknown("The workspace lease was released during semantic validation.", candidate.Path);

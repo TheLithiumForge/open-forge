@@ -5,32 +5,8 @@ using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 
-internal sealed partial class RouteRemoveRecoveryLifecycle
+internal static partial class RouteRemoveRecoveryLifecycle
 {
-    private readonly RecoveryBundleCatalogue _catalogue;
-    private readonly RecoveryBundleStore _store;
-    private readonly RecoveryBundleDeletionGuard _deletionGuard;
-
-    internal RouteRemoveRecoveryLifecycle(
-        RecoveryBundleCatalogue catalogue,
-        RecoveryBundleStore store,
-        RecoveryBundleDeletionGuard deletionGuard)
-    {
-        _catalogue = catalogue;
-        _store = store;
-        _deletionGuard = deletionGuard;
-    }
-
-    internal static RouteRemoveRecoveryLifecycle Create()
-    {
-        var reader = new RecoveryBundleReader();
-        var catalogue = new RecoveryBundleCatalogue(reader);
-        return new RouteRemoveRecoveryLifecycle(
-            catalogue,
-            new RecoveryBundleStore(reader),
-            new RecoveryBundleDeletionGuard(catalogue, reader));
-    }
-
     private static RouteRemoveRecovery Recovery(
         RouteRemovePlan plan,
         RouteRemoveRecoveryState state,

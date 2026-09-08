@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
+using OpenForge.Cli.Core.Commands.Status.Shared.Aggregation;
 using OpenForge.Cli.Core.Framework.Lifecycle.Operational.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
@@ -145,6 +146,7 @@ internal static class StatusResultSeeds
                             ],
                         },
                     }),
+                Library = StatusLibraryAggregator.Build(StatusAggregationObservationSeed.Create().Libraries),
                 Recovery = new StatusRecovery
                 {
                     VerifiedFinals = Available(status == CliSemanticStatus.Attention ? 1 : 0),

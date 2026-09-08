@@ -27,11 +27,20 @@ internal sealed class ExtensionRemovePathInspector(PhysicalPathResolver physical
                 "Extension Remove targets must remain below the .agents directory.");
         }
 
+        var libraryBoundary = await ExtensionRemoveLibraryBoundaryReader.ReadAsync(
+            _physicalPathResolver, request, path.Path, cancellationToken).ConfigureAwait(false);
+        if (ExtensionRemoveLibraryBoundaryPolicy.Classify(libraryBoundary) is { } libraryFinding)
+        {
+            return ExtensionRemovePathObservation.Stop(path.Path, libraryFinding.Code, libraryFinding.Cause)
+                with
+            { LibraryBoundary = libraryBoundary };
+        }
+
         var selectedOwners = path.Owners.Where(selected.Contains).Order(StringComparer.Ordinal).ToArray();
         var remainingOwners = path.Owners.Where(owner => !selected.Contains(owner)).Order(StringComparer.Ordinal).ToArray();
         if (remainingOwners.Length > 0)
         {
-            return ExtensionRemovePathObservation.Shared(path.Path, selectedOwners, remainingOwners);
+            return ExtensionRemovePathObservation.Shared(path.Path, selectedOwners, remainingOwners) with { LibraryBoundary = libraryBoundary };
         }
 
         var logicalPath = Path.GetFullPath(Path.Combine(
@@ -43,7 +52,7 @@ internal sealed class ExtensionRemovePathInspector(PhysicalPathResolver physical
             logicalPath);
         if (resolution.State == PhysicalPathState.Missing)
         {
-            return ExtensionRemovePathObservation.Missing(path.Path, selectedOwners);
+            return ExtensionRemovePathObservation.Missing(path.Path, selectedOwners) with { LibraryBoundary = libraryBoundary };
         }
 
         if (resolution.State != PhysicalPathState.Contained)
@@ -90,7 +99,8 @@ internal sealed class ExtensionRemovePathInspector(PhysicalPathResolver physical
                 path.Path,
                 selectedOwners,
                 ReadClassification(bytes, path),
-                FileStateSnapshot.File(logicalPath, physicalPath, bytes));
+                FileStateSnapshot.File(logicalPath, physicalPath, bytes)) with
+            { LibraryBoundary = libraryBoundary };
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -148,6 +158,8 @@ internal sealed record ExtensionRemovePathObservation
 
     internal required ExtensionRemovePathClassification Classification { get; init; }
 
+    internal ExtensionRemoveLibraryBoundary? LibraryBoundary { get; init; }
+
     internal FileStateSnapshot? Snapshot { get; init; }
 
     internal ExtensionRemoveFinding? Boundary { get; init; }
@@ -166,8 +178,9 @@ internal sealed record ExtensionRemovePathObservation
                     when policy == ExtensionRemoveChangedContentPolicy.Delete => ExtensionRemovePathAction.Delete,
                 ExtensionRemovePathClassification.ChangedFinalOwner => ExtensionRemovePathAction.KeepAsUnmanaged,
                 ExtensionRemovePathClassification.Missing => ExtensionRemovePathAction.ReleaseOwnership,
-                _ => throw new ArgumentOutOfRangeException(),
-            });
+                _ => throw new ArgumentOutOfRangeException(message: "The Extension Remove path classification is not defined.", innerException: null),
+            })
+        { LibraryBoundary = LibraryBoundary };
 
     internal static ExtensionRemovePathObservation Shared(
         string path,

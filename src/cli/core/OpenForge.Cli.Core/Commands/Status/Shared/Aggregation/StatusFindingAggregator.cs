@@ -13,6 +13,6 @@ internal static class StatusFindingAggregator
         StatusContextFindingAggregator.Add(findings, observations, facts);
         StatusLifecycleFindingAggregator.Add(findings, observations, facts.Lifecycle);
         StatusRecoveryFindingAggregator.Add(findings, observations.RecoveryResiduals, facts.Recovery);
-        return findings.Complete();
+        return [.. findings.Complete(), .. facts.Library.Findings];
     }
 }

@@ -14,6 +14,7 @@ internal static class RecoveryBundleAttributionCodec
             [RecoveryBundleProducer.Index] = "index",
             [RecoveryBundleProducer.Route] = "route",
             [RecoveryBundleProducer.Repair] = "repair",
+            [RecoveryBundleProducer.Library] = "library",
         }.ToFrozenDictionary();
     private static readonly FrozenDictionary<string, RecoveryBundleProducer> WireProducer =
         ProducerWire.ToFrozenDictionary(pair => pair.Value, pair => pair.Key, StringComparer.Ordinal);
@@ -28,6 +29,9 @@ internal static class RecoveryBundleAttributionCodec
             [RecoveryBundleOperation.Update] = "update",
             [RecoveryBundleOperation.Remove] = "remove",
             [RecoveryBundleOperation.Repair] = "repair",
+            [RecoveryBundleOperation.Attach] = "attach",
+            [RecoveryBundleOperation.Sync] = "sync",
+            [RecoveryBundleOperation.Detach] = "detach",
         }.ToFrozenDictionary();
     private static readonly FrozenDictionary<string, RecoveryBundleOperation> WireOperation =
         OperationWire.ToFrozenDictionary(pair => pair.Value, pair => pair.Key, StringComparer.Ordinal);

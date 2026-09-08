@@ -15,7 +15,6 @@ internal sealed class StatusOperation(
         StatusRequest request,
         CancellationToken cancellationToken)
     {
-        var resultBuilder = new StatusResultBuilder();
         try
         {
             var lifecycleSnapshot = await lifecycleSnapshotReader
@@ -36,17 +35,19 @@ internal sealed class StatusOperation(
             var extensionLifecycle = await contributors.ExtensionLifecycle
                 .ReadStatusAsync(lifecycleSnapshot, cancellationToken)
                 .ConfigureAwait(false);
+            var libraries = await contributors.Libraries.ReadStatusAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
             var observations = new StatusObservationSet(
                 workspaceEntry,
                 recoveryResiduals,
                 routes,
                 frameworkLifecycle,
-                extensionLifecycle);
-            return resultBuilder.Build(request, observations);
+                extensionLifecycle,
+                libraries);
+            return StatusResultBuilder.Build(request, observations);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            return resultBuilder.Event(
+            return StatusResultBuilder.Event(
                 request.Workspace,
                 StatusFindingCode.Interrupted,
                 null,
@@ -54,7 +55,7 @@ internal sealed class StatusOperation(
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
         {
-            return resultBuilder.Event(
+            return StatusResultBuilder.Event(
                 request.Workspace,
                 StatusFindingCode.OperationFailed,
                 null,

@@ -135,7 +135,7 @@ public sealed class RepairSelectionModelTests
         var valid = new RepairSelection(
             RepairSelectionMode.Automatic,
             [selected],
-            [unselected]);
+            [unselected], RepairLibrarySelection.Empty);
         Assert.Same(selected, Assert.Single(valid.Selected));
         Assert.Same(unselected, Assert.Single(valid.Unselected));
 
@@ -146,7 +146,7 @@ public sealed class RepairSelectionModelTests
         Assert.Throws<ArgumentException>(() => new RepairSelection(
             RepairSelectionMode.Automatic,
             [selected],
-            [duplicate]));
+            [duplicate], RepairLibrarySelection.Empty));
 
         var overlapping = RepairTestData.SafeProposal(
             sourcePath: RepairTestData.SourcePath,
@@ -155,7 +155,7 @@ public sealed class RepairSelectionModelTests
         Assert.Throws<ArgumentException>(() => new RepairSelection(
             RepairSelectionMode.Automatic,
             [selected],
-            [overlapping]));
+            [overlapping], RepairLibrarySelection.Empty));
     }
 
     [Fact(DisplayName = "Repairable reference input requires guided provenance and forbids automatic candidate selection"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]

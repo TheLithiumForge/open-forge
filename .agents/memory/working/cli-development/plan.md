@@ -6,25 +6,35 @@ open-forge:
 
 # Replacement CLI Development Plan
 
-## Sol Implementation Transfer
+## Current Sequential Continuation
 
-The user selected Sol for the next Task 23 implementation session, then a return
-to the Astra Overseer. The [Sol transfer](../handoffs/2026-09-07_library-sol-implementation-handoff.md)
-supersedes earlier Astra-only allocation and pending-resumption wording for that
-slice: GPT-5.6 Sol/xhigh owns substantive work; Luna/max handles bounded routine
-execution. The receiving session may begin Green after live-state verification,
-then complete Task 23 review and acceptance evidence and return a clean feature
-candidate. This session remains halted at phase 2/5, milestone 3/8. No worker
-is running; later tasks, integration and publication are not part of the transfer.
+The user resumed the Astra Overseer on 2026-09-08 with sequential direct work
+and optional bounded subagents. Earlier Sol-transfer and halt instructions are
+historical. Task 23 “Workspace Libraries” is complete at phase 5/5, milestone
+8/8. Sol returned `382ccf74`; the root placement-only correction is `25c65bf8`.
+Root verified the original 525 C# source hashes, 61 native artifacts, all 277
+frozen Red receipts, and the successful M8 logs. Full managed evidence is
+2624/1467/208; native evidence is 1467/208 plus managed-on-native 208, all with
+zero failures/skips. The six-record placement correction preserved behavior
+and tests and passed 599 Unit, 390 Integration and fifteen public journeys.
 
-## Current Stop Boundary
+The accepted source/contract/evidence overlay contains 589 exact candidate
+paths, preserving current main coordination and the newer product direction.
+The original sealed Sol handoff remains on its feature branch because it embeds
+a host-specific worktree path; it was not rewritten or copied into main.
+Task 23's Task record owns the detailed correction and acceptance receipts.
+All six Extension commands, Repair, Cleanup and the five Library commands are
+complete. Task 23 enters completion visibility with two subsequent updates.
 
-Task 23 consumer contracts, immutable Gray, qualified frozen Red, and the
-detailed Green implementation preflight are complete at phase 2/5, milestone
-3/8: `[###-----]`. Execution is halted before Green as the user requested.
-Task 23 remains incomplete; no Green implementer is assigned and all task
-agents are idle. Earlier continuation language below is superseded by this
-stop. Later tasks and unresolved Task 24/25 product choices remain preserved.
+Task 24 “Extensions Evolution” begins contract preparation at phase 1/5,
+milestone 0/8. The user accepted `content/` and a consumer allowlist with a CLI
+question for missing grants. The revised functional draft includes exact-file
+approval, remembered grants, prompt-free dry-run/automation, and explicit
+permission effects. Root continues Task 24 → Task 25 → Task 26 pure refactor
+→ Task 10 audit → conditional Task 21 → Task 13 → Task 22. Later publication
+and global installation refresh remain unauthorized. General test-environment
+cleanup remains an idea. The current Task capsules govern scoped execution;
+older snapshots below retain historical evidence only.
 
 ## Current Accepted Checkpoint
 

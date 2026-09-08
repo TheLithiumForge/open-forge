@@ -5,6 +5,8 @@ using OpenForge.Cli.Core.Commands.Extension.Install.Shared.Result;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
 using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Recovery;
@@ -19,13 +21,14 @@ internal sealed class ExtensionInstallPlanner
     private readonly ExtensionInstallFoundationReader _foundationReader;
     private readonly ExtensionInstallTargetInspector _targetInspector;
     private readonly ExtensionInstallEffectPlanner _effectPlanner;
+    private readonly PhysicalPathResolver _physicalPathResolver;
 
     internal ExtensionInstallPlanner(
         CliInteractiveSession interactiveSession,
         PhysicalPathResolver physicalPathResolver,
-        LifecycleStore lifecycleStore,
-        RecoveryBundleCatalogue recoveryCatalogue)
+        LifecycleStore lifecycleStore)
     {
+        _physicalPathResolver = physicalPathResolver;
         var validator = new FileExpectationValidator(physicalPathResolver);
         _sourceResolver = new ExtensionInstallSourceResolver(physicalPathResolver);
         _selectionResolver = new ExtensionInstallSelectionResolver(
@@ -34,8 +37,7 @@ internal sealed class ExtensionInstallPlanner
             new ExtensionInstallPayloadNormalizer());
         _foundationReader = new ExtensionInstallFoundationReader(
             lifecycleStore,
-            new FrameworkLifecycleCurrentnessReader(physicalPathResolver),
-            recoveryCatalogue);
+            new FrameworkLifecycleCurrentnessReader(physicalPathResolver));
         _targetInspector = new ExtensionInstallTargetInspector(interactiveSession, validator);
         _effectPlanner = new ExtensionInstallEffectPlanner(lifecycleStore, validator);
     }
@@ -89,6 +91,20 @@ internal sealed class ExtensionInstallPlanner
             sourceFact,
             selection,
             packageFacts);
+
+        var libraryBoundary = await ReadLibraryBoundaryAsync(
+            request,
+            resolution.Packages.SelectMany(package => package.Payload)
+                .Select(file => file.TargetPath)
+                .OfType<string>(),
+            cancellationToken).ConfigureAwait(false);
+        if (libraryBoundary is not null)
+        {
+            return Stop(ExtensionInstallResultFactory.Boundary(
+                request,
+                evidence,
+                libraryBoundary));
+        }
 
         var foundationObservation = await _foundationReader.ReadAsync(
             request,
@@ -206,13 +222,53 @@ internal sealed class ExtensionInstallPlanner
             ExtensionInstallResultFactory.Result(request, facts, []));
     }
 
-    private static IReadOnlyList<ExtensionInstallPackage> PackageFacts(
+    private async ValueTask<ExtensionInstallFinding?> ReadLibraryBoundaryAsync(
+        ExtensionInstallRequest request,
+        IEnumerable<string> targetPaths,
+        CancellationToken cancellationToken)
+    {
+        var record = await LibrariesRecordReader.ReadAsync(
+            _physicalPathResolver,
+            request.Workspace,
+            cancellationToken).ConfigureAwait(false);
+        if (record.State == LibrariesRecordReadState.Complete)
+        {
+            var claimedPaths = record.Record!.Libraries
+                .SelectMany(library => library.Paths)
+                .Select(path => path.Value)
+                .ToHashSet(StringComparer.Ordinal);
+            var conflict = targetPaths.FirstOrDefault(claimedPaths.Contains);
+            return conflict is null
+                ? null
+                : new ExtensionInstallFinding(
+                    ExtensionInstallFindingCode.OwnershipConflict,
+                    "The Extension target is owned by a registered workspace Library.",
+                    conflict);
+        }
+
+        return record.State switch
+        {
+            LibrariesRecordReadState.Missing => null,
+            LibrariesRecordReadState.Unavailable => new ExtensionInstallFinding(
+                ExtensionInstallFindingCode.ProjectionUnavailable,
+                record.Cause ?? "Library ownership could not be observed for Extension Install."),
+            LibrariesRecordReadState.Malformed or LibrariesRecordReadState.Blocked => new ExtensionInstallFinding(
+                ExtensionInstallFindingCode.OwnershipConflict,
+                record.Cause ?? "Library ownership is unsafe or ambiguous for Extension Install."),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(request),
+                record.State,
+                "The Library record state is not defined."),
+        };
+    }
+
+    private static ExtensionInstallPackage[] PackageFacts(
         IReadOnlyList<ExtensionPackageFact> packages,
         ExtensionInstallSelection? selection)
-        => packages.Select(package => new ExtensionInstallPackage(
+        => [.. packages.Select(package => new ExtensionInstallPackage(
             package.Id,
             selection?.RootIds.Contains(package.Id, StringComparer.Ordinal) == true,
-            package.Dependencies.Order(StringComparer.Ordinal))).ToArray();
+            package.Dependencies.Order(StringComparer.Ordinal)))];
 
     private static ExtensionInstallResult Boundary(
         ExtensionInstallRequest request,

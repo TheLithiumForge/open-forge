@@ -20,6 +20,15 @@ open-forge:
 - Parent: [Complete The Replacement CLI](00-cli-development.md).
 - Phase and milestone: not assigned.
 
+## Current User Direction
+
+On 2026-09-08 the user required a consumer allowlist and a CLI question when
+an entry is missing, alongside the accepted Task 24 `content/` rename. The
+[joint draft](extensions-destination-proposal.md) now includes remembered exact
+file grants, prompt-free automation/dry-run, and explicit permission effects.
+This supersedes its earlier manual-edit-only recommendation. Task 25 still
+requires the accepted Task 23 baseline and frozen Task 24 shared boundaries.
+
 ## Candidate Boundary
 
 This task prepares a proposal for consumer-approved relative-symlink projections to

@@ -102,8 +102,7 @@ internal sealed class GenericRouteInitIntegrationWorkspace : IDisposable
     internal async ValueTask<int> RecoveryCandidateCountAsync(
         CancellationToken cancellationToken)
     {
-        var result = await new RecoveryBundleCatalogue(new RecoveryBundleReader())
-            .ReadAsync(Workspace, cancellationToken);
+        var result = await RecoveryBundleCatalogue.ReadAsync(Workspace, cancellationToken);
         return result.State switch
         {
             RecoveryBundleCatalogueState.Available => result.Candidates.Length,
@@ -112,7 +111,7 @@ internal sealed class GenericRouteInitIntegrationWorkspace : IDisposable
             RecoveryBundleCatalogueState.Cancelled => throw new InvalidOperationException(
                 "The Route Init recovery catalogue was cancelled."),
             _ => throw new ArgumentOutOfRangeException(
-                nameof(result),
+                null,
                 result.State,
                 "The Route Init recovery catalogue state is not defined."),
         };

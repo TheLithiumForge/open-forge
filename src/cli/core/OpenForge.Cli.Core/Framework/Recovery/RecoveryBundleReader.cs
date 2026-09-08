@@ -8,7 +8,7 @@ using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Framework.Recovery;
 
-internal sealed class RecoveryBundleReader
+internal static class RecoveryBundleReader
 {
     private static readonly object VerifiedFinalAuthority = new();
 
@@ -32,7 +32,7 @@ internal sealed class RecoveryBundleReader
         internal RecoveryBundleVerifiedRead Verified { get; }
     }
 
-    internal ValueTask<RecoveryBundleReadResult> VerifyExpectedAsync(
+    internal static ValueTask<RecoveryBundleReadResult> VerifyExpectedAsync(
         RecoveryBundleInput input,
         string bundlePath,
         RecoveryBundleCandidateKind kind,
@@ -47,7 +47,40 @@ internal sealed class RecoveryBundleReader
             cancellationToken);
     }
 
-    internal ValueTask<RecoveryBundleReadResult> ReadFinalAsync(
+    internal static async ValueTask<RecoveryBundleFinalReadResult> ReadSelectedFinalAsync(
+        CliWorkspace workspace,
+        RecoveryBundleCandidateSnapshot candidate,
+        CancellationToken cancellationToken)
+    {
+        Models.Comparison.RecoveryEntrySetObservation.ValidateCandidate(workspace, candidate);
+        var read = await ReadFinalAsync(
+            workspace,
+            candidate.Path,
+            cancellationToken).ConfigureAwait(false);
+        if (read.Verified is not { } verified
+            || candidate.Verified is not { } selected
+            || !MatchesSelectedFinal(selected, verified))
+        {
+            return new RecoveryBundleFinalReadResult
+            {
+                Read = read.Verified is null
+                    ? read
+                    : RecoveryBundleReadResult.Classified(
+                        RecoveryBundleReadState.Malformed,
+                        "The selected recovery final changed after catalogue observation."),
+                Preparation = null,
+            };
+        }
+
+        return new RecoveryBundleFinalReadResult
+        {
+            Read = read,
+            Preparation = new RecoveryBundlePreparation(
+                new VerifiedFinalToken(verified, VerifiedFinalAuthority)),
+        };
+    }
+
+    internal static ValueTask<RecoveryBundleReadResult> ReadFinalAsync(
         CliWorkspace workspace,
         string bundlePath,
         CancellationToken cancellationToken)
@@ -61,7 +94,7 @@ internal sealed class RecoveryBundleReader
             cancellationToken);
     }
 
-    internal async ValueTask<RecoveryBundleFinalReadResult> ReadExpectedFinalAsync(
+    internal static async ValueTask<RecoveryBundleFinalReadResult> ReadExpectedFinalAsync(
         RecoveryBundleInput input,
         string bundlePath,
         CancellationToken cancellationToken)
@@ -153,27 +186,34 @@ internal sealed class RecoveryBundleReader
                 return Malformed("The recovery bundle entries do not match the expected operation targets.");
             }
 
-            if (archive.Entries.Count != manifest.Entries.Length + 1)
+            var payloadCount = manifest.Entries.Count(entry => entry.PriorPayload is not null);
+            if (archive.Entries.Count != payloadCount + 1)
             {
                 return Malformed("The recovery archive entry count does not match its manifest.");
             }
 
-            for (var index = 0; index < manifest.Entries.Length; index++)
+            var payloadIndex = 1;
+            foreach (var expected in manifest.Entries)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var expected = manifest.Entries[index];
-                var payload = archive.Entries[index + 1];
-                if (!string.Equals(payload.FullName, expected.PayloadName, StringComparison.Ordinal)
-                    || payload.Length != expected.Prior.Length)
+                if (expected.PriorPayload is not { } priorPayload
+                    || expected.Prior.OrdinaryFile is not { } prior)
+                {
+                    continue;
+                }
+
+                var payload = archive.Entries[payloadIndex++];
+                if (!string.Equals(payload.FullName, priorPayload, StringComparison.Ordinal)
+                    || payload.Length != prior.Length)
                 {
                     return Malformed("A recovery payload name or length does not match its manifest.");
                 }
 
                 var payloadHash = await HashEntryAsync(
                     payload,
-                    expected.Prior.Length,
+                    prior.Length,
                     cancellationToken).ConfigureAwait(false);
-                if (!string.Equals(payloadHash, expected.Prior.Sha256, StringComparison.Ordinal))
+                if (!string.Equals(payloadHash, prior.Sha256, StringComparison.Ordinal))
                 {
                     return Malformed("A recovery payload does not match its declared SHA-256.");
                 }
@@ -267,7 +307,7 @@ internal sealed class RecoveryBundleReader
 
     private static bool MatchesExpectedEntries(
         RecoveryBundleInput input,
-        IReadOnlyList<RecoveryBundleEntry> entries)
+        IReadOnlyList<RecoveryEntry> entries)
     {
         if (entries.Count != input.RecoveryTargets.Length)
         {
@@ -276,7 +316,7 @@ internal sealed class RecoveryBundleReader
 
         for (var index = 0; index < entries.Count; index++)
         {
-            var expected = RecoveryBundleEntry.FromTarget(
+            var expected = RecoveryEntry.FromTarget(
                 input,
                 input.RecoveryTargets[index],
                 index);
@@ -288,6 +328,20 @@ internal sealed class RecoveryBundleReader
 
         return true;
     }
+
+    private static bool MatchesSelectedFinal(
+        RecoveryBundleVerifiedRead selected,
+        RecoveryBundleVerifiedRead observed)
+        => string.Equals(selected.BundlePath, observed.BundlePath, PathComparison())
+            && string.Equals(
+                selected.WorkspacePhysicalPath,
+                observed.WorkspacePhysicalPath,
+                PathComparison())
+            && string.Equals(selected.WorkspaceKey, observed.WorkspaceKey, StringComparison.Ordinal)
+            && string.Equals(selected.Command, observed.Command, StringComparison.Ordinal)
+            && selected.Attribution == observed.Attribution
+            && selected.OperationId == observed.OperationId
+            && selected.Entries.SequenceEqual(observed.Entries);
 
     private static async ValueTask<string> HashEntryAsync(
         ZipArchiveEntry entry,

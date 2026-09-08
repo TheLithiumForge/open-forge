@@ -6,9 +6,9 @@ using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Commands.Status.Shared.Aggregation;
 
-internal sealed class StatusResultBuilder
+internal static class StatusResultBuilder
 {
-    internal StatusResult Build(StatusRequest request, StatusObservationSet observations)
+    internal static StatusResult Build(StatusRequest request, StatusObservationSet observations)
     {
         var facts = new StatusFacts
         {
@@ -26,6 +26,7 @@ internal sealed class StatusResultBuilder
                 observations.FrameworkLifecycle,
                 observations.ExtensionLifecycle,
                 StatusLifecycleAbsenceResolver.IsProven(observations)),
+            Library = StatusLibraryAggregator.Build(observations.Libraries),
             Recovery = StatusRecoveryAggregator.Build(observations.RecoveryResiduals),
         };
         var findings = StatusFindingAggregator.Build(observations, facts);
@@ -40,7 +41,7 @@ internal sealed class StatusResultBuilder
         };
     }
 
-    internal StatusResult Event(
+    internal static StatusResult Event(
         CliWorkspace? workspace,
         StatusFindingCode findingCode,
         string? subject,
@@ -66,6 +67,7 @@ internal sealed class StatusResultBuilder
                 Context = StatusContextAggregator.Unavailable(),
                 Structure = StatusStructureAggregator.Unavailable(),
                 Lifecycle = StatusLifecycleAggregator.Unavailable(),
+                Library = StatusLibraryAggregator.Unavailable("The Library observation was not completed for this Status event."),
                 Recovery = StatusRecoveryAggregator.Unavailable(),
             },
             Findings = findings,

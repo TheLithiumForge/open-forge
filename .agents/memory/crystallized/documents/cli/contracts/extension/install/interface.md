@@ -248,6 +248,16 @@ Extension payloads also cannot target the lifecycle document, repository
 metadata, recovery bundles or drafts, workspace overwrite companions, Framework
 blocks, or another manager's paths.
 
+An exact destination path claim in the consumer Library record
+`.agents/open-forge.libraries.json`, or a real relative projection link at that
+destination, is separately owned by Library management. Install never adopts,
+overwrites, updates, or removes that destination, including when `--force` is
+supplied. The no-follow final-leaf guard blocks ordinary Extension `Create`,
+`Replace`, `Delete`, or `ReplaceGeneratedRegion` when the leaf is a link or
+reparse point, independently of whether the Library record is present,
+readable, valid, or claims the path. Install does not reinterpret the Library
+record or invoke a Library operation.
+
 ## Semantic Fingerprints
 
 Supported parseable kinds use the `open-forge-markdown-v1` conservative
@@ -516,7 +526,8 @@ Conformance must cover exact source universe and ID rules, explicit `--all`,
 single-package inference, dependency-first closure and failures, Framework-anchor
 and route-host prerequisites, absent/no-op/divergent/initial-force states,
 automatic and exact bounded prompt behavior, trusted/untrusted/absent handling,
-shared owners, semantic fingerprints, generated navigation, strict
+shared owners, Library-record and projection collisions, independent no-follow
+final-leaf guards, semantic fingerprints, generated navigation, strict
 `.agents/`-descendant payload targets, rejection before planning, directory
 effects limited to missing descendants beneath the established anchor, reserved
 paths, complete planning, dependency-first target/generated effects, topology

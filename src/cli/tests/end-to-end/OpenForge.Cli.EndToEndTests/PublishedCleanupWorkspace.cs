@@ -220,14 +220,23 @@ internal sealed class PublishedCleanupWorkspace : IDisposable
               },
               "entries": [{
                 "ordinal": 0,
-                "target": "cleanup-target.md",
-                "kind": "delete",
-                "priorLength": {{priorBytes.Length}},
-                "priorSha256": "{{Hash(priorBytes)}}",
-                "payload": "payloads/00000000.bin",
-                "intendedAbsent": true,
-                "intendedLength": null,
-                "intendedSha256": null
+                "logicalPath": "cleanup-target.md",
+                "kind": "ordinary-delete",
+                "prior": {
+                  "kind": "ordinary-file",
+                  "length": {{priorBytes.Length}},
+                  "sha256": "{{Hash(priorBytes)}}",
+                  "linkKind": null,
+                  "rawRelativeTarget": null
+                },
+                "intended": {
+                  "kind": "missing",
+                  "length": null,
+                  "sha256": null,
+                  "linkKind": null,
+                  "rawRelativeTarget": null
+                },
+                "priorPayload": "payloads/00000000.bin"
               }]
             }
             """;

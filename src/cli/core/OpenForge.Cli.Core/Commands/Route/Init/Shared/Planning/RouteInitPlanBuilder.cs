@@ -14,14 +14,8 @@ internal sealed class RouteInitPlanBuilder
     private readonly RouteInitPlanFinalizer _finalizer;
 
     internal RouteInitPlanBuilder()
-        : this(new RecoveryBundleCatalogue(new RecoveryBundleReader()))
     {
-    }
-
-    internal RouteInitPlanBuilder(RecoveryBundleCatalogue recoveryCatalogue)
-    {
-        ArgumentNullException.ThrowIfNull(recoveryCatalogue);
-        _finalizer = new RouteInitPlanFinalizer(recoveryCatalogue);
+        _finalizer = new RouteInitPlanFinalizer();
     }
 
     internal async ValueTask<RouteInitPlanBuild> BuildAsync(

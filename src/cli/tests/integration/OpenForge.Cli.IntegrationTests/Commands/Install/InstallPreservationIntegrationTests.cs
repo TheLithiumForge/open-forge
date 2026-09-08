@@ -67,11 +67,13 @@ public sealed class InstallPreservationIntegrationTests
             {
                 Coverage = current.Coverage,
                 Source = current.Source,
-                Targets = current.Targets
-                    .Append(scopedTarget)
-                    .OrderBy(target => target.Path, StringComparer.Ordinal)
-                    .ThenBy(target => target.Region, StringComparer.Ordinal)
-                    .ToArray(),
+                Targets =
+                [
+                    .. current.Targets
+                        .Append(scopedTarget)
+                        .OrderBy(target => target.Path, StringComparer.Ordinal)
+                        .ThenBy(target => target.Region, StringComparer.Ordinal),
+                ],
                 GeneratedRegions = current.GeneratedRegions,
             };
 
@@ -80,7 +82,7 @@ public sealed class InstallPreservationIntegrationTests
             var lifecycleChange = Assert.IsType<PlannedFileChange>(lifecyclePlan.Change);
             await File.WriteAllBytesAsync(
                 workspace.Combine(LifecycleSchema.RelativePath),
-                lifecycleChange.IntendedBytes.ToArray(),
+                [.. lifecycleChange.IntendedBytes],
                 TestContext.Current.CancellationToken);
 
             var persistedRead = await lifecycleStore.ReadAsync(
@@ -164,7 +166,7 @@ public sealed class InstallPreservationIntegrationTests
             [
                 RecoveryBundleTarget.Create(change, before),
             ]);
-        var preparationResult = await new RecoveryBundleStore(new RecoveryBundleReader()).PrepareAsync(
+        var preparationResult = await RecoveryBundleStore.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundlePreparationState.Prepared, preparationResult.State);
@@ -173,7 +175,7 @@ public sealed class InstallPreservationIntegrationTests
             preparation.BundlePath,
             TestContext.Current.CancellationToken);
 
-        var candidateBefore = await new RecoveryBundleReader().ReadFinalAsync(
+        var candidateBefore = await RecoveryBundleReader.ReadFinalAsync(
             workspace.Workspace,
             preparation.BundlePath,
             TestContext.Current.CancellationToken);
@@ -210,7 +212,7 @@ public sealed class InstallPreservationIntegrationTests
             await File.ReadAllBytesAsync(
                 preparation.BundlePath,
                 TestContext.Current.CancellationToken));
-        var candidateAfter = await new RecoveryBundleReader().ReadFinalAsync(
+        var candidateAfter = await RecoveryBundleReader.ReadFinalAsync(
             workspace.Workspace,
             preparation.BundlePath,
             TestContext.Current.CancellationToken);
@@ -220,7 +222,8 @@ public sealed class InstallPreservationIntegrationTests
         Assert.Equal(string.Empty, promptOutput.ToString());
     }
 
-    [Fact(DisplayName = "Install preserves and ignores an unrelated recovery-store lookalike outside the recognized candidate set"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Install preserves and ignores an unrelated recovery-store lookalike outside the recognized candidate set"),
+     Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task AutomaticInstallPreservesUnrecognizedRecoveryLookalike()
     {
         using var workspace = InstallOperationWorkspace.Create("install-recovery-lookalike");
@@ -264,7 +267,7 @@ public sealed class InstallPreservationIntegrationTests
                 canPrompt: false),
             workspace.LockStoreRoot);
 
-    private static IReadOnlyDictionary<string, string> WithoutPath(
+    private static Dictionary<string, string> WithoutPath(
         IReadOnlyDictionary<string, string> snapshot,
         string relativePath)
         => snapshot

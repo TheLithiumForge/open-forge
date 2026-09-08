@@ -10,46 +10,83 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Move;
 public sealed class RouteMovePlanningIntegrationTests
 {
     [Theory(DisplayName = "Route Move resolves complete subjects destinations ownership references and navigation without writes"),
-        InlineData("leaf-id", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
-        InlineData("leaf-base-path", RouteMoveIntegrationWorkspace.LeafPath, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
-        InlineData("leaf-overwrite-path", RouteMoveIntegrationWorkspace.OverwritePath, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
-        InlineData("same-parent", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.Apply, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
-        InlineData("cross-route", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.CrossRouteDestination, (int)RouteMoveMode.Apply, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
-        InlineData("category", RouteMoveIntegrationWorkspace.CategoryPath, RouteMoveIntegrationWorkspace.CategoryDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Category),
-        InlineData("compatibility-category", ".agents/guidance/topics/index.md", ".agents/archive/topics/index.md", (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Category),
-        InlineData("incoming-reference", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
-        InlineData("outgoing-reference", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.CrossRouteDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
-        InlineData("unicode-definition-fragment", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
-        InlineData("external-uri", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
-        InlineData("loader", ".agents/loader.md", RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidSubject, -1),
+        InlineData("leaf-id", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
+        InlineData("leaf-base-path", RouteMoveIntegrationWorkspace.LeafPath, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
+        InlineData("leaf-overwrite-path", RouteMoveIntegrationWorkspace.OverwritePath, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
+        InlineData("same-parent", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.Apply, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
+        InlineData("cross-route", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.CrossRouteDestination,
+            (int)RouteMoveMode.Apply, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
+        InlineData("category", RouteMoveIntegrationWorkspace.CategoryPath, RouteMoveIntegrationWorkspace.CategoryDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Category),
+        InlineData("compatibility-category", ".agents/guidance/topics/index.md", ".agents/archive/topics/index.md",
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Category),
+        InlineData("incoming-reference", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
+        InlineData("outgoing-reference", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.CrossRouteDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
+        InlineData("unicode-definition-fragment", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
+        InlineData("external-uri", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
+        InlineData("loader", ".agents/loader.md", RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidSubject, -1),
         InlineData("workspace-root", ".agents/", RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidSource, -1),
-        InlineData("native-source", ".agents/guidance/topics/native/SKILL.md", RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidSubject, -1),
-        InlineData("resource-source", ".agents/guidance/topics/image.bin", RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidSubject, -1),
-        InlineData("unsupported-source", ".agents/guidance/topics/notes.md", RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidSubject, -1),
-        InlineData("orphan-overwrite", RouteMoveIntegrationWorkspace.OverwritePath, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidSubject, -1),
-        InlineData("ambiguous-route", RouteMoveIntegrationWorkspace.CategoryPath, RouteMoveIntegrationWorkspace.CategoryDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.RouteAmbiguous, -1),
-        InlineData("identity-collision", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.IdentityCollision, -1),
-        InlineData("missing-parent", RouteMoveIntegrationWorkspace.LeafId, ".agents/missing/new guide.md", (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationParentMissing, -1),
-        InlineData("id-like-destination", RouteMoveIntegrationWorkspace.LeafId, "archive/new-guide", (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidDestination, -1),
-        InlineData("invalid-leaf-extension", RouteMoveIntegrationWorkspace.LeafId, ".agents/guidance/new guide.txt", (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidDestination, -1),
-        InlineData("invalid-category-form", RouteMoveIntegrationWorkspace.CategoryPath, ".agents/archive/topics/index.md", (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidDestination, -1),
-        InlineData("occupied-destination", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationOccupied, -1),
-        InlineData("self-move", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafPath, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.SelfMove, -1),
-        InlineData("inside-source", RouteMoveIntegrationWorkspace.CategoryPath, ".agents/guidance/topics/nested/_nested.md", (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationInsideSource, -1),
-        InlineData("overwrite-collision", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationOccupied, -1),
-        InlineData("ownership-claim", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipClaimed, -1),
-        InlineData("ownership-malformed", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
-        InlineData("ownership-stale", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
-        InlineData("ownership-incomplete", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
-        InlineData("ownership-conflicting", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
-        InlineData("unsupported-reference", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
-        InlineData("unsafe-reference", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.ReferenceUnsafe, -1),
-        InlineData("invalid-utf8", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Incomplete, (int)RouteMoveFindingCode.ReferenceCoverageIncomplete, -1),
-        InlineData("unsafe-generated-region", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.GeneratedRegionUnsafe, -1),
-        InlineData("aliased-destination", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationUnsafe, -1),
-        InlineData("category-unsafe-alias", RouteMoveIntegrationWorkspace.CategoryPath, RouteMoveIntegrationWorkspace.CategoryDestination, (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.CategoryUnsafe, -1)]
+        InlineData("native-source", ".agents/guidance/topics/native/SKILL.md", RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidSubject, -1),
+        InlineData("resource-source", ".agents/guidance/topics/image.bin", RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidSubject, -1),
+        InlineData("unsupported-source", ".agents/guidance/topics/notes.md", RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidSubject, -1),
+        InlineData("orphan-overwrite", RouteMoveIntegrationWorkspace.OverwritePath, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidSubject, -1),
+        InlineData("ambiguous-route", RouteMoveIntegrationWorkspace.CategoryPath, RouteMoveIntegrationWorkspace.CategoryDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.RouteAmbiguous, -1),
+        InlineData("identity-collision", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.IdentityCollision, -1),
+        InlineData("missing-parent", RouteMoveIntegrationWorkspace.LeafId, ".agents/missing/new guide.md",
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationParentMissing, -1),
+        InlineData("id-like-destination", RouteMoveIntegrationWorkspace.LeafId, "archive/new-guide",
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidDestination, -1),
+        InlineData("invalid-leaf-extension", RouteMoveIntegrationWorkspace.LeafId, ".agents/guidance/new guide.txt",
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidDestination, -1),
+        InlineData("invalid-category-form", RouteMoveIntegrationWorkspace.CategoryPath, ".agents/archive/topics/index.md",
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidDestination, -1),
+        InlineData("occupied-destination", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationOccupied, -1),
+        InlineData("self-move", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafPath,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.SelfMove, -1),
+        InlineData("inside-source", RouteMoveIntegrationWorkspace.CategoryPath, ".agents/guidance/topics/nested/_nested.md",
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationInsideSource, -1),
+        InlineData("overwrite-collision", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationOccupied, -1),
+        InlineData("ownership-claim", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipClaimed, -1),
+        InlineData("ownership-malformed", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
+        InlineData("ownership-stale", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
+        InlineData("ownership-incomplete", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
+        InlineData("ownership-conflicting", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
+        InlineData("unsupported-reference", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
+        InlineData("unsafe-reference", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.ReferenceUnsafe, -1),
+        InlineData("invalid-utf8", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Incomplete, (int)RouteMoveFindingCode.ReferenceCoverageIncomplete, -1),
+        InlineData("unsafe-generated-region", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.GeneratedRegionUnsafe, -1),
+        InlineData("aliased-destination", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationUnsafe, -1),
+        InlineData("category-unsafe-alias", RouteMoveIntegrationWorkspace.CategoryPath, RouteMoveIntegrationWorkspace.CategoryDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.CategoryUnsafe, -1)]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationBehavior")]
-    public async Task PlanningCoversTheCompleteAcceptedBoundary(
+    public static async Task PlanningCoversTheCompleteAcceptedBoundary(
         string scenario,
         string source,
         string destination,
@@ -62,7 +99,7 @@ public sealed class RouteMovePlanningIntegrationTests
         workspace.SeedScenario(scenario);
         var before = workspace.SnapshotHashes();
 
-        var build = await workspace.CreatePlanBuilder().BuildAsync(
+        var build = await RouteMoveIntegrationWorkspace.CreatePlanBuilder().BuildAsync(
             workspace.Request(source, destination, (RouteMoveMode)modeValue),
             TestContext.Current.CancellationToken);
 
@@ -104,7 +141,7 @@ public sealed class RouteMovePlanningIntegrationTests
     {
         using var workspace = RouteMoveIntegrationWorkspace.Create("move-plan-parity");
         var before = workspace.SnapshotHashes();
-        var builder = workspace.CreatePlanBuilder();
+        var builder = RouteMoveIntegrationWorkspace.CreatePlanBuilder();
 
         var dryRun = await builder.BuildAsync(
             workspace.Request(mode: RouteMoveMode.DryRun),
@@ -140,7 +177,7 @@ public sealed class RouteMovePlanningIntegrationTests
     {
         using var workspace = RouteMoveIntegrationWorkspace.Create("move-category-inventory");
 
-        var build = await workspace.CreatePlanBuilder().BuildAsync(
+        var build = await RouteMoveIntegrationWorkspace.CreatePlanBuilder().BuildAsync(
             workspace.Request(
                 RouteMoveIntegrationWorkspace.CategoryPath,
                 RouteMoveIntegrationWorkspace.CategoryDestination),
@@ -238,7 +275,7 @@ public sealed class RouteMovePlanningIntegrationTests
         const string oldTarget = ".agents/guidance/old%20guide.md#section";
         const string newTarget = ".agents/guidance/new%20guide.md#section";
 
-        var build = await workspace.CreatePlanBuilder().BuildAsync(
+        var build = await RouteMoveIntegrationWorkspace.CreatePlanBuilder().BuildAsync(
             workspace.Request(),
             TestContext.Current.CancellationToken);
 
@@ -296,7 +333,7 @@ public sealed class RouteMovePlanningIntegrationTests
                 "# Child\n\n[Self](#child)\n\n[Notes](./notes.md)\n",
                 StringComparison.Ordinal));
 
-        var build = await workspace.CreatePlanBuilder().BuildAsync(
+        var build = await RouteMoveIntegrationWorkspace.CreatePlanBuilder().BuildAsync(
             workspace.Request(
                 RouteMoveIntegrationWorkspace.CategoryId,
                 RouteMoveIntegrationWorkspace.CategoryDestination),
@@ -330,7 +367,7 @@ public sealed class RouteMovePlanningIntegrationTests
                 "# Guidance\n\n[Authored old guide](old%20guide.md#section)\n",
                 StringComparison.Ordinal));
 
-        var build = await workspace.CreatePlanBuilder().BuildAsync(
+        var build = await RouteMoveIntegrationWorkspace.CreatePlanBuilder().BuildAsync(
             workspace.Request(),
             TestContext.Current.CancellationToken);
 
@@ -365,7 +402,7 @@ public sealed class RouteMovePlanningIntegrationTests
             + "Code: `.agents/guidance/old guide.md`.\n\n"
             + "[Supported](.agents/guidance/old%20guide.md#section)\n");
 
-        var build = await workspace.CreatePlanBuilder().BuildAsync(
+        var build = await RouteMoveIntegrationWorkspace.CreatePlanBuilder().BuildAsync(
             workspace.Request(),
             TestContext.Current.CancellationToken);
 
@@ -392,7 +429,7 @@ public sealed class RouteMovePlanningIntegrationTests
                 ["Route"],
                 "# Guidance\n\n## Entries\n\n<!-- open-forge:generated-index:start -->\n"));
 
-        var build = await workspace.CreatePlanBuilder().BuildAsync(
+        var build = await RouteMoveIntegrationWorkspace.CreatePlanBuilder().BuildAsync(
             workspace.Request(
                 ".agents/guidance/_guidance.md",
                 ".agents/archive/guidance/_guidance.md"),
@@ -412,7 +449,7 @@ public sealed class RouteMovePlanningIntegrationTests
     {
         using var workspace = RouteMoveIntegrationWorkspace.Create("move-generated-navigation");
 
-        var build = await workspace.CreatePlanBuilder().BuildAsync(
+        var build = await RouteMoveIntegrationWorkspace.CreatePlanBuilder().BuildAsync(
             workspace.Request(
                 ".agents/guidance/_guidance.md",
                 ".agents/archive/guidance/_guidance.md"),

@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.Filesystem;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
@@ -36,6 +37,17 @@ internal sealed partial class FileExpectationValidator(PhysicalPathResolver phys
             return FileExpectationValidationResult.Blocked(
                 expectation,
                 "The expected logical path is outside the selected workspace.");
+        }
+
+        var leaf = NoFollowLeafObserver.Observe(
+            _physicalPathResolver,
+            workspace,
+            expectation.LogicalPath,
+            cancellationToken);
+        var leafBoundary = FromLeafObservation(expectation, leaf);
+        if (leafBoundary is not null)
+        {
+            return leafBoundary;
         }
 
         var resolution = Resolve(workspace, expectation.LogicalPath);
@@ -82,6 +94,24 @@ internal sealed partial class FileExpectationValidator(PhysicalPathResolver phys
             if (cancellationToken.IsCancellationRequested)
             {
                 return FileExpectationValidationResult.Cancelled(expectation);
+            }
+
+            var confirmedLeaf = NoFollowLeafObserver.Observe(
+                _physicalPathResolver,
+                workspace,
+                expectation.LogicalPath,
+                cancellationToken);
+            if (confirmedLeaf.State == NoFollowLeafState.Missing)
+            {
+                return CompareMissing(workspace, expectation);
+            }
+
+            if (confirmedLeaf.State != NoFollowLeafState.OrdinaryFile)
+            {
+                return FromLeafObservation(expectation, confirmedLeaf)
+                    ?? FileExpectationValidationResult.Blocked(
+                        expectation,
+                        "The expected ordinary file changed object kind during validation.");
             }
 
             var confirmed = Resolve(workspace, expectation.LogicalPath);
@@ -169,6 +199,35 @@ internal sealed partial class FileExpectationValidator(PhysicalPathResolver phys
             : FileExpectationValidationResult.Blocked(
                 expectation,
                 "The expected path physical boundary is unsafe or unavailable.");
+
+    private static FileExpectationValidationResult? FromLeafObservation(
+        FileExpectation expectation,
+        NoFollowLeafObservation leaf)
+    {
+        return leaf.State switch
+        {
+            NoFollowLeafState.Missing
+                or NoFollowLeafState.OrdinaryFile
+                or NoFollowLeafState.Directory => null,
+            NoFollowLeafState.Inaccessible
+                or NoFollowLeafState.Unknown
+                when leaf.Failure is { } failure =>
+                FileExpectationValidationResult.Failed(expectation, failure),
+            NoFollowLeafState.RelativeFileLink
+                or NoFollowLeafState.Link
+                or NoFollowLeafState.ReparsePoint
+                or NoFollowLeafState.Special
+                or NoFollowLeafState.Inaccessible
+                or NoFollowLeafState.Unknown =>
+                FileExpectationValidationResult.Blocked(
+                    expectation,
+                    "The expected path final leaf is not an ordinary file, directory, or proven missing leaf."),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(leaf),
+                leaf.State,
+                "The no-follow leaf state is not defined."),
+        };
+    }
 
     private static FileExpectationValidationResult Failed(
         FileExpectation expectation,

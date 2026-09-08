@@ -1,4 +1,6 @@
+using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Operational.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
@@ -12,4 +14,6 @@ internal sealed record DoctorObservation(
     RouteDoctorView Routes,
     LocalReferenceDoctorView LocalReferences,
     FrameworkLifecycleDoctorView FrameworkLifecycle,
-    ExtensionLifecycleDoctorView ExtensionLifecycle);
+    ExtensionLifecycleDoctorView ExtensionLifecycle,
+    LibraryDoctorView Libraries,
+    ImmutableArray<LibraryResidualEvidence> LibraryResiduals);

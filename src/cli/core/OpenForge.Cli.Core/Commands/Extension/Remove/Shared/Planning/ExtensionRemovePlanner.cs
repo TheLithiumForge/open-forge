@@ -22,12 +22,10 @@ internal sealed class ExtensionRemovePlanner(
     CliInteractiveSession interactiveSession,
     LifecycleStore lifecycleStore,
     LifecycleOwnershipReader ownershipReader,
-    PhysicalPathResolver physicalPathResolver,
-    RecoveryBundleCatalogue recoveryCatalogue)
+    PhysicalPathResolver physicalPathResolver)
 {
     private readonly LifecycleStore _lifecycleStore = lifecycleStore;
     private readonly LifecycleOwnershipReader _ownershipReader = ownershipReader;
-    private readonly RecoveryBundleCatalogue _recoveryCatalogue = recoveryCatalogue;
     private readonly ExtensionRemoveSelectionResolver _selectionResolver = new(interactiveSession);
     private readonly ExtensionRemovePathInspector _pathInspector = new(physicalPathResolver);
     private readonly ExtensionRemoveTopologyBuilder _topologyBuilder = new();
@@ -270,11 +268,11 @@ internal sealed class ExtensionRemovePlanner(
             Planning = new ExtensionRemovePlanningPlan
             {
                 Authority = new ExtensionRemovePlanningAuthority(policy),
-                Decisions = pathPlans.Select(path => new ExtensionRemovePlanningDecision
+                Decisions = [.. pathPlans.Select(path => new ExtensionRemovePlanningDecision
                 {
                     Path = path,
                     Disposition = ExtensionRemovePlanAssembler.ReadDisposition(path.Action),
-                }).ToArray(),
+                })],
             },
             Topology = topologyBuild.Topology,
             Effects = effects,
@@ -311,7 +309,7 @@ internal sealed class ExtensionRemovePlanner(
         };
     }
 
-    private async ValueTask<ExtensionRemoveRecoveryRead> ReadRecoveryAsync(
+    private static async ValueTask<ExtensionRemoveRecoveryRead> ReadRecoveryAsync(
         ExtensionRemoveRequest request,
         RecoveryBundlePreparation? allowed,
         CancellationToken cancellationToken)
@@ -319,7 +317,7 @@ internal sealed class ExtensionRemovePlanner(
         RecoveryBundleCatalogueResult catalogue;
         try
         {
-            catalogue = await _recoveryCatalogue.ReadAsync(request.Workspace, cancellationToken)
+            catalogue = await RecoveryBundleCatalogue.ReadAsync(request.Workspace, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

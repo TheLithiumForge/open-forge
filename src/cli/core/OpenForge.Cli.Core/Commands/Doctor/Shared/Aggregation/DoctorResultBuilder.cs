@@ -10,9 +10,9 @@ using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
 
-internal sealed class DoctorResultBuilder
+internal static class DoctorResultBuilder
 {
-    internal DoctorResult Build(DoctorRequest request, DoctorObservation observation)
+    internal static DoctorResult Build(DoctorRequest request, DoctorObservation observation)
     {
         var lifecycleAbsence = OperationalLifecycleAbsenceProof.IsProven(
             OperationalLifecycleAbsenceEvidence.FromDoctor(
@@ -23,7 +23,12 @@ internal sealed class DoctorResultBuilder
                 observation.ExtensionLifecycle));
         var domains = new DoctorDomainReport[]
         {
-            WorkspaceEntryDoctorInspector.Inspect(request.Workspace, observation.WorkspaceEntry, observation.Routes),
+            LibraryDoctorInspector.Inspect(
+                request.Workspace,
+                WorkspaceEntryDoctorInspector.Inspect(request.Workspace, observation.WorkspaceEntry, observation.Routes),
+                observation.Libraries,
+                observation.RecoveryResiduals,
+                observation.LibraryResiduals),
             RecoveryResidualDoctorInspector.Inspect(observation.RecoveryResiduals),
             RouteDoctorInspector.Inspect(observation.Routes),
             LocalReferenceDoctorInspector.Inspect(observation.LocalReferences),
@@ -51,7 +56,7 @@ internal sealed class DoctorResultBuilder
         };
     }
 
-    internal DoctorResult Event(
+    internal static DoctorResult Event(
         CliWorkspace? workspace,
         CliSemanticStatus status,
         DoctorFindingKind? kind,

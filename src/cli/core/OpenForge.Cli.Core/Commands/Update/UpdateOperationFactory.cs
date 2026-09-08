@@ -6,7 +6,6 @@ using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Shell.Interaction;
 
 namespace OpenForge.Cli.Core.Commands.Update;
@@ -22,8 +21,6 @@ internal static class UpdateOperationFactory
         var validator = new FileExpectationValidator(physicalPathResolver);
         var mutationRevalidator = new MutationRevalidator(validator);
         var planBuilder = UpdatePlanBuilder.Create();
-        var recoveryReader = new RecoveryBundleReader();
-        var recoveryCatalogue = new RecoveryBundleCatalogue(recoveryReader);
         return new UpdateOperation(
             interactiveSession,
             planBuilder,
@@ -33,12 +30,6 @@ internal static class UpdateOperationFactory
                     : new WorkspaceLockManager(lockStoreRoot),
                 new UpdateApplicationPreflight(
                     new UpdatePlanRevalidator(planBuilder, mutationRevalidator)),
-                new UpdateRecoveryOperation(
-                    new RecoveryBundleStore(recoveryReader),
-                    recoveryCatalogue,
-                    new RecoveryBundleDeletionGuard(
-                        recoveryCatalogue,
-                        recoveryReader)),
                 new UpdateEffectApplication(
                     new FileChangeApplier(mutationRevalidator, validator)),
                 new UpdateAppliedVerifier(planBuilder)));

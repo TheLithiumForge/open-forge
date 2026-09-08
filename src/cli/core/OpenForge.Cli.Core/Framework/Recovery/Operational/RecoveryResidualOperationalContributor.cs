@@ -1,5 +1,7 @@
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Observation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
 
@@ -17,14 +19,14 @@ internal interface IRecoveryResidualOperationalContributor
 }
 
 internal sealed class RecoveryResidualOperationalContributor(
-    RecoveryBundleCatalogue catalogue,
-    RecoveryBundleTargetStateReader targetStateReader) : IRecoveryResidualOperationalContributor
+    RecoveryBundleTargetStateReader targetStateReader,
+    PhysicalPathResolver physicalPathResolver) : IRecoveryResidualOperationalContributor
 {
-    internal async ValueTask<RecoveryResidualStatusView> ReadStatusAsync(
+    internal static async ValueTask<RecoveryResidualStatusView> ReadStatusAsync(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
     {
-        var result = await catalogue.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var result = await RecoveryBundleCatalogue.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
         return new RecoveryResidualStatusView(ReadState(result.State), ReadCandidates(result));
     }
 
@@ -32,7 +34,7 @@ internal sealed class RecoveryResidualOperationalContributor(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
     {
-        var result = await catalogue.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var result = await RecoveryBundleCatalogue.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
         if (result.State != RecoveryBundleCatalogueState.Available)
         {
             return new RecoveryResidualDoctorView(
@@ -52,22 +54,26 @@ internal sealed class RecoveryResidualOperationalContributor(
                         .ReadAsync(workspace, verified, cancellationToken)
                         .ConfigureAwait(false)
                     : null;
+                var entryComparisons = verified?.Attribution.Producer == RecoveryBundleProducer.Library
+                    ? await RecoveryEntrySetObserver.ReadAsync(physicalPathResolver, workspace, candidate, cancellationToken).ConfigureAwait(false)
+                    : null;
                 candidates.Add(RecoveryDoctorCandidateObservation.Create(
                     candidate,
-                    comparison));
+                    comparison,
+                    entryComparisons));
             }
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             return new RecoveryResidualDoctorView(
                 OperationalViewState.Interrupted,
-                candidates.ToArray(),
+                [.. candidates],
                 "Recovery target comparison was interrupted.");
         }
 
         return new RecoveryResidualDoctorView(
             OperationalViewState.Complete,
-            candidates.ToArray(),
+            [.. candidates],
             null);
     }
 
@@ -93,12 +99,10 @@ internal sealed class RecoveryResidualOperationalContributor(
                 "The recovery-catalogue state is not defined."),
         };
 
-    private static IReadOnlyList<RecoveryCandidateObservation> ReadCandidates(
+    private static RecoveryCandidateObservation[] ReadCandidates(
         RecoveryBundleCatalogueResult result)
-        => result.Candidates
-            .Select(candidate => new RecoveryCandidateObservation(
+        => [.. result.Candidates.Select(candidate => new RecoveryCandidateObservation(
                 candidate.Path,
                 candidate.Kind,
-                candidate.Integrity))
-            .ToArray();
+                candidate.Integrity))];
 }

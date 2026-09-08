@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
@@ -33,6 +34,9 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
         var extensions = await _contributors.ExtensionLifecycle
             .ReadDoctorAsync(request.Workspace, cancellationToken)
             .ConfigureAwait(false);
+        var libraries = await _contributors.Libraries.ReadDoctorAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        var libraryResiduals = await LibraryResidualAttributionReader.ReadAsync(
+            request.Workspace, libraries, recovery, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
         var observation = new DoctorObservation(
             workspace,
@@ -40,8 +44,10 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
             routes,
             references,
             framework,
-            extensions);
-        var result = new DoctorResultBuilder().Build(request, observation);
+            extensions,
+            libraries,
+            libraryResiduals);
+        var result = DoctorResultBuilder.Build(request, observation);
         return new DoctorDiagnosisRead(observation, result);
     }
 }

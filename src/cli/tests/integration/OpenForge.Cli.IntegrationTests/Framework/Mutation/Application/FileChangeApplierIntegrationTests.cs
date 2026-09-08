@@ -34,7 +34,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             FileExpectation.Missing(path),
             "created bytes\n"u8);
         await using var lease = await AcquireAsync(workspace);
-        var check = await RevalidateAsync(lease, change, validator, resolver);
+        var check = await RevalidateAsync(lease, change, validator);
 
         var receipt = await new FileChangeApplier(
                 new MutationRevalidator(validator),
@@ -76,7 +76,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         var replace = PlannedFileChange.Replace(
             FileExpectation.File(path, path, FileExpectation.Hash("before\n"u8)),
             "replace bytes\n"u8);
-        var replaceCheck = await RevalidateAsync(lease, replace, validator, resolver);
+        var replaceCheck = await RevalidateAsync(lease, replace, validator);
         var replaced = await applier.ApplyAsync(
             lease,
             replace,
@@ -92,7 +92,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         var generated = PlannedFileChange.ReplaceGeneratedRegion(
             FileExpectation.File(path, path, FileExpectation.Hash("replace bytes\n"u8)),
             "generated full document\n"u8);
-        var generatedCheck = await RevalidateAsync(lease, generated, validator, resolver);
+        var generatedCheck = await RevalidateAsync(lease, generated, validator);
         var generatedReceipt = await applier.ApplyAsync(
             lease,
             generated,
@@ -120,7 +120,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         var change = PlannedFileChange.Delete(
             FileExpectation.File(path, path, FileExpectation.Hash("remove me"u8)));
         await using var lease = await AcquireAsync(workspace);
-        var check = await RevalidateAsync(lease, change, validator, resolver);
+        var check = await RevalidateAsync(lease, change, validator);
 
         var receipt = await new FileChangeApplier(
                 new MutationRevalidator(validator),
@@ -191,7 +191,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             FileExpectation.File(path, path, FileExpectation.Hash("before"u8)),
             "intended"u8);
         await using var lease = await AcquireAsync(workspace);
-        var check = await RevalidateAsync(lease, change, validator, resolver);
+        var check = await RevalidateAsync(lease, change, validator);
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 
@@ -523,8 +523,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     private static async ValueTask<FileExpectationValidationResult> RevalidateAsync(
         WorkspaceLockLease lease,
         PlannedFileChange change,
-        FileExpectationValidator validator,
-        PhysicalPathResolver resolver)
+        FileExpectationValidator validator)
     {
         var result = await new MutationRevalidator(validator).ValidateAsync(
             lease,
@@ -559,7 +558,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
                 lease.Request.Workspace),
             lease.Request.OperationId,
             [RecoveryBundleTarget.Create(change, before)]);
-        var result = await new RecoveryBundleStore(new RecoveryBundleReader()).PrepareAsync(
+        var result = await RecoveryBundleStore.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(result.Preparation);
@@ -575,10 +574,11 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         }
     }
 
-    private static IReadOnlyList<string> Stages(TemporaryWorkspace temporary)
-        => Directory
-            .EnumerateFiles(temporary.Path, ".open-forge-stage-*", SearchOption.AllDirectories)
-            .ToArray();
+    private static string[] Stages(TemporaryWorkspace temporary)
+        => [.. Directory.EnumerateFiles(
+            temporary.Path,
+            ".open-forge-stage-*",
+            SearchOption.AllDirectories)];
 
     private static CliWorkspace Workspace(TemporaryWorkspace temporary)
         => new(

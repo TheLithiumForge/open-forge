@@ -99,6 +99,8 @@ internal static class RepairDefinitions
             RepairDependencyDomain.WorkspaceContainment => "workspace-containment",
             RepairDependencyDomain.RouteAndHeading => "route-and-heading",
             RepairDependencyDomain.LocalReference => "local-reference",
+            RepairDependencyDomain.LibraryRecord => "library-record",
+            RepairDependencyDomain.LibraryResidual => "library-residual",
             _ => Undefined(nameof(domain), domain),
         };
 
@@ -108,6 +110,8 @@ internal static class RepairDefinitions
             RepairVerificationKind.DestinationLiteral => "destination-literal",
             RepairVerificationKind.SameTargetIdentity => "same-target-identity",
             RepairVerificationKind.ResultingBytes => "resulting-bytes",
+            RepairVerificationKind.NoFollowIdentity => "no-follow-identity",
+            RepairVerificationKind.PriorState => "prior-state",
             _ => Undefined(nameof(kind), kind),
         };
 

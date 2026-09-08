@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
@@ -31,7 +32,8 @@ public sealed class OperationalContributorCatalogueTests
             routes,
             localReferences,
             frameworkLifecycle,
-            extensionLifecycle);
+            extensionLifecycle,
+            new LibraryOperationalContributor());
 
         Assert.Same(workspaceEntry, catalogue.WorkspaceEntry);
         Assert.Same(recoveryResiduals, catalogue.RecoveryResiduals);

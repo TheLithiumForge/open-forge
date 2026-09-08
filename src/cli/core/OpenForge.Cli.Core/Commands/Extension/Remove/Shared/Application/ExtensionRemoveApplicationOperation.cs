@@ -18,14 +18,12 @@ internal sealed class ExtensionRemoveApplicationOperation(
     WorkspaceLockManager lockManager,
     ExtensionRemovePlanner planner,
     MutationRevalidator revalidator,
-    FileChangeApplier fileApplier,
-    ExtensionRemoveRecoveryApplication recoveryApplication)
+    FileChangeApplier fileApplier)
 {
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly ExtensionRemovePlanner _planner = planner;
     private readonly MutationRevalidator _revalidator = revalidator;
     private readonly FileChangeApplier _fileApplier = fileApplier;
-    private readonly ExtensionRemoveRecoveryApplication _recoveryApplication = recoveryApplication;
 
     internal async ValueTask<ExtensionRemoveResult> ExecuteAsync(
         ExtensionRemovePlan plan,
@@ -85,14 +83,13 @@ internal sealed class ExtensionRemoveApplicationOperation(
     }
 
     internal static IReadOnlyList<PlannedFileChange> ReadChanges(ExtensionRemovePlan plan)
-        => plan.Effects
+        => [.. plan.Effects
             .Select(effect => effect.FileChange)
             .Where(change => change is not null)
             .Cast<PlannedFileChange>()
             .Append(plan.LifecycleChange)
             .Where(change => change is not null)
-            .Cast<PlannedFileChange>()
-            .ToArray();
+            .Cast<PlannedFileChange>()];
 
     private async ValueTask<ExtensionRemoveResult> ExecuteUnderLeaseAsync(
         ExtensionRemovePlan plan,
@@ -172,7 +169,7 @@ internal sealed class ExtensionRemoveApplicationOperation(
         RecoveryBundlePreparationResult preparationResult;
         try
         {
-            preparationResult = await _recoveryApplication.PrepareAsync(
+            preparationResult = await ExtensionRemoveRecoveryApplication.PrepareAsync(
                 plan,
                 operationId,
                 cancellationToken).ConfigureAwait(false);
@@ -313,14 +310,14 @@ internal sealed class ExtensionRemoveApplicationOperation(
 
             verificationState = Verified();
             applicationStage = ExtensionRemoveApplicationStage.Cleanup;
-            var cleanup = await _recoveryApplication.CleanupAsync(
+            var cleanup = await ExtensionRemoveRecoveryApplication.CleanupAsync(
                 plan,
                 lease,
                 preparation,
                 cancellationToken).ConfigureAwait(false);
             var finalFindings = cleanup.Finding is null
                 ? planned.Findings
-                : planned.Findings.Append(cleanup.Finding).ToArray();
+                : [.. planned.Findings.Append(cleanup.Finding)];
             return Result(
                 plan,
                 planned,
@@ -348,9 +345,9 @@ internal sealed class ExtensionRemoveApplicationOperation(
                 Lifecycle(plan, progress.Lifecycle),
                 recovery,
                 progress.Verification,
-                planned.Findings.Append(new ExtensionRemoveFinding(
+                [.. planned.Findings.Append(new ExtensionRemoveFinding(
                     ExtensionRemoveFindingCode.Interrupted,
-                    "Extension Remove application was interrupted.")).ToArray());
+                    "Extension Remove application was interrupted."))]);
         }
         catch (Exception)
         {
@@ -370,9 +367,9 @@ internal sealed class ExtensionRemoveApplicationOperation(
                 Lifecycle(plan, progress.Lifecycle),
                 recovery,
                 progress.Verification,
-                planned.Findings.Append(new ExtensionRemoveFinding(
+                [.. planned.Findings.Append(new ExtensionRemoveFinding(
                     ExtensionRemoveFindingCode.OperationFailed,
-                    "Extension Remove application failed unexpectedly.")).ToArray());
+                    "Extension Remove application failed unexpectedly."))]);
         }
     }
 

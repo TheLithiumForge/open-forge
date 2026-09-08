@@ -49,6 +49,13 @@ Read and selection facts do not acquire mutation authority. Persistent effects
 begin only after the complete selected target set, expected projection, ordered
 plan, and preflight have succeeded.
 
+Every generated-region effect consumes the neutral no-follow logical-leaf guard.
+The guard inspects the logical target leaf before ordinary physical resolution,
+at initial preflight, during under-lease revalidation, and immediately before
+the effect. A present link, reparse point, or special final leaf blocks the
+ordinary `ReplaceGeneratedRegion` effect. This guard is independent of Library
+record authority, so Index cannot follow, write, or delete a Library projection.
+
 The neutral formation step is an I1-owned shared expansion of the accepted GN1
 capability. GN1 remains Complete. Index owns command selection, plan
 orchestration, status, findings, presentation, and its use of M1 mechanics. It
@@ -174,6 +181,13 @@ Destination resolution and containment are validated before expected bytes are
 accepted. The empty-child case is emitted exactly as required by the Interface
 Contract; no alternate empty representation enters the plan.
 
+The generated target's final leaf is observed without following it before its
+ordinary physical identity is resolved. A filesystem symlink projection,
+reparse point, or special final leaf is a blocked target even when its resolved
+target would otherwise be contained and its Library record is missing or
+unavailable. Stable contained directory-link ancestry remains governed by the
+ordinary path contract.
+
 Parsing, compatibility, encoding, line endings, and serialization follow the
 accepted [Technical Design](technical-design.md#markdown-yaml-and-byte-boundaries)
 and must produce the exact public generated shapes.
@@ -201,8 +215,10 @@ marker tokens. No whole-file formatting or normalization is introduced.
 ## Complete Planning
 
 The operation resolves the complete selected target set and preflights the
-complete plan before the first write. One blocked target blocks every planned
-update. There is no best-effort or partial-application mode.
+complete plan before the first write. It repeats the no-follow final-leaf
+observation for every planned target during initial preflight. One blocked
+target blocks every planned update. There is no best-effort or
+partial-application mode.
 
 Planning classifies each selected region as `update` when its current bounded
 body differs from the expected body, or `unchanged` when the bytes already
@@ -220,7 +236,8 @@ Dry-run and application use the same request, authoritative topology
 projection, current expected-state facts, planner, and preflight.
 
 Dry-run stops before recovery-bundle or staging creation, temporary file creation,
-replacement, formatting, or any other persistent effect.
+replacement, formatting, or any other persistent effect. It still performs the
+same no-follow target observations and complete preflight as application.
 
 Human dry-run output includes the exact bounded generated-region diff for every
 planned update. Structured output includes the exact expected generated change
@@ -314,9 +331,13 @@ null. Recovery provenance never classifies current target bytes.
 ## Application, Verification, And Recovery
 
 Immediately before application, the operation rechecks the complete plan's
-source and destination facts.
+source and destination facts under the held workspace lease, including a
+no-follow observation of each logical generated-region leaf.
 
-Volatile target facts are rechecked immediately before each replacement.
+Volatile target facts and the no-follow final-leaf state are rechecked
+immediately before each replacement. A present filesystem symlink projection,
+reparse point, or special final leaf blocks the replacement without consulting a
+Library record or resolving into its source.
 
 Each update applies complete planned file bytes through a safe same-directory
 replacement property. The operation never edits the target in place and never
@@ -349,6 +370,11 @@ mutation command supplies its intended post-write sources and owns its selection
 complete parent plan, ordering, command result, and orchestration through M1.
 Index is not a universal coordinator, and Generated Navigation is never an
 applier.
+
+The route and Index consumers apply the neutral no-follow guard to every
+generated-region effect. A Library projection is therefore an ordinary blocked
+final-leaf condition for Index, not a reason to read a Library record or follow
+the source target.
 
 ### Intended post-write state
 
@@ -495,6 +521,10 @@ concerns. Conforming implementation evidence must cover:
   colliding bundle protection, all-before-first-effect readiness, success-only
   cleanup, failure retention/reporting, and support-artifact nonrecursive scope.
 - Expected-state changes before and during application.
+- No-follow final-leaf observation before ordinary resolution, at initial
+  preflight, under-lease revalidation, and immediately before each generated
+  replacement, including a regression proving that Index never writes through
+  or deletes a Library projection.
 - Safe replacement, matching preparation enforcement, per-effect verification,
   complete semantic verification, residual preservation, interruption, and
   rerun convergence without automatic restoration.

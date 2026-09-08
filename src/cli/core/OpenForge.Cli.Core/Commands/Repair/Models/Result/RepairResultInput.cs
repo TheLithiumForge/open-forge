@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Repair.Models.Application;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
@@ -6,6 +7,8 @@ namespace OpenForge.Cli.Core.Commands.Repair.Models.Result;
 
 internal sealed record RepairResultInput
 {
+    internal RepairLibraryExecution? LibraryExecution { get; init; }
+
     internal required RepairRequest Request { get; init; }
 
     internal required RepairDiagnosisCoverage Diagnosis { get; init; }

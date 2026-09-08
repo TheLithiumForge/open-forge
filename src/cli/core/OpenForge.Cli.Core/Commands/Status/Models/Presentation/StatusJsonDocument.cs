@@ -31,6 +31,8 @@ internal sealed class StatusJsonResult
 
     public required StatusJsonLifecycle Lifecycle { get; init; }
 
+    public required StatusJsonLibrary Library { get; init; }
+
     public required StatusJsonRecovery Recovery { get; init; }
 
     public required StatusJsonFinding[] Findings { get; init; }

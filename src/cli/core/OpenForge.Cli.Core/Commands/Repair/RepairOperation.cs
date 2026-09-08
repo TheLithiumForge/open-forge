@@ -49,6 +49,7 @@ internal sealed class RepairOperation
                 request.Workspace,
                 diagnosis.Observation.LocalReferences,
                 cancellationToken, request.Relinks).ConfigureAwait(false);
+            var libraryProposals = RepairLibraryCatalogueReader.Read(diagnosis.Result.Diagnosis);
             RepairPlan plan;
             var wizard = new RepairWizard(_components.InteractiveSession);
             if (request.SelectionMode == RepairSelectionMode.InteractiveWizard)
@@ -66,11 +67,41 @@ internal sealed class RepairOperation
                         "Repair was interrupted before application."), initialFindings).ConfigureAwait(false);
                 }
 
-                plan = RepairPlanner.Build(request, catalogue.Proposals, selection.Relinks);
+                System.Collections.Immutable.ImmutableArray<Models.Selection.RepairLibraryRecoveryProposal> librarySelection;
+                try
+                {
+                    librarySelection = libraryProposals.IsEmpty
+                        ? []
+                        : await RepairLibraryRecoveryWizard.SelectAsync(_components.InteractiveSession, libraryProposals, cancellationToken).ConfigureAwait(false);
+                }
+                catch (RepairLibrarySelectionInterruptedException)
+                {
+                    return await BoundaryAsync(request, new RepairFinding(RepairFindingCode.Interrupted,
+                        "Repair was interrupted before application."), initialFindings).ConfigureAwait(false);
+                }
+                plan = libraryProposals.IsEmpty
+                    ? RepairPlanner.Build(request, catalogue.Proposals, selection.Relinks)
+                    : RepairLibraryRecoveryPlanner.Build(new RepairLibraryPlanningInput
+                    {
+                        Request = request,
+                        References = [.. catalogue.Proposals],
+                        Libraries = libraryProposals,
+                        WizardRelinks = [.. selection.Relinks],
+                        WizardLibraries = librarySelection,
+                    });
             }
             else
             {
-                plan = RepairPlanner.Build(request, catalogue.Proposals);
+                plan = libraryProposals.IsEmpty
+                    ? RepairPlanner.Build(request, catalogue.Proposals)
+                    : RepairLibraryRecoveryPlanner.Build(new RepairLibraryPlanningInput
+                    {
+                        Request = request,
+                        References = [.. catalogue.Proposals],
+                        Libraries = libraryProposals,
+                        WizardRelinks = [],
+                        WizardLibraries = null,
+                    });
             }
             var findings = catalogue.Findings
                 .Concat(ReadCoverageFindings(coverage))
@@ -85,7 +116,7 @@ internal sealed class RepairOperation
                 outcome = preflight.Outcome;
                 if (outcome.Preflight.State == RepairPreflightState.Ready && request.Mode == RepairMode.Apply)
                 {
-                    if (request.SelectionMode == RepairSelectionMode.InteractiveWizard && plan.Effects.Count != 0
+                    if (request.SelectionMode == RepairSelectionMode.InteractiveWizard && (plan.Effects.Count != 0 || !plan.LibrarySteps.IsEmpty)
                         && !await wizard.ConfirmAsync(plan, cancellationToken).ConfigureAwait(false))
                     {
                         return await BoundaryAsync(request, new RepairFinding(RepairFindingCode.Interrupted,
@@ -116,6 +147,7 @@ internal sealed class RepairOperation
                 Verification = outcome.Verification,
                 Recovery = outcome.Recovery,
                 PostDiagnosis = outcome.PostDiagnosis,
+                LibraryExecution = outcome.LibraryExecution,
             });
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

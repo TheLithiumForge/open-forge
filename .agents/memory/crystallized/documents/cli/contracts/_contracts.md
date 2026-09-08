@@ -22,6 +22,12 @@ records exact execution state.
 Shared interfaces such as global flags live beside command contracts so every
 command can link to one accepted definition.
 
+The grouped [`library`](library/_library.md) family has exactly five leaves:
+`list`, `inspect`, `attach`, `sync`, and `detach`. Their local Interface and
+Behavior pairs define operation meaning. The one shared-capability [Workspace
+Libraries Technical Design](../technical-designs/workspace-libraries.md) defines
+the common record, inventory, projection, and recovery realization.
+
 The grouped [`route`](route/_route.md) family includes the accepted structural
 `route move` and `route remove` leaves. Each accepts one eligible ordinary
 unmanaged logical leaf or one complete ordinary unmanaged category and keeps
@@ -56,6 +62,7 @@ program records execution history but does not replace these current contracts.
 - [Route the accepted current `find` contracts for deterministic source inventory and typed tag or heading discovery](find/_find.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Find #Discovery #Tag #Heading #CurrentTruth
 - [Route the current Crystallized non-shipping `index` contracts for its public interface, deterministic behavior, and accepted technical design](index-candidate/_index-candidate.md) - #Memory #Crystallized #CLI #Release #Command #Index #Contract #CurrentTruth
 - [Route the accepted non-shipping root Framework management-establishment and exact-no-op contracts for `install`](install/_install.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Lifecycle #CurrentTruth
+- [Route the accepted current Workspace Library list, inspect, attach, sync, and detach contracts](library/_library.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Workspace #CurrentTruth
 - [Routing-only entrypoint for the accepted current `references` command contracts](references-candidate/_references-candidate.md) - #Memory #Crystallized #CLI #Release #Command #Contract #References #CurrentTruth
 - [Route the accepted current Repair Interface and Behavior contracts for exact and guided local repair](repair/_repair.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Repair #CurrentTruth
 - [Routing-only group entrypoint for the `route` command family](route/_route.md) - #Memory #Crystallized #CLI #Release #Command #Route #Contract #CurrentTruth

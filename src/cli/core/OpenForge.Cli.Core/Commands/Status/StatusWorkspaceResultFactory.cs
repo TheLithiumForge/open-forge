@@ -6,11 +6,9 @@ using OpenForge.Cli.Core.Shell.Parsing.Models;
 
 namespace OpenForge.Cli.Core.Commands.Status;
 
-internal sealed class StatusWorkspaceResultFactory
+internal static class StatusWorkspaceResultFactory
 {
-    private readonly StatusResultBuilder _resultBuilder = new();
-
-    internal StatusResult Create(CliInvalidBindingInput input)
+    internal static StatusResult Create(CliInvalidBindingInput input)
     {
         var cause = input.InvalidInput.Diagnostics.Count == 1
             ? input.InvalidInput.Diagnostics[0]
@@ -22,7 +20,7 @@ internal sealed class StatusWorkspaceResultFactory
         var code = workspaceFailure
             ? ReadWorkspaceFinding(input.WorkspaceSelectionState)
             : StatusFindingCode.InvalidInput;
-        return _resultBuilder.Event(null, code, subject, cause);
+        return StatusResultBuilder.Event(null, code, subject, cause);
     }
 
     private static StatusFindingCode ReadWorkspaceFinding(

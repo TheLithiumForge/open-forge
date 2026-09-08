@@ -15,7 +15,6 @@ internal static class DoctorBinding
         DoctorBindingComponents components)
     {
         var binder = new DoctorRequestBinder();
-        var invalidResultFactory = new DoctorWorkspaceResultFactory();
         return new CliCommandBinding<DoctorRequest, DoctorResult>(
             symbols.DoctorCommand,
             new CliCommandBindingComponents<DoctorRequest, DoctorResult>
@@ -23,7 +22,7 @@ internal static class DoctorBinding
                 Help = components.Help,
                 WorkspaceRequirement = CliWorkspaceRequirement.Required,
                 Binder = binder.Bind,
-                InvalidResultFactory = invalidResultFactory.Create,
+                InvalidResultFactory = DoctorWorkspaceResultFactory.Create,
                 Operation = components.Operation.ExecuteAsync,
                 Renderers = components.Renderers,
                 DiagnosticRenderer = components.DiagnosticRenderer,

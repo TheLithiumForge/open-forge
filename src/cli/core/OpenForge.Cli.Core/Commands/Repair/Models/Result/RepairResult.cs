@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Repair.Models.Application;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
@@ -10,6 +11,8 @@ namespace OpenForge.Cli.Core.Commands.Repair.Models.Result;
 
 internal sealed record RepairResultFacts
 {
+    internal RepairLibraryExecution? LibraryExecution { get; init; }
+
     internal required RepairDiagnosisCoverage Diagnosis { get; init; }
 
     internal required RepairSelection? Selection { get; init; }
@@ -96,6 +99,7 @@ internal sealed record RepairResult : ICliCommandResult
                 "Repair result relinks cannot contain null members.",
                 nameof(formation)))]);
         SelectionMode = formation.SelectionMode;
+        LibraryExecution = formation.Facts.LibraryExecution;
         Diagnosis = formation.Facts.Diagnosis;
         Selection = formation.Facts.Selection;
         Plan = formation.Facts.Plan;
@@ -146,6 +150,8 @@ internal sealed record RepairResult : ICliCommandResult
     internal IReadOnlyList<RepairRelinkRequest> Relinks { get; }
 
     internal RepairSelectionMode SelectionMode { get; }
+
+    internal RepairLibraryExecution? LibraryExecution { get; }
 
     internal RepairDiagnosisCoverage Diagnosis { get; }
 
@@ -244,8 +250,11 @@ internal sealed record RepairResult : ICliCommandResult
         RepairResultFacts facts)
     {
         var hasDiagnosisScope = facts.Selection is not null || facts.Plan is not null;
-        var hasEffects = facts.Plan?.Effects.Count > 0;
+        var hasEffects = facts.Plan is { } plan
+            && (plan.Effects.Count > 0 || plan.LibrarySteps.Any(step => step.Effect is not null));
+        var libraryOnly = facts.Plan is { Effects.Count: 0, LibrarySteps.IsEmpty: false };
         var applyingSelectedEffects = mode == RepairMode.Apply && hasEffects;
+        var applyingReferenceEffects = mode == RepairMode.Apply && facts.Plan?.Effects.Count > 0;
         var applyingSelectedScope = mode == RepairMode.Apply && hasDiagnosisScope;
         var interrupted = facts.Application.State == RepairApplicationState.Interrupted
             || HasStepOutcome(facts.Plan, RepairStepOutcome.Interrupted);
@@ -254,6 +263,7 @@ internal sealed record RepairResult : ICliCommandResult
         {
             CliSemanticStatus.Failed => facts.Application.State is RepairApplicationState.Failed
                     or RepairApplicationState.Unknown
+                || facts.LibraryExecution?.UnexpectedFailure is not null
                 || HasVerificationFailure(facts.Verification)
                 || facts.Recovery.State == RepairRecoveryState.Unknown
                 || facts.PostDiagnosis.State == RepairPostDiagnosisState.Failed
@@ -262,6 +272,7 @@ internal sealed record RepairResult : ICliCommandResult
                     || HasStepOutcome(facts.Plan, RepairStepOutcome.Interrupted))
                     && facts.Recovery.State == RepairRecoveryState.Incomplete,
             CliSemanticStatus.Interrupted => facts.Application.State == RepairApplicationState.Interrupted
+                || facts.LibraryExecution?.Cancellation is not null
                 || HasStepOutcome(facts.Plan, RepairStepOutcome.Interrupted),
             CliSemanticStatus.Invalid => false,
             CliSemanticStatus.Blocked => facts.Plan?.IsBlocked == true
@@ -272,24 +283,27 @@ internal sealed record RepairResult : ICliCommandResult
                 || HasRequiredCoverage(
                     facts.Diagnosis,
                     hasDiagnosisScope,
-                    RepairCoverageState.Blocked)
+                    RepairCoverageState.Blocked,
+                    includeReferenceDomains: !libraryOnly)
                 || HasRequiredCoverage(
                     facts.PostDiagnosis.Coverage,
                     applyingSelectedScope,
-                    RepairCoverageState.Blocked)
-                || applyingSelectedEffects
+                    RepairCoverageState.Blocked,
+                    includeReferenceDomains: !libraryOnly)
+                || applyingReferenceEffects && !interrupted
                     && facts.Preflight.Recovery == RepairRecoveryState.NotRequired
-                || applyingSelectedEffects
+                || applyingReferenceEffects && !interrupted
                     && facts.Recovery.State == RepairRecoveryState.NotRequired,
             CliSemanticStatus.Incomplete => facts.Preflight.State == RepairPreflightState.Incomplete
                 || facts.Preflight.Recovery is RepairRecoveryState.Incomplete
                     or RepairRecoveryState.Unknown
                 || facts.Recovery.State == RepairRecoveryState.Incomplete
                 || facts.PostDiagnosis.State == RepairPostDiagnosisState.Incomplete
-                || HasIncompleteRequiredCoverage(facts.Diagnosis, hasDiagnosisScope)
+                || HasIncompleteRequiredCoverage(facts.Diagnosis, hasDiagnosisScope, includeReferenceDomains: !libraryOnly)
                 || HasIncompleteRequiredCoverage(
                     facts.PostDiagnosis.Coverage,
-                    applyingSelectedScope)
+                    applyingSelectedScope && !interrupted,
+                    includeReferenceDomains: !libraryOnly)
                 || facts.Selection is not null && facts.Plan is null
                 || HasStepPendingApplication(facts.Plan, applyingSelectedEffects && !interrupted, facts.Application)
                 || HasPendingVerification(facts.Verification, applyingSelectedEffects && !interrupted)
@@ -299,7 +313,7 @@ internal sealed record RepairResult : ICliCommandResult
                     && facts.Preflight.Recovery == RepairRecoveryState.NotCreated
                 || applyingSelectedEffects && !interrupted
                     && facts.Recovery.State == RepairRecoveryState.NotCreated
-                || applyingSelectedScope
+                || applyingSelectedScope && !interrupted
                     && facts.PostDiagnosis.State == RepairPostDiagnosisState.NotRequested,
             CliSemanticStatus.Attention => facts.Recovery.Residual == RepairResidualState.Retained,
             CliSemanticStatus.Complete => false,
@@ -316,7 +330,8 @@ internal sealed record RepairResult : ICliCommandResult
             || verification.PostConditions is RepairVerificationState.Failed or RepairVerificationState.Unknown;
 
     private static bool HasStepOutcome(RepairPlan? plan, RepairStepOutcome outcome)
-        => plan?.Steps.Any(step => step.Outcome == outcome) == true;
+        => plan?.Steps.Any(step => step.Outcome == outcome) == true
+            || plan?.LibrarySteps.Any(step => step.Outcome == outcome) == true;
 
     private static bool HasStepPendingApplication(
         RepairPlan? plan,
@@ -341,20 +356,22 @@ internal sealed record RepairResult : ICliCommandResult
     private static bool HasRequiredCoverage(
         RepairDiagnosisCoverage coverage,
         bool required,
-        RepairCoverageState state)
+        RepairCoverageState state,
+        bool includeReferenceDomains)
         => required
             && (coverage.WorkspaceAndPath == state
-                || coverage.RouteAndHeading == state
-                || coverage.LocalReferences == state
+                || includeReferenceDomains && coverage.RouteAndHeading == state
+                || includeReferenceDomains && coverage.LocalReferences == state
                 || coverage.SelectedScope == state);
 
     private static bool HasIncompleteRequiredCoverage(
         RepairDiagnosisCoverage coverage,
-        bool required)
+        bool required,
+        bool includeReferenceDomains)
         => required
             && (IsIncomplete(coverage.WorkspaceAndPath)
-                || IsIncomplete(coverage.RouteAndHeading)
-                || IsIncomplete(coverage.LocalReferences)
+                || includeReferenceDomains && IsIncomplete(coverage.RouteAndHeading)
+                || includeReferenceDomains && IsIncomplete(coverage.LocalReferences)
                 || IsIncomplete(coverage.SelectedScope));
 
     private static bool IsIncomplete(RepairCoverageState state)

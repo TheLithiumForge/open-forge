@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
+using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application;
@@ -12,10 +13,21 @@ internal static class ExtensionRemovePlanComparer
             && expected.Planning.Authority == actual.Planning.Authority
             && expected.Planning.Decisions.Select(DecisionKey)
                 .SequenceEqual(actual.Planning.Decisions.Select(DecisionKey), StringComparer.Ordinal)
+            && LibraryBoundariesEqual(expected, actual)
             && DictionaryEquals(expected.Topology.IntendedTargetBytes, actual.Topology.IntendedTargetBytes)
             && ChangesEqual(
                 ExtensionRemoveApplicationOperation.ReadChanges(expected),
                 ExtensionRemoveApplicationOperation.ReadChanges(actual));
+
+    private static bool LibraryBoundariesEqual(ExtensionRemovePlan expected, ExtensionRemovePlan actual)
+    {
+        var expectedPaths = expected.Planning.Decisions.Select(decision => decision.Path).ToArray();
+        var actualPaths = actual.Planning.Decisions.Select(decision => decision.Path).ToArray();
+        return expectedPaths.Length == actualPaths.Length && expectedPaths.Zip(actualPaths).All(pair =>
+            ExtensionRemoveLibraryBoundaryPolicy.Matches(
+                pair.First.LibraryBoundary ?? throw new ArgumentException("The planned Library boundary was not observed.", nameof(expected)),
+                pair.Second.LibraryBoundary ?? throw new ArgumentException("The current Library boundary was not observed.", nameof(actual))));
+    }
 
     private static bool DependencyEquals(
         ExtensionRemoveDependencyPlan expected,

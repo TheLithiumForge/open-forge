@@ -92,7 +92,7 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
         RouteMoveMode mode = RouteMoveMode.DryRun)
         => new(Workspace, sourceReference, destinationTarget, mode);
 
-    internal RouteMovePlanBuilder CreatePlanBuilder()
+    internal static RouteMovePlanBuilder CreatePlanBuilder()
         => CreatePlanBuilderStatic();
 
     private static RouteMovePlanBuilder CreatePlanBuilderStatic()
@@ -316,16 +316,6 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
         File.WriteAllText(workspaceDirectory, "block recovery directory creation\n", Encoding.UTF8);
         recoveryPaths.Add(workspaceDirectory);
         return workspaceDirectory;
-    }
-
-    internal static RouteMoveRecoveryLifecycle CreateRecoveryLifecycle()
-    {
-        var reader = new RecoveryBundleReader();
-        var catalogue = new RecoveryBundleCatalogue(reader);
-        return new RouteMoveRecoveryLifecycle(
-            catalogue,
-            new RecoveryBundleStore(reader),
-            new RecoveryBundleDeletionGuard(catalogue, reader));
     }
 
     internal static RouteMoveEffectApplication CreateEffectApplication()

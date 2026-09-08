@@ -22,7 +22,7 @@ public sealed class RouteCreateApplicationIntegrationTests
     [Theory(DisplayName = "Route Create revalidation detects concurrent target or parent changes"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     [InlineData(RevalidationSubject.Target)]
     [InlineData(RevalidationSubject.Parent)]
-    public async Task RevalidationDetectsConcurrentPlanChanges(
+    public static async Task RevalidationDetectsConcurrentPlanChanges(
         RevalidationSubject subject)
     {
         using var workspace = RouteCreateIntegrationWorkspace.Create(
@@ -124,7 +124,7 @@ public sealed class RouteCreateApplicationIntegrationTests
         workspace.SeedBase();
         var plan = await workspace.BuildPlanAsync();
 
-        var result = await new RouteCreateRecoveryLifecycle().PrepareAsync(
+        var result = await RouteCreateRecoveryLifecycle.PrepareAsync(
             plan,
             Guid.NewGuid(),
             TestContext.Current.CancellationToken);
@@ -143,15 +143,14 @@ public sealed class RouteCreateApplicationIntegrationTests
         workspace.SeedBase();
         var plan = await workspace.BuildPlanAsync();
         var operationId = Guid.NewGuid();
-        var lifecycle = new RouteCreateRecoveryLifecycle();
-        var prepared = await lifecycle.PrepareAsync(
+        var prepared = await RouteCreateRecoveryLifecycle.PrepareAsync(
             plan,
             operationId,
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         workspace.TrackRecovery(preparation);
 
-        var collision = await lifecycle.PrepareAsync(
+        var collision = await RouteCreateRecoveryLifecycle.PrepareAsync(
             plan,
             operationId,
             TestContext.Current.CancellationToken);
@@ -172,7 +171,7 @@ public sealed class RouteCreateApplicationIntegrationTests
         var preparation = await workspace.PrepareRecoveryBundleAsync(plan, operationId);
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
 
-        var result = await new RouteCreateRecoveryLifecycle().DeleteAsync(
+        var result = await RouteCreateRecoveryLifecycle.DeleteAsync(
             lease,
             preparation,
             TestContext.Current.CancellationToken);
@@ -194,7 +193,7 @@ public sealed class RouteCreateApplicationIntegrationTests
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 
-        var result = await new RouteCreateRecoveryLifecycle().DeleteAsync(
+        var result = await RouteCreateRecoveryLifecycle.DeleteAsync(
             lease,
             preparation,
             cancellation.Token);

@@ -1,4 +1,6 @@
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Repair;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
@@ -14,6 +16,8 @@ internal enum RepairDependencyDomain
     WorkspaceContainment,
     RouteAndHeading,
     LocalReference,
+    LibraryRecord,
+    LibraryResidual,
 }
 
 internal sealed record RepairDependency
@@ -54,6 +58,8 @@ internal enum RepairVerificationKind
     DestinationLiteral,
     SameTargetIdentity,
     ResultingBytes,
+    NoFollowIdentity,
+    PriorState,
 }
 
 internal sealed record RepairVerificationRequirement
@@ -305,6 +311,15 @@ internal enum RepairConflictKind
 
 internal sealed record RepairConflict
 {
+    internal RepairConflict(RepairConflictKind kind, LibraryResidualEvidence library, string cause)
+        : this(kind, sourceCanonicalPath: null, occurrence: null, cause)
+    {
+        ArgumentNullException.ThrowIfNull(library);
+        Library = library;
+    }
+
+    internal LibraryResidualEvidence? Library { get; }
+
     internal RepairConflict(
         RepairConflictKind kind,
         string? sourceCanonicalPath,
@@ -347,7 +362,8 @@ internal sealed record RepairPlan
         RepairRequest request,
         RepairSelection selection,
         IEnumerable<RepairStep> steps,
-        IEnumerable<RepairConflict> conflicts)
+        IEnumerable<RepairConflict> conflicts,
+        ImmutableArray<RepairLibraryRecoveryStep> librarySteps)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(selection);
@@ -368,6 +384,23 @@ internal sealed record RepairPlan
         }
 
         ValidateSelectedSteps(selection, stepValues, nameof(steps));
+        if (librarySteps.IsDefault || librarySteps.Any(step => step is null)
+            || librarySteps.Length != selection.Libraries.Selected.Length
+            || librarySteps.Any(step => !selection.Libraries.Selected.Contains(step.Selection))
+            || librarySteps.Select(step => step.Selection).Distinct().Count() != librarySteps.Length
+            || librarySteps.Any(step => step.Dependency is null || step.Verification is null || !Enum.IsDefined(step.Outcome)
+                || step.Effect is { } effect && effect.Selection != step.Selection))
+        {
+            throw new ArgumentException("Library plan steps must retain every exact selected residual and its typed outcome.", nameof(librarySteps));
+        }
+
+        var ordinals = stepValues.Select(step => step.Ordinal).Concat(librarySteps.Select(step => step.Ordinal)).ToArray();
+        if (ordinals.Any(ordinal => ordinal < 0) || ordinals.Distinct().Count() != ordinals.Length)
+        {
+            throw new ArgumentException("Atomic Repair steps require unique nonnegative ordinals across both effect kinds.", nameof(librarySteps));
+        }
+
+        LibrarySteps = librarySteps;
 
         Request = request;
         Selection = selection;
@@ -395,6 +428,8 @@ internal sealed record RepairPlan
 
     internal RepairSelection Selection { get; }
 
+    internal ImmutableArray<RepairLibraryRecoveryStep> LibrarySteps { get; }
+
     internal IReadOnlyList<RepairStep> Steps { get; }
 
     internal IReadOnlyList<RepairEffect> Effects { get; }
@@ -405,10 +440,12 @@ internal sealed record RepairPlan
 
     internal bool IsBlocked
         => Conflicts.Count != 0
-            || Steps.Any(step => step.Outcome == RepairStepOutcome.Blocked);
+            || Steps.Any(step => step.Outcome == RepairStepOutcome.Blocked)
+            || LibrarySteps.Any(step => step.Outcome == RepairStepOutcome.Blocked);
 
     internal bool IsNoOp
         => !IsBlocked
+            && LibrarySteps.IsEmpty
             && ((Selection.Selected.Count == 0 && Steps.Count == 0)
                 || Steps.Count != 0
                     && Steps.All(step => step.Outcome == RepairStepOutcome.NoOp && step.NoOp is not null));

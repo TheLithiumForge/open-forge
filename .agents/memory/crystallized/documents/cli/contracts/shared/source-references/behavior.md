@@ -98,6 +98,13 @@ realization within the CLI Architecture's filesystem boundary. It does not
 silently add compatibility behavior for them. The public boundary is in [Path
 Resolution](interface.md#path-resolution).
 
+A filesystem symlink projection at an eligible `.agents/...` destination is
+identified under the destination's canonical logical path and retains the
+normal automatic source ID derived from that destination. The resolver does not
+replace that ID with the source root or Library ID from a separate management
+record. Only content reached through an `AUTHORED LOCAL MARKDOWN REFERENCE`
+outside `.agents` has no automatic ID.
+
 ## ID Resolution
 
 For an ID-form request, the resolver derives identities from the current selected
@@ -150,6 +157,8 @@ when the selected command defines one unambiguous target shape; otherwise an ID
 that could select several target shapes blocks and requests an exact path.
 External Extension catalogues, formatter executables, workspace roots, and other
 filesystem values remain purpose-specific operands rather than source references.
+A Workspace Library ID is likewise a separate management identity and is never a
+source-reference operand.
 
 The shared resolver supplies identity and disambiguation only. It does not grant
 the mutation or ownership authority of the selected command. See [Command Use](interface.md#command-use).
@@ -159,9 +168,13 @@ the mutation or ownership authority of the selected command. See [Command Use](i
 Result formation emits both the automatic ID and canonical workspace-relative
 path for a resolved source. Structured output exposes them as separate fields.
 An ID collision remains visible as ambiguous while each source retains its exact
-path. Content reached through an explicit contained local link has no automatic
-ID, so human output uses `ID: none`, structured output uses a null ID, and the
-canonical workspace-relative path remains required.
+path. A filesystem symlink projection at an eligible `.agents/...` destination
+keeps that canonical destination path and its normal destination-derived
+automatic ID. Only content reached through an `AUTHORED LOCAL MARKDOWN REFERENCE`
+outside `.agents` has no automatic ID, so human output uses `ID: none`,
+structured output uses a null ID, and the canonical workspace-relative path
+remains required. A Workspace Library ID remains a separate management identity
+and is never a source-reference operand.
 
 These facts form one typed result consumed by the command's presentation layer;
 they do not create a second identity or rerun resolution. The public shapes are
@@ -193,6 +206,9 @@ Gate 5 executable proof must cover:
 - Base and overwrite selection from the ID, base path, and overwrite path.
 - Orphan overwrite behavior.
 - Results that show both ID and path.
+- Filesystem symlink projections under eligible `.agents/...` retaining their
+  canonical destination path and destination-derived automatic ID, while an
+  authored local Markdown reference outside `.agents` reports `ID: none`.
 - Repeat invocations producing the same identity result for unchanged input.
 
 ## Related Sources

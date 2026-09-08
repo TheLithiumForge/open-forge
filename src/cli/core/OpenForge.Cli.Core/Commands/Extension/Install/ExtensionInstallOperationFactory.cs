@@ -12,7 +12,6 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Shell.Interaction;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install;
@@ -27,13 +26,10 @@ internal static class ExtensionInstallOperationFactory
         var physicalPathResolver = new PhysicalPathResolver();
         var validator = new FileExpectationValidator(physicalPathResolver);
         var lifecycleStore = new LifecycleStore(physicalPathResolver);
-        var recoveryReader = new RecoveryBundleReader();
-        var recoveryCatalogue = new RecoveryBundleCatalogue(recoveryReader);
         var revalidator = new MutationRevalidator(validator);
         var foundationReader = new ExtensionInstallFoundationReader(
             lifecycleStore,
-            new FrameworkLifecycleCurrentnessReader(physicalPathResolver),
-            recoveryCatalogue);
+            new FrameworkLifecycleCurrentnessReader(physicalPathResolver));
         var verifier = new ExtensionInstallAppliedVerifier(
             physicalPathResolver,
             validator,
@@ -42,8 +38,7 @@ internal static class ExtensionInstallOperationFactory
             new ExtensionInstallPlanner(
                 interactiveSession,
                 physicalPathResolver,
-                lifecycleStore,
-                recoveryCatalogue),
+                lifecycleStore),
             new MutationPreflight(validator),
             new ExtensionInstallApplicationOperation(
                 lockStoreRoot is null
@@ -53,10 +48,6 @@ internal static class ExtensionInstallOperationFactory
                     new ExtensionInstallSourceResolver(physicalPathResolver),
                     foundationReader,
                     revalidator),
-                new ExtensionInstallRecoveryOperation(
-                    new RecoveryBundleStore(recoveryReader),
-                    recoveryCatalogue,
-                    new RecoveryBundleDeletionGuard(recoveryCatalogue, recoveryReader)),
                 new ExtensionInstallEffectApplication(
                     new DirectoryCreationApplier(revalidator, validator),
                     new FileChangeApplier(revalidator, validator),

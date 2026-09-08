@@ -12,6 +12,11 @@ internal static class RepairResultBuilder
     internal static RepairResult Build(RepairResultInput input)
     {
         ArgumentNullException.ThrowIfNull(input);
+        if (!input.Plan.LibrarySteps.IsEmpty || input.LibraryExecution is not null)
+        {
+            return RepairLibraryResultFormation.Build(input);
+        }
+
         input = input with { Plan = RepairStepOutcomeReader.Project(input) };
         var findings = AddSelectionFindings(input.Plan.Selection, input.Findings);
         var counts = ReadCounts(input, findings);

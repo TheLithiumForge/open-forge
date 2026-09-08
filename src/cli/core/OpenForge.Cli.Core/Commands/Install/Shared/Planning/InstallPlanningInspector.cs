@@ -15,20 +15,16 @@ namespace OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 internal sealed class InstallPlanningInspector
 {
     private readonly LifecycleStore _lifecycleStore;
-    private readonly RecoveryBundleCatalogue _recoveryCatalogue;
     private readonly InstallTargetReader _targetReader;
     private readonly InstallIntendedStateBuilder _intendedStateBuilder;
 
     internal InstallPlanningInspector(
         PhysicalPathResolver physicalPathResolver,
-        LifecycleStore lifecycleStore,
-        RecoveryBundleCatalogue recoveryCatalogue)
+        LifecycleStore lifecycleStore)
     {
         ArgumentNullException.ThrowIfNull(physicalPathResolver);
         ArgumentNullException.ThrowIfNull(lifecycleStore);
-        ArgumentNullException.ThrowIfNull(recoveryCatalogue);
         _lifecycleStore = lifecycleStore;
-        _recoveryCatalogue = recoveryCatalogue;
         _targetReader = new InstallTargetReader(physicalPathResolver);
         _intendedStateBuilder = new InstallIntendedStateBuilder(physicalPathResolver);
     }
@@ -84,7 +80,7 @@ internal sealed class InstallPlanningInspector
             return new InstallInspectionStopped(lifecycleBoundary);
         }
 
-        var recovery = await _recoveryCatalogue.ReadAsync(
+        var recovery = await RecoveryBundleCatalogue.ReadAsync(
                 request.Workspace,
                 cancellationToken)
             .ConfigureAwait(false);

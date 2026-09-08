@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Commands.Status.Shared.Aggregation;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Status;
@@ -10,7 +11,7 @@ public sealed class StatusAggregationTests
     [Fact(DisplayName = "Status combines ordered continuity layers and applies every deterministic result ordering"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void ContinuitySourcesCombineBaseAndOverwriteThenOrderByBytesAndSourceId()
     {
-        var result = new StatusResultBuilder().Build(
+        var result = StatusResultBuilder.Build(
             StatusObservationSeeds.Request(),
             StatusAggregationObservationSeed.Create());
 
@@ -52,7 +53,7 @@ public sealed class StatusAggregationTests
     [Fact(DisplayName = "Status deduplicates shared lifecycle targets and preserves installed facts with unavailable source"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void LifecycleProjectionDeduplicatesSharedTargetsAndRetainsInstalledFactsWhenSourceIsUnavailable()
     {
-        var result = new StatusResultBuilder().Build(
+        var result = StatusResultBuilder.Build(
             StatusObservationSeeds.Request(),
             StatusAggregationObservationSeed.Create());
 
@@ -77,6 +78,32 @@ public sealed class StatusAggregationTests
         Assert.Equal(StatusResultSeeds.Available(0), managed.Counts.Blocked);
         Assert.Contains(result.Findings, finding => finding.Code == StatusFindingCode.ExtensionSourceUnavailable);
         Assert.Contains(result.Findings, finding => finding.Code == StatusFindingCode.ExtensionTargetChanged);
+    }
+
+    [Fact(DisplayName = "Status preserves contributor-local Library cancellation as interrupted"), Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    public void LibraryContributorCancellationOutranksItsSyntheticUnavailableRecord()
+    {
+        var observations = StatusAggregationObservationSeed.Create();
+        observations = observations with
+        {
+            Libraries = observations.Libraries with
+            {
+                State = OperationalViewState.Interrupted,
+                Record = observations.Libraries.Record with
+                {
+                    State = LibrariesRecordReadState.Unavailable,
+                    Snapshot = null,
+                    Cause = "Library observation was interrupted.",
+                },
+            },
+        };
+
+        var result = StatusResultBuilder.Build(StatusObservationSeeds.Request(), observations);
+
+        Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
+        Assert.Contains(result.Findings, finding => finding.Code == StatusFindingCode.Interrupted);
+        Assert.NotNull(result.Facts.Library);
+        Assert.Equal(CliSemanticStatus.Interrupted, result.Facts.Library.State);
     }
 
 }

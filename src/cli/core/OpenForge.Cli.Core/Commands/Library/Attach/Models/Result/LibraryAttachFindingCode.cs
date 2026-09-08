@@ -1,0 +1,31 @@
+
+namespace OpenForge.Cli.Core.Commands.Library.Attach.Models.Result;
+
+internal enum LibraryAttachFindingCode
+{
+    InvalidInput,
+    InvalidId,
+    RecordInvalid,
+    RecordUnavailable,
+    RecordBlocked,
+    ConsumerBlocked,
+    MappingBlocked,
+    MappingUnavailable,
+    OwnershipConflict,
+    GeneratedNavigationIncomplete,
+    GeneratedNavigationBlocked,
+    LinkCapabilityUnavailable,
+    LockUnavailable,
+    RecoveryUnavailable,
+    ApplicationFailed,
+    VerificationFailed,
+    RecoveryRetained,
+    OperationFailed,
+    Interrupted,
+    DuplicateId,
+    SourceRootInvalid,
+    SourceRootUnavailable,
+    SourceRootBlocked,
+    InventoryIncomplete,
+    DestinationCollision,
+}

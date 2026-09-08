@@ -6,11 +6,9 @@ using OpenForge.Cli.Core.Framework.Recovery.Serialization;
 
 namespace OpenForge.Cli.Core.Framework.Recovery;
 
-internal sealed class RecoveryBundleStore(RecoveryBundleReader reader)
+internal static class RecoveryBundleStore
 {
-    private readonly RecoveryBundleReader _reader = reader;
-
-    internal async ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
+    internal static async ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
         RecoveryBundleInput input,
         CancellationToken cancellationToken)
     {
@@ -123,7 +121,7 @@ internal sealed class RecoveryBundleStore(RecoveryBundleReader reader)
         RecoveryBundleReadResult draftRead;
         try
         {
-            draftRead = await _reader.VerifyExpectedAsync(
+            draftRead = await RecoveryBundleReader.VerifyExpectedAsync(
                 input,
                 draftPath,
                 RecoveryBundleCandidateKind.Draft,
@@ -199,7 +197,7 @@ internal sealed class RecoveryBundleStore(RecoveryBundleReader reader)
         RecoveryBundleFinalReadResult finalRead;
         try
         {
-            finalRead = await _reader.ReadExpectedFinalAsync(
+            finalRead = await RecoveryBundleReader.ReadExpectedFinalAsync(
                 input,
                 finalPath,
                 cancellationToken).ConfigureAwait(false);
@@ -227,13 +225,13 @@ internal sealed class RecoveryBundleStore(RecoveryBundleReader reader)
         return RecoveryBundlePreparationResult.Prepared(preparation);
     }
 
-    private static ImmutableArray<RecoveryBundleEntry> CreateEntries(RecoveryBundleInput input)
+    private static ImmutableArray<RecoveryEntry> CreateEntries(RecoveryBundleInput input)
     {
-        var entries = ImmutableArray.CreateBuilder<RecoveryBundleEntry>(
+        var entries = ImmutableArray.CreateBuilder<RecoveryEntry>(
             input.RecoveryTargets.Length);
         for (var index = 0; index < input.RecoveryTargets.Length; index++)
         {
-            entries.Add(RecoveryBundleEntry.FromTarget(
+            entries.Add(RecoveryEntry.FromTarget(
                 input,
                 input.RecoveryTargets[index],
                 index));
@@ -245,7 +243,7 @@ internal sealed class RecoveryBundleStore(RecoveryBundleReader reader)
     private static async ValueTask WriteDraftAsync(
         FileStream file,
         RecoveryBundleInput input,
-        ImmutableArray<RecoveryBundleEntry> entries,
+        ImmutableArray<RecoveryEntry> entries,
         CancellationToken cancellationToken)
     {
         using var archive = new ZipArchive(
@@ -266,8 +264,13 @@ internal sealed class RecoveryBundleStore(RecoveryBundleReader reader)
         for (var index = 0; index < entries.Length; index++)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            if (entries[index].PriorPayload is not { } priorPayload)
+            {
+                continue;
+            }
+
             var payload = archive.CreateEntry(
-                entries[index].PayloadName,
+                priorPayload,
                 CompressionLevel.NoCompression);
             await using var payloadStream = payload.Open();
             await payloadStream.WriteAsync(

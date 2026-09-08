@@ -207,6 +207,17 @@ through current Index rules in the same plan. It preserves valid markers and
 outside bytes and blocks malformed boundaries. The package source remains
 unchanged.
 
+An exact destination path claim in the consumer Library record
+`.agents/open-forge.libraries.json`, or a real relative projection link at that
+destination, is separately owned by Library management. Remove never adopts,
+overwrites, updates, or removes that destination in any removal mode, including
+ordinary removal, same-request `--prune`, and Keep-as-unmanaged. The no-follow
+final-leaf guard blocks ordinary Extension `Create`, `Replace`, `Delete`, or
+`ReplaceGeneratedRegion` when the leaf is a link or reparse point,
+independently of whether the Library record is present, readable, valid, or
+claims the path. Remove does not reinterpret the Library record or invoke a
+Library operation.
+
 ## Lifecycle Trust And Semantic Identity
 
 The lifecycle document has isolated `framework` and `extensions` sections.
@@ -304,7 +315,8 @@ transaction journal.
 
 Conformance must cover exact managed-ID and wizard/direct/automatic behavior,
 source-unavailable facts, trusted/untrusted/absent states, retained dependents,
-orphan retention, shared owners, semantic current-versus-baseline classification,
+orphan retention, shared owners, Library-record and projection collisions,
+independent no-follow final-leaf guards, semantic current-versus-baseline classification,
 unchanged final-owner deletion, changed Keep/Delete and same-request prune,
 ownership release, later-prune refusal, route/generated safety, package-source
 preservation, complete plan, recovery-bundle behavior, dry-run parity, no-op proof,

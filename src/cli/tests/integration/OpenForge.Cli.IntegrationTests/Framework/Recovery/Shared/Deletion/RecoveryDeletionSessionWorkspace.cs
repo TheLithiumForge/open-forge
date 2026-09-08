@@ -18,23 +18,14 @@ internal sealed class RecoveryDeletionSessionWorkspace : IDisposable
     internal RecoveryDeletionSessionWorkspace()
     {
         Workspace = RecoveryBundleStoreIntegrationTests.Workspace(_temporary);
-        Reader = new RecoveryBundleReader();
-        Catalogue = new RecoveryBundleCatalogue(Reader);
-        Guard = new RecoveryBundleDeletionGuard(Catalogue, Reader);
     }
 
     internal CliWorkspace Workspace { get; }
 
-    internal RecoveryBundleReader Reader { get; }
-
-    internal RecoveryBundleCatalogue Catalogue { get; }
-
-    internal RecoveryBundleDeletionGuard Guard { get; }
-
     internal async Task<string> AddFinalAsync()
     {
         var input = RecoveryBundleStoreIntegrationTests.DeleteInput(_temporary, Workspace, Guid.NewGuid());
-        var prepared = await RecoveryBundleStoreIntegrationTests.Store().PrepareAsync(input, TestContext.Current.CancellationToken);
+        var prepared = await RecoveryBundleStore.PrepareAsync(input, TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundlePreparationState.Prepared, prepared.State);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         _ownedPaths.Add(preparation.BundlePath);
@@ -49,7 +40,7 @@ internal sealed class RecoveryDeletionSessionWorkspace : IDisposable
 
     internal async Task<RecoveryBundleCatalogueResult> FreezeAsync(int count)
     {
-        var catalogue = await Catalogue.ReadAsync(Workspace, TestContext.Current.CancellationToken);
+        var catalogue = await RecoveryBundleCatalogue.ReadAsync(Workspace, TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleCatalogueState.Available, catalogue.State);
         Assert.Equal(count, catalogue.Candidates.Length);
         Assert.All(catalogue.Candidates, candidate =>
@@ -115,7 +106,7 @@ internal sealed class RecoveryDeletionSessionWorkspace : IDisposable
             }
         }
 
-        var read = await Reader.ReadFinalAsync(Workspace, path, TestContext.Current.CancellationToken);
+        var read = await RecoveryBundleReader.ReadFinalAsync(Workspace, path, TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleReadState.Valid, read.State);
         Assert.Equal(RecoveryBundleProducer.Repair, Assert.IsType<RecoveryBundleVerifiedRead>(read.Verified).Attribution.Producer);
     }

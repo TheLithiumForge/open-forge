@@ -7,7 +7,6 @@ using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Shell.Interaction;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove;
@@ -23,14 +22,11 @@ internal static class ExtensionRemoveOperationFactory
         var lifecycleStore = new LifecycleStore(physicalPathResolver);
         var validator = new FileExpectationValidator(physicalPathResolver);
         var revalidator = new MutationRevalidator(validator);
-        var recoveryReader = new RecoveryBundleReader();
-        var recoveryCatalogue = new RecoveryBundleCatalogue(recoveryReader);
         var planner = new ExtensionRemovePlanner(
             interactiveSession,
             lifecycleStore,
             new LifecycleOwnershipReader(physicalPathResolver),
-            physicalPathResolver,
-            recoveryCatalogue);
+            physicalPathResolver);
         return new ExtensionRemoveOperation(
             planner,
             new MutationPreflight(validator),
@@ -42,10 +38,6 @@ internal static class ExtensionRemoveOperationFactory
                 revalidator,
                 new FileChangeApplier(
                     revalidator,
-                    validator),
-                new ExtensionRemoveRecoveryApplication(
-                    new RecoveryBundleStore(recoveryReader),
-                    recoveryCatalogue,
-                    new RecoveryBundleDeletionGuard(recoveryCatalogue, recoveryReader))));
+                    validator)));
     }
 }

@@ -1,9 +1,9 @@
 using System.IO.Compression;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization;
 using OpenForge.Cli.Core.Framework.Workspace;
-using OpenForge.Cli.IntegrationTests.Framework.Recovery;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Status;
@@ -48,7 +48,7 @@ internal sealed class StatusRecoveryFixture : IDisposable
                     PlannedFileChange.Delete(prior.Expectation),
                     prior),
             ]);
-        var preparation = await RecoveryBundleStoreIntegrationTests.Store().PrepareAsync(
+        var preparation = await RecoveryBundleStore.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
         if (preparation.State != RecoveryBundlePreparationState.Prepared

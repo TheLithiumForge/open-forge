@@ -12,13 +12,11 @@ namespace OpenForge.Cli.Core.Commands.Update.Shared.Application;
 internal sealed class UpdateApplicationOperation(
     WorkspaceLockManager lockManager,
     UpdateApplicationPreflight preflight,
-    UpdateRecoveryOperation recoveryOperation,
     UpdateEffectApplication effectApplication,
     UpdateAppliedVerifier verifier)
 {
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly UpdateApplicationPreflight _preflight = preflight;
-    private readonly UpdateRecoveryOperation _recoveryOperation = recoveryOperation;
     private readonly UpdateEffectApplication _effectApplication = effectApplication;
     private readonly UpdateAppliedVerifier _verifier = verifier;
 
@@ -105,7 +103,7 @@ internal sealed class UpdateApplicationOperation(
                 UpdatePlanRevalidationState.Changed => throw new InvalidOperationException(
                     "A changed Update preflight is handled before finite boundary mapping."),
                 _ => throw new ArgumentOutOfRangeException(
-                    nameof(preflight),
+                    nameof(execution),
                     preflight.State,
                     "The Update revalidation state is not defined."),
             };
@@ -117,7 +115,7 @@ internal sealed class UpdateApplicationOperation(
         RecoveryBundlePreparationResult preparation;
         try
         {
-            preparation = await _recoveryOperation
+            preparation = await UpdateRecoveryOperation
                 .PrepareAsync(execution, operationId, cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -178,7 +176,7 @@ internal sealed class UpdateApplicationOperation(
         }
 
         var cleanup = preparation.Preparation is { } prepared
-            ? await _recoveryOperation
+            ? await UpdateRecoveryOperation
                 .CleanupAsync(
                     lease,
                     prepared,

@@ -16,14 +16,12 @@ internal sealed class IndexApplicationOperation(
     WorkspaceLockManager lockManager,
     MutationRevalidator revalidator,
     FileChangeApplier fileChangeApplier,
-    IndexProjectionReader projectionReader,
-    IndexRecoveryLifecycle recoveryLifecycle)
+    IndexProjectionReader projectionReader)
 {
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly MutationRevalidator _revalidator = revalidator;
     private readonly FileChangeApplier _fileChangeApplier = fileChangeApplier;
     private readonly IndexProjectionReader _projectionReader = projectionReader;
-    private readonly IndexRecoveryLifecycle _recoveryLifecycle = recoveryLifecycle;
 
     internal async ValueTask<IndexOperationOutcome> ExecuteAsync(
         IndexPlan plan,
@@ -105,7 +103,7 @@ internal sealed class IndexApplicationOperation(
                 source: validationMapping.Source);
         }
 
-        var preparation = await _recoveryLifecycle.PrepareAsync(application, cancellationToken)
+        var preparation = await IndexRecoveryLifecycle.PrepareAsync(application, cancellationToken)
             .ConfigureAwait(false);
         if (!preparation.CanApply)
         {
@@ -234,7 +232,7 @@ internal sealed class IndexApplicationOperation(
                 source: verification.Source);
         }
 
-        var deletion = await _recoveryLifecycle.DeleteAsync(prepared, cancellationToken)
+        var deletion = await IndexRecoveryLifecycle.DeleteAsync(prepared, cancellationToken)
             .ConfigureAwait(false);
         return Finish(
             application: prepared.Application,

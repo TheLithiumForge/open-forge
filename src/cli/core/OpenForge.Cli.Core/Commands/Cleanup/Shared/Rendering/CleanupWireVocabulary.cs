@@ -218,6 +218,7 @@ internal static class CleanupWireVocabulary
             RecoveryBundleProducer.Index => "index",
             RecoveryBundleProducer.Route => "route",
             RecoveryBundleProducer.Repair => "repair",
+            RecoveryBundleProducer.Library => "library",
             _ => Undefined(nameof(value), value),
         };
 
@@ -232,6 +233,9 @@ internal static class CleanupWireVocabulary
             RecoveryBundleOperation.Update => "update",
             RecoveryBundleOperation.Remove => "remove",
             RecoveryBundleOperation.Repair => "repair",
+            RecoveryBundleOperation.Attach => "attach",
+            RecoveryBundleOperation.Sync => "sync",
+            RecoveryBundleOperation.Detach => "detach",
             _ => Undefined(nameof(value), value),
         };
 

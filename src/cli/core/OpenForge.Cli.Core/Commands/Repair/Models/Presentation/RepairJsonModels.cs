@@ -31,6 +31,8 @@ internal sealed class RepairJsonNext
 
 internal sealed class RepairJsonResult
 {
+    public required RepairJsonLibraryExecution? LibraryExecution { get; init; }
+
     public required string Mode { get; init; }
 
     public required bool Automatic { get; init; }
@@ -106,6 +108,10 @@ internal sealed class RepairJsonCoverage
 
 internal sealed class RepairJsonSelection
 {
+    public required RepairJsonSelectedLibrary[] SelectedLibraries { get; init; }
+
+    public required RepairJsonLibraryProposal[] UnselectedLibraries { get; init; }
+
     public required string Mode { get; init; }
 
     public required RepairJsonSelectedProposal[] Selected { get; init; }
@@ -173,6 +179,8 @@ internal sealed class RepairJsonCandidateEvidence
 
 internal sealed class RepairJsonPlan
 {
+    public required RepairJsonLibraryStep[] LibrarySteps { get; init; }
+
     public required bool Blocked { get; init; }
 
     public required bool NoOp { get; init; }
@@ -258,6 +266,8 @@ internal sealed class RepairJsonNoOp
 
 internal sealed class RepairJsonConflict
 {
+    public required RepairJsonLibraryProposal? Library { get; init; }
+
     public required string Kind { get; init; }
 
     public required string? SourcePath { get; init; }

@@ -10,7 +10,7 @@ internal static class RepairStepOutcomeReader
         => new(input.Plan.Request, input.Plan.Selection,
             input.Plan.Steps.Select(step => new RepairStep(
                 step.Ordinal, step.SelectedProposal, step.Dependency, step.Verification, step.Recovery,
-                step.Effect, step.NoOp, Read(step, input))), input.Plan.Conflicts);
+                step.Effect, step.NoOp, Read(step, input))), input.Plan.Conflicts, input.Plan.LibrarySteps);
 
     private static RepairStepOutcome Read(RepairStep step, RepairResultInput input)
     {

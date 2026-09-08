@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
+using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Lifecycle;
@@ -52,8 +53,8 @@ internal static class CliCompositionRoot
             new WorkspaceEntryOperationalContributor(
                 new WorkspacePathObserver(physicalPathResolver)),
             new RecoveryResidualOperationalContributor(
-                new RecoveryBundleCatalogue(new RecoveryBundleReader()),
-                new RecoveryBundleTargetStateReader(physicalPathResolver)),
+                new RecoveryBundleTargetStateReader(physicalPathResolver),
+                physicalPathResolver),
             new RouteOperationalContributor(
                 new RouteObservationReader(
                     routeSourceInspector,
@@ -76,7 +77,8 @@ internal static class CliCompositionRoot
                 new LifecycleDocumentReader(physicalPathResolver),
                 new ExtensionSourceReader(physicalPathResolver),
                 new ExtensionLifecycleTargetReader(physicalPathResolver),
-                new LifecycleOwnershipReader(physicalPathResolver)));
+                new LifecycleOwnershipReader(physicalPathResolver)),
+            new LibraryOperationalContributor());
         var route = CliRouteComposer.Compose(interactiveSession, inputs.LockStoreRoot);
         var standalone = CliStandaloneComposer.Compose(
             interactiveSession,
@@ -86,9 +88,10 @@ internal static class CliCompositionRoot
         var extension = CliExtensionComposer.Compose(
             interactiveSession,
             inputs.LockStoreRoot);
+        var library = CliLibraryComposer.Compose();
         var tree = CliCommandTree.Create(
             CreateRootHelp(),
-            [route.Branch, extension.Branch],
+            [route.Branch, extension.Branch, library.Branch],
             [
                 route.ListBinding,
                 route.InspectBinding,
@@ -113,6 +116,11 @@ internal static class CliCompositionRoot
                 extension.InstallBinding,
                 extension.UpdateBinding,
                 extension.RemoveBinding,
+                library.ListBinding,
+                library.InspectBinding,
+                library.AttachBinding,
+                library.SyncBinding,
+                library.DetachBinding,
             ],
             rootLeaves: standalone.RootLeaves);
         return new CliCoreApplication(
@@ -152,6 +160,11 @@ internal static class CliCompositionRoot
                   extension install Install reviewed Extension packages into a Framework workspace.
                   extension update  Reconcile managed Extension packages from one reviewed source.
                   extension remove  Release selected managed Extension ownership and remove eligible content.
+                  library list      Observe bounded Library records and links.
+                  library inspect   Inspect one complete Library inventory and projection.
+                  library attach    Register and project one contained source root.
+                  library sync      Reconcile one complete registered Library.
+                  library detach    Remove one exact registered projection.
                 """),
             new CliHelpSection(
                 heading: "Lifecycle",

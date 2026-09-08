@@ -5,14 +5,9 @@ using OpenForge.Cli.Core.Framework.Recovery.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 
-internal sealed class RouteUpdateRecoveryCompleter(
-    RecoveryBundleCatalogue catalogue,
-    RecoveryBundleDeletionGuard deletionGuard)
+internal static class RouteUpdateRecoveryCompleter
 {
-    private readonly RecoveryBundleCatalogue _catalogue = catalogue;
-    private readonly RecoveryBundleDeletionGuard _deletionGuard = deletionGuard;
-
-    internal async ValueTask<RouteUpdateRecoveryCompletionResult> CompleteAsync(
+    internal static async ValueTask<RouteUpdateRecoveryCompletionResult> CompleteAsync(
         RouteUpdateRecoveryCompletionInput input,
         CancellationToken cancellationToken)
     {
@@ -26,7 +21,7 @@ internal sealed class RouteUpdateRecoveryCompleter(
         RecoveryBundleCatalogueResult catalogue;
         try
         {
-            catalogue = await _catalogue.ReadAsync(
+            catalogue = await RecoveryBundleCatalogue.ReadAsync(
                     input.Plan.Request.Workspace,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -68,7 +63,7 @@ internal sealed class RouteUpdateRecoveryCompleter(
         RecoveryBundleDeletionResult deletion;
         try
         {
-            deletion = await _deletionGuard.DeleteAsync(
+            deletion = await RecoveryBundleDeletionGuard.DeleteAsync(
                     input.Lease,
                     candidates[0],
                     cancellationToken)

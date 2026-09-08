@@ -493,7 +493,8 @@ internal sealed record RepairSelection
     internal RepairSelection(
         RepairSelectionMode mode,
         IEnumerable<RepairSelectedProposal> selected,
-        IEnumerable<RepairProposal> unselected)
+        IEnumerable<RepairProposal> unselected,
+        RepairLibrarySelection libraries)
     {
         if (!Enum.IsDefined(mode))
         {
@@ -505,6 +506,8 @@ internal sealed record RepairSelection
 
         ArgumentNullException.ThrowIfNull(selected);
         ArgumentNullException.ThrowIfNull(unselected);
+        ArgumentNullException.ThrowIfNull(libraries);
+        Libraries = libraries;
         Mode = mode;
         var selectedValues = SnapshotSelected(selected, nameof(selected));
         var unselectedValues = SnapshotUnselected(unselected, nameof(unselected));
@@ -514,6 +517,8 @@ internal sealed record RepairSelection
     }
 
     internal RepairSelectionMode Mode { get; }
+
+    internal RepairLibrarySelection Libraries { get; }
 
     internal IReadOnlyList<RepairSelectedProposal> Selected { get; }
 

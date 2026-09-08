@@ -6,27 +6,27 @@ open-forge:
 
 # Extension And Library Destination Proposal
 
-## Recommendation And Status
+## Accepted Direction And Remaining Design
 
-Use `content/` for Extension package files and one consumer-owned permissions
-file for exact destinations outside `.agents/`. Keep `library`, `attach`,
-`sync`, and `detach`. Extension files are copied and managed through Extension
-lifecycle state. Library files remain live relative symlinks managed through
-the separate Library record.
+On 2026-09-08 the user accepted the `content/` rename and required an allowlist
+with a CLI question when a destination has not already been added. This replaces
+the earlier manual-edit-only recommendation. Use one consumer-owned permissions
+file for exact destinations outside `.agents/`; Extension files are copied and
+Library files remain relative symlinks under their separate ownership records.
+Keep `library`, `attach`, `sync`, and `detach`.
 
-This is a proposal for [Task 24](extensions-evolution.md) and
-[Task 25](workspace-library-destination-projections.md), prepared while the
-remaining commands are implemented. The user must review the final functional
-draft before contracts or implementation change. No phase or milestone horizon
-is assigned. [Task 26](extension-internal-consolidation.md) remains the later
-pure six-command refactor.
+The concrete interaction below is the revised functional draft for Tasks 24 and 25. Exact file grants are the recommended implementation of the accepted
+allowlist requirement; there are no wildcard or directory grants. The user did
+not separately choose every schema or revocation detail. Freeze the complete
+contracts and implementation boundaries after presenting this revised flow.
+Task 26 remains the later behavior-preserving six-command refactor.
 
 ## Names And Package Layout
 
 `content/` describes the files an Extension contributes in familiar language.
 `contents/` is a reasonable alternative, but adds no distinct meaning.
 Keeping `payload/` avoids a rename but retains transport-oriented wording.
-Recommend one atomic pre-release switch to `content/` across package creation,
+The accepted direction is one atomic pre-release switch to `content/` across package creation,
 reading, embedded assets, examples, and evidence. Do not add aliases or dual
 readers. Existing installed ownership remains identified by destination paths;
 a package directory rename alone does not reinstall files.
@@ -87,12 +87,47 @@ The current `.agents/` rules remain in force, including their exclusions.
 Every dependency must have its own grant for each external path it needs.
 A copied file grant never authorizes a Library link, or vice versa.
 
-The first version has no permission prompt or approval-writing command. Dry
-run reports missing exact grants with the source, package or Library, target,
-and effect. The consumer edits the file, reviews the change, and reruns.
-`--automatic`, `--force`, and `--prune` never grant a destination. Read and
-revalidate permission bytes with the immutable plan under the workspace lease;
-source metadata and lifecycle records cannot widen them.
+### Approval In The CLI
+
+A prompt-capable human mutation collects all missing exact grants for the
+selected Extension closure or Library before any permission or content effect.
+It shows the package/Library identity, source, destination, copy/link effect,
+and that approval will be remembered in this consumer workspace. Ask once for
+the complete displayed set, with No as the default:
+
+```text
+This Extension needs access to files outside .agents:
+  team-review: .apm/agents/reviewer.md (copy)
+Add these files to this workspace's allowlist and continue? [y/N]
+```
+
+Yes authorizes exactly that displayed set. Existing grants are reused without
+another question. No, an empty answer, end-of-input or cancellation grants
+nothing and produces no permission or content effects. Do not widen the grant
+to a folder, future source additions or a different identity. Each dependency
+has its own exact grants; a Library grant also binds its source root.
+
+Dry-run lists missing grants and planned effects without prompting or writing.
+JSON, redirected/noninteractive input and `--automatic` never prompt or grant
+permission. They return the missing grants and a concrete next action: rerun
+interactively or edit the exact consumer permission entries. `--force` and
+`--prune` do not bypass permission. Reuse the existing typed interactive session
+and human-mode admission rules; introduce no second prompt system.
+
+Before persisting approval, finish the complete command preflight. Acquire the
+normal workspace lease and revalidate the displayed source, requested paths,
+permission bytes, ownership and expected destinations. A changed snapshot stops
+the request; approval is not transferred to changed files or a broader plan.
+Write the strict permission file atomically, preserving all unrelated grants,
+and report this declared control-file effect before applying approved content.
+A failed permission write prevents content effects. If a later effect fails,
+truthfully report that the approved permission remains; no automatic rollback
+or hidden grant removal occurs. Permission admission and content ownership
+remain distinct. Exact control-file recovery and result coordinates must be
+frozen with the existing mutation/recovery contracts before implementation.
+
+Malformed or unsafe permission storage is diagnosed and never overwritten by
+an approval prompt. Package-contained permission files do not grant authority.
 
 Reject repository metadata, the source tree, Open Forge control and recovery
 files, overwrite companions, and existing Framework-owned or independently
@@ -150,13 +185,14 @@ registered links, and publishes or removes the Library record last. Neither
 operation follows a link to mutate its source. Modified files and retargeted
 links remain protected by their existing command rules.
 
-Recommend that revoking a grant blocks later effects at that external path,
-including Update, Remove, Sync, Detach, and any explicit recovery application.
-Revocation itself never deletes files or releases ownership. To retire content,
-remove or detach while the grant exists, then revoke it. To recover after early
-revocation, deliberately restore the exact grant and rerun the operation.
-Read-only inspection remains available. This simple rule avoids creating an
-implicit deletion permission that survives revocation.
+Revoking a grant prevents subsequent changes at that external path, including
+Update, Remove, Sync, Detach and explicit recovery application. Revocation does
+not itself delete content or release ownership. A prompt-capable mutation may
+ask to restore the exact missing grant through the same explicit approval flow;
+noninteractive requests stop with a concrete missing-permission result. To retire
+content without another question, remove or detach before revoking the grant.
+Read-only inspection remains available. This proposed rule is an admission
+boundary, not a malicious-same-user security guarantee.
 
 Use the accepted lock, expected-state revalidation, no-follow checks, bounded
 file/link effects, verification, and external recovery evidence. External
@@ -166,24 +202,24 @@ appropriate, never source-file bytes for a projection. Interrupted application
 retains truthful partial effects and recovery evidence, without automatic
 rollback. No native bridge or stronger malicious-same-user guarantee is proposed.
 
-## User Decision And Implementation Gate
+## Contract And Implementation Gate
 
-The user needs to accept or change the proposed `content/` spelling and the
-exact-file permission model, including the revocation rule. The strongest
-alternative is an explicit directory allowlist: it reduces permission edits
-for growing packages but gives later source additions access to more paths.
-Exact files are the recommended first version for deliberate local tooling.
+The user accepted `content/`, an allowlist and an interactive question for
+missing entries. Present this revised exact-file flow, including prompt-free
+dry-run/automation and retained approvals after later failure, before freezing
+the implementation contracts. The earlier no-prompt proposal is superseded.
 
-After that review, freeze the complete changed contracts, reserved-path list,
-permission result/error representation, strict package and record readers,
-and lifecycle/recovery effects before implementation. Revisit the earlier
-source-reader fail-closed and Update parent-catalogue candidates in Task 24;
-they are not silently accepted by this proposal or the Task 26 refactor.
+Freeze the complete changed contracts, protected destination list, permission
+result/error representation, prompt admission, strict readers, explicit grant
+publication and lifecycle/recovery effects. Revisit source-reader fail-closed
+and Update parent-catalogue candidates within Task 24; neither is silently
+accepted by this proposal or the Task 26 refactor.
 
-Use focused pure evidence for permission grammar and admission, real-filesystem
-evidence for copies, links, retirement, revocation, collisions, and recovery,
-and exactly three simple public journeys per command. Required full managed
-and supported Native AOT gates follow the accepted task applicability rules.
+Use focused pure evidence for grammar and admission; real-filesystem evidence
+for remembered approval, copies, links, retirement, revocation, collisions and
+recovery; and exactly three simple public journeys per command. Reuse existing
+interactive test boundaries for prompt decisions. Full managed and supported
+Native AOT gates follow each accepted Task's applicability check.
 
 ## Preparation Capsule And Provenance
 

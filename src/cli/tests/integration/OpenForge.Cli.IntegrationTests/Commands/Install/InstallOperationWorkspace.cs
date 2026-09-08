@@ -148,8 +148,7 @@ internal sealed class InstallOperationWorkspace : IDisposable
     internal async ValueTask<int> ReadRecoveryCandidateCountAsync(
         CancellationToken cancellationToken)
     {
-        var result = await new RecoveryBundleCatalogue(new RecoveryBundleReader())
-            .ReadAsync(Workspace, cancellationToken);
+        var result = await RecoveryBundleCatalogue.ReadAsync(Workspace, cancellationToken);
         return result.State switch
         {
             RecoveryBundleCatalogueState.Available => result.Candidates.Length,
@@ -158,9 +157,9 @@ internal sealed class InstallOperationWorkspace : IDisposable
             RecoveryBundleCatalogueState.Cancelled => throw new InvalidOperationException(
                 "The Install integration recovery catalogue was cancelled."),
             _ => throw new ArgumentOutOfRangeException(
-                nameof(result),
-                result.State,
-                "The recovery catalogue state is not defined."),
+                paramName: null,
+                actualValue: result.State,
+                message: "The recovery catalogue state is not defined."),
         };
     }
 
@@ -191,8 +190,7 @@ internal sealed class InstallOperationWorkspace : IDisposable
         foreach (var directory in EmbeddedPayloadPaths
                      .Select(path => Path.GetDirectoryName(_temporary.Combine(path)))
                      .Append(_temporary.Combine(".agents"))
-                     .Where(path => path is not null)
-                     .Select(path => path!)
+                     .OfType<string>()
                      .Distinct(StringComparer.Ordinal)
                      .OrderByDescending(path => path.Length))
         {

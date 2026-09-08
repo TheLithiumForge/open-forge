@@ -1,25 +1,19 @@
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
-
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion.Models;
 
 namespace OpenForge.Cli.Core.Framework.Recovery;
 
-internal sealed class RecoveryBundleDeletionGuard(
-    RecoveryBundleCatalogue catalogue,
-    RecoveryBundleReader reader)
+internal static class RecoveryBundleDeletionGuard
 {
-    private readonly RecoveryBundleCatalogue _catalogue = catalogue;
-    private readonly RecoveryBundleReader _reader = reader;
-
-    internal ValueTask<RecoveryBundleDeletionSessionOpenResult> OpenSessionAsync(
+    internal static ValueTask<RecoveryBundleDeletionSessionOpenResult> OpenSessionAsync(
         WorkspaceLockLease lease,
         RecoveryBundleCatalogueResult frozenCatalogue,
         CancellationToken cancellationToken)
-        => RecoveryBundleDeletionSession.OpenAsync(lease, frozenCatalogue, _catalogue, _reader, cancellationToken);
+        => RecoveryBundleDeletionSession.OpenAsync(lease, frozenCatalogue, cancellationToken);
 
-    internal async ValueTask<RecoveryBundleDeletionResult> DeleteAsync(
+    internal static async ValueTask<RecoveryBundleDeletionResult> DeleteAsync(
         WorkspaceLockLease lease,
         RecoveryBundleCandidateSnapshot candidate,
         CancellationToken cancellationToken)
@@ -57,7 +51,7 @@ internal sealed class RecoveryBundleDeletionGuard(
             return RecoveryBundleDeletionResult.CancelledUnknown();
         }
 
-        var catalogue = await _catalogue.ReadAsync(
+        var catalogue = await RecoveryBundleCatalogue.ReadAsync(
             lease.Request.Workspace,
             cancellationToken).ConfigureAwait(false);
         if (catalogue.State == RecoveryBundleCatalogueState.Cancelled)
@@ -90,7 +84,7 @@ internal sealed class RecoveryBundleDeletionGuard(
 
         if (candidate.Kind == RecoveryBundleCandidateKind.Final)
         {
-            var finalRead = await _reader.ReadFinalAsync(
+            var finalRead = await RecoveryBundleReader.ReadFinalAsync(
                 lease.Request.Workspace,
                 candidate.Path,
                 cancellationToken).ConfigureAwait(false);

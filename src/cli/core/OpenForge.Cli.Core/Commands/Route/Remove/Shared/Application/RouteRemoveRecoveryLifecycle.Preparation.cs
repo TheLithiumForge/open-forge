@@ -1,14 +1,15 @@
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
+using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 
-internal sealed partial class RouteRemoveRecoveryLifecycle
+internal static partial class RouteRemoveRecoveryLifecycle
 {
-    internal async ValueTask<RouteRemoveRecoveryPreparationResult> PrepareAsync(
+    internal static async ValueTask<RouteRemoveRecoveryPreparationResult> PrepareAsync(
         RouteRemoveRecoveryPreparationInput input,
         CancellationToken cancellationToken)
     {
@@ -36,13 +37,13 @@ internal sealed partial class RouteRemoveRecoveryLifecycle
         return await PrepareBundleAsync(input, cancellationToken).ConfigureAwait(false);
     }
 
-    private async ValueTask<RouteRemoveRecoveryPreparationResult> PrepareBundleAsync(
+    private static async ValueTask<RouteRemoveRecoveryPreparationResult> PrepareBundleAsync(
         RouteRemoveRecoveryPreparationInput input,
         CancellationToken cancellationToken)
     {
         try
         {
-            var stored = await _store.PrepareAsync(
+            var stored = await RecoveryBundleStore.PrepareAsync(
                 RecoveryBundleInput.Create(
                     input.Plan.Request.Workspace,
                     RouteRemoveDefinitions.CommandIdentity,
@@ -65,13 +66,13 @@ internal sealed partial class RouteRemoveRecoveryLifecycle
         }
     }
 
-    private async ValueTask<RecoveryBundleCatalogueResult> ReadCatalogueAsync(
+    private static async ValueTask<RecoveryBundleCatalogueResult> ReadCatalogueAsync(
         RouteRemovePlan plan,
         CancellationToken cancellationToken)
     {
         try
         {
-            return await _catalogue.ReadAsync(plan.Request.Workspace, cancellationToken)
+            return await RecoveryBundleCatalogue.ReadAsync(plan.Request.Workspace, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

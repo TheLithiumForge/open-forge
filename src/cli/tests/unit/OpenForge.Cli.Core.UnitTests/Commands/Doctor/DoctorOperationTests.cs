@@ -42,8 +42,8 @@ public sealed class DoctorOperationTests
                 DoctorDomainKind.ExtensionLifecycle,
             ],
             result.Diagnosis.Domains.Select(domain => domain.Domain));
-        Assert.True(result.Diagnosis.ReadOnly);
-        Assert.False(result.Diagnosis.ChangesMade);
+        Assert.True(DoctorDiagnosis.ReadOnly);
+        Assert.False(DoctorDiagnosis.ChangesMade);
         Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
     }
 
@@ -74,7 +74,6 @@ public sealed class DoctorOperationTests
 
     private static ExtensionLifecycleDoctorView CreatePluralSourceView()
     {
-        var workspace = DoctorOperationTestSupport.Workspace();
         var packages = new[]
         {
             new LifecycleInstalledPackage

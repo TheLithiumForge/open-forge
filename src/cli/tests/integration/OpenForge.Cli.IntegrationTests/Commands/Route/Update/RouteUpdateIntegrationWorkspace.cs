@@ -125,7 +125,7 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
         => Patch(tags: new RouteUpdateTagsRequest
         {
             Requested = true,
-            Values = ImmutableArray.CreateRange(values),
+            Values = [.. values],
         });
 
     internal static RouteUpdatePatchRequest Patch(
@@ -164,7 +164,7 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
             },
             TestContext.Current.CancellationToken);
 
-    internal ValueTask<RouteUpdatePlanBuild> BuildPlanAsync(RouteUpdateRequest request)
+    internal static ValueTask<RouteUpdatePlanBuild> BuildPlanAsync(RouteUpdateRequest request)
         => CreatePlanBuilder().BuildAsync(
             request,
             TestContext.Current.CancellationToken);
@@ -186,12 +186,10 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
             new PhysicalPathResolver());
         var mutationRevalidator = new MutationRevalidator(expectationValidator);
         var planBuilder = CreatePlanBuilder();
-        var recovery = CreateRecoveryServices();
         var preparer = new RouteUpdateApplicationPreparer(
             new RouteUpdatePlanRevalidator(
                 planBuilder,
                 new RouteUpdatePlanEquivalence()),
-            recovery.Preparer,
             mutationRevalidator);
         return new RouteUpdateApplicationOperation(
             new RouteUpdateApplicationPipeline(
@@ -202,8 +200,7 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
                         expectationValidator)),
                 new RouteUpdateAppliedVerifier(
                     planBuilder,
-                    expectationValidator),
-                recovery.Completer),
+                    expectationValidator)),
             resultBuilder,
             LockStoreRoot).ExecuteAsync(
                 plan,
@@ -295,21 +292,6 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
                 new RouteUpdateBodyPlanner()),
             new RouteUpdateNavigationPlanner(),
             new RouteUpdatePlanProjector());
-    }
-
-    internal static (
-        RouteUpdateRecoveryPreparer Preparer,
-        RouteUpdateRecoveryCompleter Completer) CreateRecoveryServices()
-    {
-        var reader = new RecoveryBundleReader();
-        var catalogue = new RecoveryBundleCatalogue(reader);
-        return (
-            new RouteUpdateRecoveryPreparer(
-                catalogue,
-                new RecoveryBundleStore(reader)),
-            new RouteUpdateRecoveryCompleter(
-                catalogue,
-                new RecoveryBundleDeletionGuard(catalogue, reader)));
     }
 
     private static RouteUpdateTargetObserver CreateTargetObserver(

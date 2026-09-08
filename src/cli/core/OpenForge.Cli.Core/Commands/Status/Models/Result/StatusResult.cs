@@ -41,6 +41,16 @@ internal enum StatusFindingCode
     RecoveryFinalUnsupported,
     RecoveryFinalUnavailable,
     RecoveryCatalogueUnavailable,
+    LibraryRecordMalformed,
+    LibraryRecordUnavailable,
+    LibrarySourceRootInvalid,
+    LibrarySourceRootAliased,
+    LibrarySourceRootUnavailable,
+    LibraryProjectionMissing,
+    LibraryProjectionChanged,
+    LibraryProjectionUnavailable,
+    LibraryProjectionBlocked,
+    LibraryExtensionCollision,
     OperationFailed,
     Interrupted,
 }
@@ -64,6 +74,8 @@ internal sealed record StatusFacts
     public required StatusStructure Structure { get; init; }
 
     public required StatusLifecycle Lifecycle { get; init; }
+
+    public required StatusLibrary Library { get; init; }
 
     public required StatusRecovery Recovery { get; init; }
 }

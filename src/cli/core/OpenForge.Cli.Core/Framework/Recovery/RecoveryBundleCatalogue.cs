@@ -5,11 +5,9 @@ using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Framework.Recovery;
 
-internal sealed class RecoveryBundleCatalogue(RecoveryBundleReader reader)
+internal static class RecoveryBundleCatalogue
 {
-    private readonly RecoveryBundleReader _reader = reader;
-
-    internal async ValueTask<RecoveryBundleCatalogueResult> ReadAsync(
+    internal static async ValueTask<RecoveryBundleCatalogueResult> ReadAsync(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
     {
@@ -79,7 +77,7 @@ internal sealed class RecoveryBundleCatalogue(RecoveryBundleReader reader)
                     continue;
                 }
 
-                var read = await _reader.ReadFinalAsync(
+                var read = await RecoveryBundleReader.ReadFinalAsync(
                     workspace,
                     path,
                     cancellationToken).ConfigureAwait(false);

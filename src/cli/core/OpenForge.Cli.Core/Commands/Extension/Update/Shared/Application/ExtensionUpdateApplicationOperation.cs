@@ -21,14 +21,12 @@ internal sealed class ExtensionUpdateApplicationOperation(
     WorkspaceLockManager lockManager,
     ExtensionUpdatePlanner planner,
     MutationRevalidator revalidator,
-    ExtensionUpdateEffectApplier effectApplier,
-    ExtensionUpdateRecoveryApplication recoveryApplication)
+    ExtensionUpdateEffectApplier effectApplier)
 {
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly ExtensionUpdatePlanner _planner = planner;
     private readonly MutationRevalidator _revalidator = revalidator;
     private readonly ExtensionUpdateEffectApplier _effectApplier = effectApplier;
-    private readonly ExtensionUpdateRecoveryApplication _recoveryApplication = recoveryApplication;
 
     internal async ValueTask<ExtensionUpdateApplicationOutcome> ExecuteAsync(
         ExtensionUpdatePlan plan,
@@ -139,7 +137,7 @@ internal sealed class ExtensionUpdateApplicationOperation(
         RecoveryBundlePreparationResult preparationResult;
         try
         {
-            preparationResult = await _recoveryApplication.PrepareAsync(
+            preparationResult = await ExtensionUpdateRecoveryApplication.PrepareAsync(
                 plan,
                 operationId,
                 cancellationToken).ConfigureAwait(false);
@@ -316,7 +314,7 @@ internal sealed class ExtensionUpdateApplicationOperation(
                 });
         }
 
-        var recovery = await _recoveryApplication.CleanupAsync(
+        var recovery = await ExtensionUpdateRecoveryApplication.CleanupAsync(
             plan,
             lease,
             preparation,
@@ -450,8 +448,8 @@ internal sealed class ExtensionUpdateApplicationOperation(
             _ => throw new ArgumentOutOfRangeException(nameof(receipt), receipt.NotStartedReason, "The not-started reason is not defined."),
         };
 
-    private static IReadOnlyList<string> ProtectedPaths(RecoveryBundlePreparation preparation)
-        => preparation.Entries.OrderBy(entry => entry.Ordinal).Select(entry => entry.TargetPath).ToArray();
+    private static string[] ProtectedPaths(RecoveryBundlePreparation preparation)
+        => [.. preparation.Entries.OrderBy(entry => entry.Ordinal).Select(entry => entry.TargetPath)];
 
     private static bool Matches(ExtensionUpdatePlan expected, ExtensionUpdatePlan actual)
         => string.Equals(expected.SourceSignature, actual.SourceSignature, StringComparison.Ordinal)

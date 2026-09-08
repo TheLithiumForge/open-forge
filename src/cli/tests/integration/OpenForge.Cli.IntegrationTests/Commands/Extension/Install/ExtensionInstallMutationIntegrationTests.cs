@@ -15,7 +15,6 @@ using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -42,13 +41,10 @@ public sealed class ExtensionInstallMutationIntegrationTests
         var validator = new FileExpectationValidator(resolver);
         var revalidator = new MutationRevalidator(validator);
         var lifecycleStore = new LifecycleStore(resolver);
-        var recoveryReader = new RecoveryBundleReader();
-        var recoveryCatalogue = new RecoveryBundleCatalogue(recoveryReader);
         var planner = new ExtensionInstallPlanner(
             new CliInteractiveSession(TextReader.Null, TextWriter.Null, canPrompt: false),
             resolver,
-            lifecycleStore,
-            recoveryCatalogue);
+            lifecycleStore);
         var request = new ExtensionInstallRequest(
             workspace.Workspace,
             ExtensionInstallMode.Apply,
@@ -76,11 +72,7 @@ public sealed class ExtensionInstallMutationIntegrationTests
             plan.AllFileChanges,
             TestContext.Current.CancellationToken);
         Assert.Equal(MutationValidationState.Valid, validation.State);
-        var recovery = new ExtensionInstallRecoveryOperation(
-            new RecoveryBundleStore(recoveryReader),
-            recoveryCatalogue,
-            new RecoveryBundleDeletionGuard(recoveryCatalogue, recoveryReader));
-        var preparationResult = await recovery.PrepareAsync(
+        var preparationResult = await ExtensionInstallRecoveryOperation.PrepareAsync(
             plan,
             operationId,
             TestContext.Current.CancellationToken);
@@ -160,7 +152,8 @@ public sealed class ExtensionInstallMutationIntegrationTests
             Assert.Equal("unknown", value.Value.GetString()));
     }
 
-    [Fact(DisplayName = "Extension Install applies dependency-first verifies topology publishes lifecycle last and converges to an exact no-op"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Extension Install applies dependency-first verifies topology publishes lifecycle last and converges to an exact no-op"),
+     Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
     public async Task ApplyVerifiesCompleteStateAndNoOp()
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-install-apply");
@@ -383,13 +376,10 @@ public sealed class ExtensionInstallMutationIntegrationTests
         workspace.CreateOccupant(".agents/toolkit.md", "plain occupant\n");
         var resolver = new PhysicalPathResolver();
         var lifecycleStore = new LifecycleStore(resolver);
-        var recoveryReader = new RecoveryBundleReader();
-        var recoveryCatalogue = new RecoveryBundleCatalogue(recoveryReader);
         var planBuild = await new ExtensionInstallPlanner(
             new CliInteractiveSession(TextReader.Null, TextWriter.Null, canPrompt: false),
             resolver,
-            lifecycleStore,
-            recoveryCatalogue).BuildAsync(
+            lifecycleStore).BuildAsync(
                 new ExtensionInstallRequest(
                     workspace.Workspace,
                     ExtensionInstallMode.Apply,
@@ -411,11 +401,7 @@ public sealed class ExtensionInstallMutationIntegrationTests
                 operationId),
             TestContext.Current.CancellationToken);
         await using var lease = Assert.IsType<WorkspaceLockLease>(lockResult.Lease);
-        var recovery = new ExtensionInstallRecoveryOperation(
-            new RecoveryBundleStore(recoveryReader),
-            recoveryCatalogue,
-            new RecoveryBundleDeletionGuard(recoveryCatalogue, recoveryReader));
-        var preparationResult = await recovery.PrepareAsync(
+        var preparationResult = await ExtensionInstallRecoveryOperation.PrepareAsync(
             plan,
             operationId,
             TestContext.Current.CancellationToken);
@@ -424,7 +410,7 @@ public sealed class ExtensionInstallMutationIntegrationTests
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 
-        var cleanup = await recovery.CleanupAsync(
+        var cleanup = await ExtensionInstallRecoveryOperation.CleanupAsync(
             new ExtensionInstallRecoveryCleanupRequest(plan, lease, preparation),
             cancellation.Token);
 
@@ -448,14 +434,14 @@ public sealed class ExtensionInstallMutationIntegrationTests
         Assert.True(toolkitIndex > baseIndex);
     }
 
-    private static IReadOnlyList<string> Names(JsonElement value)
-        => value.EnumerateObject().Select(property => property.Name).ToArray();
+    private static string[] Names(JsonElement value)
+        => [.. value.EnumerateObject().Select(property => property.Name)];
 
-    private static IReadOnlyList<string?> Strings(JsonElement array, string property)
-        => array.EnumerateArray().Select(value => value.GetProperty(property).GetString()).ToArray();
+    private static string?[] Strings(JsonElement array, string property)
+        => [.. array.EnumerateArray().Select(value => value.GetProperty(property).GetString())];
 
-    private static IReadOnlyList<string?> Strings(JsonElement array)
-        => array.EnumerateArray().Select(value => value.GetString()).ToArray();
+    private static string?[] Strings(JsonElement array)
+        => [.. array.EnumerateArray().Select(value => value.GetString())];
 
     private static string Document(string name)
         => OpenForge.Cli.TestSupport.OpenForgeDocumentSeed.Metadata(

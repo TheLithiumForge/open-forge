@@ -15,20 +15,24 @@ namespace OpenForge.Cli.Core.Commands.Repair.Shared.Application;
 
 internal sealed class RepairApplicationOperation(
     RepairMutationServices mutation,
-    RepairRecoveryLifecycle recoveryLifecycle,
     RepairPostVerifier postVerifier,
     RepairPlanRevalidator planRevalidator)
 {
+    private readonly RepairMutationServices _mutation = mutation;
     private readonly MutationPreflight _preflight = mutation.Preflight;
     private readonly WorkspaceLockManager _lockManager = mutation.LockManager;
     private readonly MutationRevalidator _revalidator = mutation.Revalidator;
     private readonly FileChangeApplier _fileChangeApplier = mutation.Applier;
-    private readonly RepairRecoveryLifecycle _recoveryLifecycle = recoveryLifecycle;
     private readonly RepairPostVerifier _postVerifier = postVerifier;
     private readonly RepairPlanRevalidator _planRevalidator = planRevalidator;
 
     internal async ValueTask<RepairPreflightOutcome> PreflightAsync(RepairPlan plan, CancellationToken cancellationToken)
     {
+        if (!plan.LibrarySteps.IsEmpty)
+        {
+            return await RepairLibraryRecoveryApplication.PreflightAsync(_mutation, plan, cancellationToken).ConfigureAwait(false);
+        }
+
         var changes = plan.Effects.Select(effect => effect.FileChange).ToArray();
         var validation = await _preflight.ValidateAsync(plan.Request.Workspace, changes, cancellationToken).ConfigureAwait(false);
         if (validation.State != MutationValidationState.Valid)
@@ -49,6 +53,12 @@ internal sealed class RepairApplicationOperation(
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(plan);
+        if (!plan.LibrarySteps.IsEmpty)
+        {
+            return await RepairLibraryRecoveryApplication.ExecuteAsync(
+                _mutation, _planRevalidator, _postVerifier, plan, targets, cancellationToken).ConfigureAwait(false);
+        }
+
         var changes = plan.Effects.Select(effect => effect.FileChange).ToArray();
         if (changes.Length == 0)
         {
@@ -101,7 +111,7 @@ internal sealed class RepairApplicationOperation(
         }
 
         var attribution = plan.Effects[0].RecoveryAttribution;
-        var preparation = await _recoveryLifecycle.PrepareAsync(
+        var preparation = await RepairRecoveryLifecycle.PrepareAsync(
             plan,
             operationId,
             cancellationToken).ConfigureAwait(false);
@@ -127,7 +137,7 @@ internal sealed class RepairApplicationOperation(
         var preparation = prepared.Preparation;
         var attribution = preparation.Attribution;
         var receipts = new List<FileChangeReceipt>();
-        var completion = new RepairApplicationCompletion(_postVerifier, _recoveryLifecycle);
+        var completion = new RepairApplicationCompletion(_postVerifier);
         try
         {
             if (!await new RepairTargetReader().ValidateAsync(plan, targets, cancellationToken).ConfigureAwait(false)

@@ -38,6 +38,11 @@ internal static class DoctorFindingWireVocabulary
             DoctorSubjectKind.ManagedFile => "managed-file",
             DoctorSubjectKind.Extension => "extension",
             DoctorSubjectKind.Dependency => "dependency",
+            DoctorSubjectKind.Library => "library",
+            DoctorSubjectKind.LibrarySourceRoot => "library-source-root",
+            DoctorSubjectKind.LibraryMapping => "library-mapping",
+            DoctorSubjectKind.LibraryProjection => "library-projection",
+            DoctorSubjectKind.LibraryResidual => "library-residual",
             _ => Undefined(value),
         };
 
@@ -124,6 +129,7 @@ internal static class DoctorFindingWireVocabulary
         => value switch
         {
             DoctorProposalKind.ReferenceCanonicalization => "reference-canonicalization",
+            DoctorProposalKind.LibraryResidualRecovery => "library-residual-recovery",
             _ => Undefined(value),
         };
 
@@ -132,6 +138,7 @@ internal static class DoctorFindingWireVocabulary
         {
             DoctorProposalVerificationKind.SameTargetIdentity => "same-target-identity",
             DoctorProposalVerificationKind.ResultingBytes => "resulting-bytes",
+            DoctorProposalVerificationKind.NoFollowPriorState => "no-follow-prior-state",
             _ => Undefined(value),
         };
 
@@ -140,6 +147,7 @@ internal static class DoctorFindingWireVocabulary
         {
             DoctorProposalRecoveryKind.NoPersistentState => "no-persistent-state",
             DoctorProposalRecoveryKind.RepairReceiptRequired => "repair-receipt-required",
+            DoctorProposalRecoveryKind.VerifiedLibraryResidual => "verified-library-residual",
             _ => Undefined(value),
         };
 

@@ -17,12 +17,10 @@ namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 
 internal sealed class ExtensionInstallFoundationReader(
     LifecycleStore lifecycleStore,
-    FrameworkLifecycleCurrentnessReader frameworkCurrentness,
-    RecoveryBundleCatalogue recoveryCatalogue)
+    FrameworkLifecycleCurrentnessReader frameworkCurrentness)
 {
     private readonly LifecycleStore _lifecycleStore = lifecycleStore;
     private readonly FrameworkLifecycleCurrentnessReader _frameworkCurrentness = frameworkCurrentness;
-    private readonly RecoveryBundleCatalogue _recoveryCatalogue = recoveryCatalogue;
     private readonly ExtensionInstallTopologyBuilder _topologyBuilder = new();
 
     internal async ValueTask<ExtensionInstallFoundationObservation> ReadAsync(
@@ -117,7 +115,7 @@ internal sealed class ExtensionInstallFoundationReader(
                     FrameworkLifecycleCurrentnessState.Current => throw new InvalidOperationException(
                         "A current Framework lifecycle has no failure boundary."),
                     _ => throw new ArgumentOutOfRangeException(
-                        nameof(currentness),
+                        null,
                         currentness.State,
                         "The Framework lifecycle currentness state is not defined."),
                 },
@@ -138,7 +136,7 @@ internal sealed class ExtensionInstallFoundationReader(
                 ExtensionInstallFindingCode.LifecycleBlocked));
         }
 
-        var recovery = await _recoveryCatalogue.ReadAsync(
+        var recovery = await RecoveryBundleCatalogue.ReadAsync(
             request.Workspace,
             cancellationToken).ConfigureAwait(false);
         if (recovery.State != RecoveryBundleCatalogueState.Available
@@ -151,7 +149,7 @@ internal sealed class ExtensionInstallFoundationReader(
                     RecoveryBundleCatalogueState.Available => ExtensionInstallFindingCode.RecoveryConflict,
                     RecoveryBundleCatalogueState.Unavailable => ExtensionInstallFindingCode.RecoveryUnavailable,
                     _ => throw new ArgumentOutOfRangeException(
-                        nameof(recovery),
+                        null,
                         recovery.State,
                         "The recovery catalogue state is not defined."),
                 },
@@ -226,11 +224,11 @@ internal sealed class ExtensionInstallFoundationReader(
                 InventoryFingerprint = lifecycle.Source.InventoryFingerprint,
             },
             Targets = targets,
-            GeneratedRegions = lifecycle.GeneratedRegions.Select(region => new FrameworkGeneratedRegion
+            GeneratedRegions = [.. lifecycle.GeneratedRegions.Select(region => new FrameworkGeneratedRegion
             {
                 Path = region.Path,
                 Region = region.Region,
-            }).ToArray(),
+            })],
         };
     }
 

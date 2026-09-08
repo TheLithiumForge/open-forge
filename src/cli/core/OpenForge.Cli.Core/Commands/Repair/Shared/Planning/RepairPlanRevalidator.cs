@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
+using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
 
@@ -15,7 +16,12 @@ internal sealed class RepairPlanRevalidator(
     {
         var diagnosis = await diagnosisReader.ReadAsync(new DoctorRequest(plan.Request.Workspace), cancellationToken)
             .ConfigureAwait(false);
-        if (RepairCoverageMapper.Read(diagnosis.Observation).SelectedScope != RepairCoverageState.Complete)
+        var libraryOnly = plan.Effects.Count == 0 && !plan.LibrarySteps.IsEmpty;
+        var dependencyComplete = libraryOnly
+            ? diagnosis.Observation.WorkspaceEntry.State == OperationalViewState.Complete
+                && diagnosis.Observation.Libraries.State == OperationalViewState.Complete
+            : RepairCoverageMapper.Read(diagnosis.Observation).SelectedScope == RepairCoverageState.Complete;
+        if (!dependencyComplete)
         {
             return false;
         }
@@ -25,6 +31,21 @@ internal sealed class RepairPlanRevalidator(
         var choices = plan.Selection.Selected.Select(value => new RepairRelinkRequest(
             new RepairSourceLocation(value.Proposal.SourceCanonicalPath, value.Proposal.Occurrence.Line, value.Proposal.Occurrence.Column),
             value.Proposal.ExpectedDestination, value.Resolution.Target)).ToArray();
+        var libraries = RepairLibraryCatalogueReader.Read(diagnosis.Result.Diagnosis);
+        if (!plan.Selection.Libraries.Selected.IsEmpty || !plan.Selection.Libraries.Unselected.IsEmpty || !libraries.IsEmpty)
+        {
+            return RepairLibraryRecoveryPlanner.Revalidate(plan, new RepairLibraryPlanningInput
+            {
+                Request = plan.Request,
+                References = [.. catalogue.Proposals],
+                Libraries = libraries,
+                WizardRelinks = [.. choices],
+                WizardLibraries = plan.Request.SelectionMode == RepairSelectionMode.InteractiveWizard
+                    ? [.. plan.Selection.Libraries.Selected.Select(selected => selected.Proposal)]
+                    : null,
+            });
+        }
+
         var current = plan.Request.SelectionMode == RepairSelectionMode.InteractiveWizard
             ? RepairPlanner.Build(plan.Request, catalogue.Proposals, choices)
             : RepairPlanner.Build(plan.Request, catalogue.Proposals);

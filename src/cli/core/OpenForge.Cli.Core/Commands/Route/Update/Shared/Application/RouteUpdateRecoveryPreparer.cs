@@ -4,14 +4,9 @@ using OpenForge.Cli.Core.Framework.Recovery.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 
-internal sealed class RouteUpdateRecoveryPreparer(
-    RecoveryBundleCatalogue catalogue,
-    RecoveryBundleStore store)
+internal static class RouteUpdateRecoveryPreparer
 {
-    private readonly RecoveryBundleCatalogue _catalogue = catalogue;
-    private readonly RecoveryBundleStore _store = store;
-
-    internal async ValueTask<RouteUpdateRecoveryPreparationResult> PrepareAsync(
+    internal static async ValueTask<RouteUpdateRecoveryPreparationResult> PrepareAsync(
         RouteUpdateRecoveryPreparationInput input,
         CancellationToken cancellationToken)
     {
@@ -29,7 +24,7 @@ internal sealed class RouteUpdateRecoveryPreparer(
         RecoveryBundleCatalogueResult catalogue;
         try
         {
-            catalogue = await _catalogue.ReadAsync(
+            catalogue = await RecoveryBundleCatalogue.ReadAsync(
                     input.Plan.Request.Workspace,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -65,7 +60,7 @@ internal sealed class RouteUpdateRecoveryPreparer(
         RecoveryBundlePreparationResult result;
         try
         {
-            result = await _store.PrepareAsync(
+            result = await RecoveryBundleStore.PrepareAsync(
                     RecoveryBundleInput.Create(
                         input.Plan.Request.Workspace,
                         RouteUpdateDefinitions.CommandIdentity,

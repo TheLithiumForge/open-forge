@@ -7,13 +7,11 @@ namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 internal sealed class RouteUpdateApplicationPipeline(
     RouteUpdateApplicationPreparer preparer,
     RouteUpdateEffectApplication effectApplication,
-    RouteUpdateAppliedVerifier verifier,
-    RouteUpdateRecoveryCompleter recoveryCompleter)
+    RouteUpdateAppliedVerifier verifier)
 {
     private readonly RouteUpdateApplicationPreparer _preparer = preparer;
     private readonly RouteUpdateEffectApplication _effectApplication = effectApplication;
     private readonly RouteUpdateAppliedVerifier _verifier = verifier;
-    private readonly RouteUpdateRecoveryCompleter _recoveryCompleter = recoveryCompleter;
 
     internal async ValueTask<RouteUpdateApplicationProgress> ExecuteAsync(
         RouteUpdateApplicationPipelineInput input,
@@ -141,7 +139,7 @@ internal sealed class RouteUpdateApplicationPipeline(
         RouteUpdateRecoveryCompletionResult completion;
         try
         {
-            completion = await _recoveryCompleter.CompleteAsync(
+            completion = await RouteUpdateRecoveryCompleter.CompleteAsync(
                     new RouteUpdateRecoveryCompletionInput
                     {
                         Plan = plan,

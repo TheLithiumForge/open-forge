@@ -221,6 +221,7 @@ OpenForge.Cli.Core/
     Lifecycle/
     Mutation/
     Recovery/
+    Libraries/
     Extensions/
 
   Commands/
@@ -233,6 +234,7 @@ OpenForge.Cli.Core/
       Shared/
       List/
       Inspect/
+    Library/
     <RootLeaf>/
 ```
 
@@ -241,6 +243,15 @@ authorization to create empty directories. `Shell` contains process-wide CLI
 mechanics with no Framework-domain behavior. `Framework` contains reusable facts
 and effect boundaries derived from accepted Framework contracts. `Commands`
 contains operation meaning and projections.
+
+Workspace Libraries follow this ownership map. The neutral no-follow logical-leaf
+observation belongs to the focused `Framework/Filesystem/` capability. Relative
+file-link effects belong to `Framework/Mutation/`, and their typed recovery
+identities and guarded application belong to `Framework/Recovery/`. Library
+record and complete-inventory facts belong to `Framework/Libraries/`. Library
+attach, sync, detach, list, and inspect policy, plans, findings, results, and
+rendering remain under `Commands/Library/`. This placement adds no dependency
+injection, runtime registry, reflection, or sibling-private import.
 
 Definitions, binding, behavior-owning composition, models, and supporting
 behavior remain within the narrowest command or capability owner. A private
@@ -274,6 +285,10 @@ writers. Commands may depend on Shell contracts and Framework capabilities.
 
 Cross-command facts remain free of command-specific status, findings, output,
 and next-action policy. A command translates shared facts into its own result.
+The Library record and inventory are neutral Framework facts; they do not grant
+Library command policy or Framework runtime authority. `CliCompositionRoot`
+constructs the Library capabilities and registers each Library leaf explicitly
+alongside the other command bindings.
 
 ## Shell Definitions And Composition
 
@@ -423,12 +438,14 @@ separate facts. `physical identity` names this resolved-path and observed-alias
 fact under the stable-workspace boundary. It does not mean an inode, file ID, or
 handle-bound object identity.
 
-`PhysicalPathResolver` walks one existing component at a time from a proven
-root. For every component it inspects without enumerating descendants,
-classifies ordinary, missing, inaccessible, dangling, or reparse/link state,
-resolves one link target, immediately proves containment, records the identity
-used for cycle and observable-link alias detection, and continues only from the
-proven contained result.
+`PhysicalPathResolver` walks one existing directory component at a time from a
+proven root. For each directory component needed to reach a final leaf it
+inspects without enumerating descendants, classifies ordinary, missing,
+inaccessible, dangling, or reparse/link state, resolves one permitted link
+target, immediately proves containment, records the identity used for cycle and
+observable-link alias detection, and continues only from the proven contained
+result. The final logical leaf is handed to the no-follow observation below
+before ordinary file identity resolution.
 
 A path that leaves the root and later re-enters is blocked at the first external
 transition. Final-target containment is insufficient. Paths are resolved before
@@ -436,6 +453,22 @@ access, expected state is revalidated immediately before effects, and ordinary
 managed BCL file operations provide atomic replacement. These checks reject
 static escapes and detected persistent changes; they do not claim adversarial
 handle-bound identity across a transient namespace swap.
+
+Every effect that addresses a logical file leaf first obtains a neutral typed
+no-follow observation of that leaf before ordinary physical resolution. The same
+observation is repeated during initial preflight, under-lease revalidation, and
+immediately before the effect. A present link, reparse point, or special final
+leaf blocks ordinary `Create`, `Replace`, `Delete`, and `ReplaceGeneratedRegion`.
+The guard does not resolve or follow that final component. Stable contained
+directory-link ancestry remains governed by this ordinary path contract; this
+Architecture does not broaden rejection of that ancestry. Library source and
+destination rules may require the stricter real-directory boundary defined by
+the [Workspace Libraries Technical Design](technical-designs/workspace-libraries.md).
+
+The no-follow guard is neutral and does not consult Library records. Therefore a
+Route Update, Index, Route Move, or Route Remove operation cannot write through
+or delete a Library projection, even when the projection has no readable or
+matching Library record.
 
 If managed BCL evidence cannot satisfy an accepted required guarantee,
 implementation stops at Architecture rather than adding P/Invoke or silently
@@ -471,6 +504,36 @@ Loader behavior, collision handling, projection, and region mechanics live in
 the [Generated Navigation Technical
 Design](technical-designs/generated-navigation.md).
 
+### Workspace Libraries
+
+Workspace Libraries are local filesystem composition over ordinary consumer
+paths, not a new Framework root or a Loader federation. One Library record names
+one workspace-contained real source directory. Its complete eligible inventory
+under the source directory's real `.agents/` directory maps to the same
+consumer-relative `.agents/` paths through relative file symlinks. The consumer
+keeps one Loader and its own route chain; a projected file has the meaning of
+its consumer destination.
+
+Attach, Sync, and Inspect require the source root and consumer destination
+namespace to be physically disjoint, with the source root and its `.agents/`
+directory having no linked or reparse ancestry. Detach uses only exact
+consumer-side registered destinations and does not resolve a source root. The
+source inventory is strict and complete: an unavailable,
+unreadable, externally resolving, aliased, or otherwise unsafe item prevents a
+complete mutating plan. Source bytes are read-only facts and are never effect
+targets. Library projection effects can create or delete only declared relative
+file-link objects and their real parent directories; an existing consumer-owned
+generated `Entries` region may be replaced under the Index contract. The
+consumer-side Library record is published last after link and generated effects
+verify. Only a typed Library relative-file-link effect may create or delete a
+link object; ordinary file effects reject a link final leaf.
+
+The exact schema-v1 record, inventory closure, relative-link identity, capability
+gate, and command-facing fact shapes are defined in the [Workspace Libraries
+Technical Design](technical-designs/workspace-libraries.md). No copy fallback,
+Git operation, native interop, external destination, path remapping, glob, or
+write-through mutation is part of this architecture.
+
 ### Embedded Framework Distribution
 
 `Framework/Distribution/` owns one neutral embedded Framework payload reader and
@@ -494,15 +557,15 @@ bundles, or drafts.
 Mutation commands follow this cross-cutting stage order:
 
 ```text
-resolve and inspect
+resolve and inspect, including no-follow final-leaf facts
   -> form a command-local immutable plan
   -> validate policy and collisions
   -> acquire the real workspace lock when applicable
-  -> revalidate expected state
-  -> prepare and verify one external recovery bundle when existing targets require it
-  -> apply bounded filesystem changes
+  -> revalidate every planned fact under the lease
+  -> prepare and verify one external recovery bundle for every reversible non-no-op effect
+  -> apply bounded filesystem changes with an immediate no-follow check per effect
   -> verify resulting identity and bytes
-  -> write accepted lifecycle state
+  -> write accepted lifecycle or Library record state last
   -> remove the command-owned recovery bundle only after whole-command success
   -> form one concrete result
 ```
@@ -511,13 +574,15 @@ The lock provides exclusion only among cooperating Open Forge processes. It is
 external to the workspace and distinct from lifecycle and recovery. Existence is
 not ownership, activity, lifecycle authority, or recovery history.
 
-Every complete plan containing an existing-target effect has one immutable
-verified final external bundle covering all such effects before the first target
-effect. Create-only and semantic or byte no-op operations have none. A multi-file
-operation is not presented as one filesystem transaction. Shared support never
-automatically restores, rolls back, or compensates for target effects and never
-classifies current target state from recovery provenance. Handled failure,
-interruption, and post-verification cleanup retain truthful residual state.
+Every complete plan has one immutable verified final external bundle before the
+first effect whenever it contains a non-no-op effect that the operation must be
+able to reverse. This includes relative file-link creates and deletes and the
+prior-missing Library record Create; semantic or byte no-ops have none. A
+multi-file operation is not presented as one filesystem transaction. Shared
+support never automatically restores, rolls back, or compensates for target
+effects and never classifies current target state from recovery provenance.
+Handled failure, interruption, and post-verification cleanup retain truthful
+residual state for explicit Repair.
 
 Shared mutation support provides facts and mechanical capabilities. Commands
 retain their plan, effect ordering, findings, lifecycle publication, recovery
@@ -542,7 +607,9 @@ The [Mutation And Recovery Technical
 Design](technical-designs/mutation-and-recovery.md) defines application-data
 stores, persistent lock identity, ZIP and manifest realization, expected-state
 checks, same-directory atomic file mechanics, receipts, bounded validation, and
-guarded deletion. The [Shared CLI Operation
+guarded deletion, no-follow recovery comparison, and relative-file-link
+application. The [Workspace Libraries Technical Design](technical-designs/workspace-libraries.md)
+defines the separate Library record and inventory. The [Shared CLI Operation
 Contract](shared-operation-contract.md) and command contracts define observable
 operation and cleanup policy.
 
@@ -551,7 +618,8 @@ operation and cleanup policy.
 JSON uses `System.Text.Json` source generation with reflection disabled. YAML
 uses one source-generated static context for accepted Framework metadata shapes.
 Concrete command contexts register concrete result graphs. AOT evidence executes
-every registered shape.
+every registered shape. The strict Library record uses one source-generated
+schema-v1 JSON model and does not add a reflective or compatibility reader.
 
 Accepted dependency roles are `System.CommandLine` for command parsing,
 YamlDotNet plus its static generator for Framework metadata, Markdig only after a
@@ -574,7 +642,8 @@ The active test projects have distinct evidence boundaries:
   stages without claiming real filesystem or process behavior.
 - Integration tests call production modules with owned real temporary
   filesystems and cover source generation, resolved-path containment and aliases,
-  locking, recovery, runtime, and Native AOT internal boundaries.
+  no-follow leaf observations, relative-file links, Library inventory and
+  records, locking, recovery, runtime, and Native AOT internal boundaries.
 - End-to-end tests invoke the published executable and prove arguments, streams,
   statuses, exits, cancellation, unchanged bytes, and public scenarios.
 - TestSupport contains cohesive real-OS workspace and process fixtures shared by
@@ -590,6 +659,13 @@ managed graph, supported Native AOT execution, public process, package, and
 release boundary at the applicable integration points. Current testing and CLI
 Directives define authoring, traits, historical-test promotion, proportional
 selection, predecessor reuse, and exact gate triggers.
+
+Workspace Library first-release executable evidence targets Linux x64 and must
+prove real relative file-link creation, inspection, dangling-link identity,
+source and destination containment, physical disjointness, complete inventory,
+record-last application, and no copy fallback. Other platform behavior remains
+capability-gated and nonshipping until the same real-link evidence exists; no
+platform expansion or Git behavior follows from this design.
 
 ## Build, Native AOT, CI, And Artifacts
 

@@ -77,6 +77,11 @@ remain controlled by the Architecture, applicable shared-capability designs, and
 their command-local contracts until a real local boundary earns a separate
 design.
 
+Workspace Libraries use one shared-capability [Workspace Libraries Technical
+Design](technical-designs/workspace-libraries.md). Their five leaf operations do
+not have local Technical Designs; the shared design records the common record,
+inventory, projection, and recovery realization.
+
 ## Authority boundaries
 
 Each detailed command-local Interface and Behavior remains authoritative for its
@@ -167,6 +172,24 @@ The `extension` group performs no operation or wizard. Its six leaves share the
 accepted lifecycle facts and safety shape while keeping Framework and Extension
 ownership, source selection, and removal boundaries separate. These contract
 routes do not replace the accepted Architecture.
+
+The grouped [`library`](contracts/library/_library.md) route has exactly five
+actual leaf operations. Each leaf keeps its Interface and Behavior in its own
+local scope, while all five use the one shared-capability Workspace Libraries
+Technical Design:
+
+| Operation         | Interface                                                     | Behavior                                                       | Technical Design                                                                    |
+| ----------------- | ------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `library list`    | [`list Interface`](contracts/library/list/interface.md)       | [`list Behavior`](contracts/library/list/behavior.md)          | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
+| `library inspect` | [`inspect Interface`](contracts/library/inspect/interface.md) | [`inspect Behavior`](contracts/library/inspect/behavior.md)    | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
+| `library attach`  | [`attach Interface`](contracts/library/attach/interface.md)   | [`attach Behavior`](contracts/library/attach/behavior.md)      | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
+| `library sync`    | [`sync Interface`](contracts/library/sync/interface.md)       | [`sync Behavior`](contracts/library/sync/behavior.md)         | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
+| `library detach`  | [`detach Interface`](contracts/library/detach/interface.md)   | [`detach Behavior`](contracts/library/detach/behavior.md)     | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
+
+The `library` group performs no operation by itself. Its five leaves share the
+accepted Library record and projection capability while keeping each operation's
+selection, planning, mutation, result, and recovery policy in its local
+contract pair. Library management is separate from Route and Index meaning.
 
 The [CLI contract document Templates](../../../../templates/cli/documents/_documents.md)
 are optional copy-ready starters for a new command-local set. They are not

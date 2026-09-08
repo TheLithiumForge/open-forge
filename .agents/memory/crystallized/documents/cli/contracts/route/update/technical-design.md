@@ -48,14 +48,35 @@ reinterpret any other option spelling.
 Original arguments do not enter `CliInvocation`, the Route Update request, or
 domain behavior. All other parser facts remain exclusively parser-owned.
 
+## Shared filesystem safety boundary
+
+The parser exception does not change Route Update's filesystem safety boundary.
+The Behavior Contract consumes the neutral Framework no-follow observation of
+each logical final leaf before ordinary physical resolution, at initial
+preflight, under-lease revalidation, and immediately before every ordinary
+effect. A present link, reparse point, or special final leaf blocks the
+corresponding Create, Replace, Delete, or ReplaceGeneratedRegion effect. Route
+Update does not follow, write, or delete a Library projection, and this guard
+does not consult Library record authority. Stable contained directory-link
+ancestry remains governed by the existing ordinary path contract.
+
+This design owns no duplicate guard, Library lookup, fallback, or parser
+diagnostic. Its implementation evidence must show that the shared fact is
+consumed at the Route Update plan, revalidation, and effect boundaries without
+changing the request or result schema.
+
 ## Conformance Evidence
 
 Focused parser and process evidence must prove both accepted attached-empty
 forms, rejection of the bare form, unchanged behavior for ordinary valued forms
 including the explicit empty string, the exactly-one-occurrence and zero-token
 precondition, the `--` stop boundary, and absence of raw arguments from the
-request and domain. Route List evidence separately preserves its exact
-equals-only depth grammar under `CLI-EDGE-005`.
+request and domain. Focused Route Update filesystem evidence must additionally
+prove no-follow final-leaf checks at physical resolution, initial preflight,
+under-lease revalidation, and immediately before each ordinary effect, including
+refusal to follow or mutate an eligible `.agents/...` Library projection.
+Route List evidence separately preserves its exact equals-only depth grammar
+under `CLI-EDGE-005`.
 
 ## Related Current Sources
 

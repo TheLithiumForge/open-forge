@@ -6,16 +6,9 @@ using OpenForge.Cli.Core.Framework.Recovery.Models;
 
 namespace OpenForge.Cli.Core.Commands.Index.Shared.Operation;
 
-internal sealed class IndexRecoveryLifecycle(
-    RecoveryBundleStore store,
-    RecoveryBundleCatalogue catalogue,
-    RecoveryBundleDeletionGuard deletionGuard)
+internal static class IndexRecoveryLifecycle
 {
-    private readonly RecoveryBundleStore _store = store;
-    private readonly RecoveryBundleCatalogue _catalogue = catalogue;
-    private readonly RecoveryBundleDeletionGuard _deletionGuard = deletionGuard;
-
-    internal async ValueTask<IndexPreparationMapping> PrepareAsync(
+    internal static async ValueTask<IndexPreparationMapping> PrepareAsync(
         IndexApplicationContext application,
         CancellationToken cancellationToken)
     {
@@ -31,7 +24,7 @@ internal sealed class IndexRecoveryLifecycle(
         RecoveryBundlePreparationResult result;
         try
         {
-            result = await _store.PrepareAsync(
+            result = await RecoveryBundleStore.PrepareAsync(
                     input,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -48,7 +41,7 @@ internal sealed class IndexRecoveryLifecycle(
         return IndexMutationMapper.ReadPreparation(result);
     }
 
-    internal async ValueTask<IndexDeletionMapping> DeleteAsync(
+    internal static async ValueTask<IndexDeletionMapping> DeleteAsync(
         IndexPreparedApplication prepared,
         CancellationToken cancellationToken)
     {
@@ -60,7 +53,7 @@ internal sealed class IndexRecoveryLifecycle(
         RecoveryBundleCatalogueResult catalogue;
         try
         {
-            catalogue = await _catalogue.ReadAsync(
+            catalogue = await RecoveryBundleCatalogue.ReadAsync(
                     prepared.Application.Request.Workspace,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -83,10 +76,7 @@ internal sealed class IndexRecoveryLifecycle(
             case RecoveryBundleCatalogueState.Available:
                 break;
             default:
-                throw new ArgumentOutOfRangeException(
-                    nameof(catalogue),
-                    catalogue.State,
-                    "The recovery catalogue state is not defined.");
+                throw InvalidCatalogueState(catalogue.State);
         }
 
         var candidates = catalogue.Candidates
@@ -105,7 +95,7 @@ internal sealed class IndexRecoveryLifecycle(
         RecoveryBundleDeletionResult deletion;
         try
         {
-            deletion = await _deletionGuard.DeleteAsync(
+            deletion = await RecoveryBundleDeletionGuard.DeleteAsync(
                     prepared.Lease,
                     candidates[0],
                     cancellationToken)
@@ -145,6 +135,13 @@ internal sealed class IndexRecoveryLifecycle(
                 IndexRecoveryState.Unknown,
                 prepared.Preparation.BundlePath),
             findingCode: findingCode);
+
+    private static ArgumentOutOfRangeException InvalidCatalogueState(
+        RecoveryBundleCatalogueState state)
+        => new(
+            nameof(state),
+            state,
+            "The recovery catalogue state is not defined.");
 
     private static bool MatchesPreparation(
         RecoveryBundleCandidateSnapshot candidate,

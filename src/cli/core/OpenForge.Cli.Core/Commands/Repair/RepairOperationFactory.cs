@@ -10,7 +10,6 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.OperationalContributors;
-using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Shell.Interaction;
 
 namespace OpenForge.Cli.Core.Commands.Repair;
@@ -50,12 +49,6 @@ internal static class RepairOperationFactory
         var diagnosisReader = new DoctorDiagnosisReader(operationalContributors);
         var validator = new FileExpectationValidator(physicalPathResolver);
         var revalidator = new MutationRevalidator(validator);
-        var recoveryReader = new RecoveryBundleReader();
-        var recoveryCatalogue = new RecoveryBundleCatalogue(recoveryReader);
-        var recoveryLifecycle = new RepairRecoveryLifecycle(
-            new RecoveryBundleStore(recoveryReader),
-            recoveryCatalogue,
-            new RecoveryBundleDeletionGuard(recoveryCatalogue, recoveryReader));
         var catalogueReader = new RepairCatalogueReader(physicalPathResolver);
         var application = new RepairApplicationOperation(
             new RepairMutationServices(
@@ -65,7 +58,6 @@ internal static class RepairOperationFactory
                 : new WorkspaceLockManager(lockStoreRoot),
             revalidator,
                 new FileChangeApplier(revalidator, validator)),
-            recoveryLifecycle,
             new RepairPostVerifier(diagnosisReader),
             new RepairPlanRevalidator(diagnosisReader, catalogueReader));
         return new RepairOperationComponents(

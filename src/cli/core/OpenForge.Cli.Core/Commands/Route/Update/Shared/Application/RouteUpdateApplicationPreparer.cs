@@ -9,16 +9,13 @@ namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 internal sealed partial class RouteUpdateApplicationPreparer
 {
     private readonly RouteUpdatePlanRevalidator _revalidator;
-    private readonly RouteUpdateRecoveryPreparer _recoveryPreparer;
     private readonly MutationRevalidator _mutationRevalidator;
 
     internal RouteUpdateApplicationPreparer(
         RouteUpdatePlanRevalidator revalidator,
-        RouteUpdateRecoveryPreparer recoveryPreparer,
         MutationRevalidator mutationRevalidator)
     {
         _revalidator = revalidator;
-        _recoveryPreparer = recoveryPreparer;
         _mutationRevalidator = mutationRevalidator;
     }
 
@@ -66,7 +63,7 @@ internal sealed partial class RouteUpdateApplicationPreparer
             return ValidationBoundary(input.Plan, validation);
         }
 
-        var recovery = await _recoveryPreparer.PrepareAsync(
+        var recovery = await RouteUpdateRecoveryPreparer.PrepareAsync(
                 new RouteUpdateRecoveryPreparationInput
                 {
                     Plan = input.Plan,

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Models.Result;
@@ -53,6 +54,8 @@ internal sealed record DoctorLimitation
 
 internal sealed record DoctorDomainReport
 {
+    public LibraryDoctorView? Libraries { get; init; }
+
     public required DoctorDomainKind Domain { get; init; }
 
     public required DoctorBoundary Boundary { get; init; }
@@ -112,9 +115,9 @@ internal sealed record DoctorCount
 
 internal sealed record DoctorDiagnosis
 {
-    public bool ReadOnly => true;
+    public static bool ReadOnly => true;
 
-    public bool ChangesMade => false;
+    public static bool ChangesMade => false;
 
     public required DoctorCoverageState Coverage { get; init; }
 

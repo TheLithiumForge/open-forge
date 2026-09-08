@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Framework.OperationalContributors;
@@ -13,7 +14,6 @@ internal sealed class DoctorOperation(OperationalContributorCatalogue contributo
         DoctorRequest request,
         CancellationToken cancellationToken)
     {
-        var resultBuilder = new Shared.Aggregation.DoctorResultBuilder();
         try
         {
             var diagnosis = await _reader.ReadAsync(request, cancellationToken)
@@ -22,7 +22,7 @@ internal sealed class DoctorOperation(OperationalContributorCatalogue contributo
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            return resultBuilder.Event(
+            return DoctorResultBuilder.Event(
                 request.Workspace,
                 CliSemanticStatus.Interrupted,
                 kind: null,
@@ -30,7 +30,7 @@ internal sealed class DoctorOperation(OperationalContributorCatalogue contributo
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
         {
-            return resultBuilder.Event(
+            return DoctorResultBuilder.Event(
                 request.Workspace,
                 CliSemanticStatus.Failed,
                 kind: null,

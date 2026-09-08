@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
+using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.Core.Framework.Lifecycle.Operational;
 using OpenForge.Cli.Core.Framework.Recovery.Operational;
 using OpenForge.Cli.Core.Framework.Sources.Operational;
@@ -12,8 +13,11 @@ internal sealed class OperationalContributorCatalogue(
     IRouteOperationalContributor routes,
     ILocalReferenceOperationalContributor localReferences,
     IFrameworkLifecycleOperationalContributor frameworkLifecycle,
-    IExtensionLifecycleOperationalContributor extensionLifecycle)
+    IExtensionLifecycleOperationalContributor extensionLifecycle,
+    ILibraryOperationalContributor libraries)
 {
+    internal ILibraryOperationalContributor Libraries { get; } = libraries;
+
     internal IWorkspaceEntryOperationalContributor WorkspaceEntry { get; } = workspaceEntry;
 
     internal IRecoveryResidualOperationalContributor RecoveryResiduals { get; } = recoveryResiduals;

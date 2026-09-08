@@ -60,6 +60,13 @@ current grouped families are:
   `remove` operations.
 - `extension` with `list`, `inspect`, `create`, `install`, `update`, and
   `remove` operations.
+- `library` with `list`, `inspect`, `attach`, `sync`, and `detach` operations.
+
+The `library` family composes ordinary consumer paths from one registered
+contained source root. Its command-local contracts own the exact source
+inventory, mapping, collision, capability, and record policy. The shared
+operation shape does not turn Library records into Framework runtime authority
+or make a Library ID a source-reference operand.
 
 The [Command Contract Set](command-contract-set.md) records the current roles,
 placement, authority boundaries, and detailed local contract links. A group
@@ -268,9 +275,10 @@ validated command input
   -> complete operation request
   -> current facts
   -> read result or complete mutation plan
-  -> preflight when mutating
+  -> complete preflight when mutating
+  -> lease acquisition and under-lease revalidation
   -> preview or application consent
-  -> revalidation and apply
+  -> immediate per-effect checks and monotonic apply
   -> verification and recovery-disposition reporting
   -> optional bounded post-processing
   -> typed operation result
@@ -287,13 +295,29 @@ Handlers return typed values. They do not write streams, select presentation,
 or set process status. Human and JSON renderers consume the same result and do
 not rerun the operation.
 
+Every mutation that addresses a logical file leaf consumes the neutral
+no-follow leaf observation before ordinary physical resolution, during initial
+preflight, again under the held workspace lease, and immediately before its
+effect. A present link, reparse point, or special final leaf blocks ordinary
+`Create`, `Replace`, `Delete`, and `ReplaceGeneratedRegion`. Stable contained
+directory-link ancestry remains governed by the ordinary filesystem contract.
+This guard does not consult Library records, so route and Index mutations cannot
+follow, write, or delete a Library projection.
+
+After all preflight and recovery preparation succeeds, application is
+monotonic. Effects run in the command-owned order, each with its immediate
+no-follow and expected-state check; a failure or interruption stops new effects
+and leaves already verified effects and residual evidence in place. Shared
+support does not automatically compensate for an earlier effect. A Library
+record is written last, after all relative file-link effects verify.
+
 ### Recovery And Cleanup Boundaries
 
 The direct root [`cleanup` contract](contracts/cleanup/_cleanup.md) is a narrow
 exception to the normal recovery shape. Other mutating operations prepare one
-external recovery bundle for the complete operation before the first existing-
-target effect. Cleanup still forms one complete catalogue and plan, runs
-preflight, and revalidates selected artifacts immediately before deletion. It
+external recovery bundle for the complete operation before the first covered
+effect. Cleanup still forms one complete catalogue and plan, runs preflight,
+and revalidates selected artifacts immediately before deletion. It
 may return a verified empty no-op without a lease. Before any deletion, it
 acquires the same-workspace lease and repeats final catalogue and expected-state
 validation under that lease. It creates no replacement bundle, staging copy,
@@ -317,21 +341,24 @@ Status and Doctor do not acquire the workspace lease, report activity, or infer
 activity from bundle contents, a filename, age, PID, marker, journal, or the
 persistent external lock file.
 
-Before applying an existing-target effect (`Replace`, `ReplaceGeneratedRegion`,
-or `Delete`), the complete operation prepares exactly one immutable verified
-bundle outside the workspace. The bundle contains the exact prior bytes and
-static prior and intended identity for every existing-target effect. Create and
-semantic or byte no-op targets have no bundle entry. An operation containing
-only those effects creates no bundle. Unavailable required storage forms a
-pre-effect incomplete result. Unknown, malformed, mismatched, or colliding
-artifacts do not authorize an effect.
+Before applying any non-no-op effect that the operation must be able to reverse,
+the complete operation prepares exactly one immutable verified bundle outside
+the workspace. The bundle contains the exact prior bytes and state-specific
+prior and intended identity for every covered effect. This includes ordinary
+existing-file `Replace`, `ReplaceGeneratedRegion`, and `Delete` effects,
+relative-file-link `Create` and `Delete` effects, and the prior-missing ordinary
+`Create` that creates the Library record. Semantic or byte no-op targets have no
+bundle entry. An operation containing only no-ops creates no bundle. Unavailable
+required storage forms a pre-effect incomplete result. Unknown, malformed,
+mismatched, or colliding artifacts do not authorize an effect.
 
 All bundle preparation and verification complete before the first target effect.
-A draft never authorizes an effect. Every existing-target effect requires the
-matching verified final preparation. Create requires no preparation. Exact
-store, ZIP, manifest, draft/final, bounded-validation, and callable mechanics
-live in the [Mutation And Recovery Technical
-Design](technical-designs/mutation-and-recovery.md).
+A draft never authorizes an effect. Every covered effect requires the matching
+verified final preparation. An ordinary Create remains preparation-free unless
+the command explicitly marks its prior-missing record creation as reversible,
+as Library operations do. Exact store, ZIP, manifest, draft/final,
+bounded-validation, and callable mechanics live in the [Mutation And Recovery
+Technical Design](technical-designs/mutation-and-recovery.md).
 
 Before post-verification deletion begins, handled application, verification, or
 cancellation outcomes stop new effects and report the actual residual draft or
@@ -507,16 +534,23 @@ content on its own. Read-only `extension list` and `extension inspect` reject
 - `--dry-run` is the sole preview spelling and shares planning and preflight
   with application while writing nothing. It shares status conditions, and
   planned changes alone do not create `attention`.
-- One verified immutable external recovery bundle covers every
-  existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`) in
-  the complete operation before the first target effect; creates and semantic or
-  byte no-ops receive none.
-- Preparation produces one verified final bundle before any existing-target
-  effect. A draft never authorizes an effect, and every existing-target effect
-  requires the matching verified preparation; Create requires none. Exact
-  archive, draft/final, atomic-file, callable, and validation mechanics belong
-  to the [Mutation And Recovery Technical
+- Every reversible non-no-op effect in the complete operation has one matching
+  verified immutable external recovery bundle prepared before the first effect.
+  This includes ordinary existing-file effects, relative-file-link creates and
+  deletes, and the prior-missing Library record Create. Semantic or byte
+  no-ops receive none. A draft never authorizes an effect, and an ordinary
+  Create remains preparation-free unless its command marks it reversible.
+  Exact archive, draft/final, atomic-file, no-follow, callable, and validation
+  mechanics belong to the [Mutation And Recovery Technical
   Design](technical-designs/mutation-and-recovery.md).
+- The no-follow leaf guard runs before ordinary physical resolution, at initial
+  preflight, under-lease revalidation, and immediately before each effect.
+  Present link, reparse, or special final leaves block ordinary file effects;
+  the guard does not require Library record authority.
+- Library application is all-preflight, lease-revalidated, and monotonic. It
+  applies only declared relative file-link and real-parent-directory effects,
+  verifies them, and publishes the Library record last. Source bytes never
+  become effects.
 - Successful commands delete their command-owned bundle only after whole-command
   verification. `Deleted`/`Removed` permits normal completion;
   `Failed`/positively observed `Retained` preserves successful target effects

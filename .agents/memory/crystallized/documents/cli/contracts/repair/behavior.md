@@ -13,7 +13,8 @@ This file is the accepted current Crystallized Behavior Contract for
 `open-forge repair`. It defines deterministic request resolution, fresh
 diagnosis, selection authority, exact and guided proposal handling, complete
 planning, conflict checks, preflight, dry-run, application, verification,
-recovery-bundle retention, post-diagnosis, result formation, and conformance without
+typed Workspace Library residual recovery, recovery-bundle retention,
+post-diagnosis, result formation, and conformance without
 choosing implementation technology. The command does not ship yet; implementation
 and executable proof remain pending Gate 5.
 
@@ -36,6 +37,7 @@ Every general Repair invocation follows one typed mutation flow:
 validated request and selection authority
   -> fresh diagnosis and selected-edit relevant-domain gate
   -> selected safe-exact proposals and confirmed guided intent
+  -> selected typed Library residual recovery effects when already authorized
   -> complete effect plan
   -> conflict check
   -> preflight, including recovery-bundle readiness
@@ -205,6 +207,30 @@ after-state, affected path, exact verification condition, and recovery
 requirement. It has no candidate choice and is eligible for `--automatic` only
 when the current facts still prove all of those values.
 
+### Typed Workspace Library residual proposals
+
+The proposal resolver may also admit a `library.recovery-safe-exact` finding
+only when a neutral producer has semantically verified current-v1 attribution to
+the selected workspace's consumer Library record and one exact typed residual
+entry. The existing automatic/guided selection shape supplies authority for the
+safe-exact effect; no new public syntax or generic rollback selection is formed.
+The accepted entries are:
+
+- prior-missing ordinary Library record `Create`, with the exact intended
+  created record/object as the only removable effect;
+- ordinary-file `Replace` or `Delete` entry with exact prior bytes, restorable
+  only at the exact logical path after the current state is proven intended; and
+- relative-file-link `Create` or `Delete` entry. `Create` restores prior
+  missing state by deleting only the exact intended created link/object.
+  `Delete` restores the exact link only when the destination is exactly missing,
+  using the stored raw relative target even when that target is dangling.
+
+For every such proposal, revalidate no-follow logical parent, leaf, and
+raw-target identity. Never follow, read, write, or delete the source target;
+link raw target text is identity, not payload. A third, changed, unavailable,
+aliased, ambiguous, or unsafe state blocks the proposal, and no filename or path
+alone can form attribution, a record, or a recovery effect.
+
 ### Guided proposals
 
 For a missing local target, the resolver may form a guided proposal from bounded
@@ -220,7 +246,8 @@ No other finding creates a general Repair proposal. A valid reference, an
 external URL, an image, a repeated or cyclic fact, generated drift, route intent,
 recovery bundle or draft, Framework finding, Extension finding, authored decision, or
 ownership conflict remains information, a targeted action, a manual decision, or
-a blocked boundary.
+a blocked boundary, except for the explicitly typed
+`library.recovery-safe-exact` residual lane above.
 
 ## Exact Relink Resolution
 
@@ -316,6 +343,13 @@ The plan records selected and unselected findings, effects and no-ops, affected
 paths, expected and intended bytes, exact bounded diffs or equivalent evidence,
 verification, recovery, and next actions. A previous plan is never reused.
 
+For a selected Library residual, the plan records the trusted record identity,
+typed entry class, exact prior/intended state, logical parent and leaf identity,
+and raw relative-link target when applicable. It contains only the exact delete
+of an intended created record/link/object, or the exact ordinary-file/link
+recreation admitted by the Interface. It never contains a source-target write,
+link follow, source-byte payload, inferred path, or third-state effect.
+
 ## Preflight And Recovery-Bundle Readiness
 
 Preflight checks the selected-edit relevant-domain gate, selected authority, effect
@@ -360,6 +394,20 @@ zero-byte workspace lock with one read/write `FileShare.None` handle; write no
 metadata, timestamp, or ownership record and never truncate or delete it. The
 lock is concurrency safety, not lifecycle, history, or recovery evidence.
 
+A selected typed Library residual consumes the already semantically verified
+current-v1 bundle entry as bounded recovery evidence. It is not reinterpreted as
+a generic forward plan and does not manufacture an automatic rollback or
+fixpoint; ordinary forward Repair effects, if present, retain their normal
+recovery preparation rules.
+
+For a Library residual, preflight additionally revalidates the current-v1 typed
+attribution, exact record and entry, selected workspace key, no-follow logical
+parent/leaf identity, and raw relative target. It admits only the recorded
+prior-missing or intended states named by the entry. A third, changed,
+unavailable, aliased, ambiguous, or unsafe state blocks before any effect; no
+source target is opened,
+written, or deleted, and no link capability is probed.
+
 ## Dry-Run Parity
 
 Dry-run and application use the same normalized request, fresh relevant-domain facts,
@@ -380,25 +428,38 @@ plan against current source occurrences, old literals, targets, expected bytes,
 identity, containment, and recovery-bundle facts immediately before effects. A
 changed fact blocks before that effect can write.
 
-Each selected non-no-op effect writes only the computed destination literal in
-its addressed Markdown source. It preserves labels, authored metadata, route
-topology, generated navigation, overwrite layers, and unrelated bytes. It never
-replaces a divergent file or authors missing content.
+Each selected ordinary local-reference effect writes only the computed
+destination literal in its addressed Markdown source. It preserves labels,
+authored metadata, route topology, generated navigation, overwrite layers, and
+unrelated bytes. It never replaces a divergent file or authors missing content.
+
+For a selected Library residual, application performs only the typed no-follow
+effect admitted by preflight: delete the exact intended created record/link/
+object, restore exact ordinary prior bytes at its logical path, or recreate the
+exact relative link from its stored raw target. It never opens, follows, writes,
+or deletes the source target and never treats link target bytes as payload.
+For this recovery lane, the plan's intended post-effect state is the recorded
+prior state, and per-effect and whole-operation verification use that exact
+state.
 
 After each effect, the operation verifies the intended bytes and semantic local
 reference relationship. After all effects, it verifies the complete selected
 operation and its semantic postconditions. Before post-verification deletion
 begins, a handled application, verification, or cancellation outcome stops new
 effects and reports the actual residual draft or final path; a valid final
-remains when preparation completed. Repair never restores, rolls back,
-compensates for an effect, or derives current target state from recovery
-provenance.
+remains when preparation completed. Outside the selected typed Library residual
+exception, Repair never restores, rolls back, or compensates for an effect, and
+it never derives current target state from recovery provenance.
 
 A closed final ZIP may remain after abrupt process termination, without an
 executable crash or power-loss guarantee. A failed operation remains `failed`;
 cancellation with incomplete residual facts is also `failed`, while cancellation
 before effects without a stronger failure is `interrupted`. After final
-verification of whole-operation success, delete the bundle. `Deleted`/`Removed`
+verification of whole-operation success, delete the bundle.
+The bundle deleted on success is Repair's newly prepared forward bundle. A
+selected original Library residual ZIP remains byte-identical, including its
+unselected entries; only explicit Cleanup may delete that original bundle.
+`Deleted`/`Removed`
 permits normal completion.
 `Failed`/positively observed `Retained` keeps target effects successful and
 produces `attention`, the exact residual path, and
@@ -483,19 +544,25 @@ Result formation preserves the Interface meanings:
 
 The selector does not treat a byte change as attention by itself, does not treat
 an unchanged target as an effect, and does not treat a recommendation as a
-selected repair. `complete` does not mean every Doctor finding is gone.
+selected repair. A typed Library residual is selected only through its existing
+safe-exact authority and reaches `complete` only after its exact no-follow
+effect verifies. `complete` does not mean every Doctor finding is gone.
 
 ## Read-Only And Mutation Boundaries
 
 The diagnosis, candidate, and planning stages have no persistent effects. The
 application stage has authority only for selected admitted local-reference
-literal effects after the complete gate, preflight, confirmation where required,
-verified recovery-bundle preparation, and revalidation.
+literal effects or the typed Workspace Library residual effects above, after the
+complete gate, preflight, confirmation where required, verified recovery-bundle
+preparation, and revalidation.
 
 Repair never mutates generated navigation, route topology, route metadata,
 overwrites, recovery bundles or drafts, Framework files, Extension files, receipts,
 manifests, ownership, or authored labels and prose. It never accepts a force,
 apply, yes, preview, suggestions, or all flag as an authority shortcut.
+The Library exception does not authorize source-target mutation, link following,
+filename/path inference, a third-state effect, automatic rollback, or a fixpoint
+loop.
 
 ## Behavioral Conformance
 
@@ -511,6 +578,10 @@ section. A conforming implementation must additionally prove:
   review, final confirmation default No, and dry-run no-application parity.
 - Automatic selection of every current safe-exact proposal and rejection of all
   guided, recommendation, divergent, destructive, ownership, and fuzzy choices.
+- Typed Library residual safe-exact selection and recovery for prior-missing
+  ordinary-record Create, ordinary-file prior bytes, and relative-file-link
+  Create/Delete entries, with no-follow parent/leaf/raw-target checks and
+  rejection of third, unavailable, unsafe, or source-target effects.
 - Non-interactive and JSON selection authority, including blocked bare and
   blocked `--dry-run` requests without automatic or explicit relink authority.
 - Exact relink source occurrence, expected literal, contained target, relative

@@ -23,7 +23,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
         using var temporary = TemporaryWorkspace.Create("recovery-application");
         using var lockStore = WorkspaceLockTestStore.Create("recovery-application-lock-store");
         var replacePath = temporary.CreateFile("replace.bin", []);
-        var deletePath = temporary.CreateFile("delete.bin", new byte[] { 0, 255, 1, 128 });
+        var deletePath = temporary.CreateFile("delete.bin", [0, 255, 1, 128]);
         var generatedPath = temporary.CreateFile("generated.md", "before\n"u8.ToArray());
         var createPath = temporary.Combine("created.bin");
         var workspace = RecoveryBundleStoreIntegrationTests.Workspace(temporary);
@@ -31,12 +31,12 @@ public sealed class RecoveryBundleApplicationIntegrationTests
         var command = "recovery application";
         var replace = PlannedFileChange.Replace(
             FileExpectation.File(replacePath, replacePath, FileExpectation.Hash([])),
-            new byte[] { 9, 0, 8 });
+            [9, 0, 8]);
         var delete = PlannedFileChange.Delete(
             FileExpectation.File(
                 deletePath,
                 deletePath,
-                FileExpectation.Hash(new byte[] { 0, 255, 1, 128 })));
+                FileExpectation.Hash([0, 255, 1, 128])));
         var generated = PlannedFileChange.ReplaceGeneratedRegion(
             FileExpectation.File(
                 generatedPath,
@@ -64,7 +64,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                     FileStateSnapshot.File(
                         deletePath,
                         deletePath,
-                        new byte[] { 0, 255, 1, 128 })),
+                        [0, 255, 1, 128])),
                 RecoveryBundleTarget.Create(
                     generated,
                     FileStateSnapshot.File(
@@ -81,7 +81,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                 workspace,
                 command,
                 operationId);
-            var result = await RecoveryBundleStoreIntegrationTests.Store().PrepareAsync(
+            var result = await RecoveryBundleStore.PrepareAsync(
                 input,
                 TestContext.Current.CancellationToken);
             preparation = Assert.IsType<RecoveryBundlePreparation>(result.Preparation);
@@ -96,14 +96,14 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                 var receipt = await applier.ApplyAsync(
                     lease,
                     change,
-                    await CheckAsync(lease, change, validator, resolver),
+                    await CheckAsync(lease, change, validator),
                     preparation,
                     TestContext.Current.CancellationToken);
                 Assert.Equal(FilesystemEffectState.Applied, receipt.EffectState);
                 Assert.Equal(FilesystemVerificationState.Verified, receipt.VerificationState);
             }
 
-            var createCheck = await CheckAsync(lease, create, validator, resolver);
+            var createCheck = await CheckAsync(lease, create, validator);
             var rejectedCreate = await applier.ApplyAsync(
                 lease,
                 create,
@@ -122,7 +122,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                 TestContext.Current.CancellationToken);
 
             Assert.Equal(FilesystemVerificationState.Verified, appliedCreate.VerificationState);
-            Assert.Equal(new byte[] { 9, 0, 8 }, await File.ReadAllBytesAsync(
+            Assert.Equal([9, 0, 8], await File.ReadAllBytesAsync(
                 replacePath,
                 TestContext.Current.CancellationToken));
             Assert.False(File.Exists(deletePath));
@@ -174,11 +174,11 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                 command,
                 operationId);
             preparation = Assert.IsType<RecoveryBundlePreparation>(
-                (await RecoveryBundleStoreIntegrationTests.Store().PrepareAsync(
+                (await RecoveryBundleStore.PrepareAsync(
                     input,
                     TestContext.Current.CancellationToken)).Preparation);
             foreignPreparation = Assert.IsType<RecoveryBundlePreparation>(
-                (await RecoveryBundleStoreIntegrationTests.Store().PrepareAsync(
+                (await RecoveryBundleStore.PrepareAsync(
                     foreignInput,
                     TestContext.Current.CancellationToken)).Preparation);
             var resolver = new PhysicalPathResolver();
@@ -186,8 +186,8 @@ public sealed class RecoveryBundleApplicationIntegrationTests
             var applier = new FileChangeApplier(
                 new MutationRevalidator(validator),
                 validator);
-            var firstCheck = await CheckAsync(lease, first, validator, resolver);
-            var secondCheck = await CheckAsync(lease, second, validator, resolver);
+            var firstCheck = await CheckAsync(lease, first, validator);
+            var secondCheck = await CheckAsync(lease, second, validator);
 
             foreach (var attempted in new[]
             {
@@ -219,12 +219,11 @@ public sealed class RecoveryBundleApplicationIntegrationTests
             {
                 await using var payload = archive.Entries[1].Open();
                 await payload.WriteAsync(
-                    new byte[] { 42 },
+                    "*"u8.ToArray(),
                     TestContext.Current.CancellationToken);
             }
 
-            var reader = new RecoveryBundleReader();
-            var corruptRead = await reader.ReadExpectedFinalAsync(
+            var corruptRead = await RecoveryBundleReader.ReadExpectedFinalAsync(
                 input,
                 preparation.BundlePath,
                 TestContext.Current.CancellationToken);
@@ -245,12 +244,12 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                 workspace.PhysicalRoot,
                 operationId);
             File.Move(preparation.BundlePath, draftPath);
-            var draftRead = await reader.ReadExpectedFinalAsync(
+            var draftRead = await RecoveryBundleReader.ReadExpectedFinalAsync(
                 input,
                 draftPath,
                 TestContext.Current.CancellationToken);
             Assert.Null(draftRead.Preparation);
-            var catalogue = await new RecoveryBundleCatalogue(reader).ReadAsync(
+            var catalogue = await RecoveryBundleCatalogue.ReadAsync(
                 workspace,
                 TestContext.Current.CancellationToken);
             Assert.Equal(
@@ -313,8 +312,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
     private static async ValueTask<FileExpectationValidationResult> CheckAsync(
         WorkspaceLockLease lease,
         PlannedFileChange change,
-        FileExpectationValidator validator,
-        PhysicalPathResolver resolver)
+        FileExpectationValidator validator)
     {
         var result = await new MutationRevalidator(validator).ValidateAsync(
             lease,

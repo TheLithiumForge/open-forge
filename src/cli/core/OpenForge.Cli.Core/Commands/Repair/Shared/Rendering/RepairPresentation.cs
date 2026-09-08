@@ -57,6 +57,12 @@ internal static class RepairPresentation
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
         var builder = new StringBuilder();
+        if (result.Selection is { Libraries: var libraries } && (!libraries.Selected.IsEmpty || !libraries.Unselected.IsEmpty)
+            || result.LibraryExecution is not null)
+        {
+            RepairLibraryPresentation.Append(builder, result);
+        }
+
         builder.AppendLine("Open Forge repair");
         builder.AppendLine($"Workspace: {result.Workspace?.LexicalRoot ?? "unavailable"}");
         builder.AppendLine($"Mode: {RepairDefinitions.ReadMachineName(result.Mode)}");

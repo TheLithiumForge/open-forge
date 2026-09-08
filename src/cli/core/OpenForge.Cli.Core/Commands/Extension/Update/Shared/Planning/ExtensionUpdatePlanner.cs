@@ -10,6 +10,8 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
 using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
@@ -26,13 +28,13 @@ internal sealed class ExtensionUpdatePlanner(
     LifecycleStore lifecycleStore,
     FileExpectationValidator validator,
     FrameworkLifecycleCurrentnessReader frameworkCurrentness,
-    RecoveryBundleCatalogue recoveryCatalogue)
+    PhysicalPathResolver physicalPathResolver)
 {
     private readonly ExtensionSourceReader _sourceReader = sourceReader;
     private readonly LifecycleStore _lifecycleStore = lifecycleStore;
     private readonly FileExpectationValidator _validator = validator;
     private readonly FrameworkLifecycleCurrentnessReader _frameworkCurrentness = frameworkCurrentness;
-    private readonly RecoveryBundleCatalogue _recoveryCatalogue = recoveryCatalogue;
+    private readonly PhysicalPathResolver _physicalPathResolver = physicalPathResolver;
     private readonly MarkdownDocumentParser _markdownParser = new();
     private readonly ExtensionUpdateTopologyBuilder _topologyBuilder = new();
     private readonly ExtensionUpdateReconciler _reconciler = new(validator);
@@ -73,7 +75,7 @@ internal sealed class ExtensionUpdatePlanner(
         RecoveryBundleCatalogueResult recovery;
         try
         {
-            recovery = await _recoveryCatalogue.ReadAsync(
+            recovery = await RecoveryBundleCatalogue.ReadAsync(
                 request.Workspace,
                 cancellationToken).ConfigureAwait(false);
         }
@@ -135,11 +137,11 @@ internal sealed class ExtensionUpdatePlanner(
                 source: SourceFact(source));
         }
 
-        var selectedIds = request.All
-            ? currentLifecycle.Packages.Select(package => package.Id).Order(StringComparer.Ordinal).ToArray()
+        string[] selectedIds = request.All
+            ? [.. currentLifecycle.Packages.Select(package => package.Id).Order(StringComparer.Ordinal)]
             : inferred
                 ? [source.Packages[0].Id]
-                : request.RequestedIds.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+                : [.. request.RequestedIds.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)];
         var selection = new ExtensionUpdateSelection(
             request.All
                 ? ExtensionUpdateSelectionKind.ExplicitAll
@@ -187,6 +189,23 @@ internal sealed class ExtensionUpdatePlanner(
                     uninstalledDependency.Id),
                 selection,
                 SourceFact(source));
+        }
+
+        var selectedSet = closure.Packages.Select(package => package.Id)
+            .ToHashSet(StringComparer.Ordinal);
+        var libraryTargets = closure.Packages.SelectMany(package => package.Payload)
+            .Select(file => file.TargetPath)
+            .OfType<string>()
+            .Concat(currentLifecycle.Packages
+                .Where(package => selectedSet.Contains(package.Id))
+                .SelectMany(package => package.Paths));
+        var libraryBoundary = await ReadLibraryBoundaryAsync(
+            request,
+            libraryTargets,
+            cancellationToken).ConfigureAwait(false);
+        if (libraryBoundary is not null)
+        {
+            return Stop(request, libraryBoundary, selection, SourceFact(source));
         }
 
         var topologyBuild = await BuildTopologyAsync(
@@ -382,7 +401,7 @@ internal sealed class ExtensionUpdatePlanner(
             Packages = packageFacts,
             Comparisons = reconciliation.Comparisons,
             Topology = topology,
-            Effects = reconciliation.Effects.Select(effect => effect.Result).ToArray(),
+            Effects = [.. reconciliation.Effects.Select(effect => effect.Result)],
             LifecycleAction = lifecyclePlan.State == LifecycleWritePlanState.Unchanged
                 ? ExtensionUpdateLifecycleAction.Preserve
                 : ExtensionUpdateLifecycleAction.Publish,
@@ -417,6 +436,46 @@ internal sealed class ExtensionUpdatePlanner(
             LifecycleRecoveryTarget = lifecycleRecovery,
         });
         return new ExtensionUpdatePlanBuild { Plan = plan, Result = plan.Result };
+    }
+
+    private async ValueTask<ExtensionUpdateFinding?> ReadLibraryBoundaryAsync(
+        ExtensionUpdateRequest request,
+        IEnumerable<string> targetPaths,
+        CancellationToken cancellationToken)
+    {
+        var record = await LibrariesRecordReader.ReadAsync(
+            _physicalPathResolver,
+            request.Workspace,
+            cancellationToken).ConfigureAwait(false);
+        if (record.State == LibrariesRecordReadState.Complete)
+        {
+            var claimedPaths = record.Record!.Libraries
+                .SelectMany(library => library.Paths)
+                .Select(path => path.Value)
+                .ToHashSet(StringComparer.Ordinal);
+            var conflict = targetPaths.FirstOrDefault(claimedPaths.Contains);
+            return conflict is null
+                ? null
+                : new ExtensionUpdateFinding(
+                    ExtensionUpdateFindingCode.OwnershipConflict,
+                    "The Extension target is owned by a registered workspace Library.",
+                    conflict);
+        }
+
+        return record.State switch
+        {
+            LibrariesRecordReadState.Missing => null,
+            LibrariesRecordReadState.Unavailable => new ExtensionUpdateFinding(
+                ExtensionUpdateFindingCode.ProjectionUnavailable,
+                record.Cause ?? "Library ownership could not be observed for Extension Update."),
+            LibrariesRecordReadState.Malformed or LibrariesRecordReadState.Blocked => new ExtensionUpdateFinding(
+                ExtensionUpdateFindingCode.OwnershipConflict,
+                record.Cause ?? "Library ownership is unsafe or ambiguous for Extension Update."),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(request),
+                record.State,
+                "The Library record state is not defined."),
+        };
     }
 
     private async ValueTask<TopologyBuild> BuildTopologyAsync(
@@ -744,7 +803,7 @@ internal sealed class ExtensionUpdatePlanner(
         byte[] expectedBytes,
         IReadOnlyList<Framework.GeneratedNavigation.Models.GeneratedNavigationEntry> currentEntries,
         IReadOnlyList<Framework.GeneratedNavigation.Models.GeneratedNavigationEntry> intendedEntries,
-        IReadOnlySet<string> affectedPaths)
+        HashSet<string> affectedPaths)
     {
         string actualSource;
         string expectedSource;
@@ -778,7 +837,7 @@ internal sealed class ExtensionUpdatePlanner(
 
         var actualLines = ReadGeneratedLines(actualSource, actualContent);
         var expectedLines = ReadGeneratedLines(expectedSource, expectedContent);
-        if (actualLines.Count != actualLines.Distinct(StringComparer.Ordinal).Count())
+        if (actualLines.Length != actualLines.Distinct(StringComparer.Ordinal).Count())
         {
             return false;
         }
@@ -839,7 +898,7 @@ internal sealed class ExtensionUpdatePlanner(
         return actualLines.Where(unaffectedLines.Contains).SequenceEqual(unaffectedLines);
     }
 
-    private static IReadOnlyList<string> ReadGeneratedLines(
+    private static string[] ReadGeneratedLines(
         string source,
         MarkdownTextSpan content)
     {
@@ -906,7 +965,7 @@ internal sealed class ExtensionUpdatePlanner(
                 Version = lifecycle.Source.Version,
                 InventoryFingerprint = lifecycle.Source.InventoryFingerprint,
             },
-            Targets = lifecycle.Targets.Select(target =>
+            Targets = [.. lifecycle.Targets.Select(target =>
             {
                 if (target.Region is not { } region
                     || !generated.Contains((target.Path, region)))
@@ -934,12 +993,12 @@ internal sealed class ExtensionUpdatePlanner(
                         target.FingerprintKind),
                     FingerprintKind = target.FingerprintKind,
                 };
-            }).ToArray(),
-            GeneratedRegions = lifecycle.GeneratedRegions.Select(region => new FrameworkGeneratedRegion
+            })],
+            GeneratedRegions = [.. lifecycle.GeneratedRegions.Select(region => new FrameworkGeneratedRegion
             {
                 Path = region.Path,
                 Region = region.Region,
-            }).ToArray(),
+            })],
         };
     }
 

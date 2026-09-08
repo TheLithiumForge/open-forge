@@ -7,18 +7,16 @@ using OpenForge.Cli.Core.Shell.Parsing.Models;
 
 namespace OpenForge.Cli.Core.Commands.Doctor;
 
-internal sealed class DoctorWorkspaceResultFactory
+internal static class DoctorWorkspaceResultFactory
 {
-    private readonly DoctorResultBuilder _resultBuilder = new();
-
-    internal DoctorResult Create(CliInvalidBindingInput input)
+    internal static DoctorResult Create(CliInvalidBindingInput input)
     {
         var cause = input.InvalidInput.Diagnostics.Count == 1
             ? input.InvalidInput.Diagnostics[0]
             : string.Join(" ", input.InvalidInput.Diagnostics);
         if (input.InvalidInput.Source != CliInvalidInputSource.Workspace)
         {
-            return _resultBuilder.Event(
+            return DoctorResultBuilder.Event(
                 workspace: null,
                 CliSemanticStatus.Invalid,
                 kind: null,
@@ -28,7 +26,7 @@ internal sealed class DoctorWorkspaceResultFactory
         var kind = input.WorkspaceSelectionState == CliWorkspaceSelectionState.NotDirectory
             ? DoctorFindingKind.WorkspaceNotDirectory
             : DoctorFindingKind.WorkspaceUnavailable;
-        return _resultBuilder.Event(
+        return DoctorResultBuilder.Event(
             workspace: null,
             CliSemanticStatus.Blocked,
             kind,

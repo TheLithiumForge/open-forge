@@ -36,9 +36,12 @@ Contract remains technology-neutral.
 
 `repair` applies only current diagnosis-backed, conflict-free, exact
 meaning-preserving local corrections and explicitly selected contained relinks.
-It does not author content, labels, metadata, generated navigation, route
-topology, recovery cleanup, Framework lifecycle, Extension lifecycle, or
-ownership decisions. It does not promise to eliminate every Doctor finding.
+It may also consume one semantically verified current-v1 Workspace Library
+residual when an already selected safe-exact effect authorizes the bounded
+no-follow recovery described below. It does not author content, labels,
+metadata, generated navigation, route topology, recovery cleanup, Framework
+lifecycle, Extension lifecycle, or ownership decisions. It does not promise to
+eliminate every Doctor finding.
 
 Repair is one mutation operation with a single plan. It is stateless and
 deterministic for unchanged workspace bytes and explicit input. It reruns current
@@ -297,13 +300,14 @@ open-forge repair --automatic --dry-run --json
 
 General Repair admits only these effects:
 
-| Catalogue member               | Proposal and selection rule                                                                                                                                                                                                                   |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Same-target canonical path     | The authored local destination resolves to the same target, but its path spelling is not canonical. It is `safe-exact` and may be selected by `--automatic`.                                                                                  |
-| Same-target canonical case     | The authored local destination differs only in case from the exact target spelling, and physical identity is unambiguous. It is `safe-exact` only when that identity is proven.                                                               |
-| Same-target canonical encoding | The authored destination uses a non-canonical encoding for the same target. It is `safe-exact` only when the expected and intended bytes are exact.                                                                                           |
-| Unique canonical fragment      | The target is the same and one canonical fragment correction is proven. It is `safe-exact` and may be selected by `--automatic`.                                                                                                              |
-| Missing-target relink          | The authored target is missing and Doctor supplies bounded filename, title, literal-content, or structural route-neighborhood candidates. It is `guided-choice`; the user must choose in the wizard or provide an explicit `--relink` target. |
+| Catalogue member                | Proposal and selection rule                                                                                                                                                                                                                                                                                             |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Same-target canonical path      | The authored local destination resolves to the same target, but its path spelling is not canonical. It is `safe-exact` and may be selected by `--automatic`.                                                                                                                                                            |
+| Same-target canonical case      | The authored local destination differs only in case from the exact target spelling, and physical identity is unambiguous. It is `safe-exact` only when that identity is proven.                                                                                                                                         |
+| Same-target canonical encoding  | The authored destination uses a non-canonical encoding for the same target. It is `safe-exact` only when the expected and intended bytes are exact.                                                                                                                                                                     |
+| Unique canonical fragment       | The target is the same and one canonical fragment correction is proven. It is `safe-exact` and may be selected by `--automatic`.                                                                                                                                                                                        |
+| Missing-target relink           | The authored target is missing and Doctor supplies bounded filename, title, literal-content, or structural route-neighborhood candidates. It is `guided-choice`; the user must choose in the wizard or provide an explicit `--relink` target.                                                                           |
+| Typed Library residual recovery | A semantically verified current-v1 residual is attributed to the selected workspace's Library record and the existing automatic/guided selection shape authorizes one exact safe-exact ordinary-record, ordinary-file, or relative-file-link recovery effect. It uses no new syntax and never becomes generic rollback. |
 
 The filename, title, literal-content, and route-neighborhood evidence is finite
 and visible. Zero, one, and several candidates remain distinct. A recommendation
@@ -323,6 +327,13 @@ route operation. Recovery-bundle or draft deletion belongs to the separate accep
 findings point to their accepted lifecycle operation or manual instructions.
 Repair does not invoke any public command.
 
+Library residual recovery is admitted only from typed current-v1 attribution and
+entries, never from a filename, path, matching bytes, or an inferred record. It
+uses no-follow logical parent/leaf/raw-target checks. It may delete only an exact
+intended created link or object to restore a prior-missing state, or recreate an
+exact deleted or dangling relative link from its stored raw target. It never
+follows, writes, or deletes a source target and blocks a third or unsafe state.
+
 ## Diagnosis And Completeness Gate
 
 Every Repair invocation may retain the complete Doctor diagnosis for display,
@@ -332,7 +343,10 @@ needed by that target, and the local-reference occurrence and candidate facts.
 Every required domain must have complete coverage for the selected edit.
 Incomplete or blocked unrelated lifecycle, Extension, Framework, or recovery-
 observer coverage remains visible but does not block a safe local-reference
-repair. Recovery writer readiness for a real Replace is checked separately in
+repair. A selected typed Library residual instead requires complete current
+Library record attribution, exact entry, workspace, and no-follow identity facts
+for that residual; unrelated domains remain separate and do not grant Library
+authority. Recovery writer readiness for a real Replace is checked separately in
 mutation preflight. Repair never borrows mutation authority from another domain.
 
 ## Mutation Authority And Safety
@@ -346,6 +360,34 @@ or ownership grant. It never:
 - Bypasses containment, identity, conflict, preflight, verification, or
   recovery requirements.
 - Makes a fuzzy, semantic, or display-order choice.
+
+### Typed Workspace Library residual recovery
+
+Repair may consume a semantically verified current-v1 residual only when its
+trusted immutable attribution names the selected workspace's Workspace Library
+record and the existing automatic/guided selection shape already authorizes
+that exact safe-exact effect. This is a bounded recovery effect in the existing
+selection shape; it adds no flag, operand, child command, rollback mode, or
+fixpoint loop. The accepted typed entry classes are:
+
+- a prior-missing ordinary Library record `Create`, where the current record or
+  object is the exact intended created state and Repair may delete only that
+  exact object to restore the prior missing state;
+- an ordinary-file entry carrying exact prior bytes, where Repair may restore
+  those bytes only at the exact no-follow logical path after the current state
+  is the verified intended state; and
+- a relative-file-link `Create` or `Delete` entry. A `Create` entry may delete
+  only its exact intended created link/object to restore prior absence. A
+  `Delete` entry may recreate the exact relative link only when the destination
+  is exactly missing, using the stored raw target text even when that target is
+  dangling.
+
+Every recovery check uses no-follow logical parent, leaf, and raw-target
+identity. It never follows, writes, or deletes the source target or treats
+source bytes as link payload. A destination that is third, changed, unavailable,
+unsafe, aliased, ambiguous, or otherwise outside the verified prior/intended
+states blocks the effect. Repair never infers a record or effect from a filename
+or path alone.
 
 For an applying plan with one or more existing-target effects (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`), the
@@ -386,6 +428,12 @@ it is not migrated, rewritten, repaired, deleted, or adopted. Unknown schema
 versions are unsupported. Drafts remain exact-name, path-only `Incomplete` facts;
 observers do not inspect or use their bytes for attribution.
 
+For a typed Library residual, the already verified current-v1 bundle entry is
+the bounded recovery evidence consumed by the selected effect. Repair does not
+reinterpret it as a generic forward plan, infer a new record, or manufacture an
+automatic rollback or fixpoint; any ordinary forward Repair effects retain their
+normal recovery preparation rules.
+
 Every planned existing-target effect must match exactly one verified entry; Create and
 no-op effects have none. All preparation completes before the first effect.
 `FileChangeApplier` requires matching preparation for each existing-target effect and
@@ -397,10 +445,16 @@ Before post-verification deletion begins, a handled application, verification,
 or cancellation outcome reports the actual residual draft or final path; a valid
 final remains when preparation completed. A closed final ZIP may remain after
 abrupt process termination, without an executable crash or power-loss guarantee.
-Repair never restores, rolls back, compensates for a target effect,
-derives current target state from recovery provenance, or stores a journal,
-progress receipt, or persisted plan. After final verification of whole-operation
-success, delete the bundle. `Deleted`/`Removed` permits normal completion.
+Outside the typed Library residual exception above, Repair never restores,
+rolls back, or compensates for a target effect, and it never derives current
+target state from recovery provenance or stores a journal, progress receipt, or
+persisted plan. The exception is a selected, bounded recovery effect rather
+than automatic rollback. After final verification of whole-operation success,
+delete the bundle.
+The bundle deleted on success is Repair's newly prepared forward bundle. A
+selected original Library residual ZIP remains byte-identical, including its
+unselected entries; only explicit Cleanup may delete that original bundle.
+`Deleted`/`Removed` permits normal completion.
 `Failed`/positively observed `Retained` keeps target effects successful and
 produces `attention`, the exact residual path, and
 cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
@@ -469,6 +523,11 @@ Repair output has one hierarchy:
    evidence where available.
 7. Preflight, application, verification, recovery, and residual state.
 8. Fresh post-repair relevant-domain diagnosis and its coverage.
+
+When a selected typed Library residual is present, output identifies its
+Library attribution, entry class, exact no-follow identity checks, and bounded
+recovery outcome. It never renders source-target bytes as link payload or
+claims a rollback.
 
 The default human view is `expanded`. Compact output retains identity, status,
 mode, coverage, effect and finding counts, selected and remaining resolution
@@ -575,6 +634,9 @@ finite:
   fresh resolution is `blocked`.
 - An incomplete or blocked required Doctor domain is `incomplete` or `blocked`
   and prevents all general Repair writes, including explicit relinks.
+- An incomplete or blocked typed Library residual attribution, entry, or
+  no-follow identity prevents that residual recovery; a third or unsafe current
+  state is `blocked` and no other effect is selected.
 - Unavailable recovery storage or preparation coverage is `incomplete`; malformed,
   colliding, or mismatched recovery-bundle facts, overlap conflict, missing
   authority, or any other unsafe plan condition is `blocked`.
@@ -655,6 +717,10 @@ Repair does not:
   labels, generated navigation, route authoring or topology, metadata,
   overwrites, recovery-bundle cleanup or restoration, Framework lifecycle, Extension
   lifecycle, or ownership.
+- Recover a Workspace Library residual unless a current-v1 typed attribution and
+  existing safe-exact selection authorize the exact ordinary record/file/link
+  effect; infer recovery from a filename or path; follow or mutate a source
+  target; or apply a third or unsafe state.
 - Partially apply a plan, resolve a conflict by order, overwrite divergent
   content, adopt a target, or bypass safety, conflict, or recovery checks.
 - Invoke `doctor`, `index`, a route operation, or a future lifecycle command as a
@@ -698,6 +764,12 @@ Conformance evidence must cover:
 - One atomic selection union, equivalent-effect coalescing, contradictory and
   overlapping conflict blocking, missing authority, verified recovery-bundle
   preparation, and no partial application.
+- Typed Workspace Library residual recovery for prior-missing ordinary-record
+  Create, ordinary-file prior bytes, and relative-file-link Create/Delete
+  entries, including exact no-follow parent/leaf/raw-target checks, safe delete
+  or recreate boundaries, third/unavailable-state blocking, source-target
+  non-mutation, no path/filename inference, and no automatic rollback or
+  fixpoint.
 - The complete mutation lifecycle: fresh diagnosis, selected intent, plan,
   conflict check, preflight, exact dry-run, confirmation, all-before-first-effect
   recovery-bundle preparation, revalidation, apply, per-effect and semantic

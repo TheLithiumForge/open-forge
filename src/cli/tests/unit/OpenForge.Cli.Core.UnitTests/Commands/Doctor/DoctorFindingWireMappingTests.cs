@@ -31,6 +31,18 @@ public sealed class DoctorFindingWireMappingTests
             (DoctorFindingKind.WorkspaceRootMissing, "workspace.root-missing"),
             (DoctorFindingKind.WorkspaceRootUnreachable, "workspace.root-unreachable"),
             (DoctorFindingKind.WorkspaceDetached, "workspace.detached"),
+            (DoctorFindingKind.LibraryRecordMalformed, "library.record-malformed"),
+            (DoctorFindingKind.LibraryRecordUnavailable, "library.record-unavailable"),
+            (DoctorFindingKind.LibrarySourceRootInvalid, "library.source-root-invalid"),
+            (DoctorFindingKind.LibrarySourceRootAliased, "library.source-root-aliased"),
+            (DoctorFindingKind.LibraryInventoryIncomplete, "library.inventory-incomplete"),
+            (DoctorFindingKind.LibraryProjectionMissing, "library.projection-missing"),
+            (DoctorFindingKind.LibraryProjectionDangling, "library.projection-dangling"),
+            (DoctorFindingKind.LibraryProjectionRetargeted, "library.projection-retargeted"),
+            (DoctorFindingKind.LibraryPathCollision, "library.path-collision"),
+            (DoctorFindingKind.LibraryLinkCapabilityUnsupported, "library.link-capability-unsupported"),
+            (DoctorFindingKind.LibraryExtensionCollision, "library.extension-collision"),
+            (DoctorFindingKind.LibraryRecoverySafeExact, "library.recovery-safe-exact"),
             (DoctorFindingKind.RecoveryBundleRecognized, "recovery.bundle-recognized"),
             (DoctorFindingKind.RecoveryDraftRecognized, "recovery.draft-recognized"),
             (DoctorFindingKind.RecoveryBundleCollision, "recovery.bundle-collision"),
@@ -120,7 +132,8 @@ public sealed class DoctorFindingWireMappingTests
             (DoctorFindingKind.ExtensionBridgeRegistration, "extension.bridge-registration"),
         };
 
-        Assert.Equal(108, expected.Length);
+        Assert.Equal(120, expected.Length);
+        Assert.Equal(12, expected.Count(item => item.WireName.StartsWith("library.", StringComparison.Ordinal)));
         Assert.Equal(21, expected.Count(item => item.WireName.StartsWith("workspace.", StringComparison.Ordinal)));
         Assert.Equal(4, expected.Count(item => item.WireName.StartsWith("recovery.", StringComparison.Ordinal)));
         Assert.Equal(22, expected.Count(item => item.WireName.StartsWith("route.", StringComparison.Ordinal)));

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
@@ -44,7 +45,8 @@ internal sealed class DoctorOperationTestSupport
             Routes,
             LocalReferences,
             FrameworkLifecycle,
-            ExtensionLifecycle);
+            ExtensionLifecycle,
+            new LibraryOperationalContributor());
     }
 
     internal List<string> Calls { get; }

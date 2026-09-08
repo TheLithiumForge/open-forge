@@ -25,6 +25,7 @@ internal static class RepairJsonProjection
             Workspace = result.Workspace is null ? null : Workspace(result.Workspace),
             Result = new RepairJsonResult
             {
+                LibraryExecution = result.LibraryExecution is { } execution ? RepairLibraryPresentation.Execution(execution) : null,
                 Mode = RepairDefinitions.ReadMachineName(result.Mode),
                 Automatic = result.Automatic,
                 SelectionMode = RepairDefinitions.ReadMachineName(result.SelectionMode),
@@ -88,6 +89,8 @@ internal static class RepairJsonProjection
     private static RepairJsonSelection Selection(RepairSelection selection)
         => new()
         {
+            SelectedLibraries = [.. selection.Libraries.Selected.Select(RepairLibraryPresentation.Selected)],
+            UnselectedLibraries = [.. selection.Libraries.Unselected.Select(RepairLibraryPresentation.Proposal)],
             Mode = RepairDefinitions.ReadMachineName(selection.Mode),
             Selected = [.. selection.Selected.Select(SelectedProposal)],
             Unselected = [.. selection.Unselected.Select(Proposal)],
@@ -146,6 +149,7 @@ internal static class RepairJsonProjection
     private static RepairJsonPlan Plan(RepairPlan plan)
         => new()
         {
+            LibrarySteps = [.. plan.LibrarySteps.Select(RepairLibraryPresentation.Step)],
             Blocked = plan.IsBlocked,
             NoOp = plan.IsNoOp,
             Steps = [.. plan.Steps.Select(Step)],
@@ -206,6 +210,7 @@ internal static class RepairJsonProjection
     private static RepairJsonConflict Conflict(RepairConflict conflict)
         => new()
         {
+            Library = conflict.Library is { } library ? RepairLibraryPresentation.Proposal(new RepairLibraryRecoveryProposal(library)) : null,
             Kind = RepairDefinitions.ReadMachineName(conflict.Kind),
             SourcePath = conflict.SourceCanonicalPath,
             Occurrence = conflict.Occurrence is null ? null : Location(conflict.Occurrence),
@@ -233,6 +238,7 @@ internal static class RepairJsonProjection
                 RecoveryBundleProducer.Index => "index",
                 RecoveryBundleProducer.Route => "route",
                 RecoveryBundleProducer.Repair => "repair",
+                RecoveryBundleProducer.Library => "library",
                 _ => throw new ArgumentOutOfRangeException(nameof(attribution), attribution.Producer, "The recovery producer is not defined."),
             },
             Operation = attribution.Operation switch
@@ -245,6 +251,9 @@ internal static class RepairJsonProjection
                 RecoveryBundleOperation.Update => "update",
                 RecoveryBundleOperation.Remove => "remove",
                 RecoveryBundleOperation.Repair => "repair",
+                RecoveryBundleOperation.Attach => "attach",
+                RecoveryBundleOperation.Sync => "sync",
+                RecoveryBundleOperation.Detach => "detach",
                 _ => throw new ArgumentOutOfRangeException(nameof(attribution), attribution.Operation, "The recovery operation is not defined."),
             },
             SubjectKind = attribution.Subject.Kind switch

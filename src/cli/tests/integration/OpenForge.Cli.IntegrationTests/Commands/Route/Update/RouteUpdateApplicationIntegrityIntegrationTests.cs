@@ -19,7 +19,7 @@ public sealed class RouteUpdateApplicationIntegrityIntegrationTests
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             "route-update-partial-write-failure");
         var plan = Assert.IsType<RouteUpdatePlan>(
-            (await workspace.BuildPlanAsync(workspace.Request())).Plan);
+            (await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request())).Plan);
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var expectationValidator = new FileExpectationValidator(
@@ -31,8 +31,7 @@ public sealed class RouteUpdateApplicationIntegrityIntegrationTests
             TestContext.Current.CancellationToken);
         Assert.Equal(MutationValidationState.Valid, validation.State);
         Assert.Equal(plan.FileChanges.Length, validation.Checks.Count);
-        var recovery = RouteUpdateIntegrationWorkspace.CreateRecoveryServices();
-        var prepared = await recovery.Preparer.PrepareAsync(
+        var prepared = await RouteUpdateRecoveryPreparer.PrepareAsync(
             new RouteUpdateRecoveryPreparationInput
             {
                 Plan = plan,
@@ -94,7 +93,7 @@ public sealed class RouteUpdateApplicationIntegrityIntegrationTests
     [InlineData(false)]
     [InlineData(true)]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
-    public async Task VerificationFailureIsNotReportedAsComplete(bool changeOverwrite)
+    public static async Task VerificationFailureIsNotReportedAsComplete(bool changeOverwrite)
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             changeOverwrite
@@ -106,7 +105,7 @@ public sealed class RouteUpdateApplicationIntegrityIntegrationTests
         }
 
         var plan = Assert.IsType<RouteUpdatePlan>(
-            (await workspace.BuildPlanAsync(workspace.Request())).Plan);
+            (await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request())).Plan);
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var expectationValidator = new FileExpectationValidator(
@@ -117,8 +116,7 @@ public sealed class RouteUpdateApplicationIntegrityIntegrationTests
             plan.FileChanges,
             TestContext.Current.CancellationToken);
         Assert.Equal(MutationValidationState.Valid, validation.State);
-        var recovery = RouteUpdateIntegrationWorkspace.CreateRecoveryServices();
-        var prepared = await recovery.Preparer.PrepareAsync(
+        var prepared = await RouteUpdateRecoveryPreparer.PrepareAsync(
             new RouteUpdateRecoveryPreparationInput
             {
                 Plan = plan,

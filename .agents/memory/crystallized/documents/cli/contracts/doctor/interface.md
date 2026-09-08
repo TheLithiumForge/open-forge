@@ -43,14 +43,14 @@ otherwise change anything.
 
 The operation always uses these six diagnostic domains, in this order:
 
-| Order | Domain                                                   | Boundary                                                                                                                                                                                   |
-| ----- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1     | `workspace and entry`                                    | Establish the selected workspace, `.agents` boundary, Loader, entrypoints, source identity, parsing, and reachable roots.                                                                  |
-| 2     | `recovery and residual state`                            | Report exact named external final bundles and incomplete drafts, with one semantic final-ZIP integrity check and Cleanup guidance.                                                         |
-| 3     | `routes, metadata, overwrites, and generated navigation` | Compare authored topology and metadata with derived route relationships and generated `Entries`.                                                                                           |
-| 4     | `local references`                                       | Inspect supported authored local references, target and fragment resolution, containment, and bounded repair evidence.                                                                     |
-| 5     | `Framework lifecycle`                                    | Diagnose the installed or absent Framework payload, isolated Framework lifecycle section, managed files and regions, trust, ownership boundaries, and recovery evidence.                   |
-| 6     | `Extension lifecycle`                                    | Diagnose the isolated `extensions` section of the exact lifecycle document, manifests, managed files, dependencies, source availability, catalogues, ownership, and registration evidence. |
+| Order | Domain                                                   | Boundary                                                                                                                                                                                                                         |
+| ----- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | `workspace and entry`                                    | Establish the selected workspace, `.agents` boundary, Loader, entrypoints, source identity, parsing, reachable roots, and the Workspace Library record, every registered source-root inventory, and registered-projection facts. |
+| 2     | `recovery and residual state`                            | Report exact named external final bundles and incomplete drafts, with one semantic final-ZIP integrity check and Cleanup guidance.                                                                                               |
+| 3     | `routes, metadata, overwrites, and generated navigation` | Compare authored topology and metadata with derived route relationships and generated `Entries`.                                                                                                                                 |
+| 4     | `local references`                                       | Inspect supported authored local references, target and fragment resolution, containment, and bounded repair evidence.                                                                                                           |
+| 5     | `Framework lifecycle`                                    | Diagnose the installed or absent Framework payload, isolated Framework lifecycle section, managed files and regions, trust, ownership boundaries, and recovery evidence.                                                         |
+| 6     | `Extension lifecycle`                                    | Diagnose the isolated `extensions` section of the exact lifecycle document, manifests, managed files, dependencies, source availability, catalogues, ownership, and registration evidence.                                       |
 
 All six domain groups remain in the result. A dependent domain reports
 `incomplete` or `blocked` coverage when an earlier boundary prevents trustworthy
@@ -226,9 +226,12 @@ The following catalogue is the complete first-release set of detectable finding
 kinds. A domain may also report a limitation or coverage boundary when the
 declared check cannot be trusted. A fact that is valid and needs no action is
 represented as an informational finding where that distinction helps the user.
-For the unreleased schema-v1 first release, this catalogue contains exactly 108
-kinds: 21 workspace, 4 recovery, 22 route, 28 local-reference, 14 Framework,
-and 19 Extension kinds.
+For the unreleased schema-v1 first release, this catalogue contains exactly 120
+kinds: 33 workspace-and-entry (including the Workspace Library
+subcatalogue), 4 recovery, 22 route, 28 local-reference, 14 Framework, and 19
+Extension kinds. The Workspace Library kinds are owned by the existing
+`workspace and entry` domain; Doctor retains six domains and does not add a
+seventh result domain.
 
 ### Workspace And Entry
 
@@ -255,6 +258,40 @@ and 19 Extension kinds.
 | `workspace.root-missing`                  | A Loader-declared root cannot be found; dependent route coverage is `incomplete` or `blocked` when the root is required.                                                        | `manual-decision`; decide whether to restore or revise the declared root; do not invent one.                |
 | `workspace.root-unreachable`              | A declared root or descendant cannot be reached through established routing facts; dependent route coverage is `incomplete` or `blocked` when reachability is required.         | `manual-decision`; report the detached evidence and do not invent reachability.                             |
 | `workspace.detached`                      | A source or route tree exists outside the established reachable topology; coverage is `blocked` when the detached boundary cannot be inspected safely.                          | `informational`; report the detached evidence and do not adopt it.                                          |
+
+### Workspace Libraries
+
+The following finite subcatalogue belongs to the existing `workspace and entry`
+domain. It diagnoses only typed Workspace Library evidence and does not add a
+seventh Doctor domain:
+
+| Kind                                  | Detectable condition                                                                                                                                                                                                                          | Resolution or next action                                                                              |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `library.record-malformed`            | A present `.agents/open-forge.libraries.json` file is not a supported schema-v1 record, or its IDs, roots, or mappings are malformed, duplicated, or ambiguous.                                                                               | `blocked-repair`; preserve the record and correct its authored shape.                                  |
+| `library.record-unavailable`          | A present Library record cannot be read or its required record fact is unavailable; Library coverage is `incomplete`. A safely proven absent record is valid zero-Library evidence and does not produce this finding.                         | `informational`; report the unavailable boundary and do not treat it as an empty record.               |
+| `library.source-root-invalid`         | A typed `sourceRoot` is malformed, not contained, not an ordinary directory, or lacks the required ordinary source-root `.agents` child.                                                                                                      | `blocked-repair`; correct the exact source-root boundary without creating or adopting it.              |
+| `library.source-root-aliased`         | A source root or its required `.agents` boundary physically aliases another identity or cannot be assigned one safe physical identity.                                                                                                        | `blocked-repair`; resolve the physical identity ambiguity.                                             |
+| `library.inventory-incomplete`        | Complete eligible inventory cannot be established for one or more Library source roots named by a readable strict record; Library coverage is `incomplete` and no source addition or retirement is inferred.                                  | `informational`; report incomplete coverage and do not narrow the inventory silently.                  |
+| `library.projection-missing`          | A typed registered destination has no current directory entry.                                                                                                                                                                                | `manual-decision`; report projection drift and leave link creation to the accepted Library operation.  |
+| `library.projection-dangling`         | The expected relative link is present, but its source target is unavailable; Doctor does not follow it to read source bytes.                                                                                                                  | `blocked-repair`; preserve the link and resolve the source boundary explicitly.                        |
+| `library.projection-retargeted`       | A registered destination is a relative link whose raw target differs from the exact recorded target.                                                                                                                                          | `blocked-repair`; preserve the occupant and do not retarget it automatically.                          |
+| `library.path-collision`              | A Library mapping collides with another mapping, consumer control, lifecycle/Framework/Extension path, or another manager's physical identity.                                                                                                | `manual-decision`; ownership and authored intent must be resolved explicitly.                          |
+| `library.link-capability-unsupported` | A typed or otherwise proven capability fact says the required relative file-link projection is unsupported; Doctor does not probe link capability.                                                                                            | `blocked-repair`; use an environment that proves the accepted capability or make an authored decision. |
+| `library.extension-collision`         | An exact Library projection claim or real link occupant conflicts with an Extension target or ownership claim.                                                                                                                                | `manual-decision`; keep Library and Extension authorities separate and choose no winner automatically. |
+| `library.recovery-safe-exact`         | A semantically verified current-v1 residual is Library-attributed to the selected workspace and proves one exact typed ordinary-record, ordinary-file, or relative-file-link recovery effect with safe no-follow identity and no third state. | `safe-exact`; Repair may admit the exact effect through its existing automatic or guided selection.    |
+
+Library findings carry typed Library ID, source-root, mapping, projection, or
+residual subjects and provenance. They never invoke Library, mutate, adopt,
+delete recovery, probe link capability, or infer identity from a filename or
+path. A safely proven absent Library record means zero Libraries and complete
+Library coverage, produces no Library finding, grants no ownership, and does not
+infer a mapping. For a readable strict record, Doctor attempts a complete
+eligible inventory for every named source root. Those registered roots are the
+complete declared Library coverage. `library.projection-missing` is safe drift
+only when every registered-root inventory and mapping fact is complete; an
+incomplete inventory emits `library.inventory-incomplete` and remains
+incomplete, with no safe prefix treated as complete. Doctor never enumerates an
+unregistered source root, and unsafe ambiguity remains blocked.
 
 ### Recovery And Residual State
 
@@ -471,7 +508,7 @@ lifecycle actions. General Repair does not mutate Framework files.
 | `extension.catalogue-unavailable`      | The declared catalogue cannot be inspected; Extension coverage is `incomplete` or `blocked` according to the boundary.                                                                                                                            | `blocked-repair`; no catalogue fallback is inferred.                                                             |
 | `extension.partial-lifecycle`          | Within one exact trusted declared managed subject or set, at least one expected member is current and at least one other expected member is non-current.                                                                                          | `blocked-repair`; preserve the partial state until a typed recovery action is available.                         |
 | `extension.ownership-collision`        | User, Framework, or Extension ownership claims conflict.                                                                                                                                                                                          | `manual-decision`; ownership is not inferred.                                                                    |
-| `extension.bridge-registration`        | One exact lifecycle-owned routed Extension payload target has a missing, unreadable, or inconsistent ordinary generated-navigation parent `Entries` registration.                                                                                | `manual-decision`; report the evidence or use a typed future lifecycle action.                                   |
+| `extension.bridge-registration`        | One exact lifecycle-owned routed Extension payload target has a missing, unreadable, or inconsistent ordinary generated-navigation parent `Entries` registration.                                                                                 | `manual-decision`; report the evidence or use a typed future lifecycle action.                                   |
 
 `extension.partial-lifecycle` uses the same finite mixed-current-state rule as
 Framework lifecycle: within one exact trusted declared managed subject or set,
@@ -501,7 +538,8 @@ The fixed first-release catalogue retains `extension.bridge-registration` as a
 producer-backed kind. Task 17 closed its accepted set-valued observation by
 extending the typed contributor views and Doctor. The current Extension domain
 has no remaining observation horizon, and the final pre-release completeness
-gate has an honest emission path for all 108 kinds.
+gate has an honest emission path for all 120 kinds, including the Workspace
+Library subcatalogue.
 
 Neither legacy `open-forge.extensions.json`, package-source manifests, broad
 `.agents` recursion, payload/path/byte resemblance, nor Framework bridges may
@@ -527,7 +565,9 @@ Doctor output has one hierarchy:
 6. Immediate typed actions, including safe Repair preview or a targeted or
    manual next action.
 7. The six deterministic domain groups, lifecycle section trust states, and
-   their findings.
+   their findings, including the Workspace Library subcatalogue under
+   `workspace and entry`; the existing three public Doctor EndToEnd journeys
+   remain unchanged.
 
 The default human view is `expanded`, as defined by the shared global contract.
 Compact output retains workspace identity, status, coverage, resolution lane,
@@ -539,7 +579,7 @@ An illustrative expanded result is:
 
 ```text
 Open Forge doctor
-Workspace: D:/work/example
+Workspace: .
 Selected by: current directory
 Mode: read-only; no files changed
 Status: requires attention
@@ -559,7 +599,7 @@ Immediate actions
 
 1. Workspace and entry
    Coverage: complete
-   Findings: none
+   Findings: none (the Workspace Library subcatalogue is included here)
 
 2. Recovery and residual state
    Coverage: complete
@@ -590,6 +630,12 @@ subjects and evidence, provenance, resolution lanes, candidates or proposals,
 next actions, status, and post-condition facts that the contract exposes. Exact
 field names, schema compatibility, and exit mapping follow the [Shared Result
 Coordinates](../shared/result-coordinates/interface.md).
+
+Workspace Library findings appear in the existing `workspace-entry` domain with
+typed Library subjects and `library-record`, `library-source`,
+`library-projection`, or `library-recovery` provenance. A safe-exact Library
+residual may carry the typed `library-residual-recovery` proposal; Doctor only
+reports it and never applies or invokes Repair.
 
 ### Command-Local JSON Result Graph
 
@@ -648,7 +694,7 @@ DoctorJsonDomain {
 }
 
 DoctorJsonFinding {
-  kind: one of the 108 finite catalogue values,
+  kind: one of the 120 finite catalogue values,
   severity: "information" | "warning" | "error",
   message: string,
   subject: DoctorJsonSubject,
@@ -664,7 +710,7 @@ DoctorJsonFinding {
 DoctorJsonSubject {
   kind: "workspace" | "path" | "route" | "generated-region"
     | "source-occurrence" | "target" | "recovery-item" | "managed-file"
-    | "extension" | "dependency",
+    | "extension" | "dependency" | "library",
   path: string | null,
   id: string | null,
   location: SourceLocation | null
@@ -676,7 +722,8 @@ DoctorJsonEvidence {
   basis: "filename" | "title" | "literal-content" | "route-neighborhood" | null,
   state: "available" | "unavailable" | "not-applicable" | "present" | "absent"
     | "current" | "changed" | "missing" | "blocked" | "incomplete"
-    | "valid" | "invalid" | "unsupported" | "malformed" | "untrusted"
+    | "dangling" | "retargeted" | "safe-exact" | "valid" | "invalid"
+    | "unsupported" | "malformed" | "untrusted"
     | "verified" | null,
   expected: string | null,
   actual: string | null,
@@ -692,7 +739,8 @@ DoctorJsonProvenance {
   source: "workspace-entry" | "recovery-residuals" | "route-inventory"
     | "route-metadata" | "generated-navigation" | "local-references"
     | "framework-lifecycle" | "framework-payload" | "extension-lifecycle"
-    | "extension-source" | "lifecycle-ownership",
+    | "extension-source" | "lifecycle-ownership" | "library-record"
+    | "library-source" | "library-projection" | "library-recovery",
   path: string | null,
   location: SourceLocation | null
 }
@@ -715,12 +763,13 @@ DoctorJsonCandidateBasis {
 }
 
 DoctorJsonProposal {
-  kind: "reference-canonicalization",
+  kind: "reference-canonicalization" | "library-residual-recovery",
   subject: DoctorJsonSubject,
   expected: string,
   intended: string,
   boundary: DoctorJsonBoundary,
-  verification: "same-target-identity" | "resulting-bytes",
+  verification: "same-target-identity" | "resulting-bytes"
+    | "library-no-follow-exact",
   recovery: "no-persistent-state" | "repair-receipt-required"
 }
 
@@ -752,14 +801,16 @@ DoctorJsonBoundary.kind:
 DoctorJsonEvidence.state:
   "available" | "unavailable" | "not-applicable" | "present" | "absent"
     | "current" | "changed" | "missing" | "blocked" | "incomplete"
-    | "valid" | "invalid" | "unsupported" | "malformed" | "untrusted"
+    | "dangling" | "retargeted" | "safe-exact" | "valid" | "invalid"
+    | "unsupported" | "malformed" | "untrusted"
     | "verified" | null
 
 DoctorJsonProvenance.source:
   "workspace-entry" | "recovery-residuals" | "route-inventory"
     | "route-metadata" | "generated-navigation" | "local-references"
     | "framework-lifecycle" | "framework-payload" | "extension-lifecycle"
-    | "extension-source" | "lifecycle-ownership"
+    | "extension-source" | "lifecycle-ownership" | "library-record"
+    | "library-source" | "library-projection" | "library-recovery"
 
 DoctorJsonAction.operation:
   "repair" | "index" | "cleanup" | "install" | "update"
@@ -816,6 +867,17 @@ Coverage and health are separate. A domain can be `complete` with findings. A
 workspace can be safely absent from a lifecycle boundary and still have complete
 diagnostic coverage. Informational findings alone do not produce `attention`.
 Severity does not override coverage and does not select a repair.
+
+The Workspace Library subcatalogue is part of `workspace and entry` coverage.
+A safely proven absent record gives zero Libraries and complete Library
+coverage with no Library finding. When a readable strict record names one or
+more source roots, Doctor attempts a complete eligible inventory for every one.
+Complete safe registered-projection drift may produce `attention`; unavailable
+or incomplete source coverage produces `library.inventory-incomplete` and
+`incomplete` coverage; malformed, aliased, colliding, or otherwise unsafe
+identity produces `blocked`. Doctor never inventories an unregistered source
+root or treats a safe prefix as complete. A `library.recovery-safe-exact`
+finding is a typed report for Repair selection, not Doctor mutation authority.
 
 ## Errors And Omission States
 
@@ -894,6 +956,9 @@ Doctor does not:
   when the declared local coverage is complete.
 - Repair authored prose, labels, route topology, metadata, overwrites, recovery,
   Framework lifecycle, or Extension lifecycle.
+- Invoke Workspace Library operations, enumerate an unregistered source tree,
+  adopt or create a projection, probe link capability, or delete or restore a
+  recovery residual.
 - Report a health score, percentage, or fabricated complete coverage.
 
 The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
@@ -921,6 +986,13 @@ Conformance evidence must cover:
   provenance, candidates, proposals, and typed next actions.
 - Every workspace and entry kind, including Loader, entrypoint, compatibility,
   identity, path, metadata, parsing, root, and detached boundaries.
+- The finite Workspace Library subcatalogue: safely absent records with zero
+  Libraries and complete coverage without a finding; malformed or unavailable
+  records,
+  invalid or aliased source roots and `.agents` boundaries, incomplete source
+  inventory, missing/dangling/retargeted projections, path collisions,
+  unsupported proven link capability, Library/Extension collisions, and the
+  safe-exact typed residual lane.
 - The four recovery kinds for verified finals, incomplete drafts, final-name
   collisions, and unavailable provenance, with exact paths and no live-target or
   activity inference.
@@ -944,6 +1016,8 @@ Conformance evidence must cover:
   `attention`.
 - Read-only, stateless, repeatable behavior with no plan, recovery-bundle,
   temporary, lifecycle, or public-command effect.
+- The existing three public Doctor EndToEnd journeys remain unchanged; Library
+  findings are covered within the existing six-domain result.
 
 ## Related Current Sources
 

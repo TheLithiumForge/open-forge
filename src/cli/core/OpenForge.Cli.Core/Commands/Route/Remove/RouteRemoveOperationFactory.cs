@@ -12,7 +12,6 @@ using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.References;
@@ -28,13 +27,10 @@ internal static class RouteRemoveOperationFactory
         var physicalPathResolver = new PhysicalPathResolver();
         var expectationValidator = new FileExpectationValidator(physicalPathResolver);
         var planBuilder = CreatePlanBuilder(physicalPathResolver, expectationValidator);
-        var recoveryLifecycle = CreateRecoveryLifecycle();
         var resultBuilder = new RouteRemoveResultBuilder();
         var applicationOperation = CreateApplicationOperation(
             planBuilder,
-            physicalPathResolver,
             expectationValidator,
-            recoveryLifecycle,
             lockStoreRoot);
         return new RouteRemoveOperation(planBuilder, applicationOperation, resultBuilder);
     }
@@ -110,21 +106,9 @@ internal static class RouteRemoveOperationFactory
             new GeneratedNavigationRegionPlanner(),
             new RouteRemoveNavigationSourceProjector());
 
-    private static RouteRemoveRecoveryLifecycle CreateRecoveryLifecycle()
-    {
-        var reader = new RecoveryBundleReader();
-        var catalogue = new RecoveryBundleCatalogue(reader);
-        return new RouteRemoveRecoveryLifecycle(
-            catalogue,
-            new RecoveryBundleStore(reader),
-            new RecoveryBundleDeletionGuard(catalogue, reader));
-    }
-
     private static RouteRemoveApplicationOperation CreateApplicationOperation(
         RouteRemovePlanBuilder planBuilder,
-        PhysicalPathResolver physicalPathResolver,
         FileExpectationValidator expectationValidator,
-        RouteRemoveRecoveryLifecycle recoveryLifecycle,
         WorkspaceLockStoreRoot? lockStoreRoot)
     {
         var appliedVerifier = new RouteRemoveAppliedVerifier(
@@ -135,9 +119,8 @@ internal static class RouteRemoveOperationFactory
         return new RouteRemoveApplicationOperation(
             CreateLockManager(lockStoreRoot),
             new RouteRemovePlanRevalidator(planBuilder),
-            recoveryLifecycle,
             CreateEffectApplication(expectationValidator),
-            new RouteRemoveApplicationCompletion(recoveryLifecycle, appliedVerifier));
+            new RouteRemoveApplicationCompletion(appliedVerifier));
     }
 
     private static RouteRemoveEffectApplication CreateEffectApplication(

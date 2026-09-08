@@ -65,6 +65,14 @@ The operation satisfies these invariants:
 - No persistent effect begins until the subject, destination, ownership proof,
   reference coverage, generated projection, complete plan, and preflight are
   complete.
+- Every ordinary source, destination, reference, and generated effect target
+  consumes the neutral no-follow final-leaf observation before ordinary
+  physical resolution, at initial preflight, during under-lease revalidation,
+  and immediately before its effect. A present link, reparse point, or special
+  final leaf blocks the ordinary move, create, delete, or replacement; Route
+  Move never follows, writes, or deletes a Library projection. Stable contained
+  directory-link ancestry remains governed by the current ordinary path
+  contract, and this guard does not consult Library record authority.
 - A category is one recovery and verification boundary, never a sequence of
   independently committed leaf operations.
 - A repeated move using the consumed old source forms exact source-not-found
@@ -134,6 +142,13 @@ Classification does not use generated entries, tags, filenames that merely look
 like categories, route proximity, or a recommendation as ownership or subject
 proof.
 
+Before ordinary physical resolution of a selected source or any intended effect
+target, the resolver obtains its neutral no-follow observation of the logical
+final leaf. A present link, reparse point, or special final leaf is not admitted
+as an ordinary Route Move subject or effect target. This observation is a
+filesystem safety fact, not a Library-record lookup; a missing record cannot
+make a projection writable, movable, or removable.
+
 ## Current Facts And Coverage
 
 Before planning, the operation establishes the complete facts required by the
@@ -146,6 +161,8 @@ For a leaf, current facts include:
 - requested and resolved source identity, base path, and valid overwrite layer;
 - ordinary routed Markdown kind, exposing parent, route identity, and
   compatibility representation;
+- no-follow final-leaf fact for the source, its overwrite companion, and each
+  resolved effect target;
 - lexical and physical containment and exact physical identity;
 - destination target kind, parent entrypoint, occupancy, alias, collision, and
   containment facts;
@@ -181,6 +198,12 @@ been inspected. An item that is neither a regular file nor a directory, or that
 is unreadable, externally resolving, ambiguous, or unsafe, blocks; an unfamiliar
 extension does not exclude an otherwise safe regular file. The resolver does not
 list a safe prefix and call the category complete.
+
+The neutral final-leaf observation is part of that inspection. A contained link,
+reparse point, or special final leaf blocks the complete ordinary category plan
+instead of being traversed or treated as source bytes. Stable directory-link
+ancestry that remains within the ordinary path contract is not newly rejected by
+this rule.
 
 ### Ownership inventory
 
@@ -246,6 +269,13 @@ occupied path, orphan companion, overwrite conflict, route-identity collision,
 self-move, destination-inside-source, lexical escape, physical alias, or
 unsafe identity. It never chooses a destination by basename, slug similarity,
 generated order, or likely intent.
+
+Destination and reference/generated effect targets receive the same no-follow
+final-leaf observation before ordinary physical resolution. A present link,
+reparse point, or special final leaf blocks the complete plan, including when an
+eligible `.agents/...` leaf is a filesystem projection whose target is contained
+by the workspace. Route Move does not follow or write through that projection,
+and the decision is independent of Library record authority.
 
 For a category, the destination occupancy check covers every path in the complete
 intended layout before the plan is admitted. A destination that would overwrite
@@ -363,6 +393,10 @@ The complete plan contains all effects before the first persistent effect:
   bytes; and
 - old/new parent and applicable Loader generated-region replacements.
 
+Initial preflight rechecks the no-follow final-leaf fact for every ordinary
+effect target before any effect is admitted. A present link, reparse point, or
+special final leaf blocks all effects; no safe subset is applied.
+
 Compatible changes to one physical path coalesce. A category's many contained
 files are still one operation with one preflight, one application result, one
 verification boundary, and one recovery-bundle preparation/retention boundary. A blocker prevents
@@ -382,6 +416,8 @@ intended bytes, generated projection, ordered plan, expected-state facts, and
 preflight. Dry-run stops before recovery-bundle creation, directory creation, file move,
 deletion, replacement, reference rewrite, generated-region write, or any other
 persistent effect.
+It performs the same no-follow final-leaf observations and reports the same
+blocking facts as application.
 
 Dry-run result evidence contains every planned path and exact bounded effect:
 selected and destination paths, reference old/new literals, generated-region
@@ -429,8 +465,11 @@ Immediately before application, the operation rechecks every source item,
 destination path, category-relative collision, ownership inventory, reference
 occurrence, generated boundary, expected byte state, containment fact, and
 recovery condition in the complete plan. Volatile effect targets are rechecked
-before their effect is applied. A changed fact prevents stale intent from
-writing.
+under the held lease, including each no-follow final-leaf observation, before
+their effect is applied. Immediately before every ordinary move, create, delete,
+or replacement, it repeats the final-leaf observation. A changed fact or a
+present link, reparse point, or special leaf prevents stale intent from writing,
+following, or deleting.
 
 Application verifies each moved or created path, each reference replacement, each
 generated region, and the preserved logical base/overwrite relationship. Final
@@ -502,6 +541,10 @@ A conforming implementation must additionally prove:
 - exact destination parent requirements, occupied-target and complete-category
   collision checks, self-move and destination-inside-source rejection, aliases,
   unsafe containment, and no implicit parent initialization;
+- no-follow final-leaf observations before physical resolution, at initial
+  preflight, under-lease revalidation, and immediately before every ordinary
+  effect, including refusal to follow, write, or delete an eligible `.agents/...`
+  Library projection without consulting its record;
 - complete supported-workspace-Markdown enumeration inside and outside `.agents`,
   base/overwrite layer coverage, exact incoming and outgoing move rewrites,
   internal-link preservation, external URL preservation, and label, fragment,

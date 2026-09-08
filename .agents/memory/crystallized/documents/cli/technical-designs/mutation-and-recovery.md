@@ -74,16 +74,50 @@ typed input/output failure rather than inferred contention.
 
 ## Expected State And Preflight
 
+`NoFollowLeafObservation` is the neutral final-component fact used by every
+mutation that addresses a logical file leaf. It records the canonical logical
+path and one leaf state: `Missing`, `OrdinaryFile`, `Directory`,
+`RelativeFileLink`, `Link`, `ReparsePoint`, `Special`, `Inaccessible`, or
+`Unknown`. `RelativeFileLink` is the exact supported relative file-symbolic-link
+identity. It retains the exact raw relative target and link kind without
+resolving the target. `Link` is the generic state for every other safely
+observable symbolic link, including an absolute, unsupported, or otherwise
+non-relative target. Its `LinkIdentity` retains the observed link kind and,
+when safely observable, the raw target and target form (`relative`, `absolute`,
+or `unsupported`) without resolving the target. If a link is identifiable but
+its target facts are unavailable, it remains `Link` with those fields unavailable
+and never becomes `RelativeFileLink`; if the link identity itself cannot be
+observed, the state is `Inaccessible` or `Unknown`.
+
+The observation is made before ordinary physical resolution, during initial
+preflight, during under-lease revalidation, and immediately before the effect.
+Any `RelativeFileLink` or generic `Link`, reparse point, or special final leaf
+blocks ordinary `Create`, `Replace`, `Delete`, and `ReplaceGeneratedRegion`.
+Every generic `Link`, reparse point, or special final leaf also blocks a
+`RelativeFileLinkEffect`; only the exact `RelativeFileLink` identity is accepted
+by that effect and by recovery. Stable contained directory-link ancestry
+continues to follow the ordinary physical path contract.
+
 `FileExpectation` distinguishes missing, ordinary-file, and directory states.
 An ordinary file retains its normalized logical path, resolved physical path,
 lowercase SHA-256 exact-byte identity, and, through `FileStateSnapshot`, owned
 immutable bytes. Missing paths and directories invent no hash or byte payload.
 
-`PlannedFileChange` has exactly four mechanical kinds: `Create`, `Replace`,
+`PlannedFileChange` has four ordinary-file mechanical kinds: `Create`, `Replace`,
 `Delete`, and `ReplaceGeneratedRegion`. Create requires Missing and intended
 bytes. Replace and generated-region replacement require an existing ordinary
 file and complete intended document bytes. Delete requires an existing ordinary
-file and no intended bytes.
+file and no intended bytes. A command may mark a prior-missing ordinary Create
+as reversible when its record must be removed if the operation stops.
+
+`RelativeFileLinkEffect` is a separate typed mechanical shape with `Create` and
+`Delete` kinds. It retains the canonical logical destination path, the finite
+relative-file-link kind, the exact raw relative target, and state-specific
+expected and intended identities. Create requires Missing and intends that
+exact `RelativeFileLink` identity. Delete requires that exact identity and
+intends Missing. Link identity never includes target bytes. Only this typed
+Library relative-file-link effect may create or delete a link object; ordinary
+file effects reject every link final leaf, including a generic `Link`.
 
 The plan entering shared preflight is already the command-owned ordered and
 coalesced mechanical set. Equivalent effects have been coalesced, while
@@ -92,17 +126,21 @@ Shared support preserves that order and does not choose or reorder effects.
 
 Effect-free preflight validates the set. An empty set is valid. A non-empty set
 rejects duplicate logical targets, incompatible present or prospective physical
-aliases, unsafe paths, stale expectations, and cancellation. Under-lock
-revalidation requires a live same-workspace lease and repeats volatile
-expected-state checks. Each target is revalidated again immediately before its
-effect.
+aliases, unsafe paths, stale expectations, and cancellation. It obtains the
+no-follow final-leaf fact before ordinary physical resolution and rejects a
+present link, reparse point, or special final leaf for an ordinary file effect.
+Under-lock revalidation requires a live same-workspace lease and repeats every
+volatile expected-state and no-follow leaf check. Each target is revalidated
+again immediately before its effect.
 
 ## Recovery Bundle
 
-An operation with one or more existing-target effects (`Replace`,
-`ReplaceGeneratedRegion`, or `Delete`) prepares exactly one immutable external
-ZIP before the first target effect. A create-only or semantic or byte no-op
-operation does not resolve recovery storage and creates no bundle.
+An operation with one or more reversible non-no-op effects prepares exactly one
+immutable external ZIP before the first target effect. Covered effects include
+ordinary existing-file `Replace`, `ReplaceGeneratedRegion`, and `Delete`,
+relative-file-link `Create` and `Delete`, and a prior-missing ordinary `Create`
+when it creates a record that the operation must be able to remove. A semantic
+or byte no-op operation does not resolve recovery storage and creates no bundle.
 
 The deterministic external directory key and names bind the normalized physical
 workspace path and operation ID. The source-generated public schema-v1
@@ -114,11 +152,34 @@ finite `operation`, and one typed `subject` with `{kind, identity}`. Every curre
 and future recovery writer supplies those facts from trusted producer-owned
 inputs. Command text, GUID, path, filename, or
 ordered-entry values never infer or substitute for attribution. Ordered entries
-remain exact plan evidence. Each target entry records its normalized relative
-path, change kind, prior byte length, prior lowercase SHA-256, ordinal payload
-name, and intended final absence or intended length and lowercase SHA-256. The
-ordinal payload entries contain exact prior bytes. These fingerprints and the
+remain exact plan evidence. Each target entry records its canonical
+`logicalPath`, typed `kind`, and state-specific `prior` and `intended` identity.
+The admissible entry kinds are `ordinary-create`, `ordinary-replace`,
+`ordinary-replace-generated-region`, `ordinary-delete`,
+`relative-file-link-create`, and `relative-file-link-delete`. An ordinary-file
+identity contains exact byte length and lowercase SHA-256; a missing identity
+contains neither; a relative-file-link identity contains the exact raw relative
+target and link kind and never target bytes. The ordinal payload entries contain
+exact prior bytes only for an existing ordinary-file prior state. A
+prior-missing ordinary Create has no payload. These identities and the
 attribution are static provenance, not an evolving journal.
+
+The typed entry shape is:
+
+```text
+RecoveryEntry
+  logicalPath: canonical workspace-relative path
+  kind: RecoveryEntryKind
+  prior: Missing | OrdinaryFile(length, sha256) | RelativeFileLink(rawTarget, linkKind)
+  intended: Missing | OrdinaryFile(length, sha256) | RelativeFileLink(rawTarget, linkKind)
+  priorPayload: ordinal payload name only when prior is OrdinaryFile
+```
+
+The state identity must match the effect kind: ordinary Create is
+`Missing -> OrdinaryFile`, ordinary Replace and generated-region replacement
+are `OrdinaryFile -> OrdinaryFile`, ordinary Delete is `OrdinaryFile -> Missing`,
+relative-file-link Create is `Missing -> RelativeFileLink`, and relative-file-link
+Delete is `RelativeFileLink -> Missing`. No other state pair is admissible.
 
 ### Schema-v1 Attribution Vocabulary
 
@@ -141,6 +202,9 @@ admissible combinations are:
 | Accepted future | `extension` | `update`    | `workspace`    | `extension update`                    |
 | Accepted future | `extension` | `remove`    | `workspace`    | `extension remove`                    |
 | Accepted future | `repair`    | `repair`    | `workspace`    | `repair`                              |
+| Accepted future | `library`   | `attach`    | `workspace`    | `library attach`                      |
+| Accepted future | `library`   | `sync`      | `workspace`    | `library sync`                        |
+| Accepted future | `library`   | `detach`    | `workspace`    | `library detach`                      |
 
 The command identity in this table is the already accepted command identity
 associated with the fixed writer tuple; it never supplies or substitutes for a
@@ -232,14 +296,63 @@ operation). Neither state proves operation history. The partial-recovery
 finding describes mixed current state relative to recovery evidence and never
 claims that recovery occurred.
 
+## No-Follow Recovery Comparison And Application
+
+Explicit recovery comparison and application use the same
+`NoFollowLeafObservation` as ordinary mutation. They do not resolve the final
+leaf before deciding whether it matches a recorded state. For each recovery
+entry, the current state must be one of the exact admissible states below:
+
+- To restore a prior `Missing` state, the current leaf must match the exact
+  intended object. Recovery deletes only that exact current object. A different
+  ordinary file, directory, `RelativeFileLink`, generic `Link`, reparse point,
+  special object, or unavailable leaf blocks.
+- To restore a prior `OrdinaryFile` state, the current leaf must match the
+  intended ordinary-file identity and pass the ordinary no-follow guard.
+  Recovery writes the recorded prior bytes through the guarded ordinary
+  same-directory replacement path.
+- To restore a prior `RelativeFileLink` state, the current leaf must be exact
+  `Missing`. Recovery creates only the recorded relative-file-symbolic-link
+  kind with the exact raw relative target. It does not resolve the target or
+  read target bytes, so an exact dangling link may be recreated. A generic
+  `Link`, regardless of target form, never satisfies this identity.
+
+A third, mismatched, unsafe, generic-link, reparse, special, or unavailable
+state blocks the entry and the recovery operation does not apply a safe subset.
+Recovery never writes, deletes, or resolves a source target. These capabilities
+support an explicit Repair operation and residual evidence; no command claims
+automatic rollback or compensation.
+
+## Relative-File-Link Application
+
+`RelativeFileLinkApplier` consumes one live same-workspace lease, one typed
+relative-file-link effect, its matching no-follow expectation, cancellation,
+and the matching verified recovery preparation when the effect is reversible.
+It validates the parent as a real contained directory, inspects the final leaf
+without following it, and applies exactly one link-object change:
+
+1. Create uses the declared raw relative target and link kind on an exact
+   missing final leaf.
+2. Delete removes the exact expected relative file link on an immediate
+   no-follow match.
+3. Verification inspects the final leaf without following it and requires the
+   exact intended missing or `RelativeFileLink` identity.
+
+The applier never follows the link, writes its target, deletes its target, or
+uses target bytes as identity. It has no copy-delete, absolute-link, directory-
+link, native, unsafe, or weaker fallback. A generic `Link` with an absolute,
+unsupported, or otherwise non-relative target is never accepted. A changed
+occupant, target, link kind, parent, or containment fact stops the effect.
+
 ## Atomic File Application
 
 `FileChangeApplier` consumes one live same-workspace `WorkspaceLockLease`, one
 `PlannedFileChange`, one matching expectation validation, a cancellation token,
-and the matching verified `RecoveryBundlePreparation` for an existing-target
-effect. Create requires `null` preparation and rejects a non-null value. Every
-existing-target effect requires the matching final preparation. The applier
-performs one final effect per target.
+and the matching verified `RecoveryBundlePreparation` for a covered effect. An
+ordinary Create requires `null` preparation unless the command marked that
+prior-missing Create as reversible, in which case it requires the matching
+final preparation. Every covered existing-target effect requires the matching
+final preparation. The applier performs one final effect per target.
 
 Create, Replace, and ReplaceGeneratedRegion use full-document mechanics:
 
@@ -247,7 +360,8 @@ Create, Replace, and ReplaceGeneratedRegion use full-document mechanics:
    `Path.GetRandomFileName`, `FileMode.CreateNew`, and ordinary managed BCL APIs.
 2. Write all intended bytes, close the stage, and read it back for exact-byte
    equality.
-3. Repeat target revalidation and the final cancellation check.
+3. Repeat the no-follow final-leaf observation, target revalidation, and the
+   final cancellation check.
 4. Use same-directory `File.Move` with `overwrite: false` for Create and
    `overwrite: true` for Replace and ReplaceGeneratedRegion.
 5. Revalidate exact resulting identity and bytes.
@@ -257,9 +371,9 @@ parse or recompute a region. There is no copy-delete, in-place write, weaker
 fallback, retry, forced durability, native or unsafe path, reflection path, or
 deterministic failure-injection seam.
 
-Delete accepts only a matched ordinary-file expectation, revalidates immediately
-before `File.Delete`, and verifies Missing. It never deletes a directory, device,
-link, or other non-file state.
+Delete accepts only a matched ordinary-file expectation, revalidates the
+no-follow final leaf immediately before `File.Delete`, and verifies Missing. It
+never deletes a directory, device, link, or other non-file state.
 
 Stage cleanup removes only the exact ordinary stage this invocation created. A
 failed `CreateNew` never claims or removes a pre-existing lookalike. A changed,
@@ -272,6 +386,12 @@ broadly deleted.
 verification-unavailable `Applied`/`Failed`, `NotStarted`, and
 `CompletionUnknown`. A receipt carries the accepted before-state snapshot and,
 when observation succeeds, the exact after-state snapshot.
+
+`RelativeFileLinkReceipt` carries the same mechanical outcome states while its
+before and after snapshots are no-follow leaf observations. A link snapshot
+contains only the logical path, link kind, and exact raw relative target; it
+contains no target bytes or resolved target identity. A link effect is
+`Verified` only when the intended missing or exact-link observation is proved.
 
 `NotStarted` carries no after-state and exactly one neutral reason:
 `Cancelled`, `TargetChanged`, `ApplicationFailed`, or `ContractRejected`.
@@ -349,4 +469,5 @@ operation; existing single-candidate callers retain their guard policy.
 - [Shared CLI Operation Contract](../shared-operation-contract.md)
 - [Directory Creation Technical Design](directory-creation.md)
 - [Lifecycle Provenance Technical Design](lifecycle-provenance.md)
+- [Workspace Libraries Technical Design](workspace-libraries.md)
 - [Cleanup Contract](../contracts/cleanup/_cleanup.md)

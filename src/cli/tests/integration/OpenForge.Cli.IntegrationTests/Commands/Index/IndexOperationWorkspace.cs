@@ -149,8 +149,7 @@ internal sealed class IndexOperationWorkspace : IDisposable
     internal async ValueTask<int> ReadRecoveryCandidateCountAsync(
         CancellationToken cancellationToken)
     {
-        var result = await new RecoveryBundleCatalogue(new RecoveryBundleReader())
-            .ReadAsync(Workspace, cancellationToken);
+        var result = await RecoveryBundleCatalogue.ReadAsync(Workspace, cancellationToken);
         return result.State switch
         {
             RecoveryBundleCatalogueState.Available => result.Candidates.Length,
@@ -159,9 +158,9 @@ internal sealed class IndexOperationWorkspace : IDisposable
             RecoveryBundleCatalogueState.Cancelled => throw new InvalidOperationException(
                 "The Index integration recovery catalogue was cancelled."),
             _ => throw new ArgumentOutOfRangeException(
-                nameof(result),
-                result.State,
-                "The recovery catalogue state is not defined."),
+                paramName: null,
+                actualValue: result.State,
+                message: "The recovery catalogue state is not defined."),
         };
     }
 

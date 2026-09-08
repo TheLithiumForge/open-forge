@@ -875,3 +875,25 @@ Those corrections remain part of the result. This session has no matched
 model trial or complete comparable usage accounting; it supports retaining
 explicit evidence gates and the selected allocation, not claiming Astra
 quality or cost superiority over prior Sol/Luna work.
+
+### Sol Green return and direct Astra integration correction — 2026-09-08
+
+Sol/xhigh returned completed Library M4–M8 at `382ccf74`. Its review accepted
+five material findings concerning Status semantics, Sync/Detach invalidity,
+non-Markdown inventory and the shared navigation parser. The grouped correction
+and one inherited Cleanup fixture renewal reached managed2624/1467/208,
+native1467/208 and managed-on-native208 with no failures/skips. Root verified
+the source, native and historical artifact identities and actual successful logs.
+The omitted M6 line scan and superseded concurrent build warning remain recorded
+in the Task rather than erased by final acceptance.
+
+Root then found six new data-only records outside Models in implementation
+files. `T23-INT-001` moved only those records and their imports/type references;
+implementation token comparison preserved behavior and all tests. Two initial
+root build attempts exposed missing namespace imports, corrected before the
+third warning-free build and 599/390/15 focused passes. This is a bounded
+source-locality gap in the returned reviewed candidate and an import-completeness
+error in the root correction, not evidence of universal model ranking. Retain
+personal directive loading, exact consumer enumeration before model moves, and
+full-context evidence for comparison. The user chose sequential direct Astra
+continuation after Sol implementation; no matched cost/quality trial exists.

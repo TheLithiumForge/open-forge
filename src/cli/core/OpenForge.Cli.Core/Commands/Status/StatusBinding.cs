@@ -15,7 +15,6 @@ internal static class StatusBinding
         StatusBindingComponents components)
     {
         var binder = new StatusRequestBinder();
-        var workspaceResultFactory = new StatusWorkspaceResultFactory();
         return new CliCommandBinding<StatusRequest, StatusResult>(
             symbols.StatusCommand,
             new CliCommandBindingComponents<StatusRequest, StatusResult>
@@ -23,7 +22,7 @@ internal static class StatusBinding
                 Help = components.Help,
                 WorkspaceRequirement = CliWorkspaceRequirement.Required,
                 Binder = binder.Bind,
-                InvalidResultFactory = workspaceResultFactory.Create,
+                InvalidResultFactory = StatusWorkspaceResultFactory.Create,
                 Operation = components.Operation.ExecuteAsync,
                 Renderers = components.Renderers,
                 DiagnosticRenderer = components.DiagnosticRenderer,

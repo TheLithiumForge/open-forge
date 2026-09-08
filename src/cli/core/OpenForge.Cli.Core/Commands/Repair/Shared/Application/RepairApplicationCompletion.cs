@@ -8,12 +8,9 @@ using OpenForge.Cli.Core.Framework.Recovery.Models;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Application;
 
-internal sealed class RepairApplicationCompletion(
-    RepairPostVerifier postVerifier,
-    RepairRecoveryLifecycle recoveryLifecycle)
+internal sealed class RepairApplicationCompletion(RepairPostVerifier postVerifier)
 {
     private readonly RepairPostVerifier _postVerifier = postVerifier;
-    private readonly RepairRecoveryLifecycle _recoveryLifecycle = recoveryLifecycle;
 
     internal async ValueTask<RepairApplicationOutcome> CompleteAsync(
         RepairPreparedApplication application,
@@ -93,7 +90,7 @@ internal sealed class RepairApplicationCompletion(
         RecoveryBundleDeletionResult deletion;
         try
         {
-            deletion = await _recoveryLifecycle.DeleteAsync(lease, preparation, cancellationToken).ConfigureAwait(false);
+            deletion = await RepairRecoveryLifecycle.DeleteAsync(lease, preparation, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
         {

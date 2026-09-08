@@ -124,7 +124,7 @@ internal sealed record RecoveryBundleVerifiedRead
 
     public required Guid OperationId { get; init; }
 
-    public required ImmutableArray<RecoveryBundleEntry> Entries { get; init; }
+    public required ImmutableArray<RecoveryEntry> Entries { get; init; }
 }
 
 internal sealed record RecoveryBundleReadResult

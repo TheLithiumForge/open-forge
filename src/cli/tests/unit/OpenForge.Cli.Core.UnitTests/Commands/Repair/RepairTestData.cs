@@ -157,7 +157,7 @@ internal static class RepairTestData
         RepairSelectedProposal selected,
         RepairSelectionMode mode = RepairSelectionMode.Automatic,
         IEnumerable<RepairProposal>? unselected = null)
-        => new(mode, [selected], unselected ?? []);
+        => new(mode, [selected], unselected ?? [], RepairLibrarySelection.Empty);
 
     internal static RepairEffect Effect(
         string sourcePath = SourcePath,
@@ -229,7 +229,7 @@ internal static class RepairTestData
         IEnumerable<RepairConflict>? conflicts = null)
     {
         request ??= Request();
-        return new(request, Selection(selected), [step], conflicts ?? []);
+        return new(request, Selection(selected), [step], conflicts ?? [], []);
     }
 
     internal static RepairResult Result(

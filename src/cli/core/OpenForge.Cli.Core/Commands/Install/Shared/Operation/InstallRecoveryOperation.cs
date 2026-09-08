@@ -7,16 +7,9 @@ using OpenForge.Cli.Core.Framework.Recovery.Models;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Operation;
 
-internal sealed class InstallRecoveryOperation(
-    RecoveryBundleStore recoveryStore,
-    RecoveryBundleCatalogue recoveryCatalogue,
-    RecoveryBundleDeletionGuard recoveryDeletionGuard)
+internal static class InstallRecoveryOperation
 {
-    private readonly RecoveryBundleStore _recoveryStore = recoveryStore;
-    private readonly RecoveryBundleCatalogue _recoveryCatalogue = recoveryCatalogue;
-    private readonly RecoveryBundleDeletionGuard _recoveryDeletionGuard = recoveryDeletionGuard;
-
-    internal ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
+    internal static ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
         InstallPlan plan,
         Guid operationId,
         CancellationToken cancellationToken)
@@ -30,17 +23,17 @@ internal sealed class InstallRecoveryOperation(
                 plan.Request.Workspace),
             operationId,
             plan.RecoveryTargets);
-        return _recoveryStore.PrepareAsync(input, cancellationToken);
+        return RecoveryBundleStore.PrepareAsync(input, cancellationToken);
     }
 
-    internal async ValueTask<InstallRecoveryCleanupResult> CleanupAsync(
+    internal static async ValueTask<InstallRecoveryCleanupResult> CleanupAsync(
         InstallRecoveryCleanupRequest request,
         CancellationToken cancellationToken)
     {
         RecoveryBundleCatalogueResult catalogue;
         try
         {
-            catalogue = await _recoveryCatalogue.ReadAsync(
+            catalogue = await RecoveryBundleCatalogue.ReadAsync(
                     request.Workspace,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -84,7 +77,7 @@ internal sealed class InstallRecoveryOperation(
         RecoveryBundleDeletionResult deletion;
         try
         {
-            deletion = await _recoveryDeletionGuard.DeleteAsync(
+            deletion = await RecoveryBundleDeletionGuard.DeleteAsync(
                     request.Lease,
                     candidates[0],
                     cancellationToken)

@@ -94,7 +94,7 @@ internal static class StatusJsonAssertions
         PropertyOrder(root, "schemaVersion", "command", "status", "workspace", "result", "next");
         PropertyOrder(root.GetProperty("workspace"), "path", "selectedBy");
         var result = Result(root);
-        PropertyOrder(result, "installation", "context", "structure", "lifecycle", "recovery", "findings");
+        PropertyOrder(result, "installation", "context", "structure", "lifecycle", "library", "recovery", "findings");
         PropertyOrder(result.GetProperty("installation"), "state", "entryPath", "loaderPath");
 
         var context = result.GetProperty("context");
@@ -151,6 +151,24 @@ internal static class StatusJsonAssertions
             PropertyOrder(target, "path", "owners", "baselineFingerprint", "fingerprintKind", "state");
         }
 
+        var library = result.GetProperty("library");
+        PropertyOrder(library, "state", "record", "records", "counts");
+        PropertyOrder(library.GetProperty("record"), "path", "state");
+        foreach (var registration in library.GetProperty("records").EnumerateArray())
+        {
+            PropertyOrder(registration, "id", "sourceRoot", "sourceRootState", "sourceAvailability", "registeredLinks");
+            var links = registration.GetProperty("registeredLinks");
+            PropertyOrder(links, "registered", "counts", "links");
+            ValueGraph(links.GetProperty("registered"));
+            LibraryLinkCounts(links.GetProperty("counts"));
+            foreach (var link in links.GetProperty("links").EnumerateArray())
+            {
+                PropertyOrder(link, "sourcePath", "destinationPath", "expectedRelativeLink", "sourceId", "state");
+            }
+        }
+
+        LibraryCounts(library.GetProperty("counts"));
+
         var recovery = result.GetProperty("recovery");
         PropertyOrder(recovery, "verifiedFinals", "incompleteDrafts", "candidates");
         ValueGraph(recovery.GetProperty("verifiedFinals"));
@@ -188,6 +206,24 @@ internal static class StatusJsonAssertions
         else
         {
             Assert.Equal(JsonValueKind.Null, value.GetProperty("value").ValueKind);
+        }
+    }
+
+    private static void LibraryCounts(JsonElement counts)
+    {
+        PropertyOrder(counts, "registered", "current", "missing", "changed", "blocked", "unavailable");
+        foreach (var name in new[] { "registered", "current", "missing", "changed", "blocked", "unavailable" })
+        {
+            ValueGraph(counts.GetProperty(name));
+        }
+    }
+
+    private static void LibraryLinkCounts(JsonElement counts)
+    {
+        PropertyOrder(counts, "current", "missing", "changed", "blocked", "unavailable");
+        foreach (var name in new[] { "current", "missing", "changed", "blocked", "unavailable" })
+        {
+            ValueGraph(counts.GetProperty(name));
         }
     }
 

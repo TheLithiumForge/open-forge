@@ -14,13 +14,6 @@ internal sealed class RouteInitPlanFinalizer
     private readonly RouteInitFrameworkLifecycleBuilder _lifecycleBuilder = new();
     private readonly RouteInitProspectiveTopologyPlanner _topologyPlanner = new();
     private readonly PhysicalPathResolver _physicalPathResolver = new();
-    private readonly RecoveryBundleCatalogue _recoveryCatalogue;
-
-    internal RouteInitPlanFinalizer(RecoveryBundleCatalogue recoveryCatalogue)
-    {
-        ArgumentNullException.ThrowIfNull(recoveryCatalogue);
-        _recoveryCatalogue = recoveryCatalogue;
-    }
 
     internal async ValueTask<RouteInitPlanFinalizationResult> FinalizeAsync(
         RouteInitRequest request,
@@ -74,7 +67,7 @@ internal sealed class RouteInitPlanFinalizer
 
         if (effectPlan.RecoveryTargets.Count > 0)
         {
-            var recovery = await _recoveryCatalogue.ReadAsync(
+            var recovery = await RecoveryBundleCatalogue.ReadAsync(
                     request.Workspace,
                     cancellationToken)
                 .ConfigureAwait(false);

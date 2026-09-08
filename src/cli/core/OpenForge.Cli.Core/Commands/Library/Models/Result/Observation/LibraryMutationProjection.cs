@@ -1,0 +1,16 @@
+using OpenForge.Cli.Core.Commands.Library.Models.Planning;
+using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Effects;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
+
+namespace OpenForge.Cli.Core.Commands.Library.Models.Result.Observation;
+
+internal sealed record LibraryMutationProjection
+{
+    public required LibraryPlanState State { get; init; }
+
+    public required LibraryMutationMapping[] Mappings { get; init; }
+
+    public required LibraryCollision[] Collisions { get; init; }
+    public required LibraryOwnershipObservation[] Ownership { get; init; }
+
+}

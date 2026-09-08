@@ -8,4 +8,7 @@ internal sealed record RepairApplicationOutcome(
     RepairVerification Verification,
     RepairRecovery Recovery,
     RepairPostDiagnosis PostDiagnosis,
-    IReadOnlyList<RepairFinding> Findings);
+    IReadOnlyList<RepairFinding> Findings)
+{
+    internal RepairLibraryExecution? LibraryExecution { get; init; }
+}

@@ -121,8 +121,8 @@ internal sealed class RouteCreateIntegrationWorkspace : IDisposable
 
     internal void SeedCompleteTarget()
     {
-        WriteBytes(TargetPath, TargetBytes().AsSpan().ToArray());
-        _temporary.ReplaceBytes(ParentPath, ParentIntendedBytes().AsSpan().ToArray());
+        WriteBytes(TargetPath, [.. TargetBytes()]);
+        _temporary.ReplaceBytes(ParentPath, [.. ParentIntendedBytes()]);
     }
 
     internal void SeedDifferingTarget()
@@ -223,8 +223,8 @@ internal sealed class RouteCreateIntegrationWorkspace : IDisposable
     {
         var targetChange = plan.FileChanges[0];
         var parentChange = plan.FileChanges[1];
-        _temporary.WriteBytes(TargetPath, targetChange.IntendedBytes.AsSpan().ToArray());
-        _temporary.ReplaceBytes(ParentPath, parentChange.IntendedBytes.AsSpan().ToArray());
+        _temporary.WriteBytes(TargetPath, [.. targetChange.IntendedBytes]);
+        _temporary.ReplaceBytes(ParentPath, [.. parentChange.IntendedBytes]);
 
         var parentBefore = plan.RecoveryTargets[0].Before;
         return
@@ -263,7 +263,7 @@ internal sealed class RouteCreateIntegrationWorkspace : IDisposable
         RouteCreatePlan plan,
         Guid operationId)
     {
-        var result = await new RecoveryBundleStore(new RecoveryBundleReader()).PrepareAsync(
+        var result = await RecoveryBundleStore.PrepareAsync(
             RecoveryBundleInput.Create(
                 Workspace,
                 RouteCreateDefinitions.CommandIdentity,
@@ -412,8 +412,8 @@ internal sealed class RouteCreateIntegrationWorkspace : IDisposable
             body: string.Empty);
 
     private static ImmutableArray<byte> ParentIntendedBytes()
-        => ImmutableArray.CreateRange(Encoding.UTF8.GetBytes(ParentDocument(
-            entries: "- [Project overview](overview.md) - #Docs #Overview")));
+        => [.. Encoding.UTF8.GetBytes(ParentDocument(
+            entries: "- [Project overview](overview.md) - #Docs #Overview"))];
 
     private static string ParentDocument(string entries)
         => OpenForgeDocumentSeed.Metadata(

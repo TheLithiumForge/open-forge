@@ -27,18 +27,23 @@ public sealed class DoctorFiniteMappingTests
             ],
             DoctorFindingWireVocabulary.Cardinality);
         AssertMappings(
-            [(DoctorProposalKind.ReferenceCanonicalization, "reference-canonicalization")],
+            [
+                (DoctorProposalKind.ReferenceCanonicalization, "reference-canonicalization"),
+                (DoctorProposalKind.LibraryResidualRecovery, "library-residual-recovery"),
+            ],
             DoctorFindingWireVocabulary.Proposal);
         AssertMappings(
             [
                 (DoctorProposalVerificationKind.SameTargetIdentity, "same-target-identity"),
                 (DoctorProposalVerificationKind.ResultingBytes, "resulting-bytes"),
+                (DoctorProposalVerificationKind.NoFollowPriorState, "no-follow-prior-state"),
             ],
             DoctorFindingWireVocabulary.Verification);
         AssertMappings(
             [
                 (DoctorProposalRecoveryKind.NoPersistentState, "no-persistent-state"),
                 (DoctorProposalRecoveryKind.RepairReceiptRequired, "repair-receipt-required"),
+                (DoctorProposalRecoveryKind.VerifiedLibraryResidual, "verified-library-residual"),
             ],
             DoctorFindingWireVocabulary.Recovery);
 

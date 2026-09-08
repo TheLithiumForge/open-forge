@@ -60,19 +60,34 @@ The operation satisfies these invariants:
   exact-name draft in the selected normalized workspace bucket and passes final
   validation while Cleanup holds the same-workspace `WorkspaceLockLease`.
 - A final ZIP passes semantic source-generated current schema-v1 manifest
-  validation, including the required immutable typed attribution, exact ordered
-  entry names and counts, declared lengths and hashes, and exact payload-byte
-  checks. A draft is exact-name, path-only `Incomplete` support data and never
-  forms preparation; observers do not inspect or use its bytes for attribution.
+  validation, including the required immutable typed attribution, admissible
+  typed entry state pairs, exact ordered entry names and counts, declared
+  lengths and hashes, and exact payload-byte checks. This includes an ordinary
+  typed `ordinary-create` entry whose prior state is `Missing` and has no prior
+  payload, and typed `relative-file-link-create` and
+  `relative-file-link-delete` entries whose identity is the exact
+  `relative-file-symbolic-link` kind and raw `/`-separated relative target;
+  absolute targets are invalid. A Library final's valid attribution tuple is
+  exactly `producer: library` with one of `operation: attach`,
+  `operation: sync`, or `operation: detach`, and
+  `subject.kind: workspace` with
+  `subject.identity` equal to the selected workspace key. A draft is exact-name,
+  path-only `Incomplete` support data and never forms preparation; observers do
+  not inspect or use its bytes for attribution.
 - The schema discriminator is exactly `1`. A schema-1 final
   missing or carrying invalid attribution is malformed/unattributed, remains
   preserved, and blocks deletion; it is never migrated, rewritten, repaired,
-  adopted, or inferred. An unknown schema version is unsupported. Attribution
-  is an integrity fact, not deletion authority.
+  adopted, or inferred. An unknown schema version is unsupported. Cleanup
+  recognizes only current schema-v1 and has no v2, dual reader, compatibility,
+  or migration path. Attribution is an integrity fact, not deletion authority.
 - The exact schema-v1 attribution vocabulary, valid producer/operation/subject
   combinations, and required non-null workspace identity are defined by the
   [Mutation And Recovery Technical Design](../../technical-designs/mutation-and-recovery.md#schema-v1-attribution-vocabulary).
   Cleanup accepts no unknown value or fallback attribution.
+- Cleanup validates Library recovery entries as evidence only. It never extracts
+  or follows a relative link, reads source bytes as payload, applies or restores
+  an entry, invokes Repair, or deletes a Library projection, Library record, or
+  source path.
 - A suffix, age, extension, location, proximity, temporary-looking name, path,
   or matching bytes alone never establishes provenance or authority.
 - Malformed, unsupported, unavailable, non-ordinary, or unsafe exact-name
@@ -163,11 +178,20 @@ For every exact-name candidate admitted to the catalogue, current facts include:
   semantic integrity for a final, or the exact `Incomplete` draft name and
   ordinary-kind fact for a draft. Draft facts remain path-only.
 
+The verified current-v1 facts retain each typed entry's admissible state pair.
+That includes a prior-missing ordinary `Create` without a prior payload and a
+relative-file-link `Create` or `Delete` identity consisting of its exact link
+kind and raw `/`-separated relative target. A verified Library final retains its
+`library`/`attach`, `library`/`sync`, or `library`/`detach` attribution and the
+trusted selected-workspace subject used for validation.
+
 Strict final-bundle recognition may stream each ZIP payload entry through fixed
 bounded buffers solely to validate the exact declared length and lowercase
-SHA-256. Cleanup never extracts, discloses, renders, logs, returns, retains, or
-materializes payload bytes, and validation memory remains independent of payload
-size.
+SHA-256. Prior-missing ordinary `Create` entries and relative-file-link
+`Create` and `Delete` entries have no source payload; link validation uses only
+the recorded kind and raw `/`-separated relative target. Cleanup never extracts,
+discloses, renders, logs, returns, retains, or materializes payload bytes, and
+validation memory remains independent of payload size.
 
 The filtered candidate catalogue includes:
 
@@ -335,6 +359,13 @@ bounded diagnostics use stderr. The exact structured schema is defined by the
 
 A conforming implementation must demonstrate:
 
+- current-v1 typed recovery-entry validation, including a prior-missing ordinary
+  `Create` without a prior payload and relative-file-link `Create` or `Delete`
+  identity, plus Library `library`/`attach`, `library`/`sync`, and
+  `library`/`detach` attribution with a trusted `workspace` subject matching the
+  selected workspace key; no link following, source-byte payload reads, entry
+  application or restoration, Repair invocation, or Library projection, record,
+  or source deletion;
 - exact request normalization, no operands, no wizard or prompts, shared flag
   behavior, terminal modes, and exact workspace selection without discovery;
 - exact selected-workspace final and draft names, every exact candidate's current

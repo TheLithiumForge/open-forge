@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "task": "T23-C1",
+  "startedFrom": {
+    "commit": "e30e005217cf2ec230a3557b8a4913ed7ac8df75",
+    "tree": "1c1076ad9934150c0266df78a9443c60660f30dd"
+  },
+  "authority": {
+    "csharp": "31045ebcb02d5bfeee8ba9f3112d307b1f72a2186cda618fbf7d22e7d1d90b53",
+    "design": "76aa8fc7aaaa79d9535998f5557150f3754e3d80520a7a06864b61659373c1a9",
+    "style": "c3fa9d31575e77fedb103ca397f0ccf10ab7236e6edbef1658c7fe36138457cb"
+  },
+  "dispositions": [
+    "T23-R1-F1",
+    "T23-R1-F2",
+    "T23-R1-F3",
+    "T23-R1-F4",
+    "T23-R1-F5",
+    "T23-PCR-STATUS-1 option A",
+    "T23-PCR-NAV-1 option A",
+    "T23-PCR-NAV-1A-E2E"
+  ],
+  "redAndCorrectionHistory": [
+    {
+      "selection": "Status Unit",
+      "selected": 36,
+      "passed": 24,
+      "failed": 12,
+      "skipped": 0,
+      "exit": 2,
+      "cause": "The public Library state vocabulary, cancellation precedence, event graph, and human facts still reflected the superseded implementation."
+    },
+    {
+      "selection": "Status Integration minimum attempt",
+      "selected": 10,
+      "passed": 8,
+      "failed": 2,
+      "skipped": 0,
+      "exit": 2,
+      "cause": "The requested minimum of 12 exceeded the ten then-selected rows; the two drift rows also retained the superseded nested state."
+    },
+    {
+      "selection": "Concurrent Status renewal, superseded",
+      "unitPassed": 35,
+      "unitFailed": 1,
+      "integrationPassed": 10,
+      "integrationFailed": 1,
+      "warning": "MSB3026",
+      "cause": "Concurrent artifact writers caused one copy retry; the remaining assertions exposed typed interruption precedence and fixture ownership. All later commands were serialized."
+    },
+    {
+      "selection": "Sync and Detach planner Unit Red",
+      "selected": 30,
+      "passed": 26,
+      "failed": 4,
+      "skipped": 0,
+      "exit": 2,
+      "cause": "Complete-record unknown IDs and safely missing records were Blocked instead of Invalid. A preceding compile attempt exposed and corrected only missing test imports."
+    },
+    {
+      "selection": "Sync and Detach input Integration Red",
+      "selected": 29,
+      "passed": 24,
+      "failed": 5,
+      "skipped": 0,
+      "exit": 2,
+      "cause": "Unknown and repeated-detach cases exited 5 instead of 4."
+    },
+    {
+      "selection": "Attach and Sync non-Markdown operation Red",
+      "selected": 20,
+      "passed": 18,
+      "failed": 2,
+      "skipped": 0,
+      "exit": 2,
+      "cause": "Eligible JSON files were rejected by generated-navigation source formation. The first Green attempt then correctly exposed missing strict consumer parents; the next exposed test disposal ownership. The fixture created the required parent and explicitly removed only its applied projection/record."
+    },
+    {
+      "selection": "Library public, superseded",
+      "selected": 15,
+      "passed": 14,
+      "failed": 1,
+      "skipped": 0,
+      "exit": 2,
+      "cause": "The Attach public fixture retained an authored suffix after the generated end marker. T23-PCR-NAV-1A-E2E authorized aligning the fixture with the shared final-inline authority."
+    },
+    {
+      "selection": "Initial final Release build, superseded",
+      "warnings": 0,
+      "errors": 1,
+      "exit": 1,
+      "cause": "A new bounded human-event test used the Status event factory with the wrong argument coordinates; the test call was corrected without production change."
+    }
+  ],
+  "focusedGreen": [
+    { "selection": "Status Unit", "selected": 36, "executed": 36, "passed": 36, "failed": 0, "skipped": 0 },
+    { "selection": "Status Boundary and Contributor Integration", "selected": 11, "executed": 11, "passed": 11, "failed": 0, "skipped": 0 },
+    { "selection": "Sync and Detach planner Unit", "selected": 30, "executed": 30, "passed": 30, "failed": 0, "skipped": 0 },
+    { "selection": "Sync and Detach input Integration", "selected": 29, "executed": 29, "passed": 29, "failed": 0, "skipped": 0 },
+    { "selection": "Attach and Sync eligible JSON decisive rows", "selected": 2, "executed": 2, "passed": 2, "failed": 0, "skipped": 0 },
+    { "selection": "Attach, Sync and Detach generated-region Integration", "selected": 9, "executed": 9, "passed": 9, "failed": 0, "skipped": 0 },
+    { "selection": "Shared Markdown parser Unit", "selected": 32, "executed": 32, "passed": 32, "failed": 0, "skipped": 0 },
+    { "selection": "Consolidated affected Unit", "selected": 101, "executed": 101, "passed": 101, "failed": 0, "skipped": 0 },
+    { "selection": "Consolidated affected Integration", "selected": 73, "executed": 73, "passed": 73, "failed": 0, "skipped": 0 }
+  ],
+  "finalFocusedGate": [
+    {
+      "name": "library-unit",
+      "command": "artifacts/bin/OpenForge.Cli.Core.UnitTests/release/OpenForge.Cli.Core.UnitTests --filter-trait Feature=library-foundation Feature=library-mutation Feature=library-read --minimum-expected-tests 599 --report-xunit-ctrf --report-xunit-ctrf-filename library-unit.json --results-directory /tmp/task23-c1-results --progress off",
+      "discovered": 599,
+      "selected": 599,
+      "executed": 599,
+      "passed": 599,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "name": "unit-controls",
+      "command": "artifacts/bin/OpenForge.Cli.Core.UnitTests/release/OpenForge.Cli.Core.UnitTests --filter-class '*Commands.Cleanup.*' '*Commands.Repair.*' '*Commands.Extension.Remove.*' '*Framework.Recovery.*' '*Commands.Status.*' '*Commands.Doctor.*' '*RouteRemoveDefinitionsAndBindingContractTests' --filter-not-trait Feature=library-foundation Feature=library-mutation Feature=library-read --minimum-expected-tests 238 --report-xunit-ctrf --report-xunit-ctrf-filename unit-controls.json --results-directory /tmp/task23-c1-results --progress off",
+      "discovered": 238,
+      "selected": 238,
+      "executed": 238,
+      "passed": 238,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "name": "library-integration",
+      "command": "artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests --filter-trait Feature=library-foundation Feature=library-mutation Feature=library-read --minimum-expected-tests 390 --report-xunit-ctrf --report-xunit-ctrf-filename library-integration.json --results-directory /tmp/task23-c1-results --progress off",
+      "discovered": 390,
+      "selected": 390,
+      "executed": 390,
+      "passed": 390,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "name": "integration-controls",
+      "command": "artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests --filter-class '*Commands.Cleanup.*' '*Commands.Repair.*' '*Commands.Extension.Remove.*' '*Framework.Recovery.*' '*Commands.Status.*' '*Commands.Doctor.*' '*RouteMovePlanningIntegrationTests' '*ExtensionInstallMutationIntegrationTests' '*InstallPreservationIntegrationTests' '*RouteRemoveStatusDoctorIntegrationTests' --filter-not-trait Feature=library-foundation Feature=library-mutation Feature=library-read --minimum-expected-tests 164 --report-xunit-ctrf --report-xunit-ctrf-filename integration-controls.json --results-directory /tmp/task23-c1-results --progress off",
+      "discovered": 164,
+      "selected": 164,
+      "executed": 164,
+      "passed": 164,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "name": "library-end-to-end",
+      "command": "artifacts/bin/OpenForge.Cli.EndToEndTests/release/OpenForge.Cli.EndToEndTests --filter-trait Feature=library-foundation Feature=library-mutation Feature=library-read --minimum-expected-tests 15 --report-xunit-ctrf --report-xunit-ctrf-filename library-end-to-end-renewed.json --results-directory /tmp/task23-c1-results --progress off",
+      "discovered": 15,
+      "selected": 15,
+      "executed": 15,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "name": "doctor-public",
+      "command": "artifacts/bin/OpenForge.Cli.EndToEndTests/release/OpenForge.Cli.EndToEndTests --filter-class '*PublishedDoctorProcessTests' --minimum-expected-tests 3 --report-xunit-ctrf --report-xunit-ctrf-filename doctor-public.json --results-directory /tmp/task23-c1-results --progress off",
+      "discovered": 3,
+      "selected": 3,
+      "executed": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    {
+      "name": "help",
+      "commands": [
+        "library --help",
+        "library list --help",
+        "library inspect --help",
+        "library attach --help",
+        "library sync --help",
+        "library detach --help",
+        "status --help",
+        "doctor --help",
+        "repair --help",
+        "cleanup --help",
+        "extension remove --help"
+      ],
+      "selected": 11,
+      "executed": 11,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0
+    }
+  ],
+  "build": {
+    "command": "dotnet build OpenForge.Cli.slnx --configuration Release --no-restore --verbosity minimal",
+    "exit": 0,
+    "warnings": 0,
+    "errors": 0,
+    "elapsed": "00:00:02.82"
+  },
+  "format": {
+    "command": "dotnet format OpenForge.Cli.slnx --no-restore --verify-no-changes --severity info --verbosity diagnostic --report /tmp/task23-c1-format-report --include <524-path-union>",
+    "baseline": "148d378da376d196de183d9564261658164d9d23",
+    "includedPaths": 524,
+    "formattedFiles": 0,
+    "diagnostics": 0,
+    "exit": 0
+  },
+  "static": {
+    "changedCorrectionPaths": 26,
+    "changedTaskCSharpPaths": 524,
+    "linesOver200": 0,
+    "diffCheck": "clean",
+    "protectedConfigurationProjectLockJavaScriptDelta": "empty",
+    "originalArtifactIndexEntries": 277,
+    "originalArtifactMismatches": 0,
+    "persistentLibraryRecoveryZipCount": 0,
+    "activeRelevantProcessCount": 0,
+    "qualifiedExistingLimitation": "RecoveryBundleTargetStateReader retains its inherited relative-file-link NotSupportedException; Library recovery uses RecoveryEntrySetObserver and this path was not changed."
+  },
+  "runtime": {
+    "version": "0.0.0-dev",
+    "executableSha256": "4450c4552ac44a4e463db6c9adad89a39d803da47801801019ee08c02045bd61",
+    "versionMarkerSha256": "fe4d33c8c2c76a67725ea7d54dafb79c485bd2819a317d7235a6910157ef76f4",
+    "cliAssemblySha256": "a557e8da3f80c108cf0fb7d3f2f1ce8e9908a08c24d9cf6c113ab64cdbe48ce3",
+    "coreAssemblySha256": "07f50eaaee6de5570e467ab69c168429f7e53fc8d84e15cd6a6c723fd67928b5",
+    "unitAssemblySha256": "1c2f5b15ad3041af8e8dc1096d7fdd098fe9c4b3e64fde64da4fdfc73b8051af",
+    "integrationAssemblySha256": "52757e4ae56c3c0369359812b7bfe0973c995dd94bc367c70b694a2c7edfa178",
+    "endToEndAssemblySha256": "3b5b97d96057af018ed38eb3dca0ab7ca48ff509045d656b6f7de9b50f1b5fe7"
+  },
+  "changedPaths": [
+    "src/cli/core/OpenForge.Cli.Core/Commands/Library/Detach/Shared/Planning/LibraryDetachPlanner.cs",
+    "src/cli/core/OpenForge.Cli.Core/Commands/Library/Shared/Planning/LibraryGeneratedNavigationReader.cs",
+    "src/cli/core/OpenForge.Cli.Core/Commands/Library/Sync/Shared/Planning/LibrarySyncPlanner.cs",
+    "src/cli/core/OpenForge.Cli.Core/Commands/Status/Models/Result/StatusResult.cs",
+    "src/cli/core/OpenForge.Cli.Core/Commands/Status/Shared/Aggregation/StatusFindingAggregator.cs",
+    "src/cli/core/OpenForge.Cli.Core/Commands/Status/Shared/Aggregation/StatusLibraryAggregator.cs",
+    "src/cli/core/OpenForge.Cli.Core/Commands/Status/Shared/Aggregation/StatusResultBuilder.cs",
+    "src/cli/core/OpenForge.Cli.Core/Commands/Status/Shared/Rendering/StatusLibraryPresentation.cs",
+    "src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryAttachProcessTests.cs",
+    "src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryWorkspace.cs",
+    "src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Library/Attach/LibraryAttachGeneratedRegionIntegrationTests.cs",
+    "src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Library/Attach/LibraryAttachOperationIntegrationTests.cs",
+    "src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Library/Detach/LibraryDetachGeneratedRegionIntegrationTests.cs",
+    "src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Library/Detach/LibraryDetachInputIntegrationTests.cs",
+    "src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Library/Sync/LibrarySyncGeneratedRegionIntegrationTests.cs",
+    "src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Library/Sync/LibrarySyncInputIntegrationTests.cs",
+    "src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Library/Sync/LibrarySyncOperationIntegrationTests.cs",
+    "src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Status/LibraryStatusBoundaryIntegrationTests.cs",
+    "src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Status/LibraryStatusContributorIntegrationTests.cs",
+    "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Library/Detach/Shared/Planning/LibraryDetachPlannerTests.cs",
+    "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Library/Sync/Shared/Planning/LibrarySyncPlannerTests.cs",
+    "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Status/LibraryStatusProjectionTests.cs",
+    "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Status/StatusAggregationTests.cs",
+    "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Status/StatusJsonRenderingTests.cs",
+    "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Status/StatusPresentationTests.cs",
+    "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Status/StatusResultSeeds.cs"
+  ]
+}

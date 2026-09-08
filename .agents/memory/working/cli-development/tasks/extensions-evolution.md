@@ -8,33 +8,63 @@ open-forge:
 
 ## Task State
 
-- State: Queued after Task 23 “Workspace Libraries”. Functional draft
-  preparation is active alongside command work; implementation waits for the
-  remaining commands and user review.
+- State: Active contract preparation after accepted Task 23 source `25c65bf8`.
 - Permanent mapping: Task 24 “Extensions Evolution” in the
   [project control ledger](../project-control.md).
-- Source: accepted contextual [Extensions Evolution idea](../../../emerging/ideas/extensions-overhaul.md).
 - Parent: [Complete The Replacement CLI](00-cli-development.md).
-- Phase and milestone: not assigned. Implementation activation requires a reviewed
-  contract, explicit maintainer acceptance, and a fresh post-command baseline.
-- Prior analysis: preparation tip
-  `8a153f23dabb05019eae2c15fae51331b9e88335`, tree
-  `bafd3d1e3173ad9342bd25a6086330dcfbe5ee16`, explored a narrower six-command
-  internal refactor. It is non-authoritative input for Task 26 “Extension
-  Internal Consolidation”; it neither defines nor activates this task.
+- Phase 1/5, milestone 0/8: `[--------]`. No implementation milestone is complete.
+- Owner: root Overseer, direct sequential work. No active subagent.
+- Current authority: the user accepted `content/`, an allowlist and a CLI question
+  for missing grants. The revised [functional draft](extensions-destination-proposal.md)
+  was presented before contract implementation. Earlier manual-only wording is superseded.
+
+## Execution Capsule
+
+Profile: streamlined assured at the material destination-admission and durable
+permission boundary, using one continuous direct implementation owner. This is
+an ordinary local developer tool handling consumer files, including uncommitted
+work that Git cannot restore. Preserve exact ownership, no-follow containment,
+lease revalidation, bounded effects and truthful partial results. The standard
+BCL, existing typed interactive session, strict JSON and mutation/recovery
+foundations supply the mechanism; exceptional machinery is none.
+
+Five phases and eight fixed milestones:
+
+| Phase | Milestones | Boundary                                                                                           |
+| ----- | ---------- | -------------------------------------------------------------------------------------------------- |
+| P1    | M1         | Freeze content naming, allowlist and interaction/lifecycle contracts and design.                   |
+| P2    | M2, M3     | Freeze callable contracts, then decisive Red evidence.                                             |
+| P3    | M4, M5, M6 | Apply content rename; implement permission foundation; integrate Extension consumers and recovery. |
+| P4    | M7         | One fresh whole-task review and grouped correction.                                                |
+| P5    | M8         | Full managed/public and supported linux-x64 Native AOT acceptance and integration.                 |
+
+Review budget: one `T24-R1`, reserved. Grouped correction: one `T24-C1`, reserved.
+Writing review: one `T24-WR1` for the changed durable contract/design pack,
+reserved; council budget zero. Optional helper work must have one bounded scope.
+Source and shared artifacts remain serialized. Do not create a parallel mutable
+implementation lane from the user’s permission to use occasional subagents.
+
+Pure grammar/admission uses Unit evidence; persistence, prompt streams and
+copy/link/ownership effects use focused Integration evidence; the existing six
+commands retain exactly three simple public journeys each. Freeze affected
+consumers and source hashes before gates. The public layout, shared permission,
+serialization and mutation changes trigger full managed and linux-x64 Native
+AOT acceptance at M8. Task 25 remains separate; Task 26 consolidates behavior
+only after both functional tasks are accepted.
 
 ## Accepted Boundary
 
 The accepted Extensions Evolution idea is contextual input for a future local
 and offline Extension boundary. Task 24 preserves two explicit decision fronts:
 
-- choose atomically among the current on-disk `payload/` package directory, the
-  recorded `content/` candidate, and the newly suggested `contents/` candidate;
+- apply the user-accepted atomic `payload/` to `content/` package rename;
 - define consumer-owned permission for exact workspace-relative Extension copy
   destinations beyond `.agents/` without allowing package metadata or source
   bytes to grant themselves access.
 
-No vocabulary or destination-policy shape is accepted yet. The current
+The user accepted `content/` and a consumer allowlist with a CLI question for
+missing grants on 2026-09-08. The revised functional draft defines the proposed
+exact-file flow; detailed contracts are not yet frozen. The current
 Extensions MVP Architecture, package layout, `.agents/**` destination boundary,
 contracts, and lifecycle commands remain authoritative until a later contract
 freeze. No compatibility layer follows from recording the alternatives.

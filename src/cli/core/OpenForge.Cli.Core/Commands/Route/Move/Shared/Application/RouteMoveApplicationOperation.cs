@@ -10,13 +10,11 @@ namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Application;
 internal sealed partial class RouteMoveApplicationOperation(
     WorkspaceLockManager lockManager,
     RouteMovePlanRevalidator revalidator,
-    RouteMoveRecoveryLifecycle recoveryLifecycle,
     RouteMoveEffectApplication effectApplication,
     RouteMoveApplicationCompletion completion)
 {
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly RouteMovePlanRevalidator _revalidator = revalidator;
-    private readonly RouteMoveRecoveryLifecycle _recoveryLifecycle = recoveryLifecycle;
     private readonly RouteMoveEffectApplication _effectApplication = effectApplication;
     private readonly RouteMoveApplicationCompletion _completion = completion;
 
@@ -35,7 +33,7 @@ internal sealed partial class RouteMoveApplicationOperation(
                 revalidation);
         }
 
-        var preparation = await _recoveryLifecycle.PrepareAsync(
+        var preparation = await RouteMoveRecoveryLifecycle.PrepareAsync(
             new RouteMoveRecoveryPreparationInput
             {
                 Plan = held.Plan,

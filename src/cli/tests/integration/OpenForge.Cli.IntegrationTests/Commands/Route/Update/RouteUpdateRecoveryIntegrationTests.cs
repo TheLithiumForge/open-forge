@@ -13,22 +13,21 @@ public sealed class RouteUpdateRecoveryIntegrationTests
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             "route-update-recovery-collision");
-        var build = await workspace.BuildPlanAsync(workspace.Request());
+        var build = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request());
         var plan = Assert.IsType<RouteUpdatePlan>(build.Plan);
-        var recovery = RouteUpdateIntegrationWorkspace.CreateRecoveryServices();
         var input = new RouteUpdateRecoveryPreparationInput
         {
             Plan = plan,
             OperationId = Guid.NewGuid().ToString("D"),
         };
 
-        var prepared = await recovery.Preparer.PrepareAsync(
+        var prepared = await RouteUpdateRecoveryPreparer.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(
             prepared.Preparation);
         workspace.TrackRecovery(preparation);
-        var collision = await recovery.Preparer.PrepareAsync(
+        var collision = await RouteUpdateRecoveryPreparer.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
 
@@ -46,11 +45,10 @@ public sealed class RouteUpdateRecoveryIntegrationTests
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             "route-update-recovery-retained");
         var plan = Assert.IsType<RouteUpdatePlan>(
-            (await workspace.BuildPlanAsync(workspace.Request())).Plan);
+            (await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request())).Plan);
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var recovery = RouteUpdateIntegrationWorkspace.CreateRecoveryServices();
-        var prepared = await recovery.Preparer.PrepareAsync(
+        var prepared = await RouteUpdateRecoveryPreparer.PrepareAsync(
             new RouteUpdateRecoveryPreparationInput
             {
                 Plan = plan,
@@ -63,7 +61,7 @@ public sealed class RouteUpdateRecoveryIntegrationTests
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 
-        var completion = await recovery.Completer.CompleteAsync(
+        var completion = await RouteUpdateRecoveryCompleter.CompleteAsync(
             new RouteUpdateRecoveryCompletionInput
             {
                 Plan = plan,
@@ -85,11 +83,10 @@ public sealed class RouteUpdateRecoveryIntegrationTests
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             "route-update-recovery-unknown");
         var plan = Assert.IsType<RouteUpdatePlan>(
-            (await workspace.BuildPlanAsync(workspace.Request())).Plan);
+            (await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request())).Plan);
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var recovery = RouteUpdateIntegrationWorkspace.CreateRecoveryServices();
-        var prepared = await recovery.Preparer.PrepareAsync(
+        var prepared = await RouteUpdateRecoveryPreparer.PrepareAsync(
             new RouteUpdateRecoveryPreparationInput
             {
                 Plan = plan,
@@ -100,7 +97,7 @@ public sealed class RouteUpdateRecoveryIntegrationTests
             prepared.Preparation);
         workspace.ReplaceRecoveryWithDirectory(preparation);
 
-        var completion = await recovery.Completer.CompleteAsync(
+        var completion = await RouteUpdateRecoveryCompleter.CompleteAsync(
             new RouteUpdateRecoveryCompletionInput
             {
                 Plan = plan,

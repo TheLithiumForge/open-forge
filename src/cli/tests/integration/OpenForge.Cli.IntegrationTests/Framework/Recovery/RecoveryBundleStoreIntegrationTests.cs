@@ -59,7 +59,7 @@ public sealed class RecoveryBundleStoreIntegrationTests
         RecoveryBundlePreparation? preparation = null;
         try
         {
-            var result = await Store().PrepareAsync(
+            var result = await RecoveryBundleStore.PrepareAsync(
                 input,
                 TestContext.Current.CancellationToken);
 
@@ -85,7 +85,7 @@ public sealed class RecoveryBundleStoreIntegrationTests
             Assert.Equal(binaryBytes, await ReadEntryAsync(archive.Entries[2]));
             Assert.Equal(largeBytes, await ReadEntryAsync(archive.Entries[3]));
 
-            var reopened = await new RecoveryBundleReader().ReadFinalAsync(
+            var reopened = await RecoveryBundleReader.ReadFinalAsync(
                 workspace,
                 preparation.BundlePath,
                 TestContext.Current.CancellationToken);
@@ -121,10 +121,10 @@ public sealed class RecoveryBundleStoreIntegrationTests
             ]);
         var workspaceDirectory = WorkspaceDirectory(workspace);
 
-        var prepared = await Store().PrepareAsync(
+        var prepared = await RecoveryBundleStore.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
-        var catalogue = await new RecoveryBundleCatalogue(new RecoveryBundleReader()).ReadAsync(
+        var catalogue = await RecoveryBundleCatalogue.ReadAsync(
             workspace,
             TestContext.Current.CancellationToken);
 
@@ -146,18 +146,18 @@ public sealed class RecoveryBundleStoreIntegrationTests
         RecoveryBundlePreparation? preparation = null;
         try
         {
-            var first = await Store().PrepareAsync(input, TestContext.Current.CancellationToken);
+            var first = await RecoveryBundleStore.PrepareAsync(input, TestContext.Current.CancellationToken);
             preparation = Assert.IsType<RecoveryBundlePreparation>(first.Preparation);
-            var collision = await Store().PrepareAsync(input, TestContext.Current.CancellationToken);
+            var collision = await RecoveryBundleStore.PrepareAsync(input, TestContext.Current.CancellationToken);
             using var readbackCancellation = new CancellationTokenSource();
             readbackCancellation.Cancel();
-            var cancelledReadback = await new RecoveryBundleReader().ReadExpectedFinalAsync(
+            var cancelledReadback = await RecoveryBundleReader.ReadExpectedFinalAsync(
                 input,
                 preparation.BundlePath,
                 readbackCancellation.Token);
             using var cancellation = new CancellationTokenSource();
             cancellation.Cancel();
-            var cancelled = await Store().PrepareAsync(
+            var cancelled = await RecoveryBundleStore.PrepareAsync(
                 DeleteInput(temporary, workspace, Guid.NewGuid()),
                 cancellation.Token);
 
@@ -175,9 +175,6 @@ public sealed class RecoveryBundleStoreIntegrationTests
             DeleteOwned(preparation?.BundlePath);
         }
     }
-
-    internal static RecoveryBundleStore Store()
-        => new(new RecoveryBundleReader());
 
     internal static RecoveryBundleInput DeleteInput(
         TemporaryWorkspace temporary,

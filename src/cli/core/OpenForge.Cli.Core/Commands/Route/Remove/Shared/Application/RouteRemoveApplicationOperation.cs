@@ -10,13 +10,11 @@ namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 internal sealed partial class RouteRemoveApplicationOperation(
     WorkspaceLockManager lockManager,
     RouteRemovePlanRevalidator revalidator,
-    RouteRemoveRecoveryLifecycle recoveryLifecycle,
     RouteRemoveEffectApplication effectApplication,
     RouteRemoveApplicationCompletion completion)
 {
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly RouteRemovePlanRevalidator _revalidator = revalidator;
-    private readonly RouteRemoveRecoveryLifecycle _recoveryLifecycle = recoveryLifecycle;
     private readonly RouteRemoveEffectApplication _effectApplication = effectApplication;
     private readonly RouteRemoveApplicationCompletion _completion = completion;
 
@@ -153,7 +151,7 @@ internal sealed partial class RouteRemoveApplicationOperation(
                 revalidation);
         }
 
-        var preparation = await _recoveryLifecycle.PrepareAsync(
+        var preparation = await RouteRemoveRecoveryLifecycle.PrepareAsync(
             new RouteRemoveRecoveryPreparationInput
             {
                 Plan = held.Plan,

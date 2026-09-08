@@ -73,7 +73,7 @@ internal sealed class RecoveryDeletionLinkedStorageWorkspace : IDisposable
         Assert.Equal((FileAttributes)0, File.GetAttributes(draft)
             & (FileAttributes.Directory | FileAttributes.Device | FileAttributes.ReparsePoint));
         Assert.Equal<byte>([1, 2, 3], File.ReadAllBytes(ExternalPath(draft)));
-        var catalogue = await Source.Catalogue.ReadAsync(Source.Workspace, TestContext.Current.CancellationToken);
+        var catalogue = await RecoveryBundleCatalogue.ReadAsync(Source.Workspace, TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleCatalogueState.Available, catalogue.State);
         var candidate = Assert.Single(catalogue.Candidates, item => item.Path == draft);
         Assert.Equal(RecoveryBundleIntegrity.Incomplete, candidate.Integrity);

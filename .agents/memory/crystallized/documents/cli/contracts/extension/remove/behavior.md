@@ -113,6 +113,17 @@ Classify each path as:
 An exact current path or matching fingerprint without a trusted recorded owner
 never becomes managed during removal.
 
+An exact destination path claim in the consumer Library record
+`.agents/open-forge.libraries.json`, or a real relative projection link at that
+destination, is separately owned by Library management. Remove never adopts,
+overwrites, updates, or removes that destination in any removal mode, including
+ordinary removal, same-request `--prune`, and Keep-as-unmanaged. The neutral
+no-follow final-leaf guard blocks ordinary Extension `Create`, `Replace`,
+`Delete`, or `ReplaceGeneratedRegion` when the leaf is a link or reparse point,
+independently of whether the Library record is present, readable, valid, or
+claims the path. Remove does not reinterpret the Library record or invoke a
+Library operation.
+
 ## Dependencies, Routes, And Intended Topology
 
 Reject removal when a retained dependent would be stranded. A dependency that
@@ -245,7 +256,8 @@ JSON renderers consume it once. Use the Interface status and stream rules.
 Conformance must cover exact ID/workspace resolution, wizard/direct/automatic
 choice, source independence, trusted/untrusted/absent lifecycle, no-op proof,
 dependency and route-host blocking, shared-owner release, unchanged final-owner
-deletion, changed Keep-as-unmanaged, same-request prune Delete, later-prune
+deletion, changed Keep-as-unmanaged, same-request prune Delete, Library-record
+and projection collisions, independent no-follow final-leaf guards, later-prune
 refusal, unknown/unowned/Framework preservation, semantic fingerprints,
 generated projection, complete plan, recovery-bundle behavior, revalidation,
 verification, dry-run no-effects, statuses/streams/JSON, and

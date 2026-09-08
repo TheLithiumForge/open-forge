@@ -18,8 +18,8 @@ The command does not ship yet.
 The [Interface Contract](interface.md) owns the complete public grammar,
 catalogue, observable projections, semantic result names, errors, examples, and
 public verification. This Behavior Contract does not add flags, operands,
-aliases, JSON field names, numeric exits, libraries, parsers, storage, or
-lifecycle mutation. The [Shared Result
+aliases, JSON field names, numeric exits, Library command syntax, parsers,
+storage, or lifecycle mutation. The [Shared Result
 Coordinates](../shared/result-coordinates/interface.md) define the exact shared
 JSON result schema and exit mapping, while the accepted [CLI
 Architecture](../../architecture.md) defines the implementation boundary. This behavior does not
@@ -37,7 +37,7 @@ Doctor follows one complete read-only flow:
 ```text
 validated command input
   -> exact workspace boundary
-  -> fresh six-domain fact inspection
+  -> fresh six-domain fact inspection, including the Workspace Library subcatalogue
   -> per-domain coverage, limitations, counts, findings, and actions
   -> aggregate semantic result
   -> one typed result
@@ -61,6 +61,12 @@ workspace content, not lifecycle input. The CLI distribution embeds Framework an
 first-party Extension assets with deterministic inventory and hash proof; that
 proof is distributed-source identity, not workspace or runtime implementation
 evidence.
+
+The exact `.agents/open-forge.libraries.json` record is a separate consumer-local
+authority. Doctor validates its typed record, every registered source-root
+inventory, registered projections, and typed residual evidence under the
+`workspace and entry` domain. It never invokes a Library command, probes link
+capability, mutates, adopts, or deletes recovery.
 
 ## Request Resolution
 
@@ -168,6 +174,19 @@ Aggregate result formation preserves the public distinctions in the Interface:
 - When all six domains have complete coverage and no actionable warning or error
   remains, the result is `complete`.
 
+The Workspace Library subcatalogue contributes to the existing
+`workspace and entry` coverage. A safely proven absent Library record means
+zero Libraries and complete Library coverage with no Library finding; it grants
+no ownership and infers no mapping. For a readable strict record, Doctor
+attempts a complete eligible inventory for every named source root. Those
+registered roots are the complete declared Library coverage. Complete safely
+observed missing or changed registered projections form `attention`; an
+unavailable or incomplete registered-root inventory emits
+`library.inventory-incomplete` and forms `incomplete` coverage; malformed,
+aliased, colliding, or otherwise unsafe identity forms `blocked`. Doctor never
+treats a safe prefix as complete and never enumerates an unregistered source
+root. It does not authorize adoption or mutation.
+
 Informational findings alone do not form `attention`. Severity remains separate
 from resolution, and neither severity nor resolution changes coverage.
 
@@ -213,6 +232,46 @@ The first stage establishes the selected workspace, `.agents` boundary, Loader,
 recognized entrypoints, source identity, parse coverage, root reachability, and
 detached facts. It derives source IDs from current paths for evidence only. It
 does not make an ID authoritative, routed, managed, or safe to mutate.
+
+### Workspace Library subcatalogue
+
+Within the same workspace-and-entry stage, the operation reads the exact
+consumer-owned `.agents/open-forge.libraries.json` record, schema v1, and keeps
+it separate from Framework and Extension lifecycle authority. A safely proven
+absent record is valid zero-Library evidence: Library coverage is complete,
+Doctor emits no Library finding, and no ownership or mapping is inferred. For a
+present strict record, it validates the typed record discriminator, stable IDs,
+normalized workspace-relative `sourceRoot` values, and exact `paths` mappings.
+An unreadable or otherwise unavailable present record emits the existing
+`library.record-unavailable` finding and makes Library coverage incomplete; it
+is not treated as an empty record.
+
+For each readable strict record, establish canonical lexical and physical
+containment, an ordinary source root, and its direct ordinary `.agents` child,
+then attempt a complete eligible inventory for every named source root. Those
+registered source roots are the complete declared Library coverage. If any
+inventory or required source fact is unavailable, Doctor emits
+`library.inventory-incomplete`, marks Library coverage incomplete, and never
+silently narrows the inventory, treats a safe prefix as complete, or infers
+source additions or retirements. Doctor never enumerates an unregistered source
+root.
+
+For each registered mapping, observe the destination entry with no-follow
+logical parent/leaf/raw-target identity. Report current exact relative-file
+links, missing destinations, dangling expected links, retargeted links, path or
+ownership collisions, and unavailable or unsafe facts. Unsupported link
+capability is reported only from an already proven typed fact; Doctor does not
+probe or create a link. Destination-derived automatic source IDs remain
+separate from the Library management ID.
+
+`library.recovery-safe-exact` is emitted only when a semantically verified
+current-v1 residual carries trusted Library attribution for the selected
+workspace and an exact typed ordinary-record, ordinary-file, or
+relative-file-link effect with safe no-follow identity and no third state.
+Doctor reports this safe-exact evidence for Repair selection; it never applies
+the effect, restores or deletes a target, follows a source target, or infers
+intent from a filename or path. Library/Extension collision remains a separate
+blocked/manual ownership fact.
 
 The stage realizes the complete workspace catalogue:
 
@@ -503,14 +562,16 @@ workspace/package/path/owner/dependency identities, the `open-forge-markdown-v1`
 semantic baseline policy, reciprocal facts, and complete verifiable coverage. An
 absent document or section is not reconstructed from paths, bytes, or manifests.
 
-The unreleased schema-v1 catalogue contains exactly 108 kinds: 21 workspace, 4
-recovery, 22 route, 28 local-reference, 14 Framework, and 19 Extension kinds.
+The unreleased schema-v1 catalogue contains exactly 120 kinds: 33
+workspace-and-entry (including the Workspace Library subcatalogue), 4 recovery,
+22 route, 28 local-reference, 14 Framework, and 19 Extension kinds. Doctor
+retains six result domains.
 The accepted Task 16 implementation, as extended by Task 17, realizes
 producer-backed findings for the complete catalogue. Task 17 closed the
 accepted set-valued bridge-registration observation by extending the typed
 contributor views and Doctor. The current Extension domain has no remaining
 observation horizon, and the final pre-release completeness gate has an honest
-emission path for all 108 kinds.
+emission path for all 120 kinds.
 
 - `extension.lifecycle-document-missing` distinguishes a missing document from a
   safely established absence; the missing document alone does not prove an empty
@@ -552,10 +613,10 @@ emission path for all 108 kinds.
   singular target wording applies per observation. Content is inspected only
   when readable. Source-unavailable coverage is `incomplete`, and ambiguous
   mapping is `blocked`, without inference.
-Task 16 emits `extension.bridge-registration` from the producer-owned facts
-accepted by Task 17. No Extension finding is synthesized without its required
-producer-owned facts, and the final pre-release completeness gate requires an
-honest emission path for all 108 kinds.
+  Task 16 emits `extension.bridge-registration` from the producer-owned facts
+  accepted by Task 17. No Extension finding is synthesized without its required
+  producer-owned facts, and the final pre-release completeness gate requires an
+  honest emission path for all 120 kinds.
 
 Neither legacy `open-forge.extensions.json`, package-source manifests, broad
 `.agents` recursion, payload/path/byte resemblance, nor Framework bridges may
@@ -579,6 +640,13 @@ ordered domain reports, lifecycle section trust and source-availability states,
 coverage and limitations, counts, findings, candidates and proposals, typed next
 actions, and aggregate semantic status. Human and JSON
 renderers consume that result without rerunning diagnosis.
+
+The existing `workspace-entry` report carries the finite Workspace Library
+subcatalogue: typed record/source-root/complete registered-root inventory and
+registered-link facts, Library subjects, destination-derived source IDs kept
+separate from Library IDs, and any `library.recovery-safe-exact` evidence. The
+six-domain result shape and the existing three public Doctor EndToEnd journeys
+remain unchanged.
 
 The typed diagnosis is intrinsically read-only: `ReadOnly` is always `true` and
 `ChangesMade` is always `false`; callers cannot supply alternative values. The
@@ -625,6 +693,11 @@ Bounded payload streaming serves only semantic length/hash validation. Doctor ne
 extracts, discloses, retains, or materializes payload bytes and never turns the
 persistent external lock file into activity evidence.
 
+Library checks are equally read-only and no-follow. They never invoke a Library
+or Extension operation, create or remove a projection, read source-target bytes,
+enumerate an unregistered source root, adopt an unregistered link, probe link
+capability, or delete or restore a Library residual.
+
 All facts and proposals are derived per invocation. A repeated unchanged
 invocation returns the same semantic result and does not create a synthetic
 no-op. An incomplete or blocked fact remains visible and cannot be replaced by a
@@ -658,12 +731,18 @@ section. A conforming implementation must additionally prove:
   external, cycle, repeat, exact same-target, candidate-basis, and candidate
   cardinality behavior without network or fuzzy selection.
 - Framework and Extension lifecycle evidence without general repair authority.
+- Workspace Library record, every readable registered source-root inventory,
+  registered-projection, collision, and typed safe-exact residual evidence
+  within the existing workspace-and-entry domain, with no unregistered-source
+  enumeration, Library invocation, capability probe, adoption, or mutation.
 - Human compact and expanded, JSON, and verbose projections from one typed
   result, including the accepted stdout and stderr policy.
 - Complete, attention, incomplete, invalid, blocked, failed, and interrupted
   formation, with informational facts not producing attention by themselves.
 - Repeatability, no prompt behavior, no persistent state, no plan, and no public
   command invocation.
+- Preservation of the existing three public Doctor EndToEnd journeys and six
+  result domains while adding the finite Library subcatalogue.
 
 Direct tests should prove request, boundary, domain, finding, ordering, and
 semantic-result behavior. Focused integration tests should use real temporary

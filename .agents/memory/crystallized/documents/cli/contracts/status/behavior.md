@@ -108,8 +108,9 @@ and [Context Inventory](interface.md#context-inventory): the canonical workspace
 entry and supported `.agents` Markdown, the embedded Framework payload, the
 route and loading facts needed for startup and continuity, direct Loader root
 categories, the exact `.agents/open-forge.lifecycle.json` document, schema v1,
-and the current user's external recovery store containing exact-name final and
-draft candidates for the selected normalized physical workspace path.
+the exact `.agents/open-forge.libraries.json` Workspace Library record, schema
+v1, and the current user's external recovery store containing exact-name final
+and draft candidates for the selected normalized physical workspace path.
 
 Enumeration is closed. The ledger records each canonical workspace-relative path,
 its physical layer and logical-source relationship where applicable, its readable
@@ -117,6 +118,13 @@ content facts, and its inspection disposition. Files outside that declared
 universe cannot enter the result merely because a local link names them, and
 eligible files cannot be silently removed because they are not exposed by stale
 generated navigation.
+
+The Library portion of the ledger is bounded to the exact consumer record,
+recorded source-root checks, and registered destination entries. It does not
+enumerate a source tree for unregistered files, follow source targets, or infer
+ownership from paths or bytes. An unavailable required Library fact remains in
+the ledger as incomplete; an unsafe or ambiguous identity blocks the affected
+boundary.
 
 The operation may read supported context bytes for measurement. It does not parse
 ordinary links or named sections, build the complete context graph, validate every
@@ -327,6 +335,41 @@ Compact human output may combine that state with Extension and managed-file
 summaries. If package source bytes are unavailable, installed facts remain
 reportable and source-dependent comparisons are unavailable or incomplete.
 
+### Workspace Library Accounting
+
+The Library stage reads the exact consumer-owned
+`.agents/open-forge.libraries.json` record, schema v1, and keeps its authority
+separate from the lifecycle document. It validates the typed `schemaVersion`,
+Library IDs, `sourceRoot`, and ordered `paths` entries without manufacturing a
+record from destination occupants. It derives bounded source and destination
+mapping facts for each entry without changing the record. A missing record is an
+absent bounded record; an unreadable record is unavailable; malformed or unsafe
+identity is blocked. Neither a matching path nor a matching link promotes an
+absent or untrusted record.
+
+For each readable record, the stage checks each source root for canonical
+workspace-relative spelling, lexical and physical containment, an ordinary
+directory, and a direct ordinary `.agents` child. It does not enumerate that
+source tree, so the result cannot claim complete source inventory or discover
+unregistered mappings. Source availability remains an explicit `available`,
+`unavailable`, or `not-applicable` fact.
+
+For each recorded mapping, observe the destination directory entry with
+no-follow identity. A relative file link with the exact raw target derived from
+the recorded mapping is `current`; no entry is `missing`; a safely observed
+different occupant or raw target is `changed`; unreadable required evidence is
+`unavailable`; and unsafe or ambiguous link, containment, alias, collision, or
+physical identity is
+`blocked`. Preserve the destination-derived automatic source ID separately from
+the Library ID. The stage never follows, reads, writes, creates, deletes, or
+adopts a link or source target.
+
+The stage forms registered and partitioned current/missing/changed/blocked/
+unavailable counts from those bounded observations. Complete safe drift maps to
+the Status `attention` finding; unavailable coverage maps to `incomplete`; an
+unsafe or ambiguous fact maps to `blocked`. Library/Extension collision remains
+a blocked ownership fact and never invokes either lifecycle command.
+
 ### Recovery-Bundle Accounting
 
 The recovery stage resolves only the current user's
@@ -378,7 +421,8 @@ containing the workspace and selection method, Framework installation state,
 Initial/current/Difference measurements, total and continuity measurements,
 ordered continuity-source contributions, root-category facts, Framework and
 Extension lifecycle trust and managed-file states, source-availability
-observations, separate verified-final and incomplete-draft counts, every
+observations, bounded Workspace Library record/source-root/registered-link
+states and partitioned counts, separate verified-final and incomplete-draft counts, every
 exact-name recovery candidate's path, kind, and integrity condition, measurement
 availability, observations or attention conditions, and the public semantic
 result. The field meanings are
@@ -431,6 +475,10 @@ array never turns that state into an available zero.
 Generated-navigation observations use only `current`, `changed`, `missing`,
 `unavailable`, `blocked`, and `not-applicable`. Framework and Extension managed
 targets use only `current`, `changed`, `missing`, `unavailable`, and `blocked`.
+Library record, source-root, and registered-link observations use only the
+finite values in [Interface Structured Output](interface.md#structured-output);
+they retain bounded no-follow facts and do not turn a missing or changed link
+into a mutation proposal.
 The result preserves every per-target observation and does not replace it with
 one aggregate currentness fact. Finding formation uses only the exact finite
 codes and code-to-status mapping in the Interface. The overall selector then
@@ -453,7 +501,8 @@ The result selector uses only the seven public semantic states in
 - An unexpected internal failure selects `failed`.
 - Cancellation or interruption before completion selects `interrupted`.
 - Complete measurement with changed or missing trusted managed files, a verified
-  recovery final, or a finite lifecycle/source observation selects `attention`.
+  recovery final, a safely observed missing or changed Library projection, or a
+  finite lifecycle/source observation selects `attention`.
 - Complete applicable measurement without an attention condition selects
   `complete`, including a safely established uninstalled workspace.
 
@@ -464,6 +513,12 @@ change status alone. Untrusted or unavailable lifecycle coverage selects
 facts remain visible and do not become trusted current source. Numeric exits and
 the exact JSON schema follow the [Shared Result
 Coordinates](../shared/result-coordinates/interface.md).
+
+For Library facts, complete safe bounded observation with projection drift maps
+to `attention`; unavailable record, source-root, or registered-link coverage
+maps to `incomplete`; malformed, aliased, colliding, or otherwise unsafe
+identity maps to `blocked`. The bounded Library view never stands in for a
+complete source inventory or authorizes adoption or mutation.
 
 ### Human Rendering
 
@@ -483,6 +538,10 @@ named input`; blocked uses `Next: correct the named workspace or safety boundary
 and rerun`; failed uses `Next: report the failure and retry with bounded
 diagnostics`; and interrupted uses `Next: rerun the same request`. It never lists
 repair or lifecycle proposals.
+
+It also retains the bounded Library record, source-root, and registered-link
+states and partitioned counts. It does not render a complete source inventory or
+turn a Library drift finding into a repair action.
 
 Primary human rendering for `complete`, `attention`, and `incomplete` goes to
 stdout. Primary human rendering for `invalid`, `blocked`, `failed`, and
@@ -527,6 +586,10 @@ bytes; and it does not create an empty mutation plan. Bounded payload streaming
 serves only strict length/hash validation. Read, comparison, ranking, and
 rendering stages cannot acquire write authority.
 
+Library observation is read-only as well: it never writes the record, creates
+or removes a projection, follows a source target, adopts an unregistered link,
+or invokes Library or Extension operations.
+
 The operation derives all facts per invocation from the selected workspace,
 embedded payload, and explicit input. Repeating it with unchanged inputs produces
 the same semantic result and does not create a synthetic effect. It does not use
@@ -563,6 +626,11 @@ build the complete context graph, inspect unrelated workspace files, or mutate
 anything, and that unsafe or incomplete facts are never silently discarded. It
 must prove bounded empty, binary, and large payload validation without extraction
 or materialization, and that Status neither inspects nor infers recovery activity.
+It must also prove bounded Library record/source-root/registered-link facts,
+destination-derived source IDs kept separate from Library IDs, complete safe
+drift as `attention`, unavailable coverage as `incomplete`, unsafe ambiguity or
+Library/Extension collision as `blocked`, and no source inventory, adoption, or
+mutation.
 
 ## Related Current Sources
 

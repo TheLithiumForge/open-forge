@@ -115,7 +115,7 @@ public sealed class InstallRevalidationIntegrationTests
                             "recovery race intended bytes\n"u8),
                         before),
                 ]);
-            var prepared = await new RecoveryBundleStore(new RecoveryBundleReader()).PrepareAsync(
+            var prepared = await RecoveryBundleStore.PrepareAsync(
                 recoveryInput,
                 TestContext.Current.CancellationToken);
             Assert.Equal(RecoveryBundlePreparationState.Prepared, prepared.State);
@@ -191,7 +191,7 @@ public sealed class InstallRevalidationIntegrationTests
                 CliSemanticStatus.Blocked,
                 InstallFindingCode.WorkspaceUnsafe);
             Assert.NotNull(contendingLease);
-            Assert.Equal(0, contendingLease!.Length);
+            Assert.Equal(0, contendingLease.Length);
             Assert.False(workspace.AgentsDirectoryExists());
             AssertNoInstallTargets(workspace);
         }

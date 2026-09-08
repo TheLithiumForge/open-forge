@@ -69,7 +69,7 @@ public sealed class RecoveryDeletionStorageBoundaryIntegrationTests
         await using var lease = await workspace.Source.AcquireAsync();
         Assert.True(lease.IsHeldFor(workspace.Source.Workspace));
 
-        var opened = await workspace.Source.Guard.OpenSessionAsync(lease, frozen, TestContext.Current.CancellationToken);
+        var opened = await RecoveryBundleDeletionGuard.OpenSessionAsync(lease, frozen, TestContext.Current.CancellationToken);
 
         Assert.Equal(RecoveryBundleDeletionSessionOpenState.Blocked, opened.State);
         Assert.Null(opened.Session);
@@ -89,7 +89,7 @@ public sealed class RecoveryDeletionStorageBoundaryIntegrationTests
         workspace.LinkBucketToExternal();
         await workspace.QualifyLinkedDraftAsync(draft);
 
-        var opened = await workspace.Source.Guard.OpenSessionAsync(lease, frozen, TestContext.Current.CancellationToken);
+        var opened = await RecoveryBundleDeletionGuard.OpenSessionAsync(lease, frozen, TestContext.Current.CancellationToken);
 
         Assert.Equal(RecoveryBundleDeletionSessionOpenState.Blocked, opened.State);
         Assert.Null(opened.Session);
@@ -107,7 +107,7 @@ public sealed class RecoveryDeletionStorageBoundaryIntegrationTests
         _ = workspace.AddDraft();
         var frozen = await workspace.Source.FreezeAsync(2);
         await using var lease = await workspace.Source.AcquireAsync();
-        var opened = await workspace.Source.Guard.OpenSessionAsync(lease, frozen, TestContext.Current.CancellationToken);
+        var opened = await RecoveryBundleDeletionGuard.OpenSessionAsync(lease, frozen, TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundleDeletionSessionOpenState.Opened, opened.State);
         var session = Assert.IsType<RecoveryBundleDeletionSession>(opened.Session);
         var first = await session.DeleteAsync(frozen.Candidates[0], TestContext.Current.CancellationToken);

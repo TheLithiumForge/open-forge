@@ -9,6 +9,7 @@ internal enum RecoveryBundleProducer
     Index,
     Route,
     Repair,
+    Library,
 }
 
 internal enum RecoveryBundleOperation
@@ -21,6 +22,9 @@ internal enum RecoveryBundleOperation
     Update,
     Remove,
     Repair,
+    Attach,
+    Sync,
+    Detach,
 }
 
 internal enum RecoveryBundleSubjectKind
@@ -129,6 +133,9 @@ internal sealed record RecoveryBundleAttribution
             (RecoveryBundleProducer.Route, RecoveryBundleOperation.Update) => true,
             (RecoveryBundleProducer.Route, RecoveryBundleOperation.Remove) => true,
             (RecoveryBundleProducer.Repair, RecoveryBundleOperation.Repair) => true,
+            (RecoveryBundleProducer.Library, RecoveryBundleOperation.Attach) => true,
+            (RecoveryBundleProducer.Library, RecoveryBundleOperation.Sync) => true,
+            (RecoveryBundleProducer.Library, RecoveryBundleOperation.Detach) => true,
             _ => false,
         };
 }

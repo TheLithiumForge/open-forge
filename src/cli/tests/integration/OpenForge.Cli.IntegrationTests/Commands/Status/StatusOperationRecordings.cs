@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
@@ -42,7 +43,8 @@ internal sealed class StatusOperationRecordings
             Routes,
             LocalReferences,
             FrameworkLifecycle,
-            ExtensionLifecycle);
+            ExtensionLifecycle,
+            new LibraryOperationalContributor());
     }
 
     internal RecordingWorkspaceEntryContributor WorkspaceEntry { get; }

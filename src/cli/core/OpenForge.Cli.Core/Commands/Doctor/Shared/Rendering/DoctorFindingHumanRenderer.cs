@@ -77,7 +77,7 @@ internal static class DoctorFindingHumanRenderer
                 DoctorIntegrityEvidence integrity => (DoctorFindingWireVocabulary.Integrity(integrity.State), null),
                 DoctorAuthoredValueEvidence authored => (authored.Value, authored.Location),
                 DoctorCandidateBasisEvidence basis => ($"{DoctorFindingWireVocabulary.CandidateBasis(basis.Basis)} {basis.Value}", basis.Location),
-                _ => throw new ArgumentOutOfRangeException(nameof(item), item.Kind, "The Doctor evidence kind is not defined."),
+                _ => throw new ArgumentOutOfRangeException(nameof(evidence), item.Kind, "The Doctor evidence kind is not defined."),
             };
             builder.AppendLine($"    evidence {DoctorFindingWireVocabulary.Evidence(item.Kind)}: {DoctorHumanRenderer.Text(value)}");
             AppendLocation(builder, location, "      ");
@@ -93,8 +93,20 @@ internal static class DoctorFindingHumanRenderer
         }
 
         AppendSubject(builder, proposal.Subject, view, "      ");
-        builder.AppendLine($"      expected: {DoctorHumanRenderer.Text(proposal.ExpectedValue)}");
-        builder.AppendLine($"      intended: {DoctorHumanRenderer.Text(proposal.IntendedValue)}");
+        switch (proposal.Kind)
+        {
+            case DoctorProposalKind.ReferenceCanonicalization:
+                var reference = proposal.Reference ?? throw new ArgumentException("A reference proposal payload is required.", nameof(proposal));
+                builder.AppendLine($"      expected: {DoctorHumanRenderer.Text(reference.ExpectedValue)}");
+                builder.AppendLine($"      intended: {DoctorHumanRenderer.Text(reference.IntendedValue)}");
+                break;
+            case DoctorProposalKind.LibraryResidualRecovery:
+                DoctorLibraryRecoveryPresentation.Append(builder,
+                    proposal.LibraryRecovery ?? throw new ArgumentException("A Library recovery payload is required.", nameof(proposal)));
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(proposal), proposal.Kind, "The Doctor proposal kind is not defined.");
+        }
         builder.AppendLine($"      boundary: {DoctorWireVocabulary.Boundary(proposal.Boundary.Kind)} {DoctorHumanRenderer.Text(proposal.Boundary.Path ?? "unavailable")}");
         builder.AppendLine($"      verification: {DoctorFindingWireVocabulary.Verification(proposal.Verification)}");
         builder.AppendLine($"      recovery: {DoctorFindingWireVocabulary.Recovery(proposal.Recovery)}");

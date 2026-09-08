@@ -35,6 +35,7 @@ internal static class StatusHumanRenderer
 
         AppendStructure(builder, result.Facts.Structure);
         StatusLifecycleHumanRenderer.Append(builder, result.Facts.Lifecycle);
+        StatusLibraryPresentation.Append(builder, result.Facts.Library);
         AppendRecovery(builder, result.Facts.Recovery);
         AppendFindings(builder, result.Findings);
         if (result.Next is { } next)

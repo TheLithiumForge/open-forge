@@ -40,7 +40,7 @@ internal static class RepairEffectPlanner
                 entry.Selected,
                 actions[entry.Selected]))
             .ToArray();
-        return new RepairPlan(request, planning.Selection, steps, conflicts);
+        return new RepairPlan(request, planning.Selection, steps, conflicts, []);
     }
 
     private static RepairPlanningAction ResolveAction(

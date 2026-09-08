@@ -269,6 +269,17 @@ derived navigation, not package-owned authored bytes. A malformed boundary
 blocks and is never repaired by force or prune. The lifecycle document, Framework,
 overwrite, recovery, and other-manager paths are not package targets.
 
+An exact destination path claim in the consumer Library record
+`.agents/open-forge.libraries.json`, or a real relative projection link at that
+destination, is separately owned by Library management. Update never adopts,
+overwrites, updates, or removes that destination in any mode, including normal
+operation, `--force`, `--prune`, and combined `--force --prune`. The no-follow
+final-leaf guard blocks ordinary Extension `Create`, `Replace`, `Delete`, or
+`ReplaceGeneratedRegion` when the leaf is a link or reparse point,
+independently of whether the Library record is present, readable, valid, or
+claims the path. Update does not reinterpret the Library record or invoke a
+Library operation.
+
 ## Semantic Identity And Formatter Boundary
 
 Supported parseable kinds use the `open-forge-markdown-v1` conservative
@@ -356,8 +367,9 @@ Framework uninstall operation.
 
 Conformance must cover exact source universe, IDs/`--all`, dependency closure,
 trusted lifecycle and Framework-anchor gates, source-unavailable behavior,
-normal/force/prune/automatic semantics, shared ownership, retired/final path
-boundaries, semantic fingerprints, generated navigation, lifecycle-section
+normal/force/prune/automatic semantics, shared ownership, Library-record and
+projection collisions, independent no-follow final-leaf guards, retired/final
+path boundaries, semantic fingerprints, generated navigation, lifecycle-section
 preservation, complete planning, recovery-bundle behavior, dry-run parity, statuses,
 streams, JSON, deterministic no-op repetition, and no package-source mutation.
 The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)

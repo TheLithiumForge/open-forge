@@ -34,7 +34,6 @@ internal sealed class RouteInitApplicationOperation
         _planBuilder = new RouteInitPlanBuilder();
         _planRevalidator = new RouteInitPlanRevalidator(_planBuilder);
         _verifier = new RouteInitAppliedVerifier(_planBuilder, validator);
-        _recoveryLifecycle = new RouteInitRecoveryLifecycle();
     }
 
     internal WorkspaceLockStoreRoot? LockStoreRoot { get; }
@@ -47,7 +46,6 @@ internal sealed class RouteInitApplicationOperation
     private readonly RouteInitPlanBuilder _planBuilder;
     private readonly RouteInitPlanRevalidator _planRevalidator;
     private readonly RouteInitAppliedVerifier _verifier;
-    private readonly RouteInitRecoveryLifecycle _recoveryLifecycle;
 
     internal async ValueTask<RouteInitApplicationOutcome> ExecuteAsync(
         RouteInitPlan plan,
@@ -136,7 +134,7 @@ internal sealed class RouteInitApplicationOperation
                 RouteInitPlanRevalidationState.Cancelled => RouteInitFindingCode.Interrupted,
                 RouteInitPlanRevalidationState.Failed => RouteInitFindingCode.OperationFailed,
                 _ => throw new ArgumentOutOfRangeException(
-                    nameof(planRevalidation),
+                    null,
                     planRevalidation.State,
                     "The Route Init plan revalidation state is not defined."),
             };
@@ -198,7 +196,7 @@ internal sealed class RouteInitApplicationOperation
                 cause);
         }
 
-        var preparation = await _recoveryLifecycle.PrepareAsync(
+        var preparation = await RouteInitRecoveryLifecycle.PrepareAsync(
                 plan,
                 operationId,
                 cancellationToken)
@@ -349,7 +347,7 @@ internal sealed class RouteInitApplicationOperation
                 verification.Cause ?? "Final Route Init verification did not complete.");
         }
 
-        var deletion = await _recoveryLifecycle.DeleteAsync(
+        var deletion = await RouteInitRecoveryLifecycle.DeleteAsync(
                 lease,
                 preparation.Preparation,
                 cancellationToken)
@@ -547,8 +545,8 @@ internal sealed class RouteInitApplicationOperation
 
     private static RouteInitApplicationOutcome FinishPreparedFailure(
         RouteInitPlan plan,
-        IReadOnlyList<DirectoryCreationReceipt> directories,
-        IReadOnlyList<FileChangeReceipt> files,
+        List<DirectoryCreationReceipt> directories,
+        List<FileChangeReceipt> files,
         RecoveryBundlePreparation? preparation,
         RouteInitFindingCode code,
         string cause,

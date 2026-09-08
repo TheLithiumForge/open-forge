@@ -2,6 +2,9 @@ namespace OpenForge.Cli.Core.Commands.Doctor.Models.Presentation;
 
 internal sealed class DoctorJsonDomain
 {
+    [System.Text.Json.Serialization.JsonIgnore]
+    public required DoctorJsonLibrary? Libraries { get; init; }
+
     public required string Domain { get; init; }
 
     public required DoctorJsonBoundary Boundary { get; init; }

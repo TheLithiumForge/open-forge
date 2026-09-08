@@ -7,20 +7,13 @@ using OpenForge.Cli.Core.Framework.Recovery.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Shared.Application;
 
-internal sealed class ExtensionUpdateRecoveryApplication(
-    RecoveryBundleStore recoveryStore,
-    RecoveryBundleCatalogue recoveryCatalogue,
-    RecoveryBundleDeletionGuard recoveryDeletionGuard)
+internal static class ExtensionUpdateRecoveryApplication
 {
-    private readonly RecoveryBundleStore _recoveryStore = recoveryStore;
-    private readonly RecoveryBundleCatalogue _recoveryCatalogue = recoveryCatalogue;
-    private readonly RecoveryBundleDeletionGuard _recoveryDeletionGuard = recoveryDeletionGuard;
-
-    internal ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
+    internal static ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
         ExtensionUpdatePlan plan,
         Guid operationId,
         CancellationToken cancellationToken)
-        => _recoveryStore.PrepareAsync(
+        => RecoveryBundleStore.PrepareAsync(
             RecoveryBundleInput.Create(
                 plan.Request.Workspace,
                 ExtensionUpdateDefinitions.CommandIdentity,
@@ -32,7 +25,7 @@ internal sealed class ExtensionUpdateRecoveryApplication(
                 plan.RecoveryTargets),
             cancellationToken);
 
-    internal async ValueTask<ExtensionUpdateRecoveryCleanup> CleanupAsync(
+    internal static async ValueTask<ExtensionUpdateRecoveryCleanup> CleanupAsync(
         ExtensionUpdatePlan plan,
         WorkspaceLockLease lease,
         RecoveryBundlePreparation? preparation,
@@ -51,7 +44,7 @@ internal sealed class ExtensionUpdateRecoveryApplication(
         RecoveryBundleCatalogueResult catalogue;
         try
         {
-            catalogue = await _recoveryCatalogue.ReadAsync(
+            catalogue = await RecoveryBundleCatalogue.ReadAsync(
                 plan.Request.Workspace,
                 cancellationToken).ConfigureAwait(false);
         }
@@ -94,7 +87,7 @@ internal sealed class ExtensionUpdateRecoveryApplication(
         RecoveryBundleDeletionResult deletion;
         try
         {
-            deletion = await _recoveryDeletionGuard.DeleteAsync(
+            deletion = await RecoveryBundleDeletionGuard.DeleteAsync(
                 lease,
                 candidate,
                 cancellationToken).ConfigureAwait(false);
@@ -180,8 +173,8 @@ internal sealed class ExtensionUpdateRecoveryApplication(
                 preparation.BundlePath),
             new ExtensionUpdateFinding(code, cause, preparation.BundlePath));
 
-    private static IReadOnlyList<string> ProtectedPaths(RecoveryBundlePreparation preparation)
-        => preparation.Entries.OrderBy(entry => entry.Ordinal).Select(entry => entry.TargetPath).ToArray();
+    private static string[] ProtectedPaths(RecoveryBundlePreparation preparation)
+        => [.. preparation.Entries.OrderBy(entry => entry.Ordinal).Select(entry => entry.TargetPath)];
 
     private static bool Matches(
         RecoveryBundleCandidateSnapshot candidate,

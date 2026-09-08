@@ -22,7 +22,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
     [InlineData(RouteUpdateIntegrationWorkspace.OverwritePath, (int)RouteUpdateTargetSelection.OverwritePath)]
     [InlineData("./" + RouteUpdateIntegrationWorkspace.OverwritePath, (int)RouteUpdateTargetSelection.OverwritePath)]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
-    public async Task ApplyThenRepeatConverges(
+    public static async Task ApplyThenRepeatConverges(
         string sourceReference,
         int expectedSelectionValue)
     {
@@ -67,7 +67,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
     [InlineData(".agents/memory/project-alpha/overview/references.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint)]
     [InlineData(".agents/memory/project-alpha/overview/_references.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint)]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
-    public async Task EntrypointFormsApplyWithoutIdentityDrift(
+    public static async Task EntrypointFormsApplyWithoutIdentityDrift(
         string path,
         int expectedFormValue)
     {
@@ -96,7 +96,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
     [InlineData(".agents/memory/project-alpha/overview/references.md")]
     [InlineData(".agents/memory/project-alpha/overview/_references.md")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
-    public async Task TemplateOnlyEntrypointApplicationCompletesNavigation(string path)
+    public static async Task TemplateOnlyEntrypointApplicationCompletesNavigation(string path)
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             $"route-update-template-entrypoint-{Path.GetFileNameWithoutExtension(path)}");
@@ -107,7 +107,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
             patch: RouteUpdateIntegrationWorkspace.Patch(),
             templateReference: RouteUpdateIntegrationWorkspace.TemplateId);
 
-        var build = await workspace.BuildPlanAsync(request);
+        var build = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(request);
         var plan = Assert.IsType<RouteUpdatePlan>(build.Plan);
         Assert.Equal(
             [path, RouteUpdateIntegrationWorkspace.ParentPath],
@@ -277,7 +277,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
     [InlineData("template")]
     [InlineData("parent")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
-    public async Task CompletePlanMustRemainExact(string changedSource)
+    public static async Task CompletePlanMustRemainExact(string changedSource)
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             $"route-update-revalidation-{changedSource}");
@@ -285,7 +285,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
         workspace.SeedTemplate();
         var request = workspace.Request(
             templateReference: RouteUpdateIntegrationWorkspace.TemplateId);
-        var build = await workspace.BuildPlanAsync(request);
+        var build = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(request);
         var plan = Assert.IsType<RouteUpdatePlan>(build.Plan);
         Change(workspace, changedSource);
         var afterRace = workspace.SnapshotHashes();
@@ -329,19 +329,17 @@ public sealed class RouteUpdateApplicationIntegrationTests
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             "route-update-top-level-post-write-failure");
-        var planBuild = await workspace.BuildPlanAsync(workspace.Request());
+        var planBuild = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(workspace.Request());
         var plan = Assert.IsType<RouteUpdatePlan>(planBuild.Plan);
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var validator = new FileExpectationValidator(new PhysicalPathResolver());
         var revalidator = new MutationRevalidator(validator);
-        var recovery = RouteUpdateIntegrationWorkspace.CreateRecoveryServices();
         var planBuilder = RouteUpdateIntegrationWorkspace.CreatePlanBuilder();
         var preparation = await new RouteUpdateApplicationPreparer(
             new RouteUpdatePlanRevalidator(
                 planBuilder,
                 new RouteUpdatePlanEquivalence()),
-            recovery.Preparer,
             revalidator).PrepareAsync(
                 new RouteUpdateApplicationPreparationInput
                 {

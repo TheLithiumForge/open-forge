@@ -36,9 +36,15 @@ internal sealed class RecoveryBundleTargetStateReader(
 
     private async ValueTask<RecoveryBundleTargetComparison> ReadTargetAsync(
         CliWorkspace workspace,
-        RecoveryBundleEntry entry,
+        RecoveryEntry entry,
         CancellationToken cancellationToken)
     {
+        if (entry.Kind is RecoveryEntryKind.RelativeFileLinkCreate
+            or RecoveryEntryKind.RelativeFileLinkDelete)
+        {
+            throw new NotSupportedException("Relative file-link recovery comparison is not implemented.");
+        }
+
         var lexicalPath = Path.GetFullPath(Path.Combine(
             workspace.LexicalRoot,
             entry.TargetPath.Replace('/', Path.DirectorySeparatorChar)));
@@ -48,7 +54,7 @@ internal sealed class RecoveryBundleTargetStateReader(
             lexicalPath);
         if (resolution.State == PhysicalPathState.Missing)
         {
-            return entry.Intended is null
+            return entry.Intended.Kind == RecoveryEntryStateKind.Missing
                 ? RecoveryBundleTargetComparison.Intended(entry.TargetPath, observed: null)
                 : RecoveryBundleTargetComparison.Third(entry.TargetPath, observed: null);
         }
@@ -68,7 +74,7 @@ internal sealed class RecoveryBundleTargetStateReader(
         var component = LinkTargetReader.Read(physicalPath);
         if (component.State == PathComponentState.Missing)
         {
-            return entry.Intended is null
+            return entry.Intended.Kind == RecoveryEntryStateKind.Missing
                 ? RecoveryBundleTargetComparison.Intended(entry.TargetPath, observed: null)
                 : RecoveryBundleTargetComparison.Third(entry.TargetPath, observed: null);
         }
@@ -99,11 +105,11 @@ internal sealed class RecoveryBundleTargetStateReader(
             var hash = Convert.ToHexStringLower(
                 await SHA256.HashDataAsync(stream, cancellationToken).ConfigureAwait(false));
             var state = RecoveryBundleTargetComparisonState.Third;
-            if (entry.Prior.Matches(hash, length))
+            if (entry.Prior.OrdinaryFile?.Matches(hash, length) == true)
             {
                 state = RecoveryBundleTargetComparisonState.Prior;
             }
-            else if (entry.Intended?.Matches(hash, length) == true)
+            else if (entry.Intended.OrdinaryFile?.Matches(hash, length) == true)
             {
                 state = RecoveryBundleTargetComparisonState.Intended;
             }
@@ -116,9 +122,7 @@ internal sealed class RecoveryBundleTargetStateReader(
                     RecoveryBundleTargetComparison.Intended(entry.TargetPath, observed),
                 RecoveryBundleTargetComparisonState.Third =>
                     RecoveryBundleTargetComparison.Third(entry.TargetPath, observed),
-                _ => throw new ArgumentOutOfRangeException(
-                    nameof(state),
-                    state,
+                _ => throw new InvalidOperationException(
                     "The observed recovery target state is not defined."),
             };
         }

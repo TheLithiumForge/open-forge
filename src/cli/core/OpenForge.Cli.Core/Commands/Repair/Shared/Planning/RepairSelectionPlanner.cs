@@ -52,7 +52,8 @@ internal static class RepairSelectionPlanner
             new RepairSelection(
                 request.SelectionMode,
                 selected.Select(entry => entry.Selected),
-                unselected),
+                unselected,
+                RepairLibrarySelection.Empty),
             selected,
             conflicts);
     }

@@ -66,6 +66,14 @@ current facts, intended destination, generated projection, ordered plan, and
 preflight are established. One blocker prevents every effect. There is no
 partial-application or best-effort path.
 
+The operation consumes the neutral no-follow logical-leaf guard for the base
+target and every generated-region target. The guard inspects each logical final
+leaf before ordinary physical resolution, at initial preflight, during
+under-lease revalidation, and immediately before its effect. A present link,
+reparse point, or special final leaf is `blocked`; Route Update never follows,
+writes, or deletes a Library projection, and this decision does not depend on a
+Library record.
+
 ## Request Resolution
 
 ### Command and workspace
@@ -110,6 +118,12 @@ resources, detached unsupported files, and other target kinds excluded by the
 recognized compatibility entrypoint retains its actual filename and route
 identity. The resolver does not create a canonical sibling or turn compatibility
 input into a rename request.
+
+Before resolving ordinary physical identity, the resolver obtains the no-follow
+observation of the selected final leaf. A link, reparse point, or special final
+leaf cannot become an ordinary Markdown or entrypoint target through its
+resolved destination. Stable contained directory-link ancestry remains governed
+by the ordinary filesystem path contract.
 
 ### Frontmatter and field patch
 
@@ -181,6 +195,8 @@ safe update and its dependency-minimal generated navigation:
 - The exposing parent and any target entrypoint generated region whose direct
   projection can change, including the target's own generated region when
   eligible Template completion establishes one.
+- No-follow final-leaf observations for the base target and every planned
+  generated-region destination.
 - The current authoritative routed topology, authored descriptions and tags,
   generated boundaries, sibling projections, route identities, and actual
   compatibility destinations needed by the [Index Behavior Contract](../../index-candidate/behavior.md)
@@ -217,6 +233,9 @@ observable requirements in this contract:
   Architecture](../../../architecture.md). Exact atomic-file mechanics follow the
   [Mutation And Recovery Technical
   Design](../../../technical-designs/mutation-and-recovery.md).
+- The neutral no-follow final-leaf observation is a Framework filesystem fact.
+  Route Update consumes it at every stated lifecycle boundary and does not add
+  a Library-specific ownership lookup or a link-following fallback.
 - Exact recovery-bundle filenames, collision-handling mechanics, and related
   recovery implementation follow the Mutation And Recovery Technical Design.
 - Lock scope, stale-lock handling, and broader cross-platform concurrency
@@ -335,6 +354,12 @@ state blocks the complete plan. Safe but unfinished inspection or planning
 coverage forms `incomplete` before any effect. There is no partial-application or
 best-effort mode.
 
+Initial preflight inspects the final logical leaf of every destination effect
+without following it. A present link, reparse point, or special final leaf
+blocks the complete plan. This applies even when the leaf resolves to a
+contained Markdown source or when a Library record is absent; Route Update does
+not follow or write through that projection.
+
 The plan preserves siblings, overwrite companions, compatibility filenames,
 authored target body content, and all bytes outside planned generated interiors.
 It coalesces compatible changes to one physical file rather than scheduling
@@ -346,7 +371,8 @@ Dry-run and application use the same normalized request, target resolution,
 current facts, field patch, Template decision, intended bytes, generated
 projection, planner, expected-state facts, preflight, and semantic status.
 Dry-run stops before recovery-bundle creation, temporary file creation, replacement,
-formatting, or another persistent effect.
+formatting, or another persistent effect. It still performs the same no-follow
+leaf observations as application.
 
 Dry-run rendering exposes every exact intended destination and bounded generated
 diff required by the complete plan, plus the body-protection observation when an
@@ -364,10 +390,12 @@ generated-region changes. The operation does not prompt and does not accept
 `--yes`.
 
 Generated effects are applied after the authored facts they depend on, then the
-complete parent operation is verified. A generated planning failure blocks
-before the first destination write. A generated application or verification
-failure retains the verified recovery bundle and reports the complete update
-plan's residual state; it does not restore earlier effects.
+complete parent operation is verified. Before each authored or generated effect,
+the operation repeats the no-follow final-leaf and expected-state checks.
+A generated planning failure blocks before the first destination write. A
+generated application or verification failure retains the verified recovery
+bundle and reports the complete update plan's residual state; it does not
+restore earlier effects.
 
 Each replacement uses the complete planned file bytes through a safe
 same-directory replacement property. The operation does not edit the target in
@@ -414,10 +442,12 @@ target effect; unknown, malformed, mismatched, or colliding bundles block.
 
 ### Revalidation and verification
 
-Immediately before application, the operation rechecks every target, source,
-Template, route, generated fact, and other expected-state fact in the complete
-plan. Volatile target facts are rechecked immediately before each replacement.
-The operation does not allow a stale plan to replace a changed target.
+Immediately before application under the held lease, the operation rechecks
+every target, source, Template, route, generated fact, and other expected-state
+fact in the complete plan. It also repeats the no-follow observation of every
+logical final leaf. Volatile target facts and that leaf observation are rechecked
+immediately before each replacement. The operation does not allow a stale plan
+or a link, reparse point, or special leaf to replace a changed target.
 
 The operation verifies each applied effect and then verifies the complete
 semantic postcondition. Generated navigation is rebuilt from the authoritative

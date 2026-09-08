@@ -44,10 +44,10 @@ public sealed class RepairFiniteMappingTests
             ["none", "one", "several"],
             Enum.GetValues<RepairCandidateCardinality>().Select(RepairDefinitions.ReadMachineName));
         Assert.Equal(
-            ["workspace-containment", "route-and-heading", "local-reference"],
+            ["workspace-containment", "route-and-heading", "local-reference", "library-record", "library-residual"],
             Enum.GetValues<RepairDependencyDomain>().Select(RepairDefinitions.ReadMachineName));
         Assert.Equal(
-            ["destination-literal", "same-target-identity", "resulting-bytes"],
+            ["destination-literal", "same-target-identity", "resulting-bytes", "no-follow-identity", "prior-state"],
             Enum.GetValues<RepairVerificationKind>().Select(RepairDefinitions.ReadMachineName));
         Assert.Equal(
             ["required", "not-required"],

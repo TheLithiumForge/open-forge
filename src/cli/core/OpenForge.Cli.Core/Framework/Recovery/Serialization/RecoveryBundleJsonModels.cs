@@ -52,29 +52,38 @@ internal sealed record RecoveryBundleManifestEntryV1
     [JsonPropertyName("ordinal"), JsonPropertyOrder(0)]
     public required int Ordinal { get; init; }
 
-    [JsonPropertyName("target"), JsonPropertyOrder(1)]
-    public required string Target { get; init; }
+    [JsonPropertyName("logicalPath"), JsonPropertyOrder(1)]
+    public required string LogicalPath { get; init; }
 
     [JsonPropertyName("kind"), JsonPropertyOrder(2)]
     public required string Kind { get; init; }
 
-    [JsonPropertyName("priorLength"), JsonPropertyOrder(3)]
-    public required long PriorLength { get; init; }
+    [JsonPropertyName("prior"), JsonPropertyOrder(3)]
+    public required RecoveryBundleManifestStateV1 Prior { get; init; }
 
-    [JsonPropertyName("priorSha256"), JsonPropertyOrder(4)]
-    public required string PriorSha256 { get; init; }
+    [JsonPropertyName("intended"), JsonPropertyOrder(4)]
+    public required RecoveryBundleManifestStateV1 Intended { get; init; }
 
-    [JsonPropertyName("payload"), JsonPropertyOrder(5)]
-    public required string Payload { get; init; }
+    [JsonPropertyName("priorPayload"), JsonPropertyOrder(5)]
+    public required string? PriorPayload { get; init; }
+}
 
-    [JsonPropertyName("intendedAbsent"), JsonPropertyOrder(6)]
-    public required bool IntendedAbsent { get; init; }
+internal sealed record RecoveryBundleManifestStateV1
+{
+    [JsonPropertyName("kind"), JsonPropertyOrder(0)]
+    public required string Kind { get; init; }
 
-    [JsonPropertyName("intendedLength"), JsonPropertyOrder(7)]
-    public required long? IntendedLength { get; init; }
+    [JsonPropertyName("length"), JsonPropertyOrder(1)]
+    public required long? Length { get; init; }
 
-    [JsonPropertyName("intendedSha256"), JsonPropertyOrder(8)]
-    public required string? IntendedSha256 { get; init; }
+    [JsonPropertyName("sha256"), JsonPropertyOrder(2)]
+    public required string? Sha256 { get; init; }
+
+    [JsonPropertyName("linkKind"), JsonPropertyOrder(3)]
+    public required string? LinkKind { get; init; }
+
+    [JsonPropertyName("rawRelativeTarget"), JsonPropertyOrder(4)]
+    public required string? RawRelativeTarget { get; init; }
 }
 
 internal enum RecoveryBundleManifestState
@@ -92,7 +101,7 @@ internal sealed record RecoveryBundleManifestDecodeResult
 
     public OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundleAttribution? Attribution { get; init; }
 
-    public required System.Collections.Immutable.ImmutableArray<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundleEntry> Entries { get; init; }
+    public required System.Collections.Immutable.ImmutableArray<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryEntry> Entries { get; init; }
 
     public string? Cause { get; init; }
 }

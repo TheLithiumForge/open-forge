@@ -1,6 +1,7 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Status;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
+using OpenForge.Cli.Core.Commands.Status.Shared.Aggregation;
 using OpenForge.Cli.Core.Commands.Status.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -68,6 +69,29 @@ public sealed class StatusPresentationTests
             Assert.Contains($"Result: {label}", output, StringComparison.Ordinal);
             Assert.Equal(target, CliStatusDefinitions.Read(result.Status).Disposition.HumanOutputTarget);
         }
+    }
+
+    [Fact(DisplayName = "Status human event results retain honest unavailable Library facts"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
+    public void HumanEventResultsRetainHonestUnavailableLibraryFacts()
+    {
+        var result = StatusResultBuilder.Event(
+            null,
+            StatusFindingCode.Interrupted,
+            null,
+            "Status observation was interrupted.");
+
+        var output = StatusHumanRenderer.Render(Presentation(result, CliView.Compact));
+
+        Assert.Contains("Libraries", output, StringComparison.Ordinal);
+        Assert.Contains("State: incomplete", output, StringComparison.Ordinal);
+        Assert.Contains("Record: unavailable", output, StringComparison.Ordinal);
+        Assert.Contains("registered=unavailable", output, StringComparison.Ordinal);
+        Assert.Contains("current=unavailable", output, StringComparison.Ordinal);
+        Assert.Contains("missing=unavailable", output, StringComparison.Ordinal);
+        Assert.Contains("changed=unavailable", output, StringComparison.Ordinal);
+        Assert.Contains("blocked=unavailable", output, StringComparison.Ordinal);
+        Assert.Contains("unavailable=unavailable", output, StringComparison.Ordinal);
+        Assert.Contains("Records: unavailable", output, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Status human and JSON renderers project the same frozen result"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]

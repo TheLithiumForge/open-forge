@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Repair.Models.Application;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
@@ -19,6 +20,93 @@ namespace OpenForge.Cli.Core.Commands.Repair.Shared.Application;
 internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
 {
     private readonly DoctorDiagnosisReader _diagnosisReader = diagnosisReader;
+
+    internal ValueTask<DoctorDiagnosisRead> ReadLibraryPostDiagnosisAsync(
+        RepairPlan plan,
+        RepairLibraryExecution execution,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(plan);
+        ArgumentNullException.ThrowIfNull(execution);
+        if (execution.ReferenceReceipts.IsDefault || execution.LibraryReceipts.IsDefault)
+        {
+            throw new ArgumentException("Library post-diagnosis must retain all completed and residual effect receipts.", nameof(execution));
+        }
+
+        return _diagnosisReader.ReadAsync(new DoctorRequest(plan.Request.Workspace), cancellationToken);
+    }
+
+    internal async ValueTask<(DoctorDiagnosisRead Diagnosis, RepairPostVerification Verification)> VerifyLibraryAsync(
+        RepairPlan plan,
+        RepairLibraryExecution execution,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(plan);
+        ArgumentNullException.ThrowIfNull(execution);
+        if (execution.ReferenceReceipts.IsDefault || execution.LibraryReceipts.IsDefault)
+        {
+            throw new ArgumentException("Library post-verification must retain every atomic effect receipt.", nameof(execution));
+        }
+
+        var diagnosis = await _diagnosisReader.ReadAsync(
+            new DoctorRequest(plan.Request.Workspace),
+            cancellationToken).ConfigureAwait(false);
+        if (plan.Effects.Count == 0)
+        {
+            var coverage = ReadLibraryCoverage(diagnosis.Observation);
+            var selectedState = RepairCoverageMapper.ReadPostDiagnosisState(coverage);
+            var libraryVerification = new RepairVerification(
+                RepairVerificationState.Verified,
+                RepairVerificationState.Verified,
+                selectedState == RepairPostDiagnosisState.Complete
+                    ? RepairVerificationState.Verified
+                    : selectedState == RepairPostDiagnosisState.Blocked
+                        ? RepairVerificationState.Failed
+                        : RepairVerificationState.Planned);
+            return (diagnosis, new RepairPostVerification(
+                libraryVerification,
+                new RepairPostDiagnosis(selectedState, coverage, []),
+                []));
+        }
+
+        var completePlanRequired = execution.UnexpectedFailure is null
+            && execution.Cancellation is null
+            && execution.ReferenceReceipts.Length == plan.Effects.Count;
+        var verification = await VerifyCoreAsync(
+            plan,
+            execution.ReferenceReceipts,
+            completePlanRequired,
+            diagnosis,
+            cancellationToken).ConfigureAwait(false);
+        return (diagnosis, verification);
+    }
+
+    private static RepairDiagnosisCoverage ReadLibraryCoverage(DoctorObservation observation)
+    {
+        var ordinary = RepairCoverageMapper.Read(observation);
+        var library = ReadCoverage(observation.Libraries.State);
+        var selected = ordinary.WorkspaceAndPath == RepairCoverageState.Blocked
+            || library == RepairCoverageState.Blocked
+                ? RepairCoverageState.Blocked
+                : ordinary.WorkspaceAndPath == RepairCoverageState.Incomplete
+                    || library == RepairCoverageState.Incomplete
+                    ? RepairCoverageState.Incomplete
+                    : RepairCoverageState.Complete;
+        return new RepairDiagnosisCoverage(
+            ordinary.WorkspaceAndPath,
+            ordinary.RouteAndHeading,
+            ordinary.LocalReferences,
+            selected);
+    }
+
+    private static RepairCoverageState ReadCoverage(OperationalViewState state)
+        => state switch
+        {
+            OperationalViewState.Complete => RepairCoverageState.Complete,
+            OperationalViewState.Incomplete or OperationalViewState.Interrupted => RepairCoverageState.Incomplete,
+            OperationalViewState.Blocked => RepairCoverageState.Blocked,
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The Library view state is not defined."),
+        };
 
     internal ValueTask<RepairPostVerification> VerifyAsync(
         RepairPlan plan,
@@ -51,6 +139,17 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
         var read = await _diagnosisReader.ReadAsync(
             new DoctorRequest(plan.Request.Workspace),
             cancellationToken).ConfigureAwait(false);
+        return await VerifyCoreAsync(plan, receipts, completePlanRequired, read, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private static async ValueTask<RepairPostVerification> VerifyCoreAsync(
+        RepairPlan plan,
+        IReadOnlyList<FileChangeReceipt> receipts,
+        bool completePlanRequired,
+        DoctorDiagnosisRead read,
+        CancellationToken cancellationToken)
+    {
         var coverage = RepairCoverageMapper.Read(read.Observation);
         var findings = ReadCoverageFindings(coverage).ToList();
         findings.AddRange(RepairRemainingFindingReader.Read(read.Observation.LocalReferences));

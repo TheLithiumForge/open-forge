@@ -175,7 +175,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
 
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var prepared = await RouteRemoveRecoveryLifecycle.Create().PrepareAsync(
+        var prepared = await RouteRemoveRecoveryLifecycle.PrepareAsync(
             new RouteRemoveRecoveryPreparationInput
             {
                 Plan = plan,
@@ -215,7 +215,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         var plan = await workspace.BuildApplicationPlanAsync(RouteRemoveIntegrationWorkspace.CategoryId);
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var prepared = await RouteRemoveRecoveryLifecycle.Create().PrepareAsync(
+        var prepared = await RouteRemoveRecoveryLifecycle.PrepareAsync(
             new RouteRemoveRecoveryPreparationInput
             {
                 Plan = plan,
@@ -271,8 +271,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         var plan = await workspace.BuildApplicationPlanAsync();
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var recovery = RouteRemoveRecoveryLifecycle.Create();
-        var prepared = await recovery.PrepareAsync(
+        var prepared = await RouteRemoveRecoveryLifecycle.PrepareAsync(
             new RouteRemoveRecoveryPreparationInput
             {
                 Plan = plan,
@@ -313,7 +312,6 @@ public sealed class RouteRemoveApplicationIntegrationTests
         workspace.WriteText("late.md", lateReference);
 
         var completion = await new RouteRemoveApplicationCompletion(
-            recovery,
             RouteRemoveAppliedVerifier.Create()).CompleteAsync(
                 new RouteRemoveHeldApplication(plan, operationId, lease),
                 prepared,
@@ -339,8 +337,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         var plan = await workspace.BuildApplicationPlanAsync();
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var recovery = RouteRemoveRecoveryLifecycle.Create();
-        var prepared = await recovery.PrepareAsync(
+        var prepared = await RouteRemoveRecoveryLifecycle.PrepareAsync(
             new RouteRemoveRecoveryPreparationInput
             {
                 Plan = plan,
@@ -378,7 +375,6 @@ public sealed class RouteRemoveApplicationIntegrationTests
             StringComparison.Ordinal);
 
         var completion = await new RouteRemoveApplicationCompletion(
-            recovery,
             RouteRemoveAppliedVerifier.Create()).CompleteAsync(
                 new RouteRemoveHeldApplication(plan, operationId, lease),
                 prepared,
@@ -406,8 +402,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         var plan = await workspace.BuildApplicationPlanAsync();
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var recovery = RouteRemoveRecoveryLifecycle.Create();
-        var prepared = await recovery.PrepareAsync(
+        var prepared = await RouteRemoveRecoveryLifecycle.PrepareAsync(
             new RouteRemoveRecoveryPreparationInput
             {
                 Plan = plan,
@@ -433,7 +428,6 @@ public sealed class RouteRemoveApplicationIntegrationTests
         workspace.WriteText(latePath, lateText);
 
         var completion = await new RouteRemoveApplicationCompletion(
-            recovery,
             RouteRemoveAppliedVerifier.Create()).CompleteAsync(
                 new RouteRemoveHeldApplication(plan, operationId, lease),
                 prepared,

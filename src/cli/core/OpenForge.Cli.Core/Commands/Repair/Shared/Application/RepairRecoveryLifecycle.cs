@@ -6,16 +6,9 @@ using OpenForge.Cli.Core.Framework.Recovery.Models;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Application;
 
-internal sealed class RepairRecoveryLifecycle(
-    RecoveryBundleStore store,
-    RecoveryBundleCatalogue catalogue,
-    RecoveryBundleDeletionGuard deletionGuard)
+internal static class RepairRecoveryLifecycle
 {
-    private readonly RecoveryBundleStore _store = store;
-    private readonly RecoveryBundleCatalogue _catalogue = catalogue;
-    private readonly RecoveryBundleDeletionGuard _deletionGuard = deletionGuard;
-
-    internal async ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
+    internal static async ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
         RepairPlan plan,
         Guid operationId,
         CancellationToken cancellationToken)
@@ -29,15 +22,15 @@ internal sealed class RepairRecoveryLifecycle(
             [.. effects.Select(effect => RecoveryBundleTarget.Create(
                 effect.FileChange,
                 effect.ExpectedState))]);
-        return await _store.PrepareAsync(input, cancellationToken).ConfigureAwait(false);
+        return await RecoveryBundleStore.PrepareAsync(input, cancellationToken).ConfigureAwait(false);
     }
 
-    internal async ValueTask<RecoveryBundleDeletionResult> DeleteAsync(
+    internal static async ValueTask<RecoveryBundleDeletionResult> DeleteAsync(
         WorkspaceLockLease lease,
         RecoveryBundlePreparation preparation,
         CancellationToken cancellationToken)
     {
-        var catalogue = await _catalogue.ReadAsync(
+        var catalogue = await RecoveryBundleCatalogue.ReadAsync(
             lease.Request.Workspace,
             cancellationToken).ConfigureAwait(false);
         if (catalogue.State != RecoveryBundleCatalogueState.Available)
@@ -56,7 +49,7 @@ internal sealed class RepairRecoveryLifecycle(
             ? RecoveryBundleDeletionResult.BlockedUnknown(
                 "The exact Repair recovery final changed before deletion.",
                 preparation.BundlePath)
-            : await _deletionGuard.DeleteAsync(lease, candidate, cancellationToken)
+            : await RecoveryBundleDeletionGuard.DeleteAsync(lease, candidate, cancellationToken)
                 .ConfigureAwait(false);
     }
 

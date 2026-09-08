@@ -30,8 +30,9 @@ internal static class StatusJsonProjection
                 Context = StatusJsonContextProjection.Create(result.Facts.Context),
                 Structure = StatusJsonStructureProjection.Create(result.Facts.Structure),
                 Lifecycle = StatusJsonLifecycleProjection.Create(result.Facts.Lifecycle),
+                Library = StatusLibraryPresentation.Project(result.Facts.Library),
                 Recovery = StatusJsonRecoveryProjection.Create(result.Facts.Recovery),
-                Findings = result.Findings.Select(Project).ToArray(),
+                Findings = [.. result.Findings.Select(Project)],
             },
             Next = result.Next is { } next
                 ? new StatusJsonNext { Command = next.Command, Reason = next.Reason }
