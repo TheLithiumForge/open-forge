@@ -1,3 +1,5 @@
+using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.IntegrationTests.Hosting;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
@@ -6,22 +8,80 @@ using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Result;
+using OpenForge.Cli.Core.Commands.Route.Update.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 
 public sealed class RouteUpdateApplicationIntegrationTests
 {
-    [Theory(DisplayName = "Route Update ID base overwrite and normalized paths apply the base then converge")]
-    [InlineData(RouteUpdateIntegrationWorkspace.TargetId, (int)RouteUpdateTargetSelection.SourceId)]
-    [InlineData(RouteUpdateIntegrationWorkspace.TargetPath, (int)RouteUpdateTargetSelection.BasePath)]
-    [InlineData("./" + RouteUpdateIntegrationWorkspace.TargetPath, (int)RouteUpdateTargetSelection.BasePath)]
-    [InlineData(RouteUpdateIntegrationWorkspace.OverwritePath, (int)RouteUpdateTargetSelection.OverwritePath)]
-    [InlineData("./" + RouteUpdateIntegrationWorkspace.OverwritePath, (int)RouteUpdateTargetSelection.OverwritePath)]
-    [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
+    [Fact(DisplayName = "Composed Route Update help retains exact shared exit and stream policy"),
+     Trait("Feature", "route-update"), Trait("Evidence", "Integration")]
+    public async Task HelpRetainsExactSharedExitAndStreamPolicy()
+    {
+        using var workspace = TemporaryWorkspace.Create("update-help-policy");
+        var before = workspace.SnapshotHashes();
+        var missing = workspace.Combine("missing");
+        var result = await CliHostCapture.RunAsync(["route", "update", "--help", "--workspace", missing], workspace.Path);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(string.Empty, result.Error);
+        Assert.Contains("open-forge route update", result.Output, StringComparison.Ordinal);
+        Assert.Contains("--dry-run", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("--automatic", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("--force", result.Output, StringComparison.Ordinal);
+        Assert.Contains("--template <template-reference>", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("--yes", result.Output, StringComparison.Ordinal);
+        Assert.Contains("complete: exit 0 and human stdout.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("attention: exit 2 and human stdout.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("incomplete: exit 3 and human stdout.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("invalid: exit 4 and human stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("blocked: exit 5 and human stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("failed: exit 1 and human stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("interrupted: exit 130 and human stderr.", result.Output, StringComparison.Ordinal);
+        Assert.False(Directory.Exists(missing));
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Composed Route Update JSON dry-run keeps bounded diagnostics separate"),
+     Trait("Feature", "route-update"), Trait("Evidence", "Integration")]
+    public async Task JsonDryRunPreservesPrimaryDocumentWithVerboseDiagnostics()
+    {
+        using var workspace = RouteUpdateIntegrationWorkspace.Create("update-json-diagnostics");
+        var before = workspace.SnapshotHashes();
+        string[] arguments =
+        [
+            "route", "update", RouteUpdateIntegrationWorkspace.TargetId,
+            "--description", "After overview", "--dry-run", "--json",
+        ];
+
+        var plain = await CliHostCapture.RunAsync(arguments, workspace.Workspace.LexicalRoot);
+        var verbose = await CliHostCapture.RunAsync([.. arguments, "--verbose"], workspace.Workspace.LexicalRoot);
+
+        Assert.Equal(0, plain.ExitCode);
+        Assert.Equal(string.Empty, plain.Error);
+        Assert.Equal(plain.ExitCode, verbose.ExitCode);
+        Assert.Equal(plain.Output, verbose.Output);
+        var diagnostic = Assert.Single(verbose.Error.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
+        Assert.InRange(diagnostic.Length, 1, 4095);
+        Assert.DoesNotContain('\r', diagnostic);
+        Assert.DoesNotContain('\n', diagnostic);
+        Assert.EndsWith(Environment.NewLine, verbose.Error, StringComparison.Ordinal);
+        Assert.Contains("status=complete; mode=dry-run", diagnostic, StringComparison.Ordinal);
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Theory(DisplayName = "Route Update ID base overwrite and normalized paths apply the base then converge"),
+     InlineData(RouteUpdateIntegrationWorkspace.TargetId, (int)RouteUpdateTargetSelection.SourceId),
+     InlineData(RouteUpdateIntegrationWorkspace.TargetPath, (int)RouteUpdateTargetSelection.BasePath),
+     InlineData("./" + RouteUpdateIntegrationWorkspace.TargetPath, (int)RouteUpdateTargetSelection.BasePath),
+     InlineData(RouteUpdateIntegrationWorkspace.OverwritePath, (int)RouteUpdateTargetSelection.OverwritePath),
+     InlineData("./" + RouteUpdateIntegrationWorkspace.OverwritePath, (int)RouteUpdateTargetSelection.OverwritePath),
+     Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
     public static async Task ApplyThenRepeatConverges(
         string sourceReference,
         int expectedSelectionValue)
@@ -60,13 +120,13 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(after, workspace.SnapshotHashes());
     }
 
-    [Theory(DisplayName = "Route Update applies canonical and compatibility entrypoints without identity drift")]
-    [InlineData(".agents/memory/project-alpha/overview/_overview.md", (int)RouteUpdateTargetForm.CanonicalEntrypoint)]
-    [InlineData(".agents/memory/project-alpha/overview/index.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint)]
-    [InlineData(".agents/memory/project-alpha/overview/_index.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint)]
-    [InlineData(".agents/memory/project-alpha/overview/references.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint)]
-    [InlineData(".agents/memory/project-alpha/overview/_references.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint)]
-    [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
+    [Theory(DisplayName = "Route Update applies canonical and compatibility entrypoints without identity drift"),
+     InlineData(".agents/memory/project-alpha/overview/_overview.md", (int)RouteUpdateTargetForm.CanonicalEntrypoint),
+     InlineData(".agents/memory/project-alpha/overview/index.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint),
+     InlineData(".agents/memory/project-alpha/overview/_index.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint),
+     InlineData(".agents/memory/project-alpha/overview/references.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint),
+     InlineData(".agents/memory/project-alpha/overview/_references.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint),
+     Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
     public static async Task EntrypointFormsApplyWithoutIdentityDrift(
         string path,
         int expectedFormValue)
@@ -89,13 +149,13 @@ public sealed class RouteUpdateApplicationIntegrationTests
             ReadDescription(workspace.ReadText(path)));
     }
 
-    [Theory(DisplayName = "Route Update Template-only application validates and completes entrypoint navigation")]
-    [InlineData(".agents/memory/project-alpha/overview/_overview.md")]
-    [InlineData(".agents/memory/project-alpha/overview/index.md")]
-    [InlineData(".agents/memory/project-alpha/overview/_index.md")]
-    [InlineData(".agents/memory/project-alpha/overview/references.md")]
-    [InlineData(".agents/memory/project-alpha/overview/_references.md")]
-    [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
+    [Theory(DisplayName = "Route Update Template-only application validates and completes entrypoint navigation"),
+     InlineData(".agents/memory/project-alpha/overview/_overview.md"),
+     InlineData(".agents/memory/project-alpha/overview/index.md"),
+     InlineData(".agents/memory/project-alpha/overview/_index.md"),
+     InlineData(".agents/memory/project-alpha/overview/references.md"),
+     InlineData(".agents/memory/project-alpha/overview/_references.md"),
+     Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
     public static async Task TemplateOnlyEntrypointApplicationCompletesNavigation(string path)
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
@@ -133,8 +193,8 @@ public sealed class RouteUpdateApplicationIntegrationTests
             StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Route Update blocks a Template-only entrypoint whose intended body has no generated region")]
-    [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
+    [Fact(DisplayName = "Route Update blocks a Template-only entrypoint whose intended body has no generated region"),
+     Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task TemplateOnlyEntrypointRequiresValidIntendedRepresentation()
     {
         const string path = ".agents/memory/project-alpha/overview/_overview.md";
@@ -159,8 +219,8 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Route Update real application preserves opaque YAML Unicode comments and mixed line endings byte-exact")]
-    [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
+    [Fact(DisplayName = "Route Update real application preserves opaque YAML Unicode comments and mixed line endings byte-exact"),
+     Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task ApplicationPreservesOpaqueTargetBytes()
     {
         const string before = "---\r\nopen-forge:\r\n  opaque: café # keep\r\n"
@@ -190,8 +250,8 @@ public sealed class RouteUpdateApplicationIntegrationTests
             workspace.ReadBytes(RouteUpdateIntegrationWorkspace.TargetPath));
     }
 
-    [Fact(DisplayName = "Route Update applies an eligible Template body and verifies the protected no-op transition")]
-    [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
+    [Fact(DisplayName = "Route Update applies an eligible Template body and verifies the protected no-op transition"),
+     Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
     public async Task EligibleTemplateBodyAppliesAndVerifies()
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
@@ -229,8 +289,8 @@ public sealed class RouteUpdateApplicationIntegrationTests
             workspace.ReadText(RouteUpdateIntegrationWorkspace.OverwritePath));
     }
 
-    [Fact(DisplayName = "Route Update dry-run returns the complete plan with zero workspace writes")]
-    [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
+    [Fact(DisplayName = "Route Update dry-run returns the complete plan with zero workspace writes"),
+     Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task DryRunDoesNotAcquireOrWrite()
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
@@ -250,8 +310,8 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Route Update lock contention is blocked before revalidation recovery or writes")]
-    [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
+    [Fact(DisplayName = "Route Update lock contention is blocked before revalidation recovery or writes"),
+     Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task ExistingWorkspaceLeaseBlocksApplication()
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
@@ -271,12 +331,12 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Theory(DisplayName = "Route Update revalidation rejects target overwrite Template and parent races before writes")]
-    [InlineData("target")]
-    [InlineData("overwrite")]
-    [InlineData("template")]
-    [InlineData("parent")]
-    [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
+    [Theory(DisplayName = "Route Update revalidation rejects target overwrite Template and parent races before writes"),
+     InlineData("target"),
+     InlineData("overwrite"),
+     InlineData("template"),
+     InlineData("parent"),
+     Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public static async Task CompletePlanMustRemainExact(string changedSource)
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
@@ -299,8 +359,8 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(afterRace, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Route Update cancellation is returned as interrupted without mutation")]
-    [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
+    [Fact(DisplayName = "Route Update cancellation is returned as interrupted without mutation"),
+     Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task CallerCancellationIsTypedAndWriteFree()
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
@@ -323,8 +383,8 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Route Update top-level verification failure retains exact applied effects and recovery")]
-    [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
+    [Fact(DisplayName = "Route Update top-level verification failure retains exact applied effects and recovery"),
+     Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task TopLevelPostWriteFailureReturnsCompleteResidualFacts()
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
@@ -407,10 +467,41 @@ public sealed class RouteUpdateApplicationIntegrationTests
             result.Findings,
             finding => finding.Code == RouteUpdateFindingCode.VerificationFailed);
         Assert.Equal("open-forge route update --verbose", result.Next?.Command);
+        Assert.Equal(recoveryPreparation.BundlePath, result.Recovery.ResidualPath);
+        Assert.True(File.Exists(recoveryPreparation.BundlePath));
+        var bundleDirectory = Assert.IsType<string>(Path.GetDirectoryName(recoveryPreparation.BundlePath));
+        Assert.Equal([recoveryPreparation.BundlePath], Directory.GetFiles(bundleDirectory));
+
+        var presentation = CliPresentationStage.Create(
+            result,
+            new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal));
+        var rendered = CliRenderingStage.Render(
+            presentation,
+            new CliRendererSet<RouteUpdateResult>(RouteUpdateHumanRenderer.Render, RouteUpdateJsonRenderer.Render),
+            RouteUpdateDiagnosticRenderer.Render);
+        using var stdout = new StringWriter();
+        using var stderr = new StringWriter();
+        var receipt = await CliOutputStage.WriteAsync(
+            rendered,
+            new CliOutputWriters(stdout, stderr),
+            TestContext.Current.CancellationToken);
+        var completion = CliCompletionStage.Complete(receipt);
+
+        Assert.Equal(1, completion.ExitCode);
+        Assert.Equal(string.Empty, stdout.ToString());
+        var human = stderr.ToString();
+        Assert.Contains($"Route Update did not update {plan.Preview.Target.Id}", human, StringComparison.Ordinal);
+        Assert.Contains("Status: failed", human, StringComparison.Ordinal);
+        Assert.Contains("Before:", human, StringComparison.Ordinal);
+        Assert.Contains("Expected:", human, StringComparison.Ordinal);
+        Assert.Contains("Recovery: retained", human, StringComparison.Ordinal);
+        Assert.Contains(recoveryPreparation.BundlePath, human, StringComparison.Ordinal);
+        Assert.Contains("Verification: failed", human, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge route update --verbose", human, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Route Update cancellation after the first effect retains its receipt and stops later effects")]
-    [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
+    [Fact(DisplayName = "Route Update cancellation after the first effect retains its receipt and stops later effects"),
+     Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task MidApplicationCancellationRetainsExactProgress()
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(

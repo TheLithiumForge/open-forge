@@ -12,6 +12,64 @@ public sealed class InstallCompositionIntegrationTests
 {
     private const string ConfirmationPrompt = "Apply this Install plan? [y/N] ";
 
+    [Fact(DisplayName = "Composed Install dry-run serializes real safe-absence facts without persistent effects"),
+     Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
+    public async Task DryRunSerializesRealSafeAbsenceFactsWithoutEffects()
+    {
+        using var workspace = InstallOperationWorkspace.Create("install-dry-run-packet");
+        var before = workspace.SnapshotHashes();
+        var result = await RunAsync(
+            ["install", "--dry-run", "--automatic", "--json"], workspace.PhysicalPath,
+            "unused", standardInputRedirected: true, promptOutputRedirected: true);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardError);
+        Assert.Equal("unused", result.RemainingInput);
+        Assert.DoesNotContain("Apply this Install plan?", result.StandardOutput, StringComparison.Ordinal);
+        using var document = JsonDocument.Parse(result.StandardOutput);
+        var root = document.RootElement;
+        Assert.Equal(["schemaVersion", "command", "status", "workspace", "result", "next"], root.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal("install", root.GetProperty("command").GetString());
+        Assert.Equal("complete", root.GetProperty("status").GetString());
+        Assert.Equal(workspace.PhysicalPath, root.GetProperty("workspace").GetProperty("path").GetString());
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
+        var facts = root.GetProperty("result");
+        Assert.Equal(
+            ["mode", "force", "automatic", "source", "classification", "footprint", "effects", "lifecycle", "recovery", "verification", "findings"],
+            facts.EnumerateObject().Select(property => property.Name));
+        Assert.Equal("dry-run", facts.GetProperty("mode").GetString());
+        Assert.False(facts.GetProperty("force").GetBoolean());
+        Assert.True(facts.GetProperty("automatic").GetBoolean());
+        var source = facts.GetProperty("source");
+        Assert.Equal(["inventoryFingerprint", "assetCount"], source.EnumerateObject().Select(property => property.Name));
+        Assert.False(string.IsNullOrWhiteSpace(source.GetProperty("inventoryFingerprint").GetString()));
+        Assert.Equal(InstallOperationWorkspace.EmbeddedPayloadPaths.Count + 2, source.GetProperty("assetCount").GetInt32());
+        Assert.Equal("safe-absence", facts.GetProperty("classification").GetString());
+        var footprint = facts.GetProperty("footprint");
+        Assert.Equal(["payloadFiles", "managedRegions", "generatedRegions"], footprint.EnumerateObject().Select(property => property.Name));
+        Assert.True(footprint.GetProperty("payloadFiles").GetInt32() > 0);
+        Assert.True(footprint.GetProperty("managedRegions").GetInt32() > 0);
+        Assert.True(footprint.GetProperty("generatedRegions").GetInt32() > 0);
+        var firstEffect = facts.GetProperty("effects")[0];
+        Assert.Equal(["path", "kind", "action", "sourceAssetPath", "outcome", "residual"], firstEffect.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(".agents", firstEffect.GetProperty("path").GetString());
+        Assert.Equal("directory", firstEffect.GetProperty("kind").GetString());
+        Assert.Equal("create", firstEffect.GetProperty("action").GetString());
+        Assert.Equal(JsonValueKind.Null, firstEffect.GetProperty("sourceAssetPath").ValueKind);
+        Assert.Equal("planned", firstEffect.GetProperty("outcome").GetString());
+        Assert.Equal("none", firstEffect.GetProperty("residual").GetString());
+        Assert.Equal("publish", facts.GetProperty("lifecycle").GetProperty("action").GetString());
+        Assert.Equal("planned", facts.GetProperty("lifecycle").GetProperty("outcome").GetString());
+        Assert.Equal("not-required", facts.GetProperty("recovery").GetProperty("state").GetString());
+        Assert.Equal("not-requested", facts.GetProperty("verification").GetString());
+        Assert.Empty(facts.GetProperty("findings").EnumerateArray());
+        Assert.Equal(before, workspace.SnapshotHashes());
+        Assert.False(result.LockInfrastructureExists);
+        Assert.False(workspace.RecoveryDirectoryExists());
+        Assert.Equal(0, await workspace.ReadRecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
+    }
+
     [Fact(DisplayName = "Root-composed Install prompts once for human apply and never prompts for its verified no-op"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task RootCompositionOwnsOneEligibleConfirmation()
     {
@@ -27,6 +85,7 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, applied.Status);
         Assert.Equal(ConfirmationPrompt, applied.StandardError);
         Assert.StartsWith("Open Forge install", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Classification: safe-absence", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("remaining", applied.RemainingInput);
         Assert.True(workspace.AgentsDirectoryExists());
         Assert.True(applied.LockInfrastructureExists);

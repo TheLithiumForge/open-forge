@@ -137,40 +137,37 @@ internal static class LibraryMutationCompletionProjection
     }
 
     internal static LibraryMutationProjection Projection(
-        LibrariesRecordRead? record,
-        LibraryInventoryRead? source,
-        IReadOnlyList<LibraryMappingObservation>? mappings,
-        LifecycleOwnershipReadResult? ownership,
+        ILibraryMutationObservation? observation,
         string? libraryId,
         LibraryPlanState state,
         bool sourceIndependent)
     {
-        var registered = record?.Record?.Libraries
+        var registered = observation?.Record.Record?.Libraries
             .FirstOrDefault(library => string.Equals(library.Id.Value, libraryId, StringComparison.Ordinal));
         var registeredPaths = registered?.Paths.Select(path => path.Value).ToHashSet(StringComparer.Ordinal)
             ?? new HashSet<string>(StringComparer.Ordinal);
-        var eligiblePaths = source?.Inventory?.Entries.Select(entry => entry.SourcePath.Value).ToHashSet(StringComparer.Ordinal)
+        var eligiblePaths = observation?.Source?.Inventory?.Entries.Select(entry => entry.SourcePath.Value).ToHashSet(StringComparer.Ordinal)
             ?? new HashSet<string>(StringComparer.Ordinal);
-        var values = mappings?.Select(observation => new LibraryMutationMapping
+        var values = observation?.Mappings.Select(mappingObservation => new LibraryMutationMapping
         {
-            SourcePath = observation.Mapping.SourcePath.Value,
-            DestinationPath = observation.Mapping.DestinationPath.Value,
-            SourceId = SourceIdentity.DeriveId(observation.Mapping.DestinationPath.Value),
-            ExpectedRelativeLink = observation.Mapping.ExpectedRelativeLink.Value,
-            ObservedRelativeLink = observation.Leaf.RelativeFileLink?.RawRelativeTarget,
-            State = observation.State switch
+            SourcePath = mappingObservation.Mapping.SourcePath.Value,
+            DestinationPath = mappingObservation.Mapping.DestinationPath.Value,
+            SourceId = SourceIdentity.DeriveId(mappingObservation.Mapping.DestinationPath.Value),
+            ExpectedRelativeLink = mappingObservation.Mapping.ExpectedRelativeLink.Value,
+            ObservedRelativeLink = mappingObservation.Leaf.RelativeFileLink?.RawRelativeTarget,
+            State = mappingObservation.State switch
             {
                 LibraryMappingObservationState.Current => LibraryLinkViewState.Current,
                 LibraryMappingObservationState.Missing => LibraryLinkViewState.Missing,
                 LibraryMappingObservationState.Changed => LibraryLinkViewState.Changed,
                 LibraryMappingObservationState.Blocked => LibraryLinkViewState.Blocked,
                 LibraryMappingObservationState.Unavailable => LibraryLinkViewState.Unavailable,
-                _ => throw new ArgumentOutOfRangeException(nameof(mappings), observation.State, "The mapping state is not defined."),
+                _ => throw new ArgumentOutOfRangeException(nameof(observation), mappingObservation.State, "The mapping state is not defined."),
             },
             Relation = Relation(
-                observation.State,
-                registeredPaths.Contains(observation.Mapping.SourcePath.Value),
-                eligiblePaths.Contains(observation.Mapping.SourcePath.Value),
+                mappingObservation.State,
+                registeredPaths.Contains(mappingObservation.Mapping.SourcePath.Value),
+                eligiblePaths.Contains(mappingObservation.Mapping.SourcePath.Value),
                 sourceIndependent),
         }).OrderBy(mapping => mapping.DestinationPath, StringComparer.Ordinal).ToArray() ?? [];
         return new LibraryMutationProjection
@@ -178,14 +175,14 @@ internal static class LibraryMutationCompletionProjection
             State = state,
             Mappings = values,
             Collisions = [],
-            Ownership = ownership?.Claims.Select(claim => new LibraryOwnershipObservation
+            Ownership = observation?.Ownership.Claims.Select(claim => new LibraryOwnershipObservation
             {
                 Path = claim.Path,
                 Kind = claim.Manager switch
                 {
                     LifecycleOwnershipManager.Framework => LibraryOwnershipKind.Framework,
                     LifecycleOwnershipManager.Extension => LibraryOwnershipKind.Extension,
-                    _ => throw new ArgumentOutOfRangeException(nameof(ownership), claim.Manager, "The ownership manager is not defined."),
+                    _ => throw new ArgumentOutOfRangeException(nameof(observation), claim.Manager, "The ownership manager is not defined."),
                 },
                 OwnerId = claim.Owner,
                 Cause = null,
@@ -247,6 +244,17 @@ internal static class LibraryMutationCompletionProjection
         LibraryExecutionEvidence execution,
         int plannedEffectCount)
     {
+        if (PreparationStatus(execution.RecoveryPreparationOutcome?.State) is { } preparationStatus)
+        {
+            var preparationResiduals = new List<LibraryResidualView>();
+            return NotStarted() with
+            {
+                State = preparationStatus == CliSemanticStatus.Interrupted ? LibraryApplicationState.Interrupted : LibraryApplicationState.NotStarted,
+                Recovery = Recovery(execution, preparationResiduals),
+                Residuals = [.. preparationResiduals],
+            };
+        }
+
         var receipts = execution.Directories.Select(receipt => new LibraryMutationEffectReceipt(
                 Relative(workspace, receipt.Creation.LogicalPath), LibraryResidualKind.Directory,
                 receipt.EffectState, receipt.VerificationState))
@@ -342,6 +350,11 @@ internal static class LibraryMutationCompletionProjection
             return CliSemanticStatus.Interrupted;
         }
 
+        if (PreparationStatus(execution.RecoveryPreparationOutcome?.State) is { } preparationStatus)
+        {
+            return preparationStatus;
+        }
+
         var statuses = findingStatuses.ToArray();
         if (statuses.Contains(CliSemanticStatus.Failed))
         {
@@ -404,6 +417,16 @@ internal static class LibraryMutationCompletionProjection
                 State = LibraryRecordPublicationState.NotStarted,
                 PublishedLast = null,
             },
+        };
+
+    internal static CliSemanticStatus? PreparationStatus(RecoveryBundlePreparationState? state)
+        => state switch
+        {
+            null or RecoveryBundlePreparationState.NotNeeded or RecoveryBundlePreparationState.Prepared => null,
+            RecoveryBundlePreparationState.Incomplete => CliSemanticStatus.Incomplete,
+            RecoveryBundlePreparationState.Blocked => CliSemanticStatus.Blocked,
+            RecoveryBundlePreparationState.Cancelled => CliSemanticStatus.Interrupted,
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The recovery preparation state is not defined."),
         };
 
     private static LibrariesRecordDocument Document(LibrariesRecord record)
@@ -508,6 +531,16 @@ internal static class LibraryMutationCompletionProjection
             }
 
             return new LibraryRecoveryView { State = state, Path = path };
+        }
+
+        if (PreparationStatus(execution.RecoveryPreparationOutcome?.State) is not null)
+        {
+            var path = execution.RecoveryPreparationOutcome?.ResidualPath;
+            if (path is not null)
+            {
+                residuals.Add(new LibraryResidualView { Path = path, Kind = LibraryResidualKind.Recovery, State = LibraryResidualState.Unknown });
+            }
+            return new LibraryRecoveryView { State = LibraryRecoveryState.Unknown, Path = path };
         }
 
         return execution.RecoveryPreparation is null

@@ -6,8 +6,30 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect;
 
 public sealed class RouteInspectApplicationIntegrationTests
 {
-    [Fact(DisplayName = "CLI Route Inspect help exposes the composed Inspect leaf")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Composed Route Inspect preserves a filesystem-safe Unicode and space source argument"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    public async Task FilesystemSafeSourceArgumentRemainsExact()
+    {
+        using var workspace = CompleteWorkspace();
+        const string path = ".agents/root/space value-東京-😀.md";
+        workspace.WriteRoutedMarkdown(path, "Exact source", ["Route"], "# Exact source\n");
+        var before = workspace.Snapshot();
+        var response = await CliHostCapture.RunAsync(["route", "inspect", path, "--workspace", workspace.Path, "--json"], workspace.Path);
+
+        Assert.Equal(0, response.ExitCode);
+        Assert.Equal(string.Empty, response.Error);
+        using var document = JsonDocument.Parse(response.Output);
+        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
+        var result = document.RootElement.GetProperty("result");
+        Assert.Equal(path, result.GetProperty("selection").GetProperty("requestedReference").GetString());
+        Assert.Equal(path, result.GetProperty("identity").GetProperty("path").GetString());
+        var after = workspace.Snapshot();
+        Assert.Equal(before.FileHashes, after.FileHashes);
+        Assert.Equal(before.Entries, after.Entries);
+    }
+
+    [Fact(DisplayName = "CLI Route Inspect help exposes the composed Inspect leaf"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task InspectHelpExposesComposedLeaf()
     {
         using var workspace = RouteInspectProfileIntegrationWorkspace.Create();
@@ -26,8 +48,8 @@ public sealed class RouteInspectApplicationIntegrationTests
         Assert.Contains("Related commands", leaf.Output, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "CLI Route Inspect renders complete real workspace human views without writes")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "CLI Route Inspect renders complete real workspace human views without writes"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task CompleteWorkspaceRendersHumanViewsWithoutWriting()
     {
         using var workspace = CompleteWorkspace();
@@ -56,8 +78,32 @@ public sealed class RouteInspectApplicationIntegrationTests
         Assert.Equal(before.Entries, after.Entries);
     }
 
-    [Fact(DisplayName = "CLI Route Inspect JSON view is stable across view selection and keeps diagnostics on stderr")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Route Inspect expanded human verbosity preserves primary bytes and bounds diagnostics without writes"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    public async Task ExpandedHumanVerbosePreservesPrimaryResult()
+    {
+        using var workspace = CompleteWorkspace();
+        var before = workspace.Snapshot();
+        string[] arguments = ["route", "inspect", "root", "--workspace", workspace.Path, "--view=expanded"];
+
+        var plain = await CliHostCapture.RunAsync(arguments, workspace.Path);
+        var afterPlain = workspace.Snapshot();
+        Assert.Equal(before.FileHashes, afterPlain.FileHashes);
+        Assert.Equal(before.Entries, afterPlain.Entries);
+        var verbose = await CliHostCapture.RunAsync([.. arguments, "--verbose"], workspace.Path);
+
+        Assert.Equal(0, plain.ExitCode);
+        Assert.Equal(plain.ExitCode, verbose.ExitCode);
+        Assert.Equal(plain.Output, verbose.Output);
+        Assert.Equal(string.Empty, plain.Error);
+        Assert.InRange(verbose.Error.Length, 1, 4096);
+        var afterVerbose = workspace.Snapshot();
+        Assert.Equal(before.FileHashes, afterVerbose.FileHashes);
+        Assert.Equal(before.Entries, afterVerbose.Entries);
+    }
+
+    [Fact(DisplayName = "CLI Route Inspect JSON view is stable across view selection and keeps diagnostics on stderr"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task JsonViewIsNoOpAndVerboseDiagnosticsStaySeparate()
     {
         using var workspace = CompleteWorkspace();
@@ -99,18 +145,18 @@ public sealed class RouteInspectApplicationIntegrationTests
         Assert.Equal(before.Entries, after.Entries);
     }
 
-    [Theory(DisplayName = "CLI Route Inspect preserves native workspace and view delimiter parity")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
-    [InlineData("spaced", "spaced")]
-    [InlineData("spaced", "equals")]
-    [InlineData("spaced", "colon")]
-    [InlineData("equals", "spaced")]
-    [InlineData("equals", "equals")]
-    [InlineData("equals", "colon")]
-    [InlineData("colon", "spaced")]
-    [InlineData("colon", "equals")]
-    [InlineData("colon", "colon")]
-    public async Task NativeGlobalFormsProduceIdenticalCompleteResults(
+    [Theory(DisplayName = "CLI Route Inspect preserves native workspace and view delimiter parity"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration"),
+     InlineData("spaced", "spaced"),
+     InlineData("spaced", "equals"),
+     InlineData("spaced", "colon"),
+     InlineData("equals", "spaced"),
+     InlineData("equals", "equals"),
+     InlineData("equals", "colon"),
+     InlineData("colon", "spaced"),
+     InlineData("colon", "equals"),
+     InlineData("colon", "colon")]
+    public static async Task NativeGlobalFormsProduceIdenticalCompleteResults(
         string workspaceForm,
         string viewForm)
     {
@@ -125,7 +171,7 @@ public sealed class RouteInspectApplicationIntegrationTests
         var arguments = new List<string> { "route", "inspect", "root" };
         AddScalar(arguments, "--workspace", workspace.Path, workspaceForm);
         AddScalar(arguments, "--view", "compact", viewForm);
-        var result = await CliHostCapture.RunAsync(arguments.ToArray(), workspace.Path);
+        var result = await CliHostCapture.RunAsync([.. arguments], workspace.Path);
 
         Assert.Equal(baseline.ExitCode, result.ExitCode);
         Assert.Equal(baseline.Output, result.Output);
@@ -136,8 +182,8 @@ public sealed class RouteInspectApplicationIntegrationTests
         Assert.Equal(before.Entries, after.Entries);
     }
 
-    [Fact(DisplayName = "CLI Route Inspect missing domain operand produces a typed invalid JSON result")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "CLI Route Inspect missing domain operand produces a typed invalid JSON result"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task MissingDomainOperandProducesTypedInvalidJson()
     {
         using var workspace = CompleteWorkspace();
@@ -152,8 +198,8 @@ public sealed class RouteInspectApplicationIntegrationTests
         AssertInvalidJson(missingDocument, "route-inspect.missing-source");
     }
 
-    [Fact(DisplayName = "CLI Route Inspect multiple domain operands produce a typed invalid JSON result")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "CLI Route Inspect multiple domain operands produce a typed invalid JSON result"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task MultipleDomainOperandsProduceTypedInvalidJson()
     {
         using var workspace = CompleteWorkspace();
@@ -168,8 +214,8 @@ public sealed class RouteInspectApplicationIntegrationTests
         AssertInvalidJson(multipleDocument, "route-inspect.multiple-sources");
     }
 
-    [Fact(DisplayName = "CLI Route Inspect preserves an option-like source operand after the option terminator")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "CLI Route Inspect preserves an option-like source operand after the option terminator"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task OptionLikeOperandAfterTerminatorRemainsSourceReference()
     {
         using var workspace = CompleteWorkspace();
@@ -188,8 +234,8 @@ public sealed class RouteInspectApplicationIntegrationTests
                 .GetProperty("requestedReference").GetString());
     }
 
-    [Fact(DisplayName = "CLI Route Inspect contextual workspace failure retains the requested source in JSON")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "CLI Route Inspect contextual workspace failure retains the requested source in JSON"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task InvalidWorkspaceRetainsTypedRequestedSource()
     {
         var missing = Path.Combine(
@@ -221,8 +267,8 @@ public sealed class RouteInspectApplicationIntegrationTests
         Assert.False(Directory.Exists(missing));
     }
 
-    [Fact(DisplayName = "CLI Route Inspect help bypasses workspace selection")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "CLI Route Inspect help bypasses workspace selection"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task InspectHelpBypassesWorkspaceSelection()
     {
         var missing = Path.Combine(
@@ -247,8 +293,8 @@ public sealed class RouteInspectApplicationIntegrationTests
         Assert.False(Directory.Exists(missing));
     }
 
-    [Fact(DisplayName = "CLI Route Inspect version bypasses workspace selection")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "CLI Route Inspect version bypasses workspace selection"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task InspectVersionBypassesWorkspaceSelection()
     {
         var missing = Path.Combine(
@@ -273,13 +319,13 @@ public sealed class RouteInspectApplicationIntegrationTests
         Assert.False(Directory.Exists(missing));
     }
 
-    [Theory(DisplayName = "CLI Route Inspect terminal modes reject source input before workspace selection")]
-    [InlineData("--help", "root")]
-    [InlineData("--version", "root")]
-    [InlineData("--help", "option-like")]
-    [InlineData("--version", "option-like")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
-    public async Task TerminalModesRejectSourceInputBeforeWorkspaceSelection(
+    [Theory(DisplayName = "CLI Route Inspect terminal modes reject source input before workspace selection"),
+     InlineData("--help", "root"),
+     InlineData("--version", "root"),
+     InlineData("--help", "option-like"),
+     InlineData("--version", "option-like"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    public static async Task TerminalModesRejectSourceInputBeforeWorkspaceSelection(
         string terminalMode,
         string sourceKind)
     {
@@ -313,7 +359,7 @@ public sealed class RouteInspectApplicationIntegrationTests
                     "The terminal source case is not defined.");
         }
 
-        var result = await CliHostCapture.RunAsync(arguments.ToArray(), missingWorkspace);
+        var result = await CliHostCapture.RunAsync([.. arguments], missingWorkspace);
 
         Assert.Equal(4, result.ExitCode);
         Assert.Equal(string.Empty, result.Output);
@@ -323,8 +369,8 @@ public sealed class RouteInspectApplicationIntegrationTests
         Assert.False(Directory.Exists(missingWorkspace));
     }
 
-    [Fact(DisplayName = "CLI Route Inspect exact-path identity collision reports attention without an invented next action")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "CLI Route Inspect exact-path identity collision reports attention without an invented next action"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task ExactPathCollisionReportsAttentionWithoutNextAction()
     {
         using var workspace = CollisionWorkspace();
@@ -341,8 +387,8 @@ public sealed class RouteInspectApplicationIntegrationTests
         Assert.DoesNotContain("Next:", exactPath.Output, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "CLI Route Inspect unresolved identity collision retains candidates and its exact-path next action")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "CLI Route Inspect unresolved identity collision retains candidates and its exact-path next action"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task UnresolvedCollisionReturnsBlockedJsonWithCandidatesAndNext()
     {
         using var workspace = CollisionWorkspace();
@@ -367,8 +413,8 @@ public sealed class RouteInspectApplicationIntegrationTests
             blockedDocument.RootElement.GetProperty("next").GetProperty("reason").GetString());
     }
 
-    [Fact(DisplayName = "CLI Route Inspect unavailable real fact reports incomplete status and its doctor next action")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "CLI Route Inspect unavailable real fact reports incomplete status and its doctor next action"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task UnavailableFactReturnsIncompleteWithDoctorNextAction()
     {
         using var workspace = IncompleteWorkspace();
@@ -384,8 +430,8 @@ public sealed class RouteInspectApplicationIntegrationTests
         Assert.Contains("Next: open-forge doctor", incompleteResult.Output, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "CLI Route Inspect unknown source reports invalid status on stderr with its correction next action")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "CLI Route Inspect unknown source reports invalid status on stderr with its correction next action"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task UnknownSourceReturnsInvalidOnStderrWithNextAction()
     {
         using var workspace = CollisionWorkspace();
@@ -429,7 +475,7 @@ public sealed class RouteInspectApplicationIntegrationTests
     }
 
     private static void AddScalar(
-        ICollection<string> arguments,
+        List<string> arguments,
         string option,
         string value,
         string form)

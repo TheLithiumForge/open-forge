@@ -12,6 +12,64 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init;
 
 public sealed class RouteInitApplicationIntegrationTests
 {
+    [Fact(DisplayName = "Composed Route Init help retains exact shared exit and stream policy"),
+     Trait("Feature", "route-init"), Trait("Evidence", "Integration")]
+    public async Task HelpRetainsExactSharedExitAndStreamPolicy()
+    {
+        using var workspace = TemporaryWorkspace.Create("init-help-policy");
+        var before = workspace.SnapshotHashes();
+        var missing = workspace.Combine("missing");
+        var result = await CliHostCapture.RunAsync(["route", "init", "--help", "--workspace", missing], workspace.Path);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(string.Empty, result.Error);
+        Assert.Contains("open-forge route init", result.Output, StringComparison.Ordinal);
+        Assert.Contains("--dry-run", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("--automatic", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("--force", result.Output, StringComparison.Ordinal);
+        Assert.Contains("[--framework]", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Omit --dry-run to apply the complete preflighted plan.", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("--template", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("--yes", result.Output, StringComparison.Ordinal);
+        Assert.Contains("complete: exit 0 and human stdout.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("attention: exit 2 and human stdout.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("incomplete: exit 3 and human stdout.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("invalid: exit 4 and human stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("blocked: exit 5 and human stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("failed: exit 1 and human stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("interrupted: exit 130 and human stderr.", result.Output, StringComparison.Ordinal);
+        Assert.False(Directory.Exists(missing));
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Composed Route Init JSON dry-run keeps bounded diagnostics separate"),
+     Trait("Feature", "route-init"), Trait("Evidence", "Integration")]
+    public async Task JsonDryRunPreservesPrimaryDocumentWithVerboseDiagnostics()
+    {
+        using var workspace = TemporaryWorkspace.Create("init-json-diagnostics");
+        var before = workspace.SnapshotHashes();
+        string[] arguments =
+        [
+            "route", "init", "docs", "--description", "Project documents",
+            "--tag=Documentation", "--dry-run", "--json",
+        ];
+
+        var plain = await CliHostCapture.RunAsync(arguments, workspace.Path);
+        var verbose = await CliHostCapture.RunAsync([.. arguments, "--verbose"], workspace.Path);
+
+        Assert.Equal(0, plain.ExitCode);
+        Assert.Equal(string.Empty, plain.Error);
+        Assert.Equal(plain.ExitCode, verbose.ExitCode);
+        Assert.Equal(plain.Output, verbose.Output);
+        var diagnostic = Assert.Single(verbose.Error.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
+        Assert.InRange(diagnostic.Length, 1, 4095);
+        Assert.DoesNotContain('\r', diagnostic);
+        Assert.DoesNotContain('\n', diagnostic);
+        Assert.EndsWith(Environment.NewLine, verbose.Error, StringComparison.Ordinal);
+        Assert.Contains("status=complete; mode=dry-run", diagnostic, StringComparison.Ordinal);
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
     [Fact(DisplayName = "Composed root registers Route Init as one nested route leaf"), Trait("Feature", "route-init-presentation"), Trait("Evidence", "Integration")]
     public void ComposedRootRegistersOneNestedRouteInitLeaf()
     {
@@ -25,8 +83,9 @@ public sealed class RouteInitApplicationIntegrationTests
         Assert.Equal("init", selection.Command.Name);
         Assert.Equal(CliBindingSelectionState.Leaf, selection.State);
         Assert.False(tree.IsGroup(selection.Command));
-        Assert.NotNull(selection.Binding);
-        Assert.Same(selection.Command, selection.Binding!.Command);
+        var binding = selection.Binding;
+        Assert.NotNull(binding);
+        Assert.Same(selection.Command, binding.Command);
     }
 
     [Fact(DisplayName = "Composed Route parser accepts equals tag values and rejects separated tag values"), Trait("Feature", "route-init-presentation"), Trait("Evidence", "Integration")]

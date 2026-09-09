@@ -6,8 +6,8 @@ namespace OpenForge.Cli.Core.UnitTests.Shell;
 
 public sealed class PipelineTests
 {
-    [Fact(DisplayName = "CLI operation validates cancellation before effects")]
-    [Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "CLI operation validates cancellation before effects"),
+     Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
     public async Task OperationStageValidatesCancellationBeforeInvokingOperation()
     {
         var calls = 0;
@@ -27,8 +27,8 @@ public sealed class PipelineTests
         Assert.Equal(0, calls);
     }
 
-    [Fact(DisplayName = "CLI pipeline presents an interrupted result after operation cancellation")]
-    [Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "CLI pipeline presents an interrupted result after operation cancellation"),
+     Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
     public async Task PipelinePresentsInterruptedResultAfterOperationCancellation()
     {
         using var cancellation = new CancellationTokenSource();
@@ -53,8 +53,8 @@ public sealed class PipelineTests
         Assert.Equal("interrupted" + Environment.NewLine, standardError.ToString());
     }
 
-    [Fact(DisplayName = "CLI pipeline retains a complete result formed before later cancellation")]
-    [Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "CLI pipeline retains a complete result formed before later cancellation"),
+     Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
     public async Task PipelineRetainsCompleteResultFormedBeforeLaterCancellation()
     {
         using var cancellation = new CancellationTokenSource();
@@ -78,8 +78,8 @@ public sealed class PipelineTests
         Assert.Equal("complete" + Environment.NewLine, standardOutput.ToString());
     }
 
-    [Fact(DisplayName = "CLI pipeline invokes one operation and selected renderer")]
-    [Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "CLI pipeline invokes one operation and selected renderer"),
+     Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
     public async Task PipelineInvokesOneOperationAndOneSelectedRenderer()
     {
         var operationCalls = 0;
@@ -127,12 +127,15 @@ public sealed class PipelineTests
         Assert.Equal(CliOutputTarget.StandardOutput, completion.PrimaryOutputTarget);
     }
 
-    [Theory(DisplayName = "CLI human output and completion follow status policy")]
-    [Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
-    [InlineData((int)CliSemanticStatus.Failed, 1, (int)CliOutputTarget.StandardError)]
-    [InlineData((int)CliSemanticStatus.Attention, 2, (int)CliOutputTarget.StandardOutput)]
-    [InlineData((int)CliSemanticStatus.Invalid, 4, (int)CliOutputTarget.StandardError)]
-    [InlineData((int)CliSemanticStatus.Interrupted, 130, (int)CliOutputTarget.StandardError)]
+    [Theory(DisplayName = "CLI human output and completion follow status policy"),
+     Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit"),
+     InlineData((int)CliSemanticStatus.Complete, 0, (int)CliOutputTarget.StandardOutput),
+     InlineData((int)CliSemanticStatus.Incomplete, 3, (int)CliOutputTarget.StandardOutput),
+     InlineData((int)CliSemanticStatus.Blocked, 5, (int)CliOutputTarget.StandardError),
+     InlineData((int)CliSemanticStatus.Failed, 1, (int)CliOutputTarget.StandardError),
+     InlineData((int)CliSemanticStatus.Attention, 2, (int)CliOutputTarget.StandardOutput),
+     InlineData((int)CliSemanticStatus.Invalid, 4, (int)CliOutputTarget.StandardError),
+     InlineData((int)CliSemanticStatus.Interrupted, 130, (int)CliOutputTarget.StandardError)]
     public async Task HumanOutputAndCompletionFollowStatusPolicy(
         int statusValue,
         int exitCode,
@@ -156,8 +159,8 @@ public sealed class PipelineTests
         Assert.Equal(target == CliOutputTarget.StandardError ? "human" + Environment.NewLine : string.Empty, standardError.ToString());
     }
 
-    [Fact(DisplayName = "CLI rendering rejects unknown presentation before effects")]
-    [Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "CLI rendering rejects unknown presentation before effects"),
+     Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
     public void RenderingRejectsUnknownPresentationBeforeRendererEffects()
     {
         var calls = 0;
@@ -180,8 +183,8 @@ public sealed class PipelineTests
         Assert.Equal(0, calls);
     }
 
-    [Fact(DisplayName = "CLI output validates messages before writer effects")]
-    [Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "CLI output validates messages before writer effects"),
+     Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
     public async Task OutputStageValidatesBeforeWriterEffects()
     {
         var standardOutput = new CountingWriter();
@@ -202,8 +205,8 @@ public sealed class PipelineTests
         Assert.Equal(0, standardError.Writes);
     }
 
-    [Fact(DisplayName = "CLI output rejects a defined target that violates status policy")]
-    [Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "CLI output rejects a defined target that violates status policy"),
+     Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
     public async Task OutputStageRejectsDefinedButIncorrectTarget()
     {
         var standardOutput = new CountingWriter();
@@ -224,8 +227,8 @@ public sealed class PipelineTests
         Assert.Equal(0, standardError.Writes);
     }
 
-    [Fact(DisplayName = "CLI renderer selection is cached and finite")]
-    [Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "CLI renderer selection is cached and finite"),
+     Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
     public void RendererSelectionIsCachedAndFinite()
     {
         static string Human(CliPresentationRequest<TestResult> presentation) => "human";

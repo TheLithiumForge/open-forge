@@ -252,11 +252,7 @@ internal sealed class LibrarySyncOperation
             if (preparation.State is not (RecoveryBundlePreparationState.Prepared
                 or RecoveryBundlePreparationState.NotNeeded))
             {
-                var evidence = preparation.State == RecoveryBundlePreparationState.Cancelled
-                    ? LibraryMutationOperationSupport.Empty(new LibraryCancellationFact(LibraryExecutionStage.RecoveryPreparation))
-                    : LibraryMutationOperationSupport.Empty(unexpected: new LibraryUnexpectedFailureFact(
-                        LibraryExecutionStage.RecoveryPreparation,
-                        preparation.Cause ?? "Library recovery preparation is unavailable."));
+                var evidence = LibraryMutationOperationSupport.Empty() with { RecoveryPreparationOutcome = preparation };
                 return Complete(request, plan, observations, evidence);
             }
 
@@ -268,7 +264,7 @@ internal sealed class LibrarySyncOperation
                     RecoveryPreparation = preparation.Preparation,
                 },
                 cancellationToken).ConfigureAwait(false);
-            var execution = outcome.Execution;
+            var execution = outcome.Execution with { RecoveryPreparationOutcome = preparation };
             if (execution.Cancellation is null && execution.UnexpectedFailure is null && execution.Permission?.Failure is null)
             {
                 execution = LibraryMutationOperationSupport.WithCleanup(

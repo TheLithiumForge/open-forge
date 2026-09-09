@@ -6,6 +6,88 @@ open-forge:
 
 # CLI Development Flow Evaluation
 
+## Task 21 Bounded Recheck Outcome
+
+The continuous Astra/high author and reviewer required a second bounded
+correction after C1: one omitted serialized References source-path assertion
+and inaccurate Init/Update branch mappings remained. C2 added four test lines
+and corrected only those records. The same reviewer accepted the exact value
+proof and nine repaired helper mappings. Root preserved failed packets and
+stopped an unqualified native run when the missing assertion was confirmed.
+
+The fresh build changed 22 runtime files despite the small source delta, so
+root reran the full managed gate: all 4,593 cases passed. This is evidence that
+small diffs still need actual runtime identity checks for reuse. It also shows
+that this model allocation needed review correction; no comparable Sol run,
+quality superiority or cost saving is established by these receipts.
+
+## Task 21 Assertion Reconciliation
+
+The independent review found that method-level evidence ownership could point
+to an executed test proving a different branch or fact. The grouped correction
+used claim-level conditions and concrete assertion locators, adding missing
+composed help, human rendering and serialized evidence. Root caught two further
+receipt overclaims: four ordinary status rows were described as seven, and
+terminal help was attributed to the ordinary result pipeline. Three literal
+status rows and real terminal-help evidence corrected those boundaries.
+
+Two new fixture mistakes failed focused Integration execution: a Create
+unchanged-path set omitted an explicitly seeded entrypoint, and a List fixture
+used an unroutable leaf as its root. The author corrected the exact fixtures
+without changing production or weakening expected outcomes. The final seventeen
+test files passed focused evidence and then 4,593 full managed cases. Failed
+attempts remain preserved; the same reviewer rechecks semantic sufficiency.
+
+This supports requiring actual scenario/branch agreement when preserving
+assertions. It does not establish model superiority or justify a broader new
+mandatory workflow. The pre-existing Install DTO self-assignment test remains
+a separate Task 27 candidate rather than incidental cleanup inside this fix.
+
+## Task 21 Final Evidence Qualification
+
+Astra/high completed the focused candidate with 980 qualified passing cases,
+separate behavior/Blue/Purple commits and explicit assertion dispositions.
+The process also exposed authoring mistakes: unsupported new Create help
+expectations, invalid repeated Init creation metadata, an attribute-formatting
+script that corrupted a fixture closing brace, and three pre-existing null
+suppressions retained in two touched tests. Root checks and the compiler caught
+these before M3; the author corrected them and retained failed receipts.
+Formatter success alone did not establish compilation or directive compliance.
+
+Root initially diagnosed the Init failure from a newer working file. The author
+challenged that diagnosis with archived executed source and the existing
+metadata rule. Source-bound failure evidence protected accepted behavior from
+an unnecessary production change. The final two test-only corrections changed
+only Integration runtime bytes; fresh Unit/Integration execution and exact
+public-runtime identity justified bounded reuse of the passing public run.
+These observations support the checks used here, not a model superiority claim
+or a requirement to repeat all gates after every unchanged input.
+
+## Task 21 Isolated Commits And Authority Editing
+
+On 2026-09-09, the Astra/high implementation draft combined three behavior
+corrections, two Library refactors and incomplete test allocation. The maintainer
+then required isolated behavior, Blue and Purple commits. Root preserved every
+draft path and validated reconstructed behavior-only blobs in a separate local
+worktree: 64 Unit and 90 Integration cases passed without skips, and the build
+had zero warnings/errors. Eight production blobs matched the earlier passing
+defect-fix hashes; the final orphan correction and two new test files needed
+fresh evidence. Hash agreement narrowed reuse but did not replace missing proof.
+
+Informational formatting exposed one newly stateless Route Inspect method.
+Converting it to static also needs three literal test receiver adaptations.
+Freezing assertions and fixtures separately from unavoidable invocation spelling
+allows a coherent structural change without weakening evidence or adding fake
+state merely to satisfy an analyzer. This exception is specific and inspectable;
+it does not authorize test pruning inside production refactoring.
+
+A separate Astra/high authority writer updated the six-target delivery scope.
+Root caught one broad row replacement that confused Work Graph D1 with Decision
+Points D1, overwriting an unrelated physical-identity decision. The writer
+restored that exact decision row and checked the other table contexts. Stable
+IDs need their owning section when a document reuses labels. No matched model
+comparison was performed; these outcomes do not prove Astra superior to Sol.
+
 This Emerging Observation compares the current replacement-CLI flow with the
 earlier implementation and reset flows. It is contextual evidence, not an
 accepted workflow rule.

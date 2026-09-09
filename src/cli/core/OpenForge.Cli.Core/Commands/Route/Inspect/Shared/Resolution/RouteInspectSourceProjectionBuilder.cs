@@ -10,55 +10,13 @@ using OpenForge.Cli.Core.Framework.Sources.Reading;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 
-internal sealed class RouteInspectSourceProjectionBuilder
+internal static class RouteInspectSourceProjectionBuilder
 {
-    internal async ValueTask<RouteSourceProjectionBuildResult> ReadAsync(
+    internal static async ValueTask<RouteSourceProjectionBuildResult> ReadAsync(
         SourceCatalogueSelection selection,
         SourceDocumentReader reader,
         CancellationToken cancellationToken)
     {
-        var projectionModes = selection.Sources.ToDictionary(
-            source => source.Identity.CanonicalBasePath,
-            _ => RouteSourceLayerProjection.ExactLayers,
-            StringComparer.Ordinal);
-        var overwritePlans = new List<OverwritePlan>();
-        foreach (var candidate in selection.Candidates
-                     .Where(candidate => candidate.Form == SourceDocumentForm.OverwriteCompanion))
-        {
-            var bases = selection.Sources
-                .Where(source => string.Equals(
-                    source.Identity.AutomaticId,
-                    SourceIdentity.DeriveId(candidate.CanonicalPath),
-                    StringComparison.Ordinal))
-                .OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
-                .ToArray();
-            if (bases.Length >= 2)
-            {
-                foreach (var source in bases)
-                {
-                    projectionModes[source.Identity.CanonicalBasePath] = RouteSourceLayerProjection.BaseOnly;
-                }
-
-                overwritePlans.Add(new OverwritePlan(
-                    candidate,
-                    RouteOverwriteState.Ambiguous,
-                    bases.Select(source => source.Identity.CanonicalBasePath).ToArray()));
-                continue;
-            }
-
-            var isAdjacent = bases.Length == 1
-                && string.Equals(
-                    bases[0].Overwrite?.CanonicalPath,
-                    candidate.CanonicalPath,
-                    StringComparison.Ordinal);
-            overwritePlans.Add(new OverwritePlan(
-                candidate,
-                isAdjacent ? RouteOverwriteState.Paired : RouteOverwriteState.Orphan,
-                isAdjacent || bases.Length == 0
-                    ? []
-                    : [bases[0].Identity.CanonicalBasePath]));
-        }
-
         var projector = new RouteSourceProjector();
         var projections = new List<RouteSourceProjection>();
         foreach (var source in selection.Sources)
@@ -66,14 +24,15 @@ internal sealed class RouteInspectSourceProjectionBuilder
             projections.Add(await projector
                 .ReadAsync(
                     source,
-                    projectionModes[source.Identity.CanonicalBasePath],
+                    RouteSourceLayerProjection.ExactLayers,
                     reader,
                     cancellationToken)
                 .ConfigureAwait(false));
         }
 
         var overwriteFacts = new List<RouteOverwriteFact>();
-        var pairedPaths = new HashSet<string>(StringComparer.Ordinal);
+        var pairedPaths = selection.Sources.Where(source => source.Overwrite is not null)
+            .Select(source => source.Overwrite?.CanonicalPath).ToHashSet(StringComparer.Ordinal);
         foreach (var projection in projections)
         {
             if (projection.Source?.Overwrite is not { } overwrite)
@@ -81,7 +40,6 @@ internal sealed class RouteInspectSourceProjectionBuilder
                 continue;
             }
 
-            pairedPaths.Add(overwrite.CanonicalLogicalPath);
             overwriteFacts.Add(new RouteOverwriteFact(
                 RouteOverwriteState.Paired,
                 overwrite,
@@ -89,17 +47,15 @@ internal sealed class RouteInspectSourceProjectionBuilder
         }
 
         var sourceLessReads = new List<SourceDocumentReadResult>();
-        foreach (var plan in overwritePlans
-                     .Where(plan => plan.State != RouteOverwriteState.Paired
-                         && plan.Candidate.PhysicalState == PhysicalPathState.Contained
-                         && !pairedPaths.Contains(plan.Candidate.CanonicalPath)))
+        foreach (var candidate in selection.Candidates.Where(candidate => candidate.Form == SourceDocumentForm.OverwriteCompanion
+            && candidate.PhysicalState == PhysicalPathState.Contained && !pairedPaths.Contains(candidate.CanonicalPath)))
         {
-            var layer = ToLayer(plan.Candidate);
+            var layer = ToLayer(candidate);
             var read = await reader.ReadAsync(layer, cancellationToken).ConfigureAwait(false);
-            overwriteFacts.Add(new RouteOverwriteFact(
-                plan.State,
-                ToRouteDocument(read),
-                plan.CandidateBasePaths));
+            var relatedPaths = selection.Sources
+                .Where(source => string.Equals(source.Identity.AutomaticId, SourceIdentity.DeriveId(candidate.CanonicalPath), StringComparison.Ordinal))
+                .Select(source => source.Identity.CanonicalBasePath).Order(StringComparer.Ordinal).ToArray();
+            overwriteFacts.Add(new RouteOverwriteFact(RouteOverwriteState.Orphan, ToRouteDocument(read), relatedPaths));
             sourceLessReads.Add(read);
         }
 
@@ -155,8 +111,4 @@ internal sealed class RouteInspectSourceProjectionBuilder
             : FileReadState.InputOutputFailure;
     }
 
-    private sealed record OverwritePlan(
-        SourceCandidate Candidate,
-        RouteOverwriteState State,
-        IReadOnlyList<string> CandidateBasePaths);
 }

@@ -38,6 +38,8 @@ defines group help and command order only.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - [Accepted technology-neutral behavior for bounded read-only Library list observations](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #List #Behavior #ReadOnly #Determinism #CurrentTruth
-- [Accepted public interface for bounded read-only Library list observations](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #List #Interface #ReadOnly #CurrentTruth
+- [Accepted public interface for bounded read-only Library list observations](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #List #Interface #ReadOnly #Workspace #CurrentTruth
+
 <!-- open-forge:generated-index:end -->

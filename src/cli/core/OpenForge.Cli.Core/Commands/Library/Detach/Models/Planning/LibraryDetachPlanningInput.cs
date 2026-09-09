@@ -10,13 +10,15 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 
 namespace OpenForge.Cli.Core.Commands.Library.Detach.Models.Planning;
 
-internal sealed record LibraryDetachPlanningInput
+internal sealed record LibraryDetachPlanningInput : ILibraryMutationObservation
 {
     public required LibraryDetachRequest Request { get; init; }
 
     public required LibraryConsumerBoundaryFacts ConsumerBoundary { get; init; }
 
     public required LibrariesRecordRead Record { get; init; }
+
+    LibraryInventoryRead? ILibraryMutationObservation.Source => null;
 
     public required ImmutableArray<LibraryMappingObservation> Mappings { get; init; }
 

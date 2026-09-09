@@ -48,11 +48,13 @@ discuss an old idea before carrying it into the replacement.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - [Current cross-cutting structure and invariants for the greenfield C# replacement CLI](architecture.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #Architecture #Greenfield #DotNet #NativeAOT #Testing #Release
 - [Accepted current replacement CLI command-contract roles, topology, and authority boundaries](command-contract-set.md) - #Memory #Crystallized #CLI #Release #Document #Evergreen #CurrentTruth #Contract #Set #Interface #Behavior #TechnicalDesign #Routing #Locality
 - [Accepted detailed command contracts for the non-shipping replacement Open Forge CLI after Gate 2 and Gate 3 closeout](contracts/_contracts.md) - #Memory #Crystallized #CLI #Release #Command #Interface #Contract #CurrentTruth #Evergreen #Architecture
-- [Accepted public package graph, x64 platform horizon, staging, packing, checksum, proof, and publication boundary for the replacement CLI](distribution.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #Distribution #Npm #NativeAOT #Release
+- [Accepted public package graph, x64 and ARM64 platform horizon, staging, packing, checksum, proof, and publication boundary for the replacement CLI](distribution.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #Distribution #Npm #NativeAOT #Release
 - [Historical frozen Open Forge CLI MVP role, command surface, deterministic state, safety model, verification boundary, proven properties, and liabilities](mvp-architecture.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #Architecture #CLI #MVP #Tooling #Legacy
 - [Accepted current shared operation contract for the non-shipping Open Forge CLI](shared-operation-contract.md) - #Memory #Crystallized #CLI #Release #Document #Evergreen #CurrentTruth #Contract #Operation #Shared #Interface #Behavior #Determinism #Output #Safety #Locality
 - [Concrete designs for shared replacement CLI capabilities whose exact realization does not belong in system Architecture](technical-designs/_technical-designs.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Implementation
+
 <!-- open-forge:generated-index:end -->

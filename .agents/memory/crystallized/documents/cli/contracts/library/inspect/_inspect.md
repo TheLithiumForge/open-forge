@@ -38,6 +38,8 @@ defines group help and the exact command order only.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Accepted technology-neutral behavior for complete Library inventory and projection comparison](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Inspect #Behavior #ReadOnly #Determinism #CurrentTruth
-- [Accepted public interface for complete Library inventory and projection comparison](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Inspect #Interface #ReadOnly #CurrentTruth
+
+- [Accepted technology-neutral behavior for complete Library inventory and exact projection comparison](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Inspect #Behavior #ReadOnly #Determinism #CurrentTruth
+- [Accepted public interface for complete Library inventory and exact projection comparison](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Inspect #Interface #ReadOnly #Workspace #CurrentTruth
+
 <!-- open-forge:generated-index:end -->

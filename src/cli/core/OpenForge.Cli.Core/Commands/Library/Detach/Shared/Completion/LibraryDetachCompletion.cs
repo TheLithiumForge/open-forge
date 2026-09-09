@@ -68,10 +68,7 @@ internal static class LibraryDetachCompletion
                     input.Request.LibraryId.Value,
                     plan?.IntendedRecord),
                 Projection = LibraryMutationCompletionProjection.Projection(
-                    observations?.Record,
-                    source: null,
-                    observations?.Mappings,
-                    observations?.Ownership,
+                    observations,
                     input.Request.LibraryId.Value,
                     planState,
                     sourceIndependent: true),
@@ -126,6 +123,18 @@ internal static class LibraryDetachCompletion
         LibraryExecutionEvidence execution,
         string libraryId)
     {
+        if (LibraryMutationCompletionProjection.PreparationStatus(execution.RecoveryPreparationOutcome?.State) is { } preparationStatus)
+        {
+            findings.Add(new LibraryDetachFinding
+            {
+                Code = preparationStatus == CliSemanticStatus.Interrupted ? LibraryDetachFindingCode.Interrupted : LibraryDetachFindingCode.RecoveryUnavailable,
+                Status = preparationStatus,
+                LibraryId = libraryId,
+                Path = execution.RecoveryPreparationOutcome?.ResidualPath,
+                Cause = execution.RecoveryPreparationOutcome?.Cause ?? "Library recovery preparation was interrupted.",
+            });
+        }
+
         if (execution.UnexpectedFailure is { } failure)
         {
             findings.Add(new LibraryDetachFinding

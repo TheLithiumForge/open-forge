@@ -6,7 +6,6 @@ namespace OpenForge.Cli.EndToEndTests;
 
 internal sealed class PublishedRouteUpdateWorkspace : IDisposable
 {
-    private const int VerificationBodyLength = 16 * 1024 * 1024;
 
     internal const string ParentPath = ".agents/memory/project-alpha/_project-alpha.md";
     internal const string TargetId = "memory/project-alpha/overview";
@@ -88,8 +87,6 @@ internal sealed class PublishedRouteUpdateWorkspace : IDisposable
             Encoding.UTF8,
             cancellationToken);
 
-    internal string ReadParent()
-        => File.ReadAllText(_temporary.Combine(ParentPath), Encoding.UTF8);
 
     internal void RemoveTemplate() => File.Delete(_temporary.Combine(TemplatePath));
 
@@ -108,21 +105,8 @@ internal sealed class PublishedRouteUpdateWorkspace : IDisposable
             + "  responsibility: Owns the overview\n"
             + "  tags: [Before, Memory]\n---\n");
 
-    internal void SeedVerificationWindow()
-        => _temporary.ReplaceText(
-            TargetPath,
-            TargetDocument() + new string('x', VerificationBodyLength) + "\n");
 
-    internal void MutateTargetAfterApplication()
-        => _temporary.ReplaceText(
-            TargetPath,
-            TargetDocument().Replace(
-                "Before overview",
-                "Concurrent overview",
-                StringComparison.Ordinal));
 
-    internal IReadOnlyList<string> RemoveRetainedRecoveryArtifacts()
-        => _lockStore.RemoveRecoveryArtifacts(Path);
 
     internal void AssertNoLockInfrastructure() => _lockStore.AssertNoInfrastructure();
 

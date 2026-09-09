@@ -8,6 +8,43 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Create;
 
 public sealed class RouteCreatePresentationTests
 {
+    [Fact(DisplayName = "Route Create dry-run JSON retains literal changes and unavailable values"),
+     Trait("Feature", "route-create"), Trait("Evidence", "Unit")]
+    public void DryRunJsonRetainsExactChangeValues()
+    {
+        var formation = RouteCreateTestData.PreviewFormation(mode: OpenForge.Cli.Core.Commands.Route.Create.Models.Request.RouteCreateMode.DryRun) with
+        {
+            Effects = [RouteCreateTestData.CreateEffect(), RouteCreateTestData.ParentEffect()],
+            Recovery = new RouteCreateRecovery { State = RouteCreateRecoveryState.NotCreated, ResidualPath = null },
+        };
+        var presentation = new CliPresentationRequest<RouteCreateResult>(RouteCreateTestData.Result(formation),
+            new CliPresentation(CliOutputFormat.Json, CliView.Compact, CliVerbosity.Normal));
+        using var document = JsonDocument.Parse(RouteCreateJsonRenderer.Render(presentation));
+        var root = document.RootElement;
+        var result = root.GetProperty("result");
+
+        Assert.Equal("complete", root.GetProperty("status").GetString());
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
+        Assert.Equal("dry-run", result.GetProperty("mode").GetString());
+        Assert.Equal(JsonValueKind.Null, result.GetProperty("template").ValueKind);
+        var effects = result.GetProperty("effects").EnumerateArray().ToArray();
+        Assert.Equal([RouteCreateTestData.TargetPath, RouteCreateTestData.ParentPath], effects.Select(effect => effect.GetProperty("path").GetString()));
+        Assert.Equal(["routed-file", "generated-region"], effects.Select(effect => effect.GetProperty("kind").GetString()));
+        Assert.Equal(["create", "replace"], effects.Select(effect => effect.GetProperty("action").GetString()));
+        Assert.Equal(JsonValueKind.Null, effects[0].GetProperty("change").GetProperty("before").ValueKind);
+        Assert.Equal("target-content-hash", effects[0].GetProperty("change").GetProperty("expected").GetString());
+        Assert.Equal("parent-before-hash", effects[1].GetProperty("change").GetProperty("before").GetString());
+        Assert.Equal("parent-expected-hash", effects[1].GetProperty("change").GetProperty("expected").GetString());
+        Assert.All(effects, effect =>
+        {
+            Assert.Equal("planned", effect.GetProperty("outcome").GetString());
+            Assert.Equal("none", effect.GetProperty("residual").GetString());
+        });
+        Assert.Equal("not-created", result.GetProperty("recovery").GetProperty("state").GetString());
+        Assert.Equal("not-requested", result.GetProperty("verification").GetString());
+        Assert.Empty(result.GetProperty("findings").EnumerateArray());
+    }
+
     [Fact(DisplayName = "Route Create human renderer emits the accepted complete projection"), Trait("Feature", "route-create"), Trait("Evidence", "UnitBehavior")]
     public void HumanRendererEmitsAcceptedCompleteProjection()
     {

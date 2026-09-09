@@ -76,9 +76,11 @@ Contract, and it does not define the mutation commands' plans or effects.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Route the accepted read-only Library list contracts for bounded record and link observations](list/_list.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #List #Interface #Behavior #ReadOnly #CurrentTruth
+
+- [Route the public attach contract for registering one contained Workspace Library and projecting its complete eligible inventory](attach/_attach.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Attach #Mutation #Recovery #Safety #CurrentTruth
+- [Route the public detach contract for removing one complete registered Workspace Library projection without touching its source](detach/_detach.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Detach #Mutation #Recovery #Safety #CurrentTruth
 - [Route the accepted read-only Library inspect contracts for one exact library ID](inspect/_inspect.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Inspect #Interface #Behavior #ReadOnly #CurrentTruth
-- [Route the accepted Library attach contracts for one contained source root](attach/_attach.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Attach #Mutation #Recovery #Safety #CurrentTruth
-- [Route the accepted Library sync contracts for one registered source root](sync/_sync.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Sync #Mutation #Recovery #Safety #CurrentTruth
-- [Route the accepted Library detach contracts for one registered source root](detach/_detach.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Detach #Mutation #Recovery #Safety #CurrentTruth
+- [Route the accepted read-only Library list contracts for bounded record and registered-link observations](list/_list.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #List #Interface #Behavior #ReadOnly #CurrentTruth
+- [Route the public sync contract for reconciling one registered Workspace Library with its complete current inventory](sync/_sync.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Sync #Mutation #Recovery #Safety #CurrentTruth
+
 <!-- open-forge:generated-index:end -->

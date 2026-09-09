@@ -95,7 +95,7 @@ internal static class LibrarySyncRequestBinder
                 Record = LibraryMutationCompletionProjection.Record(read: null, id, intended: null),
                 Source = LibraryMutationCompletionProjection.Source(read: null, destinationRoot: null),
                 Projection = LibraryMutationCompletionProjection.Projection(
-                    record: null, source: null, mappings: null, ownership: null, id,
+                    observation: null, id,
                     LibraryPlanState.NotStarted, sourceIndependent: false),
                 Plan = LibraryMutationCompletionProjection.NotPlanned(),
                 Application = LibraryMutationCompletionProjection.NotStarted(),

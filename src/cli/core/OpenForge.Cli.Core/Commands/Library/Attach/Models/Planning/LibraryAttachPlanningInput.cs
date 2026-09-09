@@ -10,7 +10,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 
 namespace OpenForge.Cli.Core.Commands.Library.Attach.Models.Planning;
 
-internal sealed record LibraryAttachPlanningInput
+internal sealed record LibraryAttachPlanningInput : ILibraryMutationObservation
 {
     public required LibraryAttachRequest Request { get; init; }
 

@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Library.Inspect.Models.Request;
+using OpenForge.Cli.Core.Commands.Library.Inspect.Shared.Comparison;
 using OpenForge.Cli.Core.Commands.Library.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Observation;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Observation;
@@ -77,9 +78,6 @@ internal sealed class LibraryInspectOperation
         LibraryRecord selected,
         CancellationToken cancellationToken)
     {
-        var registered = selected.Paths
-            .Select(sourcePath => Registered(selected, sourcePath))
-            .ToArray();
         var source = LibrarySourceRootReader.Read(
             resolver,
             new LibrarySourceRootRequest
@@ -90,7 +88,7 @@ internal sealed class LibraryInspectOperation
             cancellationToken);
         if (source.State != LibrarySourceRootState.Available)
         {
-            return FromSourceBoundary(request, selected, registered, source);
+            return FromSourceBoundary(request, selected, LibraryInspectComparisonReader.RegisteredPaths(selected), source);
         }
 
         var inventoryRead = await LibraryInventoryReader.ReadAsync(
@@ -98,10 +96,6 @@ internal sealed class LibraryInspectOperation
             source,
             cancellationToken).ConfigureAwait(false);
         var inventory = inventoryRead.Inventory;
-        var eligibleEntries = inventory?.Entries ?? [];
-        var eligible = eligibleEntries
-            .Select(entry => Eligible(LibraryPathIdentity.Map(selected.SourceRoot, selected.DestinationRoot, entry.SourcePath)))
-            .ToArray();
         var findings = new List<LibraryInspectFinding>();
         if (inventory is null || inventory.State != LibraryInventoryState.Complete)
         {
@@ -119,16 +113,9 @@ internal sealed class LibraryInspectOperation
             });
         }
 
-        var comparisons = ObserveComparisons(
-            resolver,
-            request,
-            selected,
-            registered,
-            eligible,
-            inventory?.State == LibraryInventoryState.Complete,
-            findings,
-            cancellationToken);
-        var projection = SelectProjection(inventory, comparisons);
+        var comparison = new LibraryInspectComparisonReader(resolver, request.Workspace).Read(selected, inventory, cancellationToken);
+        findings.AddRange(comparison.Findings);
+        var projection = SelectProjection(inventory, comparison.Comparisons);
         var status = SelectStatus(findings);
         return new LibraryInspectResult
         {
@@ -143,137 +130,23 @@ internal sealed class LibraryInspectOperation
                     Id = selected.Id.Value,
                     SourceRoot = selected.SourceRoot.Value,
                     DestinationRoot = selected.DestinationRoot.Value,
-                    RegisteredPaths = registered,
+                    RegisteredPaths = comparison.RegisteredPaths,
                 },
                 Source = new LibraryInspectSourceView
                 {
                     RootState = LibrarySourceRootViewState.Available,
                     State = ReadInventoryState(inventory),
-                    EligiblePaths = eligible,
+                    EligiblePaths = comparison.EligiblePaths,
                 },
                 Projection = new LibraryInspectProjectionView
                 {
                     State = projection,
-                    Comparisons = comparisons,
+                    Comparisons = comparison.Comparisons,
                 },
                 Findings = [.. findings],
             },
         };
     }
-
-    private static LibraryPathComparison[] ObserveComparisons(
-        PhysicalPathResolver resolver,
-        LibraryInspectRequest request,
-        LibraryRecord selected,
-        IReadOnlyList<LibraryRegisteredPath> registered,
-        IReadOnlyList<LibraryEligiblePath> eligible,
-        bool inventoryComplete,
-        ICollection<LibraryInspectFinding> findings,
-        CancellationToken cancellationToken)
-    {
-        var registeredByPath = registered.ToDictionary(
-            path => path.SourcePath,
-            StringComparer.Ordinal);
-        var eligibleByPath = eligible.ToDictionary(
-            path => path.SourcePath,
-            StringComparer.Ordinal);
-        var paths = new SortedSet<string>(registeredByPath.Keys, StringComparer.Ordinal);
-        paths.UnionWith(eligibleByPath.Keys);
-        var comparisons = new List<LibraryPathComparison>(paths.Count);
-        foreach (var path in paths)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var sourcePath = Framework.Libraries.Models.Identity.SourceRelativeEligiblePath.Create(path);
-            var mapping = LibraryPathIdentity.Map(selected.SourceRoot, selected.DestinationRoot, sourcePath);
-            var observation = LibraryMappingObserver.Observe(
-                resolver,
-                new LibraryMappingObservationRequest
-                {
-                    Workspace = request.Workspace,
-                    Mapping = mapping,
-                },
-                cancellationToken);
-            registeredByPath.TryGetValue(path, out var registeredPath);
-            var isEligible = eligibleByPath.ContainsKey(path);
-            var relation = ReadRelation(
-                observation.State,
-                registeredPath is not null,
-                isEligible,
-                inventoryComplete);
-            comparisons.Add(new LibraryPathComparison
-            {
-                SourcePath = path,
-                DestinationPath = observation.Mapping.DestinationPath.Value,
-                SourceId = SourceIdentity.DeriveId(observation.Mapping.DestinationPath.Value),
-                Relation = relation,
-                Registered = registeredPath,
-                ObservedRelativeLink = observation.Leaf.RelativeFileLink?.RawRelativeTarget,
-            });
-            AddComparisonFinding(findings, selected, mapping.DestinationPath.Value, relation, observation.Cause);
-        }
-
-        return [.. comparisons];
-    }
-
-    private static LibraryComparisonRelation ReadRelation(
-        LibraryMappingObservationState observation,
-        bool registered,
-        bool eligible,
-        bool inventoryComplete)
-    {
-        if (observation == LibraryMappingObservationState.Blocked)
-        {
-            return LibraryComparisonRelation.Blocked;
-        }
-
-        if (observation == LibraryMappingObservationState.Unavailable)
-        {
-            return LibraryComparisonRelation.Unavailable;
-        }
-
-        if (registered && eligible)
-        {
-            return observation switch
-            {
-                LibraryMappingObservationState.Current => LibraryComparisonRelation.Current,
-                LibraryMappingObservationState.Missing => LibraryComparisonRelation.Missing,
-                LibraryMappingObservationState.Changed => LibraryComparisonRelation.Changed,
-                _ => throw new ArgumentOutOfRangeException(nameof(observation), observation, "The mapping observation state is not defined."),
-            };
-        }
-
-        if (eligible)
-        {
-            return LibraryComparisonRelation.Added;
-        }
-
-        return inventoryComplete
-            ? LibraryComparisonRelation.Retired
-            : LibraryComparisonRelation.Unavailable;
-    }
-
-    private static LibraryRegisteredPath Registered(
-        LibraryRecord selected,
-        Framework.Libraries.Models.Identity.SourceRelativeEligiblePath sourcePath)
-    {
-        var mapping = LibraryPathIdentity.Map(selected.SourceRoot, selected.DestinationRoot, sourcePath);
-        return new LibraryRegisteredPath
-        {
-            SourcePath = sourcePath.Value,
-            DestinationPath = mapping.DestinationPath.Value,
-            ExpectedRelativeLink = mapping.ExpectedRelativeLink.Value,
-            SourceId = SourceIdentity.DeriveId(mapping.DestinationPath.Value),
-        };
-    }
-
-    private static LibraryEligiblePath Eligible(
-        LibraryMapping mapping)
-        => new()
-        {
-            SourcePath = mapping.SourcePath.Value,
-            DestinationPath = mapping.DestinationPath.Value,
-            SourceId = SourceIdentity.DeriveId(mapping.DestinationPath.Value),
-        };
 
     private static LibraryInspectResult FromRecordBoundary(
         LibraryInspectRequest request,
@@ -462,40 +335,6 @@ internal sealed class LibraryInspectOperation
             || comparisons.Any(comparison => comparison.Relation == LibraryComparisonRelation.Unavailable)
             ? LibraryCoverage.Incomplete
             : LibraryCoverage.Complete;
-    }
-
-    private static void AddComparisonFinding(
-        ICollection<LibraryInspectFinding> findings,
-        LibraryRecord selected,
-        string path,
-        LibraryComparisonRelation relation,
-        string? cause)
-    {
-        (LibraryInspectFindingCode Code, CliSemanticStatus Status, string Cause)? mapped = relation switch
-        {
-            LibraryComparisonRelation.Current => null,
-            LibraryComparisonRelation.Added => (LibraryInspectFindingCode.PathAdded, CliSemanticStatus.Attention, "The eligible source path is not registered."),
-            LibraryComparisonRelation.Retired => (LibraryInspectFindingCode.PathRetired, CliSemanticStatus.Attention, "The registered path is absent from the complete source inventory."),
-            LibraryComparisonRelation.Missing => (LibraryInspectFindingCode.LinkMissing, CliSemanticStatus.Attention, "The eligible registered destination is absent."),
-            LibraryComparisonRelation.Changed => (LibraryInspectFindingCode.LinkChanged, CliSemanticStatus.Attention, "The eligible registered destination differs from its expected relative link."),
-            LibraryComparisonRelation.Blocked => (LibraryInspectFindingCode.LinkBlocked, CliSemanticStatus.Blocked, cause ?? "The Library destination is unsafe."),
-            LibraryComparisonRelation.Unavailable => (LibraryInspectFindingCode.InventoryIncomplete, CliSemanticStatus.Incomplete, cause ?? "The required Library path facts are incomplete."),
-            LibraryComparisonRelation.NotStarted => null,
-            _ => throw new ArgumentOutOfRangeException(nameof(relation), relation, "The Library comparison relation is not defined."),
-        };
-        if (mapped is not { } finding)
-        {
-            return;
-        }
-
-        findings.Add(new LibraryInspectFinding
-        {
-            Code = finding.Code,
-            Status = finding.Status,
-            LibraryId = selected.Id.Value,
-            Path = path,
-            Cause = finding.Cause,
-        });
     }
 
     private static CliSemanticStatus SelectStatus(

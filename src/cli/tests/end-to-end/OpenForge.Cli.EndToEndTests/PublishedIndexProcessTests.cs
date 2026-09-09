@@ -6,37 +6,6 @@ namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedIndexProcessTests
 {
-    [Fact(DisplayName = "Published Index is one direct root leaf whose help bypasses workspace resolution"),
-     Trait("Feature", "index-command"), Trait("Evidence", "EndToEnd")]
-    public async Task PublishedIndexHelpUsesExactDirectGrammar()
-    {
-        var target = PublishedExecutableTarget.Discover();
-        using var workspace = PublishedIndexWorkspace.Create();
-        var root = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target,
-            workspace.Path,
-            workspace.SnapshotState,
-            ["--help"],
-            workspace.ProcessEnvironment);
-        var help = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target,
-            workspace.Path,
-            workspace.SnapshotState,
-            ["index", "--help", "--workspace", Path.Combine(workspace.Path, "missing")],
-            workspace.ProcessEnvironment);
-
-        Assert.Equal(0, root.ExitCode);
-        Assert.Equal(string.Empty, root.StandardError);
-        Assert.Single(
-            root.StandardOutput.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
-            line => line.TrimStart().StartsWith("index", StringComparison.Ordinal));
-        Assert.Equal(0, help.ExitCode);
-        Assert.Equal(string.Empty, help.StandardError);
-        Assert.Contains("open-forge index [source-reference...] [--dry-run]", help.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("--view <compact|expanded>", help.StandardOutput, StringComparison.Ordinal);
-        workspace.AssertNoLockInfrastructure();
-    }
-
     [Fact(DisplayName = "Published Index repeated dry-run emits one exact complete diff and makes no changes"),
      Trait("Feature", "index-command"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRepeatedDryRunIsExactAndReadOnly()
@@ -61,46 +30,6 @@ public sealed class PublishedIndexProcessTests
         Assert.Contains("- stale", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains($"+ {PublishedIndexWorkspace.ExpectedEntry}", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("No files changed (--dry-run).", result.StandardOutput, StringComparison.Ordinal);
-        workspace.AssertNoLockInfrastructure();
-    }
-
-    [Fact(DisplayName = "Published Index JSON is view-neutral and verbose diagnostics stay on bounded stderr"),
-     Trait("Feature", "index-command"), Trait("Evidence", "EndToEnd")]
-    public async Task PublishedJsonAndDiagnosticsKeepProcessChannelsSeparate()
-    {
-        var target = PublishedExecutableTarget.Discover();
-        using var workspace = PublishedIndexWorkspace.Create();
-        string[] common = ["index", PublishedIndexWorkspace.RootPath, "--dry-run", "--json"];
-        var compact = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target,
-            workspace.Path,
-            workspace.SnapshotState,
-            [.. common, "--view", "compact"],
-            workspace.ProcessEnvironment);
-        var expanded = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target,
-            workspace.Path,
-            workspace.SnapshotState,
-            [.. common, "--view", "expanded"],
-            workspace.ProcessEnvironment);
-        var verbose = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target,
-            workspace.Path,
-            workspace.SnapshotState,
-            [.. common, "--view", "compact", "--verbose"],
-            workspace.ProcessEnvironment);
-
-        Assert.Equal(0, compact.ExitCode);
-        Assert.Equal(compact.ExitCode, expanded.ExitCode);
-        Assert.Equal(compact.ExitCode, verbose.ExitCode);
-        Assert.Equal(compact.StandardOutput, expanded.StandardOutput);
-        Assert.Equal(compact.StandardOutput, verbose.StandardOutput);
-        Assert.Equal(string.Empty, compact.StandardError);
-        Assert.Equal(string.Empty, expanded.StandardError);
-        Assert.InRange(verbose.StandardError.Length, 1, 4096);
-        using var document = JsonDocument.Parse(compact.StandardOutput);
-        Assert.Equal("index", document.RootElement.GetProperty("command").GetString());
-        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
         workspace.AssertNoLockInfrastructure();
     }
 

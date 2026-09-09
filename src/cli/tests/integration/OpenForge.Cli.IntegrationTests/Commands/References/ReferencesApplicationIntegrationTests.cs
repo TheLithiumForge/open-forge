@@ -6,6 +6,41 @@ namespace OpenForge.Cli.IntegrationTests.Commands.References;
 
 public sealed class ReferencesApplicationIntegrationTests
 {
+    [Fact(DisplayName = "Composed References help retains exact grammar and a read-only success disposition"),
+     Trait("Feature", "references"), Trait("Evidence", "Integration")]
+    public async Task LeafHelpRetainsExactGrammarAndNoWriteDisposition()
+    {
+        using var workspace = CreateWorkspace();
+        var before = workspace.SnapshotHashes();
+        var result = await CliHostCapture.RunAsync(["references", "--help"], workspace.Path);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(string.Empty, result.Error);
+        Assert.Contains("open-forge references", result.Output, StringComparison.Ordinal);
+        Assert.Contains("<source-reference>", result.Output, StringComparison.Ordinal);
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "References verbose JSON preserves primary bytes and bounds one diagnostic line"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
+    public async Task VerboseJsonPreservesPrimaryDocument()
+    {
+        using var workspace = CreateWorkspace();
+        var before = workspace.SnapshotHashes();
+        string[] arguments = ["references", "docs", "--direction=out", "--json"];
+        var plain = await CliHostCapture.RunAsync(arguments, workspace.Path);
+        var verbose = await CliHostCapture.RunAsync([.. arguments, "--verbose"], workspace.Path);
+
+        Assert.Equal(plain.ExitCode, verbose.ExitCode);
+        Assert.Equal(plain.Output, verbose.Output);
+        Assert.Equal(string.Empty, plain.Error);
+        Assert.InRange(verbose.Error.Length, 1, 4096);
+        Assert.EndsWith(Environment.NewLine, verbose.Error, StringComparison.Ordinal);
+        var diagnostic = verbose.Error.TrimEnd('\r', '\n');
+        Assert.DoesNotContain('\n', diagnostic);
+        Assert.DoesNotContain('\r', diagnostic);
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
     [Fact(DisplayName = "Composed public root help exposes one direct References leaf and names it once"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task RootHelpExposesOneReferencesLeaf()
     {
@@ -18,8 +53,8 @@ public sealed class ReferencesApplicationIntegrationTests
             .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
             .Where(line => line.TrimStart().StartsWith("references", StringComparison.Ordinal))
             .ToArray();
-        Assert.Single(referencesLines);
-        Assert.Contains("references", referencesLines[0], StringComparison.Ordinal);
+        var referenceLine = Assert.Single(referencesLines);
+        Assert.Contains("references", referenceLine, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "References composed application uses the real workspace and default both expanded result"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
@@ -39,10 +74,10 @@ public sealed class ReferencesApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Theory(DisplayName = "References composed application honors exact in and out directions and filters only incoming work"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
-    [InlineData("in")]
-    [InlineData("out")]
-    public async Task ExplicitDirectionControlsEvaluatedSections(string direction)
+    [Theory(DisplayName = "References composed application honors exact in and out directions and filters only incoming work"), Trait("Feature", "references"), Trait("Evidence", "Integration"),
+     InlineData("in"),
+     InlineData("out")]
+    public static async Task ExplicitDirectionControlsEvaluatedSections(string direction)
     {
         using var workspace = CreateWorkspace();
         string[] arguments = direction == "in"
@@ -91,14 +126,20 @@ public sealed class ReferencesApplicationIntegrationTests
         Assert.Equal(
             [("include", "alpha"), ("exclude", "beta"), ("include", "alpha"), ("exclude", "beta")],
             supplied.Select(value =>
-                (value.GetProperty("role").GetString()!, value.GetProperty("value").GetString()!)));
+                (Assert.IsType<string>(value.GetProperty("role").GetString()),
+                 Assert.IsType<string>(value.GetProperty("value").GetString()))));
+        Assert.Equal(
+            [".agents/alpha.md"],
+            document.RootElement.GetProperty("result").GetProperty("incoming").GetProperty("occurrences").EnumerateArray()
+                .Select(occurrence => occurrence.GetProperty("source").GetProperty("path").GetString()));
     }
 
-    [Theory(DisplayName = "References composed application reports typed semantic invalidity and blocked workspace without domain writes"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
-    [InlineData("invalid-direction", 4, "invalid", "references.invalid-direction")]
-    [InlineData("filter-with-out", 4, "invalid", "references.invalid-filter")]
-    [InlineData("blocked-workspace", 5, "blocked", "references.workspace-unavailable")]
-    public async Task TypedInvalidAndBlockedJourneysRemainDistinct(
+    [Theory(DisplayName = "References composed application reports typed semantic invalidity and blocked workspace without domain writes"),
+     Trait("Feature", "references"), Trait("Evidence", "Integration"),
+     InlineData("invalid-direction", 4, "invalid", "references.invalid-direction"),
+     InlineData("filter-with-out", 4, "invalid", "references.invalid-filter"),
+     InlineData("blocked-workspace", 5, "blocked", "references.workspace-unavailable")]
+    public static async Task TypedInvalidAndBlockedJourneysRemainDistinct(
         string scenario,
         int expectedExit,
         string expectedStatus,

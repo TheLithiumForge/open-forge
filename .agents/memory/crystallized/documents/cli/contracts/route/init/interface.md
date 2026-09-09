@@ -51,8 +51,10 @@ folder name.
 
 Given the same workspace bytes and explicit input, the command selects the same
 missing entrypoints, produces the same intended files and generated navigation,
-and returns the same semantic result. Repeating a successful invocation against
-that state returns a verified no-op.
+and returns the same semantic result. After successful application, invoking the
+same target without creation metadata returns a verified no-op. Metadata flags
+apply only while the final target entrypoint is missing; they are invalid once
+it exists.
 
 The technology-neutral mechanics behind this public promise are defined in the
 [Behavior Contract](behavior.md). This file owns the complete caller-visible

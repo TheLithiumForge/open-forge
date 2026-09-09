@@ -85,10 +85,10 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         Assert.Equal(RouteUpdateMode.DryRun, request.Mode);
     }
 
-    [Theory(DisplayName = "Route Update exact attached-empty responsibility forms removal")]
-    [InlineData("--responsibility=")]
-    [InlineData("--responsibility:")]
-    [Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
+    [Theory(DisplayName = "Route Update exact attached-empty responsibility forms removal"),
+     InlineData("--responsibility="),
+     InlineData("--responsibility:"),
+     Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void ExactEmptyResponsibilityFormsRemoval(string responsibility)
     {
         var bound = Bind(
@@ -108,27 +108,41 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         var cases = new[]
         {
             (Arguments: new[] { "update", "--description=After" }, Code: RouteUpdateFindingCode.InvalidTarget),
-            (Arguments: new[] { "update", RouteUpdateTestData.TargetId }, Code: RouteUpdateFindingCode.InvalidInput),
-            (Arguments: new[] { "update", RouteUpdateTestData.TargetId, "--description=" }, Code: RouteUpdateFindingCode.InvalidPatch),
-            (Arguments: new[] { "update", RouteUpdateTestData.TargetId, "--description=   " }, Code: RouteUpdateFindingCode.InvalidPatch),
-            (Arguments: new[] { "update", RouteUpdateTestData.TargetId, "--tag=" }, Code: RouteUpdateFindingCode.InvalidPatch),
-            (Arguments: new[] { "update", RouteUpdateTestData.TargetId, "--tag=#Memory" }, Code: RouteUpdateFindingCode.InvalidPatch),
-            (Arguments: new[] { "update", RouteUpdateTestData.TargetId, "--tag=Memory", "--tag=Memory" }, Code: RouteUpdateFindingCode.InvalidPatch),
-            (Arguments: new[] { "update", RouteUpdateTestData.TargetId, "--responsibility" }, Code: RouteUpdateFindingCode.InvalidPatch),
-            (Arguments: new[] { "update", RouteUpdateTestData.TargetId, "--", "--responsibility=" }, Code: RouteUpdateFindingCode.InvalidInput),
-            (Arguments: new[] { "update", RouteUpdateTestData.TargetId, "--responsibility=   " }, Code: RouteUpdateFindingCode.InvalidPatch),
-            (Arguments: new[] { "update", RouteUpdateTestData.TargetId, "--template=" }, Code: RouteUpdateFindingCode.InvalidTemplate),
+            (Arguments: ["update", RouteUpdateTestData.TargetId], Code: RouteUpdateFindingCode.InvalidInput),
+            (Arguments: ["update", RouteUpdateTestData.TargetId, "--description="], Code: RouteUpdateFindingCode.InvalidPatch),
+            (Arguments: ["update", RouteUpdateTestData.TargetId, "--description=   "], Code: RouteUpdateFindingCode.InvalidPatch),
+            (Arguments: ["update", RouteUpdateTestData.TargetId, "--tag="], Code: RouteUpdateFindingCode.InvalidPatch),
+            (Arguments: ["update", RouteUpdateTestData.TargetId, "--tag=#Memory"], Code: RouteUpdateFindingCode.InvalidPatch),
+            (Arguments: ["update", RouteUpdateTestData.TargetId, "--tag=Memory", "--tag=Memory"], Code: RouteUpdateFindingCode.InvalidPatch),
+            (Arguments: ["update", RouteUpdateTestData.TargetId, "--responsibility"], Code: RouteUpdateFindingCode.InvalidPatch),
+            (Arguments: ["update", RouteUpdateTestData.TargetId, "--", "--responsibility="], Code: RouteUpdateFindingCode.InvalidInput),
+            (Arguments: ["update", RouteUpdateTestData.TargetId, "--responsibility=   "], Code: RouteUpdateFindingCode.InvalidPatch),
+            (Arguments: ["update", RouteUpdateTestData.TargetId, "--template="], Code: RouteUpdateFindingCode.InvalidTemplate),
         };
 
-        foreach (var item in cases)
+        foreach (var (Arguments, Code) in cases)
         {
-            var bound = Bind(item.Arguments);
+            var bound = Bind(Arguments);
             var invalid = Assert.IsType<RouteUpdateResult>(bound.InvalidResult);
 
             Assert.Null(bound.Request);
             Assert.Equal(CliSemanticStatus.Invalid, invalid.Status);
-            Assert.Contains(invalid.Findings, finding => finding.Code == item.Code);
+            Assert.Contains(invalid.Findings, finding => finding.Code == Code);
         }
+    }
+
+    [Fact(DisplayName = "Route Update bare responsibility preserves the exact invalid-patch cause"),
+     Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
+    public void BareResponsibilityRetainsExactInvalidCause()
+    {
+        var bound = Bind("update", RouteUpdateTestData.TargetId, "--responsibility");
+        var result = Assert.IsType<RouteUpdateResult>(bound.InvalidResult);
+
+        Assert.Null(bound.Request);
+        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        var finding = Assert.Single(result.Findings);
+        Assert.Equal(RouteUpdateFindingCode.InvalidPatch, finding.Code);
+        Assert.Equal("--responsibility accepts exactly one value.", finding.Cause);
     }
 
     [Fact(DisplayName = "Route Update singleton options reject every repeated value"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
@@ -137,11 +151,11 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         var cases = new[]
         {
             new[] { "--description=One", "--description=One" },
-            new[] { "--description=One", "--description=Two" },
-            new[] { "--responsibility=One", "--responsibility=One" },
-            new[] { "--responsibility=One", "--responsibility=Two" },
-            new[] { "--template=templates/topic", "--template=templates/topic" },
-            new[] { "--template=templates/topic", "--template=templates/other" },
+            ["--description=One", "--description=Two"],
+            ["--responsibility=One", "--responsibility=One"],
+            ["--responsibility=One", "--responsibility=Two"],
+            ["--template=templates/topic", "--template=templates/topic"],
+            ["--template=templates/topic", "--template=templates/other"],
         };
 
         foreach (var repeated in cases)

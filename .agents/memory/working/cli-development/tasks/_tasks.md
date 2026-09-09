@@ -31,7 +31,11 @@ Read the [program Task](00-cli-development.md),
 - [x] [Lifecycle Commands](lifecycle/_lifecycle.md) — Complete: Extension Create, Extension Install, root Install, root Update, Extension Update, and Extension Remove are integrated — Implementer: Overseer-managed command lanes
 - [x] [Operational Commands](operations/_operations.md) — Complete: Status, Doctor, Repair, and Cleanup are integrated; Task 20 Cleanup completed at phase 5/5, milestone 8/8 in `148d378d` — Implementer: Overseer-managed command lanes
 - [x] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is Complete, phase 3/3, milestone 5/5; integrated at `fbcec295`, seven findings selected for Task 21
-- [ ] [CLI Delivery](delivery/_delivery.md) — Planned — Implementer: Not assigned
+- [ ] [CLI Command Surface Remediation](cli-command-surface-remediation.md) — Task 21 is Active, phase 4/4, milestone 5/6; review and full managed/native gates passed, integration pending
+- [ ] [C# Structural Streamlining](csharp-structural-streamlining.md) — Task 27 is Planned after Task 21 and before Task 7 ARM64 expansion; phase/milestone horizon unassigned
+- [ ] [Task 7 ARM64 package expansion](delivery/01-npm-packages.md#arm64-expansion-horizon) — Queued after Task 27; new phase/milestone horizon unassigned
+- [ ] [CLI Delivery](delivery/_delivery.md) — Task 13 covers all six accepted platforms after Task 7; Task 22 remains last
+- [ ] [Source Framework Wording and Logic Review](source-framework-review.md) — Task 28 is a separate queued user-owned parallel review; no implementation or assigned horizon
 - [x] [Task 23: Workspace Libraries](workspace-libraries.md) — Complete, phase 5/5, milestone 8/8; Sol return and root placement correction accepted at `25c65bf8`.
 - [x] [Task 24: Extensions Evolution](extensions-evolution.md) — Complete, phase 5/5, milestone 8/8; integrated at `2eedaf87`
 - [x] [Task 25: Workspace Library Destination Projections](workspace-library-destination-projections.md) — Complete, phase 5/5, milestone 8/8; full managed/native acceptance, integrated at `3b4aba9d`
@@ -75,8 +79,9 @@ define execution state.
 - [Apply the accepted CLI Architecture authority audit without changing product behavior or requirement strength](cli-architecture-authority-remediation.md) - #Memory #Working #Contextual #Complete #CLI #Task #Architecture #Authority #Documentation #Remediation
 - [Record the immutable 28-command CLI audit, validated findings, retained boundaries, coverage, and remediation decisions](cli-command-surface-audit-report.md) - #Memory #Working #Contextual #CLI #Audit #Review #Architecture #Refactoring #Testing
 - [Review the complete retained CLI command surface for direct PR-level architecture, design, refactoring, and test-evidence problems](cli-command-surface-audit.md) - #Memory #Working #Contextual #Complete #CLI #Task #Audit #Architecture #Refactoring #Testing #Review
-- [Apply only the complete CLI command-surface audit findings accepted by the maintainer](cli-command-surface-remediation.md) - #Memory #Working #Contextual #Planned #CLI #Task #Remediation #Architecture #Refactoring #Testing
+- [Correct the seven validated CLI audit findings within accepted behavior, test tiers, and local callable ownership](cli-command-surface-remediation.md) - #Memory #Working #Contextual #Active #CLI #Task #Remediation #Architecture #Refactoring #Testing
 - [Remediate the accepted first-pass CLI architecture, C# design, authority, and test-evidence findings after Route Create and before Route Update](cli-quality-remediation.md) - #Memory #Working #CLI #Task #Audit #Architecture #Refactoring #Testing #Review #Contextual
+- [Assess remaining C# internals and implement justified simplifications beyond the completed strategic command audit](csharp-structural-streamlining.md) - #Memory #Working #Contextual #CLI #Task #CSharp #Architecture #Refactoring
 - [Package, prove, document, and release the complete native CLI without partial publication](delivery/_delivery.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #SupplyChain #Release #Contextual
 - [Track accepted Extension manifest consolidation and exact managed/native behavior preservation](extension-internal-consolidation.md) - #Memory #Working #CLI #Task #Extension #Refactoring #Testing #Contextual #Complete
 - [Review the candidate Extension content layout and exact consumer permissions for copied files and Library links](extensions-destination-proposal.md) - #Memory #Working #CLI #Extension #Library #Proposal #Contextual #Candidate
@@ -96,6 +101,7 @@ define execution state.
 - [Implement read-only route discovery, beginning with route list and then route inspect](route-discovery/_route-discovery.md) - #Memory #Working #CLI #Task #Route #Discovery #ReadOnly #Contextual #Complete
 - [Implement retained route mutation commands on the accepted mutation foundation](route-mutation/_route-mutation.md) - #Memory #Working #CLI #Task #Route #Mutation #Contextual
 - [Add the interaction, Framework distribution, lifecycle provenance, and directory-create prerequisites for the next command wave](shared-foundations/_shared-foundations.md) - #Memory #Working #CLI #Task #Foundation #Shell #Framework #Lifecycle #Contextual
+- [Independently review shipped framework wording and logic before assessing local extension candidates](source-framework-review.md) - #Memory #Working #Contextual #Task #Framework #Writing #Review
 - [Audit symbolic constants, generated-region authority, and composable active-test foundations across the replacement CLI](test-architecture-and-constants.md) - #Memory #Working #CLI #Task #Testing #Architecture #Constants #Fixtures #Snapshot #Contextual
 - [Execute the accepted Workspace Libraries contracts through bounded preparation, implementation, evidence, and integration](workspace-libraries.md) - #Memory #Working #CLI #Task #Workspace #Library #Contextual #Active
 - [Track accepted mapped Library leaf projections, scoped permissions, recovery and complete managed/native evidence](workspace-library-destination-projections.md) - #Memory #Working #CLI #Task #Workspace #Library #Destination #Symlink #Contextual #Complete

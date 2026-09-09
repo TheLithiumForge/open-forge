@@ -46,6 +46,10 @@ public sealed class FindHumanRenderingTests
         var rendered = FindCompactRenderer.Render(result);
 
         Assert.Equal(ExpectedCompactSummary(statusValue), FirstLine(rendered));
+        if (statusValue == "Blocked")
+        {
+            Assert.Contains("find.workspace-unavailable", rendered, StringComparison.Ordinal);
+        }
         if (result.Matches.Count != 0)
         {
             Assert.Contains("docs\t.agents/docs.md", rendered, StringComparison.Ordinal);
@@ -125,7 +129,8 @@ public sealed class FindHumanRenderingTests
             });
     }
 
-    [Fact(DisplayName = "Find compact rendering preserves fixed finding order and never emits more than the typed top-level next action"), Trait("Feature", "find-presentation"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Find compact rendering preserves fixed finding order and never emits more than the typed top-level next action"),
+     Trait("Feature", "find-presentation"), Trait("Evidence", "Unit")]
     public void CompactRendererPreservesFindingOrderAndNextAction()
     {
         var result = FindPresentationTestData.OrderedFindingsResult();
@@ -142,8 +147,8 @@ public sealed class FindHumanRenderingTests
         Assert.DoesNotContain("find.projection-missing", omitted, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Find compact frontmatter findings name distinct known source paths")]
-    [Trait("Feature", "find-presentation"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Find compact frontmatter findings name distinct known source paths"),
+     Trait("Feature", "find-presentation"), Trait("Evidence", "Unit")]
     public void CompactFrontmatterFindingsNameDistinctKnownSourcePaths()
     {
         var result = FindPresentationTestData.SourceSpecificFrontmatterFindingsResult();
@@ -500,7 +505,8 @@ public sealed class FindHumanRenderingTests
             "overwrite frontmatter");
     }
 
-    [Fact(DisplayName = "Find expanded rendering places the exact required Next line after match explanation and before projection blocks"), Trait("Feature", "find-presentation"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Find expanded rendering places the exact required Next line after match explanation and before projection blocks"),
+     Trait("Feature", "find-presentation"), Trait("Evidence", "Unit")]
     public void ExpandedRenderingPlacesNextBetweenMatchAndProjectionBlocks()
     {
         var rendered = FindExpandedRenderer.Render(
@@ -651,7 +657,7 @@ public sealed class FindHumanRenderingTests
             : rendered[start..];
     }
 
-    private static IReadOnlyList<string> ReadProjectionSignatures(string rendered)
+    private static List<string> ReadProjectionSignatures(string rendered)
     {
         var lines = Lines(rendered);
         var starts = lines
@@ -678,20 +684,19 @@ public sealed class FindHumanRenderingTests
         var projection = IndexOfLine(
             lines,
             (line, index) => index > matched && line.TrimStart().StartsWith("Projection:", StringComparison.Ordinal));
-        return lines[(matched + 1)..projection]
+        return [.. lines[(matched + 1)..projection]
             .Where(line => !string.IsNullOrWhiteSpace(line))
-            .Select(line => line.Trim())
-            .ToArray();
+            .Select(line => line.Trim())];
     }
 
     private static string[] Lines(string rendered)
         => rendered.Split(Environment.NewLine, StringSplitOptions.None);
 
     private static int IndexOfLine(
-        IReadOnlyList<string> lines,
+        string[] lines,
         Func<string, bool> predicate)
     {
-        for (var index = 0; index < lines.Count; index++)
+        for (var index = 0; index < lines.Length; index++)
         {
             if (predicate(lines[index]))
             {
@@ -704,10 +709,10 @@ public sealed class FindHumanRenderingTests
     }
 
     private static int IndexOfLine(
-        IReadOnlyList<string> lines,
+        string[] lines,
         Func<string, int, bool> predicate)
     {
-        for (var index = 0; index < lines.Count; index++)
+        for (var index = 0; index < lines.Length; index++)
         {
             if (predicate(lines[index], index))
             {

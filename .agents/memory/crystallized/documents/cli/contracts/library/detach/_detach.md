@@ -62,7 +62,7 @@ the active Task records implementation and executable evidence.
 
 <!-- open-forge:generated-index:start -->
 
-- [Accepted public syntax, source independence, exact detachment, record, results, and journeys for `library detach`](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Detach #Interface #Mutation #Recovery #Safety #CurrentTruth
-- [Accepted technology-neutral record checks, all-or-nothing planning, application, verification, and recovery behavior for `library detach`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Detach #Behavior #Mutation #Recovery #Safety #CurrentTruth
+- [Define the technology-neutral record checks, all-or-nothing planning, application, verification, and recovery behavior for `library detach`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Detach #Behavior #Mutation #Recovery #Safety #Determinism #CurrentTruth
+- [Define the exact public syntax, source-independent link checks, all-or-nothing effects, record, and results for `library detach`](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Detach #Interface #Mutation #Recovery #Safety #CurrentTruth
 
 <!-- open-forge:generated-index:end -->

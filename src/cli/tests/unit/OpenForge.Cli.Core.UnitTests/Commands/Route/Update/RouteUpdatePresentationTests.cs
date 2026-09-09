@@ -9,6 +9,25 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
 public sealed class RouteUpdatePresentationTests
 {
+    [Theory(DisplayName = "Route Update invalid blocked and incomplete human results retain exact disposition"),
+     InlineData((int)RouteUpdateFindingCode.InvalidPatch, "invalid", 4, (int)CliOutputTarget.StandardError),
+     InlineData((int)RouteUpdateFindingCode.IdentityCollision, "blocked", 5, (int)CliOutputTarget.StandardError),
+     InlineData((int)RouteUpdateFindingCode.WorkspaceUnavailable, "incomplete", 3, (int)CliOutputTarget.StandardOutput),
+     Trait("Feature", "route-update"), Trait("Evidence", "Unit")]
+    public void InvalidBlockedAndIncompleteResultsRetainHumanDisposition(int findingValue, string expectedStatus, int expectedExit, int expectedTarget)
+    {
+        var result = RouteUpdateTestData.Result(RouteUpdateTestData.VerifiedNoOpFormation(
+            findings: [RouteUpdateTestData.Finding((RouteUpdateFindingCode)findingValue)]));
+        var rendered = CliRenderingStage.Render(
+            Presentation(result, CliOutputFormat.Human),
+            new CliRendererSet<RouteUpdateResult>(RouteUpdateHumanRenderer.Render, RouteUpdateJsonRenderer.Render),
+            RouteUpdateDiagnosticRenderer.Render);
+
+        Assert.Contains($"Status: {expectedStatus}", rendered.PrimaryContent, StringComparison.Ordinal);
+        Assert.Equal((CliOutputTarget)expectedTarget, rendered.PrimaryTarget);
+        Assert.Equal(expectedExit, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
+    }
+
     [Fact(DisplayName = "Route Update human renderer exposes the complete no-op facts in stable order"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void HumanRendererExposesCompleteNoOpFactsInStableOrder()
     {
@@ -146,13 +165,13 @@ public sealed class RouteUpdatePresentationTests
         Assert.DoesNotContain("would be updated", text, StringComparison.Ordinal);
     }
 
-    [Theory(DisplayName = "Route Update compact errors name command target and direct cause")]
-    [InlineData((int)RouteUpdateFindingCode.InvalidInput)]
-    [InlineData((int)RouteUpdateFindingCode.WorkspaceUnsafe)]
-    [InlineData((int)RouteUpdateFindingCode.WorkspaceUnavailable)]
-    [InlineData((int)RouteUpdateFindingCode.WriteFailed)]
-    [InlineData((int)RouteUpdateFindingCode.Interrupted)]
-    [Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
+    [Theory(DisplayName = "Route Update compact errors name command target and direct cause"),
+     InlineData((int)RouteUpdateFindingCode.InvalidInput),
+     InlineData((int)RouteUpdateFindingCode.WorkspaceUnsafe),
+     InlineData((int)RouteUpdateFindingCode.WorkspaceUnavailable),
+     InlineData((int)RouteUpdateFindingCode.WriteFailed),
+     InlineData((int)RouteUpdateFindingCode.Interrupted),
+     Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void CompactErrorsNameCommandTargetAndDirectCause(int codeValue)
     {
         const string cause = "The direct primary cause.";
@@ -223,8 +242,8 @@ public sealed class RouteUpdatePresentationTests
         Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
     }
 
-    [Fact(DisplayName = "Route Update JSON projection retains complete failed result and Next facts")]
-    [Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
+    [Fact(DisplayName = "Route Update JSON projection retains complete failed result and Next facts"),
+     Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void JsonProjectionRetainsCompleteFailedResultAndNextFacts()
     {
         const string residualPath = "/tmp/open-forge-route-update-recovery.zip";
@@ -301,7 +320,9 @@ public sealed class RouteUpdatePresentationTests
             Presentation(result, CliOutputFormat.Human));
 
         Assert.Equal(
-            "status=attention; mode=apply; target=memory/topic; completeness=complete; safety=safe; body=authored-body-protected; effects=0; recovery=not-required; verification=verified; findings=1; finding=route-update.template-body-protected:target=.agents/memory/topic.md:cause=The authored body is protected.",
+            "status=attention; mode=apply; target=memory/topic; completeness=complete; safety=safe; body=authored-body-protected; "
+            + "effects=0; recovery=not-required; verification=verified; findings=1; "
+            + "finding=route-update.template-body-protected:target=.agents/memory/topic.md:cause=The authored body is protected.",
             diagnostic);
     }
 

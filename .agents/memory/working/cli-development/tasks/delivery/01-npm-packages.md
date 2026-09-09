@@ -8,13 +8,14 @@ open-forge:
 
 ## Task State
 
-- State: Historical 8/8 and platform-expansion 7/7 horizons remain complete and
+- State: New ARM64 expansion queued after Task 27 and before Task 13, with
+  phase and milestone horizon unassigned until activation. Historical 8/8 and platform-expansion 7/7 horizons remain complete and
   immutable. The provisional local-use horizon is complete at phase 3 of 3,
   milestone 5 of 5. Live preflight, exact Loader/current-truth/future-idea
   prose, focused evidence, both independent reviews, candidate integration,
   live linking, isolated smoke, and closeout are complete.
 - Parent: [CLI Delivery](_delivery.md).
-- Profile: Assured local-use flow with one Task Mastermind, one coherent prose
+- Prior provisional profile: Assured local-use flow with one Task Mastermind, one coherent prose
   owner, one independent Writing Reviewer, one focused local-link safety
   reviewer, and at most one grouped correction.
 - Historical review budget: maximum 1; `T7-R1` was consumed with
@@ -30,11 +31,12 @@ open-forge:
 - Closeout writing-review budget: maximum 1; `T7-LR3` passed the frozen
   live-use receipt and durable local-evidence policy.
 - Closeout correction budget: maximum 1; `T7-LC2` is unused.
-- Council budget: 0 across the current horizon.
-- Current owner: Kepler Task Mastermind completed the provisional local-use
+- Prior provisional council budget: 0.
+- Historical owner: Kepler Task Mastermind completed the provisional local-use
   horizon on branch `codex/provisional-local-use`. Ada Writer completed the
   bounded Loader, maintenance-contract, current-truth, and future-idea prose.
-  Task 13 retains Linux D1 ownership.
+  These completed owners are historical. The new ARM64 horizon has no assigned
+  implementation owner; root Overseer retains its scope and activation.
 - Provisional activation base:
   `0bc82357a4fc7bd54ecbca1d58501d721c04baa6`, tree
   `41b74d9cad9c5d16ed8a02bb60ba06a4b8df8903`.
@@ -63,6 +65,41 @@ open-forge:
   `092ead98e5f9992e7e329290a3c8b82f01c2deb1`, tree
   `1c4ab3ae9ed92a96a8708211046617ec60f8011f`; it is integrated into the current
   `develop` tree.
+
+## ARM64 Expansion Horizon
+
+The maintainer approved ARM64 alongside x64 on Linux, macOS, and Windows on
+2026-09-09. The [Distribution document](../../../../crystallized/documents/cli/distribution.md)
+defines the current main package and six platform packages. The historical
+8/8, x64 expansion 7/7, and provisional local-use 5/5 horizons remain complete.
+Their recipes and evidence below describe those earlier scopes only. In
+particular, their ARM-undecided wording is superseded by this horizon.
+
+The new horizon is queued after Task 27 and before Task 13. At activation,
+freeze its phase/milestone counts, current source identity, exact package and
+runtime mappings, callable scope, test assertions, and review/correction budget.
+Do not reuse a historical owner, budget, clean-base claim, or native receipt as
+proof of this expansion.
+
+Implement the three ARM64 package templates, exact synchronized main-package
+optional dependencies, and package-owned runtime selection, staging, and local
+tooling mappings. Reuse the thin launcher and ordinary platform metadata.
+Retain the existing x64 graph and local-use behavior. Authored implementation
+remains TypeScript, with generated JavaScript only under ignored artifacts.
+
+Prove package-owned mappings and staged/packed inventories for all six targets.
+Run the simple installed-launcher journey on each matching native host, asserting
+Open Forge package placement, payload resolution, argument/process handoff and
+candidate version. Task 13 coordinates the final native/artifact receipts;
+Task 22 consumes them for complete-graph acceptance. A package staged on Linux
+is not macOS, Windows, or ARM64 native execution proof.
+
+Use Gray contract and evidence freezes before edits. Keep any independently
+proved behavior correction, pure production refactor, and Purple test change
+in separate coherent commits, with assertion-preservation mapping for moved or
+removed tests. Exact paths and meaningful checks are selected at activation.
+No global link/unlink refresh, registry contact, remote publication, new
+dependency, fallback runtime, or packaging framework is authorized here.
 
 ## Provisional Local-Use Horizon
 

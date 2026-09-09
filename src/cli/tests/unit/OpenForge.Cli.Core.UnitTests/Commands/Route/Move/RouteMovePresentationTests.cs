@@ -10,10 +10,46 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Move;
 
 public sealed class RouteMovePresentationTests
 {
+    [Fact(DisplayName = "Route Move JSON preserves every nested object order"), Trait("Feature", "route-move"), Trait("Evidence", "Unit")]
+    public void JsonPreservesEveryNestedObjectOrder()
+    {
+        using var document = JsonDocument.Parse(RouteMoveJsonRenderer.Render(
+            Presentation(Result(CliSemanticStatus.Attention), CliOutputFormat.Json, CliView.Compact, CliVerbosity.Normal)));
+        var root = document.RootElement;
+        var result = root.GetProperty("result");
+        AssertPropertyOrder(root.GetProperty("workspace"), "path", "selectedBy");
+        AssertPropertyOrder(result.GetProperty("source"), "requested", "selectedBy", "id", "path", "form");
+        AssertPropertyOrder(result.GetProperty("destination"), "requested", "id", "path", "parentId", "parentPath");
+        var subject = result.GetProperty("subject");
+        AssertPropertyOrder(subject, "kind", "layers", "items");
+        Assert.All(subject.GetProperty("layers").EnumerateArray(), layer => AssertPropertyOrder(layer, "layer", "sourcePath", "destinationPath"));
+        AssertPropertyOrder(result.GetProperty("ownership"), "state", "framework", "extensions", "claims");
+        var references = result.GetProperty("references");
+        AssertPropertyOrder(references, "coverage", "scannedSourceCount", "inspectedSourceCount", "occurrenceCount", "rewrites");
+        var rewrite = Assert.Single(references.GetProperty("rewrites").EnumerateArray());
+        AssertPropertyOrder(rewrite, "sourcePath", "destinationSourcePath", "layer", "location", "before", "expected", "oldTarget", "expectedTarget");
+        AssertPropertyOrder(rewrite.GetProperty("location"), "line", "column", "byteOffset", "byteLength");
+        AssertPropertyOrder(rewrite.GetProperty("oldTarget"), "id", "path");
+        AssertPropertyOrder(rewrite.GetProperty("expectedTarget"), "id", "path");
+        var generated = result.GetProperty("generatedNavigation");
+        AssertPropertyOrder(generated, "coverage", "regions");
+        AssertPropertyOrder(Assert.Single(generated.GetProperty("regions").EnumerateArray()), "path", "reasons", "state");
+        AssertPropertyOrder(result.GetProperty("plan"), "completeness", "safety");
+        Assert.All(result.GetProperty("effects").EnumerateArray(), effect =>
+        {
+            AssertPropertyOrder(effect, "path", "kind", "action", "before", "expected", "outcome", "residual");
+            AssertPropertyOrder(effect.GetProperty("before"), "kind", "contentSha256");
+            AssertPropertyOrder(effect.GetProperty("expected"), "kind", "contentSha256");
+        });
+        AssertPropertyOrder(result.GetProperty("recovery"), "state", "protectedPaths", "residualPath");
+        AssertPropertyOrder(Assert.Single(result.GetProperty("findings").EnumerateArray()), "code", "status", "target", "cause");
+        AssertPropertyOrder(root.GetProperty("next"), "command", "reason");
+    }
+
     private const string RecoveryPath = "/recovery/route-move-final.zip";
 
-    [Fact(DisplayName = "Route Move attention human views expose every compact and expanded change fact")]
-    [Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
+    [Fact(DisplayName = "Route Move attention human views expose every compact and expanded change fact"),
+     Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
     public void AttentionHumanViewsExposeEveryChangeFact()
     {
         var result = Result(CliSemanticStatus.Attention);
@@ -41,8 +77,8 @@ public sealed class RouteMovePresentationTests
         Assert.Equal(expanded, verbose);
     }
 
-    [Fact(DisplayName = "Route Move attention JSON exposes the exact ordered schema-v1 graph")]
-    [Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
+    [Fact(DisplayName = "Route Move attention JSON exposes the exact ordered schema-v1 graph"),
+     Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
     public void AttentionJsonExposesExactOrderedSchemaV1Graph()
     {
         var json = RouteMoveJsonRenderer.Render(
@@ -93,8 +129,8 @@ public sealed class RouteMovePresentationTests
         Assert.Equal("open-forge cleanup", root.GetProperty("next").GetProperty("command").GetString());
     }
 
-    [Fact(DisplayName = "Route Move category JSON retains every item field in exact order")]
-    [Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
+    [Fact(DisplayName = "Route Move category JSON retains every item field in exact order"),
+     Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
     public void CategoryJsonRetainsEveryItemFieldInExactOrder()
     {
         var formation = RouteMoveTestData.Formation(RouteMoveMode.DryRun) with
@@ -163,10 +199,10 @@ public sealed class RouteMovePresentationTests
         Assert.Equal("base", items[1].GetProperty("layer").GetString());
     }
 
-    [Theory(DisplayName = "Route Move failed and interrupted results render their exact status and next action")]
-    [InlineData((int)CliSemanticStatus.Failed, "failed", "open-forge route move --verbose")]
-    [InlineData((int)CliSemanticStatus.Interrupted, "interrupted", "open-forge route move")]
-    [Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
+    [Theory(DisplayName = "Route Move failed and interrupted results render their exact status and next action"),
+     InlineData((int)CliSemanticStatus.Failed, "failed", "open-forge route move --verbose"),
+     InlineData((int)CliSemanticStatus.Interrupted, "interrupted", "open-forge route move"),
+     Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
     public void FailedAndInterruptedResultsRenderExactStatusAndNextAction(
         int statusValue,
         string expectedStatus,

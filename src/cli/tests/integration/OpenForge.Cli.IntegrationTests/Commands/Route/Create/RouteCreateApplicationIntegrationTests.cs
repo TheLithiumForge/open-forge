@@ -211,6 +211,9 @@ public sealed class RouteCreateApplicationIntegrationTests
             "route-create-operation-dry-run");
         workspace.SeedBase();
         var before = workspace.SnapshotHashes();
+        var parentBefore = workspace.ReadText(RouteCreateIntegrationWorkspace.ParentPath);
+        const string targetExpected = "---\nopen-forge:\n  description: Project overview\n  tags: [Docs, Overview]\n  responsibility: Explains the project\n---\n";
+        var parentExpected = parentBefore.Replace("- none - No entries - #Empty", "- [Project overview](overview.md) - #Docs #Overview", StringComparison.Ordinal);
 
         var result = await RouteCreateOperationFactory.Create(workspace.LockStoreRoot)
             .ExecuteAsync(
@@ -218,6 +221,13 @@ public sealed class RouteCreateApplicationIntegrationTests
                 TestContext.Current.CancellationToken);
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal([RouteCreateIntegrationWorkspace.TargetPath, RouteCreateIntegrationWorkspace.ParentPath], result.Effects.Select(effect => effect.Path));
+        Assert.Equal([RouteCreateEffectAction.Create, RouteCreateEffectAction.Replace], result.Effects.Select(effect => effect.Action));
+        Assert.Null(result.Effects[0].Change?.Before);
+        Assert.Equal(Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(targetExpected))), result.Effects[0].Change?.Expected);
+        Assert.Equal(Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(parentBefore))), result.Effects[1].Change?.Before);
+        Assert.Equal(Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(parentExpected))), result.Effects[1].Change?.Expected);
+        Assert.All(result.Effects, effect => Assert.Equal(RouteCreateEffectOutcome.Planned, effect.Outcome));
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

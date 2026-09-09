@@ -93,7 +93,7 @@ internal sealed class UpdateEffectApplication(FileChangeApplier fileApplier)
                     lease,
                     change,
                     check,
-                    preparation,
+                    change.Kind == PlannedFileChangeKind.Create ? null : preparation,
                     cancellationToken)
                 .ConfigureAwait(false);
         }

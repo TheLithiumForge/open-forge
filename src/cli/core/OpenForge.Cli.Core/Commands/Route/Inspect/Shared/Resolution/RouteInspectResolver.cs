@@ -16,7 +16,6 @@ internal sealed partial class RouteInspectResolver
 {
     private readonly PhysicalPathResolver _physicalPathResolver = new();
     private readonly SourceCatalogueReader _catalogueReader = new();
-    private readonly RouteInspectSourceProjectionBuilder _projectionBuilder = new();
     private readonly SourceRouteFactsResolver _routeFactsResolver = new();
     private readonly RouteInspectSourceSelectionResolver _sourceSelectionResolver;
 
@@ -101,7 +100,7 @@ internal sealed partial class RouteInspectResolver
             }
 
             var catalogueSelection = catalogue.SelectAll();
-            var projections = await _projectionBuilder
+            var projections = await RouteInspectSourceProjectionBuilder
                 .ReadAsync(catalogueSelection, reader, cancellationToken)
                 .ConfigureAwait(false);
             if (projections.IsCancelled || cancellationToken.IsCancellationRequested)

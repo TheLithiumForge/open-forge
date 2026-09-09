@@ -2,13 +2,14 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Resolution;
 
-public sealed class RouteInspectResolverOverwriteAmbiguityIntegrationTests
+public sealed class RouteInspectResolverOverwritePairIntegrationTests
 {
-    [Theory(DisplayName = "Route inspect blocks either exact base path whose overwrite has ambiguous candidates"),
+    [Theory(DisplayName = "Route inspect preserves exact catalogue pairs despite an automatic ID collision"),
         InlineData(".agents/root/ambiguous.md"),
+        InlineData(".agents/root/ambiguous.overwrite.md"),
         InlineData(".agents/root/ambiguous/_ambiguous.md")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
-    public async Task ExactBasePathDoesNotRepairAmbiguousOverwriteMeaning(string selectedPath)
+    public static async Task ExactPathsPreserveCataloguePairDespiteAutomaticIdCollision(string selectedPath)
     {
         using var workspace = RouteInspectResolutionIntegrationWorkspace.Create();
         workspace.WriteLoader("- [Root](root/_root.md) - #Root");
@@ -29,16 +30,18 @@ public sealed class RouteInspectResolverOverwriteAmbiguityIntegrationTests
 
         var result = await workspace.ResolveAsync(selectedPath, TestContext.Current.CancellationToken);
 
-        Assert.Equal(RouteInspectResolutionState.Blocked, result.State);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        Assert.Equal(RouteInspectResolutionState.Resolved, result.State);
         Assert.Equal(RouteInspectReferenceKind.SourcePath, result.Selection.ReferenceKind);
         Assert.Equal(RouteInspectSelectionMethod.ExactPath, result.Selection.SelectionMethod);
         Assert.Equal(selectedPath, result.Selection.RequestedReference);
-        var issue = Assert.Single(result.Issues);
-        Assert.Equal(RouteInspectResolutionIssueCode.AmbiguousOverwrite, issue.Code);
-        Assert.Equal(overwritePath, issue.Subject);
-        Assert.Equal([basePath, entrypointPath], issue.Paths);
-        Assert.Null(result.Identity);
-        Assert.Null(result.Graph);
-        Assert.Equal(before, workspace.SnapshotHashes());
+        Assert.Empty(result.Issues);
+        var identity = Assert.IsType<RouteInspectIdentity>(result.Identity);
+        Assert.Equal("root/ambiguous", identity.Id);
+        Assert.Equal(selectedPath == entrypointPath ? entrypointPath : basePath, identity.CanonicalWorkspaceRelativePath);
+        Assert.Equal(
+            selectedPath == entrypointPath ? [entrypointPath] : new[] { basePath, overwritePath },
+            identity.PhysicalLayers.Select(layer => layer.WorkspaceRelativePath));
+        Assert.NotNull(result.Graph);
     }
 }

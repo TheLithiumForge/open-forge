@@ -1,20 +1,20 @@
 ---
 open-forge:
-  description: Complete current linux-x64 native CI and reproducible artifact collection
+  description: Prove native CI and reproducible artifact collection for all six accepted platforms
   tags: [Memory, Working, CLI, Task, Distribution, NativeAOT, CI, Contextual]
 ---
 
-# Complete Current Native CI
+# Task 13: Native CI and Reproducible Artifacts
 
 ## Task State
 
-- State: Queued after completed preparation. CI and artifact mutation remains
-  Planned after all retained commands, Task 10, and every Task 21 remediation
-  accepted from that audit are complete.
-- Permanent mapping: Task 13 “Native linux-x64 CI and Reproducible Artifacts” in
+- State: Queued after Task 21, Task 27, and Task 7's new ARM64 package
+  expansion. The maintainer approved CI/artifacts for Linux, macOS, and Windows
+  on x64 and ARM64 on 2026-09-09.
+- Permanent mapping: Task 13 “Native CI and Reproducible Artifacts” in
   the [project control ledger](../../project-control.md).
 - Parent: [CLI Delivery](_delivery.md).
-- Selected profile: The opt-in
+- Historical preparation profile: The opt-in
   [Supervised Luna Preparation Trial](../../../../../workflows/supervised-luna-preparation-trial.md).
 - Exact preparation base: local `develop` commit
   `c8051478127ab9204ca31b1d86ef358dd982207f`, tree
@@ -23,11 +23,12 @@ open-forge:
   `open-forge-worktree/native-ci-preparation`.
 - Current phase and milestone: phase 1 of 3, milestone 2 of 6.
 - Current-state suffix: M2 preparation, review, and integration complete;
-  awaiting retained command acceptance, Task 10, and conditional Task 21
-  remediation before implementation.
+  the earlier Linux-only preparation must be refrozen for the six-target
+  scope and current source before M3. No new implementation milestone is earned.
 - Preparation role: One experimental Luna/max Task Mastermind supervised at
   most three bounded read-only evidence workers, followed by one fresh Sol/xhigh
-  whole-task review. Later semantic implementation remains Sol/xhigh.
+  whole-task review. That allocation is historical. Later semantic implementation
+  and fresh review use Astra/high under current Overseer direction.
 
 The project control ledger defines permanent identity, queue state, worktree
 mapping, and integration state. This Task record defines the accepted horizon,
@@ -35,38 +36,52 @@ preparation result, evidence, trial measurements, and later revalidation.
 
 ## Expected Outcome
 
-CI proves the current `linux-x64` native build and smoke, packed install and
-invocation, and checksums. It records exact SDK/dependency and artifact facts and
-collects traceable bounded artifacts without publishing them. Byte-for-byte
-reproducibility is a later evidence gate, not an implication of one checksum
-manifest.
+CI proves native build and smoke, packed installation and invocation, checksums,
+and bounded artifact collection for each accepted target. It records exact
+source, SDK, dependency and artifact identities without publishing to a registry.
+Byte-for-byte reproducibility requires an independent repeated-build comparison;
+one checksum manifest proves identity and integrity only.
 
-## Matrix
+## Matrix And Current Authority
 
-- `linux-x64` on one native Linux runner.
-- Restore from repository-root `NuGet.Config` with package audit.
-- Native root build and direct smoke for `linux-x64`.
-- Packed install/invocation journey for the accepted launcher and platform
-  package.
-- SHA-256 checksums for the exact bounded native and packed artifacts.
+| Operating system | Accepted native targets    |
+| ---------------- | -------------------------- |
+| Linux, glibc     | `linux-x64`, `linux-arm64` |
+| macOS            | `osx-x64`, `osx-arm64`     |
+| Windows          | `win-x64`, `win-arm64`     |
 
-D1 consumes the separately recorded proportional whole-candidate managed and
-Native AOT material gate. Full managed Unit, Integration, and EndToEnd suites and
-native Integration/EndToEnd publishes or executions are Architecture/A1
-evidence, not D1-owned requirements. A shared CI workflow may schedule them, but
-that scheduling does not widen D1 scope.
+Use a matching native host for each target. Revalidate current official runner,
+SDK/toolchain, action and Native AOT support before freezing concrete jobs.
+An emulated execution, cross-build, source property or existing workflow row is
+not native proof. Missing matching-host evidence remains visibly incomplete.
 
-Additional RIDs and support-floor jobs are outside current D1. They require a
-later explicit maintainer decision with updated package, runner, evidence,
-documentation, and maintenance boundaries.
+Retain the accepted split into a build matrix, a test matrix, and a separate
+manual/on-demand artifact publication workflow. The latter stages and packs
+accepted artifacts, proves isolated installed-launcher invocation, writes
+checksums and collects bounded artifacts; it does not publish npm packages or
+create a product release. Routine workflow file names and runner choices within
+this accepted graph are implementation decisions for the Overseer.
 
-The accepted package-release direction is now x64 on Linux, macOS, and
-Windows: `linux-x64`, `osx-x64`, and `win-x64`. Task 7's completed Linux and
-Windows x64 graph is the historical accepted baseline; it requires a follow-up
-to add the macOS x64 platform package and to revalidate the synchronized main
-package graph. ARM remains explicitly undecided. No ARM RID, package, runner,
-artifact, or acceptance claim is included in this task or in the accepted
-release floor.
+D1 owns native build/smoke, package installation/invocation, checksums and
+bounded artifact receipts for all six targets. Task 7 owns the package graph,
+staging/packing implementation and package-owned journeys. Full managed Unit,
+Integration and public suites, plus Native AOT Integration/public evidence,
+remain Architecture/A1 evidence consumed by D1 and Task 22. The test matrix may
+schedule these required gates without collapsing their evidence ownership.
+
+At activation, refreeze the exact candidate and package graph after Task 7,
+map every target to its native host and commands, and preserve phase 1/3,
+milestone 2/6 as completed historical preparation. Revalidation does not itself
+complete M3. Additional RIDs, libc variants, support-floor matrices, signatures,
+SBOM, provenance and OIDC remain outside this accepted expansion.
+
+## Historical Preparation Boundary
+
+The following preparation, inventory, feasibility, recipe and review sections
+retain the earlier Linux-only D1 and x64-package decisions and receipts. Their
+ARM-undecided wording and future execution instructions are historical, not
+current authority. The six-target matrix above supersedes those scope limits.
+No old command recipe is ready to run without the activation refreeze.
 
 ## Preparation Trial Boundary
 
@@ -332,14 +347,14 @@ phase 1/4 and 0/7 horizon. The other review dispositions remain unchanged.
    - M2 freezes a future execution capsule, stale-data risks, revalidation
      triggers, and the experimental workflow evidence. Task 13 then returns to
      the queue until its implementation prerequisite is satisfied.
-2. Phase 2, implementation after all retained commands, Task 10, and every
-   Task 21 remediation accepted from that audit are complete.
-   - M3 applies the bounded native Linux CI and artifact collection change.
+2. Phase 2, implementation after Task 21, Task 27, Task 7 ARM64 expansion,
+   and refreeze of the six-target source, package, runner and evidence boundary.
+   - M3 applies the native CI and artifact collection change for all six targets.
    - M4 passes focused local/static validation and the available CI-equivalent
      journey without remote publication.
 3. Phase 3, acceptance.
-   - M5 passes the exact native runner, packed install/invocation, checksum, and
-     bounded artifact evidence on the final candidate.
+   - M5 passes matching native-runner, packed install/invocation, checksum, and
+     bounded artifact evidence for every accepted target on the final candidate.
    - M6 records the final evidence, residual limits, integration identity, and
      trial comparison.
 
@@ -349,7 +364,8 @@ before M3.
 
 ## Reproducibility And Artifacts
 
-Record SDK, `linux-x64`, commit, informational version, dependency graph, source
+For each accepted target, record native host, SDK, RID, commit, informational
+version, dependency graph, source
 archive identity, binary/package hashes, package inventory, and smoke/packed
 results. This preparation defines traceable and checksummed artifact collection;
 it does not call one production run byte-for-byte reproducible. A later release
@@ -365,7 +381,7 @@ required behavior, runner-specific uncommitted patch, root-path C# assumption,
 automatic publication, a reproducibility claim without an independent repeat
 comparison, or any broader RID/support-floor claim without explicit acceptance.
 
-## Trial Measurements
+## Historical Trial Measurements
 
 Record elapsed preparation time, child count, handoffs, missing-context or model
 fallbacks, accepted and rejected Sol/xhigh review findings, grouped correction

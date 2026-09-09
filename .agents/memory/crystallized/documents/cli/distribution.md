@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted public package graph, x64 platform horizon, staging, packing, checksum, proof, and publication boundary for the replacement CLI
+  description: Accepted public package graph, x64 and ARM64 platform horizon, staging, packing, checksum, proof, and publication boundary for the replacement CLI
   responsibility: Define durable replacement CLI distribution meaning without presenting incomplete platform work or release evidence as complete
   tags: [Memory, Crystallized, Document, CurrentTruth, Evergreen, CLI, Distribution, Npm, NativeAOT, Release]
 ---
@@ -17,20 +17,23 @@ CLI. It does not claim that every accepted target is implemented or released.
 [Task 7](../../../working/cli-development/tasks/delivery/01-npm-packages.md)
 defines package-graph realization, npm release, and explicit local-linking work.
 [Task 13](../../../working/cli-development/tasks/delivery/02-native-ci.md)
-defines current Linux D1 CI and artifact preparation. Their records and Git retain
+defines native CI and artifact preparation for all six accepted targets. Their records and Git retain
 implementation state and evidence receipts.
 
 ## Accepted Package Graph
 
-The accepted public graph contains exactly one main package and three x64
+The accepted public graph contains exactly one main package and six
 platform packages:
 
-| Package                                  | Native payload               | npm platform metadata                      |
-| ---------------------------------------- | ---------------------------- | ------------------------------------------ |
-| `@thelithiumforge/open-forge`            | Thin launcher only           | Platform-independent main package          |
-| `@thelithiumforge/open-forge-linux-x64`  | `linux-x64` glibc executable | `os: [linux]`, `cpu: [x64]`, `libc: glibc` |
-| `@thelithiumforge/open-forge-darwin-x64` | `osx-x64` executable         | `os: [darwin]`, `cpu: [x64]`               |
-| `@thelithiumforge/open-forge-win-x64`    | `win-x64` executable         | `os: [win32]`, `cpu: [x64]`                |
+| Package                                    | Native payload                 | npm platform metadata                        |
+| ------------------------------------------ | ------------------------------ | -------------------------------------------- |
+| `@thelithiumforge/open-forge`              | Thin launcher only             | Platform-independent main package            |
+| `@thelithiumforge/open-forge-linux-x64`    | `linux-x64` glibc executable   | `os: [linux]`, `cpu: [x64]`, `libc: glibc`   |
+| `@thelithiumforge/open-forge-darwin-x64`   | `osx-x64` executable           | `os: [darwin]`, `cpu: [x64]`                 |
+| `@thelithiumforge/open-forge-win-x64`      | `win-x64` executable           | `os: [win32]`, `cpu: [x64]`                  |
+| `@thelithiumforge/open-forge-linux-arm64`  | `linux-arm64` glibc executable | `os: [linux]`, `cpu: [arm64]`, `libc: glibc` |
+| `@thelithiumforge/open-forge-darwin-arm64` | `osx-arm64` executable         | `os: [darwin]`, `cpu: [arm64]`               |
+| `@thelithiumforge/open-forge-win-arm64`    | `win-arm64` executable         | `os: [win32]`, `cpu: [arm64]`                |
 
 The main package uses exact synchronized optional dependencies on all accepted
 platform packages. They are not peer dependencies. Every staged public manifest
@@ -38,20 +41,24 @@ uses the same release or development version. The main package alone owns the
 `open-forge` executable mapping. Each platform package contains only its
 manifest, license, and native executable.
 
-ARM is undecided. No ARM RID, package, runner, artifact, or support claim is
-accepted by this boundary. Any new operating system, architecture, RID, libc,
-package, channel, or support-floor claim requires a new maintainer decision.
+The maintainer accepted ARM64 alongside x64 on Linux, macOS, and Windows on
+2026-09-09. This defines the required target graph, not completed implementation
+or native proof. Additional operating systems, architectures, RIDs, libc variants,
+channels, or support-floor claims require a new maintainer decision.
 
 ## Current Implementation And Delivery State
 
-Task 7's platform-expansion horizon is complete at phase 4/4, milestone 7/7.
-Its accepted lane is `a2942781` with tree `fe36fc3f`, and its squash integration
-is `e19d429e` with the same tree. The accepted graph now has Linux, macOS, and
-Windows x64 package staging and packing. The only installed-launcher journey
-was run on Linux. Darwin and Windows have stage-and-pack evidence only. ARM,
-publication, and live link or unlink remain unproven and unauthorized. Task
-13's current D1 scope remains Linux only. No document, workflow row, local
-build, or historical receipt may be read as completion of D1, ARM, or release.
+Task 7's previous x64 platform-expansion horizon is complete at phase 4/4,
+milestone 7/7. Its accepted lane is `a2942781` with tree `fe36fc3f`, and its
+squash integration is `e19d429e` with the same tree. The current implementation
+stages and packs the three x64 packages. Its installed-launcher journey was
+run on Linux; macOS and Windows have stage-and-pack evidence only.
+
+Task 7's new ARM64 expansion is queued after Task 27 and before Task 13.
+Task 13 must refreeze its earlier Linux-only preparation for all six targets.
+No new ARM64 package implementation, matching-host execution, CI acceptance,
+publication, or global installation refresh is established by this decision.
+Historical local-link receipts remain scoped to their exact authorized action.
 
 The replacement remains non-shipping until the complete retained command set,
 accepted package graph and native target set, documentation, and release evidence
@@ -89,12 +96,13 @@ and source archive for the candidate. A checksum pass proves traceable identity
 and integrity. Byte-for-byte reproducibility requires a separate repeated-build
 comparison and is not implied by one manifest.
 
-Task 13 owns the current Linux D1 native build and smoke, packed Linux install and
-invocation, checksums, bounded artifact collection, and its exact receipt. Task 7
-owns the synchronized x64 graph plus package staging and packing; its accepted
-host-installed journey is Linux-only, while Darwin and Windows remain limited to
-stage-and-pack evidence. Task 22 owns final complete-graph acceptance and
-separately authorized publication.
+Task 7 owns the synchronized six-target package graph, staging and packing,
+and package-owned journeys. Task 13 owns native build and smoke, packed
+installation and invocation, checksums, and bounded artifact collection on a
+matching native host for each accepted target. It separately consumes the
+Architecture's managed and Native AOT test evidence. Emulation or cross-build
+success cannot substitute for native execution. Task 22 consumes the complete
+set for final acceptance and separately authorized publication.
 
 ## Publication Boundary
 
@@ -113,6 +121,6 @@ maintainer accepts the replacement as shipping.
 
 - [Replacement CLI Architecture](architecture.md)
 - [Task 7: npm Package Manager Release and Local Linking](../../../working/cli-development/tasks/delivery/01-npm-packages.md)
-- [Task 13: Native linux-x64 CI and Reproducible Artifacts](../../../working/cli-development/tasks/delivery/02-native-ci.md)
+- [Task 13: Native CI and Reproducible Artifacts](../../../working/cli-development/tasks/delivery/02-native-ci.md)
 - [CLI Delivery](../../../working/cli-development/tasks/delivery/_delivery.md)
 - [Repository-Root CLI Tooling Decision](../../decisions/repository-root-cli-tooling.md)

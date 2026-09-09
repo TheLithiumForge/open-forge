@@ -1,4 +1,8 @@
 using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Mutation.Locking;
+using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
+using OpenForge.Cli.Core.Framework.Recovery;
+using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
 
@@ -11,14 +15,22 @@ public sealed class IndexApplicationIntegrationTests
     public async Task TerminalModesBypassWorkspaceAndRootRegistersIndexOnce()
     {
         using var workspace = IndexOperationWorkspace.Create("index-application-terminal");
+        var before = workspace.SnapshotHashes();
+        AssertNoPersistentState(workspace.Workspace);
         var missing = Path.Combine(workspace.Workspace.LexicalRoot, "missing");
         var root = await CliHostCapture.RunAsync(["--help"], workspace.Workspace.LexicalRoot);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        AssertNoPersistentState(workspace.Workspace);
         var help = await CliHostCapture.RunAsync(
             ["index", "--help", "--workspace", missing],
             workspace.Workspace.LexicalRoot);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        AssertNoPersistentState(workspace.Workspace);
         var version = await CliHostCapture.RunAsync(
             ["index", "--version", "--workspace", missing],
             workspace.Workspace.LexicalRoot);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        AssertNoPersistentState(workspace.Workspace);
 
         Assert.Equal(0, root.ExitCode);
         Assert.Equal(string.Empty, root.Error);
@@ -66,10 +78,18 @@ public sealed class IndexApplicationIntegrationTests
     public async Task JsonViewAndVerboseDoNotChangePrimaryResult()
     {
         using var workspace = IndexOperationWorkspace.Create("index-application-json");
+        var before = workspace.SnapshotHashes();
+        AssertNoPersistentState(workspace.Workspace);
         string[] common = ["index", IndexOperationWorkspace.RootPath, "--dry-run", "--json"];
         var compact = await CliHostCapture.RunAsync([.. common, "--view", "compact"], workspace.Workspace.LexicalRoot);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        AssertNoPersistentState(workspace.Workspace);
         var expanded = await CliHostCapture.RunAsync([.. common, "--view", "expanded"], workspace.Workspace.LexicalRoot);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        AssertNoPersistentState(workspace.Workspace);
         var verbose = await CliHostCapture.RunAsync([.. common, "--view", "compact", "--verbose"], workspace.Workspace.LexicalRoot);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        AssertNoPersistentState(workspace.Workspace);
 
         Assert.Equal(0, compact.ExitCode);
         Assert.Equal(compact.ExitCode, expanded.ExitCode);
@@ -120,10 +140,10 @@ public sealed class IndexApplicationIntegrationTests
     }
 
     [Theory(DisplayName = "Composed Index returns typed JSON errors on stdout without leaking raw operands"),
-     Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
-    [InlineData("invalid-source", 4, "invalid", "index.invalid-source")]
-    [InlineData("missing-workspace", 5, "blocked", "index.workspace-unavailable")]
-    public async Task TypedErrorsUseJsonStdout(
+     Trait("Feature", "index-command"), Trait("Evidence", "Integration"),
+     InlineData("invalid-source", 4, "invalid", "index.invalid-source"),
+     InlineData("missing-workspace", 5, "blocked", "index.workspace-unavailable")]
+    public static async Task TypedErrorsUseJsonStdout(
         string scenario,
         int expectedExit,
         string expectedStatus,
@@ -154,5 +174,30 @@ public sealed class IndexApplicationIntegrationTests
         Assert.Equal(string.Empty, human.Output);
         Assert.Contains("Generated Entries were not updated.", human.Error, StringComparison.Ordinal);
         Assert.DoesNotContain("private.md", human.Error, StringComparison.Ordinal);
+    }
+
+    private static void AssertNoPersistentState(CliWorkspace workspace)
+    {
+        var lockStore = WorkspaceLockStoreRoot.ResolveForCurrentUser(Environment.SpecialFolderOption.DoNotVerify);
+        Assert.NotNull(lockStore);
+        AssertAbsent(WorkspaceLockPathIdentity.LockPath(lockStore, workspace));
+        var recoveryStore = RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.DoNotVerify);
+        Assert.NotNull(recoveryStore);
+        AssertAbsent(RecoveryBundlePathIdentity.WorkspaceDirectory(recoveryStore, workspace.PhysicalRoot));
+    }
+
+    private static void AssertAbsent(string absolutePath)
+    {
+        try
+        {
+            _ = File.GetAttributes(absolutePath);
+            Assert.Fail($"The unique workspace artifact must remain absent: {absolutePath}");
+        }
+        catch (FileNotFoundException)
+        {
+        }
+        catch (DirectoryNotFoundException)
+        {
+        }
     }
 }

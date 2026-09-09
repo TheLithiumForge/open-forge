@@ -94,7 +94,7 @@ internal static class LibraryDetachRequestBinder
                 Identity = LibraryMutationCompletionProjection.Identity(id, sourceRoot: null, destinationRoot: null, LibraryMode.Apply, sourceIndependent: true),
                 Record = LibraryMutationCompletionProjection.Record(read: null, id, intended: null),
                 Projection = LibraryMutationCompletionProjection.Projection(
-                    record: null, source: null, mappings: null, ownership: null, id,
+                    observation: null, id,
                     LibraryPlanState.NotStarted, sourceIndependent: true),
                 Plan = LibraryMutationCompletionProjection.NotPlanned(),
                 Application = LibraryMutationCompletionProjection.NotStarted(),

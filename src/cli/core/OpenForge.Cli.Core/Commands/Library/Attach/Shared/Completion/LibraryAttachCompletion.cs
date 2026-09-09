@@ -66,10 +66,7 @@ internal static class LibraryAttachCompletion
                     plan?.IntendedRecord),
                 Source = LibraryMutationCompletionProjection.Source(observations?.Source, input.Request.DestinationRoot),
                 Projection = LibraryMutationCompletionProjection.Projection(
-                    observations?.Record,
-                    observations?.Source,
-                    observations?.Mappings,
-                    observations?.Ownership,
+                    observations,
                     input.Request.LibraryId.Value,
                     planState,
                     sourceIndependent: false),
@@ -117,6 +114,18 @@ internal static class LibraryAttachCompletion
         LibraryExecutionEvidence execution,
         string libraryId)
     {
+        if (LibraryMutationCompletionProjection.PreparationStatus(execution.RecoveryPreparationOutcome?.State) is { } preparationStatus)
+        {
+            findings.Add(new LibraryAttachFinding
+            {
+                Code = preparationStatus == CliSemanticStatus.Interrupted ? LibraryAttachFindingCode.Interrupted : LibraryAttachFindingCode.RecoveryUnavailable,
+                Status = preparationStatus,
+                LibraryId = libraryId,
+                Path = execution.RecoveryPreparationOutcome?.ResidualPath,
+                Cause = execution.RecoveryPreparationOutcome?.Cause ?? "Library recovery preparation was interrupted.",
+            });
+        }
+
         if (execution.UnexpectedFailure is { } failure)
         {
             findings.Add(new LibraryAttachFinding

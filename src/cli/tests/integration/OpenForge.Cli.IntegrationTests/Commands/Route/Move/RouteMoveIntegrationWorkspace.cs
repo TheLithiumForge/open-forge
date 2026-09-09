@@ -53,6 +53,11 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
     private readonly WorkspaceLockTestStore lockStore;
     private readonly HashSet<string> recoveryPaths = new(StringComparer.Ordinal);
     private readonly HashSet<string> symbolicLinkPaths = new(StringComparer.Ordinal);
+    private bool _ownsCategoryDestination;
+    private static readonly string[] CategoryDestinationFiles =
+    [
+        "_topics.md", "child.md", "child.overwrite.md", "notes.md", "native/SKILL.md", "image.bin", "assets/settings.json",
+    ];
 
     private RouteMoveIntegrationWorkspace(
         TemporaryWorkspace temporary,
@@ -264,6 +269,54 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
         }
     }
 
+    internal void OwnCategoryDestination()
+    {
+        if (File.Exists(Absolute(".agents/archive/topics")) || Directory.Exists(Absolute(".agents/archive/topics")))
+        {
+            throw new InvalidOperationException("The owned category destination must be absent before application.");
+        }
+        _ = temporary.SnapshotHashes();
+        _ownsCategoryDestination = true;
+    }
+
+    private void DeleteOwnedCategoryDestination()
+    {
+        if (!_ownsCategoryDestination)
+        {
+            return;
+        }
+        _ = temporary.SnapshotHashes();
+        string[] directories = [".agents/archive/topics", ".agents/archive/topics/assets", ".agents/archive/topics/native"];
+        foreach (var directory in directories)
+        {
+            var path = Absolute(directory);
+            if (Directory.Exists(path) && (File.GetAttributes(path) & (FileAttributes.ReparsePoint | FileAttributes.Device)) != 0)
+            {
+                throw new InvalidOperationException("The owned category directory was replaced.");
+            }
+        }
+        foreach (var relative in CategoryDestinationFiles)
+        {
+            var path = Absolute(".agents/archive/topics/" + relative);
+            if (File.Exists(path))
+            {
+                if ((File.GetAttributes(path) & (FileAttributes.Directory | FileAttributes.ReparsePoint | FileAttributes.Device)) != 0)
+                {
+                    throw new InvalidOperationException("The owned category file was replaced.");
+                }
+                File.Delete(path);
+            }
+        }
+        foreach (var directory in directories.Reverse())
+        {
+            var path = Absolute(directory);
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path, recursive: false);
+            }
+        }
+    }
+
     internal async ValueTask<RouteMovePlan> BuildApplicationPlanAsync()
     {
         SeedApplicationCategory();
@@ -391,6 +444,7 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
             }
         }
 
+        DeleteOwnedCategoryDestination();
         DeleteApplicationDestination();
         lockStore.Dispose();
         temporary.Dispose();

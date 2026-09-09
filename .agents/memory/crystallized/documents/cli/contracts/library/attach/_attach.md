@@ -61,7 +61,7 @@ the active Task records implementation and executable evidence.
 
 <!-- open-forge:generated-index:start -->
 
-- [Accepted public syntax, source boundary, projection, record, results, and journeys for `library attach`](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Attach #Interface #Mutation #Recovery #Safety #CurrentTruth
-- [Accepted technology-neutral inventory, planning, application, verification, and recovery behavior for `library attach`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Attach #Behavior #Mutation #Recovery #Safety #CurrentTruth
+- [Define the technology-neutral inventory, planning, application, verification, and recovery behavior for `library attach`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Attach #Behavior #Mutation #Recovery #Safety #Determinism #CurrentTruth
+- [Define the exact public syntax, source boundary, collision policy, projections, record, and results for `library attach`](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Attach #Interface #Mutation #Recovery #Safety #CurrentTruth
 
 <!-- open-forge:generated-index:end -->

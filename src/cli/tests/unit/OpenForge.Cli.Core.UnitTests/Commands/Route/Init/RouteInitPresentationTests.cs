@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Route.Init;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Route.Init.Shared.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 
@@ -10,6 +11,82 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Init;
 
 public sealed class RouteInitPresentationTests
 {
+    [Fact(DisplayName = "Route Init complete no-op human result retains exact completion facts without prompting"),
+     Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
+    public void CompleteNoOpHumanResultRetainsExactCompletionFacts()
+    {
+        var result = new RouteInitResultBuilder().Build(
+            RouteInitRedTestData.Formation(effects: [], entrypoints: [], verification: RouteInitVerificationState.Verified));
+        var text = RouteInitHumanRenderer.Render(new CliPresentationRequest<RouteInitResult>(
+            result, new CliPresentation(CliOutputFormat.Human, CliView.Compact, CliVerbosity.Normal)));
+
+        Assert.Contains("The route is initialized.", text, StringComparison.Ordinal);
+        Assert.Contains("Status: complete", text, StringComparison.Ordinal);
+        Assert.Contains("No files changed.", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("Next:", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("Apply this", text, StringComparison.Ordinal);
+    }
+
+    [Theory(DisplayName = "Route Init invalid and incomplete human results retain exact status streams and guidance"),
+     InlineData((int)RouteInitFindingCode.InvalidTarget, "invalid", "Correct the named Route Init input"),
+     InlineData((int)RouteInitFindingCode.MetadataIncomplete, "incomplete", "inspect the unavailable route, metadata, projection, lifecycle, or recovery facts"),
+     Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
+    public void InvalidAndIncompleteHumanResultsRetainStatusAndGuidance(
+        int findingValue,
+        string expectedStatus,
+        string expectedNext)
+    {
+        var finding = RouteInitRedTestData.Finding((RouteInitFindingCode)findingValue);
+        var result = new RouteInitResultBuilder().Build(RouteInitRedTestData.Formation(findings: [finding]));
+        var presentation = CliPresentationStage.Create(
+            result,
+            new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal));
+        var rendered = CliRenderingStage.Render(
+            presentation,
+            new CliRendererSet<RouteInitResult>(RouteInitHumanRenderer.Render, RouteInitJsonRenderer.Render),
+            RouteInitDiagnosticRenderer.Render);
+
+        Assert.Contains($"Status: {expectedStatus}", rendered.PrimaryContent, StringComparison.Ordinal);
+        Assert.Contains(expectedNext, rendered.PrimaryContent, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(
+            expectedStatus == "invalid" ? CliOutputTarget.StandardError : CliOutputTarget.StandardOutput,
+            rendered.PrimaryTarget);
+        Assert.Equal(expectedStatus == "invalid" ? 4 : 3, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
+    }
+
+    [Fact(DisplayName = "Route Init dry-run JSON preserves ordered schema and literal preview facts"),
+     Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
+    public void DryRunJsonPreservesOrderedSchemaAndPreviewFacts()
+    {
+        var formation = RouteInitRedTestData.Formation(mode: RouteInitMode.DryRun,
+            recovery: new RouteInitRecovery(RouteInitRecoveryState.NotCreated, null), verification: RouteInitVerificationState.NotRequested);
+        var presentation = new CliPresentationRequest<RouteInitResult>(RouteInitRedTestData.Result(formation),
+            new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal));
+        using var document = JsonDocument.Parse(RouteInitJsonRenderer.Render(presentation));
+        var root = document.RootElement;
+        var result = root.GetProperty("result");
+
+        Assert.Equal(["schemaVersion", "command", "status", "workspace", "result", "next"], root.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(
+            ["mode", "scaffold", "target", "plan", "framework", "entrypoints", "effects", "unchangedPaths", "lifecycle", "recovery", "verification", "findings"],
+            result.EnumerateObject().Select(property => property.Name));
+        Assert.Equal("dry-run", result.GetProperty("mode").GetString());
+        Assert.Equal("generic", result.GetProperty("scaffold").GetString());
+        Assert.Equal("complete", result.GetProperty("plan").GetProperty("completeness").GetString());
+        Assert.Equal("safe", result.GetProperty("plan").GetProperty("safety").GetString());
+        Assert.Equal(JsonValueKind.Null, result.GetProperty("framework").ValueKind);
+        var metadata = Assert.Single(result.GetProperty("entrypoints").EnumerateArray()).GetProperty("metadata");
+        Assert.Equal("Draft route for memory/project-alpha/documents", metadata.GetProperty("description").GetString());
+        Assert.Equal(["NeedsAuthoring"], metadata.GetProperty("tags").EnumerateArray().Select(tag => tag.GetString()));
+        var effect = Assert.Single(result.GetProperty("effects").EnumerateArray());
+        Assert.Equal("planned", effect.GetProperty("outcome").GetString());
+        Assert.Equal(JsonValueKind.Null, effect.GetProperty("change").GetProperty("before").ValueKind);
+        Assert.Equal("draft-entrypoint-bytes", effect.GetProperty("change").GetProperty("expected").GetString());
+        Assert.Equal("not-created", result.GetProperty("recovery").GetProperty("state").GetString());
+        Assert.Equal("not-requested", result.GetProperty("verification").GetString());
+        Assert.Empty(result.GetProperty("findings").EnumerateArray());
+    }
+
     [Fact(DisplayName = "Route Init JSON projection preserves the complete typed envelope graph and nullable fields"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void JsonProjectionPreservesCompleteTypedEnvelopeGraphAndNullableFields()
     {
@@ -118,6 +195,9 @@ public sealed class RouteInitPresentationTests
         var text = string.Join(Environment.NewLine, help.Sections.Select(section => section.Body));
 
         Assert.Contains("route init", text, StringComparison.Ordinal);
+        Assert.Contains(
+            "open-forge route init <route-target> [--framework] [--description <text>] [--responsibility <text>] "
+            + "[--tag=<tag>]... [--dry-run] [global flags]", text, StringComparison.Ordinal);
         Assert.Contains("<route-target>", text, StringComparison.Ordinal);
         Assert.Contains("--framework", text, StringComparison.Ordinal);
         Assert.Contains("--description", text, StringComparison.Ordinal);

@@ -6,8 +6,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Resolution;
 
 public sealed class RouteInspectResolverSafetyIntegrationTests
 {
-    [Fact(DisplayName = "Route inspect blocks an orphan overwrite instead of promoting it to a source")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Route inspect blocks an orphan overwrite instead of promoting it to a source"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task OrphanOverwriteIsBlocked()
     {
         using var workspace = RouteInspectResolutionIntegrationWorkspace.Create();
@@ -24,9 +23,8 @@ public sealed class RouteInspectResolverSafetyIntegrationTests
         Assert.Null(result.Graph);
     }
 
-    [Fact(DisplayName = "Route inspect blocks an overwrite whose automatic identity has ambiguous base candidates")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
-    public async Task AmbiguousOverwriteIsBlocked()
+    [Fact(DisplayName = "Route inspect resolves an exact overwrite to its catalogue owner despite an automatic ID collision"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    public async Task ExactOverwriteRetainsCatalogueOwnerDespiteIdCollision()
     {
         using var workspace = RouteInspectResolutionIntegrationWorkspace.Create();
         workspace.WriteLoader("- [Root](root/_root.md) - #Root");
@@ -40,18 +38,17 @@ public sealed class RouteInspectResolverSafetyIntegrationTests
 
         var result = await workspace.ResolveAsync(overwritePath, TestContext.Current.CancellationToken);
 
-        Assert.Equal(RouteInspectResolutionState.Blocked, result.State);
-        var issue = Assert.Single(result.Issues);
-        Assert.Equal(RouteInspectResolutionIssueCode.AmbiguousOverwrite, issue.Code);
+        Assert.Equal(RouteInspectResolutionState.Resolved, result.State);
+        Assert.Empty(result.Issues);
+        var identity = Assert.IsType<RouteInspectIdentity>(result.Identity);
+        Assert.Equal(".agents/root/ambiguous.md", identity.CanonicalWorkspaceRelativePath);
         Assert.Equal(
-            [".agents/root/ambiguous.md", ".agents/root/ambiguous/_ambiguous.md"],
-            issue.Paths);
-        Assert.Null(result.Identity);
-        Assert.Null(result.Graph);
+            [".agents/root/ambiguous.md", overwritePath],
+            identity.PhysicalLayers.Select(layer => layer.WorkspaceRelativePath));
+        Assert.NotNull(result.Graph);
     }
 
-    [Fact(DisplayName = "Route inspect blocks an unsafe contained-link transition without mutating either location")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Route inspect blocks an unsafe contained-link transition without mutating either location"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task ExternalContainedLinkIsBlockedAtTheBoundary()
     {
         using var workspace = RouteInspectResolutionIntegrationWorkspace.Create();
@@ -75,12 +72,11 @@ public sealed class RouteInspectResolverSafetyIntegrationTests
         Assert.Equal(workspaceBefore, workspace.SnapshotHashes());
         Assert.Equal(outsideBefore, outside.SnapshotHashes());
         var retainedLink = new FileInfo(linkPath);
-        Assert.True((retainedLink.Attributes & FileAttributes.ReparsePoint) != 0);
+        Assert.NotEqual((FileAttributes)0, retainedLink.Attributes & FileAttributes.ReparsePoint);
         Assert.Equal(originalLinkTarget, retainedLink.LinkTarget);
     }
 
-    [Fact(DisplayName = "Route inspect blocks a safe subject when the Loader crosses an unsafe physical boundary")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Route inspect blocks a safe subject when the Loader crosses an unsafe physical boundary"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task UnsafeLoaderBlocksRouteResolution()
     {
         using var workspace = RouteInspectResolutionIntegrationWorkspace.Create();
@@ -111,12 +107,11 @@ public sealed class RouteInspectResolverSafetyIntegrationTests
         Assert.Equal(workspaceBefore, workspace.SnapshotHashes());
         Assert.Equal(outsideBefore, outside.SnapshotHashes());
         var retainedLink = new FileInfo(loaderLinkPath);
-        Assert.True((retainedLink.Attributes & FileAttributes.ReparsePoint) != 0);
+        Assert.NotEqual((FileAttributes)0, retainedLink.Attributes & FileAttributes.ReparsePoint);
         Assert.Equal(originalLinkTarget, retainedLink.LinkTarget);
     }
 
-    [Fact(DisplayName = "Route inspect retains an incomplete result when a required route ancestor is unreadable")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Route inspect retains an incomplete result when a required route ancestor is unreadable"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task UnreadableRequiredAncestorIsIncomplete()
     {
         using var workspace = RouteInspectResolutionIntegrationWorkspace.Create();
@@ -150,8 +145,7 @@ public sealed class RouteInspectResolverSafetyIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Route inspect returns an interrupted resolution when its caller is cancelled")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Route inspect returns an interrupted resolution when its caller is cancelled"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task CancellationFormsAnInterruptedResolution()
     {
         using var workspace = RouteInspectResolutionIntegrationWorkspace.Create();
@@ -169,8 +163,7 @@ public sealed class RouteInspectResolverSafetyIntegrationTests
         Assert.Null(result.Graph);
     }
 
-    [Fact(DisplayName = "Route inspect leaves bytes unchanged for one resolved read-only journey")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Route inspect leaves bytes unchanged for one resolved read-only journey"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task ResolvedJourneyDoesNotWrite()
     {
         using var workspace = RouteInspectResolutionIntegrationWorkspace.Create();
@@ -185,8 +178,7 @@ public sealed class RouteInspectResolverSafetyIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Route inspect leaves bytes unchanged for one blocked overwrite journey")]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Route inspect leaves bytes unchanged for one blocked overwrite journey"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task BlockedJourneyDoesNotWrite()
     {
         using var workspace = RouteInspectResolutionIntegrationWorkspace.Create();

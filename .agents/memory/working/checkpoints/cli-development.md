@@ -46,12 +46,42 @@ integrated at `aab57058`, exactly matching feature `d053b243`, tree `571b6104`.
 Task 10 is complete at phase 3/3, milestone 5/5, integrated at `fbcec295`.
 The exact feature/integration tree is `3b73cff4`; all 28 commands, seven stable
 findings and 135 source locators are accounted. Executable source is unchanged.
-Task 21 is next with the seven report findings selected under the existing
-correction and refactoring authority. Its fresh capsule governs implementation.
-Root continues Task 10 audit → conditional Task 21 → Task 13 → Task 22. Later publication
-and global installation refresh remain unauthorized. General test-environment
-cleanup remains an idea. The current Task capsules govern scoped execution;
-older snapshots below retain historical evidence only.
+Task 21 is active at phase 4/4, milestone 5/6. Reviewed source `391ad956` passes
+all 6,418 managed/native executions: managed 2,879/1,603/111, native 1,603/111,
+and managed-public-on-native 111. There are zero failures/skips/build warnings;
+every command has three public journeys. Formatting, static/protected checks,
+source/runtime identity and unrelated dirty-file preservation pass. Integration
+remains pending. Task 27 may begin from the accepted feature candidate on its
+own branch; exact trees must be reconciled at eventual integration. The Task
+record owns canonical evidence, isolated commits and consumed review budgets.
+Task 10 already assessed C# architecture and refactoring across all 28 commands
+at strategic primary-path level. This does not establish exhaustive internals
+coverage. Under the user's broader streamlining direction, root must reconcile
+that coverage and assess remaining C# simplification opportunities before
+Task 13, selecting justified bounded follow-up work without repeating accepted
+reviews or treating superficial similarity as shared semantic ownership.
+Task 27 “C# Structural Streamlining” owns that remaining assessment and justified
+refactoring; it is queued with no invented phase or milestone horizon.
+Root continues Task 21 → Task 27 → Task 7 ARM64 expansion → Task 13 →
+Task 22. On 2026-09-09 the user explicitly approved Tasks 21, 27, 13 and 22,
+including Linux, macOS and Windows on x64 and ARM64. The current
+[Distribution document](../../crystallized/documents/cli/distribution.md) defines the six-target graph. Task 7's
+new expansion is queued with phase and milestone horizon unassigned; its earlier
+completed horizons remain complete. Task 13 retains preparation phase 1/3,
+milestone 2/6, but must refreeze for all six targets before implementation.
+
+The [Task 21](../cli-development/tasks/cli-command-surface-remediation.md) and [Task 27](../cli-development/tasks/csharp-structural-streamlining.md) records define the required Gray
+behavior/test freeze, independent Red for behavior fixes, production-only Blue
+commits against frozen tests, and separate Purple test commits with assertion
+mapping. Later publication and global installation refresh remain unauthorized.
+General test-environment cleanup remains an idea. The current Task capsules
+govern scoped execution; older snapshots below retain historical evidence only.
+
+Task 28 “Source Framework Wording and Logic Review” is a separate queued,
+user-owned parallel review, with no phase or milestone horizon. Its
+[Task record](../cli-development/tasks/source-framework-review.md) freezes source-only review scope and the later local
+Framework evidence boundary. It does not authorize implementation or alter the
+CLI sequence.
 
 ## Current Accepted Checkpoint
 

@@ -14,6 +14,57 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Detach.Shared.Completion
 
 public sealed class LibraryDetachCompletionTests
 {
+
+    [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    [InlineData((int)RecoveryBundlePreparationState.Incomplete, false, (int)CliSemanticStatus.Incomplete)]
+    [InlineData((int)RecoveryBundlePreparationState.Incomplete, true, (int)CliSemanticStatus.Incomplete)]
+    [InlineData((int)RecoveryBundlePreparationState.Blocked, false, (int)CliSemanticStatus.Blocked)]
+    [InlineData((int)RecoveryBundlePreparationState.Blocked, true, (int)CliSemanticStatus.Blocked)]
+    [InlineData((int)RecoveryBundlePreparationState.Cancelled, false, (int)CliSemanticStatus.Interrupted)]
+    [InlineData((int)RecoveryBundlePreparationState.Cancelled, true, (int)CliSemanticStatus.Interrupted)]
+    public void FailedPreparationRetainsStatusAndUncertainResidual(int state, bool hasResidual, int status)
+    {
+        var input = LibraryMutationCompletionData.Detach();
+        var path = hasResidual ? LibraryMutationPlanningData.Absolute("external-recovery.bundle") : null;
+        var preparation = (RecoveryBundlePreparationState)state switch
+        {
+            RecoveryBundlePreparationState.Incomplete => RecoveryBundlePreparationResult.Incomplete("Preparation unavailable.", path),
+            RecoveryBundlePreparationState.Blocked => RecoveryBundlePreparationResult.Blocked("Preparation blocked.", path),
+            RecoveryBundlePreparationState.Cancelled => RecoveryBundlePreparationResult.Cancelled(path),
+            _ => throw new ArgumentOutOfRangeException(nameof(state)),
+        };
+        input = input with
+        {
+            Execution = LibraryMutationCompletionData.Empty() with { RecoveryPreparationOutcome = preparation },
+        };
+
+        var result = LibraryDetachCompletion.Complete(input);
+
+        Assert.Equal((CliSemanticStatus)status, result.Status);
+        var application = result.Result.Application;
+        Assert.Equal(
+            preparation.State == RecoveryBundlePreparationState.Cancelled ? LibraryApplicationState.Interrupted : LibraryApplicationState.NotStarted,
+            application.State);
+        Assert.Equal(LibraryVerificationState.NotStarted, application.Verification);
+        Assert.Equal(LibraryRecordPublicationState.NotStarted, application.RecordPublication.State);
+        Assert.Null(application.RecordPublication.PublishedLast);
+        Assert.Equal(LibraryRecoveryState.Unknown, application.Recovery.State);
+        Assert.Equal(path, application.Recovery.Path);
+        Assert.Contains(result.Result.Findings, finding => finding.Code == (
+            preparation.State == RecoveryBundlePreparationState.Cancelled ? LibraryDetachFindingCode.Interrupted : LibraryDetachFindingCode.RecoveryUnavailable));
+        if (hasResidual)
+        {
+            var residual = Assert.Single(application.Residuals);
+            Assert.Equal(LibraryResidualKind.Recovery, residual.Kind);
+            Assert.Equal(LibraryResidualState.Unknown, residual.State);
+            Assert.Equal(path, residual.Path);
+        }
+        else
+        {
+            Assert.Empty(application.Residuals);
+        }
+    }
+
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("removed", (int)CliSemanticStatus.Complete, (int)LibraryRecoveryState.Removed)]
     [InlineData("retained", (int)CliSemanticStatus.Attention, (int)LibraryRecoveryState.Retained)]

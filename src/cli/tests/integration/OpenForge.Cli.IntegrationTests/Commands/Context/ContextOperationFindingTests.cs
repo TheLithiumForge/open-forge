@@ -2,16 +2,18 @@ using OpenForge.Cli.Core.Commands.Context;
 using OpenForge.Cli.Core.Commands.Context.Models.Request;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Commands.Context.Models.Selection;
+using OpenForge.Cli.Core.Commands.Context.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Context;
 
 public sealed class ContextOperationFindingTests
 {
-    [Theory(DisplayName = "Context direct operation maps failure and interruption to exact terminal results"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
-    [InlineData(false, (int)CliSemanticStatus.Failed, (int)ContextFindingCode.OperationFailed, (int)ContextCoverageState.Failed)]
-    [InlineData(true, (int)CliSemanticStatus.Interrupted, (int)ContextFindingCode.Interrupted, (int)ContextCoverageState.Interrupted)]
-    public async Task OperationEventsAreExactTerminalResults(
+    [Theory(DisplayName = "Context direct operation maps failure and interruption to exact terminal results"), Trait("Feature", "context"), Trait("Evidence", "Integration"),
+     InlineData(false, (int)CliSemanticStatus.Failed, (int)ContextFindingCode.OperationFailed, (int)ContextCoverageState.Failed),
+     InlineData(true, (int)CliSemanticStatus.Interrupted, (int)ContextFindingCode.Interrupted, (int)ContextCoverageState.Interrupted)]
+    public static async Task OperationEventsAreExactTerminalResults(
         bool interrupted,
         int expectedStatusValue,
         int expectedFindingValue,
@@ -41,8 +43,8 @@ public sealed class ContextOperationFindingTests
         Assert.Empty(result.Links);
     }
 
-    [Fact(DisplayName = "Context invalid source selection stops before startup resolution")]
-    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Context invalid source selection stops before startup resolution"),
+     Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task InvalidSourceStopsBeforeResolution()
     {
         using var workspace = ContextOperationWorkspace.Create();
@@ -56,10 +58,10 @@ public sealed class ContextOperationFindingTests
         Assert.Contains(result.Findings, finding => finding.Code == ContextFindingCode.InvalidSource);
     }
 
-    [Theory(DisplayName = "Context cannot report complete when global continuity membership metadata is malformed or unreadable"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task UnavailableGlobalContinuityMetadataIsIncomplete(bool invalidEncoding)
+    [Theory(DisplayName = "Context cannot report complete when global continuity membership metadata is malformed or unreadable"), Trait("Feature", "context"), Trait("Evidence", "Integration"),
+     InlineData(false),
+     InlineData(true)]
+    public static async Task UnavailableGlobalContinuityMetadataIsIncomplete(bool invalidEncoding)
     {
         using var workspace = ContextOperationWorkspace.Create();
         if (invalidEncoding)
@@ -101,11 +103,11 @@ public sealed class ContextOperationFindingTests
         Assert.DoesNotContain(result.Sources, source => source.Path == ".agents/unrouted.md");
     }
 
-    [Theory(DisplayName = "Context distinguishes valid and malformed routed native Skill metadata")]
-    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task RoutedNativeSkillMetadataUsesItsAuthoredForm(bool malformed)
+    [Theory(DisplayName = "Context distinguishes valid and malformed routed native Skill metadata"),
+     Trait("Feature", "context"), Trait("Evidence", "Integration"),
+     InlineData(false),
+     InlineData(true)]
+    public static async Task RoutedNativeSkillMetadataUsesItsAuthoredForm(bool malformed)
     {
         const string skillPath = ".agents/skills/experience-design/SKILL.md";
         using var workspace = ContextOperationWorkspace.Create();
@@ -136,6 +138,19 @@ public sealed class ContextOperationFindingTests
         {
             Assert.DoesNotContain(result.Findings, finding => finding.Path == skillPath);
         }
+
+        var rendered = ContextHumanRenderer.Render(CliPresentationStage.Create(
+            result,
+            new CliPresentation(CliOutputFormat.Human, CliView.Compact, CliVerbosity.Normal)));
+        Assert.StartsWith(malformed ? "context incomplete" : "context complete", rendered, StringComparison.Ordinal);
+        if (malformed)
+        {
+            Assert.Contains($"context.closure-unavailable subject={skillPath}", rendered, StringComparison.Ordinal);
+        }
+        else
+        {
+            Assert.DoesNotContain(skillPath, rendered, StringComparison.Ordinal);
+        }
     }
 
     [Fact(DisplayName = "Context reports an authored global continuity source whose route is broken"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
@@ -164,8 +179,8 @@ public sealed class ContextOperationFindingTests
         Assert.DoesNotContain(result.Sources, source => source.Path == ".agents/projects/ambiguous/continuity.md");
     }
 
-    [Fact(DisplayName = "Context retains same-code link findings in breadth-first authored edge order")]
-    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Context retains same-code link findings in breadth-first authored edge order"),
+     Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task SameCodeLinkFindingsRetainAuthoredOrder()
     {
         using var workspace = ContextOperationWorkspace.Create();
@@ -187,8 +202,8 @@ public sealed class ContextOperationFindingTests
                 .Select(finding => finding.Subject));
     }
 
-    [Fact(DisplayName = "Context treats an exact orphan overwrite reference as a blocked overwrite boundary")]
-    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Context treats an exact orphan overwrite reference as a blocked overwrite boundary"),
+     Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task OrphanOverwriteReferenceIsBlocked()
     {
         using var workspace = ContextOperationWorkspace.Create();
@@ -205,8 +220,8 @@ public sealed class ContextOperationFindingTests
         Assert.DoesNotContain(result.Findings, finding => finding.Code == ContextFindingCode.InvalidSource);
     }
 
-    [Fact(DisplayName = "Context exact-path selection retains a safe automatic-ID collision as attention")]
-    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Context exact-path selection retains a safe automatic-ID collision as attention"),
+     Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task ExactPathIdentityCollisionIsAttention()
     {
         using var workspace = ContextOperationWorkspace.Create();
@@ -227,8 +242,8 @@ public sealed class ContextOperationFindingTests
             finding.Candidates.Select(candidate => candidate.Path));
     }
 
-    [Fact(DisplayName = "Context resolves an exact local target case mismatch as safe attention")]
-    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Context resolves an exact local target case mismatch as safe attention"),
+     Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task ExactTargetCaseMismatchIsAttention()
     {
         using var workspace = ContextOperationWorkspace.Create();
@@ -250,8 +265,8 @@ public sealed class ContextOperationFindingTests
         Assert.Contains(result.Findings, finding => finding.Code == ContextFindingCode.TargetCaseMismatch);
     }
 
-    [Fact(DisplayName = "Context unavailable authored frontmatter forms an incomplete projection finding")]
-    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Context unavailable authored frontmatter forms an incomplete projection finding"),
+     Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task UnavailableFrontmatterIsIncomplete()
     {
         using var workspace = ContextOperationWorkspace.Create();

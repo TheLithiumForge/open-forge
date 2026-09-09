@@ -1,3 +1,6 @@
+using System.Text.Json;
+using OpenForge.Cli.Core.Commands.Route.Init.Shared.Rendering;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Commands.Route.Init;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
@@ -37,6 +40,20 @@ public sealed class RouteInitFrameworkSafetyIntegrationTests
             0,
             await workspace.ReadRecoveryCandidateCountAsync(
                 TestContext.Current.CancellationToken));
+
+        using var document = JsonDocument.Parse(RouteInitJsonRenderer.Render(
+            new CliPresentationRequest<RouteInitResult>(result, new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal))));
+        var root = document.RootElement;
+        var facts = root.GetProperty("result");
+        Assert.Equal("attention", root.GetProperty("status").GetString());
+        Assert.Equal("dry-run", facts.GetProperty("mode").GetString());
+        Assert.Equal("framework", facts.GetProperty("scaffold").GetString());
+        Assert.Equal("memory/release-notes/crystallized/documents", facts.GetProperty("target").GetProperty("id").GetString());
+        Assert.Equal(["installed-root", "scope", "managed", "managed"],
+            facts.GetProperty("framework").GetProperty("segments").EnumerateArray().Select(segment => segment.GetProperty("role").GetString()));
+        Assert.Equal("route-init.needs-authoring", facts.GetProperty("findings")[0].GetProperty("code").GetString());
+        Assert.Equal("publish", facts.GetProperty("lifecycle").GetProperty("action").GetString());
+        Assert.Equal("planned", facts.GetProperty("lifecycle").GetProperty("outcome").GetString());
     }
 
     [Fact(DisplayName = "Framework application reaches verified attention, preserves user scope ownership, and deletes its recovery bundle"),
@@ -61,9 +78,23 @@ public sealed class RouteInitFrameworkSafetyIntegrationTests
             await workspace.ReadRecoveryCandidateCountAsync(
                 TestContext.Current.CancellationToken));
         Assert.DoesNotContain(
-            result.Framework!.Segments,
+            Assert.IsType<RouteInitFramework>(result.Framework).Segments,
             segment => segment.Path == ".agents/memory/release-notes/_release-notes.md"
                 && segment.Role != RouteInitFrameworkSegmentRole.Scope);
+
+        using var document = JsonDocument.Parse(RouteInitJsonRenderer.Render(
+            new CliPresentationRequest<RouteInitResult>(result, new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal))));
+        var facts = document.RootElement.GetProperty("result");
+        Assert.Equal("verified", facts.GetProperty("verification").GetString());
+        Assert.Equal("verified", facts.GetProperty("lifecycle").GetProperty("outcome").GetString());
+        Assert.Equal("removed", facts.GetProperty("recovery").GetProperty("state").GetString());
+        var entrypoints = facts.GetProperty("entrypoints").EnumerateArray().ToArray();
+        var scope = Assert.Single(entrypoints, entrypoint => entrypoint.GetProperty("path").GetString() == ".agents/memory/release-notes/_release-notes.md");
+        Assert.Equal("user", scope.GetProperty("ownership").GetString());
+        Assert.Equal(JsonValueKind.Null, scope.GetProperty("sourceAssetPath").ValueKind);
+        Assert.Contains("NeedsAuthoring", scope.GetProperty("metadata").GetProperty("tags").EnumerateArray().Select(tag => tag.GetString()));
+        Assert.All(entrypoints.Where(entrypoint => entrypoint.GetProperty("ownership").GetString() == "framework"),
+            entrypoint => Assert.Equal(JsonValueKind.String, entrypoint.GetProperty("sourceAssetPath").ValueKind));
     }
 
     [Fact(DisplayName = "A verified Framework no-op reports existing managed targets without a recovery or lifecycle write"),
@@ -93,6 +124,15 @@ public sealed class RouteInitFrameworkSafetyIntegrationTests
             0,
             await workspace.ReadRecoveryCandidateCountAsync(
                 TestContext.Current.CancellationToken));
+
+        using var document = JsonDocument.Parse(RouteInitJsonRenderer.Render(
+            new CliPresentationRequest<RouteInitResult>(result, new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal))));
+        var facts = document.RootElement.GetProperty("result");
+        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
+        Assert.Empty(facts.GetProperty("effects").EnumerateArray());
+        Assert.Equal("preserve", facts.GetProperty("lifecycle").GetProperty("action").GetString());
+        Assert.Equal("already-current", facts.GetProperty("lifecycle").GetProperty("outcome").GetString());
+        Assert.Empty(facts.GetProperty("findings").EnumerateArray());
     }
 
     [Fact(DisplayName = "Framework external lock contention blocks before directory, file, lifecycle, or recovery effects"), Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration")]
@@ -220,10 +260,11 @@ public sealed class RouteInitFrameworkSafetyIntegrationTests
         Assert.Equal(RouteInitVerificationState.NotRequested, result.Verification);
     }
 
-    [Theory(DisplayName = "Framework recovery candidate conflict blocks apply and dry-run plans without consuming the candidate"), Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration")]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task ExistingRecoveryCandidateBlocksBeforeEffects(bool dryRun)
+    [Theory(DisplayName = "Framework recovery candidate conflict blocks apply and dry-run plans without consuming the candidate"),
+     Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration"),
+     InlineData(false),
+     InlineData(true)]
+    public static async Task ExistingRecoveryCandidateBlocksBeforeEffects(bool dryRun)
     {
         using var workspace = await RouteInitFrameworkIntegrationWorkspace.CreateTrustedAsync(
             "route-init-framework-recovery-conflict",

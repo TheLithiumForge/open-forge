@@ -1,3 +1,4 @@
+using OpenForge.Cli.IntegrationTests.Hosting;
 using System.Runtime.CompilerServices;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Core.Framework.Workspace;
@@ -13,6 +14,64 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Create;
 
 public sealed class RouteCreateCompositionIntegrationTests
 {
+    [Fact(DisplayName = "Composed Route Create help retains exact grammar without workspace effects"),
+     Trait("Feature", "route-create"), Trait("Evidence", "Integration")]
+    public async Task HelpRetainsExactGrammarWithoutWorkspaceEffects()
+    {
+        using var workspace = TemporaryWorkspace.Create("create-help-policy");
+        var before = workspace.SnapshotHashes();
+        var missing = workspace.Combine("missing");
+        var result = await CliHostCapture.RunAsync(["route", "create", "--help", "--workspace", missing], workspace.Path);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(string.Empty, result.Error);
+        Assert.Contains("open-forge route create", result.Output, StringComparison.Ordinal);
+        Assert.Contains("--dry-run", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("--automatic", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("--force", result.Output, StringComparison.Ordinal);
+        Assert.Contains("open-forge route create <file-target> --description <text> --tag=<tag>...", result.Output, StringComparison.Ordinal);
+        Assert.Contains("--description <text>", result.Output, StringComparison.Ordinal);
+        Assert.Contains("--tag=<tag>", result.Output, StringComparison.Ordinal);
+        Assert.False(Directory.Exists(missing));
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Composed Route Create JSON dry-run keeps bounded diagnostics separate"),
+     Trait("Feature", "route-create"), Trait("Evidence", "Integration")]
+    public async Task JsonDryRunPreservesPrimaryDocumentWithVerboseDiagnostics()
+    {
+        using var workspace = RouteCreateIntegrationWorkspace.Create("create-json-diagnostics");
+        workspace.SeedBase();
+        var before = workspace.SnapshotHashes();
+        string[] arguments =
+        [
+            "route", "create", RouteCreateIntegrationWorkspace.TargetId,
+            "--description", "Project overview", "--tag=Docs", "--tag=Overview", "--dry-run", "--json",
+        ];
+
+        var plain = await CliHostCapture.RunAsync(arguments, workspace.Workspace.LexicalRoot);
+        var verbose = await CliHostCapture.RunAsync([.. arguments, "--verbose"], workspace.Workspace.LexicalRoot);
+
+        Assert.Equal(0, plain.ExitCode);
+        Assert.Equal(string.Empty, plain.Error);
+        Assert.Equal(plain.ExitCode, verbose.ExitCode);
+        Assert.Equal(plain.Output, verbose.Output);
+        var diagnostic = Assert.Single(verbose.Error.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
+        Assert.InRange(diagnostic.Length, 1, 4095);
+        Assert.DoesNotContain('\r', diagnostic);
+        Assert.DoesNotContain('\n', diagnostic);
+        Assert.EndsWith(Environment.NewLine, verbose.Error, StringComparison.Ordinal);
+        Assert.Contains("status=complete; mode=dry-run", diagnostic, StringComparison.Ordinal);
+        Assert.Contains($"target={RouteCreateIntegrationWorkspace.TargetId}", diagnostic, StringComparison.Ordinal);
+        Assert.Contains("effects=2", diagnostic, StringComparison.Ordinal);
+        using var document = System.Text.Json.JsonDocument.Parse(plain.Output);
+        var root = document.RootElement;
+        Assert.Equal("current-directory", root.GetProperty("workspace").GetProperty("selectedBy").GetString());
+        Assert.Equal([".agents/loader.md", ".agents/templates/_templates.md"],
+            root.GetProperty("result").GetProperty("unchangedPaths").EnumerateArray().Select(path => path.GetString()));
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
     [Fact(DisplayName = "Composed root owns one exact Route Create leaf and stable Route delimiters"), Trait("Feature", "route-create"), Trait("Evidence", "Integration")]
     public void ComposedRootOwnsExactRouteCreateLeafAndDelimiters()
     {
@@ -33,7 +92,7 @@ public sealed class RouteCreateCompositionIntegrationTests
 
         Assert.Same(create, selection.Command);
         Assert.Equal(CliBindingSelectionState.Leaf, selection.State);
-        var binding = Assert.IsAssignableFrom<ICliCommandBinding>(selection.Binding);
+        var binding = Assert.IsType<ICliCommandBinding>(selection.Binding, exactMatch: false);
         Assert.Same(create, binding.Command);
         Assert.Same(binding, tree.FindBinding(create));
         Assert.Equal(

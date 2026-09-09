@@ -42,8 +42,9 @@ details and remains technology-neutral.
 - For unchanged workspace bytes and the same explicit input, resolution selects
   the same missing entrypoints, intended scaffold bytes, generated navigation,
   ordered plan, and semantic result described by the [Interface Contract](interface.md).
-- Repeating a successful application against the resulting state forms a
-  verified no-op. The no-op is an observation and does not become a synthetic
+- After successful application, invoking the same target without creation
+  metadata forms a verified no-op. Metadata flags remain invalid for an existing
+  final entrypoint. The no-op is an observation and does not become a synthetic
   effect.
 - The operation follows one complete mutation flow. Persistent effects begin only
   after the complete route chain, intended generated projection, ordered plan,

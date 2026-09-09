@@ -13,6 +13,7 @@ internal sealed record LibraryExecutionEvidence
     public required ImmutableArray<FileChangeReceipt> GeneratedRegions { get; init; }
     public required FileChangeReceipt? Record { get; init; }
     public required RecoveryBundlePreparation? RecoveryPreparation { get; init; }
+    public RecoveryBundlePreparationResult? RecoveryPreparationOutcome { get; init; }
     public required RecoveryBundleDeletionResult? RecoveryCleanup { get; init; }
     public required LibraryCancellationFact? Cancellation { get; init; }
     public required LibraryUnexpectedFailureFact? UnexpectedFailure { get; init; }

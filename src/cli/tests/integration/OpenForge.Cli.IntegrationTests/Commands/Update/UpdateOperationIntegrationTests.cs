@@ -8,6 +8,80 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Update;
 
 public sealed class UpdateOperationIntegrationTests
 {
+    [Fact(DisplayName = "Update creates a genuinely new source target while protecting existing lifecycle bytes"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
+    public async Task CreatesNewSourceTargetAlongsideProtectedLifecyclePublication()
+    {
+        using var workspace = UpdateIntegrationWorkspace.Create("update-operation-new-source-create");
+        await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
+        var intended = workspace.ReadBytes(UpdateIntegrationWorkspace.RetiredCandidatePath);
+        workspace.SeedGenuinelyNewSourceTarget();
+        var before = workspace.SnapshotHashes();
+
+        var result = await workspace.ExecuteAsync(workspace.Request());
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(intended, workspace.ReadBytes(UpdateIntegrationWorkspace.RetiredCandidatePath));
+        Assert.Equal(UpdateLifecycleAction.Publish, result.Lifecycle.Action);
+        Assert.Equal(UpdateLifecycleOutcome.Verified, result.Lifecycle.Outcome);
+        Assert.Equal(UpdateVerificationState.Verified, result.Verification);
+        Assert.Equal(UpdateRecoveryState.Removed, result.Recovery.State);
+        Assert.Equal([UpdateIntegrationWorkspace.LifecyclePath], result.Recovery.ProtectedPaths);
+        var after = workspace.SnapshotHashes();
+        foreach (var (path, hash) in before)
+        {
+            if (path != UpdateIntegrationWorkspace.LifecyclePath)
+            {
+                Assert.Equal(hash, after[path]);
+            }
+        }
+
+        var repeat = await workspace.ExecuteAsync(workspace.Request());
+
+        Assert.Equal(CliSemanticStatus.Complete, repeat.Status);
+        Assert.Empty(repeat.Effects);
+        Assert.Equal(UpdateLifecycleOutcome.AlreadyCurrent, repeat.Lifecycle.Outcome);
+        Assert.Equal(after, workspace.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Update restores a missing target with force alongside a protected safe replacement"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
+    public async Task ForcedMissingRestorationCoexistsWithProtectedReplacement()
+    {
+        using var workspace = UpdateIntegrationWorkspace.Create("update-operation-mixed-create-replace");
+        await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
+        var restored = workspace.ReadBytes(UpdateIntegrationWorkspace.ManagedPath);
+        var replaced = workspace.ReadBytes(UpdateIntegrationWorkspace.RetiredCandidatePath);
+        workspace.RemoveManagedContent();
+        workspace.SeedSafePreviousSourceVersion();
+        var before = workspace.SnapshotHashes();
+
+        var result = await workspace.ExecuteAsync(workspace.Request(force: true));
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(restored, workspace.ReadBytes(UpdateIntegrationWorkspace.ManagedPath));
+        Assert.Equal(replaced, workspace.ReadBytes(UpdateIntegrationWorkspace.RetiredCandidatePath));
+        Assert.Equal(UpdateLifecycleOutcome.Verified, result.Lifecycle.Outcome);
+        Assert.Equal(UpdateVerificationState.Verified, result.Verification);
+        Assert.Equal(UpdateRecoveryState.Removed, result.Recovery.State);
+        Assert.Equal(
+            [UpdateIntegrationWorkspace.RetiredCandidatePath, UpdateIntegrationWorkspace.LifecyclePath],
+            result.Recovery.ProtectedPaths);
+        var after = workspace.SnapshotHashes();
+        foreach (var (path, hash) in before)
+        {
+            if (path != UpdateIntegrationWorkspace.LifecyclePath && path != UpdateIntegrationWorkspace.RetiredCandidatePath)
+            {
+                Assert.Equal(hash, after[path]);
+            }
+        }
+
+        var repeat = await workspace.ExecuteAsync(workspace.Request(force: true));
+
+        Assert.Equal(CliSemanticStatus.Complete, repeat.Status);
+        Assert.Empty(repeat.Effects);
+        Assert.Equal(UpdateLifecycleOutcome.AlreadyCurrent, repeat.Lifecycle.Outcome);
+        Assert.Equal(after, workspace.SnapshotHashes());
+    }
+
     [Fact(DisplayName = "Update real workspace automatic mode preserves divergence without force or prune"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task AutomaticPreservesDivergenceWithoutForceOrPrune()
     {
