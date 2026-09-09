@@ -41,8 +41,9 @@ source preservation, formatting and static gates passed. Task 25 is integrated
 at `3b4aba9d`, exactly matching accepted feature `564545cb`, tree `7bdbe449`.
 Task 26 is accepted at phase 4/4, milestone 6/6. Review passed without material
 findings; full managed 2837/1570/188, native 1570/188 and managed-on-native188
-passed. All 300 managed/native raw comparison files match. Root is freezing
-final acceptance for exact local integration, then activating Task 10.
+passed. All 300 managed/native raw comparison files match. Task 26 is
+integrated at `aab57058`, exactly matching feature `d053b243`, tree `571b6104`.
+Root is activating Task 10 on the accepted complete CLI baseline.
 Root continues Task 10 audit → conditional Task 21 → Task 13 → Task 22. Later publication
 and global installation refresh remain unauthorized. General test-environment
 cleanup remains an idea. The current Task capsules govern scoped execution;

@@ -8,8 +8,7 @@ open-forge:
 
 ## Task State
 
-- State: Complete; final candidate accepted for exact local integration after
-  Tasks 24 and 25.
+- State: Complete and locally integrated at `aab57058` after Tasks 24 and 25.
 - Permanent mapping: Task 26 “Extension Internal Consolidation” in the
   [project control ledger](../project-control.md).
 - Prior input: read-only preparation tip
@@ -138,8 +137,8 @@ baseline before freezing any shared foundation; do not repeat completed work.
 - Stop conditions: a changed observable result, required policy merger, schema
   change, exceptional machinery or external effect. Return concrete evidence to
   root before expanding scope. Ordinary implementation choices remain delegated.
-- Current boundary: all M6 executable and differential gates passed. Root owns
-  final prose/source freeze and exact local integration, then Task 10 activation.
+- Current boundary: all M6 gates and exact local integration passed. Task 10
+  may activate on the accepted baseline.
 
 | Phase | Boundary                           | Completed milestones at boundary                        |
 | ----- | ---------------------------------- | ------------------------------------------------------- |
@@ -299,3 +298,13 @@ The result removes dead internal entrypoints and duplicated filename authority
 without changing the live reader policy. Global installation was not refreshed;
 no external publication occurred. Task 10 now takes the whole accepted CLI
 surface for strategic audit before any separately accepted Task 21 correction.
+
+## Local Integration
+
+Accepted feature `d053b243a86f917a36fe5a8b1b4cc61b5c80eb9f` was squash-integrated
+onto current local develop `02e929fd` as
+`aab570587dfd141dc67a5ed841ebf5f71152fc62`. Both trees are exactly
+`571b61048be0ec404d7eb6bfd8f7316102286685`. All 22 physical delta paths match
+by bytes, modes and removals, including all four formerly untracked additions.
+The feature branch and evidence remain preserved. The following coordination
+receipt changes no executable source.
