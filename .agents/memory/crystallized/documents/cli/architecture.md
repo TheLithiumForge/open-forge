@@ -735,7 +735,7 @@ package publication is accepted. The replacement becomes shipping only after
 the complete retained command set, accepted package graph and platform target,
 documentation, and release evidence are accepted together.
 
-The exact x64 package graph, platform horizon, current implementation gaps,
+The exact six-target package graph, platform horizon, implementation state,
 synchronized versions, staging, packing, checksums, proof ownership, and atomic
 publication boundary live in [CLI Distribution](distribution.md). New RIDs,
 architectures, operating systems, libc variants, channels, signatures, SBOM,

@@ -12,9 +12,10 @@ On 2026-09-09 the user explicitly resumed Tasks 27, 7, 13 and 22 in order.
 All 28 commands and Tasks 19/20/23/24/25/26/10 are complete and integrated.
 Task 21 is complete at phase 4/4, milestone 6/6, integrated at `75f6ff49`
 with the exact accepted feature tree and 6,418 qualified managed/native passes.
-Task 27 is active at phase 4/4, milestone 5/6 on its own sequential branch,
-`codex/csharp-structural-streamlining`. The Task owns exact scope and budgets.
-Task 7 adds ARM64 to Linux/macOS/Windows x64 packaging; Task 13 covers all six
+Task 27 is complete at phase 4/4, milestone 6/6, integrated at `81f22c43`
+with exact accepted tree `e7526e7f` and 6,421 qualified passes.
+Task 7 is active at phase 4/4, milestone 5/6 on `codex/npm-arm64-expansion`.
+Its Task owns the accepted ARM64 package scope and budgets. Task 13 covers all six
 native hosts; Task 22 owns final documentation/acceptance and release preparation.
 Publication and global installation refresh remain separately authorized effects.
 Task 28 is the user's independent source-first Framework review in another

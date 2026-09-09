@@ -3,7 +3,9 @@ import { chmodSync, copyFileSync, mkdirSync, rmSync, statSync, writeFileSync } f
 import { createRequire } from "node:module";
 import { join } from "node:path";
 
+import darwinArm64PackageTemplate from "./darwin-arm64/package.json" with { type: "json" };
 import darwinPackageTemplate from "./darwin-x64/package.json" with { type: "json" };
+import linuxArm64PackageTemplate from "./linux-arm64/package.json" with { type: "json" };
 import linuxPackageTemplate from "./linux-x64/package.json" with { type: "json" };
 import mainPackageTemplate from "./main/package.json" with { type: "json" };
 import {
@@ -15,6 +17,7 @@ import {
   TemplatePackageVersion,
   type SupportedRuntime,
 } from "./package-model.ts";
+import windowsArm64PackageTemplate from "./win-arm64/package.json" with { type: "json" };
 import windowsPackageTemplate from "./win-x64/package.json" with { type: "json" };
 
 export type StageVersion = { kind: "release"; value: string } | { kind: "local"; sha: string };
@@ -37,6 +40,9 @@ const platformPackageTemplates = {
   "osx-x64": darwinPackageTemplate,
   "linux-x64": linuxPackageTemplate,
   "win-x64": windowsPackageTemplate,
+  "osx-arm64": darwinArm64PackageTemplate,
+  "linux-arm64": linuxArm64PackageTemplate,
+  "win-arm64": windowsArm64PackageTemplate,
 } as const satisfies Record<SupportedRuntime, { name: string; version: string; private: boolean }>;
 
 export function stagePackages(request: StageRequest): StagedPackages {
@@ -77,6 +83,9 @@ export function stagePackages(request: StageRequest): StagedPackages {
       [PlatformPackages["osx-x64"].packageName]: version,
       [PlatformPackages["linux-x64"].packageName]: version,
       [PlatformPackages["win-x64"].packageName]: version,
+      [PlatformPackages["osx-arm64"].packageName]: version,
+      [PlatformPackages["linux-arm64"].packageName]: version,
+      [PlatformPackages["win-arm64"].packageName]: version,
     },
   });
   writeManifest(join(platformPackageDirectory, "package.json"), { ...publicPlatformTemplate, version });

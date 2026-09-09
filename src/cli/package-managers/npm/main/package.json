@@ -19,7 +19,10 @@
   "optionalDependencies": {
     "@thelithiumforge/open-forge-darwin-x64": "0.0.0",
     "@thelithiumforge/open-forge-linux-x64": "0.0.0",
-    "@thelithiumforge/open-forge-win-x64": "0.0.0"
+    "@thelithiumforge/open-forge-win-x64": "0.0.0",
+    "@thelithiumforge/open-forge-darwin-arm64": "0.0.0",
+    "@thelithiumforge/open-forge-linux-arm64": "0.0.0",
+    "@thelithiumforge/open-forge-win-arm64": "0.0.0"
   },
   "publishConfig": {
     "access": "public"

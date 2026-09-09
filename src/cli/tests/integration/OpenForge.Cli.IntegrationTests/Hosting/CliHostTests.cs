@@ -15,7 +15,7 @@ public sealed class CliHostTests
         using var workspace = TemporaryWorkspace.Create("host-help");
         var standardOutput = new StringWriter();
         var standardError = new StringWriter();
-        var arguments = explicitHelp ? new[] { "--help" } : Array.Empty<string>();
+        string[] arguments = explicitHelp ? ["--help"] : [];
 
         var exitCode = await CliHost.RunAsync(
             arguments,
@@ -46,7 +46,7 @@ public sealed class CliHostTests
             TestContext.Current.CancellationToken);
 
         Assert.Equal(0, exitCode);
-        Assert.Equal("0.0.0-dev" + Environment.NewLine, standardOutput.ToString());
+        Assert.Equal($"{CliBuildVersion.InformationalVersion}{Environment.NewLine}", standardOutput.ToString());
         Assert.Equal(string.Empty, standardError.ToString());
         Assert.False(Directory.Exists(missingWorkspace));
     }

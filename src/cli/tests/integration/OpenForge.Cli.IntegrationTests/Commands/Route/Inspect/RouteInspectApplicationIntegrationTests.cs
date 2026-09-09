@@ -1,4 +1,5 @@
 using System.Text.Json;
+using OpenForge.Cli.Hosting;
 using OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Shared.Profile;
 using OpenForge.Cli.IntegrationTests.Hosting;
 
@@ -314,7 +315,7 @@ public sealed class RouteInspectApplicationIntegrationTests
             missing);
 
         Assert.Equal(0, version.ExitCode);
-        Assert.Equal("0.0.0-dev" + Environment.NewLine, version.Output);
+        Assert.Equal($"{CliBuildVersion.InformationalVersion}{Environment.NewLine}", version.Output);
         Assert.Equal(string.Empty, version.Error);
         Assert.False(Directory.Exists(missing));
     }

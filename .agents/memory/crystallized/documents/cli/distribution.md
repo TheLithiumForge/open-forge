@@ -50,14 +50,18 @@ channels, or support-floor claims require a new maintainer decision.
 
 Task 7's previous x64 platform-expansion horizon is complete at phase 4/4,
 milestone 7/7. Its accepted lane is `a2942781` with tree `fe36fc3f`, and its
-squash integration is `e19d429e` with the same tree. The current implementation
-stages and packs the three x64 packages. Its installed-launcher journey was
+squash integration is `e19d429e` with the same tree. That historical implementation
+staged and packed the three x64 packages. Its installed-launcher journey was
 run on Linux; macOS and Windows have stage-and-pack evidence only.
 
-Task 7's new ARM64 expansion is queued after Task 27 and before Task 13.
+Task 7's new ARM64 expansion is active after Task 27 and before Task 13.
 Task 13 must refreeze its earlier Linux-only preparation for all six targets.
-No new ARM64 package implementation, matching-host execution, CI acceptance,
-publication, or global installation refresh is established by this decision.
+The six-target package graph is now implemented with staging and packing
+evidence for all six targets. Final local acceptance also proves the actual
+stamped Linux x64 native package journey and complete managed/Linux native
+suites. The other five matching-host journeys and six-target CI acceptance
+remain pending in Task 13. Publication and global installation refresh are not
+established by this local evidence.
 Historical local-link receipts remain scoped to their exact authorized action.
 
 The replacement remains non-shipping until the complete retained command set,

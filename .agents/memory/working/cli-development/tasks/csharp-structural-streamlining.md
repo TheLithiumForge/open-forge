@@ -8,9 +8,9 @@ open-forge:
 
 ## Task State
 
-- State: Active from Task 21's accepted feature candidate; before Task 7 and Task 13.
+- State: Complete and locally integrated; Task 7 follows.
 - Permanent identity: Task 27 in the [project control ledger](../project-control.md).
-- Phase and milestone horizon: phase 4/4, milestone 5/6.
+- Phase and milestone horizon: phase 4/4, milestone 6/6.
 - Owner: root Overseer, sequential; substantive assistance uses Astra/high.
 - Authority: the user's standing instruction to finish refactoring and improve
   simplicity, clarified on 2026-09-09 by asking whether C# opportunities were
@@ -61,10 +61,10 @@ open-forge:
   one exact token-preserving attribute-line wrap with the same reviewer's
   bounded recheck; no behavior or assertion correction was required. Root may record a justified adjustment
   within accepted scope; no new product or external authority is implied.
-- Current boundary: M5 accepted on exact source `d5ccca6d`. The root qualified
-  all 6,421 executions and final source/runtime, formatting and static evidence.
-  The exact operator is finished. Root owns M6 final freeze and local integration;
-  source and authority mutations remain serialized. No publication is authorized.
+- Current boundary: M6 complete. Accepted feature `a5fcea25` is integrated at
+  `81f22c43`, with exact tree `e7526e7f`. All twenty delta paths match by bytes,
+  modes and Git blobs. No source or test work remains in this finite horizon.
+  Task 7 follows; publication remains outside local authority.
 
 ## M1 Accepted Finite Scope
 
@@ -223,6 +223,18 @@ Final static/protected checks pass and all 24 unrelated dirty files retain
 exact bytes and modes. The canonical summary binds review and execution receipts.
 This proves the accepted structural scope on Linux x64, with no six-host,
 exhaustive-internals, publication or measured-performance claim.
+
+## M6 Exact Integration
+
+`artifacts/task27-final/integration-freeze.json` freezes accepted feature
+`a5fcea2534945914085407a9c3e3672a2694afec` over current develop
+`75f6ff491091a619824328ddc5707b33a15ff7c6`. All twenty paths are modifications;
+there are no formerly untracked additions or whole-file deletions. Integration
+`81f22c43c61afffecbec796fbdd49d0bd8a295d7` has the exact candidate tree
+`e7526e7f980c6990026b296227e4955a31b6b8c5`. The integration receipt confirms
+all path bytes, modes and blobs and clean Git state. Task 21's already-integrated
+source was not duplicated. Final executable evidence remains bound to unchanged
+source `d5ccca6d`; subsequent changes only close Working Memory state.
 
 ## Milestones
 

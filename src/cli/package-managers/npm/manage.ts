@@ -56,7 +56,7 @@ function stage(argumentsToRead: readonly string[]): void {
 }
 
 function readRuntime(value: string): SupportedRuntime {
-  if (value === "linux-x64" || value === "osx-x64" || value === "win-x64") {
+  if (value === "linux-x64" || value === "osx-x64" || value === "win-x64" || value === "linux-arm64" || value === "osx-arm64" || value === "win-arm64") {
     return value;
   }
 

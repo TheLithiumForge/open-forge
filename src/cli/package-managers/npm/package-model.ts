@@ -29,6 +29,30 @@ export const PlatformPackages = {
     nodeArchitecture: "x64",
     nativeFileName: "open-forge.exe",
   },
+  "osx-arm64": {
+    runtime: "osx-arm64",
+    packageName: "@thelithiumforge/open-forge-darwin-arm64",
+    directoryName: "open-forge-darwin-arm64",
+    nodePlatform: "darwin",
+    nodeArchitecture: "arm64",
+    nativeFileName: "open-forge",
+  },
+  "linux-arm64": {
+    runtime: "linux-arm64",
+    packageName: "@thelithiumforge/open-forge-linux-arm64",
+    directoryName: "open-forge-linux-arm64",
+    nodePlatform: "linux",
+    nodeArchitecture: "arm64",
+    nativeFileName: "open-forge",
+  },
+  "win-arm64": {
+    runtime: "win-arm64",
+    packageName: "@thelithiumforge/open-forge-win-arm64",
+    directoryName: "open-forge-win-arm64",
+    nodePlatform: "win32",
+    nodeArchitecture: "arm64",
+    nativeFileName: "open-forge.exe",
+  },
 } as const;
 
 export type SupportedRuntime = keyof typeof PlatformPackages;

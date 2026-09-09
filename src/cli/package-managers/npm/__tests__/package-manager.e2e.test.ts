@@ -6,8 +6,8 @@ import { join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-const repositoryRoot = fileURLToPath(new URL("../../../../", import.meta.url));
-const managerPath = join(import.meta.dirname, "manage.ts");
+const repositoryRoot = fileURLToPath(new URL("../../../../../", import.meta.url));
+const managerPath = join(import.meta.dirname, "../manage.ts");
 const localGitSha = "0123456789abcdef0123456789abcdef01234567";
 const fixtureArgument = "--version";
 const fixtureEnvironmentName = "OPEN_FORGE_PACKAGE_E2E";

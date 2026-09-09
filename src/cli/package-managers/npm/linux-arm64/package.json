@@ -1,0 +1,21 @@
+{
+  "name": "@thelithiumforge/open-forge-linux-arm64",
+  "version": "0.0.0",
+  "description": "Open Forge native CLI for Linux ARM64 with glibc.",
+  "license": "MIT",
+  "private": true,
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "libc": "glibc",
+  "files": [
+    "bin",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

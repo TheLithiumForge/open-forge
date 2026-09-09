@@ -60,19 +60,25 @@ coverage. Under the user's broader streamlining direction, root must reconcile
 that coverage and assess remaining C# simplification opportunities before
 Task 13, selecting justified bounded follow-up work without repeating accepted
 reviews or treating superficial similarity as shared semantic ownership.
-Task 27 “C# Structural Streamlining” is active at phase 4/4, milestone 5/6.
-All five isolated Blue/Purple slices and the bounded whitespace correction are
-accepted. Final source `d5ccca6d` passes 6,421 managed/native executions:
-managed 2,882/1,603/111, native 1,603/111 and managed-public-on-native 111.
-There are zero failures, skips or build warnings. Fresh review, required
-whitespace/style, static/protected checks and source/runtime identity pass.
+Task 27 “C# Structural Streamlining” is complete at phase 4/4, milestone 6/6.
+Accepted feature `a5fcea25` is integrated at `81f22c43`, with exact tree
+`e7526e7f`. All twenty delta paths retain their exact bytes, modes and blobs.
+Final source `d5ccca6d` passes 6,421 managed/native executions with zero
+failures, skips or build warnings. Five isolated Blue/Purple slices and the
+bounded whitespace correction preserve the accepted behavior and assertions.
 The Task record and canonical receipt define exact evidence and limits.
-Final candidate freeze and local integration remain M6.
+Task 7's ARM64 expansion is active at phase 4/4, milestone 5/6 on
+`codex/npm-arm64-expansion`. Fresh review `T7-AR1` accepts `1a2598ff` with no
+material findings. All 6,421 managed/Linux native executions pass, plus the
+actual stamped Linux installed-package journey. All seven layout cases pass;
+foreign payloads remain layout evidence only. Final formatting, static checks,
+3,176 source identities and twenty-four unrelated dirty files are qualified.
+Exact feature freeze and local integration are next.
 Root continues Task 21 → Task 27 → Task 7 ARM64 expansion → Task 13 →
 Task 22. On 2026-09-09 the user explicitly approved Tasks 21, 27, 13 and 22,
 including Linux, macOS and Windows on x64 and ARM64. The current
 [Distribution document](../../crystallized/documents/cli/distribution.md) defines the six-target graph. Task 7's
-new expansion is queued with phase and milestone horizon unassigned; its earlier
+new expansion uses its Task-owned four-phase, six-milestone horizon; its earlier
 completed horizons remain complete. Task 13 retains preparation phase 1/3,
 milestone 2/6, but must refreeze for all six targets before implementation.
 

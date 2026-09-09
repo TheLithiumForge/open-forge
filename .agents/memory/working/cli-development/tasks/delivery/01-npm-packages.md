@@ -8,8 +8,8 @@ open-forge:
 
 ## Task State
 
-- State: New ARM64 expansion queued after Task 27 and before Task 13, with
-  phase and milestone horizon unassigned until activation. Historical 8/8 and platform-expansion 7/7 horizons remain complete and
+- State: ARM64 expansion Active, phase 4/4, milestone 5/6, after accepted
+  Task 27 and before Task 13. Historical 8/8 and platform-expansion 7/7 horizons remain complete and
   immutable. The provisional local-use horizon is complete at phase 3 of 3,
   milestone 5 of 5. Live preflight, exact Loader/current-truth/future-idea
   prose, focused evidence, both independent reviews, candidate integration,
@@ -35,8 +35,8 @@ open-forge:
 - Historical owner: Kepler Task Mastermind completed the provisional local-use
   horizon on branch `codex/provisional-local-use`. Ada Writer completed the
   bounded Loader, maintenance-contract, current-truth, and future-idea prose.
-  These completed owners are historical. The new ARM64 horizon has no assigned
-  implementation owner; root Overseer retains its scope and activation.
+  These completed owners are historical. The ARM64 capsule below assigns the
+  continuous author; root Overseer retains scope and acceptance.
 - Provisional activation base:
   `0bc82357a4fc7bd54ecbca1d58501d721c04baa6`, tree
   `41b74d9cad9c5d16ed8a02bb60ba06a4b8df8903`.
@@ -75,11 +75,10 @@ defines the current main package and six platform packages. The historical
 Their recipes and evidence below describe those earlier scopes only. In
 particular, their ARM-undecided wording is superseded by this horizon.
 
-The new horizon is queued after Task 27 and before Task 13. At activation,
-freeze its phase/milestone counts, current source identity, exact package and
-runtime mappings, callable scope, test assertions, and review/correction budget.
-Do not reuse a historical owner, budget, clean-base claim, or native receipt as
-proof of this expansion.
+The new horizon is active after Task 27 and before Task 13. The capsule below
+freezes its phase/milestone counts, source identity, package and runtime mappings,
+callable scope, assertions and budgets. Historical owners and receipts do not
+prove this expansion.
 
 Implement the three ARM64 package templates, exact synchronized main-package
 optional dependencies, and package-owned runtime selection, staging, and local
@@ -100,6 +99,190 @@ in separate coherent commits, with assertion-preservation mapping for moved or
 removed tests. Exact paths and meaningful checks are selected at activation.
 No global link/unlink refresh, registry contact, remote publication, new
 dependency, fallback runtime, or packaging framework is authorized here.
+
+### ARM64 Execution Capsule
+
+- Base: `81f22c43`, tree `e7526e7f`, on `codex/npm-arm64-expansion` in
+  the primary worktree. Task 27's source-identical full baseline passed 6,421
+  executions. All unrelated dirty work and the user-owned Task 28 remain protected.
+- Outcome/profile: derivative package expansion with explicit Gray/Red/Green
+  freezes and one fresh review. This private developer CLI's wrapper manages
+  caller-owned generated packages and test roots. Ordinary Node, TypeScript,
+  npm and filesystem capabilities suffice. Exceptional machinery is none.
+  No stronger hostile-process, reproducibility or six-host execution claim.
+- Owner: root accepts architecture, state, freezes, commits and integration.
+  The continuous `arm64_package_preflight` Astra/high author implements the
+  closed package slice after the root releases each boundary.
+- Accepted packet: `artifacts/task7-arm64-preparation/author/preflight.md`,
+  with the capsule's refinements. Seven production paths under the npm scope:
+  three ARM64 templates, `package-model.ts`, `manage.ts`, `stage.ts`, and
+  `main/package.json`. Preserve all existing callable shapes and x64 behavior.
+  The generic launcher and local-link source require no changes.
+- Evidence placement: new literal six-target fixtures, real staging/packing
+  Integration cases, and an argv-driven native installed-package journey under
+  npm's nearest `__tests__/`. Use focused strict no-emit Integration and package
+  projects. Root package scripts may add only `test:package-layout` and
+  `test:package-native`, then update the existing fixture path during Purple.
+  New shared test support needs two actual consumers and one narrow responsibility.
+- Gray: freeze all seven production paths, their direct neighborhood, callable
+  shapes, exact six-target mapping and independent expected graph. Freeze the
+  existing Linux fixture, including argv/environment/stdout/status assertions.
+  Existing callables already carry the expansion; no stub API is needed.
+- Red: author the independently selected layout cases against unchanged
+  production. The three ARM cases must fail at owned unsupported-runtime ingress;
+  x64 cases expose the missing optional dependency edges. Keep successful x64
+  layout observations visible before that graph assertion. Qualify failure
+  reasons, exact counts and source identities, then freeze evidence before Green.
+- Green: edit only the seven accepted production paths against frozen evidence.
+  A separate Purple commit moves the existing Linux fixture to `__tests__/`,
+  changing only its two relative locators and root script path. Every other byte
+  and assertion remains unchanged. Do not merge this move into production work.
+- Native journey: explicit artifacts root, RID, native input, version kind/value
+  and independent expected version. Require matching host, fresh owned result
+  root, offline local tarballs and isolated npm configuration. Execute the
+  installed Open Forge JavaScript launcher through Node, verify input/installed
+  native hashes, exact version output, stderr, status and signal. This does not
+  claim npm shim execution. Keep existing Linux environment evidence separately.
+- Evidence ladder: seven real staging/packing Integration cases, the preserved
+  Linux fixture, one actual Linux native installed journey, strict compiler,
+  scoped lint/format, path/prohibited-pattern/source-preservation checks, and
+  the final complete managed/Linux Native AOT gate triggered by packaging.
+  Foreign layout cases use inert bytes, never foreign native execution.
+- Task 13 executes the same native journey on the other matching hosts and owns
+  the complete six-host receipt set. Task 7 acceptance closes graph implementation,
+  local evidence and integration; it does not pre-accept those downstream runs.
+- Protected: C# source/tests/projects, public journey bodies, Framework/Extension
+  content, dependencies, root MVP bin/build/source, CI and release surfaces,
+  launcher/local-link behavior, all other worktrees and authority outside this
+  capsule. No link/unlink, remote contact, dependency installation or publication.
+- Budgets: one fresh whole-task review `T7-AR1`, one grouped correction/recheck
+  `T7-AC1`, council zero. `T7-AR1` is consumed with ACCEPT and no material findings;
+  `T7-AC1` remains unused. Stop at an unaccepted public, dependency,
+  platform, exceptional machinery or external-effect change.
+- Milestones: phase 1/4 has M1 preflight/Gray acceptance and M2 qualified frozen
+  Red; phase 2/4 has M3 Green and separate Purple with focused evidence;
+  phase 3/4 has M4 fresh review/correction acceptance; phase 4/4 has M5 complete
+  local gates and M6 exact freeze/integration. Current phase 4/4, milestone 5/6.
+- Now: M4 review and M5 final local gates are accepted. Refreeze every path before
+  staging the final authority increment and exact local integration.
+
+### M2 Qualified Red
+
+Root accepted candidate `8da4e3e3`. The six new evidence/configuration files
+and two root scripts are frozen in `artifacts/task7-arm64/red/`. All seven
+Integration cases execute: three ARM cases fail at owned unsupported-runtime
+ingress; the three x64 cases prove staged bytes/manifests and both packed
+inventories before failing on missing ARM optional edges; unsupported RID
+rejection passes with no effects. There are no skips, cancellations or todo
+cases. The original Linux fixture passes 1/1 with exact original bytes.
+
+Both strict compiler projects, scoped lint/format and preservation checks pass.
+Root inspected every new body, raw case identity/reason and log hash. The native
+journey is compiled but not yet executed. An initial unsupported TypeScript
+parameter-property attempt is excluded from Red; an ordinary explicit field and
+`erasableSyntaxOnly` corrected that setup error before the complete qualified
+rerun. This strengthens the Node execution boundary without a new runtime.
+
+### M3 Green And Separate Purple
+
+Production commit `3d39173a` adds the three ARM64 templates and exact six-target
+selection, staging and optional dependency mappings. The frozen seven layout
+cases pass; the original Linux journey passes. All 3,173 entry inputs were
+accounted for, with exactly four tracked production edits and three new templates.
+Existing callable declarations, the thin launcher and local-link source remain
+unchanged. Both focused strict compilers, the existing root compiler, scoped
+lint/format and preservation pass. Root froze and inspected all seven bodies.
+
+Purple `750b42f8` moves the original Linux journey beside its focused evidence.
+Only two fixture locators, its root script path and focused compiler include
+change; every other fixture byte and assertion is retained. The moved case passes.
+Purple `af726835` corrects the two generated-version expectations after both
+original cases failed against a stamped build; both corrected cases pass.
+Purple `e23e3c33` applies the bounded help-array formatting correction below;
+all four help/version cases pass. Required whitespace and informational style
+checks pass on the two final C# files. The initial style failure remains retained.
+
+Root personally read the complete C# trio: `_csharp.md`
+`31045ebcb02d5bfeee8ba9f3112d307b1f72a2186cda618fbf7d22e7d1d90b53`,
+`design.md` `76aa8fc7aaaa79d9535998f5557150f3754e3d80520a7a06864b61659373c1a9`,
+and `style.md` `c3fa9d31575e77fedb103ca397f0ccf10ab7236e6edbef1658c7fe36138457cb`.
+Exact source bodies, assertion mapping, raw results and freezes are under
+`artifacts/task7-arm64/`. The final static gate accounts for all seventeen
+source path entries including the moved fixture, preserves all public journey
+bodies and twenty-four unrelated dirty files, and confirms unchanged surviving
+production callables. Native execution remains pending; foreign inert layout
+payloads are never execution proof.
+
+### M4 Review And M5 Final Local Acceptance
+
+Fresh Astra/high review `T7-AR1` accepts candidate `1a2598ff`, tree `0655b700`,
+with no material findings. The reviewer personally read the complete current
+C# trio and verified the same fingerprints recorded above, the seven production
+paths, original fixture translation, bounded C# corrections, twenty-four command
+log hashes and coherent durable prose. `T7-AC1` remains unused.
+
+Root accepted `artifacts/task7-arm64/final/canonical-summary.json`: managed
+2,882 Unit, 1,603 Integration and 111 public cases; native 1,603 Integration and
+111 public cases; managed public selecting native 111. All 6,421 executions
+pass with zero failed, skipped, pending or other cases. All five build/publish
+operations pass without warnings or errors. The exact three public journeys
+for each of twenty-eight commands remain unchanged.
+
+Every build uses `0.0.0-dev.sha-1a2598ffa0156880f82bd449fea395ef0a316e29`.
+The three native executables are actual ELF x86-64 artifacts. The independent
+installed-package journey passes once with that exact version, empty stderr,
+zero exit and null signal; installed and input native SHA-256 are both
+`690c2244b8c6ceba5f8a812bcdc9cd60bc951e88bc3a9ffca786763b69c069f7`.
+Its exact tested tarballs and receipt remain under the final native-package root.
+No npm shim, foreign-host or registry publication proof is claimed.
+
+All 3,176 source inputs remain unchanged through both runtime gates. Runtime
+manifests, exact discovered/executed identities, deferred Unit theory expansion,
+required format receipts, package lint/format, surviving callable declarations,
+protected public/production sources and twenty-four unrelated dirty files are
+qualified. Root refreshed the final static inventory after the reviewer's note
+about later authority-only hashes. The next milestone is exact local integration;
+Task 13 retains the remaining matching-host evidence.
+
+### Candidate Version Evidence Correction
+
+Root identified `T7-V1` during delivery preparation: two existing Integration
+assertions hard-code `0.0.0-dev` although the root host uses the build-generated
+informational version. The exact locations are
+`Hosting/CliHostTests.VersionBypassesWorkspaceSelectionAndUsesGeneratedVersion`
+and `Commands/Route/Inspect/RouteInspectApplicationIntegrationTests.InspectVersionBypassesWorkspaceSelection`
+under `src/cli/tests/integration/OpenForge.Cli.IntegrationTests/`. A stamped
+candidate therefore conflicts with those test expectations, not with accepted
+CLI behavior. Both tests must retain their arguments, missing-workspace setup,
+exit, stderr and no-created-directory assertions.
+
+This bounded amendment permits only those two test expectations and the directly
+required generated-version import, in a separate Purple commit after the package
+Green boundary. Root first runs the unchanged cases against a stamped managed
+build and qualifies the two expected failures, then freezes all original bodies.
+Use the existing generated `CliBuildVersion.InformationalVersion` for the host's
+exact output expectation. The native installed-package journey independently
+asserts the literal supplied candidate version and native hash, so this change
+does not replace the public build-stamp oracle with a self-readback.
+
+No C# production, project, callable, command behavior or public journey change
+is authorized. The full C# directive trio and fingerprints apply personally to
+the author and reviewer. The whole-task fresh review includes these two changed
+assertions. All other source and evidence remain protected. This closes an
+observed build-version assumption before the already-required final gates; it
+creates no extra review loop or unbounded test cleanup.
+
+### Focused Formatting Correction
+
+The first required style check on the two changed Integration files exposed
+pre-existing IDE0300/IDE0301 hints at `CliHostTests` line 18. Root permits one
+separate Purple cleanup of that help test's array initialization: an explicit
+`string[]` target and collection expressions retain the same empty or single
+argument array. Every assertion and both theory rows stay frozen. Run both help
+rows and the two corrected version cases, then rerun the required focused format
+checks. No production or public journey changes are added. The original style
+failure remains in `artifacts/task7-arm64/final/`; the same whole-task review
+covers this bounded amendment without an additional review unit.
 
 ## Provisional Local-Use Horizon
 

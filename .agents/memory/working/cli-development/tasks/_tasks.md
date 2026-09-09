@@ -32,8 +32,8 @@ Read the [program Task](00-cli-development.md),
 - [x] [Operational Commands](operations/_operations.md) — Complete: Status, Doctor, Repair, and Cleanup are integrated; Task 20 Cleanup completed at phase 5/5, milestone 8/8 in `148d378d` — Implementer: Overseer-managed command lanes
 - [x] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is Complete, phase 3/3, milestone 5/5; integrated at `fbcec295`, seven findings selected for Task 21
 - [x] [CLI Command Surface Remediation](cli-command-surface-remediation.md) — Complete, phase 4/4, milestone 6/6; integrated at `75f6ff49`
-- [ ] [C# Structural Streamlining](csharp-structural-streamlining.md) — Task 27 is Active, phase 4/4, milestone 5/6; all gates accepted, final integration remains
-- [ ] [Task 7 ARM64 package expansion](delivery/01-npm-packages.md#arm64-expansion-horizon) — Queued after Task 27; new phase/milestone horizon unassigned
+- [x] [C# Structural Streamlining](csharp-structural-streamlining.md) — Task 27 is Complete, phase 4/4, milestone 6/6; integrated at `81f22c43`
+- [ ] [Task 7 ARM64 package expansion](delivery/01-npm-packages.md#arm64-expansion-horizon) — Active, phase 2/4, milestone 2/6; frozen Red accepted
 - [ ] [CLI Delivery](delivery/_delivery.md) — Task 13 covers all six accepted platforms after Task 7; Task 22 remains last
 - [ ] [Source Framework Wording and Logic Review](source-framework-review.md) — Task 28 is a separate queued user-owned parallel review; no implementation or assigned horizon
 - [x] [Task 23: Workspace Libraries](workspace-libraries.md) — Complete, phase 5/5, milestone 8/8; Sol return and root placement correction accepted at `25c65bf8`.

@@ -1252,3 +1252,25 @@ comparison and establishes no model-cost or quality superiority. The complete
 Task authority given to R2 contained R1 titles; R2 did not consume R1's finding
 evidence and reviewed a disjoint cohort. This is sequential division of scope,
 not a blinded comparative experiment.
+
+## Task 7 ARM64 Package Expansion
+
+One persistent Astra/high author delivered independent six-target layout Red and
+seven-path Green against frozen evidence. An initial Node type-stripping failure
+exposed a parameter property unsupported by the actual execution mode; an
+explicit field and `erasableSyntaxOnly` made the strict project match that mode
+before qualified Red. Compilation alone would not have established executable
+TypeScript compatibility without that constraint.
+
+Root then qualified two existing hard-coded version expectations against an
+actual stamped build before correcting them in an isolated Purple commit. A
+required focused style pass also exposed two unchanged help-array hints; one
+separate, assertion-preserving Purple cleanup closed them. These were evidence
+and build-identity assumptions, not new CLI behavior.
+
+Fresh Astra/high review accepted the final candidate with no material findings.
+Luna/max performed exact pre-decided managed/native commands, and root qualified
+6,421 successful executions plus the actual Linux installed-package journey.
+All-six package layouts did not establish six-host execution. The useful result
+is a bounded author/reviewer/operator split with explicit failure qualification;
+there is no matched Sol comparison or measured model-cost superiority.
