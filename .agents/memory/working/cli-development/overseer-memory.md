@@ -15,9 +15,9 @@ with the exact accepted feature tree and 6,418 qualified managed/native passes.
 Task 27 is complete at phase 4/4, milestone 6/6, integrated at `81f22c43`
 with exact accepted tree `e7526e7f` and 6,421 qualified passes.
 Task 7 is complete at phase 4/4, milestone 6/6, integrated at `7eeeb19d`.
-Task 13 is at phase 3/3, milestone 5/6; Task 22 is at phase 3/3,
-milestone 5/6. Both are locally accepted and pending squash integration from
-`codex/cli-delivery` into local `develop`. On 2026-09-10 the user made local
+Tasks 13 and 22 are complete at phase 3/3, milestone 6/6 under their accepted
+local completion horizons. Feature `6d370632` is squash-integrated into local
+`develop` at `3bf03e0e`, with identical tree `33c98766`. On 2026-09-10 the user made local
 Git authoritative and accepted Linux execution plus static review of the other
 platform jobs. Remote Git/GitHub operations, hosted runs, uploads and publication
 are prohibited. This supersedes the earlier hosted/release completion gates.

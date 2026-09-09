@@ -69,9 +69,9 @@ bounded whitespace correction preserve the accepted behavior and assertions.
 The Task record and canonical receipt define exact evidence and limits.
 Task 7's ARM64 expansion is complete at phase 4/4, milestone 6/6,
 integrated at `7eeeb19d` with exact tree `c222861a`.
-Task 13 is at phase 3/3, milestone 5/6; Task 22 is at phase 3/3,
-milestone 5/6. Both are locally accepted and pending squash integration from
-`codex/cli-delivery` into local `develop`. On 2026-09-10 the user made local
+Tasks 13 and 22 are complete at phase 3/3, milestone 6/6 under their accepted
+local completion horizons. Feature `6d370632` is squash-integrated into local
+`develop` at `3bf03e0e`, with identical tree `33c98766`. On 2026-09-10 the user made local
 Git authoritative and accepted Linux execution plus static review of the other
 platform jobs. Remote Git/GitHub operations, hosted runs, uploads and publication
 are prohibited. This supersedes the earlier hosted/release completion gates.
@@ -80,8 +80,8 @@ foreign-host execution and a shipping release are not claimed. All thirty
 workflow shell blocks pass syntax and ShellCheck. Runtime candidate
 `c2eb60b3` retains 6,421 passing executions and the real Linux package journey;
 reviewed correction `696c56b7` changes only explicit npm TAP reporting.
-Root continues Task 21 → Task 27 → Task 7 ARM64 expansion → Task 13 →
-Task 22. On 2026-09-09 the user explicitly approved Tasks 21, 27, 13 and 22,
+The authorized CLI sequence Task 21 → Task 27 → Task 7 ARM64 expansion →
+Task 13 → Task 22 is complete locally. Task 28 continues in the other chat. On 2026-09-09 the user explicitly approved Tasks 21, 27, 13 and 22,
 including Linux, macOS and Windows on x64 and ARM64. The current
 [Distribution document](../../crystallized/documents/cli/distribution.md) defines the six-target graph. Task 7's
 new expansion uses its Task-owned four-phase, six-milestone horizon; its earlier
@@ -501,8 +501,8 @@ identity, queue state, completion grace, worktree mapping, and integration state
 | Task 21 “CLI Command Surface Remediation”              | [CLI Command Surface Remediation](tasks/cli-command-surface-remediation.md)                     | `DEQUEUED` | Consumed | Correct the seven validated audit findings within existing contracts and refactoring authority.                     | Phase 4/4, milestone 6/6; exact integration accepted. | Bounded sequential remediation                           | Accepted feature6173fb5b integrated at75f6ff49; exact tree0b7ed8e6. | Root; author/reviewer completed. | All 6,418 executions and protected/static gates passed; canonical Task receipt owns details. |
 | Task 27 “C# Structural Streamlining” | [C# Structural Streamlining](tasks/csharp-structural-streamlining.md) | `DEQUEUED` | 0 | Simplified the accepted finite C# scope with isolated production/test commits. | Phase 4/4, milestone 6/6; integrated and accepted. | Bounded Blue/Purple refactoring | Feature a5fcea25 integrated at81f22c43; exact tree e7526e7f. | Root acceptance complete; author/reviewer/operator complete. | All 6,421 executions passed; twenty-path exact integration and unrelated preservation verified. |
 | Task 7 “npm Package Manager Release and Local Linking” | [npm Packages](tasks/delivery/01-npm-packages.md) | `DEQUEUED` | 0 | Implemented and locally qualified the accepted six-target graph. | Phase 4/4, milestone 6/6; integrated and accepted. | Derivative package expansion with explicit freezes | Feature6dc714c5 integrated at7eeeb19d; exact treec222861a. | Root, author, reviewer and operator completed. | All 6,421 executions, actual Linux native package journey, thirty-path integration and unrelated preservation accepted; other hosts remain Task13. |
-| Task 13 “Native CI and Reproducible Artifacts” | [Native CI and Reproducible Artifacts](tasks/delivery/02-native-ci.md) | `INTEGRATING` | Not applicable | Implemented six-target CI with accepted local verification. | Phase 3/3, milestone 5/6; local squash integration pending. | Bounded delivery identity and evidence | codex/cli-delivery from 7eeeb19d in primary worktree. | Root; local agents completed. | Linux execution plus static other-platform review accepted by user; remote operations prohibited. |
-| Task 22 “Final Documentation, Acceptance, and Release” | [Accept And Release The Complete CLI](tasks/delivery/04-release.md) | `INTEGRATING` | Not applicable | Aligned docs/help and accepted the local delivery candidate. | Phase 3/3, milestone 5/6; local squash integration pending. | Public correctness and final acceptance | codex/cli-delivery in primary worktree. | Root; scoped reviewers completed. | Local completion authorized; shipping release excluded from current horizon. |
+| Task 13 “Native CI and Reproducible Artifacts” | [Native CI and Reproducible Artifacts](tasks/delivery/02-native-ci.md) | `RECENTLY_COMPLETED` | 2 | Implemented six-target CI with accepted local verification. | Phase 3/3, milestone 6/6; integrated and locally accepted. | Bounded delivery identity and evidence | Feature 6d370632 integrated at 3bf03e0e; exact tree 33c98766. | Root and local agents completed. | Linux execution plus static other-platform review accepted by user; remote operations prohibited. |
+| Task 22 “Final Documentation, Acceptance, and Release” | [Accept And Release The Complete CLI](tasks/delivery/04-release.md) | `RECENTLY_COMPLETED` | 2 | Aligned docs/help and accepted the local delivery candidate. | Phase 3/3, milestone 6/6; integrated and locally accepted. | Public correctness and final acceptance | Feature 6d370632 integrated at 3bf03e0e; exact tree 33c98766. | Root and scoped reviewers completed. | Local completion accepted; shipping release excluded from this horizon. |
 | Task 28 “Source Framework Wording and Logic Review” | [Source Framework review](tasks/source-framework-review.md) | `ACTIVE` | Not applicable | Source report and local Extension comparison prepared; user reviews proposals in the separate chat. | Independent user-owned review; horizon unassigned here. | Review/report only | codex/task28-framework-review in its own worktree. | Separate user-owned chat. | Preserve reports and follow-up notes; no source integration authorized in this lane. |
 
 Queue state uses `ACTIVE` for the selected task, `QUEUED` for ordered work,

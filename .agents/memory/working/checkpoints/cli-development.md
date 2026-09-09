@@ -69,9 +69,9 @@ bounded whitespace correction preserve the accepted behavior and assertions.
 The Task record and canonical receipt define exact evidence and limits.
 Task 7's ARM64 expansion is complete at phase 4/4, milestone 6/6,
 integrated at `7eeeb19d` with exact tree `c222861a`.
-Task 13 is at phase 3/3, milestone 5/6; Task 22 is at phase 3/3,
-milestone 5/6. Both are locally accepted and pending squash integration from
-`codex/cli-delivery` into local `develop`. On 2026-09-10 the user made local
+Tasks 13 and 22 are complete at phase 3/3, milestone 6/6 under their accepted
+local completion horizons. Feature `6d370632` is squash-integrated into local
+`develop` at `3bf03e0e`, with identical tree `33c98766`. On 2026-09-10 the user made local
 Git authoritative and accepted Linux execution plus static review of the other
 platform jobs. Remote Git/GitHub operations, hosted runs, uploads and publication
 are prohibited. This supersedes the earlier hosted/release completion gates.
@@ -80,8 +80,8 @@ foreign-host execution and a shipping release are not claimed. All thirty
 workflow shell blocks pass syntax and ShellCheck. Runtime candidate
 `c2eb60b3` retains 6,421 passing executions and the real Linux package journey;
 reviewed correction `696c56b7` changes only explicit npm TAP reporting.
-Root continues Task 21 → Task 27 → Task 7 ARM64 expansion → Task 13 →
-Task 22. On 2026-09-09 the user explicitly approved Tasks 21, 27, 13 and 22,
+The authorized CLI sequence Task 21 → Task 27 → Task 7 ARM64 expansion →
+Task 13 → Task 22 is complete locally. Task 28 continues in the other chat. On 2026-09-09 the user explicitly approved Tasks 21, 27, 13 and 22,
 including Linux, macOS and Windows on x64 and ARM64. The current
 [Distribution document](../../crystallized/documents/cli/distribution.md) defines the six-target graph. Task 7's
 new expansion uses its Task-owned four-phase, six-milestone horizon; its earlier

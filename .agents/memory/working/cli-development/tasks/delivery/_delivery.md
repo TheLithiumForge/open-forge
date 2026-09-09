@@ -8,7 +8,7 @@ open-forge:
 
 ## Task State
 
-- State: Local CI and delivery acceptance are complete; squash integration pending.
+- State: Complete locally; Tasks 13 and 22 are squash-integrated at `3bf03e0e`.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Prerequisite: Every retained command and operational command is accepted.
 
@@ -42,9 +42,9 @@ all remote Git/GitHub operations are prohibited.
 - [x] [Prepare and prove the accepted thin npm package graph and local-link workflow](01-npm-packages.md) — Historical 8/8 complete and integrated
 - [x] [Continue Task 7 with the accepted x64 platform-expansion horizon](01-npm-packages.md#platform-expansion-horizon) — Complete at phase 4/4, milestone 7/7; accepted lane `a2942781`, tree `fe36fc3f`, and squash integration `e19d429e` with the same tree. The Linux host journey passed; Darwin and Windows have stage-and-pack evidence only. This historical horizon supplies no ARM64 or publication proof.
 - [x] [Expand Task 7 to the accepted ARM64 packages](01-npm-packages.md#arm64-expansion-horizon) — Complete at phase 4/4, milestone 6/6; exact integration7eeeb19d and local evidence accepted
-- [ ] [Complete native CI and reproducible artifact collection for all six targets](02-native-ci.md) — Local verification accepted at phase 3/3, milestone 5/6; squash integration pending
+- [x] [Complete native CI and reproducible artifact collection for all six targets](02-native-ci.md) — Complete locally at phase 3/3, milestone 6/6; integrated at `3bf03e0e`
 - [ ] [Preserve future supply-chain expansion behind an explicit decision](03-supply-chain.md) — Deferred outside current D1 — Implementer: Not assigned
-- [ ] [Align public documentation, accept all six targets, and prepare an authorized release](04-release.md) — Local acceptance at phase 3/3, milestone 5/6; squash integration pending
+- [x] [Align public documentation, accept all six targets, and prepare an authorized release](04-release.md) — Complete locally at phase 3/3, milestone 6/6; integrated at `3bf03e0e`
 
 ## Entries
 

@@ -8,9 +8,9 @@ open-forge:
 
 ## Task State
 
-- State: Local qualification and static six-target review accepted; integration pending.
+- State: Complete and squash-integrated under the accepted local-only horizon.
   Tasks 21, 27 and Task 7 ARM64 expansion are complete through `7eeeb19d`.
-  The current branch is `codex/cli-delivery`. The maintainer approved Linux,
+  The accepted feature branch is `codex/cli-delivery`; integration is on `develop`. The maintainer approved Linux,
   macOS and Windows CI/artifacts on x64 and ARM64 on 2026-09-09.
 - Permanent mapping: Task 13 “Native CI and Reproducible Artifacts” in
   the [project control ledger](../../project-control.md).
@@ -22,10 +22,10 @@ open-forge:
   `ccc762115238c4317b3b35963be18edd38be2609`.
 - Lane: `codex/native-ci-preparation` in
   `open-forge-worktree/native-ci-preparation`.
-- Current phase and milestone: phase 3 of 3, milestone 5 of 6.
-- Current-state suffix: M5 local-only acceptance is complete, including Linux
-  execution, static six-target review and reporter correction `696c56b7`.
-  M6 exact squash integration into local `develop` remains pending.
+- Current phase and milestone: phase 3 of 3, milestone 6 of 6.
+- Current-state suffix: M6 complete. Accepted feature `6d370632` is integrated
+  into local `develop` at `3bf03e0e`, exact tree `33c98766`.
+  No remote operation, foreign-host execution or publication is claimed.
 - Preparation role: One experimental Luna/max Task Mastermind supervised at
   most three bounded read-only evidence workers, followed by one fresh Sol/xhigh
   whole-task review. That allocation is historical. Later semantic implementation

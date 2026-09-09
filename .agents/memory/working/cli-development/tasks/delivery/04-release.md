@@ -8,11 +8,12 @@ open-forge:
 
 ## Task State
 
-- State: Local documentation and delivery acceptance complete; integration pending.
+- State: Complete and squash-integrated under the accepted local-only horizon.
   Tasks 21, 27 and Task 7 are complete. Publication is excluded from this horizon.
-- Current phase and milestone: phase 3 of 3, milestone 5 of 6.
-- Current-state suffix: M4 local platform qualification and M5 acceptance of the
-  prepared candidate are complete; M6 local squash integration remains pending.
+- Current phase and milestone: phase 3 of 3, milestone 6 of 6.
+- Current-state suffix: M6 complete. Accepted feature `6d370632` is integrated
+  into local `develop` at `3bf03e0e`, exact tree `33c98766`.
+  No remote operation, foreign-host execution or publication is claimed.
 - Permanent mapping: Task 22 “Final Documentation, Acceptance, and Release” in
   the [project control ledger](../../project-control.md).
 - Responsible roles: Mastermind and maintainer.
