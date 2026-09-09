@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Extensions.Shared.Manifest;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Framework.Extensions.Embedded;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
@@ -78,7 +79,7 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
             return Cancelled(lexicalSource);
         }
 
-        var rootManifest = ResolveCandidate(lexicalSource, physicalSource, Path.Combine(lexicalSource, "extension.json"));
+        var rootManifest = ResolveCandidate(lexicalSource, physicalSource, Path.Combine(lexicalSource, ExtensionPackageLayout.ManifestFileName));
         if (rootManifest.State == PhysicalPathState.Contained)
         {
             bool hasCataloguePackage;
@@ -103,7 +104,7 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
                 lexicalSource,
                 physicalSource,
                 rootManifest.GetContainedPhysicalPath(),
-                "extension.json",
+                ExtensionPackageLayout.ManifestFileName,
                 cancellationToken).ConfigureAwait(false);
         }
 
@@ -140,7 +141,7 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
             var manifest = ResolveCandidate(
                 directory,
                 packageResolution.GetContainedPhysicalPath(),
-                Path.Combine(directory, "extension.json"));
+                Path.Combine(directory, ExtensionPackageLayout.ManifestFileName));
             if (manifest.State == PhysicalPathState.Contained)
             {
                 return true;
@@ -190,7 +191,7 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
             }
 
             var physicalPackage = packageResolution.GetContainedPhysicalPath();
-            var manifestResolution = ResolveCandidate(directory, physicalPackage, Path.Combine(directory, "extension.json"));
+            var manifestResolution = ResolveCandidate(directory, physicalPackage, Path.Combine(directory, ExtensionPackageLayout.ManifestFileName));
             if (manifestResolution.State != PhysicalPathState.Contained)
             {
                 return manifestResolution.State == PhysicalPathState.Missing
@@ -208,7 +209,7 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
                 directory,
                 physicalPackage,
                 manifestResolution.GetContainedPhysicalPath(),
-                Path.GetRelativePath(lexicalSource, Path.Combine(directory, "extension.json")).Replace('\\', '/'),
+                Path.GetRelativePath(lexicalSource, Path.Combine(directory, ExtensionPackageLayout.ManifestFileName)).Replace('\\', '/'),
                 cancellationToken).ConfigureAwait(false);
             switch (manifest)
             {

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Extensions.Shared.Manifest;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Extensions;
@@ -98,5 +99,5 @@ public sealed class ExtensionPackageContractTests
     }
 
     private static ExtensionPackageFact Read(string json)
-        => ExtensionManifestReader.ReadManifestOnly(Encoding.UTF8.GetBytes(json));
+        => ExtensionManifestReader.Read(Encoding.UTF8.GetBytes(json), ExtensionPackageLayout.ManifestFileName, []);
 }

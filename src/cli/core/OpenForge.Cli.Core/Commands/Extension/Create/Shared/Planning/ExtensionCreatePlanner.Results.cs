@@ -128,7 +128,7 @@ internal sealed partial class ExtensionCreatePlanner
             new ExtensionCreateEffect
             {
                 Kind = ExtensionCreateEffectKind.ManifestFile,
-                Path = Path.Combine(destination, ExtensionCreateDefinitions.ManifestFileName),
+                Path = Path.Combine(destination, ExtensionPackageLayout.ManifestFileName),
             },
             new ExtensionCreateEffect
             {

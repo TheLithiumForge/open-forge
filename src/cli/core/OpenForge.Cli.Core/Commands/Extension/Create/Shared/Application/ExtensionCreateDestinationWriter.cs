@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Extensions.Shared.Manifest;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Operation;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
@@ -59,7 +60,7 @@ internal sealed class ExtensionCreateDestinationWriter
         ExtensionCreateEffect effect,
         CancellationToken cancellationToken)
     {
-        var expectedPath = Path.Combine(plan.Destination, ExtensionCreateDefinitions.ManifestFileName);
+        var expectedPath = Path.Combine(plan.Destination, ExtensionPackageLayout.ManifestFileName);
         RequireExactEffectPath(effect.Path, expectedPath);
         Directory.CreateDirectory(plan.Destination);
         RequireContainedOrdinaryDirectory(plan, plan.Destination);

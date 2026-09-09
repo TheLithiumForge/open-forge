@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Extensions.Shared.Manifest;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Create;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Request;

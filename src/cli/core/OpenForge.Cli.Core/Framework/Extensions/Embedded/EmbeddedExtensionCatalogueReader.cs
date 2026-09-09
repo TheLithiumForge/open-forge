@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Extensions.Shared.Manifest;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Security.Cryptography;
 using System.Text;
@@ -101,7 +102,7 @@ internal static class EmbeddedExtensionCatalogueReader
                 throw new InvalidDataException($"Embedded Extension asset hash mismatch for '{path}'.");
             }
 
-            if (path == "extension.json")
+            if (path == ExtensionPackageLayout.ManifestFileName)
             {
                 manifestBytes = bytes.ToArray();
             }
@@ -132,7 +133,7 @@ internal static class EmbeddedExtensionCatalogueReader
             throw new InvalidDataException($"Embedded Extension package '{package.Id}' has no manifest.");
         }
 
-        var manifest = ExtensionManifestReader.Read(manifestBytes, "extension.json", payload);
+        var manifest = ExtensionManifestReader.Read(manifestBytes, ExtensionPackageLayout.ManifestFileName, payload);
         if (!string.Equals(manifest.Id, package.Id, StringComparison.Ordinal))
         {
             throw new InvalidDataException($"Embedded Extension package '{package.Id}' has a conflicting manifest ID.");

@@ -1092,3 +1092,36 @@ Inspect the exact published filename and each artifact's metadata field; after
 a harness-only interruption, verify source/runtime hashes before resuming the
 unfinished gates. The successful resume required no repeated publication.
 These observations do not establish comparative Astra/Sol cost or quality.
+
+## Task 26 Live Consumer Check
+
+A preflight proposal would have replaced duplicate manifest-only methods with
+forwarding calls. Complete invocation search later showed that their only
+production chain was itself unreachable; one test helper retained the pure
+convenience API. Root and implementer independently confirmed this before
+production mutation. The corrected scope deletes the unused methods and tests
+the reachable API. Establish live callers before choosing a shared abstraction
+or paying to characterize dead internal surface. Similar method bodies alone
+do not prove that both entrypoints should survive.
+
+The bounded implementation and its fresh review, both explicitly Astra/high,
+completed with no material review finding or correction cycle. Focused
+262/247/33 and full managed2837/1570/188 passed; fifty managed scenarios matched
+150 raw output/exit files. Native qualification remains separate. Initial
+fixture ownership and assumed command-status errors were corrected before the
+baseline seal; one unsupported middle-wildcard discovery attempt was replaced
+with explicit class selectors without rerunning completed lower-tier evidence.
+These are concrete task outcomes, not matched evidence of model superiority.
+
+The final root harness repeated informational formatting over the same thirteen
+C# files already qualified by the implementation owner, despite only later
+control-prose changes. Future gate orchestration should consume that exact
+source-bound receipt when coverage and hashes match, rather than repeat a
+completed check merely because a reusable harness bundles it with full tests.
+
+Task 26 final native acceptance also passed: 1570 Integration, 188 public and
+188 managed-on-native cases, completing 6541 successful full-gate executions.
+All 150 native output/exit files match their preserved baseline, alongside the
+150 managed files. The final native run required no harness correction. This
+closes the refactor's same-runtime differential claim within its frozen cases;
+it does not establish a matched cross-model quality or cost comparison.

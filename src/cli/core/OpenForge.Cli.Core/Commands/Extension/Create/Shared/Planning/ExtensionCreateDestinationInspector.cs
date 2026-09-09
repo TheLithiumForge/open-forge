@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Extensions.Shared.Manifest;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Planning;
 using OpenForge.Cli.Core.Framework.Extensions;
@@ -72,12 +73,12 @@ internal sealed class ExtensionCreateDestinationInspector(PhysicalPathResolver p
             if (!IsOrdinaryDirectory(destinationPhysicalIdentity)
                 || !HasExactEntries(
                     destinationPhysicalIdentity,
-                    [ExtensionCreateDefinitions.ManifestFileName, ExtensionPackageLayout.ContentDirectoryName]))
+                    [ExtensionPackageLayout.ManifestFileName, ExtensionPackageLayout.ContentDirectoryName]))
             {
                 return Collision(destinationPhysicalIdentity, "The destination is not the exact scaffold.");
             }
 
-            var manifestPath = Path.Combine(destinationPhysicalIdentity, ExtensionCreateDefinitions.ManifestFileName);
+            var manifestPath = Path.Combine(destinationPhysicalIdentity, ExtensionPackageLayout.ManifestFileName);
             var payloadPath = Path.Combine(destinationPhysicalIdentity, ExtensionPackageLayout.ContentDirectoryName);
             var agentsPath = Path.Combine(payloadPath, ExtensionCreateDefinitions.AgentsDirectoryName);
             if (!IsOrdinaryFile(manifestPath)

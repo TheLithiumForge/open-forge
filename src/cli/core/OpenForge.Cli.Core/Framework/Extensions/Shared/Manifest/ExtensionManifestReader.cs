@@ -5,25 +5,13 @@ using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Serialization;
 using OpenForge.Cli.Core.Framework.Extensions.Serialization;
 
-namespace OpenForge.Cli.Core.Framework.Extensions;
+namespace OpenForge.Cli.Core.Framework.Extensions.Shared.Manifest;
 
 internal static class ExtensionManifestReader
 {
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
-
-    internal static ExtensionPackageFact ReadManifestOnly(ReadOnlySpan<byte> bytes)
-    {
-        _ = StrictUtf8.GetString(bytes);
-        JsonDuplicatePropertyValidator.ValidateNoDuplicateProperties(bytes);
-        var manifest = JsonSerializer.Deserialize(
-            bytes,
-            ExtensionPackageJsonContext.Default.ExtensionManifestDocument)
-            ?? throw new JsonException("An Extension manifest cannot be null.");
-        Validate(manifest);
-        return CreatePackage(manifest, "extension.json", []);
-    }
 
     internal static ExtensionPackageFact Read(
         ReadOnlySpan<byte> bytes,
@@ -56,7 +44,7 @@ internal static class ExtensionManifestReader
             new ExtensionPackageContentsFact
             {
                 ManifestPath = manifestPath,
-                Payload = payload.ToArray(),
+                Payload = [.. payload],
             });
 
     private static void Validate(ExtensionManifestDocument manifest)

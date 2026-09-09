@@ -35,7 +35,7 @@ Read the [program Task](00-cli-development.md),
 - [x] [Task 23: Workspace Libraries](workspace-libraries.md) — Complete, phase 5/5, milestone 8/8; Sol return and root placement correction accepted at `25c65bf8`.
 - [x] [Task 24: Extensions Evolution](extensions-evolution.md) — Complete, phase 5/5, milestone 8/8; integrated at `2eedaf87`
 - [x] [Task 25: Workspace Library Destination Projections](workspace-library-destination-projections.md) — Complete, phase 5/5, milestone 8/8; full managed/native acceptance, integrated at `3b4aba9d`
-- [ ] [Task 26: Extension Internal Consolidation](extension-internal-consolidation.md) — Queued pure refactor after all commands and Tasks 24–25; no active phase or milestone horizon
+- [x] [Task 26: Extension Internal Consolidation](extension-internal-consolidation.md) — Complete, phase 4/4, milestone 6/6; full managed/native and differential acceptance, exact integration next
 
 ## Axioms
 
@@ -76,7 +76,7 @@ define execution state.
 - [Apply only the complete CLI command-surface audit findings accepted by the maintainer](cli-command-surface-remediation.md) - #Memory #Working #Contextual #Planned #CLI #Task #Remediation #Architecture #Refactoring #Testing
 - [Remediate the accepted first-pass CLI architecture, C# design, authority, and test-evidence findings after Route Create and before Route Update](cli-quality-remediation.md) - #Memory #Working #CLI #Task #Audit #Architecture #Refactoring #Testing #Review #Contextual
 - [Package, prove, document, and release the complete native CLI without partial publication](delivery/_delivery.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #SupplyChain #Release #Contextual
-- [Prepare the behavior-preserving six-command Extension refactor until functional Extension and Library destination work is settled](extension-internal-consolidation.md) - #Memory #Working #CLI #Task #Extension #Refactoring #Testing #Contextual #Queued
+- [Track accepted Extension manifest consolidation and exact managed/native behavior preservation](extension-internal-consolidation.md) - #Memory #Working #CLI #Task #Extension #Refactoring #Testing #Contextual #Complete
 - [Review the candidate Extension content layout and exact consumer permissions for copied files and Library links](extensions-destination-proposal.md) - #Memory #Working #CLI #Extension #Library #Proposal #Contextual #Candidate
 - [Review the concrete Task 24 content rename, permission contracts, implementation seams and decisive evidence before M1 freeze](extensions-evolution-contract-draft.md) - #Memory #Working #CLI #Extension #Permission #Contract #Design #Contextual #Candidate
 - [Track completed Extension content naming, consumer permission, review corrections and full acceptance](extensions-evolution.md) - #Memory #Working #CLI #Task #Extension #Evolution #Content #Destination #Contextual #Complete

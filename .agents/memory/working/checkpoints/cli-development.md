@@ -39,9 +39,11 @@ passed 2820/1559/188; native passed 1559/188 and managed-on-native passed 188.
 All 6,502 executions passed with zero failures/skips. Native artifact identity,
 source preservation, formatting and static gates passed. Task 25 is integrated
 at `3b4aba9d`, exactly matching accepted feature `564545cb`, tree `7bdbe449`.
-Root is preparing Task 26 on this accepted baseline.
-Root continues Task 26 pure refactor
-→ Task 10 audit → conditional Task 21 → Task 13 → Task 22. Later publication
+Task 26 is accepted at phase 4/4, milestone 6/6. Review passed without material
+findings; full managed 2837/1570/188, native 1570/188 and managed-on-native188
+passed. All 300 managed/native raw comparison files match. Root is freezing
+final acceptance for exact local integration, then activating Task 10.
+Root continues Task 10 audit → conditional Task 21 → Task 13 → Task 22. Later publication
 and global installation refresh remain unauthorized. General test-environment
 cleanup remains an idea. The current Task capsules govern scoped execution;
 older snapshots below retain historical evidence only.
