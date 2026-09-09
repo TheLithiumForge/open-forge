@@ -14,6 +14,7 @@ internal sealed record StatusJsonLibraryRegistration
 {
     public required string Id { get; init; }
     public required string SourceRoot { get; init; }
+    public required string DestinationRoot { get; init; }
     public required string SourceRootState { get; init; }
     public required string SourceAvailability { get; init; }
     public required StatusJsonLibraryRegisteredLinks RegisteredLinks { get; init; }
@@ -26,7 +27,7 @@ internal sealed record StatusJsonLibraryRegisteredLinks
     public required StatusJsonLibraryLink[] Links { get; init; }
 }
 
-internal sealed record StatusJsonLibraryLink(string SourcePath, string DestinationPath, string ExpectedRelativeLink, string SourceId, string State);
+internal sealed record StatusJsonLibraryLink(string SourcePath, string DestinationPath, string ExpectedRelativeLink, string? SourceId, string State);
 
 internal sealed record StatusJsonLibraryCounts
 {

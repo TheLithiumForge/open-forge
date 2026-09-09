@@ -1,43 +1,16 @@
-using System.Collections.Immutable;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 
 namespace OpenForge.Cli.Core.Framework.Libraries.Shared.Paths;
 
 internal static class PortableRelativePath
 {
-    internal static string Validate(
-        string value,
-        string parameterName,
-        bool requireAgentsPrefix)
+    internal static string Validate(string value, string parameterName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value, parameterName);
-        if (Path.IsPathFullyQualified(value)
-            || value.Contains((char)92)
-            || value.StartsWith('/')
-            || value.EndsWith('/'))
+        if (!PortableWorkspacePath.TryNormalize(value, out var normalized) || normalized != value)
         {
-            throw new ArgumentException(
-                "A workspace-relative path must be a slash-separated relative path.",
-                parameterName);
+            throw new ArgumentException("A Library path must be a canonical portable relative path.", parameterName);
         }
-
-        var segments = value.Split('/');
-        if (segments.Any(segment => segment is "" or "." or ".."))
-        {
-            throw new ArgumentException(
-                "A workspace-relative path cannot contain empty, dot, or dot-dot segments.",
-                parameterName);
-        }
-
-        if (requireAgentsPrefix
-            && (segments.Length < 2
-                || !string.Equals(segments[0], ".agents", StringComparison.Ordinal)))
-        {
-            throw new ArgumentException(
-                "An eligible Library path must be beneath .agents/.",
-                parameterName);
-        }
-
         return value;
     }
 }

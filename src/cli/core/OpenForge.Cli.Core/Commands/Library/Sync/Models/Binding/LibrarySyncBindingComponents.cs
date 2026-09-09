@@ -7,6 +7,8 @@ namespace OpenForge.Cli.Core.Commands.Library.Sync.Models.Binding;
 
 internal sealed record LibrarySyncBindingComponents
 {
+    public required LibrarySyncOperation Operation { get; init; }
+
     public required CliHelpContent Help { get; init; }
 
     public required CliRendererSet<LibrarySyncResult> Renderers { get; init; }

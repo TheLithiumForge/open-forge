@@ -17,10 +17,11 @@ internal sealed class LibraryResidualFacts
         var root = Path.Combine(Path.GetTempPath(), "library-residual-facts");
         Workspace = new CliWorkspace(root, root, CliWorkspaceSelectionMethod.ExplicitWorkspace);
         Record = LibrariesRecord.Create([
-            LibraryRecord.Create(LibraryId.Create("team"), WorkspaceRelativeDirectory.Create("shared/team"),
+            LibraryRecord.Create(LibraryId.Create("team"), WorkspaceRelativeDirectory.Create("shared/team"), LibraryDestinationRoot.Create("."),
                 [SourceRelativeEligiblePath.Create(".agents/a.md")]),
         ]);
-        PayloadIdentity = RecoveryContentIdentity.FromBytes("{\"schemaVersion\":1,\"libraries\":[{\"id\":\"team\",\"sourceRoot\":\"shared/team\",\"paths\":[\".agents/a.md\"]}]}"u8);
+        PayloadIdentity = RecoveryContentIdentity.FromBytes(
+            "{\"schemaVersion\":1,\"libraries\":[{\"id\":\"team\",\"sourceRoot\":\"shared/team\",\"destinationRoot\":\".\",\"paths\":[\".agents/a.md\"]}]}"u8);
         RecordEntry = PriorEntry(".agents/open-forge.libraries.json");
         LinkEntry = RecoveryEntry.Create(1, CanonicalRelativePath.Create(".agents/a.md"), RecoveryEntryKind.RelativeFileLinkDelete,
             RecoveryEntryState.RelativeLink(RelativeFileLinkIdentity.Create(NoFollowLinkKind.SymbolicLink, "../shared/team/.agents/a.md")),
@@ -56,7 +57,7 @@ internal sealed class LibraryResidualFacts
             Record = present ? Record : null,
             Snapshot = present
                 ? FileStateSnapshot.File(RecordPath, RecordPath,
-                    "{\"schemaVersion\":1,\"libraries\":[{\"id\":\"team\",\"sourceRoot\":\"shared/team\",\"paths\":[\".agents/a.md\"]}]}"u8)
+                    "{\"schemaVersion\":1,\"libraries\":[{\"id\":\"team\",\"sourceRoot\":\"shared/team\",\"destinationRoot\":\".\",\"paths\":[\".agents/a.md\"]}]}"u8)
                 : FileStateSnapshot.Missing(RecordPath),
             Cause = null,
         };

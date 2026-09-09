@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Binding;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Result;
@@ -34,6 +35,7 @@ internal static class LibrarySyncRequestBinder
             ?? throw new InvalidOperationException("A bound Library Sync invocation requires a selected workspace.");
         return CliBindResult<LibrarySyncRequest, LibrarySyncResult>.Bound(new LibrarySyncRequest
         {
+            AllowPrompt = invocation.Presentation.Format == CliOutputFormat.Human && !parse.Result.GetValue(symbols.DryRun),
             Workspace = workspace,
             LibraryId = libraryId,
             Mode = parse.Result.GetValue(symbols.DryRun) ? LibraryMode.DryRun : LibraryMode.Apply,
@@ -88,14 +90,14 @@ internal static class LibrarySyncRequestBinder
             Next = null,
             Result = new LibrarySyncPayload
             {
-                Identity = LibraryMutationCompletionProjection.Identity(id, sourceRoot: null, LibraryMode.Apply, sourceIndependent: false),
+                Permissions = LibraryPermissionView.NotEvaluated(),
+                Identity = LibraryMutationCompletionProjection.Identity(id, sourceRoot: null, destinationRoot: null, LibraryMode.Apply, sourceIndependent: false),
                 Record = LibraryMutationCompletionProjection.Record(read: null, id, intended: null),
-                Source = LibraryMutationCompletionProjection.Source(read: null),
+                Source = LibraryMutationCompletionProjection.Source(read: null, destinationRoot: null),
                 Projection = LibraryMutationCompletionProjection.Projection(
                     record: null, source: null, mappings: null, ownership: null, id,
                     LibraryPlanState.NotStarted, sourceIndependent: false),
-                Plan = LibraryMutationCompletionProjection.Plan(
-                    LibraryPlanState.NotStarted, directories: null, links: null, generatedRegions: null, recordChange: null),
+                Plan = LibraryMutationCompletionProjection.NotPlanned(),
                 Application = LibraryMutationCompletionProjection.NotStarted(),
                 Findings =
                 [

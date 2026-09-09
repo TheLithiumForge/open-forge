@@ -11,6 +11,7 @@ internal sealed record LibraryInspectRecordView
     public required string? Id { get; init; }
 
     public required string? SourceRoot { get; init; }
+    public required string? DestinationRoot { get; init; }
 
     public required LibraryRegisteredPath[] RegisteredPaths { get; init; }
 }

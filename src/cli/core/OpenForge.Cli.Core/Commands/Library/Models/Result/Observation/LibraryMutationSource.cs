@@ -18,12 +18,8 @@ internal sealed record LibraryMutationSource
 
     public required string? PhysicalRoot { get; init; }
 
-    public required string? PhysicalAgentsDirectory { get; init; }
-
     public required bool? LexicallyContained { get; init; }
 
     public required bool? PhysicallyContained { get; init; }
-
-    public required bool? PhysicallyDisjoint { get; init; }
 
 }

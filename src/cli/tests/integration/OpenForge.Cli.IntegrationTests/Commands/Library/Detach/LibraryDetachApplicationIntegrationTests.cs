@@ -150,6 +150,7 @@ public sealed class LibraryDetachApplicationIntegrationTests
 
         return new LibraryDetachPlan
         {
+            Permissions = null,
             Input = input,
             State = LibraryPlanState.Complete,
             Directories = [],

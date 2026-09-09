@@ -26,10 +26,11 @@ public sealed class PublishedLibraryListProcessTests
         workspace.Link();
         workspace.Link(".agents/directives/alpha.md");
         workspace.Write("shared/alpha/.agents/guidance/note.md", "# Note");
+        workspace.MappedLink("docs/note.md", "../shared/alpha/.agents/guidance/note.md");
         workspace.Write(PublishedLibraryWorkspace.RecordPath, """
             {"schemaVersion":1,"libraries":[
-              {"id":"alpha","sourceRoot":"shared/alpha","paths":[]},
-              {"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":[".agents/directives/alpha.md",".agents/directives/review.md"]}
+              {"id":"alpha","sourceRoot":"shared/alpha/.agents/guidance","destinationRoot":"docs","paths":["note.md"]},
+              {"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/directives/alpha.md",".agents/directives/review.md"]}
             ]}
             """);
         var target = PublishedExecutableTarget.Discover();
@@ -41,6 +42,10 @@ public sealed class PublishedLibraryListProcessTests
         Assert.Equal(first.StandardError, second.StandardError);
         var libraries = document.RootElement.GetProperty("result").GetProperty("libraries").EnumerateArray().ToArray();
         Assert.Equal(["alpha", "team-knowledge"], libraries.Select(library => library.GetProperty("id").GetString()).ToArray());
+        Assert.Equal("docs", libraries[0].GetProperty("destinationRoot").GetString());
+        var external = Assert.Single(libraries[0].GetProperty("paths").EnumerateArray());
+        Assert.Equal("docs/note.md", external.GetProperty("destinationPath").GetString());
+        Assert.Equal(System.Text.Json.JsonValueKind.Null, external.GetProperty("sourceId").ValueKind);
         var library = libraries[1];
         var paths = library.GetProperty("paths").EnumerateArray().ToArray();
         Assert.Equal([".agents/directives/alpha.md", ".agents/directives/review.md"],

@@ -64,4 +64,21 @@ The portable grammar is owned by Framework Filesystem Shared Paths and consumed
 by Extensions, lifecycle validation and permissions. Permission membership uses
 that parser's exact portable key rather than a different Unicode case comparer.
 The shared grant helper keeps Library IDs bound to their observed source roots;
-Task 25 owns any explicit rebinding flow before Library mutation consumes it.
+Library rebinding is explicit and replaces only the selected Library subject after
+old/new source disclosure and approval. Same-source changes preserve existing
+grants; unrelated subjects retain their semantics.
+
+## Library Scope And Publication Boundary
+
+Library entries require `directories` beside exact `paths`; Extension entries
+retain their exact-file shape. `LibraryPermissionScope` carries the Library
+subject, File/Directory kind and portable destination. `GrantLibrary` accepts one
+`LibraryPermissionGrantChange` with approved scopes and optional previous root;
+`PlanLibrary` composes that approval with its original permission observation.
+Directory membership uses strict segment ancestry and never admits the workspace
+root. Library-local selection, interaction and result projection live under
+`Commands/Library/Shared/Permissions`; the shared framework does not choose scopes
+or prompt. The [Workspace Libraries design](workspace-libraries.md) owns live
+versus retired selection, source rebinding, scope-visible receipts and record-last
+application. Current permission gates explicit Library recovery without restoring
+or widening the permission document.

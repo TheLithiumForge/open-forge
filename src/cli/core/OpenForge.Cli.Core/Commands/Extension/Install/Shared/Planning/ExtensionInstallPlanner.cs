@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Libraries;
 using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
@@ -243,7 +244,7 @@ internal sealed class ExtensionInstallPlanner
             var document = record.Record
                 ?? throw new InvalidOperationException("A complete Library record observation requires its document.");
             var claimedPaths = document.Libraries
-                .SelectMany(library => library.Paths)
+                .SelectMany(library => LibraryPathIdentity.Mappings(library).Select(mapping => mapping.DestinationPath))
                 .Select(path => PortableWorkspacePath.CreatePortableKey(path.Value))
                 .ToHashSet(StringComparer.Ordinal);
             var conflict = targetPaths.FirstOrDefault(path => claimedPaths.Contains(PortableWorkspacePath.CreatePortableKey(path)));

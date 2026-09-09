@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions;
 using System.Collections.Immutable;
 using System.IO.Compression;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
@@ -131,7 +132,7 @@ internal static class LibraryResidualAttributionReader
     }
 
     private static bool IsAttributedEntry(LibraryRecord library, RecoveryEntry entry)
-        => entry.Kind switch
+        => entry.TargetPath != WorkspacePermissionDefinitions.RelativePath && entry.Kind switch
         {
             RecoveryEntryKind.RelativeFileLinkCreate or RecoveryEntryKind.RelativeFileLinkDelete =>
                 IsAttributedLink(library, entry),
@@ -142,14 +143,14 @@ internal static class LibraryResidualAttributionReader
 
     private static bool IsAttributedLink(LibraryRecord library, RecoveryEntry entry)
     {
-        var path = library.Paths.FirstOrDefault(value =>
-            string.Equals(value.Value, entry.TargetPath, StringComparison.Ordinal));
-        if (path is null)
+        var mapping = LibraryPathIdentity.Mappings(library).FirstOrDefault(value =>
+            string.Equals(value.DestinationPath.Value, entry.TargetPath, StringComparison.Ordinal));
+        if (mapping is null)
         {
             return false;
         }
 
-        var expected = LibraryPathIdentity.Map(library.SourceRoot, path).ExpectedRelativeLink.Value;
+        var expected = mapping.ExpectedRelativeLink.Value;
         return string.Equals(entry.Prior.RelativeFileLink?.RawRelativeTarget, expected, StringComparison.Ordinal)
             || string.Equals(entry.Intended.RelativeFileLink?.RawRelativeTarget, expected, StringComparison.Ordinal);
     }
@@ -170,10 +171,15 @@ internal static class LibraryResidualAttributionReader
         }
 
         var entry = candidates[0];
+        if (entry.PriorPayload is not { } payloadName || entry.Prior.OrdinaryFile is not { } priorIdentity
+            || residual.Candidate.Verified is not { } original)
+        {
+            return null;
+        }
         var payload = await ReadPayloadAsync(
             verified.BundlePath,
-            entry.PriorPayload!,
-            entry.Prior.OrdinaryFile!,
+            payloadName,
+            priorIdentity,
             cancellationToken).ConfigureAwait(false);
         if (payload is null)
         {
@@ -203,8 +209,8 @@ internal static class LibraryResidualAttributionReader
             return null;
         }
 
-        var originalEntry = residual.Candidate.Verified!.Entries[entry.Ordinal];
-        return new LibraryRecoveryPriorRecord(record, originalEntry, entry.Prior.OrdinaryFile!);
+        var originalEntry = original.Entries[entry.Ordinal];
+        return new LibraryRecoveryPriorRecord(record, originalEntry, priorIdentity);
     }
 
     private static async ValueTask<byte[]?> ReadPayloadAsync(

@@ -50,14 +50,14 @@ internal sealed record LibraryInventory
 {
     private LibraryInventory(
         WorkspaceRelativeDirectory sourceRoot,
-        string sourceAgentsDirectory,
+        string physicalSourceRoot,
         LibrarySourceRootState rootState,
         LibraryInventoryState state,
         ImmutableArray<EligibleSourceFile> entries,
         string? cause)
     {
         SourceRoot = sourceRoot;
-        SourceAgentsDirectory = sourceAgentsDirectory;
+        PhysicalSourceRoot = physicalSourceRoot;
         RootState = rootState;
         State = state;
         Entries = entries;
@@ -66,7 +66,7 @@ internal sealed record LibraryInventory
 
     internal WorkspaceRelativeDirectory SourceRoot { get; }
 
-    internal string SourceAgentsDirectory { get; }
+    internal string PhysicalSourceRoot { get; }
 
     internal LibrarySourceRootState RootState { get; }
 
@@ -78,11 +78,11 @@ internal sealed record LibraryInventory
 
     internal static LibraryInventory Complete(
         WorkspaceRelativeDirectory sourceRoot,
-        string sourceAgentsDirectory,
+        string physicalSourceRoot,
         IReadOnlyList<EligibleSourceFile> entries)
         => Create(
             sourceRoot,
-            sourceAgentsDirectory,
+            physicalSourceRoot,
             LibrarySourceRootState.Available,
             LibraryInventoryState.Complete,
             entries,
@@ -90,7 +90,7 @@ internal sealed record LibraryInventory
 
     internal static LibraryInventory Classified(
         WorkspaceRelativeDirectory sourceRoot,
-        string sourceAgentsDirectory,
+        string physicalSourceRoot,
         LibrarySourceRootState rootState,
         LibraryInventoryState state,
         string cause,
@@ -104,7 +104,7 @@ internal sealed record LibraryInventory
         ArgumentException.ThrowIfNullOrWhiteSpace(cause);
         return Create(
             sourceRoot,
-            sourceAgentsDirectory,
+            physicalSourceRoot,
             rootState,
             state,
             entries ?? [],
@@ -113,14 +113,14 @@ internal sealed record LibraryInventory
 
     private static LibraryInventory Create(
         WorkspaceRelativeDirectory sourceRoot,
-        string sourceAgentsDirectory,
+        string physicalSourceRoot,
         LibrarySourceRootState rootState,
         LibraryInventoryState state,
         IReadOnlyList<EligibleSourceFile> entries,
         string? cause)
     {
         ArgumentNullException.ThrowIfNull(sourceRoot);
-        ArgumentException.ThrowIfNullOrWhiteSpace(sourceAgentsDirectory);
+        ArgumentException.ThrowIfNullOrWhiteSpace(physicalSourceRoot);
         ArgumentNullException.ThrowIfNull(entries);
         if (!Enum.IsDefined(rootState) || !Enum.IsDefined(state))
         {
@@ -146,7 +146,7 @@ internal sealed record LibraryInventory
 
         return new LibraryInventory(
             sourceRoot,
-            Path.GetFullPath(sourceAgentsDirectory),
+            Path.GetFullPath(physicalSourceRoot),
             rootState,
             state,
             values.MoveToImmutable(),

@@ -392,7 +392,7 @@ workspace's current installation or of a proven runtime implementation.
 Status reads the exact consumer-owned `.agents/open-forge.libraries.json`
 record, schema v1, as a bounded projection catalogue. The record is separate
 from `.agents/open-forge.lifecycle.json` and does not grant Framework or
-Extension ownership. A readable record reports its exact `id`, `sourceRoot`, and
+Extension ownership. A readable record reports its exact `id`, `sourceRoot`, `destinationRoot`, and
 ordered `paths` entries. Status derives bounded mapping facts for each entry—
 `sourcePath`, `destinationPath`, and `expectedRelativeLink`—without changing the
 record. A missing record is an absent Library record, not an inference that
@@ -401,7 +401,7 @@ record identity is reported as the corresponding bounded condition.
 
 For each recorded Library, Status observes the source root only far enough to
 establish workspace-relative lexical and physical containment, an ordinary
-directory, and its direct ordinary `.agents` child. It does not enumerate that
+directory, and safe real ancestry. No specially named source child is required. It does not enumerate that
 source tree to discover unregistered files. `sourceAvailability` is
 `available`, `unavailable`, or `not-applicable` and remains separate from
 record state.
@@ -691,6 +691,7 @@ library: {
   records: [{
     id,
     sourceRoot,
+    destinationRoot,
     sourceRootState,
     sourceAvailability,
     registeredLinks: {
@@ -1142,3 +1143,7 @@ Native AOT, OS locking, isolated tests, and package journeys.
 - [Routing model](../../../framework/routing/model.md)
 - [Route scope and inheritance](../../../framework/routing/scope.md)
 - [Overwrite customization](../../../framework/routing/overwrites.md)
+
+Library registered links retain separate source-relative and mapped destination
+paths. A destination outside the existing `.agents` source-reference contract has
+`sourceId: null`; neither the management ID nor an empty string replaces it.

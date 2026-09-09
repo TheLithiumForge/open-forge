@@ -633,3 +633,20 @@ executable proof.
 - [Historical CLI Decision Agenda](../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Historical CLI Release Plan](../../../../../archived/cli-release/release-plan-2026-08-21.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
+
+## Library Destination Permissions
+
+Library recovery derives every destination from the recorded `sourceRoot`,
+`destinationRoot` and source-relative suffix. It preserves source independence:
+recorded source identity is enough and no source bytes are required. The
+permission control-file entry is excluded from automatic Library residual
+attribution. A permission receipt may remain in the existing recovery bundle as
+evidence, but Repair does not restore, revoke or widen grants.
+
+Preflight and application under the held workspace lease require current
+consumer permission for every selected external Library link effect. Revocation,
+an invalid or unavailable permission observation, or source-binding mismatch
+blocks the selected recovery. Existing `.agents` implicit permission remains;
+protected controls, all selected/registered source trees, exact no-follow link
+identity and collision checks still apply to each actual effect. Recovery adds
+no permission prompt or broad grant. Original residual bytes remain unchanged.

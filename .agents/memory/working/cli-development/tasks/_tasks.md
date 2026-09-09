@@ -33,8 +33,8 @@ Read the [program Task](00-cli-development.md),
 - [ ] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is queued until after the retained command sequence; audit only, with no implementation mutation — Implementer: Dedicated Review Mastermind
 - [ ] [CLI Delivery](delivery/_delivery.md) — Planned — Implementer: Not assigned
 - [x] [Task 23: Workspace Libraries](workspace-libraries.md) — Complete, phase 5/5, milestone 8/8; Sol return and root placement correction accepted at `25c65bf8`.
-- [ ] [Task 24: Extensions Evolution](extensions-evolution.md) — Active, phase 2/5, milestone 2/8; semantic and callable contracts frozen, Red next
-- [ ] [Task 25: Workspace Library Destination Projections](workspace-library-destination-projections.md) — Queued post-command Library symlink destination decisions; no active phase or milestone horizon
+- [x] [Task 24: Extensions Evolution](extensions-evolution.md) — Complete, phase 5/5, milestone 8/8; integrated at `2eedaf87`
+- [x] [Task 25: Workspace Library Destination Projections](workspace-library-destination-projections.md) — Complete, phase 5/5, milestone 8/8; full managed/native acceptance, exact local integration next
 - [ ] [Task 26: Extension Internal Consolidation](extension-internal-consolidation.md) — Queued pure refactor after all commands and Tasks 24–25; no active phase or milestone horizon
 
 ## Axioms
@@ -96,5 +96,5 @@ define execution state.
 - [Add the interaction, Framework distribution, lifecycle provenance, and directory-create prerequisites for the next command wave](shared-foundations/_shared-foundations.md) - #Memory #Working #CLI #Task #Foundation #Shell #Framework #Lifecycle #Contextual
 - [Audit symbolic constants, generated-region authority, and composable active-test foundations across the replacement CLI](test-architecture-and-constants.md) - #Memory #Working #CLI #Task #Testing #Architecture #Constants #Fixtures #Snapshot #Contextual
 - [Execute the accepted Workspace Libraries contracts through bounded preparation, implementation, evidence, and integration](workspace-libraries.md) - #Memory #Working #CLI #Task #Workspace #Library #Contextual #Active
-- [Prepare consumer-approved Workspace Library projections beyond the .agents tree](workspace-library-destination-projections.md) - #Memory #Working #CLI #Task #Workspace #Library #Destination #Symlink #Contextual #Queued
+- [Track accepted mapped Library leaf projections, scoped permissions, recovery and complete managed/native evidence](workspace-library-destination-projections.md) - #Memory #Working #CLI #Task #Workspace #Library #Destination #Symlink #Contextual #Complete
 <!-- open-forge:generated-index:end -->

@@ -121,7 +121,7 @@ public sealed class LibraryAttachPlannerTests
             Source = input.Source with
             {
                 Inventory = LibraryInventory.Classified(
-            inventory.SourceRoot, inventory.SourceAgentsDirectory, LibrarySourceRootState.Available, LibraryInventoryState.Incomplete,
+            inventory.SourceRoot, inventory.PhysicalSourceRoot, LibrarySourceRootState.Available, LibraryInventoryState.Incomplete,
             "A required subtree could not be enumerated.", inventory.Entries)
             }
         };

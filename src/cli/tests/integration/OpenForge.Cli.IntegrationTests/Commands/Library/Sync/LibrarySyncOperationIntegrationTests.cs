@@ -27,7 +27,7 @@ public sealed class LibrarySyncOperationIntegrationTests
         }
 
         var before = workspace.Snapshot();
-        var result = await LibrarySyncOperation.ExecuteAsync(workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
+        var result = await new LibrarySyncOperation(workspace.Permissions).ExecuteAsync(workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Equal(LibraryApplicationState.NotStarted, result.Result.Application.State);
         Assert.Equal(LibraryRecoveryState.NotRequested, result.Result.Application.Recovery.State);
@@ -40,9 +40,9 @@ public sealed class LibrarySyncOperationIntegrationTests
         using var workspace = new LibraryMutationWorkspace();
         workspace.Link();
         workspace.Record(LibraryMutationWorkspace.Leaf);
-        System.IO.Directory.Delete(workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/.agents"));
+        System.IO.Directory.Delete(workspace.Absolute(LibraryMutationWorkspace.SourceRoot), recursive: true);
         var before = workspace.Snapshot();
-        var result = await LibrarySyncOperation.ExecuteAsync(workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
+        var result = await new LibrarySyncOperation(workspace.Permissions).ExecuteAsync(workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
         Assert.Empty(result.Result.Plan.Links);
         Assert.Equal(before, workspace.Snapshot());
@@ -54,7 +54,7 @@ public sealed class LibrarySyncOperationIntegrationTests
         using var workspace = new LibraryMutationWorkspace();
         workspace.Record(LibraryMutationWorkspace.Leaf);
         var before = workspace.Snapshot();
-        var result = await LibrarySyncOperation.ExecuteAsync(workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
+        var result = await new LibrarySyncOperation(workspace.Permissions).ExecuteAsync(workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Equal(before, workspace.Snapshot());
     }
@@ -68,7 +68,7 @@ public sealed class LibrarySyncOperationIntegrationTests
         workspace.Record(LibraryMutationWorkspace.Leaf);
         File.WriteAllText(workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/{LibraryMutationWorkspace.Leaf}"), "Changed source bytes.");
         var before = workspace.Snapshot();
-        var result = await LibrarySyncOperation.ExecuteAsync(workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
+        var result = await new LibrarySyncOperation(workspace.Permissions).ExecuteAsync(workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(LibraryApplicationState.NoOp, result.Result.Application.State);
         Assert.Empty(result.Result.Plan.Links);
@@ -86,7 +86,7 @@ public sealed class LibrarySyncOperationIntegrationTests
         workspace.Record(LibraryMutationWorkspace.Leaf);
         workspace.DirectoryLink(".agents/directives", "local");
         var before = workspace.Snapshot();
-        var result = await LibrarySyncOperation.ExecuteAsync(workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
+        var result = await new LibrarySyncOperation(workspace.Permissions).ExecuteAsync(workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Equal(LibraryApplicationState.NotStarted, result.Result.Application.State);
         Assert.Equal(before, workspace.Snapshot());
@@ -102,7 +102,7 @@ public sealed class LibrarySyncOperationIntegrationTests
         var before = workspace.Snapshot();
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
-        var result = await LibrarySyncOperation.ExecuteAsync(workspace.Sync(LibraryMode.Apply), cancellation.Token);
+        var result = await new LibrarySyncOperation(workspace.Permissions).ExecuteAsync(workspace.Sync(LibraryMode.Apply), cancellation.Token);
         Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
         Assert.Equal(LibraryRecoveryState.NotRequested, result.Result.Application.Recovery.State);
         Assert.Equal(before, workspace.Snapshot());
@@ -123,7 +123,7 @@ public sealed class LibrarySyncOperationIntegrationTests
 
         try
         {
-            var result = await LibrarySyncOperation.ExecuteAsync(
+            var result = await new LibrarySyncOperation(workspace.Permissions).ExecuteAsync(
                 workspace.Sync(LibraryMode.Apply),
                 TestContext.Current.CancellationToken);
 

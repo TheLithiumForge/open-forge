@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Libraries;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
@@ -45,6 +47,53 @@ public sealed class LibraryDoctorClassificationTests
         }
     }
 
+    [Theory, Trait("Feature", "library-mapping"), Trait("Evidence", "Unit")]
+    [InlineData(false, "docs/b/README.md"), InlineData(true, "docs/b/README.md")]
+    [InlineData(false, "docs/b/readme.md"), InlineData(true, "docs/b/readme.md")]
+    public void MappedRegistrationsKeepFindingsAndOwnershipSeparate(bool sameSource, string ownershipPath)
+    {
+        var source = WorkspaceRelativeDirectory.Create(LibraryMutationPlanningData.SourceRoot);
+        var leaf = SourceRelativeEligiblePath.Create("README.md");
+        var first = LibraryRecord.Create(LibraryId.Create("alpha"), source, LibraryDestinationRoot.Create("docs/a"), [leaf]);
+        var second = LibraryRecord.Create(LibraryId.Create("beta"),
+            sameSource ? source : WorkspaceRelativeDirectory.Create("shared/beta"), LibraryDestinationRoot.Create("docs/b"), [leaf]);
+        var inventory = LibraryMutationPlanningData.Inventory("README.md");
+        var secondInventory = inventory with { Source = inventory.Source with { Request = inventory.Source.Request with { SourceRoot = second.SourceRoot } } };
+        var mappings = new[] { first, second }.SelectMany(library => LibraryPathIdentity.Mappings(library)).Select(mapping =>
+            LibraryMappingObservation.Create(mapping, NoFollowLeafObservation.Missing(LibraryMutationPlanningData.Absolute(mapping.DestinationPath.Value)),
+                LibraryMappingObservationState.Missing, null)).ToImmutableArray();
+        var view = View("ProjectionMissing") with
+        {
+            Record = LibraryMutationPlanningData.Record() with { Record = LibrariesRecord.Create([first, second]) },
+            Inventories = [inventory, secondInventory],
+            Mappings = mappings,
+            Ownership = LibraryMutationPlanningData.Ownership(new LifecycleOwnershipClaim(ownershipPath, LifecycleOwnershipManager.Extension, "toolkit")),
+        };
+        var report = LibraryDoctorInspector.Inspect(LibraryMutationPlanningData.Workspace, EmptyWorkspace(), view,
+            new RecoveryResidualDoctorView(OperationalViewState.Complete, [], null), []);
+        Assert.Equal(2, report.Findings.Count(finding => finding.Kind == DoctorFindingKind.LibraryProjectionMissing));
+        var collision = Assert.Single(report.Findings, finding => finding.Kind == DoctorFindingKind.LibraryExtensionCollision);
+        Assert.Equal("beta", collision.Subject.Identifier);
+        Assert.Same(second, collision.Subject.Library?.Registration);
+    }
+
+    [Theory, Trait("Feature", "library-mapping"), Trait("Evidence", "Unit")]
+    [InlineData(false), InlineData(true)]
+    public void ForeignInventoryMappingCannotBecomeRegisteredEvidence(bool dangling)
+    {
+        var view = View(dangling ? "ProjectionDangling" : "ProjectionMissing");
+        var registered = Assert.Single(view.Mappings);
+        var foreign = LibraryPathIdentity.Map(WorkspaceRelativeDirectory.Create("shared/other"), LibraryDestinationRoot.Create("."), registered.Mapping.SourcePath);
+        view = view with
+        {
+            Mappings = [registered, LibraryMappingObservation.Create(foreign, registered.Leaf, LibraryMappingObservationState.Changed, null)],
+        };
+        var report = LibraryDoctorInspector.Inspect(LibraryMutationPlanningData.Workspace, EmptyWorkspace(), view,
+            new RecoveryResidualDoctorView(OperationalViewState.Complete, [], null), []);
+        var finding = Assert.Single(report.Findings);
+        Assert.Equal(dangling ? DoctorFindingKind.LibraryProjectionDangling : DoctorFindingKind.LibraryProjectionMissing, finding.Kind);
+    }
+
     private static LibraryDoctorView View(string scenario)
     {
         var record = LibraryMutationPlanningData.Record(LibraryMutationPlanningData.Leaf);
@@ -68,7 +117,7 @@ public sealed class LibraryDoctorClassificationTests
             case "SourceRootAliased":
                 inventory = inventory with
                 {
-                    Source = inventory.Source with { State = LibrarySourceRootState.Blocked, PhysicallyDisjoint = false, Cause = "Physical source alias." },
+                    Source = inventory.Source with { State = LibrarySourceRootState.Blocked, Cause = "Physical source alias." },
                     Inventory = null,
                 };
                 break;

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Libraries;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
@@ -44,7 +45,7 @@ internal static class StatusLibraryAggregator
         var records = new List<StatusLibraryRegistration>();
         foreach (var library in observation.Record.Record?.Libraries ?? [])
         {
-            var source = observation.Sources.SingleOrDefault(value => value.Request.SourceRoot == library.SourceRoot);
+            var source = observation.Sources.FirstOrDefault(value => value.Request.SourceRoot == library.SourceRoot);
             if (source is not null && source.State != LibrarySourceRootState.Available)
             {
                 var blocked = source.State is LibrarySourceRootState.Invalid or LibrarySourceRootState.Blocked;
@@ -59,16 +60,16 @@ internal static class StatusLibraryAggregator
                     source.Cause ?? "The registered Library source root is unavailable."));
             }
 
-            var paths = library.Paths.Select(path => path.Value).ToHashSet(StringComparer.Ordinal);
+            var registeredMappings = LibraryPathIdentity.Mappings(library).ToHashSet();
             var links = observation.Mappings
-                .Where(mapping => paths.Contains(mapping.Mapping.SourcePath.Value))
+                .Where(mapping => registeredMappings.Contains(mapping.Mapping))
                 .OrderBy(mapping => mapping.Mapping.DestinationPath.Value, StringComparer.Ordinal)
                 .Select(mapping =>
                 {
                     AddMappingFinding(findings, library.Id.Value, mapping);
                     return new StatusLibraryLink(
                         mapping,
-                        SourceIdentity.DeriveId(mapping.Mapping.DestinationPath.Value) ?? string.Empty);
+                        SourceIdentity.DeriveId(mapping.Mapping.DestinationPath.Value));
                 })
                 .ToImmutableArray();
             var counts = Counts(links.Select(link => link.Observation));
@@ -76,6 +77,7 @@ internal static class StatusLibraryAggregator
             {
                 Id = library.Id,
                 SourceRoot = library.SourceRoot,
+                DestinationRoot = library.DestinationRoot,
                 SourceRootState = source?.State ?? LibrarySourceRootState.Unavailable,
                 SourceAvailability = source?.State == LibrarySourceRootState.Available
                     ? OperationalSourceAvailability.Available

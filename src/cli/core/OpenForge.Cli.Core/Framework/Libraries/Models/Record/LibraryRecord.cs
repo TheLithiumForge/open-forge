@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 
@@ -9,10 +10,12 @@ internal sealed record LibraryRecord
     private LibraryRecord(
         LibraryId id,
         WorkspaceRelativeDirectory sourceRoot,
+        LibraryDestinationRoot destinationRoot,
         ImmutableArray<SourceRelativeEligiblePath> paths)
     {
         Id = id;
         SourceRoot = sourceRoot;
+        DestinationRoot = destinationRoot;
         Paths = paths;
     }
 
@@ -20,15 +23,19 @@ internal sealed record LibraryRecord
 
     internal WorkspaceRelativeDirectory SourceRoot { get; }
 
+    internal LibraryDestinationRoot DestinationRoot { get; }
+
     internal ImmutableArray<SourceRelativeEligiblePath> Paths { get; }
 
     internal static LibraryRecord Create(
         LibraryId id,
         WorkspaceRelativeDirectory sourceRoot,
+        LibraryDestinationRoot destinationRoot,
         IReadOnlyList<SourceRelativeEligiblePath> paths)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(sourceRoot);
+        ArgumentNullException.ThrowIfNull(destinationRoot);
         ArgumentNullException.ThrowIfNull(paths);
         var values = ImmutableArray.CreateBuilder<SourceRelativeEligiblePath>(paths.Count);
         string? previous = null;
@@ -47,7 +54,7 @@ internal sealed record LibraryRecord
             previous = path.Value;
         }
 
-        return new LibraryRecord(id, sourceRoot, values.MoveToImmutable());
+        return new LibraryRecord(id, sourceRoot, destinationRoot, values.MoveToImmutable());
     }
 }
 
@@ -85,9 +92,9 @@ internal sealed record LibrariesRecord
 
             values.Add(library);
             previous = id;
-            foreach (var path in library.Paths)
+            foreach (var mapping in LibraryPathIdentity.Mappings(library))
             {
-                if (!destinations.Add(path.Value))
+                if (!destinations.Add(PortableWorkspacePath.CreatePortableKey(mapping.DestinationPath.Value)))
                 {
                     throw new ArgumentException(
                         "Library destination paths must be unique across the record.",

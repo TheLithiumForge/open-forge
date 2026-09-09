@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.Permissions;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
@@ -66,6 +67,18 @@ internal static class RepairLibraryRecoveryApplication
         foreach (var step in plan.LibrarySteps)
         {
             var evidence = step.Selection.Proposal.Evidence;
+            var permission = await LibraryRecoveryPermissionReader.ObserveAsync(
+                plan.Request.Workspace, evidence, cancellationToken).ConfigureAwait(false);
+            if (!permission.IsAdmitted)
+            {
+                return new RepairPreflightOutcome(
+                    RepairApplicationOutcomeFactory.BeforeApplication(
+                        RepairPreflightState.Blocked,
+                        "Current consumer permissions or Library source protection do not admit the selected recovery.",
+                        RepairFindingCode.TargetUnsafe),
+                    []);
+            }
+
             var selected = await RecoveryBundleReader.ReadSelectedFinalAsync(
                 plan.Request.Workspace,
                 evidence.Residual.Candidate,
@@ -207,6 +220,21 @@ internal static class RepairLibraryRecoveryApplication
         var lease = acquired.Lease;
         try
         {
+            foreach (var step in plan.LibrarySteps)
+            {
+                var evidence = step.Selection.Proposal.Evidence;
+                var permission = await LibraryRecoveryPermissionReader.ReadAsync(
+                    lease, evidence, cancellationToken).ConfigureAwait(false);
+                if (!permission.IsAdmitted)
+                {
+                    await lease.DisposeAsync().ConfigureAwait(false);
+                    return AtomicPreparationResult.BoundaryResult(Boundary(
+                        RepairPreflightState.Blocked,
+                        RepairFindingCode.TargetUnsafe,
+                        "Current consumer permissions or Library source protection do not admit the selected recovery."));
+                }
+
+            }
             var changes = plan.Effects.Select(effect => effect.FileChange).ToArray();
             var validation = changes.Length == 0
                 ? MutationValidationResult.Valid()

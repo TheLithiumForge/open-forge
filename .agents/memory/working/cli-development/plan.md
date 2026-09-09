@@ -33,8 +33,13 @@ acceptance passes 2719/1518/188; native passes 1518/188 and managed-on-native
 passes 188, with zero failures/skips/warnings and zero formatting diagnostics.
 The Task record and canonical receipt own exact source/runtime evidence.
 Task 24 is integrated into local develop at `2eedaf87`, with the exact
-accepted feature tree. Task 25 awaits the external source-selection decision.
-Root continues Task 25 → Task 26 pure refactor
+accepted feature tree. Task 25 is accepted at phase 5/5, milestone 8/8.
+All T25-R1 findings are closed after T25-C1 and T25-C2. Final managed evidence
+passed 2820/1559/188; native passed 1559/188 and managed-on-native passed 188.
+All 6,502 executions passed with zero failures/skips. Native artifact identity,
+source preservation, formatting and static gates passed. Root is freezing the
+acceptance prose for exact local integration, then activating Task 26.
+Root continues Task 26 pure refactor
 → Task 10 audit → conditional Task 21 → Task 13 → Task 22. Later publication
 and global installation refresh remain unauthorized. General test-environment
 cleanup remains an idea. The current Task capsules govern scoped execution;

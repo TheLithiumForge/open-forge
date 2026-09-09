@@ -97,7 +97,7 @@ public sealed class LibraryInspectCoverageTests
         LibraryReadBoundary.Arrange(fixture, "destination-parent-link");
         fixture.SourceFile();
         fixture.Files.ReplaceText(LibraryReadWorkspace.RecordPath, """
-            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team",
+            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team","destinationRoot":".",
             "paths":[".agents/directives/review.md",".agents/linked/review.md"]}]}
             """);
         var before = fixture.Snapshot();

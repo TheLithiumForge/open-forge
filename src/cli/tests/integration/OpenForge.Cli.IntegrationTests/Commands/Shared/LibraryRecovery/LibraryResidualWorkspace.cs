@@ -21,10 +21,13 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Shared.LibraryRecovery;
 internal sealed class LibraryResidualWorkspace : IDisposable
 {
     internal const string RecordText = """
-        {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":[".agents/directives/review.md"]}]}
+        {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/directives/review.md"]}]}
         """;
     private readonly List<string> _bundles = [];
     private readonly string? _lockPath;
+    private RecoveryBundlePreparation? _preparation;
+    private LibraryResidualEvidence? _evidence;
+    private string? _targetPath;
 
     internal LibraryResidualWorkspace(bool dangling = false)
     {
@@ -42,9 +45,9 @@ internal sealed class LibraryResidualWorkspace : IDisposable
     }
 
     internal LibraryMutationWorkspace Files { get; }
-    internal RecoveryBundlePreparation Preparation { get; private set; } = null!;
-    internal LibraryResidualEvidence Evidence { get; private set; } = null!;
-    internal string TargetPath { get; private set; } = null!;
+    internal RecoveryBundlePreparation Preparation => Assert.IsType<RecoveryBundlePreparation>(_preparation);
+    internal LibraryResidualEvidence Evidence => Assert.IsType<LibraryResidualEvidence>(_evidence);
+    internal string TargetPath => Assert.IsType<string>(_targetPath);
     internal string? PriorText { get; private set; }
 
     internal async Task PrepareAsync(string kind, string operation = "sync", bool includeUnselectedHost = false)
@@ -56,7 +59,7 @@ internal sealed class LibraryResidualWorkspace : IDisposable
         Assert.Equal(LibraryMutationApplicationData.ManagedPath, Assert.Single(ownership.Claims).Path);
         RecoveryBundleTarget target;
         var linked = kind is "link-create" or "link-delete";
-        TargetPath = Files.Absolute(linked ? LibraryMutationWorkspace.Leaf : LibraryMutationWorkspace.RecordPath);
+        _targetPath = Files.Absolute(linked ? LibraryMutationWorkspace.Leaf : LibraryMutationWorkspace.RecordPath);
         if (linked)
         {
             Files.Record(LibraryMutationWorkspace.Leaf);
@@ -111,7 +114,7 @@ internal sealed class LibraryResidualWorkspace : IDisposable
 
         Assert.True(prepared.State == RecoveryBundlePreparationState.Prepared && prepared.Preparation is not null,
             $"Library residual fixture preparation prerequisite: {prepared.State}; {prepared.Cause}");
-        Preparation = prepared.Preparation!;
+        _preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         if (!_bundles.Contains(Preparation.BundlePath))
         {
             _bundles.Add(Preparation.BundlePath);
@@ -141,9 +144,9 @@ internal sealed class LibraryResidualWorkspace : IDisposable
         var candidate = RecoveryBundleCandidateSnapshot.VerifiedFinal(verified);
         var record = LibraryMutationApplicationData.ReadRecord(Files, exists: kind != "record-delete", registered: true);
         var priorRecord = kind == "record-delete"
-            ? new LibraryRecoveryPriorRecord(LibraryMutationApplicationData.Record(registered: true), entry, entry.Prior.OrdinaryFile!)
+            ? new LibraryRecoveryPriorRecord(LibraryMutationApplicationData.Record(registered: true), entry, Assert.IsType<RecoveryContentIdentity>(entry.Prior.OrdinaryFile))
             : null;
-        Evidence = new LibraryResidualEvidence(LibraryId.Create("team-knowledge"), record, priorRecord,
+        _evidence = new LibraryResidualEvidence(LibraryId.Create("team-knowledge"), record, priorRecord,
             new RecoveryEntrySetObservation(Files.Workspace, candidate, comparisons), comparison);
     }
 
@@ -155,8 +158,9 @@ internal sealed class LibraryResidualWorkspace : IDisposable
         {
             RecoveryEntryStateKind.Missing => NoFollowLeafObservation.Missing(path),
             RecoveryEntryStateKind.RelativeFileLink => NoFollowLeafObservation.CreateRelativeFileLink(path,
-                RelativeFileLinkIdentity.Create(NoFollowLinkKind.SymbolicLink, new FileInfo(path).LinkTarget!)),
-            _ => NoFollowLeafObservation.OrdinaryFile(path),
+                RelativeFileLinkIdentity.Create(NoFollowLinkKind.SymbolicLink, Assert.IsType<string>(new FileInfo(path).LinkTarget))),
+            RecoveryEntryStateKind.OrdinaryFile => NoFollowLeafObservation.OrdinaryFile(path),
+            _ => throw new ArgumentOutOfRangeException(nameof(entry), entry.Intended.Kind, "The recovery state kind is not defined."),
         };
         var content = entry.Intended.Kind == RecoveryEntryStateKind.OrdinaryFile
             ? new RecoveryOrdinaryContentObservation(path, RecoveryContentIdentity.FromBytes(File.ReadAllBytes(path)), null)
@@ -188,7 +192,7 @@ internal sealed class LibraryResidualWorkspace : IDisposable
 
         Assert.True(prepared.State == RecoveryBundlePreparationState.Prepared && prepared.Preparation is not null,
             $"Independent preparation prerequisite: {prepared.State}; {prepared.Cause}");
-        var preparation = prepared.Preparation!;
+        var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         _bundles.Add(preparation.BundlePath);
         return preparation;
     }

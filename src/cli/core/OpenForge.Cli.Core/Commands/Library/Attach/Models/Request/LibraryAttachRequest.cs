@@ -12,5 +12,9 @@ internal sealed record LibraryAttachRequest
 
     public required WorkspaceRelativeDirectory SourceRoot { get; init; }
 
+    public required LibraryDestinationRoot DestinationRoot { get; init; }
+
+    public required bool AllowPrompt { get; init; }
+
     public required LibraryMode Mode { get; init; }
 }

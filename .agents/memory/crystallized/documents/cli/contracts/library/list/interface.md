@@ -73,85 +73,72 @@ no applicable behavior remains a shared no-op.
 
 ## Workspace And Record
 
-The workspace is the exact current directory unless `--workspace <path>` selects
-one exact directory. The command does not search for another workspace or infer
-one from a Library ID or path.
+The consumer record is `.agents/open-forge.libraries.json`, separate from
+lifecycle ownership and consumer permissions. Its exact current schema is:
 
-The only record path is `.agents/open-forge.libraries.json`. It is separate from
-`.agents/open-forge.lifecycle.json`. The record has this strict schema-v1 shape.
-Object members not shown here are not accepted:
-
-```text
-LibrariesRecord {
-  schemaVersion: integer(1),
-  libraries: LibraryRecord[]
-}
-
-LibraryRecord {
-  id: string matching [a-z0-9]+(-[a-z0-9]+)*, length 1..128,
-  sourceRoot: workspace-relative slash path,
-  paths: string[] of `.agents/...` paths
+```json
+{
+  "schemaVersion": 1,
+  "libraries": [
+    {
+      "id": "team-knowledge",
+      "sourceRoot": "shared/team-knowledge",
+      "destinationRoot": ".apm/agents/team",
+      "paths": ["checks/security.md", "review.md"]
+    }
+  ]
 }
 ```
 
-The `libraries` array is the complete bounded record. A `LibraryRecord` has only
-`id`, `sourceRoot`, and `paths`. Each `paths` item is one canonical
-consumer-relative `.agents/...` path. That path is both the source-relative path
-below `sourceRoot` and the destination path below the selected workspace. The
-expected link is derived from that path and `sourceRoot`; it is not stored in the
-record.
+Require exactly `schemaVersion` and `libraries` at the top level, and exactly
+`id`, `sourceRoot`, `destinationRoot` and `paths` per Library. Require integer
+`1`, existing Library-ID grammar, canonical portable roots and source-relative
+eligible paths. The destination root is `.` or a normal relative directory;
+source roots do not admit `.`. Unknown, missing, null, duplicate and wrongly
+typed members are malformed. No previous schema shape, migration or alternate
+reader is accepted.
 
-The record is invalid when `schemaVersion` is not the integer `1`, a required
-member is missing, an unknown member is present, a value has the wrong type, an
-ID is malformed, or a path item is empty, absolute, escaping, backslash-
-separated, duplicated, or not a canonical `.agents/...` path.
-Duplicate Library IDs, duplicate paths across Libraries, ambiguous path
-identity, and unsafe record identity are `blocked` because the command cannot
-choose one meaning. The record is not treated as empty when parsing or reading
-it fails.
+IDs and each source-relative path array use ordinal order. Paths are unique
+within a Library. Derived destinations must be unique across Libraries under
+portable identity; equal source-relative paths at different destinations are
+valid. Empty path arrays and an empty Library array are valid. The record stores
+no expected-link text, contents, hashes, timestamps, Git facts, dependencies,
+globs or per-file remapping. Link identity derives from both recorded roots and
+the source-relative path. Permission is separate from ownership and may be
+revoked independently.
 
-The expected link derived from `sourceRoot` and a path is a raw relative slash
-path. It may contain `..` segments needed to reach the contained source root,
-but it must not be absolute, backslash-separated, or resolve outside the
-selected workspace or the recorded source file.
-
-A missing record is a known zero-library record. In that case `libraries` is an
-empty array, record coverage is complete, and the command returns `complete`.
-An unreadable or unavailable record is not a missing record and returns
-`incomplete`. A structurally unsafe record identity returns `blocked`.
-
-Library IDs are exact management identities. They use the grammar above and are
-separate from automatic source IDs. The ID for an eligible projected file is
-derived from its destination path under the shared [Automatic Source IDs](../../shared/source-references/interface.md#automatic-source-ids)
-rules. A Library ID is never accepted where a source-reference operand is
-expected.
+A missing record is a valid prior-absence fact for Attach and a complete empty
+List result. Inspect, Sync and Detach require the requested ID in a valid record.
+Malformed, unavailable and unsafe records retain their existing invalid,
+incomplete and blocked classification; none becomes an empty valid record.
 
 ## Source-Root State
 
-For each record, `sourceRoot` is resolved from the selected workspace as one
-workspace-relative path. It must be lexically and physically contained by that
-workspace, be non-empty and free of `.` or `..` segments, identify a real
-ordinary directory, and contain a direct child named `.agents` that is also a
-real ordinary directory. A source root without that ordinary `.agents`
-directory is invalid. The source root must be physically
-disjoint from the selected consumer `.agents` destination namespace; overlap or
-alias is blocked.
+The source root is a non-empty canonical portable workspace-relative directory,
+strictly contained by the selected workspace lexically and physically. It has
+no absolute, empty, backslash, `.` or `..` segment and no portable alias. Every
+ancestor and the selected root must be a real ordinary directory, without
+symlink, junction or reparse ancestry. No specially named child is required.
+The selected directory itself scopes the recursively discovered eligible files.
 
-The list operation does not enumerate that `.agents` directory. Its source-root
-state is one of:
+An absent or non-directory source root is `invalid` for Attach. For an existing
+registration, unavailable or missing source facts make Inspect or Sync
+`incomplete`; a readable non-directory root is `invalid`. Unsafe containment,
+linked ancestry or ambiguous identity is `blocked`. List reports only bounded
+root availability and does not enumerate descendants. An incomplete source is
+never an empty source inventory.
 
-| State | Meaning | Result effect |
-| --- | --- | --- |
-| `available` | The source root and its ordinary `.agents` directory are established. | Registered-link observations may be complete. |
-| `missing` or `unavailable` | A required directory or fact cannot be read. | `incomplete`; no empty source is inferred. |
-| `invalid` | The path is not a valid ordinary source root or has no ordinary `.agents` directory. | `invalid`. |
-| `blocked` | Lexical or physical containment, alias, or identity is unsafe or ambiguous. | `blocked`. |
-| `not-started` | Record resolution stopped at an earlier boundary. | No independent status. |
+The consumer workspace and its existing ordinary `.agents` control directory
+remain consumer-owned. The operation does not create or replace either root.
+The destination root may be an ancestor of a contained source root, including
+`.`. Actual destination leaves and every mutation target must remain outside
+all selected and registered source trees. This per-leaf check preserves source
+contents without forbidding workspace-root projection.
 
 ## Registered-Link Observation
 
 For every path in a Library's `paths` array, the command observes only the
-destination directory entry named by that same path. It does not follow the
+destination directory entry derived from that source suffix and the recorded destination root. It does not follow the
 destination to read source bytes or to discover unregistered files.
 
 The observation is one of:
@@ -192,6 +179,7 @@ RecordView {
 LibraryView {
   id: string,
   sourceRoot: string,
+  destinationRoot: string,
   sourceRootState: "not-started" | "available" | "missing" | "unavailable" | "invalid" | "blocked",
   paths: RegisteredPath[]
 }
@@ -239,7 +227,7 @@ The command uses the shared seven statuses:
 | `complete` | The record is known missing and therefore has zero libraries, or every bounded record, source-root, and registered-link fact is complete and safe with no drift. |
 | `attention` | Bounded facts are complete and safe, and one or more registered links are missing or changed. No complete source inventory was performed. |
 | `incomplete` | A required record, source-root, or registered-link fact is unavailable or incomplete. The command does not report an empty substitute. |
-| `invalid` | The command input or strict record shape is invalid, including a source root without a real ordinary `.agents` directory. |
+| `invalid` | The command input or strict record shape is invalid, including a source root that is not an ordinary directory. |
 | `blocked` | Unsafe identity, containment, record identity, or link ambiguity prevents safe observation. |
 | `failed` | An unexpected operation or result-formation failure occurred. |
 | `interrupted` | The caller interrupted the operation before its result was complete. |

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Libraries;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Result;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
@@ -48,7 +49,15 @@ internal static class LibrarySyncPlanner
         var currentPaths = entries.Select(entry => entry.SourcePath.Value).ToHashSet(StringComparer.Ordinal);
         var registeredPaths = selected?.Paths.Select(path => path.Value).ToHashSet(StringComparer.Ordinal)
             ?? new HashSet<string>(StringComparer.Ordinal);
-        var destinations = currentPaths.Union(registeredPaths).Order(StringComparer.Ordinal).ToImmutableArray();
+        var projection = selected is null ? null : LibraryRecord.Create(selected.Id, selected.SourceRoot, selected.DestinationRoot,
+            [.. currentPaths.Union(registeredPaths).Order(StringComparer.Ordinal).Select(SourceRelativeEligiblePath.Create)]);
+        var destinations = projection is null ? [] : LibraryPathIdentity.Mappings(projection)
+            .Select(mapping => mapping.DestinationPath.Value).ToImmutableArray();
+        if (projection is not null && LibraryDestinationPolicy.FindConflict(input.Request.Workspace, projection, record, RelativePaths(input)) is { } conflict)
+        {
+            Add(findings, LibrarySyncFindingCode.DestinationCollision, CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value, conflict, "The Library destination is protected, source-owned, or registered to another Library.");
+        }
 
         if (LibraryMutationPlanningPolicy.HasDestinationAlias(input.Request.Workspace, destinations))
         {
@@ -97,7 +106,7 @@ internal static class LibrarySyncPlanner
 
         var replacement = LibraryRecord.Create(
             selected.Id,
-            selected.SourceRoot,
+            selected.SourceRoot, selected.DestinationRoot,
             [.. entries.Select(entry => entry.SourcePath)]);
         var intendedRecord = LibrariesRecord.Create(
             [.. record.Libraries
@@ -106,6 +115,7 @@ internal static class LibrarySyncPlanner
         var intendedBytes = LibrariesRecordCodec.Write(intendedRecord);
         return new LibrarySyncPlan
         {
+            Permissions = null,
             Input = input,
             State = LibraryPlanState.Complete,
             Directories = boundary.Directories,
@@ -272,7 +282,7 @@ internal static class LibrarySyncPlanner
         foreach (var path in currentPaths.Union(registeredPaths).Order(StringComparer.Ordinal))
         {
             var sourcePath = SourceRelativeEligiblePath.Create(path);
-            var expected = LibraryMapping.Create(selected.SourceRoot, sourcePath);
+            var expected = LibraryMapping.Create(selected.SourceRoot, selected.DestinationRoot, sourcePath);
             if (!byPath.Remove(path, out var observation)
                 || observation.Mapping.DestinationPath != expected.DestinationPath
                 || observation.Mapping.ExpectedRelativeLink != expected.ExpectedRelativeLink)
@@ -334,11 +344,15 @@ internal static class LibrarySyncPlanner
             change.LogicalPath).Replace(Path.DirectorySeparatorChar, '/'));
 
     private static LibraryPlanState PlanState(IEnumerable<LibrarySyncFinding> findings)
-        => findings.Any(finding => finding.Status == CliSemanticStatus.Blocked)
-            ? LibraryPlanState.Blocked
-            : findings.Any(finding => finding.Status == CliSemanticStatus.Incomplete)
-                ? LibraryPlanState.Incomplete
-                : LibraryPlanState.Complete;
+    {
+        if (findings.Any(finding => finding.Status == CliSemanticStatus.Blocked))
+        {
+            return LibraryPlanState.Blocked;
+        }
+        return findings.Any(finding => finding.Status == CliSemanticStatus.Incomplete)
+            ? LibraryPlanState.Incomplete
+            : LibraryPlanState.Complete;
+    }
 
     private static LibrarySyncPlan Empty(
         LibrarySyncPlanningInput input,
@@ -346,6 +360,7 @@ internal static class LibrarySyncPlanner
         ImmutableArray<LibrarySyncFinding>.Builder findings)
         => new()
         {
+            Permissions = null,
             Input = input,
             State = state,
             Directories = [],

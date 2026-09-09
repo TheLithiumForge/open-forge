@@ -506,42 +506,41 @@ Design](technical-designs/generated-navigation.md).
 
 ### Workspace Libraries
 
-Workspace Libraries are local filesystem composition over ordinary consumer
-paths, not a new Framework root or a Loader federation. One Library record names
-one workspace-contained real source directory. Its complete eligible inventory
-under the source directory's real `.agents/` directory maps to the same
-consumer-relative `.agents/` paths through relative file symlinks. The consumer
-keeps one Loader and its own route chain; a projected file has the meaning of
-its consumer destination.
+Workspace Libraries project recursively discovered eligible files from one
+workspace-contained real source root. No specially named child is required.
+Each record keeps a source root, a destination root (`.` for the workspace
+root), and source-relative leaf paths. Central typed mapping derives final
+consumer destinations and exact raw relative file-link targets. Destination
+parents are real ordinary directories; only individual leaves are symlinks.
 
-Attach, Sync, and Inspect require the source root and consumer destination
-namespace to be physically disjoint, with the source root and its `.agents/`
-directory having no linked or reparse ancestry. Detach uses only exact
-consumer-side registered destinations and does not resolve a source root. The
-source inventory is strict and complete: an unavailable,
-unreadable, externally resolving, aliased, or otherwise unsafe item prevents a
-complete mutating plan. Source bytes are read-only facts and are never effect
-targets. Library projection effects can create or delete only declared relative
-file-link objects and their real parent directories; an existing consumer-owned
-generated `Entries` region may be replaced under the Index contract. The
-consumer-side Library record is published last after link and generated effects
-verify. Only a typed Library relative-file-link effect may create or delete a
-link object; ordinary file effects reject a link final leaf.
+All selected and registered source trees remain protected from actual mutation
+targets. A destination root may be their ancestor, including the workspace root.
+Source and destination ancestry remain no-follow ordinary-directory boundaries.
+Incomplete inventory blocks Sync; Detach uses recorded mappings without source
+availability. Library permissions cover exact external files or explicitly
+approved destination folders and future descendants, bound to Library/source.
+Revocation still gates removal and recovery. Permission never grants ownership
+or overrides protected paths, source trees, ancestry or collisions.
 
-The exact schema-v1 record, inventory closure, relative-link identity, capability
-gate, and command-facing fact shapes are defined in the [Workspace Libraries
-Technical Design](technical-designs/workspace-libraries.md). No copy fallback,
-Git operation, native interop, external destination, path remapping, glob, or
-write-through mutation is part of this architecture.
+The consumer keeps its Loader and route chain. Only mapped `.agents` leaves
+can affect existing generated navigation under the Index contract; external
+Markdown remains opaque. Relative-link effects never follow or mutate source
+bytes. Prepare one recovery bundle, verify permission publication before links,
+and publish the Library record last. Ordinary file effects reject link leaves.
+
+The [Workspace Libraries Technical Design](technical-designs/workspace-libraries.md)
+defines strict record shape, complete inventory, mapping, grant integration,
+recovery and capability gates. No copy fallback, Git operation, native interop,
+per-file remapping, glob or write-through mutation is introduced.
 
 ### Consumer Workspace Permissions
 
 `Framework/Permissions/` owns strict consumer grant representation, observation,
-exact identity lookup and proposed permission-file changes. Extension commands
+exact and Library subtree identity lookup and proposed permission-file changes. Consuming commands
 own required-grant policy, prompting, results, lease orchestration and content
 application. Permission is separate from lifecycle ownership. Neutral immutable
-facts may also serve Library consumers when their contracts select this shared
-meaning; no consumer imports another command's policy.
+facts serve both Extension and Library consumers under their separate selected
+contracts; no consumer imports another command's policy.
 
 The [Workspace Permissions contracts](contracts/shared/workspace-permissions/_workspace-permissions.md)
 and [Technical Design](technical-designs/workspace-permissions.md) own the exact
@@ -677,7 +676,7 @@ selection, predecessor reuse, and exact gate triggers.
 
 Workspace Library first-release executable evidence targets Linux x64 and must
 prove real relative file-link creation, inspection, dangling-link identity,
-source and destination containment, physical disjointness, complete inventory,
+source and destination containment, per-effect source-tree exclusion, complete inventory,
 record-last application, and no copy fallback. Other platform behavior remains
 capability-gated and nonshipping until the same real-link evidence exists; no
 platform expansion or Git behavior follows from this design.

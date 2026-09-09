@@ -10,5 +10,7 @@ internal sealed record LibraryDetachRequest
 
     public required LibraryId LibraryId { get; init; }
 
+    public required bool AllowPrompt { get; init; }
+
     public required LibraryMode Mode { get; init; }
 }

@@ -8,16 +8,18 @@ public sealed class PublishedLibraryInspectProcessTests
     public async Task HealthyProjectionHasCompleteInventoryAndDestinationIdentity()
     {
         using var workspace = new PublishedLibraryWorkspace();
-        workspace.Source();
-        workspace.Link();
-        workspace.Record(PublishedLibraryWorkspace.ReviewPath);
+        workspace.Source("_guide.md");
+        workspace.MappedLink("docs/_guide.md", "../shared/team-knowledge/_guide.md");
+        workspace.RecordAt("docs", "_guide.md");
         using var document = PublishedLibraryWorkspace.Result(
             await workspace.ReadOnlyAsync(PublishedExecutableTarget.Discover(), "library", "inspect", "team-knowledge", "--json"), "complete");
         var result = document.RootElement.GetProperty("result");
         var comparison = Assert.Single(result.GetProperty("projection").GetProperty("comparisons").EnumerateArray());
         Assert.Equal("current", comparison.GetProperty("relation").GetString());
-        Assert.Equal("directives/review", comparison.GetProperty("sourceId").GetString());
-        workspace.AssertSource();
+        Assert.Equal("docs/_guide.md", comparison.GetProperty("destinationPath").GetString());
+        Assert.Equal("_guide.md", comparison.GetProperty("sourcePath").GetString());
+        Assert.Equal(System.Text.Json.JsonValueKind.Null, comparison.GetProperty("sourceId").ValueKind);
+        Assert.Equal(PublishedLibraryWorkspace.SourceBody, File.ReadAllText(workspace.Combine("shared/team-knowledge/_guide.md")));
         workspace.AssertNoInfrastructure();
     }
 

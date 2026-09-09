@@ -21,6 +21,7 @@ internal sealed record StatusLibraryRegistration
 {
     public required LibraryId Id { get; init; }
     public required WorkspaceRelativeDirectory SourceRoot { get; init; }
+    public required LibraryDestinationRoot DestinationRoot { get; init; }
     public required LibrarySourceRootState SourceRootState { get; init; }
     public required OperationalSourceAvailability SourceAvailability { get; init; }
     public required StatusIntegerValue Registered { get; init; }
@@ -28,7 +29,7 @@ internal sealed record StatusLibraryRegistration
     public required ImmutableArray<StatusLibraryLink> Links { get; init; }
 }
 
-internal sealed record StatusLibraryLink(LibraryMappingObservation Observation, string SourceId);
+internal sealed record StatusLibraryLink(LibraryMappingObservation Observation, string? SourceId);
 
 internal sealed record StatusLibraryCounts
 {

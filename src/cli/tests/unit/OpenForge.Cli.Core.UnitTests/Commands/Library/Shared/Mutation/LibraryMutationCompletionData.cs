@@ -19,6 +19,7 @@ internal static class LibraryMutationCompletionData
     internal static LibraryExecutionEvidence Empty()
         => new()
         {
+            Permission = null,
             Directories = [],
             Links = [],
             GeneratedRegions = [],
@@ -72,6 +73,7 @@ internal static class LibraryMutationCompletionData
         var link = Link(delete: false);
         var plan = new LibraryAttachPlan
         {
+            Permissions = null,
             Input = observations,
             State = LibraryPlanState.Complete,
             Directories = [],
@@ -98,6 +100,7 @@ internal static class LibraryMutationCompletionData
         var link = Link(delete: false);
         var plan = new LibrarySyncPlan
         {
+            Permissions = null,
             Input = observations,
             State = LibraryPlanState.Complete,
             Directories = [],
@@ -124,6 +127,7 @@ internal static class LibraryMutationCompletionData
         var link = Link(delete: true);
         var plan = new LibraryDetachPlan
         {
+            Permissions = null,
             Input = observations,
             State = LibraryPlanState.Complete,
             Directories = [],

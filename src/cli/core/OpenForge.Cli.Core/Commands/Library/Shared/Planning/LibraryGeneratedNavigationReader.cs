@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
+using OpenForge.Cli.Core.Framework.Libraries;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
@@ -24,16 +25,19 @@ internal static class LibraryGeneratedNavigationReader
 {
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
 
-    internal static async ValueTask<LibraryGeneratedNavigationRead> ReadAsync(
-        CliWorkspace workspace,
-        LibraryId selectedId,
-        LibrariesRecord? currentRecord,
-        IReadOnlyList<EligibleSourceFile> intendedSelectedEntries,
+    internal static ValueTask<LibraryGeneratedNavigationRead> ReadAsync(
+        LibraryGeneratedNavigationRequest request,
+        CancellationToken cancellationToken)
+        => ReadCoreAsync(request, cancellationToken);
+
+    private static async ValueTask<LibraryGeneratedNavigationRead> ReadCoreAsync(
+        LibraryGeneratedNavigationRequest request,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(workspace);
-        ArgumentNullException.ThrowIfNull(selectedId);
-        ArgumentNullException.ThrowIfNull(intendedSelectedEntries);
+        var workspace = request.Workspace;
+        var selectedId = request.SelectedLibrary.Id;
+        var currentRecord = request.CurrentRecord;
+        var intendedSelectedEntries = request.IntendedEntries;
         try
         {
             var catalogue = await new SourceCatalogueReader().ReadAsync(
@@ -45,8 +49,8 @@ internal static class LibraryGeneratedNavigationReader
             }
 
             var selected = currentRecord?.Libraries.FirstOrDefault(library => library.Id == selectedId);
-            var selectedPaths = selected?.Paths.Select(path => path.Value).ToHashSet(StringComparer.Ordinal)
-                ?? [];
+            var selectedPaths = selected is null ? [] : LibraryPathIdentity.Mappings(selected)
+                .Select(mapping => mapping.DestinationPath.Value).ToHashSet(StringComparer.Ordinal);
             var intendedCatalogue = selectedPaths.Count == 0
                 ? catalogue
                 : new SourceCatalogue(
@@ -63,7 +67,8 @@ internal static class LibraryGeneratedNavigationReader
             foreach (var entry in intendedSelectedEntries)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var path = entry.SourcePath.Value;
+                var path = LibraryPathIdentity.Map(request.SelectedLibrary.SourceRoot,
+                    request.SelectedLibrary.DestinationRoot, entry.SourcePath).DestinationPath.Value;
                 if (TryCreateSelectedSource(path, entry.PhysicalPath) is not { } source)
                 {
                     continue;

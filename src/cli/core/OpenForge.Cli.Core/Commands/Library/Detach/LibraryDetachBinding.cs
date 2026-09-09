@@ -46,7 +46,7 @@ internal static class LibraryDetachBinding
                 WorkspaceRequirement = CliWorkspaceRequirement.Required,
                 Binder = (parse, invocation) => LibraryDetachRequestBinder.Bind(parse, invocation, symbols),
                 InvalidResultFactory = LibraryDetachRequestBinder.CreateInvalid,
-                Operation = LibraryDetachOperation.ExecuteAsync,
+                Operation = components.Operation.ExecuteAsync,
                 Renderers = components.Renderers,
             });
     }

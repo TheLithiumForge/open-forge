@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Binding;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Result;
@@ -36,10 +37,24 @@ internal static class LibraryAttachRequestBinder
                 Invalid(invocation.Workspace, suppliedId, suppliedRoot, LibraryAttachFindingCode.SourceRootInvalid));
         }
 
+        LibraryDestinationRoot destinationRoot;
+        try
+        {
+            destinationRoot = LibraryDestinationRoot.Create(
+                parse.Result.GetValue(symbols.DestinationRoot) ?? LibraryDestinationRoot.WorkspaceRootValue);
+        }
+        catch (ArgumentException)
+        {
+            return CliBindResult<LibraryAttachRequest, LibraryAttachResult>.Invalid(
+                Invalid(invocation.Workspace, suppliedId, suppliedRoot, LibraryAttachFindingCode.DestinationRootInvalid));
+        }
+
         var workspace = invocation.Workspace
             ?? throw new InvalidOperationException("A bound Library Attach invocation requires a selected workspace.");
         return CliBindResult<LibraryAttachRequest, LibraryAttachResult>.Bound(new LibraryAttachRequest
         {
+            AllowPrompt = invocation.Presentation.Format == CliOutputFormat.Human && !parse.Result.GetValue(symbols.DryRun),
+            DestinationRoot = destinationRoot,
             Workspace = workspace,
             LibraryId = libraryId,
             SourceRoot = sourceRoot,
@@ -109,9 +124,13 @@ internal static class LibraryAttachRequestBinder
             id,
             sourceRoot,
             code,
-            code == LibraryAttachFindingCode.InvalidId
-                ? "Library Attach requires exactly one ID matching [a-z0-9]+(-[a-z0-9]+)* with length 1 through 128."
-                : "Library Attach requires one portable workspace-relative source root.");
+            code switch
+            {
+                LibraryAttachFindingCode.InvalidId => "Library Attach requires exactly one ID matching [a-z0-9]+(-[a-z0-9]+)* with length 1 through 128.",
+                LibraryAttachFindingCode.SourceRootInvalid => "Library Attach requires one portable workspace-relative source root.",
+                LibraryAttachFindingCode.DestinationRootInvalid => "Library Attach requires one portable workspace-relative destination directory or dot for the workspace root.",
+                _ => throw new ArgumentOutOfRangeException(nameof(code), code, "The Library Attach binding failure is not defined."),
+            });
 
     private static LibraryAttachResult Create(
         CliSemanticStatus status,
@@ -127,14 +146,14 @@ internal static class LibraryAttachRequestBinder
             Next = null,
             Result = new LibraryAttachPayload
             {
-                Identity = LibraryMutationCompletionProjection.Identity(id, sourceRoot, LibraryMode.Apply, sourceIndependent: false),
+                Permissions = LibraryPermissionView.NotEvaluated(),
+                Identity = LibraryMutationCompletionProjection.Identity(id, sourceRoot, destinationRoot: null, LibraryMode.Apply, sourceIndependent: false),
                 Record = LibraryMutationCompletionProjection.Record(read: null, id, intended: null),
-                Source = LibraryMutationCompletionProjection.Source(read: null),
+                Source = LibraryMutationCompletionProjection.Source(read: null, destinationRoot: null),
                 Projection = LibraryMutationCompletionProjection.Projection(
                     record: null, source: null, mappings: null, ownership: null, id,
                     LibraryPlanState.NotStarted, sourceIndependent: false),
-                Plan = LibraryMutationCompletionProjection.Plan(
-                    LibraryPlanState.NotStarted, directories: null, links: null, generatedRegions: null, recordChange: null),
+                Plan = LibraryMutationCompletionProjection.NotPlanned(),
                 Application = LibraryMutationCompletionProjection.NotStarted(),
                 Findings =
                 [

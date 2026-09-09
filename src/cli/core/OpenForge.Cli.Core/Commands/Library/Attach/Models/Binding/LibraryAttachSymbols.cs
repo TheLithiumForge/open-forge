@@ -10,5 +10,7 @@ internal sealed record LibraryAttachSymbols
 
     public required Argument<string?> SourceRoot { get; init; }
 
+    public required Option<string?> DestinationRoot { get; init; }
+
     public required Option<bool> DryRun { get; init; }
 }

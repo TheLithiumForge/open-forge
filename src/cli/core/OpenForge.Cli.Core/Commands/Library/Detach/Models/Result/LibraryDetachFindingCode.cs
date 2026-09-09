@@ -4,6 +4,12 @@ namespace OpenForge.Cli.Core.Commands.Library.Detach.Models.Result;
 internal enum LibraryDetachFindingCode
 {
     InvalidInput,
+    PermissionRequired,
+    PermissionDeclined,
+    PermissionInvalid,
+    PermissionUnavailable,
+    PermissionChanged,
+    PermissionWriteFailed,
     InvalidId,
     RecordInvalid,
     RecordUnavailable,

@@ -88,7 +88,7 @@ internal static class CliCompositionRoot
         var extension = CliExtensionComposer.Compose(
             interactiveSession,
             inputs.LockStoreRoot);
-        var library = CliLibraryComposer.Compose();
+        var library = CliLibraryComposer.Compose(interactiveSession);
         var tree = CliCommandTree.Create(
             CreateRootHelp(),
             [route.Branch, extension.Branch, library.Branch],

@@ -13,7 +13,7 @@ public sealed class WorkspacePermissionCodecTests
     public void ReadsBothSubjectKindsWithoutRequiringAuthoredSortOrder()
     {
         const string json = """
-            {"libraries":[{"paths":["z.txt","a.txt"],"sourceRoot":"shared/team","id":"team"}],
+            {"libraries":[{"paths":["z.txt","a.txt"],"sourceRoot":"shared/team","id":"team","directories":["docs",".apm/agents"]}],
              "extensions":[{"id":"z","paths":[".apm/z.md",".apm/a.md"]},{"id":"a","paths":[]}],"schemaVersion":1}
             """;
 
@@ -88,7 +88,7 @@ public sealed class WorkspacePermissionCodecTests
     {
         var document = new WorkspacePermissionDocument(
             Extensions: [new("z", ["z.txt", "a.txt"]), new("a", [])],
-            Libraries: [new("team", "shared/team", [".apm/agents/reviewer.md"])]);
+            Libraries: [new("team", "shared/team", [".apm/agents/reviewer.md"], Directories: [])]);
         const string expected = """
             {
               "schemaVersion": 1,
@@ -111,7 +111,8 @@ public sealed class WorkspacePermissionCodecTests
                   "sourceRoot": "shared/team",
                   "paths": [
                     ".apm/agents/reviewer.md"
-                  ]
+                  ],
+                  "directories": []
                 }
               ]
             }
@@ -138,5 +139,26 @@ public sealed class WorkspacePermissionCodecTests
         byte[] bytes = [.. prefix, 0xff, .. suffix];
 
         Assert.Null(WorkspacePermissionCodec.Read(bytes).Document);
+    }
+
+    [Theory]
+    [InlineData("null"), InlineData("{}"), InlineData("[null]"), InlineData("[1]")]
+    [InlineData("[\".\"]"), InlineData("[\".agents\"]"), InlineData("[\".AGENTS/skills\"]")]
+    [InlineData("[\"../docs\"]"), InlineData("[\"docs/\"]"), InlineData("[\"docs\",\"DOCS\"]")]
+    public void RejectsInvalidLibraryDirectoryScopes(string directories)
+    {
+        var json = $$"""{"schemaVersion":1,"extensions":[],"libraries":[{"id":"team","sourceRoot":"shared/team","paths":[],"directories":{{directories}}}]}""";
+
+        Assert.Null(WorkspacePermissionCodec.Read(Encoding.UTF8.GetBytes(json)).Document);
+    }
+
+    [Fact]
+    public void RequiredLibraryDirectoriesDoNotChangeExtensionWireShape()
+    {
+        const string missing = """{"schemaVersion":1,"extensions":[],"libraries":[{"id":"team","sourceRoot":"shared/team","paths":[]}]}""";
+        const string extension = """{"schemaVersion":1,"extensions":[{"id":"team","paths":[],"directories":[]}],"libraries":[]}""";
+
+        Assert.Null(WorkspacePermissionCodec.Read(Encoding.UTF8.GetBytes(missing)).Document);
+        Assert.Null(WorkspacePermissionCodec.Read(Encoding.UTF8.GetBytes(extension)).Document);
     }
 }

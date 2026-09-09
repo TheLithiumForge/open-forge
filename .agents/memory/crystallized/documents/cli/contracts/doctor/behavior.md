@@ -247,7 +247,7 @@ An unreadable or otherwise unavailable present record emits the existing
 is not treated as an empty record.
 
 For each readable strict record, establish canonical lexical and physical
-containment, an ordinary source root, and its direct ordinary `.agents` child,
+containment and an ordinary source root with safe real ancestry,
 then attempt a complete eligible inventory for every named source root. Those
 registered source roots are the complete declared Library coverage. If any
 inventory or required source fact is unavailable, Doctor emits
@@ -262,7 +262,8 @@ links, missing destinations, dangling expected links, retargeted links, path or
 ownership collisions, and unavailable or unsafe facts. Unsupported link
 capability is reported only from an already proven typed fact; Doctor does not
 probe or create a link. Destination-derived automatic source IDs remain
-separate from the Library management ID.
+separate from the Library management ID. External destinations retain explicit
+paths and null automatic source IDs under the existing source-reference grammar.
 
 `library.recovery-safe-exact` is emitted only when a semantically verified
 current-v1 residual carries trusted Library attribution for the selected

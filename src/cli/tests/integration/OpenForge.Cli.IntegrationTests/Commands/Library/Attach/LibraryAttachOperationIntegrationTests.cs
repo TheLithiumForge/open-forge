@@ -26,7 +26,7 @@ public sealed class LibraryAttachOperationIntegrationTests
         }
 
         var before = workspace.Snapshot();
-        var result = await LibraryAttachOperation.ExecuteAsync(workspace.Attach(LibraryMode.Apply), TestContext.Current.CancellationToken);
+        var result = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(workspace.Attach(LibraryMode.Apply), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Equal(LibraryApplicationState.NotStarted, result.Result.Application.State);
         Assert.Equal(LibraryRecoveryState.NotRequested, result.Result.Application.Recovery.State);
@@ -34,13 +34,13 @@ public sealed class LibraryAttachOperationIntegrationTests
     }
 
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
-    public async Task MissingOrdinarySourceAgentsIsInvalid()
+    public async Task EmptySourceWithoutNamedChildIsComplete()
     {
         using var workspace = new LibraryMutationWorkspace();
         System.IO.Directory.Delete(workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/.agents"));
         var before = workspace.Snapshot();
-        var result = await LibraryAttachOperation.ExecuteAsync(workspace.Attach(LibraryMode.Apply), TestContext.Current.CancellationToken);
-        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        var result = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(workspace.Attach(), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(before, workspace.Snapshot());
     }
 
@@ -56,7 +56,7 @@ public sealed class LibraryAttachOperationIntegrationTests
         workspace.Write($"{LibraryMutationWorkspace.SourceRoot}/.agents/open-forge.libraries.json", "{}");
         workspace.Link($"{LibraryMutationWorkspace.SourceRoot}/.agents/linked.md", "directives/review.md");
         var before = workspace.Snapshot();
-        var result = await LibraryAttachOperation.ExecuteAsync(workspace.Attach(), TestContext.Current.CancellationToken);
+        var result = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(workspace.Attach(), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(LibraryMutationWorkspace.Leaf, Assert.Single(result.Result.Source.EligiblePaths).SourcePath);
         Assert.Equal(6, result.Result.Source.ExcludedPaths.Length);
@@ -73,7 +73,7 @@ public sealed class LibraryAttachOperationIntegrationTests
         workspace.Source(".agents/guidance/nested/new.md");
         workspace.Write(".agents/directives/local.md", "Local sibling.");
         var before = workspace.Snapshot();
-        var result = await LibraryAttachOperation.ExecuteAsync(workspace.Attach(), TestContext.Current.CancellationToken);
+        var result = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(workspace.Attach(), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(2, result.Result.Plan.Links.Length);
         Assert.Contains(result.Result.Plan.Directories, directory => directory.Path == ".agents/guidance/nested");
@@ -89,7 +89,7 @@ public sealed class LibraryAttachOperationIntegrationTests
         workspace.Directory(".agents/local");
         workspace.DirectoryLink(".agents/directives", "local");
         var before = workspace.Snapshot();
-        var result = await LibraryAttachOperation.ExecuteAsync(workspace.Attach(LibraryMode.Apply), TestContext.Current.CancellationToken);
+        var result = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(workspace.Attach(LibraryMode.Apply), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Equal(LibraryApplicationState.NotStarted, result.Result.Application.State);
         Assert.Equal(before, workspace.Snapshot());
@@ -103,7 +103,7 @@ public sealed class LibraryAttachOperationIntegrationTests
         var before = workspace.Snapshot();
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
-        var result = await LibraryAttachOperation.ExecuteAsync(workspace.Attach(LibraryMode.Apply), cancellation.Token);
+        var result = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(workspace.Attach(LibraryMode.Apply), cancellation.Token);
         Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
         Assert.Equal(LibraryRecoveryState.NotRequested, result.Result.Application.Recovery.State);
         Assert.Equal(before, workspace.Snapshot());
@@ -121,7 +121,7 @@ public sealed class LibraryAttachOperationIntegrationTests
 
         try
         {
-            var result = await LibraryAttachOperation.ExecuteAsync(
+            var result = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(
                 workspace.Attach(LibraryMode.Apply),
                 TestContext.Current.CancellationToken);
 

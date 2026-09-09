@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Libraries;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Commands.Status.Shared.Aggregation;
@@ -14,6 +17,46 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Status;
 
 public sealed class LibraryStatusProjectionTests
 {
+    [Fact, Trait("Feature", "library-mapping"), Trait("Evidence", "Unit")]
+    public void ForeignMappingCannotChangeRegisteredLinkCounts()
+    {
+        var view = Observation(LibraryMappingObservationState.Current);
+        var registered = Assert.Single(view.Mappings);
+        var foreign = LibraryPathIdentity.Map(WorkspaceRelativeDirectory.Create("shared/other"), LibraryDestinationRoot.Create("."), registered.Mapping.SourcePath);
+        view = view with
+        {
+            Mappings = [registered, LibraryMappingObservation.Create(foreign, registered.Leaf, LibraryMappingObservationState.Changed, null)],
+        };
+        var result = StatusLibraryAggregator.Build(view);
+        Assert.Single(Assert.Single(result.Records).Links);
+        Assert.Equal(1, result.Counts.Current.Value);
+        Assert.Equal(0, result.Counts.Changed.Value);
+    }
+
+    [Theory, Trait("Feature", "library-mapping"), Trait("Evidence", "Unit")]
+    [InlineData(false), InlineData(true)]
+    public void MappedRegistrationsCountOnlyTheirOwnDestination(bool sameSource)
+    {
+        var view = Observation(LibraryMappingObservationState.Current);
+        var source = WorkspaceRelativeDirectory.Create(LibraryMutationPlanningData.SourceRoot);
+        var leaf = SourceRelativeEligiblePath.Create("README.md");
+        var first = LibraryRecord.Create(LibraryId.Create("alpha"), source, LibraryDestinationRoot.Create("docs/a"), [leaf]);
+        var second = LibraryRecord.Create(LibraryId.Create("beta"),
+            sameSource ? source : WorkspaceRelativeDirectory.Create("shared/beta"), LibraryDestinationRoot.Create("docs/b"), [leaf]);
+        view = view with
+        {
+            Record = view.Record with { Record = LibrariesRecord.Create([first, second]) },
+            Sources = [view.Sources[0], view.Sources[0] with { Request = view.Sources[0].Request with { SourceRoot = second.SourceRoot } }],
+            Mappings = [.. new[] { first, second }.SelectMany(library => LibraryPathIdentity.Mappings(library)).Select(mapping =>
+                LibraryMappingObservation.Create(mapping, NoFollowLeafObservation.Missing(LibraryMutationPlanningData.Absolute(mapping.DestinationPath.Value)),
+                    LibraryMappingObservationState.Missing, null))],
+        };
+        var result = StatusLibraryAggregator.Build(view);
+        Assert.Equal(2, result.Counts.Missing.Value);
+        Assert.Equal("docs/a/README.md", Assert.Single(result.Records[0].Links).Observation.Mapping.DestinationPath.Value);
+        Assert.Equal("docs/b/README.md", Assert.Single(result.Records[1].Links).Observation.Mapping.DestinationPath.Value);
+    }
+
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("Current", "Complete", "trusted"), InlineData("Missing", "Attention", "trusted")]
     [InlineData("Changed", "Attention", "trusted"), InlineData("Blocked", "Blocked", "blocked")]
@@ -145,8 +188,7 @@ public sealed class LibraryStatusProjectionTests
             State = OperationalViewState.Incomplete,
             Sources = [view.Sources[0] with
             {
-                State = LibrarySourceRootState.Unavailable, PhysicalSourceRoot = null, PhysicalAgentsDirectory = null,
-                PhysicallyContained = null, PhysicallyDisjoint = null, Cause = "Required source root unavailable.",
+                State = LibrarySourceRootState.Unavailable, PhysicalSourceRoot = null, PhysicallyContained = null, Cause = "Required source root unavailable.",
             }],
         };
         var result = StatusLibraryAggregator.Build(view);
@@ -205,6 +247,7 @@ public sealed class LibraryStatusProjectionTests
     private static StatusLibrary Result(LibraryMappingObservationState state)
     {
         var observation = Observation(state);
+        var registration = Assert.Single(Assert.IsType<LibrariesRecord>(observation.Record.Record).Libraries);
         var counts = new StatusLibraryCounts
         {
             Registered = Count(1),
@@ -228,8 +271,9 @@ public sealed class LibraryStatusProjectionTests
             Findings = [],
             Records = [new StatusLibraryRegistration
             {
-                Id = observation.Record.Record!.Libraries[0].Id,
-                SourceRoot = observation.Record.Record.Libraries[0].SourceRoot,
+                Id = registration.Id,
+                SourceRoot = registration.SourceRoot,
+                DestinationRoot = registration.DestinationRoot,
                 SourceRootState = observation.Sources[0].State,
                 SourceAvailability = OperationalSourceAvailability.Available, Registered = Count(1), Counts = counts,
                 Links = [new StatusLibraryLink(observation.Mappings[0], "directives/review")],

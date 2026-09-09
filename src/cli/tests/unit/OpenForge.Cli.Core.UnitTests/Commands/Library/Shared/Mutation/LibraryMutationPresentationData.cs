@@ -11,7 +11,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Mutation;
 internal static class LibraryMutationPresentationData
 {
     internal static LibraryMutationIdentity Identity(bool sourceIndependent)
-        => new() { LibraryId = "team-knowledge", SourceRoot = "shared/team-knowledge", Mode = LibraryMode.Apply, SourceIndependent = sourceIndependent };
+        => new() { LibraryId = "team-knowledge", SourceRoot = "shared/team-knowledge", DestinationRoot = ".", Mode = LibraryMode.Apply, SourceIndependent = sourceIndependent };
     internal static LibraryMutationRecord Record()
         => new() { Path = ".agents/open-forge.libraries.json", State = LibraryMutationRecordState.NotStarted, RegisteredPaths = [], Intended = null };
     internal static LibraryMutationSource Source()
@@ -24,10 +24,8 @@ internal static class LibraryMutationPresentationData
             UnavailablePaths = [],
             LexicalRoot = null,
             PhysicalRoot = null,
-            PhysicalAgentsDirectory = null,
             LexicallyContained = null,
             PhysicallyContained = null,
-            PhysicallyDisjoint = null,
         };
     internal static LibraryMutationProjection Projection()
         => new() { State = LibraryPlanState.NotStarted, Mappings = [], Collisions = [], Ownership = [] };

@@ -8,6 +8,8 @@ namespace OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 
 internal sealed record LibraryMapping
 {
+    private const string ParentSegment = "..";
+
     private LibraryMapping(
         SourceRelativeEligiblePath sourcePath,
         WorkspaceRelativeEligiblePath destinationPath,
@@ -26,26 +28,31 @@ internal sealed record LibraryMapping
 
     internal static LibraryMapping Create(
         WorkspaceRelativeDirectory sourceRoot,
+        LibraryDestinationRoot destinationRoot,
         SourceRelativeEligiblePath sourcePath)
     {
         ArgumentNullException.ThrowIfNull(sourceRoot);
+        ArgumentNullException.ThrowIfNull(destinationRoot);
         ArgumentNullException.ThrowIfNull(sourcePath);
-        var destination = WorkspaceRelativeEligiblePath.Create(sourcePath.Value);
-        var source = $"{sourceRoot.Value}/{sourcePath.Value}";
-        var parent = Path.GetDirectoryName(
-                destination.Value.Replace('/', Path.DirectorySeparatorChar))
-            ?? throw new ArgumentException(
-                "An eligible destination must have a parent directory.",
-                nameof(sourcePath));
-        var target = Path.GetRelativePath(
-            parent,
-            source.Replace('/', Path.DirectorySeparatorChar));
+        var destination = destinationRoot.Value == LibraryDestinationRoot.WorkspaceRootValue
+            ? sourcePath.Value
+            : $"{destinationRoot.Value}/{sourcePath.Value}";
+        var sourceSegments = $"{sourceRoot.Value}/{sourcePath.Value}".Split('/');
+        var destinationParents = destination.Split('/')[..^1];
+        var commonLength = 0;
+        while (commonLength < sourceSegments.Length
+            && commonLength < destinationParents.Length
+            && string.Equals(sourceSegments[commonLength], destinationParents[commonLength], StringComparison.Ordinal))
+        {
+            commonLength++;
+        }
+
+        var target = string.Join('/', Enumerable.Repeat(ParentSegment, destinationParents.Length - commonLength)
+            .Concat(sourceSegments[commonLength..]));
         return new LibraryMapping(
             sourcePath,
-            destination,
-            RawRelativeLinkTarget.Create(target.Replace(
-                Path.DirectorySeparatorChar,
-                '/')));
+            WorkspaceRelativeEligiblePath.Create(destination),
+            RawRelativeLinkTarget.Create(target));
     }
 }
 
@@ -69,8 +76,7 @@ internal sealed record LibraryMappingObservation
     {
         LogicalDestinationPath = PortableRelativePath.Validate(
             logicalDestinationPath,
-            nameof(logicalDestinationPath),
-            requireAgentsPrefix: true);
+            nameof(logicalDestinationPath));
         Mapping = mapping;
         ExpectedLink = RelativeFileLinkIdentity.Create(
             NoFollowLinkKind.SymbolicLink,

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Commands.Library;
@@ -29,7 +31,7 @@ namespace OpenForge.Cli.Composition;
 
 internal static class CliLibraryComposer
 {
-    internal static CliLibraryComposition Compose()
+    internal static CliLibraryComposition Compose(CliInteractiveSession interaction)
     {
         var group = LibraryBinding.CreateGroup();
         var list = LibraryListBinding.CreateSymbols(group);
@@ -55,16 +57,19 @@ internal static class CliLibraryComposer
             AttachBinding = LibraryAttachBinding.Close(attach, new LibraryAttachBindingComponents
             {
                 Help = LibraryAttachPresentation.CreateHelp(),
+                Operation = new LibraryAttachOperation(new LibraryPermissionOperation(interaction)),
                 Renderers = new CliRendererSet<LibraryAttachResult>(LibraryAttachPresentation.RenderHuman, LibraryAttachPresentation.RenderJson),
             }),
             SyncBinding = LibrarySyncBinding.Close(sync, new LibrarySyncBindingComponents
             {
                 Help = LibrarySyncPresentation.CreateHelp(),
+                Operation = new LibrarySyncOperation(new LibraryPermissionOperation(interaction)),
                 Renderers = new CliRendererSet<LibrarySyncResult>(LibrarySyncPresentation.RenderHuman, LibrarySyncPresentation.RenderJson),
             }),
             DetachBinding = LibraryDetachBinding.Close(detach, new LibraryDetachBindingComponents
             {
                 Help = LibraryDetachPresentation.CreateHelp(),
+                Operation = new LibraryDetachOperation(new LibraryPermissionOperation(interaction)),
                 Renderers = new CliRendererSet<LibraryDetachResult>(LibraryDetachPresentation.RenderHuman, LibraryDetachPresentation.RenderJson),
             }),
         };

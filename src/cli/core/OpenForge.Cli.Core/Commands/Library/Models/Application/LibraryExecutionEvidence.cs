@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
@@ -6,6 +7,7 @@ namespace OpenForge.Cli.Core.Commands.Library.Models.Application;
 
 internal sealed record LibraryExecutionEvidence
 {
+    public required LibraryPermissionApplication? Permission { get; init; }
     public required ImmutableArray<DirectoryCreationReceipt> Directories { get; init; }
     public required ImmutableArray<RelativeFileLinkReceipt> Links { get; init; }
     public required ImmutableArray<FileChangeReceipt> GeneratedRegions { get; init; }

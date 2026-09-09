@@ -26,17 +26,18 @@ public sealed class PublishedLibraryDetachProcessTests
     public async Task ApplyRemovesExactAndDanglingLinksBeforeLastRecord()
     {
         using var workspace = new PublishedLibraryWorkspace();
-        workspace.Source();
-        workspace.Link();
-        workspace.Link(".agents/directives/retired.md");
-        workspace.Record(PublishedLibraryWorkspace.ReviewPath, ".agents/directives/retired.md");
+        workspace.Source("review.md");
+        workspace.MappedLink("docs/review.md", "../shared/team-knowledge/review.md");
+        workspace.MappedLink("docs/retired.md", "../shared/team-knowledge/retired.md");
+        workspace.RecordAt("docs", "retired.md", "review.md");
+        workspace.GrantDocs();
         using var document = PublishedLibraryWorkspace.Result(
             await workspace.RunAsync(PublishedExecutableTarget.Discover(), "library", "detach", "team-knowledge", "--json"), "complete");
-        Assert.Null(new FileInfo(workspace.Combine(PublishedLibraryWorkspace.ReviewPath)).LinkTarget);
-        Assert.Null(new FileInfo(workspace.Combine(".agents/directives/retired.md")).LinkTarget);
+        Assert.Null(new FileInfo(workspace.Combine("docs/review.md")).LinkTarget);
+        Assert.Null(new FileInfo(workspace.Combine("docs/retired.md")).LinkTarget);
         Assert.False(File.Exists(workspace.Combine(PublishedLibraryWorkspace.RecordPath)));
         Assert.True(document.RootElement.GetProperty("result").GetProperty("application").GetProperty("recordPublication").GetProperty("publishedLast").GetBoolean());
-        workspace.AssertSource();
+        Assert.Equal(PublishedLibraryWorkspace.SourceBody, File.ReadAllText(workspace.Combine("shared/team-knowledge/review.md")));
         workspace.AssertAppliedInfrastructure();
     }
 

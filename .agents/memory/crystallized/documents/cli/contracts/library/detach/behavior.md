@@ -37,7 +37,7 @@ identity. A conforming implementation follows this conceptual flow:
 
 ```text
 validated library ID, workspace, record, and flags
-  -> exact selected library record and identical destination path set
+  -> exact selected library record and mapped destination path set
   -> source-independent derived relative targets
   -> complete no-follow destination and generated-region facts
   -> one all-or-nothing ordered mutation plan
@@ -80,24 +80,23 @@ source root, substitutes a Git root, or accepts an external destination.
 The record is read from the exact consumer path
 `.agents/open-forge.libraries.json`. It must have schema discriminator exactly
 `1`, exactly `schemaVersion` and `libraries` at the top level, exactly `id`,
-`sourceRoot`, and `paths` for each library, no extra properties, no duplicate
-IDs or paths, and sorted IDs and path lists. The selected ID must resolve to
+`sourceRoot`, `destinationRoot`, and `paths` for each library, no extra properties, no duplicate
+IDs, source paths within a Library, or mapped destination leaves, and sorted IDs and path lists. The selected ID must resolve to
 exactly one record. A missing record or unknown ID is `invalid`; a malformed,
 unsafe, or unreadable required record is blocked or incomplete according to the
 shared result boundary.
 
 The selected `sourceRoot` is validated as a normalized portable
 workspace-relative source-origin string and each `paths` value as a portable
-`.agents/...` source-relative path. Detach does not require the source root or
-its `.agents` child to exist and does not perform physical source containment
+source-relative leaf path. Detach does not require the source root to exist and does not perform physical source containment
 resolution. A path that cannot safely derive a contained consumer destination
 is blocked. The expected relative target is derived from the recorded source
-root and identical destination path; no expected target is read from the
+root, destination root and source suffix; no expected target is read from the
 record because the schema has no such field.
 
 ## Source-Independent Destination Facts
 
-For each recorded path, detach forms the identical consumer destination below
+For each recorded source suffix, detach derives the destination under the recorded destination root below
 the selected workspace. It checks destination parents one component at a time
 without following links or reparse points. The consumer `.agents` root must
 already be a real ordinary directory without link or reparse ancestry; detach
@@ -149,6 +148,7 @@ after every link and generated effect verifies.
 
 The ordered plan contains only:
 
+- an explicitly approved permission create/replace before link deletion;
 - exact relative-file-link `Delete` effects for registered links whose raw
   target matches, including dangling links;
 - permitted bounded generated-region replacements; and
@@ -174,6 +174,27 @@ link, missing-link blocker, generated effect, record effect, and other blocker, 
 stops before lease acquisition or recovery capability probing. It writes no
 consumer or application-data state. Planned effects alone do not create
 `attention`.
+
+## Consumer Permission
+
+Derive required external leaves from every registered destination selected for exact-link deletion, using the recorded
+Library/source identity. The [Interface](interface.md#consumer-permission)
+selects scope proposals and the [Workspace Permissions Behavior](../../shared/workspace-permissions/behavior.md)
+defines exact admission, future-descendant approval, source rebinding, revocation,
+prompt grammar and receipt truth.
+
+Complete source/record, ownership, mapping and structural preflight before the
+question. Preserve immutable required/missing leaves, proposed/approved scopes
+and any old/new source binding. Missing or declined permission blocks the whole
+request; dry-run and noninteractive execution do not write approval.
+
+Under the same workspace lease, compare exact permission bytes or prior absence
+and every other volatile plan fact. Drift invalidates approval without merging
+new grants. Prepare one bundle including prior permission bytes or absence, then
+verify its ordinary create/replace before directories, links or generated effects.
+Publish the Library record last. Failure preserves actual verified permission
+outcome and residual evidence. Library repair never applies the permission entry;
+explicit recovery checks current grants without widening or restoring them.
 
 ## Lease-Bound Application
 
@@ -206,7 +227,7 @@ recovery bundle. Library recovery distinguishes:
 - a relative-file-link `Delete` carrying the exact registered raw relative
   target.
 
-It stores consumer-side record bytes and raw link identity only. It never
+It stores consumer-side record and permission bytes and raw link identity only. It never
 stores, opens, follows, restores, or deletes source bytes. Strong no-follow
 recovery can remove an exact created link or recreate an exact deleted link
 only when its destination is safely missing and the recorded raw target is

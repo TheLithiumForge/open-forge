@@ -340,7 +340,7 @@ reportable and source-dependent comparisons are unavailable or incomplete.
 The Library stage reads the exact consumer-owned
 `.agents/open-forge.libraries.json` record, schema v1, and keeps its authority
 separate from the lifecycle document. It validates the typed `schemaVersion`,
-Library IDs, `sourceRoot`, and ordered `paths` entries without manufacturing a
+Library IDs, `sourceRoot`, required `destinationRoot`, and ordered source-relative `paths` entries without manufacturing a
 record from destination occupants. It derives bounded source and destination
 mapping facts for each entry without changing the record. A missing record is an
 absent bounded record; an unreadable record is unavailable; malformed or unsafe
@@ -349,7 +349,7 @@ absent or untrusted record.
 
 For each readable record, the stage checks each source root for canonical
 workspace-relative spelling, lexical and physical containment, an ordinary
-directory, and a direct ordinary `.agents` child. It does not enumerate that
+directory, and safe real ancestry. No source child name is mandatory. It does not enumerate that
 source tree, so the result cannot claim complete source inventory or discover
 unregistered mappings. Source availability remains an explicit `available`,
 `unavailable`, or `not-applicable` fact.
@@ -361,7 +361,8 @@ different occupant or raw target is `changed`; unreadable required evidence is
 `unavailable`; and unsafe or ambiguous link, containment, alias, collision, or
 physical identity is
 `blocked`. Preserve the destination-derived automatic source ID separately from
-the Library ID. The stage never follows, reads, writes, creates, deletes, or
+the Library ID; external mapped paths have a null source ID under the existing
+source-reference grammar. The stage never follows, reads, writes, creates, deletes, or
 adopts a link or source target.
 
 The stage forms registered and partitioned current/missing/changed/blocked/

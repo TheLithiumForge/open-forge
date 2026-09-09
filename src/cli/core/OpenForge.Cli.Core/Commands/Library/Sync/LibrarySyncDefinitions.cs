@@ -10,6 +10,12 @@ internal static class LibrarySyncDefinitions
     internal static string ReadFindingCode(LibrarySyncFindingCode value)
         => value switch
         {
+            LibrarySyncFindingCode.PermissionRequired => "library-sync.permission-required",
+            LibrarySyncFindingCode.PermissionDeclined => "library-sync.permission-declined",
+            LibrarySyncFindingCode.PermissionInvalid => "library-sync.permission-invalid",
+            LibrarySyncFindingCode.PermissionUnavailable => "library-sync.permission-unavailable",
+            LibrarySyncFindingCode.PermissionChanged => "library-sync.permission-changed",
+            LibrarySyncFindingCode.PermissionWriteFailed => "library-sync.permission-write-failed",
             LibrarySyncFindingCode.InvalidInput => "library-sync.invalid-input",
             LibrarySyncFindingCode.InvalidId => "library-sync.invalid-id",
             LibrarySyncFindingCode.RecordInvalid => "library-sync.record-invalid",

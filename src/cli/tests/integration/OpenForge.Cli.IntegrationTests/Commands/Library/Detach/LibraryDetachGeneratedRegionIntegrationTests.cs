@@ -36,7 +36,7 @@ public sealed class LibraryDetachGeneratedRegionIntegrationTests
 
         File.WriteAllText(parentPath, parent);
         var before = workspace.Snapshot();
-        var result = await LibraryDetachOperation.ExecuteAsync(workspace.Detach(), TestContext.Current.CancellationToken);
+        var result = await new LibraryDetachOperation(workspace.Permissions).ExecuteAsync(workspace.Detach(), TestContext.Current.CancellationToken);
         Assert.Equal(validRegion ? CliSemanticStatus.Complete : CliSemanticStatus.Blocked, result.Status);
         if (validRegion)
         {
@@ -72,7 +72,7 @@ public sealed class LibraryDetachGeneratedRegionIntegrationTests
         File.WriteAllText(parentPath, parent);
         var before = workspace.Snapshot();
 
-        var result = await LibraryDetachOperation.ExecuteAsync(
+        var result = await new LibraryDetachOperation(workspace.Permissions).ExecuteAsync(
             workspace.Detach(),
             TestContext.Current.CancellationToken);
 

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
+using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Request;
@@ -76,20 +78,33 @@ internal sealed class LibraryMutationWorkspace : IDisposable
             """);
 
     internal void DirectoryLink(string path, string target) => _workspace.CreateDirectorySymbolicLink(path, target);
-    internal void Record(params string[] paths)
+    internal void Record(params string[] paths) => RecordAt(".", paths);
+
+    internal void RecordAt(string destinationRoot, params string[] paths)
     {
         var values = string.Join(",", paths.Order(StringComparer.Ordinal).Select(path => $"\"{path}\""));
         Write(RecordPath, $$"""
-            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":[{{values}}]}]}
+            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":"{{destinationRoot}}","paths":[{{values}}]}]}
             """);
     }
 
+    internal LibraryPermissionOperation Permissions { get; } = new(
+        new CliInteractiveSession(TextReader.Null, TextWriter.Null, canPrompt: false));
+
     internal LibraryAttachRequest Attach(LibraryMode mode = LibraryMode.DryRun)
-        => new() { Workspace = Workspace, LibraryId = LibraryId.Create("team-knowledge"), SourceRoot = WorkspaceRelativeDirectory.Create(SourceRoot), Mode = mode };
+        => new()
+        {
+            Workspace = Workspace,
+            LibraryId = LibraryId.Create("team-knowledge"),
+            AllowPrompt = false,
+            SourceRoot = WorkspaceRelativeDirectory.Create(SourceRoot),
+            DestinationRoot = LibraryDestinationRoot.Create("."),
+            Mode = mode,
+        };
     internal LibrarySyncRequest Sync(LibraryMode mode = LibraryMode.DryRun)
-        => new() { Workspace = Workspace, LibraryId = LibraryId.Create("team-knowledge"), Mode = mode };
+        => new() { Workspace = Workspace, LibraryId = LibraryId.Create("team-knowledge"), AllowPrompt = false, Mode = mode };
     internal LibraryDetachRequest Detach(LibraryMode mode = LibraryMode.DryRun)
-        => new() { Workspace = Workspace, LibraryId = LibraryId.Create("team-knowledge"), Mode = mode };
+        => new() { Workspace = Workspace, LibraryId = LibraryId.Create("team-knowledge"), AllowPrompt = false, Mode = mode };
 
     internal IReadOnlyDictionary<string, string> Snapshot()
     {

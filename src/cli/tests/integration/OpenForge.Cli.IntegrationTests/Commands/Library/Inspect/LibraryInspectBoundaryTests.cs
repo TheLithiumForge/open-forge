@@ -13,9 +13,7 @@ public sealed class LibraryInspectBoundaryTests
     [InlineData("record-link", (int)CliSemanticStatus.Blocked, (int)LibraryInspectFindingCode.RecordBlocked)]
     [InlineData("missing-source", (int)CliSemanticStatus.Incomplete, (int)LibraryInspectFindingCode.SourceRootUnavailable)]
     [InlineData("source-file", (int)CliSemanticStatus.Invalid, (int)LibraryInspectFindingCode.SourceRootInvalid)]
-    [InlineData("missing-agents", (int)CliSemanticStatus.Invalid, (int)LibraryInspectFindingCode.SourceRootInvalid)]
     [InlineData("source-link", (int)CliSemanticStatus.Blocked, (int)LibraryInspectFindingCode.SourceRootBlocked)]
-    [InlineData("consumer-overlap", (int)CliSemanticStatus.Blocked, (int)LibraryInspectFindingCode.SourceRootBlocked)]
     [InlineData("destination-parent-link", (int)CliSemanticStatus.Blocked, (int)LibraryInspectFindingCode.LinkBlocked)]
     public static async Task BoundaryStatus(string scenario, int status, int code)
     {

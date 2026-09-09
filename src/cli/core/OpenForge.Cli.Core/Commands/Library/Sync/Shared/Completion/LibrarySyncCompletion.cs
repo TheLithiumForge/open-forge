@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Permissions;
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
@@ -22,10 +25,20 @@ internal static class LibrarySyncCompletion
         var observations = input.Observations;
         var planState = plan?.State ?? LibraryPlanState.NotStarted;
         var findings = (plan?.Findings ?? []).ToList();
+        var permissionStage = plan?.Permissions;
+        if (permissionStage is not null && input.Execution.Permission is { } permissionApplication)
+        {
+            permissionStage = permissionStage with { Result = permissionApplication.Result, Failure = permissionApplication.Failure };
+        }
+        if (permissionStage?.Failure is { } permissionFailure)
+        {
+            AddPermissionFinding(findings, permissionFailure, input.Request.LibraryId.Value);
+        }
         AddExecutionFindings(findings, input.Execution, input.Request.LibraryId.Value);
         var application = input.Request.Mode == LibraryMode.DryRun || planState != LibraryPlanState.Complete
+            || permissionStage?.Failure is not null && input.Execution.Permission?.Receipt is null
             ? LibraryMutationCompletionProjection.NotStarted()
-            : LibraryMutationCompletionProjection.Application(input.Execution, EffectCount(plan));
+            : LibraryMutationCompletionProjection.Application(input.Request.Workspace, input.Execution, EffectCount(plan));
         var sourceRoot = observations?.Source.Source.Request.SourceRoot;
         var protectedSources = sourceRoot is null ? [] : new[] { sourceRoot };
         var status = LibraryMutationCompletionProjection.Status(
@@ -42,16 +55,20 @@ internal static class LibrarySyncCompletion
             Next = null,
             Result = new LibrarySyncPayload
             {
+                Permissions = permissionStage is null ? LibraryPermissionView.NotEvaluated() : LibraryPermissionPresentation.Project(permissionStage),
                 Identity = LibraryMutationCompletionProjection.Identity(
                     input.Request.LibraryId.Value,
                     sourceRoot?.Value,
+                    observations?.Record.Record?.Libraries.FirstOrDefault(library => library.Id == input.Request.LibraryId)?.DestinationRoot.Value,
                     input.Request.Mode,
                     sourceIndependent: false),
                 Record = LibraryMutationCompletionProjection.Record(
                     observations?.Record,
                     input.Request.LibraryId.Value,
                     plan?.IntendedRecord),
-                Source = LibraryMutationCompletionProjection.Source(observations?.Source),
+                Source = LibraryMutationCompletionProjection.Source(
+                    observations?.Source,
+                    observations?.Record.Record?.Libraries.FirstOrDefault(library => library.Id == input.Request.LibraryId)?.DestinationRoot),
                 Projection = LibraryMutationCompletionProjection.Projection(
                     observations?.Record,
                     observations?.Source,
@@ -60,16 +77,40 @@ internal static class LibrarySyncCompletion
                     input.Request.LibraryId.Value,
                     planState,
                     sourceIndependent: false),
-                Plan = LibraryMutationCompletionProjection.Plan(
-                    planState,
-                    plan?.Directories,
-                    plan?.Links,
-                    plan?.GeneratedRegions,
-                    plan?.RecordChange),
+                Plan = LibraryMutationCompletionProjection.Plan(new()
+                {
+                    Workspace = input.Request.Workspace,
+                    State = planState,
+                    Effects = plan?.Effects,
+                }),
                 Application = application,
                 Findings = [.. findings],
             },
         };
+    }
+
+    private static void AddPermissionFinding(List<LibrarySyncFinding> findings, LibraryPermissionFailure failure, string libraryId)
+    {
+        var (status, cause) = LibraryPermissionFailureProjection.Read(failure);
+        var code = failure switch
+        {
+            LibraryPermissionFailure.Required => LibrarySyncFindingCode.PermissionRequired,
+            LibraryPermissionFailure.Declined => LibrarySyncFindingCode.PermissionDeclined,
+            LibraryPermissionFailure.Invalid => LibrarySyncFindingCode.PermissionInvalid,
+            LibraryPermissionFailure.Unavailable => LibrarySyncFindingCode.PermissionUnavailable,
+            LibraryPermissionFailure.Changed => LibrarySyncFindingCode.PermissionChanged,
+            LibraryPermissionFailure.WriteFailed => LibrarySyncFindingCode.PermissionWriteFailed,
+            LibraryPermissionFailure.Interrupted => LibrarySyncFindingCode.Interrupted,
+            _ => throw new ArgumentOutOfRangeException(nameof(failure), failure, "The Library permission failure is not defined."),
+        };
+        findings.Add(new LibrarySyncFinding
+        {
+            Code = code,
+            Status = status,
+            LibraryId = libraryId,
+            Path = WorkspacePermissionDefinitions.RelativePath,
+            Cause = cause,
+        });
     }
 
     private static int EffectCount(LibrarySyncPlan? plan)

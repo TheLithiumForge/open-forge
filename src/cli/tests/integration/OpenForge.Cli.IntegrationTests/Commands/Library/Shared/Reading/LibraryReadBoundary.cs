@@ -12,8 +12,8 @@ internal static class LibraryReadBoundary
             case "duplicate-id":
                 fixture.Files.WriteText(LibraryReadWorkspace.RecordPath, """
                     {"schemaVersion":1,"libraries":[
-                    {"id":"team-knowledge","sourceRoot":"shared/team","paths":[]},
-                    {"id":"team-knowledge","sourceRoot":"shared/other","paths":[]}]}
+                    {"id":"team-knowledge","sourceRoot":"shared/team","destinationRoot":".","paths":[]},
+                    {"id":"team-knowledge","sourceRoot":"shared/other","destinationRoot":".","paths":[]}]}
                     """);
                 return;
             case "record-link":
@@ -38,7 +38,7 @@ internal static class LibraryReadBoundary
                 return;
             case "consumer-overlap":
                 fixture.Files.WriteText(LibraryReadWorkspace.RecordPath, """
-                    {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":".agents","paths":[]}]}
+                    {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":".agents","destinationRoot":".","paths":[]}]}
                     """);
                 fixture.Files.CreateDirectory(".agents/.agents");
                 return;

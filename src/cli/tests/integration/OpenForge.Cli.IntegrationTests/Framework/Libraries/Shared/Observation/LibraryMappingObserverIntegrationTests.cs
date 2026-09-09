@@ -41,7 +41,7 @@ public sealed class LibraryMappingObserverIntegrationTests
         var request = new LibraryMappingObservationRequest
         {
             Workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace),
-            Mapping = LibraryMapping.Create(WorkspaceRelativeDirectory.Create("shared/team"), SourceRelativeEligiblePath.Create(".agents/a.md")),
+            Mapping = LibraryMapping.Create(WorkspaceRelativeDirectory.Create("shared/team"), LibraryDestinationRoot.Create("."), SourceRelativeEligiblePath.Create(".agents/a.md")),
         };
 
         var result = LibraryMappingObserver.Observe(new PhysicalPathResolver(), request, TestContext.Current.CancellationToken);

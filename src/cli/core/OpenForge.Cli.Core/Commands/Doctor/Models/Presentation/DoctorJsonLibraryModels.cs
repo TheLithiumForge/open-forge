@@ -23,8 +23,6 @@ internal sealed record DoctorJsonLibraryRoot
     public required string? PhysicalPath { get; init; }
     public required bool? LexicallyContained { get; init; }
     public required bool? PhysicallyContained { get; init; }
-    public required bool? PhysicallyDisjoint { get; init; }
-    public required string? PhysicalAgentsDirectory { get; init; }
     public required string[]? InventoryPaths { get; init; }
     public required DoctorJsonEvidence[] ExcludedPaths { get; init; }
     public required DoctorJsonEvidence[] UnavailablePaths { get; init; }

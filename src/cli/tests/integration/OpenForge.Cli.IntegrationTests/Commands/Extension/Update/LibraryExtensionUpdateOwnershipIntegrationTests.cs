@@ -17,7 +17,7 @@ public sealed class LibraryExtensionUpdateOwnershipIntegrationTests
         Assert.Equal(0, installed.ExitCode);
         source.ReplacePayload("toolkit", targetPath, "Updated Extension-owned bytes.");
         workspace.CreateOccupant(".agents/open-forge.libraries.json", """
-            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":[".agents/toolkit/note.md"]}]}
+            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/toolkit/note.md"]}]}
             """);
         var before = workspace.Snapshot();
         var sourceBefore = source.Snapshot();

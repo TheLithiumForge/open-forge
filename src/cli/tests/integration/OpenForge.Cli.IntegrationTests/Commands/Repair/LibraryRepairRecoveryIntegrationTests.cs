@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
+using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.LibraryRecovery;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
@@ -25,6 +27,82 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Repair;
 
 public sealed class LibraryRepairRecoveryIntegrationTests
 {
+    [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
+    public async Task PriorRecordRecoveryCannotOverwriteACurrentRegisteredSource()
+    {
+        using var workspace = new LibraryResidualWorkspace();
+        await workspace.PrepareAsync("record-delete");
+        File.WriteAllText(workspace.Files.Absolute(LibraryMutationWorkspace.RecordPath), """
+            {"schemaVersion":1,"libraries":[{"id":"later","sourceRoot":".agents","destinationRoot":"docs","paths":[]}]}
+            """);
+        var current = await LibrariesRecordReader.ReadAsync(new PhysicalPathResolver(), workspace.Files.Workspace, TestContext.Current.CancellationToken);
+        var evidence = new LibraryResidualEvidence(workspace.Evidence.LibraryId, current, workspace.Evidence.VerifiedPriorRecord,
+            workspace.Evidence.Residual, workspace.Evidence.Entry);
+        var before = workspace.Files.Snapshot();
+        var admission = await OpenForge.Cli.Core.Framework.Libraries.Shared.Permissions.LibraryRecoveryPermissionReader.ObserveAsync(
+            workspace.Files.Workspace, evidence, TestContext.Current.CancellationToken);
+        Assert.False(admission.IsAdmitted);
+        Assert.Equal(before, workspace.Files.Snapshot());
+    }
+
+    [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
+    [InlineData(false, false), InlineData(true, false), InlineData(false, true), InlineData(true, true)]
+    public static async Task NewlyRegisteredSourceBlocksSelectedRecoveryBeforeEffects(bool generatedHost, bool afterPreflight)
+    {
+        using var workspace = new LibraryResidualWorkspace();
+        await workspace.PrepareAsync("link-create", includeUnselectedHost: generatedHost);
+        var evidence = generatedHost
+            ? new LibraryResidualEvidence(workspace.Evidence.LibraryId, workspace.Evidence.CurrentRecord, null,
+                workspace.Evidence.Residual, workspace.Evidence.Residual.Entries[1])
+            : workspace.Evidence;
+        var plan = RepairLibraryRecoveryPlanner.Build(new RepairLibraryPlanningInput
+        {
+            Request = new RepairRequest(workspace.Files.Workspace, RepairMode.Apply, automatic: true, [], allowInteraction: false),
+            References = [],
+            Libraries = [new RepairLibraryRecoveryProposal(evidence)],
+            WizardRelinks = [],
+            WizardLibraries = null,
+        });
+        Assert.Single(plan.LibrarySteps);
+        var application = RepairOperationFactory.CreateDefaultComponents().Application;
+        if (afterPreflight)
+        {
+            var ready = await application.PreflightAsync(plan, TestContext.Current.CancellationToken);
+            Assert.Equal(RepairPreflightState.Ready, ready.Outcome.Preflight.State);
+        }
+        workspace.Files.Replace(LibraryMutationWorkspace.RecordPath, """
+            {"schemaVersion":1,"libraries":[
+              {"id":"later","sourceRoot":".agents/directives","destinationRoot":"docs","paths":[]},
+              {"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/directives/review.md"]}]}
+            """);
+        if (!afterPreflight)
+        {
+            var current = await LibrariesRecordReader.ReadAsync(new PhysicalPathResolver(), workspace.Files.Workspace, TestContext.Current.CancellationToken);
+            Assert.Equal(OpenForge.Cli.Core.Framework.Libraries.Models.Record.LibrariesRecordReadState.Complete, current.State);
+            var freshEvidence = new LibraryResidualEvidence(evidence.LibraryId, current, null, evidence.Residual, evidence.Entry);
+            plan = RepairLibraryRecoveryPlanner.Build(new RepairLibraryPlanningInput
+            {
+                Request = plan.Request,
+                References = [],
+                Libraries = [new RepairLibraryRecoveryProposal(freshEvidence)],
+                WizardRelinks = [],
+                WizardLibraries = null,
+            });
+            var heldOutcome = await application.ExecuteAsync(plan, [], TestContext.Current.CancellationToken);
+            Assert.Equal(RepairPreflightState.Blocked, heldOutcome.Preflight.State);
+            Assert.Equal(0, heldOutcome.Application.AppliedEffects);
+        }
+        var before = workspace.Files.Snapshot();
+        var bundle = File.ReadAllBytes(workspace.Preparation.BundlePath);
+        var outcome = afterPreflight
+            ? await application.ExecuteAsync(plan, [], TestContext.Current.CancellationToken)
+            : (await application.PreflightAsync(plan, TestContext.Current.CancellationToken)).Outcome;
+        Assert.Equal(RepairPreflightState.Blocked, outcome.Preflight.State);
+        Assert.Equal(0, outcome.Application.AppliedEffects);
+        Assert.Equal(before, workspace.Files.Snapshot());
+        Assert.Equal(bundle, File.ReadAllBytes(workspace.Preparation.BundlePath));
+    }
+
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData("record-create", false), InlineData("record-replace", false), InlineData("record-delete", false)]
     [InlineData("link-create", false), InlineData("link-delete", false), InlineData("link-delete", true)]

@@ -86,7 +86,7 @@ internal sealed class LibraryListOperation
             foreach (var sourcePath in library.Paths)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var mapping = LibraryPathIdentity.Map(library.SourceRoot, sourcePath);
+                var mapping = LibraryPathIdentity.Map(library.SourceRoot, library.DestinationRoot, sourcePath);
                 var observation = LibraryMappingObserver.Observe(
                     resolver,
                     new LibraryMappingObservationRequest
@@ -103,6 +103,7 @@ internal sealed class LibraryListOperation
             {
                 Id = library.Id.Value,
                 SourceRoot = library.SourceRoot.Value,
+                DestinationRoot = library.DestinationRoot.Value,
                 SourceRootState = sourceState,
                 Paths = [.. paths],
             });

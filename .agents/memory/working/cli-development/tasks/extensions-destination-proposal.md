@@ -8,6 +8,14 @@ open-forge:
 
 ## Accepted Direction And Remaining Design
 
+Task 24 is complete. The user subsequently accepted the revised Library flow:
+the attached folder is its content root, optional `--to` maps it to a consumer
+directory, and Library directory grants include future descendants. Only leaf
+files are symlinked. Extensions retain `content/` and exact-file grants.
+The [Task 25 accepted direction](workspace-library-destination-projections.md#accepted-functional-direction)
+supersedes this earlier joint draft wherever its Library selection, mapping or
+permission proposal differs. The remainder preserves the original reasoning.
+
 On 2026-09-08 the user accepted the `content/` rename and required an allowlist
 with a CLI question when a destination has not already been added. This replaces
 the earlier manual-edit-only recommendation. Use one consumer-owned permissions

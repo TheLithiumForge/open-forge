@@ -1017,3 +1017,78 @@ full managed/native execution. Formatter output alone did not prove an applied
 change. Wider selections also exposed concrete collection call-site constraints
 that the narrower runs had not resolved; compilation and source inventory were
 necessary checks after those adjustments.
+
+## Task 25 Contract Boundary Observation
+
+The coherent contract review found three semantic contradictions after Library
+mapping widened beyond `.agents`: stale mandatory-child and whole-root
+requirements, Detach wording copied from creation, and a link formula that
+omitted the destination root. The forward correction closed these gaps before
+Red authoring. The Task 25 record preserves the finding dispositions.
+
+Contract inspection also caught a fixture boundary: stubbing pure mapping
+construction would prevent valid test records from reaching the intended
+runtime gaps. Keeping validated data construction usable lets Red distinguish
+fixture failure from missing behavior. This occurrence supports checking
+fixture viability at Gray; it does not establish comparative model performance.
+
+## Task 25 Destination Consumer Review
+
+Fresh source review found four gaps after the focused 747/427/33 suites passed;
+a subsequent full managed baseline also passed 2803/1545/188. Doctor and Status
+still used source-relative suffixes and source-root uniqueness after mapping
+became a separate coordinate. Recovery permission admission omitted current
+registered source ownership, structural preview omitted control-file effects,
+and approval questions omitted per-target effect descriptions. The Task 25
+record owns the accepted findings and grouped correction state.
+
+The concrete review lesson is to trace a widened identity through read-only
+attribution as well as mutation, and to include management-file effects in
+source-preservation admission. Retained recovery evidence must also be checked
+against current ownership; an exact old target identity alone does not establish
+current permission to mutate that location. These are source-inspected gaps;
+regression reproduction and corrected execution are still pending. Passing
+broad suites did not substitute for these missing scenarios. The separately
+invoked Astra/high reviewer found the gaps, but there is no matched Sol review
+or cost evidence from which to infer comparative model superiority.
+
+The grouped correction qualified the missing behavior with focused failures.
+A recovery fixture initially violated strict record ordering; its first failure
+therefore did not establish valid later-source registration. Replaying the
+corrected fixture against the exact baseline reader qualified four admission
+failures, with exact corrected-source reinstatement afterward. Retain fixture
+failures separately rather than crediting every red assertion to product logic.
+
+Final inspection also showed that destination identity alone is insufficient
+when an observation includes both registered and newly eligible mappings.
+Complete source/link identity prevents foreign attribution, while one producer
+observation per complete mapping prevents duplicates across overlapping source
+inventories. Three Unit and one Integration failures independently qualified
+these cases. The final correction passed 762/441/33; full acceptance remains
+pending. This demonstrates the concrete value of direct-consumer cases and
+qualified failure evidence, without a matched cross-model comparison.
+
+The affected-finding recheck distinguished a second identity rule: observation
+attribution needs complete mapping identity, while ownership conflicts use
+portable destination keys. A raw ordinal ownership lookup missed case aliases
+after the first correction. Two added assertions failed before both sides used
+the existing portable-key function and passed afterward. Do not assume that
+one successful identity comparison establishes every consumer's distinct
+collision or attribution contract.
+
+## Task 25 Final Evidence Qualification
+
+The corrected candidate passed all 6,502 managed/native executions with no
+failures or skips. Nine existing Find theories account for 22 more Unit
+execution rows than discovery entries. Receipt qualification now reconciles
+type/method coverage and row expansion before claiming complete execution;
+raw count equality would falsely reject this valid run. This is an observed
+local discovery shape, not a reason to accept missing tests.
+
+Native smoke orchestration initially guessed the installed executable name
+instead of the actual published artifact, then counted architecture substrings
+that also appeared in interpreter paths. Both harness failures are retained.
+Inspect the exact published filename and each artifact's metadata field; after
+a harness-only interruption, verify source/runtime hashes before resuming the
+unfinished gates. The successful resume required no repeated publication.
+These observations do not establish comparative Astra/Sol cost or quality.

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Binding;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Result;
@@ -34,6 +35,7 @@ internal static class LibraryDetachRequestBinder
             ?? throw new InvalidOperationException("A bound Library Detach invocation requires a selected workspace.");
         return CliBindResult<LibraryDetachRequest, LibraryDetachResult>.Bound(new LibraryDetachRequest
         {
+            AllowPrompt = invocation.Presentation.Format == CliOutputFormat.Human && !parse.Result.GetValue(symbols.DryRun),
             Workspace = workspace,
             LibraryId = libraryId,
             Mode = parse.Result.GetValue(symbols.DryRun) ? LibraryMode.DryRun : LibraryMode.Apply,
@@ -88,13 +90,13 @@ internal static class LibraryDetachRequestBinder
             Next = null,
             Result = new LibraryDetachPayload
             {
-                Identity = LibraryMutationCompletionProjection.Identity(id, sourceRoot: null, LibraryMode.Apply, sourceIndependent: true),
+                Permissions = LibraryPermissionView.NotEvaluated(),
+                Identity = LibraryMutationCompletionProjection.Identity(id, sourceRoot: null, destinationRoot: null, LibraryMode.Apply, sourceIndependent: true),
                 Record = LibraryMutationCompletionProjection.Record(read: null, id, intended: null),
                 Projection = LibraryMutationCompletionProjection.Projection(
                     record: null, source: null, mappings: null, ownership: null, id,
                     LibraryPlanState.NotStarted, sourceIndependent: true),
-                Plan = LibraryMutationCompletionProjection.Plan(
-                    LibraryPlanState.NotStarted, directories: null, links: null, generatedRegions: null, recordChange: null),
+                Plan = LibraryMutationCompletionProjection.NotPlanned(),
                 Application = LibraryMutationCompletionProjection.NotStarted(),
                 Findings =
                 [

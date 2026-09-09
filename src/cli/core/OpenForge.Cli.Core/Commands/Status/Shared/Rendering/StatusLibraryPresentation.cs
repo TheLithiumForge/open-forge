@@ -23,6 +23,7 @@ internal static class StatusLibraryPresentation
             {
                 Id = record.Id.Value,
                 SourceRoot = record.SourceRoot.Value,
+                DestinationRoot = record.DestinationRoot.Value,
                 SourceRootState = SourceState(record.SourceRootState),
                 SourceAvailability = StatusWireVocabulary.SourceAvailability(record.SourceAvailability),
                 RegisteredLinks = new StatusJsonLibraryRegisteredLinks

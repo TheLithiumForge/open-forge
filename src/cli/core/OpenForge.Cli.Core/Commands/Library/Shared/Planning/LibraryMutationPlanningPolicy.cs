@@ -2,6 +2,8 @@ using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
+using OpenForge.Cli.Core.Framework.Permissions;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Workspace;
@@ -72,8 +74,8 @@ internal static class LibraryMutationPlanningPolicy
     {
         ArgumentNullException.ThrowIfNull(ownership);
         ArgumentNullException.ThrowIfNull(destinationPaths);
-        var paths = destinationPaths.ToHashSet(StringComparer.Ordinal);
-        conflict = ownership.Claims.FirstOrDefault(claim => paths.Contains(claim.Path));
+        var paths = destinationPaths.Select(PortableWorkspacePath.CreatePortableKey).ToHashSet(StringComparer.Ordinal);
+        conflict = ownership.Claims.FirstOrDefault(claim => paths.Contains(PortableWorkspacePath.CreatePortableKey(claim.Path)));
         return conflict is not null;
     }
 
@@ -83,13 +85,10 @@ internal static class LibraryMutationPlanningPolicy
     {
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(destinationPaths);
-        var paths = new HashSet<string>(PhysicalIdentityTracker.PathComparer);
+        var paths = new HashSet<string>(StringComparer.Ordinal);
         foreach (var path in destinationPaths)
         {
-            var absolute = Path.GetFullPath(Path.Combine(
-                workspace.LexicalRoot,
-                path.Replace('/', Path.DirectorySeparatorChar)));
-            if (!paths.Add(absolute))
+            if (!paths.Add(PortableWorkspacePath.CreatePortableKey(path)))
             {
                 return true;
             }
@@ -108,9 +107,13 @@ internal static class LibraryMutationPlanningPolicy
         foreach (var destinationPath in destinationPaths)
         {
             var segments = destinationPath.Split('/');
-            for (var length = 2; length < segments.Length; length++)
+            for (var length = 1; length < segments.Length; length++)
             {
-                required.Add(string.Join('/', segments.AsSpan(0, length).ToArray()));
+                var ancestor = string.Join('/', segments.AsSpan(0, length).ToArray());
+                if (ancestor != WorkspacePermissionDefinitions.ImplicitDirectoryPath)
+                {
+                    required.Add(ancestor);
+                }
             }
         }
 

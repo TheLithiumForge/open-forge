@@ -39,25 +39,17 @@ internal static class DoctorLibraryPresentation
         ArgumentNullException.ThrowIfNull(subject);
         return subject.Kind switch
         {
-            DoctorSubjectKind.Library => CreateSubject(
-                subject,
-                sourceRoot: subject.Registration!.SourceRoot.Value),
-            DoctorSubjectKind.LibrarySourceRoot => CreateSubject(
-                subject,
-                sourceRoot: subject.Source!.Request.SourceRoot.Value),
-            DoctorSubjectKind.LibraryMapping => CreateSubject(
-                subject,
-                sourceRoot: SourceRoot(subject.Mapping!),
-                mapping: subject.Mapping),
-            DoctorSubjectKind.LibraryProjection => CreateSubject(
-                subject,
-                sourceRoot: SourceRoot(subject.Projection!.Mapping),
-                mapping: subject.Projection.Mapping),
-            DoctorSubjectKind.LibraryResidual => CreateSubject(
-                subject,
-                sourceRoot: ResidualSourceRoot(subject.Residual!),
-                residual: subject.Residual),
-            _ => throw new ArgumentOutOfRangeException(nameof(subject), "The Library subject kind is not defined."),
+            DoctorSubjectKind.Library when subject.Registration is { } registration =>
+                CreateSubject(subject, sourceRoot: registration.SourceRoot.Value),
+            DoctorSubjectKind.LibrarySourceRoot when subject.Source is { } source =>
+                CreateSubject(subject, sourceRoot: source.Request.SourceRoot.Value),
+            DoctorSubjectKind.LibraryMapping when subject.Mapping is { } mapping =>
+                CreateSubject(subject, sourceRoot: SourceRoot(mapping), mapping),
+            DoctorSubjectKind.LibraryProjection when subject.Projection is { } projection =>
+                CreateSubject(subject, sourceRoot: SourceRoot(projection.Mapping), mapping: projection.Mapping),
+            DoctorSubjectKind.LibraryResidual when subject.Residual is { } residual =>
+                CreateSubject(subject, sourceRoot: ResidualSourceRoot(residual), residual: residual),
+            _ => throw new ArgumentOutOfRangeException(nameof(subject), "The Library subject kind or required evidence is not defined."),
         };
     }
 
@@ -98,8 +90,6 @@ internal static class DoctorLibraryPresentation
             PhysicalPath = inventory.Source.PhysicalSourceRoot,
             LexicallyContained = inventory.Source.LexicallyContained,
             PhysicallyContained = inventory.Source.PhysicallyContained,
-            PhysicallyDisjoint = inventory.Source.PhysicallyDisjoint,
-            PhysicalAgentsDirectory = inventory.Source.PhysicalAgentsDirectory,
             InventoryPaths = inventory.Inventory is { } value
                 ? [.. value.Entries.Select(entry => entry.SourcePath.Value)]
                 : null,
@@ -136,16 +126,30 @@ internal static class DoctorLibraryPresentation
             ExpectedRelativeLink = observation.Mapping.ExpectedRelativeLink.Value,
             State = MappingState(observation.State),
             LeafState = LeafState(observation.Leaf.State),
-            LinkKind = observation.Leaf.RelativeFileLink is { } relative
-                ? LinkKind(relative.LinkKind)
-                : observation.Leaf.Link is { } link ? LinkKind(link.LinkKind) : null,
+            LinkKind = ReadLinkKind(observation.Leaf),
             RawLinkTarget = observation.Leaf.RelativeFileLink?.RawRelativeTarget
                 ?? observation.Leaf.Link?.RawTarget,
-            LinkTargetForm = observation.Leaf.RelativeFileLink is not null
-                ? "relative"
-                : observation.Leaf.Link is { } target ? TargetForm(target.TargetForm) : null,
+            LinkTargetForm = ReadTargetForm(observation.Leaf),
             Cause = observation.Cause ?? observation.Leaf.Failure?.DirectCause,
         };
+
+    private static string? ReadLinkKind(NoFollowLeafObservation leaf)
+    {
+        if (leaf.RelativeFileLink is { } relative)
+        {
+            return LinkKind(relative.LinkKind);
+        }
+        return leaf.Link is { } link ? LinkKind(link.LinkKind) : null;
+    }
+
+    private static string? ReadTargetForm(NoFollowLeafObservation leaf)
+    {
+        if (leaf.RelativeFileLink is not null)
+        {
+            return TargetForm(NoFollowLinkTargetForm.Relative);
+        }
+        return leaf.Link is { } link ? TargetForm(link.TargetForm) : null;
+    }
 
     private static DoctorJsonEvidence Ownership(LifecycleOwnershipClaim claim)
         => new()
@@ -219,6 +223,7 @@ internal static class DoctorLibraryPresentation
             {
                 Id = library.Id.Value,
                 SourceRoot = library.SourceRoot.Value,
+                DestinationRoot = library.DestinationRoot.Value,
                 Paths = [.. library.Paths.Select(path => path.Value)],
             })],
         };

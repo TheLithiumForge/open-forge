@@ -14,7 +14,8 @@ internal sealed record ExtensionPermissionGrant(string Id, ImmutableArray<string
 internal sealed record LibraryPermissionGrant(
     string Id,
     string SourceRoot,
-    ImmutableArray<string> Paths);
+    ImmutableArray<string> Paths,
+    ImmutableArray<string> Directories);
 
 internal sealed record WorkspacePermissionDecode(
     WorkspacePermissionDocument? Document,

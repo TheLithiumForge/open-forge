@@ -18,7 +18,7 @@ internal sealed class LibraryObservationWorkspace : IDisposable
 {
     internal const string RecordPath = ".agents/open-forge.libraries.json";
     internal const string SingleRecord = """
-        {"schemaVersion":1,"libraries":[{"id":"team","sourceRoot":"shared/team","paths":[".agents/a.md"]}]}
+        {"schemaVersion":1,"libraries":[{"id":"team","sourceRoot":"shared/team","destinationRoot":".","paths":[".agents/a.md"]}]}
         """;
     private readonly List<string> _externalRecoveryFiles = [];
     private string? _externalRecoveryDirectory;
@@ -77,9 +77,9 @@ internal sealed class LibraryObservationWorkspace : IDisposable
     {
         Write(RecordPath, """
             {"schemaVersion":1,"libraries":[
-              {"id":"alpha","sourceRoot":"shared/alpha","paths":[".agents/alpha.md"]},
-              {"id":"beta","sourceRoot":"shared/beta","paths":[".agents/beta.md"]},
-              {"id":"gamma","sourceRoot":"shared/gamma","paths":[".agents/gamma.md"]}
+              {"id":"alpha","sourceRoot":"shared/alpha","destinationRoot":".","paths":[".agents/alpha.md"]},
+              {"id":"beta","sourceRoot":"shared/beta","destinationRoot":".","paths":[".agents/beta.md"]},
+              {"id":"gamma","sourceRoot":"shared/gamma","destinationRoot":".","paths":[".agents/gamma.md"]}
             ]}
             """);
         foreach (var id in new[] { "alpha", "beta", "gamma" })
@@ -116,7 +116,7 @@ internal sealed class LibraryObservationWorkspace : IDisposable
 
     internal static LibrariesRecord TeamRecord()
         => LibrariesRecord.Create([
-            LibraryRecord.Create(LibraryId.Create("team"), WorkspaceRelativeDirectory.Create("shared/team"),
+            LibraryRecord.Create(LibraryId.Create("team"), WorkspaceRelativeDirectory.Create("shared/team"), LibraryDestinationRoot.Create("."),
                 [SourceRelativeEligiblePath.Create(".agents/a.md")]),
         ]);
 

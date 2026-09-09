@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
+using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Commands.Library.Shared.Completion.Models;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
@@ -25,12 +28,14 @@ internal static class LibraryMutationCompletionProjection
     internal static LibraryMutationIdentity Identity(
         string? libraryId,
         string? sourceRoot,
+        string? destinationRoot,
         LibraryMode mode,
         bool sourceIndependent)
         => new()
         {
             LibraryId = libraryId,
             SourceRoot = sourceRoot,
+            DestinationRoot = destinationRoot,
             Mode = mode,
             SourceIndependent = sourceIndependent,
         };
@@ -62,7 +67,16 @@ internal static class LibraryMutationCompletionProjection
         };
     }
 
-    internal static LibraryMutationSource Source(LibraryInventoryRead? read)
+    private static LibraryMapping ProjectMapping(
+        LibraryInventoryRead? read,
+        LibraryDestinationRoot? destinationRoot,
+        SourceRelativeEligiblePath sourcePath)
+        => LibraryPathIdentity.Map(
+            read?.Source.Request.SourceRoot ?? throw new InvalidOperationException("An eligible source requires its Library root."),
+            destinationRoot ?? throw new InvalidOperationException("An eligible source requires its selected destination root."),
+            sourcePath);
+
+    internal static LibraryMutationSource Source(LibraryInventoryRead? read, LibraryDestinationRoot? destinationRoot)
     {
         var inventory = read?.Inventory;
         return new LibraryMutationSource
@@ -85,11 +99,15 @@ internal static class LibraryMutationCompletionProjection
                 LibraryInventoryState.Blocked => LibraryMutationInventoryState.Blocked,
                 _ => throw new ArgumentOutOfRangeException(nameof(read), inventory.State, "The Library inventory state is not defined."),
             },
-            EligiblePaths = inventory?.Entries.Select(entry => new LibraryEligiblePath
+            EligiblePaths = inventory?.Entries.Select(entry =>
             {
-                SourcePath = entry.SourcePath.Value,
-                DestinationPath = entry.SourcePath.Value,
-                SourceId = SourceIdentity.DeriveId(entry.SourcePath.Value),
+                var mapping = ProjectMapping(read, destinationRoot, entry.SourcePath);
+                return new LibraryEligiblePath
+                {
+                    SourcePath = entry.SourcePath.Value,
+                    DestinationPath = mapping.DestinationPath.Value,
+                    SourceId = SourceIdentity.DeriveId(mapping.DestinationPath.Value),
+                };
             }).ToArray() ?? [],
             ExcludedPaths = read?.ExcludedPaths.Select(path => new LibraryExcludedPath
             {
@@ -113,10 +131,8 @@ internal static class LibraryMutationCompletionProjection
             }).ToArray() ?? [],
             LexicalRoot = read?.Source.LexicalSourceRoot,
             PhysicalRoot = read?.Source.PhysicalSourceRoot,
-            PhysicalAgentsDirectory = read?.Source.PhysicalAgentsDirectory,
             LexicallyContained = read?.Source.LexicallyContained,
             PhysicallyContained = read?.Source.PhysicallyContained,
-            PhysicallyDisjoint = read?.Source.PhysicallyDisjoint,
         };
     }
 
@@ -177,70 +193,82 @@ internal static class LibraryMutationCompletionProjection
         };
     }
 
-    internal static LibraryMutationPlanView Plan(
-        LibraryPlanState state,
-        IReadOnlyList<PlannedDirectoryCreation>? directories,
-        IReadOnlyList<RelativeFileLinkEffect>? links,
-        IReadOnlyList<PlannedFileChange>? generatedRegions,
-        PlannedFileChange? recordChange)
+    internal static LibraryMutationPlanView NotPlanned() => new()
+    {
+        State = LibraryPlanState.NotStarted,
+        Directories = [],
+        Links = [],
+        GeneratedRegions = [],
+        RecordEffect = LibraryRecordEffect.None,
+        RecordExpected = null,
+    };
+
+    internal static LibraryMutationPlanView Plan(LibraryMutationPlanProjectionInput input)
         => new()
         {
-            State = state,
-            Directories = directories?.Select(directory => new LibraryDirectoryEffectView
+            State = input.State,
+            Directories = input.Effects?.Directories.Select(directory => new LibraryDirectoryEffectView
             {
-                Path = Relative(directory.LogicalPath),
+                Path = Relative(input.Workspace, directory.LogicalPath),
                 Expected = Expected(directory.Expectation),
             }).ToArray() ?? [],
-            Links = links?.Select(link => new LibraryLinkEffectView
+            Links = input.Effects?.Links.Select(link => new LibraryLinkEffectView
             {
                 Path = link.DestinationPath.Value,
-                Kind = link.Kind == RelativeFileLinkEffectKind.Create
-                    ? LibraryLinkEffectKind.Create
-                    : LibraryLinkEffectKind.Delete,
+                Kind = link.Kind switch
+                {
+                    RelativeFileLinkEffectKind.Create => LibraryLinkEffectKind.Create,
+                    RelativeFileLinkEffectKind.Delete => LibraryLinkEffectKind.Delete,
+                    _ => throw new ArgumentOutOfRangeException(nameof(input), link.Kind, "The Library link effect kind is not defined."),
+                },
                 RawRelativeTarget = link.RawRelativeTarget,
                 Expected = Expected(link.Expected),
             }).ToArray() ?? [],
-            GeneratedRegions = generatedRegions?.Select(change => new LibraryGeneratedRegionEffectView
+            GeneratedRegions = input.Effects?.GeneratedRegions.Select(change => new LibraryGeneratedRegionEffectView
             {
-                Path = Relative(change.LogicalPath),
+                Path = Relative(input.Workspace, change.LogicalPath),
                 ExpectedSha256 = change.Expectation.ContentHash ?? string.Empty,
                 IntendedSha256 = FileExpectation.Hash(change.IntendedBytes.AsSpan()),
                 Expected = Expected(change.Expectation),
             }).ToArray() ?? [],
-            RecordEffect = recordChange?.Kind switch
+            RecordEffect = input.Effects?.RecordChange?.Kind switch
             {
                 null => LibraryRecordEffect.None,
                 PlannedFileChangeKind.Create => LibraryRecordEffect.Create,
                 PlannedFileChangeKind.Replace or PlannedFileChangeKind.ReplaceGeneratedRegion => LibraryRecordEffect.Replace,
                 PlannedFileChangeKind.Delete => LibraryRecordEffect.Delete,
-                _ => throw new ArgumentOutOfRangeException(nameof(recordChange), recordChange.Kind, "The record effect is not defined."),
+                _ => throw new ArgumentOutOfRangeException(nameof(input), input.Effects?.RecordChange?.Kind, "The record effect is not defined."),
             },
-            RecordExpected = recordChange is null ? null : Expected(recordChange.Expectation),
+            RecordExpected = input.Effects?.RecordChange is { } record ? Expected(record.Expectation) : null,
         };
 
     internal static LibraryMutationApplication Application(
+        CliWorkspace workspace,
         LibraryExecutionEvidence execution,
         int plannedEffectCount)
     {
         var receipts = execution.Directories.Select(receipt => new LibraryMutationEffectReceipt(
-                Relative(receipt.Creation.LogicalPath), LibraryResidualKind.Directory,
+                Relative(workspace, receipt.Creation.LogicalPath), LibraryResidualKind.Directory,
                 receipt.EffectState, receipt.VerificationState))
             .Concat(execution.Links.Select(receipt => new LibraryMutationEffectReceipt(
                 receipt.Effect.DestinationPath.Value, LibraryResidualKind.Link,
                 receipt.EffectState, receipt.VerificationState)))
             .Concat(execution.GeneratedRegions.Select(receipt => new LibraryMutationEffectReceipt(
-                Relative(receipt.Change.LogicalPath), LibraryResidualKind.GeneratedRegion,
+                Relative(workspace, receipt.Change.LogicalPath), LibraryResidualKind.GeneratedRegion,
                 receipt.EffectState, receipt.VerificationState)))
             .Concat(execution.Record is null
                 ? []
                 : [new LibraryMutationEffectReceipt(
-                    Relative(execution.Record.Change.LogicalPath), LibraryResidualKind.Record,
+                    Relative(workspace, execution.Record.Change.LogicalPath), LibraryResidualKind.Record,
                     execution.Record.EffectState, execution.Record.VerificationState)])
             .ToArray();
-        var allVerified = plannedEffectCount == receipts.Length
+        var permissionReceipt = execution.Permission?.Receipt;
+        var permissionVerified = permissionReceipt is null
+            || permissionReceipt.EffectState == FilesystemEffectState.Applied && permissionReceipt.VerificationState == FilesystemVerificationState.Verified;
+        var allVerified = plannedEffectCount == receipts.Length && permissionVerified
             && receipts.All(receipt => receipt.Effect == FilesystemEffectState.Applied
                 && receipt.Verification == FilesystemVerificationState.Verified);
-        var failed = execution.UnexpectedFailure is not null
+        var failed = execution.UnexpectedFailure is not null || execution.Permission?.Failure is not null || !permissionVerified
             || receipts.Any(receipt => receipt.Effect == FilesystemEffectState.Unknown
                 || receipt.Verification == FilesystemVerificationState.Failed);
         var residuals = (failed || execution.Cancellation is not null
@@ -257,26 +285,41 @@ internal static class LibraryMutationCompletionProjection
                 : [])
             .ToList();
         var recovery = Recovery(execution, residuals);
+        var totalEffects = plannedEffectCount + (permissionReceipt is null ? 0 : 1);
         return new LibraryMutationApplication
         {
-            State = execution.Cancellation is not null && execution.UnexpectedFailure is null
-                ? LibraryApplicationState.Interrupted
-                : failed || (!allVerified && plannedEffectCount > 0)
-                    ? LibraryApplicationState.Failed
-                    : plannedEffectCount == 0
-                        ? LibraryApplicationState.NoOp
-                        : LibraryApplicationState.Applied,
-            Verification = plannedEffectCount == 0
-                ? LibraryVerificationState.NotStarted
-                : allVerified
-                    ? LibraryVerificationState.Verified
-                    : failed
-                        ? LibraryVerificationState.Failed
-                        : LibraryVerificationState.Unavailable,
+            State = ReadApplicationState(execution, failed, allVerified, totalEffects),
+            Verification = ReadVerificationState(totalEffects, allVerified, failed),
             Recovery = recovery,
             Residuals = [.. residuals.OrderBy(residual => residual.Path, StringComparer.Ordinal).ThenBy(residual => residual.Kind)],
             RecordPublication = Publication(execution.Record, execution.RecordPublicationOrder),
         };
+    }
+
+    private static LibraryApplicationState ReadApplicationState(LibraryExecutionEvidence execution, bool failed, bool allVerified, int effectCount)
+    {
+        if (execution.Cancellation is not null && execution.UnexpectedFailure is null)
+        {
+            return LibraryApplicationState.Interrupted;
+        }
+        if (failed || !allVerified && effectCount > 0)
+        {
+            return LibraryApplicationState.Failed;
+        }
+        return effectCount == 0 ? LibraryApplicationState.NoOp : LibraryApplicationState.Applied;
+    }
+
+    private static LibraryVerificationState ReadVerificationState(int effectCount, bool allVerified, bool failed)
+    {
+        if (effectCount == 0)
+        {
+            return LibraryVerificationState.NotStarted;
+        }
+        if (allVerified)
+        {
+            return LibraryVerificationState.Verified;
+        }
+        return failed ? LibraryVerificationState.Failed : LibraryVerificationState.Unavailable;
     }
 
     internal static CliSemanticStatus Status(
@@ -294,12 +337,20 @@ internal static class LibraryMutationCompletionProjection
             return CliSemanticStatus.Failed;
         }
 
-        if (execution.Cancellation is not null)
+        if (execution.Cancellation is not null || execution.Permission?.Failure == LibraryPermissionFailure.Interrupted)
         {
             return CliSemanticStatus.Interrupted;
         }
 
         var statuses = findingStatuses.ToArray();
+        if (statuses.Contains(CliSemanticStatus.Failed))
+        {
+            return CliSemanticStatus.Failed;
+        }
+        if (statuses.Contains(CliSemanticStatus.Interrupted))
+        {
+            return CliSemanticStatus.Interrupted;
+        }
         if (statuses.Contains(CliSemanticStatus.Blocked))
         {
             return CliSemanticStatus.Blocked;
@@ -363,6 +414,7 @@ internal static class LibraryMutationCompletionProjection
             {
                 Id = library.Id.Value,
                 SourceRoot = library.SourceRoot.Value,
+                DestinationRoot = library.DestinationRoot.Value,
                 Paths = [.. library.Paths.Select(path => path.Value)],
             })],
         };
@@ -472,14 +524,7 @@ internal static class LibraryMutationCompletionProjection
         LibraryRecordPublicationOrder order)
         => new()
         {
-            State = receipt is null
-                ? LibraryRecordPublicationState.NotStarted
-                : receipt.EffectState == FilesystemEffectState.Unknown
-                    ? LibraryRecordPublicationState.Unknown
-                    : receipt.EffectState == FilesystemEffectState.Applied
-                        && receipt.VerificationState == FilesystemVerificationState.Verified
-                        ? LibraryRecordPublicationState.Verified
-                        : LibraryRecordPublicationState.Failed,
+            State = ReadPublicationState(receipt),
             PublishedLast = order switch
             {
                 LibraryRecordPublicationOrder.Last => true,
@@ -488,6 +533,21 @@ internal static class LibraryMutationCompletionProjection
                 _ => throw new ArgumentOutOfRangeException(nameof(order), order, "The record publication order is not defined."),
             },
         };
+
+    private static LibraryRecordPublicationState ReadPublicationState(FileChangeReceipt? receipt)
+    {
+        if (receipt is null)
+        {
+            return LibraryRecordPublicationState.NotStarted;
+        }
+        if (receipt.EffectState == FilesystemEffectState.Unknown)
+        {
+            return LibraryRecordPublicationState.Unknown;
+        }
+        return receipt.EffectState == FilesystemEffectState.Applied && receipt.VerificationState == FilesystemVerificationState.Verified
+            ? LibraryRecordPublicationState.Verified
+            : LibraryRecordPublicationState.Failed;
+    }
 
     private static bool SafeScope(
         LibrarySourceEffectScopeFacts? scope,
@@ -503,18 +563,15 @@ internal static class LibraryMutationCompletionProjection
             return false;
         }
 
-        return scope.AttemptedMutationTargets.All(target => protectedSources.All(source =>
-            !string.Equals(target.Value, source.Value, StringComparison.Ordinal)
-            && !target.Value.StartsWith($"{source.Value}/", StringComparison.Ordinal)));
+        var sources = protectedSources.Concat(scope.ProtectedSourceRoots)
+            .Select(source => PortableWorkspacePath.CreatePortableKey(source.Value)).Distinct(StringComparer.Ordinal).ToArray();
+        return scope.AttemptedMutationTargets.All(target =>
+        {
+            var key = PortableWorkspacePath.CreatePortableKey(target.Value);
+            return sources.All(source => key != source && !key.StartsWith($"{source}/", StringComparison.Ordinal));
+        });
     }
 
-    private static string Relative(string logicalPath)
-    {
-        var marker = $"{Path.DirectorySeparatorChar}.agents{Path.DirectorySeparatorChar}";
-        var index = logicalPath.IndexOf(marker, StringComparison.Ordinal);
-        return index >= 0
-            ? logicalPath[(index + 1)..].Replace(Path.DirectorySeparatorChar, '/')
-            : Path.GetFileName(logicalPath);
-    }
-
+    private static string Relative(CliWorkspace workspace, string logicalPath)
+        => Path.GetRelativePath(workspace.LexicalRoot, logicalPath).Replace(Path.DirectorySeparatorChar, '/');
 }

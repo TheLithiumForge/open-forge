@@ -33,7 +33,7 @@ public sealed class LibraryDoctorBoundaryIntegrationTests
         workspace.ConsumerRoute();
         workspace.Record(LibraryMutationWorkspace.Leaf);
         workspace.Link();
-        System.IO.Directory.Delete(workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/.agents"));
+        System.IO.Directory.Delete(workspace.Absolute(LibraryMutationWorkspace.SourceRoot), recursive: true);
         var before = workspace.Snapshot();
         var run = await CliHostCapture.RunAsync(["doctor", "--json"], workspace.Path);
         Assert.True(run.Output.TrimStart().StartsWith('{'),

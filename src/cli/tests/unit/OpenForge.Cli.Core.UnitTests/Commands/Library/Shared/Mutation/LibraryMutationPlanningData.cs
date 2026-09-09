@@ -36,6 +36,8 @@ internal static class LibraryMutationPlanningData
         {
             Request = new LibraryAttachRequest
             {
+                AllowPrompt = false,
+                DestinationRoot = LibraryDestinationRoot.Create("."),
                 Workspace = Workspace,
                 LibraryId = LibraryId.Create(Id),
                 SourceRoot = WorkspaceRelativeDirectory.Create(SourceRoot),
@@ -52,7 +54,7 @@ internal static class LibraryMutationPlanningData
     internal static LibrarySyncPlanningInput Sync(string[] current, string[] registered)
         => new()
         {
-            Request = new LibrarySyncRequest { Workspace = Workspace, LibraryId = LibraryId.Create(Id), Mode = LibraryMode.Apply },
+            Request = new LibrarySyncRequest { AllowPrompt = false, Workspace = Workspace, LibraryId = LibraryId.Create(Id), Mode = LibraryMode.Apply },
             Record = Record(registered),
             Source = Inventory(current),
             Mappings = [.. current.Union(registered).Order(StringComparer.Ordinal)
@@ -65,7 +67,7 @@ internal static class LibraryMutationPlanningData
     internal static LibraryDetachPlanningInput Detach(params string[] registered)
         => new()
         {
-            Request = new LibraryDetachRequest { Workspace = Workspace, LibraryId = LibraryId.Create(Id), Mode = LibraryMode.Apply },
+            Request = new LibraryDetachRequest { AllowPrompt = false, Workspace = Workspace, LibraryId = LibraryId.Create(Id), Mode = LibraryMode.Apply },
             Record = Record(registered),
             Mappings = [.. registered.Select(path => Mapping(path, LibraryMappingObservationState.Current))],
             ConsumerBoundary = Boundary(),
@@ -80,7 +82,7 @@ internal static class LibraryMutationPlanningData
         => new()
         {
             State = LibrariesRecordReadState.Complete,
-            Record = LibrariesRecord.Create([LibraryRecord.Create(LibraryId.Create(Id), WorkspaceRelativeDirectory.Create(SourceRoot),
+            Record = LibrariesRecord.Create([LibraryRecord.Create(LibraryId.Create(Id), WorkspaceRelativeDirectory.Create(SourceRoot), LibraryDestinationRoot.Create("."),
                 [.. paths.Order(StringComparer.Ordinal).Select(SourceRelativeEligiblePath.Create)])]),
             Snapshot = FileStateSnapshot.File(Absolute(RecordPath), Absolute(RecordPath), RecordBytes(paths)),
             Cause = null,
@@ -90,7 +92,7 @@ internal static class LibraryMutationPlanningData
     {
         var values = string.Join(",", paths.Order(StringComparer.Ordinal).Select(path => $"\"{path}\""));
         return Encoding.UTF8.GetBytes($$"""
-            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":[{{values}}]}]}
+            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[{{values}}]}]}
             """);
     }
 
@@ -118,7 +120,7 @@ internal static class LibraryMutationPlanningData
     internal static LibraryInventoryRead Inventory(params string[] paths)
     {
         var root = WorkspaceRelativeDirectory.Create(SourceRoot);
-        var agents = Absolute($"{SourceRoot}/.agents");
+        var sourceRoot = Absolute(SourceRoot);
         return new LibraryInventoryRead
         {
             Source = new LibrarySourceRootObservation
@@ -127,14 +129,11 @@ internal static class LibraryMutationPlanningData
                 State = LibrarySourceRootState.Available,
                 LexicalSourceRoot = Absolute(SourceRoot),
                 PhysicalSourceRoot = Absolute(SourceRoot),
-                PhysicalAgentsDirectory = agents,
                 LexicallyContained = true,
                 PhysicallyContained = true,
-                PhysicallyDisjoint = true,
-                Condition = LibrarySourceRootCondition.None,
                 Cause = null,
             },
-            Inventory = LibraryInventory.Complete(root, agents,
+            Inventory = LibraryInventory.Complete(root, sourceRoot,
                 [.. paths.Order(StringComparer.Ordinal).Select(path => EligibleSourceFile.Create(
                     SourceRelativeEligiblePath.Create(path), Absolute($"{SourceRoot}/{path}")))]),
             ExcludedPaths = [],
@@ -144,7 +143,7 @@ internal static class LibraryMutationPlanningData
 
     internal static LibraryMappingObservation Mapping(string path, LibraryMappingObservationState state)
     {
-        var mapping = LibraryMapping.Create(WorkspaceRelativeDirectory.Create(SourceRoot), SourceRelativeEligiblePath.Create(path));
+        var mapping = LibraryMapping.Create(WorkspaceRelativeDirectory.Create(SourceRoot), LibraryDestinationRoot.Create("."), SourceRelativeEligiblePath.Create(path));
         var leaf = state switch
         {
             LibraryMappingObservationState.Current => NoFollowLeafObservation.CreateRelativeFileLink(Absolute(path),

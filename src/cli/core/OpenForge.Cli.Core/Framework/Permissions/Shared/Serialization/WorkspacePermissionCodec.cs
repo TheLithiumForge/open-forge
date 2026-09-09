@@ -44,14 +44,14 @@ internal static class WorkspacePermissionCodec
             var libraryIds = new HashSet<string>(StringComparer.Ordinal);
             foreach (var entry in RequireArray(root.GetProperty("libraries")))
             {
-                RequireObject(entry, ["id", "sourceRoot", "paths"]);
+                RequireObject(entry, ["id", "sourceRoot", "paths", "directories"]);
                 var id = LibraryId.Create(RequireString(entry.GetProperty("id"))).Value;
                 var sourceRoot = WorkspaceRelativeDirectory.Create(RequireString(entry.GetProperty("sourceRoot"))).Value;
                 if (!libraryIds.Add(id))
                 {
                     throw new JsonException("Library permission IDs must be unique.");
                 }
-                libraries.Add(new(id, sourceRoot, ReadPaths(entry.GetProperty("paths"))));
+                libraries.Add(new(id, sourceRoot, ReadPaths(entry.GetProperty("paths")), ReadDirectories(entry.GetProperty("directories"))));
             }
             return new(new(extensions.ToImmutable(), libraries.ToImmutable()), Cause: null);
         }
@@ -84,6 +84,12 @@ internal static class WorkspacePermissionCodec
                 writer.WriteString("id", grant.Id);
                 writer.WriteString("sourceRoot", grant.SourceRoot);
                 WritePaths(writer, grant.Paths);
+                writer.WriteStartArray("directories");
+                foreach (var directory in grant.Directories.Order(StringComparer.Ordinal))
+                {
+                    writer.WriteStringValue(directory);
+                }
+                writer.WriteEndArray();
                 writer.WriteEndObject();
             }
             writer.WriteEndArray();
@@ -91,6 +97,26 @@ internal static class WorkspacePermissionCodec
         }
         stream.WriteByte((byte)'\n');
         return stream.ToArray();
+    }
+
+    private static ImmutableArray<string> ReadDirectories(JsonElement value)
+    {
+        var directories = ImmutableArray.CreateBuilder<string>();
+        var portableDirectories = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var item in RequireArray(value))
+        {
+            var directory = RequireString(item);
+            if (!PortableWorkspacePath.TryNormalize(directory, out var normalized)
+                || normalized != directory
+                || normalized.Equals(WorkspacePermissionDefinitions.ImplicitDirectoryPath, StringComparison.OrdinalIgnoreCase)
+                || normalized.StartsWith(WorkspacePermissionDefinitions.ImplicitPathPrefix, StringComparison.OrdinalIgnoreCase)
+                || !portableDirectories.Add(PortableWorkspacePath.CreatePortableKey(normalized)))
+            {
+                throw new JsonException("Library permission directories must be unique canonical portable external subtrees.");
+            }
+            directories.Add(normalized);
+        }
+        return directories.ToImmutable();
     }
 
     private static ImmutableArray<string> ReadPaths(JsonElement value)

@@ -26,7 +26,7 @@ public sealed class LibraryDetachOperationIntegrationTests
         }
 
         var before = workspace.Snapshot();
-        var result = await LibraryDetachOperation.ExecuteAsync(workspace.Detach(LibraryMode.Apply), TestContext.Current.CancellationToken);
+        var result = await new LibraryDetachOperation(workspace.Permissions).ExecuteAsync(workspace.Detach(LibraryMode.Apply), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Equal(LibraryApplicationState.NotStarted, result.Result.Application.State);
         Assert.Equal(LibraryRecoveryState.NotRequested, result.Result.Application.Recovery.State);
@@ -42,7 +42,7 @@ public sealed class LibraryDetachOperationIntegrationTests
         System.IO.Directory.Delete(workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/.agents"));
         System.IO.Directory.Delete(workspace.Absolute(LibraryMutationWorkspace.SourceRoot));
         var before = workspace.Snapshot();
-        var result = await LibraryDetachOperation.ExecuteAsync(workspace.Detach(), TestContext.Current.CancellationToken);
+        var result = await new LibraryDetachOperation(workspace.Permissions).ExecuteAsync(workspace.Detach(), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.True(result.Result.Identity.SourceIndependent);
         Assert.Equal(LibraryLinkEffectKind.Delete, Assert.Single(result.Result.Plan.Links).Kind);
@@ -55,7 +55,7 @@ public sealed class LibraryDetachOperationIntegrationTests
         using var workspace = new LibraryMutationWorkspace();
         workspace.Record(LibraryMutationWorkspace.Leaf);
         var before = workspace.Snapshot();
-        var result = await LibraryDetachOperation.ExecuteAsync(workspace.Detach(LibraryMode.Apply), TestContext.Current.CancellationToken);
+        var result = await new LibraryDetachOperation(workspace.Permissions).ExecuteAsync(workspace.Detach(LibraryMode.Apply), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Equal(before, workspace.Snapshot());
     }
@@ -68,7 +68,7 @@ public sealed class LibraryDetachOperationIntegrationTests
         workspace.Link(".agents/directives/local.md");
         workspace.Record(LibraryMutationWorkspace.Leaf);
         var before = workspace.Snapshot();
-        var result = await LibraryDetachOperation.ExecuteAsync(workspace.Detach(), TestContext.Current.CancellationToken);
+        var result = await new LibraryDetachOperation(workspace.Permissions).ExecuteAsync(workspace.Detach(), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(LibraryMutationWorkspace.Leaf, Assert.Single(result.Result.Plan.Links).Path);
         Assert.Equal(before, workspace.Snapshot());
@@ -84,7 +84,7 @@ public sealed class LibraryDetachOperationIntegrationTests
         workspace.Record(LibraryMutationWorkspace.Leaf);
         workspace.DirectoryLink(".agents/directives", "local");
         var before = workspace.Snapshot();
-        var result = await LibraryDetachOperation.ExecuteAsync(workspace.Detach(LibraryMode.Apply), TestContext.Current.CancellationToken);
+        var result = await new LibraryDetachOperation(workspace.Permissions).ExecuteAsync(workspace.Detach(LibraryMode.Apply), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Equal(LibraryApplicationState.NotStarted, result.Result.Application.State);
         Assert.Equal(before, workspace.Snapshot());
@@ -100,7 +100,7 @@ public sealed class LibraryDetachOperationIntegrationTests
         var before = workspace.Snapshot();
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
-        var result = await LibraryDetachOperation.ExecuteAsync(workspace.Detach(LibraryMode.Apply), cancellation.Token);
+        var result = await new LibraryDetachOperation(workspace.Permissions).ExecuteAsync(workspace.Detach(LibraryMode.Apply), cancellation.Token);
         Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
         Assert.Equal(LibraryRecoveryState.NotRequested, result.Result.Application.Recovery.State);
         Assert.Equal(before, workspace.Snapshot());

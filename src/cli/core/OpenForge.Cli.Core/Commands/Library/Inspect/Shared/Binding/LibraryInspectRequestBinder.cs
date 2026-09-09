@@ -88,6 +88,7 @@ internal static class LibraryInspectRequestBinder
                     State = blocked ? LibraryRecordViewState.Blocked : LibraryRecordViewState.Unavailable,
                     Id = supplied,
                     SourceRoot = null,
+                    DestinationRoot = null,
                     RegisteredPaths = [],
                 },
                 Source = new LibraryInspectSourceView
@@ -138,6 +139,7 @@ internal static class LibraryInspectRequestBinder
                     State = LibraryRecordViewState.NotStarted,
                     Id = supplied,
                     SourceRoot = null,
+                    DestinationRoot = null,
                     RegisteredPaths = [],
                 },
                 Source = new LibraryInspectSourceView

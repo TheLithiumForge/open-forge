@@ -96,7 +96,7 @@ public sealed class LibraryStatusBoundaryIntegrationTests
         using var workspace = await StatusIntegrationWorkspace.CreateInstalledAsync("status-library-drift");
         workspace.WriteText("shared/team-knowledge/.agents/resources/data.json", "{\"value\":1}\n");
         workspace.WritePostInstallAgentText(".agents/open-forge.libraries.json", """
-            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":[".agents/resources/data.json"]}]}
+            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/resources/data.json"]}]}
             """);
         var before = workspace.SnapshotHashes();
 

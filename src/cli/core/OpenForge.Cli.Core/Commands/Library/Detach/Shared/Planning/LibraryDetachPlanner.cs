@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Library.Detach.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Libraries;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
@@ -43,7 +44,13 @@ internal static class LibraryDetachPlanner
                 navigationIssue.Cause);
         }
 
-        var destinations = selected?.Paths.Select(path => path.Value).ToImmutableArray() ?? [];
+        var destinations = selected is null ? [] : LibraryPathIdentity.Mappings(selected)
+            .Select(mapping => mapping.DestinationPath.Value).ToImmutableArray();
+        if (selected is not null && LibraryDestinationPolicy.FindConflict(input.Request.Workspace, selected, record, RelativePaths(input)) is { } conflict)
+        {
+            Add(findings, LibraryDetachFindingCode.MappingBlocked, CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value, conflict, "The Library destination is protected, source-owned, or registered to another Library.");
+        }
         if (LibraryMutationPlanningPolicy.HasDestinationAlias(input.Request.Workspace, destinations))
         {
             Add(findings, LibraryDetachFindingCode.MappingBlocked, CliSemanticStatus.Blocked,
@@ -99,6 +106,7 @@ internal static class LibraryDetachPlanner
                 delete: false);
         return new LibraryDetachPlan
         {
+            Permissions = null,
             Input = input,
             State = LibraryPlanState.Complete,
             Directories = [],
@@ -192,7 +200,7 @@ internal static class LibraryDetachPlanner
         var links = ImmutableArray.CreateBuilder<RelativeFileLinkEffect>();
         foreach (var registeredPath in selected.Paths)
         {
-            var expected = LibraryMapping.Create(selected.SourceRoot, registeredPath);
+            var expected = LibraryMapping.Create(selected.SourceRoot, selected.DestinationRoot, registeredPath);
             if (!byPath.Remove(registeredPath.Value, out var observation)
                 || observation.Mapping.DestinationPath != expected.DestinationPath
                 || observation.Mapping.ExpectedRelativeLink != expected.ExpectedRelativeLink)
@@ -246,11 +254,15 @@ internal static class LibraryDetachPlanner
             change.LogicalPath).Replace(Path.DirectorySeparatorChar, '/'));
 
     private static LibraryPlanState PlanState(IEnumerable<LibraryDetachFinding> findings)
-        => findings.Any(finding => finding.Status == CliSemanticStatus.Blocked)
-            ? LibraryPlanState.Blocked
-            : findings.Any(finding => finding.Status == CliSemanticStatus.Incomplete)
-                ? LibraryPlanState.Incomplete
-                : LibraryPlanState.Complete;
+    {
+        if (findings.Any(finding => finding.Status == CliSemanticStatus.Blocked))
+        {
+            return LibraryPlanState.Blocked;
+        }
+        return findings.Any(finding => finding.Status == CliSemanticStatus.Incomplete)
+            ? LibraryPlanState.Incomplete
+            : LibraryPlanState.Complete;
+    }
 
     private static LibraryDetachPlan Empty(
         LibraryDetachPlanningInput input,
@@ -258,6 +270,7 @@ internal static class LibraryDetachPlanner
         ImmutableArray<LibraryDetachFinding>.Builder findings)
         => new()
         {
+            Permissions = null,
             Input = input,
             State = state,
             Directories = [],

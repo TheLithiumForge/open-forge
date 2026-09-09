@@ -39,8 +39,7 @@ The shared [Global CLI Flags](../../shared/global-flags/interface.md),
 their shared meanings. The [Index Behavior Contract](../../index-candidate/behavior.md)
 remains authoritative for any existing generated `Entries` region that this
 operation is allowed to project. The replacement CLI does not ship yet;
-implementation and executable proof remain pending the Task 23 contract
-freeze and its later acceptance gates.
+the active Task records implementation and executable evidence.
 
 ## Contract Roles
 

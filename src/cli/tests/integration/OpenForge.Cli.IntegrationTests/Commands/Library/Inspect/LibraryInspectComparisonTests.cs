@@ -109,8 +109,8 @@ public sealed class LibraryInspectComparisonTests
 
         fixture.Files.WriteText(LibraryReadWorkspace.RecordPath, """
             {"schemaVersion":1,"libraries":[
-              {"id":"other","sourceRoot":"missing/unselected","paths":[]},
-              {"id":"team-knowledge","sourceRoot":"shared/team","paths":[
+              {"id":"other","sourceRoot":"missing/unselected","destinationRoot":".","paths":[]},
+              {"id":"team-knowledge","sourceRoot":"shared/team","destinationRoot":".","paths":[
                 ".agents/directives/Équipe Review.md",".agents/resources/data.json",".agents/skills/review/SKILL.md"]}]}
             """);
         var before = fixture.Snapshot();

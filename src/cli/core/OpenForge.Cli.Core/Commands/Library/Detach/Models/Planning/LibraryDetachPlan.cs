@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Request;
@@ -12,6 +13,16 @@ namespace OpenForge.Cli.Core.Commands.Library.Detach.Models.Planning;
 
 internal sealed record LibraryDetachPlan
 {
+    internal LibraryMutationEffects Effects => new()
+    {
+        Directories = Directories,
+        Links = Links,
+        GeneratedRegions = GeneratedRegions,
+        RecordChange = RecordChange,
+    };
+
+    public required LibraryPermissionStage? Permissions { get; init; }
+
     public required LibraryDetachPlanningInput Input { get; init; }
 
     public required LibraryPlanState State { get; init; }

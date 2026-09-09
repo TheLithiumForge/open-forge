@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Libraries;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
@@ -41,9 +43,13 @@ internal static class LibraryDoctorInspector
             workspaceEntry.Coverage,
             DoctorDomainSupport.Coverage(libraries.State));
         InspectRecord(libraries.Record, findings);
-        foreach (var inventory in libraries.Inventories)
+        foreach (var record in libraries.Record.Record?.Libraries ?? [])
         {
-            InspectInventory(libraries, inventory, findings);
+            var inventory = libraries.Inventories.FirstOrDefault(value => value.Source.Request.SourceRoot == record.SourceRoot);
+            if (inventory is not null)
+            {
+                InspectInventory(libraries, record, inventory, findings);
+            }
         }
 
         foreach (var mapping in libraries.Mappings)
@@ -130,28 +136,15 @@ internal static class LibraryDoctorInspector
 
     private static void InspectInventory(
         LibraryDoctorView libraries,
-        Framework.Libraries.Models.Inventory.LibraryInventoryRead inventory,
+        LibraryRecord record,
+        LibraryInventoryRead inventory,
         ICollection<DoctorFinding> findings)
     {
-        var record = libraries.Record.Record?.Libraries.SingleOrDefault(value =>
-            value.SourceRoot == inventory.Source.Request.SourceRoot);
-        if (record is null)
-        {
-            return;
-        }
-
         if (inventory.Source.State == LibrarySourceRootState.Invalid)
         {
             Add(findings, DoctorFindingKind.LibrarySourceRootInvalid, DoctorResolutionLane.BlockedRepair,
                 inventory.Source.Cause ?? "The Library source root is invalid.", Subject(record, DoctorSubjectKind.LibrarySourceRoot, inventory.Source),
                 new DoctorStateEvidence(DoctorObservedState.Invalid));
-            if (IsSafelyMissingRequiredAgentsDirectory(inventory.Source))
-            {
-                Add(findings, DoctorFindingKind.LibraryInventoryIncomplete, DoctorResolutionLane.Informational,
-                    "The required Library source .agents directory is safely missing, so its eligible inventory is incomplete.",
-                    Subject(record, DoctorSubjectKind.LibrarySourceRoot, inventory.Source),
-                    new DoctorStateEvidence(DoctorObservedState.Incomplete));
-            }
 
             return;
         }
@@ -176,7 +169,7 @@ internal static class LibraryDoctorInspector
         var eligible = inventory.Inventory.Entries.Select(entry => entry.SourcePath.Value).ToHashSet(StringComparer.Ordinal);
         foreach (var path in record.Paths.Where(path => !eligible.Contains(path.Value)))
         {
-            var mapping = libraries.Mappings.SingleOrDefault(value => value.Mapping.SourcePath == path);
+            var mapping = libraries.Mappings.SingleOrDefault(value => value.Mapping == LibraryPathIdentity.Map(record.SourceRoot, record.DestinationRoot, path));
             if (mapping?.State == LibraryMappingObservationState.Current)
             {
                 Add(findings, DoctorFindingKind.LibraryProjectionDangling, DoctorResolutionLane.BlockedRepair,
@@ -193,7 +186,7 @@ internal static class LibraryDoctorInspector
         ICollection<DoctorFinding> findings)
     {
         var record = libraries.Record.Record?.Libraries.SingleOrDefault(value =>
-            value.Paths.Contains(mapping.Mapping.SourcePath));
+            LibraryPathIdentity.Mappings(value).Any(registered => registered == mapping.Mapping));
         if (record is null)
         {
             return;
@@ -224,11 +217,15 @@ internal static class LibraryDoctorInspector
             return;
         }
 
-        var recordsByPath = record.Libraries.SelectMany(library => library.Paths.Select(path => (library, path)))
-            .ToDictionary(value => value.path.Value, value => value.library, StringComparer.Ordinal);
-        foreach (var claim in ownership.Claims.Where(claim => recordsByPath.ContainsKey(claim.Path)))
+        var recordsByPath = record.Libraries.SelectMany(library => LibraryPathIdentity.Mappings(library).Select(mapping => (library, mapping)))
+            .ToDictionary(value => PortableWorkspacePath.CreatePortableKey(value.mapping.DestinationPath.Value), value => value.library, StringComparer.Ordinal);
+        foreach (var claim in ownership.Claims)
         {
-            var library = recordsByPath[claim.Path];
+            if (!recordsByPath.TryGetValue(PortableWorkspacePath.CreatePortableKey(claim.Path), out var library))
+            {
+                continue;
+            }
+
             Add(findings,
                 claim.Manager == LifecycleOwnershipManager.Extension
                     ? DoctorFindingKind.LibraryExtensionCollision
@@ -290,11 +287,6 @@ internal static class LibraryDoctorInspector
 
     private static DoctorSubject PlainSubject(DoctorSubjectKind kind, string path)
         => new() { Kind = kind, Path = path, Identifier = null, Location = null };
-
-    private static bool IsSafelyMissingRequiredAgentsDirectory(
-        LibrarySourceRootObservation source)
-        => source.State == LibrarySourceRootState.Invalid
-            && source.Condition == LibrarySourceRootCondition.RequiredAgentsMissing;
 
     private static void Add(
         ICollection<DoctorFinding> findings,

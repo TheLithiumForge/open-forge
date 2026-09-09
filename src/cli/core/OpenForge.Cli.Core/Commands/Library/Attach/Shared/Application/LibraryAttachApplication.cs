@@ -14,13 +14,15 @@ internal static class LibraryAttachApplication
         var run = await LibraryMutationApplicationRunner.ApplyAsync(
             new LibraryMutationApplicationRequest
             {
+                Permissions = input.Plan.Permissions,
                 Lease = input.Lease,
                 Directories = input.Plan.Directories,
                 Links = input.Plan.Links,
                 GeneratedRegions = input.Plan.GeneratedRegions,
                 RecordChange = input.Plan.RecordChange,
                 RecoveryPreparation = input.RecoveryPreparation,
-                ProtectedSourceRoots = [input.Plan.Input.Request.SourceRoot],
+                ProtectedSourceRoots = [.. (input.Plan.Input.Record.Record?.Libraries ?? []).Select(library => library.SourceRoot)
+                    .Append(input.Plan.Input.Request.SourceRoot).Distinct()],
             },
             cancellationToken).ConfigureAwait(false);
         return new LibraryAttachApplicationOutcome

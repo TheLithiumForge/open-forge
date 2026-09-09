@@ -19,8 +19,8 @@ public sealed class LibraryListOrderingAndPrecedenceTests
         fixture.CurrentLink(".agents/directives/a.md");
         fixture.Files.WriteText(LibraryReadWorkspace.RecordPath, """
             {"schemaVersion":1,"libraries":[
-              {"id":"alpha","sourceRoot":"shared/alpha","paths":[]},
-              {"id":"team-knowledge","sourceRoot":"shared/team","paths":[".agents/directives/Z.md",".agents/directives/a.md"]}]}
+              {"id":"alpha","sourceRoot":"shared/alpha","destinationRoot":".","paths":[]},
+              {"id":"team-knowledge","sourceRoot":"shared/team","destinationRoot":".","paths":[".agents/directives/Z.md",".agents/directives/a.md"]}]}
             """);
         var before = fixture.Snapshot();
         var result = await fixture.ListAsync(TestContext.Current.CancellationToken);
@@ -48,19 +48,19 @@ public sealed class LibraryListOrderingAndPrecedenceTests
         {
             fixture.Files.CreateDirectory("shared/actual/.agents");
             fixture.Files.CreateDirectorySymbolicLink("shared/linked", "actual");
-            blocked = ",{\"id\":\"c-blocked\",\"sourceRoot\":\"shared/linked\",\"paths\":[]}";
+            blocked = ",{\"id\":\"c-blocked\",\"sourceRoot\":\"shared/linked\",\"destinationRoot\":\".\",\"paths\":[]}";
         }
 
         if (highest == "invalid")
         {
-            fixture.Files.CreateDirectory("shared/invalid");
-            invalid = ",{\"id\":\"d-invalid\",\"sourceRoot\":\"shared/invalid\",\"paths\":[]}";
+            fixture.Files.CreateFile("shared/invalid", "A source root must be a directory.");
+            invalid = ",{\"id\":\"d-invalid\",\"sourceRoot\":\"shared/invalid\",\"destinationRoot\":\".\",\"paths\":[]}";
         }
 
         fixture.Files.WriteText(LibraryReadWorkspace.RecordPath, $$"""
             {"schemaVersion":1,"libraries":[
-              {"id":"a-drift","sourceRoot":"shared/team","paths":[".agents/directives/review.md"]},
-              {"id":"b-unavailable","sourceRoot":"shared/missing","paths":[]}{{blocked}}{{invalid}}]}
+              {"id":"a-drift","sourceRoot":"shared/team","destinationRoot":".","paths":[".agents/directives/review.md"]},
+              {"id":"b-unavailable","sourceRoot":"shared/missing","destinationRoot":".","paths":[]}{{blocked}}{{invalid}}]}
             """);
         var before = fixture.Snapshot();
         var result = await fixture.ListAsync(TestContext.Current.CancellationToken);

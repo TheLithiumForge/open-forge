@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.Paths;
@@ -31,15 +32,20 @@ internal static class LibrariesRecordCodec
             var candidates = document.Libraries.Select(library => (
                 Id: LibraryId.Create(library.Id),
                 SourceRoot: WorkspaceRelativeDirectory.Create(library.SourceRoot),
+                DestinationRoot: LibraryDestinationRoot.Create(library.DestinationRoot),
                 Paths: library.Paths.Select(SourceRelativeEligiblePath.Create).ToArray()))
                 .ToArray();
-            foreach (var path in candidates.SelectMany(candidate => candidate.Paths))
+            foreach (var candidate in candidates)
             {
-                if (LibraryEligiblePathPolicy.TryClassifyExclusion(path.Value, out _))
+                foreach (var path in candidate.Paths)
                 {
-                    throw new ArgumentException(
-                        "A Library record path names an ineligible manager or source-control path.");
+                    if (LibraryEligiblePathPolicy.TryClassifyExclusion(candidate.SourceRoot, path, out _))
+                    {
+                        throw new ArgumentException(
+                            "A Library record path names an ineligible manager or source-control path.");
+                    }
                 }
+
             }
 
             if (HasOutOfOrderMembers(document))
@@ -62,7 +68,7 @@ internal static class LibrariesRecordCodec
             LibraryRecord[] libraries = [.. candidates.Select(candidate =>
                 LibraryRecord.Create(
                     candidate.Id,
-                    candidate.SourceRoot,
+                    candidate.SourceRoot, candidate.DestinationRoot,
                     candidate.Paths))];
             return new LibrariesRecordDecode
             {
@@ -96,6 +102,7 @@ internal static class LibrariesRecordCodec
             {
                 Id = library.Id.Value,
                 SourceRoot = library.SourceRoot.Value,
+                DestinationRoot = library.DestinationRoot.Value,
                 Paths = [.. library.Paths.Select(path => path.Value)],
             })],
         };
@@ -122,9 +129,10 @@ internal static class LibrariesRecordCodec
 
         foreach (var library in libraries.EnumerateArray())
         {
-            RequireObject(library, ["id", "sourceRoot", "paths"]);
+            RequireObject(library, ["id", "sourceRoot", "destinationRoot", "paths"]);
             RequireString(library.GetProperty("id"));
             RequireString(library.GetProperty("sourceRoot"));
+            RequireString(library.GetProperty("destinationRoot"));
             var paths = library.GetProperty("paths");
             if (paths.ValueKind != JsonValueKind.Array)
             {
@@ -181,7 +189,11 @@ internal static class LibrariesRecordCodec
 
             foreach (var path in library.Paths)
             {
-                if (!destinations.Add(path))
+                var mapping = LibraryPathIdentity.Map(
+                    WorkspaceRelativeDirectory.Create(library.SourceRoot),
+                    LibraryDestinationRoot.Create(library.DestinationRoot),
+                    SourceRelativeEligiblePath.Create(path));
+                if (!destinations.Add(PortableWorkspacePath.CreatePortableKey(mapping.DestinationPath.Value)))
                 {
                     return true;
                 }

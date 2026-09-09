@@ -19,7 +19,7 @@ The exact command and help order is:
 
 1. `open-forge library list [global flags]`
 2. `open-forge library inspect <library-id> [global flags]`
-3. `open-forge library attach <library-id> <source-root> [--dry-run] [global flags]`
+3. `open-forge library attach <library-id> <source-root> [--to <workspace-relative-directory>] [--dry-run] [global flags]`
 4. `open-forge library sync <library-id> [--dry-run] [global flags]`
 5. `open-forge library detach <library-id> [--dry-run] [global flags]`
 
@@ -31,13 +31,14 @@ command or alias is implied by this group.
 ## Shared Library Boundary
 
 Workspace Libraries register a contained source root for one consumer workspace
-and expose the source's eligible `.agents` files at the same consumer-relative
-paths. The source root and the consumer workspace retain separate identities.
+and recursively expose eligible source files below a recorded destination root
+through individual relative file links. No specially named source child is
+required. Optional Attach `--to` defaults to the workspace root (`.`). The source root and the consumer workspace retain separate identities.
 The consumer-local record is `.agents/open-forge.libraries.json`.
 
 The record is a strict schema-v1 document. Its top-level members are
 `schemaVersion` and `libraries`; each library record has only `id`, `sourceRoot`,
-and `paths`. It is separate from `.agents/open-forge.lifecycle.json`. Library
+`destinationRoot`, and `paths`. It is separate from `.agents/open-forge.lifecycle.json`. Library
 IDs use the lowercase ASCII stable-ID grammar and occupy a namespace separate
 from automatic source IDs. A library ID is management identity, never a
 source-reference operand.

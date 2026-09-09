@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
 using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
@@ -9,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Permissions;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
@@ -19,20 +21,14 @@ internal static class LibraryMutationOperationSupport
 {
     internal static ImmutableArray<LibraryMappingObservation> ObserveMappings(
         PhysicalPathResolver resolver,
-        CliWorkspace workspace,
-        WorkspaceRelativeDirectory sourceRoot,
-        IEnumerable<SourceRelativeEligiblePath> paths,
+        LibraryMappingSetRequest request,
         CancellationToken cancellationToken)
-        => [.. paths
-            .OrderBy(path => path.Value, StringComparer.Ordinal)
-            .Select(path => LibraryMappingObserver.Observe(
-                resolver,
-                new LibraryMappingObservationRequest
-                {
-                    Workspace = workspace,
-                    Mapping = LibraryPathIdentity.Map(sourceRoot, path),
-                },
-                cancellationToken))];
+        => [.. request.Paths.Select(path => LibraryMappingObserver.Observe(resolver,
+            new LibraryMappingObservationRequest
+            {
+                Workspace = request.Workspace,
+                Mapping = LibraryPathIdentity.Map(request.SourceRoot, request.DestinationRoot, path),
+            }, cancellationToken))];
 
     internal static ImmutableArray<CanonicalRelativePath> ReadAncestors(
         CliWorkspace workspace,
@@ -46,9 +42,13 @@ internal static class LibraryMutationOperationSupport
                          .Replace(Path.AltDirectorySeparatorChar, '/'))))
         {
             var segments = path.Split('/');
-            for (var length = 2; length < segments.Length; length++)
+            for (var length = 1; length < segments.Length; length++)
             {
-                paths.Add(string.Join('/', segments.AsSpan(0, length).ToArray()));
+                var ancestor = string.Join('/', segments.AsSpan(0, length).ToArray());
+                if (ancestor != WorkspacePermissionDefinitions.ImplicitDirectoryPath)
+                {
+                    paths.Add(ancestor);
+                }
             }
         }
 
@@ -56,55 +56,38 @@ internal static class LibraryMutationOperationSupport
     }
 
     internal static async ValueTask<RecoveryBundlePreparationResult> PrepareRecoveryAsync(
-        WorkspaceLockLease lease,
-        string command,
-        RecoveryBundleOperation operation,
-        IReadOnlyList<RelativeFileLinkEffect> links,
-        IReadOnlyList<PlannedFileChange> generatedRegions,
-        PlannedFileChange? recordChange,
-        IReadOnlyList<LibraryMappingObservation> mappings,
-        LibrariesRecordRead record,
+        LibraryRecoveryPreparationRequest request,
         CancellationToken cancellationToken)
     {
         var targets = new List<RecoveryBundleTarget>();
-        foreach (var link in links)
+        if (request.Permissions?.RecoveryTarget is { } permission)
         {
-            var observation = mappings.SingleOrDefault(mapping => string.Equals(
-                mapping.Mapping.DestinationPath.Value,
-                link.DestinationPath.Value,
-                StringComparison.Ordinal))
-                ?? throw new InvalidOperationException(
-                    "A Library link effect requires its exact no-follow preflight observation.");
+            targets.Add(permission);
+        }
+        foreach (var link in request.Links)
+        {
+            var observation = request.Mappings.SingleOrDefault(mapping =>
+                mapping.Mapping.DestinationPath.Value == link.DestinationPath.Value)
+                ?? throw new InvalidOperationException("A Library link effect requires its exact no-follow preflight observation.");
             targets.Add(RecoveryBundleTarget.Create(link, observation.Leaf));
         }
-
-        foreach (var change in generatedRegions)
+        foreach (var change in request.GeneratedRegions)
         {
-            targets.Add(RecoveryBundleTarget.Create(
-                change,
+            targets.Add(RecoveryBundleTarget.Create(change,
                 await ReadSnapshotAsync(change, cancellationToken).ConfigureAwait(false)));
         }
-
-        if (recordChange is not null)
+        if (request.RecordChange is { } recordChange)
         {
-            var before = record.Snapshot
+            var before = request.Record.Snapshot
                 ?? throw new InvalidOperationException("A Library record effect requires its exact prior snapshot.");
             targets.Add(recordChange.Kind == PlannedFileChangeKind.Create
                 ? RecoveryBundleTarget.CreateReversible(recordChange, before)
                 : RecoveryBundleTarget.Create(recordChange, before));
         }
-
         return await RecoveryBundleStore.PrepareAsync(
-            RecoveryBundleInput.Create(
-                lease.Request.Workspace,
-                command,
-                RecoveryBundleAttribution.Create(
-                    RecoveryBundleProducer.Library,
-                    operation,
-                    lease.Request.Workspace),
-                lease.Request.OperationId,
-                targets),
-            cancellationToken).ConfigureAwait(false);
+            RecoveryBundleInput.Create(request.Lease.Request.Workspace, request.Command,
+                RecoveryBundleAttribution.Create(RecoveryBundleProducer.Library, request.Operation, request.Lease.Request.Workspace),
+                request.Lease.Request.OperationId, targets), cancellationToken).ConfigureAwait(false);
     }
 
     internal static async ValueTask<RecoveryBundleDeletionResult?> CleanupRecoveryAsync(
@@ -146,6 +129,7 @@ internal static class LibraryMutationOperationSupport
         RecoveryBundlePreparation? preparation = null)
         => new()
         {
+            Permission = null,
             Directories = [],
             Links = [],
             GeneratedRegions = [],
@@ -163,19 +147,11 @@ internal static class LibraryMutationOperationSupport
         RecoveryBundleDeletionResult? cleanup)
         => evidence with { RecoveryCleanup = cleanup };
 
-    internal static bool PlansMatch(
-        IReadOnlyList<PlannedDirectoryCreation> expectedDirectories,
-        IReadOnlyList<RelativeFileLinkEffect> expectedLinks,
-        IReadOnlyList<PlannedFileChange> expectedGenerated,
-        PlannedFileChange? expectedRecord,
-        IReadOnlyList<PlannedDirectoryCreation> actualDirectories,
-        IReadOnlyList<RelativeFileLinkEffect> actualLinks,
-        IReadOnlyList<PlannedFileChange> actualGenerated,
-        PlannedFileChange? actualRecord)
-        => expectedDirectories.Select(DirectoryKey).SequenceEqual(actualDirectories.Select(DirectoryKey))
-            && expectedLinks.Select(LinkKey).SequenceEqual(actualLinks.Select(LinkKey))
-            && expectedGenerated.Select(ChangeKey).SequenceEqual(actualGenerated.Select(ChangeKey))
-            && ChangeKey(expectedRecord) == ChangeKey(actualRecord);
+    internal static bool PlansMatch(LibraryMutationEffects expected, LibraryMutationEffects actual)
+        => expected.Directories.Select(DirectoryKey).SequenceEqual(actual.Directories.Select(DirectoryKey))
+            && expected.Links.Select(LinkKey).SequenceEqual(actual.Links.Select(LinkKey))
+            && expected.GeneratedRegions.Select(ChangeKey).SequenceEqual(actual.GeneratedRegions.Select(ChangeKey))
+            && ChangeKey(expected.RecordChange) == ChangeKey(actual.RecordChange);
 
     private static async ValueTask<FileStateSnapshot> ReadSnapshotAsync(
         PlannedFileChange change,

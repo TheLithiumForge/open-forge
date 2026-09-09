@@ -40,7 +40,7 @@ validated library ID, source root, workspace, and flags
   -> complete physical source and consumer boundary facts
   -> complete eligible source inventory
   -> valid current library record and every destination collision fact
-  -> identical source/destination mappings
+  -> derived source/destination mappings
   -> permitted generated-region projection and intended record
   -> one deterministic ordered mutation plan
   -> effect-free preflight
@@ -64,122 +64,138 @@ a no-op from matching source or destination bytes.
 
 ## Request And Workspace Resolution
 
-Request resolution validates the exact command path, two required singleton
-operands, the library-ID grammar, the source-root spelling, `--dry-run`, shared
-global flags, and terminal behavior. It does not rescan raw arguments, infer an
-ID from a path, or turn a global or write-policy flag into another operation.
+Resolve the workspace and global flags through the shared operation boundary.
+Require one Library ID and one source-root operand. Parse the single optional
+`--to` through its distinct destination-root grammar; omission and explicit `.`
+select the workspace root. Resolve all relative coordinates against that selected
+workspace and retain the normalized mapping in the request and record.
 
-The selected workspace is the exact current workspace or exact shared
-`--workspace` value. Source-root resolution is relative to that selected
-workspace. The resolver forms both lexical and physical path facts without
-searching parent directories, substituting a Git root, or accepting an
-external destination.
+The source root is a non-empty canonical portable workspace-relative directory,
+strictly contained by the selected workspace lexically and physically. It has
+no absolute, empty, backslash, `.` or `..` segment and no portable alias. Every
+ancestor and the selected root must be a real ordinary directory, without
+symlink, junction or reparse ancestry. No specially named child is required.
+The selected directory itself scopes the recursively discovered eligible files.
 
-The source root must be strictly contained by the selected workspace in both
-representations. An absolute, empty, backslash, dot-traversing, escaping, or
-non-portable spelling is `invalid`; normalization never repairs an invalid
-value. An alias, physical escape, or ambiguous identity is `blocked`. Each
-existing component from the workspace through the source root and its `.agents`
-child is checked as a real ordinary directory with no link or reparse ancestry.
-The source root tree and the consumer `.agents` tree must be physically
-disjoint.
+An absent or non-directory source root is `invalid` for Attach. For an existing
+registration, unavailable or missing source facts make Inspect or Sync
+`incomplete`; a readable non-directory root is `invalid`. Unsafe containment,
+linked ancestry or ambiguous identity is `blocked`. List reports only bounded
+root availability and does not enumerate descendants. An incomplete source is
+never an empty source inventory.
 
-The selected consumer `.agents` path is consumer-owned. Attach does not create
-the Loader, route parents, or source-root controls. The consumer `.agents` root
-must already be a real ordinary directory without link or reparse ancestry; it
-is never created or replaced. A missing or non-ordinary mandatory source root or
-`.agents` child is `invalid`. An existing source boundary or required source
-fact that is unavailable or inaccessible is `incomplete`. An unsafe, aliased,
-or ambiguous source identity is `blocked`; no plan is effectful in any case.
+The consumer workspace and its existing ordinary `.agents` control directory
+remain consumer-owned. The operation does not create or replace either root.
+The destination root may be an ancestor of a contained source root, including
+`.`. Actual destination leaves and every mutation target must remain outside
+all selected and registered source trees. This per-leaf check preserves source
+contents without forbidding workspace-root projection.
 
 ## Complete Source Inventory
 
-After boundary resolution, attach enumerates the source root's `.agents`
-subtree once as a complete narrow inventory. It records every eligible
-ordinary regular file by portable source-relative `.agents/...` path and
-records enough bounded exclusion and coverage facts to prove that no eligible
-file was silently skipped.
+Recursively enumerate the selected real source root, recording each eligible
+ordinary file by its canonical portable path relative to that root. A source
+containing no `.agents` or `content` child is valid. Empty eligible inventory is
+complete when the entire selected tree was safely observed.
 
-The inventory excludes the source Loader, recognized entrypoints, adjacent
-overwrite companions, lifecycle and library records, other manager controls,
-symlinks, junctions, reparse points, and special or non-ordinary entries. The
-enumerator never traverses a link or reparse point. A safely identified excluded
-link does not become an eligible mapping and does not authorize following its
-target.
+Exclude Git metadata at any path segment, known manager controls, symlinks,
+junctions, reparse points and special entries. Recognize Open Forge Loader,
+entrypoint and overwrite controls at their original `.agents` source coordinates
+before remapping. A remap cannot make those controls eligible. External
+`_name.md`, `*.overwrite.md` and README remain ordinary opaque Library content. Inspect excluded entries without
+following them and never descend into excluded metadata or linked directories.
+Existing source classification and protected-control rules remain applicable.
 
-The inventory is `incomplete` when an inaccessible directory or subtree,
-enumeration failure, or unavailable required fact prevents complete coverage.
-It is not silently narrowed to readable children. A missing or non-ordinary
-mandatory source root or `.agents` child is `invalid`; an unsafe, aliased, or
-ambiguous source boundary is `blocked`. The command does not read source bytes
-to manufacture ownership and does not store, write, move, delete, or copy source
-bytes.
+An inaccessible directory, enumeration failure, unavailable eligible ordinary
+file or unsafe required boundary prevents complete inventory. Retain known safe
+facts as partial evidence, never as permission to delete retired links. Source
+bytes are never copied, rewritten or deleted. Only eligible leaf membership and
+physical path facts feed projection planning.
 
 ## Record Resolution And Identity
 
-Attach reads the exact consumer record path
-`.agents/open-forge.libraries.json` as a separate ordinary record. An absent
-record is a valid prior-missing state for the intended record Create. An
-existing record must have exactly `schemaVersion`, `libraries`, and each exact
-library member property `id`, `sourceRoot`, and `paths`; no extra property or
-malformed value is accepted. A malformed record is `invalid`; an unavailable or
-inaccessible existing record is `incomplete`; a duplicate ID, duplicate path,
-unsafe path, or other ambiguous record identity is `blocked`.
+The consumer record is `.agents/open-forge.libraries.json`, separate from
+lifecycle ownership and consumer permissions. Its exact current schema is:
 
-The schema discriminator is exactly numeric `1`. The record's library IDs are
-sorted by ID, and each path list is sorted by portable path spelling. The
-record's `sourceRoot` is the normalized workspace-relative source-origin fact.
-The record stores only eligible source-relative path strings. It stores no
-expected relative target because each source and destination path is identical
-and the expected target is derived from the source root and destination.
+```json
+{
+  "schemaVersion": 1,
+  "libraries": [
+    {
+      "id": "team-knowledge",
+      "sourceRoot": "shared/team-knowledge",
+      "destinationRoot": ".apm/agents/team",
+      "paths": ["checks/security.md", "review.md"]
+    }
+  ]
+}
+```
 
-The record is consumer ownership and authorization evidence, not Framework
-runtime meaning. Attach never adopts a link merely because it matches a
-derived target, and it never places library data into the lifecycle record. A
-record with the requested ID blocks the operation before destination planning,
-even if its source root or path set appears equal.
+Require exactly `schemaVersion` and `libraries` at the top level, and exactly
+`id`, `sourceRoot`, `destinationRoot` and `paths` per Library. Require integer
+`1`, existing Library-ID grammar, canonical portable roots and source-relative
+eligible paths. The destination root is `.` or a normal relative directory;
+source roots do not admit `.`. Unknown, missing, null, duplicate and wrongly
+typed members are malformed. No previous schema shape, migration or alternate
+reader is accepted.
+
+IDs and each source-relative path array use ordinal order. Paths are unique
+within a Library. Derived destinations must be unique across Libraries under
+portable identity; equal source-relative paths at different destinations are
+valid. Empty path arrays and an empty Library array are valid. The record stores
+no expected-link text, contents, hashes, timestamps, Git facts, dependencies,
+globs or per-file remapping. Link identity derives from both recorded roots and
+the source-relative path. Permission is separate from ownership and may be
+revoked independently.
+
+A missing record is a valid prior-absence fact for Attach and a complete empty
+List result. Inspect, Sync and Detach require the requested ID in a valid record.
+Malformed, unavailable and unsafe records retain their existing invalid,
+incomplete and blocked classification; none becomes an empty valid record.
+
+An already registered ID blocks Attach even when all other facts match.
 
 ## Mapping, Collision, And Generated Facts
 
-The complete inventory set is converted to one identical source/destination
-path set. Every destination is below consumer `.agents` and every target
-relationship is relative. The expected raw link target is derived from the
-source-root spelling and the destination path; source bytes are not needed for
-link identity.
+Each record keeps `sourceRoot`, `destinationRoot` and source-relative `paths`.
+For a path `p`, its source is `sourceRoot/p`. Its consumer destination is `p`
+when `destinationRoot` is `.`, otherwise `destinationRoot/p`. Derive the exact
+raw relative file-link target from the destination parent to that source.
+Root-level leaf destinations use the workspace root as their parent.
 
-For each destination, current facts distinguish missing, ordinary file,
-directory, relative or generic link, reparse, special, separately owned,
-unsafe, and unavailable states. Only a missing destination may receive a newly
-declared link. An
-existing exact-looking link without a registered library record is still a
-collision; attach never adopts or overwrites it. Extension-owned, lifecycle,
-library-control, and other manager paths are collisions even when their bytes
-look replaceable. Two intended mappings to one physical destination block the
-complete plan.
+Projection creates individual relative file symlinks. Required missing parents
+are separate real ordinary directory effects, including first-level parents.
+Existing parents must be real ordinary directories with no linked or reparse
+ancestry. Local sibling files remain untouched; no directory symlink, copied
+file fallback or directory ownership is introduced.
 
-Missing parent directories may be included only when they are real ordinary
-directories that the declared mappings require. A parent alias, link, reparse
-point, special entry, or unsafe identity blocks. Local sibling files outside
-declared leaves are preserved.
+Validate source eligibility and final destination protection separately. Protect
+Git metadata, Framework and recognized manager controls, `.agents` Loader,
+entrypoint and overwrite controls, lifecycle/Library/permission/lock controls, recovery and temporary
+storage, and every selected or registered Library source tree. A grant covering
+a containing directory never overrides these leaf checks. Compare portable
+identity and physical containment. Different source-relative paths and different
+Libraries may share ordinary directories but never the same destination leaf.
+An unregistered link, including an exact-looking link, is an existing occupant
+and is never adopted.
 
-If an affected destination already belongs to an existing consumer route chain,
-the operation may form one bounded generated `Entries` projection according to
-the [Index Behavior Contract](../../index-candidate/behavior.md). The region
-must already exist in a pre-existing consumer-owned entrypoint, and authored
-bytes outside the region are preserved. No source entrypoint is projected, no
-missing route chain is made, and the Loader is never rewritten. If no existing
-route exposes a projected leaf, no generated region is invented.
+Only mapped `.agents/**` leaves may participate in an existing consumer route
+chain and its bounded generated `Entries` projection under the Index contract.
+The region and route chain must already exist and authored bytes remain intact.
+External Markdown remains opaque content. No source entrypoint, Loader, missing
+route or generated region is created.
 
 ## Intended Record And Plan
 
 Attach forms the intended schema-v1 record by inserting the new sorted library
 record and its complete sorted path list. The intended record contains no
 expected-link property, source bytes, absolute path, Git fact, collection,
-remapping, glob, dependency, or exclusion metadata. The resulting record is
+per-file remapping, glob, dependency, or exclusion metadata. The resulting record is
 the final consumer publication and is not an early ownership marker.
 
 The ordered plan contains only declared effects:
 
+- the approved consumer permission create/replace, verified before all other effects;
 - real ordinary parent-directory creation required by declared mappings;
 - relative-file-link creation at each missing destination;
 - bounded replacement of each permitted pre-existing generated region; and
@@ -205,6 +221,27 @@ It reports all links, parent directories, generated regions, record bytes, and
 blockers, then stops before acquiring a workspace lease or probing recovery
 capability. It performs no filesystem or application-data effect. A planned
 change alone does not create `attention`.
+
+## Consumer Permission
+
+Derive required external leaves from the complete eligible mapped inventory, using the recorded
+Library/source identity. The [Interface](interface.md#consumer-permission)
+selects scope proposals and the [Workspace Permissions Behavior](../../shared/workspace-permissions/behavior.md)
+defines exact admission, future-descendant approval, source rebinding, revocation,
+prompt grammar and receipt truth.
+
+Complete source/record, ownership, mapping and structural preflight before the
+question. Preserve immutable required/missing leaves, proposed/approved scopes
+and any old/new source binding. Missing or declined permission blocks the whole
+request; dry-run and noninteractive execution do not write approval.
+
+Under the same workspace lease, compare exact permission bytes or prior absence
+and every other volatile plan fact. Drift invalidates approval without merging
+new grants. Prepare one bundle including prior permission bytes or absence, then
+verify its ordinary create/replace before directories, links or generated effects.
+Publish the Library record last. Failure preserves actual verified permission
+outcome and residual evidence. Library repair never applies the permission entry;
+explicit recovery checks current grants without widening or restoring them.
 
 ## Lease-Bound Application
 
@@ -279,11 +316,11 @@ Conformance must prove, at the cheapest boundary that directly owns each fact:
 
 - exact parser and shared-flag behavior, ID grammar and duplicate blocking;
 - source-root lexical/physical containment, ordinary directory identity,
-  disjoint consumer `.agents`, link/reparse ancestry, aliases, and invalid
+  protected source trees, link/reparse ancestry, aliases, and invalid
   source forms;
 - complete inventory, inaccessible-subtree `incomplete`, every exclusion,
   ordinary-file coverage, and no source-byte effect;
-- identical source/destination path sets, derived relative raw targets, real
+- derived source/destination path sets, derived relative raw targets, real
   parent directories, local sibling preservation, no copy fallback, collision
   categories, and Extension/lifecycle/library ownership;
 - existing generated-region projection, marker and authored-byte preservation,

@@ -100,7 +100,7 @@ internal sealed class LibraryInspectOperation
         var inventory = inventoryRead.Inventory;
         var eligibleEntries = inventory?.Entries ?? [];
         var eligible = eligibleEntries
-            .Select(entry => Eligible(entry.SourcePath))
+            .Select(entry => Eligible(LibraryPathIdentity.Map(selected.SourceRoot, selected.DestinationRoot, entry.SourcePath)))
             .ToArray();
         var findings = new List<LibraryInspectFinding>();
         if (inventory is null || inventory.State != LibraryInventoryState.Complete)
@@ -112,7 +112,7 @@ internal sealed class LibraryInspectOperation
                     ? CliSemanticStatus.Blocked
                     : CliSemanticStatus.Incomplete,
                 LibraryId = selected.Id.Value,
-                Path = ".agents",
+                Path = selected.SourceRoot.Value,
                 Cause = inventory?.Cause
                     ?? inventoryRead.UnavailablePaths.FirstOrDefault()?.Cause
                     ?? "The complete Library source inventory could not be established.",
@@ -142,6 +142,7 @@ internal sealed class LibraryInspectOperation
                     State = LibraryRecordViewState.Complete,
                     Id = selected.Id.Value,
                     SourceRoot = selected.SourceRoot.Value,
+                    DestinationRoot = selected.DestinationRoot.Value,
                     RegisteredPaths = registered,
                 },
                 Source = new LibraryInspectSourceView
@@ -171,10 +172,10 @@ internal sealed class LibraryInspectOperation
         CancellationToken cancellationToken)
     {
         var registeredByPath = registered.ToDictionary(
-            path => path.DestinationPath,
+            path => path.SourcePath,
             StringComparer.Ordinal);
         var eligibleByPath = eligible.ToDictionary(
-            path => path.DestinationPath,
+            path => path.SourcePath,
             StringComparer.Ordinal);
         var paths = new SortedSet<string>(registeredByPath.Keys, StringComparer.Ordinal);
         paths.UnionWith(eligibleByPath.Keys);
@@ -183,7 +184,7 @@ internal sealed class LibraryInspectOperation
         {
             cancellationToken.ThrowIfCancellationRequested();
             var sourcePath = Framework.Libraries.Models.Identity.SourceRelativeEligiblePath.Create(path);
-            var mapping = LibraryPathIdentity.Map(selected.SourceRoot, sourcePath);
+            var mapping = LibraryPathIdentity.Map(selected.SourceRoot, selected.DestinationRoot, sourcePath);
             var observation = LibraryMappingObserver.Observe(
                 resolver,
                 new LibraryMappingObservationRequest
@@ -202,13 +203,13 @@ internal sealed class LibraryInspectOperation
             comparisons.Add(new LibraryPathComparison
             {
                 SourcePath = path,
-                DestinationPath = path,
-                SourceId = SourceIdentity.DeriveId(path),
+                DestinationPath = observation.Mapping.DestinationPath.Value,
+                SourceId = SourceIdentity.DeriveId(observation.Mapping.DestinationPath.Value),
                 Relation = relation,
                 Registered = registeredPath,
                 ObservedRelativeLink = observation.Leaf.RelativeFileLink?.RawRelativeTarget,
             });
-            AddComparisonFinding(findings, selected, path, relation, observation.Cause);
+            AddComparisonFinding(findings, selected, mapping.DestinationPath.Value, relation, observation.Cause);
         }
 
         return [.. comparisons];
@@ -255,7 +256,7 @@ internal sealed class LibraryInspectOperation
         LibraryRecord selected,
         Framework.Libraries.Models.Identity.SourceRelativeEligiblePath sourcePath)
     {
-        var mapping = LibraryPathIdentity.Map(selected.SourceRoot, sourcePath);
+        var mapping = LibraryPathIdentity.Map(selected.SourceRoot, selected.DestinationRoot, sourcePath);
         return new LibraryRegisteredPath
         {
             SourcePath = sourcePath.Value,
@@ -266,12 +267,12 @@ internal sealed class LibraryInspectOperation
     }
 
     private static LibraryEligiblePath Eligible(
-        Framework.Libraries.Models.Identity.SourceRelativeEligiblePath sourcePath)
+        LibraryMapping mapping)
         => new()
         {
-            SourcePath = sourcePath.Value,
-            DestinationPath = sourcePath.Value,
-            SourceId = SourceIdentity.DeriveId(sourcePath.Value),
+            SourcePath = mapping.SourcePath.Value,
+            DestinationPath = mapping.DestinationPath.Value,
+            SourceId = SourceIdentity.DeriveId(mapping.DestinationPath.Value),
         };
 
     private static LibraryInspectResult FromRecordBoundary(
@@ -333,6 +334,7 @@ internal sealed class LibraryInspectOperation
                     State = state,
                     Id = request.LibraryId.Value,
                     SourceRoot = null,
+                    DestinationRoot = null,
                     RegisteredPaths = [],
                 },
                 Source = new LibraryInspectSourceView
@@ -406,6 +408,7 @@ internal sealed class LibraryInspectOperation
                     State = LibraryRecordViewState.Complete,
                     Id = selected.Id.Value,
                     SourceRoot = selected.SourceRoot.Value,
+                    DestinationRoot = selected.DestinationRoot.Value,
                     RegisteredPaths = registered,
                 },
                 Source = new LibraryInspectSourceView
@@ -539,6 +542,7 @@ internal sealed class LibraryInspectOperation
                     State = recordState,
                     Id = request.LibraryId.Value,
                     SourceRoot = null,
+                    DestinationRoot = null,
                     RegisteredPaths = [],
                 },
                 Source = new LibraryInspectSourceView

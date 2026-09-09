@@ -7,6 +7,8 @@ namespace OpenForge.Cli.Core.Commands.Library.Detach.Models.Binding;
 
 internal sealed record LibraryDetachBindingComponents
 {
+    public required LibraryDetachOperation Operation { get; init; }
+
     public required CliHelpContent Help { get; init; }
 
     public required CliRendererSet<LibraryDetachResult> Renderers { get; init; }

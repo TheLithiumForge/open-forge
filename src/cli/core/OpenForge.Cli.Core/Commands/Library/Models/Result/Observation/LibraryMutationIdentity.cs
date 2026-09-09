@@ -8,6 +8,7 @@ internal sealed record LibraryMutationIdentity
     public required string? LibraryId { get; init; }
 
     public required string? SourceRoot { get; init; }
+    public required string? DestinationRoot { get; init; }
 
     public required LibraryMode Mode { get; init; }
 

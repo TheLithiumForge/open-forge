@@ -25,8 +25,7 @@ The [Workspace Libraries Technical Design](../../../technical-designs/workspace-
 and [Mutation And Recovery Technical Design](../../../technical-designs/mutation-and-recovery.md)
 define accepted shared realization boundaries. The [Index Behavior Contract](../../index-candidate/behavior.md)
 defines existing generated-navigation projection. This Interface Contract adds
-no callable or implementation choice. Implementation and executable proof
-remain pending the Task 23 contract freeze and later acceptance gates.
+no callable or implementation choice. The active Task records implementation and executable evidence.
 
 ## Purpose And Operation Boundary
 
@@ -108,6 +107,7 @@ The record must have exactly schema-v1 shape:
     {
       "id": "team-knowledge",
       "sourceRoot": "shared/team-knowledge",
+      "destinationRoot": ".",
       "paths": [
         ".agents/directives/review.md"
       ]
@@ -116,13 +116,14 @@ The record must have exactly schema-v1 shape:
 }
 ```
 
-The only properties are `schemaVersion`, `libraries`, `id`, `sourceRoot`, and
+The only properties are `schemaVersion`, `libraries`, `id`, `sourceRoot`, `destinationRoot`, and
 `paths` at their declared levels. `schemaVersion` is exactly numeric `1`.
 Library records are sorted by ID, and each `paths` array is sorted by portable
-path spelling. `paths` contains unique eligible `.agents/...` source-relative
-path strings that are also their identical consumer destinations. The record
+path spelling. `paths` contains unique eligible source-relative
+path strings mapped below the recorded `destinationRoot`. The record
 stores no expected link target; detach derives the expected relative target
-from the recorded `sourceRoot` and each destination path. Extra fields,
+from recorded `sourceRoot`, `destinationRoot` and each source-relative suffix,
+measured from the actual destination parent to the source leaf. Extra fields,
 duplicates, malformed values, unsafe paths, or a missing record block or make
 the request invalid under the shared result boundary. Detach never migrates or
 repairs the record.
@@ -134,25 +135,40 @@ blocking journey below.
 
 ## Source Independence And Mapping Boundary
 
-Detach validates the recorded `sourceRoot` and each recorded path as the
-portable, workspace-relative forms required by the schema. It uses those
-recorded strings only to derive the expected relative raw link target. It does
-not require the source root to be present, enumerate its `.agents` directory,
-resolve its physical target, read its bytes, or prove its current source
-inventory.
+Detach validates recorded roots and source-relative paths without resolving or
+enumerating a source root. It derives the recorded destinations and raw relative
+links from those strings. Missing sources and exact dangling links are supported.
+Current destination permission is still required, bound to the recorded source
+identity, and cannot be supplied by recovery bytes or an old grant for another
+source.
 
-The destination for every recorded path is the identical consumer-relative
-`.agents/...` path below the selected workspace. Its expected relationship is a
-relative file symlink from the destination's parent to the recorded source
-path. The relationship is derived, not stored. Detach never accepts a record
-path that escapes the consumer workspace, has an absolute or backslash form,
-uses dot traversal, or cannot form a safe contained destination.
+Each record keeps `sourceRoot`, `destinationRoot` and source-relative `paths`.
+For a path `p`, its source is `sourceRoot/p`. Its consumer destination is `p`
+when `destinationRoot` is `.`, otherwise `destinationRoot/p`. Derive the exact
+raw relative file-link target from the destination parent to that source.
+Root-level leaf destinations use the workspace root as their parent.
 
-The consumer `.agents` root and every traversed destination parent must be a
-real ordinary directory without link or reparse ancestry. A missing root,
-parent, or leaf makes the registered link unverifiable and blocks the complete
-request. A parent link, reparse point, special entry, alias, external
-transition, or unknown state is unsafe.
+Detach removes only exact registered relative file symlinks. Every existing
+parent must be a real ordinary directory with no linked or reparse ancestry;
+a missing parent blocks the request. Detach creates no parents or links. Local
+siblings and destination directories remain untouched.
+
+Validate recorded path grammar and destination protection without resolving or
+enumerating source content. Protect
+Git metadata, Framework and recognized manager controls, `.agents` Loader,
+entrypoint and overwrite controls, lifecycle/Library/permission/lock controls, recovery and temporary
+storage, and every selected or registered Library source tree. A grant covering
+a containing directory never overrides these leaf checks. Compare portable
+identity and physical containment. Different source-relative paths and different
+Libraries may share ordinary directories but never the same destination leaf.
+An unregistered link, including an exact-looking link, is an existing occupant
+and is never adopted.
+
+Only mapped `.agents/**` leaves may participate in an existing consumer route
+chain and its bounded generated `Entries` projection under the Index contract.
+The region and route chain must already exist and authored bytes remain intact.
+External Markdown remains opaque content. No source entrypoint, Loader, missing
+route or generated region is created.
 
 ## Exact Registered Occupants
 
@@ -196,8 +212,40 @@ effect verifies. Record publication is last. An unsafe, changed, or missing
 occupant never permits record publication.
 
 The record remains separate from `.agents/open-forge.lifecycle.json`. It has no
-expected-link, source-byte, timestamp, Git, collection, remapping, glob,
+expected-link, source-byte, timestamp, Git, collection, per-file remapping, glob,
 dependency, or source metadata field.
+
+## Consumer Permission
+
+This command selects [Workspace Permissions](../../shared/workspace-permissions/interface.md)
+for every registered destination selected for exact-link deletion. `.agents/**` leaves remain implicit.
+Requirements bind the selected Library ID and source root. Permission remains
+necessary even for existing owned links; recorded identity makes removal
+source-independent, without exempting it from revocation.
+
+Every missing permission proposal is an exact file grant. Detach does not request future-folder authority or revoke saved grants.
+Directory proposals explicitly include future descendants and never cover the
+workspace root. A conflicting saved source binding requires disclosed old/new
+source replacement approval under the shared contract. Protected paths,
+source trees, ancestry, ownership and collision checks still apply per leaf.
+
+Only human prompt-capable application can approve the displayed scopes. JSON,
+redirected execution and dry-run never prompt; missing or declined approval is
+`blocked` and cancellation is `interrupted`, without effects. Malformed or unsafe
+permission observations are `blocked`; unavailable observations are `incomplete`.
+
+`result.permissions` appears after `plan` and before `application`. It uses the
+shared Library leaf, scope, rebinding and receipt coordinates exactly. Required
+and missing arrays are concrete destinations; proposed/approved scopes expose
+remembered authority. A proposed rebind is not an applied one. Only a verified
+outcome says permission was saved; later content failure retains that outcome.
+
+Permission findings use the `library-detach.` prefix and suffixes
+`permission-required`, `permission-declined`, `permission-invalid`,
+`permission-unavailable`, `permission-changed` and `permission-write-failed`.
+Changed lease-bound permission facts block; failed permission publication is
+`failed` with its actual receipt; cancellation uses the existing `interrupted`
+finding. No content effect proceeds after an unverified permission write.
 
 ## Dry Run And Application
 
@@ -286,7 +334,7 @@ The result exposes the concrete detach facts under the exact shared result
 envelope, including:
 
 - selected workspace, library ID, record validity, and source-independent mode;
-- recorded source root and identical consumer-relative paths without source
+- recorded source root and mapped consumer-relative paths without source
   bytes or a stored expected-link field;
 - every exact, dangling, missing, changed, unsafe, unknown, or separately
   owned destination fact;

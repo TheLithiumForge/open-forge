@@ -25,24 +25,40 @@ public sealed class PublishedLibrarySyncProcessTests
     public async Task DryRunThenApplyReconcilesOneAdditionAndRetirement()
     {
         using var workspace = new PublishedLibraryWorkspace();
-        workspace.Source();
-        workspace.Link(".agents/directives/old.md");
-        workspace.Record(".agents/directives/old.md");
+        workspace.Source("future/new.md");
+        workspace.MappedLink("docs/old.md", "../shared/team-knowledge/old.md");
+        workspace.RecordAt("docs", "old.md");
+        workspace.GrantDocs();
         var target = PublishedExecutableTarget.Discover();
         using var preview = PublishedLibraryWorkspace.Result(
             await workspace.ReadOnlyAsync(target, "library", "sync", "team-knowledge", "--dry-run", "--json"), "complete");
         workspace.AssertNoInfrastructure();
-        using var applied = PublishedLibraryWorkspace.Result(
-            await workspace.RunAsync(target, "library", "sync", "team-knowledge", "--json"), "complete");
-        Assert.Equal(preview.RootElement.GetProperty("result").GetProperty("plan").GetRawText(),
-            applied.RootElement.GetProperty("result").GetProperty("plan").GetRawText());
-        Assert.Null(new FileInfo(workspace.Combine(".agents/directives/old.md")).LinkTarget);
-        Assert.Equal(PublishedLibraryWorkspace.RawReviewTarget, new FileInfo(workspace.Combine(PublishedLibraryWorkspace.ReviewPath)).LinkTarget);
-        using var record = JsonDocument.Parse(File.ReadAllText(workspace.Combine(PublishedLibraryWorkspace.RecordPath)));
-        Assert.Equal(PublishedLibraryWorkspace.ReviewPath,
-            Assert.Single(Assert.Single(record.RootElement.GetProperty("libraries").EnumerateArray()).GetProperty("paths").EnumerateArray()).GetString());
-        workspace.AssertSource();
-        workspace.AssertAppliedInfrastructure();
+        try
+        {
+            using var applied = PublishedLibraryWorkspace.Result(
+                await workspace.RunAsync(target, "library", "sync", "team-knowledge", "--json"), "complete");
+            Assert.Equal(preview.RootElement.GetProperty("result").GetProperty("plan").GetRawText(),
+                applied.RootElement.GetProperty("result").GetProperty("plan").GetRawText());
+            Assert.Null(new FileInfo(workspace.Combine("docs/old.md")).LinkTarget);
+            Assert.Equal("../../shared/team-knowledge/future/new.md", new FileInfo(workspace.Combine("docs/future/new.md")).LinkTarget);
+            using var record = JsonDocument.Parse(File.ReadAllText(workspace.Combine(PublishedLibraryWorkspace.RecordPath)));
+            Assert.Equal("future/new.md",
+                Assert.Single(Assert.Single(record.RootElement.GetProperty("libraries").EnumerateArray()).GetProperty("paths").EnumerateArray()).GetString());
+            Assert.Equal(PublishedLibraryWorkspace.SourceBody, File.ReadAllText(workspace.Combine("shared/team-knowledge/future/new.md")));
+            workspace.AssertAppliedInfrastructure();
+        }
+        finally
+        {
+            if (new FileInfo(workspace.Combine("docs/future/new.md")).LinkTarget == "../../shared/team-knowledge/future/new.md")
+            {
+                File.Delete(workspace.Combine("docs/future/new.md"));
+            }
+            var parent = workspace.Combine("docs/future");
+            if (Directory.Exists(parent) && !Directory.EnumerateFileSystemEntries(parent).Any())
+            {
+                Directory.Delete(parent);
+            }
+        }
     }
 
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "EndToEnd")]

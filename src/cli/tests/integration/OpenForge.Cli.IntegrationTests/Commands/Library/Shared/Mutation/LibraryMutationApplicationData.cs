@@ -47,13 +47,13 @@ internal static class LibraryMutationApplicationData
 
     internal static LibrariesRecord Record(bool registered)
         => LibrariesRecord.Create([LibraryRecord.Create(LibraryId.Create("team-knowledge"),
-            WorkspaceRelativeDirectory.Create(LibraryMutationWorkspace.SourceRoot),
+            WorkspaceRelativeDirectory.Create(LibraryMutationWorkspace.SourceRoot), LibraryDestinationRoot.Create("."),
             registered ? [SourceRelativeEligiblePath.Create(LibraryMutationWorkspace.Leaf)] : [])]);
 
     internal static LibraryInventoryRead Inventory(LibraryMutationWorkspace workspace)
     {
         var root = WorkspaceRelativeDirectory.Create(LibraryMutationWorkspace.SourceRoot);
-        var agents = workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/.agents");
+        var sourceRoot = workspace.Absolute(LibraryMutationWorkspace.SourceRoot);
         return new LibraryInventoryRead
         {
             Source = new LibrarySourceRootObservation
@@ -62,14 +62,11 @@ internal static class LibraryMutationApplicationData
                 State = LibrarySourceRootState.Available,
                 LexicalSourceRoot = workspace.Absolute(LibraryMutationWorkspace.SourceRoot),
                 PhysicalSourceRoot = workspace.Absolute(LibraryMutationWorkspace.SourceRoot),
-                PhysicalAgentsDirectory = agents,
                 LexicallyContained = true,
                 PhysicallyContained = true,
-                PhysicallyDisjoint = true,
-                Condition = LibrarySourceRootCondition.None,
                 Cause = null,
             },
-            Inventory = LibraryInventory.Complete(root, agents, [EligibleSourceFile.Create(
+            Inventory = LibraryInventory.Complete(root, sourceRoot, [EligibleSourceFile.Create(
                 SourceRelativeEligiblePath.Create(LibraryMutationWorkspace.Leaf),
                 workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/{LibraryMutationWorkspace.Leaf}"))]),
             ExcludedPaths = [],
@@ -92,7 +89,7 @@ internal static class LibraryMutationApplicationData
 
     internal static ImmutableArray<LibraryMappingObservation> Mapping(LibraryMutationWorkspace workspace, bool linked)
     {
-        var mapping = LibraryMapping.Create(WorkspaceRelativeDirectory.Create(LibraryMutationWorkspace.SourceRoot),
+        var mapping = LibraryMapping.Create(WorkspaceRelativeDirectory.Create(LibraryMutationWorkspace.SourceRoot), LibraryDestinationRoot.Create("."),
             SourceRelativeEligiblePath.Create(LibraryMutationWorkspace.Leaf));
         return [LibraryMappingObservation.Create(mapping, Leaf(workspace, linked),
             linked ? LibraryMappingObservationState.Current : LibraryMappingObservationState.Missing, cause: null)];

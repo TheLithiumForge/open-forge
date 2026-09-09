@@ -72,6 +72,7 @@ internal static class LibraryInspectResultFixture
                     State = LibraryRecordViewState.Complete,
                     Id = "team-knowledge",
                     SourceRoot = "shared/team",
+                    DestinationRoot = null,
                     RegisteredPaths = [registered],
                 },
                 Source = new LibraryInspectSourceView

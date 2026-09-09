@@ -11,7 +11,7 @@ open-forge:
 
 This entrypoint routes the accepted current Crystallized Interface and Behavior
 Contracts for read-only `open-forge library inspect`. Inspect explains one
-record, inventories its source root's complete eligible `.agents` file set, and
+record, inventories its source root's complete eligible ordinary-file set, and
 compares that inventory with the exact registered projection.
 
 The command does not ship yet. It is stateless and read-only: it does not

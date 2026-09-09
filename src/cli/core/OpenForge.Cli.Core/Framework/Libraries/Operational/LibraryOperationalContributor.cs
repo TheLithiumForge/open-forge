@@ -45,14 +45,17 @@ internal sealed class LibraryOperationalContributor : ILibraryOperationalContrib
                 foreach (var library in value.Libraries)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    sources.Add(LibrarySourceRootReader.Read(
-                        resolver,
-                        new LibrarySourceRootRequest
-                        {
-                            Workspace = workspace,
-                            SourceRoot = library.SourceRoot,
-                        },
-                        cancellationToken));
+                    if (!sources.Any(source => source.Request.SourceRoot == library.SourceRoot))
+                    {
+                        sources.Add(LibrarySourceRootReader.Read(
+                            resolver,
+                            new LibrarySourceRootRequest
+                            {
+                                Workspace = workspace,
+                                SourceRoot = library.SourceRoot,
+                            },
+                            cancellationToken));
+                    }
                     ObserveMappings(resolver, workspace, library, library.Paths, mappings, cancellationToken);
                 }
             }
@@ -95,27 +98,31 @@ internal sealed class LibraryOperationalContributor : ILibraryOperationalContrib
                 foreach (var library in value.Libraries)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    var source = LibrarySourceRootReader.Read(
-                        resolver,
-                        new LibrarySourceRootRequest
-                        {
-                            Workspace = workspace,
-                            SourceRoot = library.SourceRoot,
-                        },
-                        cancellationToken);
-                    var inventory = source.State == LibrarySourceRootState.Available
-                        ? await LibraryInventoryReader.ReadAsync(
+                    var inventory = inventories.FirstOrDefault(observed => observed.Source.Request.SourceRoot == library.SourceRoot);
+                    if (inventory is null)
+                    {
+                        var source = LibrarySourceRootReader.Read(
                             resolver,
-                            source,
-                            cancellationToken).ConfigureAwait(false)
-                        : new LibraryInventoryRead
-                        {
-                            Source = source,
-                            Inventory = null,
-                            ExcludedPaths = [],
-                            UnavailablePaths = [],
-                        };
-                    inventories.Add(inventory);
+                            new LibrarySourceRootRequest
+                            {
+                                Workspace = workspace,
+                                SourceRoot = library.SourceRoot,
+                            },
+                            cancellationToken);
+                        inventory = source.State == LibrarySourceRootState.Available
+                            ? await LibraryInventoryReader.ReadAsync(
+                                resolver,
+                                source,
+                                cancellationToken).ConfigureAwait(false)
+                            : new LibraryInventoryRead
+                            {
+                                Source = source,
+                                Inventory = null,
+                                ExcludedPaths = [],
+                                UnavailablePaths = [],
+                            };
+                        inventories.Add(inventory);
+                    }
                     var paths = library.Paths
                         .Concat(inventory.Inventory?.Entries.Select(entry => entry.SourcePath) ?? [])
                         .DistinctBy(path => path.Value, StringComparer.Ordinal)
@@ -148,15 +155,21 @@ internal sealed class LibraryOperationalContributor : ILibraryOperationalContrib
         ImmutableArray<LibraryMappingObservation>.Builder mappings,
         CancellationToken cancellationToken)
     {
+        var observedMappings = mappings.Select(observation => observation.Mapping).ToHashSet();
         foreach (var path in paths)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            var mapping = LibraryPathIdentity.Map(library.SourceRoot, library.DestinationRoot, path);
+            if (!observedMappings.Add(mapping))
+            {
+                continue;
+            }
             mappings.Add(LibraryMappingObserver.Observe(
                 resolver,
                 new LibraryMappingObservationRequest
                 {
                     Workspace = workspace,
-                    Mapping = LibraryPathIdentity.Map(library.SourceRoot, path),
+                    Mapping = mapping,
                 },
                 cancellationToken));
         }
@@ -172,8 +185,7 @@ internal sealed class LibraryOperationalContributor : ILibraryOperationalContrib
             || sources?.Any(source => source.State is LibrarySourceRootState.Invalid or LibrarySourceRootState.Blocked) == true
             || inventories?.Any(read => read.Inventory?.State == LibraryInventoryState.Blocked
                 || read.Source.State == LibrarySourceRootState.Blocked
-                || (read.Source.State == LibrarySourceRootState.Invalid
-                    && read.Source.Condition != LibrarySourceRootCondition.RequiredAgentsMissing)) == true
+                || read.Source.State == LibrarySourceRootState.Invalid) == true
             || mappings.Any(mapping => mapping.State == LibraryMappingObservationState.Blocked))
         {
             return OperationalViewState.Blocked;

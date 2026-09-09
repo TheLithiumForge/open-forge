@@ -15,6 +15,24 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Libraries.Operational;
 [Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
 public sealed class LibraryResidualAttributionReaderIntegrationTests
 {
+    [Fact]
+    public static async Task LibraryResidualNeverAttributesPermissionDocumentForAutomaticRepair()
+    {
+        using var fixture = new LibraryObservationWorkspace();
+        fixture.Write(LibraryObservationWorkspace.RecordPath, LibraryObservationWorkspace.SingleRecord);
+        var residual = await LibraryResidualArchive.CreateAsync(fixture,
+            expectedPriorRecord: """{"schemaVersion":1,"extensions":[],"libraries":[]}""",
+            recordTarget: ".agents/open-forge.permissions.json");
+        var before = fixture.Snapshot();
+
+        var result = await LibraryResidualAttributionReader.ReadAsync(fixture.Workspace, fixture.DoctorView(true),
+            LibraryResidualArchive.View(residual), TestContext.Current.CancellationToken);
+
+        Assert.Equal(".agents/a.md", Assert.Single(result).Entry.Input.Context.Entry.TargetPath);
+        Assert.DoesNotContain(result, item => item.Entry.Input.Context.Entry.TargetPath == ".agents/open-forge.permissions.json");
+        Assert.Equal(before, fixture.Snapshot());
+    }
+
     [Fact(DisplayName = "Library residual reader binds current-v1 record membership to the exact observed residual entry")]
     public static async Task AttributesFromCurrentRecord()
     {
@@ -41,7 +59,7 @@ public sealed class LibraryResidualAttributionReaderIntegrationTests
     {
         using var fixture = new LibraryObservationWorkspace();
         const string payload = """
-            {"schemaVersion":1,"libraries":[{"id":"team","sourceRoot":"shared/team","paths":[".agents/a.md",".agents/z.md"]}]}
+            {"schemaVersion":1,"libraries":[{"id":"team","sourceRoot":"shared/team","destinationRoot":".","paths":[".agents/a.md",".agents/z.md"]}]}
             """;
         var residual = await LibraryResidualArchive.CreateAsync(fixture, payload);
         var libraries = fixture.DoctorView(false);
@@ -91,7 +109,7 @@ public sealed class LibraryResidualAttributionReaderIntegrationTests
     {
         using var fixture = new LibraryObservationWorkspace();
         const string otherRecord = """
-            {"schemaVersion":1,"libraries":[{"id":"other","sourceRoot":"shared/other","paths":[".agents/a.md"]}]}
+            {"schemaVersion":1,"libraries":[{"id":"other","sourceRoot":"shared/other","destinationRoot":".","paths":[".agents/a.md"]}]}
             """;
         var residual = await LibraryResidualArchive.CreateAsync(fixture, otherRecord);
         var before = fixture.Snapshot();

@@ -10,6 +10,13 @@ internal static class LibraryAttachDefinitions
     internal static string ReadFindingCode(LibraryAttachFindingCode value)
         => value switch
         {
+            LibraryAttachFindingCode.DestinationRootInvalid => "library-attach.destination-root-invalid",
+            LibraryAttachFindingCode.PermissionRequired => "library-attach.permission-required",
+            LibraryAttachFindingCode.PermissionDeclined => "library-attach.permission-declined",
+            LibraryAttachFindingCode.PermissionInvalid => "library-attach.permission-invalid",
+            LibraryAttachFindingCode.PermissionUnavailable => "library-attach.permission-unavailable",
+            LibraryAttachFindingCode.PermissionChanged => "library-attach.permission-changed",
+            LibraryAttachFindingCode.PermissionWriteFailed => "library-attach.permission-write-failed",
             LibraryAttachFindingCode.InvalidInput => "library-attach.invalid-input",
             LibraryAttachFindingCode.InvalidId => "library-attach.invalid-id",
             LibraryAttachFindingCode.RecordInvalid => "library-attach.record-invalid",

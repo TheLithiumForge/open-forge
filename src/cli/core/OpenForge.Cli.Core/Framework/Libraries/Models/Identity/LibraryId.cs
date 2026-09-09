@@ -45,7 +45,7 @@ internal sealed record WorkspaceRelativeDirectory
     internal string Value { get; }
 
     internal static WorkspaceRelativeDirectory Create(string value)
-        => new(PortableRelativePath.Validate(value, nameof(value), requireAgentsPrefix: false));
+        => new(PortableRelativePath.Validate(value, nameof(value)));
 }
 
 internal sealed record SourceRelativeEligiblePath
@@ -58,7 +58,7 @@ internal sealed record SourceRelativeEligiblePath
     internal string Value { get; }
 
     internal static SourceRelativeEligiblePath Create(string value)
-        => new(PortableRelativePath.Validate(value, nameof(value), requireAgentsPrefix: true));
+        => new(PortableRelativePath.Validate(value, nameof(value)));
 }
 
 internal sealed record WorkspaceRelativeEligiblePath
@@ -74,7 +74,7 @@ internal sealed record WorkspaceRelativeEligiblePath
         => CanonicalRelativePath.Create(Value);
 
     internal static WorkspaceRelativeEligiblePath Create(string value)
-        => new(PortableRelativePath.Validate(value, nameof(value), requireAgentsPrefix: true));
+        => new(PortableRelativePath.Validate(value, nameof(value)));
 }
 
 internal sealed record RawRelativeLinkTarget

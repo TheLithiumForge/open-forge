@@ -46,7 +46,7 @@ internal static class LibrarySyncBinding
                 WorkspaceRequirement = CliWorkspaceRequirement.Required,
                 Binder = (parse, invocation) => LibrarySyncRequestBinder.Bind(parse, invocation, symbols),
                 InvalidResultFactory = LibrarySyncRequestBinder.CreateInvalid,
-                Operation = LibrarySyncOperation.ExecuteAsync,
+                Operation = components.Operation.ExecuteAsync,
                 Renderers = components.Renderers,
             });
     }

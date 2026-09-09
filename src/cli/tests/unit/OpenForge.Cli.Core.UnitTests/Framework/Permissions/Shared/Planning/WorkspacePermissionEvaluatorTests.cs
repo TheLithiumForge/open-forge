@@ -14,7 +14,7 @@ public sealed class WorkspacePermissionEvaluatorTests
     {
         var document = new WorkspacePermissionDocument(
             Extensions: [new("team", [".apm/a.md"])],
-            Libraries: [new("team", "shared/original", [".apm/a.md"])]);
+            Libraries: [new("team", "shared/original", [".apm/a.md"], Directories: [])]);
         ImmutableArray<WorkspacePermissionRequirement> required =
         [
             new(new ExtensionPermissionSubject("team"), ".apm/b.md"),
@@ -54,7 +54,7 @@ public sealed class WorkspacePermissionEvaluatorTests
     {
         var document = new WorkspacePermissionDocument(
             Extensions: [new("team", ["a.txt"]), new("other", ["keep.txt"])],
-            Libraries: [new("team", "shared/team", ["linked.txt"])]);
+            Libraries: [new("team", "shared/team", ["linked.txt"], Directories: [])]);
 
         var result = WorkspacePermissionEvaluator.Grant(
             document,
@@ -100,7 +100,7 @@ public sealed class WorkspacePermissionEvaluatorTests
     {
         var document = new WorkspacePermissionDocument(
             Extensions: [new("team", ["owned.txt"])],
-            Libraries: [new("team", "shared/team", ["a.txt"])]);
+            Libraries: [new("team", "shared/team", ["a.txt"], Directories: [])]);
 
         var granted = WorkspacePermissionEvaluator.Grant(document,
             [new(new LibraryPermissionSubject("team", "shared/team"), "b.txt"),
@@ -112,5 +112,96 @@ public sealed class WorkspacePermissionEvaluatorTests
         Assert.Throws<InvalidOperationException>(() => WorkspacePermissionEvaluator.Grant(document,
             [new(new LibraryPermissionSubject("team", "shared/rebound"), "b.txt")]));
         Assert.Equal(["a.txt"], Assert.Single(document.Libraries).Paths);
+    }
+
+    [Theory]
+    [InlineData("docs/a.md", true), InlineData("docs/future/nested.md", true), InlineData("DOCS/A.md", true)]
+    [InlineData("docs", false), InlineData("docs-other/a.md", false), InlineData("other/a.md", false)]
+    public void LibraryDirectoryGrantUsesPortableDescendantSegments(string path, bool covered)
+    {
+        var document = new WorkspacePermissionDocument([], [new("team", "shared/team", [], ["docs"])]);
+
+        var result = WorkspacePermissionEvaluator.Evaluate(document,
+            [new(new LibraryPermissionSubject("team", "shared/team"), path)]);
+
+        Assert.Equal(covered ? WorkspacePermissionDecision.Granted : WorkspacePermissionDecision.Required, result.Decision);
+        Assert.Equal(covered ? 0 : 1, result.Missing.Length);
+    }
+
+    [Fact]
+    public void DirectoryScopeNeverCrossesSubjectOrSourceIdentity()
+    {
+        var document = new WorkspacePermissionDocument([], [new("team", "shared/team", [], ["docs"])]);
+        ImmutableArray<WorkspacePermissionRequirement> required =
+        [
+            new(new ExtensionPermissionSubject("team"), "docs/a.md"),
+            new(new LibraryPermissionSubject("other", "shared/team"), "docs/a.md"),
+            new(new LibraryPermissionSubject("team", "shared/new"), "docs/a.md"),
+        ];
+
+        var result = WorkspacePermissionEvaluator.Evaluate(document, required);
+
+        Assert.Equal(3, result.Missing.Length);
+        Assert.Equal(WorkspacePermissionDecision.Required, result.Decision);
+    }
+
+    [Theory]
+    [InlineData(false), InlineData(true)]
+    public void ExplicitLibraryGrantPreservesSameSourceAndReplacesOnlyReboundSubject(bool rebind)
+    {
+        var document = new WorkspacePermissionDocument([new("team", ["extension.txt"])],
+            [new("other", "shared/other", ["other.txt"], ["other"]), new("team", "shared/old", ["old.txt"], ["old"])]);
+        var subject = new LibraryPermissionSubject("team", rebind ? "shared/new" : "shared/old");
+        var change = new LibraryPermissionGrantChange
+        {
+            Subject = subject,
+            PreviousSourceRoot = rebind ? "shared/old" : null,
+            ApprovedScopes = [new(subject, LibraryPermissionScopeKind.Directory, "docs")],
+        };
+
+        var result = WorkspacePermissionEvaluator.GrantLibrary(document, change);
+
+        var selected = Assert.Single(result.Libraries, value => value.Id == "team");
+        string[] expectedPaths = rebind ? [] : ["old.txt"];
+        string[] expectedDirectories = rebind ? ["docs"] : ["docs", "old"];
+        Assert.Equal(subject.SourceRoot, selected.SourceRoot);
+        Assert.Equal(expectedPaths, selected.Paths);
+        Assert.Equal(expectedDirectories, selected.Directories);
+        Assert.Equal(document.Extensions, result.Extensions);
+        Assert.Equal(document.Libraries[0], result.Libraries[0]);
+        Assert.Equal(["old.txt"], document.Libraries[1].Paths);
+        Assert.Equal(["old"], document.Libraries[1].Directories);
+    }
+
+    [Fact]
+    public void LibraryGrantRequiresExplicitAccurateRebindingAuthority()
+    {
+        var document = new WorkspacePermissionDocument([], [new("team", "shared/old", [], ["old"])]);
+        var subject = new LibraryPermissionSubject("team", "shared/new");
+        var change = new LibraryPermissionGrantChange
+        {
+            Subject = subject,
+            PreviousSourceRoot = null,
+            ApprovedScopes = [new(subject, LibraryPermissionScopeKind.File, "README.md")],
+        };
+
+        Assert.Throws<InvalidOperationException>(() => WorkspacePermissionEvaluator.GrantLibrary(document, change));
+        Assert.Throws<InvalidOperationException>(() => WorkspacePermissionEvaluator.GrantLibrary(document,
+            change with { PreviousSourceRoot = "shared/unrelated" }));
+    }
+
+    [Fact]
+    public void UndefinedScopeCannotBeRememberedAsAFileOrDirectoryGrant()
+    {
+        var subject = new LibraryPermissionSubject("team", "shared/team");
+        var change = new LibraryPermissionGrantChange
+        {
+            Subject = subject,
+            PreviousSourceRoot = null,
+            ApprovedScopes = [new(subject, (LibraryPermissionScopeKind)int.MaxValue, "docs")],
+        };
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => WorkspacePermissionEvaluator.GrantLibrary(
+            new WorkspacePermissionDocument([], []), change));
     }
 }

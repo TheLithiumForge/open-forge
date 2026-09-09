@@ -18,7 +18,7 @@ public sealed class LibraryInspectPresentationTests
         var result = root.GetProperty("result");
         LibraryReadPresentationAssertions.Members(result, "record", "source", "projection", "findings");
         var record = result.GetProperty("record");
-        LibraryReadPresentationAssertions.Members(record, "path", "state", "id", "sourceRoot", "registeredPaths");
+        LibraryReadPresentationAssertions.Members(record, "path", "state", "id", "sourceRoot", "destinationRoot", "registeredPaths");
         Assert.Equal("team-knowledge", record.GetProperty("id").GetString());
         var registered = Assert.Single(record.GetProperty("registeredPaths").EnumerateArray());
         LibraryReadPresentationAssertions.Members(registered, "sourcePath", "destinationPath", "expectedRelativeLink", "sourceId");
@@ -53,7 +53,7 @@ public sealed class LibraryInspectPresentationTests
             Workspace = null,
             Result = seed.Result with
             {
-                Record = seed.Result.Record with { Id = null, SourceRoot = null, RegisteredPaths = [] },
+                Record = seed.Result.Record with { Id = null, SourceRoot = null, DestinationRoot = null, RegisteredPaths = [] },
                 Source = seed.Result.Source with { EligiblePaths = [] },
                 Projection = seed.Result.Projection with { Comparisons = [] },
             },

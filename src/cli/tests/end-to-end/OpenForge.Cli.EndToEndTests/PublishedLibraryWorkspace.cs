@@ -59,12 +59,22 @@ internal sealed class PublishedLibraryWorkspace : IDisposable
     }
 
     internal void Record(params string[] paths)
+        => RecordAt(".", paths);
+
+    internal void RecordAt(string destinationRoot, params string[] paths)
     {
         var pathArray = string.Join(",", paths.Order(StringComparer.Ordinal).Select(path => $"\"{path}\""));
         Write(RecordPath, $$"""
-            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":[{{pathArray}}]}]}
+            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":"{{destinationRoot}}","paths":[{{pathArray}}]}]}
             """);
     }
+
+    internal void GrantDocs()
+        => Write(".agents/open-forge.permissions.json", """
+            {"schemaVersion":1,"extensions":[],"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":[],"directories":["docs"]}]}
+            """);
+
+    internal void MappedLink(string path, string target) => _workspace.CreateFileSymbolicLink(path, target);
 
     internal IReadOnlyDictionary<string, string> Snapshot()
     {

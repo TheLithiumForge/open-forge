@@ -26,6 +26,12 @@ internal static class LibraryAttachBinding
             Arity = ArgumentArity.ZeroOrOne,
         };
         command.Arguments.Add(sourceRoot);
+        var destinationRoot = new Option<string?>(LibraryDefinitions.DestinationRoot.Name)
+        {
+            Description = LibraryDefinitions.DestinationRoot.Description,
+            Arity = ArgumentArity.ExactlyOne,
+        };
+        command.Options.Add(destinationRoot);
         var dryRun = new Option<bool>(LibraryDefinitions.DryRun.Name)
         {
             Description = LibraryDefinitions.DryRun.Description,
@@ -38,6 +44,7 @@ internal static class LibraryAttachBinding
             Command = command,
             LibraryId = libraryId,
             SourceRoot = sourceRoot,
+            DestinationRoot = destinationRoot,
             DryRun = dryRun,
         };
     }
@@ -53,7 +60,7 @@ internal static class LibraryAttachBinding
                 WorkspaceRequirement = CliWorkspaceRequirement.Required,
                 Binder = (parse, invocation) => LibraryAttachRequestBinder.Bind(parse, invocation, symbols),
                 InvalidResultFactory = LibraryAttachRequestBinder.CreateInvalid,
-                Operation = LibraryAttachOperation.ExecuteAsync,
+                Operation = components.Operation.ExecuteAsync,
                 Renderers = components.Renderers,
             });
     }

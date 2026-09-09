@@ -139,10 +139,11 @@ public sealed class LibrarySyncApplicationIntegrationTests
             GeneratedRegionChanges = [],
         };
         var intendedBytes = Encoding.UTF8.GetBytes("""
-            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":[".agents/directives/review.md"]}]}
+            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/directives/review.md"]}]}
             """);
         return new LibrarySyncPlan
         {
+            Permissions = null,
             Input = input,
             State = LibraryPlanState.Complete,
             Directories = [],

@@ -13,7 +13,7 @@ public sealed class LibraryExtensionInstallOwnershipIntegrationTests
         using var source = ExtensionInstallCatalogue.Create("library-extension-install-source");
         source.AddPackage("toolkit", [], (targetPath, "Extension-owned bytes."));
         workspace.CreateOccupant(".agents/open-forge.libraries.json", """
-            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":[".agents/toolkit/note.md"]}]}
+            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/toolkit/note.md"]}]}
             """);
         var before = workspace.Snapshot();
         var sourceBefore = source.Snapshot();

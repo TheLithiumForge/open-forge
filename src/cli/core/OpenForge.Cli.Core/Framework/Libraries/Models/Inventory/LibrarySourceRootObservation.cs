@@ -18,17 +18,9 @@ internal sealed record LibrarySourceRootObservation
     public required string? PhysicalSourceRoot { get; init; }
     public required bool? LexicallyContained { get; init; }
     public required bool? PhysicallyContained { get; init; }
-    public required string? PhysicalAgentsDirectory { get; init; }
-    public required bool? PhysicallyDisjoint { get; init; }
-    public required LibrarySourceRootCondition Condition { get; init; }
     public required string? Cause { get; init; }
 }
 
-internal enum LibrarySourceRootCondition
-{
-    None,
-    RequiredAgentsMissing,
-}
 
 internal enum LibraryInventoryExclusionKind
 {

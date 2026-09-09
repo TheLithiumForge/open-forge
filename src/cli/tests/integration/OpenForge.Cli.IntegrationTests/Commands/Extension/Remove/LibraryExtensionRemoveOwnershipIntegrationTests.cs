@@ -13,7 +13,7 @@ public sealed class LibraryExtensionRemoveOwnershipIntegrationTests
     private const string SourceTarget = "shared/team-knowledge/.agents/toolkit/note.md";
     private const string Body = "---\nopen-forge:\n  description: Note\n  tags: [Toolkit]\n---\n# Note\n\nPreserve source bytes.\n";
     private const string Record = """
-        {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":[".agents/toolkit/note.md"]}]}
+        {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/toolkit/note.md"]}]}
         """;
 
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]

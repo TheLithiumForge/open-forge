@@ -58,6 +58,7 @@ internal static class LibraryListResultFixture
                     {
                         Id = "team-knowledge",
                         SourceRoot = "shared/team",
+            DestinationRoot = ".",
                         SourceRootState = LibrarySourceRootViewState.Available,
                         Paths =
                         [

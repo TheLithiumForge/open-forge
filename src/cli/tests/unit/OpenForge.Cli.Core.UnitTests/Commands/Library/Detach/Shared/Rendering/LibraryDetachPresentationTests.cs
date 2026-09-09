@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Detach.Shared.Rendering;
@@ -64,6 +65,7 @@ public sealed class LibraryDetachPresentationTests
             Next = null,
             Result = new LibraryDetachPayload
             {
+                Permissions = LibraryPermissionView.NotEvaluated(),
                 Identity = LibraryMutationPresentationData.Identity(true),
                 Record = LibraryMutationPresentationData.Record(),
                 Projection = LibraryMutationPresentationData.Projection(),

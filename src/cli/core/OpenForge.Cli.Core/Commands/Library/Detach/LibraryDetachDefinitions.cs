@@ -10,6 +10,12 @@ internal static class LibraryDetachDefinitions
     internal static string ReadFindingCode(LibraryDetachFindingCode value)
         => value switch
         {
+            LibraryDetachFindingCode.PermissionRequired => "library-detach.permission-required",
+            LibraryDetachFindingCode.PermissionDeclined => "library-detach.permission-declined",
+            LibraryDetachFindingCode.PermissionInvalid => "library-detach.permission-invalid",
+            LibraryDetachFindingCode.PermissionUnavailable => "library-detach.permission-unavailable",
+            LibraryDetachFindingCode.PermissionChanged => "library-detach.permission-changed",
+            LibraryDetachFindingCode.PermissionWriteFailed => "library-detach.permission-write-failed",
             LibraryDetachFindingCode.InvalidInput => "library-detach.invalid-input",
             LibraryDetachFindingCode.InvalidId => "library-detach.invalid-id",
             LibraryDetachFindingCode.RecordInvalid => "library-detach.record-invalid",

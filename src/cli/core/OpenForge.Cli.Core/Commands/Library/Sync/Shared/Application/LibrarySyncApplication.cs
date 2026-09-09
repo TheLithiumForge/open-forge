@@ -14,13 +14,14 @@ internal static class LibrarySyncApplication
         var run = await LibraryMutationApplicationRunner.ApplyAsync(
             new LibraryMutationApplicationRequest
             {
+                Permissions = input.Plan.Permissions,
                 Lease = input.Lease,
                 Directories = input.Plan.Directories,
                 Links = input.Plan.Links,
                 GeneratedRegions = input.Plan.GeneratedRegions,
                 RecordChange = input.Plan.RecordChange,
                 RecoveryPreparation = input.RecoveryPreparation,
-                ProtectedSourceRoots = [input.Plan.Input.Source.Source.Request.SourceRoot],
+                ProtectedSourceRoots = [.. (input.Plan.Input.Record.Record?.Libraries ?? []).Select(library => library.SourceRoot)],
             },
             cancellationToken).ConfigureAwait(false);
         return new LibrarySyncApplicationOutcome

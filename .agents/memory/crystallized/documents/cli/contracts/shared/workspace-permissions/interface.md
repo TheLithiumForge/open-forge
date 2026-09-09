@@ -7,16 +7,16 @@ open-forge:
 # Workspace Permissions Interface
 
 These are accepted current contracts for the replacement CLI, which does not
-ship yet. The consuming Extension Install, Update and Remove contracts select
-this capability. Library grants have a defined document representation; Library
-projection behavior remains governed by its separate command contracts.
+ship yet. The consuming Extension Install, Update and Remove and Library Attach, Sync
+and Detach contracts select this capability. Explicit Library recovery checks
+current grants without prompting or publishing them.
 
 ## Permission Document
 
 The consumer owns `.agents/open-forge.permissions.json`. Schema version 1 has
 exactly `schemaVersion`, `extensions` and `libraries` at the root. Both arrays
 are required. Each Extension entry contains exactly `id` and `paths`; each
-Library entry contains exactly `id`, `sourceRoot` and `paths`. IDs retain their
+Library entry contains exactly `id`, `sourceRoot`, `paths` and `directories`. IDs retain their
 existing command grammars. Library source roots retain the accepted contained
 workspace-relative grammar. The document is independent of ownership records.
 
@@ -29,11 +29,16 @@ final LF. A write preserves unrelated valid grants semantically. The recovery
 bundle preserves exact prior bytes, including formatting. No comments or
 trailing commas are supported.
 
-A grant names one canonical, portable, workspace-relative file outside
+An exact `paths` grant names one canonical, portable, workspace-relative file outside
 `.agents/`. No absolute, empty, parent, dot, backslash, wildcard, trailing slash,
 non-NFC, device-name or trailing-dot/space alias is accepted. Portable identity
 uses the existing invariant case-insensitive target key; divergent spellings of
-one portable path are rejected within an entry. A directory grant is invalid.
+one portable path are rejected within an entry. Extension directory grants are invalid. Library `directories` contains canonical
+external directories; a grant covers future descendant file leaves, never the
+directory itself. `.` and empty/workspace-root grants are invalid. File and
+directory scopes retain their separate kinds, with unique portable identity
+within each array. Canonical writes sort both arrays. The mandatory Library
+`directories` member has no old-format default or compatibility branch.
 The document cannot grant ownership, force, source selection, executable trust,
 or permission to mutate a Library source. Extension and Library identities are
 different subjects even when their IDs match. A Library grant binds sourceRoot.
@@ -44,6 +49,26 @@ Commands requiring no external destination do not depend on this document.
 Read-only commands do not prompt or change it. A package's own permission file
 is content and cannot supply consumer approval; its control-file destination is
 reserved and cannot be installed.
+
+## Library Scope And Rebinding Coordinates
+
+Library command results retain concrete required/missing destination leaves,
+adding `sourceRoot` to each Library `{id, sourceRoot, path}` leaf. Their
+`proposedScopes` and `approvedScopes` arrays contain `{id, sourceRoot, kind,
+path}`, with kind `file` or `directory`. A directory scope includes all future
+descendant files; concrete leaf arrays never stand in for that broader approval.
+Order by ordinal ID, source root, path and kind. Empty arrays remain present.
+
+A nullable `rebinding` object contains `previousSourceRoot` and `sourceRoot`
+when a selected ID has grants bound to another source. It describes the proposed
+subject replacement, not its completion. Explicit Yes populates approved scopes;
+only the verified permission outcome proves they were saved. Approval replaces
+old-source grants only with the displayed newly approved scopes. It preserves
+same-source existing grants and all unrelated subjects. No grant is silently
+transferred between source roots.
+
+Extension result objects and their exact-file grammar remain unchanged. Each
+Library command declares the location and order of its extended result object.
 
 ## Result Coordinates
 

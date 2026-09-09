@@ -14,6 +14,41 @@ public sealed class WorkspacePermissionChangePlannerTests
 {
     [Theory]
     [InlineData(false), InlineData(true)]
+    public void ExplicitLibraryScopesPlanOneOrdinaryFileChangeWithExactPriorState(bool present)
+    {
+        var path = Path.GetFullPath(Path.Combine("permission-unit", ".agents", "open-forge.permissions.json"));
+        const string original = "{ \"schemaVersion\":1,\"extensions\":[{\"id\":\"keep\",\"paths\":[\"keep.txt\"]}],\"libraries\":[] }\r\n";
+        var document = present ? new WorkspacePermissionDocument([new("keep", ["keep.txt"])], []) : WorkspacePermissionDocument.Empty;
+        var snapshot = present ? FileStateSnapshot.File(path, path, Encoding.UTF8.GetBytes(original)) : FileStateSnapshot.Missing(path);
+        var observation = new WorkspacePermissionRead(present ? WorkspacePermissionReadState.Complete : WorkspacePermissionReadState.Missing,
+            document, snapshot, Cause: null);
+        var subject = new LibraryPermissionSubject("team", "shared/team");
+        var approval = new LibraryPermissionGrantChange
+        {
+            Subject = subject,
+            PreviousSourceRoot = null,
+            ApprovedScopes = [new(subject, LibraryPermissionScopeKind.Directory, "docs"), new(subject, LibraryPermissionScopeKind.File, "README.md")],
+        };
+
+        var change = Assert.IsType<PlannedFileChange>(WorkspacePermissionChangePlanner.PlanLibrary(new(observation, approval)));
+
+        Assert.Equal(present ? PlannedFileChangeKind.Replace : PlannedFileChangeKind.Create, change.Kind);
+        Assert.Equal(snapshot.Expectation, change.Expectation);
+        using var json = JsonDocument.Parse(change.IntendedBytes.AsMemory());
+        var library = Assert.Single(json.RootElement.GetProperty("libraries").EnumerateArray());
+        Assert.Equal("team", library.GetProperty("id").GetString());
+        Assert.Equal("shared/team", library.GetProperty("sourceRoot").GetString());
+        Assert.Equal("README.md", Assert.Single(library.GetProperty("paths").EnumerateArray()).GetString());
+        Assert.Equal("docs", Assert.Single(library.GetProperty("directories").EnumerateArray()).GetString());
+        Assert.Equal(present ? 1 : 0, json.RootElement.GetProperty("extensions").GetArrayLength());
+        if (present)
+        {
+            Assert.Equal(original, Encoding.UTF8.GetString(snapshot.Bytes.AsSpan()));
+        }
+    }
+
+    [Theory]
+    [InlineData(false), InlineData(true)]
     public void ApprovedGrantPreservesExactPriorExpectationAndUnrelatedPermission(bool present)
     {
         var path = Path.GetFullPath(Path.Combine("permission-unit", ".agents", "open-forge.permissions.json"));

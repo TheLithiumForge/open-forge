@@ -10,7 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Libraries.Shared.Record;
 public sealed class LibrariesRecordCodecTests
 {
     private const string ValidRecord = """
-        {"schemaVersion":1,"libraries":[{"id":"team","sourceRoot":"shared/team","paths":[".agents/directives/a.md",".agents/notes/z.txt"]}]}
+        {"schemaVersion":1,"libraries":[{"id":"team","sourceRoot":"shared/team","destinationRoot":".","paths":[".agents/directives/a.md",".agents/notes/z.txt"]}]}
         """;
 
     [Theory(DisplayName = "Strict Library decoding accepts only the complete schema-v1 record")]
@@ -54,7 +54,7 @@ public sealed class LibrariesRecordCodecTests
                 records.Add(ValidRecord.Insert(1, extra));
             }
 
-            foreach (var property in new[] { "\"id\":\"team\"", "\"sourceRoot\":\"shared/team\"", "\"paths\":[\".agents/directives/a.md\",\".agents/notes/z.txt\"]" })
+            foreach (var property in new[] { "\"id\":\"team\"", "\"sourceRoot\":\"shared/team\"", "\"destinationRoot\":\".\"", "\"paths\":[\".agents/directives/a.md\",\".agents/notes/z.txt\"]" })
             {
                 records.Add(ValidRecord.Replace(property, $"{property},{property}", StringComparison.Ordinal));
                 records.Add(ValidRecord.Replace(property, $"{property},\"extra\":0", StringComparison.Ordinal));
@@ -65,7 +65,7 @@ public sealed class LibrariesRecordCodecTests
                 }
             }
 
-            records.Add("{\"schemaVersion\":1,\"libraries\":[{\"sourceRoot\":\"shared/team\",\"paths\":[]}]}");
+            records.Add("{\"schemaVersion\":1,\"libraries\":[{\"sourceRoot\":\"shared/team\",\"destinationRoot\":\".\",\"paths\":[]}]}");
             records.Add("{\"schemaVersion\":1,\"libraries\":[{\"id\":\"team\",\"paths\":[]}]}");
             records.Add("{\"schemaVersion\":1,\"libraries\":[{\"id\":\"team\",\"sourceRoot\":\"shared/team\"}]}");
             foreach (var invalidPaths in new[] { "[null]", "[1]", "[true]", "[{}]", "\"path\"", "[\".agents/z.md\",\".agents/a.md\"]", "[\".agents/a.md\",\".agents/a.md\"]" })
@@ -85,7 +85,7 @@ public sealed class LibrariesRecordCodecTests
 
             foreach (var path in new[]
             {
-                "notes/a.md", ".agents", ".agents/../a.md", ".agents//a.md", ".agents/a.md/",
+                "../a.md", ".", ".agents/../a.md", ".agents//a.md", ".agents/a.md/",
                 ".agents/loader.md", ".agents/open-forge.libraries.json", ".agents/directives/_directives.md", ".agents/directives/a.overwrite.md",
             })
             {
@@ -94,10 +94,18 @@ public sealed class LibrariesRecordCodecTests
 
             foreach (var ids in new[] { new[] { "z", "a" }, ["a", "a"] })
             {
-                records.Add($"{{\"schemaVersion\":1,\"libraries\":[{{\"id\":\"{ids[0]}\",\"sourceRoot\":\"one\",\"paths\":[]}},{{\"id\":\"{ids[1]}\",\"sourceRoot\":\"two\",\"paths\":[]}}]}}");
+                records.Add($$"""
+                    {"schemaVersion":1,"libraries":[
+                     {"id":"{{ids[0]}}","sourceRoot":"one","destinationRoot":".","paths":[]},
+                     {"id":"{{ids[1]}}","sourceRoot":"two","destinationRoot":".","paths":[]}]}
+                    """);
             }
 
-            records.Add("{\"schemaVersion\":1,\"libraries\":[{\"id\":\"a\",\"sourceRoot\":\"one\",\"paths\":[\".agents/a.md\"]},{\"id\":\"b\",\"sourceRoot\":\"two\",\"paths\":[\".agents/a.md\"]}]}");
+            records.Add("""
+                {"schemaVersion":1,"libraries":[
+                 {"id":"a","sourceRoot":"one","destinationRoot":".","paths":[".agents/a.md"]},
+                 {"id":"b","sourceRoot":"two","destinationRoot":".","paths":[".agents/a.md"]}]}
+                """);
             return records;
         }
     }
@@ -116,9 +124,9 @@ public sealed class LibrariesRecordCodecTests
     public void WritesExactDeterministicSchema()
     {
         var record = LibrariesRecord.Create([
-            LibraryRecord.Create(LibraryId.Create("a"), WorkspaceRelativeDirectory.Create("shared/a"),
+            LibraryRecord.Create(LibraryId.Create("a"), WorkspaceRelativeDirectory.Create("shared/a"), LibraryDestinationRoot.Create("."),
                 [SourceRelativeEligiblePath.Create(".agents/a.md"), SourceRelativeEligiblePath.Create(".agents/z.md")]),
-            LibraryRecord.Create(LibraryId.Create("b"), WorkspaceRelativeDirectory.Create("shared/b"), []),
+            LibraryRecord.Create(LibraryId.Create("b"), WorkspaceRelativeDirectory.Create("shared/b"), LibraryDestinationRoot.Create("."), []),
         ]);
 
         var bytes = LibrariesRecordCodec.Write(record);
@@ -129,9 +137,30 @@ public sealed class LibrariesRecordCodecTests
         Assert.Equal(1, json.RootElement.GetProperty("schemaVersion").GetInt32());
         var libraries = json.RootElement.GetProperty("libraries").EnumerateArray().ToArray();
         Assert.Equal(["a", "b"], libraries.Select(library => library.GetProperty("id").GetString()));
-        Assert.All(libraries, library => Assert.Equal(["id", "sourceRoot", "paths"], library.EnumerateObject().Select(property => property.Name)));
+        Assert.All(libraries, library => Assert.Equal(["id", "sourceRoot", "destinationRoot", "paths"], library.EnumerateObject().Select(property => property.Name)));
         Assert.Equal("shared/a", libraries[0].GetProperty("sourceRoot").GetString());
         Assert.Equal([".agents/a.md", ".agents/z.md"], libraries[0].GetProperty("paths").EnumerateArray().Select(path => path.GetString()));
         Assert.Empty(libraries[1].GetProperty("paths").EnumerateArray());
+    }
+
+    [Fact]
+    public void MappedRecordKeepsSourceSuffixSeparateFromDestinationRoot()
+    {
+        const string json = """{"schemaVersion":1,"libraries":[{"id":"team","sourceRoot":"shared/team","destinationRoot":"docs","paths":["README.md","nested/_nested.md"]}]}""";
+
+        var read = LibrariesRecordCodec.Read(Encoding.UTF8.GetBytes(json));
+
+        Assert.Equal(LibrariesRecordReadState.Complete, read.State);
+        var library = Assert.Single(Assert.IsType<LibrariesRecord>(read.Record).Libraries);
+        Assert.Equal("docs", library.DestinationRoot.Value);
+        Assert.Equal(["README.md", "nested/_nested.md"], library.Paths.Select(value => value.Value));
+    }
+
+    [Fact]
+    public void MissingDestinationRootCannotReadAsImplicitLegacyRoot()
+    {
+        const string json = """{"schemaVersion":1,"libraries":[{"id":"team","sourceRoot":"shared/team","paths":[]}]}""";
+
+        Assert.Equal(LibrariesRecordReadState.Malformed, LibrariesRecordCodec.Read(Encoding.UTF8.GetBytes(json)).State);
     }
 }

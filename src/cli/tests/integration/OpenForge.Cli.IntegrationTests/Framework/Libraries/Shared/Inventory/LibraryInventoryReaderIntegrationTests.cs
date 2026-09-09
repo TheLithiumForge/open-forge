@@ -11,12 +11,14 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Libraries.Shared.Inventory;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryInventoryReaderIntegrationTests
 {
-    [Fact(DisplayName = "Library inventory is complete deterministic dot-agents-only ordinary files excluding controls and links")]
+    [Fact(DisplayName = "Library inventory includes opaque external files and excludes dot-agents controls and links")]
     public async Task InventoriesAllEligibleFilesWithoutTraversingExcludedObjects()
     {
         using var temporary = TemporaryWorkspace.Create("library-inventory");
         var source = CreateSource(temporary);
-        temporary.CreateFile("shared/team/README.md", "outside agents");
+        temporary.CreateFile("shared/team/README.md", "ordinary root content");
+        temporary.CreateFile("shared/team/docs/_docs.md", "opaque external entrypoint name");
+        temporary.CreateFile("shared/team/docs/a.overwrite.md", "opaque external companion name");
         temporary.CreateFile("shared/team/.agents/z.txt", "z");
         var ordinary = temporary.CreateFile("shared/team/.agents/directives/a.md", "a");
         var controls = new[] { "loader.md", "open-forge.libraries.json", "open-forge.lifecycle.json", "directives/_directives.md", "directives/a.overwrite.md" };
@@ -35,7 +37,7 @@ public sealed class LibraryInventoryReaderIntegrationTests
 
         var inventory = Assert.IsType<LibraryInventory>(result.Inventory);
         Assert.Equal(LibraryInventoryState.Complete, inventory.State);
-        Assert.Equal([".agents/directives/a.md", ".agents/z.txt"], inventory.Entries.Select(entry => entry.SourcePath.Value));
+        Assert.Equal([".agents/directives/a.md", ".agents/z.txt", "README.md", "docs/_docs.md", "docs/a.overwrite.md"], inventory.Entries.Select(entry => entry.SourcePath.Value));
         Assert.Equal(ordinary, inventory.Entries[0].PhysicalPath);
         Assert.Equal(inventory.Entries, Assert.IsType<LibraryInventory>(repeated.Inventory).Entries);
         Assert.Empty(result.UnavailablePaths);
@@ -48,7 +50,7 @@ public sealed class LibraryInventoryReaderIntegrationTests
         Assert.Equal(before, await File.ReadAllBytesAsync(ordinary, TestContext.Current.CancellationToken));
     }
 
-    [Fact(DisplayName = "An ordinary empty source dot-agents directory produces a complete empty inventory")]
+    [Fact(DisplayName = "An ordinary empty source root produces a complete empty inventory")]
     public async Task DistinguishesEmptyFromUnavailable()
     {
         using var temporary = TemporaryWorkspace.Create("library-inventory-empty");
@@ -68,12 +70,12 @@ public sealed class LibraryInventoryReaderIntegrationTests
     {
         using var temporary = TemporaryWorkspace.Create("library-inventory-race");
         var source = CreateSource(temporary);
-        var agents = temporary.Combine("shared/team/.agents");
-        Directory.Delete(agents);
+        var agents = temporary.Combine("shared/team");
+        Directory.Delete(agents, recursive: true);
         if (replaceWithLink)
         {
             temporary.CreateDirectory("elsewhere");
-            Directory.CreateSymbolicLink(agents, "../../elsewhere");
+            Directory.CreateSymbolicLink(agents, "../elsewhere");
         }
 
         try
@@ -154,7 +156,7 @@ public sealed class LibraryInventoryReaderIntegrationTests
     {
         temporary.CreateDirectory(".agents");
         var physical = temporary.CreateDirectory("shared/team");
-        var agents = temporary.CreateDirectory("shared/team/.agents");
+        _ = temporary.CreateDirectory("shared/team/.agents");
         return new LibrarySourceRootObservation
         {
             Request = new LibrarySourceRootRequest
@@ -167,9 +169,6 @@ public sealed class LibraryInventoryReaderIntegrationTests
             PhysicalSourceRoot = physical,
             LexicallyContained = true,
             PhysicallyContained = true,
-            PhysicalAgentsDirectory = agents,
-            PhysicallyDisjoint = true,
-            Condition = LibrarySourceRootCondition.None,
             Cause = null,
         };
     }

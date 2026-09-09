@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Library.Attach.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Libraries;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
@@ -81,7 +82,14 @@ internal static class LibraryAttachPlanner
         }
 
         var entries = ReadSource(input, findings);
-        var destinationPaths = entries.Select(entry => entry.SourcePath.Value).ToImmutableArray();
+        var newLibrary = LibraryRecord.Create(input.Request.LibraryId, input.Request.SourceRoot,
+            input.Request.DestinationRoot, [.. entries.Select(entry => entry.SourcePath)]);
+        var destinationPaths = LibraryPathIdentity.Mappings(newLibrary).Select(mapping => mapping.DestinationPath.Value).ToImmutableArray();
+        if (LibraryDestinationPolicy.FindConflict(input.Request.Workspace, newLibrary, currentRecord, RelativePaths(input)) is { } conflict)
+        {
+            Add(findings, LibraryAttachFindingCode.DestinationCollision, CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value, conflict, "The Library destination is protected, source-owned, or registered to another Library.");
+        }
         if (LibraryMutationPlanningPolicy.HasDestinationAlias(input.Request.Workspace, destinationPaths))
         {
             Add(findings, LibraryAttachFindingCode.DestinationCollision, CliSemanticStatus.Blocked,
@@ -124,16 +132,13 @@ internal static class LibraryAttachPlanner
             return Empty(input, state, findings);
         }
 
-        var newLibrary = LibraryRecord.Create(
-            input.Request.LibraryId,
-            input.Request.SourceRoot,
-            [.. entries.Select(entry => entry.SourcePath)]);
         var intendedRecord = LibrariesRecord.Create(
             [.. (currentRecord?.Libraries ?? []).Append(newLibrary)
                 .OrderBy(library => library.Id.Value, StringComparer.Ordinal)]);
         var intendedBytes = LibrariesRecordCodec.Write(intendedRecord);
         return new LibraryAttachPlan
         {
+            Permissions = null,
             Input = input,
             State = LibraryPlanState.Complete,
             Directories = boundary.Directories,
@@ -279,7 +284,7 @@ internal static class LibraryAttachPlanner
         EligibleSourceFile entry,
         LibraryMappingObservation observation)
     {
-        var expected = LibraryMapping.Create(input.Request.SourceRoot, entry.SourcePath);
+        var expected = LibraryMapping.Create(input.Request.SourceRoot, input.Request.DestinationRoot, entry.SourcePath);
         return observation.Mapping.SourcePath == expected.SourcePath
             && observation.Mapping.DestinationPath == expected.DestinationPath
             && observation.Mapping.ExpectedRelativeLink == expected.ExpectedRelativeLink;
@@ -291,11 +296,15 @@ internal static class LibraryAttachPlanner
             change.LogicalPath).Replace(Path.DirectorySeparatorChar, '/'));
 
     private static LibraryPlanState PlanState(IEnumerable<LibraryAttachFinding> findings)
-        => findings.Any(finding => finding.Status is CliSemanticStatus.Blocked or CliSemanticStatus.Invalid)
-            ? LibraryPlanState.Blocked
-            : findings.Any(finding => finding.Status == CliSemanticStatus.Incomplete)
-                ? LibraryPlanState.Incomplete
-                : LibraryPlanState.Complete;
+    {
+        if (findings.Any(finding => finding.Status is CliSemanticStatus.Blocked or CliSemanticStatus.Invalid))
+        {
+            return LibraryPlanState.Blocked;
+        }
+        return findings.Any(finding => finding.Status == CliSemanticStatus.Incomplete)
+            ? LibraryPlanState.Incomplete
+            : LibraryPlanState.Complete;
+    }
 
     private static LibraryAttachPlan Empty(
         LibraryAttachPlanningInput input,
@@ -303,6 +312,7 @@ internal static class LibraryAttachPlanner
         ImmutableArray<LibraryAttachFinding>.Builder findings)
         => new()
         {
+            Permissions = null,
             Input = input,
             State = state,
             Directories = [],

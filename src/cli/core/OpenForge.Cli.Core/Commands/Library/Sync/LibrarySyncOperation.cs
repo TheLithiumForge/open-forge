@@ -1,3 +1,8 @@
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
+using OpenForge.Cli.Core.Framework.Libraries;
+using OpenForge.Cli.Core.Commands.Library.Shared.Planning.Models;
+using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
@@ -27,9 +32,16 @@ using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Commands.Library.Sync;
 
-internal static class LibrarySyncOperation
+internal sealed class LibrarySyncOperation
 {
-    internal static async ValueTask<LibrarySyncResult> ExecuteAsync(
+    private readonly LibraryPermissionOperation _permissions;
+
+    internal LibrarySyncOperation(LibraryPermissionOperation permissions)
+    {
+        _permissions = permissions;
+    }
+
+    internal async ValueTask<LibrarySyncResult> ExecuteAsync(
         LibrarySyncRequest request,
         CancellationToken cancellationToken)
     {
@@ -67,7 +79,7 @@ internal static class LibrarySyncOperation
         }
     }
 
-    private static async ValueTask<LibrarySyncCompletionInput> CollectExecutionAsync(
+    private async ValueTask<LibrarySyncCompletionInput> CollectExecutionAsync(
         LibrarySyncRequest request,
         CancellationToken cancellationToken)
     {
@@ -81,9 +93,32 @@ internal static class LibrarySyncOperation
                 cancellationToken).ConfigureAwait(false),
         };
         var plan = LibrarySyncPlanner.Plan(observations, cancellationToken);
-        if (request.Mode == LibraryMode.DryRun
-            || plan.State != LibraryPlanState.Complete
-            || !HasEffects(plan))
+        if (plan.State != LibraryPlanState.Complete)
+        {
+            return Complete(request, plan, observations, LibraryMutationOperationSupport.Empty());
+        }
+        var selected = observations.Record.Record?.Libraries.Single(library => library.Id == request.LibraryId)
+            ?? throw new InvalidOperationException("A complete Library sync plan requires its selected Library.");
+        var livePaths = (observations.Source.Inventory?.Entries ?? []).Select(entry => entry.SourcePath).ToHashSet();
+        var targets = observations.Mappings.Select(observation => new LibraryPermissionTarget(
+            observation.Mapping.DestinationPath.Value,
+            livePaths.Contains(observation.Mapping.SourcePath) ? LibraryPermissionTargetUse.Live : LibraryPermissionTargetUse.Retired)
+        {
+            Effect = LibraryPermissionPresentation.ReadEffect(plan.Links.SingleOrDefault(link => link.DestinationPath.Value == observation.Mapping.DestinationPath.Value)?.Kind),
+        }).ToImmutableArray();
+        var permissions = await _permissions.DetermineAsync(new LibraryPermissionRequest
+        {
+            Workspace = request.Workspace,
+            Library = selected,
+            Targets = targets,
+            AllowPrompt = request.AllowPrompt && request.Mode != LibraryMode.DryRun,
+        }, cancellationToken).ConfigureAwait(false);
+        plan = plan with
+        {
+            Permissions = permissions,
+            State = permissions.Failure is null ? plan.State : LibraryPlanState.Blocked,
+        };
+        if (request.Mode == LibraryMode.DryRun || permissions.Failure is not null || !HasEffects(plan))
         {
             return Complete(request, plan, observations, LibraryMutationOperationSupport.Empty());
         }
@@ -114,18 +149,25 @@ internal static class LibrarySyncOperation
             ? []
             : LibraryMutationOperationSupport.ObserveMappings(
                 resolver,
-                request.Workspace,
-                selected.SourceRoot,
-                paths,
+                new LibraryMappingSetRequest
+                {
+                    Workspace = request.Workspace,
+                    SourceRoot = selected.SourceRoot,
+                    DestinationRoot = selected.DestinationRoot,
+                    Paths = [.. paths],
+                },
                 cancellationToken);
         var navigation = record.State == LibrariesRecordReadState.Complete
             && selected is not null
             && source.Inventory?.State == LibraryInventoryState.Complete
             ? await LibraryGeneratedNavigationReader.ReadAsync(
-                request.Workspace,
-                request.LibraryId,
-                record.Record,
-                entries,
+                new LibraryGeneratedNavigationRequest
+                {
+                    Workspace = request.Workspace,
+                    SelectedLibrary = selected,
+                    CurrentRecord = record.Record,
+                    IntendedEntries = entries,
+                },
                 cancellationToken).ConfigureAwait(false)
             : new LibraryGeneratedNavigationRead([], Issue: null);
         var ownership = await new LifecycleOwnershipReader(resolver).ReadAsync(
@@ -138,7 +180,7 @@ internal static class LibrarySyncOperation
                 request.Workspace,
                 LibraryMutationOperationSupport.ReadAncestors(
                     request.Workspace,
-                    paths.Select(path => path.Value),
+                    mappings.Select(observation => observation.Mapping.DestinationPath.Value),
                     navigation.Changes)),
             Record = record,
             Source = source,
@@ -181,23 +223,31 @@ internal static class LibrarySyncOperation
                     cancellationToken).ConfigureAwait(false),
             };
             var freshPlan = LibrarySyncPlanner.Plan(fresh, cancellationToken);
-            if (freshPlan.State != LibraryPlanState.Complete || !Matches(plan, freshPlan))
+            var permissions = plan.Permissions
+                ?? throw new InvalidOperationException("An admitted Library plan requires its permission observation.");
+            if (freshPlan.State != LibraryPlanState.Complete || !Matches(plan, freshPlan)
+                || !await LibraryPermissionOperation.RevalidateAsync(lease, permissions, cancellationToken).ConfigureAwait(false))
             {
-                return Complete(request, plan, observations, LibraryMutationOperationSupport.Empty(
-                    unexpected: new LibraryUnexpectedFailureFact(
-                        LibraryExecutionStage.Preflight,
-                        "The complete Library sync plan changed under the held workspace lease.")));
+                return Complete(request, plan with
+                {
+                    State = LibraryPlanState.Blocked,
+                    Permissions = permissions with { Failure = LibraryPermissionFailure.Changed },
+                }, observations, LibraryMutationOperationSupport.Empty());
             }
 
             var preparation = await LibraryMutationOperationSupport.PrepareRecoveryAsync(
-                lease,
-                LibrarySyncDefinitions.CommandIdentity,
-                RecoveryBundleOperation.Sync,
-                plan.Links,
-                plan.GeneratedRegions,
-                plan.RecordChange,
-                fresh.Mappings,
-                fresh.Record,
+                new LibraryRecoveryPreparationRequest
+                {
+                    Lease = lease,
+                    Command = LibrarySyncDefinitions.CommandIdentity,
+                    Operation = RecoveryBundleOperation.Sync,
+                    Permissions = plan.Permissions,
+                    Links = plan.Links,
+                    GeneratedRegions = plan.GeneratedRegions,
+                    RecordChange = plan.RecordChange,
+                    Mappings = fresh.Mappings,
+                    Record = fresh.Record,
+                },
                 cancellationToken).ConfigureAwait(false);
             if (preparation.State is not (RecoveryBundlePreparationState.Prepared
                 or RecoveryBundlePreparationState.NotNeeded))
@@ -219,7 +269,7 @@ internal static class LibrarySyncOperation
                 },
                 cancellationToken).ConfigureAwait(false);
             var execution = outcome.Execution;
-            if (execution.Cancellation is null && execution.UnexpectedFailure is null)
+            if (execution.Cancellation is null && execution.UnexpectedFailure is null && execution.Permission?.Failure is null)
             {
                 execution = LibraryMutationOperationSupport.WithCleanup(
                     execution,
@@ -269,9 +319,6 @@ internal static class LibrarySyncOperation
                 PhysicalSourceRoot = null,
                 LexicallyContained = null,
                 PhysicallyContained = null,
-                PhysicalAgentsDirectory = null,
-                PhysicallyDisjoint = null,
-                Condition = LibrarySourceRootCondition.None,
                 Cause = "No registered Library was selected.",
             },
             Inventory = null,
@@ -295,21 +342,14 @@ internal static class LibrarySyncOperation
         };
 
     private static bool Matches(LibrarySyncPlan expected, LibrarySyncPlan actual)
-        => LibraryMutationOperationSupport.PlansMatch(
-            expected.Directories,
-            expected.Links,
-            expected.GeneratedRegions,
-            expected.RecordChange,
-            actual.Directories,
-            actual.Links,
-            actual.GeneratedRegions,
-            actual.RecordChange);
+        => LibraryMutationOperationSupport.PlansMatch(expected.Effects, actual.Effects);
 
     private static bool HasEffects(LibrarySyncPlan plan)
         => plan.Directories.Length > 0
             || plan.Links.Length > 0
             || plan.GeneratedRegions.Length > 0
-            || plan.RecordChange is not null;
+            || plan.RecordChange is not null
+            || plan.Permissions?.Change is not null;
 
     private static LibrarySyncCompletionInput Complete(
         LibrarySyncRequest request,

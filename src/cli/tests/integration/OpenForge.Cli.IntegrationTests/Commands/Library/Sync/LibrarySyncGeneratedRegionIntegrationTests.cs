@@ -35,7 +35,7 @@ public sealed class LibrarySyncGeneratedRegionIntegrationTests
 
         File.WriteAllText(parentPath, parent);
         var before = workspace.Snapshot();
-        var result = await LibrarySyncOperation.ExecuteAsync(workspace.Sync(), TestContext.Current.CancellationToken);
+        var result = await new LibrarySyncOperation(workspace.Permissions).ExecuteAsync(workspace.Sync(), TestContext.Current.CancellationToken);
         Assert.Equal(validRegion ? CliSemanticStatus.Complete : CliSemanticStatus.Blocked, result.Status);
         if (validRegion)
         {
@@ -70,7 +70,7 @@ public sealed class LibrarySyncGeneratedRegionIntegrationTests
         File.WriteAllText(parentPath, parent);
         var before = workspace.Snapshot();
 
-        var result = await LibrarySyncOperation.ExecuteAsync(
+        var result = await new LibrarySyncOperation(workspace.Permissions).ExecuteAsync(
             workspace.Sync(),
             TestContext.Current.CancellationToken);
 

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
@@ -9,6 +10,7 @@ namespace OpenForge.Cli.Core.Commands.Library.Models.Application;
 
 internal sealed record LibraryMutationApplicationRequest
 {
+    public required LibraryPermissionStage? Permissions { get; init; }
     public required WorkspaceLockLease Lease { get; init; }
     public required ImmutableArray<PlannedDirectoryCreation> Directories { get; init; }
     public required ImmutableArray<RelativeFileLinkEffect> Links { get; init; }

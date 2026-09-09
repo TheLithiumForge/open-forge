@@ -7,6 +7,7 @@ internal sealed record LibraryListView
     public required string Id { get; init; }
 
     public required string SourceRoot { get; init; }
+    public required string DestinationRoot { get; init; }
 
     public required LibrarySourceRootViewState SourceRootState { get; init; }
 

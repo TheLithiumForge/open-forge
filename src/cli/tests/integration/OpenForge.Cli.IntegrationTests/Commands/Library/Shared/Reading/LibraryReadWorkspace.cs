@@ -48,7 +48,7 @@ internal sealed class LibraryReadWorkspace : IDisposable
 
     internal void Record(params string[] paths)
         => _temporary.WriteText(RecordPath, $$"""
-            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team","paths":[{{string.Join(',', paths.Select(path => $"\"{path}\""))}}]}]}
+            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team","destinationRoot":".","paths":[{{string.Join(',', paths.Select(path => $"\"{path}\""))}}]}]}
             """);
 
     internal void CurrentLink(string path = ReviewPath)

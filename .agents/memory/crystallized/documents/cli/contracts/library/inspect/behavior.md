@@ -29,12 +29,11 @@ parser, filesystem library, serializer, or other implementation technology.
   `invalid`; malformed record structure is `invalid`; unavailable record facts
   are `incomplete`; unsafe or ambiguous identity is `blocked`.
 - A valid source root must be lexically and physically contained by the selected
-  workspace and must contain a real ordinary `.agents` directory.
+  workspace as a real ordinary directory with no linked ancestry.
 - Inspect enumerates the complete eligible ordinary-file inventory below that
-  `.agents` directory. It never turns an unavailable inventory into an empty
+  selected root. It never turns an unavailable inventory into an empty
   inventory.
-- Every eligible source path maps to the same consumer-relative destination
-  path. The registered record and observed destination link remain separate
+- Every eligible source path maps below the recorded destination root, preserving its suffix. The registered record and observed destination link remain separate
   facts.
 - Destination links are observed without following their targets. No source
   bytes are read through a destination link.
@@ -77,63 +76,88 @@ resemblance.
 
 ## Strict Record Facts
 
-Resolve the record using the exact schema in [Workspace And Strict Record](interface.md#workspace-and-strict-record):
+The consumer record is `.agents/open-forge.libraries.json`, separate from
+lifecycle ownership and consumer permissions. Its exact current schema is:
 
-- Accept only integer `schemaVersion: 1`.
-- Accept only top-level `schemaVersion` and `libraries` members.
-- Accept only `id`, `sourceRoot`, and `paths` in each Library object.
-- Accept only canonical `.agents/...` path strings in each `paths` array.
-- Validate ID grammar, length, canonical slash paths, the path's identical
-  source/destination interpretation, and source-root/path relationships.
-  Duplicate IDs, duplicate paths, duplicate destinations across Libraries, and
-  unsafe record identity are blocked ambiguities. Derive expected-link text from
-  the source root and path rather than reading it from the record.
+```json
+{
+  "schemaVersion": 1,
+  "libraries": [
+    {
+      "id": "team-knowledge",
+      "sourceRoot": "shared/team-knowledge",
+      "destinationRoot": ".apm/agents/team",
+      "paths": ["checks/security.md", "review.md"]
+    }
+  ]
+}
+```
 
-Retain the exact requested Library record and path facts in the typed result.
-Do not infer a missing path from the source root or an observed destination.
-Sort Libraries by ID and each path array by its path string, using ordinal
-comparison. Sorting does not alter the record bytes.
+Require exactly `schemaVersion` and `libraries` at the top level, and exactly
+`id`, `sourceRoot`, `destinationRoot` and `paths` per Library. Require integer
+`1`, existing Library-ID grammar, canonical portable roots and source-relative
+eligible paths. The destination root is `.` or a normal relative directory;
+source roots do not admit `.`. Unknown, missing, null, duplicate and wrongly
+typed members are malformed. No previous schema shape, migration or alternate
+reader is accepted.
+
+IDs and each source-relative path array use ordinal order. Paths are unique
+within a Library. Derived destinations must be unique across Libraries under
+portable identity; equal source-relative paths at different destinations are
+valid. Empty path arrays and an empty Library array are valid. The record stores
+no expected-link text, contents, hashes, timestamps, Git facts, dependencies,
+globs or per-file remapping. Link identity derives from both recorded roots and
+the source-relative path. Permission is separate from ownership and may be
+revoked independently.
+
+A missing record is a valid prior-absence fact for Attach and a complete empty
+List result. Inspect, Sync and Detach require the requested ID in a valid record.
+Malformed, unavailable and unsafe records retain their existing invalid,
+incomplete and blocked classification; none becomes an empty valid record.
 
 ## Source-Root Resolution
 
-Resolve the selected `sourceRoot` from the workspace and establish, in order,
-that it is:
+The source root is a non-empty canonical portable workspace-relative directory,
+strictly contained by the selected workspace lexically and physically. It has
+no absolute, empty, backslash, `.` or `..` segment and no portable alias. Every
+ancestor and the selected root must be a real ordinary directory, without
+symlink, junction or reparse ancestry. No specially named child is required.
+The selected directory itself scopes the recursively discovered eligible files.
 
-1. A non-empty workspace-relative slash path without absolute, `.`, or `..`
-   segments.
-2. Lexically and physically contained by the selected workspace.
-3. A real ordinary directory.
-4. The parent of a direct real ordinary `.agents` directory.
+An absent or non-directory source root is `invalid` for Attach. For an existing
+registration, unavailable or missing source facts make Inspect or Sync
+`incomplete`; a readable non-directory root is `invalid`. Unsafe containment,
+linked ancestry or ambiguous identity is `blocked`. List reports only bounded
+root availability and does not enumerate descendants. An incomplete source is
+never an empty source inventory.
 
-The source root and selected consumer `.agents` destination namespace must be
-physically disjoint. An overlap or alias is `blocked`.
-
-An absent or unreadable required directory is `incomplete`. A root without the
-real ordinary `.agents` directory is `invalid`. Unsafe containment, alias, or
-physical identity is `blocked`. Inspect never uses another root and never
-substitutes an empty source for an unavailable root.
+The consumer workspace and its existing ordinary `.agents` control directory
+remain consumer-owned. The operation does not create or replace either root.
+The destination root may be an ancestor of a contained source root, including
+`.`. Actual destination leaves and every mutation target must remain outside
+all selected and registered source trees. This per-leaf check preserves source
+contents without forbidding workspace-root projection.
 
 ## Eligible Source Inventory
 
-After source-root validation, enumerate every eligible ordinary file below the
-source root's `.agents` directory. Eligibility requires a canonical
-source-relative `.agents/...` path and an ordinary file identity. Exclude
-recognized entrypoints, adjacent overwrite companions, lifecycle and Library
-records, Loader and other manager controls, symbolic links, junctions, reparse
-aliases, and special files.
+Recursively enumerate the selected real source root, recording each eligible
+ordinary file by its canonical portable path relative to that root. A source
+containing no `.agents` or `content` child is valid. Empty eligible inventory is
+complete when the entire selected tree was safely observed.
 
-The inventory is complete only when every relevant directory and file boundary
-has a safe established state. A read or traversal failure leaves the known safe
-facts available, marks the affected inventory `incomplete`, and prevents an
-`attention` or `complete` result. An unsafe or ambiguous identity is `blocked`.
-No source file outside the selected root is included.
+Exclude Git metadata at any path segment, known manager controls, symlinks,
+junctions, reparse points and special entries. Recognize Open Forge Loader,
+entrypoint and overwrite controls at their original `.agents` source coordinates
+before remapping. A remap cannot make those controls eligible. External
+`_name.md`, `*.overwrite.md` and README remain ordinary opaque Library content. Inspect excluded entries without
+following them and never descend into excluded metadata or linked directories.
+Existing source classification and protected-control rules remain applicable.
 
-For each eligible source path, set the destination to the identical
-consumer-relative `.agents/...` path. Derive `sourceId` from that destination
-using the shared automatic source-ID rules. Preserve the source ID as a
-separate fact from the selected Library ID. The source ID is descriptive output
-for the destination path and does not select a source or alter the exact path
-comparison.
+An inaccessible directory, enumeration failure, unavailable eligible ordinary
+file or unsafe required boundary prevents complete inventory. Retain known safe
+facts as partial evidence, never as permission to delete retired links. Source
+bytes are never copied, rewritten or deleted. Only eligible leaf membership and
+physical path facts feed projection planning.
 
 ## Registered And Observed Facts
 
@@ -144,8 +168,10 @@ entry observation for each relevant destination.
 For every union member of the registered and observed path sets:
 
 1. Match canonical source and destination paths exactly.
-2. Derive the expected relative-link text from the selected `sourceRoot` and
-   path, if the source root is available.
+2. Derive the source and destination from `sourceRoot`, `destinationRoot` and
+   the source-relative suffix. Measure the expected raw relative-link text
+   from the actual destination parent to the source leaf; this derivation
+   does not require source availability.
 3. Observe the destination entry without following its target.
 4. Retain observed relative-link text only when link identity is safe and
    unambiguous.
@@ -182,7 +208,7 @@ Select status from the highest applicable condition:
 1. `interrupted` when caller interruption stops result formation.
 2. `failed` for an unexpected operation or result-formation failure.
 3. `invalid` for invalid syntax, missing or unknown ID, malformed record, or a
-   source root without a real ordinary `.agents` directory.
+   source root that is not an ordinary directory.
 4. `blocked` for unsafe or ambiguous identity, containment, record, mapping, or
    link facts.
 5. `incomplete` for unavailable or incomplete record, source-root, inventory,

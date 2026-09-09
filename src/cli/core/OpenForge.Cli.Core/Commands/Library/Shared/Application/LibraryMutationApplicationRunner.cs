@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
+using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
 using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
@@ -15,7 +18,12 @@ namespace OpenForge.Cli.Core.Commands.Library.Shared.Application;
 
 internal static class LibraryMutationApplicationRunner
 {
-    internal static async ValueTask<LibraryMutationApplicationRun> ApplyAsync(
+    internal static ValueTask<LibraryMutationApplicationRun> ApplyAsync(
+        LibraryMutationApplicationRequest input,
+        CancellationToken cancellationToken)
+        => ApplyCoreAsync(input, cancellationToken);
+
+    private static async ValueTask<LibraryMutationApplicationRun> ApplyCoreAsync(
         LibraryMutationApplicationRequest input,
         CancellationToken cancellationToken)
     {
@@ -40,7 +48,8 @@ internal static class LibraryMutationApplicationRunner
 
         var reversibleEffects = input.Links.Length
             + input.GeneratedRegions.Length
-            + (input.RecordChange is null ? 0 : 1);
+            + (input.RecordChange is null ? 0 : 1)
+            + (input.Permissions?.Change is null ? 0 : 1);
         if (reversibleEffects > 0 && !MatchesRecovery(input))
         {
             return Stop(
@@ -49,6 +58,21 @@ internal static class LibraryMutationApplicationRunner
                 new LibraryUnexpectedFailureFact(
                     LibraryExecutionStage.RecoveryPreparation,
                     "The complete Library plan does not have one exact verified recovery preparation."));
+        }
+
+        if (!ProtectsSources(input))
+        {
+            return Stop(input, cancellation: null, new LibraryUnexpectedFailureFact(
+                LibraryExecutionStage.Preflight, "A Library mutation target overlaps a protected source tree."));
+        }
+        if (input.Permissions is { } permissions && (permissions.Failure is not null
+            || !await LibraryPermissionOperation.RevalidateAsync(input.Lease, permissions, cancellationToken).ConfigureAwait(false)))
+        {
+            var stopped = Stop(input, cancellation: null, unexpected: null).Execution with
+            {
+                Permission = new(permissions.Result, Receipt: null, permissions.Failure ?? LibraryPermissionFailure.Changed),
+            };
+            return new(Summarize(stopped, noEffects: false), stopped);
         }
 
         var resolver = new PhysicalPathResolver();
@@ -77,11 +101,10 @@ internal static class LibraryMutationApplicationRunner
         }
 
         var linkChecks = ImmutableArray.CreateBuilder<RelativeFileLinkValidationResult>(input.Links.Length);
+        var linkPreflight = new LibraryLinkPreflight(input.Lease, input.Directories);
         foreach (var link in input.Links)
         {
-            var check = await RelativeFileLinkRevalidator.ValidateAsync(
-                resolver,
-                input.Lease,
+            var check = await linkPreflight.ValidateAsync(
                 link,
                 cancellationToken).ConfigureAwait(false);
             linkChecks.Add(check);
@@ -109,7 +132,30 @@ internal static class LibraryMutationApplicationRunner
         LibraryUnexpectedFailureFact? unexpected = null;
         var checkIndex = 0;
 
-        for (var index = 0; index < input.Directories.Length; index++)
+        LibraryPermissionApplication? permissionApplication = null;
+        if (input.Permissions is { } permissionStage)
+        {
+            if (permissionStage.Change is { } permissionChange)
+            {
+                attempted.Add(Relative(input.Lease, permissionChange.LogicalPath));
+            }
+            permissionApplication = await LibraryPermissionOperation.ApplyAsync(
+                input.Lease, permissionStage, input.RecoveryPreparation, cancellationToken).ConfigureAwait(false);
+            if (permissionApplication.Failure is { } permissionFailure)
+            {
+                if (permissionFailure == LibraryPermissionFailure.Interrupted)
+                {
+                    cancellation = new LibraryCancellationFact(LibraryExecutionStage.Application);
+                }
+                else
+                {
+                    unexpected = new LibraryUnexpectedFailureFact(LibraryExecutionStage.Application,
+                        "The Library permission write could not be applied and verified.");
+                }
+            }
+        }
+
+        for (var index = 0; index < input.Directories.Length && cancellation is null && unexpected is null; index++)
         {
             var creation = input.Directories[index];
             attempted.Add(Relative(input.Lease, creation.LogicalPath));
@@ -195,6 +241,7 @@ internal static class LibraryMutationApplicationRunner
 
         var execution = new LibraryExecutionEvidence
         {
+            Permission = permissionApplication,
             Directories = directoryReceipts.ToImmutable(),
             Links = linkReceipts.ToImmutable(),
             GeneratedRegions = generatedReceipts.ToImmutable(),
@@ -223,7 +270,8 @@ internal static class LibraryMutationApplicationRunner
             return false;
         }
 
-        return input.Links.All(effect => preparation.MatchesRelativeFileLink(input.Lease.Request, effect))
+        return (input.Permissions?.Change is not { } permission || preparation.MatchesChange(input.Lease.Request, permission))
+            && input.Links.All(effect => preparation.MatchesRelativeFileLink(input.Lease.Request, effect))
             && input.GeneratedRegions.All(change => preparation.MatchesChange(input.Lease.Request, change))
             && (input.RecordChange is null
                 || preparation.MatchesChange(input.Lease.Request, input.RecordChange));
@@ -236,6 +284,7 @@ internal static class LibraryMutationApplicationRunner
     {
         var execution = new LibraryExecutionEvidence
         {
+            Permission = input.Permissions is { } stage ? new(stage.Result, Receipt: null, stage.Failure) : null,
             Directories = [],
             Links = [],
             GeneratedRegions = [],
@@ -259,7 +308,7 @@ internal static class LibraryMutationApplicationRunner
         LibraryExecutionEvidence execution,
         bool noEffects)
     {
-        var failed = execution.UnexpectedFailure is not null;
+        var failed = execution.UnexpectedFailure is not null || execution.Permission?.Failure is not null;
         var interrupted = execution.Cancellation is not null;
         var receipts = execution.Directories.Select(receipt => (receipt.EffectState, receipt.VerificationState))
             .Concat(execution.Links.Select(receipt => (receipt.EffectState, receipt.VerificationState)))
@@ -267,22 +316,13 @@ internal static class LibraryMutationApplicationRunner
             .Concat(execution.Record is null
                 ? []
                 : [(execution.Record.EffectState, execution.Record.VerificationState)])
+            .Concat(execution.Permission?.Receipt is { } permission ? [(permission.EffectState, permission.VerificationState)] : [])
             .ToArray();
         var allVerified = receipts.All(receipt => Verified(receipt.EffectState, receipt.VerificationState));
         return new LibraryMutationApplication
         {
-            State = interrupted
-                ? LibraryApplicationState.Interrupted
-                : failed || !allVerified
-                    ? LibraryApplicationState.Failed
-                    : noEffects
-                        ? LibraryApplicationState.NoOp
-                        : LibraryApplicationState.Applied,
-            Verification = receipts.Length == 0
-                ? LibraryVerificationState.NotStarted
-                : allVerified
-                    ? LibraryVerificationState.Verified
-                    : LibraryVerificationState.Failed,
+            State = ReadApplicationState(interrupted, failed || !allVerified, noEffects),
+            Verification = ReadVerification(receipts.Length, allVerified),
             Recovery = new LibraryRecoveryView
             {
                 State = execution.RecoveryPreparation is null
@@ -301,6 +341,43 @@ internal static class LibraryMutationApplicationRunner
                     : null,
             },
         };
+    }
+
+    private static LibraryApplicationState ReadApplicationState(bool interrupted, bool failed, bool noEffects)
+    {
+        if (interrupted)
+        {
+            return LibraryApplicationState.Interrupted;
+        }
+        if (failed)
+        {
+            return LibraryApplicationState.Failed;
+        }
+        return noEffects ? LibraryApplicationState.NoOp : LibraryApplicationState.Applied;
+    }
+
+    private static LibraryVerificationState ReadVerification(int count, bool allVerified)
+    {
+        if (count == 0)
+        {
+            return LibraryVerificationState.NotStarted;
+        }
+        return allVerified ? LibraryVerificationState.Verified : LibraryVerificationState.Failed;
+    }
+
+    private static bool ProtectsSources(LibraryMutationApplicationRequest input)
+    {
+        var targets = input.Directories.Select(value => Relative(input.Lease, value.LogicalPath).Value)
+            .Concat(input.Links.Select(value => value.DestinationPath.Value))
+            .Concat(input.GeneratedRegions.Select(value => Relative(input.Lease, value.LogicalPath).Value))
+            .Concat(input.RecordChange is { } record ? [Relative(input.Lease, record.LogicalPath).Value] : [])
+            .Concat(input.Permissions?.Change is { } permission ? [Relative(input.Lease, permission.LogicalPath).Value] : []);
+        var sources = input.ProtectedSourceRoots.Select(source => PortableWorkspacePath.CreatePortableKey(source.Value)).ToArray();
+        return targets.All(target =>
+        {
+            var key = PortableWorkspacePath.CreatePortableKey(target);
+            return sources.All(source => key != source && !key.StartsWith($"{source}/", StringComparison.Ordinal));
+        });
     }
 
     private static void ReadStop(

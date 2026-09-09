@@ -22,7 +22,7 @@ public sealed class LibraryListPresentationTests
         Assert.Equal(".agents/open-forge.libraries.json", record.GetProperty("path").GetString());
         Assert.Equal(1, record.GetProperty("libraryCount").GetInt32());
         var library = Assert.Single(result.GetProperty("libraries").EnumerateArray());
-        LibraryReadPresentationAssertions.Members(library, "id", "sourceRoot", "sourceRootState", "paths");
+        LibraryReadPresentationAssertions.Members(library, "id", "sourceRoot", "destinationRoot", "sourceRootState", "paths");
         Assert.Equal("team-knowledge", library.GetProperty("id").GetString());
         var path = Assert.Single(library.GetProperty("paths").EnumerateArray());
         LibraryReadPresentationAssertions.Members(path, "sourcePath", "destinationPath", "expectedRelativeLink", "sourceId", "state", "observedRelativeLink");

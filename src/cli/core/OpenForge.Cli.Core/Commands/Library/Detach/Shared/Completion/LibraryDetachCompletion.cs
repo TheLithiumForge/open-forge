@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Permissions;
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
@@ -23,10 +26,20 @@ internal static class LibraryDetachCompletion
         var observations = input.Observations;
         var planState = plan?.State ?? LibraryPlanState.NotStarted;
         var findings = (plan?.Findings ?? []).ToList();
+        var permissionStage = plan?.Permissions;
+        if (permissionStage is not null && input.Execution.Permission is { } permissionApplication)
+        {
+            permissionStage = permissionStage with { Result = permissionApplication.Result, Failure = permissionApplication.Failure };
+        }
+        if (permissionStage?.Failure is { } permissionFailure)
+        {
+            AddPermissionFinding(findings, permissionFailure, input.Request.LibraryId.Value);
+        }
         AddExecutionFindings(findings, input.Execution, input.Request.LibraryId.Value);
         var application = input.Request.Mode == LibraryMode.DryRun || planState != LibraryPlanState.Complete
+            || permissionStage?.Failure is not null && input.Execution.Permission?.Receipt is null
             ? LibraryMutationCompletionProjection.NotStarted()
-            : LibraryMutationCompletionProjection.Application(input.Execution, EffectCount(plan));
+            : LibraryMutationCompletionProjection.Application(input.Request.Workspace, input.Execution, EffectCount(plan));
         var sourceRoot = ReadSourceRoot(observations, input.Request.LibraryId.Value);
         var protectedSources = sourceRoot is null ? [] : new[] { sourceRoot };
         var status = LibraryMutationCompletionProjection.Status(
@@ -43,9 +56,11 @@ internal static class LibraryDetachCompletion
             Next = null,
             Result = new LibraryDetachPayload
             {
+                Permissions = permissionStage is null ? LibraryPermissionView.NotEvaluated() : LibraryPermissionPresentation.Project(permissionStage),
                 Identity = LibraryMutationCompletionProjection.Identity(
                     input.Request.LibraryId.Value,
                     sourceRoot?.Value,
+                    observations?.Record.Record?.Libraries.FirstOrDefault(library => library.Id == input.Request.LibraryId)?.DestinationRoot.Value,
                     input.Request.Mode,
                     sourceIndependent: true),
                 Record = LibraryMutationCompletionProjection.Record(
@@ -60,12 +75,12 @@ internal static class LibraryDetachCompletion
                     input.Request.LibraryId.Value,
                     planState,
                     sourceIndependent: true),
-                Plan = LibraryMutationCompletionProjection.Plan(
-                    planState,
-                    plan?.Directories,
-                    plan?.Links,
-                    plan?.GeneratedRegions,
-                    plan?.RecordChange),
+                Plan = LibraryMutationCompletionProjection.Plan(new()
+                {
+                    Workspace = input.Request.Workspace,
+                    State = planState,
+                    Effects = plan?.Effects,
+                }),
                 Application = application,
                 Findings = [.. findings],
             },
@@ -78,6 +93,30 @@ internal static class LibraryDetachCompletion
         => observations?.Record.Record?.Libraries
             .FirstOrDefault(library => string.Equals(library.Id.Value, libraryId, StringComparison.Ordinal))
             ?.SourceRoot;
+
+    private static void AddPermissionFinding(List<LibraryDetachFinding> findings, LibraryPermissionFailure failure, string libraryId)
+    {
+        var (status, cause) = LibraryPermissionFailureProjection.Read(failure);
+        var code = failure switch
+        {
+            LibraryPermissionFailure.Required => LibraryDetachFindingCode.PermissionRequired,
+            LibraryPermissionFailure.Declined => LibraryDetachFindingCode.PermissionDeclined,
+            LibraryPermissionFailure.Invalid => LibraryDetachFindingCode.PermissionInvalid,
+            LibraryPermissionFailure.Unavailable => LibraryDetachFindingCode.PermissionUnavailable,
+            LibraryPermissionFailure.Changed => LibraryDetachFindingCode.PermissionChanged,
+            LibraryPermissionFailure.WriteFailed => LibraryDetachFindingCode.PermissionWriteFailed,
+            LibraryPermissionFailure.Interrupted => LibraryDetachFindingCode.Interrupted,
+            _ => throw new ArgumentOutOfRangeException(nameof(failure), failure, "The Library permission failure is not defined."),
+        };
+        findings.Add(new LibraryDetachFinding
+        {
+            Code = code,
+            Status = status,
+            LibraryId = libraryId,
+            Path = WorkspacePermissionDefinitions.RelativePath,
+            Cause = cause,
+        });
+    }
 
     private static int EffectCount(LibraryDetachPlan? plan)
         => plan is null ? 0 : plan.Directories.Length + plan.Links.Length + plan.GeneratedRegions.Length + (plan.RecordChange is null ? 0 : 1);

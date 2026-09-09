@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Sync.Shared.Rendering;
@@ -64,6 +65,7 @@ public sealed class LibrarySyncPresentationTests
             Next = null,
             Result = new LibrarySyncPayload
             {
+                Permissions = LibraryPermissionView.NotEvaluated(),
                 Identity = LibraryMutationPresentationData.Identity(false),
                 Record = LibraryMutationPresentationData.Record(),
                 Source = LibraryMutationPresentationData.Source(),
