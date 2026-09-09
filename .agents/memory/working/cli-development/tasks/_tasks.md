@@ -31,8 +31,8 @@ Read the [program Task](00-cli-development.md),
 - [x] [Lifecycle Commands](lifecycle/_lifecycle.md) — Complete: Extension Create, Extension Install, root Install, root Update, Extension Update, and Extension Remove are integrated — Implementer: Overseer-managed command lanes
 - [x] [Operational Commands](operations/_operations.md) — Complete: Status, Doctor, Repair, and Cleanup are integrated; Task 20 Cleanup completed at phase 5/5, milestone 8/8 in `148d378d` — Implementer: Overseer-managed command lanes
 - [x] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is Complete, phase 3/3, milestone 5/5; integrated at `fbcec295`, seven findings selected for Task 21
-- [ ] [CLI Command Surface Remediation](cli-command-surface-remediation.md) — Task 21 is Active, phase 4/4, milestone 5/6; review and full managed/native gates passed, integration pending
-- [ ] [C# Structural Streamlining](csharp-structural-streamlining.md) — Task 27 is Planned after Task 21 and before Task 7 ARM64 expansion; phase/milestone horizon unassigned
+- [x] [CLI Command Surface Remediation](cli-command-surface-remediation.md) — Complete, phase 4/4, milestone 6/6; integrated at `75f6ff49`
+- [ ] [C# Structural Streamlining](csharp-structural-streamlining.md) — Task 27 is Active, phase 4/4, milestone 5/6; all gates accepted, final integration remains
 - [ ] [Task 7 ARM64 package expansion](delivery/01-npm-packages.md#arm64-expansion-horizon) — Queued after Task 27; new phase/milestone horizon unassigned
 - [ ] [CLI Delivery](delivery/_delivery.md) — Task 13 covers all six accepted platforms after Task 7; Task 22 remains last
 - [ ] [Source Framework Wording and Logic Review](source-framework-review.md) — Task 28 is a separate queued user-owned parallel review; no implementation or assigned horizon
@@ -79,7 +79,7 @@ define execution state.
 - [Apply the accepted CLI Architecture authority audit without changing product behavior or requirement strength](cli-architecture-authority-remediation.md) - #Memory #Working #Contextual #Complete #CLI #Task #Architecture #Authority #Documentation #Remediation
 - [Record the immutable 28-command CLI audit, validated findings, retained boundaries, coverage, and remediation decisions](cli-command-surface-audit-report.md) - #Memory #Working #Contextual #CLI #Audit #Review #Architecture #Refactoring #Testing
 - [Review the complete retained CLI command surface for direct PR-level architecture, design, refactoring, and test-evidence problems](cli-command-surface-audit.md) - #Memory #Working #Contextual #Complete #CLI #Task #Audit #Architecture #Refactoring #Testing #Review
-- [Correct the seven validated CLI audit findings within accepted behavior, test tiers, and local callable ownership](cli-command-surface-remediation.md) - #Memory #Working #Contextual #Active #CLI #Task #Remediation #Architecture #Refactoring #Testing
+- [Correct the seven validated CLI audit findings within accepted behavior, test tiers, and local callable ownership](cli-command-surface-remediation.md) - #Memory #Working #Contextual #Complete #CLI #Task #Remediation #Architecture #Refactoring #Testing
 - [Remediate the accepted first-pass CLI architecture, C# design, authority, and test-evidence findings after Route Create and before Route Update](cli-quality-remediation.md) - #Memory #Working #CLI #Task #Audit #Architecture #Refactoring #Testing #Review #Contextual
 - [Assess remaining C# internals and implement justified simplifications beyond the completed strategic command audit](csharp-structural-streamlining.md) - #Memory #Working #Contextual #CLI #Task #CSharp #Architecture #Refactoring
 - [Package, prove, document, and release the complete native CLI without partial publication](delivery/_delivery.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #SupplyChain #Release #Contextual

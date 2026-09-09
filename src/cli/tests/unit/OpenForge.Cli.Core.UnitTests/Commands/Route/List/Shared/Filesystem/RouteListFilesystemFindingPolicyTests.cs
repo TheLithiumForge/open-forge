@@ -3,13 +3,15 @@ using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Framework.Filesystem;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List.Shared.Filesystem;
 
 public sealed class RouteListFilesystemFindingPolicyTests
 {
-    public static TheoryData<object, object, object> PhysicalCases => new()
+    public static TheoryData<object, object, object> CandidatePhysicalCases => new()
     {
         { PhysicalPathState.Missing, RouteListFindingCode.ReadUnavailable, CliSemanticStatus.Incomplete },
         { PhysicalPathState.Dangling, RouteListFindingCode.PhysicalBoundary, CliSemanticStatus.Blocked },
@@ -30,10 +32,9 @@ public sealed class RouteListFilesystemFindingPolicyTests
         { FileReadState.Cancelled, RouteListFindingCode.Interrupted, CliSemanticStatus.Interrupted },
     };
 
-    [Theory(DisplayName = "Route-list finding policy maps every non-contained physical state"),
-        MemberData(nameof(PhysicalCases))]
+    [Theory(DisplayName = "Route-list catalogue finding policy maps every non-contained candidate state"), MemberData(nameof(CandidatePhysicalCases))]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
-    public void PhysicalStatesHaveFiniteMappings(
+    public void CatalogueCandidatesHaveFinitePhysicalMappings(
         object stateValue,
         object expectedCodeValue,
         object expectedStatusValue)
@@ -41,13 +42,25 @@ public sealed class RouteListFilesystemFindingPolicyTests
         var state = Assert.IsType<PhysicalPathState>(stateValue);
         var expectedCode = Assert.IsType<RouteListFindingCode>(expectedCodeValue);
         var expectedStatus = Assert.IsType<CliSemanticStatus>(expectedStatusValue);
-        var resolution = PhysicalResolution(state);
-        var finding = RouteListFilesystemFindingPolicy.FromPhysical(".agents/subject", resolution);
+        var candidate = new SourceCandidate(
+            canonicalPath: ".agents/subject.md",
+            form: SourceDocumentForm.Markdown,
+            automaticId: "subject",
+            physicalState: state,
+            physicalPath: null,
+            physicalParentPath: Physical("parent"));
+        var issue = new SourceCatalogueIssue(
+            code: SourceCatalogueIssueCode.CandidateUnsafe,
+            attemptedCanonicalPath: ".agents/subject.md",
+            relatedPaths: [],
+            scopePhysicalPath: candidate.PhysicalParentPath,
+            failure: PhysicalFailure(state));
+        var finding = RouteListFilesystemFindingPolicy.FromCatalogueIssue(issue, candidate);
 
         Assert.NotNull(finding);
         Assert.Equal(expectedCode, finding.Code);
         Assert.Equal(expectedStatus, finding.Status);
-        Assert.Equal(".agents/subject", finding.CanonicalLogicalSubject);
+        Assert.Equal(".agents/subject.md", finding.CanonicalLogicalSubject);
     }
 
     [Theory(DisplayName = "Route-list finding policy maps every strict file-read outcome"),
@@ -69,14 +82,12 @@ public sealed class RouteListFilesystemFindingPolicyTests
         Assert.Equal(expectedStatus, finding.Status);
     }
 
-    [Fact(DisplayName = "Route-list finding policy emits no finding for complete filesystem facts")]
+    [Fact(DisplayName = "Route-list finding policy emits no finding for a complete file read")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
-    public void CompleteFactsHaveNoFinding()
+    public void CompleteFileFactsHaveNoFinding()
     {
-        var physical = PhysicalPathResolution.Contained("logical", Physical("complete"));
         var file = FileReadResult<string>.Complete(".agents/file.md", "body");
 
-        Assert.Null(RouteListFilesystemFindingPolicy.FromPhysical(".agents", physical));
         Assert.Null(RouteListFilesystemFindingPolicy.FromFile(file));
     }
 
@@ -136,33 +147,21 @@ public sealed class RouteListFilesystemFindingPolicyTests
         Assert.Throws<ArgumentOutOfRangeException>(() => RouteListFilesystemFindingPolicy.FromFile(read));
     }
 
-    private static PhysicalPathResolution PhysicalResolution(PhysicalPathState state)
-    {
-        return state switch
+    private static FilesystemFailure? PhysicalFailure(PhysicalPathState state)
+        => state switch
         {
-            PhysicalPathState.Missing => PhysicalPathResolution.Classified(state, "logical"),
-            PhysicalPathState.Dangling
-                or PhysicalPathState.External
-                or PhysicalPathState.Cycle => PhysicalPathResolution.Classified(state, "logical", Physical("target")),
-            PhysicalPathState.Inaccessible => PhysicalPathResolution.Failed(
-                state,
-                "logical",
-                new FilesystemFailure(FilesystemFailureKind.AccessDenied, "Filesystem access was denied.")),
-            PhysicalPathState.Invalid => PhysicalPathResolution.Failed(
-                state,
-                "logical",
-                new FilesystemFailure(FilesystemFailureKind.InvalidPath, "The path is invalid.")),
-            PhysicalPathState.Unsupported => PhysicalPathResolution.Failed(
-                state,
-                "logical",
-                new FilesystemFailure(FilesystemFailureKind.Unsupported, "The operation is unsupported.")),
-            PhysicalPathState.InputOutputFailure => PhysicalPathResolution.Failed(
-                state,
-                "logical",
-                new FilesystemFailure(FilesystemFailureKind.InputOutput, "The filesystem operation failed.")),
+            PhysicalPathState.Missing or PhysicalPathState.Dangling
+                or PhysicalPathState.External or PhysicalPathState.Cycle => null,
+            PhysicalPathState.Inaccessible =>
+                new FilesystemFailure(FilesystemFailureKind.AccessDenied, "Filesystem access was denied."),
+            PhysicalPathState.Invalid =>
+                new FilesystemFailure(FilesystemFailureKind.InvalidPath, "The path is invalid."),
+            PhysicalPathState.Unsupported =>
+                new FilesystemFailure(FilesystemFailureKind.Unsupported, "The operation is unsupported."),
+            PhysicalPathState.InputOutputFailure =>
+                new FilesystemFailure(FilesystemFailureKind.InputOutput, "The filesystem operation failed."),
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The test state is not a non-contained state."),
         };
-    }
 
     private static FileReadResult<string> FileResult(FileReadState state)
     {

@@ -46,22 +46,28 @@ integrated at `aab57058`, exactly matching feature `d053b243`, tree `571b6104`.
 Task 10 is complete at phase 3/3, milestone 5/5, integrated at `fbcec295`.
 The exact feature/integration tree is `3b73cff4`; all 28 commands, seven stable
 findings and 135 source locators are accounted. Executable source is unchanged.
-Task 21 is active at phase 4/4, milestone 5/6. Reviewed source `391ad956` passes
-all 6,418 managed/native executions: managed 2,879/1,603/111, native 1,603/111,
-and managed-public-on-native 111. There are zero failures/skips/build warnings;
-every command has three public journeys. Formatting, static/protected checks,
-source/runtime identity and unrelated dirty-file preservation pass. Integration
-remains pending. Task 27 may begin from the accepted feature candidate on its
-own branch; exact trees must be reconciled at eventual integration. The Task
-record owns canonical evidence, isolated commits and consumed review budgets.
+Task 21 is complete at phase 4/4, milestone 6/6, integrated into local develop
+at `75f6ff49`. Its tree exactly equals accepted feature `6173fb5b`. Reviewed
+source `391ad956` passes all 6,418 managed/native executions: managed
+2,879/1,603/111, native 1,603/111 and managed-public-on-native 111. There are
+zero failures/skips/build warnings; every command has three public journeys.
+Formatting, static/protected checks, source/runtime identity and unrelated
+dirty-file preservation pass. Task 27 reconciled this ancestry at `12d15251`
+with its prior tree unchanged. The Task record owns exact acceptance evidence.
 Task 10 already assessed C# architecture and refactoring across all 28 commands
 at strategic primary-path level. This does not establish exhaustive internals
 coverage. Under the user's broader streamlining direction, root must reconcile
 that coverage and assess remaining C# simplification opportunities before
 Task 13, selecting justified bounded follow-up work without repeating accepted
 reviews or treating superficial similarity as shared semantic ownership.
-Task 27 “C# Structural Streamlining” owns that remaining assessment and justified
-refactoring; it is queued with no invented phase or milestone horizon.
+Task 27 “C# Structural Streamlining” is active at phase 4/4, milestone 5/6.
+All five isolated Blue/Purple slices and the bounded whitespace correction are
+accepted. Final source `d5ccca6d` passes 6,421 managed/native executions:
+managed 2,882/1,603/111, native 1,603/111 and managed-public-on-native 111.
+There are zero failures, skips or build warnings. Fresh review, required
+whitespace/style, static/protected checks and source/runtime identity pass.
+The Task record and canonical receipt define exact evidence and limits.
+Final candidate freeze and local integration remain M6.
 Root continues Task 21 → Task 27 → Task 7 ARM64 expansion → Task 13 →
 Task 22. On 2026-09-09 the user explicitly approved Tasks 21, 27, 13 and 22,
 including Linux, macOS and Windows on x64 and ARM64. The current

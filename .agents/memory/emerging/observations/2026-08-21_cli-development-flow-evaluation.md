@@ -6,6 +6,27 @@ open-forge:
 
 # CLI Development Flow Evaluation
 
+## Task 27 Bounded Structural Preparation
+
+A continuous Astra/high author traced twelve prepared candidates and found
+one additional redundant Route Move parse. Root accepted five isolated slices,
+retaining test-only construction or accessor surfaces where actual contracts
+and fixtures justified them. The 82-path model inventory was not treated as
+82 violations or an exhaustive review. S1 moved physical/token evidence onto
+live owners before S2 removed the now-unused helpers; both passed focused
+execution against exact frozen assertions and source identities.
+
+S1 exposed another runtime-reuse boundary: an authority-only Git successor
+changed Core/TestSupport build metadata despite unchanged production source.
+The author detected the differing binaries and rebuilt Integration before
+qualification. Its first formatting receipt ran whitespace verification;
+root additionally ran the required informational style check, then made that
+exact tool distinction explicit for later slices. S2's four existing collection
+suggestions were retained in its deletion-only commit and explicitly assigned
+to the already planned Route Move slice. These receipts establish bounded
+outcomes and needed corrections, not superiority over Sol or cost savings;
+there is no controlled comparison with equivalent prior work.
+
 ## Task 21 Bounded Recheck Outcome
 
 The continuous Astra/high author and reviewer required a second bounded

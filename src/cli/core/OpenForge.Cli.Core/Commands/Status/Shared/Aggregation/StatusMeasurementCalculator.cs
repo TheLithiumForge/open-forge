@@ -12,18 +12,6 @@ internal static class StatusMeasurementCalculator
         return new StatusIntegerValue(observation.State, observation.Value);
     }
 
-    internal static StatusIntegerValue EstimateTokens(OperationalIntegerObservation characters)
-    {
-        Validate(characters.State, characters.Value, nameof(characters));
-        if (characters.State != OperationalValueState.Available)
-        {
-            return new StatusIntegerValue(characters.State, null);
-        }
-
-        var value = characters.Value.GetValueOrDefault();
-        return new StatusIntegerValue(OperationalValueState.Available, value / 4L + (value % 4L == 0 ? 0L : 1L));
-    }
-
     internal static StatusIntegerValue Difference(StatusIntegerValue current, StatusIntegerValue initial)
     {
         Validate(current.State, current.Value, nameof(current));

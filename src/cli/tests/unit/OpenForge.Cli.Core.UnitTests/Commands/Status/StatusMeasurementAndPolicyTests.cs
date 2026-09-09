@@ -7,15 +7,11 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Status;
 
 public sealed class StatusMeasurementAndPolicyTests
 {
-    [Fact(DisplayName = "Status derives signed differences and ceiling token estimates only from available measurements"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
-    public void AvailableMeasurementsDeriveSignedDifferenceAndCeilingTokenEstimate()
+    [Fact(DisplayName = "Status preserves available values and derives signed differences without fabricating unavailable values"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
+    public void AvailableMeasurementsPreserveProjectionAndSignedDifferences()
     {
         Assert.Equal(StatusResultSeeds.Available(0), StatusMeasurementCalculator.Project(StatusObservationSeeds.Available(0)));
         Assert.Equal(StatusResultSeeds.Available(42), StatusMeasurementCalculator.Project(StatusObservationSeeds.Available(42)));
-        Assert.Equal(StatusResultSeeds.Available(0), StatusMeasurementCalculator.EstimateTokens(StatusObservationSeeds.Available(0)));
-        Assert.Equal(StatusResultSeeds.Available(1), StatusMeasurementCalculator.EstimateTokens(StatusObservationSeeds.Available(1)));
-        Assert.Equal(StatusResultSeeds.Available(1), StatusMeasurementCalculator.EstimateTokens(StatusObservationSeeds.Available(4)));
-        Assert.Equal(StatusResultSeeds.Available(2), StatusMeasurementCalculator.EstimateTokens(StatusObservationSeeds.Available(5)));
         Assert.Equal(
             StatusResultSeeds.Available(-7),
             StatusMeasurementCalculator.Difference(StatusResultSeeds.Available(3), StatusResultSeeds.Available(10)));
@@ -31,12 +27,6 @@ public sealed class StatusMeasurementAndPolicyTests
         Assert.Equal(
             notApplicable,
             StatusMeasurementCalculator.Project(StatusObservationSeeds.NotApplicable()));
-        Assert.Equal(
-            unavailable,
-            StatusMeasurementCalculator.EstimateTokens(StatusObservationSeeds.Unavailable()));
-        Assert.Equal(
-            notApplicable,
-            StatusMeasurementCalculator.EstimateTokens(StatusObservationSeeds.NotApplicable()));
         Assert.Equal(
             unavailable,
             StatusMeasurementCalculator.Difference(StatusResultSeeds.Available(3), unavailable));

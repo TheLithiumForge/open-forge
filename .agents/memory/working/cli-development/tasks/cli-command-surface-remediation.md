@@ -1,10 +1,26 @@
 ---
 open-forge:
   description: Correct the seven validated CLI audit findings within accepted behavior, test tiers, and local callable ownership
-  tags: [Memory, Working, Contextual, Active, CLI, Task, Remediation, Architecture, Refactoring, Testing]
+  tags: [Memory, Working, Contextual, Complete, CLI, Task, Remediation, Architecture, Refactoring, Testing]
 ---
 
 # Task 21: CLI Command Surface Remediation
+
+## M6 Integration Acceptance
+
+Task 21 is complete at phase 4/4, milestone 6/6. Accepted feature `6173fb5b`
+was squash-integrated into local develop as `75f6ff49`, from `8463a2e2`.
+Both have exact tree `0b7ed8e619d7a4208c805c04e8a038860f88cfbd`. The final
+freeze accounts for 95 changed paths, including sixteen additions and one
+deletion (94 displayed changes with rename detection). No reviewed source
+changed during integration, so the qualified M5 receipts remain applicable.
+
+`artifacts/task21-final/integration-receipt.json` records every accepted path
+and source identity. Task 27 reconciled the new ancestor at `12d15251`; its
+pre-existing authority tree remained exactly `fa23fa6e`. All older dirty
+worktrees and the separate Task 28 work remain preserved. No remote action,
+publication or global installation refresh occurred. The earlier M5 and M4
+sections below retain their historical evidence and superseded pending states.
 
 ## M5 Full Gate Acceptance
 

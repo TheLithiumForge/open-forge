@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.References;
@@ -97,12 +96,9 @@ internal sealed partial class RouteMoveNavigationPlanner(
     private ProjectedRegion[] ProjectRegions(
         IEnumerable<RegionDocument> documents,
         GeneratedNavigationProjectionRequest request)
-        => documents.Select(document => new ProjectedRegion(
-                document,
-                _regionPlanner.Plan(request, new GeneratedNavigationRegionInput(
-                    document.Region.Source,
-                    _markdownParser.Parse(document.Text)))))
-            .ToArray();
+        => [.. documents.Select((document, index) => new ProjectedRegion(
+            document,
+            _regionPlanner.Plan(request, request.Regions[index])))];
 
     private static RouteMoveNavigationPlanningResult FormPlan(
         RouteMoveNavigationPlanningRequest request,
@@ -117,14 +113,12 @@ internal sealed partial class RouteMoveNavigationPlanner(
                 GeneratedNavigation = new RouteMoveGeneratedNavigation
                 {
                     Coverage = RouteMoveCoverage.Complete,
-                    Regions = selectedRegions.Select(region => ProjectRegion(region, regions))
-                        .OrderBy(region => region.Path, StringComparer.Ordinal)
-                        .ToImmutableArray(),
+                    Regions = [.. selectedRegions.Select(region => ProjectRegion(region, regions))
+                        .OrderBy(region => region.Path, StringComparer.Ordinal)],
                 },
-                FileChanges = changes.Select(change => change.Change)
-                    .OfType<PlannedFileChange>()
-                    .ToImmutableArray(),
-                DocumentEdits = changes.Select(change => change.Edit).ToImmutableArray(),
+                FileChanges = [.. changes.Select(change => change.Change)
+                    .OfType<PlannedFileChange>()],
+                DocumentEdits = [.. changes.Select(change => change.Edit)],
             },
             boundary: null);
     }
@@ -146,9 +140,6 @@ internal sealed partial class RouteMoveNavigationPlanner(
                 : RouteMoveGeneratedState.Unchanged,
         };
     }
-
-    private static bool IsMovedEntrypoint(SelectedRegion region)
-        => region.Reasons.Contains(RouteMoveGeneratedReason.MovedEntrypoint);
 
     private static IReadOnlyList<NavigationChange> BuildChanges(
         RouteMoveNavigationPlanningRequest request,

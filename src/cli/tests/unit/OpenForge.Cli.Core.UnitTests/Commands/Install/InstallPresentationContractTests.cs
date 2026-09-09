@@ -51,119 +51,6 @@ public sealed class InstallPresentationContractTests
         Assert.Equal(typeof(InstallJsonFinding[]), findings.PropertyType);
     }
 
-    [Fact(DisplayName = "Install JSON DTO graph preserves exact literal envelope, nested values, nulls, and ordered arrays"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
-    public void JsonDtoGraphPreservesExactPacketValues()
-    {
-        var document = new InstallJsonDocument
-        {
-            SchemaVersion = 1,
-            Command = "install",
-            Status = "attention",
-            Workspace = new InstallJsonWorkspace
-            {
-                Path = "/tmp/install-workspace",
-                SelectedBy = "explicit-workspace",
-            },
-            Result = new InstallJsonResult
-            {
-                Mode = "apply",
-                Force = true,
-                Automatic = false,
-                Source = new InstallJsonSource
-                {
-                    InventoryFingerprint = "embedded-framework-v1",
-                    AssetCount = 7,
-                },
-                Classification = "eligible-initial-occupant",
-                Footprint = new InstallJsonFootprint
-                {
-                    PayloadFiles = 4,
-                    ManagedRegions = 2,
-                    GeneratedRegions = 3,
-                },
-                Effects =
-                [
-                    new InstallJsonEffect
-                    {
-                        Path = ".agents/loader.md",
-                        Kind = "file",
-                        Action = "replace",
-                        SourceAssetPath = "framework/loader.md",
-                        Outcome = "verified",
-                        Residual = "none",
-                    },
-                    new InstallJsonEffect
-                    {
-                        Path = ".agents/memory/_memory.md",
-                        Kind = "generated-region",
-                        Action = "replace",
-                        SourceAssetPath = null,
-                        Outcome = "verified",
-                        Residual = "none",
-                    },
-                ],
-                Lifecycle = new InstallJsonLifecycle
-                {
-                    Action = "publish",
-                    Outcome = "verified",
-                },
-                Recovery = new InstallJsonRecovery
-                {
-                    State = "retained",
-                    ResidualPath = "/tmp/open-forge-recovery/bundle.zip",
-                },
-                Verification = "verified",
-                Findings =
-                [
-                    new InstallJsonFinding
-                    {
-                        Code = "install.recovery-artifact-retained",
-                        Target = null,
-                        Cause = "The recovery artifact remains available for cleanup.",
-                    },
-                ],
-            },
-            Next = new InstallJsonNext
-            {
-                Command = "open-forge cleanup",
-                Reason = "Review the retained recovery artifact.",
-            },
-        };
-
-        Assert.Equal(1, document.SchemaVersion);
-        Assert.Equal("install", document.Command);
-        Assert.Equal("attention", document.Status);
-        Assert.Equal("/tmp/install-workspace", document.Workspace?.Path);
-        Assert.Equal("explicit-workspace", document.Workspace?.SelectedBy);
-        Assert.Equal("apply", document.Result.Mode);
-        Assert.True(document.Result.Force);
-        Assert.False(document.Result.Automatic);
-        Assert.Equal("embedded-framework-v1", document.Result.Source?.InventoryFingerprint);
-        Assert.Equal(7, document.Result.Source?.AssetCount);
-        Assert.Equal("eligible-initial-occupant", document.Result.Classification);
-        Assert.Equal((4, 2, 3), (
-            document.Result.Footprint?.PayloadFiles,
-            document.Result.Footprint?.ManagedRegions,
-            document.Result.Footprint?.GeneratedRegions));
-        Assert.Equal(
-            [".agents/loader.md", ".agents/memory/_memory.md"],
-            document.Result.Effects.Select(effect => effect.Path));
-        Assert.Equal(
-            ["file", "generated-region"],
-            document.Result.Effects.Select(effect => effect.Kind));
-        Assert.Equal("framework/loader.md", document.Result.Effects[0].SourceAssetPath);
-        Assert.Null(document.Result.Effects[1].SourceAssetPath);
-        Assert.Equal("publish", document.Result.Lifecycle.Action);
-        Assert.Equal("verified", document.Result.Lifecycle.Outcome);
-        Assert.Equal("retained", document.Result.Recovery.State);
-        Assert.Equal("/tmp/open-forge-recovery/bundle.zip", document.Result.Recovery.ResidualPath);
-        Assert.Equal("verified", document.Result.Verification);
-        var finding = Assert.Single(document.Result.Findings);
-        Assert.Equal("install.recovery-artifact-retained", finding.Code);
-        Assert.Null(finding.Target);
-        Assert.Equal("open-forge cleanup", document.Next?.Command);
-    }
-
     [Fact(DisplayName = "Install projection must map the complete typed result to the frozen DTO packet"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
     public void JsonProjectionMapsTheFrozenPacket()
     {
@@ -177,7 +64,8 @@ public sealed class InstallPresentationContractTests
         Assert.NotNull(document.Result.Findings);
     }
 
-    [Theory(DisplayName = "Install compact and expanded human output leads with operation identity and retains one bounded next action"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "Install compact and expanded human output leads with operation identity and retains one bounded next action"),
+        Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
     [InlineData((int)CliView.Compact)]
     [InlineData((int)CliView.Expanded)]
     public void HumanViewsLeadWithInstallIdentityAndBoundedNext(int viewValue)

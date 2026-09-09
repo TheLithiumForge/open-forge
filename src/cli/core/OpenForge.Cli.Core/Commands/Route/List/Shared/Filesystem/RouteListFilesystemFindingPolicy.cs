@@ -11,45 +11,6 @@ namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 
 internal static class RouteListFilesystemFindingPolicy
 {
-    internal static RouteListFilesystemFinding? FromPhysical(
-        string canonicalLogicalSubject,
-        PhysicalPathResolution resolution)
-    {
-        ArgumentNullException.ThrowIfNull(resolution);
-        return resolution.State switch
-        {
-            PhysicalPathState.Contained => null,
-            PhysicalPathState.Missing => ReadUnavailable(
-                canonicalLogicalSubject,
-                "The filesystem candidate is unavailable."),
-            PhysicalPathState.External => PhysicalBoundary(
-                canonicalLogicalSubject,
-                "The physical path leaves the selected workspace."),
-            PhysicalPathState.Dangling => PhysicalBoundary(
-                canonicalLogicalSubject,
-                "The physical link target is unavailable."),
-            PhysicalPathState.Cycle => PhysicalBoundary(
-                canonicalLogicalSubject,
-                "The physical link chain contains a cycle."),
-            PhysicalPathState.Inaccessible => PhysicalBoundary(
-                canonicalLogicalSubject,
-                ReadFailureCause(ReadFailure(resolution), "Physical path access was denied.")),
-            PhysicalPathState.Invalid => PhysicalBoundary(
-                canonicalLogicalSubject,
-                ReadFailureCause(ReadFailure(resolution), "The physical path is invalid.")),
-            PhysicalPathState.Unsupported => PhysicalBoundary(
-                canonicalLogicalSubject,
-                ReadFailureCause(ReadFailure(resolution), "The physical path operation is unsupported.")),
-            PhysicalPathState.InputOutputFailure => PhysicalBoundary(
-                canonicalLogicalSubject,
-                ReadFailureCause(ReadFailure(resolution), "The physical path operation failed.")),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(resolution),
-                resolution.State,
-                "The physical path state is not defined."),
-        };
-    }
-
     internal static RouteListFilesystemFinding? FromFile<T>(FileReadResult<T> result)
     {
         ArgumentNullException.ThrowIfNull(result);
@@ -155,25 +116,11 @@ internal static class RouteListFilesystemFindingPolicy
         };
     }
 
-    internal static RouteListFilesystemFinding CandidateMissing(string canonicalLogicalSubject)
-    {
-        return ReadUnavailable(
-            canonicalLogicalSubject,
-            "The contained filesystem candidate is no longer available.");
-    }
-
     internal static RouteListFilesystemFinding DirectoryExpected(string canonicalLogicalSubject)
     {
         return ReadUnavailable(
             canonicalLogicalSubject,
             "The inventory root is not a directory.");
-    }
-
-    internal static RouteListFilesystemFinding ContainedDirectoryCycle(string canonicalLogicalSubject)
-    {
-        return PhysicalBoundary(
-            canonicalLogicalSubject,
-            "The contained directory alias repeats an active traversal boundary.");
     }
 
     internal static RouteListFilesystemFinding MetadataMissing(string canonicalLogicalSubject)
@@ -283,12 +230,6 @@ internal static class RouteListFilesystemFindingPolicy
             PhysicalPathState.Cycle => "The physical link chain contains a cycle.",
             _ => "The physical path leaves the selected workspace.",
         };
-    }
-
-    private static FilesystemFailure ReadFailure(PhysicalPathResolution resolution)
-    {
-        return resolution.Failure
-            ?? throw new InvalidOperationException("A failed physical resolution requires its direct failure.");
     }
 
     private static FilesystemFailure ReadFailure<T>(FileReadResult<T> result)

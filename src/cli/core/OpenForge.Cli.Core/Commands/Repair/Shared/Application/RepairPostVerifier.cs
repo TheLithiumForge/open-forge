@@ -21,21 +21,6 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
 {
     private readonly DoctorDiagnosisReader _diagnosisReader = diagnosisReader;
 
-    internal ValueTask<DoctorDiagnosisRead> ReadLibraryPostDiagnosisAsync(
-        RepairPlan plan,
-        RepairLibraryExecution execution,
-        CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(plan);
-        ArgumentNullException.ThrowIfNull(execution);
-        if (execution.ReferenceReceipts.IsDefault || execution.LibraryReceipts.IsDefault)
-        {
-            throw new ArgumentException("Library post-diagnosis must retain all completed and residual effect receipts.", nameof(execution));
-        }
-
-        return _diagnosisReader.ReadAsync(new DoctorRequest(plan.Request.Workspace), cancellationToken);
-    }
-
     internal async ValueTask<(DoctorDiagnosisRead Diagnosis, RepairPostVerification Verification)> VerifyLibraryAsync(
         RepairPlan plan,
         RepairLibraryExecution execution,
@@ -55,14 +40,24 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
         {
             var coverage = ReadLibraryCoverage(diagnosis.Observation);
             var selectedState = RepairCoverageMapper.ReadPostDiagnosisState(coverage);
+            RepairVerificationState postConditions;
+            if (selectedState == RepairPostDiagnosisState.Complete)
+            {
+                postConditions = RepairVerificationState.Verified;
+            }
+            else if (selectedState == RepairPostDiagnosisState.Blocked)
+            {
+                postConditions = RepairVerificationState.Failed;
+            }
+            else
+            {
+                postConditions = RepairVerificationState.Planned;
+            }
+
             var libraryVerification = new RepairVerification(
                 RepairVerificationState.Verified,
                 RepairVerificationState.Verified,
-                selectedState == RepairPostDiagnosisState.Complete
-                    ? RepairVerificationState.Verified
-                    : selectedState == RepairPostDiagnosisState.Blocked
-                        ? RepairVerificationState.Failed
-                        : RepairVerificationState.Planned);
+                postConditions);
             return (diagnosis, new RepairPostVerification(
                 libraryVerification,
                 new RepairPostDiagnosis(selectedState, coverage, []),
@@ -85,13 +80,22 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
     {
         var ordinary = RepairCoverageMapper.Read(observation);
         var library = ReadCoverage(observation.Libraries.State);
-        var selected = ordinary.WorkspaceAndPath == RepairCoverageState.Blocked
-            || library == RepairCoverageState.Blocked
-                ? RepairCoverageState.Blocked
-                : ordinary.WorkspaceAndPath == RepairCoverageState.Incomplete
-                    || library == RepairCoverageState.Incomplete
-                    ? RepairCoverageState.Incomplete
-                    : RepairCoverageState.Complete;
+        RepairCoverageState selected;
+        if (ordinary.WorkspaceAndPath == RepairCoverageState.Blocked
+            || library == RepairCoverageState.Blocked)
+        {
+            selected = RepairCoverageState.Blocked;
+        }
+        else if (ordinary.WorkspaceAndPath == RepairCoverageState.Incomplete
+            || library == RepairCoverageState.Incomplete)
+        {
+            selected = RepairCoverageState.Incomplete;
+        }
+        else
+        {
+            selected = RepairCoverageState.Complete;
+        }
+
         return new RepairDiagnosisCoverage(
             ordinary.WorkspaceAndPath,
             ordinary.RouteAndHeading,

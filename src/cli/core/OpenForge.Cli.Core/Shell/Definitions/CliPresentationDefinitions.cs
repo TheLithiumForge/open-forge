@@ -34,16 +34,6 @@ internal static class CliPresentationDefinitions
     internal const string Compact = "compact";
     internal const string Expanded = "expanded";
 
-    internal static CliView ParseView(string value)
-    {
-        return value switch
-        {
-            Compact => CliView.Compact,
-            Expanded => CliView.Expanded,
-            _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The view is not defined."),
-        };
-    }
-
     internal static void Validate(CliPresentation presentation)
     {
         ArgumentNullException.ThrowIfNull(presentation);

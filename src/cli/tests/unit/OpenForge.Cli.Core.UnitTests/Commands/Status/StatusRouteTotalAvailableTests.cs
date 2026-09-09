@@ -43,6 +43,25 @@ public sealed class StatusRouteTotalAvailableTests
             expectedTokens: 1L);
     }
 
+    [Theory(DisplayName = "Status live context measurements retain exact ceiling token boundaries"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
+    [InlineData("", 0L, 0L), InlineData("x", 1L, 1L), InlineData("xxxx", 4L, 1L), InlineData("xxxxx", 5L, 2L)]
+    public void LiveMeasurementsUseCeilingTokenEstimate(string text, long expectedCharacters, long expectedTokens)
+    {
+        var result = StatusRouteTotalAvailableSupport.Read(
+            installed: false,
+            FileReadState.Complete,
+            text,
+            OperationalViewState.Complete);
+
+        Assert.Equal(OperationalViewState.Complete, result.State);
+        StatusRouteTotalAvailableSupport.AssertMeasurement(
+            result.Context.TotalAvailable,
+            expectedFiles: 1L,
+            expectedCharacters: expectedCharacters,
+            expectedBytes: expectedCharacters,
+            expectedTokens: expectedTokens);
+    }
+
     [Fact(DisplayName = "Status total available is unavailable when the canonical entry is unavailable")]
     [Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void UnavailableEntryProducesUnavailableMeasurement()
@@ -55,6 +74,7 @@ public sealed class StatusRouteTotalAvailableTests
 
         Assert.Equal(OperationalViewState.Incomplete, result.State);
         StatusRouteTotalAvailableSupport.AssertUnavailable(result.Context);
+        Assert.Equal(OperationalValueState.Unavailable, result.Context.TotalAvailable.EstimatedTokens.State);
     }
 
     [Fact(DisplayName = "Status route view is blocked when the canonical entry is unsafe")]

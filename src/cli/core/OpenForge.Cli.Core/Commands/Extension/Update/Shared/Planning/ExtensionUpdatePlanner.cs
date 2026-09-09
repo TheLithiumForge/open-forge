@@ -104,13 +104,23 @@ internal sealed class ExtensionUpdatePlanner(
                     && Matches(recovery.Candidates[0], allowedRecovery));
         if (!recoveryIsExpected)
         {
+            ExtensionUpdateFindingCode recoveryFinding;
+            if (recovery.State == RecoveryBundleCatalogueState.Cancelled)
+            {
+                recoveryFinding = ExtensionUpdateFindingCode.Interrupted;
+            }
+            else if (recovery.State == RecoveryBundleCatalogueState.Available)
+            {
+                recoveryFinding = ExtensionUpdateFindingCode.RecoveryConflict;
+            }
+            else
+            {
+                recoveryFinding = ExtensionUpdateFindingCode.RecoveryUnavailable;
+            }
+
             return Stop(
                 request,
-                recovery.State == RecoveryBundleCatalogueState.Cancelled
-                    ? ExtensionUpdateFindingCode.Interrupted
-                    : recovery.State == RecoveryBundleCatalogueState.Available
-                        ? ExtensionUpdateFindingCode.RecoveryConflict
-                        : ExtensionUpdateFindingCode.RecoveryUnavailable,
+                recoveryFinding,
                 recovery.Cause ?? "Recognized recovery residuals block Extension Update.");
         }
 
@@ -140,17 +150,26 @@ internal sealed class ExtensionUpdatePlanner(
                 source: SourceFact(source));
         }
 
-        string[] selectedIds = request.All
-            ? [.. currentLifecycle.Packages.Select(package => package.Id).Order(StringComparer.Ordinal)]
-            : inferred
-                ? [source.Packages[0].Id]
-                : [.. request.RequestedIds.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)];
+        string[] selectedIds;
+        ExtensionUpdateSelectionKind selectionKind;
+        if (request.All)
+        {
+            selectedIds = [.. currentLifecycle.Packages.Select(package => package.Id).Order(StringComparer.Ordinal)];
+            selectionKind = ExtensionUpdateSelectionKind.ExplicitAll;
+        }
+        else if (inferred)
+        {
+            selectedIds = [source.Packages[0].Id];
+            selectionKind = ExtensionUpdateSelectionKind.SinglePackageInference;
+        }
+        else
+        {
+            selectedIds = [.. request.RequestedIds.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)];
+            selectionKind = ExtensionUpdateSelectionKind.ExplicitIds;
+        }
+
         var selection = new ExtensionUpdateSelection(
-            request.All
-                ? ExtensionUpdateSelectionKind.ExplicitAll
-                : inferred
-                    ? ExtensionUpdateSelectionKind.SinglePackageInference
-                    : ExtensionUpdateSelectionKind.ExplicitIds,
+            selectionKind,
             request.All ? [] : selectedIds);
         var installed = currentLifecycle.Packages.Select(package => package.Id)
             .ToHashSet(StringComparer.Ordinal);
@@ -376,15 +395,25 @@ internal sealed class ExtensionUpdatePlanner(
 
         if (currentness.State != FrameworkLifecycleCurrentnessState.Current)
         {
+            ExtensionUpdateFindingCode currentnessFinding;
+            if (currentness.State == FrameworkLifecycleCurrentnessState.Cancelled)
+            {
+                currentnessFinding = ExtensionUpdateFindingCode.Interrupted;
+            }
+            else if (currentness.State is FrameworkLifecycleCurrentnessState.Unavailable
+                or FrameworkLifecycleCurrentnessState.Missing)
+            {
+                currentnessFinding = ExtensionUpdateFindingCode.FrameworkUnavailable;
+            }
+            else
+            {
+                currentnessFinding = ExtensionUpdateFindingCode.FrameworkUnsafe;
+            }
+
             return Stop(
                 request,
                 new ExtensionUpdateFinding(
-                    currentness.State == FrameworkLifecycleCurrentnessState.Cancelled
-                        ? ExtensionUpdateFindingCode.Interrupted
-                        : currentness.State is FrameworkLifecycleCurrentnessState.Unavailable
-                            or FrameworkLifecycleCurrentnessState.Missing
-                            ? ExtensionUpdateFindingCode.FrameworkUnavailable
-                            : ExtensionUpdateFindingCode.FrameworkUnsafe,
+                    currentnessFinding,
                     currentness.Cause ?? "The installed Framework anchor is not current.",
                     currentness.Path),
                 selection,

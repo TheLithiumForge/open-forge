@@ -45,6 +45,3 @@ internal sealed record UpdatePlanExecution(
 internal sealed record UpdatePlanResolution(
     UpdatePlanBuild Build,
     UpdatePlanExecution? Execution);
-
-internal sealed record UpdatePlanningBoundary(
-    UpdatePlanBuild Build);
