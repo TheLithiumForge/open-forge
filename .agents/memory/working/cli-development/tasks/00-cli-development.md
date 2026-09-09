@@ -43,7 +43,11 @@ Task 26 is accepted at phase 4/4, milestone 6/6. Review passed without material
 findings; full managed 2837/1570/188, native 1570/188 and managed-on-native188
 passed. All 300 managed/native raw comparison files match. Task 26 is
 integrated at `aab57058`, exactly matching feature `d053b243`, tree `571b6104`.
-Root is activating Task 10 on the accepted complete CLI baseline.
+Task 10 is active at phase 3/3, milestone 4/5 on accepted `d5b77fce`.
+Both sequential cohorts and root disposition are complete for all 28 commands.
+The report retains three behavior defects, two evidence-allocation findings
+and two bounded callable improvements, selected under the existing correction
+and refactoring authority. Protected-source report freeze/integration is next.
 Root continues Task 10 audit → conditional Task 21 → Task 13 → Task 22. Later publication
 and global installation refresh remain unauthorized. General test-environment
 cleanup remains an idea. The current Task capsules govern scoped execution;

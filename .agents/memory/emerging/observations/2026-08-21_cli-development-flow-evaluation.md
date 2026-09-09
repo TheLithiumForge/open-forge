@@ -1125,3 +1125,27 @@ All 150 native output/exit files match their preserved baseline, alongside the
 150 managed files. The final native run required no harness correction. This
 closes the refactor's same-runtime differential claim within its frozen cases;
 it does not establish a matched cross-model quality or cost comparison.
+
+## Task 10 Strategic Audit And Evidence Subjects
+
+Two sequential Astra/high reviewers covered disjoint cohorts of twelve and
+sixteen commands on `d5b77fce`. Root verified their concrete finding paths and
+authority. The report preserves three behavior defects, two related public
+evidence-allocation findings and two local callable candidates. Passing full
+predecessor suites did not prove unexecuted Update create/lifecycle application
+or Library failed-preparation completion; an existing Route Inspect test even
+asserted the behavior that conflicted with exact-pair authority. Qualification
+therefore needs the owned subject and actual reached stage, not a green suite
+or a plausible test name alone. No new runtime reproduction occurred in the
+audit; Task 21 owns that Red evidence.
+
+The audit also distinguished public journeys from methods, theory rows and
+Shell/artifact subjects. Root retained Install's relocated embedded-payload
+proof while narrowing its duplicate domain-schema detail. One Index helper
+locator and one Update contract locator were corrected before report freeze;
+135 coverage file paths then resolved against the immutable source. The two
+review passes exposed useful concrete issues, but this is not a matched Sol
+comparison and establishes no model-cost or quality superiority. The complete
+Task authority given to R2 contained R1 titles; R2 did not consume R1's finding
+evidence and reviewed a disjoint cohort. This is sequential division of scope,
+not a blinded comparative experiment.
