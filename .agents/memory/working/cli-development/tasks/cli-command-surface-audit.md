@@ -1,18 +1,18 @@
 ---
 open-forge:
   description: Review the complete retained CLI command surface for direct PR-level architecture, design, refactoring, and test-evidence problems
-  tags: [Memory, Working, Contextual, Active, CLI, Task, Audit, Architecture, Refactoring, Testing, Review]
+  tags: [Memory, Working, Contextual, Complete, CLI, Task, Audit, Architecture, Refactoring, Testing, Review]
 ---
 
 # Task 10: CLI Command Surface Audit
 
 ## Task State
 
-- State: Active after all 28 retained commands and Tasks 24–26 are accepted
-  and integrated; before delivery and release acceptance.
+- State: Complete and integrated after reviewing all 28 retained commands and
+  accepted Tasks 24–26; seven findings are selected for Task 21.
 - Permanent mapping: Task 10 “CLI Command Surface Audit” in the
   [project control ledger](../project-control.md).
-- Phase and milestone horizon: phase 3/3, milestone 4/5.
+- Phase and milestone horizon: phase 3/3, milestone 5/5.
 - Selected profile: sequential strategic audit. Root owns meaning and the report;
   two bounded Astra/high reviewers cover disjoint command cohorts in sequence,
   including architecture, callable design, locality/projection and test evidence.
@@ -188,10 +188,8 @@ immutable base, protected surfaces, and finding taxonomy before delegation.
   report's routine in-scope corrections under that authority. A consequential
   new product, support, external-effect or safety choice still requires the
   maintainer. No such choice is needed for the selected seven IDs.
-- Current boundary: M4 is complete: both cohorts and root synthesis/disposition
-  cover all 28 commands. The final report preserves seven stable finding IDs,
-  source/authority locators, invariants, direct evidence, shared boundaries and
-  candid depth limits. M5 protected-source freeze and integration remains.
+- Current boundary: M5 complete. Both cohorts, root disposition, protected
+  source/report freeze and exact-tree local integration are accepted.
 
 | Phase | Boundary              | Completed milestones at boundary                                 |
 | ----- | --------------------- | ---------------------------------------------------------------- |
@@ -242,3 +240,21 @@ restore accepted contracts/rules or simplify identified local callables. They
 introduce no product feature, public schema, support-floor change, compatibility
 mechanism or external effect. This resolves older pending-finding wording
 within current user authority; publication remains separately unauthorized.
+
+## Acceptance And Integration Receipt
+
+Feature `4914c03273a88d4c4440e81ddb6704d7dc0128db` was squash-integrated
+onto accepted `d5b77fce` as `fbcec295edb0c523ba2135f484f3e4191252b92c`.
+Both have exact tree `3b73cff413f1895ff0512f09eaebff36a35a8624`. All eight
+changed paths were frozen by SHA-256 and mode before staging; the sole formerly
+untracked report is committed and accounted. The nine protected Git objects
+are unchanged. All 28 command names exactly match the frozen inventory; 135
+coverage paths resolve at the source base; report/control links and whitespace
+pass. Same-worktree Index refreshed the direct Task navigation. Prettier was
+applied after Index's generated-region whitespace update. No source build,
+test or Native AOT rerun was warranted.
+
+Ignored `artifacts/task10-preflight/acceptance.json` retains source accounting,
+feature/integration trees, protected identities and selected finding IDs. The
+prose-only completion receipt does not invalidate the accepted source evidence.
+Task 10 is complete; Task 21 begins from this current integrated baseline.
