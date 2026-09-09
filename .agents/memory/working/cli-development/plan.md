@@ -37,8 +37,9 @@ accepted feature tree. Task 25 is accepted at phase 5/5, milestone 8/8.
 All T25-R1 findings are closed after T25-C1 and T25-C2. Final managed evidence
 passed 2820/1559/188; native passed 1559/188 and managed-on-native passed 188.
 All 6,502 executions passed with zero failures/skips. Native artifact identity,
-source preservation, formatting and static gates passed. Root is freezing the
-acceptance prose for exact local integration, then activating Task 26.
+source preservation, formatting and static gates passed. Task 25 is integrated
+at `3b4aba9d`, exactly matching accepted feature `564545cb`, tree `7bdbe449`.
+Root is preparing Task 26 on this accepted baseline.
 Root continues Task 26 pure refactor
 → Task 10 audit → conditional Task 21 → Task 13 → Task 22. Later publication
 and global installation refresh remain unauthorized. General test-environment

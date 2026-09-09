@@ -34,7 +34,7 @@ Read the [program Task](00-cli-development.md),
 - [ ] [CLI Delivery](delivery/_delivery.md) — Planned — Implementer: Not assigned
 - [x] [Task 23: Workspace Libraries](workspace-libraries.md) — Complete, phase 5/5, milestone 8/8; Sol return and root placement correction accepted at `25c65bf8`.
 - [x] [Task 24: Extensions Evolution](extensions-evolution.md) — Complete, phase 5/5, milestone 8/8; integrated at `2eedaf87`
-- [x] [Task 25: Workspace Library Destination Projections](workspace-library-destination-projections.md) — Complete, phase 5/5, milestone 8/8; full managed/native acceptance, exact local integration next
+- [x] [Task 25: Workspace Library Destination Projections](workspace-library-destination-projections.md) — Complete, phase 5/5, milestone 8/8; full managed/native acceptance, integrated at `3b4aba9d`
 - [ ] [Task 26: Extension Internal Consolidation](extension-internal-consolidation.md) — Queued pure refactor after all commands and Tasks 24–25; no active phase or milestone horizon
 
 ## Axioms

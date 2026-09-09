@@ -8,7 +8,7 @@ open-forge:
 
 ## Task State
 
-- State: Complete; final candidate accepted for local integration after Tasks 23
+- State: Complete and locally integrated at `3b4aba9d` after Tasks 23
   and 24. The user accepted the final
   folder-scoped Library proposal and optional destination mapping on 2026-09-08.
 - Permanent mapping: Task 25 “Workspace Library Destination Projections” in the
@@ -90,8 +90,8 @@ the historical discussion below. The accepted behavior is:
 - Stop conditions: unresolved product meaning, exceptional machinery, source
   mutation, unsafe grant broadening, or unapproved external effect. Routine
   implementation decisions remain with the root within this accepted design.
-- Next: freeze acceptance prose, integrate the exact accepted candidate locally,
-  and activate Task 26. All executable gates and finding rechecks passed.
+- Next: activate Task 26 on the accepted integrated baseline. All executable
+  gates, finding rechecks and exact-tree integration passed.
 
 | Phase | Boundary                     | Milestones completed at boundary                   |
 | ----- | ---------------------------- | -------------------------------------------------- |
@@ -633,3 +633,13 @@ per-file selection. It does not change accepted contracts, implementation, or
 Task 24 completion. A Library containing only external destinations would also
 need the current mandatory source `.agents` child requirement removed as part
 of the Task 25 contract change.
+
+## Local Integration
+
+Accepted feature `564545cb7e357cd1b2167422c60d8dd4894b3340` was squash-integrated
+onto current local develop `de1e1b7a` as
+`3b4aba9d1c6b939e867eabda8421eaf216bb3bbf`. Both trees are exactly
+`7bdbe449e85c5e15659bd7104506a4e2bd20fa4d`. All 203 changed-path bytes and
+modes match the acceptance inventory, including 29 Task additions and all ten
+formerly untracked M6 paths. The feature branch and prior evidence remain.
+The subsequent integration receipt changes only coordination prose.
