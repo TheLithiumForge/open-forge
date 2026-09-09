@@ -11,7 +11,8 @@ open-forge:
 
 This is the accepted current Crystallized authority for the caller-visible
 Interface Contract for `route remove`. The command does not ship yet;
-implementation and executable proof remain pending Gate 5. It is one explicit
+implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md). It is one explicit
 mutation operation, not a generic batch or apply surface.
 
 The sibling [Behavior Contract](behavior.md) defines the deterministic,

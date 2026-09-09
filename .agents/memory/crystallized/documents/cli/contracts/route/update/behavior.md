@@ -11,7 +11,8 @@ open-forge:
 
 This is the accepted current Crystallized authority for the technology-neutral
 Behavior Contract behind `route update`. The command does not ship yet;
-implementation and executable proof remain pending Gate 5.
+implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md).
 
 The [Interface Contract](interface.md) defines the complete public syntax,
 inputs, observable output, semantic result names, errors, non-goals, and public

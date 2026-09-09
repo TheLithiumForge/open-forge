@@ -11,7 +11,8 @@ open-forge:
 
 This is the accepted current Crystallized authority for the caller-visible
 Interface Contract for `route inspect`. The command does not ship yet;
-implementation and executable proof remain pending Gate 5.
+implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md).
 
 The [Behavior Contract](behavior.md) defines the deterministic,
 technology-neutral operation behind this public surface. The shared

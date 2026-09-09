@@ -13,8 +13,8 @@ This is the accepted current Crystallized Interface Contract for
 `open-forge references`. It owns the public purpose, exact grammar, direction
 selection, incoming scan universe, occurrence facts, overwrite evidence, human
 and structured presentation, semantic results, errors, examples, non-goals, and
-caller-visible verification. The command does not ship yet; implementation and
-executable proof remain pending Gate 5.
+caller-visible verification. The command does not ship yet; implementation and executable evidence are tracked in
+[CLI Development](../../../../../working/cli-development/_cli-development.md).
 
 The sibling [Behavior Contract](behavior.md) defines deterministic,
 technology-neutral resolution, scan coverage, safety, and conformance. The

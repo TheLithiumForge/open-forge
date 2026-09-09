@@ -11,9 +11,9 @@ This accepted Crystallized Document is the single concise `#Evergreen` overview
 of the replacement CLI command-contract set. It defines the contract roles,
 topology, and authority boundaries, and links to the detailed command-local
 contracts. It is a Document, not a Pattern, and it does not replace the detailed
-contracts it links. The replacement does not ship yet. Accepted implementation
-and evidence exist for several foundations and commands, including public
-`index`, while the broader retained command set and delivery remain incomplete.
+contracts it links. All 28 retained commands are implemented and locally
+accepted. The replacement remains unreleased while complete six-target delivery
+evidence and final acceptance are pending.
 The active [CLI Development](../../../working/cli-development/_cli-development.md)
 route records exact execution state.
 

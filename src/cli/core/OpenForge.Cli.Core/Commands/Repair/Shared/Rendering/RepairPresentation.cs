@@ -31,7 +31,16 @@ internal static class RepairPresentation
                     ])),
             new CliHelpSection(
                 "Catalogue",
-                "  Repair admits same-target canonical path, case, encoding, and unique fragment corrections, plus explicitly selected missing-target relinks backed by bounded Doctor candidates."),
+                """
+                  Repair admits same-target canonical path, case, encoding, and unique fragment corrections, plus explicitly selected missing-target relinks backed by bounded Doctor candidates.
+                It also admits selected safe-exact Workspace Library residual recovery from verified typed evidence.
+                """),
+            new CliHelpSection(
+                "Library recovery",
+                """
+                  Selected Library recovery requires exact current-v1 attribution, no-follow identity, and current permission for external link effects.
+                It adds no recovery syntax, never follows or mutates source targets, and does not restore or widen permission grants.
+                """),
             new CliHelpSection(
                 "Preview and safety",
                 string.Join(

@@ -14,12 +14,23 @@ Task 21 is complete at phase 4/4, milestone 6/6, integrated at `75f6ff49`
 with the exact accepted feature tree and 6,418 qualified managed/native passes.
 Task 27 is complete at phase 4/4, milestone 6/6, integrated at `81f22c43`
 with exact accepted tree `e7526e7f` and 6,421 qualified passes.
-Task 7 is active at phase 4/4, milestone 5/6 on `codex/npm-arm64-expansion`.
-Its Task owns the accepted ARM64 package scope and budgets. Task 13 covers all six
-native hosts; Task 22 owns final documentation/acceptance and release preparation.
-Publication and global installation refresh remain separately authorized effects.
-Task 28 is the user's independent source-first Framework review in another
-worktree. Preserve that work and the older unrelated drafts.
+Task 7 is complete at phase 4/4, milestone 6/6, integrated at `7eeeb19d`.
+Task 13 is at phase 3/3, milestone 5/6; Task 22 is at phase 3/3,
+milestone 5/6. Both are locally accepted and pending squash integration from
+`codex/cli-delivery` into local `develop`. On 2026-09-10 the user made local
+Git authoritative and accepted Linux execution plus static review of the other
+platform jobs. Remote Git/GitHub operations, hosted runs, uploads and publication
+are prohibited. This supersedes the earlier hosted/release completion gates.
+The Task records define the revised local horizon and exact evidence. Actual
+foreign-host execution and a shipping release are not claimed. All thirty
+workflow shell blocks pass syntax and ShellCheck. Runtime candidate
+`c2eb60b3` retains 6,421 passing executions and the real Linux package journey;
+reviewed correction `696c56b7` changes only explicit npm TAP reporting.
+No child agent or runtime lease remains active. Temporary Python helpers were
+removed on user instruction; none are tracked. Preserve every other chat's
+Markdown, notes and artifacts. Task 28's source report and local Extension
+comparison are present in its own worktree; proposal review continues there.
+Do not take over that review or integrate its unapproved source changes.
 
 This current continuation and the linked project control/Task records supersede
 the historical restart, horizons and agent handles below. Use Astra/high for

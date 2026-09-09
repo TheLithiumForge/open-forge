@@ -24,7 +24,7 @@
   "scripts": {
     "build": "bun run build.ts",
     "build:assets": "bun run src/cli-mvp/build/generate-build-module.ts",
-    "cli:dev": "open-forge",
+    "cli:dev": "dotnet run --project src/cli/root/OpenForge.Cli/OpenForge.Cli.csproj --no-restore --",
     "cli:link": "node src/cli/package-managers/npm/manage.ts link",
     "cli:old": "bun run src/cli-mvp/cli.ts",
     "cli:unlink": "node src/cli/package-managers/npm/manage.ts unlink",

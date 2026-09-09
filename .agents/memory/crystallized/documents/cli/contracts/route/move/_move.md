@@ -10,8 +10,8 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized entrypoint for `route move`.
-The command does not ship yet; implementation and executable proof remain
-pending Gate 5. Its sibling [Interface Contract](interface.md) defines what a
+The command does not ship yet; implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md). Its sibling [Interface Contract](interface.md) defines what a
 caller may enter and observe. Its sibling [Behavior Contract](behavior.md)
 defines the deterministic, technology-neutral operation behind that interface.
 This entrypoint does not duplicate either contract and no Route Technical Design

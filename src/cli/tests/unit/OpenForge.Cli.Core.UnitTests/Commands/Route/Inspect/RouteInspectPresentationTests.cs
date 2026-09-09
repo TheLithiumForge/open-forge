@@ -121,7 +121,8 @@ public sealed class RouteInspectPresentationTests
         Assert.Contains("context — available", text, StringComparison.Ordinal);
         Assert.Contains("open-forge context [source-reference...]", text, StringComparison.Ordinal);
         Assert.DoesNotContain("context — unavailable", text, StringComparison.Ordinal);
-        Assert.Contains("doctor — unavailable", text, StringComparison.Ordinal);
+        Assert.Contains("doctor — diagnose workspace conditions without changing them.", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("doctor — unavailable", text, StringComparison.Ordinal);
     }
 
     [Theory(DisplayName = "Route Inspect expanded output renders each observation or condition message once")]

@@ -67,20 +67,26 @@ Final source `d5ccca6d` passes 6,421 managed/native executions with zero
 failures, skips or build warnings. Five isolated Blue/Purple slices and the
 bounded whitespace correction preserve the accepted behavior and assertions.
 The Task record and canonical receipt define exact evidence and limits.
-Task 7's ARM64 expansion is active at phase 4/4, milestone 5/6 on
-`codex/npm-arm64-expansion`. Fresh review `T7-AR1` accepts `1a2598ff` with no
-material findings. All 6,421 managed/Linux native executions pass, plus the
-actual stamped Linux installed-package journey. All seven layout cases pass;
-foreign payloads remain layout evidence only. Final formatting, static checks,
-3,176 source identities and twenty-four unrelated dirty files are qualified.
-Exact feature freeze and local integration are next.
+Task 7's ARM64 expansion is complete at phase 4/4, milestone 6/6,
+integrated at `7eeeb19d` with exact tree `c222861a`.
+Task 13 is at phase 3/3, milestone 5/6; Task 22 is at phase 3/3,
+milestone 5/6. Both are locally accepted and pending squash integration from
+`codex/cli-delivery` into local `develop`. On 2026-09-10 the user made local
+Git authoritative and accepted Linux execution plus static review of the other
+platform jobs. Remote Git/GitHub operations, hosted runs, uploads and publication
+are prohibited. This supersedes the earlier hosted/release completion gates.
+The Task records define the revised local horizon and exact evidence. Actual
+foreign-host execution and a shipping release are not claimed. All thirty
+workflow shell blocks pass syntax and ShellCheck. Runtime candidate
+`c2eb60b3` retains 6,421 passing executions and the real Linux package journey;
+reviewed correction `696c56b7` changes only explicit npm TAP reporting.
 Root continues Task 21 → Task 27 → Task 7 ARM64 expansion → Task 13 →
 Task 22. On 2026-09-09 the user explicitly approved Tasks 21, 27, 13 and 22,
 including Linux, macOS and Windows on x64 and ARM64. The current
 [Distribution document](../../crystallized/documents/cli/distribution.md) defines the six-target graph. Task 7's
 new expansion uses its Task-owned four-phase, six-milestone horizon; its earlier
-completed horizons remain complete. Task 13 retains preparation phase 1/3,
-milestone 2/6, but must refreeze for all six targets before implementation.
+completed horizons remain complete. Task 13 now uses its accepted six-target execution capsule; historical
+Linux-only preparation remains traceable and does not define the current scope.
 
 The [Task 21](tasks/cli-command-surface-remediation.md) and [Task 27](tasks/csharp-structural-streamlining.md) records define the required Gray
 behavior/test freeze, independent Red for behavior fixes, production-only Blue
@@ -89,8 +95,10 @@ mapping. Later publication and global installation refresh remain unauthorized.
 General test-environment cleanup remains an idea. The current Task capsules
 govern scoped execution; older snapshots below retain historical evidence only.
 
-Task 28 “Source Framework Wording and Logic Review” is a separate queued,
-user-owned parallel review, with no phase or milestone horizon. Its
+Task 28 “Source Framework Wording and Logic Review” continues in the separate
+user-owned chat, with no phase or milestone horizon assigned here. Its source
+report and local Extension comparison are present; the user is reviewing
+proposals there. Preserve those reports and follow-up notes. Its
 [Task record](tasks/source-framework-review.md) freezes source-only review scope and the later local
 Framework evidence boundary. It does not authorize implementation or alter the
 CLI sequence.
@@ -492,10 +500,10 @@ identity, queue state, completion grace, worktree mapping, and integration state
 | Task 10 “CLI Command Surface Audit”                    | [CLI Command Surface Audit](tasks/cli-command-surface-audit.md)                                 | `DEQUEUED`  | 0                | Review the complete retained CLI for direct PR-level architecture, design, refactoring, and test-evidence problems. | Phase 3/3, milestone 5/5; integrated at `fbcec295`.                                              | Read-only strategic audit                                | Feature `4914c032` integrated as `fbcec295`; exact tree `3b73cff4`.                                                                                                                                                                                                                         | Root acceptance/integration complete; both Astra/high reviews complete.                                                     | All28 commands reviewed; seven stable findings dispositioned. Executable source unchanged.                                                                                                                                                                                                                                                            |
 | Task 21 “CLI Command Surface Remediation”              | [CLI Command Surface Remediation](tasks/cli-command-surface-remediation.md)                     | `DEQUEUED` | Consumed | Correct the seven validated audit findings within existing contracts and refactoring authority.                     | Phase 4/4, milestone 6/6; exact integration accepted. | Bounded sequential remediation                           | Accepted feature6173fb5b integrated at75f6ff49; exact tree0b7ed8e6. | Root; author/reviewer completed. | All 6,418 executions and protected/static gates passed; canonical Task receipt owns details. |
 | Task 27 “C# Structural Streamlining” | [C# Structural Streamlining](tasks/csharp-structural-streamlining.md) | `DEQUEUED` | 0 | Simplified the accepted finite C# scope with isolated production/test commits. | Phase 4/4, milestone 6/6; integrated and accepted. | Bounded Blue/Purple refactoring | Feature a5fcea25 integrated at81f22c43; exact tree e7526e7f. | Root acceptance complete; author/reviewer/operator complete. | All 6,421 executions passed; twenty-path exact integration and unrelated preservation verified. |
-| Task 7 “npm Package Manager Release and Local Linking” | [npm Packages](tasks/delivery/01-npm-packages.md) | `ACTIVE` | Not applicable | Implement the accepted six-target graph and package journeys. | Phase 4/4, milestone 5/6; review and final local gates accepted; integration next. | Derivative package expansion with explicit freezes | codex/npm-arm64-expansion from81f22c43 in primary worktree. | Root; author, reviewer and verification operator completed. | Historical horizons complete; new graph local qualification and integration pending. |
-| Task 13 “Native CI and Reproducible Artifacts”         | [Native CI and Reproducible Artifacts](tasks/delivery/02-native-ci.md)                          | `QUEUED`    | Not applicable   | Prove native CI and artifacts for all six accepted targets after the ARM64 package expansion.                       | After Task 7 ARM64 expansion; preparation phase 1/3, milestone 2/6 requires six-target refreeze. | Six-target delivery; historical preparation retained     | Preparation candidate `e7689696`, tree `c204c17b`; later implementation base deferred until activation                                                                                                                                                                                      | Preparation owner complete; later allocation follows current Overseer direction                                             | Preparation is integrated by the commit containing this record; later implementation keeps this permanent ID.                                                                                                                                                                                                                                         |
-| Task 22 “Final Documentation, Acceptance, and Release” | [Accept And Release The Complete CLI](tasks/delivery/04-release.md)                             | `QUEUED`    | Not applicable   | Align docs and packages, run complete acceptance, and perform only a separately authorized release.                 | Queued after Task 13 and the complete contributor gate; no publication is implied.               | Final acceptance and release                             | Planned branch and worktree; exact base deferred until activation                                                                                                                                                                                                                           | Task Mastermind and maintainer                                                                                              | No publication is authorized by queueing.                                                                                                                                                                                                                                                                                                             |
-| Task 28 “Source Framework Wording and Logic Review”    | [Source Framework review](tasks/source-framework-review.md)                                     | `QUEUED`    | Not applicable   | Review source Framework wording and logic; report improvements and later Extension candidates.                      | Independent user-owned parallel review; horizon unassigned.                                      | Review/report only                                       | Source boundary frozen in Task 28.                                                                                                                                                                                                                                                          | Separate user-owned chat; execution unassigned.                                                                             | Initial src/open-forge scope and writing directive only; local Framework becomes evidence only at the final stage. No implementation.                                                                                                                                                                                                                 |
+| Task 7 “npm Package Manager Release and Local Linking” | [npm Packages](tasks/delivery/01-npm-packages.md) | `DEQUEUED` | 0 | Implemented and locally qualified the accepted six-target graph. | Phase 4/4, milestone 6/6; integrated and accepted. | Derivative package expansion with explicit freezes | Feature6dc714c5 integrated at7eeeb19d; exact treec222861a. | Root, author, reviewer and operator completed. | All 6,421 executions, actual Linux native package journey, thirty-path integration and unrelated preservation accepted; other hosts remain Task13. |
+| Task 13 “Native CI and Reproducible Artifacts” | [Native CI and Reproducible Artifacts](tasks/delivery/02-native-ci.md) | `INTEGRATING` | Not applicable | Implemented six-target CI with accepted local verification. | Phase 3/3, milestone 5/6; local squash integration pending. | Bounded delivery identity and evidence | codex/cli-delivery from 7eeeb19d in primary worktree. | Root; local agents completed. | Linux execution plus static other-platform review accepted by user; remote operations prohibited. |
+| Task 22 “Final Documentation, Acceptance, and Release” | [Accept And Release The Complete CLI](tasks/delivery/04-release.md) | `INTEGRATING` | Not applicable | Aligned docs/help and accepted the local delivery candidate. | Phase 3/3, milestone 5/6; local squash integration pending. | Public correctness and final acceptance | codex/cli-delivery in primary worktree. | Root; scoped reviewers completed. | Local completion authorized; shipping release excluded from current horizon. |
+| Task 28 “Source Framework Wording and Logic Review” | [Source Framework review](tasks/source-framework-review.md) | `ACTIVE` | Not applicable | Source report and local Extension comparison prepared; user reviews proposals in the separate chat. | Independent user-owned review; horizon unassigned here. | Review/report only | codex/task28-framework-review in its own worktree. | Separate user-owned chat. | Preserve reports and follow-up notes; no source integration authorized in this lane. |
 
 Queue state uses `ACTIVE` for the selected task, `QUEUED` for ordered work,
 `CONDITIONAL` for Task 21 pending accepted findings, and `DEQUEUED` after

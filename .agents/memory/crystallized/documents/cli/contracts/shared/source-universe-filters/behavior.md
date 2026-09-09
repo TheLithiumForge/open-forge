@@ -12,8 +12,8 @@ open-forge:
 This file is the accepted current Crystallized authority for the
 technology-neutral resolution and conformance behavior behind the [Shared
 Source-Universe Filters Interface Contract](interface.md). The commands that
-apply the contract do not ship yet; implementation and executable proof remain
-pending Gate 5. The [Shared Result
+apply the contract do not ship yet; implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md). The [Shared Result
 Coordinates](../result-coordinates/interface.md) define the shared result
 boundary. The [CLI Architecture](../../../architecture.md) defines filesystem,
 runtime, and evidence boundaries; this behavior defines only selector resolution

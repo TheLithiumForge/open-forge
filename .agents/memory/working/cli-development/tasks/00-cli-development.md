@@ -67,17 +67,26 @@ Final source `d5ccca6d` passes 6,421 managed/native executions with zero
 failures, skips or build warnings. Five isolated Blue/Purple slices and the
 bounded whitespace correction preserve the accepted behavior and assertions.
 The Task record and canonical receipt define exact evidence and limits.
-Task 7's ARM64 expansion is active at phase 2/4, milestone 2/6 on
-`codex/npm-arm64-expansion`. Independent Red is accepted at `8da4e3e3`: seven
-layout cases expose six intended failures and one pass; the original Linux
-fixture passes. Green now implements only the frozen seven production paths.
+Task 7's ARM64 expansion is complete at phase 4/4, milestone 6/6,
+integrated at `7eeeb19d` with exact tree `c222861a`.
+Task 13 is at phase 3/3, milestone 5/6; Task 22 is at phase 3/3,
+milestone 5/6. Both are locally accepted and pending squash integration from
+`codex/cli-delivery` into local `develop`. On 2026-09-10 the user made local
+Git authoritative and accepted Linux execution plus static review of the other
+platform jobs. Remote Git/GitHub operations, hosted runs, uploads and publication
+are prohibited. This supersedes the earlier hosted/release completion gates.
+The Task records define the revised local horizon and exact evidence. Actual
+foreign-host execution and a shipping release are not claimed. All thirty
+workflow shell blocks pass syntax and ShellCheck. Runtime candidate
+`c2eb60b3` retains 6,421 passing executions and the real Linux package journey;
+reviewed correction `696c56b7` changes only explicit npm TAP reporting.
 Root continues Task 21 → Task 27 → Task 7 ARM64 expansion → Task 13 →
 Task 22. On 2026-09-09 the user explicitly approved Tasks 21, 27, 13 and 22,
 including Linux, macOS and Windows on x64 and ARM64. The current
 [Distribution document](../../../crystallized/documents/cli/distribution.md) defines the six-target graph. Task 7's
 new expansion uses its Task-owned four-phase, six-milestone horizon; its earlier
-completed horizons remain complete. Task 13 retains preparation phase 1/3,
-milestone 2/6, but must refreeze for all six targets before implementation.
+completed horizons remain complete. Task 13 now uses its accepted six-target execution capsule; historical
+Linux-only preparation does not define the current scope.
 
 The [Task 21](cli-command-surface-remediation.md) and [Task 27](csharp-structural-streamlining.md) records define the required Gray
 behavior/test freeze, independent Red for behavior fixes, production-only Blue
@@ -86,8 +95,10 @@ mapping. Later publication and global installation refresh remain unauthorized.
 General test-environment cleanup remains an idea. The current Task capsules
 govern scoped execution; older snapshots below retain historical evidence only.
 
-Task 28 “Source Framework Wording and Logic Review” is a separate queued,
-user-owned parallel review, with no phase or milestone horizon. Its
+Task 28 “Source Framework Wording and Logic Review” continues in the separate
+user-owned chat, with no phase or milestone horizon assigned here. Its source
+report and local Extension comparison are present; the user is reviewing
+proposals there. Preserve those reports and follow-up notes. Its
 [Task record](source-framework-review.md) freezes source-only review scope and the later local
 Framework evidence boundary. It does not authorize implementation or alter the
 CLI sequence.

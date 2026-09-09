@@ -34,7 +34,7 @@ internal static class RouteInspectHelpSections
                 "Related commands",
                 "  route list — list routed sources and descendants.\n"
                 + "  context — available; use open-forge context [source-reference...] to read selected source content.\n"
-                + "  doctor — unavailable; planned to diagnose workspace conditions."),
+                + "  doctor — diagnose workspace conditions without changing them."),
             new CliHelpSection(
                 "Notes",
                 "  Inspect reports one route profile without authored source bodies, ordinary links, "

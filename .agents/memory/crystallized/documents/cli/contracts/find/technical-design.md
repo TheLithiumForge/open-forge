@@ -17,9 +17,9 @@ It cannot add public syntax, weaken a safety guarantee, change a semantic result
 or make an implementation artifact authoritative for user-authored meaning.
 
 The accepted implementation direction is a C# CLI on .NET 10 or newer with
-Native AOT. The command does not ship. This document claims no existing code,
-executable, test suite, package, or proof. Actual Native AOT proof is pending
-Gate 5.
+Native AOT. The command does not ship. The [CLI Development](../../../../../working/cli-development/_cli-development.md)
+route records implementation and executable evidence, including the current
+native-target limits.
 
 The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
 the shared schema-v1 JSON envelope, source-location primitive, and status/process
@@ -32,11 +32,11 @@ authority.
 
 | Contract boundary                                                                                                                                                                    | Accepted design response                                                                                                                                                                                                                                                                                               | Evidence state                                       |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| [Structured Result Fields](interface.md#structured-result-fields) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)           | Produce one typed result rich enough for the public workspace, universe, query, projection, counts, coverage, ordered sources, evidence, content, findings, and semantic status. Follow the exact Find Interface command-local schema inside the shared result-coordinate envelope and use its status-to-exit mapping. | Design accepted; executable proof is pending Gate 5. |
-| [Semantic Results](interface.md#semantic-results) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)                           | Map semantic results to process completion behavior without changing the named semantic conditions.                                                                                                                                                                                                                    | Design accepted; executable proof is pending Gate 5. |
-| [Public Heading Matching](interface.md#public-heading-matching) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)             | Use the fixed accepted Markdig CommonMark pipeline to expose the required structural heading nodes, visible inline text, source forms, levels, locations, and section boundaries.                                                                                                                                      | Design accepted; executable proof is pending Gate 5. |
-| [Workspace And Source Universe](interface.md#workspace-and-source-universe) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities) | Use real `System.IO` boundaries and command-local source units that establish the declared workspace and source-universe containment without hiding eligible files.                                                                                                                                                    | Design accepted; executable proof is pending Gate 5. |
-| [Public Tag Matching](interface.md#public-tag-matching) and [Public Heading Matching](interface.md#public-heading-matching)                                                          | Use strict UTF-8 byte-origin mapping for source locations and keep body-tag scanners and compatibility patches local to `find`. Preserve exact authored spelling, line, occurrence, layer, and source-span facts without guessing unavailable origins.                                                                 | Design accepted; executable proof is pending Gate 5. |
+| [Structured Result Fields](interface.md#structured-result-fields) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)           | Produce one typed result rich enough for the public workspace, universe, query, projection, counts, coverage, ordered sources, evidence, content, findings, and semantic status. Follow the exact Find Interface command-local schema inside the shared result-coordinate envelope and use its status-to-exit mapping. | Design accepted; evidence is tracked in CLI Development. |
+| [Semantic Results](interface.md#semantic-results) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)                           | Map semantic results to process completion behavior without changing the named semantic conditions.                                                                                                                                                                                                                    | Design accepted; evidence is tracked in CLI Development. |
+| [Public Heading Matching](interface.md#public-heading-matching) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)             | Use the fixed accepted Markdig CommonMark pipeline to expose the required structural heading nodes, visible inline text, source forms, levels, locations, and section boundaries.                                                                                                                                      | Design accepted; evidence is tracked in CLI Development. |
+| [Workspace And Source Universe](interface.md#workspace-and-source-universe) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities) | Use real `System.IO` boundaries and command-local source units that establish the declared workspace and source-universe containment without hiding eligible files.                                                                                                                                                    | Design accepted; evidence is tracked in CLI Development. |
+| [Public Tag Matching](interface.md#public-tag-matching) and [Public Heading Matching](interface.md#public-heading-matching)                                                          | Use strict UTF-8 byte-origin mapping for source locations and keep body-tag scanners and compatibility patches local to `find`. Preserve exact authored spelling, line, occurrence, layer, and source-span facts without guessing unavailable origins.                                                                 | Design accepted; evidence is tracked in CLI Development. |
 
 ## Runtime And Dependencies
 
@@ -61,8 +61,8 @@ contract.
 
 All selected dependencies and runtime features must remain compatible with
 Native AOT and trimming. The implementation uses real `System.IO` filesystem
-boundaries and no virtual filesystem abstraction. No code or dependency proof is
-claimed here; actual Native AOT proof is pending Gate 5.
+boundaries and no virtual filesystem abstraction. CLI Development records
+dependency and Native AOT evidence.
 
 ## Source Structure And Boundaries
 
@@ -171,7 +171,8 @@ or artifacts already exist.
 
 Every evidence tier remains independently selectable, owns the mutable temporary
 state it can affect, and proves the corresponding Interface and Behavior facts.
-Actual Native AOT publish, execution, package, and release proof is pending Gate 5.
+CLI Development records Native AOT publication and execution, package evidence,
+and the remaining release prerequisites.
 
 ## Related Current Sources
 

@@ -18,8 +18,8 @@ owns public meaning. The shared [Source References](../shared/source-references/
 [Global CLI Flags](../shared/global-flags/interface.md), and [Source Universe
 Filters](../shared/source-universe-filters/behavior.md) contracts own their shared boundaries.
 
-The operation is read-only, stateless, and non-shipping. Implementation and
-executable proof remain pending Gate 5. It has no mutation phase,
+The operation is read-only, stateless, and non-shipping. Implementation and executable evidence are tracked in
+[CLI Development](../../../../../working/cli-development/_cli-development.md). It has no mutation phase,
 repair authority, network side effect, persistent reverse index, receipt, cache,
 or hidden context or doctor invocation.
 

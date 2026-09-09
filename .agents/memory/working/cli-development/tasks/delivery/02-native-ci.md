@@ -8,9 +8,10 @@ open-forge:
 
 ## Task State
 
-- State: Queued after Task 21, Task 27, and Task 7's new ARM64 package
-  expansion. The maintainer approved CI/artifacts for Linux, macOS, and Windows
-  on x64 and ARM64 on 2026-09-09.
+- State: Local qualification and static six-target review accepted; integration pending.
+  Tasks 21, 27 and Task 7 ARM64 expansion are complete through `7eeeb19d`.
+  The current branch is `codex/cli-delivery`. The maintainer approved Linux,
+  macOS and Windows CI/artifacts on x64 and ARM64 on 2026-09-09.
 - Permanent mapping: Task 13 “Native CI and Reproducible Artifacts” in
   the [project control ledger](../../project-control.md).
 - Parent: [CLI Delivery](_delivery.md).
@@ -21,10 +22,10 @@ open-forge:
   `ccc762115238c4317b3b35963be18edd38be2609`.
 - Lane: `codex/native-ci-preparation` in
   `open-forge-worktree/native-ci-preparation`.
-- Current phase and milestone: phase 1 of 3, milestone 2 of 6.
-- Current-state suffix: M2 preparation, review, and integration complete;
-  the earlier Linux-only preparation must be refrozen for the six-target
-  scope and current source before M3. No new implementation milestone is earned.
+- Current phase and milestone: phase 3 of 3, milestone 5 of 6.
+- Current-state suffix: M5 local-only acceptance is complete, including Linux
+  execution, static six-target review and reporter correction `696c56b7`.
+  M6 exact squash integration into local `develop` remains pending.
 - Preparation role: One experimental Luna/max Task Mastermind supervised at
   most three bounded read-only evidence workers, followed by one fresh Sol/xhigh
   whole-task review. That allocation is historical. Later semantic implementation
@@ -33,6 +34,31 @@ open-forge:
 The project control ledger defines permanent identity, queue state, worktree
 mapping, and integration state. This Task record defines the accepted horizon,
 preparation result, evidence, trial measurements, and later revalidation.
+
+## Accepted Local Completion Boundary
+
+On 2026-09-10 the user made local Git authoritative, prohibited all remote Git
+and GitHub operations, and accepted manually executed Linux commands plus static
+inspection of the other platform jobs for local completion. This supersedes the
+earlier hosted-execution prerequisite. The six-target implementation remains;
+actual execution on the other five hosts is unproven and is not claimed.
+
+The existing three-phase, six-milestone horizon retains M1 through M4. M5 now
+means accepted local execution and static platform inspection; M6 means exact
+local acceptance and squash integration. No hosted run, upload, publication or
+global installation refresh is part of this horizon. Future release proof is
+separate from local task completion.
+
+The final workflow inspection passed all three six-target matrices and all
+thirty Bash blocks through syntax and ShellCheck checks. Existing exact Linux
+runtime and package receipts remain valid because their inputs are unchanged.
+The fifty CI helper cases include collector fixtures; they do not represent six
+real host bundles. Local Bun remains 1.3.0, not hosted pin 1.3.14, and no fresh
+dependency installation or byte-for-byte repeated-build proof is claimed.
+The static receipt is
+`artifacts/task13-six-target-preparation/root/local-only-closeout/workflow-static.json`.
+Temporary Python helpers were removed at the user's request; raw evidence,
+manifests, Markdown and source tooling were preserved. No Python is tracked.
 
 ## Expected Outcome
 
@@ -74,6 +100,185 @@ map every target to its native host and commands, and preserve phase 1/3,
 milestone 2/6 as completed historical preparation. Revalidation does not itself
 complete M3. Additional RIDs, libc variants, support-floor matrices, signatures,
 SBOM, provenance and OIDC remain outside this accepted expansion.
+
+## Six-Target Execution Capsule
+
+- Base: `7eeeb19d5dd3b30445f7b67a6c9ade1e02e5ee85`, tree
+  `c222861a9a6026e686b9bf435a376092a1d7533d`, on `codex/cli-delivery` in the
+  primary worktree. Task 7's exact reviewed executable inputs passed 6,421
+  managed/Linux native cases and its actual Linux installed-package journey.
+- Profile/applicability: bounded delivery tooling for a private developer CLI.
+  It handles reproducible job inputs and disposable build/package artifacts;
+  failures stop acceptance and can be rerun. Standard GitHub workflow reuse,
+  Node/TypeScript, .NET, npm and tar supply the needed capabilities. Checksums
+  prove identity and integrity, not hostile-runner attestation or independent
+  byte reproducibility. Exceptional machinery is none.
+- Accepted preparation: root accepts the two-workflow, same-run architecture in
+  `artifacts/task13-six-target-preparation/architecture/packet.md`, with the
+  refinements in `root-refinements.json` and formatting policy below. Refreeze
+  exact workflow/helper contracts and evidence before Green. Historical Linux
+  recipes are not current implementation instructions.
+- Owner: root retains architecture, authority, commits, integration and acceptance.
+  The continuous `six_platform_ci_design` Astra/high owner assumes the coherent
+  implementation role after its read-only architecture packet. One fresh
+  Astra/high reviewer inspects the final coherent boundary.
+- Placement: modify `.github/workflows/cli.yml`; add
+  `.github/workflows/cli-artifacts.yml`. New focused CI tooling lives under
+  `src/cli/ci/`: `verify-test-results.ts`, `artifact-manifest.ts`, optional
+  `host-receipt.ts`, `collect-packages.ts` when collection needs cohesive code,
+  explicit `test-inventory.json`, and strict `tsconfig.json`. Root accepted
+  `test-result-documents.ts` for pinned JSON-to-fact validation and
+  `package-contents.ts` for ordinary tar member/content operations; these preserve
+  the 200-line TypeScript boundary without creating a generic parser. Focused tests and
+  their strict project live in `ci/__tests__/`, mirroring those responsibilities.
+  A demonstrated split remains within its capability, requires a reported
+  placement refinement and never creates a generic CI or process framework.
+- Workflow relationship: ordinary PR/manual verification plus `workflow_call`
+  exposes separate build and test matrices. The manual-only artifact workflow
+  calls verification in the same run, then its package matrix consumes the exact
+  tested native files, followed by one bounded complete-graph collector. No
+  cross-run selection, API/token service, `workflow_run`, registry publication,
+  release or automatic artifact-publication trigger is introduced.
+- Matrix: Linux glibc x64/ARM64 on `ubuntu-24.04`/`ubuntu-24.04-arm`, macOS
+  x64/ARM64 on `macos-15-intel`/`macos-15`, Windows x64/ARM64 on
+  `windows-2025`/`windows-11-vs2026-arm`. Assert actual matching native host and
+  selected tool architecture. The accepted packet records official action SHA
+  pins; use exact SDK 10.0.111, Node 24.19.0 and Bun 1.3.14 with frozen Bun
+  dependencies, repository NuGet configuration and captured resolved graphs.
+- Tool setup: isolate the SDK beneath runner temporary storage so `global.json`
+  cannot select an unrelated preinstalled SDK. Record exact source SHA/tree,
+  tool versions, architecture, dependency identities and bounded artifact hashes.
+  Missing native capabilities fail rather than installing an unaccepted fallback.
+- Build/transfer: stamp every build/publish with the same full-SHA version;
+  preserve complete managed Unit, Integration and public closures before native
+  publications, and a separate managed-public-on-native closure afterward. Keep
+  the canonical development/native publications at their build-owned paths.
+  Transfer only these bounded roots and receipts through ordinary tar so Unix
+  executable modes survive. Test jobs never rebuild the accepted artifacts.
+- Evidence: preserve raw discovery, CTRF, command exits, logs and runtime hashes.
+  Use the exact discovered count for the runner minimum and separately enforce
+  exact executed counts. Current baseline is 2,860/2,882 Unit, 1,603/1,603
+  Integration and 111/111 public; qualify the nine known deferred Unit theories
+  by full case identity and multiplicity. Every command retains exactly three
+  public journeys, with twenty-six Shell and one embedded-artifact case separate.
+- Package proof: Linux x64 additionally runs the seven layout cases and original
+  one-case fixture. Every native package row runs Task 7's existing argv-driven
+  installed-launcher journey. Bind native/package/source hashes to successful
+  build/test receipts, preserve the exact tested tarballs, and require all six
+  RIDs and the synchronized seven-package graph. If main tarball hashes differ,
+  compare their actual member contents before choosing the tested Linux main
+  as canonical. No repacking or rebuild after acceptance.
+- Gray/Red: freeze accepted inputs, callable shapes, file ownership and independent
+  expected data first. New custom receipt/checksum code receives focused tests
+  for positive acceptance and false-green rejection: missing/partial/inconsistent
+  or skipped results, unexplained case changes, changed/missing artifacts, and
+  incomplete/mismatched package graphs. A temporary compilable contract stub may
+  establish qualified Red; absent imports or compiler/setup failures are not Red.
+  Freeze tests before Green. Keep contract/evidence and implementation commits
+  isolated; do not test upstream runner, npm or tar internals.
+- Final ladder: focused strict TypeScript, scoped lint/format, workflow
+  trigger/matrix/action/permission inspection, protected-path and exact input
+  checks, one fresh holistic review, and local Linux build/transfer/test/package
+  qualification. This build/package boundary triggers the complete managed and
+  Linux Native AOT gate. Root may converge separately owned Task 22 documentation
+  preparation before that final source freeze so one exact final candidate pays
+  the combined gate once. Task-owned changes and acceptance remain distinct.
+- Protected: all C# production/tests/projects, existing npm implementation and
+  tests, root package/dependencies/configuration, Framework/Extension source,
+  frozen MVP, global installation, unrelated dirty worktrees and Task 28. Any
+  separately accepted Task 22 delta is root-owned and explicitly identified;
+  the CI author never edits it or treats it as their implementation scope.
+- Budgets: fresh whole-task review maximum one `T13-R1`, grouped correction and
+  affected recheck maximum one `T13-C1`, council zero. `T13-R1` is consumed for
+  the immutable 21-path candidate `20776f5d`, accepted without material findings;
+  `T13-C1` is consumed for the observed reporter-selection correction and
+  one affected recheck, accepted without further findings; no second
+  whole-source review is selected.
+- Phases/milestones: phase 1 completed M1/M2 preparation.
+  Phase 2/3 owns M3 implementation and M4 reviewed local qualification. Phase
+  3/3 owns M5 local execution plus static six-target acceptance and M6 exact
+  local squash integration under the current completion boundary above.
+  Remote execution, downloads, uploads and publication are outside this horizon.
+- Local checkpoints: Gray `910c837c`, independent Red `fae17b29`, tier-config
+  correction `a262c7dc`, and initial five-helper Green `0f5d698c` are committed.
+  Root independently reproduced all 39 initial cases passing. Supplemental Gray
+  `2bb4ddea` and Red `31bad86d` add host qualification, selected-root snapshots,
+  and matching-host package exports. Root qualified four Unit and seven
+  Integration named-stub failures after compilation, with no skips. All fifty
+  assertions and the inventory are frozen before supplemental Green.
+- Placement refinements: `host-receipt.ts` owns concrete host/tool/source facts;
+  `package-export.ts` forms portable relative package exports on the producing
+  host. `artifact-manifest.ts` owns enumeration of explicitly selected complete
+  closures. No generic runner, parser or dispatcher is added. The two existing
+  tier projects select all CI Unit and Integration evidence. Root corrected the
+  initial mixed compiler project and the supplemental pure-host Unit cases
+  before accepting those boundaries.
+- Local tools: Node v24.19.0 and SDK 10.0.111 match the accepted pins; installed
+  Bun is 1.3.0, while hosted CI requires 1.3.14. Existing dependencies permit
+  local Node/.NET gates, but local evidence must not claim exact pinned Bun or
+  a fresh frozen-lock installation. No download or global mutation is authorized.
+- Hosted rollout: GitHub requires a manual workflow to exist on the default
+  branch before `workflow_dispatch` can receive events. The new artifact
+  workflow therefore requires an explicitly authorized default-branch rollout
+  before its first manual run. See [GitHub's manual workflow documentation](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow).
+  Keep the accepted manual-only trigger; no remote effect is implied here.
+- Green checkpoint: `20776f5d` completes the six remaining source deltas. Root
+  verified all 21 path hashes, modes and saved bodies, eight focused execution
+  receipts, and exact 21 Unit plus 29 Integration passing totals. The eleven
+  frozen Red paths remain unchanged. Thirty shell blocks pass syntax and
+  ShellCheck; strict production and both test projects, lint and formatting pass.
+- Historical checkpoint before local-only acceptance: M4 complete, phase 3/3.
+  T13-R1 accepted the complete CI boundary and proposed local transfer/runtime script. Its canonical reports are
+  `artifacts/task13-six-target-preparation/review/T13-R1.md` and `.json`. Root
+  verified the receipts and accepted the qualified local runtime chain, including
+  the bounded T13-C1 correction. No agent or runtime lease remains active.
+  The next dependency is explicit authorization to inspect the remote state and
+  prepare the exact default-branch workflow registration and hosted run.
+
+### Local Runtime And Reporter Correction
+
+The frozen `c2eb60b3` candidate passed all 6,421 managed/Linux native executions
+from its separate exact-source consumer fixture. These are 4,596 cases exercised
+across the six accepted runtime selections, not 6,421 distinct cases. All raw
+process exits, cases, source/artifact hashes and required formatting qualify.
+Root verified 3,196 exact source files and preserved all 24 unrelated dirty paths.
+
+The first package receipt check rejected Node's default spec output after the
+seven layout and one fixture cases passed. A first continuation using direct
+Node selected TAP but omitted the accepted harness's npm execution context;
+six layout cases failed that prerequisite. Both attempts are preserved. The
+successful continuation retained root npm scripts and selected TAP through
+command-scoped `NODE_OPTIONS`. It passed the eight package cases, the actual
+Linux installed-native journey, package export and bounded archive verification.
+All 57 protected successful evidence files remained byte-identical.
+
+Isolated correction `696c56b7` changes only the two workflow invocation lines.
+No C#, tests, fixtures, projects, embedded resources, package implementation or
+CI helper changed; the correction therefore requires only affected reporting
+proof and recheck, not another full native build or repeated 6,421 executions.
+The final hosted workflow still needs actual matching-host execution.
+
+Canonical local evidence is `artifacts/task13-ci/local-c2eb60b3/canonical-summary.json`.
+`execution-chain.json` binds the initial failure, rejected continuation, successful
+continuation and source correction without relabelling the tested commit.
+The same reviewer accepted T13-C1 with no further findings in
+`artifacts/task13-six-target-preparation/review/T13-C1.md` and `.json`.
+M4 is accepted. All six actual hosted runs and complete graph collection remain
+M5; neither this source nor the Linux archive earns hosted completion.
+
+### Formatting Baseline And Gate
+
+Root verified the whole current solution: whitespace passes, and ordinary full
+`dotnet format --verify-no-changes --severity warn --no-restore` passes with no
+diagnostics. These are the required CI gates and preserve the existing workflow's
+warning-severity policy. The supplementary whole-solution style/info pass reports
+703 existing suggestions across 294 untouched files, mainly eager collection
+expressions. They are recorded under
+`artifacts/task13-six-target-preparation/format-baseline/`; no suppression or
+production edit is introduced. A clean required pass does not imply a clean
+informational baseline. Task-scoped C# authoring still follows the current
+Directives and its applicable focused checks. This CI Task does not reopen the
+accepted structural refactor to apply unrelated automated suggestions.
 
 ## Historical Preparation Boundary
 

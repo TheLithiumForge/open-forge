@@ -11,7 +11,8 @@ open-forge:
 
 This is the permanent Crystallized route for the shared source-universe filter
 contract set. The command contracts that explicitly apply it remain
-non-shipping. Implementation and executable proof remain pending Gate 5. The
+non-shipping. Implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md). The
 accepted implementation boundaries are defined by the [CLI
 Architecture](../../../architecture.md), while this route remains
 technology-neutral.

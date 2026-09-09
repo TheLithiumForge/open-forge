@@ -1,16 +1,12 @@
 # Open Forge CLI
 
-The accepted replacement Open Forge CLI design specifies one future production
-executable for an optional, stateless, deterministic, and idempotent native tool
-for the human-readable Framework. Its development implementation contains
-read-only and mutating commands, but it has no
-accepted shipping executable and is not released. This document summarizes its
-accepted command interface. The accepted shared
-implementation choices are defined in the [CLI Architecture](../.agents/memory/crystallized/documents/cli/architecture.md);
-the linked command contracts define exact public behavior.
-
-The frozen TypeScript MVP is available as `open-forge-old`. Its interface is
-separate from the replacement CLI.
+The native Open Forge CLI implements all 28 commands for inspecting and
+maintaining the human-readable Framework. It remains unreleased while
+matching-host evidence and final delivery acceptance are completed. This guide
+describes the current command interface. The [CLI Architecture](../.agents/memory/crystallized/documents/cli/architecture.md)
+defines implementation boundaries, and the linked command contracts define exact
+public behavior. Examples use `open-forge`; [maintainers build and verify the
+artifact from their own worktree](development.md#current-repository-tooling).
 
 An `entrypoint` is a Markdown file that makes its folder routable.
 A `route` is a navigable path exposed through entrypoints. Generated `Entries`
@@ -102,7 +98,7 @@ lifecycle or Extension file, including `open-forge.extensions.json`. Old-format
 files remain untouched ordinary workspace content outside replacement authority.
 The [CLI Architecture](../.agents/memory/crystallized/documents/cli/architecture.md)
 defines the exact lifecycle, parser, serialization, filesystem, recovery, and
-Native AOT choices. Gate 5 must provide their executable proof.
+Native AOT choices. Complete delivery acceptance remains pending.
 
 See the [Install contract set](../.agents/memory/crystallized/documents/cli/contracts/install/_install.md),
 [Install Interface](../.agents/memory/crystallized/documents/cli/contracts/install/interface.md),
@@ -170,7 +166,7 @@ open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run]
 
 The bare group shows help and performs no operation or wizard. `list` and
 `inspect` are read-only. `create` writes only
-`<catalogue>/<id>/extension.json` and `payload/.agents/` under its distinct
+`<catalogue>/<id>/extension.json` and `content/.agents/` under its distinct
 `--path` destination; `--workspace` is a no-op for create. Create uses a
 separate exact-destination, collision, and revalidation path with no workspace
 lease, none of `Replace`, `ReplaceGeneratedRegion`, or `Delete`, and no recovery
@@ -227,6 +223,120 @@ the replacement CLI remains unreleased.
 See the [Extension documentation](extensions.md) and the
 [Extension contract group](../.agents/memory/crystallized/documents/cli/contracts/extension/_extension.md)
 for complete details.
+
+## Workspace Libraries
+
+A Workspace Library exposes live source files through individual relative file
+symlinks. Select an eligible real source directory contained in the consumer
+workspace; it needs no specially named `content` or `.agents` child. `--to`
+places each source-relative path beneath a destination directory and defaults
+to the workspace root (`.`). Destination parents are real directories. Source
+and destination ancestry must be ordinary, and every actual destination remains
+outside selected and registered source trees.
+
+The consumer workspace and its ordinary `.agents` directory must already exist.
+The five commands are:
+
+```text
+open-forge library list [global flags]
+open-forge library inspect <library-id> [global flags]
+open-forge library attach <library-id> <source-root> [--to <workspace-relative-directory>] [--dry-run] [global flags]
+open-forge library sync <library-id> [--dry-run] [global flags]
+open-forge library detach <library-id> [--dry-run] [global flags]
+```
+
+The bare `library` group shows help. All five commands accept the six shared
+global flags: `--workspace <path>`, `--json`, `--view <compact|expanded>`,
+`--verbose`, `--help`, and `--version`. Library mutation commands have no
+`--automatic`, `--all`, `--force`, or `--prune` option.
+
+The consumer keeps `.agents/open-forge.libraries.json`, separate from lifecycle
+state and permissions. Its schema-v1 envelope contains `schemaVersion` and
+`libraries`; each Library record contains `id`, `sourceRoot`, `destinationRoot`,
+and sorted source-relative `paths`. Library IDs are exact lowercase management
+identities, not source references. Mapped `.agents` files keep their ordinary
+destination-derived source IDs. They may participate in existing consumer
+route chains and their bounded generated `Entries` updates;
+external Markdown remains opaque content. The commands do not create a Loader
+or route chain.
+
+### Inspect Libraries
+
+`list` reads the record, bounded source-root facts, and registered link
+observations. It does not inventory source additions or retirements. A missing
+record is a complete empty result; safe link drift is `attention`.
+
+`inspect` inventories one registered source completely and compares it with
+registered links. It reports additions, retirements, missing links, and changed
+links. Missing or unknown IDs are `invalid`; incomplete inventory remains
+`incomplete`. Both commands are read-only and create no lock, record, link, or
+recovery state.
+
+```sh
+open-forge library list
+open-forge library inspect team-knowledge --json
+```
+
+### Attach, Sync, And Detach
+
+`attach` registers one new ID and creates the complete eligible projection. An
+existing ID or any destination occupant, including an unregistered matching
+link, blocks the request. Eligible files are recursively discovered ordinary
+files; Git metadata, protected controls, linked entries, and special files are
+excluded. There is no copy fallback or force flag.
+
+Changes to source-file bytes are visible immediately through existing links.
+`sync` reconciles membership: it adds eligible files, recreates missing current
+links, and retires only exact registered links proven against a complete
+inventory. An unavailable inventory or changed occupant prevents all effects.
+A missing retired link cannot supply the proof required for retirement.
+
+`detach` removes the entire exact registered projection and then its record.
+Source availability is unnecessary, and exact dangling links can be removed.
+Missing or changed destinations block the whole request. Source files, local
+siblings, and destination directories remain untouched.
+
+These examples preview each operation. The source roots must exist for Attach;
+Sync and Detach require a registered ID:
+
+```sh
+open-forge library attach team-knowledge shared/team-knowledge --dry-run
+open-forge library attach team-agents shared/agents --to .apm/agents/team --dry-run
+open-forge library sync team-knowledge --dry-run
+open-forge library detach team-knowledge --dry-run
+```
+
+Omit `--dry-run` to apply after resolving the reported prerequisites. Each
+mutation uses complete preflight and expected-state revalidation, prepares
+required recovery evidence before effects, verifies the projection, and
+publishes the Library record last. It never copies or writes through source
+bytes. A failure reports actual residual state without automatic rollback.
+
+### Destination Permissions
+
+`.agents` destinations need no explicit grant. External Library destinations
+require grants bound to the Library ID and source root in
+`.agents/open-forge.permissions.json`. Human application can ask once to remember
+displayed scopes, with No as the default. Live leaves propose their immediate
+parent directory, explicitly including future descendants. Workspace-root
+leaves, retirement-only leaves, and Detach use exact file grants. No
+whole-workspace grant is allowed.
+
+JSON, redirected execution, and dry-run do not prompt; missing grants block the
+request and report the missing scopes. An external-destination preview without
+grants therefore returns `blocked`. Revocation also gates removal and recovery.
+Grants never override protected paths, source protection, ancestry, ownership,
+or collisions. A grant saved before a later content failure remains saved and
+is reported.
+
+See the [Library group](../.agents/memory/crystallized/documents/cli/contracts/library/_library.md)
+and its [List](../.agents/memory/crystallized/documents/cli/contracts/library/list/_list.md),
+[Inspect](../.agents/memory/crystallized/documents/cli/contracts/library/inspect/_inspect.md),
+[Attach](../.agents/memory/crystallized/documents/cli/contracts/library/attach/_attach.md),
+[Sync](../.agents/memory/crystallized/documents/cli/contracts/library/sync/_sync.md),
+and [Detach](../.agents/memory/crystallized/documents/cli/contracts/library/detach/_detach.md)
+Interface and Behavior contract sets for complete input, permission, result,
+and recovery rules.
 
 ## Status
 
@@ -1311,6 +1421,10 @@ Doctor checks these domains in order:
 5. Framework lifecycle.
 6. Extension lifecycle.
 
+Workspace-and-entry diagnosis includes the Library record, complete inventories
+of registered sources, projection drift, and typed Library recovery findings.
+It does not inspect unregistered source trees or change links.
+
 Each domain reports its coverage, limitations, counts, findings, and typed next
 actions. Complete coverage means that the checks ran, not that the workspace is
 healthy. Findings keep severity separate from their resolution, which may be
@@ -1340,8 +1454,8 @@ for the complete finite finding catalogue and output rules.
 
 ## Repair
 
-`repair` is the separate, constrained mutation operation for current exact local
-reference repairs:
+`repair` previews or applies bounded local-reference repairs and selected
+Workspace Library residual recovery:
 
 ```text
 open-forge repair [--automatic] [--relink <source-location> <expected-destination> <target-path>]... [--dry-run] [global flags]
@@ -1394,19 +1508,33 @@ Status: requires attention
 
 `--dry-run` is the only preview spelling and writes nothing. Every request uses
 fresh facts, one conflict-free plan, preflight, expected-state revalidation,
-one external recovery-bundle preparation covering every existing-target effect
-(`Replace`, `ReplaceGeneratedRegion`, or `Delete`),
-verification, and fresh relevant-domain post-diagnosis. All bundle preparation
-completes before the first target effect; handled failure or cancellation reports
-the actual residual draft or final path without restoration, rollback,
-compensation, or current-target classification. Only incomplete or blocked
-diagnosis facts actually required by the selected edits block Repair; unrelated
-lifecycle or recovery-observer unavailability remains visible but non-blocking.
-Repair never chooses external, fuzzy, semantic, authored, generated-navigation,
-route, recovery, Framework, or Extension changes. Generated drift belongs to
-`index`; known route intent belongs to route operations; lease-validated
-recognized recovery-bundle or draft deletion belongs to the separate `cleanup`
-operation.
+verification, and fresh relevant-domain post-diagnosis. Only incomplete or
+blocked diagnosis facts actually required by the selected edits block Repair;
+unrelated lifecycle or recovery-observer unavailability remains visible but
+non-blocking.
+
+For local-reference replacements, Repair prepares and verifies one external
+recovery bundle before the first existing-target effect. Handled failure or
+cancellation reports completed effects and the actual residual draft or final
+path without automatic restoration, rollback, compensation, or recovery-derived
+current-target classification.
+
+Selected Library residual recovery instead consumes a verified current-v1
+bundle and uses its exact typed prior and intended states. It can undo an exact
+created Library record or link, restore eligible prior ordinary-file bytes, or
+recreate an exact deleted relative link, including a dangling link. No-follow
+identity and current external-destination permission must be proven. It never
+follows or changes source targets, restores or widens grants, or infers recovery
+authority from names or matching bytes. The original residual bundle remains
+unchanged. This uses the existing safe-exact selection within automatic or
+wizard mode; it adds no recovery flag or general rollback mode.
+
+Outside this bounded Library recovery, Repair does not restore targets. It does
+not make external, fuzzy, or semantic target choices, author content, alter
+route topology or generated navigation, or perform Framework or Extension
+lifecycle operations. Use `index` for generated navigation, route commands for
+route changes, and the separate `cleanup` operation to delete recognized
+recovery bundles and drafts.
 See the
 [Repair contract set](../.agents/memory/crystallized/documents/cli/contracts/repair/_repair.md)
 for the complete catalogue, wizard, direct modes, and result meanings.
@@ -1533,55 +1661,13 @@ canonical path.
 
 ## Legacy CLI
 
-The frozen TypeScript MVP is available as `open-forge-old`. It is an optional
-deterministic helper for the human-readable Open Forge Framework.
-
-The legacy CLI exists so agents and maintainers can still use established
-routing assistance. Its commands and flags do not define the new CLI.
-
-### Commands
-
-| Command   | Legacy responsibility                         | Writes    |
-| --------- | --------------------------------------------- | --------- |
-| `install` | Install or reconcile the Framework            | Yes       |
-| `extend`  | Inspect or manage Extension packages          | Sometimes |
-| `index`   | Rebuild generated `Entries`                   | Yes       |
-| `load`    | Emit broad baseline and continuity context    | No        |
-| `find`    | Select routed files by tag or route           | No        |
-| `chain`   | Inspect inherited context for one routed file | No        |
-| `doctor`  | Validate deterministic Framework structure    | No        |
-| `create`  | Scaffold a route chain or Extension package   | Yes       |
-
-Use the executable's help for exact frozen syntax:
-
-```sh
-open-forge-old --help
-```
-
-Common repository assistance:
-
-```sh
-open-forge-old load --bodies
-open-forge-old find --tag Architecture --paths
-open-forge-old chain .agents/memory/crystallized/documents/_documents.md
-open-forge-old index
-open-forge-old doctor
-```
-
-`load` performs the MVP's broad `#KeepInMind` audit. It does not implement the
-current Framework's target-sensitive entrypoint contract.
-
-### Legacy Implementation
-
 `src/cli-mvp/` contains the frozen source for `open-forge-old`. Neither
 `src/cli-mvp/` nor `open-forge-old` is replacement implementation or contract
 authority. Keep this source frozen during new-CLI development. Do not modify,
 build, test, repair, or extend it.
 
-The implementation and its legacy architecture document define its exact
-behavior:
-
-- [`src/cli-mvp/cli.ts`](../src/cli-mvp/cli.ts)
-- [CLI MVP Architecture](../.agents/memory/crystallized/documents/cli/mvp-architecture.md)
+The [historical MVP architecture](../.agents/memory/crystallized/documents/cli/mvp-architecture.md)
+records that implementation's commands and state formats. The native CLI does
+not migrate its lifecycle or Extension receipts.
 
 Plain Markdown remains complete without either CLI.

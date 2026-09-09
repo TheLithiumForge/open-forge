@@ -10,8 +10,8 @@ open-forge:
 ## Status And Authority
 
 This file is the accepted current Crystallized authority for the public `repair`
-Interface Contract. The command does not ship yet; implementation and executable
-proof remain pending Gate 5. This contract owns the exact
+Interface Contract. The command does not ship yet; implementation and executable evidence are tracked in
+[CLI Development](../../../../../working/cli-development/_cli-development.md). This contract owns the exact
 syntax, flags, value grammar, repetition and composition, interactive and
 non-interactive selection paths, admitted repair catalogue, output projections,
 semantic results, errors, examples, non-goals, and public verification.

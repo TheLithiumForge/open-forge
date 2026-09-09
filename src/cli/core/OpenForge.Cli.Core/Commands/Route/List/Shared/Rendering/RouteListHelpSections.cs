@@ -39,8 +39,8 @@ internal static class RouteListHelpSections
             new CliHelpSection(
                 "Related commands",
                 "  route inspect — available; inspect one source's route behavior.\n"
-                + "  find — unavailable in this build; use it later for unrouted source discovery.\n"
-                + "  context — unavailable in this build; use it later for source content."),
+                + "  find — find Markdown sources by authored tags and structural headings.\n"
+                + "  context — return ordered startup and selected source content."),
         ]);
     }
 

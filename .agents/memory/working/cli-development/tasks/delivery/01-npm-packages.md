@@ -8,7 +8,7 @@ open-forge:
 
 ## Task State
 
-- State: ARM64 expansion Active, phase 4/4, milestone 5/6, after accepted
+- State: ARM64 expansion Complete, phase 4/4, milestone 6/6, after accepted
   Task 27 and before Task 13. Historical 8/8 and platform-expansion 7/7 horizons remain complete and
   immutable. The provisional local-use horizon is complete at phase 3 of 3,
   milestone 5 of 5. Live preflight, exact Loader/current-truth/future-idea
@@ -162,9 +162,9 @@ dependency, fallback runtime, or packaging framework is authorized here.
 - Milestones: phase 1/4 has M1 preflight/Gray acceptance and M2 qualified frozen
   Red; phase 2/4 has M3 Green and separate Purple with focused evidence;
   phase 3/4 has M4 fresh review/correction acceptance; phase 4/4 has M5 complete
-  local gates and M6 exact freeze/integration. Current phase 4/4, milestone 5/6.
-- Now: M4 review and M5 final local gates are accepted. Refreeze every path before
-  staging the final authority increment and exact local integration.
+  local gates and M6 exact freeze/integration. Current phase 4/4, milestone 6/6.
+- Now: M6 complete. Feature `6dc714c5` is integrated at `7eeeb19d`, exact tree
+  `c222861a`. Completion grace is owned by the project control ledger.
 
 ### M2 Qualified Red
 
@@ -243,6 +243,18 @@ protected public/production sources and twenty-four unrelated dirty files are
 qualified. Root refreshed the final static inventory after the reviewer's note
 about later authority-only hashes. The next milestone is exact local integration;
 Task 13 retains the remaining matching-host evidence.
+
+### M6 Exact Integration
+
+Root froze all thirty path entries before staging and squash-integrated accepted
+feature `6dc714c51e8dcfa681377a20f8e3dfab38f5448e` onto `81f22c43` as
+`7eeeb19d5dd3b30445f7b67a6c9ade1e02e5ee85`. The exact feature/integration tree
+is `c222861a9a6026e686b9bf435a376092a1d7533d`. Every added, changed and removed
+path is accounted for, including all formerly untracked files and the moved
+fixture. The isolated Red, Green and Purple feature commits remain intact.
+The integration receipt is `artifacts/task7-arm64/final/integration-receipt.json`.
+This closes the ARM64 graph/local-evidence horizon. Actual six-host CI evidence,
+final product acceptance, publication and global link refresh are not implied.
 
 ### Candidate Version Evidence Correction
 

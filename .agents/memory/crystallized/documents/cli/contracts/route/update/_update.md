@@ -10,8 +10,8 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized entrypoint for `route update`. The
-command does not ship yet; implementation and executable proof remain pending
-Gate 5. Its sibling Interface and Behavior Contracts define command meaning.
+command does not ship yet; implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md). Its sibling Interface and Behavior Contracts define command meaning.
 Its bounded Technical Design defines one parser-realization exception without
 adding public or technology-neutral meaning. This entrypoint does not duplicate
 their detail.

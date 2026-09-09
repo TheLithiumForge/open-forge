@@ -17,9 +17,9 @@ boundaries, BCL-first filesystem structure, and recovery identity relationships.
 Contract](interface.md) and [Behavior Contract](behavior.md) remain authoritative
 for public and technology-neutral meaning.
 
-The CLI is non-shipping. This file records accepted implementation direction; it
-does not claim that source code, tests, a package, or an executable exists.
-Implementation and executable proof remain pending Gate 5.
+The CLI is non-shipping. This file defines the accepted Context implementation.
+Implementation and executable evidence are tracked in
+[CLI Development](../../../../../working/cli-development/_cli-development.md).
 
 ## Accepted Design
 

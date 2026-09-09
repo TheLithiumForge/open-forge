@@ -12,8 +12,8 @@ open-forge:
 This routed set is the accepted current Crystallized authority for the
 non-shipping `repair` command. Its sibling Interface and Behavior files are the
 detailed authorities for the public surface and technology-neutral operation.
-This entrypoint provides navigation only. Implementation and executable proof
-remain pending Gate 5.
+This entrypoint provides navigation only. Implementation and executable evidence are tracked in
+[CLI Development](../../../../../working/cli-development/_cli-development.md).
 
 Repair is a constrained mutation operation. It does not promise to resolve every
 Doctor finding and does not author content, choose ownership, or replace a

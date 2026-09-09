@@ -11,7 +11,8 @@ open-forge:
 
 This is the accepted current Crystallized authority for the caller-visible
 Interface Contract for `route update`. The command does not ship yet;
-implementation and executable proof remain pending Gate 5.
+implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md).
 
 The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
 define the accepted shared result schema and process-status mapping. The [CLI

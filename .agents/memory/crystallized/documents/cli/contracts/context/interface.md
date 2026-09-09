@@ -12,8 +12,8 @@ open-forge:
 This is the current Crystallized Interface Contract for the accepted `context`
 command. This file is authoritative for the command's public grammar, selected
 content, observable result, errors, non-goals, examples, and verification. The
-command does not ship yet. Implementation and executable proof remain pending
-Gate 5. The sibling Behavior Contract defines the technology-neutral operation,
+command does not ship yet. Implementation and executable evidence are tracked in
+[CLI Development](../../../../../working/cli-development/_cli-development.md). The sibling Behavior Contract defines the technology-neutral operation,
 and the Technical Design is subordinate to the [CLI Architecture](../../architecture.md)
 for the accepted context realization.
 

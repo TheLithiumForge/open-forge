@@ -1,6 +1,6 @@
 # Developing Open Forge
 
-This guide describes the current repository transition. Start with the
+This guide describes how to develop and verify Open Forge. Start with the
 [README](../README.md) when you want to use the Framework.
 
 ## Enter The Workspace
@@ -22,21 +22,16 @@ Current responsibilities are:
 
 ## CLI Transition
 
-The TypeScript MVP is frozen. Do not modify, build, test, repair, or otherwise
-exercise its source or tests while developing the new CLI. Use
-`open-forge-old` only when repository routing assistance is needed, such as:
-
-```sh
-open-forge-old load --bodies
-open-forge-old index
-open-forge-old doctor
-```
+The TypeScript MVP in `src/cli-mvp/` is frozen historical source. Do not modify,
+build, test, repair, or otherwise exercise its source or tests while developing
+the native CLI. Use the replacement CLI built from this worktree for repository
+routing, development, review, and acceptance.
 
 CLI v2 was deleted. Its former Documents, Decisions, Directives, Patterns,
 plans, and implementation records live under
 `.agents/memory/archived/cli-v2/`. They are raw input, not accepted design.
 
-The new CLI direction is:
+The native CLI uses:
 
 - One canonical .NET Native AOT executable
 - Optional agent-first acceleration over a complete Markdown Framework
@@ -46,10 +41,12 @@ The new CLI direction is:
 - npm as the first wrapper
 - The root `package.json` retained as an ecosystem-neutral orchestration layer
 
-The replacement CLI remains non-shipping until its complete command and release
-boundary is accepted. Its thin npm package source is accepted for distribution
-preparation and repository-local linking; actual package publication remains a
-separate explicitly authorized release effect.
+The replacement CLI implements all 28 commands but remains unreleased. Its
+six-target npm package graph is implemented, with matching-host execution and
+package invocation proven locally on Linux x64. The other five native-host
+receipts and final delivery acceptance remain incomplete. Local linking is
+available for development; package publication remains a separate explicitly
+authorized release effect.
 
 Rune is outside the current release effort.
 
@@ -78,6 +75,21 @@ dotnet build
 dotnet test
 ```
 
+After a Debug build, invoke that worktree's development artifact directly:
+
+```sh
+./artifacts/publish/open-forge-dev/Debug/open-forge-dev --help
+./artifacts/publish/open-forge-dev/Debug/open-forge-dev context
+./artifacts/publish/open-forge-dev/Debug/open-forge-dev doctor
+```
+
+On Windows, use `open-forge-dev.exe`; use the configuration built in this
+worktree. For ordinary development, `npm run cli:dev -- --help` runs this
+worktree's CLI project after the workspace has been restored. Public-process
+verification invokes the already built development or selected native artifact
+directly. Use `--help` on a command from that same artifact when checking
+documentation examples.
+
 Building the CLI project directly, through the solution, or through the EndToEnd
 project publishes the local managed development executable as
 `artifacts/publish/open-forge-dev/<Configuration>/open-forge-dev[.exe]` and writes
@@ -89,16 +101,22 @@ selected by an earlier build. CI and explicit Native AOT evidence compile the
 EndToEnd project for one supported target RID and use the corresponding
 `artifacts/publish/<RID>/open-forge/OpenForge.Cli[.exe]` publication.
 
-The root `package.json` and frozen MVP tooling do not provide a replacement CLI
-build.
+Use the .NET commands above for replacement CLI builds. The frozen MVP build
+scripts are not a replacement CLI gate.
 
 ### Link The Native CLI Locally
 
-The npm package source under `src/cli/package-managers/npm/` can prepare the
-current Linux x64 or Windows x64 native package graph for local use. The root
-link command publishes the current host in Release mode without restoring,
-stages a local version containing the full Git commit SHA, and links the
-platform package through the main package into this repository.
+The npm tooling under `src/cli/package-managers/npm/` can prepare the native
+package for the current host on Linux (glibc), macOS, or Windows, on x64 or
+ARM64. The accepted distribution contains all six target packages. Package
+layout and packing are implemented; five matching-host receipts and final
+delivery acceptance remain incomplete. See [CLI Distribution](../.agents/memory/crystallized/documents/cli/distribution.md).
+
+The root link command publishes the current host in Release mode without
+restoring, stages a local version containing the full Git commit SHA, and links
+the platform package through the main package into this repository. This is an
+explicit maintainer workflow that creates global links, not a verification
+prerequisite.
 
 Restore the locked .NET workspace before the first link or after its
 dependencies change. Then link and invoke the current native CLI:
@@ -139,12 +157,14 @@ through `open-forge-old` and `npm run cli:old`.
 Do not treat `dist/` or `.temp/` as authored authority. Do not edit generated
 output manually.
 
-For Framework-only changes, use proportionate checks and the available legacy
-routing commands. Review the complete Git diff before closeout:
+For Framework-only changes, use proportionate checks with the artifact built
+from the same worktree. Preview generated navigation with `index --dry-run` when
+useful, then apply the authorized changes. Review the complete Git diff before
+closeout:
 
 ```sh
-open-forge-old index
-open-forge-old doctor
+./artifacts/publish/open-forge-dev/Debug/open-forge-dev index
+./artifacts/publish/open-forge-dev/Debug/open-forge-dev doctor
 git diff --check
 ```
 

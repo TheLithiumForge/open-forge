@@ -16,7 +16,7 @@ internal static class RepairDefinitions
 
     internal static readonly CliSyntaxDefinition RepairCommand = new(
         CommandIdentity,
-        "Apply bounded, diagnosis-backed local-reference repairs.");
+        "Apply bounded local-reference repairs and selected Workspace Library residual recovery.");
 
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         "--automatic",

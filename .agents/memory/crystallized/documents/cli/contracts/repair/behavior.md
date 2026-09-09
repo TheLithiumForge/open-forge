@@ -15,8 +15,8 @@ diagnosis, selection authority, exact and guided proposal handling, complete
 planning, conflict checks, preflight, dry-run, application, verification,
 typed Workspace Library residual recovery, recovery-bundle retention,
 post-diagnosis, result formation, and conformance without
-choosing implementation technology. The command does not ship yet; implementation
-and executable proof remain pending Gate 5.
+choosing implementation technology. The command does not ship yet; implementation and executable evidence are tracked in
+[CLI Development](../../../../../working/cli-development/_cli-development.md).
 
 The [Interface Contract](interface.md) owns the exact public grammar, selection
 modes, relink value grammar, admitted catalogue, observable output, semantic

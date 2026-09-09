@@ -17,8 +17,8 @@ the public vocabulary and observable shape. The shared [CLI Source References](.
 and [Global CLI Flags](../../shared/global-flags/interface.md) contracts own
 their shared input and presentation meaning.
 
-The operation is read-only, stateless, and non-shipping. Implementation and
-executable proof remain pending Gate 5. Its behavior ends at one typed result;
+The operation is read-only, stateless, and non-shipping. Implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md). Its behavior ends at one typed result;
 it has no mutation phase, receipt, cache, persistent reverse index,
 or hidden `index` invocation.
 

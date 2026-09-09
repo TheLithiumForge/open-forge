@@ -11,7 +11,8 @@ open-forge:
 
 This routed set is the accepted current Crystallized authority for shared CLI
 source references. It defines current behavior for the new CLI and does not ship
-yet. Implementation and executable proof remain pending Gate 5.
+yet. Implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md).
 This entrypoint provides navigation only. Consumers link directly to the
 Interface for public definitions and to the Behavior file for technology-neutral
 resolution and conformance.

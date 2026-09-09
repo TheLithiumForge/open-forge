@@ -3,101 +3,371 @@ name: CLI
 on:
   pull_request:
     paths:
-      - ".github/workflows/cli.yml"
+      - ".github/workflows/cli*.yml"
       - "Directory.Build.props"
       - "Directory.Packages.props"
       - "global.json"
       - "NuGet.Config"
       - "OpenForge.Cli.slnx"
+      - "package.json"
+      - "bun.lock"
+      - "tsconfig.json"
+      - "eslint.config.ts"
+      - ".prettier*"
       - "src/cli/**"
       - "src/open-forge/**"
+      - "src/extensions/**"
+      - ".editorconfig"
+      - ".gitattributes"
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
 
-concurrency:
-  group: cli-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+env:
+  DOTNET_MULTILEVEL_LOOKUP: "0"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "1"
+  CANDIDATE_VERSION: 0.0.0-dev.sha-${{ github.sha }}
+  SOURCE_TAR: open-forge-source-${{ github.run_id }}-${{ github.run_attempt }}.tar
 
 jobs:
-  native:
-    name: ${{ matrix.rid }}
+  build:
+    name: build ${{ matrix.rid }}
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 45
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
         include:
-          - rid: win-x64
-            runner: windows-latest
-            suffix: ".exe"
-          - rid: win-arm64
-            runner: windows-11-vs2026-arm
-            suffix: ".exe"
           - rid: linux-x64
-            runner: ubuntu-latest
+            runner: ubuntu-24.04
+            architecture: x64
             suffix: ""
           - rid: linux-arm64
             runner: ubuntu-24.04-arm
+            architecture: arm64
             suffix: ""
           - rid: osx-x64
             runner: macos-15-intel
+            architecture: x64
             suffix: ""
           - rid: osx-arm64
-            runner: macos-latest
+            runner: macos-15
+            architecture: arm64
             suffix: ""
-
+          - rid: win-x64
+            runner: windows-2025
+            architecture: x64
+            suffix: ".exe"
+          - rid: win-arm64
+            runner: windows-11-vs2026-arm
+            architecture: arm64
+            suffix: ".exe"
     defaults:
       run:
         shell: bash
-
+    env:
+      RID: ${{ matrix.rid }}
+      RECEIPTS: artifacts/ci/receipts/${{ matrix.rid }}/build
+      BUILD_TAR: open-forge-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.rid }}.tar
+      TEST_TAR: open-forge-test-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.rid }}.tar
+      PACKAGE_TAR: open-forge-package-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.rid }}.tar
     steps:
-      - name: Check out source
-        uses: actions/checkout@v4
-
-      - name: Install .NET 10
-        uses: actions/setup-dotnet@v4
+      - name: Check out exact candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          dotnet-version: 10.0.x
+          ref: ${{ github.sha }}
+          persist-credentials: false
 
-      - name: Restore audited graph
-        run: dotnet restore OpenForge.Cli.slnx --configfile NuGet.Config
+      - name: Set the job-owned SDK installation directory
+        run: |
+          printf 'DOTNET_INSTALL_DIR=%s/open-forge-dotnet\nDOTNET_ROOT=%s/open-forge-dotnet\n' "$RUNNER_TEMP" "$RUNNER_TEMP" >> "$GITHUB_ENV"
 
-      - name: Verify formatting
-        run: dotnet format OpenForge.Cli.slnx --no-restore --verify-no-changes
+      - name: Select isolated .NET SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.111"
+          architecture: ${{ matrix.architecture }}
 
-      - name: Build Release graph
-        run: dotnet build OpenForge.Cli.slnx --configuration Release --no-restore -p:OpenForgeSkipDevelopmentPublish=true -p:OpenForgeEndToEndTargetRuntimeIdentifier=${{ matrix.rid }}
+      - name: Select native Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24.19.0"
+          architecture: ${{ matrix.architecture }}
+          package-manager-cache: false
 
-      - name: Run managed Unit evidence
-        run: dotnet test --project src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-build
+      - name: Select native Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: "1.3.14"
 
-      - name: Run managed Integration evidence
-        run: dotnet test --project src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-build
+      - name: Qualify native host, tools and checked-out source
+        id: host
+        run: |
+          node src/cli/ci/host-receipt.ts ${{ matrix.rid }} build
+          npm --version > "$RECEIPTS/npm-version.txt"
+
+      - name: Install locked tooling and restore audited NuGet graph
+        run: |
+          bun install --frozen-lockfile 2>&1 | tee "$RECEIPTS/bun-install.log"
+          bun pm ls --all > "$RECEIPTS/bun-dependencies.txt"
+          dotnet restore OpenForge.Cli.slnx --configfile NuGet.Config 2>&1 | tee "$RECEIPTS/restore.log"
+          dotnet package list --project OpenForge.Cli.slnx --include-transitive --format json --no-restore > "$RECEIPTS/nuget-dependencies.json"
+          node src/cli/ci/artifact-manifest.ts snapshot . artifacts/ci/candidate.json "$RECEIPTS/resolved-assets.json" artifacts/obj
+
+      - name: Qualify CI source and separate evidence projects
+        run: |
+          node node_modules/typescript/bin/tsc --project src/cli/ci/tsconfig.json
+          node node_modules/typescript/bin/tsc --project src/cli/ci/__tests__/tsconfig.unit.json
+          node node_modules/typescript/bin/tsc --project src/cli/ci/__tests__/tsconfig.integration.json
+          node --experimental-strip-types node_modules/eslint/bin/eslint.js --flag unstable_native_nodejs_ts_config --config eslint.config.ts --max-warnings 0 src/cli/ci
+          node node_modules/prettier/bin/prettier.cjs --check src/cli/ci .github/workflows/cli.yml .github/workflows/cli-artifacts.yml
+          node --test src/cli/ci/__tests__/verify-test-results.test.ts src/cli/ci/__tests__/host-receipt.test.ts
+          node --test src/cli/ci/__tests__/artifact-manifest.integration.test.ts src/cli/ci/__tests__/collect-packages.integration.test.ts src/cli/ci/__tests__/producer-boundaries.integration.test.ts
+
+      - name: Enforce required whole-solution formatting
+        run: |
+          dotnet format whitespace OpenForge.Cli.slnx --no-restore --verify-no-changes 2>&1 | tee "$RECEIPTS/format-whitespace.log"
+          dotnet format OpenForge.Cli.slnx --no-restore --verify-no-changes --severity warn 2>&1 | tee "$RECEIPTS/format-warn.log"
+
+      - name: Record supplementary informational style findings
+        run: |
+          set +e
+          dotnet format style OpenForge.Cli.slnx --no-restore --verify-no-changes --severity info > "$RECEIPTS/format-style-info.log" 2>&1
+          format_status=$?
+          set -e
+          printf '%s\n' "$format_status" > "$RECEIPTS/format-style-info.exit"
+          # Existing informational suggestions are supplementary; required gates ran above.
+
+      - name: Build normal managed graph and preserve all three test closures
+        run: |
+          dotnet build OpenForge.Cli.slnx --configuration Release --no-restore -p:OpenForgeCliInformationalVersion="$CANDIDATE_VERSION" 2>&1 | tee "$RECEIPTS/build-managed.log"
+          mkdir -p artifacts/ci/managed
+          cp -R artifacts/bin/OpenForge.Cli.Core.UnitTests/release artifacts/ci/managed/unit
+          cp -R artifacts/bin/OpenForge.Cli.IntegrationTests/release artifacts/ci/managed/integration
+          cp -R artifacts/bin/OpenForge.Cli.EndToEndTests/release artifacts/ci/managed/public
+          cp artifacts/obj/OpenForge.Cli.EndToEndTests/release/Generated/PublishedExecutableBuildTarget.g.cs "$RECEIPTS/public-development-selection.g.cs"
 
       - name: Publish native CLI
-        run: dotnet publish src/cli/root/OpenForge.Cli/OpenForge.Cli.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/publish/${{ matrix.rid }}/open-forge -p:OpenForgeSkipDevelopmentPublish=true
+        run: |
+          dotnet publish src/cli/root/OpenForge.Cli/OpenForge.Cli.csproj --configuration Release --runtime "$RID" --self-contained true --no-restore --output "artifacts/publish/$RID/open-forge" -p:OpenForgeSkipDevelopmentPublish=true -p:OpenForgeCliInformationalVersion="$CANDIDATE_VERSION" 2>&1 | tee "$RECEIPTS/publish-open-forge.log"
 
-      - name: Run managed EndToEnd evidence
-        run: dotnet test --project src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj --configuration Release --no-build
+      - name: Publish native Integration
+        run: |
+          dotnet publish src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --runtime "$RID" --self-contained true --no-restore --output "artifacts/publish/$RID/integration" -p:OpenForgeSkipDevelopmentPublish=true -p:OpenForgeCliInformationalVersion="$CANDIDATE_VERSION" 2>&1 | tee "$RECEIPTS/publish-integration.log"
 
-      - name: Publish native Integration evidence
-        run: dotnet publish src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/publish/${{ matrix.rid }}/integration -p:OpenForgeSkipDevelopmentPublish=true
+      - name: Publish native public
+        run: |
+          dotnet publish src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj --configuration Release --runtime "$RID" --self-contained true --no-restore --output "artifacts/publish/$RID/end-to-end" -p:OpenForgeSkipDevelopmentPublish=true -p:OpenForgeCliInformationalVersion="$CANDIDATE_VERSION" 2>&1 | tee "$RECEIPTS/publish-end-to-end.log"
 
-      - name: Execute native Integration evidence
-        run: ./artifacts/publish/${{ matrix.rid }}/integration/OpenForge.Cli.IntegrationTests${{ matrix.suffix }}
+      - name: Preserve managed public tests selected for the native CLI
+        run: |
+          dotnet build src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj --configuration Release --no-restore -p:OpenForgeEndToEndTargetRuntimeIdentifier="$RID" -p:OpenForgeSkipDevelopmentPublish=true -p:OpenForgeCliInformationalVersion="$CANDIDATE_VERSION" 2>&1 | tee "$RECEIPTS/build-public-native.log"
+          cp -R artifacts/bin/OpenForge.Cli.EndToEndTests/release artifacts/ci/managed/public-native
+          cp artifacts/obj/OpenForge.Cli.EndToEndTests/release/Generated/PublishedExecutableBuildTarget.g.cs "$RECEIPTS/public-native-selection.g.cs"
+          cp "artifacts/obj/OpenForge.Cli.EndToEndTests/release_$RID/Generated/PublishedExecutableBuildTarget.g.cs" "$RECEIPTS/native-public-selection.g.cs"
 
-      - name: Publish native EndToEnd evidence
-        run: dotnet publish src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/publish/${{ matrix.rid }}/end-to-end -p:OpenForgeSkipDevelopmentPublish=true
+      - name: Archive the exact source candidate
+        if: matrix.rid == 'linux-x64'
+        run: |
+          mkdir -p artifacts/ci/source
+          git archive --format=tar --prefix="open-forge-${GITHUB_SHA}/" --output="artifacts/ci/source/$SOURCE_TAR" "$GITHUB_SHA"
+          node src/cli/ci/artifact-manifest.ts entry . "artifacts/ci/source/$SOURCE_TAR" "$RECEIPTS/source-entry.json"
 
-      - name: Execute native EndToEnd evidence
-        run: ./artifacts/publish/${{ matrix.rid }}/end-to-end/OpenForge.Cli.EndToEndTests${{ matrix.suffix }}
+      - name: Bind and transfer complete built closures
+        run: |
+          node src/cli/ci/artifact-manifest.ts snapshot . artifacts/ci/candidate.json "artifacts/ci/receipts/$RID/build-manifest.json" artifacts/ci/managed artifacts/publish/open-forge-dev/Release "artifacts/publish/$RID" "$RECEIPTS"
+          node src/cli/ci/artifact-manifest.ts verify . artifacts/ci/candidate.json "artifacts/ci/receipts/$RID/build-manifest.json" ${{ runner.os != 'Windows' }}
+          tar -cf "$BUILD_TAR" artifacts/ci/managed artifacts/publish/open-forge-dev/Release "artifacts/publish/$RID" "artifacts/ci/receipts/$RID/build" "artifacts/ci/receipts/$RID/build-manifest.json"
 
-      - name: Upload bounded native artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload complete candidate build
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: open-forge-${{ matrix.rid }}
-          path: artifacts/publish/${{ matrix.rid }}/open-forge/OpenForge.Cli${{ matrix.suffix }}
+          path: ${{ env.BUILD_TAR }}
+          archive: false
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload exact source archive
+        if: matrix.rid == 'linux-x64'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: artifacts/ci/source/${{ env.SOURCE_TAR }}
+          archive: false
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Preserve bounded failure diagnostics
+        if: failure() && steps.host.outcome == 'success'
+        run: |
+          tar -cf "open-forge-build-failure-${{ github.run_id }}-${{ github.run_attempt }}-$RID.tar" "$RECEIPTS"
+
+      - name: Upload failure diagnostics
+        if: failure() && steps.host.outcome == 'success'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: open-forge-build-failure-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.rid }}.tar
+          archive: false
+          if-no-files-found: error
+          retention-days: 7
+
+  test:
+    name: test ${{ matrix.rid }}
+    needs: build
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rid: linux-x64
+            runner: ubuntu-24.04
+            architecture: x64
+            suffix: ""
+          - rid: linux-arm64
+            runner: ubuntu-24.04-arm
+            architecture: arm64
+            suffix: ""
+          - rid: osx-x64
+            runner: macos-15-intel
+            architecture: x64
+            suffix: ""
+          - rid: osx-arm64
+            runner: macos-15
+            architecture: arm64
+            suffix: ""
+          - rid: win-x64
+            runner: windows-2025
+            architecture: x64
+            suffix: ".exe"
+          - rid: win-arm64
+            runner: windows-11-vs2026-arm
+            architecture: arm64
+            suffix: ".exe"
+    defaults:
+      run:
+        shell: bash
+    env:
+      RID: ${{ matrix.rid }}
+      RECEIPTS: artifacts/ci/receipts/${{ matrix.rid }}/test
+      BUILD_TAR: open-forge-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.rid }}.tar
+      TEST_TAR: open-forge-test-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.rid }}.tar
+      PACKAGE_TAR: open-forge-package-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.rid }}.tar
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set the job-owned SDK installation directory
+        run: |
+          printf 'DOTNET_INSTALL_DIR=%s/open-forge-dotnet\nDOTNET_ROOT=%s/open-forge-dotnet\n' "$RUNNER_TEMP" "$RUNNER_TEMP" >> "$GITHUB_ENV"
+
+      - name: Select isolated .NET SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.111"
+          architecture: ${{ matrix.architecture }}
+
+      - name: Select native Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24.19.0"
+          architecture: ${{ matrix.architecture }}
+          package-manager-cache: false
+
+      - name: Select native Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: "1.3.14"
+
+      - name: Qualify native host, tools and checked-out source
+        id: host
+        run: |
+          node src/cli/ci/host-receipt.ts ${{ matrix.rid }} test
+          npm --version > "$RECEIPTS/npm-version.txt"
+
+      - name: Download matching current-run build
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ${{ env.BUILD_TAR }}
+          path: artifacts/ci/transfers
+          skip-decompress: true
+          digest-mismatch: error
+
+      - name: Restore and verify the exact candidate closures
+        run: |
+          tar -xf "artifacts/ci/transfers/$BUILD_TAR"
+          node src/cli/ci/artifact-manifest.ts verify . artifacts/ci/candidate.json "artifacts/ci/receipts/$RID/build-manifest.json" ${{ runner.os != 'Windows' }}
+
+      - name: Discover, execute and qualify six exact suites
+        run: |
+          while read -r selection suite executable minimum; do
+            output="$RECEIPTS/$selection"
+            mkdir "$output"
+            runner=("$executable")
+            if [[ "$executable" == *.dll ]]; then runner=(dotnet "$executable"); fi
+            arguments=(--minimum-expected-tests "$minimum" --parallel none --fail-warns on --fail-skips on --no-ansi --progress off --report-xunit-ctrf --report-xunit-ctrf-filename results.json --results-directory "$output")
+            printf '%s\0' "${runner[@]}" --list-tests json > "$output/discovery.argv"
+            printf '%s\0' "${runner[@]}" "${arguments[@]}" > "$output/execution.argv"
+            set +e
+            "${runner[@]}" --list-tests json > "$output/discovery.json" 2> "$output/discovery.stderr"
+            discovery_exit=$?
+            "${runner[@]}" "${arguments[@]}" > "$output/execution.stdout" 2> "$output/execution.stderr"
+            execution_exit=$?
+            set -e
+            node src/cli/ci/verify-test-results.ts record-execution . "artifacts/ci/receipts/$RID/build-manifest.json" "$RID" "$executable" "$discovery_exit" "$execution_exit" "$output/execution.json"
+            node src/cli/ci/verify-test-results.ts "$suite" . "$output/discovery.json" "$output/results.json" "$output/execution.json" "$output/qualified.json"
+          done <<SUITES
+          unit unit artifacts/ci/managed/unit/OpenForge.Cli.Core.UnitTests.dll 2860
+          integration integration artifacts/ci/managed/integration/OpenForge.Cli.IntegrationTests.dll 1603
+          public public artifacts/ci/managed/public/OpenForge.Cli.EndToEndTests.dll 111
+          native-integration integration artifacts/publish/$RID/integration/OpenForge.Cli.IntegrationTests${{ matrix.suffix }} 1603
+          native-public public artifacts/publish/$RID/end-to-end/OpenForge.Cli.EndToEndTests${{ matrix.suffix }} 111
+          public-native public artifacts/ci/managed/public-native/OpenForge.Cli.EndToEndTests.dll 111
+          SUITES
+
+      - name: Run the Linux-only package layout and preserved fixture
+        if: matrix.rid == 'linux-x64'
+        run: |
+          bun install --frozen-lockfile
+          NODE_OPTIONS="${NODE_OPTIONS:+$NODE_OPTIONS }--test-reporter=tap" npm run test:package-layout > "$RECEIPTS/package-layout.tap" 2>&1
+          NODE_OPTIONS="${NODE_OPTIONS:+$NODE_OPTIONS }--test-reporter=tap" npm run test:package-manager > "$RECEIPTS/package-fixture.tap" 2>&1
+          for selection in package-layout:7 package-fixture:1; do
+            report="${selection%:*}"
+            count="${selection##*:}"
+            for summary in "tests $count" "pass $count" "fail 0" "cancelled 0" "skipped 0" "todo 0"; do
+              [[ "$(grep -Fxc "# $summary" "$RECEIPTS/$report.tap")" == 1 ]]
+            done
+          done
+
+      - name: Bind successful test evidence to unchanged native bytes
+        run: |
+          node src/cli/ci/artifact-manifest.ts verify . artifacts/ci/candidate.json "artifacts/ci/receipts/$RID/build-manifest.json" ${{ runner.os != 'Windows' }}
+          node src/cli/ci/artifact-manifest.ts snapshot . artifacts/ci/candidate.json "artifacts/ci/receipts/$RID/test-manifest.json" "$RECEIPTS" "artifacts/ci/receipts/$RID/build-manifest.json" "artifacts/publish/$RID/open-forge/OpenForge.Cli${{ matrix.suffix }}"
+          tar -cf "$TEST_TAR" "$RECEIPTS" "artifacts/ci/receipts/$RID/test-manifest.json"
+
+      - name: Upload qualified current-run test receipts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: ${{ env.TEST_TAR }}
+          archive: false
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Preserve bounded failure diagnostics
+        if: failure() && steps.host.outcome == 'success'
+        run: |
+          tar -cf "open-forge-test-failure-${{ github.run_id }}-${{ github.run_attempt }}-$RID.tar" "$RECEIPTS"
+
+      - name: Upload failure diagnostics
+        if: failure() && steps.host.outcome == 'success'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: open-forge-test-failure-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.rid }}.tar
+          archive: false
           if-no-files-found: error
           retention-days: 7

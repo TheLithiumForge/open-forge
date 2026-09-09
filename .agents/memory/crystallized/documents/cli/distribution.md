@@ -54,14 +54,18 @@ squash integration is `e19d429e` with the same tree. That historical implementat
 staged and packed the three x64 packages. Its installed-launcher journey was
 run on Linux; macOS and Windows have stage-and-pack evidence only.
 
-Task 7's new ARM64 expansion is active after Task 27 and before Task 13.
-Task 13 must refreeze its earlier Linux-only preparation for all six targets.
+Task 7's ARM64 expansion is complete and integrated at `7eeeb19d`,
+with exact accepted tree `c222861a`.
+Task 13 owns six-target CI implementation and delivery qualification.
+Its Task record owns the current evidence state.
 The six-target package graph is now implemented with staging and packing
 evidence for all six targets. Final local acceptance also proves the actual
 stamped Linux x64 native package journey and complete managed/Linux native
-suites. The other five matching-host journeys and six-target CI acceptance
-remain pending in Task 13. Publication and global installation refresh are not
-established by this local evidence.
+suites. The user accepted Linux execution plus static inspection of the other
+platform jobs for local completion on 2026-09-10. The other five matching-host journeys
+remain unexecuted. This boundary permits local integration, not a shipping
+release. Remote Git/GitHub operations, hosted runs and publication are prohibited
+under the current direction. Global installation refresh is not authorized.
 Historical local-link receipts remain scoped to their exact authorized action.
 
 The replacement remains non-shipping until the complete retained command set,
@@ -105,8 +109,9 @@ and package-owned journeys. Task 13 owns native build and smoke, packed
 installation and invocation, checksums, and bounded artifact collection on a
 matching native host for each accepted target. It separately consumes the
 Architecture's managed and Native AOT test evidence. Emulation or cross-build
-success cannot substitute for native execution. Task 22 consumes the complete
-set for final acceptance and separately authorized publication.
+success cannot substitute for native execution. Local acceptance follows the
+explicit maintainer boundary recorded above. A future separately authorized
+release must distinguish the available platform proof from static inspection.
 
 ## Publication Boundary
 

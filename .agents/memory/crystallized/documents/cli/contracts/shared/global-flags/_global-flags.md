@@ -11,7 +11,8 @@ open-forge:
 
 This routed set is the accepted current Crystallized authority for shared global
 flags. The flags define current behavior for the new CLI and do not ship yet.
-Implementation and executable proof remain pending Gate 5.
+Implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md).
 This entrypoint provides navigation only. Consumers link directly to the
 Interface for public definitions and to the Behavior file for technology-neutral
 resolution and conformance.

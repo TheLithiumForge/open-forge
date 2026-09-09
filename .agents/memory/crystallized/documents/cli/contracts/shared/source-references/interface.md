@@ -10,8 +10,8 @@ open-forge:
 ## Status And Authority
 
 This file is the accepted current Crystallized authority for the caller-visible
-shared source-reference contract. It does not ship yet; implementation and
-executable proof remain pending Gate 5. Command contracts link here for public
+shared source-reference contract. It does not ship yet; implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md). Command contracts link here for public
 grammar, identity, disambiguation, results, errors, and examples instead of
 defining a second source grammar.
 

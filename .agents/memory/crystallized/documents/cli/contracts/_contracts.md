@@ -11,10 +11,8 @@ This route contains the detailed command contracts for the accepted replacement
 CLI. Gate 2 command definition, Gate 3 Architecture, and current-source
 reconciliation are complete. These contracts define accepted behavior and do
 not duplicate current executable state. The replacement remains non-shipping.
-Accepted implementation and evidence exist for several commands, including
-public `index`, Route Init local integration `cc5085ce`, and Route Create local
-integration `19412d2`, while the
-broader retained command set, complete delivery, and release remain unfinished.
+All 28 retained commands are implemented and locally accepted. Complete
+six-target delivery evidence, final acceptance, and release remain pending.
 The active [CLI
 Development](../../../../working/cli-development/_cli-development.md) route
 records exact execution state.
@@ -32,7 +30,7 @@ The grouped [`route`](route/_route.md) family includes the accepted structural
 `route move` and `route remove` leaves. Each accepts one eligible ordinary
 unmanaged logical leaf or one complete ordinary unmanaged category and keeps
 its Interface and Behavior contracts in the operation-local scope. These
-commands define intended behavior only; they do not ship yet.
+commands are implemented and locally accepted; they do not ship yet.
 
 The direct root [`cleanup`](cleanup/_cleanup.md) command is retained as an
 operand-free operation over the current recognized external recovery-bundle and
@@ -43,10 +41,9 @@ Interface and Behavior Contracts define the complete default-all deletion
 boundary; this entrypoint does not duplicate that meaning.
 
 The [CLI Architecture](../architecture.md) defines the accepted implementation
-structure and cross-command boundaries. The [frozen legacy CLI documentation](../_cli.md)
-and [MVP Architecture](../mvp-architecture.md) remain the source for the
-executable currently available as `open-forge-old`. The contextual release
-program records execution history but does not replace these current contracts.
+structure and cross-command boundaries. The [MVP Architecture](../mvp-architecture.md)
+records the frozen `open-forge-old` implementation as historical reference. The
+active development records track execution without replacing these contracts.
 
 ## Axioms
 

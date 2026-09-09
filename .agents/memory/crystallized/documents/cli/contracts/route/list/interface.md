@@ -13,7 +13,8 @@ This is the accepted current Crystallized Interface Contract for `open-forge
 route list`. It owns the public purpose, grammar, route selection, structural depth,
 observable rows, human and structured presentation, semantic results, errors,
 examples, non-goals, and caller-visible verification. The command does not ship
-yet; implementation and executable proof remain pending Gate 5.
+yet; implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md).
 
 The sibling [Behavior Contract](behavior.md) defines deterministic,
 technology-neutral resolution and conformance. The [Route group entrypoint](../_route.md)

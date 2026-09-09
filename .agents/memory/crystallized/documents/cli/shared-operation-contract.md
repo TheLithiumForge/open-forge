@@ -431,8 +431,9 @@ dependencies, libraries, dispatch, or runtime. Prefer direct typed relationships
 and exhaustive handling of finite cases where they keep the contract visible.
 Do not use string-keyed behavior registries, service locators, reflective
 dispatch, or a universal operation engine that hides command meaning. The
-accepted Architecture controls concrete implementation choices; Gate 5 still
-owes implementation and evidence.
+accepted Architecture controls concrete implementation choices. The active
+[CLI Development](../../../working/cli-development/_cli-development.md) route
+records implementation and executable evidence.
 
 ## Errors And No-Ops
 

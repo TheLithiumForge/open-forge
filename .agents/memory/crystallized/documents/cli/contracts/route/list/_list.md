@@ -14,7 +14,8 @@ This is the accepted current Crystallized entrypoint for the read-only
 grammar and result. The [Behavior Contract](behavior.md) defines deterministic,
 technology-neutral resolution and conformance. This entrypoint does not create a
 second command contract and no command-local Technical Design file is needed for
-this operation. Implementation and executable proof remain pending Gate 5.
+this operation. Implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md).
 
 The command does not ship yet. It is stateless, read-only, and non-shipping: a
 request may inspect the selected workspace, but it never changes authored files,

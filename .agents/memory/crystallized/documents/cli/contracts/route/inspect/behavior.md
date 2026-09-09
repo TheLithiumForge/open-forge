@@ -11,7 +11,8 @@ open-forge:
 
 This is the accepted current Crystallized authority for the technology-neutral
 Behavior Contract for `route inspect`. The command does not ship yet;
-implementation and executable proof remain pending Gate 5.
+implementation and executable evidence are tracked in
+[CLI Development](../../../../../../working/cli-development/_cli-development.md).
 
 The [Interface Contract](interface.md) defines the complete public grammar,
 observable profile, output, semantic result names, errors, and non-goals that

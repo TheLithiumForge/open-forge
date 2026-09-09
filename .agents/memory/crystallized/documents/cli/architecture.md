@@ -406,7 +406,7 @@ consume the same concrete result.
 
 Standard help comes from the exact composed `System.CommandLine` symbol graph.
 Bindings provide ordered product sections such as Discovery, examples, related
-commands, bounded notes, and unavailable planned commands. The implementation
+commands and bounded notes. The implementation
 does not maintain a second command catalogue or normalize library output through
 ad hoc string replacement.
 
@@ -703,6 +703,22 @@ C# source root. Current platform and package targets, present implementation
 gaps, staging, packing, checksums, and proof ownership are defined by
 [Distribution](distribution.md). Additional support and supply-chain claims
 require explicit acceptance.
+
+CI keeps separate native build and test matrices for the six accepted targets.
+A manual artifact workflow reuses verification within the same run, then stages
+and invokes packages from the exact tested native files before collecting the
+complete graph. Workflow YAML owns scheduling and direct tool commands. Focused
+TypeScript under `src/cli/ci/` owns only host, receipt, checksum and evidence
+qualification; its tests remain in the nearest `__tests__/` scope. It is not
+CLI domain code and introduces no production dependency or general CI framework.
+
+Build jobs preserve complete managed test closures before native publication
+and a separate managed-public-on-native closure afterward. Test jobs consume
+those exact artifacts without rebuilding. Ordinary tar preserves executable
+modes across transfer. Source, native and package identities stay explicit;
+checksums do not establish independent reproducibility or expand publication
+authority. The current Task defines the finite implementation and acceptance
+scope, while the source workflows own exact action and tool pins.
 
 ## Durable Implementation Sequence
 

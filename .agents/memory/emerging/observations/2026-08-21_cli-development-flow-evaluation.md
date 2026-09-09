@@ -1274,3 +1274,71 @@ Luna/max performed exact pre-decided managed/native commands, and root qualified
 All-six package layouts did not establish six-host execution. The useful result
 is a bounded author/reviewer/operator split with explicit failure qualification;
 there is no matched Sol comparison or measured model-cost superiority.
+
+## Task 13 CI Evidence Checkpoints
+
+The persistent Astra/high author supplied five focused CI evidence helpers with
+39 independently qualified Red cases. Root inspected the bodies and raw failure
+hashes before separate Gray and Red commits, then independently reproduced all
+39 passing cases at the initial Green checkpoint. When workflow wiring exposed
+host and package-producer validation, a supplemental Gray/Red boundary added
+four Unit and seven Integration cases before behavior. Old receipt acceptance
+remains consumption of historical evidence, not fresh runtime execution.
+
+Root corrected two evidence-tier placement issues before acceptance: the initial
+shared test compiler project, and pure host-fact cases placed in Integration.
+Separate Unit and Integration projects now select the proper subjects while
+retaining the original assertions. This shows why a compiler pass or test label
+cannot establish evidence-tier fit. It does not establish a model-wide defect
+rate or superiority over earlier Sol work.
+
+The author also qualified actual GitHub context availability before freezing
+workflow environment setup. Host/tool pins and local prerequisites are distinct:
+local Node and SDK match, but installed Bun 1.3.0 does not prove hosted Bun
+1.3.14. Likewise, a new manual workflow needs default-branch registration before
+its first dispatch. Neither source generation nor a local green helper suite
+establishes six-host execution or authorizes remote rollout.
+
+The final workflow inspection found three JSON/acceptance implementations embedded
+as JavaScript in YAML shell blocks. Moving their owned logic into the existing
+strict TypeScript modules preserved the frozen fifty assertions; direct adapter
+smoke qualified three positive commands and four rejection cases. Shell glue now
+only invokes typed capabilities and checks simple test summaries. Check the
+implementation language at orchestration boundaries as well as source files.
+
+Fresh Astra/high source review accepted the coherent CI implementation without
+findings, but actual execution exposed two invocation assumptions. The receipt
+check expected TAP while Node emitted its default spec reporter. A direct-Node
+correction then bypassed the package harness's required npm context. Retaining
+the accepted npm entrypoint and selecting TAP through its supported Node option
+closed the boundary. Both failures and the successful correction are preserved.
+Static review and a green helper suite did not replace actual caller execution.
+
+The final Linux gate qualified 6,421 executions across 4,596 cases, plus the
+package-owned checks. Those totals describe repeated managed/native selections,
+not 6,421 distinct tests. The reporter correction reran only the eight affected
+package cases; all 57 earlier successful runtime evidence files remained exact.
+One bounded recheck accepted the isolated two-line workflow correction. This
+supports scoped invalidation and preserving caller context; it supplies no
+controlled Astra-versus-Sol quality or cost comparison.
+
+## Task 22 Public And Durable Status Alignment
+
+The Astra/high writer's bounded preflight identified nine public-doc/help gaps,
+including Library documentation, Extension layout/lifecycle descriptions and
+stale command availability. Root qualified the stale Doctor help assertion as
+one expected failure before its isolated text correction. Twenty-four focused
+presentation cases and four fresh built help surfaces then passed. A fresh
+Astra/high review accepted the eleven-path source pack and independently checked
+66 local links and thirteen protected README blocks.
+
+A subsequent root status scan found obsolete implementation-pending claims in
+linked Crystallized sources. The isolated forty-file correction preserved
+behavior and verification requirements while directing mutable evidence state
+to current Task records. One distinct durable-writing pass verified all forty
+paths, eighty fingerprints and thirty-five new links. The initial public review
+was not repeated. The useful lesson is to keep contract meaning distinct from
+mutable implementation state; copied pending-status sentences drift even when
+the executable work is complete. Neither review supplies the pending final
+combined runtime or foreign-host evidence, and no matched model-cost comparison
+was performed.

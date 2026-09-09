@@ -34,11 +34,13 @@ When direction becomes clear, useful results can become current documents, Decis
 
 ## Quick Start
 
+The native CLI implements all 28 commands but is not released. These examples use a locally built CLI exposed as the global `open-forge` command. Follow [the development guide](docs/development.md#link-the-native-cli-locally) to build and link it locally, or [copy the Framework files](#working-without-the-cli).
+
 Start from a Git repository and install Open Forge into the current directory:
 
 ```sh
 git init
-npx open-forge-old install
+open-forge install
 ```
 
 Review the installed files before trusting them:
@@ -60,7 +62,7 @@ That is enough to use Open Forge. `AGENTS.md` directs compatible agents to the w
 When the CLI is available, an agent can obtain the complete effective startup context with one command:
 
 ```sh
-npx open-forge-old load --bodies
+open-forge context
 ```
 
 The same contract remains readable and usable without the CLI.
@@ -278,59 +280,43 @@ Extensions install optional whole files into the ordinary route tree. Installed 
 Explore the bundled catalogue:
 
 ```sh
-npx open-forge extend --list
+open-forge extension list --available
 ```
 
-Interactively select Extensions:
+Inspect the toolkit:
 
 ```sh
-npx open-forge extend
+open-forge extension inspect development-toolkit
 ```
 
 Preview an installation:
 
 ```sh
-npx open-forge extend development-toolkit --dry-run
+open-forge extension install development-toolkit --dry-run
 ```
 
 Install it:
 
 ```sh
-npx open-forge extend development-toolkit
+open-forge extension install development-toolkit
 ```
 
 The deliberately small current catalogue contains one `development-toolkit` package. It adds six lean Workflows, one native Experience Design Skill, and nine copy-ready Templates without changing the Framework's runtime model.
 
 See [Extension documentation](docs/extensions.md) for package shapes, dependencies, receipts, update and removal behavior, safety boundaries, and sharing.
 
-## Legacy CLI Reference
+## CLI
 
-The frozen TypeScript MVP remains available as `open-forge-old` while the new
-.NET Native AOT CLI is designed. These commands describe the legacy helper and
-do not define the future interface.
-
-```text
-open-forge-old install
-open-forge-old extend
-open-forge-old index
-open-forge-old load
-open-forge-old find
-open-forge-old chain
-open-forge-old doctor
-open-forge-old create
-open-forge-old help
-```
-
-Common context commands:
+Use `open-forge --help` to discover the current commands. The [CLI guide](docs/cli.md) explains their arguments, results, and safety boundaries.
 
 ```sh
-npx open-forge-old load --bodies
-npx open-forge-old find --tag Architecture --paths
-npx open-forge-old chain .agents/memory/crystallized/documents/_documents.md
-npx open-forge-old doctor
+open-forge context
+open-forge find --tag Architecture
+open-forge route inspect .agents/memory/crystallized/documents/_documents.md
+open-forge doctor
 ```
 
-See the complete [CLI documentation](docs/cli.md) for current arguments and lifecycle behavior.
+The frozen TypeScript MVP remains in `src/cli-mvp/` as historical reference. Its commands and state formats do not define the native CLI.
 
 ## Working Without The CLI
 
@@ -359,13 +345,13 @@ Scoping uses ordinary Markdown `routes`. Every scope `slug` has an `entrypoint` 
 
 A folder named `skills` beneath Workflows does not recreate the Skills `root route` merely because the `slug` is familiar. Workflows use Skills and other Core primitives through explicit links.
 
-`open-forge-old create category` can scaffold a generic `route` chain, but its placeholder wording must still be completed.
+`open-forge route init <route-target>` scaffolds missing entrypoints in one route chain. Complete the draft wording before relying on it.
 
 After changing routed files, rebuild and validate navigation:
 
 ```sh
-npx open-forge-old index
-npx open-forge-old doctor
+open-forge index
+open-forge doctor
 ```
 
 Prefer one detailed authoritative source plus visible links over maintaining several competing copies.
@@ -386,9 +372,9 @@ Explicit context and deterministic validation improve the probability of correct
 
 ## Project Status
 
-Open Forge is under active dogfood and architectural migration.
+Open Forge is under active development and dogfooding.
 
-The file-native Framework and its ACE direction are the accepted foundation. The current CLI and Extensions system are functional MVPs with substantial safety and lifecycle behavior, but both have planned architecture overhauls. Interfaces and installed defaults may still evolve before a stable release.
+The file-native Framework and its ACE direction are the accepted foundation. The native CLI implements all 28 commands, including Extension and Workspace Library operations, but is not released. The six-target package graph is implemented. Native execution and package invocation are proven locally on Linux x64; the other five matching-host receipts and final delivery acceptance remain incomplete. Interfaces and installed defaults may still evolve before a stable release.
 
 Review installation and update diffs. Keep Git as the recovery and inspection boundary.
 
