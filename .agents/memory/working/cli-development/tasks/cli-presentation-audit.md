@@ -12,8 +12,11 @@ The user clarified that diagnostic-kind changes are not the intended work.
 Keep all diagnostic kinds, typed findings, JSON fields/counts, operation behavior
 and exit statuses. Treat deduplication as presentation grouping. The
 [design analysis](cli-presentation-design.md) now compares category/subject grouping
-and specifies a proposed severity filter with its implementation boundaries.
-Withdraw the earlier seven-kind retirement proposal from the active sequence. No schema or default-severity change blocks presentation analysis.
+and records the rendering boundaries. The [per-command proposal](cli-command-output-proposals.md)
+and [example gallery](cli-command-output-examples.md) now provide output for user
+review. Existing statuses remain; a new severity flag is not selected.
+Withdraw the earlier seven-kind retirement proposal from the active sequence.
+No schema or default-severity change blocks presentation analysis.
 The immediate priority is legible, friendly, readable output for people and AI,
 with less repetition and lower output cost wherever useful information survives.
 
@@ -119,8 +122,9 @@ unqualified blanket rewrite instruction.
 2. Doctor and Status presentation: clear severity, file:line, plain cause and
    useful next action. Reuse existing typed facts. Keep all diagnostic kinds,
    JSON and exit behavior. The design analysis proposes category/subject/occurrence
-   grouping; freeze its examples before implementation. The severity flag is a
-   separate public-interface slice. Do not retire findings to shorten human output.
+   grouping; get user approval, update Interfaces and freeze examples before
+   implementation. No filter is selected as a prerequisite. Do not retire findings
+   to shorten human output.
 3. Library mutation presentation: restore the already required affected-path and
    dry-run detail in both views. Freeze JSON/operation behavior and no-write checks.
 4. Extension mutation presentation: make compact meaningful and keep expanded

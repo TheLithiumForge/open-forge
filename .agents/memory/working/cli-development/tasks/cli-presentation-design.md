@@ -20,6 +20,15 @@ manual-parsing simplifications are backlog. Useful functionality, typed results,
 status, exit codes, effects and recovery guarantees remain intact. No production
 code, public contract, output snapshot or installed binary changes in this set.
 
+## Clarification And Review Gallery — 2026-09-12
+
+The user's warning/error/info example was an idea, not a required classification
+or spelling. Existing statuses remain. The [per-command proposal](cli-command-output-proposals.md)
+and [example gallery](cli-command-output-examples.md) now provide recommendations
+for all 28 commands. User approval comes before changing command Interfaces or
+implementing the proposed layouts. The earlier Doctor-only severity-flag priority
+is withdrawn; no new flag blocks clearer presentation.
+
 ## Main Finding
 
 Most of the work belongs in rendering over existing typed results. Commands
@@ -175,52 +184,21 @@ The implementation pass must cover all rendered branches, not only successful
 examples. Use the existing result wherever it contains the required fact. If a
 needed fact is absent, record that gap before expanding the operation or schema.
 
-## Severity Filter Proposal
+## Filtering After The User Clarification
 
-Start with Doctor, which already has explicit severity. Suggested syntax:
+Keep the existing status and finding models. The user's example does not require
+a global warning/error/info model or a Doctor severity flag. The
+[per-command proposal](cli-command-output-proposals.md) compares overall status,
+collection status, category and severity filtering and recommends improving
+existing views first. A scoped Doctor category filter is a later candidate if
+large grouped reports still need focused selection; no flag spelling is selected.
 
-```sh
-open-forge doctor --severity warning
-open-forge doctor --severity error --severity warning
-open-forge doctor --severity info --view compact
-```
-
-This is an exact inclusion filter, not a minimum threshold: selecting warning
-does not implicitly include errors. Repeated values form a union; duplicates are
-idempotent. Omission includes all severities. Require a value and reject unknown
-values. Use System.CommandLine's normal typed option binding and delimiters,
-including spaced and equals forms. Do not add a CSV parser or scan raw tokens.
-
-Filter finding visibility before human grouping. A visible finding retains its
-own candidate/evidence context, even when another finding that references that
-context is hidden. Empty groups disappear, but category coverage remains.
-Report displayed and total finding counts separately. For example, filtering
-errors in a result with zero errors and four warnings must say that no findings
-match the filter and four warnings remain; the result still requires attention
-and still exits 2. Coverage limitations, command failures and required recovery
-instructions are result-level facts and remain visible under any filter.
-
-Recommendation for the first slice: make the flag human-only and explicitly
-reject `--severity` with `--json`, with help explaining that JSON remains complete.
-This avoids quietly ignoring the requested filter or silently violating the
-current complete-JSON promise. Unlike the existing global view flag, this would
-be a new command-local option with a documented combination rule. If filtered
-JSON is wanted, settle that public contract separately, including full versus
-selected counts and coverage. This combination rule is proposed, not accepted.
-
-Do not register severity globally yet. `attention`, `blocked` and `incomplete`
-describe command outcomes, not severity levels; a blanket mapping would invent
-behavior for other commands. Broader filtering requires a defined selection
-meaning for each additional command family.
-
-The new flag needs a small typed path from command binding to presentation.
-Current `CliPresentation` has only format/view/verbosity, and binding has no
-command-local presentation-options hook. Freeze that internal interface in the
-flag stage. Keep Doctor types out of Shell, keep the filter out of diagnosis
-requests/results, and avoid mutable renderer closures or untyped option bags.
-The choice between a neutral opt-in presentation setting and a typed local
-presentation binding must be closed before source implementation; neither is
-needed for the first renderer-only stage.
+Any future display filter must preserve full diagnosis, status/exit and coverage,
+show full versus selected counts and retain required recovery. Its JSON behavior
+needs an explicit contract. A new presentation option also needs typed binding
+transport: current presentation settings have only format/view/verbosity. Keep
+command types out of Shell and display options out of domain diagnosis. That
+internal design can wait until a filter is actually selected.
 
 ## What Changes And What Does Not
 
@@ -228,7 +206,7 @@ needed for the first renderer-only stage.
 | --- | --- | --- |
 | Labels, layout, human grouping, repeated-detail removal | Command renderers, output snapshots, affected Interface/Behavior text | Same typed findings, JSON, counts, status, exits and effects. |
 | Restore missing Library detail and distinct Extension views | Render existing plan/application data; verify public contract branches | No new planning or mutation behavior. |
-| Doctor severity option | Native parser registration, validation, typed presentation transport, help/contracts and tests | New public interaction; defaults and complete diagnosis stay unchanged. |
+| A future scoped display filter, if selected | Native parser registration, validation, typed presentation transport, help/contracts and tests | Separate public interaction proposal; no filter is currently selected. |
 | Reduce repeated JSON payload | Separate schema/serialization analysis and acceptance | Human grouping alone cannot shrink the prior 168 MB JSON result or remove its underlying allocations. |
 | Change diagnosis, retire kinds, change default visibility, add colour | Separate explicit decision | Outside this presentation implementation proposal. |
 
@@ -239,13 +217,14 @@ may remain large when the evidence is distinct.
 
 ## Frozen Sequence And Evidence
 
-1. Freeze representative typed results and proposed output for Doctor/Status:
+1. Obtain user approval of the per-command proposals, update affected Interfaces,
+   then freeze representative typed results and proposed output for Doctor/Status:
    success, mixed findings, incomplete coverage, unavailable source and failure.
    Freeze the affected Interface/Behavior changes and snapshots before rendering
    edits. Implement the first bounded presentation set and qualify it.
-2. After agreement on its public semantics, freeze and implement the Doctor
-   severity option as a separate set. Close the typed presentation transport
-   before editing Shell. It need not block other renderer-only sets.
+2. Do not add a filter by default. Review the first grouped diagnosis output on
+   a large workspace, then consider a scoped display filter if it remains useful.
+   Close public semantics and typed presentation transport before any such slice.
 3. Library mutation presentation, then Extension mutation presentation, each with
    preview/applied/blocked/retained/recovery cases and its own integration boundary.
 4. Remaining command families and help, one bounded set at a time. Check every

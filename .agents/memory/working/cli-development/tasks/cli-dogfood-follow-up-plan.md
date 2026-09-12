@@ -24,15 +24,16 @@ presentation surface audit is done; broad renderer changes and deduplication are
 not implemented. Six mutation-command comparisons expose ignored view selection
 and missing Library affected-path details.
 
-The [presentation design analysis](cli-presentation-design.md) is complete.
-Recommend Doctor category/subject/occurrence grouping over existing typed results,
-with unchanged diagnostic kinds, JSON and status. A Doctor-only severity filter
-is proposed separately; its JSON combination rule and typed presentation transport
-need design closure before implementation. No renderer or flag is changed yet.
-Remaining parsing simplifications P2–P6 are explicitly backlog, not prerequisites.
-Next: freeze Doctor/Status output examples, snapshots and affected contracts, then
-implement and qualify the first presentation set. Continue by bounded command
-family; consolidate reusable CLI UX/development Guidance and CLI/C# Directives last.
+The [per-command output proposal](cli-command-output-proposals.md)
+and [28-command example gallery](cli-command-output-examples.md) are ready
+for user review. Warning/error/info was an illustrative idea, not a required
+vocabulary or flag. Preserve existing statuses; improve grouping and compact/
+expanded views first. No new filter is selected or required for this work.
+No renderer or public contract is changed yet. User approval precedes updates
+to each affected command Interface and frozen implementation snapshots.
+Next: review the examples with the user, then implement approved sets sequentially.
+Parsing simplifications P2–P6 remain backlog. Reusable CLI UX/development Guidance
+and CLI/C# Directive consolidation remains the final stage.
 
 Cleanup completed: the parser probe was outside the repository and has no matching
 committed project/path history. Its source/project and temporary compiled output,
@@ -83,7 +84,8 @@ D2 is complete. The [generated-navigation capsule](cli-generated-navigation-alig
 records source `29de40a0`, all six qualified suites, 24 direct native checks and
 the local integration receipt. The installed CLI is this candidate. Doctor
 presentation is next. Preserve diagnostic kinds and existing default visibility;
-the new severity-filter proposal is separate from renderer-only work.
+no new filter is selected. User review of the command examples precedes Interface
+updates and renderer implementation.
 
 ## Parsing Backlog — Accepted Deferral 2026-09-12
 
