@@ -62,6 +62,9 @@ meaning.
 
 ## Syntax
 
+Tag values accept `--tag Memory`, `--tag=Memory`, and `--tag:Memory` with
+identical meaning. Repeated values retain their existing order and validation.
+
 ```text
 open-forge route init <route-target>
   [--framework]

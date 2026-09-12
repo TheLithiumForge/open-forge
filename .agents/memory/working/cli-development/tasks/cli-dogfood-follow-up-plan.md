@@ -126,7 +126,7 @@ each stage; update them for intentional changes. Do not infer new semantics
 from a wording rewrite.
 
 Task 30 [Extension Catalogue Synchronization](extension-catalogue-synchronization.md)
-is now the active prerequisite to a green baseline. Task 27 retains the later
+is complete and squash-integrated at `b4a06740`. Task 27 retains the later
 parser and presentation work. Its audit is a baseline report, not a current
 claim that the later accepted changes remain unauthorized.
 
@@ -136,15 +136,18 @@ sets; Doctor human/JSON deduplication. Freeze each stage's baseline, intended
 behavior delta, tests and applicable contracts before editing production.
 Squash verified stages into local `develop` while preserving unrelated changes.
 
-- Active: Task 30 phase 3/3, milestone 2/3. The full Linux native gate passes; local integration is next.
+- Done: Task 27's [native-delimiter stage](cli-native-delimiters.md), phase 3/3,
+  milestone 3/3. Candidate `5bef9a24` passes the six-suite managed/native gate
+  and 19 direct native commands; this completion record accompanies local squash.
 - Done: fixture repairs, the Observation, and automatic catalogue implementation.
   Candidate `ee5a5599` passes 3,231 Unit, 1,724 Integration and 112 public tests.
   Both strict catalogue parity tests pass. No behavioral assertion was weakened.
 - Report: the [parsing and Doctor audit](cli-parsing-doctor-audit.md) records the
   complete command coverage, concrete delimiter leak, manual syntax recovery,
   Doctor size attribution and fresh-install diagnostic contradictions.
-- Next: qualify and squash the restored baseline, then implement P1 as one isolated
-  set. Doctor default filtering and JSON changes remain proposals; colours follow.
-- Integration: no squash merge yet. The earlier catalogue mismatch is fixed;
+- Next: correct Doctor before the full presentation
+  pass. Doctor default filtering and JSON changes remain proposals; colours follow.
+- Integration: the restored baseline and earlier helper refactor are squash-merged
+  into local develop at `b4a06740`. The earlier catalogue mismatch is fixed;
   Task 30 records native qualification and existing ownership-transition limits.
-  The helper refactor remains preserved. No remote operations occurred.
+  No remote operations occurred.

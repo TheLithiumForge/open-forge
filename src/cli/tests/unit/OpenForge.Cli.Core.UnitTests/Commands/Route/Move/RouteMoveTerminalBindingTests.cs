@@ -63,7 +63,7 @@ public sealed class RouteMoveTerminalBindingTests
     {
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(routeGroup, CliHelpContent.Empty, [])],
+            [new CliRootBranch(routeGroup, CliHelpContent.Empty)],
             [binding]);
         var application = new CliCoreApplication(
             new CliProcessIdentity("open-forge", "test-version"),

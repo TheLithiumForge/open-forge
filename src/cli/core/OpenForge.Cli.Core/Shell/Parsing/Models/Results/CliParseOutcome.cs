@@ -7,5 +7,4 @@ internal sealed record CliParseOutcome(
     ParseResult Result,
     CliCommandTree Tree,
     CliGlobalOptionSymbols Options,
-    IReadOnlyList<string> OriginalArguments,
-    IReadOnlyList<CliDelimiterPolicy> DelimiterPolicies);
+    IReadOnlyList<string> OriginalArguments);

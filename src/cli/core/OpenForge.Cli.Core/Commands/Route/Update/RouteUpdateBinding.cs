@@ -9,7 +9,6 @@ using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions.Models;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update;
 
@@ -59,12 +58,6 @@ internal sealed partial class RouteUpdateBinding(RouteUpdateSymbols symbols)
             Responsibility = responsibility,
             Template = template,
             DryRun = dryRun,
-            DelimiterPolicies = Array.AsReadOnly(
-            [
-                new CliDelimiterPolicy(
-                    RouteUpdateDefinitions.Tag.Name,
-                    CliDelimiterShape.Equals),
-            ]),
         };
     }
 

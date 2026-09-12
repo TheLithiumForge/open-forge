@@ -2,7 +2,6 @@ using System.CommandLine;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 using OpenForge.Cli.Core.Shell.Parsing.Models.Results;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
@@ -87,8 +86,8 @@ public sealed class RouteInitApplicationIntegrationTests
         Assert.Same(selection.Command, binding.Command);
     }
 
-    [Fact(DisplayName = "Composed Route parser accepts equals tag values and rejects separated tag values"), Trait("Feature", "route-init-presentation"), Trait("Evidence", "Integration")]
-    public void ComposedRouteParserUsesTheFrozenTagDelimiter()
+    [Fact(DisplayName = "Composed Route parser accepts equivalent equals and separated tag values"), Trait("Feature", "route-init-presentation"), Trait("Evidence", "Integration")]
+    public void ComposedRouteParserUsesNativeTagDelimiters()
     {
         var application = CliCompositionRoot.Create(
             new CliProcessIdentity("open-forge", "test"));
@@ -97,12 +96,6 @@ public sealed class RouteInitApplicationIntegrationTests
             ["route", "init", "memory/project-alpha/documents", "--tag=Memory"]);
         var equalsSelection = CliBindingSelector.Select(equals);
 
-        Assert.Equal(
-            ["--depth", "--tag"],
-            equals.DelimiterPolicies.Select(policy => policy.OptionName));
-        Assert.Equal(
-            1,
-            equals.DelimiterPolicies.Count(policy => policy.OptionName == "--tag"));
         Assert.Equal(CliBindingSelectionState.Leaf, equalsSelection.State);
         Assert.NotNull(equalsSelection.Binding);
         Assert.Null(CliTerminalValidator.Validate(equals).InvalidInput);
@@ -114,9 +107,8 @@ public sealed class RouteInitApplicationIntegrationTests
             ["route", "init", "memory/project-alpha/documents", "--tag", "Memory"]);
         var separatedResolution = CliTerminalValidator.Validate(separated);
 
-        var invalid = Assert.IsType<CliInvalidInput>(separatedResolution.InvalidInput);
-        Assert.Equal("cli.delimiter.invalid", invalid.Code);
-        Assert.Equal(CliInvalidInputSource.Delimiter, invalid.Source);
+        Assert.Null(separatedResolution.InvalidInput);
+        Assert.Equal(tagValues, separated.Result.GetValue(tag));
     }
 
     [Fact(DisplayName = "Composed route help exposes Route Init exactly once in Commands"), Trait("Feature", "route-init-presentation"), Trait("Evidence", "Integration")]

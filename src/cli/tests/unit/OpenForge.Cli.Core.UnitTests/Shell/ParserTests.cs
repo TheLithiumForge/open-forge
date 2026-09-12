@@ -269,35 +269,34 @@ public sealed class ParserTests
         Assert.Equal(CliTerminalMode.None, resolution.TerminalMode);
     }
 
-    [Theory(DisplayName = "Route List depth keeps its explicit delimiter policy before option termination")]
+    [Theory(DisplayName = "Route List depth accepts native delimiters before option termination")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
     [InlineData("--depth", "1")]
+    [InlineData("--depth=1", null)]
     [InlineData("--depth:1", null)]
-    public void RouteListDepthPolicyRejectsNonEqualsFormsBeforeTerminator(
+    public void RouteListDepthAcceptsNativeFormsBeforeTerminator(
         string option,
         string? separateValue)
     {
-        var tree = CreateRouteListPolicyTree(out _);
+        var tree = CreateRouteListTree(out _);
         string[] arguments = separateValue is null
             ? ["route", "list", option]
             : ["route", "list", option, separateValue];
         var parse = tree.Parse(arguments);
 
         Assert.Empty(parse.Result.Errors);
-        var invalid = CliTerminalValidator.Validate(parse).InvalidInput;
-        Assert.NotNull(invalid);
-        Assert.Equal(CliInvalidInputSource.Delimiter, invalid.Source);
+        Assert.Null(CliTerminalValidator.Validate(parse).InvalidInput);
 
         var equals = CliTerminalValidator.Validate(
             tree.Parse(["route", "list", "--depth=1"]));
         Assert.Null(equals.InvalidInput);
     }
 
-    [Fact(DisplayName = "Aggregated Route List delimiter policies stop at the option terminator")]
+    [Fact(DisplayName = "CLI preserves an option-like sibling source after the terminator")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
-    public void AggregatedDelimiterPoliciesDoNotRejectOptionLikeSiblingSourceAfterTerminator()
+    public void OptionLikeSiblingSourceAfterTerminatorIsPreserved()
     {
-        var tree = CreateRouteListPolicyTree(out var inspectSourceReference);
+        var tree = CreateRouteListTree(out var inspectSourceReference);
         var parse = tree.Parse(["route", "inspect", "--", "--depth"]);
 
         Assert.Empty(parse.Result.Errors);
@@ -308,9 +307,9 @@ public sealed class ParserTests
         Assert.NotNull(resolution.Input);
     }
 
-    [Fact(DisplayName = "CLI parser diagnostics precede delimiter diagnostics")]
+    [Fact(DisplayName = "CLI parser diagnostics preserve unknown-option errors")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
-    public void ParserDiagnosticsTakePrecedenceOverDelimiterViolations()
+    public void ParserDiagnosticsPreserveUnknownOptionErrors()
     {
         var parse = CreateTree().Parse(["--view", "compact", "--unknown"]);
 
@@ -405,7 +404,7 @@ public sealed class ParserTests
         var binding = new StubBinding(leaf);
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(group, CliHelpContent.Empty, [])],
+            [new CliRootBranch(group, CliHelpContent.Empty)],
             [binding]);
 
         Assert.Equal(CliBindingSelectionState.Root, CliBindingSelector.Select(tree.Parse([])).State);
@@ -505,13 +504,13 @@ public sealed class ParserTests
 
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(group, CliHelpContent.Empty, [])],
+            [new CliRootBranch(group, CliHelpContent.Empty)],
             []);
         tree.Root.TreatUnmatchedTokensAsErrors = false;
         return tree;
     }
 
-    private static CliCommandTree CreateRouteListPolicyTree(
+    private static CliCommandTree CreateRouteListTree(
         out Argument<string?> inspectSourceReference)
     {
         var route = new Command("route");
@@ -537,8 +536,7 @@ public sealed class ParserTests
             CliHelpContent.Empty,
             [new CliRootBranch(
                 route,
-                CliHelpContent.Empty,
-                [new CliDelimiterPolicy("--depth", CliDelimiterShape.Equals)])],
+                CliHelpContent.Empty)],
             []);
     }
 

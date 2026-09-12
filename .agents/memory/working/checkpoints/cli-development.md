@@ -9,21 +9,20 @@ open-forge:
 ## Current Sequential Dogfood Follow-Up
 
 Task 30 [catalogue synchronization](../cli-development/tasks/extension-catalogue-synchronization.md)
-is qualified at phase 3/3, milestone 2/3, candidate `ee5a5599`. Automatic
-manifest-based embedding and exact source/resource parity pass the full managed
-and Linux native gate: 3,231 Unit, 1,724 Integration in both modes, and 112 public
-tests in all three execution modes, with zero failures/skips. Six isolated native
-package journeys and previous-Toolkit transition controls are recorded.
+and the fixture/helper set are squash-integrated at `b4a06740`.
+Task 27's [native-delimiter stage](../cli-development/tasks/cli-native-delimiters.md)
+is complete, phase 3/3, milestone 3/3, candidate `5bef9a24`: 3,232 Unit,
+1,745 Integration and 114 public cases pass in all applicable managed/native
+modes, plus 19 native command checks. The global CLI is refreshed; this record
+accompanies authorized local squash integration.
 
-The fixture repairs and brittle-test Observation are complete. Existing Toolkit
-migration and reinstallation limits are reported without implicit adoption.
-Next: authorized local squash integration of the restored baseline and preserved
-helper refactor, then Task 27's native-delimiter correction. Doctor correctness
-and the full presentation pass follow in frozen stages. The
-[plan](../cli-development/tasks/cli-dogfood-follow-up-plan.md) and
-[audit](../cli-development/tasks/cli-parsing-doctor-audit.md) hold the accepted
-sequence and findings. Root executes directly and sequentially. No remote effects
-are authorized; unrelated develop changes remain intact.
+Next: Doctor correctness, then the full presentation pass and deduplication in
+frozen stages. Fresh Framework/Extension install journeys reproduce five
+correctness problems recorded in the
+[audit](../cli-development/tasks/cli-parsing-doctor-audit.md). The
+[plan](../cli-development/tasks/cli-dogfood-follow-up-plan.md) owns the sequence.
+Root works directly and sequentially. No remote effects are authorized;
+unrelated develop changes remain intact.
 
 ## Current Script Structure Continuation
 

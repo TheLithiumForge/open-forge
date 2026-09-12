@@ -45,8 +45,9 @@ drop coverage evidence, or turn an incomplete result into a complete one.
 2. Resolve the exact current directory or exact `--workspace` directory under the
    shared global contract. Do not search parent directories, Git roots, marker
    files, or nearby workspaces.
-3. Parse at most one source operand and one scalar `--depth` value. Reject unknown
-   depth spellings, negative values, non-integers, empty values, and repeated
+3. Parse at most one source operand and one scalar `--depth` value. Native space,
+   equals and colon delimiters have identical meaning. Reject unknown depth
+   values, negative values, non-integers, missing or empty values, and repeated
    depth values.
 4. Resolve source references with the shared exact-ID and exact-path rules,
    including collisions, quoting, containment, and overwrite identity.

@@ -121,7 +121,8 @@ The command-specific flags have these public states and meanings:
 - The six global flags are accepted with the meanings in the shared [Global CLI
   Flags](../../shared/global-flags/interface.md) contract.
 
-`--tag` is a required multi-value flag. Repetition retains argument order. The
+`--tag` accepts `--tag Memory`, `--tag=Memory`, and `--tag:Memory` with identical
+meaning. It is a required multi-value flag. Repetition retains argument order. The
 exact empty, duplicate, and syntax rules are defined in [Destination Metadata](#destination-metadata).
 `--description`, `--responsibility`, and `--template` are singleton flags. Any
 repeated occurrence of one of them is invalid, even when the repeated value is

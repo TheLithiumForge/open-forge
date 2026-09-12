@@ -68,7 +68,7 @@ internal static class RouteInspectInteractionApplication
             });
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(route, RouteHelpSections.CreateGroup(), [])],
+            [new CliRootBranch(route, RouteHelpSections.CreateGroup())],
             [binding]);
         return new CliCoreApplication(
             new CliProcessIdentity("open-forge", "test"),

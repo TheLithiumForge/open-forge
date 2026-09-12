@@ -447,7 +447,7 @@ public sealed class RouteInspectBindingAndCompositionTests
             });
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(route, CliHelpContent.Empty, [])],
+            [new CliRootBranch(route, CliHelpContent.Empty)],
             [binding]);
 
         return new CliCoreApplication(

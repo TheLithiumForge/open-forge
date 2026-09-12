@@ -95,16 +95,16 @@ internal static class CliStandaloneComposer
             UpdateBinding = BuildUpdate(updateSymbols, interactiveSession, lockStoreRoot),
             RootLeaves =
             [
-                new CliRootLeaf(findSymbols.FindCommand, []),
-                new CliRootLeaf(indexSymbols.IndexCommand, []),
-                new CliRootLeaf(statusSymbols.StatusCommand, []),
-                new CliRootLeaf(doctorSymbols.DoctorCommand, []),
-                new CliRootLeaf(repairSymbols.RepairCommand, []),
-                new CliRootLeaf(cleanupSymbols.CleanupCommand, []),
-                new CliRootLeaf(contextSymbols.ContextCommand, []),
-                new CliRootLeaf(referencesSymbols.ReferencesCommand, []),
-                new CliRootLeaf(installSymbols.InstallCommand, []),
-                new CliRootLeaf(updateSymbols.UpdateCommand, []),
+                new CliRootLeaf(findSymbols.FindCommand),
+                new CliRootLeaf(indexSymbols.IndexCommand),
+                new CliRootLeaf(statusSymbols.StatusCommand),
+                new CliRootLeaf(doctorSymbols.DoctorCommand),
+                new CliRootLeaf(repairSymbols.RepairCommand),
+                new CliRootLeaf(cleanupSymbols.CleanupCommand),
+                new CliRootLeaf(contextSymbols.ContextCommand),
+                new CliRootLeaf(referencesSymbols.ReferencesCommand),
+                new CliRootLeaf(installSymbols.InstallCommand),
+                new CliRootLeaf(updateSymbols.UpdateCommand),
             ],
         };
     }

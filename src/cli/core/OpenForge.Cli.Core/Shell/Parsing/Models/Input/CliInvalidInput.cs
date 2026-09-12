@@ -5,7 +5,6 @@ namespace OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 internal enum CliInvalidInputSource
 {
     Parser,
-    Delimiter,
     Semantic,
     Workspace,
 }

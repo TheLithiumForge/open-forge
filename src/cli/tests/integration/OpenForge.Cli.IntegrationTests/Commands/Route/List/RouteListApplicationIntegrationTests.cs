@@ -233,13 +233,13 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Theory(DisplayName = "CLI route-list enforces equals-only depth syntax before option termination"),
+    [Theory(DisplayName = "CLI route-list accepts native depth forms and rejects a missing value without writes"),
      Trait("Feature", "route-list"), Trait("Evidence", "Integration"),
      InlineData("--depth=1", null, false),
      InlineData("--depth", null, true),
-     InlineData("--depth", "1", true),
-     InlineData("--depth:1", null, true)]
-    public static async Task DepthDelimiterPolicyRemainsExplicitBeforeTerminator(
+     InlineData("--depth", "1", false),
+     InlineData("--depth:1", null, false)]
+    public static async Task DepthUsesNativeDelimitersBeforeTerminator(
         string option,
         string? separateValue,
         bool rejected)
@@ -257,8 +257,9 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(rejected ? 4 : 0, result.ExitCode);
         if (rejected)
         {
-            Assert.Equal(string.Empty, result.Output);
-            Assert.NotEmpty(result.Error);
+            Assert.Equal(string.Empty, result.Error);
+            using var document = JsonDocument.Parse(result.Output);
+            Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
         }
         else
         {

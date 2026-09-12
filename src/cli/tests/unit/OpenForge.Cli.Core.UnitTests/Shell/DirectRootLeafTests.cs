@@ -12,16 +12,13 @@ namespace OpenForge.Cli.Core.UnitTests.Shell;
 
 public sealed class DirectRootLeafTests
 {
-    [Fact(DisplayName = "A direct root leaf preserves its command identity and delimiter policies"), Trait("Feature", "shell-root-leaf"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "A direct root leaf preserves its command identity"), Trait("Feature", "shell-root-leaf"), Trait("Evidence", "Unit")]
     public void RootLeafDefinitionPreservesItsShape()
     {
         var command = new Command("find");
-        var policies = new List<CliDelimiterPolicy>();
-
-        var rootLeaf = new CliRootLeaf(command, policies);
+        var rootLeaf = new CliRootLeaf(command);
 
         Assert.Same(command, rootLeaf.Command);
-        Assert.Equal(policies, rootLeaf.DelimiterPolicies);
     }
 
     [Fact(DisplayName = "A direct root leaf is classified as a leaf and selects its exact binding"), Trait("Feature", "shell-root-leaf"), Trait("Evidence", "Unit")]
@@ -35,7 +32,7 @@ public sealed class DirectRootLeafTests
             CliHelpContent.Empty,
             [],
             [binding],
-            rootLeaves: [new CliRootLeaf(command, [])]);
+            rootLeaves: [new CliRootLeaf(command)]);
 
         var selection = CliBindingSelector.Select(tree.Parse(["find"]));
 
@@ -55,7 +52,7 @@ public sealed class DirectRootLeafTests
             CliHelpContent.Empty,
             [],
             [],
-            rootLeaves: [new CliRootLeaf(command, [])]));
+            rootLeaves: [new CliRootLeaf(command)]));
 
         Assert.Contains("binding", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
@@ -83,7 +80,7 @@ public sealed class DirectRootLeafTests
             CliHelpContent.Empty,
             [],
             [binding],
-            rootLeaves: [new CliRootLeaf(leaf, [])]));
+            rootLeaves: [new CliRootLeaf(leaf)]));
 
         Assert.Contains("same", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
@@ -98,7 +95,7 @@ public sealed class DirectRootLeafTests
             CliHelpContent.Empty,
             [],
             [binding],
-            rootLeaves: [new CliRootLeaf(command, []), new CliRootLeaf(command, [])]));
+            rootLeaves: [new CliRootLeaf(command), new CliRootLeaf(command)]));
 
         Assert.Contains("once", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
@@ -111,9 +108,9 @@ public sealed class DirectRootLeafTests
 
         var exception = Assert.Throws<ArgumentException>(() => CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(command, CliHelpContent.Empty, [])],
+            [new CliRootBranch(command, CliHelpContent.Empty)],
             [binding],
-            rootLeaves: [new CliRootLeaf(command, [])]));
+            rootLeaves: [new CliRootLeaf(command)]));
 
         Assert.Contains("branch", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
@@ -127,9 +124,9 @@ public sealed class DirectRootLeafTests
 
         var exception = Assert.Throws<ArgumentException>(() => CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(branch, CliHelpContent.Empty, [])],
+            [new CliRootBranch(branch, CliHelpContent.Empty)],
             [binding],
-            rootLeaves: [new CliRootLeaf(leaf, [])]));
+            rootLeaves: [new CliRootLeaf(leaf)]));
 
         Assert.Contains("collision", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
@@ -153,7 +150,7 @@ public sealed class DirectRootLeafTests
             [],
             [binding],
             [additionalHelp],
-            [new CliRootLeaf(command, [])]);
+            [new CliRootLeaf(command)]);
 
         Assert.Same(bindingHelp, tree.ReadHelp(command));
     }
@@ -167,7 +164,7 @@ public sealed class DirectRootLeafTests
         var binding = new RecordingBinding(list, CliHelpContent.Empty);
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(route, CliHelpContent.Empty, [])],
+            [new CliRootBranch(route, CliHelpContent.Empty)],
             [binding]);
 
         var selection = CliBindingSelector.Select(tree.Parse(["route", "list"]));

@@ -10,7 +10,6 @@ using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions.Models;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init;
 
@@ -53,13 +52,7 @@ internal static class RouteInitBinding
             description,
             responsibility,
             tag,
-            dryRun,
-            Array.AsReadOnly(
-            [
-                new CliDelimiterPolicy(
-                    RouteInitDefinitions.Tag.Name,
-                    CliDelimiterShape.Equals),
-            ]));
+            dryRun);
     }
 
     internal static CliCommandBinding<RouteInitRequest, RouteInitResult> Close(

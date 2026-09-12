@@ -49,8 +49,6 @@ public sealed class RouteInitDefinitionsAndBindingTests
         Assert.Equal(ArgumentArity.ZeroOrMore, symbols.Tag.Arity);
         Assert.False(symbols.Tag.AllowMultipleArgumentsPerToken);
         Assert.Equal(ArgumentArity.Zero, symbols.DryRun.Arity);
-        Assert.Single(symbols.DelimiterPolicies);
-        Assert.Equal("--tag", symbols.DelimiterPolicies[0].OptionName);
 
         var parse = route.Parse(["init", "memory/project-alpha/documents", "--tag=alpha"]);
         Assert.Empty(parse.Errors);

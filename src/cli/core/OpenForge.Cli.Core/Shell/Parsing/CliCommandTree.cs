@@ -10,7 +10,6 @@ namespace OpenForge.Cli.Core.Shell.Parsing;
 internal sealed class CliCommandTree
 {
     private readonly ParserConfiguration _parserConfiguration;
-    private readonly IReadOnlyList<CliDelimiterPolicy> _delimiterPolicies;
     private readonly IReadOnlyDictionary<Command, ICliCommandBinding> _bindings;
     private readonly IReadOnlySet<Command> _groups;
     private readonly IReadOnlyDictionary<Command, CliHelpContent> _help;
@@ -18,14 +17,12 @@ internal sealed class CliCommandTree
     private CliCommandTree(
         RootCommand root,
         CliGlobalOptionSymbols options,
-        IReadOnlyList<CliDelimiterPolicy> delimiterPolicies,
         IReadOnlyDictionary<Command, ICliCommandBinding> bindings,
         IReadOnlySet<Command> groups,
         IReadOnlyDictionary<Command, CliHelpContent> help)
     {
         Root = root;
         Options = options;
-        _delimiterPolicies = delimiterPolicies;
         _bindings = bindings;
         _groups = groups;
         _help = help;
@@ -136,7 +133,6 @@ internal sealed class CliCommandTree
         return new CliCommandTree(
             definition.Root,
             definition.Options,
-            definition.DelimiterPolicies,
             new ReadOnlyDictionary<Command, ICliCommandBinding>(bindingByCommand),
             groups,
             new ReadOnlyDictionary<Command, CliHelpContent>(helpByCommand));
@@ -150,8 +146,7 @@ internal sealed class CliCommandTree
             Root.Parse(originalArguments, _parserConfiguration),
             this,
             Options,
-            originalArguments,
-            _delimiterPolicies);
+            originalArguments);
     }
 
     internal ICliCommandBinding? FindBinding(Command command)

@@ -44,7 +44,6 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.Responsibility.Arity);
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.Template.Arity);
         Assert.Equal(ArgumentArity.Zero, symbols.DryRun.Arity);
-        Assert.Equal("--tag", Assert.Single(symbols.DelimiterPolicies).OptionName);
     }
 
     [Fact(DisplayName = "Route Create binding forms one typed dry-run request"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]

@@ -48,7 +48,7 @@ internal static class CliExtensionComposer
         var removeSymbols = ExtensionRemoveBinding.CreateSymbols(group);
         return new CliExtensionComposition
         {
-            Branch = new CliRootBranch(group, ExtensionHelpSections.CreateGroup(), []),
+            Branch = new CliRootBranch(group, ExtensionHelpSections.CreateGroup()),
             ListBinding = BuildList(listSymbols),
             InspectBinding = BuildInspect(inspectSymbols),
             CreateBinding = BuildCreate(createSymbols, interactiveSession),

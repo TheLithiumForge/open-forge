@@ -29,8 +29,8 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         Assert.Equal(CliOptionArity.None, RouteUpdateDefinitions.DryRun.Arity);
     }
 
-    [Fact(DisplayName = "Route Update symbols preserve singleton, tag-list, and delimiter policy"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
-    public void SymbolsPreserveSingletonTagListAndDelimiterPolicy()
+    [Fact(DisplayName = "Route Update symbols preserve singleton and tag-list arity"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
+    public void SymbolsPreserveSingletonAndTagListArity()
     {
         var route = RouteBinding.CreateGroup();
         var symbols = RouteUpdateBinding.CreateSymbols(route);
@@ -44,9 +44,6 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.Responsibility.Arity);
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.Template.Arity);
         Assert.Equal(ArgumentArity.Zero, symbols.DryRun.Arity);
-        var delimiter = Assert.Single(symbols.DelimiterPolicies);
-        Assert.Equal("--tag", delimiter.OptionName);
-        Assert.Equal(OpenForge.Cli.Core.Shell.Parsing.CliDelimiterShape.Equals, delimiter.RequiredShape);
     }
 
     [Fact(DisplayName = "Route Update binding forms one complete typed dry-run request"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]

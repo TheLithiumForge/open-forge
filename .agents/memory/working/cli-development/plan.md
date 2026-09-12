@@ -8,23 +8,23 @@ open-forge:
 
 ## Current Sequential Dogfood Plan
 
-The user continued with automatic Extension embedding, a complete presentation
-review in frozen stages, and nonduplicated Doctor diagnostics. Task 30
-[catalogue synchronization](tasks/extension-catalogue-synchronization.md) is active
-at phase 3/3, milestone 2/3. Candidate `ee5a5599` passes full managed evidence
-(3,231 Unit, 1,724 Integration, 112 public tests), source/resource parity,
-isolated native package journeys, and changed-C# format/style checks. The full
-Linux native gate passes: 1,724 native Integration and 112 public tests in each
-of the three execution modes, with zero failures/skips. Existing Toolkit migration limits and old
-reinstallation failures are recorded in Task 30; no implicit adoption is added.
+Task 30 and the earlier fixture/helper changes are complete and squash-integrated
+at `b4a06740`, with exact accepted tree `64e88bdee3337295ae5712dbff78422c3f707d0b`.
+The [catalogue Task](tasks/extension-catalogue-synchronization.md) records the full
+managed/native gate, isolated package journeys and existing transition limits.
 
-Task 27 retains the [sequential follow-up](tasks/cli-dogfood-follow-up-plan.md):
-fixture repairs and the brittle-test Observation are complete; the
-[parsing and Doctor audit](tasks/cli-parsing-doctor-audit.md) is delivered.
-Native delimiters, Doctor correctness and the full presentation pass follow.
-Root works directly and sequentially. Local squash integration is authorized
-for verified sets, including the previously held helper changes. Preserve
-unrelated concurrent develop changes. No remote operation is authorized.
+Task 27's [native-delimiter stage](tasks/cli-native-delimiters.md) is ACTIVE,
+phase 2/3, milestone 1/3, in `codex/cli-native-delimiters`. Red `9399da85`
+freezes the accepted native forms and 21 composed-root cases plus public Find
+regressions. The redundant guard and policy plumbing are removed; full managed
+qualification is running. Keep typed request validation and the separate Route
+Update attached-empty responsibility exception intact.
+
+Doctor correctness and the full presentation pass follow sequentially, using the
+[follow-up plan](tasks/cli-dogfood-follow-up-plan.md) and
+[audit](tasks/cli-parsing-doctor-audit.md). The user accepted clearer Doctor
+messages and deduplication. Root works directly; no helpers or remote operations
+are selected. Squash each verified set locally and preserve unrelated changes.
 
 ## Script Structure Continuation
 

@@ -8,9 +8,13 @@ open-forge:
 
 ## Task State
 
-Task 30 is ACTIVE on 2026-09-12, phase 3/3, milestone 2/3, as the first frozen
+Task 30 is COMPLETE on 2026-09-12, phase 3/3, milestone 3/3, as the first frozen
 stage of the user's [sequential follow-up](cli-dogfood-follow-up-plan.md).
-Root works directly in `/tmp/open-forge-cli-refactor-sequential` on
+Feature `aef337fd` was squash-integrated into local develop at `b4a06740`, with
+identical tree `64e88bdee3337295ae5712dbff78422c3f707d0b`. The integration
+preserves develop's unrelated ignore/tool/artifact changes, and every qualified
+production, test, package and build input equals candidate `ee5a5599`.
+Root worked directly in `/tmp/open-forge-cli-refactor-sequential` on
 `codex/cli-refactor-sequential`. Base `399b60b8` contains the fixture repairs.
 Catalogue production is `1b86b066`; the complete build candidate is `ee5a5599`.
 No parallel work is selected.
@@ -64,7 +68,7 @@ reports are `artifacts/delivery/linux-x64/reports-ecxh8L`, summarized in
 The isolated journey executable and gate executable have identical SHA-256
 `33cda49d8cd1f8541724b5b4fddd1a819cea69021f13411abf1fdf52bf0dd546`.
 Later edits only update documentation and work records. No foreign-host or
-remote-release proof is claimed. Local integration is the remaining milestone.
+remote-release proof is claimed. Local integration is complete as recorded above.
 
 ### Native Package Journeys And Transition Findings
 

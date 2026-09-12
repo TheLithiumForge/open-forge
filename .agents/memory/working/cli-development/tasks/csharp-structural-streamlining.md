@@ -11,12 +11,13 @@ open-forge:
 The user reprioritized work after installed-command smoke checks. Follow the
 [sequential plan](cli-dogfood-follow-up-plan.md): outdated fixtures, parsing audit,
 then Doctor. The later `continue` selects automatic catalogue embedding and a
-full presentation pass with Doctor deduplication. Task 30 is qualifying the
-restored baseline, including the earlier helper set at `50a36f35`, before its
-authorized squash merge. The new Task 27 horizon remains phase 2/3, milestone
-1/3 until this prerequisite completes. Fixture corrections and the
-[audit report](cli-parsing-doctor-audit.md) are complete. Native delimiter
-correction follows, then Doctor correctness and bounded presentation sets.
+full presentation pass with Doctor deduplication. Task 30 and the earlier helper
+set are qualified and squash-integrated at `b4a06740`. The
+[native-delimiter stage](cli-native-delimiters.md) is complete at phase 3/3,
+milestone 3/3, candidate `5bef9a24`, with the full managed/native gate and
+19 direct native checks passing. Its completion record accompanies local squash.
+Fixture corrections and the [audit report](cli-parsing-doctor-audit.md) are
+complete. Doctor correctness and bounded presentation sets follow.
 
 ## Sequential Refactoring Set 1 — 2026-09-12
 

@@ -56,7 +56,7 @@ public sealed class BindingTests
         group.Add(command);
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(group, CliHelpContent.Empty, [])],
+            [new CliRootBranch(group, CliHelpContent.Empty)],
             [binding]);
         var parse = tree.Parse(["group", "leaf"]);
         var invocation = Invocation();
@@ -176,7 +176,7 @@ public sealed class BindingTests
             });
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(group, CliHelpContent.Empty, [])],
+            [new CliRootBranch(group, CliHelpContent.Empty)],
             [binding]);
         var application = new CliCoreApplication(
             new CliProcessIdentity("open-forge", "test"),

@@ -50,7 +50,8 @@ open-forge route list [source-reference]
 
 There is at most one optional source operand. It uses the shared source-reference
 grammar: an automatic source ID or an exact `.agents/...` path. The command has
-no alias and no alternate source or depth spelling.
+no alias. Depth accepts the native value forms `--depth 2`, `--depth=2`, and
+`--depth:2`, with identical meaning. Source-reference syntax is unchanged.
 
 ### Operands And Flags
 

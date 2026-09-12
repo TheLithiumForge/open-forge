@@ -32,13 +32,13 @@ public sealed class PublishedShellBoundaryProcessTests
         Assert.Equal(before, working.SnapshotHashes());
     }
 
-    [Theory(DisplayName = "Published route-list enforces equals-only depth syntax before the terminator"),
+    [Theory(DisplayName = "Published route-list accepts native depth forms and rejects a missing value"),
      Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd"),
      InlineData("--depth=1", null, false),
      InlineData("--depth", null, true),
-     InlineData("--depth", "1", true),
-     InlineData("--depth:1", null, true)]
-    public static async Task PublishedRouteListEnforcesEqualsOnlyDepthSyntax(
+     InlineData("--depth", "1", false),
+     InlineData("--depth:1", null, false)]
+    public static async Task PublishedRouteListUsesNativeDepthForms(
         string option,
         string? separateValue,
         bool rejected)
@@ -66,8 +66,11 @@ public sealed class PublishedShellBoundaryProcessTests
         Assert.Equal(rejected ? 4 : 0, result.ExitCode);
         if (rejected)
         {
-            Assert.Equal(string.Empty, result.StandardOutput);
-            Assert.NotEmpty(result.StandardError);
+            Assert.Equal(string.Empty, result.StandardError);
+            using var document = JsonDocument.Parse(result.StandardOutput);
+            Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
+            var finding = Assert.Single(document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray());
+            Assert.Equal("route-list.invalid-depth", finding.GetProperty("code").GetString());
         }
         else
         {

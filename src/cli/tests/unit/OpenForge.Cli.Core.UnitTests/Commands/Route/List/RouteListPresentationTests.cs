@@ -86,7 +86,7 @@ public sealed class RouteListPresentationTests
         var error = new StringWriter();
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(symbols.RouteGroup, CliHelpContent.Empty, symbols.DelimiterPolicies)],
+            [new CliRootBranch(symbols.RouteGroup, CliHelpContent.Empty)],
             [binding]);
         var parse = tree.Parse(["route", "list", "--depth=-1"]);
         var completion = await binding.InvokeAsync(

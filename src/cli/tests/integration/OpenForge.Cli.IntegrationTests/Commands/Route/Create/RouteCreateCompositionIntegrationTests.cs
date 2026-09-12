@@ -74,8 +74,8 @@ public sealed class RouteCreateCompositionIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Composed root owns one exact Route Create leaf and stable Route delimiters"), Trait("Feature", "route-create"), Trait("Evidence", "Integration")]
-    public void ComposedRootOwnsExactRouteCreateLeafAndDelimiters()
+    [Fact(DisplayName = "Composed root owns one exact Route Create leaf and binding"), Trait("Feature", "route-create"), Trait("Evidence", "Integration")]
+    public void ComposedRootOwnsExactRouteCreateLeafAndBinding()
     {
         var application = CliCompositionRoot.Create(
             new CliProcessIdentity("open-forge", "test"));
@@ -96,12 +96,6 @@ public sealed class RouteCreateCompositionIntegrationTests
         var binding = Assert.IsType<ICliCommandBinding>(selection.Binding, exactMatch: false);
         Assert.Same(create, binding.Command);
         Assert.Same(binding, tree.FindBinding(create));
-        Assert.Equal(
-            ["--depth", "--tag"],
-            parse.DelimiterPolicies.Select(policy => policy.OptionName));
-        Assert.Single(
-            parse.DelimiterPolicies,
-            policy => policy.OptionName == "--tag");
     }
 
     [Fact(DisplayName = "Composed Route group and Create leaf help are direct no-write terminal modes"), Trait("Feature", "route-create"), Trait("Evidence", "Integration")]

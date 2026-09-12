@@ -40,7 +40,7 @@ internal static class CliLibraryComposer
         var detach = LibraryDetachBinding.CreateSymbols(group);
         return new CliLibraryComposition
         {
-            Branch = new CliRootBranch(group, LibraryHelpSections.CreateGroup(), []),
+            Branch = new CliRootBranch(group, LibraryHelpSections.CreateGroup()),
             ListBinding = LibraryListBinding.Close(list, new LibraryListBindingComponents
             {
                 Help = LibraryListPresentation.CreateHelp(),

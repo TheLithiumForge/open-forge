@@ -489,7 +489,7 @@ public sealed class FindQueryParserTests
     {
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(symbols.FindCommand, CliHelpContent.Empty, [])],
+            [new CliRootBranch(symbols.FindCommand, CliHelpContent.Empty)],
             []);
         return tree.Parse(arguments);
     }

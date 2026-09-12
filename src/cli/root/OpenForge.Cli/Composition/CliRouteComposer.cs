@@ -62,8 +62,7 @@ internal static class CliRouteComposer
         {
             Branch = new CliRootBranch(
                 group,
-                RouteHelpSections.CreateGroup(),
-                ReadDelimiterPolicies(listSymbols, initSymbols, createSymbols, updateSymbols)),
+                RouteHelpSections.CreateGroup()),
             ListBinding = BuildList(listSymbols),
             InspectBinding = BuildInspect(inspectSymbols, interactiveSession),
             InitBinding = BuildInit(initSymbols, lockStoreRoot),
@@ -73,20 +72,6 @@ internal static class CliRouteComposer
             RemoveBinding = BuildRemove(removeComposer, removeSymbols, lockStoreRoot),
         };
     }
-
-    private static IReadOnlyList<CliDelimiterPolicy> ReadDelimiterPolicies(
-        RouteListSymbols list,
-        RouteInitSymbols init,
-        RouteCreateSymbols create,
-        RouteUpdateSymbols update)
-        =>
-        [
-            .. list.DelimiterPolicies
-                .Concat(init.DelimiterPolicies)
-                .Concat(create.DelimiterPolicies)
-                .Concat(update.DelimiterPolicies)
-                .Distinct(),
-        ];
 
     private static ICliCommandBinding BuildList(RouteListSymbols symbols)
         => RouteListBinding.Close(

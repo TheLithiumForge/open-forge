@@ -22,7 +22,7 @@ public sealed class SystemCommandLineBehaviorTests
         var symbols = RouteUpdateBinding.CreateSymbols(route);
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(route, CliHelpContent.Empty, symbols.DelimiterPolicies)],
+            [new CliRootBranch(route, CliHelpContent.Empty)],
             []);
         string[] attachedArguments =
         [
@@ -276,7 +276,7 @@ public sealed class SystemCommandLineBehaviorTests
         var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(symbols.RouteGroup, CliHelpContent.Empty, symbols.DelimiterPolicies)],
+            [new CliRootBranch(symbols.RouteGroup, CliHelpContent.Empty)],
             []);
 
         var parse = tree.Parse(["route", "list", emptyDepth, followingOption]);

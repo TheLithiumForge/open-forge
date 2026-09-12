@@ -91,7 +91,7 @@ public sealed class RepairC1SelectionTests
     {
         var symbols = RepairBinding.CreateSymbols();
         var parse = CliCommandTree.Create(CliHelpContent.Empty,
-            [new CliRootBranch(symbols.RepairCommand, CliHelpContent.Empty, [])], []).Parse(
+            [new CliRootBranch(symbols.RepairCommand, CliHelpContent.Empty)], []).Parse(
             [
                 "repair", "--relink", ".agents/docs/guide.md@1:1", "old", ".agents/docs/new.md#Heading",
                 "--relink", ".agents/docs/guide.md@1:1", secondExpected, ".agents/docs/new.md#Heading",

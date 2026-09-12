@@ -334,18 +334,20 @@ prompt. Unrelated commands and requests gain no interaction or stream parameter.
 aggregation, typed conversion, unknown symbols, parser diagnostics, standard
 syntax help, and version dispatch.
 
-The implementation performs one parse, validates parser and bounded accepted
-delimiter facts, resolves terminal conflicts, selects the exact binding, handles
+The implementation performs one parse, validates its typed facts, resolves
+terminal conflicts, selects the exact binding, handles
 help or version, normalizes one global invocation and optional workspace, and
 forms one command-local request or concrete invalid result.
 
-It does not rescan raw arguments for facts exposed by the parse tree. A lexical
-guard may inspect only one exact recognized option and its attached delimiter
-when an accepted syntax distinction cannot be obtained from typed parser facts.
-Such a guard does not parse values, count occurrences, select commands, or
-produce parser diagnostics. The accepted Route Update exception is bounded by
-its [Technical Design](contracts/route/update/technical-design.md). Route List
-retains its separate command-contract exception.
+Ordinary long-option values use the parser's native space, equals and colon
+delimiters. This includes Find and Route tags and Route List depth. There is no
+raw delimiter-policy scan or policy shared across unrelated commands.
+
+The implementation does not rescan raw arguments for facts exposed by the parse
+tree. Route Update alone retains the attached-empty responsibility recognizer
+bounded by its [Technical Design](contracts/route/update/technical-design.md),
+because that distinction is erased by the pinned parser. It does not parse
+values, count occurrences, select commands, or produce parser diagnostics.
 
 `CliInvocation` contains normalized process-wide facts only. A command request
 is complete and immutable. Neither carries `ParseResult`, parser symbols,

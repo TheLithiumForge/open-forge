@@ -6,6 +6,33 @@ open-forge:
 
 # CLI Parsing And Doctor Audit
 
+## Continuation Findings
+
+The native-delimiter candidate `5bef9a24` preserves Doctor behavior. Fresh
+Framework, Development, Toolkit and all-package installations were captured in
+`artifacts/task27-native-delimiters/doctor-baseline/`. Each installation succeeds,
+and Doctor leaves file hashes unchanged. Framework-only Doctor is `incomplete`;
+all three Extension cases are `blocked`.
+
+- T27-DOG05: Extension Install persists `source: "embedded catalogue"`, but
+  `ExtensionSourceObservationReader` treats every non-null recorded source as an
+  explicit path. Doctor therefore resolves that display identity beneath the
+  selected workspace and reports a source-overlap boundary. Reconcile the reader
+  with the actual persisted source identity; keep real explicit-source
+  disjointness and unavailable-source checks strict.
+- T30-DOG02 also occurs immediately after fresh package installation: generated
+  Workflow, Pattern and Template host indexes differ from their old Framework
+  generated-region baselines. Doctor reports managed changes and mixed lifecycle
+  state despite the package operation's verified generated projection. Establish
+  current generated navigation from its authoritative authored topology while
+  preserving authored managed-file drift and unsafe-region detection. The
+  [catalogue Task](extension-catalogue-synchronization.md) retains the related
+  old Toolkit removal/reinstallation controls.
+
+These are additional correctness inputs for the frozen Doctor stage. They are
+not fixed by clearer messages, lower severity, or hidden findings. The original
+baseline audit below remains historical evidence for its named executable.
+
 ## Result And Scope
 
 The spaced `--tag` failure is our delimiter guard overriding System.CommandLine.
@@ -125,6 +152,7 @@ distinguished from parsing document syntax.
 | `Commands/References/Shared/Binding/ReferencesSelectorOccurrenceReader.cs` | Reads library tokens to retain include/exclude order, but also manually looks for attached `=` and `:` values | P2: use normalized parser-owned option/argument tokens and typed values; prove the attached-token fallback is unnecessary before removing it |
 | `Commands/Find/FindRequestBinder.cs` | Reads typed values, counts and token order to interleave tags and headings | Retain required interleaving; simplify only if the pinned API exposes equivalent ordered occurrence facts. Token traversal alone is not a second tokenizer |
 | `Shell/Parsing/CliOptionResultFactsReader.cs` | Uses `OptionResult.IdentifierTokenCount` and library argument tokens | Keep: ordinary library adaptation |
+| `Commands/Library/{Attach,Inspect,Sync,Detach}/Shared/Binding/*RequestBinder.cs` invalid-result factories | `ReadOperands` or `ReadAttemptedId` filters raw strings by their leading dash | P6: replace this fallback with typed argument facts. These paths are exercised by direct invalid-result tests; the current root handles parser errors before reaching them. Do not claim a public misidentification without an executable reproduction |
 | `Commands/Find/Shared/Query/FindQueryParser.cs`, `Commands/Context/Shared/Binding/ContextRequestParser.cs` | Interprets typed values such as section selectors and explicit comma-list choices | Keep product-owned value grammar; System.CommandLine does not define these meanings |
 | `Framework/Documents/Markdown/MarkdownDocumentParser.cs`, `MarkdownInlineFactCollector.cs`, `MarkdownInlineTextReader.cs`, `MarkdownPipelineFactory.cs` | Markdig AST, precise spans, headings, visible text, links and opaque code/HTML | Keep as the shared library adapter. No independent general Markdown tokenizer found here |
 | `Framework/Documents/Markdown/MarkdownFrontmatterParser.cs` | Scans the exact leading `---` pair and retains body/YAML boundaries, including incomplete input | P5: evaluate Markdig's YAML frontmatter extension against the malformed-boundary and exact-span contract. Do not replace this finite boundary scanner merely because it has a loop |

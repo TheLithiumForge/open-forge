@@ -17,15 +17,6 @@ internal static class CliTerminalValidator
                 parse.Result.Errors.Select(error => error.Message));
         }
 
-        var delimiterViolation = CliDelimiterGuard.Validate(parse.OriginalArguments, parse.DelimiterPolicies);
-        if (delimiterViolation is not null)
-        {
-            return Invalid(
-                "cli.delimiter.invalid",
-                CliInvalidInputSource.Delimiter,
-                [delimiterViolation.Describe()]);
-        }
-
         CliGlobalInput input;
         try
         {

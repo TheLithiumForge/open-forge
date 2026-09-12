@@ -31,25 +31,21 @@ internal static class CliRootDefinitionFactory
         root.Add(version);
         root.SetAction(static _ => 0);
 
-        var policies = new List<CliDelimiterPolicy>();
         foreach (var branch in branches)
         {
             ArgumentNullException.ThrowIfNull(branch);
             root.Add(branch.Command);
-            policies.AddRange(branch.DelimiterPolicies);
         }
 
         foreach (var rootLeaf in rootLeaves)
         {
             ArgumentNullException.ThrowIfNull(rootLeaf, "root leaf");
             root.Add(rootLeaf.Command);
-            policies.AddRange(rootLeaf.DelimiterPolicies);
         }
 
         return new CliRootDefinition(
             root,
-            new CliGlobalOptionSymbols(workspace, json, view, verbose, help, version),
-            policies.AsReadOnly());
+            new CliGlobalOptionSymbols(workspace, json, view, verbose, help, version));
     }
 
     private static Option<string?> CreateWorkspaceOption()

@@ -238,7 +238,7 @@ public sealed class FindPresentationBindingTests
             });
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(command, binding.Help, [])],
+            [new CliRootBranch(command, binding.Help)],
             [binding]);
         var application = new CliCoreApplication(
             new CliProcessIdentity("open-forge", "test"),

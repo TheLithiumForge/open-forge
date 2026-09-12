@@ -189,7 +189,7 @@ public sealed class RepairBindingAndRequestTests
     private static CliParseOutcome Parse(RepairSymbols symbols, string[] arguments)
         => CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(symbols.RepairCommand, CliHelpContent.Empty, [])],
+            [new CliRootBranch(symbols.RepairCommand, CliHelpContent.Empty)],
             [])
             .Parse(arguments);
 }

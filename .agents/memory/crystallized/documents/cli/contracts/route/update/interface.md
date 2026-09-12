@@ -53,6 +53,10 @@ successful repeated updates are `complete` verified no-ops.
 
 ## Syntax
 
+Tag values accept `--tag Memory`, `--tag=Memory`, and `--tag:Memory` with
+identical meaning. Repeated values retain their existing order and validation.
+The separately defined empty-responsibility grammar remains unchanged.
+
 ```text
 open-forge route update <source-reference>
   [--description <text>]

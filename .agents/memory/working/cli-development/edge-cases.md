@@ -132,49 +132,31 @@ Use these current Task links when assigning or closing an item.
   cross-products, add or reuse real public evidence for them, and resolve or
   explicitly accept any remaining breadth boundary before their gates complete.
 
-### CLI-EDGE-005 — Raw lexical option edge
+### CLI-EDGE-005 — Native option delimiters
 
-- **Current behavior and evidence:** Global and Route List depth values,
-  occurrences, and aggregate value counts come from typed parser results. Global
-  custom parsers and the raw depth spelling reader are removed. Route List retains
-  only its explicitly contracted equals-only delimiter guard, and that inspection
-  stops at `--`. Attached-empty workspace, view, and depth values preserve a
-  following typed global and become invalid through typed validation.
-- **Risk:** Future Shell consumers could let raw lexical inspection drift from
-  parser-owned typed behavior, especially when a workspace or source value looks
-  like an option.
-- **Resolution/promotion decision:** Promoted route parsers consume only the bound
-  typed source reference and never rescan process arguments. The route-list
-  attached-empty depth EndToEnd journey passes after promotion. The reviewed Purple
-  regression also proves that route-list lexical scanning stops at `--`; the
-  resolution/promotion child is closed.
-- **Route-inspect acceptance disposition:** Final managed/native evidence preserves
-  parser-owned typed globals and the `--` boundary for List and Inspect, including
-  an option-like Inspect operand after the terminator. The raw Route List depth
-  exception and broader option-looking workspace/source audit remain assigned to
-  the authorized generic parser-remediation branch; Route Inspect adds no lexical
-  workaround.
-- **Parser-remediation acceptance disposition:** Public 2.0.11 result facts now own
-  scalar and multi-value occurrences and aggregate values. The retained delimiter
-  guard distinguishes only Route List depth spelling; it does not parse a value,
-  count occurrences, cross `--`, or enter command binding. Focused Unit `68/68`,
-  Integration `93/93`, and freshly published managed selected EndToEnd `57/57`
-  pass. The exact attached-empty depth JSON journey and ordinary option-like
-  post-terminator Inspect journey pass without workspace writes.
-- **Owning Task(s):** [Implement Route Inspect And Promote Shared Route Facts](tasks/route-discovery/route-inspect.md)
-  owns focused option-terminator regression. [Parser And Standard Behavior
-  Remediation](tasks/generic-improvements/parser-remediation.md) closes the raw depth
-  audit. [Accept And Release The Complete CLI](tasks/delivery/04-release.md) owns final
-  residual-risk acceptance.
-- **Closure condition:** Met for parser remediation. Route Inspect preserves
-  parser-owned global and operand behavior at `--`; generic typed validation removes
-  raw depth value authority; and the one documented equals-only delimiter exception
-  remains bounded without another spelling-specific workaround. Final release still
-  owns broader public input breadth.
+- **Accepted continuation:** The user requested ordinary library handling for
+  `--tag` and continued after the manual-parsing audit. Task 27's
+  [native-delimiter stage](tasks/cli-native-delimiters.md) retires the former
+  equals-only Route List depth exception and the globally aggregated tag guards.
+  Native space, equals and colon forms have identical typed values. Missing,
+  empty and repeated singleton values remain invalid through typed validation.
+- **Frozen evidence:** At `b4a06740`, composed-root regression cases have seven
+  passing equals controls and fourteen failing space/colon forms. All 21 are
+  accepted by the pinned parser itself. The global guard causes the failure.
+- **Boundary:** Parser-owned value aggregation, command selection and `--`
+  remain unchanged. Route Update's independent `CLI-EDGE-016` exact-empty
+  responsibility recognizer remains accepted. No raw value parser replaces the
+  deleted restriction.
+- **History:** Earlier parser-remediation evidence qualified typed occurrence and
+  value facts while retaining the equals-only exception. That accepted exception
+  is superseded here; its historical receipts do not qualify this new stage.
+- **Closed:** Candidate `5bef9a24` removes the guards and plumbing, passes the
+  frozen evidence, full managed/native gate and 19 direct native checks. The
+  native-delimiter completion record accompanies authorized local squash.
 
 ### CLI-EDGE-007 — Terminal modes with domain input
 
-- **Current behavior and evidence:** The shared Shell validates parser and delimiter
+- **Current behavior and evidence:** The shared Shell validates parser
   results, reads typed global input, resolves terminal conflict policy, and applies
   one typed terminal-input validator before help/version short circuiting, workspace
   selection, command binding, or operation work. Root, group, List, Inspect, local-
@@ -478,9 +460,9 @@ Use these current Task links when assigning or closing an item.
   Interface-contract meaning. Inspection stops at `--`, and original arguments
   enter neither the typed request nor domain behavior.
 - **Separation from CLI-EDGE-005:** This edge belongs exclusively to Route
-  Update's responsibility grammar. `CLI-EDGE-005` remains exclusively the Route
-  List equals-only depth-delimiter exception. Neither recognizer parses a value,
-  counts occurrences, crosses `--`, or becomes general binding authority.
+  Update's responsibility grammar. `CLI-EDGE-005` retires the former Route List
+  depth-delimiter exception. This responsibility recognizer does not parse a
+  value, count occurrences, cross `--`, or become general binding authority.
 - **Risk:** A generic raw-argument workaround could create a second parser,
   reinterpret ordinary values, leak raw arguments into the domain, or merge two
   unrelated command grammars.

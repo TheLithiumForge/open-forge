@@ -18,7 +18,8 @@ behavior. This design adds no spelling, result, diagnostic, or domain fact.
 The generic parser and typed-request boundaries remain in the [CLI
 Architecture](../../../architecture.md). The active [edge-case
 ledger](../../../../../../working/cli-development/edge-cases.md) records this
-exception as `CLI-EDGE-016`, separate from Route List `CLI-EDGE-005`.
+exception as `CLI-EDGE-016`. The former Route List equals-only exception,
+`CLI-EDGE-005`, is retired in favor of native parser delimiters.
 
 ## CLI-EDGE-016 Recognizer
 
@@ -75,8 +76,8 @@ request and domain. Focused Route Update filesystem evidence must additionally
 prove no-follow final-leaf checks at physical resolution, initial preflight,
 under-lease revalidation, and immediately before each ordinary effect, including
 refusal to follow or mutate an eligible `.agents/...` Library projection.
-Route List evidence separately preserves its exact equals-only depth grammar
-under `CLI-EDGE-005`.
+Route List evidence separately proves equivalent native space, equals and colon
+depth forms. It adds no raw argument inspection.
 
 ## Related Current Sources
 

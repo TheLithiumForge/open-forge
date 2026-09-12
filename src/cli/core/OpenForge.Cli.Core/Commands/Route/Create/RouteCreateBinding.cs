@@ -7,7 +7,6 @@ using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create;
 
@@ -55,12 +54,6 @@ internal static class RouteCreateBinding
             Responsibility = responsibility,
             Template = template,
             DryRun = dryRun,
-            DelimiterPolicies = Array.AsReadOnly(
-            [
-                new CliDelimiterPolicy(
-                    RouteCreateDefinitions.Tag.Name,
-                    CliDelimiterShape.Equals),
-            ]),
         };
     }
 

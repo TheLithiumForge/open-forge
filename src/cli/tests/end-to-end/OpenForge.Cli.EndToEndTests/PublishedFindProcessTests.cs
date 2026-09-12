@@ -27,8 +27,11 @@ public sealed class PublishedFindProcessTests
         Assert.DoesNotContain("result=complete", result.StandardOutput, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Published Find compact filtering returns the exact matched source identity"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
-    public async Task PublishedFindCompactFilteringReturnsMatch()
+    [Theory(DisplayName = "Published Find compact filtering accepts native tag delimiters and returns the exact source"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
+    [InlineData(" ")]
+    [InlineData("=")]
+    [InlineData(":")]
+    public async Task PublishedFindCompactFilteringReturnsMatch(string delimiter)
     {
         var target = PublishedExecutableTarget.Discover();
         using var working = PublishedFindWorkspace.CreateBare();
@@ -36,7 +39,9 @@ public sealed class PublishedFindProcessTests
             target,
             working.Path,
             working.SnapshotState,
-            ["find", "--workspace", working.Path, "--view=compact", "--tag=Architecture", "--heading=Architecture"]);
+            ["find", "--workspace", working.Path, "--view=compact",
+                .. (delimiter == " " ? new[] { "--tag", "Architecture" } : [$"--tag{delimiter}Architecture"]),
+                "--heading=Architecture"]);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);

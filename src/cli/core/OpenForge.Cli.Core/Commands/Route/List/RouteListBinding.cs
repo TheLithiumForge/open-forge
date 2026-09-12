@@ -6,16 +6,8 @@ using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 
 namespace OpenForge.Cli.Core.Commands.Route.List;
-
-internal sealed record RouteListSymbols(
-    Command RouteGroup,
-    Command ListCommand,
-    Argument<string?> SourceReference,
-    Option<string?> Depth,
-    IReadOnlyList<CliDelimiterPolicy> DelimiterPolicies);
 
 internal static class RouteListBinding
 {
@@ -46,11 +38,7 @@ internal static class RouteListBinding
             routeGroup,
             list,
             sourceReference,
-            depth,
-            Array.AsReadOnly(
-            [
-                new CliDelimiterPolicy(RouteListDefinitions.Depth.Name, CliDelimiterShape.Equals),
-            ]));
+            depth);
     }
 
     internal static CliCommandBinding<RouteListRequest, RouteListResult> Close(

@@ -1,5 +1,4 @@
 using System.CommandLine;
-using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Models.Binding;
 
@@ -11,5 +10,4 @@ internal sealed record RouteInitSymbols(
     Option<string?> Description,
     Option<string?> Responsibility,
     Option<string[]> Tag,
-    Option<bool> DryRun,
-    IReadOnlyList<CliDelimiterPolicy> DelimiterPolicies);
+    Option<bool> DryRun);

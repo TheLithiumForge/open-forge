@@ -256,7 +256,7 @@ public sealed class ReferencesBindingTests
     {
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(symbols.ReferencesCommand, CliHelpContent.Empty, [])],
+            [new CliRootBranch(symbols.ReferencesCommand, CliHelpContent.Empty)],
             []);
         return tree.Parse(arguments);
     }

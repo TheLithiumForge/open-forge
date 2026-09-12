@@ -94,16 +94,13 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.SourceReference.Arity);
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.Depth.Arity);
         Assert.Empty(symbols.ListCommand.Aliases);
-        Assert.Single(symbols.DelimiterPolicies);
         var omitted = symbols.RouteGroup.Parse(["list"]);
         var explicitDepth = symbols.RouteGroup.Parse(["list", "--depth=2"]);
         var repeated = symbols.RouteGroup.Parse(["list", "--depth=1", "--depth=2"]);
         Assert.Equal("1", omitted.GetValue(symbols.Depth));
         Assert.Equal("2", explicitDepth.GetValue(symbols.Depth));
         Assert.NotEmpty(repeated.Errors);
-        Assert.NotNull(CliDelimiterGuard.Validate(
-            ["list", "--depth", "2"],
-            symbols.DelimiterPolicies));
+        Assert.Equal("2", symbols.RouteGroup.Parse(["list", "--depth", "2"]).GetValue(symbols.Depth));
     }
 
     [Fact(DisplayName = "CLI option result facts expose explicit occurrence and value counts")]
@@ -142,13 +139,13 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.Equal(2, repeatedFacts.ValueCount);
     }
 
-    [Theory(DisplayName = "Route List depth requires equals syntax before the option terminator")]
+    [Theory(DisplayName = "Route List depth accepts native delimiters and rejects a missing value")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     [InlineData("--depth=1", null, false)]
     [InlineData("--depth", null, true)]
-    [InlineData("--depth", "1", true)]
-    [InlineData("--depth:1", null, true)]
-    public void DepthDelimiterPolicyIsEqualsOnlyBeforeTerminator(
+    [InlineData("--depth", "1", false)]
+    [InlineData("--depth:1", null, false)]
+    public void DepthUsesTypedValuesBeforeTerminator(
         string option,
         string? separateValue,
         bool rejected)
@@ -160,8 +157,12 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         var parse = symbols.RouteGroup.Parse(arguments);
 
         Assert.Empty(parse.Errors);
-        var violation = CliDelimiterGuard.Validate(arguments, symbols.DelimiterPolicies);
-        Assert.Equal(rejected, violation is not null);
+        var bound = RouteListBinding.Bind(parse, Invocation(RouteListContractTestData.Workspace()), symbols);
+        Assert.Equal(rejected, bound.InvalidResult is not null);
+        if (!rejected)
+        {
+            Assert.Equal(RouteListDepth.Finite(1), Assert.IsType<RouteListRequest>(bound.Request).RequestedDepth);
+        }
     }
 
     [Theory(DisplayName = "Route List binding maps omitted and boundary depth values to typed requests")]
@@ -255,7 +256,6 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
 
         Assert.Empty(parse.Errors);
         Assert.Equal("--depth=", parse.GetValue(symbols.SourceReference));
-        Assert.Null(CliDelimiterGuard.Validate(arguments, symbols.DelimiterPolicies));
 
         var bound = RouteListBinding.Bind(parse, Invocation(workspace), symbols);
         var request = Assert.IsType<RouteListRequest>(bound.Request);
@@ -299,7 +299,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
         return CliCommandTree.Create(
             CliHelpContent.Empty,
-            [new CliRootBranch(symbols.RouteGroup, CliHelpContent.Empty, symbols.DelimiterPolicies)],
+            [new CliRootBranch(symbols.RouteGroup, CliHelpContent.Empty)],
             []);
     }
 
