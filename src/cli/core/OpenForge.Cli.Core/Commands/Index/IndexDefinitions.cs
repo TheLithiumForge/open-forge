@@ -16,7 +16,7 @@ internal static class IndexDefinitions
 
     internal static readonly CliSyntaxDefinition IndexCommand = new(
         CommandIdentity,
-        "Rebuild bounded generated Entries from routed sources.");
+        "Rebuild generated Entries for selected routes.");
 
     internal static readonly CliSyntaxDefinition Sources = new(
         "source-reference",
@@ -24,7 +24,7 @@ internal static class IndexDefinitions
 
     internal static readonly CliOptionDefinition<bool> DryRun = new(
         "--dry-run",
-        "Preview every bounded generated-region change without writing files.",
+        "Preview all generated Entries changes without writing files.",
         CliOptionArity.None,
         false,
         null);

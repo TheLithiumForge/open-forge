@@ -24,8 +24,8 @@ public sealed class PublishedExtensionRemoveProcessTests
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         Assert.Contains(
-            "open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [global flags]",
-            result.StandardOutput,
+            "open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [global options]",
+            string.Join(" ", result.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
             StringComparison.Ordinal);
         Assert.Contains("Selection and dependencies", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Ownership and changed content", result.StandardOutput, StringComparison.Ordinal);

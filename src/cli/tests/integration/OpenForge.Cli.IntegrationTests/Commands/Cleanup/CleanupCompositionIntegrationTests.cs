@@ -43,7 +43,7 @@ public sealed class CleanupCompositionIntegrationTests
         Assert.Equal(CliOutputTarget.StandardOutput, leaf.PrimaryOutputTarget);
         Assert.Equal(string.Empty, leaf.StandardError);
         Assert.Contains(
-            "open-forge cleanup [--dry-run] [global flags]",
+            "open-forge cleanup [--dry-run] [global options]",
             leaf.StandardOutput,
             StringComparison.Ordinal);
         Assert.Contains("Catalogue", leaf.StandardOutput, StringComparison.Ordinal);

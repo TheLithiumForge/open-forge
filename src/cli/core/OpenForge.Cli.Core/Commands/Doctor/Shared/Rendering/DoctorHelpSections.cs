@@ -9,13 +9,13 @@ internal static class DoctorHelpSections
     internal static CliHelpContent Create()
         => new(
         [
-            new CliHelpSection("Syntax", "  open-forge doctor [global flags]"),
+            new CliHelpSection("Syntax", "  open-forge doctor [global options]"),
             new CliHelpSection(
                 "Diagnosis",
-                "  Inspect six fixed workspace, recovery, route, reference, Framework lifecycle, and Extension lifecycle domains without changing them."),
+                "  Check the workspace, recovery data, routes, references, managed Framework files, and managed Extensions without changing them."),
             new CliHelpSection(
                 "Global options",
-                "  --workspace <path>, --json, --view=<compact|expanded>, --verbose, --help, and --version retain their shared Shell meaning. --view is a no-op with --json."),
+                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
             new CliHelpSection("Results and streams", ResultsAndStreams()),
             new CliHelpSection(
                 "Notes",

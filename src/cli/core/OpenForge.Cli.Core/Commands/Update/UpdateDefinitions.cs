@@ -20,11 +20,11 @@ internal static class UpdateDefinitions
 
     internal static readonly CliSyntaxDefinition UpdateCommand = new(
         UpdateCommandName,
-        "Reconcile managed Framework content with the embedded current payload.");
+        "Update managed Framework files.");
 
     internal static readonly CliOptionDefinition<bool> Force = new(
         "--force",
-        "Replace changed or restore missing current expected content.",
+        "Replace changed or restore missing managed content.",
         CliOptionArity.None,
         false);
 
@@ -36,7 +36,7 @@ internal static class UpdateDefinitions
 
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         "--automatic",
-        "Use deterministic safe defaults; grants neither force nor prune.",
+        "Use safe defaults without prompting; does not imply --force or --prune.",
         CliOptionArity.None,
         false);
 

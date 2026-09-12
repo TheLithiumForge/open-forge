@@ -39,8 +39,8 @@ public sealed class FindApplicationIntegrationTests
         Assert.Same(selection.Command, binding!.Command);
     }
 
-    [Fact(DisplayName = "Composed root help exposes the direct Find leaf exactly once in Discovery"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
-    public async Task ComposedRootHelpExposesFindOnceInDiscovery()
+    [Fact(DisplayName = "Composed root help exposes the direct Find leaf exactly once in Commands"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
+    public async Task ComposedRootHelpExposesFindOnceInCommands()
     {
         using var workspace = FindWorkspace.CreateBare();
         var missing = workspace.Combine("missing-root-help-workspace");
@@ -55,8 +55,8 @@ public sealed class FindApplicationIntegrationTests
         var lines = result.Output.Split(Environment.NewLine, StringSplitOptions.None);
         var discovery = Array.FindIndex(
             lines,
-            line => line.Equals("Discovery:", StringComparison.Ordinal));
-        Assert.True(discovery >= 0, "Root help must contain the Discovery section.");
+            line => line.Equals("Commands:", StringComparison.Ordinal));
+        Assert.True(discovery >= 0, "Root help must contain the Commands section.");
         var findLines = lines[(discovery + 1)..]
             .TakeWhile(line => line.StartsWith("  ", StringComparison.Ordinal))
             .Where(line =>

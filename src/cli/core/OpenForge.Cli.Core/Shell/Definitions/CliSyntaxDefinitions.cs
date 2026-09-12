@@ -27,13 +27,13 @@ internal static class CliSyntaxDefinitions
 
     internal static readonly CliOptionDefinition<bool> Json = new(
         "--json",
-        "Write the complete structured result as JSON.",
+        "Write the complete JSON result; --view has no effect.",
         CliOptionArity.None,
         false);
 
     internal static readonly CliOptionDefinition<CliView> View = new(
         "--view",
-        "Select compact or expanded human output.",
+        "Text detail: compact or expanded.",
         CliOptionArity.ExactlyOne,
         CliView.Expanded,
         "view",
@@ -45,7 +45,7 @@ internal static class CliSyntaxDefinitions
 
     internal static readonly CliOptionDefinition<bool> Verbose = new(
         "--verbose",
-        "Write bounded diagnostics to stderr.",
+        "Write diagnostic details to stderr.",
         CliOptionArity.None,
         false);
 

@@ -21,18 +21,18 @@ internal static class FindDefinitions
 
     internal static readonly CliSyntaxDefinition FindCommand = new(
         CommandIdentity,
-        "Find Markdown sources by authored tags and structural headings.");
+        "Find Markdown sources by tags and headings.");
 
     internal static readonly CliOptionDefinition<string[]> Include = new(
         "--include",
-        "Include one source reference in the effective source universe.",
+        "Include one source in the search; repeat to include more.",
         CliOptionArity.ExactlyOne,
         [],
         "source-reference");
 
     internal static readonly CliOptionDefinition<string[]> Exclude = new(
         "--exclude",
-        "Exclude one source reference from the effective source universe.",
+        "Exclude one source from the search; repeat to exclude more.",
         CliOptionArity.ExactlyOne,
         [],
         "source-reference");
@@ -46,14 +46,14 @@ internal static class FindDefinitions
 
     internal static readonly CliOptionDefinition<string[]> Heading = new(
         "--heading",
-        "Match one complete structural heading value.",
+        "Match one complete Markdown heading.",
         CliOptionArity.ExactlyOne,
         [],
         "heading");
 
     internal static readonly CliOptionDefinition<string?> Require = new(
         "--require",
-        "Require all or any supplied predicates.",
+        "Require all or any of the supplied tag and heading matches.",
         CliOptionArity.ExactlyOne,
         null,
         "all|any",
@@ -65,14 +65,14 @@ internal static class FindDefinitions
 
     internal static readonly CliOptionDefinition<string?> Within = new(
         "--within",
-        "Select authored regions in which predicates are evaluated.",
+        "Choose where to match tags and headings.",
         CliOptionArity.ExactlyOne,
         null,
         "part[,part...]");
 
     internal static readonly CliOptionDefinition<string?> Content = new(
         "--content",
-        "Project selected content parts for matched sources.",
+        "Choose which parts of matched sources to show.",
         CliOptionArity.ExactlyOne,
         null,
         "part[,part...]");

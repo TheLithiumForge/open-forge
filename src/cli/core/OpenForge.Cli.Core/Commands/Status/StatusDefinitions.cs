@@ -64,7 +64,7 @@ internal static class StatusDefinitions
 
     internal static CliSyntaxDefinition StatusCommand { get; } = new(
         CommandIdentity,
-        "Inspect workspace, context, lifecycle, generated-navigation, and recovery status.");
+        "Show workspace status and recovery data.");
 
     internal static CliNextAction AttentionNextAction { get; } = new(
         "open-forge doctor",

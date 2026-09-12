@@ -32,7 +32,7 @@ public sealed class RepairBindingAndRequestTests
         Assert.Equal(new ArgumentArity(3, 3), symbols.Relink.Arity);
         Assert.True(symbols.Relink.AllowMultipleArgumentsPerToken);
         Assert.Equal(
-            "source-location expected-destination target-path",
+            "source expected target",
             symbols.Relink.HelpName);
         Assert.Equal(typeof(bool), symbols.DryRun.ValueType);
         Assert.Equal(ArgumentArity.Zero, symbols.DryRun.Arity);

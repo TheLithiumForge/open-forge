@@ -15,7 +15,22 @@ namespace OpenForge.Cli.Core.Commands.Library.Attach.Shared.Rendering;
 
 internal static class LibraryAttachPresentation
 {
-    internal static CliHelpContent CreateHelp() => new([new CliHelpSection("Library", LibraryAttachDefinitions.Command.Description)]);
+    internal static CliHelpContent CreateHelp() => new(
+    [
+        new CliHelpSection("Syntax", """
+              open-forge library attach <library-id> <source-root> [--to <directory>] [--dry-run] [global options]
+            """),
+        new CliHelpSection("Source and destination", """
+              Register a source directory contained in the workspace and create relative file links. Both paths are workspace-relative. --to defaults to the workspace root.
+            """),
+        new CliHelpSection("Preview and permissions", """
+              Use --dry-run to inspect the complete plan without writing. Destinations outside .agents require the applicable workspace permission.
+            """),
+        new CliHelpSection("Examples", """
+              open-forge library attach shared vendor/shared --dry-run
+              open-forge library attach shared vendor/shared --to docs --dry-run
+            """),
+    ]);
     internal static string RenderHuman(CliPresentationRequest<LibraryAttachResult> presentation)
         => Render(presentation, "attach");
     internal static string RenderJson(CliPresentationRequest<LibraryAttachResult> presentation)

@@ -24,10 +24,10 @@ public sealed class CliHostTests
             TestContext.Current.CancellationToken);
 
         Assert.Equal(0, exitCode);
-        Assert.Contains("Open Forge CLI (`open-forge`)", standardOutput.ToString(), StringComparison.Ordinal);
-        Assert.Contains("Discovery:", standardOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Inspect and maintain an Open Forge workspace.", standardOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Getting started:", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains("route list", standardOutput.ToString(), StringComparison.Ordinal);
-        Assert.Contains("route inspect", standardOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains("open-forge route --help", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Equal(string.Empty, standardError.ToString());
     }
 

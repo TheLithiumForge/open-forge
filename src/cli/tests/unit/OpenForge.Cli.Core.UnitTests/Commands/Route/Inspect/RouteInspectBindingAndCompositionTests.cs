@@ -41,14 +41,14 @@ public sealed class RouteInspectBindingAndCompositionTests
 
         var help = RouteHelpSections.CreateGroup();
         var section = Assert.Single(help.Sections);
-        Assert.Equal("Notes", section.Heading);
+        Assert.Equal("Command help", section.Heading);
         var text = string.Join(Environment.NewLine, help.Sections.Select(section => section.Body));
         Assert.DoesNotContain(" available", text, StringComparison.Ordinal);
         Assert.DoesNotContain("list", text, StringComparison.Ordinal);
         Assert.DoesNotContain("inspect", text, StringComparison.Ordinal);
         Assert.DoesNotContain("init", text, StringComparison.Ordinal);
         Assert.DoesNotContain("create", text, StringComparison.Ordinal);
-        Assert.Contains("performs no operation", text, StringComparison.Ordinal);
+        Assert.Contains("Use open-forge route <command> --help", text, StringComparison.Ordinal);
         Assert.DoesNotContain("update", text, StringComparison.Ordinal);
         Assert.DoesNotContain("Planned but unavailable operation: remove.", text, StringComparison.Ordinal);
     }

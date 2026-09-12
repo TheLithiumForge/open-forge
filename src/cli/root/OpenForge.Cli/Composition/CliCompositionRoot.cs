@@ -140,35 +140,22 @@ internal static class CliCompositionRoot
         => new(
         [
             new CliHelpSection(
-                "Product",
-                $"  Open Forge CLI (`{CliSyntaxDefinitions.ExecutableName}`)."),
-            new CliHelpSection(
-                "Discovery",
+                "Getting started",
                 """
-                  route list        List routed sources and descendants at a structural depth.
-                  route inspect     Explain one source's route behavior without returning authored content.
-                  route init        Initialize every missing entrypoint in one exact route chain.
-                  route update      Update selected fields or an eligible Template body on one routed source.
-                  route move        Move one routed source or category while preserving its route meaning.
-                  route remove      Remove one unmanaged routed source or category and detach local references.
-                  find              Find Markdown sources by authored tags and structural headings.
-                  status            Inspect workspace, context, lifecycle, generated-navigation, and recovery status.
-                  doctor            Diagnose workspace, route, reference, lifecycle, and recovery facts without changing them.
-                  repair            Preview or apply local-reference repairs and selected Library residual recovery.
-                  extension list    List installed and available Extension packages.
-                  extension inspect Inspect one installed or available Extension package.
-                  extension create  Create one local Extension package scaffold.
-                  extension install Install reviewed Extension packages into a Framework workspace.
-                  extension update  Reconcile managed Extension packages from one reviewed source.
-                  extension remove  Release selected managed Extension ownership and remove eligible content.
-                  library list      Observe bounded Library records and links.
-                  library inspect   Inspect one complete Library inventory and projection.
-                  library attach    Register and project one contained source root.
-                  library sync      Reconcile one complete registered Library.
-                  library detach    Remove one exact registered projection.
+                  open-forge install --dry-run
+                  open-forge context
+                  open-forge route list
+                  open-forge doctor
                 """),
             new CliHelpSection(
-                heading: "Lifecycle",
-                body: "  Framework management is established or verified by install. Managed content is reconciled by update under its explicit force and prune authority."),
+                "Command help",
+                """
+                  Use open-forge <command> --help for options and examples.
+                  Use open-forge route --help, open-forge extension --help, or
+                  open-forge library --help to list their subcommands.
+                """),
+            new CliHelpSection(
+                "Managed content",
+                "  Install establishes or verifies Framework management. Update reconciles managed files; --force and --prune permit only their documented changes."),
         ]);
 }

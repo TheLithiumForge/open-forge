@@ -15,7 +15,7 @@ internal static class RouteInspectDefinitions
 
     internal static readonly CliSyntaxDefinition SourceReference = new(
         "source-reference",
-        "Select one source by automatic ID or exact .agents path.");
+        "Select one source by its ID or exact .agents path.");
 
     internal static string ReadObservationCode(RouteInspectObservationCode code)
     {

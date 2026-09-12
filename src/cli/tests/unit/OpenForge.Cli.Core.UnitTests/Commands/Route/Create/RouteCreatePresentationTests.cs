@@ -139,7 +139,7 @@ public sealed class RouteCreatePresentationTests
         Assert.Contains("route create", text, StringComparison.Ordinal);
         Assert.Contains("<file-target>", text, StringComparison.Ordinal);
         Assert.Contains("--description", text, StringComparison.Ordinal);
-        Assert.Contains("--tag=", text, StringComparison.Ordinal);
+        Assert.Contains("--tag ", text, StringComparison.Ordinal);
         Assert.Contains("--responsibility", text, StringComparison.Ordinal);
         Assert.Contains("--template", text, StringComparison.Ordinal);
         Assert.Contains("--dry-run", text, StringComparison.Ordinal);

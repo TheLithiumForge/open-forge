@@ -17,13 +17,13 @@ public sealed class ExtensionUpdatePresentationTests
         var help = ExtensionUpdatePresentation.CreateHelp();
 
         Assert.Equal(
-            ["Command", "Selection and dependencies", "Authority", "Results and streams"],
+            ["Syntax", "Selection and dependencies", "Authority", "Results and streams"],
             help.Sections.Select(section => section.Heading));
         Assert.Contains(
-            "open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [global flags]",
+            "open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [global options]",
             help.Sections[0].Body,
             StringComparison.Ordinal);
-        Assert.Contains("Dependencies are resolved transitively and dependency-first.", help.Sections[1].Body, StringComparison.Ordinal);
+        Assert.Contains("Dependencies, including dependencies of dependencies, are resolved first.", help.Sections[1].Body, StringComparison.Ordinal);
         Assert.Contains("--force", help.Sections[2].Body, StringComparison.Ordinal);
         Assert.Contains("--prune", help.Sections[2].Body, StringComparison.Ordinal);
         Assert.Contains("Dry-run writes nothing.", help.Sections[3].Body, StringComparison.Ordinal);

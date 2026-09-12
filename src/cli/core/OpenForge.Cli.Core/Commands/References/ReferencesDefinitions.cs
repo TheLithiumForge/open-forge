@@ -16,7 +16,7 @@ internal static class ReferencesDefinitions
 
     internal static readonly CliSyntaxDefinition ReferencesCommand = new(
         CommandIdentity,
-        "Report direct authored incoming and outgoing references for one source.");
+        "Show direct incoming and outgoing references.");
 
     internal static readonly CliSyntaxDefinition Source = new(
         "source-reference",

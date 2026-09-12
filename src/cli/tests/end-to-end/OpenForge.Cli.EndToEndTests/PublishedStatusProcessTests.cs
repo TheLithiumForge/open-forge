@@ -146,8 +146,10 @@ public sealed class PublishedStatusProcessTests
 
     private static IReadOnlyList<string> ReadImplementedRootLeaves(string help)
     {
-        return help.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
-            .TakeWhile(line => line.TrimStart() is not ("Product:" or "Discovery:" or "Lifecycle:"))
+        return help.Split(Environment.NewLine, StringSplitOptions.None)
+            .SkipWhile(line => line != "Commands:")
+            .Skip(1)
+            .TakeWhile(line => !string.IsNullOrWhiteSpace(line))
             .Select(line => line.TrimStart().Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries).FirstOrDefault())
             .Where(token => token is not null && ExpectedRootLeafOrder.Contains(token, StringComparer.Ordinal))
             .OfType<string>()

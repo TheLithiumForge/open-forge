@@ -122,11 +122,11 @@ public sealed class RouteListApplicationIntegrationTests
             .Split(Environment.NewLine, StringSplitOptions.None)
             .SkipWhile(line => !line.Equals("Commands:", StringComparison.Ordinal))
             .Skip(1)
-            .TakeWhile(line => !line.Equals("Notes:", StringComparison.Ordinal))
+            .TakeWhile(line => !string.IsNullOrWhiteSpace(line))
             .Where(line => line.Length > 2
                 && line[0] == ' '
                 && line[1] == ' '
-                && !char.IsWhiteSpace(line[2]))
+                && char.IsAsciiLetterLower(line[2]))
             .Select(line => line.TrimStart().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries)[0]);
         Assert.Equal(["list", "inspect", "init", "create", "update", "move", "remove"], groupCommands);
         Assert.Contains("update <source-reference>", group.Output, StringComparison.Ordinal);
@@ -134,7 +134,7 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.DoesNotContain("Operations:", group.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("available —", group.Output, StringComparison.Ordinal);
         Assert.Contains("open-forge route list [source-reference]", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("route inspect — available", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("route inspect — inspect", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("The default depth is 1", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("open-forge route list memory", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("open-forge route list .agents/memory/_memory.md", leaf.Output, StringComparison.Ordinal);

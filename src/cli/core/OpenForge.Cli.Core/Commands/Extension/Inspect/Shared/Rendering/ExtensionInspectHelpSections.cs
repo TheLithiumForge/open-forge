@@ -10,16 +10,16 @@ internal static class ExtensionInspectHelpSections
         [
             new CliHelpSection(
                 "Syntax",
-                "  open-forge extension inspect <stable-id> [--source <package-or-catalogue-path>] [global flags]"),
+                "  open-forge extension inspect <stable-id> [--source <package-or-catalogue-path>] [global options]"),
             new CliHelpSection(
                 "Subject and source",
-                "  The operand is one exact lowercase stable ID. Without --source, available facts use the embedded catalogue; with --source, only that exact disjoint local package or catalogue is read. No fallback, network, registry, cache, or fuzzy identity is used."),
+                "  Supply one exact lowercase stable ID. Available package details come from the bundled catalogue, or only from the separate local package or catalogue named by --source. There is no fallback, network, registry, cache, or approximate ID matching."),
             new CliHelpSection(
                 "Inspection",
                 "  Inspect reports independently trusted lifecycle, available package, dependency, path, current-byte, fingerprint, generated-boundary, and comparison facts. It never writes, mutates, executes package content, or invokes another command."),
             new CliHelpSection(
                 "Global options",
-                "  --workspace <path>, --json, --view=<compact|expanded>, --verbose, --help, and --version retain their shared Shell meaning. --view is a no-op with --json."),
+                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
             new CliHelpSection(
                 "Examples",
                 """

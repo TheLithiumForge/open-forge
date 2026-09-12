@@ -6,7 +6,7 @@ namespace OpenForge.Cli.Core.Commands.Library.List;
 internal static class LibraryListDefinitions
 {
     internal const string CommandIdentity = "library list";
-    internal static readonly CliSyntaxDefinition Command = new("list", "List bounded Library record and link observations.");
+    internal static readonly CliSyntaxDefinition Command = new("list", "List registered Libraries and their link status.");
     internal static string ReadFindingCode(LibraryListFindingCode value)
         => value switch
         {

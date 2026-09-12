@@ -16,13 +16,13 @@ internal static class ExtensionListDefinitions
 
     internal static readonly CliOptionDefinition<bool> Installed = new(
         name: "--installed",
-        description: "Render only the Installed section unless composed with --available.",
+        description: "Show installed packages; combine with --available to show both.",
         arity: CliOptionArity.None,
         defaultValue: false);
 
     internal static readonly CliOptionDefinition<bool> Available = new(
         name: "--available",
-        description: "Render only the Available section unless composed with --installed.",
+        description: "Show available packages; combine with --installed to show both.",
         arity: CliOptionArity.None,
         defaultValue: false);
 

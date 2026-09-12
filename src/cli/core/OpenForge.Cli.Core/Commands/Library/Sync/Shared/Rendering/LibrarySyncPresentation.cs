@@ -15,7 +15,19 @@ namespace OpenForge.Cli.Core.Commands.Library.Sync.Shared.Rendering;
 
 internal static class LibrarySyncPresentation
 {
-    internal static CliHelpContent CreateHelp() => new([new CliHelpSection("Library", LibrarySyncDefinitions.Command.Description)]);
+    internal static CliHelpContent CreateHelp() => new(
+    [
+        new CliHelpSection("Syntax", """
+              open-forge library sync <library-id> [--dry-run] [global options]
+            """),
+        new CliHelpSection("Write policy", """
+              Reconcile a registered Library with its complete source inventory. Use --dry-run to preview all changes without writing.
+            """),
+        new CliHelpSection("Examples", """
+              open-forge library sync shared --dry-run
+              open-forge library sync shared
+            """),
+    ]);
     internal static string RenderHuman(CliPresentationRequest<LibrarySyncResult> presentation)
         => Render(presentation, "sync");
     internal static string RenderJson(CliPresentationRequest<LibrarySyncResult> presentation)

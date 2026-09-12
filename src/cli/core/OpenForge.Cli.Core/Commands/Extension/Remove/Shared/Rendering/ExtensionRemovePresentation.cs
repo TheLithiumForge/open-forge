@@ -15,19 +15,19 @@ internal static class ExtensionRemovePresentation
         => new(
         [
             new CliHelpSection(
-                "Command",
-                "  open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [global flags]"),
+                "Syntax",
+                "  open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [global options]"),
             new CliHelpSection(
                 "Selection and dependencies",
                 """
-                  Select exact managed stable IDs, or use the finite human wizard.
-                  Retained dependents block dependency removal; orphan dependencies remain recorded.
+                  Select exact managed stable IDs, or choose from the interactive package list.
+                  A dependency cannot be removed while a retained package needs it. Unused dependencies remain registered.
                 """),
             new CliHelpSection(
                 "Ownership and changed content",
                 """
                   Shared paths remain owned by retained packages.
-                  Unchanged final-owner paths may be deleted; changed final-owner paths stay unmanaged
+                  When the last owner is removed, unchanged files may be deleted. Changed files stay unmanaged
                   unless this request includes --prune.
                 """),
             new CliHelpSection(

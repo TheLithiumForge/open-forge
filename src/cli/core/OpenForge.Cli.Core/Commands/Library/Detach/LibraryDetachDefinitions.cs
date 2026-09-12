@@ -6,7 +6,7 @@ namespace OpenForge.Cli.Core.Commands.Library.Detach;
 internal static class LibraryDetachDefinitions
 {
     internal const string CommandIdentity = "library detach";
-    internal static readonly CliSyntaxDefinition Command = new("detach", "Detach one exact Library projection while preserving its source.");
+    internal static readonly CliSyntaxDefinition Command = new("detach", "Remove a Library registration and its links; preserve source files.");
     internal static string ReadFindingCode(LibraryDetachFindingCode value)
         => value switch
         {

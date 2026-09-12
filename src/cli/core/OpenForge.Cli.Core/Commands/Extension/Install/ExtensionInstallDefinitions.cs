@@ -32,13 +32,13 @@ internal static class ExtensionInstallDefinitions
 
     internal static readonly CliOptionDefinition<bool> Force = new(
         "--force",
-        "Replace only eligible initial occupants with exact authority.",
+        "Replace eligible existing content during initial installation.",
         CliOptionArity.None,
         false);
 
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         "--automatic",
-        "Disable prompts without granting selection or force authority.",
+        "Disable prompts; does not select packages or imply --force.",
         CliOptionArity.None,
         false);
 

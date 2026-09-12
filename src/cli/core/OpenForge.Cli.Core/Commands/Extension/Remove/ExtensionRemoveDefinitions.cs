@@ -30,7 +30,7 @@ internal static class ExtensionRemoveDefinitions
 
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         name: "--automatic",
-        description: "Disable prompts without granting selection or delete authority.",
+        description: "Disable prompts; does not select packages or permit extra deletion.",
         arity: CliOptionArity.None,
         defaultValue: false);
 

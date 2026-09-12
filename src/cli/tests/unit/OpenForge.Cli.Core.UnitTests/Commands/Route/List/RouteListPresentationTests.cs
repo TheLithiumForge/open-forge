@@ -256,7 +256,7 @@ public sealed class RouteListPresentationTests
         Assert.Contains("--depth=all", text, StringComparison.Ordinal);
         Assert.Contains("--workspace <path>", text, StringComparison.Ordinal);
         Assert.Contains("JSON always writes one result envelope to stdout", text, StringComparison.Ordinal);
-        Assert.Contains("route inspect — available", text, StringComparison.Ordinal);
+        Assert.Contains("route inspect — inspect", text, StringComparison.Ordinal);
         Assert.Contains("open-forge route list memory", text, StringComparison.Ordinal);
         Assert.Contains("open-forge route list .agents/memory/_memory.md", text, StringComparison.Ordinal);
         Assert.Contains("open-forge route list --depth=2 --json", text, StringComparison.Ordinal);

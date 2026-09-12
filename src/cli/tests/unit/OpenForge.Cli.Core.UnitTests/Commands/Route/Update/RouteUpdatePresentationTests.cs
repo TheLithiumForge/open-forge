@@ -348,7 +348,7 @@ public sealed class RouteUpdatePresentationTests
         Assert.Contains("open-forge route update <source-reference>", text, StringComparison.Ordinal);
         Assert.Contains("--description <text>", text, StringComparison.Ordinal);
         Assert.Contains("--responsibility <text>", text, StringComparison.Ordinal);
-        Assert.Contains("--tag=<tag>", text, StringComparison.Ordinal);
+        Assert.Contains("--tag <tag>", text, StringComparison.Ordinal);
         Assert.Contains("--template <template-reference>", text, StringComparison.Ordinal);
         Assert.Contains("--dry-run", text, StringComparison.Ordinal);
         Assert.Contains("exact empty responsibility removes", text, StringComparison.OrdinalIgnoreCase);

@@ -10,19 +10,19 @@ internal static class InstallHelpSections
         [
             new CliHelpSection(
                 heading: "Syntax",
-                body: "  open-forge install [--force] [--automatic] [--dry-run] [global flags]"),
+                body: "  open-forge install [--force] [--automatic] [--dry-run] [global options]"),
             new CliHelpSection(
                 heading: "Establishment",
-                body: "  Install establishes the complete embedded Framework in one exact workspace or verifies an exact managed installation as a no-op. Managed divergence is preserved and directs to open-forge update."),
+                body: "  Install adds the complete bundled Framework to the selected workspace. An identical managed installation needs no changes. Existing managed changes are preserved; use open-forge update to reconcile them."),
             new CliHelpSection(
                 heading: "Write policy",
-                body: "  --force may replace only one eligible initial occupant; it never updates or adopts managed state. --automatic suppresses confirmation without adding force. --dry-run previews the same complete preflighted plan and writes nothing. Repetition is idempotent."),
+                body: "  --force may replace only one eligible existing item during initial installation. It never updates or adopts managed state. --automatic suppresses confirmation without adding force. --dry-run previews the same complete checked plan and writes nothing. Repeating the command makes no further changes."),
             new CliHelpSection(
                 heading: "Confirmation",
-                body: "  A prompt-capable human apply that would write asks once after preflight. Dry-run, verified no-op, --automatic, JSON, and non-prompt-capable requests never prompt; a non-prompt-capable human write requires --automatic."),
+                body: "  An interactive text request asks for confirmation once, after checks, if it would write files. Dry-run, unchanged installations, --automatic, JSON, and redirected requests never prompt. Redirected text requests that would write require --automatic."),
             new CliHelpSection(
                 heading: "Global options",
-                body: "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version retain their shared Shell meaning. --view is a no-op with --json."),
+                body: "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
             new CliHelpSection(
                 heading: "Examples",
                 body: "  open-forge install\n"

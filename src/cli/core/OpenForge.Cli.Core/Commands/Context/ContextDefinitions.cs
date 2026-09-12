@@ -21,17 +21,17 @@ internal static class ContextDefinitions
 
     internal static readonly CliSyntaxDefinition ContextCommand = new(
         name: CommandIdentity,
-        description: "Return ordered startup and selected Open Forge context.");
+        description: "Read startup context and selected sources.");
 
     internal static readonly CliOptionDefinition<bool> AdditionsOnly = new(
         name: "--additions-only",
-        description: "Return only sources added beyond the startup-required closure.",
+        description: "Show only sources added beyond the required startup context.",
         arity: CliOptionArity.None,
         defaultValue: false);
 
     internal static readonly CliOptionDefinition<string[]> Content = new(
         name: "--content",
-        description: "Project one comma-separated content selection.",
+        description: "Choose content parts as one comma-separated list.",
         arity: CliOptionArity.ExactlyOne,
         defaultValue: [],
         valueName: "part[,part...]");

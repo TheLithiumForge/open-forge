@@ -24,7 +24,7 @@ public sealed class PublishedCleanupProcessTests
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         Assert.Contains(
-            "open-forge cleanup [--dry-run] [global flags]",
+            "open-forge cleanup [--dry-run] [global options]",
             result.StandardOutput,
             StringComparison.Ordinal);
         Assert.Contains("Catalogue", result.StandardOutput, StringComparison.Ordinal);

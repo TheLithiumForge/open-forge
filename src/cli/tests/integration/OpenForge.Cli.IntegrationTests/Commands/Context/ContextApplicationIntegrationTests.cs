@@ -75,8 +75,8 @@ public sealed class ContextApplicationIntegrationTests
         Assert.Contains("open-forge context", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("[source-reference...]", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("--additions-only", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("--content=", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("--follow-links=", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("--content ", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("--follow-links ", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("Examples", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("Results and streams", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("deterministic, stateless, and read-only", leaf.Output, StringComparison.Ordinal);

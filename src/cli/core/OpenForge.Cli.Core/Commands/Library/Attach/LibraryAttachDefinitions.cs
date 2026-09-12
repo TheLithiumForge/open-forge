@@ -6,7 +6,7 @@ namespace OpenForge.Cli.Core.Commands.Library.Attach;
 internal static class LibraryAttachDefinitions
 {
     internal const string CommandIdentity = "library attach";
-    internal static readonly CliSyntaxDefinition Command = new("attach", "Attach one contained source root as relative file links.");
+    internal static readonly CliSyntaxDefinition Command = new("attach", "Register one Library source and create relative file links.");
     internal static string ReadFindingCode(LibraryAttachFindingCode value)
         => value switch
         {

@@ -165,7 +165,7 @@ public sealed class ContextPresentationTests
         var text = string.Join('\n', help.Sections.Select(section => $"{section.Heading}\n{section.Body}"));
 
         Assert.Contains("--additions-only", text, StringComparison.Ordinal);
-        Assert.Contains("--follow-links=<positive-depth|all>", text, StringComparison.Ordinal);
+        Assert.Contains("--follow-links <positive-depth|all>", text, StringComparison.Ordinal);
         Assert.Contains("Human complete, attention, and incomplete results use stdout", text, StringComparison.Ordinal);
         Assert.Contains("deterministic, stateless, and read-only", text, StringComparison.Ordinal);
     }

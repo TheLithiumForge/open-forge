@@ -10,7 +10,7 @@ internal static class RouteMoveHelpSections
         [
             new CliHelpSection(
                 "Syntax",
-                "  open-forge route move <source-reference> <destination-target> [--dry-run] [global flags]"),
+                "  open-forge route move <source-reference> <destination-target> [--dry-run] [global options]"),
             new CliHelpSection(
                 "Source",
                 "  <source-reference> selects one ordinary unmanaged routed Markdown leaf by ID, base path, or overwrite path, or one complete unmanaged category by its recognized entrypoint path."),

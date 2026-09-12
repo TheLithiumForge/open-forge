@@ -25,6 +25,10 @@ Commands use this general form:
 open-forge <command> [command options] [global options]
 ```
 
+Use `open-forge --help` to see commands and `open-forge <command> --help`
+for arguments, options, and examples. Help wraps to the terminal width;
+redirected help uses 80 columns. Long source references stay intact.
+
 The CLI works against the current directory unless `--workspace` selects one
 explicit directory. A source reference is either an automatic source ID, such
 as `memory/crystallized/documents`, or an exact path under `.agents`, such as

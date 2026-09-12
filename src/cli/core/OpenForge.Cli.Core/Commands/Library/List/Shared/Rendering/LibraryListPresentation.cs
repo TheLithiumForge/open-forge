@@ -15,7 +15,16 @@ namespace OpenForge.Cli.Core.Commands.Library.List.Shared.Rendering;
 
 internal static class LibraryListPresentation
 {
-    internal static CliHelpContent CreateHelp() => new([new CliHelpSection("Library", LibraryListDefinitions.Command.Description)]);
+    internal static CliHelpContent CreateHelp() => new(
+    [
+        new CliHelpSection("Inspection", """
+              List registered Libraries and their link status without scanning all source files.
+            """),
+        new CliHelpSection("Examples", """
+              open-forge library list
+              open-forge library list --json
+            """),
+    ]);
 
     internal static string RenderHuman(CliPresentationRequest<LibraryListResult> presentation)
     {

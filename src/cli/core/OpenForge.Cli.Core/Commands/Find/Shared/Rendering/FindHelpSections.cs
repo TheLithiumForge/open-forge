@@ -12,37 +12,37 @@ internal static class FindHelpSections
         [
             new CliHelpSection(
                 "Syntax",
-                "  open-forge find [--include=<source-reference>]... [--exclude=<source-reference>]... "
-                + "[--tag=<tag>]... [--heading=<heading>]... [--require=<all|any>] "
-                + "[--within=<part>[,<part>...]] [--content=<part>[,<part>...]] [global flags]"),
+                "  open-forge find [--include <source-reference>]... [--exclude <source-reference>]... "
+                + "[--tag <tag>]... [--heading <heading>]... [--require <all|any>] "
+                + "[--within <part>[,<part>...]] [--content <part>[,<part>...]] [global options]"),
             new CliHelpSection(
                 "Source references",
                 "  --include and --exclude accept one exact source ID or one exact .agents/... Markdown path "
-                + "per occurrence. Includes form a union, exclusions win, and unresolved selectors fail closed."
+                + "per occurrence. All includes are combined, exclusions take priority, and an unresolved reference prevents the search."
                 ),
             new CliHelpSection(
                 "Predicates and regions",
-                "  Repeat --tag or --heading for scalar predicates. --require accepts all or any. "
-                + "--within selects document, frontmatter, body, or section:<name>; parts compose in one value."
+                "  Repeat --tag or --heading to match more values. --require accepts all or any. "
+                + "--within selects document, frontmatter, body, or section:<name>; combine parts with commas in one value."
                 ),
             new CliHelpSection(
                 "Content and views",
-                "  --content projects metadata, frontmatter, headings, body, or section:<name>. "
-                + "Human --view values are compact and expanded; --view is a no-op with --json."
+                "  --content shows metadata, frontmatter, headings, body, or section:<name>. "
+                + "Text --view values are compact and expanded; --view is ignored with --json."
                 ),
             new CliHelpSection(
                 "Inherited global options",
                 "  Find inherits --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, "
-                + "and --version. Standard grammar and terminal behavior remain Shell-owned."
+                + "and --version. These options work the same way across commands."
                 ),
             new CliHelpSection("Results and streams", ResultsAndStreams()),
             new CliHelpSection(
                 "Examples",
                 "  open-forge find\n"
-                + "  open-forge find --tag=Architecture\n"
-                + "  open-forge find --heading=Instructions --view=compact\n"
-                + "  open-forge find --tag=Architecture --content=section:Target\n"
-                + "  open-forge find --include=docs --exclude=guide --json"
+                + "  open-forge find --tag Architecture\n"
+                + "  open-forge find --heading Instructions --view compact\n"
+                + "  open-forge find --tag Architecture --content section:Target\n"
+                + "  open-forge find --include docs --exclude guide --json"
                 ),
             new CliHelpSection(
                 "Related commands",

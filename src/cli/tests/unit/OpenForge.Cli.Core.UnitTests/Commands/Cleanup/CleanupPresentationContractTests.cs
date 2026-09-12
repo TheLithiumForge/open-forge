@@ -144,14 +144,14 @@ public sealed class CleanupPresentationContractTests
         Assert.Equal(
             ["Syntax", "Catalogue", "Write policy", "Global options", "Notes"],
             headings);
-        Assert.Contains("open-forge cleanup [--dry-run] [global flags]", text, StringComparison.Ordinal);
-        Assert.Contains("every positively recognized recovery final and ordinary exact-name draft", text, StringComparison.Ordinal);
-        Assert.Contains("without acquiring a lease or writing files", text, StringComparison.Ordinal);
-        Assert.Contains("--workspace <path>, --json, --view=<compact|expanded>, --verbose, --help, and --version", text, StringComparison.Ordinal);
+        Assert.Contains("open-forge cleanup [--dry-run] [global options]", text, StringComparison.Ordinal);
+        Assert.Contains("every recognized completed recovery bundle and draft with an exact expected name", text, StringComparison.Ordinal);
+        Assert.Contains("without locking the workspace or writing files", text, StringComparison.Ordinal);
+        Assert.Contains("--workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version", text, StringComparison.Ordinal);
         Assert.Contains("accepts no operands, selectors, prompts, confirmations", text, StringComparison.Ordinal);
         Assert.Contains("force mode, age filters, glob filters,", text, StringComparison.Ordinal);
-        Assert.Contains("or recursive arbitrary deletion.", text, StringComparison.Ordinal);
-        Assert.Contains("revalidates the exact catalogue before effects", text, StringComparison.Ordinal);
+        Assert.Contains("or arbitrary recursive deletion.", text, StringComparison.Ordinal);
+        Assert.Contains("rechecks the exact catalogue before making changes", text, StringComparison.Ordinal);
         Assert.DoesNotContain("--force", text, StringComparison.Ordinal);
         Assert.DoesNotContain("--automatic", text, StringComparison.Ordinal);
     }

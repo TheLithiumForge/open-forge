@@ -49,6 +49,7 @@ internal sealed record FindSymbols(
         => new(definition.Name)
         {
             Description = definition.Description,
+            HelpName = definition.ValueName,
             Arity = ArgumentArity.ZeroOrMore,
             AllowMultipleArgumentsPerToken = false,
         };
@@ -57,6 +58,7 @@ internal sealed record FindSymbols(
         => new(definition.Name)
         {
             Description = definition.Description,
+            HelpName = definition.ValueName,
             Arity = ArgumentArity.ZeroOrOne,
         };
 }

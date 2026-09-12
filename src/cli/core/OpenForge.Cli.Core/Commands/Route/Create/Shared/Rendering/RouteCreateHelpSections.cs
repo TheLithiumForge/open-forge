@@ -9,13 +9,13 @@ internal static class RouteCreateHelpSections
         [
             new CliHelpSection(
                 "Syntax",
-                "  open-forge route create <file-target> --description <text> --tag=<tag>... [--responsibility <text>] [--template <template-reference>] [--dry-run] [global flags]"),
+                "  open-forge route create <file-target> --description <text> --tag <tag>... [--responsibility <text>] [--template <template-reference>] [--dry-run] [global options]"),
             new CliHelpSection(
                 "Target",
                 "  <file-target> selects one ordinary Markdown source ID or exact .agents path below exactly one existing routable parent. Use route init when the parent route is missing."),
             new CliHelpSection(
                 "Metadata",
-                "  --description <text> and at least one ordered --tag=<tag> are required. --responsibility <text> is optional. Singleton values reject repetition; exact duplicate tags are invalid."),
+                "  --description <text> and at least one ordered --tag <tag> are required. --responsibility <text> is optional. Supply --description, --responsibility, and --template at most once each. Repeat --tag for more tags; exact duplicate tags are invalid."),
             new CliHelpSection(
                 "Template",
                 "  --template <template-reference> copies only the body of one exact routed Markdown source tagged Template. The destination keeps its explicit metadata and no continuing Template relationship."),
@@ -25,8 +25,8 @@ internal static class RouteCreateHelpSections
             new CliHelpSection(
                 "Examples",
                 """
-                  open-forge route create memory/project-alpha/overview --description "Project overview" --tag=Docs
-                  open-forge route create .agents/memory/project-alpha/overview.md --description "Project overview" --tag=Docs --template templates/route --dry-run
+                  open-forge route create memory/project-alpha/overview --description "Project overview" --tag Docs
+                  open-forge route create .agents/memory/project-alpha/overview.md --description "Project overview" --tag Docs --template templates/route --dry-run
                 """),
             new CliHelpSection(
                 "Notes",

@@ -10,26 +10,26 @@ internal static class RouteInitHelpSections
         [
             new CliHelpSection(
                 "Syntax",
-                "  open-forge route init <route-target> [--framework] [--description <text>] [--responsibility <text>] [--tag=<tag>]... [--dry-run] [global flags]"),
+                "  open-forge route init <route-target> [--framework] [--description <text>] [--responsibility <text>] [--tag <tag>]... [--dry-run] [global options]"),
             new CliHelpSection(
                 "Target",
                 "  <route-target> selects one exact route ID or .agents entrypoint path. A missing exact-path target must use the canonical entrypoint filename. Route Init creates missing entrypoints in that exact chain and never creates the Loader."),
             new CliHelpSection(
                 "Scaffold mode",
-                "  Generic mode uses the fixed draft scaffold. --framework uses the trusted embedded Framework topology and managed entrypoint assets. Repetition of --framework is idempotent."),
+                "  Generic mode uses the fixed draft scaffold. --framework uses the trusted embedded Framework topology and managed entrypoint assets. Repeating --framework has no additional effect."),
             new CliHelpSection(
                 "Metadata",
-                "  --description <text>, --responsibility <text>, and ordered repeated --tag=<tag> values apply only to a missing generic final target. Description and responsibility are singletons; empty or duplicate tags are invalid."),
+                "  --description <text>, --responsibility <text>, and ordered repeated --tag <tag> values apply only to a missing generic final target. Supply description and responsibility only once; empty or duplicate tags are invalid."),
             new CliHelpSection(
                 "Write policy",
-                "  Omit --dry-run to apply the complete preflighted plan. --dry-run previews the same directories, entrypoints, generated-region effects, and bounded changes without writing files. Repetition is idempotent."),
+                "  Omit --dry-run to apply the complete checked plan. --dry-run previews the same directories, entrypoints, generated-region effects, and bounded changes without writing files. Repeating the command makes no further changes."),
             new CliHelpSection(
                 "Global options",
-                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version retain their shared Shell meaning. --view is a no-op with --json."),
+                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
             new CliHelpSection(
                 "Examples",
                 "  open-forge route init memory/project-alpha/documents\n"
-                + "  open-forge route init memory/project-alpha/documents --description \"Project documents\" --tag=Memory\n"
+                + "  open-forge route init memory/project-alpha/documents --description \"Project documents\" --tag Memory\n"
                 + "  open-forge route init \"memory/Mobile App/crystallized/documents\" --framework --dry-run\n"
                 + "  open-forge route init .agents/memory/project-alpha/documents/_documents.md --json"),
             new CliHelpSection(

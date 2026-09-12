@@ -15,7 +15,7 @@ internal static class ExtensionUpdateDefinitions
 
     internal static readonly CliSyntaxDefinition UpdateCommand = new(
         name: "update",
-        description: "Reconcile managed Extension packages from one reviewed source.");
+        description: "Update managed Extension packages from one reviewed source.");
 
     internal static readonly CliOptionDefinition<string?> Source = new(
         name: "--source",
@@ -32,7 +32,7 @@ internal static class ExtensionUpdateDefinitions
 
     internal static readonly CliOptionDefinition<bool> Force = new(
         name: "--force",
-        description: "Replace changed or restore missing current expected managed content when eligible.",
+        description: "Replace changed or restore missing managed content when eligible.",
         arity: CliOptionArity.None,
         defaultValue: false);
 
@@ -44,7 +44,7 @@ internal static class ExtensionUpdateDefinitions
 
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         name: "--automatic",
-        description: "Disable prompts without granting selection, force, or prune authority.",
+        description: "Disable prompts; does not select packages or imply --force or --prune.",
         arity: CliOptionArity.None,
         defaultValue: false);
 

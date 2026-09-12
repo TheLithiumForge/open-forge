@@ -10,7 +10,7 @@ internal static class IndexHelpSections
         [
             new CliHelpSection(
                 "Syntax",
-                "  open-forge index [source-reference...] [--dry-run] [global flags]"),
+                "  open-forge index [source-reference...] [--dry-run] [global options]"),
             new CliHelpSection(
                 "Selection",
                 """
@@ -18,10 +18,10 @@ internal static class IndexHelpSections
                 """),
             new CliHelpSection(
                 "Write policy",
-                "  Omit --dry-run to apply bounded generated-interior changes. --dry-run previews the same complete preflighted plan and writes nothing. Repetition is idempotent."),
+                "  Omit --dry-run to apply bounded generated-interior changes. --dry-run previews the same complete checked plan and writes nothing. Repeating the command makes no further changes."),
             new CliHelpSection(
                 "Global options",
-                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version retain their shared Shell meaning. --view is a no-op with --json."),
+                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
             new CliHelpSection(
                 "Examples",
                 """

@@ -15,7 +15,19 @@ namespace OpenForge.Cli.Core.Commands.Library.Detach.Shared.Rendering;
 
 internal static class LibraryDetachPresentation
 {
-    internal static CliHelpContent CreateHelp() => new([new CliHelpSection("Library", LibraryDetachDefinitions.Command.Description)]);
+    internal static CliHelpContent CreateHelp() => new(
+    [
+        new CliHelpSection("Syntax", """
+              open-forge library detach <library-id> [--dry-run] [global options]
+            """),
+        new CliHelpSection("Write policy", """
+              Remove the registered destination links while preserving source files. Use --dry-run to preview all changes without writing.
+            """),
+        new CliHelpSection("Examples", """
+              open-forge library detach shared --dry-run
+              open-forge library detach shared
+            """),
+    ]);
     internal static string RenderHuman(CliPresentationRequest<LibraryDetachResult> presentation)
         => Render(presentation, "detach");
     internal static string RenderJson(CliPresentationRequest<LibraryDetachResult> presentation)

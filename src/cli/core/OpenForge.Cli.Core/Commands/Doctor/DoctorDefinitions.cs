@@ -11,7 +11,7 @@ internal static class DoctorDefinitions
 
     internal static CliSyntaxDefinition DoctorCommand { get; } = new(
         CommandIdentity,
-        "Diagnose workspace, route, reference, lifecycle, and recovery facts without changing them.");
+        "Diagnose workspace and managed content problems.");
 
     internal static string ReadFindingKind(DoctorFindingKind kind)
         => kind switch

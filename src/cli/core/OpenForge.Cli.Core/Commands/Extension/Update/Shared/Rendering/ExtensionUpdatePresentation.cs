@@ -15,11 +15,11 @@ internal static class ExtensionUpdatePresentation
         => new(
         [
             new CliHelpSection(
-                "Command",
-                "  open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [global flags]"),
+                "Syntax",
+                "  open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [global options]"),
             new CliHelpSection(
                 "Selection and dependencies",
-                "  Select exact managed stable IDs or --all from one reviewed source. Dependencies are resolved transitively and dependency-first."),
+                "  Select exact managed stable IDs or --all from one reviewed source. Dependencies, including dependencies of dependencies, are resolved first."),
             new CliHelpSection(
                 "Authority",
                 "  Normal mode preserves changed, missing, retired, shared, and unknown content. --force replaces or restores current expected content; --prune deletes eligible retired content."),

@@ -14,7 +14,7 @@ internal static class InstallDefinitions
 
     internal static readonly CliSyntaxDefinition InstallCommand = new(
         CommandIdentity,
-        "Establish Framework management in the selected workspace.");
+        "Install the bundled Framework.");
 
     internal static readonly CliOptionDefinition<bool> Force = new(
         "--force",

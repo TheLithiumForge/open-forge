@@ -15,17 +15,17 @@ internal static class ExtensionInstallPresentation
         => new(
         [
             new CliHelpSection(
-                "Command",
-                "  open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [global flags]"),
+                "Syntax",
+                "  open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [global options]"),
             new CliHelpSection(
                 "Selection and dependencies",
                 "  Select exact stable IDs, --all, or the sole package in a one-package source. Dependencies are mandatory and installed first."),
             new CliHelpSection(
                 "Interaction and automatic mode",
-                "  A prompt-capable human request may select from a finite catalogue. --automatic and non-interactive requests never choose packages or grant force."),
+                "  Interactive text requests can offer a list of packages to choose from. --automatic and non-interactive requests do not choose packages or enable --force."),
             new CliHelpSection(
                 "Initial force",
-                "  --force replaces only exact eligible initial occupants; it never reconciles managed divergence."),
+                "  --force replaces only eligible existing content during initial installation. Use extension update for changes to managed content."),
             new CliHelpSection(
                 "Results and streams",
                 "  Dry-run writes nothing. Human and JSON output preserve the shared semantic status, stream, and exit mapping."),

@@ -11,13 +11,13 @@ internal static class StatusHelpSections
         [
             new CliHelpSection(
                 "Syntax",
-                "  open-forge status [global flags]"),
+                "  open-forge status [global options]"),
             new CliHelpSection(
                 "Inspection",
                 "  Inspect the selected workspace's installation, startup and continuity context, generated navigation, lifecycle, managed targets, and exact recovery candidates."),
             new CliHelpSection(
                 "Global options",
-                "  --workspace <path>, --json, --view=<compact|expanded>, --verbose, --help, and --version retain their shared Shell meaning. --view is a no-op with --json."),
+                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
             new CliHelpSection(
                 "Related commands",
                 """

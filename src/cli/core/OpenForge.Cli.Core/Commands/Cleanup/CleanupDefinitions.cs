@@ -53,11 +53,11 @@ internal static class CleanupDefinitions
 
     internal static readonly CliSyntaxDefinition CleanupCommand = new(
         CleanupCommandName,
-        "Remove recognized recovery bundles and drafts for the selected workspace.");
+        "Remove recognized recovery bundles and drafts.");
 
     internal static readonly CliOptionDefinition<bool> DryRun = new(
         "--dry-run",
-        "Preview the complete cleanup plan without acquiring a lease or writing.",
+        "Preview cleanup without locking the workspace or writing files.",
         CliOptionArity.None,
         false);
 

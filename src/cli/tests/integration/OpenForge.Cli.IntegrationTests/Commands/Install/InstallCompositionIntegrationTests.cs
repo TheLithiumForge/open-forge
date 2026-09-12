@@ -236,17 +236,17 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Single(
             root.StandardOutput.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
             line => line.TrimStart().StartsWith("install", StringComparison.Ordinal));
-        Assert.Contains("Lifecycle", root.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("established or verified by install", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Managed content", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Install establishes or verifies Framework management.", root.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
-            "reconciled by update under its explicit force and prune authority",
-            root.StandardOutput,
+            "--force and --prune permit only their documented changes",
+            string.Join(" ", root.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
             StringComparison.Ordinal);
         Assert.Equal(0, leaf.ExitCode);
         Assert.Equal(string.Empty, leaf.StandardError);
         Assert.Contains(
-            "open-forge install [--force] [--automatic] [--dry-run] [global flags]",
-            leaf.StandardOutput,
+            "open-forge install [--force] [--automatic] [--dry-run] [global options]",
+            string.Join(" ", leaf.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
             StringComparison.Ordinal);
         Assert.Contains("Confirmation", leaf.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Results and streams", leaf.StandardOutput, StringComparison.Ordinal);

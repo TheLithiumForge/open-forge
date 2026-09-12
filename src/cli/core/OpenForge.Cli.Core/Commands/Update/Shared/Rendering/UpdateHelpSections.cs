@@ -10,24 +10,24 @@ internal static class UpdateHelpSections
         [
             new CliHelpSection(
                 heading: "Syntax",
-                body: "  open-forge update [--force] [--prune] [--automatic] [--dry-run] [global flags]"),
+                body: "  open-forge update [--force] [--prune] [--automatic] [--dry-run] [global options]"),
             new CliHelpSection(
                 heading: "Reconciliation",
-                body: "  Update reconciles one trusted managed Framework installation with the complete payload embedded in the running CLI. A verified current installation is a write-free no-op."),
+                body: "  Update compares the managed Framework installation with the complete version bundled in this CLI. An installation already at that version needs no writes."),
             new CliHelpSection(
                 heading: "Authority",
                 body: "  --force may replace changed or restore missing current managed content. "
-                + "--prune may delete eligible retired managed content. The two authorities are independent; "
-                + "--automatic grants neither. Safe source changes and new targets do not require force."),
+                + "--prune may delete eligible retired managed content. The flags are independent; "
+                + "--automatic enables neither. Safe source changes and new targets do not require force."),
             new CliHelpSection(
                 heading: "Execution",
                 body: "  --automatic suppresses confirmation without adding force or prune. "
-                + "--dry-run previews the same complete preflighted plan and writes nothing. "
-                + "A prompt-capable human apply that would write asks once after preflight; "
+                + "--dry-run previews the same complete checked plan and writes nothing. "
+                + "An interactive text request asks once after checks if it would write files. "
                 + "JSON and redirected execution never prompt."),
             new CliHelpSection(
                 heading: "Global options",
-                body: "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version retain their shared Shell meaning. --view is a no-op with --json."),
+                body: "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
             new CliHelpSection(
                 heading: "Examples",
                 body: "  open-forge update\n"

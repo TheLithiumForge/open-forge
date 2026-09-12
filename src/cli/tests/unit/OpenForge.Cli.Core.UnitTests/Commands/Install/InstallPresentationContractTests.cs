@@ -129,7 +129,7 @@ public sealed class InstallPresentationContractTests
 
         var syntax = Assert.Single(help.Sections, section => section.Heading == "Syntax");
         Assert.Contains(
-            "open-forge install [--force] [--automatic] [--dry-run] [global flags]",
+            "open-forge install [--force] [--automatic] [--dry-run] [global options]",
             syntax.Body,
             StringComparison.Ordinal);
         var writePolicy = Assert.Single(
@@ -139,7 +139,7 @@ public sealed class InstallPresentationContractTests
         var confirmation = Assert.Single(
             help.Sections,
             section => section.Heading == "Confirmation");
-        Assert.Contains("non-prompt-capable human write requires --automatic", confirmation.Body, StringComparison.Ordinal);
+        Assert.Contains("Redirected text requests that would write require --automatic", confirmation.Body, StringComparison.Ordinal);
         var globalOptions = Assert.Single(
             help.Sections,
             section => section.Heading == "Global options");

@@ -12,16 +12,16 @@ internal static class RouteInspectHelpSections
         [
             new CliHelpSection(
                 "Syntax",
-                "  open-forge route inspect <source-reference> [global flags]"),
+                "  open-forge route inspect <source-reference> [global options]"),
             new CliHelpSection(
                 "Source references",
                 "  Use one source-id or one exact .agents/... or ./.agents/... path. "
-                + "The source reference is required for domain execution."),
+                + "Supply a source reference to run this command."),
             new CliHelpSection(
                 "Inherited global options",
                 "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version.\n"
-                + "  The native --view=<compact|expanded> and --view:<compact|expanded> forms remain parser-owned.\n"
-                + "  --view selects human density and is a no-op with --json."),
+                + "  You can also use --view=<compact|expanded> or --view:<compact|expanded>.\n"
+                + "  --view selects text detail and is ignored with --json."),
             new CliHelpSection("Results and streams", BuildResultsBody()),
             new CliHelpSection(
                 "Examples",
@@ -33,7 +33,7 @@ internal static class RouteInspectHelpSections
             new CliHelpSection(
                 "Related commands",
                 "  route list — list routed sources and descendants.\n"
-                + "  context — available; use open-forge context [source-reference...] to read selected source content.\n"
+                + "  context — use open-forge context [source-reference...] to read selected source content.\n"
                 + "  doctor — diagnose workspace conditions without changing them."),
             new CliHelpSection(
                 "Notes",

@@ -16,7 +16,7 @@ internal static class CliHost
         var writers = new CliOutputWriters(Console.Out, Console.Error);
         return RunApplicationAsync(
             arguments: arguments,
-            currentDirectory: Environment.CurrentDirectory,
+            environment: new CliProcessEnvironment(Environment.CurrentDirectory, ReadHelpWidth()),
             writers: writers,
             application: CliCompositionRoot.Create(
                 CreateProcessIdentity(),
@@ -38,7 +38,7 @@ internal static class CliHost
     {
         return RunApplicationAsync(
             arguments: arguments,
-            currentDirectory: currentDirectory,
+            environment: new CliProcessEnvironment(currentDirectory),
             writers: writers,
             application: CliCompositionRoot.Create(CreateProcessIdentity()),
             cancellationToken: cancellationToken);
@@ -46,18 +46,18 @@ internal static class CliHost
 
     private static async ValueTask<int> RunApplicationAsync(
         string[] arguments,
-        string currentDirectory,
+        CliProcessEnvironment environment,
         CliOutputWriters writers,
         CliCoreApplication application,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(arguments);
-        ArgumentException.ThrowIfNullOrWhiteSpace(currentDirectory);
+        ArgumentNullException.ThrowIfNull(environment);
         ArgumentNullException.ThrowIfNull(writers);
         var completion = await application
             .RunAsync(
                 arguments,
-                new CliProcessEnvironment(currentDirectory),
+                environment,
                 writers,
                 cancellationToken)
             .ConfigureAwait(false);
@@ -69,5 +69,16 @@ internal static class CliHost
         return new CliProcessIdentity(
             CliSyntaxDefinitions.ExecutableName,
             CliBuildVersion.InformationalVersion);
+    }
+
+    private static int ReadHelpWidth()
+    {
+        if (Console.IsOutputRedirected)
+        {
+            return CliProcessEnvironment.DefaultHelpWidth;
+        }
+
+        var width = Console.WindowWidth;
+        return width > 0 ? width : CliProcessEnvironment.DefaultHelpWidth;
     }
 }

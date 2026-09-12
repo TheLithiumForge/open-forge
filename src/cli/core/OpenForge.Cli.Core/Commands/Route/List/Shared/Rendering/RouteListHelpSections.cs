@@ -11,7 +11,7 @@ internal static class RouteListHelpSections
         [
             new CliHelpSection(
                 "Syntax",
-                "  open-forge route list [source-reference] [--depth=<non-negative-integer|all>] [global flags]"),
+                "  open-forge route list [source-reference] [--depth=<non-negative-integer|all>] [global options]"),
             new CliHelpSection(
                 "Source references",
                 "  source-reference is either an exact source ID such as memory or an exact .agents/... or "
@@ -19,13 +19,13 @@ internal static class RouteListHelpSections
                 + "fuzzy or path guesses."),
             new CliHelpSection(
                 "Depth",
-                "  The default depth is 1. Use --depth=0 for selected roots only, a non-negative Int32 for a "
-                + "bounded descendant depth, or --depth=all for the complete routed descendant closure. "
+                "  The default depth is 1. Use --depth=0 for selected roots only, a whole number from 0 to 2147483647 for a "
+                + "bounded descendant depth, or --depth=all for all routed descendants. "
                 + "The equals form is required for --depth."),
             new CliHelpSection(
                 "Inherited global options",
-                "  This leaf inherits --workspace <path>, --json, --view=<compact|expanded>, --verbose, --help, "
-                + "and --version from the root. --view changes only human density and is a no-op with --json."),
+                "  Available on this command: --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, "
+                + "and --version. --view changes only text detail and is ignored with --json."),
             new CliHelpSection(
                 "Exit and streams",
                 BuildExitAndStreamBody()),
@@ -38,7 +38,7 @@ internal static class RouteListHelpSections
                 + "  open-forge route list --depth=2 --json"),
             new CliHelpSection(
                 "Related commands",
-                "  route inspect — available; inspect one source's route behavior.\n"
+                "  route inspect — inspect one source's route behavior.\n"
                 + "  find — find Markdown sources by authored tags and structural headings.\n"
                 + "  context — return ordered startup and selected source content."),
         ]);

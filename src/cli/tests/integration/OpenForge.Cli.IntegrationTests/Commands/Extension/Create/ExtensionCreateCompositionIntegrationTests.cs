@@ -87,15 +87,15 @@ public sealed class ExtensionCreateCompositionIntegrationTests
         switch (scope)
         {
             case "root":
-                Assert.Contains("extension create  Create one local Extension package scaffold.", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("open-forge extension --help", run.StandardOutput, StringComparison.Ordinal);
                 break;
             case "group":
                 Assert.Contains("list", run.StandardOutput, StringComparison.Ordinal);
                 Assert.Contains("inspect <stable-id>", run.StandardOutput, StringComparison.Ordinal);
                 Assert.Contains("create <stable-id>", run.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("The extension group performs no operation.", run.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Update syntax:", run.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Remove syntax:", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("Command help:", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("update <stable-id>", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("remove <stable-id>", run.StandardOutput, StringComparison.Ordinal);
                 Assert.DoesNotContain("Operations:", run.StandardOutput, StringComparison.Ordinal);
                 Assert.DoesNotContain("Create one local catalogue scaffold without installing it.", run.StandardOutput, StringComparison.Ordinal);
                 break;

@@ -73,7 +73,7 @@ public sealed class StatusCompositionIntegrationTests
             workspace, "status", "--help", "--workspace", missing);
         Assert.Equal(0, leafHelp.ExitCode);
         Assert.Equal(string.Empty, leafHelp.StandardError);
-        Assert.Contains("open-forge status [global flags]", leafHelp.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("open-forge status [global options]", leafHelp.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("schemaVersion", leafHelp.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Startup context", leafHelp.StandardOutput, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missing));

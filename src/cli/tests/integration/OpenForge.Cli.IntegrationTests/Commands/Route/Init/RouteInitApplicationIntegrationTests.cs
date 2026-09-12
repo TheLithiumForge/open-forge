@@ -28,7 +28,7 @@ public sealed class RouteInitApplicationIntegrationTests
         Assert.DoesNotContain("--automatic", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--force", result.Output, StringComparison.Ordinal);
         Assert.Contains("[--framework]", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Omit --dry-run to apply the complete preflighted plan.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Omit --dry-run to apply the complete checked plan.", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--template", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--yes", result.Output, StringComparison.Ordinal);
         Assert.Contains("complete: exit 0 and human stdout.", result.Output, StringComparison.Ordinal);
@@ -119,23 +119,23 @@ public sealed class RouteInitApplicationIntegrationTests
         Assert.Equal(CliInvalidInputSource.Delimiter, invalid.Source);
     }
 
-    [Fact(DisplayName = "Composed root help exposes Route Init exactly once in Discovery"), Trait("Feature", "route-init-presentation"), Trait("Evidence", "Integration")]
-    public async Task ComposedRootHelpExposesRouteInitOnceInDiscovery()
+    [Fact(DisplayName = "Composed route help exposes Route Init exactly once in Commands"), Trait("Feature", "route-init-presentation"), Trait("Evidence", "Integration")]
+    public async Task ComposedRouteHelpExposesRouteInitOnceInCommands()
     {
         using var workspace = TemporaryWorkspace.Create("route-init-composed-help");
 
         var result = await CliHostCapture.RunAsync(
-            ["--help"],
+            ["route", "--help"],
             workspace.Path);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
         var discovery = result.Output
             .Split(Environment.NewLine, StringSplitOptions.None)
-            .SkipWhile(line => !line.Equals("Discovery:", StringComparison.Ordinal))
+            .SkipWhile(line => !line.Equals("Commands:", StringComparison.Ordinal))
             .Skip(1)
             .TakeWhile(line => line.StartsWith("  ", StringComparison.Ordinal))
-            .Where(line => line.TrimStart().StartsWith("route init", StringComparison.Ordinal))
+            .Where(line => line.TrimStart().StartsWith("init ", StringComparison.Ordinal))
             .ToArray();
         Assert.Single(discovery);
     }

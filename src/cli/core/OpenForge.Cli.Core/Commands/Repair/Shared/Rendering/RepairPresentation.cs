@@ -19,27 +19,27 @@ internal static class RepairPresentation
         [
             new CliHelpSection(
                 "Syntax",
-                "  open-forge repair [--automatic] [--relink <source-location> <expected-destination> <target-path>]... [--dry-run] [global flags]"),
+                "  open-forge repair [--automatic] [--relink <source-location> <expected-destination> <target-path>]... [--dry-run] [global options]"),
             new CliHelpSection(
                 "Selection",
                 string.Join(
                     " ",
                     [
-                        "  Bare human Repair opens the bounded wizard.",
-                        "--automatic selects current safe-exact corrections;",
+                        "  Run repair interactively to choose from the available repairs.",
+                        "--automatic selects currently verified safe corrections;",
                         "--relink selects one current occurrence and contained target.",
                         "Guided candidates are never selected automatically.",
                     ])),
             new CliHelpSection(
                 "Catalogue",
                 """
-                  Repair admits same-target canonical path, case, encoding, and unique fragment corrections, plus explicitly selected missing-target relinks backed by bounded Doctor candidates.
-                It also admits selected safe-exact Workspace Library residual recovery from verified typed evidence.
+                  Repair can correct path spelling, case, encoding, and unique fragments while preserving the target. You can also explicitly relink a missing target to a candidate reported by Doctor.
+                It can also complete selected incomplete Library operations when current evidence proves the correction is safe.
                 """),
             new CliHelpSection(
                 "Library recovery",
                 """
-                  Selected Library recovery requires exact current-v1 attribution, no-follow identity, and current permission for external link effects.
+                  Library recovery requires a matching current-v1 recovery record, verified link identity without following the link, and current permission to change links outside .agents.
                 It adds no recovery syntax, never follows or mutates source targets, and does not restore or widen permission grants.
                 """),
             new CliHelpSection(
@@ -53,7 +53,7 @@ internal static class RepairPresentation
                     ])),
             new CliHelpSection(
                 "Global options",
-                "  --workspace <path>, --json, --view=<compact|expanded>, --verbose, --help, and --version retain their shared Shell meaning. --view is a no-op with --json."),
+                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
             new CliHelpSection("Results and streams", ResultsAndStreams()),
             new CliHelpSection(
                 "Notes",

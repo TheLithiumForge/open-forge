@@ -200,12 +200,12 @@ public sealed class RouteInitPresentationTests
         Assert.Contains("route init", text, StringComparison.Ordinal);
         Assert.Contains(
             "open-forge route init <route-target> [--framework] [--description <text>] [--responsibility <text>] "
-            + "[--tag=<tag>]... [--dry-run] [global flags]", text, StringComparison.Ordinal);
+            + "[--tag <tag>]... [--dry-run] [global options]", text, StringComparison.Ordinal);
         Assert.Contains("<route-target>", text, StringComparison.Ordinal);
         Assert.Contains("--framework", text, StringComparison.Ordinal);
         Assert.Contains("--description", text, StringComparison.Ordinal);
         Assert.Contains("--responsibility", text, StringComparison.Ordinal);
-        Assert.Contains("--tag=", text, StringComparison.Ordinal);
+        Assert.Contains("--tag ", text, StringComparison.Ordinal);
         Assert.Contains("--dry-run", text, StringComparison.Ordinal);
         Assert.DoesNotContain("--automatic", text, StringComparison.Ordinal);
         Assert.DoesNotContain("--scope", text, StringComparison.Ordinal);

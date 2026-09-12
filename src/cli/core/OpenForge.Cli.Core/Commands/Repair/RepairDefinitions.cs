@@ -18,18 +18,18 @@ internal static class RepairDefinitions
 
     internal static readonly CliSyntaxDefinition RepairCommand = new(
         CommandIdentity,
-        "Apply bounded local-reference repairs and selected Workspace Library residual recovery.");
+        "Repair local references and Library state.");
 
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         "--automatic",
-        "Select every current safe-exact repair without prompting.",
+        "Select all currently verified safe repairs without prompting.",
         CliOptionArity.None,
         false);
 
     internal static readonly RepairRelinkDefinition Relink = new(
         "--relink",
         "Select one exact source occurrence and contained target.",
-        "source-location expected-destination target-path");
+        "source expected target");
 
     internal static readonly CliOptionDefinition<bool> DryRun = new(
         "--dry-run",

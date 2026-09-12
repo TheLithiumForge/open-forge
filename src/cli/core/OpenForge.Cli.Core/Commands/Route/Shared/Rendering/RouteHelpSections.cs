@@ -9,8 +9,8 @@ internal static class RouteHelpSections
         return new CliHelpContent(
         [
             new CliHelpSection(
-                "Notes",
-                "  The route group performs no operation."),
+                "Command help",
+                "  Use open-forge route <command> --help for arguments, write policy, and examples."),
         ]);
     }
 }

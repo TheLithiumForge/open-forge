@@ -118,7 +118,7 @@ public sealed class RouteInspectPresentationTests
         Assert.Contains("--view", text, StringComparison.Ordinal);
         Assert.Contains("JSON", text, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("route list", text, StringComparison.Ordinal);
-        Assert.Contains("context — available", text, StringComparison.Ordinal);
+        Assert.Contains("context — use", text, StringComparison.Ordinal);
         Assert.Contains("open-forge context [source-reference...]", text, StringComparison.Ordinal);
         Assert.DoesNotContain("context — unavailable", text, StringComparison.Ordinal);
         Assert.Contains("doctor — diagnose workspace conditions without changing them.", text, StringComparison.Ordinal);

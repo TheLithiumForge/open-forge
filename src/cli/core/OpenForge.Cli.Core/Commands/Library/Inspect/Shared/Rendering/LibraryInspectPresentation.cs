@@ -15,7 +15,19 @@ namespace OpenForge.Cli.Core.Commands.Library.Inspect.Shared.Rendering;
 
 internal static class LibraryInspectPresentation
 {
-    internal static CliHelpContent CreateHelp() => new([new CliHelpSection("Library", LibraryInspectDefinitions.Command.Description)]);
+    internal static CliHelpContent CreateHelp() => new(
+    [
+        new CliHelpSection("Syntax", """
+              open-forge library inspect <library-id> [global options]
+            """),
+        new CliHelpSection("Inspection", """
+              Scan all source files and destination links for one registered Library. The Library ID is its management ID, not an Open Forge source ID.
+            """),
+        new CliHelpSection("Examples", """
+              open-forge library inspect shared
+              open-forge library inspect shared --json
+            """),
+    ]);
 
     internal static string RenderHuman(CliPresentationRequest<LibraryInspectResult> presentation)
     {

@@ -248,7 +248,7 @@ public sealed class FindDiagnosticsAndHelpTests
 
         Assert.Contains("stdout", results, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("stderr", results, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("open-forge find --tag=Architecture", examples, StringComparison.Ordinal);
+        Assert.Contains("open-forge find --tag Architecture", examples, StringComparison.Ordinal);
         Assert.Contains("open-forge route list", related, StringComparison.Ordinal);
         Assert.Contains("open-forge doctor", related, StringComparison.Ordinal);
         Assert.False(string.IsNullOrWhiteSpace(notes));

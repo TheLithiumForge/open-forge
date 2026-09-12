@@ -17,13 +17,13 @@ public sealed class ExtensionRemovePresentationTests
         var help = ExtensionRemovePresentation.CreateHelp();
 
         Assert.Equal(
-            ["Command", "Selection and dependencies", "Ownership and changed content", "Results and streams"],
+            ["Syntax", "Selection and dependencies", "Ownership and changed content", "Results and streams"],
             help.Sections.Select(section => section.Heading));
         Assert.Contains(
-            "open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [global flags]",
+            "open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [global options]",
             help.Sections[0].Body,
             StringComparison.Ordinal);
-        Assert.Contains("Retained dependents block dependency removal", help.Sections[1].Body, StringComparison.Ordinal);
+        Assert.Contains("A dependency cannot be removed while a retained package needs it", help.Sections[1].Body, StringComparison.Ordinal);
         Assert.Contains("unless this request includes --prune", help.Sections[2].Body, StringComparison.Ordinal);
         Assert.Contains("Dry-run writes nothing.", help.Sections[3].Body, StringComparison.Ordinal);
     }

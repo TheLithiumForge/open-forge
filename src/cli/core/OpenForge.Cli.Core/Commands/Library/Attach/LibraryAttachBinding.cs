@@ -29,6 +29,7 @@ internal static class LibraryAttachBinding
         var destinationRoot = new Option<string?>(LibraryDefinitions.DestinationRoot.Name)
         {
             Description = LibraryDefinitions.DestinationRoot.Description,
+            HelpName = LibraryDefinitions.DestinationRoot.ValueName,
             Arity = ArgumentArity.ExactlyOne,
         };
         command.Options.Add(destinationRoot);

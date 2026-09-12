@@ -61,7 +61,7 @@ internal sealed class CliCoreApplication
 
         if (global.TerminalMode == CliTerminalMode.Help || selection.Binding is null)
         {
-            var help = CliHelpRenderer.Render(parse.Result, parse.Tree.ReadHelp(selection.Command));
+            var help = CliHelpRenderer.Render(parse.Result, parse.Tree.ReadHelp(selection.Command), environment.HelpWidth);
             await writers.StandardOutput.WriteLineAsync(help.AsMemory(), cancellationToken).ConfigureAwait(false);
             return CliProcessCompletionPolicy.Complete(
                 CliSemanticStatus.Complete,

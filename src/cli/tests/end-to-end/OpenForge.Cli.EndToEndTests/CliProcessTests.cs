@@ -60,10 +60,10 @@ public sealed class CliProcessTests
         Assert.Equal(0, leaf.ExitCode);
         Assert.Equal(0, inspectLeaf.ExitCode);
         Assert.Equal(root.StandardOutput, help.StandardOutput);
-        Assert.Contains("Open Forge CLI (`open-forge`)", root.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Discovery:", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Inspect and maintain an Open Forge workspace.", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Getting started:", root.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("route list", root.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("route inspect", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("open-forge route --help", root.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Commands:", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("list <source-reference>", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("inspect <source-reference>", group.StandardOutput, StringComparison.Ordinal);
@@ -75,7 +75,7 @@ public sealed class CliProcessTests
         Assert.DoesNotContain("available —", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
             "open-forge route list [source-reference] [--depth=<non-negative-integer|all>]",
-            leaf.StandardOutput,
+            string.Join(" ", leaf.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
             StringComparison.Ordinal);
         Assert.Contains("open-forge route list memory --depth=all", leaf.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(

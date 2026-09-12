@@ -6,7 +6,7 @@ namespace OpenForge.Cli.Core.Commands.Library.Sync;
 internal static class LibrarySyncDefinitions
 {
     internal const string CommandIdentity = "library sync";
-    internal static readonly CliSyntaxDefinition Command = new("sync", "Synchronize one registered Library from its complete inventory.");
+    internal static readonly CliSyntaxDefinition Command = new("sync", "Synchronize a registered Library with all its source files.");
     internal static string ReadFindingCode(LibrarySyncFindingCode value)
         => value switch
         {

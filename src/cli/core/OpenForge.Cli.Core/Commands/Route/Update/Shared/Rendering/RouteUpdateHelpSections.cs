@@ -10,7 +10,7 @@ internal static class RouteUpdateHelpSections
         [
             new CliHelpSection(
                 "Syntax",
-                "  open-forge route update <source-reference> [--description <text>] [--responsibility <text>] [--tag=<tag>]... [--template <template-reference>] [--dry-run] [global flags]"),
+                "  open-forge route update <source-reference> [--description <text>] [--responsibility <text>] [--tag <tag>]... [--template <template-reference>] [--dry-run] [global options]"),
             new CliHelpSection(
                 "Target",
                 """
@@ -20,8 +20,8 @@ internal static class RouteUpdateHelpSections
             new CliHelpSection(
                 "Metadata",
                 """
-                  Supply at least one metadata or Template operation. Description, responsibility, and Template values are singletons and reject repetition.
-                  Repeated --tag=<tag> values form one ordered replacement list; empty or duplicate tags are invalid.
+                  Supply at least one metadata or Template operation. Description, responsibility, and Template values must each be supplied only once.
+                  Repeated --tag <tag> values form one ordered replacement list; empty or duplicate tags are invalid.
                   An exact empty responsibility removes that field, while whitespace-only text is invalid.
                 """),
             new CliHelpSection(
@@ -39,7 +39,7 @@ internal static class RouteUpdateHelpSections
             new CliHelpSection(
                 "Examples",
                 "  open-forge route update memory/project-alpha/overview --description \"Project overview\"\n"
-                + "  open-forge route update .agents/memory/project-alpha/overview.md --responsibility \"\" --tag=Docs --tag=Memory\n"
+                + "  open-forge route update .agents/memory/project-alpha/overview.md --responsibility \"\" --tag Docs --tag Memory\n"
                 + "  open-forge route update memory/project-alpha/overview --template templates/route --dry-run"),
             new CliHelpSection(
                 "Notes",
