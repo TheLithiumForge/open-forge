@@ -1,5 +1,4 @@
-import { mkdirSync, mkdtempSync } from "node:fs";
-import { join } from "node:path";
+import { resetOutput } from "./output.ts";
 import { TestAssemblies } from "./layout.ts";
 import { managedBuild } from "./managed-build.ts";
 import { readBuildOptions } from "./options.ts";
@@ -9,15 +8,13 @@ import { runSuites } from "./test-suites.ts";
 import { committedVersion } from "./version.ts";
 
 function testManaged(root: string): void {
-  const directory = join(root, "artifacts/delivery");
-  mkdirSync(directory, { recursive: true });
   const selections = Object.entries(TestAssemblies).map(([name, assembly]) => ({ name, executable: `artifacts/bin/${assembly}/release/${assembly}.dll` }));
-  runSuites(root, selections, mkdtempSync(join(directory, "managed-reports-")));
+  runSuites(root, selections, resetOutput(root, "artifacts/delivery/managed-reports"));
 }
 
 try {
-  readBuildOptions();
-  managedBuild(repositoryRoot, committedVersion(repositoryRoot));
+  const values = readBuildOptions(false, true);
+  managedBuild(repositoryRoot, committedVersion(repositoryRoot), values);
   testManaged(repositoryRoot);
 } catch (error) {
   reportFailure(error);

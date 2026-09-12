@@ -5,8 +5,8 @@ import { repositoryRoot } from "./repository.ts";
 import { committedVersion } from "./version.ts";
 
 try {
-  readBuildOptions();
-  managedBuild(repositoryRoot, committedVersion(repositoryRoot));
+  const values = readBuildOptions(false, true);
+  managedBuild(repositoryRoot, committedVersion(repositoryRoot), values);
 } catch (error) {
   reportFailure(error);
 }

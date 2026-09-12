@@ -1,18 +1,12 @@
 import { execFileSync } from "node:child_process";
 import { chmodSync, copyFileSync, mkdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import rootPackage from "../../../package.json" with { type: "json" };
-import { candidateVersion, validateVersion } from "../version.ts";
+import { candidateVersion, committedVersion, validateVersion } from "../version.ts";
+import { nativeManifest } from "./package-manifests.ts";
+import { stageWrapperPackage } from "./wrapper-stage.ts";
 
-import darwinArm64PackageTemplate from "./darwin-arm64/package.json" with { type: "json" };
-import darwinPackageTemplate from "./darwin-x64/package.json" with { type: "json" };
-import linuxArm64PackageTemplate from "./linux-arm64/package.json" with { type: "json" };
-import linuxPackageTemplate from "./linux-x64/package.json" with { type: "json" };
-import mainPackageTemplate from "./main/package.json" with { type: "json" };
-import { MainPackageName, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
+import { PlatformPackages, type SupportedRuntime } from "../package-model.ts";
 import { FullGitShaPattern } from "../source-identity.ts";
-import windowsArm64PackageTemplate from "./win-arm64/package.json" with { type: "json" };
-import windowsPackageTemplate from "./win-x64/package.json" with { type: "json" };
 
 export type StageVersion = { kind: "release"; value: string } | { kind: "local"; sha: string };
 
@@ -31,20 +25,10 @@ export interface StagedPackages {
   platformPackageDirectory: string;
 }
 
-const platformPackageTemplates = {
-  "osx-x64": darwinPackageTemplate,
-  "linux-x64": linuxPackageTemplate,
-  "win-x64": windowsPackageTemplate,
-  "osx-arm64": darwinArm64PackageTemplate,
-  "linux-arm64": linuxArm64PackageTemplate,
-  "win-arm64": windowsArm64PackageTemplate,
-} as const satisfies Record<SupportedRuntime, { name: string; version: string; private: boolean }>;
-
 export function stagePackages(request: StageRequest): StagedPackages {
   const platformPackage = PlatformPackages[request.runtime];
-  const platformTemplate = platformPackageTemplates[request.runtime];
-  const version = resolveVersion(request.version);
-  validateInputs(request, platformTemplate.name, platformPackage.packageName);
+  const version = resolveVersion(request.repositoryRoot, request.version);
+  if (!statSync(request.nativeArtifact).isFile()) throw new Error(`The native artifact is not a regular file: ${request.nativeArtifact}`);
 
   const npmArtifacts = join(request.artifactsRoot, "npm");
   const buildDirectory = join(npmArtifacts, "build", request.runtime);
@@ -57,39 +41,19 @@ export function stagePackages(request: StageRequest): StagedPackages {
   if (request.compiledLauncher === undefined) compileLauncher(request.repositoryRoot, buildDirectory);
   const launcherDirectory = request.compiledLauncher ?? buildDirectory;
 
-  const mainBinDirectory = join(mainPackageDirectory, "bin");
   const platformBinDirectory = join(platformPackageDirectory, "bin");
-  mkdirSync(mainBinDirectory, { recursive: true });
   mkdirSync(platformBinDirectory, { recursive: true });
 
-  copyExecutable(join(launcherDirectory, "npm", "open-forge.js"), join(mainBinDirectory, "open-forge.js"));
-  copyFileSync(join(launcherDirectory, "package-model.js"), join(mainPackageDirectory, "package-model.js"));
+  stageWrapperPackage(request.repositoryRoot, mainPackageDirectory, version, launcherDirectory);
   copyExecutable(request.nativeArtifact, join(platformBinDirectory, platformPackage.nativeFileName));
-  copyFileSync(join(request.repositoryRoot, "LICENSE"), join(mainPackageDirectory, "LICENSE"));
   copyFileSync(join(request.repositoryRoot, "LICENSE"), join(platformPackageDirectory, "LICENSE"));
 
-  const { private: mainPrivate, ...publicMainTemplate } = mainPackageTemplate;
-  const { private: platformPrivate, ...publicPlatformTemplate } = platformTemplate;
-  void mainPrivate;
-  void platformPrivate;
-  writeManifest(join(mainPackageDirectory, "package.json"), {
-    ...publicMainTemplate,
-    version,
-    optionalDependencies: {
-      [PlatformPackages["osx-x64"].packageName]: version,
-      [PlatformPackages["linux-x64"].packageName]: version,
-      [PlatformPackages["win-x64"].packageName]: version,
-      [PlatformPackages["osx-arm64"].packageName]: version,
-      [PlatformPackages["linux-arm64"].packageName]: version,
-      [PlatformPackages["win-arm64"].packageName]: version,
-    },
-  });
-  writeManifest(join(platformPackageDirectory, "package.json"), { ...publicPlatformTemplate, version });
+  writeManifest(join(platformPackageDirectory, "package.json"), nativeManifest(request.runtime, version));
 
   return { version, mainPackageDirectory, platformPackageDirectory };
 }
 
-function resolveVersion(version: StageVersion): string {
+function resolveVersion(root: string, version: StageVersion): string {
   if (version.kind === "release") {
     return validateVersion(version.value);
   }
@@ -98,21 +62,7 @@ function resolveVersion(version: StageVersion): string {
     throw new Error("The local version requires one full lowercase 40-character Git SHA.");
   }
 
-  return candidateVersion(rootPackage.version, version.sha);
-}
-
-function validateInputs(request: StageRequest, templateName: string, packageName: string): void {
-  if (!statSync(request.nativeArtifact).isFile()) {
-    throw new Error(`The native artifact is not a regular file: ${request.nativeArtifact}`);
-  }
-
-  if (mainPackageTemplate.name !== MainPackageName || mainPackageTemplate.version !== rootPackage.version) {
-    throw new Error("The tracked main package template does not match the package model.");
-  }
-
-  if (templateName !== packageName || platformPackageTemplates[request.runtime].version !== rootPackage.version) {
-    throw new Error(`The tracked ${request.runtime} package template does not match the package model.`);
-  }
+  return candidateVersion(committedVersion(root), version.sha);
 }
 
 export function compileLauncher(repositoryRoot: string, outputDirectory: string): void {

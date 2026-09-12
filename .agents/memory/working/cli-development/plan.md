@@ -6,6 +6,31 @@ open-forge:
 
 # Replacement CLI Development Plan
 
+## Delivery Retry And Integration Follow-up
+
+Task 13 completed the accepted npm retry/version/.NET simplification, review
+and verification. This closeout accompanies its authorized local squash integration. The [capsule](tasks/delivery/02-native-ci.md#retryable-publication-and-local-integration)
+owns current scope, the qualified b1d2d149 source and full passing Linux evidence.
+No push or actual publication occurred. Earlier trial sections below are historical.
+
+## Shared Local And Actions Trial
+
+The maintainer accepted Task 13's [two-workflow continuation](tasks/delivery/02-native-ci.md#shared-local-and-actions-trial):
+shared setup/verify/dist commands, one host matrix and release consumption of
+finished packages. Work remains local and uncommitted; no merge or push.
+The continuation is implemented and locally verified. The original native
+qualification failures were separate findings at that baseline.
+
+## Local Delivery Trial
+
+Task 13 concluded the isolated worktree trial for host-detected distribution,
+independent native/wrapper publication commands and bounded output cleanup.
+Its [capsule](tasks/delivery/02-native-ci.md#local-delivery-trial) defines the
+accepted behavior and local evidence. No integration or external publication is
+authorized by this trial. Tooling, setup and wrapper checks pass; the real native
+distribution stops on three existing integration-test inconsistencies. Changes
+remain uncommitted for inspection. Earlier completed horizons remain historical.
+
 ## Current Status And Next Work — 2026-09-12
 
 Completed and squash-integrated: stale fixture repairs plus the brittle-fixture

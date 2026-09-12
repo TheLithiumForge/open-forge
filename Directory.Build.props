@@ -14,6 +14,6 @@
     <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
     <OpenForgeAotRuntimeIdentifiers>win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx-arm64</OpenForgeAotRuntimeIdentifiers>
     <OpenForgeCliVersion>0.0.0</OpenForgeCliVersion>
-    <OpenForgeCliInformationalVersion>0.0.0</OpenForgeCliInformationalVersion>
+    <OpenForgeCliInformationalVersion>$(OpenForgeCliVersion)</OpenForgeCliInformationalVersion>
   </PropertyGroup>
 </Project>

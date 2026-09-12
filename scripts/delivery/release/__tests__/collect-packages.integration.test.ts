@@ -1,15 +1,16 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { copyFileSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { hashArtifact } from "../../manifest.ts";
-import { PlatformPackages } from "../../package-model.ts";
+import { MainPackageName, PlatformPackages } from "../../package-model.ts";
 import { IsolatedNpm } from "../../npm/__tests__/isolated-npm.ts";
 import { compileLauncher, stagePackages } from "../../npm/stage.ts";
 import { collectPackages } from "../collect-packages.ts";
+import { readReleasePublications } from "../release-publications.ts";
 
 const repository = fileURLToPath(new URL("../../../../", import.meta.url));
 const version = "0.1.0-beta.1";
@@ -22,7 +23,9 @@ test("complete release collection preserves seven synchronized packages and six 
   const launcher = join(root, "launcher");
   compileLauncher(repository, launcher);
   const input = join(root, "input");
-  const output = join(root, "output");
+  const releaseDirectory = "artifacts/release";
+  const output = join(root, releaseDirectory);
+  copyFileSync(join(repository, "LICENSE"), join(root, "LICENSE"));
   for (const platform of Object.values(PlatformPackages)) {
     const directory = join(input, `package-${platform.runtime}`);
     const portable = join(root, `portable-${platform.runtime}`);
@@ -51,6 +54,39 @@ test("complete release collection preserves seven synchronized packages and six 
   assert.equal(readdirSync(output).filter((file) => file.endsWith(".tgz")).length, 7);
   assert.equal(readdirSync(output).filter((file) => file.endsWith(".tar.gz")).length, 6);
   assert.equal(readFileSync(join(output, "SHA256SUMS"), "utf8").trim().split("\n").length, 6);
+  const source = { sha, dirty: false };
+  const publications = readReleasePublications(root, releaseDirectory, source, version);
+  assert.deepEqual(
+    publications.map((publication) => publication.name),
+    [...Object.values(PlatformPackages).map((platform) => platform.packageName), MainPackageName],
+  );
+  assert.throws(() => readReleasePublications(root, releaseDirectory, { ...source, sha: "b".repeat(40) }, version), /Release source mismatch/u);
+  assert.throws(() => readReleasePublications(root, releaseDirectory, source, "0.1.0-beta.2"), /Release version mismatch/u);
+  const publisher = new URL("../../npm/publish-packages.ts", import.meta.url).href;
+  const preview = spawnSync(
+    process.execPath,
+    [
+      "--input-type=module",
+      "-e",
+      `import { publishPackages } from ${JSON.stringify(publisher)}; delete process.env.npm_execpath; publishPackages(process.cwd(), JSON.parse(process.argv[1]), "beta", true);`,
+      JSON.stringify(publications),
+    ],
+    { cwd: root, encoding: "utf8" },
+  );
+  assert.equal(preview.error, undefined);
+  assert.equal(preview.status, 0, preview.stderr);
+  assert.deepEqual(
+    JSON.parse(preview.stdout),
+    publications.map((publication) => ({ ...publication, tag: "beta", dryRun: true })),
+  );
+  const wrapper = publications.at(-1);
+  assert.ok(wrapper);
+  const originalWrapper = readFileSync(wrapper.tarball);
+  writeFileSync(wrapper.tarball, "changed after collection");
+  assert.throws(() => readReleasePublications(root, releaseDirectory, source, version), /Package bytes changed/u);
+  writeFileSync(wrapper.tarball, originalWrapper);
+  rmSync(wrapper.tarball);
+  assert.throws(() => readReleasePublications(root, releaseDirectory, source, version));
   assert.throws(() => collectPackages(input, join(root, "wrong-sha"), "b".repeat(40), version));
   assert.throws(() => collectPackages(input, join(root, "wrong-version"), sha, "0.1.0-beta.2"));
   const last = join(input, "package-win-arm64");

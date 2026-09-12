@@ -90,9 +90,13 @@ channels, or fallback behavior.
 
 The root package.json owns the product version. Native npm version handling
 calculates the next version or accepts an explicit version without creating a
-commit or tag. A small TypeScript utility synchronizes that exact value to .NET
-properties, existing shim manifests and exact npm optional dependencies. New
-shims add explicit consumers when implemented; they do not bump independently.
+commit or tag. A small npm lifecycle hook projects that exact value to
+one .NET version property for direct .NET/IDE builds. Informational version derives
+from that property. The seven npm manifests and exact optional dependencies
+are generated during staging from the selected version and platform table;
+there are no tracked npm manifest copies to synchronize. The version:bump
+script delegates directly to npm version --no-git-tag-version. Future shims
+consume the same selected version; they do not bump independently.
 
 Local build, test and pack commands are the same root package scripts used by
 CI. Native build defaults to the matching host, and optional SHA qualification
@@ -105,7 +109,8 @@ preserve the native payload bytes.
 Portable archives contain the native executable and license for one supported
 OS/architecture. They need no npm installation. npm tarballs contain the thin
 launcher and appropriate native package. All local outputs remain under ignored
-artifacts; public publication is pipeline-only.
+artifacts; explicit native and wrapper publication commands consume validated
+tarballs independently, while the pipeline coordinates complete releases.
 
 ## Staging, Packing, And Checksums
 
@@ -139,6 +144,17 @@ release must distinguish the available platform proof from static inspection.
 
 ## Publication Boundary
 
+The maintainer accepted independent local publication commands as a worktree
+trial on 2026-09-12. `dist` qualifies the current host; `dist:wrapper` separately
+compiles and packs the main wrapper without native files or .NET. The native
+and wrapper publishers each select one validated existing tarball, require an
+explicit tag, and require committed matching source for an actual upload.
+Their dry runs print an offline publication plan without registry contact.
+Wrapper manifests retain all six exact-version optional dependencies. Successful
+publication of one package is not a complete release, and an unavailable native
+package leaves its platform unsupported at that version. The following
+complete-release rules apply to the release coordinator.
+
 The release coordinator supports manual source-ref/commit selection and
 automatic version-tag invocation. Its destination selects GitHub, npm or all
 implemented destinations. All six targets are prepared and tested before any
@@ -146,12 +162,29 @@ publication begins. A supplied build run must be successful, from the expected
 repository/workflow, and match the selected source commit and version; otherwise
 the reusable build workflow produces the candidate once.
 
+The accepted Actions trial uses only build.yml and release.yml. Build's one
+six-host matrix calls the same setup and dist commands as local development;
+verify runs once in a shared-check job. Each host builds, tests and packages
+before uploading its finished package set. Release collection consumes those
+packages directly, and npm publication shares archive validation and upload
+code with the individual local publishers. The release publisher validates all
+seven npm packages before uploading any and places the wrapper last. Its input
+is collected packages, independent of the publication host and native build
+directories. Intermediate-only historical builds do not supply the new inputs.
+
 GitHub receives one release with the complete portable target set and checksums.
 npm publishes every platform package at the synchronized version before the
 main package. No command subset, platform subset presented as complete,
 partial graph presented as a successful release, or warning-bearing artifact is
 accepted. Publication across packages and services is not a transaction: a
-failure can leave earlier uploads present and requires inspection before retry.
+failure can leave earlier uploads present. Before any npm upload, the shared
+publisher queries every selected exact version. An existing version emits a
+warning and is skipped without retagging; only npm E404 means missing. Other
+lookup failures stop publication before uploads. Rerunning the same candidate
+therefore fills missing packages in native-first order. Availability checks do
+not prove remote byte equality or make uploads atomic. Dry runs stay offline.
+A skip warning is a publication status, not a warning-bearing build artifact.
+Current CI authentication remains NPM_TOKEN.
 The replacement is shipping only after all selected destination results agree.
 Prerelease versions use a prerelease channel; stable versions use latest.
 

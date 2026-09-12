@@ -25,6 +25,7 @@ export function sourceIdentity(root: string): { sha: string; dirty: boolean; cha
     "package.json",
     "package-lock.json",
     "tsconfig.json",
+    "LICENSE",
   ];
   const diff = git(["diff", "HEAD", "--binary", "--", ...inputs]);
   const untracked = git(["ls-files", "--others", "--exclude-standard", "-z", "--", ...inputs])

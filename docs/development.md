@@ -10,8 +10,8 @@ Read `AGENTS.md` and `.agents/loader.md`, then select the scopes relevant to you
 | ----------------------- | ---------------------------------------------------------------- |
 | `src/open-forge/`       | Installable Framework files                                      |
 | `src/extensions/`       | First-party Extension packages                                   |
-| `src/cli/`              | Native CLI implementation and tests                             |
-| `scripts/`              | Repository build, delivery, package, and agent tooling            |
+| `src/cli/`              | Native CLI implementation and tests                              |
+| `scripts/`              | Repository build, delivery, package, and agent tooling           |
 | `.agents/`              | This repository's own rules, current knowledge, and work context |
 | `docs/` and `README.md` | Public introductions and practical guides                        |
 | `artifacts/`            | Generated build, publication, and verification output            |
@@ -20,10 +20,9 @@ Keep changes in their defining sources. Generated output and a machine's install
 
 ## Build And Test
 
-
 The root `package.json` is the shared entry point for local development and CI.
-Small TypeScript scripts run the .NET build and test tools, synchronize versions,
-and prepare packages. Repository tooling uses Node and npm, including its tests.
+Small TypeScript scripts coordinate native tests and packaging. Standard npm
+and .NET commands own version increments, restore, compilation and uploads. Repository tooling uses Node and npm, including its tests.
 
 Package scripts invoke workspace tools directly: `tsc`, `eslint`, and `prettier`.
 `tsc` uses TypeScript 7. The `@typescript/native` npm alias supplies that compiler;
@@ -35,7 +34,7 @@ linking use that same command when they need emitted JavaScript.
 Delivery scripts live together under `scripts/delivery/`. Each task has a direct
 entry point, such as `build.ts`, `restore.ts` or `pack.ts`. Shared capabilities
 stay beside their consumers, with package preparation under `npm/` and
-pipeline-only release preparation under `release/`. Repository agent tools
+release coordination under `release/`. Repository agent tools
 remain separate under `scripts/agent-tooling/`.
 
 One root `tsconfig.json` checks all repository TypeScript, including tests. The
@@ -59,14 +58,18 @@ Tools with the C++ workload on Windows. See the [.NET Native AOT prerequisites](
 Set up dependencies once, then use the same commands from any supported host:
 
 ```sh
-npm ci
-npm run restore
+npm run setup
 npm run build
 npm test
 npm run cli:dev -- --help
 ```
 
-`npm run build` and `npm test` use Release configuration. The test command
+`setup` installs locked npm dependencies and restores .NET dependencies.
+`npm run build` and `npm test` let `dotnet build` restore incrementally and use
+Release configuration. Native builds restore once during that managed build;
+subsequent native publications reuse the restored dependencies.
+Use `-- --no-restore` after an explicit restore, or `-- --offline` to restore
+only from cached dependencies. These options are mutually exclusive. The test command
 builds the managed solution and runs its Unit, Integration and public-process
 tests. IDEs can continue using the root .NET solution directly.
 
@@ -97,17 +100,34 @@ selected by an earlier build. CI and explicit Native AOT evidence compile the
 EndToEnd project for one supported target RID and use the corresponding
 `artifacts/publish/<RID>/open-forge/OpenForge.Cli[.exe]` publication.
 
-When all dependencies are already cached, `npm ci --offline` and
-`npm run restore -- --offline` prepare the workspace without contacting package
+When all dependencies are already cached, `npm run setup -- --offline` or
+`npm run restore -- --offline` prepares the workspace without contacting package
 feeds. Offline .NET restore does not perform a fresh vulnerability audit; a
 normal connected restore is required for that evidence.
 
 ### Build A Copyable Native Package
 
-Run the complete native journey on the host you want to support:
+Run the same preparation, checks and native journey used by CI on the host you
+want to support:
 
 ```sh
-npm run build:native
+npm run setup
+npm run verify
+npm run dist -- --no-restore
+```
+
+`verify` runs formatting, lint, type checking and delivery/package-layout tests.
+`dist` builds the native CLI and its test executables, runs the managed/native
+suites, and packs the
+portable archive plus main and host npm packages. The installed-package journey
+checks the exact native payload through the launcher. No upload or global
+installation occurs. Use `-- --sha` for a commit-qualified development version,
+`-- --offline` for cached restore, or `-- --no-restore` after preparation.
+
+CI and focused local work can run the individual steps:
+
+```sh
+npm run build:native -- --no-restore
 npm run test:built
 npm run pack
 ```
@@ -123,6 +143,8 @@ six matching hosts. See [.NET cross-compilation](https://learn.microsoft.com/en-
 their successful qualification, creates the portable archive and current-host
 npm packages, and checks the installed npm launcher against the native binary.
 The commands print their output locations under `artifacts/delivery/<RID>/`.
+The current reports are in `reports/`, and the packages are in `packages/`.
+`package-path.txt` is written only after packaging succeeds.
 
 Copy the `open-forge-<version>-<RID>.tar.gz` archive and its checksums to a
 supported machine with the same OS and architecture. Extract it, then run
@@ -135,10 +157,71 @@ Builds and tests also use the normal `artifacts/bin`, `artifacts/obj`, and
 `artifacts/publish` directories. Run these commands sequentially in one worktree.
 Generated archives and reports are build artifacts, not authored source.
 
+### Build And Publish The Wrapper Separately
+
+The wrapper needs Node/npm dependencies but no .NET SDK or native artifacts:
+
+```sh
+npm ci --ignore-scripts
+npm run dist:wrapper
+npm run publish:wrapper -- --tag preview --dry-run
+```
+
+`dist:wrapper` compiles the launcher and packs it with the license and exact
+versioned optional dependencies for all six platforms. Its output is
+`artifacts/delivery/wrapper/packages/`. `-- --sha` uses the same optional
+commit-qualified version convention as native builds.
+
+After `dist` succeeds, preview publication of only the host's native package:
+
+```sh
+npm run publish:native -- --tag preview --dry-run
+```
+
+Both publishers validate the existing tarball against its source, version,
+hash and license. The dry run is entirely local and does not invoke npm publish
+or inspect credentials. Removing `--dry-run` explicitly uploads that one public
+npm package using the configured registry and account. An actual upload requires
+committed matching source; a dirty trial can still preview its selection.
+Before any upload, the shared publisher queries npm for each selected exact
+version. Existing versions print a warning and are skipped; missing versions
+are published. Authentication, network and unexpected lookup errors stop the
+run before uploads. Rerun the same command after an interrupted publication.
+The complete release checks all seven packages first and publishes remaining
+native packages before the wrapper. Existing versions keep their npm tags;
+skipping checks availability, not whether remote bytes match a local rebuild.
+Dry runs remain offline and cannot report which versions already exist.
+
+Both commands require a tag, and prerelease versions cannot use `latest`.
+Changing source or version requires rebuilding the affected distribution.
+
+Publish each native package at the synchronized version, then publish the main
+wrapper once. No publisher needs all native tarballs locally. The wrapper's
+optional dependencies do need to exist in the registry for their platforms to
+work. Publishing a subset is a preview, not proof of a complete release.
+The platform package alone contains no npm command mapping; the main package
+provides the `open-forge` command.
+
+### Clean Generated Outputs
+
+`npm run clean` removes owned .NET outputs and current/legacy delivery output
+directories. It preserves source, `node_modules`, dependency caches, the offline
+feed, staged local npm links and unrelated artifact directories. Output paths
+with symlinked ancestors are rejected before deletion.
+
+Ordinary builds preserve incremental compiler outputs. Native builds replace
+their selected target's publish and delivery directories, while tests and packs
+replace their current reports and packages. Old runs are no longer archived
+automatically. Failure diagnostics remain until the next run or explicit clean.
+Run build, test, pack, link and clean commands sequentially in one worktree.
+After clean, build/test/dist restore by default; do not pass `--no-restore` until
+restoration has completed again. Directory.Build.props centralizes outputs but
+does not own cleanup of TypeScript-created packages and reports.
+
 ### Change The Product Version
 
 The root `package.json` owns the product version. Use one command to calculate
-the next version and synchronize .NET and every implemented package shim:
+the next version and update the .NET version:
 
 ```sh
 npm run version:bump -- patch
@@ -149,8 +232,14 @@ npm run version:bump -- 0.1.0-beta.1
 ```
 
 These are alternative examples. The command uses npm's normal version handling,
-then sets that exact value in the other version-bearing files. It creates no
+which updates package.json and its lockfile. Its version lifecycle hook projects
+that value to one property in Directory.Build.props for direct .NET/IDE builds;
+the informational version derives from it. Staging generates all seven npm
+manifests and their exact dependency versions from the selected version and
+platform definitions, so no per-platform manifests need editing. It creates no
 commit, Git tag, or release. Review and commit the resulting diff normally.
+If you edit the root version manually, run `npm run version` to refresh the .NET
+property before using direct dotnet or IDE builds.
 
 Builds use the committed product version by default. For a development artifact
 identified by the current commit, use `npm run build:native -- --sha`.
@@ -160,23 +249,29 @@ the version afterward requires a new build and test run.
 
 ### CI And Releases
 
-`build.yml` checks the tooling once and builds/tests Linux, macOS, and Windows
-on x64 and ARM64. The test jobs download the build outputs and call the same
-`npm run test:built` command used locally. The reusable platform packaging
-workflows download those tested artifacts and call `npm run pack`.
+`build.yml` runs `setup` and `verify` once for shared checks. Its single native
+matrix covers Linux, macOS and Windows on x64 and ARM64. Each runner uses
+`setup` and `dist -- --no-restore` to build, test and package on the same machine.
+The explicit matrix RID is an assertion that the host matches the target.
+The build uploads finished packages and diagnostics from stable output paths.
+There are no intermediate build/test transfers or platform packaging workflows.
 
-The `release.yml` workflow owns public publication. It can run manually with a
+The `release.yml` workflow coordinates complete public releases. It can run manually with a
 source ref or commit, a destination (`github`, `npm`, or `all`), and optionally
 an existing successful build run for that exact commit. Without a supplied
-build run, it runs the reusable build workflow once. The release jobs do not
-recompile or change the product version.
+build run, it runs the reusable build workflow once. The release job downloads
+the finished `package-<RID>` artifacts from the selected run and calls
+`npm run release:collect -- artifacts/release-input artifacts/release`.
+Collection checks all six targets and replaces its generated release output.
+Older build runs containing only intermediate test artifacts cannot be reused.
+Release does not compile, repack or change the product version.
 
 Pushing a version tag such as `v0.1.0-beta.1` selects automatic release. The tag
 must match the source version. Automatic runs use the `RELEASE_TARGET`
 repository variable, defaulting to `all`. Merely bumping the local version does
 not release anything.
 
-All six platform packages must be prepared before publication begins. npm
+For a complete release, all six platform packages must be prepared before publication begins. npm
 publishes the platform packages before the main package that references them.
 GitHub receives one release containing the portable archives and checksums.
 Prereleases use a prerelease channel; stable releases use `latest`. Selecting
@@ -186,7 +281,13 @@ npm. A failed publication must be inspected before retrying its remaining work.
 The workflow must be available on the repository's default branch for manual
 dispatch. Configure the required publication credentials only when enabling
 releases. Local build/test/package commands do not publish, create GitHub
-releases, or require publication credentials.
+releases, or require publication credentials. The explicit `publish:native`
+and `publish:wrapper` commands upload individual packages independently.
+`publish:release -- --tag <channel>` consumes the collected release and uses the
+same package validation and publication code, with all native packages before
+the wrapper. `--dry-run` previews the complete npm publication locally. It needs
+no .NET SDK, native test output or matching target host; all packages are
+validated before any upload begins.
 
 ### Link The Native CLI Locally
 
@@ -236,7 +337,6 @@ That command removes the known npm links. Remove an explicitly owned user-local
 PATH bridge only after resolving and revalidating its exact target.
 
 The public command name is `open-forge`.
-
 
 ## Framework And Extension Changes
 

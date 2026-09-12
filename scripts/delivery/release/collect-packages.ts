@@ -2,13 +2,14 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
-import { basename, join } from "node:path";
+import { basename, join, resolve, sep } from "node:path";
 import { MainPackageName, PlatformPackages } from "../package-model.ts";
 import { hashArtifact } from "../manifest.ts";
 import { readPackage } from "../package-json.ts";
 import { committedVersion } from "../version.ts";
 import { sourceIdentity } from "../source.ts";
-import { inspectPackageContents } from "./package-contents.ts";
+import { inspectPackageContents } from "../package-contents.ts";
+import { resetOutput } from "../output.ts";
 
 export function collectPackages(input: string, output: string, sha: string, version: string): void {
   const dependencies = Object.fromEntries(Object.values(PlatformPackages).map((platform) => [platform.packageName, version]));
@@ -66,13 +67,22 @@ export function collectPackages(input: string, output: string, sha: string, vers
     if (path.endsWith(".tar.gz")) checksums.push(`${artifact.sha256}  ${path}`);
   }
   writeFileSync(join(output, "SHA256SUMS"), `${checksums.sort().join("\n")}\n`);
-  writeFileSync(join(output, "release.json"), `${JSON.stringify({ sha, version, artifacts: [...selected.keys()] }, null, 2)}\n`);
+  const artifacts = [...selected].map(([path, artifact]) => ({ path, sha256: artifact.sha256 }));
+  writeFileSync(join(output, "release.json"), `${JSON.stringify({ sha, version, artifacts }, null, 2)}\n`);
 }
 
 if (import.meta.main) {
-  const [input, output] = process.argv.slice(2);
-  assert.ok(input && output, "Provide downloaded packages and release output directories.");
+  const [input, output, ...extra] = process.argv.slice(2);
+  assert.ok(input && output && extra.length === 0, "Provide downloaded packages and release output directories.");
   const source = sourceIdentity(process.cwd());
   assert.equal(source.dirty, false, "Release collection requires committed source.");
-  collectPackages(input, output, source.sha, committedVersion(process.cwd()));
+  const version = committedVersion(process.cwd());
+  const inputPath = resolve(input);
+  const outputPath = resolve(output);
+  assert.ok(
+    inputPath !== outputPath && !inputPath.startsWith(`${outputPath}${sep}`) && !outputPath.startsWith(`${inputPath}${sep}`),
+    "Release input and output directories must be separate.",
+  );
+  resetOutput(process.cwd(), output);
+  collectPackages(input, output, source.sha, version);
 }

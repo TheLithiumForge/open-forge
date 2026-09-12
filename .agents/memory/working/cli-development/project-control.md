@@ -6,6 +6,29 @@ open-forge:
 
 # CLI Project Control Ledger
 
+## Delivery Retry And Integration Follow-up
+
+Task 13 completed the accepted npm retry/version/.NET simplification, review
+and verification. This closeout accompanies its authorized local squash integration. The [capsule](tasks/delivery/02-native-ci.md#retryable-publication-and-local-integration)
+owns current scope, the qualified b1d2d149 source and full passing Linux evidence.
+No push or actual publication occurred. Earlier trial sections below are historical.
+
+## Shared Local And Actions Trial
+
+Complete: Task 13, phase 3/3, milestone 3/3, in the existing uncommitted trial
+worktree. The maintainer accepted the two-workflow shared-command continuation,
+with no merge or push. Its [capsule](tasks/delivery/02-native-ci.md#shared-local-and-actions-trial)
+owns current scope and passing local tooling/workflow evidence. The native failures were still present at that baseline. No helpers or queued tasks are active.
+
+## Local Delivery Trial
+
+Task 13's local trial concluded (phase 3/3): milestone 4/4. The scripts are
+implemented; native qualification remains failed on three existing integration
+test inconsistencies. The changes remain uncommitted on `codex/local-delivery-trial`
+from `03fa6b9a5`. The [capsule](tasks/delivery/02-native-ci.md#local-delivery-trial)
+owns the scope, milestones and evidence. No helpers are active. No task is
+queued in this trial; previous completion-grace state is unchanged.
+
 ## Current Status And Next Work — 2026-09-12
 
 Completed and squash-integrated: stale fixture repairs plus the brittle-fixture

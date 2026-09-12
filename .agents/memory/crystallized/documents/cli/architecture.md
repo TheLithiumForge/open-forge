@@ -690,6 +690,19 @@ platform expansion or Git behavior follows from this design.
 
 ## Build, Native AOT, CI, And Artifacts
 
+The accepted local delivery trial adds host-detected `dist`, independent
+`dist:wrapper`, and explicit `publish:native` / `publish:wrapper` commands.
+Local publication consumes existing validated tarballs; wrapper packaging needs
+no native artifact or .NET SDK. Complete-release orchestration still checks all
+six native packages before the wrapper. Authoring these commands does not
+authorize an agent to publish. Distribution defines the package boundaries.
+
+Developer builds restore by default; explicit offline and no-restore modes
+support prepared environments. Each distribution run replaces its selected
+target's output and current reports/packages. Compiler intermediates remain
+incremental. The cleanup command removes known build and delivery outputs,
+preserving offline feeds, local npm link staging and unrelated artifact scopes.
+
 The CLI uses stable .NET 10 with C# 14, nullable analysis, warnings as errors,
 deterministic builds, package auditing, and no prerelease SDK. `global.json`
 allows compatible stable feature-band roll-forward.
@@ -715,8 +728,8 @@ The root package.json scripts own the repeatable local and CI build, test,
 version and package commands. Focused TypeScript under `scripts/delivery/`
 coordinates the standard .NET, Node and npm tools. Each delivery task has a
 direct entry point. Shared capabilities stay at their nearest common delivery
-scope. The `npm/` child contains the launcher, package templates and staging;
-the `release/` child contains pipeline-only preparation. Tests stay beside the
+scope. The `npm/` child contains the launcher, manifest generation and staging;
+the `release/` child contains release coordination. Tests stay beside the
 behavior they verify and remain independently selectable. One root strict Node
 configuration checks scripts and tests, while one focused configuration emits
 only the shipped launcher.
@@ -724,24 +737,26 @@ These scripts contain no CLI domain behavior or general build framework.
 `src/cli/` contains only C# implementation, projects and their required resources.
 Maintained repository agent tooling belongs under `scripts/agent-tooling/`.
 
-CI keeps separate native build and test matrices for all six accepted targets,
-with platform-independent checks once. Reusable platform packaging workflows
-consume the tested artifacts, and one release coordinator handles manual or
-version-tag publication to the selected implemented destinations. Workflow YAML
-owns runners, scheduling, artifact transfer and external publication; its build,
-test and package steps call the same root scripts as local development.
+CI keeps one native matrix for all six accepted targets. A shared-check job
+runs setup and verify once; each matrix runner runs setup and dist to build,
+test and package on that host. Only finished packages and diagnostics cross
+the job boundary. One release coordinator handles manual or version-tag
+publication to selected destinations. Workflow YAML owns runners, scheduling,
+toolchain installation, artifact transfer and credentials; repeatable build,
+test, collection and npm publication behavior belongs to shared root scripts.
 
 Root package.json owns one product version. Standard npm version handling and a
-small synchronization utility set that exact version in .NET and every existing
-shim. Builds stamp the selected version before compilation. Optional SHA builds
+small lifecycle hook project that exact version to one .NET property. Staging
+generates all seven npm manifests and dependencies from the version and platform
+table. The informational version derives from the .NET version. Builds stamp the selected version before compilation. Optional SHA builds
 change only the produced artifact version. Tests, packages and releases consume
 that identity rather than supplying a second version. A release may reuse a
 successful build only for the selected source commit and version.
 
 Build jobs preserve complete managed test closures before native publication
-and a separate managed-public-on-native closure afterward. Test jobs consume
-those exact artifacts without rebuilding. Ordinary tar preserves executable
-modes across transfer. Source, native and package identities stay explicit;
+and a separate managed-public-on-native closure afterward. Tests and packaging
+consume those exact artifacts within the same job without rebuilding. Finished
+archives preserve executable modes across transfer. Source, native and package identities stay explicit;
 checksums do not establish independent reproducibility or expand publication
 authority. The current Task defines the finite implementation and acceptance
 scope, while the source workflows own exact action and tool pins.

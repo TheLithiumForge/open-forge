@@ -6,6 +6,15 @@ open-forge:
 
 # CLI Overseer Memory
 
+## Delivery Follow-up — 2026-09-12
+
+Task 13's local/CI delivery simplification and retryable npm publication are
+complete and verified for local squash integration. Its [capsule](tasks/delivery/02-native-ci.md#retryable-publication-and-local-integration)
+owns the exact b1d2d149 candidate and durable reproduction/evidence summary.
+The normal build, shared verify gate, all six Linux managed/native suites and
+real npm package journey pass. No push, publication or global install occurred.
+The presentation/parsing queue below is preserved as a separate workstream.
+
 ## Current Status And Next Work — 2026-09-12
 
 Completed and squash-integrated: stale fixture repairs plus the brittle-fixture

@@ -1,26 +1,27 @@
-import { cpSync, existsSync, mkdirSync, renameSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { SupportedRuntime } from "./package-model.ts";
 import { compileLauncher } from "./npm/stage.ts";
 import { reportFailure, run } from "./process.ts";
-import { managedBuild } from "./managed-build.ts";
+import { managedBuild, type BuildRestoreOptions } from "./managed-build.ts";
 import { readBuildOptions } from "./options.ts";
 import { repositoryRoot } from "./repository.ts";
 import { candidateVersion, committedVersion } from "./version.ts";
 import { Configuration, hostRuntime, deliveryDirectory, DevelopmentPublish, nativeDirectory, Projects, suites, TestAssemblies } from "./layout.ts";
 import { createManifest } from "./manifest.ts";
 import { sourceIdentity } from "./source.ts";
+import { removeOutputs, resetOutput } from "./output.ts";
 
-function nativeBuild(root: string, rid: SupportedRuntime, version: string): void {
+function nativeBuild(root: string, rid: SupportedRuntime, version: string, options: BuildRestoreOptions): void {
   const directory = deliveryDirectory(rid);
-  const absolute = join(root, directory);
-  if (existsSync(absolute)) renameSync(absolute, `${absolute}-${Date.now()}`);
+  removeOutputs(root, [directory, nativeDirectory(rid), DevelopmentPublish]);
+  const absolute = resetOutput(root, directory);
   mkdirSync(join(absolute, "build"), { recursive: true });
   const source = sourceIdentity(root);
   compileLauncher(root, join(absolute, "build/launcher"));
-  managedBuild(root, version);
+  managedBuild(root, version, options);
   for (const [name, assembly] of Object.entries(TestAssemblies)) cpSync(join(root, "artifacts/bin", assembly, "release"), join(absolute, "build", name), { recursive: true });
-  const properties = ["-p:OpenForgeSkipDevelopmentPublish=true", `-p:OpenForgeCliVersion=${version}`, `-p:OpenForgeCliInformationalVersion=${version}`];
+  const properties = ["-p:OpenForgeSkipDevelopmentPublish=true", `-p:OpenForgeCliVersion=${version}`];
   for (const [project, folder] of [
     [Projects.cli, "open-forge"],
     [Projects.integration, "integration"],
@@ -58,9 +59,10 @@ function nativeBuild(root: string, rid: SupportedRuntime, version: string): void
 }
 
 try {
-  const values = readBuildOptions();
+  const values = readBuildOptions(true, true);
   const version = committedVersion(repositoryRoot);
-  nativeBuild(repositoryRoot, hostRuntime(values.rid), candidateVersion(version, values.sha ? sourceIdentity(repositoryRoot).sha : undefined));
+  const rid = hostRuntime(values.rid);
+  nativeBuild(repositoryRoot, rid, candidateVersion(version, values.sha ? sourceIdentity(repositoryRoot).sha : undefined), values);
 } catch (error) {
   reportFailure(error);
 }

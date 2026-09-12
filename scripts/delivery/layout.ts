@@ -9,6 +9,7 @@ export const Projects = {
 } as const;
 export const TestAssemblies = { unit: "OpenForge.Cli.Core.UnitTests", integration: "OpenForge.Cli.IntegrationTests", public: "OpenForge.Cli.EndToEndTests" } as const;
 export const DevelopmentPublish = "artifacts/publish/open-forge-dev/Release";
+export const WrapperOutput = "artifacts/delivery/wrapper";
 
 export function hostRuntime(requested?: string): SupportedRuntime {
   const platform = Object.values(PlatformPackages).find((entry) => entry.nodePlatform === process.platform && entry.nodeArchitecture === process.arch);

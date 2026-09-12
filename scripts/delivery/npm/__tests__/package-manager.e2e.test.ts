@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { chmodSync, mkdirSync, mkdtempSync, readdirSync, realpathSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { chmodSync, mkdirSync, mkdtempSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -58,14 +58,12 @@ printf '%s' "${fixtureOutput}"
     const platformDirectory = join(modulesRoot, "@thelithiumforge", "open-forge-linux-x64");
     const installedNative = join(platformDirectory, "bin", "open-forge");
     const installedBin = join(modulesRoot, ".bin", "open-forge");
-    const installedLauncher = join(mainDirectory, "bin", "open-forge.js");
 
     assert.equal(statSync(mainDirectory).isDirectory(), true);
     assert.equal(statSync(platformDirectory).isDirectory(), true);
     assert.equal(statSync(installedNative).isFile(), true);
-    assert.equal(realpathSync(installedBin), realpathSync(installedLauncher));
 
-    const completion = spawnSync(realpathSync(installedBin), [fixtureArgument], {
+    const completion = spawnSync(installedBin, [fixtureArgument], {
       cwd: installRoot,
       encoding: "utf8",
       env: { ...npmEnvironment, [fixtureEnvironmentName]: fixtureEnvironmentValue },

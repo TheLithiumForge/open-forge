@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { chmodSync, copyFileSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { chmodSync, copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 import { PlatformPackages, type SupportedRuntime } from "./package-model.ts";
 import { readBuilt } from "./built-artifacts.ts";
@@ -9,11 +9,14 @@ import { repositoryRoot } from "./repository.ts";
 import { committedVersion } from "./version.ts";
 import { deliveryDirectory, hostRuntime, nativeDirectory } from "./layout.ts";
 import { hashArtifact } from "./manifest.ts";
+import { removeOutputs, resetOutput } from "./output.ts";
+import { recordWrapper } from "./npm/wrapper-artifact.ts";
 
 function pack(root: string, rid: SupportedRuntime): void {
   const manifest = readBuilt(root, rid, true);
   const directory = join(root, deliveryDirectory(rid));
-  const output = mkdtempSync(join(directory, "packages-"));
+  removeOutputs(root, [`${deliveryDirectory(rid)}/package-path.txt`]);
+  const output = resetOutput(root, `${deliveryDirectory(rid)}/packages`);
   const platform = PlatformPackages[rid];
   const native = `${nativeDirectory(rid)}/open-forge/OpenForge.Cli${platform.nodePlatform === "win32" ? ".exe" : ""}`;
   const portable = join(output, "portable");
@@ -51,14 +54,14 @@ function pack(root: string, rid: SupportedRuntime): void {
     `${JSON.stringify({ sha: manifest.sha, version: manifest.version, rid, nativeSha256: hashArtifact(root, native), files }, null, 2)}\n`,
   );
   readBuilt(root, rid, true);
+  recordWrapper(root, join(output, `thelithiumforge-open-forge-${manifest.version}.tgz`), manifest.version);
   writeFileSync(join(directory, "package-path.txt"), relative(root, output).replaceAll("\\", "/"));
   process.stdout.write(`Packed ${manifest.version}: ${relative(root, output)}\n`);
 }
 
 try {
-  const values = readBuildOptions();
+  const values = readBuildOptions(true);
   committedVersion(repositoryRoot);
-  assert.ok(!values.sha);
   pack(repositoryRoot, hostRuntime(values.rid));
 } catch (error) {
   reportFailure(error);

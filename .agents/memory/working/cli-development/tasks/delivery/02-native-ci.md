@@ -6,6 +6,194 @@ open-forge:
 
 # Task 13: Native CI and Reproducible Artifacts
 
+## Retryable Publication And Local Integration
+
+The maintainer authorized publication retries, simpler version/.NET orchestration,
+a final review and local squash integration into develop. This supersedes the
+older no-merge constraint below. No push, actual npm publication, hosted Actions
+run or authentication migration is authorized. Keep action version tags and
+NPM_TOKEN. Standard direct implementation and self-review; no helpers.
+
+Phase 3/3 complete: implementation, review and local verification passed. This
+closeout accompanies the authorized local squash into develop. The
+shared native, wrapper and release publisher preflights every exact npm version,
+skips existing versions with a warning, and rejects non-E404 lookup failures.
+Dry runs stay offline. Generated npm manifests replace seven tracked templates;
+standard npm version owns the bump and a focused hook updates one .NET property.
+Managed builds own normal restore; native publication reuses it. Owned tests
+cover response parsing, skip/order/failure behavior and generated version state.
+
+Develop advanced independently through b94f8359 to c7494f04. The trial was rebased onto c7494f04 while
+preserving its C# and documentation changes. Candidate b1d2d149566a73eba4f0947c1fcb4e43f3cfd5b7,
+tree 4974c8f2387e6c4bd6eb255b15448147871f82cb, owns code verification. Earlier
+native failures belong to the original trial base; develop includes their fixes.
+A redundant build against the old base was stopped after its managed build passed.
+
+Review found no blocking delivery issue. Deliberate limits: npm existence checks
+establish availability, not remote byte identity; skips do not retag; concurrent
+publication can still race, and uploads remain non-atomic. Dry runs do not query
+the registry. Keep NPM_TOKEN and external action version tags as requested.
+
+The rebased normal build passed with zero warnings/errors. npm run verify passed:
+33 delivery tests, seven platform layout cases, TypeScript, lint, formatting and
+.NET whitespace/analyzer diagnostics. Wrapper packaging and its clean-source,
+offline publication preview passed with LICENSE validation. A disposable version
+command smoke check evaluated both .NET version properties as 0.1.0-beta.1.
+The full Linux dist gate passed: Unit 3,232; managed and native Integration
+1,745 each; public, native-public and managed-public-on-native 123 each. All
+7,091 executions passed with zero failures or skips. Build output has zero
+warnings/errors. The real npm native installation/invocation journey passed,
+portable and npm packages were created with LICENSE, and both local publication
+previews passed. No extra rebuild or retest is inferred from the final prose-only
+closeout commit or squash: b1d2d149 owns the executed source evidence. Rebuilding
+is required before publishing artifacts under a different source commit.
+
+Reproduce from the selected source with Node 24.19.0/npm 11.17.0, .NET 10.0.111
+and the Linux native toolchain:
+
+```sh
+npm run setup
+npm run build
+npm run verify
+npm run dist -- --no-restore
+npm run publish:native -- --tag preview --dry-run
+npm run dist:wrapper
+npm run publish:wrapper -- --tag preview --dry-run
+```
+
+Optional raw logs and integrated-receipt.json are under
+artifacts/local-delivery-trial in the trial worktree; this tracked capsule owns
+the durable acceptance summary. Native execution on other hosts and registry
+publication are not claimed.
+
+## Shared Local And Actions Trial
+
+Maintainer preference: reference external GitHub Actions by version tags rather
+than commit SHAs. The two trial workflows now use their existing documented
+versions directly; local reusable-workflow references stay relative.
+
+The maintainer accepted the two-workflow design in the existing
+`codex/local-delivery-trial` worktree, with no merge or push. Standard direct
+implementation, no helpers or independent review; one grouped correction pass.
+Complete: phase 3/3, milestone 3/3. Shared commands, local behavior and workflow
+wiring are verified, and documentation and the evidence receipt are aligned.
+No hosted run, npm publication, global installation or C# change is authorized.
+
+Accepted shape: build.yml runs setup/verify once and one six-platform matrix
+runs setup/dist. Each host builds, tests and packages in one job. Release.yml
+selects an exact successful build or invokes build.yml, downloads finished
+packages and calls shared collection/publication scripts. The four platform
+packaging workflows and intermediate transfers are removed. Package validation
+and upload behavior are shared with individual local publishers. Complete
+release validation precedes publication and the wrapper remains last.
+
+Evidence is limited to owned behavior: TypeScript/static workflow validation,
+existing delivery/layout checks, complete package selection/order and negative
+source/version/tarball cases, and an offline publication preview. The shared
+verify command also runs the existing .NET diagnostic gate. No new native build
+is needed for YAML orchestration and archive-reader extraction; the earlier
+native trial and its three source-owned integration failures remain historical.
+
+Result: two workflow files replace six; one six-host matrix replaces the
+separate build/test/package jobs. Full npm run verify passed (25 delivery tests,
+seven layout cases, TypeScript/lint/formatting and .NET diagnostics). After the
+final collector input/output separation guard, focused delivery tests and
+static checks passed again. The collector now emits hashed publication inputs;
+release selection validates all seven packages, source/version, current bytes
+and licenses before invoking the same publisher as local single-package commands.
+The complete dry-run fixture and actual wrapper packaging/preview passed.
+The Linux-only inert launcher fixture remains independently selectable; dist's
+real installed native-package journey supplies the default host-level smoke check.
+
+Actionlint 1.7.12 passed with a temporary runner-label allowlist for the existing
+windows-11-vs2026-arm runner, documented by GitHub after that linter's catalog
+was released. The checksum-verified linter and its config are local verification
+tools, not repository dependencies or workflow changes. No hosted execution,
+registry upload, native rebuild, C# changes, commit, merge or push occurred.
+The main worktree remains unchanged. The canonical receipt is
+`artifacts/local-delivery-trial/actions-receipt.json`; earlier native
+qualification failures remain unresolved and are not reclassified as passing.
+
+## Local Delivery Trial
+
+Testing follow-up: the maintainer reaffirmed that tests cover only behavior
+Open Forge owns and the minimal external integration needed to establish that
+installation and invocation work. The trial's option, publication-selection,
+license and cleanup checks meet that boundary. The existing npm smoke test now
+invokes the installed command directly instead of asserting npm's symlink
+implementation. This test-only correction passed the focused package smoke
+test (1/1, no failures or skips), TypeScript, lint, formatting and diff checks.
+No native rebuild was needed. The receipt is
+`artifacts/local-delivery-trial/testing-ownership-receipt.json`. The
+earlier full-trial receipt remains historical evidence for its recorded source.
+
+The maintainer accepted a worktree trial of host-detected distribution,
+independent native and wrapper npm publication, and bounded generated-output
+cleanup. Baseline: `03fa6b9a5`. Branch: `codex/local-delivery-trial`.
+State: Trial concluded, phase 3/3, milestone 4/4; native qualification failed.
+M1 is the accepted design and isolated
+worktree; M2 implements commands and regression evidence; M3 qualifies the real
+Linux distribution and offline publication previews; M4 documents the trial.
+No merge, registry publication, hosted run or global installation is authorized.
+
+Standard profile, primary implementation owner, independent review budget zero,
+council budget zero, correction budget one grouped pass. This is developer
+tooling; realistic risks are deleting unrelated local files, packaging stale
+outputs, and publishing the wrong package. New remote commands are tested with
+offline plans only. Existing C# source, Framework payload and Extension source
+are protected. No C# semantic or dependency change is accepted.
+
+The accepted command surface is setup, restore, build, test, dist, dist:wrapper,
+publish:native, publish:wrapper and clean, alongside existing focused CI and
+developer commands. Build/test restore once by default; explicit --no-restore
+and offline restore remain supported. Native distribution detects its host,
+builds once, consumes exact tested artifacts and packages their existing bytes.
+Wrapper preparation requires only Node/npm and source/version/license data.
+Wrapper dependencies remain synchronized exact versions of all six platforms.
+Individual publication consumes a verified tarball and an explicit tag. Dry runs
+never invoke npm publication or read credentials. The complete CI release still
+owns six-target completeness and publishes the wrapper last.
+
+Known output paths are replaced before regeneration. Cleanup preserves source,
+dependency caches, offline feeds, local npm link staging and unrelated artifacts.
+Every deletion validates its owned path and rejects symlinked ancestors before
+mutating. Compiler intermediates remain incremental between ordinary builds.
+Source identity includes LICENSE. Failure invalidates current success markers.
+
+Evidence: real-filesystem cleanup and publication-selection regressions;
+existing delivery and package-layout suites; typecheck, lint and formatting;
+wrapper-only packaging; the full matching-host managed/native distribution
+journey and repeated pack/test cleanup checks. No macOS/Windows execution or
+registry behavior is claimed. Tests use isolated fixtures and cached dependencies.
+
+Result: command implementation, 25 delivery regressions, all seven package
+layout cases and static checks pass. Offline setup installed 95 locked npm
+packages and restored .NET from existing caches. Managed and all Linux native
+binaries built without warnings or errors. Wrapper-only packaging and its
+offline publication preview passed; repeating packaging removed a stale output
+probe and produced an identical tarball, including LICENSE.
+
+The real distribution stopped at integration qualification: Unit passed
+3231/3231; managed and native Integration each passed 1721/1724. All three public
+CLI modes passed 111/111. The same three existing source inconsistencies fail in
+both Integration modes: two embedded Extension comparisons retain the old
+24-asset catalogue while the authored toolkit now has only two files, and the
+coalesced-update fixture replaces a phrase absent from the current Framework.
+C# code, Framework and Extension source are unchanged from the trial baseline.
+The trial does not change those protected inputs or weaken qualification.
+Pack and the native publication preview correctly reject the failed manifest.
+Repeated native pack/test success evidence remains unavailable until those
+source inconsistencies are corrected. The isolated npm installation journey
+provides separate package evidence without promoting qualification.
+
+The evidence receipt is `artifacts/local-delivery-trial/receipt.json`, alongside
+the full build log, suite reports, package journey and publication previews.
+Changes remain uncommitted in `/tmp/open-forge-local-delivery`; the main
+worktree is unchanged. No upload, hosted execution, merge or global installation
+occurred. Sandbox subprocess restrictions required local execution escalation;
+offline NuGet needed the existing global cache explicitly selected with the
+temporary CLI home. These environment corrections needed no source changes.
+
 ## Accepted Script Structure Implementation
 
 State: Complete. Phase 3/3, milestone 5/5. Completion grace: 2.
@@ -177,12 +365,12 @@ Inventory: 41 TypeScript files, approximately 2801 lines including tests,
 have useful responsibilities, but configuration and shared ownership can be
 simplified. The following changes are proposals, not completed implementation.
 
-| Current directory | Responsibility | Recommended treatment |
-| --- | --- | --- |
-| scripts/delivery | Restore, build, native output, built tests, versions and artifact identity | Keep one meaningful entry point per task and topic-local shared capabilities. |
-| scripts/ci | Release selection, complete platform collection, checksums and archive inspection | Group as release tooling within delivery; retain checks at actual release boundaries. |
+| Current directory            | Responsibility                                                                                | Recommended treatment                                                                      |
+| ---------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| scripts/delivery             | Restore, build, native output, built tests, versions and artifact identity                    | Keep one meaningful entry point per task and topic-local shared capabilities.              |
+| scripts/ci                   | Release selection, complete platform collection, checksums and archive inspection             | Group as release tooling within delivery; retain checks at actual release boundaries.      |
 | scripts/package-managers/npm | Seven manifest templates, thin launcher, staging, packing, local linking and package journeys | Keep npm-specific code together; share delivery facts without importing task entry points. |
-| scripts/agent-tooling | Agent projections and Git-object review tooling | Keep separate from product delivery. |
+| scripts/agent-tooling        | Agent projections and Git-object review tooling                                               | Keep separate from product delivery.                                                       |
 
 Use one root strict Node no-emit configuration for tooling and tests, plus one
 small emitting configuration for the shipped npm launcher. Most current nested
@@ -424,18 +612,18 @@ that directory preserves all six standard test reports. Root npm commands
 passed offline restore, C# formatting/diagnostics, native build, prebuilt tests,
 packing and global linking. Build summaries reported zero warnings/errors.
 
-| Selection | Passed |
-| --- | ---: |
-| Unit | 3228 |
-| Managed Integration | 1718 |
-| Managed public E2E | 111 |
-| Native Integration | 1718 |
-| Native public E2E | 111 |
-| Managed public E2E on native CLI | 111 |
-| Delivery/CI helpers | 16 |
-| Agent tooling | 8 |
-| npm package layouts | 7 |
-| Installed npm fixture | 1 |
+| Selection                        | Passed |
+| -------------------------------- | -----: |
+| Unit                             |   3228 |
+| Managed Integration              |   1718 |
+| Managed public E2E               |    111 |
+| Native Integration               |   1718 |
+| Native public E2E                |    111 |
+| Managed public E2E on native CLI |    111 |
+| Delivery/CI helpers              |     16 |
+| Agent tooling                    |      8 |
+| npm package layouts              |      7 |
+| Installed npm fixture            |      1 |
 
 The C# rows are repeated execution of shared suites under supported build modes,
 not 6997 distinct behaviors. All rows have zero failures/skips. The real packed
@@ -557,7 +745,6 @@ Markdown, transfer packets and other existing evidence remain preserved.
 - New version evidence covers derivation, synchronized manifests, the real npm
   version hook and lockfile, and absence of a created commit or tag. Release
   selection covers the exact successful build and beta/stable channel mapping.
-
 
 ## Historical Completed Horizon
 
