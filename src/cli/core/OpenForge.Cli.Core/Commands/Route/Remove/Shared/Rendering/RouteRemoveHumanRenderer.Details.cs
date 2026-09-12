@@ -1,5 +1,6 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Rendering;
 
@@ -58,7 +59,7 @@ internal static partial class RouteRemoveHumanRenderer
         foreach (var detachment in references.Detachments)
         {
             builder.AppendLine(
-                $"  {Value(detachment.SourcePath)}: {Value(detachment.Before)} -> {Value(detachment.Expected)}");
+                $"  {Value(detachment.SourcePath)}:{detachment.Location.Line}:{detachment.Location.Column}: {Value(detachment.Before)} -> {Value(detachment.Expected)}");
             builder.AppendLine(
                 $"    Detached: {Value(detachment.OriginalDestination)} / label={Value(detachment.VisibleLabel)}");
         }
@@ -118,16 +119,10 @@ internal static partial class RouteRemoveHumanRenderer
 
     private static void AppendRecovery(
         StringBuilder builder,
-        RouteRemoveRecovery recovery,
-        bool showProtectedPaths)
+        RouteRemoveRecovery recovery)
     {
         builder.AppendLine(
             $"Recovery: {RouteRemoveDefinitions.ReadMachineName(recovery.State)} / residual={Value(recovery.ResidualPath)}");
-        if (!showProtectedPaths)
-        {
-            return;
-        }
-
         foreach (var path in recovery.ProtectedPaths)
         {
             builder.AppendLine($"  Protected: {Value(path)}");
@@ -136,18 +131,16 @@ internal static partial class RouteRemoveHumanRenderer
 
     private static void AppendFindings(
         StringBuilder builder,
-        IReadOnlyList<RouteRemoveFinding> findings,
-        bool showFindings)
+        IReadOnlyList<RouteRemoveFinding> findings)
     {
-        if (!showFindings)
-        {
-            return;
-        }
-
         foreach (var finding in findings)
         {
             builder.AppendLine(
-                $"Finding: {RouteRemoveDefinitions.ReadMachineName(finding.Code)} / target={Value(finding.Target)} / {Value(finding.Cause)}");
+                $"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Value(finding.Cause)} [{RouteRemoveDefinitions.ReadMachineName(finding.Code)}]");
+            if (finding.Target is { } target)
+            {
+                builder.AppendLine($"  {Value(target)}");
+            }
         }
     }
 }

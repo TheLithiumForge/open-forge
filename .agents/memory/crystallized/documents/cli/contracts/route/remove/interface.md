@@ -380,66 +380,44 @@ its separate lease-bound contract.
 
 ## Human Output
 
-Human output comes from one typed result. The default expanded view includes the
-workspace, selection method, selected subject kind, source identity, complete
-effect summary, affected paths, reference coverage and every detachment,
-generated projections, verification, bundle provenance, and retained partial-state
-facts, and semantic status.
-Compact view retains the identity, leaf/category kind, mode, status,
-completeness and safety, every affected path, every detachment, every generated
-effect, and at most one required `Next:` action.
+Both views start with the outcome, `Status`, `Workspace`, and `Selected by`,
+followed by command identity and mode. Expanded remains the default. Compact
+uses the same typed result and retains completeness, safety, every affected and
+unchanged path, every finding with its status, cause, stable code and available
+target, and verification and recovery facts. A failure heading reports the
+semantic outcome; it does not claim that no mutation occurred. Effect outcomes
+and residual state describe any partial work.
 
-Dry-run compact and expanded output still shows every exact planned effect or
-bounded diff. A successful result does not name internal planning stages. The
-primary human result for `complete`, `attention`, and `incomplete` goes to
-stdout. The primary human result for `invalid`, `blocked`, `failed`, and
-`interrupted` goes to stderr. Each primary result stays together on its assigned
-stream. Bounded diagnostics use stderr.
+Each required `Next:` line contains the actual command from the result, once.
+Expanded adds its reason on the following line; compact omits that explanation.
+Complete results have no Next action. Other statuses retain at most one direct
+correction or recovery action supplied by the operation. Rendering does not
+invent advice, change status, or select another action.
 
-### Successful leaf removal with detachment
+Primary human `complete`, `attention`, and `incomplete` results use stdout.
+Primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
+stderr. Each result stays together on its assigned stream. Separate bounded
+diagnostics use stderr. JSON remains one complete structured result on stdout.
 
-```text
-The routed leaf was removed.
-Workspace: <workspace-path>
-Selected by: current directory
-Source: docs/old-guide
-Detached references: 2
-Updated generated regions: 1
-```
+Both views retain source ID/path, leaf/category identity, every subject layer
+and category member, ownership state and coverage, every reference detachment,
+generated-navigation coverage and effect, and every protected recovery path.
+Expanded also includes the underlying ownership claims.
 
-Every detached occurrence is listed in the expanded result:
+Each detachment row shows its source path with line and column, exact
+before/expected text, original destination and visible label. Byte coordinates
+remain structured detail. Every effect retains its action, kind, before/expected
+path state and fingerprints, outcome and residual state in both views. Dry-run
+output retains every exact planned effect and ends with
+`No files changed (--dry-run).`
 
-```text
-Detached references
-  .agents/README.md:18  [Old guide](docs/old-guide.md)  ->  Old guide
-  docs/overview.md:7    [Guide](../.agents/docs/old-guide.md#intro)  ->  Guide
-```
-
-### Successful category removal
-
-```text
-The routed category was removed.
-Category: .agents/guides/_guides.md
-Removed items: 6
-Detached references: 4
-Updated generated regions: 2
-```
-
-### Dry run
-
-```text
-The routed category would be removed.
-Category: .agents/guides/_guides.md
-
-<complete removed-path, detachment, and generated-region effects>
-
-No files changed (--dry-run).
-```
-
-The exact examples use illustrative paths. A complete result has no required
-`Next:` action. Incomplete, invalid, and blocked results name the direct
-correction when it is known. Failed and interrupted results identify retained
-bundle/partial-state or retry guidance without inventing provenance.
+Success headings use `The routed file was removed.` or
+`The routed category was removed.`; previews use `would be removed`. Attention
+keeps the verified result and its findings. Failed or interrupted results retain
+all partial effects, protected paths and recovery details without claiming that
+nothing was removed. They report `Route Remove failed.` or
+`Route Remove was interrupted.` respectively, with any operation-supplied
+recovery command.
 
 ## Structured Output
 

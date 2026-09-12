@@ -56,6 +56,37 @@ public sealed class RouteCreatePresentationTests
         Assert.Contains("complete", text, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Theory(DisplayName = "Route Create human views retain partial effects and recovery findings")]
+    [InlineData(false)]
+    [InlineData(true)]
+    [Trait("Feature", "route-create"), Trait("Evidence", "UnitBehavior")]
+    public void HumanViewsRetainPartialEffects(bool compact)
+    {
+        var formation = RouteCreateTestData.PreviewFormation() with
+        {
+            Effects = [RouteCreateTestData.CreateEffect() with
+            {
+                Outcome = RouteCreateEffectOutcome.VerificationFailed,
+                Residual = RouteCreateEffectResidual.Retained,
+            }],
+            Recovery = new RouteCreateRecovery { State = RouteCreateRecoveryState.Retained, ResidualPath = "/recovery/create.zip" },
+            Verification = RouteCreateVerificationState.Failed,
+            Findings = [RouteCreateTestData.Finding(RouteCreateFindingCode.VerificationFailed,
+                cause: "The destination verification failed.")],
+        };
+        var result = RouteCreateTestData.Result(formation);
+        var text = RouteCreateHumanRenderer.Render(new CliPresentationRequest<RouteCreateResult>(result,
+            new CliPresentation(CliOutputFormat.Human, compact ? CliView.Compact : CliView.Expanded, CliVerbosity.Normal)));
+
+        Assert.StartsWith("Route Create failed.", text, StringComparison.Ordinal);
+        Assert.Contains("verification-failed / residual=retained", text, StringComparison.Ordinal);
+        Assert.Contains("The destination verification failed.", text, StringComparison.Ordinal);
+        Assert.Contains("[route-create.verification-failed]", text, StringComparison.Ordinal);
+        Assert.Contains("/recovery/create.zip", text, StringComparison.Ordinal);
+        Assert.Contains("Verification: failed", text, StringComparison.Ordinal);
+        Assert.Contains(RouteCreateTestData.TargetPath, text, StringComparison.Ordinal);
+    }
+
     [Fact(DisplayName = "Route Create JSON renderer emits the ordered envelope"), Trait("Feature", "route-create"), Trait("Evidence", "UnitBehavior")]
     public void JsonRendererEmitsOrderedEnvelope()
     {

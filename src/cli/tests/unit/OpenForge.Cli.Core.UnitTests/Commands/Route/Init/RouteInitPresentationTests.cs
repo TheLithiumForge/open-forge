@@ -160,7 +160,24 @@ public sealed class RouteInitPresentationTests
         Assert.Contains("Target:", text, StringComparison.Ordinal);
         Assert.Contains("dry-run", text, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("Status: requires attention", text, StringComparison.Ordinal);
-        Assert.Contains("Next: author each NeedsAuthoring entrypoint", text, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge route update", text, StringComparison.Ordinal);
+    }
+
+    [Theory(DisplayName = "Route Init human views report observed outcomes independently of apply mode")]
+    [InlineData(false)]
+    [InlineData(true)]
+    [Trait("Feature", "route-init"), Trait("Evidence", "UnitBehavior")]
+    public void HumanViewsReportObservedOutcomes(bool compact)
+    {
+        var text = RouteInitHumanRenderer.Render(new CliPresentationRequest<RouteInitResult>(
+            RouteInitRedTestData.Result(RouteInitRedTestData.Formation(mode: RouteInitMode.Apply)),
+            new CliPresentation(CliOutputFormat.Human, compact ? CliView.Compact : CliView.Expanded, CliVerbosity.Normal)));
+
+        Assert.Contains("1 planned", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("Created 1", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("did create", text, StringComparison.Ordinal);
+        Assert.Contains("Recovery:", text, StringComparison.Ordinal);
+        Assert.Contains("Verification:", text, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Route Init diagnostic renderer stays bounded and names the direct finding"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]

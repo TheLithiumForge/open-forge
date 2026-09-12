@@ -81,14 +81,17 @@ trials pass both human views and JSON, preserve exact Context body bytes and Fin
 TSV rows, and leave workspace/state unchanged. This closeout accompanies the
 authorized local squash onto develop; its commit completes the narrowed slice.
 
-Human views are complete for 23 of 28 commands. Core maintenance (Index,
-Install, Update, Repair and Cleanup) is qualified at source `6aaec0ee`: 3,325 Unit,
-1,745 Integration in each managed/native mode and 123 public journeys in each
-of three runtime configurations pass, with zero failures/skips. This closeout
-accompanies its local squash. Route List/Inspect was integrated as `5c325960`.
-Next are Route Create/Init/Update/Move/Remove human views, then accepted command
-JSON views. Stop after command work and before colour; final guidance remains
-pending. Command coverage is distinct from completion of the JSON work.
+Human views are complete for all 28 commands. Route Create/Init/Update/Move/
+Remove is qualified at source `c31915e3`: 3,334 Unit, 1,745 Integration in each
+managed/native mode and 123 public journeys in each of three runtime
+configurations pass, with zero failed, pending, skipped or other results.
+This closeout accompanies its local squash. Core maintenance is integrated as
+`638a850e`; Route List/Inspect as `5c325960`. Accepted compact JSON is next, with
+field membership and implementation readiness recorded in the capsule.
+Stop after command work and before colour; final guidance remains pending.
+Human command coverage is distinct from completion of the JSON work.
+The installed command was directly observed at `56538d63`; this set uses the
+qualified built executables and did not change the global installation.
 Expanded remains the default. Result limits, a compact default and an even smaller
 file-oriented view are saved proposals; none is implemented. Display filtering,
 parser simplifications P2–P6 and configurable-threshold analysis stay backlog.

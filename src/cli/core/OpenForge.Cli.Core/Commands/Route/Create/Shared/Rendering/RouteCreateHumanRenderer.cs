@@ -1,10 +1,10 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Shared.Rendering;
 
@@ -18,14 +18,11 @@ internal static class RouteCreateHumanRenderer
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
         var builder = new StringBuilder();
-        builder.AppendLine(Summary(result));
-        builder.AppendLine($"Workspace: {Value(result.Workspace?.LexicalRoot)}");
-        builder.AppendLine($"Selected by: {SelectedBy(result.Workspace)}");
+        CliHumanText.AppendHeader(builder, presentation, Summary(result));
         builder.AppendLine($"Target: {Value(result.Target.Id ?? result.Target.Requested)}");
         builder.AppendLine($"Path: {Value(result.Target.Path)}");
         builder.AppendLine($"Description: {Value(result.Metadata.Description)}");
         builder.AppendLine($"Mode: {RouteCreateDefinitions.ReadMachineName(result.Mode)}");
-        builder.AppendLine($"Status: {Status(result.Status)}");
         builder.AppendLine(
             $"Plan: completeness={RouteCreateDefinitions.ReadMachineName(result.Plan.Completeness)}, safety={RouteCreateDefinitions.ReadMachineName(result.Plan.Safety)}");
 
@@ -39,33 +36,24 @@ internal static class RouteCreateHumanRenderer
             result,
             showChanges: expanded || result.Mode == Models.Request.RouteCreateMode.DryRun);
         AppendUnchanged(builder, result.UnchangedPaths);
-        if (expanded)
+        foreach (var finding in result.Findings)
         {
-            foreach (var finding in result.Findings)
+            builder.AppendLine($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Value(finding.Cause)} [{RouteCreateDefinitions.ReadMachineName(finding.Code)}]");
+            if (finding.Target is { } target)
             {
-                builder.AppendLine($"{FindingLabel(finding.Status)}: {Value(finding.Cause)}");
+                builder.AppendLine($"  {Value(target)}");
             }
+        }
 
-            builder.AppendLine(
-                $"Recovery: {RouteCreateDefinitions.ReadMachineName(result.Recovery.State)}{PathSuffix(result.Recovery.ResidualPath)}");
-            builder.AppendLine(
-                $"Verification: {RouteCreateDefinitions.ReadMachineName(result.Verification)}");
-        }
-        else if (result.Status == CliSemanticStatus.Attention)
-        {
-            builder.AppendLine(
-                $"Recovery: {RouteCreateDefinitions.ReadMachineName(result.Recovery.State)}{PathSuffix(result.Recovery.ResidualPath)}");
-        }
+        builder.AppendLine($"Recovery: {RouteCreateDefinitions.ReadMachineName(result.Recovery.State)}{PathSuffix(result.Recovery.ResidualPath)}");
+        builder.AppendLine($"Verification: {RouteCreateDefinitions.ReadMachineName(result.Verification)}");
 
         if (result.Mode == Models.Request.RouteCreateMode.DryRun)
         {
             builder.AppendLine("No files changed (--dry-run).");
         }
 
-        if (result.Next is { } next)
-        {
-            builder.AppendLine($"Next: {Value(next.Command)} — {Value(next.Reason)}");
-        }
+        CliHumanText.AppendNext(builder, presentation);
 
         return builder.ToString().TrimEnd();
     }
@@ -78,7 +66,7 @@ internal static class RouteCreateHumanRenderer
             or CliSemanticStatus.Failed
             or CliSemanticStatus.Interrupted)
         {
-            return "The routed file was not created.";
+            return CliHumanText.Outcome("Route Create", result.Status);
         }
 
         if (result.Mode == Models.Request.RouteCreateMode.DryRun)
@@ -136,24 +124,6 @@ internal static class RouteCreateHumanRenderer
         }
     }
 
-    private static string SelectedBy(CliWorkspace? workspace)
-        => workspace?.SelectedBy switch
-        {
-            null => "unavailable",
-            CliWorkspaceSelectionMethod.CurrentDirectory => "current directory",
-            CliWorkspaceSelectionMethod.ExplicitWorkspace => "--workspace",
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(workspace),
-                workspace.SelectedBy,
-                "The workspace selection method is not defined."),
-        };
-
-    private static string FindingLabel(CliSemanticStatus status)
-    {
-        var name = Status(status);
-        return char.ToUpperInvariant(name[0]) + name[1..];
-    }
-
     private static string Value(string? value)
         => value is null ? "unavailable" : RouteTextEscaping.Escape(value);
 
@@ -162,8 +132,4 @@ internal static class RouteCreateHumanRenderer
             ? string.Empty
             : $" / {RouteTextEscaping.Escape(path)}";
 
-    private static string Status(CliSemanticStatus status)
-        => status == CliSemanticStatus.Attention
-            ? "requires attention"
-            : CliStatusDefinitions.Read(status).MachineName;
 }

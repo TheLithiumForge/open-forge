@@ -492,7 +492,8 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(1, completion.ExitCode);
         Assert.Equal(string.Empty, stdout.ToString());
         var human = stderr.ToString();
-        Assert.Contains($"Route Update did not update {plan.Preview.Target.Id}", human, StringComparison.Ordinal);
+        Assert.Contains("Route Update failed.", human, StringComparison.Ordinal);
+        Assert.Contains(Assert.IsType<string>(plan.Preview.Target.Id), human, StringComparison.Ordinal);
         Assert.Contains("Status: failed", human, StringComparison.Ordinal);
         Assert.Contains("Before:", human, StringComparison.Ordinal);
         Assert.Contains("Expected:", human, StringComparison.Ordinal);

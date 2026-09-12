@@ -116,7 +116,7 @@ public sealed class PublishedRouteCreateProcessTests
 
         Assert.Equal(4, invalid.ExitCode);
         Assert.Equal(string.Empty, invalid.StandardOutput);
-        Assert.Contains("The routed file was not created.", invalid.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Route Create could not start because the input is invalid.", invalid.StandardError, StringComparison.Ordinal);
         Assert.Contains("Status: invalid", invalid.StandardError, StringComparison.Ordinal);
         Assert.Contains(
             "requires one nonblank --description value",

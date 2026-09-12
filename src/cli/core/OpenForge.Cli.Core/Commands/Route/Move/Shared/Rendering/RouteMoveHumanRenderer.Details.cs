@@ -1,5 +1,6 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Rendering;
 
@@ -52,7 +53,7 @@ internal static partial class RouteMoveHumanRenderer
         foreach (var rewrite in references.Rewrites)
         {
             builder.AppendLine(
-                $"  {Value(rewrite.SourcePath)} -> {Value(rewrite.DestinationSourcePath)}: {Value(rewrite.Before)} -> {Value(rewrite.Expected)}");
+                $"  {Value(rewrite.SourcePath)}:{rewrite.Location.Line}:{rewrite.Location.Column} -> {Value(rewrite.DestinationSourcePath)}: {Value(rewrite.Before)} -> {Value(rewrite.Expected)}");
             builder.AppendLine(
                 $"    Target: {Value(rewrite.OldTarget.Path)} -> {Value(rewrite.ExpectedTarget.Path)}");
         }
@@ -106,16 +107,10 @@ internal static partial class RouteMoveHumanRenderer
 
     private static void AppendRecovery(
         StringBuilder builder,
-        RouteMoveRecovery recovery,
-        bool showProtectedPaths)
+        RouteMoveRecovery recovery)
     {
         builder.AppendLine(
             $"Recovery: {RouteMoveDefinitions.ReadMachineName(recovery.State)} / residual={Value(recovery.ResidualPath)}");
-        if (!showProtectedPaths)
-        {
-            return;
-        }
-
         foreach (var path in recovery.ProtectedPaths)
         {
             builder.AppendLine($"  Protected: {Value(path)}");
@@ -124,18 +119,16 @@ internal static partial class RouteMoveHumanRenderer
 
     private static void AppendFindings(
         StringBuilder builder,
-        IReadOnlyList<RouteMoveFinding> findings,
-        bool showFindings)
+        IReadOnlyList<RouteMoveFinding> findings)
     {
-        if (!showFindings)
-        {
-            return;
-        }
-
         foreach (var finding in findings)
         {
             builder.AppendLine(
-                $"Finding: {RouteMoveDefinitions.ReadMachineName(finding.Code)} / target={Value(finding.Target)} / {Value(finding.Cause)}");
+                $"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Value(finding.Cause)} [{RouteMoveDefinitions.ReadMachineName(finding.Code)}]");
+            if (finding.Target is { } target)
+            {
+                builder.AppendLine($"  {Value(target)}");
+            }
         }
     }
 }

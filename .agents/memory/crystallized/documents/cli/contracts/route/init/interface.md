@@ -481,81 +481,54 @@ truncation.
 
 ## Human Output
 
-The default expanded view uses the complete blocks below. Compact view is a
-projection of the same typed result. Every workspace-aware human result retains
-`Workspace`, `Selected by`, and the target identity when it is available.
-Compact output also retains application or preview mode, semantic status,
-completeness and safety, created and unchanged paths, generated-navigation
-effects, draft paths, and at most one required `Next:` line. Dry-run compact
-output still shows every planned path, generated effect, and exact bounded diff.
-Structured results retain at most one required `Next:` action as well.
+Both views start with the outcome, `Status`, `Workspace`, and `Selected by`,
+followed by command identity and mode. Expanded remains the default. Compact
+uses the same typed result and retains completeness, safety, every affected and
+unchanged path, every finding with its status, cause, stable code and available
+target, and verification and recovery facts. A failure heading reports the
+semantic outcome; it does not claim that no mutation occurred. Effect outcomes
+and residual state describe any partial work.
 
-### Verified No-Op
+Each required `Next:` line contains the actual command from the result, once.
+Expanded adds its reason on the following line; compact omits that explanation.
+Complete results have no Next action. Other statuses retain at most one direct
+correction or recovery action supplied by the operation. Rendering does not
+invent advice, change status, or select another action.
 
-```text
-Workspace: D:/work/example
-Selected by: current directory
-Target: memory/project-alpha/documents
-Path: .agents/memory/project-alpha/documents/_documents.md
-The route is initialized.
-Checked 3 entrypoints. No files changed.
-```
+Primary human `complete`, `attention`, and `incomplete` results use stdout.
+Primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
+stderr. Each result stays together on its assigned stream. Separate bounded
+diagnostics use stderr. JSON remains one complete structured result on stdout.
 
-### Successful Application
+Both views retain target ID/path, scaffold, every entrypoint and generated effect,
+unchanged paths and draft paths. Entrypoint counts use each typed outcome, such
+as `planned`, `created`, or `unchanged`; selecting apply mode does not establish
+that a write occurred. Effect rows likewise use their actual outcome and
+residual state. Lifecycle, recovery and verification remain visible in compact.
+Expanded additionally includes Framework inventory and segment detail.
 
-```text
-The route was initialized.
-Created 2 entrypoints and updated 2 generated regions.
-Workspace: D:/work/example
-Selected by: current directory
-Target: memory/project-alpha/documents
-Path: .agents/memory/project-alpha/documents/_documents.md
-Status: requires attention
-Next: author each NeedsAuthoring entrypoint through route update before relying on its description or tags.
-```
+Dry-run output retains every planned path, generated effect and exact bounded
+change, ending with `No files changed (--dry-run).` Expanded also retains change
+values for application results. Exact no-ops identify the checked entrypoints
+and say `No files changed.`
 
-If `Failed`/positively observed `Retained` recovery also applies, its exact
-cleanup guidance owns the single `Next:` line and the `NeedsAuthoring` condition
-remains visible as evidence.
-
-### Successful Dry Run
+Illustrative beginning of a preview with draft metadata:
 
 ```text
 The route would be initialized.
-Would create 2 entrypoints and update 2 generated regions.
-
+Status: requires attention
 Workspace: D:/work/example
 Selected by: --workspace
 Target: memory/project-alpha/documents
 Path: .agents/memory/project-alpha/documents/_documents.md
-
-<new files and exact bounded diffs>
-
-No files changed (--dry-run).
-Status: requires attention
-Next: author each NeedsAuthoring entrypoint through route update before relying on its description or tags.
 ```
 
-Default human output lists every created entrypoint and changed existing path.
-It states what happened without naming successful internal stages. Verbose and
-structured output may include planning and preflight evidence.
-
-Every error names the route initialization, target, direct cause, and direct
-correction when one exists. Compact output has no required `Next:` line for a
-`complete` result. An `attention` result has at most one required line:
-
-```text
-Next: author each NeedsAuthoring entrypoint through route update before relying on its description or tags.
-```
-
-For `incomplete`, `invalid`, and `blocked`, a required line names the direct
-correction when it is known. Failed and interrupted results use ordinary retry
-and recovery guidance. No result invents a health or semantic-quality score.
-
-Primary human `complete`, `attention`, and `incomplete` results use stdout.
-Primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
-stderr. Each primary human result stays together on its assigned stream.
-Separate bounded diagnostics use stderr.
+The remaining mode, plan, entrypoint counts, effects, draft paths and findings
+follow that header. A NeedsAuthoring finding remains visible when recovery
+cleanup takes precedence as the single Next action. When authoring is the next
+action, the command is `Next: open-forge route update`; expanded gives the
+operation's authoring explanation below it. No result invents a health or
+semantic-quality score.
 
 ## Structured Output
 

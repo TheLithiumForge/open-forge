@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 
@@ -5,41 +6,47 @@ namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Rendering;
 
 internal static partial class RouteUpdateHumanRenderer
 {
-    private static void AppendChanged(
+    private static void AppendPatch(
         StringBuilder builder,
         RouteUpdateResult result)
     {
-        var changed = new List<string>(capacity: 4);
-        if (result.Patch.Description.State == RouteUpdatePatchState.Changed)
+        var patch = result.Patch;
+        if (patch.Description.Requested)
         {
-            changed.Add("description");
+            builder.AppendLine($"Description ({RouteUpdateDefinitions.ReadMachineName(patch.Description.State)}): {MetadataValue(patch.Description.Before, patch.Description.State)} -> {MetadataValue(patch.Description.Expected, patch.Description.State)}");
         }
 
-        if (result.Patch.Responsibility.State == RouteUpdatePatchState.Changed)
+        if (patch.Responsibility.Requested)
         {
-            changed.Add("responsibility");
+            var expected = patch.Responsibility.Operation == RouteUpdateResponsibilityOperation.Remove
+                ? "absent"
+                : MetadataValue(patch.Responsibility.Expected, patch.Responsibility.State);
+            builder.AppendLine($"Responsibility ({RouteUpdateDefinitions.ReadMachineName(patch.Responsibility.State)}): {MetadataValue(patch.Responsibility.Before, patch.Responsibility.State)} -> {expected}");
         }
 
-        if (result.Patch.Tags.State == RouteUpdatePatchState.Changed)
+        if (patch.Tags.Requested)
         {
-            changed.Add("tags");
+            builder.AppendLine($"Tags ({RouteUpdateDefinitions.ReadMachineName(patch.Tags.State)}): {Tags(patch.Tags.Before)} -> {Tags(patch.Tags.Expected)}");
         }
 
         if (result.Template?.Decision == RouteUpdateTemplateDecision.Copied)
         {
-            changed.Add("Template body");
-        }
-
-        if (changed.Count > 0)
-        {
-            builder.AppendLine($"Changed: {string.Join(", ", changed)}");
+            builder.AppendLine("Template body: selected for copying");
         }
     }
 
+    private static string MetadataValue(string? value, RouteUpdatePatchState state)
+        => value is not null ? $"\"{Value(value)}\""
+            : state == RouteUpdatePatchState.Unresolved ? "unavailable" : "absent";
+
+    private static string Tags(ImmutableArray<string>? values)
+        => values is { } tags
+            ? $"[{string.Join(", ", tags.Select(tag => $"\"{Value(tag)}\""))}]"
+            : "unavailable";
+
     private static void AppendEffects(
         StringBuilder builder,
-        RouteUpdateResult result,
-        bool showPreview)
+        RouteUpdateResult result)
     {
         if (result.Effects.IsEmpty)
         {
@@ -52,11 +59,6 @@ internal static partial class RouteUpdateHumanRenderer
         {
             builder.AppendLine(
                 $"  {Value(effect.Path)}: {RouteUpdateDefinitions.ReadMachineName(effect.Action)} {RouteUpdateDefinitions.ReadMachineName(effect.Kind)} / {RouteUpdateDefinitions.ReadMachineName(effect.Outcome)} / residual={RouteUpdateDefinitions.ReadMachineName(effect.Residual)}");
-            if (!showPreview)
-            {
-                continue;
-            }
-
             builder.AppendLine($"    Before: {Value(effect.Change.Before)}");
             builder.AppendLine($"    Expected: {Value(effect.Change.Expected)}");
             foreach (var preview in effect.Preview)

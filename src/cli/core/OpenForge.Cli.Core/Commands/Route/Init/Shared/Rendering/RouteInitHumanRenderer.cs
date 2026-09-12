@@ -3,11 +3,10 @@ using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Rendering;
 
@@ -18,19 +17,13 @@ internal static class RouteInitHumanRenderer
     {
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
-        return Render(
-            presentation.Result,
-            presentation.Presentation.View == CliView.Expanded);
-    }
-
-    private static string Render(RouteInitResult result, bool expanded)
-    {
+        var result = presentation.Result;
+        var expanded = presentation.Presentation.View == CliView.Expanded;
         var builder = new StringBuilder();
-        builder.AppendLine(Summary(result));
+        CliHumanText.AppendHeader(builder, presentation, Summary(result));
         AppendIdentity(builder, result);
         builder.AppendLine($"Mode: {RouteInitDefinitions.ReadMachineName(result.Mode)}");
         builder.AppendLine($"Scaffold: {RouteInitDefinitions.ReadMachineName(result.Scaffold)}");
-        builder.AppendLine($"Status: {Status(result.Status)}");
         builder.AppendLine(
             $"Plan: completeness={RouteInitDefinitions.ReadMachineName(result.Plan.Completeness)}, safety={RouteInitDefinitions.ReadMachineName(result.Plan.Safety)}");
 
@@ -42,25 +35,19 @@ internal static class RouteInitHumanRenderer
         if (expanded)
         {
             AppendFramework(builder, result.Framework);
-            AppendFindings(builder, result.Findings);
-            builder.AppendLine(
-                $"Lifecycle: {RouteInitDefinitions.ReadMachineName(result.Lifecycle.Action)} / {RouteInitDefinitions.ReadMachineName(result.Lifecycle.Outcome)}");
-            builder.AppendLine(
-                $"Recovery: {RouteInitDefinitions.ReadMachineName(result.Recovery.State)}{PathSuffix(result.Recovery.ResidualPath)}");
-            builder.AppendLine(
-                $"Verification: {RouteInitDefinitions.ReadMachineName(result.Verification)}");
         }
-        else
-        {
-            AppendDirectFinding(builder, result);
-        }
+
+        AppendFindings(builder, result.Findings);
+        builder.AppendLine($"Lifecycle: {RouteInitDefinitions.ReadMachineName(result.Lifecycle.Action)} / {RouteInitDefinitions.ReadMachineName(result.Lifecycle.Outcome)}");
+        builder.AppendLine($"Recovery: {RouteInitDefinitions.ReadMachineName(result.Recovery.State)}{PathSuffix(result.Recovery.ResidualPath)}");
+        builder.AppendLine($"Verification: {RouteInitDefinitions.ReadMachineName(result.Verification)}");
 
         if (result.Mode == RouteInitMode.DryRun)
         {
             builder.AppendLine("No files changed (--dry-run).");
         }
 
-        AppendNext(builder, result.Next);
+        CliHumanText.AppendNext(builder, presentation);
         return builder.ToString().TrimEnd();
     }
 
@@ -72,7 +59,7 @@ internal static class RouteInitHumanRenderer
             or CliSemanticStatus.Interrupted
             or CliSemanticStatus.Incomplete)
         {
-            return "The route was not initialized.";
+            return CliHumanText.Outcome("Route Init", result.Status);
         }
 
         if (result.Mode == RouteInitMode.DryRun)
@@ -92,8 +79,6 @@ internal static class RouteInitHumanRenderer
 
     private static void AppendIdentity(StringBuilder builder, RouteInitResult result)
     {
-        builder.AppendLine($"Workspace: {Value(result.Workspace?.LexicalRoot)}");
-        builder.AppendLine($"Selected by: {SelectedBy(result.Workspace)}");
         builder.AppendLine(
             $"Target: {RouteTextEscaping.Escape(result.Target.Id ?? result.Target.Requested)}");
         builder.AppendLine($"Path: {Value(result.Target.Path)}");
@@ -103,19 +88,17 @@ internal static class RouteInitHumanRenderer
         StringBuilder builder,
         RouteInitResult result)
     {
-        var created = result.Entrypoints.Count(entrypoint => entrypoint.Outcome
-            is RouteInitEntrypointOutcome.Planned
-            or RouteInitEntrypointOutcome.Created);
+        var outcomes = result.Entrypoints.GroupBy(entrypoint => entrypoint.Outcome)
+            .OrderBy(group => group.Key)
+            .Select(group => string.Create(CultureInfo.InvariantCulture,
+                $"{group.Count()} {RouteInitDefinitions.ReadMachineName(group.Key)}"));
         var generated = result.Effects.Count(effect => effect.Kind == RouteInitEffectKind.GeneratedRegion);
-        var verb = result.Mode == RouteInitMode.DryRun
-            ? "Would create"
-            : "Created";
-        var generatedVerb = result.Mode == RouteInitMode.DryRun
-            ? "would update"
-            : "updated";
-        builder.AppendLine(
-            CultureInfo.InvariantCulture,
-            $"{verb} {created} entrypoints and {generatedVerb} {generated} generated regions.");
+        builder.AppendLine(CultureInfo.InvariantCulture,
+            $"Entrypoints: {result.Entrypoints.Length}; generated regions: {generated}");
+        if (result.Entrypoints.Length != 0)
+        {
+            builder.AppendLine($"  {string.Join(", ", outcomes)}");
+        }
     }
 
     private static void AppendEffects(
@@ -134,11 +117,8 @@ internal static class RouteInitHumanRenderer
         builder.AppendLine("Effects:");
         foreach (var effect in result.Effects)
         {
-            var tense = result.Mode == RouteInitMode.DryRun
-                ? "would"
-                : "did";
             builder.AppendLine(
-                $"  {RouteTextEscaping.Escape(effect.Path)}: {tense} {RouteInitDefinitions.ReadMachineName(effect.Action)} {RouteInitDefinitions.ReadMachineName(effect.Kind)} / {RouteInitDefinitions.ReadMachineName(effect.Outcome)} / residual={RouteInitDefinitions.ReadMachineName(effect.Residual)}");
+                $"  {RouteTextEscaping.Escape(effect.Path)}: {RouteInitDefinitions.ReadMachineName(effect.Action)} {RouteInitDefinitions.ReadMachineName(effect.Kind)} / {RouteInitDefinitions.ReadMachineName(effect.Outcome)} / residual={RouteInitDefinitions.ReadMachineName(effect.Residual)}");
             if (effect.SourceAssetPath is not null)
             {
                 builder.AppendLine(
@@ -210,7 +190,7 @@ internal static class RouteInitHumanRenderer
         foreach (var finding in findings)
         {
             builder.AppendLine(
-                $"{FindingLabel(finding.Status)}: {RouteTextEscaping.Escape(finding.Cause)}");
+                $"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {RouteTextEscaping.Escape(finding.Cause)} [{RouteInitDefinitions.ReadMachineName(finding.Code)}]");
             if (finding.Target is not null)
             {
                 builder.AppendLine($"  Target: {RouteTextEscaping.Escape(finding.Target)}");
@@ -218,76 +198,10 @@ internal static class RouteInitHumanRenderer
         }
     }
 
-    private static void AppendDirectFinding(
-        StringBuilder builder,
-        RouteInitResult result)
-    {
-        if (result.Status is not (
-                CliSemanticStatus.Incomplete
-                or CliSemanticStatus.Invalid
-                or CliSemanticStatus.Blocked
-                or CliSemanticStatus.Failed
-                or CliSemanticStatus.Interrupted))
-        {
-            return;
-        }
-
-        var finding = result.Findings.FirstOrDefault(candidate => candidate.Status == result.Status)
-            ?? result.Findings.FirstOrDefault();
-        if (finding is null)
-        {
-            return;
-        }
-
-        builder.AppendLine(
-            $"{FindingLabel(finding.Status)}: {RouteTextEscaping.Escape(finding.Cause)}");
-        if (finding.Target is not null)
-        {
-            builder.AppendLine($"  Target: {RouteTextEscaping.Escape(finding.Target)}");
-        }
-    }
-
-    private static void AppendNext(StringBuilder builder, CliNextAction? next)
-    {
-        if (next is null)
-        {
-            return;
-        }
-
-        var guidance = next.Command == "open-forge route update"
-            ? "author each NeedsAuthoring entrypoint before relying on its description or tags."
-            : LowerInitial(next.Reason);
-        builder.AppendLine($"Next: {RouteTextEscaping.Escape(guidance)}");
-    }
-
-    private static string SelectedBy(CliWorkspace? workspace)
-        => workspace?.SelectedBy switch
-        {
-            null => "unavailable",
-            CliWorkspaceSelectionMethod.CurrentDirectory => "current directory",
-            CliWorkspaceSelectionMethod.ExplicitWorkspace => "--workspace",
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(workspace),
-                workspace.SelectedBy,
-                "The workspace selection method is not defined."),
-        };
-
     private static string Value(string? value)
         => value is null ? "unavailable" : RouteTextEscaping.Escape(value);
 
     private static string PathSuffix(string? path)
         => path is null ? string.Empty : $" / {RouteTextEscaping.Escape(path)}";
 
-    private static string Status(CliSemanticStatus status)
-        => status == CliSemanticStatus.Attention
-            ? "requires attention"
-            : CliStatusDefinitions.Read(status).MachineName;
-
-    private static string FindingLabel(CliSemanticStatus status)
-        => status == CliSemanticStatus.Attention
-            ? "Requires attention"
-            : char.ToUpperInvariant(Status(status)[0]) + Status(status)[1..];
-
-    private static string LowerInitial(string value)
-        => char.ToLowerInvariant(value[0]) + value[1..];
 }

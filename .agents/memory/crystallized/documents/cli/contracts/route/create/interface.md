@@ -371,71 +371,50 @@ separate lease-bound contract.
 
 ## Human Output
 
-The default expanded view uses the complete blocks below. Every workspace-aware
-human result retains `Workspace`, `Selected by`, and the target identity when it
-is available. Compact view keeps the
-semantic result, workspace, selection method, and target identity when
-available, preview or application mode, completeness and safety, the Template
-identity when supplied, affected paths, generated-navigation effects, and the
-exact effects or diffs required for a preview while omitting optional
-explanation and provenance. It retains at most one required `Next:` action.
-Structured results retain at most one required `Next:` action as well. Complete
-results have no `Next:` action. Incomplete results and direct errors name one
-required correction when one exists. Failed and interrupted results name
-ordinary recovery when needed. Results do not provide diagnosis or
-recommendations. Dry-run compact output still shows every planned affected path
-and every exact planned effect or diff.
+Both views start with the outcome, `Status`, `Workspace`, and `Selected by`,
+followed by command identity and mode. Expanded remains the default. Compact
+uses the same typed result and retains completeness, safety, every affected and
+unchanged path, every finding with its status, cause, stable code and available
+target, and verification and recovery facts. A failure heading reports the
+semantic outcome; it does not claim that no mutation occurred. Effect outcomes
+and residual state describe any partial work.
 
-Primary human rendering for `complete`, `attention`, and `incomplete` results
-goes to stdout. Primary human rendering for `invalid`, `blocked`, `failed`, and
-`interrupted` results goes to stderr. Each primary typed result stays together
-on its assigned stream. Bounded diagnostics, including verbose diagnostics, use
-stderr when emitted.
+Each required `Next:` line contains the actual command from the result, once.
+Expanded adds its reason on the following line; compact omits that explanation.
+Complete results have no Next action. Other statuses retain at most one direct
+correction or recovery action supplied by the operation. Rendering does not
+invent advice, change status, or select another action.
 
-### Verified No-Op
+Primary human `complete`, `attention`, and `incomplete` results use stdout.
+Primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
+stderr. Each result stays together on its assigned stream. Separate bounded
+diagnostics use stderr. JSON remains one complete structured result on stdout.
+
+Both views retain target ID/path, description, Template identity
+when supplied, and every generated-navigation effect. Dry-run output includes
+every exact planned effect and prints `No files changed (--dry-run).` Expanded
+also shows before/expected change values for application results. Compact apply
+retains effect action, kind, outcome and residual state.
+
+Success headings distinguish created content, an already-matching no-op, and a
+preview. An attention result retains the verified result and all attention
+findings. Errors identify Route Create, the target and the direct cause without
+diagnosing authoring quality or Template placeholder completion.
+
+Illustrative beginning of an application result:
 
 ```text
-The routed file already matches the requested content.
+The routed file was created.
+Status: complete
 Workspace: D:/work/example
 Selected by: current directory
 Target: memory/crystallized/decisions/cache-policy
 Path: .agents/memory/crystallized/decisions/cache-policy.md
-No files changed.
 ```
 
-### Successful Application
-
-```text
-The routed file was created.
-Workspace: D:/work/example
-Selected by: current directory
-ID: memory/crystallized/decisions/cache-policy
-Path: .agents/memory/crystallized/decisions/cache-policy.md
-Updated 1 generated region.
-```
-
-### Successful Dry Run
-
-```text
-The routed file would be created.
-Workspace: D:/work/example
-Selected by: --workspace
-ID: memory/crystallized/decisions/cache-policy
-Path: .agents/memory/crystallized/decisions/cache-policy.md
-
-<new file and exact bounded diffs>
-
-No files changed (--dry-run).
-```
-
-Default human output identifies the Template when a Template supplied the body
-content and lists each changed existing path. It states what happened without
-naming successful internal stages. Verbose and structured output may include
-planning and preflight evidence.
-
-Every error names the route creation, target, direct cause, and one required
-correction when one exists. It does not diagnose authoring quality or Template
-placeholder completion.
+The remaining metadata, plan, effects, recovery and verification follow that
+header. A failed verification can still have a retained created file; both views
+show that effect and its recovery details under `Route Create failed.`
 
 ## Structured Output
 

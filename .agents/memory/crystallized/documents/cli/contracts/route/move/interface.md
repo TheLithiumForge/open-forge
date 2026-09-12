@@ -441,61 +441,43 @@ separate lease-bound contract.
 
 ## Human Output
 
-Human output comes from one typed result. The default expanded view includes the
-workspace, selection method, selected subject kind, source and destination
-identity, complete effect summary, affected paths, reference coverage and
-rewrites, generated projections, verification, bundle provenance, and retained
-partial-state facts, and semantic status. Compact view retains the identity,
-leaf/category kind, mode, status,
-completeness and safety, every affected path, every reference effect, every
-generated effect, and at most one required `Next:` action.
+Both views start with the outcome, `Status`, `Workspace`, and `Selected by`,
+followed by command identity and mode. Expanded remains the default. Compact
+uses the same typed result and retains completeness, safety, every affected and
+unchanged path, every finding with its status, cause, stable code and available
+target, and verification and recovery facts. A failure heading reports the
+semantic outcome; it does not claim that no mutation occurred. Effect outcomes
+and residual state describe any partial work.
 
-Dry-run compact and expanded output still shows every exact planned effect or
-bounded diff. A successful result does not name internal planning stages. The
-primary human result for `complete`, `attention`, and `incomplete` goes to
-stdout. The primary human result for `invalid`, `blocked`, `failed`, and
-`interrupted` goes to stderr. Each primary result stays together on its assigned
-stream. Bounded diagnostics use stderr.
+Each required `Next:` line contains the actual command from the result, once.
+Expanded adds its reason on the following line; compact omits that explanation.
+Complete results have no Next action. Other statuses retain at most one direct
+correction or recovery action supplied by the operation. Rendering does not
+invent advice, change status, or select another action.
 
-### Successful leaf move
+Primary human `complete`, `attention`, and `incomplete` results use stdout.
+Primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
+stderr. Each result stays together on its assigned stream. Separate bounded
+diagnostics use stderr. JSON remains one complete structured result on stdout.
 
-```text
-The routed leaf was moved.
-Workspace: <workspace-path>
-Selected by: current directory
-Source: docs/old-guide
-Destination: .agents/docs/new-guide.md
-Rewritten references: 2
-Updated generated regions: 2
-```
+Both views retain source and destination IDs and paths, leaf/category identity,
+every subject layer and category member, ownership state and coverage, every
+reference rewrite, generated-navigation coverage and effect, and every
+protected recovery path. Expanded also includes the underlying ownership claims.
 
-### Successful category move
+Reference rows show source path with line and column, destination source path,
+exact before/expected literals and old/expected target identity. Byte coordinates
+remain structured detail. Every effect retains its action, kind, before/expected
+path state and fingerprints, outcome and residual state in both views. Dry-run
+output retains every exact planned effect and ends with
+`No files changed (--dry-run).`
 
-```text
-The routed category was moved.
-Category: .agents/guides/_guides.md
-Destination: .agents/archive/guides/_guides.md
-Moved items: 6
-Rewritten references: 4
-Updated generated regions: 3
-```
-
-### Dry run
-
-```text
-The routed category would be moved.
-Category: .agents/guides/_guides.md
-Destination: .agents/archive/guides/_guides.md
-
-<complete moved-path, reference, and generated-region effects>
-
-No files changed (--dry-run).
-```
-
-The exact examples use illustrative paths. A complete result has no required
-`Next:` action. Incomplete, invalid, and blocked results name the direct
-correction when it is known. Failed and interrupted results identify retained
-bundle/partial-state or retry guidance without inventing provenance.
+Success headings use `The routed file was moved.` or
+`The routed category was moved.`; previews use `would be moved`. Attention keeps
+the verified result and its findings. Failed or interrupted results retain all
+partial effects, protected paths and recovery details without claiming that
+nothing moved. They report `Route Move failed.` or `Route Move was interrupted.`
+respectively, with any operation-supplied recovery command.
 
 ## Structured Output
 

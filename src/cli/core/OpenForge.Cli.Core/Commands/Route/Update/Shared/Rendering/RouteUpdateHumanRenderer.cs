@@ -1,10 +1,10 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Rendering;
 
@@ -16,11 +16,8 @@ internal static partial class RouteUpdateHumanRenderer
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
-        var expanded = presentation.Presentation.View == CliView.Expanded;
         var builder = new StringBuilder();
-        builder.AppendLine(Summary(result));
-        builder.AppendLine($"Workspace: {Value(result.Workspace?.LexicalRoot)}");
-        builder.AppendLine($"Selected by: {SelectedBy(result.Workspace)}");
+        CliHumanText.AppendHeader(builder, presentation, Summary(result));
         if (result.Target.Id is { } id)
         {
             builder.AppendLine($"ID: {Value(id)}");
@@ -32,7 +29,6 @@ internal static partial class RouteUpdateHumanRenderer
 
         builder.AppendLine($"Path: {Value(result.Target.Path)}");
         builder.AppendLine($"Mode: {RouteUpdateDefinitions.ReadMachineName(result.Mode)}");
-        builder.AppendLine($"Status: {Status(result.Status)}");
         var completeness = RouteUpdateDefinitions.ReadMachineName(result.Plan.Completeness);
         var safety = RouteUpdateDefinitions.ReadMachineName(result.Plan.Safety);
         var body = RouteUpdateDefinitions.ReadMachineName(result.Plan.Body);
@@ -44,50 +40,36 @@ internal static partial class RouteUpdateHumanRenderer
                 $"Template: {Value(template.Id ?? template.Requested)} ({Value(template.Path)}) / {RouteUpdateDefinitions.ReadMachineName(template.Decision)}");
         }
 
-        AppendChanged(builder, result);
-        AppendEffects(
-            builder,
-            result,
-            showPreview: true);
+        AppendPatch(builder, result);
+        AppendEffects(builder, result);
         AppendUnchanged(builder, result.UnchangedPaths);
-        if (result.Plan.Body == RouteUpdateBodyState.AuthoredBodyProtected)
+        if (result.Plan.Body == RouteUpdateBodyState.AuthoredBodyProtected
+            && !result.Findings.Any(finding => finding.Code == RouteUpdateFindingCode.TemplateBodyProtected))
         {
-            builder.AppendLine(
-                "Template body not applied: the target already has authored body content.");
+            builder.AppendLine("Template body not applied: the target already has authored body content.");
         }
 
-        if (expanded)
+        foreach (var finding in result.Findings)
         {
-            foreach (var finding in result.Findings)
+            var cause = finding.Code == RouteUpdateFindingCode.TemplateBodyProtected
+                ? "Template body not applied: the target already has authored body content."
+                : Value(finding.Cause);
+            builder.AppendLine($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {cause} [{RouteUpdateDefinitions.ReadMachineName(finding.Code)}]");
+            if (finding.Target is { } target)
             {
-                if (finding.Code == RouteUpdateFindingCode.TemplateBodyProtected)
-                {
-                    continue;
-                }
-
-                builder.AppendLine($"{FindingLabel(finding.Status)}: {Value(finding.Cause)}");
+                builder.AppendLine($"  {Value(target)}");
             }
+        }
 
-            builder.AppendLine(
-                $"Recovery: {RouteUpdateDefinitions.ReadMachineName(result.Recovery.State)}{PathSuffix(result.Recovery.ResidualPath)}");
-            builder.AppendLine(
-                $"Verification: {RouteUpdateDefinitions.ReadMachineName(result.Verification)}");
-        }
-        else if (result.Status == CliSemanticStatus.Attention)
-        {
-            builder.AppendLine(
-                $"Recovery: {RouteUpdateDefinitions.ReadMachineName(result.Recovery.State)}{PathSuffix(result.Recovery.ResidualPath)}");
-        }
+        builder.AppendLine($"Recovery: {RouteUpdateDefinitions.ReadMachineName(result.Recovery.State)}{PathSuffix(result.Recovery.ResidualPath)}");
+        builder.AppendLine($"Verification: {RouteUpdateDefinitions.ReadMachineName(result.Verification)}");
 
         if (result.Mode == Models.Request.RouteUpdateMode.DryRun)
         {
             builder.AppendLine("No files changed (--dry-run).");
         }
 
-        if (result.Next is { } next)
-        {
-            builder.AppendLine($"Next: {Value(next.Command)} — {Value(next.Reason)}");
-        }
+        CliHumanText.AppendNext(builder, presentation);
 
         return builder.ToString().TrimEnd();
     }
@@ -96,8 +78,7 @@ internal static partial class RouteUpdateHumanRenderer
     {
         if (IsError(result.Status))
         {
-            var primary = result.Findings.First(finding => finding.Status == result.Status);
-            return $"Route Update did not update {Value(result.Target.Id ?? result.Target.Requested)}: {Value(primary.Cause)}";
+            return CliHumanText.Outcome("Route Update", result.Status);
         }
 
         if (result.Status == CliSemanticStatus.Attention)
@@ -122,29 +103,6 @@ internal static partial class RouteUpdateHumanRenderer
             or CliSemanticStatus.Failed
             or CliSemanticStatus.Interrupted;
 
-    private static string SelectedBy(CliWorkspace? workspace)
-        => workspace?.SelectedBy switch
-        {
-            null => "unavailable",
-            CliWorkspaceSelectionMethod.CurrentDirectory => "current directory",
-            CliWorkspaceSelectionMethod.ExplicitWorkspace => "--workspace",
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(workspace),
-                workspace.SelectedBy,
-                "The workspace selection method is not defined."),
-        };
-
-    private static string FindingLabel(CliSemanticStatus status)
-    {
-        if (status == CliSemanticStatus.Attention)
-        {
-            return "Attention";
-        }
-
-        var name = Status(status);
-        return char.ToUpperInvariant(name[0]) + name[1..];
-    }
-
     private static string Value(string? value)
         => value is null ? "unavailable" : RouteTextEscaping.Escape(value);
 
@@ -153,8 +111,4 @@ internal static partial class RouteUpdateHumanRenderer
             ? string.Empty
             : $" / {RouteTextEscaping.Escape(path)}";
 
-    private static string Status(CliSemanticStatus status)
-        => status == CliSemanticStatus.Attention
-            ? "requires attention"
-            : CliStatusDefinitions.Read(status).MachineName;
 }

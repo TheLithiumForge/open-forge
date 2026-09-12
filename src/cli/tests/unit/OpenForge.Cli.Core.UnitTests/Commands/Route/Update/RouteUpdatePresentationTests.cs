@@ -39,12 +39,12 @@ public sealed class RouteUpdatePresentationTests
         AssertInOrder(
             text,
             "The routed source is up to date.",
+            "Status: complete",
             $"Workspace: {RouteUpdateTestData.Workspace().LexicalRoot}",
             "Selected by: --workspace",
             $"ID: {RouteUpdateTestData.TargetId}",
             $"Path: {RouteUpdateTestData.TargetPath}",
             "Mode: apply",
-            "Status: complete",
             "Plan: completeness=complete, safety=safe, body=preserved",
             "No files changed.",
             "Unchanged:",
@@ -73,7 +73,7 @@ public sealed class RouteUpdatePresentationTests
             text,
             StringComparison.Ordinal);
         Assert.Contains(
-            "Next: open-forge route update — review the authored body; the Template body was not applied.",
+            $"Next: open-forge route update{Environment.NewLine}review the authored body; the Template body was not applied.",
             text,
             StringComparison.Ordinal);
     }
@@ -105,10 +105,10 @@ public sealed class RouteUpdatePresentationTests
             Presentation(RouteUpdateTestData.Result(formation), CliOutputFormat.Human));
 
         Assert.StartsWith("The routed source was updated.", text, StringComparison.Ordinal);
-        Assert.Contains(
-            "Changed: description, responsibility, tags, Template body",
-            text,
-            StringComparison.Ordinal);
+        Assert.Contains("Description (changed): \"Before\" -> \"After\"", text, StringComparison.Ordinal);
+        Assert.Contains("Responsibility (changed): \"Before responsibility\" -> \"After responsibility\"", text, StringComparison.Ordinal);
+        Assert.Contains("Tags (changed): [\"Before\"] -> [\"After\"]", text, StringComparison.Ordinal);
+        Assert.Contains("Template body: selected for copying", text, StringComparison.Ordinal);
         Assert.Contains(RouteUpdateTestData.ParentPath, text, StringComparison.Ordinal);
 
         var compact = RouteUpdateHumanRenderer.Render(
@@ -144,6 +144,50 @@ public sealed class RouteUpdatePresentationTests
             "The routed source would be updated.",
             dryRunText,
             StringComparison.Ordinal);
+    }
+
+    [Theory(DisplayName = "Route Update human views distinguish unknown and absent selected metadata")]
+    [InlineData(false)]
+    [InlineData(true)]
+    [Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
+    public void HumanViewsDistinguishUnknownAndAbsentMetadata(bool compact)
+    {
+        var formation = RouteUpdateTestData.VerifiedNoOpFormation();
+        var patch = ChangedPatch();
+        formation = formation with
+        {
+            Patch = patch with
+            {
+                Description = patch.Description with { State = RouteUpdatePatchState.Unresolved, Before = null, Expected = "After" },
+                Responsibility = patch.Responsibility with { State = RouteUpdatePatchState.Unchanged, Operation = RouteUpdateResponsibilityOperation.Remove, Before = null, Expected = null },
+                Tags = patch.Tags with { State = RouteUpdatePatchState.Unresolved, Before = null, Expected = [] },
+            },
+        };
+        var view = compact ? CliView.Compact : CliView.Expanded;
+        var text = RouteUpdateHumanRenderer.Render(Presentation(RouteUpdateTestData.Result(formation), CliOutputFormat.Human, view));
+
+        Assert.Contains("Description (unresolved): unavailable -> \"After\"", text, StringComparison.Ordinal);
+        Assert.Contains("Responsibility (unchanged): absent -> absent", text, StringComparison.Ordinal);
+        Assert.Contains("Tags (unresolved): unavailable -> []", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("Description (changed)", text, StringComparison.Ordinal);
+    }
+
+    [Theory(DisplayName = "Route Update human views retain protected body findings once and copyable next command")]
+    [InlineData(false)]
+    [InlineData(true)]
+    [Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
+    public void HumanViewsRetainProtectedBodyOnce(bool compact)
+    {
+        var result = ProtectedBodyResult();
+        var text = RouteUpdateHumanRenderer.Render(Presentation(result, CliOutputFormat.Human, compact ? CliView.Compact : CliView.Expanded));
+
+        Assert.Equal(1, text.Split("Template body not applied:", StringSplitOptions.None).Length - 1);
+        Assert.Contains("[route-update.template-body-protected]", text, StringComparison.Ordinal);
+        Assert.Equal(1, text.Split("Next:", StringSplitOptions.None).Length - 1);
+        Assert.Contains("Next: open-forge route update", text, StringComparison.Ordinal);
+        Assert.Contains("Recovery:", text, StringComparison.Ordinal);
+        Assert.Contains("Verification:", text, StringComparison.Ordinal);
+        Assert.Equal(!compact, text.Contains("review the authored body;", StringComparison.Ordinal));
     }
 
     [Fact(DisplayName = "Route Update dry-run no-op human summary remains up to date"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]

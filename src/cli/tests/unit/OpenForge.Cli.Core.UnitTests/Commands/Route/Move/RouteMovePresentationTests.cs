@@ -65,13 +65,16 @@ public sealed class RouteMovePresentationTests
         {
             Assert.Contains("requires attention", text, StringComparison.OrdinalIgnoreCase);
             Assert.Contains(RouteMoveTestData.DestinationPath, text, StringComparison.Ordinal);
-            Assert.Contains("README.md", text, StringComparison.Ordinal);
+            Assert.Contains("README.md:3:2", text, StringComparison.Ordinal);
             Assert.Contains(RouteMoveTestData.SourcePath, text, StringComparison.Ordinal);
             Assert.Contains("old%20guide.md", text, StringComparison.Ordinal);
             Assert.Contains("new%20guide.md", text, StringComparison.Ordinal);
             Assert.Contains(".agents/guidance/_guidance.md", text, StringComparison.Ordinal);
             Assert.Contains(RecoveryPath, text, StringComparison.Ordinal);
             Assert.Contains("open-forge cleanup", text, StringComparison.Ordinal);
+            Assert.Contains("[route-move.recovery-artifact-retained]", text, StringComparison.Ordinal);
+            Assert.Contains(Assert.Single(result.Findings).Cause, text, StringComparison.Ordinal);
+            Assert.All(result.Recovery.ProtectedPaths, path => Assert.Contains(path, text, StringComparison.Ordinal));
         }
 
         var verbose = RouteMoveHumanRenderer.Render(

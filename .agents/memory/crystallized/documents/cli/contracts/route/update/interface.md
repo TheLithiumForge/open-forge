@@ -419,92 +419,53 @@ separate lease-bound contract.
 
 ## Human Output
 
-Primary human rendering for `complete`, `attention`, and `incomplete` results
-goes to stdout. Primary human rendering for `invalid`, `blocked`, `failed`, and
-`interrupted` results goes to stderr. Each primary human typed result stays
-together on its assigned stream, including safe facts and coverage observations
-or availability conditions for `incomplete`. Under `--json`, every status is one
-complete structured result on stdout; bounded diagnostics use stderr, and no
-ordinary human text is mixed into JSON stdout.
+Both views start with the outcome, `Status`, `Workspace`, and `Selected by`,
+followed by command identity and mode. Expanded remains the default. Compact
+uses the same typed result and retains completeness, safety, every affected and
+unchanged path, every finding with its status, cause, stable code and available
+target, and verification and recovery facts. A failure heading reports the
+semantic outcome; it does not claim that no mutation occurred. Effect outcomes
+and residual state describe any partial work.
 
-The default expanded view uses the complete blocks below. Every workspace-aware
-human result retains `Workspace`, `Selected by`, and the target identity when it
-is available. Compact view consumes
-the same typed result and retains the workspace, selection method, and target
-identity when available, preview/application mode, semantic status,
-completeness and safety, selected field state, Template identity, body-protection
-observation, changed and unchanged paths, generated effects, exact preview
-effects, and at most one required `Next:` line. Structured results retain at
-most one required `Next:` action as well. It omits optional explanation and
-provenance. Compact dry-run output still shows every exact planned effect and
-affected path.
+Each required `Next:` line contains the actual command from the result, once.
+Expanded adds its reason on the following line; compact omits that explanation.
+Complete results have no Next action. Other statuses retain at most one direct
+correction or recovery action supplied by the operation. Rendering does not
+invent advice, change status, or select another action.
 
-Complete results have no `Next:` line. Protected-Template `attention` uses
-`Next: review the authored body; the Template body was not applied.`
-`Failed`/positively observed `Retained` recovery uses cleanup guidance. When both
-conditions apply, cleanup guidance owns the single `Next:` line and the
-Template-protection facts remain visible evidence. Other statuses provide at most one direct correction or
-recovery action. No result proposes overwriting authored body content.
+Primary human `complete`, `attention`, and `incomplete` results use stdout.
+Primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
+stderr. Each result stays together on its assigned stream. Separate bounded
+diagnostics use stderr. JSON remains one complete structured result on stdout.
 
-### Verified No-Op
+Both views retain target ID/path, selected field state, Template identity and
+body decision, every changed and unchanged path and generated effect. Each
+requested description, responsibility or tags field shows its state and
+before/expected values, including unchanged and unresolved patches. `absent`
+means an established missing value or requested removal; `unavailable` means a
+value could not be established. An empty tags array is `[]`, not unavailable.
+Requested or expected values do not imply a completed write.
 
-```text
-The routed source is up to date.
-Workspace: D:/work/example
-Selected by: current directory
-ID: memory/crystallized/decisions/cache-policy
-Path: .agents/memory/crystallized/decisions/cache-policy.md
-No files changed.
-```
+Every effect retains exact before/expected values and preview rows in both
+views, including compact apply. Dry-run output retains every exact planned
+effect and affected path and prints `No files changed (--dry-run).`
 
-### Protected Template Body (Attention)
-
-When the complete protected-Template condition applies, human output uses
-`requires attention` even when no replacement effect is needed:
+Illustrative field rows for a selected patch:
 
 ```text
-The routed source requires attention.
-Workspace: D:/work/example
-Selected by: current directory
-ID: memory/crystallized/decisions/cache-policy
-Path: .agents/memory/crystallized/decisions/cache-policy.md
-No files changed.
-Template body not applied: the target already has authored body content.
-Next: review the authored body; the Template body was not applied.
+Description (changed): "Old description" -> "New description"
+Responsibility (unchanged): absent -> absent
+Tags (changed): ["Before"] -> ["After"]
 ```
 
-### Successful Application
-
-```text
-The routed source was updated.
-Workspace: D:/work/example
-Selected by: current directory
-ID: memory/crystallized/decisions/cache-policy
-Path: .agents/memory/crystallized/decisions/cache-policy.md
-Changed: description, responsibility
-Updated 1 generated region.
-```
-
-### Successful Dry Run
-
-```text
-The routed source would be updated.
-Workspace: D:/work/example
-Selected by: --workspace
-ID: memory/crystallized/decisions/cache-policy
-
-<exact destination and bounded generated diffs>
-
-No files changed (--dry-run).
-```
-
-Default human output names the changed metadata fields, whether a Template body
-was added or protected, and each changed generated path. It states what happened
-without naming successful internal stages. Verbose and structured output may
-include planning and preflight evidence.
-
-Every error names the route update, target, direct cause, and useful next action
-when one exists.
+Success headings distinguish updated content, an up-to-date no-op and a preview.
+Protected-Template attention says `The routed source requires attention.` and
+shows `Template body not applied: the target already has authored body content.`
+once, with its finding status, code and available target. It never proposes
+overwriting authored body content. When that condition owns the Next action,
+`Next: open-forge route update` is followed in expanded by the operation's reason
+to review the authored body. Retained recovery can instead own the single Next
+command, while Template protection remains visible as a finding.
 
 ## Structured Output
 

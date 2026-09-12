@@ -1171,3 +1171,161 @@ Integrate this closeout as one squash on clean develop `5c325960`, verifying the
 candidate/integration tree and feature/test `b88f5e7af99c02fd85626ba1fc6182c32ed17798`.
 Coverage becomes 23/28 human commands. Next is the frozen Route mutation set,
 then compact JSON. Colour and final guidance remain pending by user direction.
+
+## Set 5D Route Mutation Human Views: Frozen Scope
+
+Begin from feature `579fc5a5`, integrating qualified develop `638a850e`. Implement
+the five Route mutation changes specified in the preparation note above. Own
+only their leaf Shared/Rendering code, direct rendering evidence and affected
+Interfaces/Behavior presentation wording. Reuse CliHumanText and the typed
+operation facts; ordinary BCL formatting is sufficient. Exceptional machinery:
+none. No new shared payload, parser, dependency, source discovery or mutation
+capability is needed. Source changes are reversible through Git. Displayed
+partial effects and recovery facts are consequential, so compact cannot hide
+those facts or imply an effect completed from the selected mode.
+
+Use focused Unit projections for mandatory fields/ordering/nonduplication and
+existing Integration/public journeys for streams, statuses, effects and no-write
+previews. Preserve exact preview evidence and all JSON. Freeze final source after
+formatting and direct contract review, then run one complete managed/native gate
+before its local squash. The qualified predecessor supplies the green baseline.
+Colour, final guidance, filters, limits, defaults and threshold changes remain
+outside this set. Continue sequentially to the accepted compact JSON stage after
+these five commands are integrated; stop before colour.
+
+### Set 5D Source Freeze And Focused Evidence
+
+All five Route mutation human renderers and their Interfaces are aligned.
+Direct review checked typed effect outcomes, partial failures, every finding and
+protected recovery path, exact preview evidence, location line/column, selected
+metadata states and the actual single Next command. Behavior contracts continue
+to delegate presentation to the Interfaces and require the preserved semantics;
+no operation, parser, result or JSON changes were needed.
+
+Release build passes with zero warnings/errors. Focused final Unit 279/279,
+Integration 327/327 and published-process 15/15 pass without failures or skips.
+The final Unit run includes absent/unavailable/empty metadata and nonduplicated
+Template protection regressions. The Remove retention test now exercises the
+renderer rather than only asserting its input. Scoped dotnet format and Markdown
+formatting pass; git diff --check passes. No experiment file is retained.
+
+Direct managed CLI journeys used an isolated installed workspace and external
+state, then Create, Init, Update, Move and Remove dry runs in both human views
+and both JSON views. All 20 preview invocations exit 0 with empty stderr and
+preserve every file hash, directory and link in workspace/state. JSON views
+remain equal. Compact/expanded human byte counts respectively: Create 1661/1661,
+Init 1190/1190, Update 1540/1540, Move 2197/2197, Remove 1519/1519. These previews
+contain mandatory exact effects; equality is expected when no optional detail
+is present. The owned temporary workspace was removed.
+
+Freeze this source for npm run build:native -- --sha --no-restore followed by
+npm run test:built. Keep source and HEAD fixed throughout. Only a fully green
+candidate may squash onto develop 638a850e. feature/test remains b88f5e7a.
+Human coverage will then be 28/28; accepted compact JSON remains next. Stop
+before colour and final guidance as instructed.
+
+### Set 6 Compact JSON Preparation During Set 5D Qualification
+
+Read-only inspection confirms source-generated, command-owned JSON projections
+for all 28 commands. Library uses typed payloads with explicit converters;
+other commands project concrete JSON documents. The neutral ICliCommandResult
+already owns command/status/workspace/next. DoctorCandidateSetComparer already
+provides ordered structural equality and hashing of cardinality, candidate
+subjects, provenance and basis evidence, and can serve both human and JSON
+presentation without changing diagnosis.
+
+Proposed final slice: preserve normal/expanded schema-v1 documents. Compact uses
+one neutral typed envelope with schemaVersion=2 and view="compact", followed by
+command/status/workspace/result/next. A closed generic result type is registered
+in each command's existing source-generated context; Shell knows no command
+payload types. Compact settings clone that context's options and change only
+WriteIndented=false, preserving explicit Library converters. No reflection,
+JSON reparsing, dictionary-shaped result, dependency or operation change.
+
+Field membership is conservative: all 17 mutation commands retain their complete
+existing result graph, including plans, exact previews, effects, permissions,
+revalidation, findings, counts, verification and recovery. This is their stable
+compact core, since discarded mutation receipts cannot be recovered safely by
+rerunning a command. Library List/Inspect, Extension List and Route Inspect also
+retain their complete result core. Their compact distinction is the explicit
+compact envelope and minification; other commands below omit supporting detail.
+
+For Doctor, retain all domain metadata/counts/coverage/limitations/actions and
+all findings, including kind/severity/message/subject/evidence/resolution/
+proposal/actions. Omit finding provenance in compact. Replace each finding's
+candidate array with a nullable candidate-set reference and emit identical
+ordered candidate sets once per document, in first-use order. Retain each set's
+full cardinality, subjects, provenance and basis evidence; equality must use the
+existing exact comparer, not path-only or serialized-text identity. Null means
+no candidate set, distinct from a present empty set. No diagnostic grouping,
+filtering or kinds change is made in JSON.
+
+For Status, omit only context.continuitySources; retain all context measurements
+and every other result member, including all affected paths and findings.
+For Find, omit only each match's evidence array; retain universe/query/requested
+presentation/coverage/findings and each ordered match's identity, description
+and complete selected projections. Do not omit requested authored content.
+For Context, omit inclusionReasons on paths, sources and layers; retain every
+selection, coverage, link, finding, identity, position and selected projection,
+including exact body text and source order.
+For References, omit occurrence provenance and destinationLocation; occurrence
+location retains line/column while its byteOffset/byteLength are omitted.
+Retain direction/level/source/rawDestination/fragment/full target and every
+selection, finding, coverage and occurrence count. Finding locations stay full.
+For Route List, omit only each row's provenance; preserve selection/depth,
+coverage, findings, row ordering and all other row fields.
+For Extension Inspect, omit comparison-side fingerprint arrays and each
+comparison path's baseline/current/intended fingerprint objects; retain side
+states, path relation/owners, comparison mode/state/dependency comparison and
+all other result members. This omits repeated comparison evidence, not paths,
+coverage, relation or available-package content facts.
+
+Each compact Interface must define these omissions as projection membership,
+not unavailable data, empty evidence or partial inspection. No collection is
+truncated or filtered; original counts and coverage stay truthful. Full JSON
+remains available by choosing expanded on the original invocation. Update global
+view contracts/help and direct full-schema tests to request expanded explicitly;
+add compact shape/core parity and Doctor reference-integrity evidence. Do not
+expose global JSON-view behavior until all 28 projections are present and the
+complete managed/native gate passes. Colour and final guidance remain outside
+the command slice, with an explicit stop before colour.
+
+Installed-command observation during qualification: command -v open-forge resolves
+/home/tedy/.local/bin/open-forge, a symlink to the Volta Node 24.19.0 global npm
+command. Its current version is 0.0.0-dev.sha-56538d635ce0722fdb9bc8fd53a0a810970b84a0,
+not the older 29de40a0 recorded by prior stages. No global installation was
+changed during this set. Current verification uses the frozen built executables.
+
+Set 6 implementation readiness notes: CliRendererSet's ordinary constructor
+already registers each command function for both views, so the accepted fallback
+needs no change. Existing source-generated contexts keep their own converters;
+only their compact serializer options and closed document registration change.
+The seven reduced projections should reuse command-local mapping methods through
+partial projection classes and avoid constructing the unselected expanded graph.
+Doctor's per-document candidate table belongs to its leaf Rendering scope.
+The neutral compact envelope contains only shared coordinates and a statically
+closed command-owned payload; ICliCommandResult itself is never serialized.
+Clarify that distinction in Architecture alongside the two schema contracts.
+Route List's new compact models belong in Models/Presentation; any materially
+changed existing model must follow the scoped C# placement rule in the same set.
+
+Qualification for Set 5D has so far passed Unit 3334, managed Integration 1745 and
+managed public 123; native suites remain running. Do not treat partial receipts
+as integration approval. Full source and HEAD remain c31915e3.
+
+### Set 5D Complete Gate And Integration Closeout
+
+Frozen source c31915e33876fe4cf82aae6d95c9811bdd2373a2 passes the full Release/native
+build with zero warnings/errors and all six suites: Unit 3334; managed/native
+Integration 1745 each; managed public, native public and managed-on-native
+public 123 each. Every report has zero failed, pending, skipped and other results.
+The manifest reports dirty=false and tested=true. Native CLI SHA-256 is
+f8e42cef00c9365d4f447cbd21207783f2130f55a2e6b34fbfda903eb305fac4.
+Reproduce with npm run build:native -- --sha --no-restore and npm run test:built
+from the frozen source. Only tracked preparation/checkpoint prose changed during
+qualification; no executable input or HEAD changed.
+
+Integrate this closeout as one squash on clean develop 638a850e, verify identical
+candidate/integration trees and preserve feature/test b88f5e7a. This completes
+28/28 human commands. Begin the compact JSON slice from that qualified squash;
+colour and final guidance remain pending at the explicit user stop boundary.
