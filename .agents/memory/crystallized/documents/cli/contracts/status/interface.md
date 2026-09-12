@@ -486,13 +486,25 @@ workspace lock as a recovery bundle.
 
 ## Human Output
 
-The default expanded result uses the stable sections and labels below and adds
-ordinary explanation and provenance. Compact view keeps the semantic result,
-workspace identity, startup and continuity totals, root changes, Extension and
-managed-state summaries, recovery counts, and required next actions while
-omitting optional explanation and largest-source detail. Both remain
-understandable without color. Zero values remain visible wherever omission would
-make absence ambiguous.
+Human output starts with the observed installation outcome, status, workspace
+identity and selection method. Findings that explain a non-complete result appear
+before the summaries, grouped by exact code, status and cause. Each distinct
+subject remains visible. Generated-navigation findings may refer to Routes
+instead of repeating paths already present there as non-current observations;
+unmatched subjects remain beside their finding. The sections are Context, Routes, Framework, Extensions,
+Libraries and Recovery, followed by the supported next action.
+
+Expanded is the default. Compact retains startup and continuity measurements,
+root changes, lifecycle and Library state, recovery candidates and required next
+actions. Current generated-navigation paths are summarized by count in compact;
+every non-current path remains visible. Expanded adds all observed navigation
+paths, total context and the at-most-three largest continuity sources. Both views
+show navigation counts by actual state; a check that could not finish is never
+reported as current or as a successful empty result. Paths are not truncated.
+
+Both views remain understandable without colour. Zero values stay visible when
+omission would make absence ambiguous. Expanded explains the same observed
+facts; it does not run extra checks.
 
 Both views show separate verified-final and incomplete-draft counts and report
 every exact-name candidate's path and integrity condition. A malformed,
@@ -533,48 +545,39 @@ useful. It uses these rules:
 Status never lists repair or lifecycle proposals in `Next:` or elsewhere in its
 summary.
 
-Illustrative output:
+Illustrative excerpt from expanded output:
 
 ```text
-Open Forge status
-Workspace: D:/Repositories/open-forge
+Open Forge is installed.
+Status: requires attention
+Workspace: /work/demo
 Selected by: current directory
-Result: requires attention
 
-Startup context
-                         Files   Characters      Size   Est. tokens
-Initial (shipped)           14       18,420  18.0 KiB        ~4,600
-Current workspace           21       33,960  33.2 KiB        ~8,500
-Difference                  +7      +15,540 +15.2 KiB       ~+3,900
-
-Total available context
-  205 files · 1,516,560 characters · 1.45 MiB · ~379,100 tokens
-  Startup context: 2.2% of total available context
-
-Continuity context (may load again)
-  4 files · 6,120 characters · 6.0 KiB · ~1,500 tokens
-
+Context
+  Shipped startup: 2 files, 9 characters, 11 bytes, ~3 tokens
+  Startup: 4 files, 21 characters, 25 bytes, ~6 tokens
+  Difference: 2 files, 12 characters, 14 bytes, ~3 tokens
+  Continuity (may load again): 2 files, 12 characters, 15 bytes, ~3 tokens
+Startup share: 25%
+  Total available context: 7 files, 81 characters, 100 bytes, ~21 tokens
 Largest continuity sources
-  2.4 KiB   memory/crystallized/documents/cli
-  1.9 KiB   directives/public-facing-writing
-  1.1 KiB   memory/crystallized/documents
+  memory/alpha: 10 bytes
+  memory/beta: 10 bytes
 
-Workspace structure
-  Root categories:    8
-  Added categories:   workspace
-  Removed categories: templates
-  Extensions:         1
-  Managed files:      9 current, 11 changed, 1 missing
-  Library projections: 4 registered, 3 current, 1 missing, 0 changed, 0 blocked, 0 unavailable
-  Verified recovery finals:  0
-  Incomplete recovery drafts: 0
+Routes
+Root categories: 3
+  Added: custom
+  Removed: patterns
+Generated navigation:
+  1 need updating
+  .agents/directives/_directives.md: need updating
 ```
 
 The values are illustrative. They do not claim to be a current measurement of
 this repository.
 
-When a list is empty, human output uses `none`, except that absent lifecycle
-sections use `none recorded` for managed files. An uninstalled workspace states
+Empty lists use `none`; an empty observed navigation list uses `none observed`.
+Absent lifecycle sections use `none recorded` for managed files. An uninstalled workspace states
 that Open Forge is not installed and marks current startup, Difference, startup
 percentage, continuity, and root-category facts as not-applicable. It keeps the
 initial measurement when the embedded payload is available and keeps total

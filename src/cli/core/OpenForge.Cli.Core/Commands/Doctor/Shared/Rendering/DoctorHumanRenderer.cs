@@ -1,7 +1,5 @@
-using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
-using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
@@ -15,37 +13,40 @@ internal static class DoctorHumanRenderer
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
+        var view = presentation.Presentation.View;
         var builder = new StringBuilder();
-        builder.AppendLine("Open Forge doctor");
-        builder.AppendLine($"Workspace: {Text(result.Workspace?.LexicalRoot ?? "unavailable")}");
-        builder.AppendLine($"Selected by: {Selection(result)}");
-        builder.AppendLine($"Result: {DoctorWireVocabulary.Status(result.Status)}");
-        builder.AppendLine($"Coverage: {DoctorWireVocabulary.Coverage(result.Diagnosis.Coverage)}");
-        builder.AppendLine("Read-only: yes; changes made: no");
-        builder.AppendLine($"Limitations: {result.Diagnosis.Domains.Sum(domain => domain.Limitations.Count)}");
+        builder.AppendLine($"""
+            {DoctorHumanVocabulary.Outcome(result.Status)} No files changed.
+            Status: {DoctorHumanVocabulary.Status(result.Status)}
+            Workspace: {Text(result.Workspace?.LexicalRoot ?? "unavailable")}
+            Selected by: {Selection(result)}
+            Checks: {DoctorWireVocabulary.Coverage(result.Diagnosis.Coverage)}
+            """);
         DoctorCountsHumanRenderer.Append(builder, result.Diagnosis.Counts, string.Empty);
-        DoctorActionHumanRenderer.Append(builder, result.Diagnosis.Actions, presentation.Presentation.View, string.Empty);
-        builder.AppendLine();
         foreach (var domain in result.Diagnosis.Domains)
         {
-            AppendDomain(builder, domain, presentation.Presentation.View);
+            builder.AppendLine();
+            AppendDomain(builder, domain, view);
         }
 
+        var represented = result.Diagnosis.Domains
+            .SelectMany(domain => domain.Actions.Concat(domain.Findings.SelectMany(finding => finding.Actions)))
+            .ToHashSet();
+        DoctorActionHumanRenderer.Append(builder, result.Diagnosis.Actions.Where(action => !represented.Contains(action)).ToArray(), view, string.Empty);
         return builder.ToString().TrimEnd();
     }
 
     private static void AppendDomain(StringBuilder builder, DoctorDomainReport domain, CliView view)
     {
-        builder.AppendLine(DoctorWireVocabulary.Domain(domain.Domain));
-        builder.AppendLine($"  coverage: {DoctorWireVocabulary.Coverage(domain.Coverage)}");
+        builder.AppendLine($"{DoctorHumanVocabulary.Domain(domain.Domain)}: checks {DoctorWireVocabulary.Coverage(domain.Coverage)}");
         if (domain.Lifecycle is { } lifecycle)
         {
-            builder.AppendLine($"  lifecycle: {DoctorWireVocabulary.Lifecycle(lifecycle)}");
+            builder.AppendLine($"  Installation record: {DoctorWireVocabulary.Lifecycle(lifecycle)}");
         }
 
         if (domain.SourceAvailability is { } source)
         {
-            builder.AppendLine($"  source availability: {DoctorWireVocabulary.SourceAvailability(source)}");
+            builder.AppendLine($"  Source: {DoctorWireVocabulary.SourceAvailability(source)}");
         }
 
         if (domain.Libraries is { } libraries)
@@ -56,22 +57,19 @@ internal static class DoctorHumanRenderer
         DoctorCountsHumanRenderer.Append(builder, domain.Counts, "  ");
         foreach (var limitation in domain.Limitations)
         {
-            builder.AppendLine($"  limitation {DoctorWireVocabulary.Limitation(limitation.Kind)}: {Text(limitation.Message)}");
+            builder.AppendLine($"  Check {DoctorWireVocabulary.Limitation(limitation.Kind)}: {Text(limitation.Message)}");
         }
 
-        DoctorActionHumanRenderer.Append(builder, domain.Actions, view, "  ");
         DoctorFindingHumanRenderer.Append(builder, domain.Findings, view);
+        var represented = domain.Findings.SelectMany(finding => finding.Actions).ToHashSet();
+        DoctorActionHumanRenderer.Append(builder, domain.Actions.Where(action => !represented.Contains(action)).ToArray(), view, "  ");
     }
 
     private static string Selection(DoctorResult result)
         => result.Workspace is { } workspace
-            ? DoctorWireVocabulary.WorkspaceSelection(workspace.SelectedBy)
+            ? DoctorHumanVocabulary.Selection(workspace.SelectedBy)
             : "unavailable";
 
     internal static string Text(string value)
-    {
-        const int maximum = 512;
-        var safe = string.Concat(value.Select(character => char.IsControl(character) ? '\uFFFD' : character));
-        return safe.Length <= maximum ? safe : safe[..maximum];
-    }
+        => string.Concat(value.Select(character => char.IsControl(character) ? '\uFFFD' : character));
 }

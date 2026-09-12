@@ -54,11 +54,11 @@ public sealed class StatusLifecycleHumanRenderingTests
         Assert.Contains("Managed files: none recorded", trusted, StringComparison.Ordinal);
         Assert.Contains("Extensions: unavailable", incomplete, StringComparison.Ordinal);
         Assert.Contains("Managed files: unavailable", incomplete, StringComparison.Ordinal);
-        Assert.Contains("Startup percentage: unavailable", unavailablePercentage, StringComparison.Ordinal);
-        Assert.DoesNotContain("Startup percentage: 0%", unavailablePercentage, StringComparison.Ordinal);
-        Assert.Contains("Installation: uninstalled", notApplicablePercentage, StringComparison.Ordinal);
+        Assert.Contains("Startup share: unavailable", unavailablePercentage, StringComparison.Ordinal);
+        Assert.DoesNotContain("Startup share: 0%", unavailablePercentage, StringComparison.Ordinal);
         Assert.Contains("Open Forge is not installed.", notApplicablePercentage, StringComparison.Ordinal);
-        Assert.Contains("Startup percentage: not-applicable", notApplicablePercentage, StringComparison.Ordinal);
+        Assert.Contains("Open Forge is not installed.", notApplicablePercentage, StringComparison.Ordinal);
+        Assert.Contains("Startup share: not-applicable", notApplicablePercentage, StringComparison.Ordinal);
     }
 
     private static string Render(StatusResult result)

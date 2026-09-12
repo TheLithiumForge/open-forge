@@ -9,24 +9,44 @@ internal static class DoctorCountsHumanRenderer
 {
     internal static void Append(StringBuilder builder, DoctorFindingCounts counts, string indent)
     {
-        builder.AppendLine($"{indent}resolution counts:");
-        Append(builder, indent, "safe-exact", counts.Resolution.SafeExact);
-        Append(builder, indent, "guided-choice", counts.Resolution.GuidedChoice);
-        Append(builder, indent, "targeted-operation", counts.Resolution.TargetedOperation);
-        Append(builder, indent, "manual-decision", counts.Resolution.ManualDecision);
-        Append(builder, indent, "blocked-repair", counts.Resolution.BlockedRepair);
-        Append(builder, indent, "informational", counts.Resolution.Informational);
-        builder.AppendLine($"{indent}severity counts:");
-        Append(builder, indent, "information", counts.Severity.Information);
-        Append(builder, indent, "warning", counts.Severity.Warning);
-        Append(builder, indent, "error", counts.Severity.Error);
+        var severity = counts.Severity;
+        var resolution = counts.Resolution;
+        DoctorCount[] values = [severity.Error, severity.Warning, severity.Information, resolution.SafeExact, resolution.GuidedChoice,
+            resolution.TargetedOperation, resolution.ManualDecision, resolution.BlockedRepair, resolution.Informational];
+        if (values.All(value => value is { State: OperationalValueState.Available, Value: 0 }))
+        {
+            builder.AppendLine($"{indent}Findings: none");
+            return;
+        }
+
+        var errors = Count(severity.Error, "error", "errors");
+        var warnings = Count(severity.Warning, "warning", "warnings");
+        var information = Count(severity.Information, "informational finding", "informational findings");
+        var exact = Count(resolution.SafeExact, "exact repair", "exact repairs");
+        var choices = Count(resolution.GuidedChoice, "choice", "choices");
+        var commands = Count(resolution.TargetedOperation, "targeted command", "targeted commands");
+        var manual = Count(resolution.ManualDecision, "manual decision", "manual decisions");
+        var blocked = Count(resolution.BlockedRepair, "blocked repair", "blocked repairs");
+        var informational = Count(resolution.Informational, "informational finding", "informational findings");
+        builder.AppendLine($"""
+            {indent}Findings: {errors}, {warnings}, {information}
+            {indent}Resolution: {exact}, {choices}, {commands}
+            {indent}  {manual}, {blocked}, {informational}
+            """);
     }
 
-    private static void Append(StringBuilder builder, string indent, string label, DoctorCount count)
+    private static string Count(DoctorCount count, string singular, string plural)
     {
-        var value = count.State == OperationalValueState.Available && count.Value is { } available
+        if (count.State != OperationalValueState.Available || count.Value is null)
+        {
+            return $"{singular} count {Value(count)}";
+        }
+
+        return $"{Value(count)} {(count.Value == 1 ? singular : plural)}";
+    }
+
+    private static string Value(DoctorCount count)
+        => count.State == OperationalValueState.Available && count.Value is { } available
             ? available.ToString(CultureInfo.InvariantCulture)
             : DoctorWireVocabulary.ValueState(count.State);
-        builder.AppendLine($"{indent}  {label}: {value}");
-    }
 }

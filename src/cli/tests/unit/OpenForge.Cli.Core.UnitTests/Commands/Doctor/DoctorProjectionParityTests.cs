@@ -23,16 +23,16 @@ public sealed class DoctorProjectionParityTests
         var expanded = Render(result, CliView.Expanded);
         var json = DoctorJsonProjection.Create(result);
 
-        Assert.Contains($"Result: {DoctorWireVocabulary.Status(result.Status)}", compact, StringComparison.Ordinal);
-        Assert.Contains($"Result: {DoctorWireVocabulary.Status(result.Status)}", expanded, StringComparison.Ordinal);
+        Assert.Contains($"Status: {DoctorHumanVocabulary.Status(result.Status)}", compact, StringComparison.Ordinal);
+        Assert.Contains($"Status: {DoctorHumanVocabulary.Status(result.Status)}", expanded, StringComparison.Ordinal);
         Assert.Equal(DoctorWireVocabulary.Status(result.Status), json.Status);
         Assert.Equal(DoctorWireVocabulary.Coverage(result.Diagnosis.Coverage), json.Result.Coverage);
 
         foreach (var domain in result.Diagnosis.Domains)
         {
             var domainName = DoctorWireVocabulary.Domain(domain.Domain);
-            Assert.Contains(domainName, compact, StringComparison.Ordinal);
-            Assert.Contains(domainName, expanded, StringComparison.Ordinal);
+            Assert.Contains(DoctorHumanVocabulary.Domain(domain.Domain), compact, StringComparison.Ordinal);
+            Assert.Contains(DoctorHumanVocabulary.Domain(domain.Domain), expanded, StringComparison.Ordinal);
             var jsonDomain = Assert.Single(json.Result.Domains, candidate =>
                 string.Equals(candidate.Domain, domainName, StringComparison.Ordinal));
             Assert.Equal(DoctorWireVocabulary.Coverage(domain.Coverage), jsonDomain.Coverage);

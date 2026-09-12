@@ -46,10 +46,11 @@ internal static class StatusLibraryPresentation
     {
         ArgumentNullException.ThrowIfNull(builder);
         Validate(library);
+        builder.AppendLine();
         builder.AppendLine("Libraries");
         builder.AppendLine($"  State: {Status(library)}");
         builder.AppendLine($"  Record: {RecordState(library.Observation.Record.State)} (.agents/open-forge.libraries.json)");
-        builder.AppendLine($"  Counts: {CountsText(library.Counts, includeRegistered: true)}");
+        builder.AppendLine($"  Links: {CountsText(library.Counts, includeRegistered: true)}");
         if (library.Records.Length == 0)
         {
             builder.AppendLine(library.Observation.Record.State is LibrariesRecordReadState.Missing or LibrariesRecordReadState.Complete
@@ -60,11 +61,12 @@ internal static class StatusLibraryPresentation
 
         foreach (var record in library.Records)
         {
-            builder.AppendLine($"  {Text(record.Id.Value)} ({Text(record.SourceRoot.Value)}): "
-                + $"source-root={SourceState(record.SourceRootState)}; "
-                + $"source={StatusWireVocabulary.SourceAvailability(record.SourceAvailability)}; "
-                + $"registered={Value(record.Registered)}");
-            builder.AppendLine($"    Counts: {CountsText(record.Counts, includeRegistered: false)}");
+            builder.AppendLine($"""
+                  {Text(record.Id.Value)}
+                    Source: {Text(record.SourceRoot.Value)} (root {SourceState(record.SourceRootState)}; content {StatusWireVocabulary.SourceAvailability(record.SourceAvailability)})
+                    Destination: {Text(record.DestinationRoot.Value)}
+                    Links: {Value(record.Registered)} registered; {CountsText(record.Counts, includeRegistered: false)}
+                """);
             foreach (var link in record.Links)
             {
                 builder.AppendLine($"    {Text(link.Observation.Mapping.DestinationPath.Value)}: {LinkState(link.Observation.State)}");
@@ -165,11 +167,14 @@ internal static class StatusLibraryPresentation
 
     private static string CountsText(StatusLibraryCounts counts, bool includeRegistered)
     {
-        var registered = includeRegistered ? $"registered={Value(counts.Registered)}, " : string.Empty;
-        return $"{registered}current={Value(counts.Current)}, missing={Value(counts.Missing)}, "
-            + $"changed={Value(counts.Changed)}, blocked={Value(counts.Blocked)}, "
-            + $"unavailable={Value(counts.Unavailable)}";
+        var registered = includeRegistered ? $"{Count(counts.Registered, "registered")}, " : string.Empty;
+        return $"{registered}{Count(counts.Current, "current")}, {Count(counts.Missing, "missing")}, {Count(counts.Changed, "changed")}, {Count(counts.Blocked, "blocked")}, {Count(counts.Unavailable, "unavailable")}";
     }
+
+    private static string Count(StatusIntegerValue value, string label)
+        => value.State == Framework.OperationalContributors.Models.OperationalValueState.Available && value.Value is not null
+            ? $"{Value(value)} {label}"
+            : $"{label}: {Value(value)}";
 
     private static string Value(StatusIntegerValue value)
         => value.State == Framework.OperationalContributors.Models.OperationalValueState.Available

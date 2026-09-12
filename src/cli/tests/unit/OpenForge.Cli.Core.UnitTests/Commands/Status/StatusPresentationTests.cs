@@ -24,19 +24,19 @@ public sealed class StatusPresentationTests
 
         foreach (var output in new[] { expanded, compact })
         {
-            Assert.Contains("Open Forge status", output, StringComparison.Ordinal);
+            Assert.Contains("Open Forge is installed.", output, StringComparison.Ordinal);
             Assert.Contains("Workspace:", output, StringComparison.Ordinal);
             Assert.Contains("Selected by:", output, StringComparison.Ordinal);
-            Assert.Contains("Result: requires attention", output, StringComparison.Ordinal);
-            Assert.Contains("Installation: installed", output, StringComparison.Ordinal);
-            Assert.Contains("Startup context", output, StringComparison.Ordinal);
-            Assert.Contains("Startup percentage: 25%", output, StringComparison.Ordinal);
-            Assert.Contains("Continuity context (may load again)", output, StringComparison.Ordinal);
+            Assert.Contains("Status: requires attention", output, StringComparison.Ordinal);
+            Assert.Contains("Open Forge is installed.", output, StringComparison.Ordinal);
+            Assert.Contains("Startup:", output, StringComparison.Ordinal);
+            Assert.Contains("Startup share: 25%", output, StringComparison.Ordinal);
+            Assert.Contains("Continuity (may load again)", output, StringComparison.Ordinal);
             Assert.Contains("Root categories:", output, StringComparison.Ordinal);
             Assert.Contains("Extensions:", output, StringComparison.Ordinal);
             Assert.Contains("Managed files:", output, StringComparison.Ordinal);
-            Assert.Contains("Verified recovery finals:", output, StringComparison.Ordinal);
-            Assert.Contains("Incomplete recovery drafts:", output, StringComparison.Ordinal);
+            Assert.Contains("Verified recovery records:", output, StringComparison.Ordinal);
+            Assert.Contains("Incomplete drafts:", output, StringComparison.Ordinal);
             Assert.Contains("Next: open-forge doctor", output, StringComparison.Ordinal);
             Assert.Single(
                 output.Split(Environment.NewLine),
@@ -68,7 +68,7 @@ public sealed class StatusPresentationTests
             var result = StatusResultSeeds.Representative(status, Next(status));
             var output = StatusHumanRenderer.Render(Presentation(result, CliView.Compact));
 
-            Assert.Contains($"Result: {label}", output, StringComparison.Ordinal);
+            Assert.Contains($"Status: {label}", output, StringComparison.Ordinal);
             Assert.Equal(target, CliStatusDefinitions.Read(result.Status).Disposition.HumanOutputTarget);
         }
     }
@@ -87,12 +87,12 @@ public sealed class StatusPresentationTests
         Assert.Contains("Libraries", output, StringComparison.Ordinal);
         Assert.Contains("State: incomplete", output, StringComparison.Ordinal);
         Assert.Contains("Record: unavailable", output, StringComparison.Ordinal);
-        Assert.Contains("registered=unavailable", output, StringComparison.Ordinal);
-        Assert.Contains("current=unavailable", output, StringComparison.Ordinal);
-        Assert.Contains("missing=unavailable", output, StringComparison.Ordinal);
-        Assert.Contains("changed=unavailable", output, StringComparison.Ordinal);
-        Assert.Contains("blocked=unavailable", output, StringComparison.Ordinal);
-        Assert.Contains("unavailable=unavailable", output, StringComparison.Ordinal);
+        Assert.Contains("registered: unavailable", output, StringComparison.Ordinal);
+        Assert.Contains("current: unavailable", output, StringComparison.Ordinal);
+        Assert.Contains("missing: unavailable", output, StringComparison.Ordinal);
+        Assert.Contains("changed: unavailable", output, StringComparison.Ordinal);
+        Assert.Contains("blocked: unavailable", output, StringComparison.Ordinal);
+        Assert.Contains("unavailable: unavailable", output, StringComparison.Ordinal);
         Assert.Contains("Records: unavailable", output, StringComparison.Ordinal);
     }
 
@@ -112,7 +112,7 @@ public sealed class StatusPresentationTests
         using var parsed = JsonDocument.Parse(json);
         Assert.Equal("status", parsed.RootElement.GetProperty("command").GetString());
         Assert.Equal("attention", parsed.RootElement.GetProperty("status").GetString());
-        Assert.Contains("Result: requires attention", human, StringComparison.Ordinal);
+        Assert.Contains("Status: requires attention", human, StringComparison.Ordinal);
         Assert.NotNull(result.Workspace);
         Assert.Equal(result.Workspace.LexicalRoot, parsed.RootElement.GetProperty("workspace").GetProperty("path").GetString());
     }

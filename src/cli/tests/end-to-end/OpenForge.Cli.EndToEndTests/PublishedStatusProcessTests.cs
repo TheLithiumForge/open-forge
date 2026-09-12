@@ -52,9 +52,9 @@ public sealed class PublishedStatusProcessTests
         {
             Assert.Equal(3, result.ExitCode);
             Assert.Equal(string.Empty, result.StandardError);
-            Assert.Contains("Open Forge status", result.StandardOutput, StringComparison.Ordinal);
-            Assert.Contains("Result: incomplete", result.StandardOutput, StringComparison.Ordinal);
-            Assert.Contains("Incomplete recovery drafts: 1", result.StandardOutput, StringComparison.Ordinal);
+            Assert.Contains("Open Forge is installed.", result.StandardOutput, StringComparison.Ordinal);
+            Assert.Contains("Status: incomplete", result.StandardOutput, StringComparison.Ordinal);
+            Assert.Contains("Incomplete drafts: 1", result.StandardOutput, StringComparison.Ordinal);
             Assert.Contains(Path.GetFileName(working.RecoveryDraftPath), result.StandardOutput, StringComparison.Ordinal);
         }
 

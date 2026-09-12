@@ -56,17 +56,19 @@ zero failures/skips. Those are prior qualification results, not a new test run.
 The parsing audit covers all commands; only its native-delimiter fix is complete.
 Further YAML/Markdown/parser simplifications are backlog, not work silently
 implemented or prerequisites for clearer rendering. The full 28-command
-presentation surface audit is done; broad renderer changes and deduplication are
-not implemented. Six mutation-command comparisons expose ignored view selection
+presentation surface audit is done; Doctor/Status renderer changes and deduplication are
+implemented and fully qualified. Six mutation-command comparisons expose ignored view selection
 and missing Library affected-path details.
 
 The user approved implementation of the presentation proposals, both views for
 all commands and JSON, compact-to-expanded fallback, and automatic terminal
 colour with no colour flag or configurable palette. No AI view is added.
 The [implementation capsule](tasks/cli-presentation-implementation.md) owns the
-sequential sets, frozen boundaries and evidence. Set 1 is active: neutral view
-resolution with unchanged existing command output. Subsequent sets implement
-all human renderers, compact JSON, automatic colour and final reusable guidance.
+sequential sets, frozen boundaries and evidence. Set 1 is squash-merged as
+`5bb4aefa`. Set 2 implements Doctor/Status human views, typed grouping and full
+paths; all six final managed/native suites pass at `39f0ec39`. Set 3 starts
+with Library after the authorized Set 2 squash. Later sets implement
+Extension and remaining human views, compact JSON, automatic colour and guidance.
 Update each affected Interface with its approved set. Parsing P2–P6 stay backlog.
 
 Cleanup completed: the parser probe was outside the repository and has no matching

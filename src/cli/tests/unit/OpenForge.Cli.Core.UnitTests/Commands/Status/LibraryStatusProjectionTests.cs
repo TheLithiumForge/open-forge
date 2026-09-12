@@ -113,10 +113,10 @@ public sealed class LibraryStatusProjectionTests
         Assert.Contains("State: trusted", text, StringComparison.Ordinal);
         Assert.Contains("Record: complete", text, StringComparison.Ordinal);
         Assert.Contains("team-knowledge", text, StringComparison.Ordinal);
-        Assert.Contains("source-root=available", text, StringComparison.Ordinal);
-        Assert.Contains("source=available", text, StringComparison.Ordinal);
-        Assert.Contains("registered=1", text, StringComparison.Ordinal);
-        Assert.Contains("current=0, missing=1, changed=0, blocked=0, unavailable=0", text, StringComparison.Ordinal);
+        Assert.Contains("root available", text, StringComparison.Ordinal);
+        Assert.Contains("content available", text, StringComparison.Ordinal);
+        Assert.Contains("1 registered", text, StringComparison.Ordinal);
+        Assert.Contains("0 current, 1 missing, 0 changed, 0 blocked, 0 unavailable", text, StringComparison.Ordinal);
         Assert.Contains("missing", text, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("shared/team-knowledge", text, StringComparison.Ordinal);
     }

@@ -790,3 +790,12 @@ locking, isolated tests, and package journeys.
 - [Global CLI Flags Interface Contract](../shared/global-flags/interface.md)
 - [CLI Source References Behavior Contract](../shared/source-references/behavior.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
+
+## Human Finding Groups
+
+Human presentation may group findings by their complete typed subject within a
+domain and show equal supporting facts once. Grouping does not alter diagnosis,
+severities, resolution lanes, counts, proposals, actions, or the stored finding
+order. Distinct locations and subject identities remain distinct even when their
+human path text is identical. Candidate selection is never inferred by rendering.
+The Interface defines the readable labels and compact/expanded detail boundary.

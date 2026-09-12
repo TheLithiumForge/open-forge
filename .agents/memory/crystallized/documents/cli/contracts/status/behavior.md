@@ -536,9 +536,13 @@ complete source inventory or authorizes adoption or mutation.
 ### Human Rendering
 
 The human renderer uses the stable sections, exact labels, zero visibility, list
-`none` rule, and compact-versus-expanded relationship in [Interface Human Output](interface.md#human-output).
+empty-list wording, and compact-versus-expanded relationship in [Interface Human Output](interface.md#human-output).
 It renders the typed `attention` value as `requires attention` and does not
 reinterpret any measurement or ranking.
+
+Compact summarizes current generated-navigation paths by count and retains every
+non-current path. Expanded keeps every observed navigation path. Presentation
+does not alter the ordered observations or perform additional checks.
 
 Compact rendering retains the public status, workspace identity, startup and
 continuity totals, root changes, Extension and managed summaries, separate

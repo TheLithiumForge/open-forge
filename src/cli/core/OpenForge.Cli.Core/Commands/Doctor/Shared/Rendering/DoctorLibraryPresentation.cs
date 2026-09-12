@@ -58,26 +58,26 @@ internal static class DoctorLibraryPresentation
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(libraries);
         builder.AppendLine($"  Libraries: {State(libraries.State)}");
-        builder.AppendLine($"    record: .agents/open-forge.libraries.json ({RecordState(libraries.Record.State)})");
+        builder.AppendLine($"    Record: .agents/open-forge.libraries.json ({RecordState(libraries.Record.State)})");
         foreach (var inventory in libraries.Inventories)
         {
             builder.AppendLine(
-                $"    source root: {DoctorHumanRenderer.Text(inventory.Source.Request.SourceRoot.Value)} ({SourceState(inventory.Source.State)})");
+                $"    Source: {DoctorHumanRenderer.Text(inventory.Source.Request.SourceRoot.Value)} ({SourceState(inventory.Source.State)})");
             builder.AppendLine(
-                $"      inventory: {InventoryState(inventory)} ({inventory.Inventory?.Entries.Length ?? 0} eligible paths)");
+                $"      Source scan: {InventoryState(inventory)}; eligible paths: {inventory.Inventory?.Entries.Length.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "unavailable"}");
         }
 
         foreach (var mapping in libraries.Mappings)
         {
             builder.AppendLine(
-                $"    projection: {DoctorHumanRenderer.Text(
-                    mapping.Mapping.DestinationPath.Value)} ({MappingState(mapping.State)}; expected={DoctorHumanRenderer.Text(
+                $"    Link: {DoctorHumanRenderer.Text(
+                    mapping.Mapping.DestinationPath.Value)} ({MappingState(mapping.State)}; expected target: {DoctorHumanRenderer.Text(
                         mapping.Mapping.ExpectedRelativeLink.Value)})");
         }
 
         if (libraries.LinkCapability is { } capability)
         {
-            builder.AppendLine($"    link capability: {LinkCapability(capability.State)}");
+            builder.AppendLine($"    Symbolic links: {LinkCapability(capability.State)}");
         }
     }
 

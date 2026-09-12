@@ -2,20 +2,42 @@ using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
+using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Status.Shared.Rendering;
 
 internal static class StatusLifecycleHumanRenderer
 {
-    internal static void Append(StringBuilder builder, StatusLifecycle lifecycle)
+    internal static void Append(StringBuilder builder, StatusLifecycle lifecycle, CliView view)
     {
-        builder.AppendLine(
-            $"Framework lifecycle: {StatusWireVocabulary.LifecycleState(lifecycle.Framework.State)}");
-        builder.AppendLine(
-            $"Framework source: {StatusWireVocabulary.SourceAvailability(lifecycle.Framework.SourceAvailability)}");
-        builder.AppendLine(
-            $"Extension lifecycle: {StatusWireVocabulary.LifecycleState(lifecycle.Extensions.State)}");
-        builder.AppendLine($"Extensions: {ExtensionCount(lifecycle.Extensions)}");
+        builder.AppendLine();
+        builder.AppendLine($"""
+            Framework
+              Installation record: {StatusWireVocabulary.LifecycleState(lifecycle.Framework.State)}
+              Source: {StatusWireVocabulary.SourceAvailability(lifecycle.Framework.SourceAvailability)}
+            """);
+        foreach (var target in lifecycle.Framework.Targets)
+        {
+            if (view == CliView.Expanded || target.State != OperationalTargetState.Current)
+            {
+                builder.AppendLine($"  {StatusHumanRenderer.Text(target.Path)}: {StatusWireVocabulary.TargetState(target.State)}");
+            }
+        }
+
+        builder.AppendLine();
+        builder.AppendLine($"""
+            Extensions: {ExtensionCount(lifecycle.Extensions)}
+              Installation record: {StatusWireVocabulary.LifecycleState(lifecycle.Extensions.State)}
+              Source: {StatusWireVocabulary.SourceAvailability(lifecycle.Extensions.SourceAvailability)}
+            """);
+        if (view == CliView.Expanded)
+        {
+            foreach (var extension in lifecycle.Extensions.Installed)
+            {
+                builder.AppendLine($"  {StatusHumanRenderer.Text(extension.Id)} {StatusHumanRenderer.Text(extension.Version ?? "version unavailable")}");
+            }
+        }
+
         var counts = lifecycle.Extensions.ManagedFiles.Counts;
         if (ManagedFilesUnavailable(counts))
         {
@@ -29,12 +51,18 @@ internal static class StatusLifecycleHumanRenderer
             return;
         }
 
-        builder.AppendLine("Managed files:");
-        builder.AppendLine($"  Current: {Value(counts.Current)}");
-        builder.AppendLine($"  Changed: {Value(counts.Changed)}");
-        builder.AppendLine($"  Missing: {Value(counts.Missing)}");
-        builder.AppendLine($"  Unavailable: {Value(counts.Unavailable)}");
-        builder.AppendLine($"  Blocked: {Value(counts.Blocked)}");
+        builder.AppendLine($"""
+            Managed files:
+              {Value(counts.Current)} current, {Value(counts.Changed)} changed, {Value(counts.Missing)} missing
+              {Value(counts.Unavailable)} unavailable, {Value(counts.Blocked)} blocked
+            """);
+        foreach (var target in lifecycle.Extensions.ManagedFiles.Targets)
+        {
+            if (view == CliView.Expanded || target.State != OperationalTargetState.Current)
+            {
+                builder.AppendLine($"  {StatusHumanRenderer.Text(target.Path)}: {StatusWireVocabulary.TargetState(target.State)}");
+            }
+        }
     }
 
     private static string ExtensionCount(StatusExtensionLifecycle extensions)

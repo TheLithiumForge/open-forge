@@ -555,73 +555,52 @@ dependencies, catalogues, or registrations.
 
 ## Output
 
-Doctor output has one hierarchy:
+Human output starts with the outcome and an explicit statement that no files
+changed, followed by status, exact workspace identity and selection method,
+overall check coverage, finding counts and resolution counts. Human status
+`requires attention` represents the typed status `attention`.
 
-1. Overall semantic status.
-2. Exact workspace identity and selection method.
-3. An explicit read-only statement that no changes were made.
-4. Overall and per-domain coverage, including limitations.
-5. Counts by resolution lane and finding severity where counts are available.
-6. Immediate typed actions, including safe Repair preview or a targeted or
-   manual next action.
-7. The six deterministic domain groups, lifecycle section trust states, and
-   their findings, including the Workspace Library subcatalogue under
-   `workspace and entry`; the existing three public Doctor EndToEnd journeys
-   remain unchanged.
+The six categories remain in their defined order, labelled `Workspace`,
+`Recovery`, `Routes and navigation`, `Links`, `Framework`, and `Extensions`.
+Each category retains its coverage and limitations. Lifecycle and source
+availability remain visible when supplied. Counts describe the original
+findings, never the number of display groups. Unavailable counts do not become
+zero. When every finding and resolution count is available and zero, human
+output uses `Findings: none`. Neither view emits a health score or percentage.
 
-The default human view is `expanded`, as defined by the shared global contract.
-Compact output retains workspace identity, status, coverage, resolution lane,
-typed subject, candidate count when applicable, and the required next action for
-each finding. Expanded output adds evidence, provenance, locations, and the
-basis for each candidate. Neither view emits a health score or percentage.
+Both human views group findings with the same exact typed subject within a
+category. Source coordinates include line and column when available, directly
+beside the path. Subject kind, identifier and full location distinguish separate
+occurrences; identical displayed paths alone are insufficient for grouping.
+Each finding keeps its severity, readable explanation, stable diagnostic code
+and resolution. No diagnostic kind or severity is filtered out. Shared candidate
+lists, evidence and exact proposals appear once within their subject group;
+different facts remain separate. Actions appear with their finding group, with
+any additional category or overall actions retained once at their own scope.
+The operation result and its deterministic finding order remain unchanged.
 
-An illustrative expanded result is:
+The default human view is `expanded`. Compact keeps the same subjects, findings,
+resolutions, possible-target counts and paths, exact proposed replacements and
+required actions with short rows. Expanded adds distinct supporting evidence,
+where it was read, why each possible target was included, and proposal
+verification and recovery detail. Possible targets are explicitly unselected;
+being the only possible target does not make a candidate a confirmed repair.
+Paths, identifiers and commands are not truncated. Human source locations omit
+byte offsets and byte lengths; exact edit coordinates remain in structured data.
+
+For example, a missing-link finding can appear as:
 
 ```text
-Open Forge doctor
-Workspace: .
-Selected by: current directory
-Mode: read-only; no files changed
-Status: requires attention
-Coverage: complete; 6 domains complete
-
-Resolution counts
-  safe-exact: 2
-  guided-choice: 1
-  targeted-operation: 1
-  manual-decision: 1
-  blocked-repair: 0
-  informational: 4
-
-Immediate actions
-  Preview safe exact repairs: open-forge repair --automatic --dry-run
-  Review the guided local-reference candidates before selecting a target.
-
-1. Workspace and entry
-   Coverage: complete
-   Findings: none (the Workspace Library subcatalogue is included here)
-
-2. Recovery and residual state
-   Coverage: complete
-   Findings: none
-
-3. Routes, metadata, overwrites, and generated navigation
-   Coverage: complete
-   Finding: route.generated-entry-order
-     Resolution: targeted-operation
-     Next: open-forge index --dry-run
-
-4. Local references
-   Coverage: complete
-   Finding: reference.target-missing
-     Resolution: guided-choice; candidates: 1
-     Next: review the candidate and use an explicit relink or the Repair wizard.
+Links: checks complete
+  .agents/directives/review.md:12:4
+  WARNING  Broken link [reference.target-missing]
+    The linked file was not found: ../guidance/testing.md
+    Resolution: choose a target after reviewing the evidence
 ```
 
-The values are illustrative. Human output may say `requires attention` for the
-typed status `attention`. `--verbose` is separate from expanded view and adds
-bounded diagnostic detail without changing facts, order, coverage, findings, or
-status.
+This is illustrative; candidate lists and action commands appear only when
+supported by the actual result. `--verbose` remains separate from expanded view
+and adds bounded diagnostics without changing facts, coverage, findings or status.
 
 `--json` emits one complete structured result derived from the same typed result
 as human output. JSON is non-interactive and never prompts. It includes the
