@@ -6,6 +6,15 @@ open-forge:
 
 # CLI Parsing And Doctor Audit
 
+## Current Reading Of This Audit
+
+The delimiter, catalogue and Doctor correctness issues below were fixed in the
+completed stages recorded in the sequential plan. Measurements describe their
+named earlier baselines. P2–P6 remain reported parsing follow-ups. The temporary
+parser probe and task artifact directories have been removed; no experimental
+program was committed. Presentation analysis now preserves diagnostic kinds and
+JSON, concentrating on understandable output and presentation-only grouping.
+
 ## Continuation Findings
 
 The native-delimiter candidate `5bef9a24` preserves Doctor behavior. Fresh
@@ -326,5 +335,4 @@ Ignored receipts are in `artifacts/task27-sequential-set1/`: full managed/public
 and tooling logs, `fixture-integration-final.json`, `fixture-build-final.log`,
 `fixture-format.log`, `parser-probe.log`, `installed-tag-reproduction.json`,
 `doctor-size-analysis.json`, and the `dogfood/` command outputs. The 168 MB Doctor
-capture is intentionally not tracked. The standalone parser probe is local to
-`/tmp/open-forge-parser-probe` and is not a production dependency.
+capture is intentionally not tracked. The standalone parser probe was never committed and has now been removed.

@@ -6,6 +6,38 @@ open-forge:
 
 # CLI Dogfood Follow-Up Plan
 
+## Current Status And Next Work — 2026-09-12
+
+Completed and squash-integrated: stale fixture repairs plus the brittle-fixture
+Observation and automatic Extension embedding (b4a06740); native option delimiter
+alignment (6b6f054b); Doctor coverage/source correctness (ef7bdb3b); Doctor/Status
+generated-navigation alignment (c5883662); documentation, source examples and
+durable artifact-independent checkpoints (5e34f1a8). The installed CLI is the
+qualified 29de40a0 native source, copied into global npm packages. Latest full gate:
+3,232 Unit, 1,745 Integration in both modes, 123 public cases in all three modes,
+zero failures/skips. Those are prior qualification results, not a new test run.
+
+The parsing audit covers all commands; only its native-delimiter fix is complete.
+Further YAML/Markdown/parser simplifications are reported follow-ups, not work
+silently implemented or prerequisites for clearer rendering. The full 28-command
+presentation surface audit is done; broad renderer changes and deduplication are
+not implemented. Six mutation-command comparisons expose ignored view selection
+and missing Library affected-path details.
+
+Next: analyze and freeze a consistent human/AI presentation shape with concrete
+representative before/after examples and snapshot boundaries. Preserve diagnostic
+kinds, JSON, typed findings, statuses and operation capabilities. Detailed grouping
+can be discussed later; do not treat diagnostic retirement as a required decision.
+Then implement the bounded command families in the presentation audit. Consolidate
+reusable CLI UX/development guidance and CLI/C# Directives at the very end.
+
+Cleanup completed: the parser probe was outside the repository and has no matching
+committed project/path history. Its source/project and temporary compiled output,
+nine task helper/draft files, and five owned task artifact directories are removed.
+Committed regressions and ordinary delivery scripts remain. The copied installed
+CLI still reports its qualified version after deletion. Do not create disposable
+experiment programs as retained repository requirements.
+
 ## Outcome And Authority
 
 The user set this order on 2026-09-12 after direct use of the locally installed

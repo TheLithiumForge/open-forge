@@ -21,7 +21,8 @@ complete. Doctor D1 is qualified and squash-integrated at `ef7bdb3b`.
 [Generated-navigation alignment](cli-generated-navigation-alignment.md) D2 is
 complete: source `29de40a0`, all six managed/native suites and 24 native checks
 pass. Presentation audit is complete; its implementation stages follow.
-Diagnostic retirement and default filtering await the user’s pending answers.
+Diagnostic kinds remain unchanged. Next freeze the cross-command presentation
+design for humans and AI; detailed grouping can be discussed later.
 
 ## Sequential Refactoring Set 1 — 2026-09-12
 

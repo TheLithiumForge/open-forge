@@ -6,6 +6,22 @@ open-forge:
 
 # CLI Presentation Review
 
+## Current Presentation Direction — 2026-09-12
+
+The user clarified that diagnostic-kind changes are not the intended work.
+Keep all diagnostic kinds, typed findings, JSON fields/counts, operation behavior
+and exit statuses. Treat deduplication as presentation grouping; discuss its
+exact shape later. Withdraw the earlier seven-kind retirement proposal from the
+active sequence. No schema or default-severity change blocks presentation analysis.
+The immediate priority is legible, friendly, readable output for people and AI,
+with less repetition and lower output cost wherever useful information survives.
+
+The initial audit is complete; broad presentation implementation has not started.
+All 28 command surfaces and help owners were inspected. Six mutation commands
+were compared in compact, expanded and JSON modes. That is a surface audit and
+representative execution, not exhaustive testing of every status/view combination.
+D1/D2 fixed incorrect diagnosis, not the general output layout or wording.
+
 ## Scope And Evidence
 
 This is the first complete surface review requested by the user, following the
@@ -96,14 +112,13 @@ baseline, explicit contract delta, frozen semantic evidence, final review and
 appropriate qualification before squash integration. This report is not an
 unqualified blanket rewrite instruction.
 
-1. Finish Doctor D1, then D2: separate current generated navigation from persisted
-   install-time fingerprints, keeping real stale/missing/unsafe region diagnosis
-   under Routes/Index and genuine authored Framework drift under Framework.
-2. Doctor presentation and JSON nonduplication: show actionable errors and warnings
-   clearly; summarize informational facts and checked domains. Keep broken links
-   visible. Use file:line rather than detached coordinates. Machine byte offsets
-   remain in JSON for exact edits. Retire redundant candidate finding emissions
-   only with an explicit diagnostic-catalogue update and Repair consumer checks.
+1. D1 and D2 are complete: false coverage/source/currentness findings are fixed.
+   Next freeze the shared presentation design and representative before/after
+   outputs for success, findings, dry-run, blocked and incomplete results.
+2. Doctor and Status presentation: clear severity, file:line, plain cause and
+   useful next action. Reuse existing typed facts. Keep all diagnostic kinds,
+   JSON and exit behavior. Detailed grouping and visibility proposals are a
+   separate later discussion; do not retire findings to shorten human output.
 3. Library mutation presentation: restore the already required affected-path and
    dry-run detail in both views. Freeze JSON/operation behavior and no-write checks.
 4. Extension mutation presentation: make compact meaningful and keep expanded
@@ -121,38 +136,45 @@ Keep separate assertions for actual status, findings, path sets, cardinality,
 JSON facts, source safety, effects and unchanged files. A snapshot update never
 qualifies changed behavior by itself.
 
-## Presentation Decisions Requiring User Review
+## Next Analysis And Freeze
 
-The user's latest preservation boundary applies before implementing these
-changes. Neither is part of D1.
+Start from the existing command inventory, shared-operation contract, global
+flags/result-coordinates contracts and Writing Standard. The existing default
+view is expanded; compact is explicitly intended for scanning and agent use.
+Improve both before inferring that a new default or flag is needed. Keep Find's
+compact TSV and Context's selected authored bytes intact.
 
-### Candidate Diagnostic Consolidation
+For representative real results, review the following shape against each owner:
 
-Current output emits the broken-link finding plus candidate-only findings named
-`reference.candidate-filename`, `reference.candidate-title`,
-`reference.candidate-literal-content`, `reference.candidate-route-neighborhood`,
-`reference.candidates-none`, `reference.candidates-one`, and
-`reference.candidates-several`. Each carries the same occurrence and full
-candidate set. Proposed output emits the broken-link finding once, keeping its
-entire candidate set, every basis, exact locations, cardinality and provenance.
-No match is selected and no repair capability or source evidence is removed.
+| Surface | Facts the reader needs first | Detail organization |
+| --- | --- | --- |
+| Read-only list/inspection | What was inspected, useful rows, incomplete checks | Shared context once; stable identities/order; expanded explanations beside the relevant item |
+| Doctor findings | Severity, affected file and line, plain cause, available action | Related details under the same occurrence; keep distinct facts and source-edit coordinates available |
+| Status | Current state and useful measurements, then items needing attention | Group repeated current paths; preserve uncertainty and the meaning of every measurement |
+| Mutation dry-run | Explicit preview, affected paths and proposed effects, blockers | Group by path/package; distinguish would-change from applied, retained or unavailable |
+| Applied/blocked/interrupted operation | Actual outcome, retained changes and recovery action when applicable | Preserve operation boundaries; explain technical states in ordinary words |
 
-This would retire those seven finding kinds from the unreleased catalogue
-(120 to 113) and change aggregate finding counts accordingly. Existing JSON
-object fields remain present, but consumers relying on the seven redundant
-kind emissions would observe a change. That representation change requires the
-user's approval, explicit Interface/Behavior catalogue updates, frozen candidate
-fact-equivalence evidence and Repair consumer checks. It is not merely wording.
+The design should use stable labels, consistent ordering and plain text that
+works when piped or copied into an AI context. Put the outcome before internal
+phase names; make severity distinguishable without colour. Reuse a path/header
+within one group instead of printing it repeatedly. Avoid decorative tables or
+framing that cost space without helping comparison. Keep useful diagnostic codes
+as secondary detail, not as the only explanation. Do not silently truncate user
+content or hide incomplete checks to reduce output size.
 
-### Normal Human Visibility
+Freeze representative output snapshots on small committed authored fixtures,
+with separate assertions for status, selected facts, path sets, JSON, safety and
+actual effects. Measure lines and UTF-8 bytes on those fixed cases; claim token
+savings only with a stated tokenizer/measurement. Then implement sequentially:
+Doctor/Status; Library mutations; Extension mutations; remaining read-only and
+mutation command families; help. Review contracts and qualify each set before
+squash integration. Keep the final reusable CLI/C# guidance consolidation queued
+at the end of the overall sequence.
 
-Proposed normal human output shows each error and warning with a clear severity,
-file:line, cause and next action. It summarizes informational findings rather
-than printing every valid link and cycle. All typed findings, details, precise
-byte offsets and counts remain in JSON; failures and incomplete checks stay
-visible. Compact and expanded still use the same diagnosis and exit status.
+## Temporary Evidence Cleanup
 
-This changes default human visibility, so it requires user approval. The
-alternative is to keep every finding visible and improve only formatting and
-language. No default is changed while that decision is pending. Colours remain
-out of this set.
+The task-owned exploratory programs, parser probe and task artifact directories
+were removed at the user's request. The measurements above are recorded historical
+results. Required regressions remain committed under src/cli/tests; durable
+qualification summaries and exact rebuild/test commands are in their Task records.
+No removed experiment is a dependency of the next presentation stage.
