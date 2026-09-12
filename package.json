@@ -23,32 +23,34 @@
     "cli:unlink": "node scripts/package-managers/npm/manage.ts unlink",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "node --experimental-strip-types node_modules/eslint/bin/eslint.js --flag unstable_native_nodejs_ts_config --config eslint.config.ts .",
+    "lint": "eslint --flag unstable_native_nodejs_ts_config .",
     "typecheck": "tsc --project tsconfig.json",
     "test:package-manager": "node --test scripts/package-managers/npm/__tests__/package-manager.e2e.test.ts",
-    "test:package-layout": "node node_modules/typescript/bin/tsc --project scripts/package-managers/npm/__tests__/tsconfig.integration.json --noEmit && node --test scripts/package-managers/npm/__tests__/stage.integration.test.ts",
-    "test:package-native": "node node_modules/typescript/bin/tsc --project scripts/package-managers/npm/__tests__/tsconfig.package-e2e.json --noEmit && node scripts/package-managers/npm/__tests__/native-package-journey.ts",
-    "apm:install": "apm install --frozen --target opencode,codex && node --experimental-strip-types scripts/agent-tooling/agent-projections/patch-codex-agent-models.ts",
+    "test:package-layout": "tsc --project scripts/package-managers/npm/__tests__/tsconfig.integration.json --noEmit && node --test scripts/package-managers/npm/__tests__/stage.integration.test.ts",
+    "test:package-native": "tsc --project scripts/package-managers/npm/__tests__/tsconfig.package-e2e.json --noEmit && node scripts/package-managers/npm/__tests__/native-package-journey.ts",
+    "apm:install": "apm install --frozen --target opencode,codex && node scripts/agent-tooling/agent-projections/patch-codex-agent-models.ts",
     "check:fast": "npm run typecheck && npm run lint",
     "check": "npm run format:check && npm run typecheck && npm run lint",
     "check:delivery": "npm run typecheck:delivery && npm run lint:delivery && npm run format:delivery:check",
-    "lint:delivery": "node node_modules/eslint/bin/eslint.js --flag unstable_native_nodejs_ts_config --config eslint.config.ts --max-warnings 0 scripts/delivery scripts/ci scripts/package-managers/npm",
+    "lint:delivery": "eslint --flag unstable_native_nodejs_ts_config --max-warnings 0 scripts/delivery scripts/ci scripts/package-managers/npm",
     "format:delivery:check": "prettier --check scripts/delivery scripts/ci scripts/package-managers/npm .github/workflows package.json",
     "check:dotnet": "dotnet format whitespace OpenForge.Cli.slnx --no-restore --verify-no-changes && dotnet format OpenForge.Cli.slnx --no-restore --verify-no-changes --severity warn",
     "typecheck:delivery": "tsc -p scripts/delivery/tsconfig.json && tsc -p scripts/delivery/__tests__/tsconfig.unit.json && tsc -p scripts/delivery/__tests__/tsconfig.integration.json && tsc -p scripts/ci/tsconfig.json && tsc -p scripts/ci/__tests__/tsconfig.unit.json && tsc -p scripts/ci/__tests__/tsconfig.integration.json",
     "test:delivery": "node --test scripts/delivery/__tests__/*.test.ts scripts/ci/__tests__/*.test.ts",
-    "test:agent-tooling": "tsc -p scripts/agent-tooling/tsconfig.integration.json && node --test scripts/agent-tooling/agent-projections/*.test.ts scripts/agent-tooling/review/*.test.ts"
+    "test:agent-tooling": "tsc -p scripts/agent-tooling/tsconfig.integration.json && node --test scripts/agent-tooling/agent-projections/*.test.ts scripts/agent-tooling/review/*.test.ts",
+    "build:launcher": "tsc --project scripts/package-managers/npm/tsconfig.build.json"
   },
   "engines": {
     "node": ">=22.18.0"
   },
   "devDependencies": {
     "@types/node": "^26.1.2",
+    "@typescript/native": "npm:typescript@7.0.2",
     "eslint": "^10.8.0",
     "eslint-config-prettier": "10.1.8",
     "prettier": "3.9.6",
     "semver": "7.8.5",
-    "typescript": "6.0.2",
+    "typescript": "npm:@typescript/typescript6@6.0.2",
     "typescript-eslint": "^8.65.0"
   }
 }

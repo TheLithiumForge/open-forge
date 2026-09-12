@@ -1,6 +1,5 @@
 import { execFileSync } from "node:child_process";
 import { chmodSync, copyFileSync, mkdirSync, rmSync, statSync, writeFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { join } from "node:path";
 import rootPackage from "../../../package.json" with { type: "json" };
 import { candidateVersion, validateVersion } from "../../delivery/version.ts";
@@ -116,8 +115,9 @@ function validateInputs(request: StageRequest, templateName: string, packageName
 }
 
 export function compileLauncher(repositoryRoot: string, outputDirectory: string): void {
-  const compiler = createRequire(import.meta.url).resolve("typescript/bin/tsc");
-  execFileSync(process.execPath, [compiler, "--project", join(import.meta.dirname, "tsconfig.build.json"), "--outDir", outputDirectory], { cwd: repositoryRoot, stdio: "inherit" });
+  const npmCli = process.env["npm_execpath"];
+  if (npmCli === undefined) throw new Error("Run launcher compilation through npm run.");
+  execFileSync(process.execPath, [npmCli, "run", "build:launcher", "--", "--outDir", outputDirectory], { cwd: repositoryRoot, stdio: "inherit" });
 }
 
 function copyExecutable(source: string, destination: string): void {
