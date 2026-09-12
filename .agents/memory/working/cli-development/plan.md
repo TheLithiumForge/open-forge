@@ -6,6 +6,26 @@ open-forge:
 
 # Replacement CLI Development Plan
 
+## Current Sequential Dogfood Plan
+
+The user continued with automatic Extension embedding, a complete presentation
+review in frozen stages, and nonduplicated Doctor diagnostics. Task 30
+[catalogue synchronization](tasks/extension-catalogue-synchronization.md) is active
+at phase 3/3, milestone 2/3. Candidate `ee5a5599` passes full managed evidence
+(3,231 Unit, 1,724 Integration, 112 public tests), source/resource parity,
+isolated native package journeys, and changed-C# format/style checks. The full
+Linux native gate passes: 1,724 native Integration and 112 public tests in each
+of the three execution modes, with zero failures/skips. Existing Toolkit migration limits and old
+reinstallation failures are recorded in Task 30; no implicit adoption is added.
+
+Task 27 retains the [sequential follow-up](tasks/cli-dogfood-follow-up-plan.md):
+fixture repairs and the brittle-test Observation are complete; the
+[parsing and Doctor audit](tasks/cli-parsing-doctor-audit.md) is delivered.
+Native delimiters, Doctor correctness and the full presentation pass follow.
+Root works directly and sequentially. Local squash integration is authorized
+for verified sets, including the previously held helper changes. Preserve
+unrelated concurrent develop changes. No remote operation is authorized.
+
 ## Script Structure Continuation
 
 The maintainer accepted the script architecture recommendation and a feature

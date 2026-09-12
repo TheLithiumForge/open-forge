@@ -6,6 +6,25 @@ open-forge:
 
 # CLI Development Checkpoint
 
+## Current Sequential Dogfood Follow-Up
+
+Task 30 [catalogue synchronization](../cli-development/tasks/extension-catalogue-synchronization.md)
+is qualified at phase 3/3, milestone 2/3, candidate `ee5a5599`. Automatic
+manifest-based embedding and exact source/resource parity pass the full managed
+and Linux native gate: 3,231 Unit, 1,724 Integration in both modes, and 112 public
+tests in all three execution modes, with zero failures/skips. Six isolated native
+package journeys and previous-Toolkit transition controls are recorded.
+
+The fixture repairs and brittle-test Observation are complete. Existing Toolkit
+migration and reinstallation limits are reported without implicit adoption.
+Next: authorized local squash integration of the restored baseline and preserved
+helper refactor, then Task 27's native-delimiter correction. Doctor correctness
+and the full presentation pass follow in frozen stages. The
+[plan](../cli-development/tasks/cli-dogfood-follow-up-plan.md) and
+[audit](../cli-development/tasks/cli-parsing-doctor-audit.md) hold the accepted
+sequence and findings. Root executes directly and sequentially. No remote effects
+are authorized; unrelated develop changes remain intact.
+
 ## Current Script Structure Continuation
 
 Task 13 completed phase 3/3, milestone 5/5. Feature 86825351 was locally

@@ -152,7 +152,8 @@ public sealed class ExtensionInstallPlanningIntegrationTests
         var source = result.GetProperty("source");
         Assert.Equal("embedded", source.GetProperty("kind").GetString());
         Assert.Equal(JsonValueKind.Null, source.GetProperty("path").ValueKind);
-        Assert.Equal(["development-toolkit"], Strings(result.GetProperty("packages"), "id"));
+        Assert.Equal(["development", "memory-starters", "planning", "project-documents", "development-toolkit"],
+            Strings(result.GetProperty("packages"), "id"));
         Assert.Equal(before, workspace.Snapshot());
         Assert.Equal(lockInfrastructureBefore, workspace.LockInfrastructureExists);
     }

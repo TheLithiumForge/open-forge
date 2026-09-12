@@ -18,23 +18,29 @@ The [first-party catalogue](../src/extensions/README.md) offers five focused pac
 
 The sixth package, `development-toolkit`, bundles the first four through dependencies. It contributes no files of its own. Choose a focused package when you need only that part, or the Toolkit when the whole set is useful.
 
-The CLI can use its embedded catalogue or a local package source. Use `--source` to select the exact source you want to inspect or install. Local dependency resolution stays within that source; it does not fetch missing packages from a registry.
+The CLI includes the first-party catalogue from its build. Omit `--source` to
+use those embedded packages; no source checkout is needed. Each build includes
+the current package files and reads their IDs and dependencies from the manifests.
+Dependency resolution stays within the selected catalogue and does not fetch
+missing packages from a registry.
 
 ```sh
-open-forge extension list --available --source /path/to/open-forge/src/extensions
-open-forge extension inspect orchestration --source /path/to/open-forge/src/extensions
+open-forge extension list --available
+open-forge extension inspect orchestration
 ```
 
-Replace example paths with your own. A local source must be separate from the target workspace, including after resolving links. Keeping the Open Forge checkout beside your project works; placing the source catalogue inside that project does not.
+To inspect or install local changes, add `--source /path/to/open-forge/src/extensions`.
+Replace that path with your source catalogue. A local source must be separate
+from the target workspace, including after resolving links. Keeping the Open
+Forge checkout beside your project works; placing the source catalogue inside
+that project does not. An explicit source selects that catalogue alone.
 
 ## Install An Extension
 
 Set up the base Framework first. From your project, preview the selected package and its dependencies:
 
 ```sh
-open-forge extension install orchestration \
-  --source /path/to/open-forge/src/extensions \
-  --dry-run
+open-forge extension install orchestration --dry-run
 ```
 
 Review the proposed files, then repeat the command without `--dry-run` to apply it. If you are running from another directory, add `--workspace /path/to/project` to both commands. Check the resulting diff before adopting the content.
@@ -45,13 +51,12 @@ Installation records managed ownership in `.agents/open-forge.lifecycle.json`. T
 
 ## Update And Remove
 
-Inspect installed packages and preview an update from the same source:
+Inspect installed packages and preview an update from the embedded catalogue.
+To use a local catalogue instead, supply its exact path with `--source`:
 
 ```sh
 open-forge extension list --installed
-open-forge extension update orchestration \
-  --source /path/to/open-forge/src/extensions \
-  --dry-run
+open-forge extension update orchestration --dry-run
 ```
 
 Normal updates preserve locally changed files, missing files, and retired content that needs a deliberate choice. Use the result to decide which differences to keep:
@@ -63,6 +68,14 @@ Normal updates preserve locally changed files, missing files, and retired conten
 | `--automatic`       | Non-interactive execution with the choices already supplied        |
 
 Preview those options before applying them. They have specific boundaries; none is a general permission to overwrite the workspace.
+
+An older Development Toolkit installation may own files that now belong to the
+focused packages. Automatic catalogue embedding does not migrate that ownership.
+Update currently reports attention when the new Toolkit requires dependencies
+that are not installed. `--force` and `--prune` do not resolve that limitation.
+Inspect the removal plan and preserve local changes before choosing a new
+installation. Removing an unchanged old Toolkit allows a fresh install; retained
+edits or overwrite files can require further review before reinstallation.
 
 To remove a package, first inspect the plan:
 

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.EndToEndTests;
 
@@ -51,7 +52,9 @@ public sealed class PublishedExtensionListProcessTests
         var commandResult = document.RootElement.GetProperty("result");
         Assert.Equal("trusted", commandResult.GetProperty("coverage").GetProperty("lifecycleTrust").GetString());
         Assert.Equal("development-toolkit", Assert.Single(commandResult.GetProperty("installed").EnumerateArray()).GetProperty("id").GetString());
-        Assert.Equal("development-toolkit", Assert.Single(commandResult.GetProperty("available").EnumerateArray()).GetProperty("id").GetString());
+        Assert.Equal(ExtensionCatalogueSource.PackageIds,
+            commandResult.GetProperty("available").EnumerateArray()
+                .Select(package => package.GetProperty("id").GetString()));
     }
 
 

@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Exact embedded Framework payload resource, identity, hashing, and source-parity design
-  responsibility: Define the shared runtime payload realization consumed by Framework lifecycle commands
+  description: Define automatic embedded Framework and Extension resources, source identity, hashes, and parity evidence
+  responsibility: Define runtime resource realization for the distributed Framework and first-party Extension catalogue
   tags: [Memory, Crystallized, Document, CurrentTruth, Evergreen, CLI, TechnicalDesign, Framework, Distribution, EmbeddedResource]
 ---
 
@@ -40,6 +40,40 @@ Published Native AOT evidence moves the executable away from the checkout before
 reading every resource. That proves the payload is embedded and that runtime
 operation does not fall back to repository source paths.
 
+## First-Party Extension Catalogue
+
+`Framework/Extensions/Embedded/` owns the first-party catalogue reader. The Core
+project embeds `src/extensions/` package files through ordinary `EmbeddedResource`
+items under `OpenForge.Extensions.Payload/`, excluding the catalogue-level
+README. Every package contributes its manifest, documentation and `content/`
+files. Package additions, removals and wording changes enter the next build
+automatically; there is no separately authored compressed archive or hash list.
+
+The reader enumerates only that resource prefix and rejects unsafe, duplicate
+or noncanonical asset paths. Each first-level package directory requires an
+`extension.json`. The manifest defines its stable ID and ordered dependencies;
+the directory name does not replace that identity. The reader validates manifests
+through the existing source-generated JSON boundary, hashes exact embedded
+payload bytes, and projects only `content/` files as installed destinations.
+Documentation remains embedded source content, not an installed payload target.
+
+Package facts are ordered by stable ID. Duplicate IDs, missing dependencies and
+dependency cycles invalidate the catalogue. A package without `content/` retains
+its empty-payload semantics, including a dependency-only bundle. Existing source
+selection, dependency resolution and lifecycle ownership rules remain unchanged.
+The runtime never reads package files from a source checkout as a fallback.
+
+Parity evidence derives the complete expected asset set from source files and
+checks exact resource paths and bytes independently of the runtime reader. It
+also compares manifest values, dependencies, payload destinations, lengths and
+SHA-256 hashes. Do not maintain a second literal inventory oracle. Published
+Native AOT evidence must exercise the relocated executable without the checkout
+to establish that its available package facts and payload come from resources.
+
+Updating distributed content does not grant an ownership migration. Prior
+installations still follow the accepted Extension Update contract; conflicts
+remain visible until a supported sequence resolves them.
+
 ## Related Current Sources
 
 - [CLI Architecture](../architecture.md)
@@ -47,3 +81,4 @@ operation does not fall back to repository source paths.
 - [Install Contract](../contracts/install/_install.md)
 - [Update Contract](../contracts/update/_update.md)
 - [Route Init Contract](../contracts/route/init/_init.md)
+- [Extension Contracts](../contracts/extension/_extension.md)

@@ -1,59 +1,23 @@
-using OpenForge.Cli.Core.Framework.Extensions.Shared.Manifest;
-using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
-using OpenForge.Cli.Core.Framework.Serialization;
-using OpenForge.Cli.Core.Framework.Extensions.Models.Serialization;
-using OpenForge.Cli.Core.Framework.Extensions.Serialization;
+using OpenForge.Cli.Core.Framework.Extensions.Shared.Manifest;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 
 namespace OpenForge.Cli.Core.Framework.Extensions.Embedded;
 
 internal static class EmbeddedExtensionCatalogueReader
 {
-    private const string InventoryAsset = "inventory.json";
-
     internal static ExtensionSourceReadResult Read()
     {
         try
         {
-            var inventoryBytes = EmbeddedExtensionCatalogueAssets.Read(InventoryAsset);
-            JsonDuplicatePropertyValidator.ValidateNoDuplicateProperties(inventoryBytes.Span);
-            var inventory = JsonSerializer.Deserialize(
-                inventoryBytes.Span,
-                ExtensionPackageJsonContext.Default.EmbeddedExtensionInventoryDocument)
-                ?? throw new JsonException("The embedded Extension inventory cannot be null.");
-            if (inventory.SchemaVersion != 1 || inventory.Packages is null)
-            {
-                throw new JsonException("The embedded Extension inventory schema is invalid.");
-            }
-
-            var packages = new List<ExtensionPackageFact>();
-            var expectedAssets = new HashSet<string>(StringComparer.Ordinal) { InventoryAsset };
-            string? previousPackage = null;
-            foreach (var package in inventory.Packages)
-            {
-                if (package is null
-                    || !ExtensionIdentity.IsValidStableId(package.Id)
-                    || package.Assets is null
-                    || package.Assets.Length == 0
-                    || previousPackage is not null && string.CompareOrdinal(previousPackage, package.Id) >= 0)
-                {
-                    throw new JsonException("The embedded Extension package inventory is invalid or not ordered.");
-                }
-
-                var manifest = ValidateAssets(package, expectedAssets);
-                packages.Add(manifest);
-                previousPackage = package.Id;
-            }
-
-            if (!expectedAssets.SetEquals(EmbeddedExtensionCatalogueAssets.All.Keys))
-            {
-                throw new InvalidDataException("The embedded Extension asset inventory is incomplete or contains undeclared assets.");
-            }
-
+            var assets = EmbeddedExtensionCatalogueAssets.All;
+            var packages = assets.GroupBy(asset => asset.Key[..asset.Key.IndexOf('/')], StringComparer.Ordinal)
+                .Select(ReadPackage)
+                .OrderBy(package => package.Id, StringComparer.Ordinal)
+                .ToList();
             ValidateClosure(packages);
             return new(
                 state: ExtensionSourceReadState.Complete,
@@ -62,7 +26,7 @@ internal static class EmbeddedExtensionCatalogueReader
                 packages: packages,
                 cause: null);
         }
-        catch (Exception exception) when (exception is JsonException or InvalidDataException or DecoderFallbackException)
+        catch (Exception exception) when (exception is JsonException or IOException or DecoderFallbackException)
         {
             return new(
                 state: ExtensionSourceReadState.Invalid,
@@ -73,46 +37,24 @@ internal static class EmbeddedExtensionCatalogueReader
         }
     }
 
-    private static ExtensionPackageFact ValidateAssets(
-        EmbeddedExtensionInventoryPackage package,
-        HashSet<string> expectedAssets)
+    private static ExtensionPackageFact ReadPackage(
+        IGrouping<string, KeyValuePair<string, ReadOnlyMemory<byte>>> assets)
     {
-        string? previousPath = null;
-        byte[]? manifestBytes = null;
+        ReadOnlyMemory<byte>? manifest = null;
         var payload = new List<ExtensionPackageFileFact>();
-        foreach (var asset in package.Assets)
+        foreach (var asset in assets.OrderBy(asset => asset.Key, StringComparer.Ordinal))
         {
-            if (asset is null
-                || !PortableWorkspacePath.TryNormalize(asset.Path, out var path)
-                || !IsLowerSha256(asset.Sha256)
-                || previousPath is not null && string.CompareOrdinal(previousPath, path) >= 0)
-            {
-                throw new JsonException("An embedded Extension asset identity is invalid or not ordered.");
-            }
-
-            var assetName = $"{package.Id}/{path}";
-            if (!expectedAssets.Add(assetName))
-            {
-                throw new JsonException("The embedded Extension asset inventory contains a duplicate identity.");
-            }
-
-            var bytes = EmbeddedExtensionCatalogueAssets.Read(assetName);
-            var digest = Convert.ToHexStringLower(SHA256.HashData(bytes.Span));
-            if (!string.Equals(digest, asset.Sha256, StringComparison.Ordinal))
-            {
-                throw new InvalidDataException($"Embedded Extension asset hash mismatch for '{path}'.");
-            }
-
+            var path = asset.Key[(assets.Key.Length + 1)..];
             if (path == ExtensionPackageLayout.ManifestFileName)
             {
-                manifestBytes = bytes.ToArray();
+                manifest = asset.Value;
             }
             else if (path.StartsWith(ExtensionPackageLayout.ContentPathPrefix, StringComparison.Ordinal))
             {
                 var target = path[ExtensionPackageLayout.ContentPathPrefix.Length..];
                 if (!PortableWorkspacePath.TryNormalize(target, out var normalizedTarget))
                 {
-                    throw new JsonException("An embedded Extension payload target path is invalid.");
+                    throw new InvalidDataException($"Embedded Extension payload '{asset.Key}' has an invalid target path.");
                 }
 
                 payload.Add(ExtensionPackageFileFact.Create(new ExtensionPackageFileSnapshot
@@ -120,32 +62,20 @@ internal static class EmbeddedExtensionCatalogueReader
                     Path = path,
                     TargetPath = normalizedTarget,
                     State = ExtensionPackageFileReadState.Available,
-                    ByteLength = bytes.Length,
-                    Sha256 = asset.Sha256,
-                    Bytes = bytes,
+                    ByteLength = asset.Value.Length,
+                    Sha256 = Convert.ToHexStringLower(SHA256.HashData(asset.Value.Span)),
+                    Bytes = asset.Value,
                 }));
             }
-
-            previousPath = path;
         }
 
-        if (manifestBytes is null)
+        if (manifest is null)
         {
-            throw new InvalidDataException($"Embedded Extension package '{package.Id}' has no manifest.");
+            throw new InvalidDataException($"Embedded Extension directory '{assets.Key}' has no manifest.");
         }
 
-        var manifest = ExtensionManifestReader.Read(manifestBytes, ExtensionPackageLayout.ManifestFileName, payload);
-        if (!string.Equals(manifest.Id, package.Id, StringComparison.Ordinal))
-        {
-            throw new InvalidDataException($"Embedded Extension package '{package.Id}' has a conflicting manifest ID.");
-        }
-
-        return manifest;
+        return ExtensionManifestReader.Read(manifest.Value.Span, ExtensionPackageLayout.ManifestFileName, payload);
     }
-
-    private static bool IsLowerSha256(string? value)
-        => value is { Length: SHA256.HashSizeInBytes * 2 }
-            && value.All(character => character is >= '0' and <= '9' or >= 'a' and <= 'f');
 
     private static void ValidateClosure(List<ExtensionPackageFact> packages)
     {

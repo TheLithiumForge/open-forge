@@ -66,7 +66,7 @@ public sealed class ReferencesBindingTests
             ? ["references", "docs"]
             : ["references", "docs", $"--direction={direction}"];
         var parse = Parse(symbols, arguments);
-        var bound = new ReferencesRequestBinder(symbols, new ReferencesResultBuilder()).Bind(
+        var bound = new ReferencesRequestBinder(symbols).Bind(
             new CliBindingParse(parse.Result, parse.OriginalArguments),
             Invocation());
 
@@ -87,7 +87,7 @@ public sealed class ReferencesBindingTests
                 "references", "docs", "--include", "alpha", "--exclude=beta",
                 "--include:alpha", "--exclude", "beta",
             ]);
-        var bound = new ReferencesRequestBinder(symbols, new ReferencesResultBuilder()).Bind(
+        var bound = new ReferencesRequestBinder(symbols).Bind(
             new CliBindingParse(parse.Result, parse.OriginalArguments),
             Invocation());
 
@@ -117,7 +117,7 @@ public sealed class ReferencesBindingTests
     {
         var symbols = ReferencesBinding.CreateSymbols();
         var parse = Parse(symbols, InvalidArguments(scenario));
-        var bound = new ReferencesRequestBinder(symbols, new ReferencesResultBuilder()).Bind(
+        var bound = new ReferencesRequestBinder(symbols).Bind(
             new CliBindingParse(parse.Result, parse.OriginalArguments),
             Invocation());
 
@@ -148,7 +148,7 @@ public sealed class ReferencesBindingTests
             new CliProcessEnvironment(Path.GetTempPath()),
             new CliBindingParse(parse.Result, parse.OriginalArguments));
 
-        var result = new ReferencesWorkspaceResultFactory(symbols, new ReferencesResultBuilder()).Create(invalidInput);
+        var result = new ReferencesWorkspaceResultFactory(symbols).Create(invalidInput);
 
         Assert.Equal(CliSemanticStatus.Invalid, result.Status);
         Assert.Contains(result.Findings, finding => finding.Code == ReferencesFindingCode.InvalidFilter);
@@ -165,7 +165,7 @@ public sealed class ReferencesBindingTests
             new CliProcessEnvironment(Path.GetTempPath()),
             new CliBindingParse(validParse.Result, validParse.OriginalArguments));
 
-        var unavailable = new ReferencesWorkspaceResultFactory(symbols, new ReferencesResultBuilder()).Create(unavailableInput);
+        var unavailable = new ReferencesWorkspaceResultFactory(symbols).Create(unavailableInput);
 
         Assert.Equal(CliSemanticStatus.Blocked, unavailable.Status);
         Assert.Null(unavailable.Workspace);

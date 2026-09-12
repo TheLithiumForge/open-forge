@@ -7,5 +7,4 @@ namespace OpenForge.Cli.Core.Framework.Extensions.Serialization;
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
     GenerationMode = JsonSourceGenerationMode.Metadata)]
 [JsonSerializable(typeof(ExtensionManifestDocument))]
-[JsonSerializable(typeof(EmbeddedExtensionInventoryDocument))]
 internal sealed partial class ExtensionPackageJsonContext : JsonSerializerContext;

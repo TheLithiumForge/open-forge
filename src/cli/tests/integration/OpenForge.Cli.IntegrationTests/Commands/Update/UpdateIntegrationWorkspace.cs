@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Commands.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Update.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -21,6 +22,7 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
 {
     private const string PreviousInventoryFingerprint =
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    private const string PreviousAuthoredContent = "Earlier authored fixture content.";
 
     private static readonly FrameworkContentIdentity ContentIdentity = new();
     private static readonly UTF8Encoding StrictUtf8NoBom = new(
@@ -188,14 +190,7 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
     internal void SeedSafePreviousSourceVersion()
     {
         var current = ReadText(RetiredCandidatePath);
-        var previous = current.Replace(
-            "or finish broad work.",
-            "or finish focused work.",
-            StringComparison.Ordinal);
-        if (string.Equals(current, previous, StringComparison.Ordinal))
-        {
-            throw new InvalidOperationException("The previous source fixture did not change the intended target.");
-        }
+        var previous = $"{current}\n{PreviousAuthoredContent}\n";
 
         ReplaceText(RetiredCandidatePath, previous);
         var lifecycle = ReadLifecycle();
@@ -230,20 +225,19 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
     internal byte[] SeedCoalescedAuthoredAndGeneratedChange()
     {
         var current = ReadText(GeneratedPath);
-        var previous = current
-            .Replace(
-                "Memory is self-growing Markdown state",
-                "Memory was previously maintained Markdown state",
-                StringComparison.Ordinal)
-            .Replace(
-                "- [Useful history that no longer controls current work](archived/_archived.md) - #Memory #Archived #Contextual #Historical\n",
-                string.Empty,
-                StringComparison.Ordinal);
-        if (string.Equals(current, previous, StringComparison.Ordinal))
+        var document = new MarkdownDocumentParser().Parse(current);
+        if (document.GeneratedRegion.ContentSpan is not { } content || document.BodySpan is not { } body)
         {
-            throw new InvalidOperationException("The coalesced-change fixture did not change the intended target.");
+            throw new InvalidOperationException("The coalesced-change fixture requires a generated Entries region.");
         }
 
+        var emptyEntries = $"\n{MarkdownGeneratedRegionSyntax.EmptyEntry}\n";
+        if (string.Equals(current[content.Start..content.End], emptyEntries, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException("The coalesced-change fixture requires populated Entries.");
+        }
+
+        var previous = $"{current[..body.Start]}\n{PreviousAuthoredContent}\n\n{current[body.Start..content.Start]}{emptyEntries}{current[content.End..]}";
         ReplaceText(GeneratedPath, previous);
         var lifecycle = ReadLifecycle();
         SetSourceBaseline(

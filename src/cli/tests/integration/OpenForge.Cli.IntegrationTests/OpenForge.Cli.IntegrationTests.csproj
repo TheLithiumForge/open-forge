@@ -22,11 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="../../../core/OpenForge.Cli.Core/Framework/Extensions/Embedded/EmbeddedExtensionCatalogueInventory.json"
-             Link="ExtensionCatalogue/inventory.json"
-             CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="../../../../extensions/development-toolkit/**/*"
-             Link="ExtensionCatalogue/development-toolkit/%(RecursiveDir)%(Filename)%(Extension)"
+    <Content Include="../../../../extensions/**/*"
+             Exclude="../../../../extensions/README.md"
+             Link="ExtensionCatalogue/%(RecursiveDir)%(Filename)%(Extension)"
              CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../../../open-forge/**/*"
              Link="FrameworkPayloadSource/%(RecursiveDir)%(Filename)%(Extension)"

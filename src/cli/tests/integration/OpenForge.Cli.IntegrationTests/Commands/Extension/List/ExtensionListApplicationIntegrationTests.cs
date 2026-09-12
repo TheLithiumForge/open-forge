@@ -162,7 +162,9 @@ public sealed class ExtensionListApplicationIntegrationTests
         using var document = JsonDocument.Parse(json.Output);
         Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
         Assert.Single(document.RootElement.GetProperty("result").GetProperty("installed").EnumerateArray());
-        Assert.Single(document.RootElement.GetProperty("result").GetProperty("available").EnumerateArray());
+        Assert.Equal(ExtensionCatalogueSource.PackageIds,
+            document.RootElement.GetProperty("result").GetProperty("available").EnumerateArray()
+                .Select(package => package.GetProperty("id").GetString()));
         Assert.Equal(json.Output, verbose.Output);
         Assert.Contains("status=complete", verbose.Error, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
@@ -222,7 +224,9 @@ public sealed class ExtensionListApplicationIntegrationTests
         var commandResult = document.RootElement.GetProperty("result");
         Assert.Equal("not-requested", commandResult.GetProperty("coverage").GetProperty("installed").GetString());
         Assert.Equal(JsonValueKind.Null, commandResult.GetProperty("coverage").GetProperty("lifecycleTrust").ValueKind);
-        Assert.Single(commandResult.GetProperty("available").EnumerateArray());
+        Assert.Equal(ExtensionCatalogueSource.PackageIds,
+            commandResult.GetProperty("available").EnumerateArray()
+                .Select(package => package.GetProperty("id").GetString()));
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

@@ -560,6 +560,11 @@ The payload has canonical asset identity, exact bytes, deterministic ordinal
 inventory, per-asset hashes, and one aggregate inventory fingerprint. Root
 Install and Update consume the complete inventory. Framework-aware Route Init
 consumes route entrypoint assets and topology from the same canonical payload.
+`Framework/Extensions/Embedded/` derives the first-party catalogue from package
+files embedded by the Core project. Package manifests define IDs and dependencies;
+the reader validates dependency closure and hashes embedded payload bytes.
+No separately maintained compressed source snapshot or hash inventory is used.
+
 Exact resource, hashing, parity, and isolated-binary mechanics live in the
 [Embedded Payload Technical Design](technical-designs/embedded-payload.md).
 

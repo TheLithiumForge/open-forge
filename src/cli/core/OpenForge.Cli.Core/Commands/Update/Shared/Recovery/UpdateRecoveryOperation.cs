@@ -22,7 +22,7 @@ internal static class UpdateRecoveryOperation
         var targets = execution.Effects
             .Select(effect => RecoveryBundleTarget.Create(
                 effect.FileChange,
-                effect.ObservationsSnapshot(execution.Observations)))
+                ReadObservationSnapshot(effect, execution.Observations)))
             .ToList();
         if (execution.LifecycleChange is { } lifecycle)
         {
@@ -147,12 +147,9 @@ internal static class UpdateRecoveryOperation
                 ResidualPath = residualPath,
             },
             new UpdateFinding(code, target: null, cause));
-}
 
-internal static class UpdateRecoveryObservationExtensions
-{
-    internal static FileStateSnapshot ObservationsSnapshot(
-        this UpdatePlannedEffect effect,
+    private static FileStateSnapshot ReadObservationSnapshot(
+        UpdatePlannedEffect effect,
         IReadOnlyList<UpdateComparisonObservation> observations)
         => observations.First(value =>
             value.Comparison.RelativePath == effect.ResultEffect.Path).Snapshot;

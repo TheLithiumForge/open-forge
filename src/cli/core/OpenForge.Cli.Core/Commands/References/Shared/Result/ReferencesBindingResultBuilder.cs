@@ -13,12 +13,10 @@ namespace OpenForge.Cli.Core.Commands.References.Shared.Result;
 internal static class ReferencesBindingResultBuilder
 {
     internal static ReferencesResult CreateInvalidResult(
-        this ReferencesResultBuilder resultBuilder,
         ReferencesBindingInput input,
         CliWorkspace? workspace,
         IReadOnlyList<ReferencesFinding> findings)
     {
-        ArgumentNullException.ThrowIfNull(resultBuilder);
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(findings);
         var direction = input.Direction;
@@ -45,11 +43,9 @@ internal static class ReferencesBindingResultBuilder
     }
 
     internal static ReferencesResult CreateBlockedResult(
-        this ReferencesResultBuilder resultBuilder,
         ReferencesBindingInput input,
         ReferencesFinding finding)
     {
-        ArgumentNullException.ThrowIfNull(resultBuilder);
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(finding);
         var direction = input.Direction ?? ReferencesDirection.Both;

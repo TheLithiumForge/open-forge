@@ -21,15 +21,21 @@ Use what fits, adapt it as your project changes, and remove content that adds no
 
 You can install a package with the CLI or copy the files yourself. The [Extension installation guide](../../docs/extensions.md#install-an-extension) covers both approaches.
 
-These commands let you browse the catalogue and preview a package before adding it to your workspace. Replace the example paths with your source catalogue and destination workspace, keeping the source checkout separate from that workspace.
+These commands browse the catalogue embedded in your CLI and preview a package
+before adding it to your workspace. Replace the destination path with your
+project; you do not need a source checkout.
 
 ```sh
-open-forge extension list --available --source /path/to/open-forge/src/extensions --workspace /path/to/project
-open-forge extension install development-toolkit --source /path/to/open-forge/src/extensions --workspace /path/to/project --dry-run
-open-forge extension install orchestration --source /path/to/open-forge/src/extensions --workspace /path/to/project --dry-run
+open-forge extension list --available --workspace /path/to/project
+open-forge extension install development-toolkit --workspace /path/to/project --dry-run
+open-forge extension install orchestration --workspace /path/to/project --dry-run
 ```
 
 After reviewing the preview, apply the same command without `--dry-run`. The guide also covers updates, removal, and permissions. Managed state lives in `.agents/open-forge.lifecycle.json`. It does not become agent context.
+
+Each CLI build embeds the current package sources automatically. To try local
+package changes without rebuilding, add `--source /path/to/open-forge/src/extensions`
+and keep that source checkout separate from the destination workspace.
 
 For [manual installation](../../docs/extensions.md#manual-installation), copy the `content/` files from the selected package and its dependencies into the workspace. A bundle has no separate payload to copy. Update affected `Entries`, check links in the assembled workspace, and review the changes. Manual copying does not create managed lifecycle state.
 

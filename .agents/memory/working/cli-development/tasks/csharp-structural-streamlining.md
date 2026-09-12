@@ -6,6 +6,132 @@ open-forge:
 
 # Task 27: C# Structural Streamlining
 
+## Current Dogfood Follow-Up
+
+The user reprioritized work after installed-command smoke checks. Follow the
+[sequential plan](cli-dogfood-follow-up-plan.md): outdated fixtures, parsing audit,
+then Doctor. The later `continue` selects automatic catalogue embedding and a
+full presentation pass with Doctor deduplication. Task 30 is qualifying the
+restored baseline, including the earlier helper set at `50a36f35`, before its
+authorized squash merge. The new Task 27 horizon remains phase 2/3, milestone
+1/3 until this prerequisite completes. Fixture corrections and the
+[audit report](cli-parsing-doctor-audit.md) are complete. Native delimiter
+correction follows, then Doctor correctness and bounded presentation sets.
+
+## Sequential Refactoring Set 1 — 2026-09-12
+
+The user resumed this task with direct sequential execution, one improvement
+set at a time, and authorized local squash integration into `develop` after
+each verified set. This new horizon supersedes the beta deferral only for the
+selected work. Earlier completed horizons and their evidence remain history.
+
+- State: Preserved, integration held by the later user priority. Its previous
+  position was phase 3/3, milestone 2/3. Milestones are baseline and freeze,
+  implementation with focused verification, and review with local integration.
+- Base: `4c115f8e7`, branch `codex/cli-refactor-sequential`.
+- Scope: the two optional extension-method follow-ups recorded in the
+  [beta closeout](csharp-beta-closeout.md#final-review-observations).
+  Remove the unused References result-builder receiver and its constructor
+  plumbing. Move Update's single-caller observation lookup into its recovery
+  operation as a private static method.
+- Profile: direct, behavior-preserving C# refactoring. The CLI handles local
+  user files; this set changes only internal call structure. Existing typed
+  results, recovery snapshots, ordering, exceptions for remaining inputs,
+  containment, leases and effect timing stay fixed. Git makes the code changes
+  reversible; it does not protect uncommitted user data. The existing stable
+  workspace and cooperating-process boundary remains in force.
+- Architecture: keep each helper under its existing command-local owner.
+  Ordinary C# static methods are sufficient. No shared promotion, new library,
+  parser, serializer, schema, package or exceptional machinery is needed.
+- Expected production paths: ReferencesBinding, ReferencesRequestBinder,
+  ReferencesWorkspaceResultFactory, Shared/Result/ReferencesBindingResultBuilder,
+  and Update/Shared/Recovery/UpdateRecoveryOperation, under the existing Core
+  command scopes. Direct test adaptation: remove the unused constructor
+  argument at five sites in ReferencesBindingTests. All assertions, test
+  identities, inputs and other test files are frozen.
+- Evidence: same-worktree offline restore and Release build; unchanged affected
+  References/Update Unit and Integration selections before and after; their six
+  existing public journeys after. Compare References public failure output
+  bytes before and after on the same fixture. Inspect Update's exact lookup
+  predicate, first-match selection and recovery inputs for equivalence.
+  These local callable changes do not trigger a complete managed/native gate:
+  no material shared, public, mutation-safety or build boundary changes.
+  Focused Linux Native AOT command evidence is the final compatibility check.
+- Budgets: root implements and reviews directly; no delegated review or council.
+  One grouped correction if evidence finds a material issue. Stop and rescope
+  on changed public behavior, recovery meaning, dependencies or test oracles.
+- Protected: Framework/Extension payloads, public contracts/prose, build and
+  package configuration, unrelated worktrees and existing historical evidence.
+  No remote operations, publication or global installation refresh.
+- Next: finish native qualification and local squash integration.
+
+### Managed Qualification And Review
+
+Fixture correction `b07f239e` restores both intended edits and passes 87/87
+affected Integration cases. Refactor `50a36f35` passes 146/146 Unit, 87/87
+Integration and 6/6 public journeys, all with zero failures or skips. The
+Release solution build reports zero warnings and errors. Changed-path whitespace
+and warning-level style checks pass. All ten frozen References failure cases
+retain identical stdout, stderr and exit status in human and JSON output.
+
+Root inspected the complete seven-path source/test delta. References removes
+only an unused receiver, its guards and constructor plumbing. Five Unit
+constructor calls adapt mechanically; an exact transformed-source comparison
+proves the rest of that test file is unchanged. Update retains the exact
+`First` predicate, observation collection, snapshot reference, effect ordering
+and call timing while making the lookup private to recovery preparation.
+No material finding remains in this reviewed boundary. T27-S1-F1 is fixed.
+
+The canonical managed receipt and source-hash manifest are under
+`artifacts/task27-sequential-set1/`; they record exact commands, test assembly
+hashes, source/configuration hashes and CTRF execution counts. The initial
+baseline failure and pre-refactor native publication remain preserved.
+This evidence qualifies the selected set, not every deferred CLI finding.
+
+### Baseline Fixture Correction
+
+Baseline Unit passes 146/146. Baseline Integration passes 86/87 with the same
+coalesced Update fixture failure recorded by Task 29. Its obsolete authored-text
+replacement makes no change after the Framework wording update, so only the
+generated region changes. Before Blue, correct that seed in
+`Commands/Update/UpdateIntegrationWorkspace.cs` in the Integration project:
+change a stable authored heading and independently verify both authored and
+generated edits occurred. Preserve every assertion, test identity and production
+file. This separate test-support correction becomes the frozen predecessor
+for the pure refactor. Record it as T27-S1-F1; the earlier test-input freeze is
+narrowed only for this exact broken fixture.
+
+### Installation And Direct Dogfood
+
+The user required local installation before further work. Offline npm preparation
+and offline solution restore succeeded. Sandboxed .NET restore failed with exit
+1 and no ordinary diagnostics; the same offline restore succeeded outside that
+sandbox. `npm run cli:link` built and staged the Linux x64 Native AOT CLI and
+completed all three offline npm links. The native and staged executable share
+SHA-256 `115b638722968e0b5f19638b3a3e28a85d7d1c6a2be69428e5750640986d10d0`.
+Direct `open-forge --version` now returns
+`0.0.0-dev.sha-4c115f8e72626d7419b8b41ea5e9f683ba311b9c`.
+
+The existing user-local PATH symlink initially shadowed npm's new installation
+with an old staged package. After verifying both targets, root redirected that
+existing symlink to npm's global command. No repository source changed for it.
+
+Smoke evidence is retained under `artifacts/task27-sequential-set1/dogfood/`.
+Fresh install, repeat install, Update, Context, Route List and Status complete
+without findings. Repository Route List, outgoing References, corrected Find
+syntax and Index dry-run complete. These are real installed-command invocations,
+not test-suite or cross-platform qualification.
+
+| ID | Observed issue | Disposition |
+| --- | --- | --- |
+| T27-DOG-01 | Find help shows `--tag Refactoring`, but the command rejects it and requires `--tag=Refactoring`. | Reproduced help/runtime mismatch; correct help against accepted grammar in a separate set. |
+| T27-DOG-02 | Repository Context and Route Inspect remain incomplete. Context identifies five August handoffs with unavailable loading metadata. | Existing repository-content issue; preserve sealed historical files. Current scoped loading reduces the older installed CLI's much larger closure-failure set to five. |
+| T27-DOG-03 | Doctor reports incomplete route facts and `extension.lifecycle-untrusted` on a fresh successful installation, while Status is complete. | Reproduced diagnostic inconsistency; cause and correction still require focused investigation. |
+| T27-DOG-04 | Repository Doctor emits 168,127,363 bytes of JSON with 10,986 local-reference findings. | Output usability concern. The first wrapper capture exceeded 16 MiB and was invalid; direct file capture completed with exit 3 and valid JSON. Do not report the wrapper termination as a CLI crash. |
+
+The installation authorization extends this set's earlier global-installation
+protection for the requested refresh only. Remote operations remain unauthorized.
+
 ## Current Beta Acceptance — 2026-09-12
 
 Task 27 “C# Structural Streamlining” is complete at phase 4/4, milestone 8/8.

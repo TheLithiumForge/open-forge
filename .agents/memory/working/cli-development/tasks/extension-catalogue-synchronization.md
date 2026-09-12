@@ -8,9 +8,117 @@ open-forge:
 
 ## Task State
 
-Prepared for the user's CLI implementer in a separate task. Implementation has not started. This record is integrated with Task 28 after explicit user authorization. Register a task ID in the [project control ledger](../project-control.md) on activation.
+Task 30 is ACTIVE on 2026-09-12, phase 3/3, milestone 2/3, as the first frozen
+stage of the user's [sequential follow-up](cli-dogfood-follow-up-plan.md).
+Root works directly in `/tmp/open-forge-cli-refactor-sequential` on
+`codex/cli-refactor-sequential`. Base `399b60b8` contains the fixture repairs.
+Catalogue production is `1b86b066`; the complete build candidate is `ee5a5599`.
+No parallel work is selected.
 
-Task 28 authorizes framework and extension wording changes while keeping CLI changes separate. This task records the resulting distribution work. Its creation does not dispatch an implementer or authorize merging, publishing, or a new runtime design.
+The user asked why embedding is not automatic, identified package manifests as
+the source of IDs and dependencies, and instructed continued work. The accepted
+implementation direction is the existing Framework resource pattern: embed
+the current package files through Core `EmbeddedResource` items, derive package
+facts and hashes from those bytes, and preserve manifest/dependency validation.
+Remove the separate hand-maintained compressed C# archive and digest inventory.
+No runtime source-checkout fallback, extra dependency, schema change, implicit
+ownership migration, or package meaning change is selected.
+
+Freeze: canonical package sources, all existing command behaviors and mutation
+safety assertions. The intentional distribution delta is the six accepted source
+packages replacing the stale Toolkit snapshot. Replace archive-format evidence
+with independent resource/set/byte/hash parity evidence, and adapt only test
+setup or inventory assertions that depend on the retired bundled content.
+Record such adaptations explicitly; keep source parity strict.
+
+Milestones: resource design and frozen evidence; implementation and complete
+managed verification; published Native AOT isolation, package journeys, review
+and authorized local squash integration. Verify prior Toolkit ownership effects
+without inventing an automatic migration if the existing contracts reject it.
+
+Frozen evidence is committed at `5b24b216`: the two source/resource parity tests
+fail against the old implementation, with five focused discovery controls
+passing. The first build caught a nullable-memory test compilation error; that
+was corrected before the recorded Red run. Existing behavior assertions remain
+frozen except explicitly recorded source-inventory fixture adaptations.
+
+Implementation `1b86b066` passes both frozen parity tests and all 3,231 Unit
+tests. The first full Integration run exposed exactly three old catalogue
+expectations; a focused published run exposed one more. The two List Integration
+cases and one published List case assumed a single available package. They now
+compare ordered IDs with a source-manifest fixture embedded independently in the
+test-support assembly. The Install case now asserts the accepted Toolkit bundle's
+four dependencies precede the bundle. Status, read-only, prompt and effect
+assertions are unchanged. Complete qualification is in progress.
+
+Managed qualification at `29e19729` is green: 3,231 Unit, 1,724 Integration and
+111 public CLI tests, zero failures/skips, Release build zero warnings/errors.
+An additional relocated Extension catalogue test passes alongside the existing
+relocated Framework test (2/2). The complete candidate passes the canonical
+`npm run build:native -- --sha` and `npm run test:built` gate on Linux x64.
+Unit is 3,231/3,231, managed and native Integration are each 1,724/1,724,
+and managed-public, native-public and managed-on-native-public are each 112/112.
+All suites have zero failures/skips. The manifest is marked `tested: true`;
+reports are `artifacts/delivery/linux-x64/reports-ecxh8L`, summarized in
+`artifacts/task30-automatic-catalogue/native-qualification.json`.
+The isolated journey executable and gate executable have identical SHA-256
+`33cda49d8cd1f8541724b5b4fddd1a819cea69021f13411abf1fdf52bf0dd546`.
+Later edits only update documentation and work records. No foreign-host or
+remote-release proof is claimed. Local integration is the remaining milestone.
+
+### Native Package Journeys And Transition Findings
+
+The locally linked Native AOT executable reports
+`0.0.0-dev.sha-ee5a55999d830c337c6510fb94953a2bac3bcd53`. A copy of the executable
+alone passed six isolated package install/inspect/repeat journeys and an all-six
+installation. Manifest-derived dependency closures matched exactly. Installed
+authored content matched source bytes outside generated Entries interiors;
+the independent Integration parity tests verify exact embedded bytes including
+those interiors. Repeated installations left workspace file hashes unchanged.
+
+The 54-command receipt at
+`artifacts/task30-automatic-catalogue/journeys/run3/summary.json` includes dependency
+removal refusal and bundle removal with retained dependencies. The exploratory
+wrapper initially assumed complete for retained-dependency attention, then used
+the wrong blocked exit code. Both harness expectations were corrected against
+the existing contract; neither required a product or committed-test change.
+
+Eight additional native controls at
+`artifacts/task30-automatic-catalogue/journeys/transition-controls.json` compare
+the retained baseline executable with the new one and apply the unchanged old
+Toolkit remove/reinstall/update sequence. Removing the new bundle retains its
+four dependencies and reports attention. Obsolete Experience Design files from
+the old unchanged package are removed by ordinary source-independent removal.
+
+- T30-DOG01: old Toolkit update reports attention because Update cannot introduce
+  an uninstalled dependency. Normal and force/prune dry-runs produce no effects
+  for unchanged, edited, missing-default and overwrite variants. This stage adds
+  no ownership migration. Further lifecycle behavior needs its own frozen stage.
+- T30-DOG02: removing the old Toolkit with a local edit preserves that edit, but
+  subsequent install encounters a Framework generated-index baseline mismatch.
+  The old executable also blocks, at the old catalogue's Skills host; the new
+  catalogue first reports Patterns. Record this pre-existing lifecycle/index
+  interaction for the Doctor correctness investigation.
+- T30-DOG03: overwrite companions survive removal; the now-orphaned companion
+  prevents the next install's authored-source validation in both executables.
+  Do not delete the companion or invent automatic adoption to make this pass.
+- Deliberately missing files remain absent during all update previews and old
+  package removal. A later explicit fresh install is a new selection, not a
+  promise to preserve a retired installation's missing defaults.
+
+Public setup guidance now states the transition limitation. No migration command,
+receipt rewriting, force expansion, package-source change or Doctor suppression
+is included. Direct review of the final production, independent parity evidence,
+and coherent changed documentation found no material remaining defect in the
+automatic embedding stage. All 16 changed Markdown files' relative link targets
+exist. Required changed-C# whitespace and style checks pass.
+
+## Preparation Context
+
+Task 28 authorized framework and extension wording changes while keeping CLI
+changes separate. The original preparation record did not activate implementation;
+the later user direction above now authorizes this bounded stage and verified
+local squash integration. Remote publication remains unauthorized.
 
 ## Outcome
 
@@ -24,7 +132,7 @@ Revalidate these paths against the implementation baseline selected after user r
 
 - [First-party catalogue](../../../../../src/extensions/README.md)
 - [Embedded assets](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Extensions/Embedded/EmbeddedExtensionCatalogueAssets.cs)
-- [Embedded inventory](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Extensions/Embedded/EmbeddedExtensionCatalogueInventory.json)
+- [Core resource inclusion](../../../../../src/cli/core/OpenForge.Cli.Core/OpenForge.Cli.Core.csproj)
 - [Catalogue integration tests](../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Framework/Extensions/EmbeddedExtensionCatalogueIntegrationTests.cs)
 - [Extension package contract](../../../crystallized/documents/cli/contracts/extension/_extension.md)
 

@@ -5,4 +5,9 @@
     <IsPackable>false</IsPackable>
     <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../../../../extensions/**/extension.json"
+                      LogicalName="OpenForge.Tests.ExtensionManifests/%(RecursiveDir)%(Filename)%(Extension)"
+                      WithCulture="false" />
+  </ItemGroup>
 </Project>

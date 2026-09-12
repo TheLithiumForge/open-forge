@@ -6,12 +6,9 @@ using OpenForge.Cli.Core.Shell.Composition.Models;
 
 namespace OpenForge.Cli.Core.Commands.References;
 
-internal sealed class ReferencesWorkspaceResultFactory(
-    ReferencesSymbols symbols,
-    ReferencesResultBuilder resultBuilder)
+internal sealed class ReferencesWorkspaceResultFactory(ReferencesSymbols symbols)
 {
     private readonly ReferencesSymbols _symbols = symbols;
-    private readonly ReferencesResultBuilder _resultBuilder = resultBuilder;
 
     internal ReferencesResult Create(CliInvalidBindingInput input)
     {
@@ -20,7 +17,7 @@ internal sealed class ReferencesWorkspaceResultFactory(
         var invalid = ReferencesBindingValidator.ReadInvalidFindings(parsed);
         if (invalid.Count != 0)
         {
-            return _resultBuilder.CreateInvalidResult(parsed, null, invalid);
+            return ReferencesBindingResultBuilder.CreateInvalidResult(parsed, null, invalid);
         }
 
         var subject = input.GlobalInput.WorkspaceValue
@@ -38,7 +35,7 @@ internal sealed class ReferencesWorkspaceResultFactory(
             null,
             null,
             []);
-        return _resultBuilder.CreateBlockedResult(parsed, finding);
+        return ReferencesBindingResultBuilder.CreateBlockedResult(parsed, finding);
     }
 
     private static string ReadWorkspaceCause(CliInvalidBindingInput input)

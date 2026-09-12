@@ -1,7 +1,6 @@
 using OpenForge.Cli.Core.Commands.References.Models.Binding;
 using OpenForge.Cli.Core.Commands.References.Models.Request;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
-using OpenForge.Cli.Core.Commands.References.Shared.Result;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 
@@ -19,9 +18,8 @@ internal static class ReferencesBinding
         ArgumentNullException.ThrowIfNull(components);
         ArgumentNullException.ThrowIfNull(components.Operation);
 
-        var resultBuilder = new ReferencesResultBuilder();
-        var binder = new ReferencesRequestBinder(symbols, resultBuilder);
-        var workspaceResultFactory = new ReferencesWorkspaceResultFactory(symbols, resultBuilder);
+        var binder = new ReferencesRequestBinder(symbols);
+        var workspaceResultFactory = new ReferencesWorkspaceResultFactory(symbols);
         return new CliCommandBinding<ReferencesRequest, ReferencesResult>(
             symbols.ReferencesCommand,
             new CliCommandBindingComponents<ReferencesRequest, ReferencesResult>

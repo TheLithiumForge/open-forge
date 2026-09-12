@@ -8,12 +8,9 @@ using OpenForge.Cli.Core.Shell.Invocation.Models;
 
 namespace OpenForge.Cli.Core.Commands.References;
 
-internal sealed class ReferencesRequestBinder(
-    ReferencesSymbols symbols,
-    ReferencesResultBuilder resultBuilder)
+internal sealed class ReferencesRequestBinder(ReferencesSymbols symbols)
 {
     private readonly ReferencesSymbols _symbols = symbols;
-    private readonly ReferencesResultBuilder _resultBuilder = resultBuilder;
 
     internal CliBindResult<ReferencesRequest, ReferencesResult> Bind(
         CliBindingParse parse,
@@ -27,7 +24,7 @@ internal sealed class ReferencesRequestBinder(
         if (invalid.Count != 0)
         {
             return CliBindResult<ReferencesRequest, ReferencesResult>.Invalid(
-                _resultBuilder.CreateInvalidResult(input, invocation.Workspace, invalid));
+                ReferencesBindingResultBuilder.CreateInvalidResult(input, invocation.Workspace, invalid));
         }
 
         var workspace = invocation.Workspace

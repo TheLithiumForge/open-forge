@@ -1,114 +1,92 @@
-using System.IO.Compression;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Extensions.Embedded;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
-using OpenForge.Cli.Core.Framework.Extensions.Serialization;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Extensions;
 
 public sealed class EmbeddedExtensionCatalogueIntegrationTests
 {
-    private static readonly UTF8Encoding StrictUtf8 = new(
-        encoderShouldEmitUTF8Identifier: false,
-        throwOnInvalidBytes: true);
-
-    private const int InventoryArchiveOrder = 0;
-    private const int PackageArchiveOrder = 1;
-    private const string InventoryAssetPath = "inventory.json";
-    private const string ManifestAssetPath = "extension.json";
-    private const string PayloadAssetPrefix = "content/";
-
     [Fact(DisplayName = "Embedded Extension catalogue matches every authored package, asset, and hash"), Trait("Feature", "extension-discovery"), Trait("Evidence", "Integration")]
     public void EmbeddedCatalogueMatchesAuthoredPackagesAssetsAndHashes()
     {
         var result = EmbeddedExtensionCatalogueReader.Read();
-
         Assert.Equal(ExtensionSourceReadState.Complete, result.State);
         Assert.Equal(ExtensionSourceKind.EmbeddedCatalogue, result.Kind);
 
-        var authoredRoot = Path.Combine(AppContext.BaseDirectory, "ExtensionCatalogue");
-        var authoredAssets = Directory
-            .EnumerateFiles(authoredRoot, "*", SearchOption.AllDirectories)
-            .ToDictionary(
-                path => Path.GetRelativePath(authoredRoot, path).Replace('\\', '/'),
-                File.ReadAllBytes,
-                StringComparer.Ordinal);
-        Assert.Equal(
-            authoredAssets.Keys.Order(StringComparer.Ordinal),
-            EmbeddedExtensionCatalogueAssets.All.Keys.Order(StringComparer.Ordinal));
-        foreach (var (path, bytes) in authoredAssets)
+        var authored = ReadAuthoredAssets();
+        var embedded = EmbeddedExtensionCatalogueAssets.All;
+        Assert.Equal(authored.Keys.Order(StringComparer.Ordinal), embedded.Keys.Order(StringComparer.Ordinal));
+        foreach (var (path, bytes) in authored)
         {
-            Assert.True(EmbeddedExtensionCatalogueAssets.Read(path).Span.SequenceEqual(bytes));
+            Assert.True(embedded[path].Span.SequenceEqual(bytes), path);
         }
 
-        var inventory = JsonSerializer.Deserialize(
-            authoredAssets[InventoryAssetPath],
-            ExtensionPackageJsonContext.Default.EmbeddedExtensionInventoryDocument);
-        Assert.NotNull(inventory);
-        Assert.Equal(inventory.Packages.Length, result.Packages.Count);
-        foreach (var inventoryPackage in inventory.Packages)
+        var manifests = authored.Where(asset => asset.Key.EndsWith("/extension.json", StringComparison.Ordinal)
+            && asset.Key.Count(character => character == '/') == 1).ToArray();
+        Assert.NotEmpty(manifests);
+        Assert.Equal(manifests.Length, result.Packages.Count);
+        Assert.Equal(result.Packages.Select(package => package.Id).Order(StringComparer.Ordinal),
+            result.Packages.Select(package => package.Id));
+        foreach (var manifestAsset in manifests)
         {
-            var package = Assert.Single(
-                result.Packages,
-                candidate => string.Equals(candidate.Id, inventoryPackage.Id, StringComparison.Ordinal));
-            var manifestAssetPath = $"{inventoryPackage.Id}/{ManifestAssetPath}";
-            var manifest = JsonSerializer.Deserialize(
-                authoredAssets[manifestAssetPath],
-                ExtensionPackageJsonContext.Default.ExtensionManifestDocument);
-            Assert.NotNull(manifest);
+            using var document = JsonDocument.Parse(manifestAsset.Value);
+            var manifest = document.RootElement;
+            var id = manifest.GetProperty("id").GetString();
+            var package = Assert.Single(result.Packages, candidate => candidate.Id == id);
+            Assert.Equal(manifest.GetProperty("name").GetString(), package.Name);
+            Assert.Equal(manifest.GetProperty("description").GetString(), package.Description);
+            Assert.Equal(manifest.GetProperty("version").GetString(), package.Version);
+            Assert.Equal(manifest.GetProperty("dependencies").EnumerateArray().Select(value => value.GetString()),
+                package.Dependencies);
+            Assert.All(package.Dependencies, dependency =>
+                Assert.Contains(result.Packages, candidate => candidate.Id == dependency));
+            Assert.Equal("extension.json", package.ManifestPath);
 
-            Assert.Equal(inventoryPackage.Id, manifest.Id);
-            Assert.Equal(manifest.Id, package.Id);
-            Assert.Equal(manifest.Name, package.Name);
-            Assert.Equal(manifest.Description, package.Description);
-            Assert.Equal(manifest.Version, package.Version);
-            Assert.Equal(manifest.Dependencies, package.Dependencies);
-            Assert.Equal(ManifestAssetPath, package.ManifestPath);
-
-            var payloadPaths = inventoryPackage.Assets
-                .Select(asset => asset.Path)
-                .Where(path => path.StartsWith(PayloadAssetPrefix, StringComparison.Ordinal))
-                .ToArray();
-            Assert.Equal(payloadPaths, package.Payload.Select(asset => asset.Path));
-            Assert.Equal(payloadPaths.Length, package.PayloadFileCount);
-
-            foreach (var asset in inventoryPackage.Assets)
+            var directory = manifestAsset.Key[..manifestAsset.Key.IndexOf('/')];
+            var prefix = $"{directory}/content/";
+            var payload = authored.Where(asset => asset.Key.StartsWith(prefix, StringComparison.Ordinal))
+                .OrderBy(asset => asset.Key, StringComparer.Ordinal).ToArray();
+            Assert.Equal(payload.Length, package.PayloadFileCount);
+            Assert.Equal(payload.Select(asset => asset.Key[(directory.Length + 1)..]),
+                package.Payload.Select(asset => asset.Path));
+            foreach (var asset in payload)
             {
-                var authoredAssetPath = $"{inventoryPackage.Id}/{asset.Path}";
-                Assert.Equal(
-                    asset.Sha256,
-                    Convert.ToHexStringLower(SHA256.HashData(authoredAssets[authoredAssetPath])));
+                var fact = Assert.Single(package.Payload, candidate =>
+                    candidate.Path == asset.Key[(directory.Length + 1)..]);
+                Assert.Equal(asset.Key[prefix.Length..], fact.TargetPath);
+                Assert.Equal(Convert.ToHexStringLower(SHA256.HashData(asset.Value)), fact.Sha256);
+                Assert.Equal(asset.Value.Length, fact.ByteLength);
+                Assert.Equal(asset.Value, fact.Bytes?.ToArray());
             }
         }
     }
 
-    [Fact(DisplayName = "Embedded Extension archive decodes to the exact canonical authored asset stream"), Trait("Feature", "extension-discovery"), Trait("Evidence", "Integration")]
-    public void EmbeddedCatalogueArchiveDecodesToCanonicalAuthoredAssets()
+    [Fact(DisplayName = "Core manifest resources contain the exact authored Extension asset set and bytes"), Trait("Feature", "extension-discovery"), Trait("Evidence", "Integration")]
+    public void ManifestResourcesContainExactAuthoredAssets()
     {
-        var authoredRoot = Path.Combine(AppContext.BaseDirectory, "ExtensionCatalogue");
-        var archiveLines = Directory
-            .EnumerateFiles(authoredRoot, "*", SearchOption.AllDirectories)
-            .Select(path => new
-            {
-                AssetPath = Path.GetRelativePath(authoredRoot, path).Replace('\\', '/'),
-                Bytes = File.ReadAllBytes(path),
-            })
-            .OrderBy(asset => asset.AssetPath == InventoryAssetPath
-                ? InventoryArchiveOrder
-                : PackageArchiveOrder)
-            .ThenBy(asset => asset.AssetPath, StringComparer.Ordinal)
-            .Select(asset => $"{asset.AssetPath}\t{Convert.ToBase64String(asset.Bytes)}");
-        var archiveText = $"{string.Join('\n', archiveLines)}\n";
-        using var compressed = new MemoryStream(
-            EmbeddedExtensionCatalogueAssets.Archive.ToArray(),
-            writable: false);
-        using var gzip = new GZipStream(compressed, CompressionMode.Decompress);
-        using var output = new MemoryStream();
-        gzip.CopyTo(output);
-        var embeddedArchiveText = StrictUtf8.GetString(output.ToArray());
+        const string prefix = "OpenForge.Extensions.Payload/";
+        var assembly = typeof(EmbeddedExtensionCatalogueReader).Assembly;
+        var resources = assembly.GetManifestResourceNames()
+            .Where(name => name.StartsWith(prefix, StringComparison.Ordinal))
+            .ToDictionary(name => name[prefix.Length..], StringComparer.Ordinal);
+        var authored = ReadAuthoredAssets();
+        Assert.Equal(authored.Keys.Order(StringComparer.Ordinal), resources.Keys.Order(StringComparer.Ordinal));
+        foreach (var (path, bytes) in authored)
+        {
+            using var stream = assembly.GetManifestResourceStream(resources[path]);
+            Assert.NotNull(stream);
+            using var buffer = new MemoryStream();
+            stream.CopyTo(buffer);
+            Assert.Equal(bytes, buffer.ToArray());
+        }
+    }
 
-        Assert.Equal(archiveText, embeddedArchiveText);
+    private static Dictionary<string, byte[]> ReadAuthoredAssets()
+    {
+        var root = Path.Combine(AppContext.BaseDirectory, "ExtensionCatalogue");
+        return Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories)
+            .ToDictionary(path => Path.GetRelativePath(root, path).Replace('\\', '/'),
+                File.ReadAllBytes, StringComparer.Ordinal);
     }
 }

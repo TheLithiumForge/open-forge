@@ -18,6 +18,10 @@
     <EmbeddedResource Include="../../../open-forge/**/*"
                       LogicalName="OpenForge.Framework.Payload/%(RecursiveDir)%(Filename)%(Extension)"
                       WithCulture="false" />
+    <EmbeddedResource Include="../../../extensions/**/*"
+                      Exclude="../../../extensions/README.md"
+                      LogicalName="OpenForge.Extensions.Payload/%(RecursiveDir)%(Filename)%(Extension)"
+                      WithCulture="false" />
   </ItemGroup>
 
   <ItemGroup>
