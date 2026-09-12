@@ -6,6 +6,26 @@ open-forge:
 
 # Task 13: Native CI and Reproducible Artifacts
 
+## Scripts README And Help Follow-up
+
+The maintainer requests discoverable script documentation and useful command
+help, followed by local squash integration. Direct implementation and review,
+no helpers. Isolated branch codex/delivery-help starts at 54c28134b. Scope is
+README prose, help metadata/rendering and conventional -h support. Existing
+build/test/package/publication behavior remains authoritative. No new
+dependencies or native build changes. Focused evidence: bootstrap and every
+command help through the real entry point, static checks, readable examples
+and local Markdown links. No .NET or native qualification is triggered by
+this presentation-only change. Complete: the scripts index and delivery README,
+command-specific prerequisites, positional usage, outputs, examples and -h
+support are implemented. Direct review and all 47 delivery regressions pass,
+including every command’s help in a fixture without node_modules. TypeScript,
+lint, formatting, diff checks and README local-link checks pass. Reproduce with
+`npm run check:delivery` and `npm run test:delivery` using Node 24.19.0/npm
+11.17.0. Representative pack, release:collect and version help was inspected
+against the actual stage implementations. This closeout accompanies authorized
+local squash integration into develop. No remote effects occurred.
+
 ## Unified Delivery CLI And Visible Stages
 
 The maintainer requested clearer arguments and pipeline stages, packing despite

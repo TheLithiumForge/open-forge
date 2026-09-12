@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
+import { deliveryCommands } from "../commands.ts";
 import { readPackage } from "../package-json.ts";
 
 const cli = fileURLToPath(new URL("../cli.ts", import.meta.url));
@@ -16,12 +17,16 @@ test("delivery help and setup help bootstrap without node_modules", (context) =>
   mkdirSync(scripts, { recursive: true });
   const manifest = readPackage(fileURLToPath(new URL("../../../package.json", import.meta.url)));
   writeFileSync(join(root, "package.json"), JSON.stringify({ name: "forge-bootstrap-fixture", version: "0.0.0", type: "module", private: true, bin: manifest["bin"] }));
-  for (const file of ["cli.ts", "commands.ts", "options.ts", "process.ts", "repository.ts"])
+  for (const file of ["cli.ts", "commands.ts", "options.ts", "process.ts", "repository.ts", "targets.ts", "package-model.ts"])
     copyFileSync(fileURLToPath(new URL(`../${file}`, import.meta.url)), join(scripts, file));
-  for (const args of [["--help"], ["setup", "--help"], ["pack", "--help"]]) {
+  for (const args of [["--help"], ["-h"], ["pack", "-h"], ...Object.keys(deliveryCommands).map((command) => [command, "--help"])]) {
     const result = spawnSync(process.execPath, [join(scripts, "cli.ts"), ...args], { cwd: root, encoding: "utf8" });
     assert.equal(result.status, 0, result.stderr);
     assert.match(result.stdout, /Usage: npx forge/);
+    if (args.length > 1) {
+      assert.match(result.stdout, /Examples \(from the repository root\):/);
+      assert.match(result.stdout, /Guide: scripts\/delivery\/README.md/);
+    }
   }
   const npm = process.env["npm_execpath"];
   assert.ok(npm, "Run integration tests through npm.");

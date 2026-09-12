@@ -8,6 +8,10 @@ open-forge:
 
 ## Unified Delivery CLI Follow-up
 
+The [scripts README/help follow-up](tasks/delivery/02-native-ci.md#scripts-readme-and-help-follow-up)
+is complete and verified for the maintainer-authorized local squash. Both
+README guides and every command’s dependency-free help are checked.
+
 Task 13’s unified `forge` CLI, named stages, explicit argument help/plan
 and untested local packing are implemented and locally verified. The maintainer
 accepted the direction and added target-selective publication. The maintainer confirmed that the

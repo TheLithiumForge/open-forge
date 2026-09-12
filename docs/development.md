@@ -20,7 +20,9 @@ Keep changes in their defining sources. Generated output and a machine's install
 
 ## Build And Test
 
-The delivery CLI is the shared entry point for local development and CI.
+The [delivery CLI guide](../scripts/delivery/README.md) is the quick reference
+for setup, stage selection, target-specific packaging and publication. The CLI
+is the shared entry point for local development and CI.
 It runs directly as TypeScript with the required Node version, so a fresh
 checkout can run setup before dependencies or a compiled build tool exist.
 Run `npx forge` from the repository root. The private root package registers the
