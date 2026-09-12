@@ -8,8 +8,8 @@ open-forge:
 
 ## Current Delivery Continuation
 
-Task 13 is active at phase 3/3, milestone 5/6 on
-`codex/streamlined-delivery`. The [Task continuation](../cli-development/tasks/delivery/02-native-ci.md#delivery-simplification-continuation)
+Task 13 is complete at phase 3/3, milestone 6/6. Feature `0101f25c` was
+squash-integrated at `1b8475ae`, with identical tree `5461e002`. The [Task continuation](../cli-development/tasks/delivery/02-native-ci.md#delivery-simplification-continuation)
 owns the shared-script/version/workflow changes, current evidence, review fixes,
 and accepted root-scripts/global-link extension. The [control ledger](../cli-development/project-control.md)
 owns queue state. Task 27 remains complete and Task 28 continues in the other

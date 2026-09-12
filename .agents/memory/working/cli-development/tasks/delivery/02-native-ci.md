@@ -8,11 +8,11 @@ open-forge:
 
 ## Delivery Simplification Continuation
 
-- State: Active on `codex/streamlined-delivery` from local baseline
+- State: Complete and locally integrated at `1b8475ae` from baseline
   `ae433e200123f59ebc35d4a88c98167edee8e474`, tree
   `c21012fd024d22c39996d5b96d16dd89bdea6e91`.
-- Current phase: 3/3. Completed milestones: 5/6.
-- Owner: Astra Overseer; Astra/high author and fresh reviewer completed.
+- Current phase: 3/3. Completed milestones: 6/6. Completion grace: 2.
+- Owner: Astra Overseer completed; Astra/high author and fresh reviewer completed.
 - Authority: The maintainer approved the complete shared-script and pipeline
   proposal on 2026-09-12. This continuation includes the directly required
   version/package changes formerly mapped to Tasks 7/22; their earlier
@@ -64,7 +64,7 @@ extension below separately authorizes the current native global link.
 Review budget: one fresh Astra/high whole-change review D13-R1 and one
 user-scope-extension delta review D13-R2.
 Correction budget: one grouped cycle D13-C1, rechecked at affected boundaries.
-Council budget: zero. Consumed IDs: D13-R1, D13-C1 and D13-R2. D13-R2 reviews cleanup candidate
+Council budget: zero. Consumed IDs: D13-R1, D13-C1 and D13-R2. D13-R2 reviewed cleanup candidate
 `b4983d53`, tree `420a32a46`, including the earlier release corrections. D13-R1 was assigned to the fresh whole-change
 review of candidate `a446897d`, tree `63980a39`, against baseline `ae433e20`.
 
@@ -134,10 +134,23 @@ Done: Final `b4983d53` qualification passed all 6997 C# executions, 32 tooling
 tests, installed-native npm and portable extraction journeys; review passed.
 The simplified global-link command exited zero and exposes the exact qualified
 version/native hash.
-Now: Phase 3, milestone 5/6; documentation/evidence closure and local integration.
-Next: Freeze the final metadata, squash into current local develop and verify
-exact tree equality.
+Now: Complete at phase 3/3, milestone 6/6; exact local integration accepted.
+Next: Task 28 continues independently. Broader refactoring stays deferred.
 Blocker: None. Foreign-host execution and public release remain unclaimed.
+
+### Accepted Local Integration
+
+Feature `0101f25ca8bd0c6615d77dc3457d93dfc02b0c44` was squash-integrated
+into current local develop at `1b8475aef267384df7bc07aef6fb5bf8bee29700`.
+Both trees are exactly `5461e0021f7b198e253166a1eda9b15afa67e5cf`.
+The integration has 122 changed paths; it preserves all C# core/root/tests and
+Framework/Extension payload source against the initial baseline. The worktree
+was clean after integration. The final completion record changes only Markdown.
+
+The receipt is `artifacts/task13-simplification/integration.json`. The saved
+metadata freeze accounts for all five final coordination/prose paths; the source
+changes and replacement tests were frozen in earlier coherent commits. No remote
+effect or publication occurred.
 
 ### Final Qualification And Remaining Work
 
@@ -150,7 +163,7 @@ The canonical saved receipt is
 `artifacts/task13-simplification/final-qualification/qualification.json`;
 that directory preserves all six standard test reports. Root npm commands
 passed offline restore, C# formatting/diagnostics, native build, prebuilt tests,
-packing and global linking. Both build summaries reported zero warnings/errors.
+packing and global linking. Build summaries reported zero warnings/errors.
 
 | Selection | Passed |
 | --- | ---: |

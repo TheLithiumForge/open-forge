@@ -65,8 +65,10 @@ suites. The user accepted Linux execution plus static inspection of the other
 platform jobs for local completion on 2026-09-10. The other five matching-host journeys
 remain unexecuted. This boundary permits local integration, not a shipping
 release. Remote Git/GitHub operations, hosted runs and publication are prohibited
-under the current direction. Global installation refresh is not authorized.
-Historical local-link receipts remain scoped to their exact authorized action.
+under the current direction. On 2026-09-12 the maintainer explicitly authorized
+refreshing the current native global link. The simplified link command passed
+and exposed the exact Linux native version/hash qualified by Task 13. That
+receipt does not authorize unrelated installation changes or publication.
 
 The replacement remains non-shipping until the complete retained command set,
 accepted package graph and native target set, documentation, and release evidence

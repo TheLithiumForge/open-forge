@@ -10,8 +10,9 @@ open-forge:
 
 The maintainer approved shared local/CI build, test and packaging commands,
 synchronized versioning and pipeline-only releases on 2026-09-12.
-[Task 13](delivery/02-native-ci.md#delivery-simplification-continuation) owns this new
-bounded continuation. Its current capsule supersedes earlier workflow/
+[Task 13](delivery/02-native-ci.md#delivery-simplification-continuation) completed this bounded continuation
+at phase 3/3, milestone 6/6. Feature `0101f25c` was squash-integrated at
+`1b8475ae` with exact tree `5461e002`. Its current capsule supersedes earlier workflow/
 version constraints for this change only. Earlier completed horizons and
 the local-only external-effect boundary remain intact.
 

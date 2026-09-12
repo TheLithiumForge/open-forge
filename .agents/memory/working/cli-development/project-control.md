@@ -8,8 +8,8 @@ open-forge:
 
 ## Current Delivery Execution
 
-Task 13 is reopened for the approved delivery simplification at phase 3/3,
-milestone 5/6, on `codex/streamlined-delivery`. Its [continuation capsule](tasks/delivery/02-native-ci.md#delivery-simplification-continuation)
+Task 13 is complete at phase 3/3, milestone 6/6. Feature `0101f25c` was
+squash-integrated at `1b8475ae`, with identical tree `5461e002`. Its [continuation capsule](tasks/delivery/02-native-ci.md#delivery-simplification-continuation)
 owns the full shared-command, version/package and workflow boundary. Tasks 7/22
 retain their historical completion receipts; Task 28 remains in the other chat.
 
@@ -27,9 +27,9 @@ build, test, and pack operations belong to those shared commands. The maintainer
 clarified that public release belongs to the pipeline. A local remote-release
 command is unnecessary for the accepted first implementation.
 Task 13 owns this accepted continuation; all prior completed horizons remain
-history. Shared commands and replacement workflows are implemented drafts under
-final qualification. Linux native tests, actual packages, global linking and both
-review boundaries passed; the final metadata freeze and local integration follow.
+history. Shared commands and replacement workflows are implemented and locally
+accepted. Linux native tests, actual packages, global linking, both review
+boundaries and exact-tree local integration passed.
 
 - Always build Linux, macOS and Windows on both x64 and ARM64. Remove the
   proposed `x64` versus `all` selector; release destination is a separate choice.
@@ -87,8 +87,8 @@ findings, final review dispositions and exact evidence/platform limits.
 Wider refactoring, F13 and U07 stay deferred or paused; no product choice remains
 pending for this beta. All implementation/review helpers have finished.
 Task 28 continues in the separate user-owned chat; preserve its source and notes.
-Tasks 7, 21 and 22 remain locally complete; Task 13 has the active continuation above. No remote operation or publication is authorized. Historical execution below does
-not reopen completed or deferred work.
+Tasks 7, 13, 21 and 22 remain locally complete. No remote operation or publication
+is authorized. Historical execution below does not reopen completed or deferred work.
 
 ## Previous Sequential Continuation
 
@@ -585,7 +585,7 @@ identity, queue state, completion grace, worktree mapping, and integration state
 | Task 21 “CLI Command Surface Remediation”              | [CLI Command Surface Remediation](tasks/cli-command-surface-remediation.md)                     | `DEQUEUED` | Consumed | Correct the seven validated audit findings within existing contracts and refactoring authority.                     | Phase 4/4, milestone 6/6; exact integration accepted. | Bounded sequential remediation                           | Accepted feature6173fb5b integrated at75f6ff49; exact tree0b7ed8e6. | Root; author/reviewer completed. | All 6,418 executions and protected/static gates passed; canonical Task receipt owns details. |
 | Task 27 “C# Structural Streamlining” | [C# Structural Streamlining](tasks/csharp-structural-streamlining.md) | `DEQUEUED` | 0 | Completed the bounded beta batch; broader refactoring is deferred. | Phase 4/4, milestone 8/8; accepted and integrated locally. | Explicit Gray/Blue/Purple freezes and final qualification | Feature `1b101bf2` integrated as `73ef066a`; exact tree `43407622`. | Root and all helpers complete. | [Complete changes, findings and evidence](tasks/csharp-beta-closeout.md); 6,997 C# executions and native package journey pass. |
 | Task 7 “npm Package Manager Release and Local Linking” | [npm Packages](tasks/delivery/01-npm-packages.md) | `DEQUEUED` | 0 | Implemented and locally qualified the accepted six-target graph. | Phase 4/4, milestone 6/6; integrated and accepted. | Derivative package expansion with explicit freezes | Feature6dc714c5 integrated at7eeeb19d; exact treec222861a. | Root, author, reviewer and operator completed. | All 6,421 executions, actual Linux native package journey, thirty-path integration and unrelated preservation accepted; other hosts remain Task13. |
-| Task 13 “Native CI and Reproducible Artifacts” | [Native CI and Reproducible Artifacts](tasks/delivery/02-native-ci.md) | `ACTIVE` | 0 | Simplify shared local/CI commands, versioning, packaging and pipeline-only publication. | Phase 3/3, milestone 5/6; final qualification/reviews/global link passed; local integration next. | Standard with frozen CLI behavior and artifact/version failure evidence | Baseline ae433e20; cleanup candidate b4983d53 on codex/streamlined-delivery. | Root; Astra/high author and reviewer completed. | 6997 C# executions, 32 tooling tests, actual package/portable/global-link evidence pass; other platforms statically reviewed. |
+| Task 13 “Native CI and Reproducible Artifacts” | [Native CI and Reproducible Artifacts](tasks/delivery/02-native-ci.md) | `RECENTLY_COMPLETED` | 2 | Simplified shared local/CI commands, versioning, packaging and pipeline-only publication; retired obsolete CLI tooling. | Complete phase 3/3, milestone 6/6. | Standard with frozen CLI behavior and artifact/version failure evidence | Feature 0101f25c integrated at 1b8475ae; exact tree 5461e002. | Root, Astra/high author and reviewer completed. | 6997 C# executions, 32 tooling tests, actual package/portable/global-link evidence pass; five other platforms statically reviewed. |
 | Task 22 “Final Documentation, Acceptance, and Release” | [Accept And Release The Complete CLI](tasks/delivery/04-release.md) | `DEQUEUED` | 0 | Aligned docs/help and accepted the local delivery candidate. | Phase 3/3, milestone 6/6; integrated and locally accepted. | Public correctness and final acceptance | Feature 6d370632 integrated at 3bf03e0e; exact tree 33c98766. | Root and scoped reviewers completed. | Local completion accepted; shipping release excluded from this horizon. |
 | Task 28 “Source Framework Wording and Logic Review” | [Source Framework review](tasks/source-framework-review.md) | `ACTIVE` | Not applicable | Source report and local Extension comparison prepared; user reviews proposals in the separate chat. | Independent user-owned review; horizon unassigned here. | Review/report only | codex/task28-framework-review in its own worktree. | Separate user-owned chat. | Preserve reports and follow-up notes; no source integration authorized in this lane. |
 
