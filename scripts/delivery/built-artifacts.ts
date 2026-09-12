@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { SupportedRuntime } from "../package-managers/npm/package-model.ts";
+import type { SupportedRuntime } from "./package-model.ts";
 import { deliveryDirectory, DevelopmentPublish, nativeDirectory, suites } from "./layout.ts";
 import { verifyManifest, type DeliveryManifest } from "./manifest.ts";
 import { sourceIdentity } from "./source.ts";
 import { candidateVersion } from "./version.ts";
-import { committedVersion, readPackage } from "./version-sync.ts";
+import { readPackage } from "./package-json.ts";
+import { committedVersion } from "./version.ts";
 import { qualifyReport } from "./test-report.ts";
 
 export interface BuiltManifest extends DeliveryManifest {

@@ -1,9 +1,10 @@
 import { execFileSync, spawnSync } from "node:child_process";
 import { join } from "node:path";
 
-import { FullGitShaPattern, MainPackageName, PlatformPackages } from "./package-model.ts";
-import { candidateVersion } from "../../delivery/version.ts";
-import { committedVersion } from "../../delivery/version-sync.ts";
+import { MainPackageName, PlatformPackages } from "../package-model.ts";
+import { FullGitShaPattern } from "../source-identity.ts";
+import { candidateVersion } from "../version.ts";
+import { committedVersion } from "../version.ts";
 import { stagePackages } from "./stage.ts";
 
 const npmLinkArguments = ["--offline", "--ignore-scripts", "--no-save", "--no-package-lock", "--no-audit", "--no-fund"];

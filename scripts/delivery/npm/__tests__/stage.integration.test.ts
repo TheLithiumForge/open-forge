@@ -6,7 +6,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { PlatformPackages } from "../package-model.ts";
+import { PlatformPackages } from "../../package-model.ts";
 import { IsolatedNpm } from "./isolated-npm.ts";
 import {
   ExpectedLauncherPath,

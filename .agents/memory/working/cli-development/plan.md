@@ -6,6 +6,13 @@ open-forge:
 
 # Replacement CLI Development Plan
 
+## Script Structure Continuation
+
+The maintainer accepted the script architecture recommendation and a feature
+branch followed by local squash integration. [Task 13](tasks/delivery/02-native-ci.md#accepted-script-structure-implementation)
+defines this bounded continuation and its behavior freeze. Earlier completed
+CLI horizons remain closed. External-core extraction remains deferred.
+
 ## Delivery Simplification Continuation
 
 The maintainer approved shared local/CI build, test and packaging commands,

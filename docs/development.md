@@ -32,6 +32,17 @@ This follows the supported [side-by-side installation](https://devblogs.microsof
 `npm run build:launcher` compiles only the thin npm launcher. Delivery and local
 linking use that same command when they need emitted JavaScript.
 
+Delivery scripts live together under `scripts/delivery/`. Each task has a direct
+entry point, such as `build.ts`, `restore.ts` or `pack.ts`. Shared capabilities
+stay beside their consumers, with package preparation under `npm/` and
+pipeline-only release preparation under `release/`. Repository agent tools
+remain separate under `scripts/agent-tooling/`.
+
+One root `tsconfig.json` checks all repository TypeScript, including tests. The
+launcher's emitting configuration includes only its runtime sources. Tests
+remain independently runnable through their package commands; compiler
+configuration does not determine which test tier executes.
+
 The replacement C# implementation follows the current [CLI
 Architecture](../.agents/memory/crystallized/documents/cli/architecture.md) and
 [active Plan](../.agents/memory/working/cli-development/plan.md). Source and
@@ -179,7 +190,7 @@ releases, or require publication credentials.
 
 ### Link The Native CLI Locally
 
-The npm tooling under `scripts/package-managers/npm/` can prepare the native
+The npm tooling under `scripts/delivery/npm/` can prepare the native
 package for the current host on Linux (glibc), macOS, or Windows, on x64 or
 ARM64. The accepted distribution contains all six target packages. Package
 layout and packing are implemented; five matching-host runtime receipts remain

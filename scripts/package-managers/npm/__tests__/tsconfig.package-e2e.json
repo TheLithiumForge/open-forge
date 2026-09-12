@@ -1,6 +1,0 @@
-{
-  "extends": "../../../../tsconfig.json",
-  "compilerOptions": { "noEmit": true, "types": ["node"], "erasableSyntaxOnly": true },
-  "include": ["package-manager.e2e.test.ts", "native-package-journey.ts"],
-  "exclude": []
-}

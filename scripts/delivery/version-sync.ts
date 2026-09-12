@@ -2,20 +2,9 @@ import assert from "node:assert/strict";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { PlatformPackages } from "../package-managers/npm/package-model.ts";
-import { validateVersion } from "./version.ts";
-
-export function readPackage(path: string): Record<string, unknown> {
-  const value: unknown = JSON.parse(readFileSync(path, "utf8"));
-  assert.ok(typeof value === "object" && value !== null && !Array.isArray(value));
-  return Object.fromEntries(Object.entries(value));
-}
-
-export function committedVersion(root: string): string {
-  const version = readPackage(join(root, "package.json"))["version"];
-  assert.ok(typeof version === "string", "Root package.json must own the version.");
-  return validateVersion(version);
-}
+import { PlatformPackages } from "./package-model.ts";
+import { committedVersion } from "./version.ts";
+import { readPackage } from "./package-json.ts";
 
 export function synchronizeVersion(root: string): void {
   const version = committedVersion(root);
@@ -31,7 +20,7 @@ export function synchronizeVersion(root: string): void {
     ...Object.values(PlatformPackages).map((platform) => `${platform.nodePlatform === "darwin" ? "darwin" : platform.runtime.split("-")[0]}-${platform.nodeArchitecture}`),
   ];
   for (const directory of directories) {
-    const path = join(root, "scripts/package-managers/npm", directory, "package.json");
+    const path = join(root, "scripts/delivery/npm", directory, "package.json");
     const manifest = readPackage(path);
     manifest["version"] = version;
     if (directory === "main") manifest["optionalDependencies"] = Object.fromEntries(Object.values(PlatformPackages).map((platform) => [platform.packageName, version]));

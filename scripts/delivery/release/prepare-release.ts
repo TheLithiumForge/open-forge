@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { appendFileSync } from "node:fs";
-import { sourceIdentity } from "../delivery/source.ts";
-import { committedVersion } from "../delivery/version-sync.ts";
+import { sourceIdentity } from "../source.ts";
+import { committedVersion } from "../version.ts";
 import { releaseChannel, validateBuildRun } from "./release-selection.ts";
 import { validateReleaseTag } from "./release-tag.ts";
 

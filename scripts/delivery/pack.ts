@@ -1,13 +1,16 @@
 import assert from "node:assert/strict";
 import { chmodSync, copyFileSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join, relative } from "node:path";
-import { PlatformPackages, type SupportedRuntime } from "../package-managers/npm/package-model.ts";
+import { PlatformPackages, type SupportedRuntime } from "./package-model.ts";
 import { readBuilt } from "./built-artifacts.ts";
-import { run } from "./commands.ts";
-import { deliveryDirectory, nativeDirectory } from "./layout.ts";
+import { reportFailure, run } from "./process.ts";
+import { readBuildOptions } from "./options.ts";
+import { repositoryRoot } from "./repository.ts";
+import { committedVersion } from "./version.ts";
+import { deliveryDirectory, hostRuntime, nativeDirectory } from "./layout.ts";
 import { hashArtifact } from "./manifest.ts";
 
-export function pack(root: string, rid: SupportedRuntime): void {
+function pack(root: string, rid: SupportedRuntime): void {
   const manifest = readBuilt(root, rid, true);
   const directory = join(root, deliveryDirectory(rid));
   const output = mkdtempSync(join(directory, "packages-"));
@@ -24,7 +27,7 @@ export function pack(root: string, rid: SupportedRuntime): void {
   run(
     process.execPath,
     [
-      "scripts/package-managers/npm/__tests__/native-package-journey.ts",
+      "scripts/delivery/npm/__tests__/native-package-journey.ts",
       journey,
       rid,
       join(root, native),
@@ -50,4 +53,13 @@ export function pack(root: string, rid: SupportedRuntime): void {
   readBuilt(root, rid, true);
   writeFileSync(join(directory, "package-path.txt"), relative(root, output).replaceAll("\\", "/"));
   process.stdout.write(`Packed ${manifest.version}: ${relative(root, output)}\n`);
+}
+
+try {
+  const values = readBuildOptions();
+  committedVersion(repositoryRoot);
+  assert.ok(!values.sha);
+  pack(repositoryRoot, hostRuntime(values.rid));
+} catch (error) {
+  reportFailure(error);
 }

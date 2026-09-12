@@ -48,7 +48,7 @@ jobs:
           package-manager-cache: false
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - id: selection
-        run: node scripts/ci/prepare-release.ts
+        run: node scripts/delivery/release/prepare-release.ts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_name || '' }}
@@ -108,7 +108,7 @@ jobs:
           pattern: package-*
           path: artifacts/release-input
           digest-mismatch: error
-      - run: node scripts/ci/collect-packages.ts artifacts/release-input artifacts/release
+      - run: node scripts/delivery/release/collect-packages.ts artifacts/release-input artifacts/release
       - name: Publish six platform packages before the main package
         if: needs.select.outputs.target == 'npm' || needs.select.outputs.target == 'all'
         env:

@@ -6,8 +6,9 @@
     "noEmit": false,
     "outDir": "../../../artifacts/npm/build",
     "rewriteRelativeImportExtensions": true,
-    "rootDir": ".",
+    "rootDir": "..",
     "sourceMap": false
   },
-  "include": ["package-model.ts", "main/open-forge.ts"]
+  "include": ["../package-model.ts", "open-forge.ts"],
+  "exclude": []
 }

@@ -15,7 +15,7 @@ open-forge:
 - Reference imported types through named static imports. Do not use TypeScript import type expressions such as `import("module").Type`.
 - Use runtime `import()` only at an explicit asynchronous lazy-loading boundary. Keep the reason visible at that boundary, and scope any lint exception to the exact import that requires it.
 - Enable and preserve full TypeScript strictness. Do not use `any`, suppressed diagnostics, weakened compiler settings, or unchecked casts to bypass a type boundary that can be modeled explicitly.
-- Keep production ambient types separate from test-runner and tooling-only globals through focused compiler projects.
+- Separate compiler projects when their runtime environments or ambient globals differ. Repository scripts and tests that share the Node environment and import test APIs explicitly use one strict root no-emit configuration. Keep a focused emitting configuration for the shipped npm launcher so delivery helpers and tests stay outside its output.
 - Use `const` unless the binding itself must be reassigned. Prefer declaration-side annotations when an authored contract benefits from one, and use `satisfies` selectively when preserving narrower inference is useful.
 - Never use `as any`, a chained assertion, or `as Type` for a workspace-owned value. Isolate and explain an unavoidable assertion only at a focused untyped external boundary. Literal-preserving `as const` definitions remain valid.
 

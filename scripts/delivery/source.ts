@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { FullGitShaPattern } from "../package-managers/npm/package-model.ts";
+import { FullGitShaPattern } from "./source-identity.ts";
 
 export function sourceIdentity(root: string): { sha: string; dirty: boolean; changes: string } {
   const git = (args: readonly string[]) => execFileSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });

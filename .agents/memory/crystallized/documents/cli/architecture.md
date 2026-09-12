@@ -706,9 +706,13 @@ require explicit acceptance.
 
 The root package.json scripts own the repeatable local and CI build, test,
 version and package commands. Focused TypeScript under `scripts/delivery/`
-coordinates the standard .NET, Node and npm tools. Package-manager source owns
-shim layout and staging under `scripts/package-managers/`; pipeline-only helpers under `scripts/ci/` own release
-preparation. Tests stay beside each tooling boundary in focused projects.
+coordinates the standard .NET, Node and npm tools. Each delivery task has a
+direct entry point. Shared capabilities stay at their nearest common delivery
+scope. The `npm/` child contains the launcher, package templates and staging;
+the `release/` child contains pipeline-only preparation. Tests stay beside the
+behavior they verify and remain independently selectable. One root strict Node
+configuration checks scripts and tests, while one focused configuration emits
+only the shipped launcher.
 These scripts contain no CLI domain behavior or general build framework.
 `src/cli/` contains only C# implementation, projects and their required resources.
 Maintained repository agent tooling belongs under `scripts/agent-tooling/`.

@@ -49,7 +49,7 @@ Maintaining dogfood and source representations still requires deliberate synchro
 - [Framework distribution and dogfood contract](../../documents/framework/architecture.md#distribution-and-dogfood)
 - [Payload Maintenance scope](../../documents/maintenance/payload/_payload.md)
 - [Installable Framework source](../../../../../src/open-forge/)
-- [Current build and delivery implementation](../../../../../scripts/delivery/delivery.ts)
+- [Current build and delivery implementation](../../../../../scripts/delivery/build.ts)
 - [Current overwrite contract](../../documents/framework/routing/overwrites.md)
 
 ## Decision Relationships

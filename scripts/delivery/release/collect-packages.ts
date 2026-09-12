@@ -3,10 +3,11 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
-import { MainPackageName, PlatformPackages } from "../package-managers/npm/package-model.ts";
-import { hashArtifact } from "../delivery/manifest.ts";
-import { committedVersion, readPackage } from "../delivery/version-sync.ts";
-import { sourceIdentity } from "../delivery/source.ts";
+import { MainPackageName, PlatformPackages } from "../package-model.ts";
+import { hashArtifact } from "../manifest.ts";
+import { readPackage } from "../package-json.ts";
+import { committedVersion } from "../version.ts";
+import { sourceIdentity } from "../source.ts";
 import { inspectPackageContents } from "./package-contents.ts";
 
 export function collectPackages(input: string, output: string, sha: string, version: string): void {

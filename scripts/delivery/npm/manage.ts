@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 
 import { linkLocalPackages, unlinkLocalPackages } from "./local-link.ts";
-import type { SupportedRuntime } from "./package-model.ts";
+import type { SupportedRuntime } from "../package-model.ts";
 import { stagePackages, type StageVersion } from "./stage.ts";
 
 const repositoryRoot = fileURLToPath(new URL("../../../", import.meta.url));

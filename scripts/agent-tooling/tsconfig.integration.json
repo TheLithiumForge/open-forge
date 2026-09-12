@@ -1,6 +1,0 @@
-{
-  "extends": "../../tsconfig.json",
-  "compilerOptions": { "noEmit": true, "types": ["node"], "erasableSyntaxOnly": true },
-  "include": ["**/*.integration.test.ts"],
-  "exclude": []
-}

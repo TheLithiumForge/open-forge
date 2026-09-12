@@ -5,8 +5,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { readPackage } from "../version-sync.ts";
-import { PlatformPackages } from "../../package-managers/npm/package-model.ts";
+import { readPackage } from "../package-json.ts";
+import { PlatformPackages } from "../package-model.ts";
 
 const repository = fileURLToPath(new URL("../../../", import.meta.url));
 
@@ -31,7 +31,6 @@ test("the public npm version command invokes synchronization without committing 
     });
   mkdirSync(join(root, "scripts"), { recursive: true });
   cpSync(join(repository, "scripts/delivery"), join(root, "scripts/delivery"), { recursive: true });
-  cpSync(join(repository, "scripts/package-managers"), join(root, "scripts/package-managers"), { recursive: true });
   symlinkSync(join(repository, "node_modules"), join(root, "node_modules"), process.platform === "win32" ? "junction" : "dir");
   const scripts = readPackage(join(repository, "package.json"))["scripts"];
   writeFileSync(join(root, "package.json"), JSON.stringify({ name: "version-fixture", type: "module", private: true, version: "0.0.0", scripts }));
@@ -53,10 +52,10 @@ test("the public npm version command invokes synchronization without committing 
   run(process.execPath, [npmCli, "run", "version:bump", "--", version]);
   assert.equal(readPackage(join(root, "package.json"))["version"], version);
   assert.equal(readPackage(join(root, "package-lock.json"))["version"], version);
-  const main = readPackage(join(root, "scripts/package-managers/npm/main/package.json"));
+  const main = readPackage(join(root, "scripts/delivery/npm/main/package.json"));
   assert.deepEqual(main["optionalDependencies"], Object.fromEntries(Object.values(PlatformPackages).map((platform) => [platform.packageName, version])));
   for (const directory of ["main", "linux-x64", "linux-arm64", "darwin-x64", "darwin-arm64", "win-x64", "win-arm64"])
-    assert.equal(readPackage(join(root, "scripts/package-managers/npm", directory, "package.json"))["version"], version);
+    assert.equal(readPackage(join(root, "scripts/delivery/npm", directory, "package.json"))["version"], version);
   assert.ok(readFileSync(join(root, "Directory.Build.props"), "utf8").includes(`<OpenForgeCliInformationalVersion>${version}</OpenForgeCliInformationalVersion>`));
   assert.equal(run("git", ["rev-parse", "HEAD"]), head);
   assert.equal(run("git", ["tag", "--list"]), "");

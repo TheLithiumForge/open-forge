@@ -5,13 +5,13 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { hashArtifact } from "../../delivery/manifest.ts";
-import { PlatformPackages } from "../../package-managers/npm/package-model.ts";
-import { IsolatedNpm } from "../../package-managers/npm/__tests__/isolated-npm.ts";
-import { compileLauncher, stagePackages } from "../../package-managers/npm/stage.ts";
+import { hashArtifact } from "../../manifest.ts";
+import { PlatformPackages } from "../../package-model.ts";
+import { IsolatedNpm } from "../../npm/__tests__/isolated-npm.ts";
+import { compileLauncher, stagePackages } from "../../npm/stage.ts";
 import { collectPackages } from "../collect-packages.ts";
 
-const repository = fileURLToPath(new URL("../../../", import.meta.url));
+const repository = fileURLToPath(new URL("../../../../", import.meta.url));
 const version = "0.1.0-beta.1";
 const sha = "a".repeat(40);
 

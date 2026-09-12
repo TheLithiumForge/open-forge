@@ -25,8 +25,8 @@
     "forceConsistentCasingInFileNames": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-    "skipLibCheck": false
+    "skipLibCheck": false,
+    "erasableSyntaxOnly": true
   },
-  "include": ["eslint.config.ts", "scripts/**/*.ts"],
-  "exclude": ["scripts/**/*.test.ts"]
+  "include": ["eslint.config.ts", "scripts/**/*.ts"]
 }

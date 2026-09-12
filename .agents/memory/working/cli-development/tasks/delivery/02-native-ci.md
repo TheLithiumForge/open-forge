@@ -6,6 +6,116 @@ open-forge:
 
 # Task 13: Native CI and Reproducible Artifacts
 
+## Accepted Script Structure Implementation
+
+State: Complete. Phase 3/3, milestone 5/5. Completion grace: 2.
+The maintainer accepted the preceding scripts recommendation and required a
+feature branch followed by a local squash into develop. Baseline: 5a565594.
+Branch: codex/delivery-script-structure. No external-core adoption, package-manager
+migration, hosted action, remote publication or C# behavior change is included.
+
+Standard structural profile: freeze existing observable commands, version rules,
+artifact identity, package graph and all test assertions before Blue changes.
+Phase 1 owns M1 source/test inventory and behavior freeze. Phase 2 owns M2
+structure/configuration implementation and M3 focused typecheck, lint, formatting,
+tooling tests, launcher and real package evidence. Phase 3 owns M4 one fresh
+review and M5 documentation, exact staging and local squash integration.
+
+Accepted architecture: one root strict Node no-emit configuration checks scripts
+and tests; one focused emitting configuration ships only the npm launcher.
+Keep independently runnable test tiers through stable commands and paths. Group
+release and npm tooling beneath delivery; keep agent-tooling separate. Meaningful
+tasks have direct entry points using capability-specific shared modules at their
+nearest common scope. Shared modules never import task entry points. Preserve
+root-relative execution from any npm invocation directory. No generic registry,
+custom process framework or one-line wrapper for ordinary tools. Use semver's
+public API for validation if its existing contract is preserved.
+
+One Astra/high implementation owner owns scripts, root package/configuration and
+workflow consumers. Root owns the Task, ledger, narrow local directive clarification
+and development documentation. Protected: all C# source/tests, Framework and
+Extension payloads, unrelated prose, existing artifacts and other-chat changes.
+Dependency installation already authorized for workspace tooling remains limited
+to directly needed dependencies. Do not update the global CLI during this change.
+
+Evidence: baseline tests and source are frozen at 5a565594. Reuse existing 32
+tooling assertions and installed-native package journey; add only evidence for
+an actual uncovered changed entry-point boundary. Compare launcher output and
+public package contents. Existing native bytes are frozen inputs; no new C# or
+foreign-host runtime qualification is claimed. Source tracking must cover new
+paths and removed-path deltas. Review budget: one independent structure/package
+review S13-R1; correction budget: one grouped cycle S13-C1; council: zero.
+
+Done: Implementation committed at 0ad9f11d; 32 tooling tests and native package
+journey passed. Fresh review S13-R1 found no material source issues.
+Now: Phase 3/3, milestone 5/5; accepted local squash completed.
+Next: No remaining work in this bounded script refactoring.
+Blocker: None.
+
+### Implementation Review And Execution Correction
+
+S13-R1 reviewed immutable baseline 5a565594 through candidate 0ad9f11d, tree
+34975852dcedb58d0e4073b613dd6f9c15e99087, including preflight 509bb8b5.
+No material source or documentation findings. The review covered argument/error
+order, root resolution, shared dependencies, source tracking, compiler output,
+package/release composition, version synchronization and preserved assertions.
+The 68 recorded source hashes matched the candidate. The review was read-only.
+
+The original supplemental comparison harness used Python in ignored artifacts.
+Root rejected that execution format under the maintainer's no-Python instruction
+and requested a TypeScript rerun plus removal of the two exact generated Python
+files. The production candidate and 32 Node test results were unaffected. The
+TypeScript harness exited zero and superseded the initial comparison receipt.
+Both exact Python harnesses were removed, including the temporary external copy.
+This consumes S13-C1 for an execution correction, not a source behavior fix.
+The delegation packet should carry explicit language constraints even when its
+source scope already says TypeScript; do not infer a relative model-quality
+conclusion from this single packet omission.
+
+### Accepted Local Integration
+
+Feature 868253517b38ecbbe4b014034a4ddab1ae73fea7 was squash-integrated
+onto develop baseline 5a565594f3eeb6c6c450057266d12b160fbf3e7a in the
+commit containing this completion record. The staged squash first matched the
+feature tree exactly. Only this Task, the ledger and checkpoint then received
+completion updates. All qualified script/configuration bytes are unchanged.
+No remote operations, global-link changes or publication occurred.
+
+### Accepted Result And Evidence
+
+The implementation candidate is 0ad9f11d5962b3b6a1e07fea2143972bc61676e3,
+tree 34975852dcedb58d0e4073b613dd6f9c15e99087. Source and configuration
+hashes remain unchanged after review. The root acceptance receipt is
+`artifacts/task13-structure/acceptance.json`; it links the detailed command,
+toolchain, source-hash, test, differential and package receipts.
+
+- Removed ten redundant compiler configurations. One strict root Node
+  configuration checks tooling and tests; one narrow configuration emits the
+  launcher. Existing package commands still select each test boundary.
+- Replaced the delivery dispatcher with direct restore/build/test/native-build,
+  built-test, pack and version-bump entry points. Shared process, version,
+  package identity, source and test execution capabilities are directly imported.
+- Moved npm and release tooling beneath delivery and updated actual consumers.
+  Agent tooling remains separate. All seven package templates are byte-identical
+  to the baseline. No runtime dependency or external core was added.
+- Version validation calls the existing semver API; only its development type
+  declarations were added. Strict checking, linting, formatting and all 32
+  existing tooling tests pass with zero failures or skips. Existing assertions
+  remain unchanged apart from the relocated package-template path.
+- The Node/TypeScript comparison proves 42 matching entry-point outcomes and
+  22 matching version-validation outcomes. Its process sentinel captures our
+  invocation arguments, cwd, output and exit handling without building C#.
+- The emitted launcher is byte-identical. The second emitted module only loses
+  the unused SHA-pattern export, now defined beside shared source identity.
+  Exactly two JavaScript files are emitted; public package paths and whitelist
+  are unchanged. The real installed Linux native-package journey passes and
+  preserves the native binary hash.
+
+Protected C#, Framework and Extension sources are unchanged. Foreign-host
+runtime execution, new C# qualification, hosted workflows and publication are
+not claimed. No production repair followed the no-finding review. External
+core extraction and wider previously deferred refactoring remain deferred.
+
 ## Script Tooling And Architecture Follow-up
 
 State: Complete. Phase 2/2, milestone 3/3. Completion grace: 2.

@@ -22,3 +22,8 @@ export function npm(args: readonly string[], root: string): void {
   assert.ok(cli, "Run this command through npm run.");
   run(process.execPath, [cli, ...args], root);
 }
+
+export function reportFailure(error: unknown): void {
+  process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
+  process.exitCode ||= 1;
+}

@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { test } from "node:test";
 import { synchronizeVersion } from "../version-sync.ts";
-import { MainPackageName, PlatformPackages } from "../../package-managers/npm/package-model.ts";
+import { MainPackageName, PlatformPackages } from "../package-model.ts";
 
 test("version synchronization updates .NET, all npm manifests and exact optional dependencies", (context) => {
   const root = mkdtempSync(join(tmpdir(), "open-forge-version-"));
@@ -17,7 +17,7 @@ test("version synchronization updates .NET, all npm manifests and exact optional
   );
   const names = Object.values(PlatformPackages).map((platform) => platform.packageName);
   const paths = ["main", "linux-x64", "linux-arm64", "darwin-x64", "darwin-arm64", "win-x64", "win-arm64"].map((directory) =>
-    join(root, "scripts/package-managers/npm", directory, "package.json"),
+    join(root, "scripts/delivery/npm", directory, "package.json"),
   );
   for (const path of paths) {
     mkdirSync(dirname(path), { recursive: true });

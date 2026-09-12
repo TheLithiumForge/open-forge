@@ -6,6 +6,17 @@ open-forge:
 
 # CLI Development Checkpoint
 
+## Current Script Structure Continuation
+
+Task 13 completed phase 3/3, milestone 5/5. Feature 86825351 was locally
+squash-integrated into develop in the commit containing this completion record. Its
+[execution capsule](../cli-development/tasks/delivery/02-native-ci.md#accepted-script-structure-implementation)
+defines the accepted structure, frozen behavior, phase/milestone state and
+verification boundary. The [ledger](../cli-development/project-control.md) owns
+queue state. All 32 tooling tests, differential comparisons and the Linux native
+package journey passed. Fresh review found no material issues. Root and helpers
+finished. Wider deferred work and external-core extraction remain separate.
+
 ## Current Delivery Continuation
 
 Task 13 is complete at phase 3/3, milestone 6/6. Feature `0101f25c` was

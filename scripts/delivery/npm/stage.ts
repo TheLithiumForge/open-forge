@@ -2,14 +2,15 @@ import { execFileSync } from "node:child_process";
 import { chmodSync, copyFileSync, mkdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import rootPackage from "../../../package.json" with { type: "json" };
-import { candidateVersion, validateVersion } from "../../delivery/version.ts";
+import { candidateVersion, validateVersion } from "../version.ts";
 
 import darwinArm64PackageTemplate from "./darwin-arm64/package.json" with { type: "json" };
 import darwinPackageTemplate from "./darwin-x64/package.json" with { type: "json" };
 import linuxArm64PackageTemplate from "./linux-arm64/package.json" with { type: "json" };
 import linuxPackageTemplate from "./linux-x64/package.json" with { type: "json" };
 import mainPackageTemplate from "./main/package.json" with { type: "json" };
-import { FullGitShaPattern, MainPackageName, PlatformPackages, type SupportedRuntime } from "./package-model.ts";
+import { MainPackageName, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
+import { FullGitShaPattern } from "../source-identity.ts";
 import windowsArm64PackageTemplate from "./win-arm64/package.json" with { type: "json" };
 import windowsPackageTemplate from "./win-x64/package.json" with { type: "json" };
 
@@ -61,7 +62,7 @@ export function stagePackages(request: StageRequest): StagedPackages {
   mkdirSync(mainBinDirectory, { recursive: true });
   mkdirSync(platformBinDirectory, { recursive: true });
 
-  copyExecutable(join(launcherDirectory, "main", "open-forge.js"), join(mainBinDirectory, "open-forge.js"));
+  copyExecutable(join(launcherDirectory, "npm", "open-forge.js"), join(mainBinDirectory, "open-forge.js"));
   copyFileSync(join(launcherDirectory, "package-model.js"), join(mainPackageDirectory, "package-model.js"));
   copyExecutable(request.nativeArtifact, join(platformBinDirectory, platformPackage.nativeFileName));
   copyFileSync(join(request.repositoryRoot, "LICENSE"), join(mainPackageDirectory, "LICENSE"));

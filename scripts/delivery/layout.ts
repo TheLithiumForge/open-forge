@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { PlatformPackages, type SupportedRuntime } from "../package-managers/npm/package-model.ts";
+import { PlatformPackages, type SupportedRuntime } from "./package-model.ts";
 
 export const Configuration = "Release";
 export const Projects = {

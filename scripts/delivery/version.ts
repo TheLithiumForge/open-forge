@@ -1,18 +1,18 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
-import { createRequire } from "node:module";
-import { FullGitShaPattern } from "../package-managers/npm/package-model.ts";
-
-const semverCli = createRequire(import.meta.url).resolve("semver/bin/semver.js");
+import { join } from "node:path";
+import { valid } from "semver";
+import { readPackage } from "./package-json.ts";
+import { FullGitShaPattern } from "./source-identity.ts";
 
 export function validateVersion(version: string): string {
-  try {
-    const normalized = execFileSync(process.execPath, [semverCli, version], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
-    assert.equal(normalized, version);
-    return version;
-  } catch {
-    throw new Error(`Invalid package version: ${version}`);
-  }
+  if (valid(version) !== version) throw new Error(`Invalid package version: ${version}`);
+  return version;
+}
+
+export function committedVersion(root: string): string {
+  const version = readPackage(join(root, "package.json"))["version"];
+  assert.ok(typeof version === "string", "Root package.json must own the version.");
+  return validateVersion(version);
 }
 
 export function candidateVersion(version: string, sha?: string): string {
