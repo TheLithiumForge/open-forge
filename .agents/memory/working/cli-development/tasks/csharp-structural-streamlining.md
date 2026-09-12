@@ -17,7 +17,11 @@ set are qualified and squash-integrated at `b4a06740`. The
 milestone 3/3, candidate `5bef9a24`, with the full managed/native gate and
 19 direct native checks passing. Its completion record accompanies local squash.
 Fixture corrections and the [audit report](cli-parsing-doctor-audit.md) are
-complete. Doctor correctness and bounded presentation sets follow.
+complete. Doctor D1 is qualified and squash-integrated at `ef7bdb3b`.
+[Generated-navigation alignment](cli-generated-navigation-alignment.md) D2 is
+complete: source `29de40a0`, all six managed/native suites and 24 native checks
+pass. Presentation audit is complete; its implementation stages follow.
+Diagnostic retirement and default filtering await the user’s pending answers.
 
 ## Sequential Refactoring Set 1 — 2026-09-12
 

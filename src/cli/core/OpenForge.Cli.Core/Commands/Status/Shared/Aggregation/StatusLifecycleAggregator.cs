@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Operational;
 using OpenForge.Cli.Core.Framework.Lifecycle.Operational.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 
@@ -10,11 +11,18 @@ internal static class StatusLifecycleAggregator
     internal static StatusLifecycle Build(
         FrameworkLifecycleStatusView framework,
         ExtensionLifecycleStatusView extensions,
-        bool absenceProven)
+        bool absenceProven,
+        IReadOnlySet<string> currentNavigationPaths)
     {
         if (absenceProven)
         {
             return Absent();
+        }
+
+        var targets = new List<StatusFrameworkTarget>(framework.Targets.Count);
+        foreach (var target in framework.Targets.OrderBy(target => target.Path, StringComparer.Ordinal))
+        {
+            targets.Add(Project(target, framework.SourceAvailability, currentNavigationPaths));
         }
 
         return new StatusLifecycle(
@@ -22,10 +30,7 @@ internal static class StatusLifecycleAggregator
             {
                 State = framework.Lifecycle,
                 SourceAvailability = framework.SourceAvailability,
-                Targets = framework.Targets
-                    .OrderBy(target => target.Path, StringComparer.Ordinal)
-                    .Select(Project)
-                    .ToArray(),
+                Targets = targets,
             },
             new StatusExtensionLifecycle
             {
@@ -99,7 +104,10 @@ internal static class StatusLifecycleAggregator
             });
     }
 
-    private static StatusFrameworkTarget Project(FrameworkManagedTargetObservation target)
+    private static StatusFrameworkTarget Project(
+        FrameworkManagedTargetObservation target,
+        OperationalSourceAvailability sourceAvailability,
+        IReadOnlySet<string> currentNavigationPaths)
     {
         return new StatusFrameworkTarget
         {
@@ -109,7 +117,7 @@ internal static class StatusLifecycleAggregator
             Region = target.Region,
             BaselineFingerprint = target.BaselineFingerprint,
             FingerprintKind = target.FingerprintKind,
-            State = target.State,
+            State = FrameworkGeneratedNavigationCurrentness.ReadState(target, sourceAvailability, currentNavigationPaths),
         };
     }
 

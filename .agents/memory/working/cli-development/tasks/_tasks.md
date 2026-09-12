@@ -83,6 +83,7 @@ define execution state.
 - [Correct the seven validated CLI audit findings within accepted behavior, test tiers, and local callable ownership](cli-command-surface-remediation.md) - #Memory #Working #Contextual #Complete #CLI #Task #Remediation #Architecture #Refactoring #Testing
 - [Correct false Doctor coverage and source-identity failures before changing its presentation](cli-doctor-correctness.md) - #Memory #Working #Contextual #CLI #Task #Doctor #Refactoring
 - [Fix stale test fixtures, audit manual parsing, and make Doctor diagnostics accurate and understandable in sequential steps](cli-dogfood-follow-up-plan.md) - #Memory #Working #Contextual #CLI #Task #Plan #Testing #Parsing #Doctor #Dogfood
+- [Align Doctor and Status with current generated navigation while preserving real managed-content drift](cli-generated-navigation-alignment.md) - #Memory #Working #Contextual #CLI #Task #Doctor #Status #Alignment
 - [Remove redundant option-delimiter restrictions and use native parser value forms consistently](cli-native-delimiters.md) - #Memory #Working #Contextual #CLI #Task #Parsing #Refactoring
 - [Explain the tag delimiter defect, inventory manual parsing across CLI commands, and propose actionable Doctor diagnostics](cli-parsing-doctor-audit.md) - #Memory #Working #Contextual #CLI #Task #Audit #Parsing #Doctor #Dogfood
 - [Review all CLI presentation surfaces and sequence verified fixes for missing detail, duplication, and unclear writing](cli-presentation-audit.md) - #Memory #Working #Contextual #CLI #Task #Presentation #Writing #Dogfood

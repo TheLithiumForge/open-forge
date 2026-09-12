@@ -35,7 +35,11 @@ internal static class DoctorResultBuilder
                 observation.FrameworkLifecycle,
                 observation.RecoveryResiduals,
                 observation.ExtensionLifecycle.Ownership,
-                lifecycleAbsence),
+                lifecycleAbsence,
+                observation.Routes.GeneratedNavigation
+                    .Where(target => target.State == OperationalGeneratedNavigationState.Current)
+                    .Select(target => target.Path)
+                    .ToHashSet(StringComparer.Ordinal)),
             ExtensionLifecycleDoctorInspector.Inspect(observation.ExtensionLifecycle),
         };
         var coverage = domains.Max(domain => domain.Coverage);

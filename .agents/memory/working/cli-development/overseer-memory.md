@@ -6,6 +6,35 @@ open-forge:
 
 # CLI Overseer Memory
 
+## D2 Qualified Closeout — 2026-09-12
+
+D2 is COMPLETE phase 3/3, milestone 3/3. Qualified source candidate
+`29de40a0de6a55cb6ee2c7c50b64a3d79854046e`; frozen public Red `fa122d07`.
+All six managed/native suites pass: 3,232 Unit, 1,745 Integration in both modes,
+and 123 public cases in all three modes; zero failures/skips. Reports:
+`artifacts/delivery/linux-x64/reports-ZBdBMB/`; retained manifest and direct
+native receipts: `artifacts/task27-generated-navigation-alignment/`. Twenty-four
+direct native invocations pass; fourteen read-only checks preserve all workspace
+and external-state file hashes. The installed CLI is refreshed to this candidate.
+
+Doctor and Status now recognize safely observed current generated Entries after
+Extension Install or Index. Authored drift, stale/malformed navigation and
+missing/unavailable/blocked evidence retain their checks. No mutation, ownership,
+recovery, diagnostic kind, JSON field or default visibility was removed.
+Doctor/Status Behavior and Interface documents describe the alignment.
+
+This completion record accompanies the authorized local squash into develop
+(title: `Align generated navigation currentness in Doctor and Status`).
+The feature branch `codex/cli-generated-navigation-alignment` and ignored
+`integration.json` receipt retain the exact feature/squash identities and tree
+comparison. D1 predecessor is `ef7bdb3b`. No remote effects.
+
+Next: Doctor presentation and nonduplication, then the remaining presentation
+stages in the full 28-command audit. The two proposed changes—retiring seven
+redundant diagnostic kinds while preserving candidate evidence, and summarizing
+information by default—still await explicit user answers. No such change is
+implemented. Preserve useful functionality and continue updating this checkpoint.
+
 ## User Boundary — 2026-09-12 Continuation
 
 The user explicitly requires preservation of useful functionality. Authorized
@@ -19,7 +48,7 @@ preserved; D1 Doctor coverage/source/host alignment. No diagnostic kind, JSON
 field, warning visibility default, mutation capability, ownership or recovery
 policy has been removed. D1 source candidate `c8d786ed` is qualified: all six managed/native suites
 pass (3,232 Unit, 1,745 Integration and 117 public cases per applicable mode).
-The installed CLI is refreshed. This record accompanies authorized local squash.
+D1 was squash-integrated at `ef7bdb3b`; the installed CLI is its qualified build.
 
 The [presentation audit](tasks/cli-presentation-audit.md) records proposals,
 not implemented behavior. In particular, retiring seven redundant diagnostic
@@ -28,11 +57,8 @@ requires explicit user review before implementation. Preserve candidate facts,
 counts, exact edit coordinates and real errors. A clearer human presentation
 must not silently remove useful information.
 
-Next: record the D1 squash commit, then freeze the generated-navigation alignment
-stage against real fresh-install/index/stale/authored-drift controls. The draft
-public test file is `/tmp/PublishedDoctorGeneratedNavigationProcessTests.cs`;
-it is outside the source tree, unbuilt and not accepted evidence. Any proposed
-scope/behavior change beyond alignment remains pending user review.
+D2 is complete; its qualified closeout above owns current state. Broader scope
+or behavior changes remain pending explicit user review.
 
 ## Current Sequential Dogfood Plan
 
@@ -43,13 +69,12 @@ managed/native gate, isolated package journeys and existing transition limits.
 
 Task 27's [native-delimiter stage](tasks/cli-native-delimiters.md) is complete
 and squash-integrated at `6b6f054b`, exact tree
-`939a3f1cfc52db9613b872d49cddd26ab83dcfc4`. The installed native CLI is its
-qualified source candidate `5bef9a24`.
+`939a3f1cfc52db9613b872d49cddd26ab83dcfc4`. Its qualified native source candidate was `5bef9a24`; D1 now supplies the installed CLI.
 
 [Doctor correctness](tasks/cli-doctor-correctness.md) D1 is COMPLETE phase 3/3,
 milestone 3/3, candidate `c8d786ed`. All six managed/native suites and four
-native dogfood checks pass. This record accompanies its local squash. Generated
-baseline diagnosis is the next bounded D2 stage. The [follow-up plan](tasks/cli-dogfood-follow-up-plan.md) and
+native dogfood checks pass. Local squash is `ef7bdb3b`. Generated
+navigation alignment D2 is also complete, as recorded above. The [follow-up plan](tasks/cli-dogfood-follow-up-plan.md) and
 [audit](tasks/cli-parsing-doctor-audit.md) preserve the full presentation and
 nonduplication horizon. Root works directly and sequentially. Squash each
 verified set locally; no remote effects or helpers are selected.

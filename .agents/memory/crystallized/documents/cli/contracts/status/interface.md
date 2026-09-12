@@ -128,6 +128,15 @@ a lifecycle section. The document stores no plan, runtime history, journal,
 recovery-bundle evidence, or session. Files outside this exact path are ordinary
 workspace content, not lifecycle input.
 
+For a trusted Framework section with available source evidence, a valid derived
+Entries target is current when the safely observed generated region matches the
+current authored topology at that exact path. A different recorded generated
+fingerprint alone is not drift after Extension installation or indexing. This
+read-only comparison preserves the recorded fingerprint and does not rebaseline
+lifecycle state or authorize mutation. Authored targets, stale or malformed
+navigation, missing targets and unavailable or blocked evidence retain their
+separate checks.
+
 Each section retains its finite state:
 
 | State        | Status meaning                                                                                                                                                                 |

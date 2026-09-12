@@ -6,33 +6,38 @@ open-forge:
 
 # CLI Development Checkpoint
 
-## Current Sequential Dogfood Follow-Up
+## Current Sequential Dogfood Checkpoint
 
-Local develop is `6b6f054b`: catalogue/fixture/helper stage `b4a06740`, then
-native-delimiter stage `6b6f054b`, both qualified and squash-integrated.
-Installed CLI is delimiter source candidate `5bef9a24` until D1 qualifies.
+D2 is COMPLETE phase 3/3, milestone 3/3. Qualified source candidate
+`29de40a0de6a55cb6ee2c7c50b64a3d79854046e`; frozen public Red `fa122d07`.
+All six managed/native suites pass: 3,232 Unit, 1,745 Integration in both modes,
+and 123 public cases in all three modes; zero failures/skips. Reports:
+`artifacts/delivery/linux-x64/reports-ZBdBMB/`; retained manifest and direct
+native receipts: `artifacts/task27-generated-navigation-alignment/`. Twenty-four
+direct native invocations pass; fourteen read-only checks preserve all workspace
+and external-state file hashes. The installed CLI is refreshed to this candidate.
 
-[Doctor D1](../cli-development/tasks/cli-doctor-correctness.md) is COMPLETE,
-phase 3/3, milestone 3/3, candidate
-`c8d786ed92d11de79361c6e5139151fa223d3d1d`. All six managed/native suites pass:
-3,232 Unit, 1,745 Integration in both modes, 117 public cases in all three modes,
-zero failures/skips. Reports: `reports-V1s3Yj`; retained qualification manifest
-and logs: `artifacts/task27-doctor-correctness/`. Four native dogfood checks
-preserve workspace and external-state hashes. The installed CLI is refreshed
-from `5bef9a24` to `c8d786ed`. This record accompanies local squash integration.
+Doctor and Status now recognize safely observed current generated Entries after
+Extension Install or Index. Authored drift, stale/malformed navigation and
+missing/unavailable/blocked evidence retain their checks. No mutation, ownership,
+recovery, diagnostic kind, JSON field or default visibility was removed.
+Doctor/Status Behavior and Interface documents describe the alignment.
 
-The [presentation audit](../cli-development/tasks/cli-presentation-audit.md)
-covers all 28 leaf surfaces and six concrete compact/expanded/JSON comparisons.
-It records ignored views and missing Library dry-run details as pending fixes.
-The original managed public run had one superseded Doctor coverage expectation;
-the corrected case and frozen new regressions pass. The final native gate supersedes that earlier failure.
+This completion record accompanies the authorized local squash into develop
+(title: `Align generated navigation currentness in Doctor and Status`).
+The feature branch `codex/cli-generated-navigation-alignment` and ignored
+`integration.json` receipt retain the exact feature/squash identities and tree
+comparison. D1 predecessor is `ef7bdb3b`. No remote effects.
 
-User boundary: preserve useful functionality; do alignment fixes, improvements
-and optimizations. Check with the user before any other change. Diagnostic-kind
-retirement, JSON changes and default warning filtering remain proposals, not
-implemented behavior. Keep the [plan](../cli-development/tasks/cli-dogfood-follow-up-plan.md)
-and this checkpoint current. Next: record D1 integration, then the bounded generated
-navigation alignment. No remote effects or helpers are authorized.
+Next: Doctor presentation and nonduplication, then the remaining presentation
+stages in the full 28-command audit. The two proposed changes—retiring seven
+redundant diagnostic kinds while preserving candidate evidence, and summarizing
+information by default—still await explicit user answers. No such change is
+implemented. Preserve useful functionality and continue updating this checkpoint.
+
+See the [plan](../cli-development/tasks/cli-dogfood-follow-up-plan.md),
+[D2 capsule](../cli-development/tasks/cli-generated-navigation-alignment.md), and
+[presentation audit](../cli-development/tasks/cli-presentation-audit.md).
 
 ## Current Script Structure Continuation
 

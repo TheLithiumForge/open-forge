@@ -982,6 +982,10 @@ Conformance evidence must cover:
 - The six fixed domains in order, with every domain retained when a dependency is
   incomplete or blocked.
 - Complete, incomplete, and blocked coverage independently of finding health.
+- Fresh Extension installation and successful Index generation do not produce
+  Framework drift solely because the recorded generated fingerprint predates
+  current Entries. Real authored drift, stale navigation, malformed markers,
+  missing targets and unavailable source evidence remain diagnosed.
 - A fresh Framework installation with a trusted empty Extension section has
   complete coverage and no false error. Installed embedded packages retain their
   recorded source identity without being treated as filesystem paths.

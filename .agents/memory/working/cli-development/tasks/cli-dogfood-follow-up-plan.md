@@ -35,7 +35,7 @@ preserved; D1 Doctor coverage/source/host alignment. No diagnostic kind, JSON
 field, warning visibility default, mutation capability, ownership or recovery
 policy has been removed. D1 source candidate `c8d786ed` is qualified: all six managed/native suites
 pass (3,232 Unit, 1,745 Integration and 117 public cases per applicable mode).
-The installed CLI is refreshed. This record accompanies authorized local squash.
+D1 was squash-integrated at `ef7bdb3b`; the installed CLI is its qualified build.
 
 The [presentation audit](cli-presentation-audit.md) records proposals,
 not implemented behavior. In particular, retiring seven redundant diagnostic
@@ -44,11 +44,11 @@ requires explicit user review before implementation. Preserve candidate facts,
 counts, exact edit coordinates and real errors. A clearer human presentation
 must not silently remove useful information.
 
-Next: record the D1 squash commit, then freeze the generated-navigation alignment
-stage against real fresh-install/index/stale/authored-drift controls. The draft
-public test file is `/tmp/PublishedDoctorGeneratedNavigationProcessTests.cs`;
-it is outside the source tree, unbuilt and not accepted evidence. Any proposed
-scope/behavior change beyond alignment remains pending user review.
+D2 is complete. The [generated-navigation capsule](cli-generated-navigation-alignment.md)
+records source `29de40a0`, all six qualified suites, 24 direct native checks and
+the local integration receipt. The installed CLI is this candidate. Doctor
+presentation is next; diagnostic-kind retirement and default filtering still
+await the user’s explicit answers.
 
 ## Sequential Steps
 

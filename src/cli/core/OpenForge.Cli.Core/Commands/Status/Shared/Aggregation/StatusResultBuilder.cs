@@ -25,7 +25,11 @@ internal static class StatusResultBuilder
             Lifecycle = StatusLifecycleAggregator.Build(
                 observations.FrameworkLifecycle,
                 observations.ExtensionLifecycle,
-                StatusLifecycleAbsenceResolver.IsProven(observations)),
+                StatusLifecycleAbsenceResolver.IsProven(observations),
+                observations.Routes.GeneratedNavigation
+                    .Where(target => target.State == OperationalGeneratedNavigationState.Current)
+                    .Select(target => target.Path)
+                    .ToHashSet(StringComparer.Ordinal)),
             Library = StatusLibraryAggregator.Build(observations.Libraries),
             Recovery = StatusRecoveryAggregator.Build(observations.RecoveryResiduals),
         };

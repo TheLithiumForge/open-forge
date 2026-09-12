@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
+using OpenForge.Cli.Core.Framework.Lifecycle.Operational;
 using OpenForge.Cli.Core.Framework.Lifecycle.Operational.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
@@ -15,7 +16,8 @@ internal static class FrameworkLifecycleDoctorInspector
         FrameworkLifecycleDoctorView view,
         RecoveryResidualDoctorView recovery,
         LifecycleOwnershipReadResult ownership,
-        bool absenceProven)
+        bool absenceProven,
+        IReadOnlySet<string> currentNavigationPaths)
     {
         var findings = new List<DoctorFinding>();
         var limitations = new List<DoctorLimitation>();
@@ -40,12 +42,29 @@ internal static class FrameworkLifecycleDoctorInspector
                 findings,
                 limitations,
                 ref coverage);
+            var currentTargets = 0;
             foreach (var target in view.Targets)
             {
-                FrameworkManagedTargetDoctorInspector.Inspect(target, findings, limitations, ref coverage);
+                var state = FrameworkGeneratedNavigationCurrentness.ReadState(
+                    target.Target,
+                    view.SourceAvailability,
+                    currentNavigationPaths);
+                if (state == OperationalTargetState.Current)
+                {
+                    currentTargets++;
+                }
+
+                if (state == target.Target.State)
+                {
+                    FrameworkManagedTargetDoctorInspector.Inspect(target, findings, limitations, ref coverage);
+                }
             }
 
-            AddManagedSet(view.ManagedSet, findings);
+            AddManagedSet(
+                view.ManagedSet is not (FrameworkManagedSetState.Empty or FrameworkManagedSetState.Unavailable)
+                    && currentTargets > 0
+                    && currentTargets < view.Targets.Count,
+                findings);
             FrameworkOwnershipDoctorInspector.Inspect(
                 ownership,
                 findings,
@@ -74,10 +93,10 @@ internal static class FrameworkLifecycleDoctorInspector
     }
 
     private static void AddManagedSet(
-        FrameworkManagedSetState state,
+        bool isMixed,
         ICollection<DoctorFinding> findings)
     {
-        if (state == FrameworkManagedSetState.Mixed)
+        if (isMixed)
         {
             findings.Add(Create(
                 DoctorDomainSupport.Error(
