@@ -1,0 +1,190 @@
+{
+  "captured_utc": "2026-09-09T07:14:41.493398+00:00",
+  "head": "8a52ede13ab6d622578a6cfae04031a9a5b2eb2d",
+  "files": [
+    {
+      "path": "src/open-forge/.agents/directives/_directives.md",
+      "bytes": 995,
+      "lines": 26,
+      "sha256": "c0353481452294ff94800ec02214569497444de2bee3b36682d10a623ea88450",
+      "working_git_blob": "2c188629ce29a5369fd325a31b41356e2416c221",
+      "head_git_blob": "2c188629ce29a5369fd325a31b41356e2416c221"
+    },
+    {
+      "path": "src/open-forge/.agents/guidance/_guidance.md",
+      "bytes": 831,
+      "lines": 22,
+      "sha256": "20c1e4b678724983ebdd8226c04b9293eec32594401696685b7c0f68d3679983",
+      "working_git_blob": "8439aadd2a31f9f434b7078cfbbc4e9effd1bf77",
+      "head_git_blob": "8439aadd2a31f9f434b7078cfbbc4e9effd1bf77"
+    },
+    {
+      "path": "src/open-forge/.agents/guidance/adaptive-collaboration.md",
+      "bytes": 4940,
+      "lines": 70,
+      "sha256": "ea25a5b684dcd1e39dfa2c4b55e2f74f831ff77028213c2131ab85dc45488aeb",
+      "working_git_blob": "8b113eb5e2dc65862a89ffad700b15ff54b9f394",
+      "head_git_blob": "8b113eb5e2dc65862a89ffad700b15ff54b9f394"
+    },
+    {
+      "path": "src/open-forge/.agents/loader.md",
+      "bytes": 9686,
+      "lines": 110,
+      "sha256": "b628a0fc4b47c2a69e1dfbdde151419bbacc4d5ef1691e06c7a1c1e34b2a3d3a",
+      "working_git_blob": "ac100ad3eaaf8f4aaf490eea47ea16e9b31a59ac",
+      "head_git_blob": "ac100ad3eaaf8f4aaf490eea47ea16e9b31a59ac"
+    },
+    {
+      "path": "src/open-forge/.agents/maps/_maps.md",
+      "bytes": 1063,
+      "lines": 31,
+      "sha256": "2b26ff787c2471a1fae8577420d88384ec5e8b827a0def54829119d612f5cbb6",
+      "working_git_blob": "76cbcbb55f31caeb5fa7f74a53b690db88408e80",
+      "head_git_blob": "76cbcbb55f31caeb5fa7f74a53b690db88408e80"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/_memory.md",
+      "bytes": 3525,
+      "lines": 56,
+      "sha256": "f143ab94da17075e44704fee59e540bde1baab8f95cbb586770e6253bbc1bd1b",
+      "working_git_blob": "a77b34d6baa71b44e95dc2037d233949cf9f2c6a",
+      "head_git_blob": "a77b34d6baa71b44e95dc2037d233949cf9f2c6a"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/archived/_archived.md",
+      "bytes": 888,
+      "lines": 23,
+      "sha256": "d6b810abb3d2fb9a75f6aa0a913355fb7d5e25e4e77224989150876be709a4f7",
+      "working_git_blob": "35ea07e40de325d34bc183f54a869de4f496b80c",
+      "head_git_blob": "35ea07e40de325d34bc183f54a869de4f496b80c"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/crystallized/_crystallized.md",
+      "bytes": 1219,
+      "lines": 28,
+      "sha256": "c104d87c774dc331fd7518710071690fa6adc3b7fdcba8b050ff70f1b094ea57",
+      "working_git_blob": "2745eccadac06ad9f901fc01f4b5d582d8e852d9",
+      "head_git_blob": "2745eccadac06ad9f901fc01f4b5d582d8e852d9"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/crystallized/decisions/_decisions.md",
+      "bytes": 1050,
+      "lines": 23,
+      "sha256": "19bab5d82a2fe1d6104ac0103535957b67774fc58d33858ac885d0ebebe2f653",
+      "working_git_blob": "42e70531f48ea4a9c22114684920692c3d70c322",
+      "head_git_blob": "42e70531f48ea4a9c22114684920692c3d70c322"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/crystallized/documents/_documents.md",
+      "bytes": 773,
+      "lines": 22,
+      "sha256": "1e06730115acae7af117baba38850df96691f5f7b885f806f094f2d32a36fc00",
+      "working_git_blob": "338641637e2680726231ca9d2187049ddc5cf205",
+      "head_git_blob": "338641637e2680726231ca9d2187049ddc5cf205"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/emerging/_emerging.md",
+      "bytes": 1700,
+      "lines": 34,
+      "sha256": "f6b00111fb349ece253e9c46029070e36b73f6be6122d97032f25dbd016cb76b",
+      "working_git_blob": "60feb57a9063d1484e4c6290515fbac8068574cc",
+      "head_git_blob": "60feb57a9063d1484e4c6290515fbac8068574cc"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/emerging/analysis/_analysis.md",
+      "bytes": 658,
+      "lines": 21,
+      "sha256": "75a1d425dbcc23087d12a88dea07c3425e63f2c065a4a6ba437dd980aa534230",
+      "working_git_blob": "9509ba83fab54b1edff72e1ea78b23afae2ad793",
+      "head_git_blob": "9509ba83fab54b1edff72e1ea78b23afae2ad793"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/emerging/ideas/_ideas.md",
+      "bytes": 725,
+      "lines": 21,
+      "sha256": "5408dc2116282f28e921f010afe76bdb862d172e47c9ea2647f59eea1c8aa6de",
+      "working_git_blob": "2fb16af068526661c086f3719d8d5f07992df1bc",
+      "head_git_blob": "2fb16af068526661c086f3719d8d5f07992df1bc"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/emerging/observations/_observations.md",
+      "bytes": 1065,
+      "lines": 30,
+      "sha256": "01a1db08c5bd446f0cf6f10549fdbd59299037307f8b991b7e7125388181f547",
+      "working_git_blob": "2328e421782065564a62676db8f47cc757c85ec2",
+      "head_git_blob": "2328e421782065564a62676db8f47cc757c85ec2"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/working/_working.md",
+      "bytes": 1150,
+      "lines": 31,
+      "sha256": "2d90a2d3352420da95d3be90b4f7fb889964976f7875756d8ba036f5c0ef03e5",
+      "working_git_blob": "296bbc2146cb9c8df12dec1e98f280bc0ebc9c2b",
+      "head_git_blob": "296bbc2146cb9c8df12dec1e98f280bc0ebc9c2b"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/working/checkpoints/_checkpoints.md",
+      "bytes": 1418,
+      "lines": 35,
+      "sha256": "aa0b2411b471a7375b4e39571faa7b0ced9ff6b7a3d3df0527fd5f40ca55eacc",
+      "working_git_blob": "31b50f8a6c454946b8ccdbe71dc2772f9ee477c1",
+      "head_git_blob": "31b50f8a6c454946b8ccdbe71dc2772f9ee477c1"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/working/handoffs/_handoffs.md",
+      "bytes": 1580,
+      "lines": 34,
+      "sha256": "dd7576ad185c7e8737b6d5d00c5795343514e6859e7ec566f91975dff4871113",
+      "working_git_blob": "448f03ce5607e2ece215d70a6399e41662f22281",
+      "head_git_blob": "448f03ce5607e2ece215d70a6399e41662f22281"
+    },
+    {
+      "path": "src/open-forge/.agents/patterns/_patterns.md",
+      "bytes": 1235,
+      "lines": 31,
+      "sha256": "47a7538b5d1dab187f6a4a10da5652f6a94dbe15f403f8505b74007e35e37c7a",
+      "working_git_blob": "a7a2cb81975aac282b2ba88fac8f228915aab955",
+      "head_git_blob": "a7a2cb81975aac282b2ba88fac8f228915aab955"
+    },
+    {
+      "path": "src/open-forge/.agents/skills/_skills.md",
+      "bytes": 573,
+      "lines": 21,
+      "sha256": "66a6f0ccf184a02ee13589b91e21d82ee0f06b623d7521e9671d7f5b85dd11d7",
+      "working_git_blob": "d0c3dfb10e137a86bd751e0b8bf3d887210bc72e",
+      "head_git_blob": "d0c3dfb10e137a86bd751e0b8bf3d887210bc72e"
+    },
+    {
+      "path": "src/open-forge/.agents/templates/_templates.md",
+      "bytes": 1314,
+      "lines": 33,
+      "sha256": "f65b270a87eff9a47ac11a3fcff915e90abc6197a8a3e0ba5f35733f7f34e920",
+      "working_git_blob": "89fed6855b455cc30514b0a8ec63517d29cbe054",
+      "head_git_blob": "89fed6855b455cc30514b0a8ec63517d29cbe054"
+    },
+    {
+      "path": "src/open-forge/.agents/workflows/_workflows.md",
+      "bytes": 1873,
+      "lines": 34,
+      "sha256": "24fdd1f7134feb238a1fc0b9ead352f46eaffff3f45f72cbb11abcf5430be6c3",
+      "working_git_blob": "ce4bb58c33b4fae7bd101b318e0348dfc5cc00c8",
+      "head_git_blob": "ce4bb58c33b4fae7bd101b318e0348dfc5cc00c8"
+    },
+    {
+      "path": "src/open-forge/AGENTS.md",
+      "bytes": 295,
+      "lines": 10,
+      "sha256": "6be1083ce5998b089316f6700e4bc03fbf8d2a01b4c327ae87d137438dc28efa",
+      "working_git_blob": "95384d929ccfef1853e0fa281d3ac408faf59392",
+      "head_git_blob": "95384d929ccfef1853e0fa281d3ac408faf59392"
+    },
+    {
+      "path": "src/open-forge/CLAUDE.md",
+      "bytes": 81,
+      "lines": 5,
+      "sha256": "d1e8d44d433ada93b2cf35adac0be27d4474f600561db1080e7e34072226892c",
+      "working_git_blob": "3ed9a7a560f53164bf78d8fa7f49ec24ac3c8e41",
+      "head_git_blob": "3ed9a7a560f53164bf78d8fa7f49ec24ac3c8e41"
+    }
+  ]
+}

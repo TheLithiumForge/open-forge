@@ -22,9 +22,11 @@ Connect an observed symptom to a reproducible root cause and, when authorized, a
 8. Rerun reproduction, regression evidence, direct integration checks, and broader gates justified by risk.
 9. Use an independent review only for safety-critical, cross-cutting, or persistently unexplained defects.
 
+If evidence cannot establish the cause, return an inconclusive diagnosis with the checks performed, remaining hypotheses, and next useful check. Investigation may stop there; a cause or fix must not be reported as established.
+
 ## Completion
 
-- Symptom, trigger, contributing conditions, and root cause are distinguished.
+- The result distinguishes a verified diagnosis or fix from an inconclusive investigation.
 - Rejected hypotheses and decisive evidence are explicit.
 - Any fix addresses the cause and passes regression evidence.
 - Remaining uncertainty and the next discriminating check are visible.

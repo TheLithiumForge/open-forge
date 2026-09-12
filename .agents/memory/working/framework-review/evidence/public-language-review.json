@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "review": "public-language-rewrite",
+  "baseline": "0eea5e6557473a52ba24a5e42bdd1b0dd5c9485c",
+  "target": {
+    "kind": "explicit mutable review target; tracked edits frozen by author",
+    "tracked_paths": 53,
+    "untracked_paths": 0,
+    "sha256_identities_verified": true
+  },
+  "coverage": {
+    "read_all_changed_paths": true,
+    "areas": [
+      "Framework loader and mirrored source loader",
+      "Memory entrypoints and lifecycle guidance",
+      "Patterns, Templates, and Workflows",
+      "README and Extension package documentation",
+      "Development Toolkit and Orchestration workflow sources",
+      "Adaptive Collaboration guidance",
+      "Extension manifest prose"
+    ],
+    "mirrored_template_comparisons": "Repository and packaged copies were compared where both exist; intentional local Memory entrypoint differences were retained."
+  },
+  "checks": [
+    "Target SHA-256 identities match public-language-review-target.json.",
+    "Target path set exactly matches the 53 tracked paths in the target manifest.",
+    "git diff --check passes for the language rewrite.",
+    "Changed prose was compared with the accepted baseline for rules, conditions, authority, scope, ordering, exceptions, distinctions, links, and local specializations."
+  ],
+  "findings": [],
+  "limits": [
+    "This review does not assess the earlier substantive framework changes or the later private current-content scrub.",
+    "CLI bodies, CLI contracts and tests, docs/cli.md, docs/extensions.md, runtime/APM agent content, and external behavior remain outside this review.",
+    "CLI-owned link destinations were treated as existence-only references; fragment and runtime behavior were not verified."
+  ]
+}

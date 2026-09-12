@@ -6,7 +6,9 @@ open-forge:
 
 # Memory Templates
 
-Memory Templates help create records in the route that matches their current role.
+## What starting structure fits this record's question and current role?
+
+Memory Templates provide starting structures suited to a record's question and current role. They help create the record in the route that matches that role.
 
 ## Axioms
 
@@ -15,12 +17,12 @@ Memory Templates help create records in the route that matches their current rol
 - Choose the Memory state from the information's current meaning, not from the Template's location.
 - Choose a Template by the question the record must answer and its current role, not by how permanent it seems.
 - After copying the Template, follow the destination state's inherited `Axioms`. This route does not create another lifecycle or authority.
-- Replace metadata, placeholders, and prompts with accurate source, scope, uncertainty, freshness, and relationships.
+- Replace the metadata, placeholders, and prompts with accurate information about the source, scope, uncertainty, freshness, and relationships.
 
 ### Reuse And Retention
 
 - Search for a matching record before creating another. Extend, consolidate, or link it when appropriate.
-- Keep only information whose expected future value justifies its discovery and review cost.
+- Keep only information whose expected future value justifies the cost of finding and reviewing it.
 
 ## Entries
 

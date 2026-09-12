@@ -1,0 +1,400 @@
+{
+  "file_count": 23,
+  "total_lines": 751,
+  "total_bytes": 38637,
+  "links": [
+    {
+      "source": ".agents/guidance/_guidance.md",
+      "line": 21,
+      "target": "adaptive-collaboration.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 101,
+      "target": "directives/_directives.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 102,
+      "target": "guidance/_guidance.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 103,
+      "target": "maps/_maps.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 104,
+      "target": "memory/_memory.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 105,
+      "target": "patterns/_patterns.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 106,
+      "target": "skills/_skills.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 107,
+      "target": "templates/_templates.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 108,
+      "target": "workflows/_workflows.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/memory/_memory.md",
+      "line": 51,
+      "target": "archived/_archived.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/memory/_memory.md",
+      "line": 52,
+      "target": "crystallized/_crystallized.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/memory/_memory.md",
+      "line": 53,
+      "target": "emerging/_emerging.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/memory/_memory.md",
+      "line": 54,
+      "target": "working/_working.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/memory/crystallized/_crystallized.md",
+      "line": 26,
+      "target": "decisions/_decisions.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/memory/crystallized/_crystallized.md",
+      "line": 27,
+      "target": "documents/_documents.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/memory/emerging/_emerging.md",
+      "line": 30,
+      "target": "analysis/_analysis.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/memory/emerging/_emerging.md",
+      "line": 31,
+      "target": "ideas/_ideas.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/memory/emerging/_emerging.md",
+      "line": 32,
+      "target": "observations/_observations.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/memory/working/_working.md",
+      "line": 28,
+      "target": "checkpoints/_checkpoints.md",
+      "exists": true,
+      "inside_source": true
+    },
+    {
+      "source": ".agents/memory/working/_working.md",
+      "line": 29,
+      "target": "handoffs/_handoffs.md",
+      "exists": true,
+      "inside_source": true
+    }
+  ],
+  "entry_metadata": [
+    {
+      "source": ".agents/guidance/_guidance.md",
+      "line": 21,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 101,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 102,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 103,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 104,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 105,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 106,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 107,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/loader.md",
+      "line": 108,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/memory/_memory.md",
+      "line": 51,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/memory/_memory.md",
+      "line": 52,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/memory/_memory.md",
+      "line": 53,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/memory/_memory.md",
+      "line": 54,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/memory/crystallized/_crystallized.md",
+      "line": 26,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/memory/crystallized/_crystallized.md",
+      "line": 27,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/memory/emerging/_emerging.md",
+      "line": 30,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/memory/emerging/_emerging.md",
+      "line": 31,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/memory/emerging/_emerging.md",
+      "line": 32,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/memory/working/_working.md",
+      "line": 28,
+      "description_matches": true,
+      "tags_match": true
+    },
+    {
+      "source": ".agents/memory/working/_working.md",
+      "line": 29,
+      "description_matches": true,
+      "tags_match": true
+    }
+  ],
+  "imports": [
+    {
+      "source": "CLAUDE.md",
+      "line": 3,
+      "target": "AGENTS.md",
+      "exists": true
+    },
+    {
+      "source": "CLAUDE.md",
+      "line": 4,
+      "target": ".agents/loader.md",
+      "exists": true
+    }
+  ],
+  "routed_directories": [
+    {
+      "directory": ".agents/directives",
+      "entrypoints": [
+        ".agents/directives/_directives.md"
+      ]
+    },
+    {
+      "directory": ".agents/guidance",
+      "entrypoints": [
+        ".agents/guidance/_guidance.md"
+      ]
+    },
+    {
+      "directory": ".agents/maps",
+      "entrypoints": [
+        ".agents/maps/_maps.md"
+      ]
+    },
+    {
+      "directory": ".agents/memory",
+      "entrypoints": [
+        ".agents/memory/_memory.md"
+      ]
+    },
+    {
+      "directory": ".agents/memory/archived",
+      "entrypoints": [
+        ".agents/memory/archived/_archived.md"
+      ]
+    },
+    {
+      "directory": ".agents/memory/crystallized",
+      "entrypoints": [
+        ".agents/memory/crystallized/_crystallized.md"
+      ]
+    },
+    {
+      "directory": ".agents/memory/crystallized/decisions",
+      "entrypoints": [
+        ".agents/memory/crystallized/decisions/_decisions.md"
+      ]
+    },
+    {
+      "directory": ".agents/memory/crystallized/documents",
+      "entrypoints": [
+        ".agents/memory/crystallized/documents/_documents.md"
+      ]
+    },
+    {
+      "directory": ".agents/memory/emerging",
+      "entrypoints": [
+        ".agents/memory/emerging/_emerging.md"
+      ]
+    },
+    {
+      "directory": ".agents/memory/emerging/analysis",
+      "entrypoints": [
+        ".agents/memory/emerging/analysis/_analysis.md"
+      ]
+    },
+    {
+      "directory": ".agents/memory/emerging/ideas",
+      "entrypoints": [
+        ".agents/memory/emerging/ideas/_ideas.md"
+      ]
+    },
+    {
+      "directory": ".agents/memory/emerging/observations",
+      "entrypoints": [
+        ".agents/memory/emerging/observations/_observations.md"
+      ]
+    },
+    {
+      "directory": ".agents/memory/working",
+      "entrypoints": [
+        ".agents/memory/working/_working.md"
+      ]
+    },
+    {
+      "directory": ".agents/memory/working/checkpoints",
+      "entrypoints": [
+        ".agents/memory/working/checkpoints/_checkpoints.md"
+      ]
+    },
+    {
+      "directory": ".agents/memory/working/handoffs",
+      "entrypoints": [
+        ".agents/memory/working/handoffs/_handoffs.md"
+      ]
+    },
+    {
+      "directory": ".agents/patterns",
+      "entrypoints": [
+        ".agents/patterns/_patterns.md"
+      ]
+    },
+    {
+      "directory": ".agents/skills",
+      "entrypoints": [
+        ".agents/skills/_skills.md"
+      ]
+    },
+    {
+      "directory": ".agents/templates",
+      "entrypoints": [
+        ".agents/templates/_templates.md"
+      ]
+    },
+    {
+      "directory": ".agents/workflows",
+      "entrypoints": [
+        ".agents/workflows/_workflows.md"
+      ]
+    }
+  ],
+  "source_matches_initial_inventory": true
+}

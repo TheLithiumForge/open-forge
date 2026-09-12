@@ -22,7 +22,7 @@ Open Forge uses typed terminology for semantic authority:
 - `authoritative document` when a current document expresses an accepted concept
 - `authoritative route` when routed content expresses applicable Framework or workspace meaning
 - `authoritative system` when an external system contains live source code, issue state, product data, or another subject
-- `responsible person` or `responsible role` when human accountability is meant
+- `responsible person` or `responsible role` when a person is accountable
 
 Wording uses the most specific natural term supported by the sentence. `Authoritative source` is the generic fallback, not a phrase every sentence must repeat. Ordinary prose prefers a direct verb when it says more: a document `defines`, a Decision `records`, and an external system `contains` current information.
 
@@ -38,7 +38,7 @@ The repository-only [Writing Directive](../../../../directives/public-facing-wri
 
 ## Rationale
 
-Typed vocabulary makes the authority model understandable before a reader learns Open Forge's internal categories. It distinguishes semantic authority from human responsibility and from mechanical file ownership.
+Typed vocabulary makes the authority model understandable before a reader learns Open Forge's internal categories. It distinguishes semantic authority from responsibility assigned to people and from mechanical file ownership.
 
 Keeping legitimate ownership language preserves useful established meanings in Git, packaging, installation, and Template lifecycle contracts.
 

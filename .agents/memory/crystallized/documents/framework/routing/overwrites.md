@@ -44,7 +44,7 @@ The frozen MVP currently reports an orphan overwrite as a warning rather than en
 
 ## Composition And Precedence
 
-The base remains effective except where the overwrite explicitly changes it.
+Interpret an overwrite as part of its base source, within that source's role and scope. The base remains effective except where the overwrite explicitly changes it.
 
 When both files address the same question incompatibly, the overwrite has final precedence within the base file's scope. State the affected base behavior and its local result clearly enough that no reader must guess which statement applies.
 
@@ -56,7 +56,7 @@ An overwrite may explicitly replace or disable one bounded behavior. It cannot r
 
 Generated `Entries` describe routed sources and never list overwrite companions.
 
-An `entrypoint` overwrite adjusts only the authored contract associated with its base. It does not own a second generated region. Change navigation by adding, moving, editing, or removing routed sources, then rebuild the base `entrypoint`'s generated `Entries`.
+An `entrypoint` overwrite is interpreted within the base entrypoint's inherited authority and scope and adjusts only its authored contract. It does not own a second generated region. Change navigation by adding, moving, editing, or removing routed sources, then rebuild the base `entrypoint`'s generated `Entries`.
 
 ## Ownership And Lifecycle
 
@@ -75,7 +75,7 @@ After a base changes, review its overwrite when the adjustment may no longer mat
 - [Canonical loader](../../../../../loader.md)
 - [Loader maintenance contract](../../maintenance/payload/agents/loader.md)
 - [CLI MVP Architecture](../../cli/mvp-architecture.md)
-- [Extensions MVP Architecture](../../extensions/architecture.md)
+- [Extensions Architecture](../../extensions/architecture.md)
 
 ## Decisions And Rationale
 

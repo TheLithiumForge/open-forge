@@ -15,7 +15,7 @@ Users do not receive this Maintenance route. The [Framework distribution contrac
 
 - Every reviewed payload file has a Maintenance contract that identifies its canonical installed source, any repository counterpart, related current contracts, and verification matched to change risk and reach
 - The installed source is authoritative for exact runtime wording; Maintenance defines repository obligations without becoming required runtime context
-- Review each installed file as the final human-readable and agent-facing product; verify that every operational rule named by Maintenance appears in the source or in an installed route the source directs the reader to load
+- Review each installed file as the final readable and agent-facing product; verify that every operational rule named by Maintenance appears in the source or in an installed route the source directs the reader to load
 - Keep shared authored content aligned between the installed source and repository counterpart while allowing generated regions and explicitly local content to differ
 - Treat authored frontmatter, final generated Entries, and visible base-overwrite pairs as semantic contracts. Stop review or generation when their required meaning cannot be established rather than inferring it from partial structure.
 - When a Maintenance change affects installed behavior, update the canonical source, any repository counterpart, affected current documents, and behavior tests together

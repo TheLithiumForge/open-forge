@@ -6,6 +6,8 @@ open-forge:
 
 # Ideas
 
+## What possibility is worth exploring?
+
 Ideas keep possibilities, experiments, open questions, and options worth exploring later.
 
 ## Axioms

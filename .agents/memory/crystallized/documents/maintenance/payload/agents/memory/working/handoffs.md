@@ -21,7 +21,7 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 - The intended reader or resumed work remains clear from the route, description, or content
 - Handoffs remain concise and link to current work state, durable sources, documents, code, or other details instead of copying them
 - Boundary status, next action, blockers, and verification state appear in the Handoff itself. A live Checkpoint may supplement but not replace the snapshot
-- A sealed Handoff remains unchanged. Later state belongs in the active Checkpoint or a new Handoff
+- The snapshot remains unchanged while serving as a sealed Handoff. Later state belongs in the active Checkpoint or a new Handoff. Category transitions follow the destination's rules
 - Handoffs remain contextual rather than complete history or accepted truth
 - Useful material is extracted and the handoff is archived after it no longer supports an active transfer
 

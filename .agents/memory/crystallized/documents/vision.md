@@ -8,7 +8,13 @@ open-forge:
 
 ## Adaptive Context Engineering
 
-Adaptive Context Engineering (ACE) is the deliberate design of a workspace's information, relationships, authority, and retrieval paths so the right context is available at the right time and the environment evolves through use.
+Adaptive Context Engineering (ACE) means shaping a workspace's knowledge and instructions so useful context is available for each task and stays current as the work changes.
+
+Open Forge builds on progressive disclosure and specification-driven development. It applies those ideas to the workspace itself, so context can evolve alongside the work. It gives information a clear place, connects related sources, makes each source's authority clear, and puts the next useful detail within reach.
+
+Progressive disclosure keeps each task's context focused while making deeper detail available when it is needed. Specification-driven development makes accepted goals, constraints, and expected results explicit enough to guide work and assess its outcome.
+
+People and agents refine that context as goals, accepted decisions, and understanding change. Expectations can begin with clear user direction in a conversation, then become more detailed as decisions are accepted and evidence improves understanding. The aim is enough clarity for the work at hand, with further detail added when it becomes useful.
 
 Context is the current knowledge, authority, constraints, relationships, and working state relevant to understanding and acting on a goal. It is not every file a workspace contains.
 
@@ -16,7 +22,7 @@ For example, work on a feature may need the accepted product direction, relevant
 
 ## Vision
 
-Open Forge is a user-owned, human-readable, file-native operating layer for Adaptive Context Engineering. It makes workspaces understandable, routes the right context and authority, enables confident autonomy, preserves continuity, and deliberately evolves how work gets done. It does this without imposing a universal methodology or requiring a proprietary runtime.
+Open Forge is a user-owned operating layer for Adaptive Context Engineering, defined in plain files. It makes workspaces understandable, routes the right context and authority, enables confident autonomy, preserves continuity, and deliberately evolves how work gets done. It does this without imposing a universal methodology or requiring a proprietary runtime.
 
 ## Why Open Forge
 
@@ -30,13 +36,13 @@ A user can begin with incomplete natural direction. The agent builds the best cu
 
 ## Scope
 
-Open Forge shapes the working environment around a subject. It provides human-readable context, explicit relationships and authority, routed retrieval, continuity, reusable starting points, and deterministic assistance. It does not own the subject's goals, domain knowledge, source code, product data, or external systems unless the workspace deliberately records or routes to them.
+Open Forge shapes the working environment around a subject. It provides readable context, explicit relationships and authority, routed retrieval, continuity, reusable starting points, and deterministic assistance. It does not own the subject's goals, domain knowledge, source code, product data, or external systems unless the workspace deliberately records or routes to them.
 
 Development is a proving ground, not a boundary. Open Forge can grow around any person, project, team, discipline, collection of projects, or shared source of truth that benefits from explicit, evolving context.
 
 ## Principles
 
-The [Open Forge Principles](principles.md) own the identity-level filters that guide the product as it evolves. Open Forge remains user-owned, relevance-routed, user-directed, agent-enabled, explicitly connected, small at its shared foundation, recursively adaptable, complete in human-readable files, and honest about nondeterministic reliability.
+The [Open Forge Principles](principles.md) define the identity-level filters that guide the product as it evolves. Open Forge remains user-owned, relevance-routed, user-directed, agent-enabled, explicitly connected, small at its shared foundation, recursively adaptable, complete in readable files, and honest about nondeterministic reliability.
 
 ## Success
 

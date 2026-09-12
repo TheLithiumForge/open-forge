@@ -1,0 +1,153 @@
+--- a/src/open-forge/.agents/loader.md
++++ b/src/open-forge/.agents/loader.md
+@@ -60,16 +60,16 @@
+ 
+ Defined tags keep the meanings below wherever they appear. Tags change what loads, when it loads, or how it is classified. They do not create authority. Other tags remain search and routing signals.
+ 
++#LoadNow and #KeepInMind operate through loaded parent routes. Neither tag activates an otherwise unselected ancestor or scope.
++
+ #### Defined Tags
+ 
+ - #LoadNow - Read this `entry` in listed order when an already-loaded parent exposes it. If it is an `entrypoint`, apply the same rule to its `Entries`.
+-- #KeepInMind - Read the relevant continuity set at these boundaries. The tag does not change authority or scope.
+-  - Timing: Read it at task start or resume, after context restoration, and before handoff or closeout.
+-  - Tagged entrypoints: Read one proactively only when initial loader or #LoadNow traversal exposes it, it belongs to a selected route or scope, or it is an ancestor needed by a file used for the task.
+-  - Other tagged files: Read every routed #KeepInMind file that is not an `entrypoint` across the workspace, even when its ancestor route is inactive. Use this exceptional reach only for continuity that must survive unrelated route changes.
+-  - Order: Read missing ancestor `entrypoints` first. Then read the tagged file and its adjacent overwrite. Follow #LoadNow in listed order through any `Entries` it exposes.
+-  - Boundaries: Do not load file bodies only to discover tagged files. Exclude unrelated descendants.
+-  - Recheck: Recheck during work only when the continuity set may have changed.
++- #KeepInMind - Read exposed continuity context when its parent loads, then refresh it while its scope remains active.
++  - Timing: Refresh at task start or resume, after context restoration, and before handoff or closeout.
++  - Order: Read the tagged file and its adjacent overwrite. For an `entrypoint`, apply its child loading rules in listed order.
++  - Boundaries: Refresh only active scopes. Do not load file bodies only to discover tagged files.
++  - Recheck: Recheck during work only when the active continuity set may have changed.
+ - #Core - Base routing and loading, workspace orientation, and reusable agent-facing roles.
+ - #Memory - Self-growing Markdown state for active work, coordination, accepted knowledge, candidates, and history.
+ - #Extension - Optional packaged routes, capabilities, integrations, and support files.
+--- a/.agents/loader.md
++++ b/.agents/loader.md
+@@ -60,16 +60,16 @@
+ 
+ Defined tags keep the meanings below wherever they appear. Tags change what loads, when it loads, or how it is classified. They do not create authority. Other tags remain search and routing signals.
+ 
++#LoadNow and #KeepInMind operate through loaded parent routes. Neither tag activates an otherwise unselected ancestor or scope.
++
+ #### Defined Tags
+ 
+ - #LoadNow - Read this `entry` in listed order when an already-loaded parent exposes it. If it is an `entrypoint`, apply the same rule to its `Entries`.
+-- #KeepInMind - Read the relevant continuity set at these boundaries. The tag does not change authority or scope.
+-  - Timing: Read it at task start or resume, after context restoration, and before handoff or closeout.
+-  - Tagged entrypoints: Read one proactively only when initial loader or #LoadNow traversal exposes it, it belongs to a selected route or scope, or it is an ancestor needed by a file used for the task.
+-  - Other tagged files: Read every routed #KeepInMind file that is not an `entrypoint` across the workspace, even when its ancestor route is inactive. Use this exceptional reach only for continuity that must survive unrelated route changes.
+-  - Order: Read missing ancestor `entrypoints` first. Then read the tagged file and its adjacent overwrite. Follow #LoadNow in listed order through any `Entries` it exposes.
+-  - Boundaries: Do not load file bodies only to discover tagged files. Exclude unrelated descendants.
+-  - Recheck: Recheck during work only when the continuity set may have changed.
++- #KeepInMind - Read exposed continuity context when its parent loads, then refresh it while its scope remains active.
++  - Timing: Refresh at task start or resume, after context restoration, and before handoff or closeout.
++  - Order: Read the tagged file and its adjacent overwrite. For an `entrypoint`, apply its child loading rules in listed order.
++  - Boundaries: Refresh only active scopes. Do not load file bodies only to discover tagged files.
++  - Recheck: Recheck during work only when the active continuity set may have changed.
+ - #Core - Base routing and loading, workspace orientation, and reusable agent-facing roles.
+ - #Memory - Self-growing Markdown state for active work, coordination, accepted knowledge, candidates, and history.
+ - #Extension - Optional packaged routes, capabilities, integrations, and support files.
+--- a/.agents/memory/crystallized/documents/framework/routing/loading.md
++++ b/.agents/memory/crystallized/documents/framework/routing/loading.md
+@@ -24,7 +24,7 @@
+ | Context    | Purpose                                                                                                |
+ | ---------- | ------------------------------------------------------------------------------------------------------ |
+ | Baseline   | Small universal and immediate context needed to enter and navigate the environment                     |
+-| Continuity | Standing follow-ups and resumability context that must survive `route`, workstream, or context changes |
++| Continuity | Follow-ups and resumability context refreshed while their scope remains active |
+ | Selected   | On-demand context chosen for the current goal                                                          |
+ 
+ The shipped root `entrypoints` and compact route maps deliberately pay a small baseline cost so agents can discover the Framework and its standard roles. That cost should not grow with local specialization. Put specialized content in narrow scopes and let each scope choose on-demand, #LoadNow, or #KeepInMind loading according to the thresholds below.
+@@ -41,21 +41,23 @@
+ 
+ ## #KeepInMind
+ 
+-#KeepInMind identifies continuity roots. A tagged `entrypoint` is proactive only when it appears during the initial loader and #LoadNow traversal, belongs to a selected route or scope, or is an ancestor of a direct sibling file or descendant currently active for work. Every routed #KeepInMind file that is not an `entrypoint` is read across the workspace regardless of ancestor activity. This exceptional reach is justified only when continuity must survive unrelated route changes. It does not mean every descendant below those routes.
++#KeepInMind identifies continuity content exposed by loaded parent routes. Tagged entrypoints and other tagged files use the same scope and parent-loading boundaries as #LoadNow. Neither tag activates an otherwise unselected ancestor or scope.
+ 
+-For each applicable #KeepInMind `entrypoint` or other tagged file, read any missing parent `entrypoints` needed to establish its scope and inherited Axioms. Then read the tagged file and its adjacent overwrite when present. Follow #LoadNow in listed order through the `Entries` it exposes. Read or recheck this complete continuity set:
++Read a tagged entry when its parent loads, then read its adjacent overwrite when present. For an entrypoint, apply its visible child loading rules in listed order. Explicitly selecting an on-demand route establishes its parent chain and exposes the applicable loading rules within that scope.
++
++Refresh the applicable continuity content while its scope remains active:
+ 
+ - At task start or resume
+ - After detected context restoration
+ - Before handoff
+ - Before closeout
+-- At another transition when its standing follow-ups may have changed
++- During work when the active continuity set may have changed
+ 
+-#KeepInMind file discovery can cross the selected branch because continuity failures are most costly when a task, route, workstream, or context changes. Entrypoint proactivity remains target-sensitive. Its #LoadNow traversal still follows ordinary direct-child visibility, so unrelated descendants remain unloaded.
++After restoration, recover the active route chains from the current task context before refreshing their continuity content. A refresh does not reactivate an unrelated scope. Do not load file bodies merely to discover tagged content.
+ 
+-Each result remains contextual or authoritative according to its routed source. #KeepInMind does not promote candidate material or make every follow-up binding.
++Each result retains the meaning and authority established by its source. #KeepInMind does not promote candidate material or make every follow-up binding.
+ 
+-A broken #KeepInMind `route` is a structural defect to repair or report, not permission to silently omit its result.
++A broken applicable #KeepInMind route is a structural defect to repair or report, not permission to silently omit its result.
+ 
+ ## Selected Context
+ 
+@@ -65,8 +67,8 @@
+ 
+ When deterministic assistance selects a route, include the parent entrypoint
+ chain that establishes its scope and inherited Axioms. Loading a selected
+-entrypoint makes its generated Entries visible, so its #LoadNow descendants
+-apply normally.
++entrypoint makes its generated Entries visible, so its #LoadNow and #KeepInMind
++child loading rules apply normally.
+ 
+ Conditional context must be cheap to select, cheap to skip, and recoverable when initially missed.
+ 
+@@ -75,11 +77,10 @@
+ The effective order is:
+ 
+ 1. Read the canonical workspace entry and loader
+-2. Traverse the visible #LoadNow closure in generated order
+-3. Recover applicable #KeepInMind entrypoints and every routed #KeepInMind file that is not an entrypoint, with their visible #LoadNow closure
+-4. Select other relevant `routes` from visible `entries`
+-5. Follow explicit relationships and dependencies
+-6. Recheck #KeepInMind at every required continuity boundary
++2. Apply #LoadNow and initial #KeepInMind reading through loaded parents in generated entry order
++3. Select other relevant `routes` and apply their child loading rules as the parent chains become active
++4. Follow explicit relationships and dependencies
++5. Refresh applicable #KeepInMind content at the required boundaries while its scope remains active
+ 
+ When a base file has a user-owned `{name}.overwrite.md` companion, read it immediately after the base. The [overwrite contract](overwrites.md) owns its inherited `route`, scope, loading behavior, precedence, and independent-selection boundary.
+ 
+--- a/README.md
++++ b/README.md
+@@ -148,7 +148,7 @@
+ - Put specialized material in the narrowest useful scope
+ - Use workspace-wide placement only for material that genuinely applies across the workspace
+ - Let each scoped `entrypoint` choose its own loading: on demand by default, #LoadNow when omission costs more than loading, or #KeepInMind when continuity must be revisited
+-- Use #KeepInMind on an ordinary record sparingly because those records are discovered across the workspace even when their ancestor branch is inactive
++- #LoadNow and #KeepInMind operate through loaded parents. Neither activates an unselected scope
+ 
+ Scopes do not inherit #LoadNow merely because the standard roots use it. A deeply specialized scope can remain available without entering ordinary active context.
+ 
+--- a/.agents/memory/crystallized/documents/framework/architecture.md
++++ b/.agents/memory/crystallized/documents/framework/architecture.md
+@@ -140,7 +140,7 @@
+ 
+ Work may select several scopes without merging them. Each keeps its own `route` chain and authority, explicit relationships connect them, and conflicts about a shared result are resolved by clear direction or the authoritative source for that result rather than by path depth or load order.
+ 
+-Loading determines when routed context becomes visible, not what authority it has. Baseline context follows visible immediate-loading `routes`; target-sensitive continuity recovers applicable entrypoints and globally discoverable ordinary records across `route`, workstream, and context changes; other context remains selected on demand.
++Loading determines when routed context becomes visible, not what authority it has. Baseline and continuity context both follow loaded parent routes. Continuity content is refreshed while its scope remains active. Other context remains selected on demand.
+ 
+ The detailed current contracts are separated by responsibility:
+ 
+--- a/.agents/memory/crystallized/documents/maintenance/payload/agents/loader.md
++++ b/.agents/memory/crystallized/documents/maintenance/payload/agents/loader.md
+@@ -57,7 +57,7 @@
+ - Generated `Entries` remain navigation metadata. Detailed meaning comes from the routed destination or the authoritative source it identifies.
+ - Loading and tags change visibility, timing, or classification without creating authority.
+ - The loader remains authoritative for the meanings of #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, #CurrentTruth, and #Evergreen. Its #Memory definition identifies self-growing Markdown state without moving Memory mechanics into the loader. Undefined tags remain routing and search signals.
+-- #LoadNow follows only entries exposed by an already-loaded parent. A #KeepInMind entrypoint loads proactively only during initial loader and #LoadNow traversal, in a selected route or scope, or when a file used by the task needs it as an ancestor. Every other routed #KeepInMind file loads across the workspace, so that form is reserved for continuity that must survive unrelated route changes. Missing ancestor entrypoints load first, then the tagged file and adjacent overwrite. #LoadNow continues through any `Entries` the tagged file exposes. Unrelated descendants stay excluded.
++- #LoadNow and #KeepInMind operate through loaded parent routes for both entrypoints and other files. Neither activates an unselected ancestor or scope. Read exposed continuity content when its parent loads, then refresh it at the defined boundaries while its scope remains active. Base files precede their adjacent overwrites, and entrypoints apply their child loading rules in listed order.
+ - Every recovered result retains the authority and scope established by its `route` and content.
+ - A user-owned `{name}.overwrite.md` is not an independent `route` and loads immediately after its base.
+ - It inherits the base `route`, scope, and loading behavior. It is neither indexed nor selected independently. It wins only when the base and overwrite answer the same question differently, and only within the base scope. It does not override unrelated authority.

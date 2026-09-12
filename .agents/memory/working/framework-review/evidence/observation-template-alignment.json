@@ -1,0 +1,64 @@
+{
+  "task": "Task 28 Observation Template alignment",
+  "status": "applied; uncommitted and unmerged",
+  "recorded_utc": "2026-09-11T19:15:37.405Z",
+  "authorization": "User direction: we should update ours if the template is better; assigning primary authorized this bounded adoption after the read-only comparison.",
+  "worktree": "/home/tedy/dev/open-forge-worktree/task28-framework-review",
+  "branch": "codex/task28-framework-review",
+  "head": "8a52ede13ab6d622578a6cfae04031a9a5b2eb2d",
+  "local_path": ".agents/templates/memory/observation.md",
+  "source_path": "src/extensions/development-toolkit/content/.agents/templates/memory/observation.md",
+  "before_sha256": "903213f619f2765678aaeacc8497d9a2ff8aa8a9a09dce3ddda947a6e70b5c70",
+  "source_sha256": "6df5343de1aef77d918e8ab47e044f6728a8ec0e7bea2c0929f1c15ed2776d45",
+  "after_sha256": "6df5343de1aef77d918e8ab47e044f6728a8ec0e7bea2c0929f1c15ed2776d45",
+  "exact_parity": true,
+  "source_unchanged": true,
+  "metadata_unchanged": true,
+  "navigation": {
+    "path": ".agents/templates/memory/_memory.md",
+    "before_sha256": "c6035f6e4cb830db0bbb9aad9138e40b3176f30b6b0b48ae4c3cd6e99c128954",
+    "after_sha256": "c6035f6e4cb830db0bbb9aad9138e40b3176f30b6b0b48ae4c3cd6e99c128954",
+    "unchanged": true
+  },
+  "git_diff_check": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "removed_local_additions": [
+    {
+      "before_lines": "29-33",
+      "addition": "The unbraced sanitization paragraph, including its blanket task, review, and handoff identifier prohibitions.",
+      "rationale": "Review Evidence retains the current sanitization rule. The Template's broader identifier prohibitions were not supported by the inspected current rules and could obstruct required stable finding identifiers and repository-relative evidence.",
+      "protecting_sources": [
+        ".agents/directives/review-evidence.md:11",
+        ".agents/directives/review-evidence.md:22"
+      ]
+    },
+    {
+      "before_lines": "35-37",
+      "addition": "The Conclusion, Reasoning, And Tradeoffs section and its review-specific prompt.",
+      "rationale": "Review Evidence already requires substantive rationale, alternatives, tradeoffs, and change conditions when justified. The adopted generic Template retains source attribution, evidence-versus-inference, and uncertainty prompts.",
+      "protecting_sources": [
+        ".agents/directives/review-evidence.md:19"
+      ]
+    },
+    {
+      "before_lines": "53",
+      "addition": "The reviewer-convergence and changed-assumptions extension to the Occurrences prompt.",
+      "rationale": "The existing review Directive preserves first-pass independence, material evidence comparison, counterexamples, and the boundary between repeated agreement and authority. The generic prompt still consolidates later independent occurrences.",
+      "protecting_sources": [
+        ".agents/directives/review-evidence.md:15",
+        ".agents/directives/review-evidence.md:23"
+      ]
+    }
+  ],
+  "source_boundary": {
+    "canonical_package": ".agents/memory/crystallized/documents/maintenance/payload/agents/templates.md:32",
+    "dogfood_alignment": ".agents/memory/crystallized/documents/maintenance/payload/agents/templates.md:33",
+    "continuing_requirements": ".agents/memory/crystallized/documents/maintenance/payload/agents/templates.md:24"
+  },
+  "prose_inspection": "Inspected the complete applied 51-line Template. It exactly matches the reviewed packaged source; only the three local additions were removed.",
+  "meaning": "This is user-authorized Template alignment. It deliberately removes extra local starting content while leaving current Directive rules and independently maintained records unchanged.",
+  "limits": "Only the local Observation Template and this receipt were written. No packaged/src edit, Directive change, Working/Emerging/Archived record scrub, CLI work, builds, tests, commits, or merges."
+}

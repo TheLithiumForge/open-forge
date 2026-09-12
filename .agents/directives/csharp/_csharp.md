@@ -10,7 +10,6 @@ open-forge:
 
 - Select this scope whenever C# source or C# tests are authored or reviewed anywhere in the workspace.
 - Keep generic C# design and style in this workspace-wide scope. A narrower scope may add implementation or platform constraints, but it must not replace or duplicate these generic rules.
-- inherited - No local axioms; loaded ancestor axioms remain active.
 
 ## Entries
 

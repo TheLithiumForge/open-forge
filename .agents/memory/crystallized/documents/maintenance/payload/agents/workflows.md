@@ -11,6 +11,8 @@ open-forge:
 
 [`src/open-forge/.agents/workflows/_workflows.md`](../../../../../../../src/open-forge/.agents/workflows/_workflows.md) is the canonical installed Workflows `entrypoint`. The repository [Workflows `entrypoint`](../../../../../../workflows/_workflows.md) dogfoods the same authored contract and may add local generated `entries`.
 
+An adjacent [workspace overwrite](../../../../../../workflows/_workflows.overwrite.md) adds the accepted local condition: change a Workflow only when evidence shows that its risk profile no longer fits.
+
 The [current Workflow contract](../../../framework/primitives/workflows.md) defines recipe structure, selection, composition, and relationships with other Core primitives.
 
 ## Contract
@@ -29,7 +31,15 @@ The [current Workflow contract](../../../framework/primitives/workflows.md) defi
 - A child with a familiar primitive `slug` beneath Workflows does not receive that primitive's runtime or managed tooling behavior
 - The installable source begins with no opinionated Workflow recipes
 
+## Optional Recipes And Local Profiles
+
+The [Extension catalogue](../../../../../../../src/extensions/README.md) identifies installable recipes and their package dependencies. Core retains the compact category contract. Local workflows may preserve accepted repository-specific execution profiles without making their agents, model choices, budgets, or tooling portable defaults.
+
+Keep each recipe explicit about selection, required inputs, sequence, stopping or recovery conditions, and observable completion. An incomplete investigation or withheld integration must remain visible as such. Check that related recipes link to their defining method instead of duplicating it.
+
 ## Verification
 
 - Workflow validation tests cover required section level and order, recipe-specific headings, organizational `entrypoints`, direct Workflow files, and `root route` boundaries
 - Core installation and route tests verify baseline loading, indexing, and recursive Workflow categories
+- Package verification assembles declared dependencies, checks links at installed destinations, validates recipe sections and generated indexes, and checks local parity where shared content is intended
+- Review specialized and experimental recipes individually. Record why each is revised, retained locally, or promoted; do not infer effectiveness from its existence

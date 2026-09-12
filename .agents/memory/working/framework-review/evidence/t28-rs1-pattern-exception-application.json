@@ -1,0 +1,37 @@
+{
+  "finding": "T28-RS1",
+  "status": "applied",
+  "authorization": "User approved the exact proposal for worktree application and Git review.",
+  "proposal": "t28-rs1-pattern-exception-proposal.diff",
+  "files": [
+    {
+      "path": "src/open-forge/.agents/patterns/_patterns.md",
+      "before_sha256": "47a7538b5d1dab187f6a4a10da5652f6a94dbe15f403f8505b74007e35e37c7a",
+      "applied_sha256": "7d581f5bbaa3b583e92286aaf29f29596ed7c786b323274509b5e2331d7fb2a1"
+    },
+    {
+      "path": ".agents/patterns/_patterns.md",
+      "before_sha256": "fce38a4070facc407493fd75c776eef60476e25c4ab43a5e365f3365b8e5a7f1",
+      "applied_sha256": "9658d5a639574f070d855c85205eed741c9de16d6b53bcfda98f518499dedce4"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/primitives/patterns.md",
+      "before_sha256": "f00fa2954658e71f509ba6d67d9e7410a967d1bfdbe452f20cfb7d208030de0b",
+      "applied_sha256": "5e6715bffd8e44e9b13c3590f322295b6f354c6fe2dd947cc6496e432c1d8938"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/patterns.md",
+      "before_sha256": "ec7ea2ca7002c7840b207088e1261fa3d9decfc820638af217c084b29c1501db",
+      "applied_sha256": "0d7352cbab0a811c36b8fe7d8ebe37d8fc709c9a37ee72330126b81449c93888"
+    }
+  ],
+  "checks": {
+    "before_sha256": "all four matched before application",
+    "candidate_sha256": "all four matched after application",
+    "exact_applied_prose": "inspected in all four target files",
+    "source_dogfood_authored_parity": "passed, excluding generated Entries",
+    "generated_entries": "preserved by the exact approved patch",
+    "git_diff_check": "passed"
+  },
+  "scope": "Only the four approved target files and this receipt were written. No CLI work, tests, commits, merges, or task dispatch."
+}

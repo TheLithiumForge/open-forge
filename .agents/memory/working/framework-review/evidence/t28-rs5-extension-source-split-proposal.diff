@@ -1,0 +1,912 @@
+--- a/.agents/maps/sources-of-truth.md
++++ b/.agents/maps/sources-of-truth.md
+@@ -24,7 +24,7 @@
+ - [historical frozen CLI MVP role, command surface, deterministic state, safety model, verification boundary, proven properties, and liabilities.](../memory/crystallized/documents/cli/mvp-architecture.md) - #CurrentTruth #Evergreen #Architecture #CLI #MVP #Legacy #Document
+ - [active top-down work graph, Task state, and evidence for the greenfield replacement CLI.](../memory/working/cli-development/_cli-development.md) - #Contextual #CLI #Architecture #Plan #Task #Development
+ - [historical CLI-v2 designs, decisions, governance, plans, and implementation records kept as raw input.](../memory/archived/cli-v2/_cli-v2.md) - #Contextual #Historical #CLI #CLI-v2
+-- [current Extensions MVP package semantics, composition, runtime boundary, ownership lifecycle, safety properties, and liabilities.](../memory/crystallized/documents/extensions/architecture.md) - #CurrentTruth #Evergreen #Architecture #Extension #MVP #Document
++- [current Extension package meaning, composition, and runtime boundary.](../memory/crystallized/documents/extensions/architecture.md) - #CurrentTruth #Evergreen #Architecture #Extension #Document
+ - [current public contract for the non-shipping replacement CLI commands, options, safety behavior, outputs, and limitations.](../../docs/cli.md) - #CurrentTruth #Evergreen #Documentation #CLI #Replacement
+ - [current maintainer contracts for reviewed source and repository surfaces.](../memory/crystallized/documents/maintenance/_maintenance.md) - #CurrentTruth #Evergreen #Maintenance #Governance #Document
+ - [the installable payload users receive; runtime truth for installed workspaces, including this one.](../../src/open-forge/) - #CurrentTruth #Payload
+--- a/.agents/memory/archived/_archived.md
++++ b/.agents/memory/archived/_archived.md
+@@ -24,5 +24,6 @@
+ - [Superseded pre-reset Open Forge architecture preserved for historical context](architecture_old.md) - #Memory #Archived #Contextual #Historical #Architecture #Framework
+ - [Historical CLI release audits, migration, and review material kept outside current program authority](cli-release/_cli-release.md) - #Memory #Archived #Contextual #Historical #CLI #Release #Review
+ - [Historical CLI-v2 designs, decisions, governance, plans, and implementation records kept only as raw input for the new CLI](cli-v2/_cli-v2.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
++- [Historical frozen MVP Extension package, ownership, lifecycle, safety, recorded verification, and limitations](extensions-mvp-architecture.md) - #Memory #Archived #Contextual #Historical #Extension #MVP #Architecture #Lifecycle
+ - [Historical Open Forge ideas and snapshots kept after application, supersession, or pruning](ideas/_ideas.md) - #Memory #Archived #Idea #Contextual #Historical
+ <!-- open-forge:generated-index:end -->
+--- /dev/null
++++ b/.agents/memory/archived/extensions-mvp-architecture.md
+@@ -0,0 +1,141 @@
++---
++open-forge:
++  description: Historical frozen MVP Extension package, ownership, lifecycle, safety, recorded verification, and limitations
++  tags: [Memory, Archived, Contextual, Historical, Extension, MVP, Architecture, Lifecycle]
++---
++
++# Frozen MVP Extension Architecture
++
++## Origin And Status
++
++This record preserves implementation-specific material extracted from `.agents/memory/crystallized/documents/extensions/architecture.md` during the Task 28 document split. That source combined frozen MVP mechanics with later current material. The [current Extensions Architecture](../crystallized/documents/extensions/architecture.md) replaces it as the coherent source for Extension concepts and composition.
++
++The extracted source had SHA-256 `5e1c30a1d5b7f71e84d9a914830241c78e8241300a26f4a5791c47020e5bcd86`. This record condenses its historical account. Later native-layout annotations and catalogue additions were excluded.
++
++All behavior and limitations below belong to the frozen MVP account. They do not define current Framework or CLI behavior. The verification summaries are recorded historical evidence, not checks rerun for this extraction. The [CLI MVP Architecture](../crystallized/documents/cli/mvp-architecture.md) links to the historical implementation and its test sources.
++
++## Package Sources And Manifest
++
++A normal managed MVP package used this layout:
++
++```text
++{package-folder}/
++  extension.json
++  README.md
++  payload/
++    ... target-relative complete files ...
++```
++
++A dependency-only pack could omit `payload/`. Local sources could use the complete package shape, a plain `payload/` directory, or a direct overlay whose contents mapped directly into the target workspace.
++
++The manifest could declare:
++
++| Field | Recorded meaning |
++| --- | --- |
++| `id` | Stable lowercase managed identity |
++| `name` | Display name |
++| `description` | Catalogue selection text |
++| `version` | Descriptive package version |
++| `dependencies` | Required bundled Extension identities |
++
++Every bundled first-party package declared an identity. A local source could declare one to opt into managed lifecycle; a source without an identity remained unmanaged. Unknown manifest fields were rejected.
++
++Identity was independent of source location and content type. Versions were descriptive and did not provide compatibility solving, version ranges, or migration semantics.
++
++## Dependencies And Assembly
++
++The resolver used stable Extension identities and resolved bundled dependencies offline. It traversed dependencies transitively, installed dependencies before their dependents, rejected unknown identities and cycles, and deduplicated the resolved set.
++
++Local packages could depend on bundled identities. The resolver did not support arbitrary local-to-local graphs, remote packages, registries, or capability providers. Dependency-only packs selected a set of packages without installing placeholder runtime files.
++
++Payloads contained complete files at their intended workspace-relative paths. The CLI constructed a plan, checked source and target safety, assembled workspace routes, maintained generated navigation, and recorded managed ownership when applicable.
++
++## Ownership Record
++
++Installations with a stable identity used `open-forge.extensions.json` at the workspace root.
++
++The receipt recorded:
++
++- Explicitly requested packages.
++- Installed dependencies.
++- Descriptive versions.
++- Owned payload paths.
++- Content digests.
++- Shared owner sets.
++
++This let the CLI distinguish reconcilable files, files modified after installation, paths shared by managed packages, existing unowned files, and dependencies still required by a retained package.
++
++Generated `Entries` bodies were excluded from authored ownership identity because the CLI could rebuild them around an Extension-owned `entrypoint`.
++
++Unmanaged overlays and externally installed Skills remained outside the receipt. Routing them did not transfer ownership. External installation used distinct paths; two managers could not claim the same installed path. An externally installed Skill did not automatically satisfy an Extension dependency identity.
++
++## Update And Removal
++
++Reinstalling a stable identity acted as managed reconciliation. The CLI verified recorded bytes, planned new payload effects, updated owned files, and removed dropped files only when their recorded contents still matched and no owner remained.
++
++Removal:
++
++- Acted only on explicitly requested identities.
++- Refused to break retained dependents.
++- Preserved modified owned files by blocking.
++- Preserved shared files while another owner remained.
++- Refused to remove an `entrypoint` that would strand retained routed descendants.
++- Did not automatically prune orphaned dependencies.
++
++The source also recorded that receipts supported explicit preview and removal of retired package identities without retaining their old source packages. Installed files remained ordinary workspace content, and retired identities were not aliases.
++
++## Safety And Application
++
++The recorded preflight considered:
++
++- Portable cross-platform path identity.
++- Source and target topology.
++- Lexical and physical containment.
++- Symlinks, junctions, and hard links.
++- File and parent-directory collisions.
++- Existing unowned paths.
++- Shared managed ownership.
++- Git visibility.
++- Generated-index side effects.
++- Route reachability after removal.
++
++Payloads could not claim `.git/`, `.gitignore`, the ownership receipt, or workspace-owned `.overwrite.md` files.
++
++Different bytes targeting one portable path were a conflict. Identical managed bytes could share owners only through explicit compatible plans. Byte equality alone did not permit adoption of an existing file.
++
++The CLI provided Git review checkpoints and rollback after handled failures. Its recovery limits are recorded below.
++
++## Recorded Verification
++
++The former document reported these kinds of verification:
++
++| Evidence | Recorded coverage |
++| --- | --- |
++| Pure tests | Dependency selection, manifest validation, path identity, ownership receipts, and collision rules |
++| Lifecycle scenarios | Real subprocesses, filesystems, and Git repositories for installation, update, removal, rollback, and review checkpoints |
++| MVP catalogue tests | The then-single first-party package |
++| Packaged-layout tests | Discovery from built and npm-style package layouts |
++| Framework validation | Assembled routes and links after installation |
++
++These summaries describe the recorded checks and their scope. They are not fresh results for the current catalogue or CLI. Deterministic packaging and lifecycle checks also did not prove that every package improved agent outcomes.
++
++## Recorded Limitations
++
++| Area | Frozen MVP limitation |
++| --- | --- |
++| Implementation separation | Manifest parsing, catalogue discovery, dependencies, ownership, and lifecycle behavior lived in the CLI monolith without an independently expressed Extension domain implementation. |
++| Sources and distribution | Bundled packages and local sources had no source-provider boundary, registry protocol, remote trust model, provenance verification, or reproducible third-party fetch contract. |
++| Compatibility | Descriptive versions did not negotiate compatibility among packages, the Framework, the CLI, or agent runtimes. |
++| Migration | Packages could not declare migrations, compatibility transitions, or required user decisions. The account identified this as insufficient for long-lived third-party packages. |
++| Ownership across workspaces | One root receipt assumed one Open Forge lifecycle authority. Multiple repositories, nested scopes, submodules, and several managers lacked a complete ownership model. |
++| Dependency expressiveness | Exact bundled identities did not express compatible alternatives, provided capabilities, optional dependencies, conflicts, or external satisfaction. |
++| Catalogue governance | There was no accepted stability, deprecation, support, or quality policy. Continued distribution still needed evidence of reusable value. |
++| Scoped installation | Payloads could target deep routes, but scope selection, missing scope `entrypoints`, and ownership across repositories or submodules lacked a complete user-facing design. |
++| Recovery | Handled failures rolled back. Abrupt process or machine failure relied on Git; there was no persistent recovery journal or workspace mutation lock. |
++
++These were limitations of the recorded implementation, not claims about current behavior or requirements to build a larger package manager. The [Extensions Evolution candidate](../emerging/ideas/extensions-overhaul.md) keeps possible future responses open for evaluation.
++
++## Related Historical Context
++
++- [Historical extension skill-sharing exploration](ideas/extension-skill-sharing.md).
++- [Archived CLI-v2 designs](cli-v2/_cli-v2.md), retained as historical input.
+--- a/.agents/memory/crystallized/decisions/extensions/_extensions.md
++++ b/.agents/memory/crystallized/decisions/extensions/_extensions.md
+@@ -13,6 +13,6 @@
+ ## Entries
+ 
+ <!-- open-forge:generated-index:start -->
+-- [The pre-release first-party catalogue is one deliberately small development toolkit containing six lean Workflows, one Experience Design Skill, and nine Templates](development-toolkit.md) - #Memory #Decision #CurrentTruth #Extension #Workflow #Skill #Template #Catalogue #DevelopmentToolkit
++- [Why first-party development content was consolidated into one Development Toolkit package](development-toolkit.md) - #Memory #Decision #CurrentTruth #Extension #Workflow #Skill #Template #Catalogue #DevelopmentToolkit
+ - [Extensions deliver optional whole files through existing routes, and installed files carry complete runtime meaning without package metadata or the CLI](extension-package-boundary.md) - #Memory #Decision #CurrentTruth #Extension #Package #RuntimeBoundary
+ <!-- open-forge:generated-index:end -->
+--- a/.agents/memory/crystallized/decisions/extensions/development-toolkit.md
++++ b/.agents/memory/crystallized/decisions/extensions/development-toolkit.md
+@@ -1,10 +1,14 @@
+ ---
+ open-forge:
+-  description: The pre-release first-party catalogue is one deliberately small development toolkit containing six lean Workflows, one Experience Design Skill, and nine Templates
++  description: Why first-party development content was consolidated into one Development Toolkit package
+   tags: [Memory, Decision, CurrentTruth, Extension, Workflow, Skill, Template, Catalogue, DevelopmentToolkit]
+ ---
+ 
+-# Development Toolkit Catalogue
++# Development Toolkit Consolidation
++
++## Current Result
++
++The recorded choice and its consequences below describe the earlier catalogue consolidation. Later accepted changes added the Work Records Pattern to Toolkit and introduced optional Orchestration as a separate package. The [first-party catalogue](../../../../../src/extensions/README.md) defines the current packages and contents.
+ 
+ ## Context
+ 
+@@ -14,9 +18,9 @@
+ 
+ ## Decision
+ 
+-Before a stable release, consolidate the complete first-party catalogue into one dependency-free Extension with the stable id `development-toolkit`.
++The consolidation chose one dependency-free Extension with the stable id `development-toolkit` for the complete first-party catalogue before a stable release.
+ 
+-The package contains:
++The package at that point contained:
+ 
+ - Six direct Workflows for Vision, Architecture, Planning, Development, Debugging, and Review
+ - One native Experience Design Skill with three focused references
+@@ -56,7 +60,7 @@
+ 
+ ## Consequences
+ 
+-- The first-party catalogue advertises exactly one package
++- The first-party catalogue advertised exactly one package at that point
+ - Package payload and isolated assembly tests cover all advertised content
+ - The package source is canonical for the nine shipped Template leaves
+ - Selected repository dogfood Template leaves remain aligned through automated parity verification
+@@ -68,7 +72,7 @@
+ 
+ - [Development toolkit package](../../../../../src/extensions/development-toolkit/README.md)
+ - [First-party catalogue](../../../../../src/extensions/README.md)
+-- [Extensions MVP Architecture](../../documents/extensions/architecture.md)
++- [Extensions Architecture](../../documents/extensions/architecture.md)
+ - [Workflow role](../../documents/framework/primitives/workflows.md)
+ - [Template Maintenance contract](../../documents/maintenance/payload/agents/templates.md)
+ - [Extension user guide](../../../../../docs/extensions.md)
+--- a/.agents/memory/crystallized/decisions/extensions/extension-package-boundary.md
++++ b/.agents/memory/crystallized/decisions/extensions/extension-package-boundary.md
+@@ -99,8 +99,8 @@
+   universal methodology.
+ - Lifecycle and CLI designs may evolve, but they must not make installed
+   interpretation depend on private package state.
+-- The Extensions MVP Architecture defines current Extension package and runtime
+-  semantics. The replacement CLI Architecture and command contracts define the
++- The Extensions Architecture defines current package meaning, composition,
++  and runtime boundaries. The replacement CLI Architecture and command contracts define the
+   accepted non-shipping replacement mechanics.
+ - The CLI MVP Architecture and frozen source define only the executable
+   historical reference.
+@@ -109,7 +109,7 @@
+ 
+ ### Extension Package And Runtime Boundary
+ 
+-- [Extensions MVP Architecture](../../documents/extensions/architecture.md)
++- [Extensions Architecture](../../documents/extensions/architecture.md)
+ - [Current Extension user contract](../../../../../docs/extensions.md)
+ 
+ ### Accepted Replacement
+--- a/.agents/memory/crystallized/documents/_documents.md
++++ b/.agents/memory/crystallized/documents/_documents.md
+@@ -20,7 +20,7 @@
+ <!-- open-forge:generated-index:start -->
+ - [Current Open Forge system model, component boundaries, context flow, authority, evolution, scaling, and tool boundary](architecture.md) - #Memory #Document #CurrentTruth #Evergreen #Architecture #Framework #ACE
+ - [Current replacement CLI architecture, contracts, technical designs, and distribution authority, kept separate from the frozen MVP and its historical evidence](cli/_cli.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #Architecture #Contract #TechnicalDesign #Distribution #MVP #Legacy
+-- [Current documents for the Open Forge Extensions MVP package, composition, ownership, safety, and lifecycle](extensions/_extensions.md) - #Memory #Document #CurrentTruth #Architecture #Extension #MVP
++- [Current documents for optional Extension packages, composition, and runtime boundaries](extensions/_extensions.md) - #Memory #Document #CurrentTruth #Architecture #Extension
+ - [Current documents for Open Forge Framework internals, including Core and Memory](framework/_framework.md) - #Memory #Document #CurrentTruth #Framework #Core #Architecture
+ - [Current maintainer contracts, writing standard, and repository-only authoring helpers for Open Forge source and documentation](maintenance/_maintenance.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance
+ - [Current foundational principles that define Open Forge's identity and guide unfamiliar product, Framework, and tooling choices](principles.md) - #Memory #Document #CurrentTruth #Evergreen #Principle #Foundation #Identity #Product #ACE
+--- a/.agents/memory/crystallized/documents/architecture.md
++++ b/.agents/memory/crystallized/documents/architecture.md
+@@ -166,10 +166,10 @@
+ - This top architecture is authoritative for the system map and cross-cutting invariants
+ - The [Framework Architecture](framework/architecture.md) is authoritative for Core and Memory internals
+ - The [Open Forge Routing scope](framework/routing/_routing.md) is authoritative for navigation, recursive scope, inheritance, loading, continuity, and path identity
+-- The [Extensions MVP Architecture](extensions/architecture.md) is authoritative for current optional capability composition, lifecycle, safety boundaries, and liabilities
++- The [Extensions Architecture](extensions/architecture.md) defines optional package composition and its boundary with installed Framework behavior
+ - The [CLI MVP Architecture](cli/mvp-architecture.md) is authoritative for shipped commands, deterministic state, safety, verification, implementation, and liabilities
+ 
+-The Extensions view documents its current MVP without treating implementation choices as permanent. The [replacement CLI Architecture](cli/architecture.md) defines the current greenfield implementation boundary, while the [CLI-v2 archive](../../archived/cli-v2/_cli-v2.md) preserves deleted designs without making them current.
++The Extensions view keeps package meaning separate from implementation mechanics. The [replacement CLI Architecture](cli/architecture.md) defines the current greenfield implementation boundary, while the [CLI-v2 archive](../../archived/cli-v2/_cli-v2.md) preserves deleted designs without making them current.
+ 
+ ## Related Current Views
+ 
+--- a/.agents/memory/crystallized/documents/extensions/_extensions.md
++++ b/.agents/memory/crystallized/documents/extensions/_extensions.md
+@@ -1,12 +1,12 @@
+ ---
+ open-forge:
+-  description: Current documents for the Open Forge Extensions MVP package, composition, ownership, safety, and lifecycle
+-  tags: [Memory, Document, CurrentTruth, Architecture, Extension, MVP]
++  description: Current documents for optional Extension packages, composition, and runtime boundaries
++  tags: [Memory, Document, CurrentTruth, Architecture, Extension]
+ ---
+ 
+ # Extensions
+ 
+-This scope contains current documents for Open Forge Extensions and their evolution.
++This scope explains current Extension package meaning and composition. The linked implementation contracts define package representation and managed operations.
+ 
+ ## Axioms
+ 
+@@ -15,5 +15,5 @@
+ ## Entries
+ 
+ <!-- open-forge:generated-index:start -->
+-- [Current Open Forge Extensions MVP package semantics, composition, runtime boundary, ownership lifecycle, safety properties, and liabilities](architecture.md) - #Memory #Document #CurrentTruth #Evergreen #Architecture #Extension #MVP #Composition #ACE
++- [Current Extension concept, package composition, installed interpretation, and boundary with lifecycle tools](architecture.md) - #Memory #Document #CurrentTruth #Evergreen #Architecture #Extension #Composition #ACE
+ <!-- open-forge:generated-index:end -->
+--- a/.agents/memory/crystallized/documents/extensions/architecture.md
++++ b/.agents/memory/crystallized/documents/extensions/architecture.md
+@@ -1,424 +1,97 @@
+ ---
+ open-forge:
+-  description: Current Open Forge Extensions MVP package semantics, composition, runtime boundary, ownership lifecycle, safety properties, and liabilities
+-  responsibility: Define the accepted current Extensions MVP architecture and distinguish it from candidate replacement direction
+-  tags: [Memory, Document, CurrentTruth, Evergreen, Architecture, Extension, MVP, Composition, ACE]
++  description: Current Extension concept, package composition, installed interpretation, and boundary with lifecycle tools
++  responsibility: Define how optional Extension packages compose complete files without changing their Framework meaning or making lifecycle tools necessary for interpretation
++  tags: [Memory, Document, CurrentTruth, Evergreen, Architecture, Extension, Composition, ACE]
+ ---
+ 
+-# Open Forge Extensions MVP Architecture
++# Open Forge Extensions Architecture
+ 
+-## Replacement CLI Boundary
++## Role
+ 
+-The lifecycle design below documents the frozen MVP only, not the current native CLI or first-party source layout. The historical design retains its original `payload/` and overlay
+-semantics. The non-shipping replacement CLI instead uses the accepted
+-[Extension package layout](../cli/contracts/extension/_extension.md#package-layout)
+-and [consumer permission contracts](../cli/contracts/shared/workspace-permissions/_workspace-permissions.md).
+-Current first-party source packages use `content/`; the frozen MVP executable is
+-not updated to consume them. This distinction does not introduce a compatibility
+-reader into either implementation.
++An Extension is an optional installation and ownership unit for complete files. Its identity is independent of the kind of content it carries. A package may contain one kind of content, a useful combination, support files, or only dependencies.
+ 
+-## Status And Scope
++Extensions add routed content and supporting files. Routed content uses ordinary Framework `routes` and retains its destination's role, scope, loading behavior, and authority. Native formats and supporting files retain the meaning defined by their consumers. Lifecycle tools may manage files, but packaging does not create another runtime primitive or `root route`.
+ 
+-Open Forge Extensions are a dogfooded MVP whose long-term architecture remains intentionally open. This document is authoritative for the coherent current view of:
++## Sources And Scope
+ 
+-- What an extension means
+-- How extension packages compose Framework content
+-- Current source, identity, dependency, ownership, and lifecycle boundaries
+-- Runtime behavior after installation
+-- Proven invariants worth preserving
+-- MVP liabilities
++This document defines the Extension concept, package composition, and the boundary between installed content and lifecycle tools. Related sources define their own detail:
+ 
+-The [top architecture](../architecture.md#framework-composition) is authoritative for the composition relationship among Core, Memory, and Extensions. The [Framework Architecture](../framework/architecture.md) is authoritative for every runtime route, primitive, authority, and Memory meaning used by installed extension files. The [CLI MVP Architecture](../cli/mvp-architecture.md) is authoritative for the deterministic implementation that currently discovers, plans, installs, validates, and removes packages.
++| Source | Question it answers |
++| --- | --- |
++| [Top Architecture](../architecture.md#framework-composition) | How do Core, Memory, and Extensions compose? |
++| [Framework Architecture](../framework/architecture.md) | How are installed routes, roles, scope, loading, authority, and Memory interpreted? |
++| [Extension command contracts](../cli/contracts/extension/_extension.md), including [package layout](../cli/contracts/extension/_extension.md#package-layout) | What package representation and managed operations do the current CLI contracts define? |
++| [Consumer permission contracts](../cli/contracts/shared/workspace-permissions/_workspace-permissions.md) | Which permission grants are required for files consumed by other tools? |
++| [First-party catalogue](../../../../../src/extensions/README.md) | Which packages exist, what do they contain, and how are their source files arranged and installed? |
+ 
+-This document describes the present MVP without treating its implementation as
+-the final Extensions design. The new CLI must rediscover its package,
+-source-review, ownership, and lifecycle boundary from current needs.
+-[Extensions evolution](../../../emerging/ideas/extensions-overhaul.md) keeps
+-future distribution, compatibility, migration, multi-root, dependency, and
+-catalogue questions contextual.
+-
+-## Core Proposition
+-
+-An extension is an optional content-agnostic installation and ownership unit.
+-
+-It may contribute:
+-
+-- A skill
+-- A workflow
+-- Directives
+-- Guidance
+-- Patterns
+-- Templates
+-- Map `routes`
+-- Memory `routes`
+-- Support files
+-- A deliberate combination
+-- Only dependencies as a convenience pack
+-
+-Extension is not a runtime primitive. After installation, every file retains the ordinary meaning of its destination `route`. A Skill remains a Skill, a Directive remains binding in its loaded scope, a Workflow remains a routed recipe, and Memory retains its state and authority.
+-
+-The package delivers and optionally manages files. It does not create another agent interpretation layer.
++The current command contracts define implementation-specific manifest rules, dependency resolution, lifecycle records, update and removal behavior, and operational safety requirements. They do not define the runtime meaning of installed Framework content.
+ 
+ ## Architectural Invariants
+ 
+-The following constraints define the intended Extensions boundary beyond the current implementation:
++These constraints apply independently of the implementation:
+ 
+-1. Extensions remain optional
+-2. Explicit user selection precedes installation
+-3. Installed files remain complete runtime truth
+-4. Extension metadata never becomes necessary for agent interpretation
+-5. Extension content uses ordinary `routes` and relationships
+-6. Packages add whole files rather than injecting private mutations into shared Markdown
+-7. Every installed managed path has explicit ownership
+-8. Dependency edges compose installable units without redefining runtime relationships
+-9. Manual plain-file installation remains possible
+-10. Installation effects are reviewable before they become trusted context
+-11. Removal protects user changes, shared ownership, dependencies, and route reachability
+-12. Catalogue and source organization do not determine authority
++1. Extensions remain optional.
++2. Explicit user selection precedes installation.
++3. Installed files carry the Extension's complete runtime meaning.
++4. Extension metadata is not required for agent interpretation.
++5. Routed Extension content uses ordinary `routes` and relationships.
++6. Packages contribute whole files. They do not inject private changes into shared Markdown.
++7. Every installed managed path has explicit ownership.
++8. Dependency edges compose installable units without redefining runtime relationships.
++9. Manual installation through ordinary files remains possible.
++10. Installation effects are reviewable before they become trusted context.
++11. Removal protects user changes, shared ownership, dependencies, and route reachability.
++12. Catalogue and source organization do not determine authority.
+ 
+-## Current MVP System
++## Package Composition
+ 
+-The MVP combines six elements:
++Package identity identifies an installation unit. Its source location and subject do not determine the meaning or scope of its installed files.
+ 
+-```text
+-Bundled or local source package
+-  -> manifest identity and dependency graph
+-    -> payload of complete target-relative files
+-      -> CLI plan and safety preflight
+-        -> assembled workspace routes
+-          -> optional ownership receipt
+-```
++Dependencies connect installable packages. They arrange for required content to be assembled, while installed files express their runtime relationships through ordinary links and instructions. For example, a Workflow package may depend on a package that provides a Skill. The installed Workflow still identifies the Skill it uses; the package dependency is not an agent instruction.
+ 
+-The first three elements define extension content and composition. The CLI MVP Architecture is authoritative for current planning and application. Installed workspace files are authoritative for runtime meaning. The receipt records only managed lifecycle state.
++A convenience pack may declare only dependencies, contribute coordinated files, or combine both. Shared content should have one package source and be reused through dependencies instead of copied into competing packages.
+ 
+-## Source Packages
++## Installed Interpretation
+ 
+-The historical MVP package lived directly beneath [`src/extensions/`](../../../../../src/extensions/):
++An installed Directive remains required within its loaded scope. A Workflow remains an optional recipe. Memory retains its destination's state and authority. Packaging does not change any of these roles.
+ 
+-```text
+-src/extensions/
+-  development-toolkit/
+-    extension.json
+-    README.md
+-    payload/
+-```
++The `#Extension` tag identifies optional package provenance and composition. It does not activate content or create authority. Generated `Entries` expose installed routes; the destination files define their meaning.
+ 
+-A normal managed package has:
++Links resolve relative to the installed file in the assembled workspace. References within a package should resolve within its content. References to Framework files or declared dependencies may require the combined installation.
+ 
+-```text
+-{package-folder}/
+-  extension.json
+-  README.md
+-  payload/
+-    ... target-relative complete files ...
+-```
++Agents interpret the installed files through the Framework and the native formats those files use. They do not need the package manifest, catalogue, dependency metadata, lifecycle records, or CLI for that interpretation.
+ 
+-A dependency-only pack may omit `payload/`. A local source may use the complete package shape, a plain `payload/` directory, or a direct overlay whose contents map directly into the target.
++## Manual Installation And Managed Ownership
+ 
+-The source folder helps maintainers browse packages. It does not determine install identity, dependency semantics, or runtime meaning.
++Manual installation copies the content of the selected package and its dependencies into the workspace, updates affected `Entries`, and reviews the assembled files and relationships. The result remains usable without the CLI. Manual copying does not by itself establish managed ownership.
+ 
+-## Identity And Manifest
++Lifecycle tools reduce manual work through package discovery, dependency planning, navigation maintenance, and supported installation, update, and removal operations. Installation and updates remain user-directed setup and maintenance concerns.
+ 
+-The current `extension.json` manifest may declare:
++Managed operations act through explicit ownership and protect user changes, shared files, required dependencies, and retained route reachability. Matching bytes alone do not authorize a manager to adopt an existing file. [Overwrite companions](../framework/routing/overwrites.md) belong to the workspace and remain outside Extension ownership.
+ 
+-- `id`: stable lowercase managed identity
+-- `name`: display name
+-- `description`: catalogue selection text
+-- `version`: descriptive package version
+-- `dependencies`: bundled extension identities required by the package
++Lifecycle metadata supports management of files. It does not grant those files authority or replace their content as the source of runtime meaning.
+ 
+-Every bundled first-party package declares an id. A local source may declare an id to opt into managed lifecycle. An idless local source remains unmanaged.
++## Native Formats And External Managers
+ 
+-The stable id is intentionally independent from source location and content type. Moving a package between catalogue groups does not change its identity.
++Keep native formats such as `SKILL.md` with their own metadata and resources. Routing a native package does not require wrapping or rewriting it as another Framework category.
+ 
+-The current version field is descriptive. The MVP has no compatibility solver, version range semantics, or migration contract.
++Users and external tools may install native content independently. Exposing that content through ordinary routes does not transfer its ownership to Open Forge. Two managers must not claim the same installed path.
+ 
+-Unknown manifest fields are rejected so misspelled ownership or dependency declarations do not silently alter behavior.
++An externally installed capability does not automatically satisfy a package dependency. Such substitution would need an explicit identity, compatibility, and ownership model. Routing the capability does not create that model.
+ 
+-## Payload
++## Evidence And Evolution
+ 
+-The payload contains complete files at their intended workspace-relative paths.
++Verify package contents and their assembled dependencies against the relevant Framework and lifecycle contracts. Distinguish successful installation and structural checks from evidence that the content helps its users. Claims about efficiency, reliability, or reusable value need evidence for the actual method and conditions.
+ 
+-Open Forge-authored routed files normally carry:
++Optional packages must not turn Core into a universal methodology. Continued distribution should be justified by useful outcomes, clarity, maintenance cost, and evidence of use. Evaluate each capability by how it helps achieve its stated goal.
+ 
+-- `#Extension`
+-- Their Framework primitive or Memory classification
+-- Useful scope and topic tags
+-
+-Standard runtime formats such as `SKILL.md` retain their native metadata and resource conventions.
+-
+-`#Extension` identifies optional package provenance and composition. It creates no authority, loading, or runtime behavior. Reserved loading tags are used only when the installed file deliberately belongs in baseline or continuity context.
+-
+-Markdown links resolve relative to the file in the assembled workspace. A same-package link should resolve in the isolated payload. A link to Core or a declared dependency may resolve only after complete assembly.
+-
+-Generated `entries` expose installed files but do not own their meaning.
+-
+-## Runtime Boundary
+-
+-An installed extension disappears as a runtime abstraction.
+-
+-Agents use:
+-
+-- Installed Markdown
+-- Framework `entrypoints`
+-- Native `SKILL.md` packages
+-- Relative links
+-- Tags
+-- Declared external sources
+-
+-They do not need:
+-
+-- `extension.json`
+-- Source catalogue grouping
+-- Package README files
+-- Dependency metadata
+-- The ownership receipt
+-- The CLI
+-
+-This is the most important Extensions invariant. Packaging may become more sophisticated without making installed workspaces dependent on a private package runtime.
+-
+-## Dependency And Composition Model
+-
+-Dependencies connect installable packages. They do not replace runtime links.
+-
+-The current resolver:
+-
+-- Uses stable extension ids
+-- Resolves bundled dependencies offline
+-- Traverses dependencies transitively
+-- Installs dependencies before dependents
+-- Rejects unknown ids and cycles
+-- Deduplicates the resolved closure
+-
+-A workflow package may depend on a skill package to ensure the skill arrives. The installed workflow still links to the concrete `SKILL.md` route it needs because the dependency edge is not agent context.
+-
+-Dependency-only packs select a useful closure without installing placeholder runtime files.
+-
+-The current MVP permits local packages to depend on bundled ids. It does not resolve arbitrary local-to-local graphs, remote packages, registries, or capability providers.
+-
+-## Current Catalogue
+-
+-The [extension catalogue README](../../../../../src/extensions/README.md) and manifests are authoritative for the live package list and descriptions.
+-
+-The current catalogue provides Development Toolkit and optional Orchestration. Toolkit defines the portable development recipes, Work Records Pattern, native Skill, and Templates. Orchestration depends on it and adds the Managed Delivery Workflow. Repository-specific agents and council remain local candidates.
+-
+-The earlier single-package MVP established that mixed content can retain its route meaning. It does not establish the effectiveness of every current workflow or validate future agent packaging.
+-
+-Optional catalogues must not turn Open Forge Core into the author's universal methodology. A package earns continued distribution through reusable value, clarity, maintenance cost, and evidence of use.
+-
+-Earlier first-party package identities were removed before a stable release and are not aliases. Files already installed from them remain ordinary workspace content. Existing receipts remain sufficient for explicit preview and removal without retaining the old source packages.
+-
+-## Manual And Managed Installation
+-
+-The plain-file installation contract is:
+-
+-1. Copy payload files into the target workspace
+-2. Rebuild or manually update affected generated route entries
+-3. Review the assembled files and relationships
+-
+-After that, the extension is fully usable without the CLI.
+-
+-The current CLI adds:
+-
+-- Catalogue discovery and selection
+-- Dependency resolution
+-- Complete plan construction
+-- Portability and containment validation
+-- Collision and ownership checks
+-- Generated-index maintenance
+-- Git review checkpoints
+-- Managed update and removal
+-- Rollback after handled failures
+-
+-The convenience layer is significant, but it remains an implementation over the plain-file contract.
+-
+-## Managed Ownership
+-
+-Stable-id installations are recorded in `open-forge.extensions.json` at the workspace root.
+-
+-The current receipt records:
+-
+-- Explicitly requested roots
+-- Installed dependencies
+-- Descriptive versions
+-- Owned payload paths
+-- Content digests
+-- Shared owner sets
+-
+-The receipt allows the CLI to distinguish:
+-
+-- A file it may safely reconcile
+-- A file modified after installation
+-- A path shared by several managed packages
+-- An existing unowned file
+-- A package dependency that remains required
+-
+-Generated `Entries` bodies are excluded from authored ownership identity because the CLI may legitimately rebuild them around an extension-owned `entrypoint`.
+-
+-An unmanaged overlay or externally installed skill remains outside the receipt. Routing it does not transfer ownership.
+-
+-## Update And Removal
+-
+-Reinstalling a stable id currently acts as managed reconciliation.
+-
+-The CLI verifies recorded bytes, plans new payload effects, updates owned files, and removes dropped files only when their recorded contents still match and no owner remains.
+-
+-Removal:
+-
+-- Acts only on explicitly requested ids
+-- Refuses to break retained dependents
+-- Preserves modified owned files by blocking
+-- Preserves shared files while another owner remains
+-- Refuses to remove an `entrypoint` that would strand retained routed descendants
+-- Does not automatically prune orphaned dependencies
+-
+-This behavior is safety-oriented but still lacks an explicit versioned update or migration model.
+-
+-## Safety Boundary
+-
+-Extension safety is larger than validating payload bytes.
+-
+-The current plan accounts for:
+-
+-- Portable cross-platform path identity
+-- Source and target topology
+-- Lexical and physical containment
+-- Symlinks, junctions, and hard links
+-- File and parent-directory collisions
+-- Existing unowned paths
+-- Shared managed ownership
+-- Git visibility
+-- Generated-index side effects
+-- Route reachability after removal
+-
+-Payloads cannot claim `.git/`, `.gitignore`, the ownership receipt, or workspace-owned `.overwrite.md` files. The [overwrite contract](../framework/routing/overwrites.md) owns why these companions remain outside Extension ownership.
+-
+-Different bytes targeting one portable path are a conflict. Identical managed bytes may share owners only through explicit compatible plans. Byte equality alone is not permission to adopt an existing file.
+-
+-The [CLI MVP Architecture](../cli/mvp-architecture.md) is authoritative for how these checks are implemented and transacted.
+-
+-## Skills And External Managers
+-
+-Open Forge does not need to own every skill.
+-
+-An external manager or user may install a complete native skill under `.agents/skills/{skill-name}/`. Regenerating the skills index makes it routable without wrapping or rewriting it.
+-
+-Two managers must not claim the same installed path. The current MVP treats external installation as distinct-path additive interoperability.
+-
+-An externally installed skill does not automatically satisfy an extension dependency id. Supporting substitution would require an explicit future capability or satisfaction model with clear identity, compatibility, and ownership semantics.
+-
+-## Packs
+-
+-A pack is an extension selected primarily for composition convenience.
+-
+-It may:
+-
+-- Declare only dependencies
+-- Add coordinated files
+-- Combine both when the complete unit has independent value
+-
+-A pack should not duplicate payloads already owned by narrower packages. Dependency edges are the preferred composition mechanism when the desired files already have canonical owners.
+-
+-Source placement is catalogue presentation, not a special dependency engine or runtime primitive.
+-
+-## Current Verification
+-
+-The current extension system is verified at several levels:
+-
+-- Pure tests cover dependency selection, manifest validation, path identity, ownership receipts, and collision rules
+-- Closure tests use real subprocesses, filesystems, and Git repositories for installation, update, removal, rollback, and review checkpoints
+-- Historical MVP catalogue tests covered the then-single package. They are not evidence for the current native catalogue. Validate current package closures and installation against the native CLI separately
+-- Packaged-layout tests verify discovery from built and npm-style package layouts
+-- Framework validation checks assembled routes and links after installation
+-
+-The primary implementation test sources are linked from the [CLI MVP Architecture](../cli/mvp-architecture.md).
+-
+-These tests validate deterministic packaging and lifecycle behavior. They do not prove that every catalogue package improves agent outcomes.
+-
+-## MVP Liabilities
+-
+-### Architecture Is Coupled To The CLI
+-
+-Manifest parsing, catalogue discovery, dependency resolution, ownership, and lifecycle behavior currently live inside the CLI monolith. Extensions have no independently expressed domain implementation.
+-
+-### Source Model Is Local And Closed
+-
+-The resolver understands bundled packages and local sources. It has no source-provider boundary, registry protocol, remote trust model, provenance verification, or reproducible third-party fetch contract.
+-
+-This limitation is safe for the MVP. Post-initial evolution must decide whether
+-remote distribution belongs in Open Forge at all before designing it.
+-
+-### Versions Do Not Govern Compatibility
+-
+-Versions are descriptive. There is no compatibility negotiation among packages, the Framework, the CLI, or agent runtimes.
+-
+-### Update Has No Migration Semantics
+-
+-Reinstallation reconciles whole files, but packages cannot declare migrations, compatibility transitions, or required user decisions. This is insufficient for long-lived third-party packages.
+-
+-### One Root Receipt
+-
+-The receipt is transparent and effective for the current manager, but its ownership model assumes one Open Forge lifecycle authority at the workspace root. Multi-repository environments, nested scopes, submodules, or several package managers may require more explicit ownership boundaries.
+-
+-### Dependency Identity Is Package-Specific
+-
+-Dependencies require exact bundled ids. The MVP cannot express compatible alternatives, provided capabilities, optional dependencies, conflicts, or external satisfaction.
+-
+-Adding those concepts without a demonstrated need would recreate package-manager complexity, so the overhaul must justify each one.
+-
+-### Catalogue Governance Is Immature
+-
+-The consolidated first-party catalogue is intentionally small but still has no accepted stability, deprecation, support, or quality policy. Continued distribution must be justified by actual reusable value rather than the existence of the package.
+-
+-### Scope-Aware Installation Is Incomplete
+-
+-Payload paths can target deep `routes`, but the package model does not yet provide a complete user-facing design for selecting a scope, initializing missing scope `entrypoints`, or explaining how ownership composes across many repositories and submodules.
+-
+-### Recovery Is Process-Local
+-
+-Handled failures roll back, while abrupt process or machine failure relies on Git. There is no persistent recovery journal or workspace mutation lock.
+-
+-## Future Direction
+-
+-Deleted CLI-v2 lifecycle and source-review contracts remain available only in
+-the [CLI-v2 archive](../../../archived/cli-v2/_cli-v2.md) as raw historical input.
+-
+-The [Extensions evolution candidate](../../../emerging/ideas/extensions-overhaul.md)
+-retains questions that may follow representative use:
+-remote distribution and provenance, compatibility and migrations, richer
+-dependencies, multi-root or multi-manager ownership, and catalogue governance.
+-Keeping those questions in Emerging Memory prevents them from appearing as
+-accepted architecture.
+-
+-## Non-Goals
+-
+-Extensions are not:
+-
+-- Another `root route` or interpretation model
+-- A new runtime primitive
+-- A provider-specific plugin runtime
+-- A hidden instruction database
+-- A reason to make Core large
+-- Automatic authority over local files
+-- Automatic satisfaction of external capabilities
+-- A remote registry by default
+-- Permission to mutate shared Markdown invisibly
+-- A substitute for ordinary relative links and routes
+-
+-## Related Current Views
+-
+-- [Open Forge architecture](../architecture.md)
+-- [Framework Architecture](../framework/architecture.md)
+-- [CLI MVP Architecture](../cli/mvp-architecture.md)
+-- [Current extension user contract](../../../../../docs/extensions.md)
+-- [Current first-party catalogue](../../../../../src/extensions/README.md)
++The [Extensions Evolution candidate](../../../emerging/ideas/extensions-overhaul.md) keeps questions about distribution, compatibility, migrations, richer dependencies, ownership across workspaces or managers, and catalogue governance contextual. Those questions do not establish additional package or runtime capabilities.
+ 
+ ## Decisions And Rationale
+ 
+-- [Extension package boundary](../../decisions/extensions/extension-package-boundary.md)
++The [Extension Package Boundary Decision](../../decisions/extensions/extension-package-boundary.md) records why optional whole files, explicit ownership, and complete installed interpretation were chosen.
+ 
+ ## Historical Context
+ 
+-These archived records preserve earlier observations and exploration. They may inform future redesign, but they do not govern the current Extensions architecture:
+-
+-- [Historical extension skill-sharing exploration](../../../archived/ideas/extension-skill-sharing.md)
++The [frozen MVP architecture record](../../../archived/extensions-mvp-architecture.md) preserves the former implementation's package, ownership, lifecycle, safety, recorded verification, and limitations. That history may inform later decisions. It does not define current behavior.
+--- a/.agents/memory/crystallized/documents/framework/architecture.md
++++ b/.agents/memory/crystallized/documents/framework/architecture.md
+@@ -283,19 +283,13 @@
+ 
+ ## Extensions Boundary
+ 
+-Extensions add optional reusable content through the same `routes` and primitive meanings. They do not create a second loader, root authority model, or runtime interpretation system.
+-
+-After installation, an extension's files behave like ordinary directives, patterns, guidance, skills, templates, workflows, Map `routes`, or Memory. Its packaging metadata does not become necessary to understand its runtime meaning.
+-
+-The current extensions implementation remains an MVP. The [Extensions MVP
+-Architecture](../extensions/architecture.md) is authoritative for its present
+-manifests, dependency system, ownership lifecycle, and liabilities. The
+-[Extensions evolution candidate](../../../emerging/ideas/extensions-overhaul.md)
+-keeps future distribution, compatibility, migration, multi-root, dependency,
+-and governance questions unsettled. The [CLI MVP
+-Architecture](../cli/mvp-architecture.md) remains authoritative for the frozen
+-legacy implementation. The new CLI must rediscover its Extension boundary from
+-current Framework needs rather than inherit deleted CLI-v2 contracts.
++Extensions add optional reusable content and supporting files. Routed Extension content uses the same `routes` and primitive meanings as other Framework content. Packaging does not create a second loader, root authority model, or runtime interpretation system.
++
++After installation, routed content retains its destination's role, scope, loading behavior, and authority. Native formats and supporting files retain the meaning defined by their consumers. Package metadata is not required to interpret the installed content.
++
++The [Extensions Architecture](../extensions/architecture.md) defines package meaning, composition, and the boundary with installed Framework behavior. The [Extension command contracts](../cli/contracts/extension/_extension.md) define the accepted package representation and managed operations.
++
++The [CLI MVP Architecture](../cli/mvp-architecture.md) records the frozen implementation. Further distribution, compatibility, migration, multi-root, dependency, and governance questions remain contextual in the [Extensions evolution candidate](../../../emerging/ideas/extensions-overhaul.md).
+ 
+ ## Distribution And Dogfood
+ 
+@@ -350,7 +344,7 @@
+ - [Memory Architecture](memory/_memory.md)
+ - [Accepted State and Synchronization](truth.md)
+ - [Payload Maintenance](../maintenance/payload/_payload.md)
+-- [Extensions MVP Architecture](../extensions/architecture.md)
++- [Extensions Architecture](../extensions/architecture.md)
+ - [CLI MVP Architecture](../cli/mvp-architecture.md)
+ - [Current replacement CLI Architecture](../cli/architecture.md)
+ - [Historical CLI-v2 evidence](../../../archived/cli-v2/_cli-v2.md)
+--- a/.agents/memory/crystallized/documents/framework/routing/overwrites.md
++++ b/.agents/memory/crystallized/documents/framework/routing/overwrites.md
+@@ -75,7 +75,7 @@
+ - [Canonical loader](../../../../../loader.md)
+ - [Loader maintenance contract](../../maintenance/payload/agents/loader.md)
+ - [CLI MVP Architecture](../../cli/mvp-architecture.md)
+-- [Extensions MVP Architecture](../../extensions/architecture.md)
++- [Extensions Architecture](../../extensions/architecture.md)
+ 
+ ## Decisions And Rationale
+ 
+--- a/.agents/memory/emerging/ideas/extensions-overhaul.md
++++ b/.agents/memory/emerging/ideas/extensions-overhaul.md
+@@ -8,9 +8,7 @@
+ 
+ ## Current Boundaries
+ 
+-The shipped [Extensions MVP Architecture](../../crystallized/documents/extensions/architecture.md)
+-owns current runtime behavior. Deleted CLI v2 proposed an initial next boundary
+-for:
++The [Extensions Architecture](../../crystallized/documents/extensions/architecture.md) defines current package meaning, composition, and runtime boundaries. The [Extension command contracts](../../crystallized/documents/cli/contracts/extension/_extension.md) define accepted implementation mechanics. Deleted CLI-v2 proposals remain historical input for these topics:
+ 
+ - A strict inspectable package and manifest shape.
+ - Embedded Open Forge and explicit external filesystem catalogues.
+@@ -21,9 +19,7 @@
+ - Git-first recovery, Gitless backups, formatting, route rebuilding, and
+   explicit preservation decisions.
+ 
+-Those choices are raw historical input, not accepted direction. Inspect them in
+-the [CLI-v2 archive](../../archived/cli-v2/_cli-v2.md) when the new CLI reaches
+-Extension lifecycle design.
++Those proposals do not establish accepted direction. Consult the [CLI-v2 archive](../../archived/cli-v2/_cli-v2.md) for relevant historical reasoning. Use the current contracts for accepted behavior.
+ 
+ ## Remaining Opportunities
+ 
+--- a/.agents/memory/working/cli-development/tasks/_tasks.md
++++ b/.agents/memory/working/cli-development/tasks/_tasks.md
+@@ -105,4 +105,5 @@
+ - [Track accepted mapped Library leaf projections, scoped permissions, recovery and complete managed/native evidence](workspace-library-destination-projections.md) - #Memory #Working #CLI #Task #Workspace #Library #Destination #Symlink #Contextual #Complete
+ 
+ - [Regenerate and verify the native CLI's embedded catalogue from the reviewed first-party Extension sources](extension-catalogue-synchronization.md) - #Memory #Working #Contextual #CLI #Task #Extension #Distribution #Testing
++- [Align current Extension lifecycle documentation with its accepted contracts and keep frozen MVP instructions historical](extension-lifecycle-documentation.md) - #Memory #Working #Contextual #CLI #Task #Extension #Documentation
+ <!-- open-forge:generated-index:end -->
+--- /dev/null
++++ b/.agents/memory/working/cli-development/tasks/extension-lifecycle-documentation.md
+@@ -0,0 +1,51 @@
++---
++open-forge:
++  description: Align current Extension lifecycle documentation with its accepted contracts and keep frozen MVP instructions historical
++  tags: [Memory, Working, Contextual, CLI, Task, Extension, Documentation]
++---
++
++# Extension Lifecycle Documentation Alignment
++
++## Task State
++
++Planned for the user's CLI implementer in a separate chat. Implementation has not started. Keep this record in the Task 28 review worktree until the user authorizes integration. Register a task ID in the [project control ledger](../project-control.md) on activation.
++
++Task 28 separates current Extension concepts from historical MVP details. This task records the remaining CLI documentation work. It does not dispatch an implementer or authorize a behavior change, merge, or publication. Select a fresh accepted implementation baseline after the source review is integrated.
++
++## Outcome
++
++Make current Extension setup and lifecycle instructions easy to find and accurate for their declared CLI version. Keep frozen executable examples and evidence explicitly historical, including when a reader follows a direct section link.
++
++The [Extensions Architecture](../../../crystallized/documents/extensions/architecture.md) defines package meaning and composition. The [MVP archive](../../../archived/extensions-mvp-architecture.md) preserves historical details. CLI contracts define exact representation, operations, permissions, lifecycle state, and recovery.
++
++## Starting Sources
++
++- [Public Extension documentation](../../../../../docs/extensions.md)
++- [CLI command overview](../../../../../docs/cli.md)
++- [Extension command contracts](../../../crystallized/documents/cli/contracts/extension/_extension.md)
++- [Consumer permission contracts](../../../crystallized/documents/cli/contracts/shared/workspace-permissions/_workspace-permissions.md)
++- [Replacement CLI Architecture](../../../crystallized/documents/cli/architecture.md)
++- [Frozen CLI MVP Architecture](../../../crystallized/documents/cli/mvp-architecture.md)
++- [Top Architecture](../../../crystallized/documents/architecture.md)
++- [First-party catalogue](../../../../../src/extensions/README.md)
++- [Catalogue synchronization task](extension-catalogue-synchronization.md)
++
++Task 28 inspected public documentation and current non-CLI references for this issue. It did not reverify CLI implementation, command behavior, or CLI contract bodies during this reassessment.
++
++## Work And Evidence
++
++1. Compare the selected baseline's accepted contracts, public documentation, and relevant implementation. Resolve any conflict through the existing decision authority before presenting a changed behavior as current.
++2. Separate current native-CLI instructions from frozen MVP material. The existing public Extension page places broad headings and examples after one historical banner. Make their scope clear to readers arriving through direct links. Preserve useful history in the appropriate source rather than carrying competing current explanations.
++3. Verify command examples, package layout, managed state, permissions, update and removal behavior, and recovery descriptions against their defining contracts. Keep accepted specifications, observed implementation, and release status distinct. Do not infer release readiness from implemented commands.
++4. Reconcile CLI-owned references to the renamed Extensions Architecture and its narrower responsibility. Check relevant anchors as well as paths. Update stale CLI-status claims in the top-level documentation where the verified baseline warrants it.
++5. Keep installation and update instructions in user-facing setup documentation. Agent startup context remains focused on using the installed Framework. Preserve manual use, optional tooling, and source-specific authority.
++6. Coordinate embedded-catalogue caveats with the separate catalogue synchronization task. Remove them only when its evidence establishes that they are obsolete.
++7. Check affected links and direct section entry points. Verify changed runnable examples through appropriate local evidence. Record the inspected source and executable identities, results, and limitations; add tests only for a concrete uncovered behavior.
++
++## Completion
++
++- Current and frozen instructions are distinguishable at every affected entry point.
++- CLI descriptions and examples agree with the accepted contracts and disclose any remaining implementation difference.
++- Package semantics remain in the Extensions Architecture, with lifecycle detail in its defining CLI sources.
++- Links, anchors, and relevant examples have supporting evidence.
++- Any unresolved behavior or release question remains explicit rather than being settled by a documentation edit.

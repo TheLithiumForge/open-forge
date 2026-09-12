@@ -1,0 +1,157 @@
+{
+  "status": "applied in review worktree",
+  "files": [
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/patterns/work-records.md",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "28738e0324a13ea9d9774bb94b011d5257050dbf8ca8dca9118c5cb8a466a829"
+    },
+    {
+      "path": ".agents/patterns/work-records.md",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "28738e0324a13ea9d9774bb94b011d5257050dbf8ca8dca9118c5cb8a466a829"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/workflows/planning.md",
+      "before_sha256": "14d1bd6ed6c88415896396aeae7eddaa91d06bcaaffe0e27f71f4abc526af47f",
+      "after_sha256": "d5423001196862e8caefddd4178818e353be0e89ef17ffc80774ac9f2a1ac0eb"
+    },
+    {
+      "path": ".agents/workflows/planning.md",
+      "before_sha256": "206d3ff00a0d2f93b94b6a2589fa3245eb87f6de6518b28cae2b8c132394cc1f",
+      "after_sha256": "ea12c537316586d10c9d9f63aabd77a36e9a4c8f23328b3ca3124b0eeda01cb1"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/workflows/development.md",
+      "before_sha256": "02fee6449e97b5c24377da0b47bf18f86342f70ce62a29ec9020f34b7deb0de9",
+      "after_sha256": "1e8c5bb266626f332dde63cc1b0bbb84266fec9bf5b8b3f926f3d71f941d484f"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/workflows/architecture.md",
+      "before_sha256": "b23f52f3669cafa418577f83c28e21d356b49991dd445597c3c20f2a9bb674e7",
+      "after_sha256": "fcef8b71b4b1ec46a6320cf21ae56a2915dcf863bf2c558e73034315b41b958e"
+    },
+    {
+      "path": ".agents/workflows/architecture.md",
+      "before_sha256": "77f59778d0e4887005258352d3658308c51fac7d262268d8328527b112a2ae87",
+      "after_sha256": "9f3a75fe58812fc9d96621f3cd215ce213babcc5915c39fc647c8138d5392e0a"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/workflows/vision.md",
+      "before_sha256": "af5e35c9ca0052e275b43386235f97db8e5d94df253e7ded8e566cce71a4a9bc",
+      "after_sha256": "6c7813c89d8b67d73acea09bee5c9d22246b2434bc28ab718e346f9aae834168"
+    },
+    {
+      "path": ".agents/workflows/vision.md",
+      "before_sha256": "af5e35c9ca0052e275b43386235f97db8e5d94df253e7ded8e566cce71a4a9bc",
+      "after_sha256": "6c7813c89d8b67d73acea09bee5c9d22246b2434bc28ab718e346f9aae834168"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/workflows/debugging.md",
+      "before_sha256": "3c4408fabf3552f8bc964d14c3aae6ac169234129cbc3ecb73023c79fa33fbfe",
+      "after_sha256": "5b2a70012c9dfe80d730210f2792af0e275bca826d24ec258942f64a7fc05d0e"
+    },
+    {
+      "path": ".agents/workflows/debugging.md",
+      "before_sha256": "5b67a4743be5e71c42d8e24457e4c8be6524afb1369b842a1af45926ad4caea4",
+      "after_sha256": "d5d43fa42eb4cedbafb086264758ac905640e0f58dc053e87af668dcaa9b9c99"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/workflows/review.md",
+      "before_sha256": "d65b97ad1daa5a96706884126fc44d4ba7d8a5a4d07d5a3631be2ca8f16f924b",
+      "after_sha256": "fe7ddfeb88d1c3c3fbf02825268d27f92069a2db773a9cbf91dfb8e31e42ed13"
+    },
+    {
+      "path": ".agents/workflows/adaptive-development.md",
+      "before_sha256": "7b95b79f0cb2b109730efade812f27b03c9b767a0ac6600bb5d8964319c3abf3",
+      "after_sha256": "4b1668714d549c95569395fc6fbc642e61b1afb9006741579997982768d56c30"
+    },
+    {
+      "path": ".agents/workflows/program-development.md",
+      "before_sha256": "e05e167a6a5987072e5da56a81a85f0ad71401455165155aafe2f21470430c15",
+      "after_sha256": "8d1867d213a39a0d17e0982ed72d5eef464512e9d5e3d570fe7aad646df49775"
+    },
+    {
+      "path": ".agents/workflows/council.md",
+      "before_sha256": "f0ddb232231ae4525f0330f7ce5032b15a3d3da6cca64681fcf9346da0a4fab7",
+      "after_sha256": "87677284dc5b16a5e5b15bbeb88b91dfe182856689f30ea8e1a56d337a38e099"
+    },
+    {
+      "path": ".agents/workflows/review.md",
+      "before_sha256": "6f82da06f38f2d571d5913a6f0cd3ea5ef895fdcd248771e18a8d3f6fc446d08",
+      "after_sha256": "ba304c998cb6d05c2b11b4aa78287de0599a88ab3682752c880a47741ce325d9"
+    },
+    {
+      "path": ".agents/workflows/worktree-program-development.md",
+      "before_sha256": "cbf1c33241f85e40b99db14eecdba05f2af45694faf2d785a24b0bd157400649",
+      "after_sha256": "175368177a4053a65494bbc934e6a2a880f922d657331967654a13f8e4addc5b"
+    },
+    {
+      "path": ".agents/workflows/experimental-development.md",
+      "before_sha256": "e8732beeabec593d7cf010eaa2ebdbeedde9b249b5999d8077e40165358e6162",
+      "after_sha256": "2f02f651a2e8d3410774eff3cee3f17e6def9ef827594de750b36601c54d308e"
+    },
+    {
+      "path": ".agents/workflows/development/task-lifecycle.md",
+      "before_sha256": "bcbd1d0bb8ed3ad7c9f8b4f7ce57910def6d11a4275a2cf19156acb51c14d924",
+      "after_sha256": "fea1968a954f3e908044dcdb82f347413b91059dbc4e08611540c897220927d3"
+    },
+    {
+      "path": ".agents/workflows/development/task-acceptance.md",
+      "before_sha256": "2fea6792f4c559ea6c59c41f9434f795a56717dd5e628f05a355cd8fdbef0cb1",
+      "after_sha256": "8cd5a2f47c68914b282d008e5891162a0f855a8df6c4e1100fde5f132c4d7cc7"
+    },
+    {
+      "path": ".agents/workflows/development/phase-6-review.md",
+      "before_sha256": "1b88ced0c7f29ecd5516c32dfb9c5f1b139c0f96369e93e7abfb9790cda50019",
+      "after_sha256": "7e51e1ad50e3863906d77af9d9d1191aaa74d177fecea717455a71ef9bc528bf"
+    },
+    {
+      "path": ".agents/workflows/development/phase-2-red.md",
+      "before_sha256": "9a2439aa8a1bc12f653a06cce71f6ff8b11dcc79cf858e065bd6dd0e3021e7d1",
+      "after_sha256": "67be68063ff18aee100f81cb79015bce0002411f9f8c3bc713f48e467a5421f9"
+    },
+    {
+      "path": ".agents/workflows/development/_development.md",
+      "before_sha256": "d1cdfd9323d00a10a5f4ce2cd467cf022b819d35184453e84e3d2cf1c6fe2490",
+      "after_sha256": "f0eafc7e4de39e0f20860f30096deb773594ef4c0bb9d5557f5cb5b847f50ec1"
+    },
+    {
+      "path": ".agents/workflows/supervised-luna-preparation-trial.md",
+      "before_sha256": "66fb4f1339bdfdf62f54074c1f07ee63552c041db7ecd74048569540abcdf336",
+      "after_sha256": "6e58f00a34ee7e557507111b371d0bc0cb991392873cb2141e5626191e765003"
+    },
+    {
+      "path": "src/extensions/orchestration/content/.agents/workflows/managed-delivery.md",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e29af80ab18da51aa6b772c932bd8ea831b29c78c450e7e6885c0cd557683030"
+    },
+    {
+      "path": ".agents/workflows/managed-delivery.md",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e29af80ab18da51aa6b772c932bd8ea831b29c78c450e7e6885c0cd557683030"
+    },
+    {
+      "path": "src/extensions/orchestration/extension.json",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "2bf7d2bc2e2cd332bed86bf3a0fc4ffef6e721fbd38745ae7ca838f24b3adcaf"
+    },
+    {
+      "path": "src/extensions/orchestration/README.md",
+      "before_sha256": "0a9633f56cd905968b5929f7f56aeb4cb4e75718328b7098acc6cc2e6cc71824",
+      "after_sha256": "e0db6bb3c1cf1322c9bd95be8017658450861b8bf4bee19e1612526380a1ed2f"
+    },
+    {
+      "path": "src/extensions/development-toolkit/README.md",
+      "before_sha256": "13c46d71362be718c7ea7ece832b5ae0e3c4113f33b4d0e1db627e2b5a1bbcc9",
+      "after_sha256": "86640d976a1ba05d9e1483e3cc1ab98913e8165cced8ee391f0e1d18326a5512"
+    },
+    {
+      "path": "src/extensions/development-toolkit/extension.json",
+      "before_sha256": "fdc960b90e343668f43d0d4b13cb8d6659747d122b4a288de1aadd72cae3efa8",
+      "after_sha256": "ad5924dfaf1754547ce9b972ec3abe8dfacb92a36751f8f9ece8c4c9a6f6013d"
+    }
+  ],
+  "committed": false,
+  "merged": false
+}

@@ -24,7 +24,7 @@ Route map for this repository's important authoritative sources and representati
 - [historical frozen CLI MVP role, command surface, deterministic state, safety model, verification boundary, proven properties, and liabilities.](../memory/crystallized/documents/cli/mvp-architecture.md) - #CurrentTruth #Evergreen #Architecture #CLI #MVP #Legacy #Document
 - [active top-down work graph, Task state, and evidence for the greenfield replacement CLI.](../memory/working/cli-development/_cli-development.md) - #Contextual #CLI #Architecture #Plan #Task #Development
 - [historical CLI-v2 designs, decisions, governance, plans, and implementation records kept as raw input.](../memory/archived/cli-v2/_cli-v2.md) - #Contextual #Historical #CLI #CLI-v2
-- [current Extensions MVP package semantics, composition, runtime boundary, ownership lifecycle, safety properties, and liabilities.](../memory/crystallized/documents/extensions/architecture.md) - #CurrentTruth #Evergreen #Architecture #Extension #MVP #Document
+- [current Extension package meaning, composition, and runtime boundary.](../memory/crystallized/documents/extensions/architecture.md) - #CurrentTruth #Evergreen #Architecture #Extension #Document
 - [current public contract for the non-shipping replacement CLI commands, options, safety behavior, outputs, and limitations.](../../docs/cli.md) - #CurrentTruth #Evergreen #Documentation #CLI #Replacement
 - [current maintainer contracts for reviewed source and repository surfaces.](../memory/crystallized/documents/maintenance/_maintenance.md) - #CurrentTruth #Evergreen #Maintenance #Governance #Document
 - [the installable payload users receive; runtime truth for installed workspaces, including this one.](../../src/open-forge/) - #CurrentTruth #Payload

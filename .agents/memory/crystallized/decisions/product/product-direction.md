@@ -18,7 +18,7 @@ It provides sensible removable defaults without installing a universal methodolo
 
 ## Rationale
 
-- Human-readable repository files keep meaning vendor-agnostic, inspectable, reviewable, and correctable
+- Readable repository files keep meaning vendor-agnostic, inspectable, reviewable, and correctable
 - Goals and consequential choices remain under user control without requiring approval for ordinary execution
 - A small shared foundation limits baseline context, onboarding, and maintenance cost
 - Removable defaults provide discoveries and structure that an empty substrate would withhold

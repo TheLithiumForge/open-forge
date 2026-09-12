@@ -6,7 +6,9 @@ open-forge:
 
 # Analysis
 
-Analysis keeps structured reasoning, investigation, or comparison that is useful but not accepted yet.
+## What does the available evidence support, and what remains uncertain?
+
+Analysis keeps useful structured reasoning, investigation, or comparison that is not accepted yet. It makes the evidence, assumptions, limits, and current conclusion clear.
 
 ## Axioms
 

@@ -35,7 +35,7 @@ Read the [program Task](00-cli-development.md),
 - [x] [C# Structural Streamlining](csharp-structural-streamlining.md) — Task 27 bounded beta complete at phase 4/4, milestone 8/8; integrated at `73ef066a`, exact feature tree. [Changes and remaining work](csharp-beta-closeout.md).
 - [x] [Task 7 ARM64 package expansion](delivery/01-npm-packages.md#arm64-expansion-horizon) — Complete, phase 4/4, milestone 6/6; integrated at `7eeeb19d`
 - [x] [CLI Delivery](delivery/_delivery.md) — Tasks 13 and 22 complete locally, phase 3/3, milestone 6/6; integrated at `3bf03e0e`, with Linux execution and static other-platform review
-- [ ] [Source Framework Wording and Logic Review](source-framework-review.md) — Task 28 is active in the separate user-owned chat; no horizon assigned here; preserve its updates and notes
+- [x] [Framework Release Preparation](source-framework-review.md) — Task 28 accepted for local squash integration; source, Extensions, and public documentation are complete. Follow-up CLI tasks remain separate.
 - [x] [Task 23: Workspace Libraries](workspace-libraries.md) — Complete, phase 5/5, milestone 8/8; Sol return and root placement correction accepted at `25c65bf8`.
 - [x] [Task 24: Extensions Evolution](extensions-evolution.md) — Complete, phase 5/5, milestone 8/8; integrated at `2eedaf87`
 - [x] [Task 25: Workspace Library Destination Projections](workspace-library-destination-projections.md) — Complete, phase 5/5, milestone 8/8; full managed/native acceptance, integrated at `3b4aba9d`
@@ -102,8 +102,11 @@ define execution state.
 - [Implement read-only route discovery, beginning with route list and then route inspect](route-discovery/_route-discovery.md) - #Memory #Working #CLI #Task #Route #Discovery #ReadOnly #Contextual #Complete
 - [Implement retained route mutation commands on the accepted mutation foundation](route-mutation/_route-mutation.md) - #Memory #Working #CLI #Task #Route #Mutation #Contextual
 - [Add the interaction, Framework distribution, lifecycle provenance, and directory-create prerequisites for the next command wave](shared-foundations/_shared-foundations.md) - #Memory #Working #CLI #Task #Foundation #Shell #Framework #Lifecycle #Contextual
-- [Independently review shipped framework wording and logic before assessing local extension candidates](source-framework-review.md) - #Memory #Working #Contextual #Task #Framework #Writing #Review
+- [Prepare Framework, Extension, and public documentation for release and reconcile current non-CLI agent context](source-framework-review.md) - #Memory #Working #Contextual #Task #Framework #Extension #Release #Writing #Review
 - [Audit symbolic constants, generated-region authority, and composable active-test foundations across the replacement CLI](test-architecture-and-constants.md) - #Memory #Working #CLI #Task #Testing #Architecture #Constants #Fixtures #Snapshot #Contextual
 - [Execute the accepted Workspace Libraries contracts through bounded preparation, implementation, evidence, and integration](workspace-libraries.md) - #Memory #Working #CLI #Task #Workspace #Library #Contextual #Active
 - [Track accepted mapped Library leaf projections, scoped permissions, recovery and complete managed/native evidence](workspace-library-destination-projections.md) - #Memory #Working #CLI #Task #Workspace #Library #Destination #Symlink #Contextual #Complete
+- [Align CLI context loading, route inspection, and context measurements with scoped KeepInMind behavior](scoped-continuity-loading.md) - #Memory #Working #Contextual #CLI #Task #Loading #Continuity #Testing
+- [Regenerate and verify the native CLI's embedded catalogue from the reviewed first-party Extension sources](extension-catalogue-synchronization.md) - #Memory #Working #Contextual #CLI #Task #Extension #Distribution #Testing
+- [Verify public CLI documentation against the integrated executable and reconcile remaining CLI-owned references](extension-lifecycle-documentation.md) - #Memory #Working #Contextual #CLI #Task #Extension #Documentation
 <!-- open-forge:generated-index:end -->

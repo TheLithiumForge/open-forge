@@ -20,7 +20,7 @@ Improve one consequential or genuinely uncertain decision through a small set of
 6. Resolve factual disagreements through authoritative evidence. Preserve value and tradeoff disagreements for the decision-maker.
 7. Have the primary owner synthesize the strongest arguments, shared ground, material dissent, and recommendation. Do not vote or average positions.
 8. Run one concise rebuttal round only when one or two unresolved disagreements could materially change the decision and an authorized council-budget unit remains. Otherwise stop.
-9. Preserve reusable rationale only when consequence, surprise, recurrence, or future value justifies it.
+9. Record which argument, counterexample, or evidence changed the recommendation, or state that none did. Count neither agreement nor invocation as evidence of decision improvement. Preserve reusable rationale only when consequence, surprise, recurrence, or future value justifies it.
 
 ## Completion
 

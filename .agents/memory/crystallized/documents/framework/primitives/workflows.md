@@ -61,6 +61,14 @@ Workflows use other primitives through explicit relationships:
 
 This keeps each Workflow a readable recipe instead of a miniature mixed Core installation.
 
+## Reusable And Local Methods
+
+Keep portable recipes focused on the decisions, sequence, evidence, and completion they add. A specialized local profile may add explicit roles, budgets, or protected phases when accepted for that workspace. Those choices do not become requirements for every installation.
+
+A planning recipe may use a Pattern for record shape and a Template for starting content. The Workflow defines how work proceeds; the Pattern defines what the records look like. Keep the method in one source when a Skill or another Workflow uses it.
+
+Evaluate a Workflow by how its method helps achieve its stated goal. Any collaboration it uses should contribute to that result.
+
 ## Runtime And Validation
 
 The installed [Workflows entrypoint](../../../../../workflows/_workflows.md) contains the compact runtime and manual authoring contract. The [Maintenance contract](../../maintenance/payload/agents/workflows.md) owns source alignment and deterministic verification. Validation preserves the authored recipe contract without becoming authoritative for its meaning.

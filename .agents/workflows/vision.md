@@ -17,7 +17,7 @@ Produce a candidate or accepted Vision that clearly states the subject's purpose
 3. Separate user-stated needs, observed signals, inferred consequences, assumptions, and candidate ideas. Keep unaccepted direction visibly #Contextual.
 4. Refine the Vision from the answers and repeat only while uncertainty could significantly change it. Do not require exhaustive specification when reversible implementation choices are enough.
 5. Identify the core value that must exist for the direction to matter. Define the first useful version, explicit non-goals, and later growth without allowing future possibilities to expand the initial boundary.
-6. Test the direction against audience fit, important risks, constraints, and the cheapest credible validation signals.
+6. Test the direction against audience fit, important risks, constraints, and the cheapest credible validation signals. Distinguish observed results from proposed checks. Validation supports the claim; acceptance establishes which direction may be used.
 7. Present the Vision with the detail the request needs. State whether it is a candidate, accepted, revised, deferred, or rejected.
 8. When the direction is accepted, update the current document. Put only useful reusable behavior or reasoning in matching #Core or #Memory routes. Keep useful unaccepted material in Emerging Memory or report where it should go.
 

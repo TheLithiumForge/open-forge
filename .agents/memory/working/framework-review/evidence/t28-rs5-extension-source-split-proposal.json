@@ -1,0 +1,138 @@
+{
+  "finding": "T28-RS5",
+  "status": "prepared, not applied",
+  "files": [
+    {
+      "path": ".agents/maps/sources-of-truth.md",
+      "before_sha256": "ea918bb1353a012bae5b4fb69046f6c4112f748d2b1d08eef4b5312a7d266214",
+      "candidate_sha256": "8839da918c832777d75e73231dd1ba613e2506adc493804163d09f38f0ae5b88"
+    },
+    {
+      "path": ".agents/memory/archived/_archived.md",
+      "before_sha256": "9e7a7123b7fcc71da278841a0c4c93464ac9c5064e3bf52a35951136bd7af4fe",
+      "candidate_sha256": "32e732d7ca865eebcecbba84f5c8551719d7618e903456986c1ed367011aa243"
+    },
+    {
+      "path": ".agents/memory/archived/extensions-mvp-architecture.md",
+      "before_sha256": null,
+      "candidate_sha256": "d06ba9de897046c794eea46e04686835f49eb9d5eec0797254000e0edb69f99f"
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/extensions/_extensions.md",
+      "before_sha256": "022efeb01a364214babd3fd28e0a84f1cb46c4c13738854b1abc536eda9a4494",
+      "candidate_sha256": "441ae15ba57a798e6a8fb03f248810703834223e44183dfbd9ac05c972539a92"
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/extensions/development-toolkit.md",
+      "before_sha256": "4f18e87afc8b852e17a94879055a05c85611234b4a49032e80151c40e4903be2",
+      "candidate_sha256": "8b6c08696ddc9ec7588859a698a7a09fc893b3edd5fad33dd699505e9e657ede"
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/extensions/extension-package-boundary.md",
+      "before_sha256": "0750ae48818310a98fa72ab6648a071905b8ef4f0efd69fe43e468cb0d396e5d",
+      "candidate_sha256": "6eb7fd8a1e194ba63428fed732f4002910ad85933343ffa2f0eda03d00fc0e2c"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/_documents.md",
+      "before_sha256": "725da9d986efd483d44a39dd42958172839d4a6129215b920402813158dcc303",
+      "candidate_sha256": "bda66a8d37c87e0de62a52f767281898e44f72977d6793ed4e0ebd172ffce449"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/architecture.md",
+      "before_sha256": "bb2a89177407a22533f25fbd0ffb83f5af7e1cd7d4cc9a19bcf450f305ab560e",
+      "candidate_sha256": "2382228480bf2649288904b7ab85ec7a6297432987e39c55569e1dd842e76891"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/extensions/_extensions.md",
+      "before_sha256": "a441448ab32b3b0df5b0b9d6a231ca9be010bf0ba0dabb1b8b34a1ddf2a6579b",
+      "candidate_sha256": "b204f107c685ff2b2affab2b37e0baee829baf8aebdc8a8b499ed255e2999cf0"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/extensions/architecture.md",
+      "before_sha256": "5e1c30a1d5b7f71e84d9a914830241c78e8241300a26f4a5791c47020e5bcd86",
+      "candidate_sha256": "b1cf7deb2824c4f4e27cfb9d703d0fc8789bae9315736a5ab2c71f5b57824f87"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/architecture.md",
+      "before_sha256": "a451ee970cffc6fdbf7f8368c5b60f0b02ce2546bd8b5d07d6316ac3a9a91a77",
+      "candidate_sha256": "2b18856aa20c465979af02aa33303bf65813c31f7477b171a2ba0eb81607ad51"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/routing/overwrites.md",
+      "before_sha256": "c20f64c41476767af9b312376e5e586f5608b2028cd6238cdc03f09d34ed3bc9",
+      "candidate_sha256": "e98538c4735416401b89af70d1b5725af8a9e2fa41c6447cd48596923aec43ce"
+    },
+    {
+      "path": ".agents/memory/emerging/ideas/extensions-overhaul.md",
+      "before_sha256": "c1cff83331ecd00e96eae1743767a020aecd3883b653c9ec30822c53a60e789a",
+      "candidate_sha256": "4065d08bbefa88620deebf6438b5ff4bfcf80c3e6f3e2c661f5052ac1aa4be5b"
+    },
+    {
+      "path": ".agents/memory/working/cli-development/tasks/_tasks.md",
+      "before_sha256": "7cfc7ef77583362bb1c652b2eac00e2d793f849d0bc70d52bd783c52ea549dea",
+      "candidate_sha256": "6b201f95bb4fa4db6d67dbba178e363fd0b8eab0d0b6e68ea0f1baa13f86e351"
+    },
+    {
+      "path": ".agents/memory/working/cli-development/tasks/extension-lifecycle-documentation.md",
+      "before_sha256": null,
+      "candidate_sha256": "b385efa5cb1c844b00ec2028735df5b9149d806eb9c1e77b344a93e6cbd3ff47"
+    }
+  ],
+  "reason": "The current Extension architecture mixes general package meaning with frozen MVP lifecycle and newer catalogue facts. Each source must answer its own current or historical question.",
+  "scope": "Keep the existing current architecture path; extract useful MVP detail into one contextual archive record; align current references and the Toolkit consolidation rationale; prepare one later CLI-documentation task and its navigation.",
+  "boundaries": "No CLI implementation, contract, public CLI guide, package, loader, runtime, or agent-source changes. No diagrams, commits, merges, task dispatch, or publication.",
+  "candidate_root": "t28-rs5-candidate",
+  "new_files": [
+    ".agents/memory/archived/extensions-mvp-architecture.md",
+    ".agents/memory/working/cli-development/tasks/extension-lifecycle-documentation.md"
+  ],
+  "historical_extraction": "Retain package layout, manifest, resolver, receipt, ownership, update/removal, safety, recorded evidence, and liabilities. Exclude recent native-layout and current-catalogue additions. Historical evidence is not presented as rerun verification.",
+  "reference_alignment": "Current non-CLI inbound references retain the architecture path. No inspected current non-CLI inbound reference used a fragment anchor. Historical and unrelated Working references remain unchanged.",
+  "review_notes": "The primary clarified the routed-content boundary so native formats and support files keep their consumers' meaning. This preserves content-agnostic packaging and does not introduce a new runtime role.",
+  "checks": {
+    "source_and_candidate_hashes": "all 15 match; proposal remains unapplied",
+    "patch_application": "git apply --check passed",
+    "local_link_destinations_checked": 275,
+    "non_cli_fragments_checked": 8,
+    "new_or_changed_link_failures": [],
+    "retained_link_failures": [
+      {
+        "source": ".agents/maps/sources-of-truth.md",
+        "target": "../../dist/",
+        "issue": "missing destination"
+      }
+    ],
+    "cli_fragment_checks_deferred": [
+      {
+        "source": ".agents/memory/crystallized/documents/extensions/architecture.md",
+        "target": "../cli/contracts/extension/_extension.md#package-layout"
+      },
+      {
+        "source": ".agents/memory/crystallized/documents/framework/routing/overwrites.md",
+        "target": "../../cli/mvp-architecture.md#metadata-and-overwrite-integrity"
+      }
+    ],
+    "generated_navigation": "all five edited relationships match candidate descriptions and tags",
+    "archival_metadata": "contextual historical role; no current, evergreen, eager-loading, or active behavioral metadata",
+    "limits": "CLI file bodies, behavior, commands, builds, and tests were not inspected or executed for these checks. CLI link destinations were checked for existence only.",
+    "retained_reference_note": "The unchanged Sources of Truth link to dist/ identifies generated build output, which is absent in this unbuilt worktree. No build was run to create it.",
+    "semantic_review": "Astra/max reviewed the coherent 15-file pack and rechecked the two corrected scope issues; no remaining material concern. The primary inspected the final substantive prose and affected neighborhood.",
+    "final_targeted_check": "Final git apply --check passed. The two scope corrections changed no link destinations, headings, or navigation metadata, so the preceding static checks remain applicable."
+  },
+  "review_findings": [
+    {
+      "id": "T28-RS5-R1",
+      "status": "corrected in proposal and rechecked",
+      "source": ".agents/memory/crystallized/documents/framework/architecture.md",
+      "finding": "The companion Extensions Boundary still treated all package files as Framework routes.",
+      "correction": "Qualify Framework role inheritance as routed content and preserve native/support-file consumer semantics."
+    },
+    {
+      "id": "T28-RS5-R2",
+      "status": "corrected in proposal and rechecked",
+      "source": ".agents/memory/crystallized/documents/extensions/architecture.md",
+      "finding": "The consumer-permission source row described all operation authority and preservation choices.",
+      "correction": "Narrow the question to permission grants for files consumed by other tools."
+    }
+  ]
+}

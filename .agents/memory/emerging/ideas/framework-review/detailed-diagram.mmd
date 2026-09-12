@@ -1,0 +1,95 @@
+flowchart TD
+    WORK["Current work and experience"]
+    AUTH["User direction and other<br/>applicable acceptance sources"]
+
+    subgraph FRAME["Open Forge — default categories"]
+        subgraph MEM["Memory"]
+            subgraph WORKING["Working — temporary continuation context"]
+                CP["Checkpoints<br/>Current state and next steps"]
+                HF["Handoffs<br/>Snapshots for transfer or resumption"]
+            end
+            subgraph EMERGING["Emerging — useful unsettled material"]
+                OBS["Observations<br/>Occurrences and evidence"]
+                ANA["Analysis<br/>Reasoning and investigation"]
+                IDEA["Ideas<br/>Possibilities and open questions"]
+            end
+            subgraph CRYSTALLIZED["Crystallized — accepted current knowledge"]
+                DEC["Decisions<br/>What was accepted and why"]
+                DOC["Documents<br/>Current meaning of a subject"]
+            end
+            subgraph ARCHIVED["Archived — useful history"]
+                HIST["Retained historical material<br/>Former behavioral role has ended"]
+            end
+        end
+
+        subgraph CONTENT["Core content categories"]
+            subgraph DIRECTIVES["Directives"]
+                DI["Required behavior"]
+            end
+            subgraph GUIDANCE["Guidance"]
+                GU["Recommended approaches"]
+            end
+            subgraph PATTERNS["Patterns"]
+                PA["Reusable inspectable shapes"]
+            end
+            subgraph WORKFLOWS["Workflows"]
+                WF["Repeatable methods<br/>Goal, Steps, Completion"]
+            end
+            subgraph SKILLS["Skills"]
+                SK["Specialized capabilities<br/>Native SKILL.md packages"]
+            end
+            subgraph TEMPLATES["Templates"]
+                TE["Copy-ready starting content<br/>Results maintained independently"]
+            end
+            subgraph MAPS["Maps"]
+                MP["Navigation to useful sources<br/>Destinations define their own detail"]
+            end
+        end
+    end
+
+    VALIDATE(["Validate claims against evidence<br/>Preserve uncertainty"])
+    ACCEPT(["Establish acceptance<br/>within its scope"])
+    INTEGRATE(["Extract relevant outcomes<br/>into their defining categories"])
+    APPLY["Use selected sources<br/>within their roles and scopes"]
+    RETIRE(["Material leaving current use<br/>Extract what remains current"])
+    DEST["Relevant local or external source"]
+
+    WORK -->|Continuation when needed| CP
+    CP -->|A transfer needs a snapshot| HF
+    WORK -->|Useful candidate learning| OBS & ANA & IDEA
+    CP & HF -->|Potential durable outcomes| VALIDATE
+    OBS & ANA & IDEA --> VALIDATE
+    VALIDATE --> ACCEPT
+    AUTH --> ACCEPT
+    ACCEPT -->|Useful accepted choice and rationale| DEC
+    ACCEPT -->|Accepted durable knowledge| DOC
+    DEC -.->|Supports| DOC
+    DEC & DOC -->|Relevant category-specific outcomes| INTEGRATE
+    INTEGRATE --> DI & GU & PA & WF & SK & TE & MP
+    DI & GU & PA & WF & SK & TE & MP --> APPLY
+    DOC -->|Current knowledge| APPLY
+    CP & HF -->|Continuation context| APPLY
+    WF -.->|May invoke| SK
+    MP -.->|Points to| DEST
+    DEST -.->|Its own detail| APPLY
+    APPLY -->|New evidence and experience| WORK
+    RETIRE -->|Still-current knowledge| DOC
+    RETIRE -->|Still-current category content| INTEGRATE
+    RETIRE -->|Useful remainder| HIST
+    HIST -.->|Historical context only| APPLY
+    HIST -->|Reconsider for current use| VALIDATE
+
+    style FRAME fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style MEM fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style WORKING fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style EMERGING fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style CRYSTALLIZED fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style ARCHIVED fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style CONTENT fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style DIRECTIVES fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style GUIDANCE fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style PATTERNS fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style WORKFLOWS fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style SKILLS fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style TEMPLATES fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style MAPS fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5

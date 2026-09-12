@@ -1,399 +1,154 @@
 # Open Forge
 
-Adaptive Context Engineering (ACE) is the deliberate design of a workspace's information, relationships, authority, and retrieval paths so the right context is available at the right time and the environment evolves through use.
+Open Forge is a customizable, AI-agnostic framework built around your projects, your tools, and the way you like to work.
 
-Open Forge is a user-owned, human-readable, file-native operating layer for Adaptive Context Engineering. It makes workspaces understandable, routes the right context and authority, enables confident autonomy, preserves continuity, and deliberately evolves how work gets done. It does this without imposing a universal methodology or requiring a proprietary runtime.
+Inspired by **spec-driven development** and **progressive disclosure**, we built Open Forge around an idea we call **Adaptive Context Engineering (ACE)**.
 
-> Markdown makes Open Forge complete. The CLI makes it exceptional.
+Each task starts with a clear sense of what you want to achieve. Relevant details come into view as the work unfolds. What you learn along the way can then become part of the framework, ready to help with the next task.
 
-## Why Open Forge
+A useful correction, a workflow that saves you time, or a decision you don't want to explain again can become part of your framework. As it grows, scopes keep the relevant pieces within reach without bringing the whole collection into every task.
 
-Capable AI agents can reason well and still produce inconsistent work when important context is missing, stale, duplicated, too broad, or expensive to retrieve. Every new session may need to rediscover the same architecture, preferences, constraints, and unfinished work. The person directing the project then spends attention repeating settled direction and reviewing mistakes that should never have happened.
-
-Many agent frameworks answer this with a large predefined methodology: more roles, prompts, documents, workflows, and required ceremonies. That can replace missing context with permanent process overhead.
-
-Open Forge takes a smaller and more adaptable approach:
-
-- Keep important meaning in human-readable files you control
-- Give each detailed concept one authoritative source
-- Connect related material with ordinary Markdown links, `descriptions`, anchors, and tags
-- Load context by relevance instead of loading the whole workspace
-- Preserve active work, candidate learning, accepted knowledge, and history without mixing their authority
-- Let real decisions and recurring needs shape the local way of working
-- Use deterministic tools to make correct navigation and maintenance cheaper
+The foundation is around 8k tokens of Markdown. From there, make it yours. Keep your favorite tools, add your own ideas, and change the parts that don't fit. We've included a CLI to make maintenance easier, but the files work on their own.
 
 You begin with a useful foundation. What grows from it is yours.
 
-## Start With A Conversation
+## Get Started
 
-Users do not need to learn Open Forge roles before benefiting from them. Describe the goal naturally, with as much or as little technical detail as you have.
+The Framework is complete in [src/open-forge](src/open-forge/). For manual setup, copy its `.agents/` directory into your workspace and add the supplied `AGENTS.md` handoff to your existing agent instructions. Include the `CLAUDE.md` bridge when your harness uses it. Preserve existing files and review the combined result.
 
-The agent builds the best current model from the request and accepted workspace context. Unless deep analysis is requested, it begins conversationally with the current understanding, one recommendation, and at most one material decision frontier. Deeper rationale, alternatives, architecture, and plans remain available when wanted or needed. Technical users can provide detailed constraints without being forced through discovery again. Less technical users can decide through understandable outcomes and tradeoffs without being asked to design the implementation.
-
-When direction becomes clear, useful results can become current documents, Decisions, Patterns, Guidance, Directives, Observations, or another appropriate source. Those files are outcomes of the conversation, not forms the user must learn to complete.
-
-## Quick Start
-
-The native CLI implements all 28 commands but is not released. These examples use a locally built CLI exposed as the global `open-forge` command. Follow [the development guide](docs/development.md#link-the-native-cli-locally) to build and link it locally, or [copy the Framework files](#working-without-the-cli).
-
-Start from a Git repository and install Open Forge into the current directory:
+For CLI setup, follow the [local setup guide](docs/development.md#link-the-native-cli-locally). Then run these commands from the project you want to equip:
 
 ```sh
-git init
+open-forge install --dry-run
 open-forge install
 ```
 
-Review the installed files before trusting them:
+Review the files with `git diff`, then commit the installation. Installation and updates are choices you make when maintaining the workspace; agents do not need to repeat them at startup.
 
-```sh
-git status
-git diff
-```
+Now describe the work you want done. Your agent starts from `AGENTS.md`, reads the loader, follows relevant routes, and works within their rules. Start with the request and add detail as the work calls for it.
 
-Commit the foundation as its own reviewable change:
+## Grow Your Own Framework
 
-```sh
-git add AGENTS.md CLAUDE.md .agents
-git commit -m "Install Open Forge"
-```
+Your project has its own tools, constraints, and habits. Open Forge gives them a place to live and a way to evolve:
 
-That is enough to use Open Forge. `AGENTS.md` directs compatible agents to the workspace loader, and the loader exposes the available context `routes`.
+- A recurring correction can become a Directive or useful Guidance.
+- A structure that makes mistakes easier to spot can become a Pattern or Template.
+- A method that repeatedly helps can become a Workflow.
+- A specialized capability can become a Skill.
+- A useful finding or accepted decision can become Memory that supports later work.
 
-When the CLI is available, an agent can obtain the complete effective startup context with one command:
+Add, adapt, replace, or remove the defaults as your needs change. Open Forge is model and harness agnostic, so you can work with a pool of agents and tools, connect external sources, or build your own capabilities. Each tool keeps its own interface; the Framework gives their shared context a place to live. Development is one use for it, alongside research, design, operations, or whatever your project calls for.
 
-```sh
-open-forge context
-```
+**Scoping is what makes this growth practical.** Put frontend conventions in a frontend scope and database rules in a database scope. A task selects the branches it needs; a task spanning both deliberately follows both. Each scope contains only what helps there.
 
-The same contract remains readable and usable without the CLI.
+The Framework has no fixed limit on the number or depth of routed scopes. Active context follows the selected paths and their relationships, so adding knowledge need not mean reading the whole workspace.
 
-## What You Receive
+The complete base Framework is **about 8.3k tokens**, with **about 6.8k loaded at startup** before project-specific context or Extensions. These are measured source counts, not a context-window requirement for every model. See the [counting method](docs/development.md#measure-context-size).
 
-The base installation provides two cooperating areas:
+## What Goes Where
 
-| Area   | Responsibility                                                               |
-| ------ | ---------------------------------------------------------------------------- |
-| Core   | Entry, routing, authority, loading, and reusable agent-facing content roles  |
-| Memory | Self-growing state for continuity, candidates, accepted records, and history |
+The Framework combines **Core**, which defines routing, loading, and reusable content roles, with **Memory**, which preserves useful context as work evolves.
 
-Core and Memory ship together as the standard Framework. Extensions remain optional packages that add whole files through those same `routes`.
+Core categories each answer a different question:
 
-The installed shape is intentionally small:
+| Category                                                       | Question it answers                                                         |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| [Directives](src/open-forge/.agents/directives/_directives.md) | What behavior is required in this scope?                                    |
+| [Guidance](src/open-forge/.agents/guidance/_guidance.md)       | What approach is recommended, and when does it fit?                         |
+| [Patterns](src/open-forge/.agents/patterns/_patterns.md)       | What reusable shape makes related work easy to create and inspect?          |
+| [Skills](src/open-forge/.agents/skills/_skills.md)             | Which specialized capability would help with this work?                     |
+| [Templates](src/open-forge/.agents/templates/_templates.md)    | What starting content can be copied, adapted, and maintained independently? |
+| [Workflows](src/open-forge/.agents/workflows/_workflows.md)    | What repeatable method can help reach this goal?                            |
+| [Maps](src/open-forge/.agents/maps/_maps.md)                   | Where is a useful local or external source, and when should it be used?     |
 
-```text
-AGENTS.md
-CLAUDE.md
-.agents/
-  loader.md
-  directives/
-  guidance/
-  patterns/
-  skills/
-  templates/
-  workflows/
-  maps/
-  memory/
-    working/
-    emerging/
-    crystallized/
-    archived/
-```
+A Pattern gives work a recognizable shape. A Workflow gives it a repeatable method. A Skill provides a specialized capability through its native `SKILL.md` package. Choose the combination that suits the work.
 
-These are useful defaults, not an untouchable taxonomy. Every file can be inspected, edited, scoped, replaced, or removed. Normal installation and update behavior must not silently restore defaults you deliberately removed.
+[Memory](src/open-forge/.agents/memory/_memory.md) asks: **What is worth remembering for current or future work?** Its default states separate temporary context, unsettled findings, accepted knowledge, and history:
 
-## How It Works
+| State                                                                       | Question it answers                                                         |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| [Working](src/open-forge/.agents/memory/working/_working.md)                | What temporary context is needed to continue or resume this work?           |
+| [Emerging](src/open-forge/.agents/memory/emerging/_emerging.md)             | What is useful but still unsettled?                                         |
+| [Crystallized](src/open-forge/.agents/memory/crystallized/_crystallized.md) | What accepted knowledge should remain current within this scope?            |
+| [Archived](src/open-forge/.agents/memory/archived/_archived.md)             | What useful history should remain available without governing current work? |
 
-### Enter Once, Route From There
+Records can move as their usefulness changes, without passing through every state. Memory evolves as people and agents save useful findings, review them, bring related knowledge together, and retire what is no longer needed.
 
-`AGENTS.md` is the canonical workspace entry. Provider-specific files such as `CLAUDE.md` remain small bridges to canonical Framework entries instead of becoming competing policy documents. The Claude Code bridge imports both `AGENTS.md` and the loader so required baseline context enters the session without another agent-decided read step.
+Each source defines only its part of the truth. A Decision records what was chosen and why; a current document explains its subject. Required behavior belongs in Directives or inherited Axioms. Recording an instruction in Memory does not turn that record into a Directive. Integrate accepted outcomes into the sources that define them, preserving useful reasoning in Memory.
 
-The loader exposes direct `routes`. Each `route` provides:
+## Small Metadata, Useful Context
 
-- A natural `description` that helps an agent select or skip it
-- A relative Markdown link to the next file or `route`
-- Tags for compact loading, type, scope, and search signals
-
-Selection proceeds from general context to relevant detail. Unselected sibling `routes` stay outside active context.
-
-Agents scan visible descriptions, tags, route paths, ancestor meaning, and links; recursively select the scopes that materially apply; compose their selected chains; and reevaluate after a material task change. They do not load route bodies merely to discover more selection surfaces.
-
-### Describe Routed Files In Frontmatter
-
-Entrypoints and indexed Markdown files use a small `open-forge` frontmatter block:
+Routed Markdown files use frontmatter to help readers choose and maintain them. For example, a document about a project's architecture might begin with:
 
 ```yaml
 ---
 open-forge:
-  description: Explain when a reader should select or skip this file
-  responsibility: State what this file defines when that boundary is useful
-  tags: [Memory, Document]
+  description: Understand the service boundaries and how requests move through the system
+  responsibility: Define the current service structure and dependency boundaries
+  tags: [Memory, Document, Architecture]
 ---
 ```
 
-- `description` is required for entrypoints and indexed Markdown files. It is the short selection text shown in generated `Entries`. A file loaded directly and never indexed may omit Open Forge frontmatter unless another contract requires it.
-- `responsibility` is optional. Use it when one sentence adds a useful boundary beyond the description and route. Omit it when it would only repeat the file's meaning.
-- `tags` classify loading, role, state, scope, or useful topics. Reserved tags keep the meanings defined by the Loader.
+A **description** helps a reader decide whether to open the file. An optional **responsibility** helps an editor decide what belongs in it. Tags support selection and search; a few also have defined behavior:
 
-Frontmatter helps agents and deterministic tools navigate the file. It does not create authority by itself. See the [canonical Markdown syntax](.agents/memory/crystallized/documents/framework/markdown/syntax.md#frontmatter) for the complete current format.
+| Tag                           | Meaning                                                                               |
+| ----------------------------- | ------------------------------------------------------------------------------------- |
+| `LoadNow`                     | Read the entry when its parent route loads                                            |
+| `KeepInMind`                  | Read exposed continuity context, then refresh it while its scope stays active         |
+| `Contextual`                  | Treat useful context as unaccepted unless applicable authority establishes acceptance |
+| `CurrentTruth`                | Identify accepted current state within its stated scope                               |
+| `Evergreen`                   | Keep the content aligned with the current state it represents                         |
+| `Core`, `Memory`, `Extension` | Identify the part of the Framework or package the content relates to                  |
 
-### Use Source IDs Or Exact Paths
+Tags do not grant authority. Loading tags work through loaded parents and preserve scope. Other tags can describe your own subjects without introducing new loading behavior.
 
-The native CLI gives every supported file under `.agents` an automatic source ID derived from its workspace-relative path. Commands accept either that ID or the exact `.agents` path. IDs are convenient; exact paths disambiguate collisions without guessing. See the [CLI documentation](docs/cli.md#source-references) for the full behavior.
+Each routed folder has an **entrypoint**, normally `_{folder-name}.md`, with short links under `Entries`. Those links expose the next useful choices. The [loader](src/open-forge/.agents/loader.md) contains the complete routing and tag rules; the [Markdown reference](.agents/memory/crystallized/documents/framework/markdown/syntax.md#frontmatter) explains the format.
 
-```text
-ID:   memory/crystallized/documents/architecture
-Path: .agents/memory/crystallized/documents/architecture.md
-```
+## A CLI Worth Keeping Nearby
 
-The standard root `entrypoints` and their compact maps pay a small baseline cost so an agent knows which Framework roles exist. Keep that cost flat as the workspace grows:
+The files make Open Forge complete. The CLI makes repeated navigation and maintenance much easier.
 
-- Put specialized material in the narrowest useful scope
-- Use workspace-wide placement only for material that genuinely applies across the workspace
-- Let each scoped `entrypoint` choose its own loading: on demand by default, #LoadNow when omission costs more than loading, or #KeepInMind when continuity must be revisited
-- Use #KeepInMind on an ordinary record sparingly because those records are discovered across the workspace even when their ancestor branch is inactive
+| Command                                      | Use it to                                       |
+| -------------------------------------------- | ----------------------------------------------- |
+| `open-forge context`                         | Read startup context                            |
+| `open-forge route list`                      | Explore available routes                        |
+| `open-forge find --tag=Decision`             | Find decision records                           |
+| `open-forge route init memory/project-alpha` | Create a routed scope                           |
+| `open-forge index`                           | Rebuild generated navigation after edits        |
+| `open-forge doctor`                          | Check workspace structure without changing it   |
+| `open-forge status`                          | See the current workspace and maintenance state |
+| `open-forge update --dry-run`                | Preview a Framework update                      |
 
-Scopes do not inherit #LoadNow merely because the standard roots use it. A deeply specialized scope can remain available without entering ordinary active context.
+Use `open-forge --help` or the [CLI guide](docs/cli.md) for more. Commands that support `--dry-run` let you inspect their planned changes before applying them.
 
-### Keep Authority Explicit
+### Working Without The CLI
 
-Loading makes information visible. It does not make that information authoritative by itself.
+Follow Markdown links, edit the files, and keep affected `Entries` aligned with their destinations. For a small local adjustment, an adjacent `{name}.overwrite.md` can supplement or replace the corresponding content of its base. It shares that file's role, scope, and loading behavior.
 
-Current documents explain accepted concepts as they work now. Decisions preserve why consequential choices were accepted. Directives and `Axioms` state binding behavior. External systems remain authoritative when the workspace explicitly points to them.
-
-The relationships stay visible and correctable because they are ordinary files and links.
-
-### Preserve Continuity Without Premature Truth
-
-Memory is self-growing Markdown state. It grows through useful records and routed scopes without forcing the whole store into active context. Recording remains deliberate rather than automatic.
-
-Memory distinguishes four semantic states:
-
-| State        | Purpose                                                              |
-| ------------ | -------------------------------------------------------------------- |
-| Working      | Temporary context needed to continue or resume active work           |
-| Emerging     | Useful analysis, ideas, and observations that are not accepted truth |
-| Crystallized | Accepted durable knowledge within its declared scope                 |
-| Archived     | Useful history that no longer governs current work                   |
-
-These states are not a mandatory pipeline. Information moves when its meaning, usefulness, and accepted authority change.
-
-### Reuse Native Agent Capability
-
-Open Forge assumes contemporary agents can reason, inspect files, navigate links, follow scoped authority, and use tools. It does not restate ordinary intelligence through exhaustive prompts.
-
-Additional procedure earns its place when it makes work more reliable, safer, cheaper to reason about, available at the right time, or specific to the workspace.
-
-### Make Deterministic Work Cheap
-
-The CLI is a deterministic reasoning accelerator. It can:
-
-- Load routed context in the correct order
-- Find files by `route` or tag
-- Show inherited `Axioms`
-- Rebuild generated `entries` for `routes`
-- Validate Framework structure
-- Scaffold categories
-- Install and remove optional Extensions through reviewable plans
-
-Deterministic tools reduce the cost of obtaining and applying context. They do not privately own its meaning.
-
-## Grow Your Own Framework
-
-Open Forge is designed to evolve through use.
-
-A recurring correction may become Guidance or a Directive. A stable shape may become a Pattern. A reusable capability may become a Skill. A repeated multi-step goal may become a Workflow. Important local or external destinations can be exposed through Map `routes`. Useful starting content can become a Template.
-
-The shared Framework stays small while local scopes can become highly specialized.
-
-Open Forge can organize:
-
-- One project
-- A monorepo
-- Several related repositories
-- A shared multi-project source of truth
-- Product, engineering, design, research, planning, or operational knowledge
-- Personal, team, or organization-specific ways of working
-
-Each `route` exposed directly by the loader is a `root route` and is not scopable. Every `route` below a `root route` is scopable at any depth: routed `slugs` narrow everything that follows them. Relationships across `root routes` stay explicit through ordinary links.
-
-The precise scaling claim is:
-
-> Open Forge has no fixed structural expansion ceiling. Active context grows primarily with selected `route` depth, scopes, and relationships, not with the total size of the workspace.
-
-Two projects may coexist in the same routed environment without ordinary work in one loading the other. Work integrating both projects can deliberately select both.
-
-In less restrained language: grow your own framework and scale it toward infinity. The `route` still determines what enters the context window.
-
-## Examples
-
-### A Feature In One Repository
-
-An agent working on authentication may receive:
-
-- The accepted product direction
-- The relevant architecture section
-- Security directives for that scope
-- The established API and test Patterns
-- Current task state and prior handoff
-
-Unrelated deployment history and another feature's analysis remain unselected.
-
-### Several Interacting Projects
-
-A shared Open Forge environment may route separately to a backend, web application, mobile application, and infrastructure repository.
-
-Ordinary mobile work selects only the mobile scope and shared contracts. An integration task selects the mobile and backend scopes together. Keeping the other projects available adds negligible active-context cost until their `routes` are selected.
-
-### Learning From Repeated Work
-
-An agent notices a surprising failure with plausible future value and records an Emerging observation with its evidence and scope. A later agent finds the same observation and adds another occurrence.
-
-Repeated evidence can justify a proposed Pattern, Guidance entry, Directive, current-document update, or another suitable destination. Candidate learning remains visibly candidate until accepted.
-
-### Continuing Across Agents
-
-Working Checkpoints keep the goal, current state, current step, unresolved questions, evidence, next steps, and durable-source links available across a context break or handoff. Create and seal a concise Handoff only when an actual transfer or explicitly planned resumption needs a stable boundary snapshot while the Checkpoint may continue to change.
-
-The new agent resumes from explicit workspace state instead of reconstructing the task from private chat history.
-
-## Core Content Roles
-
-Open Forge uses inherited `Axioms` for mandatory Framework behavior and seven routed primitives for reusable content. The roles stay distinct because they have different authority and lifecycle semantics:
-
-| Role      | What it contributes                                                 |
-| --------- | ------------------------------------------------------------------- |
-| `Axiom`   | Mandatory Framework behavior inherited through a loaded `route`     |
-| Directive | Independently routed binding behavior                               |
-| Guidance  | Adaptable judgment for recurring situations and tradeoffs           |
-| Pattern   | A reusable shape that continues to guide related results            |
-| Skill     | A specialized capability expressed through `SKILL.md`               |
-| Template  | Copy-ready starting content whose ownership transfers to the result |
-| Workflow  | A repeatable Markdown recipe for reaching a defined goal            |
-| Map route | Concise navigation to important local or external sources           |
-
-A workspace can use only the roles that provide value. Optional Extensions can add specialized content without making it part of the universal foundation.
+The Framework explains itself through its own files. This README and the documentation help you get acquainted with it; its own files contain the rules needed to understand and use it.
 
 ## Extensions
 
-Extensions install optional whole files into the ordinary route tree. Installed files remain complete runtime meaning; package manifests and ownership receipts are lifecycle metadata rather than hidden agent context.
+Extensions package optional content you can use and customize. The [first-party catalogue](src/extensions/README.md) includes:
 
-Explore the bundled catalogue:
+- **Project Documents:** establish your project's direction and architecture with workflows and document starters.
+- **Memory Starters:** keep useful analysis, decisions, ideas, observations, and handoffs in reusable starting formats.
+- **Planning:** organize work with a Planning Workflow, a Work Records Pattern, and Task, Plan, Backlog, and Checkpoint starters. Use only the records your work needs.
+- **Development:** follow adaptable workflows for development, debugging, and review.
+- **Orchestration:** coordinate dependent tasks and isolated work through Managed Delivery. It brings in Planning and Development.
 
-```sh
-open-forge extension list --available
-```
+Choose the pieces that fit, or install **Development Toolkit** to get the first four together. Orchestration remains a separate choice.
 
-Inspect the toolkit:
+Routed files keep their destination's meaning. Native capabilities and support files follow the tools that use them. Packaging does not add authority.
 
-```sh
-open-forge extension inspect development-toolkit
-```
+See the [Extension guide](docs/extensions.md) to install a package, copy its files manually, or create your own.
 
-Preview an installation:
+## Go Deeper
 
-```sh
-open-forge extension install development-toolkit --dry-run
-```
+- [CLI guide](docs/cli.md): everyday commands and maintenance.
+- [Extension guide](docs/extensions.md): packages, dependencies, and customization.
+- [Development guide](docs/development.md): local setup, contributions, and verification.
 
-Install it:
+This repository uses Open Forge to maintain Open Forge. Its current documents are also a working example: [Vision](.agents/memory/crystallized/documents/vision.md), [Principles](.agents/memory/crystallized/documents/principles.md), [Framework Architecture](.agents/memory/crystallized/documents/framework/architecture.md), [Memory](.agents/memory/crystallized/documents/framework/memory/model.md), and our [writing guides](.agents/memory/crystallized/documents/maintenance/writing.md#choose-the-voice).
 
-```sh
-open-forge extension install development-toolkit
-```
-
-The deliberately small current catalogue contains one `development-toolkit` package. It adds six lean Workflows, one native Experience Design Skill, and nine copy-ready Templates without changing the Framework's runtime model.
-
-See [Extension documentation](docs/extensions.md) for package shapes, dependencies, receipts, update and removal behavior, safety boundaries, and sharing.
-
-## CLI
-
-Use `open-forge --help` to discover the current commands. The [CLI guide](docs/cli.md) explains their arguments, results, and safety boundaries.
-
-```sh
-open-forge context
-open-forge find --tag Architecture
-open-forge route inspect .agents/memory/crystallized/documents/_documents.md
-open-forge doctor
-```
-
-The retired TypeScript MVP remains available in Git history. Its commands and state formats do not define the native CLI.
-
-## Working Without The CLI
-
-Open Forge remains complete as human-readable Markdown.
-
-A manual installation can copy the contents of `src/open-forge/` into a workspace. The `routes` can be followed through ordinary Markdown links, and generated `Entries` can be maintained manually when needed.
-
-The CLI is the safer and cheaper path for repeated mechanical work because it validates routes, limits generated edits, previews lifecycle changes, and preserves review boundaries.
-
-## Customization
-
-The installed Framework belongs to the workspace.
-
-You can:
-
-- Add ordinary files beneath an existing route
-- Create routed scopes for projects, products, disciplines, or repositories
-- Nest any number of scopes anywhere below a `root route`
-- Add `root routes` through the loader
-- Remove or replace installed `root routes` that do not fit the workspace
-- Add local Templates, Patterns, Guidance, Directives, Skills, and Workflows
-- Use `{name}.overwrite.md` for a small local adjustment to a mostly suitable base
-- Edit or replace a base file when the combined base and overwrite would become confusing
-
-Scoping uses ordinary Markdown `routes`. Every scope `slug` has an `entrypoint` that states its local subject. Place it immediately before the first `route` segment it should narrow.
-
-A folder named `skills` beneath Workflows does not recreate the Skills `root route` merely because the `slug` is familiar. Workflows use Skills and other Core primitives through explicit links.
-
-`open-forge route init <route-target>` scaffolds missing entrypoints in one route chain. Complete the draft wording before relying on it.
-
-After changing routed files, rebuild and validate navigation:
-
-```sh
-open-forge index
-open-forge doctor
-```
-
-Prefer one detailed authoritative source plus visible links over maintaining several competing copies.
-
-## Design Boundaries
-
-Open Forge is not:
-
-- A universal development, product, design, or organizational methodology
-- A large catalogue of mandatory prompts, roles, workflows, or ceremonies
-- A substitute for the judgment and responsibility of the person directing the work
-- A hidden knowledge database or agent runtime
-- A provider-specific orchestrator
-- An automatic recorder of every conversation
-- A mechanical guarantee that a nondeterministic agent will behave correctly
-
-Explicit context and deterministic validation improve the probability of correct behavior. Consequential work still deserves proportionate review.
-
-## Project Status
-
-Open Forge is under active development and dogfooding.
-
-The file-native Framework and its ACE direction are the accepted foundation. The native CLI implements all 28 commands, including Extension and Workspace Library operations, but is not released. The six-target package graph is implemented. Native execution and package invocation are proven locally on Linux x64; the other five matching-host receipts and final delivery acceptance remain incomplete. Interfaces and installed defaults may still evolve before a stable release.
-
-Review installation and update diffs. Keep Git as the recovery and inspection boundary.
-
-## Documentation
-
-- [CLI](docs/cli.md)
-- [Extensions](docs/extensions.md)
-- [Developing Open Forge](docs/development.md)
-- [Vision](.agents/memory/crystallized/documents/vision.md)
-- [Principles](.agents/memory/crystallized/documents/principles.md)
-- [Architecture](.agents/memory/crystallized/documents/architecture.md)
-- [Framework Architecture](.agents/memory/crystallized/documents/framework/architecture.md)
-
-## Who Uses Open Forge
-
-Open Forge dogfoods itself: its own vision, architecture, decisions, migration state, maintenance contracts, Templates, and work continuity are managed through Open Forge.
-
-Additional projects or organizations will be listed only when their usage is confirmed and they want to be named.
-
-## License
-
-[MIT](LICENSE)
+[MIT license](LICENSE).

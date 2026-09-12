@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: How Open Forge maintainers write clear, consistent, and easy-to-read prose
-  responsibility: Define the voice, structure, terminology, and review standard for prose written in this repository
+  responsibility: Define shared clarity, structure, terminology, and review requirements, and the precise voice of rules and reference text
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Writing, Documentation, Voice, Clarity, Internal]
 ---
 
@@ -13,6 +13,12 @@ Use this repository-only standard when writing or reviewing Open Forge text. Thi
 
 This standard does not define Markdown syntax, component behavior, code identifiers, external formats, quotations, or archived text. [Canonical Markdown Syntax](../framework/markdown/syntax.md) defines Markdown notation. The source for each component defines what its text must mean. The root [Writing Directive](../../../../directives/public-facing-writing.md) makes this standard mandatory for repository work. Use the [Open Forge Dictionary](helpers/dictionary.md) when choosing Open Forge terms.
 
+## Choose The Voice
+
+Use this standard's direct, precise voice for Framework rules, contracts, technical reference text, and maintenance explanations. Use [Project Voice](project-voice.md) for READMEs and public introductions: welcoming, natural, and quietly proud of the project. Choose by the purpose of the passage, including within a single document.
+
+Both voices follow the shared requirements below for clarity, correctness, terminology, source boundaries, and lossless rewriting. Introductions may use a more varied rhythm and sentence structure; they do not need to turn every explanation into a direct instruction.
+
 ## Values
 
 Write for technically literate readers who may be new to Open Forge. Assume they understand basic software concepts such as files, folders, commands, and source code. Do not assume they already understand this Framework.
@@ -23,7 +29,9 @@ Prefer familiar, precise words and direct sentences. State the rule, result, or 
 
 Be concise, but do not remove context the reader needs. Explain defined Open Forge terms at first use, then use them consistently.
 
-The desired voice is calm, neutral, boring, and predictable. It should not sound legal, academic, promotional, or written like a news headline.
+For rules and reference text, the desired voice is calm, direct, and conversational. It should not sound legal, academic, promotional, or written like a news headline.
+
+Make the text enjoyable to read through clear explanations, natural flow, and easy navigation. Use familiar structure for similar material so readers can find what they need. Let each sentence build on what came before.
 
 ## Priorities
 
@@ -37,7 +45,7 @@ Apply these priorities in order. Correctness is a hard boundary: clearer wording
 
 Shorter is not better when the reader must guess what was removed.
 
-## Voice
+## Voice For Rules And Reference Text
 
 Write like one technically literate person explaining the system to another.
 
@@ -47,7 +55,7 @@ Open Forge writing is:
 - Confident about accepted direction
 - Honest about uncertainty and tradeoffs
 - Calm and conversational
-- Boring and predictable in a useful way
+- Predictable in structure and easy to navigate
 
 State the real rule, conclusion, or relationship first. Do not replace a precise idea with a slogan.
 
@@ -69,6 +77,7 @@ Use the fewest words that make the meaning clear, not the fewest words possible.
 - Lead with the purpose, rule, result, or relationship the reader needs.
 - Put one main idea in each sentence or list item.
 - Keep related rules together.
+- Make conditions explicit and keep them close to the actions they control.
 - Separate different concerns with the smallest useful heading or grouping.
 - State valid behavior before listing exceptions or prohibitions.
 - Add a negative rule when it closes a real ambiguity, safety risk, or rejected alternative.
@@ -78,7 +87,8 @@ Use the fewest words that make the meaning clear, not the fewest words possible.
 ### Prose, Lists, And Tables
 
 - Use complete natural sentences in explanatory prose.
-- Keep headings short and paragraphs focused.
+- Keep headings short.
+- Use short paragraphs for distinct concerns. Let each paragraph develop one connected thought.
 - Introduce lists with a sentence or heading.
 - Nest child items under the item that introduces them.
 - Keep list items parallel.
@@ -87,12 +97,22 @@ Use the fewest words that make the meaning clear, not the fewest words possible.
 
 ### Descriptions
 
-A `description` helps a reader select or skip a source before opening it.
+A `description` helps a reader decide whether to open the file.
 
 - Start with the source's purpose, trigger, or useful result.
 - Use ordinary words instead of a stack of classification terms.
 - Keep enough detail to distinguish sibling routes.
 - Do not force every description into the same sentence pattern.
+
+### Responsibilities
+
+An optional `responsibility` helps an editor decide what belongs in the file by stating what it defines. Include it only when it adds a useful boundary beyond the route and description. It creates no authority or loading behavior.
+
+### Category Openings
+
+Keep the category name as the level-1 title. Put its primary question in a level-2 heading immediately below it, followed by the definition and any necessary supporting explanation. Explain how the category helps answer that question.
+
+The question describes the category's role. It does not expand the entrypoint's responsibility or make the entrypoint define every answer beneath it. The heading has no special parsing or loading meaning and adds no metadata field.
 
 ### Essence And Summaries
 
@@ -120,6 +140,7 @@ State actors and relationships directly.
 
 - Use `user` when the person directing or accepting work matters.
 - Use `agent` only when the agent is the meaningful actor.
+- Use `people` or `readers` when that is the relevant relationship. Use `plain` or `readable` for text when that is the intended property.
 - Omit the actor when the action is already clear, such as `Update the affected current document`.
 - Use `operator` only when a technical interface defines that role.
 - Name the authoritative document, `route`, system, person, or role instead of using an unexplained `owner`.
@@ -142,10 +163,11 @@ Explain an unfamiliar Open Forge term at its first useful appearance in each sta
 - Use ordinary lowercase words when no defined concept is intended.
 - Put backticks around an exact defined term, such as `root route`, `responsibility`, or `entrypoint`.
 - Prefer established terms and links over synonyms introduced only for variety.
+- Keep `self-growing` in Memory's definition. Explain the deliberate growth described in the [dictionary](helpers/dictionary.md#memory).
 
 ## Sentences And Punctuation
 
-- Prefer active voice and concrete verbs.
+- Prefer active voice and concrete verbs when they make the relationship clearer. Use passive voice when the result deserves the focus or the actor is immaterial.
 - Prefer separate sentences to stacked qualifications.
 - Prefer periods to semicolons.
 - Use commas, parentheses, colons, or separate sentences instead of em dashes.
@@ -157,6 +179,10 @@ Explain an unfamiliar Open Forge term at its first useful appearance in each sta
 - Use backticks and links according to the Markdown contract, not as decoration.
 
 ## Examples
+
+Keep examples proportionate to the point they explain. Include one when it makes a rule or relationship easier to use.
+
+Use examples that are valid for the APIs, formats, and tools they use. If an example is intentionally incomplete, label it as schematic.
 
 ### Complete Sentence
 
@@ -253,14 +279,14 @@ Extensions must not inject blocks, create hidden state, redefine routes, or add 
 Clearer:
 
 ```text
-Extensions add complete files through ordinary `routes`. Installed files retain the meaning of their destination `routes`.
+Extensions add complete files. Routed content follows its Framework route. Native and support files follow the rules of the capability or tool that uses them.
 ```
 
 The positive form defines the valid model. Add a negative sentence when a specific risk remains unclear.
 
 ## Lossless Rewriting
 
-A rewrite may improve wording, order, or structure. It must not change the meaning.
+A language rewrite may improve wording, sentence structure, order, or layout. It must preserve the source's rules, logic, and meaning.
 
 Before accepting a rewrite, compare it with the source and confirm that it preserves:
 
@@ -280,6 +306,8 @@ Do not rewrite historical quotations or archived wording unless the task targets
 - Does it state the main point before its qualifications?
 - Does each sentence or list item carry one main idea?
 - Are related points together and different concerns separated?
+- Are conditions clearly connected to the actions they control?
+- Does the flow help readers move from one thought to the next and find the detail they need?
 - Are unfamiliar terms defined or linked where first used?
 - Are authority, ownership, scope, and actors clear?
 - Does every abstraction that needs context have an example?
@@ -294,7 +322,7 @@ Do not rewrite historical quotations or archived wording unless the task targets
 - [Routed Markdown Representation](../framework/markdown/routes.md)
 - [Open Forge Dictionary](helpers/dictionary.md)
 - [Open Forge Principles](../principles.md)
-- [README-specific documentation voice](../../../../../docs/development.md#documentation-voice)
+- [Project Voice](project-voice.md)
 
 ## Decisions And Rationale
 

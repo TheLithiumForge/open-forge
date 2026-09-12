@@ -1,0 +1,39 @@
+{
+  "comparison_commit": "2b54fdc598a48a12e44772a5cb323cf45e9e5a73",
+  "ordinary_commands": [
+    "dotnet restore",
+    "dotnet build",
+    "dotnet test"
+  ],
+  "locked_restore": "dotnet restore OpenForge.Cli.slnx --locked-mode --configfile NuGet.Config --nologo",
+  "solution_required_for_root_dotnet_test": false,
+  "development_artifact": "artifacts/publish/open-forge-dev/<Configuration>/open-forge-dev[.exe]",
+  "development_invocation": "npm run cli:dev -- --help",
+  "native_publish_template": "dotnet publish src/cli/root/OpenForge.Cli/OpenForge.Cli.csproj --configuration Release --runtime <RID> --self-contained true --no-restore --output artifacts/publish/<RID>/open-forge -p:OpenForgeSkipDevelopmentPublish=true",
+  "supported_rids": ["win-x64", "win-arm64", "linux-x64", "linux-arm64", "osx-x64", "osx-arm64"],
+  "local_link_sequence": [
+    "dotnet restore OpenForge.Cli.slnx --locked-mode --configfile NuGet.Config --nologo",
+    "npm run cli:link",
+    "open-forge --version"
+  ],
+  "local_link_behavior": [
+    "publishes current host Release self-contained Native AOT",
+    "stages a full-SHA local package version",
+    "creates repository and global npm links",
+    "does not publish to a registry or update the lockfile"
+  ],
+  "sources": [
+    "global.json",
+    "Directory.Build.props",
+    "src/cli/root/OpenForge.Cli/OpenForge.Cli.csproj",
+    "src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj",
+    "package.json",
+    "src/cli/package-managers/npm/local-link.ts",
+    "src/cli/package-managers/npm/manage.ts",
+    "src/cli/package-managers/npm/package-model.ts",
+    ".github/workflows/cli.yml",
+    ".agents/memory/crystallized/decisions/repository-root-cli-tooling.md",
+    "docs/development.md"
+  ],
+  "release_caveat": "Linux x64 matching-host/package evidence is described as proven; other host receipts and final delivery acceptance remain incomplete."
+}

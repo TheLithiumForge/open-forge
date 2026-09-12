@@ -1,0 +1,47 @@
+{
+  "review": "public-voice-pack",
+  "status": "PASS",
+  "baseline": "96a4f094",
+  "scope": [
+    "README.md",
+    "docs/cli.md",
+    "docs/development.md",
+    "docs/extension-candidates/development.md",
+    "docs/extension-candidates/csharp-development.md",
+    "docs/extensions.md",
+    "src/extensions/README.md",
+    "src/extensions/development-toolkit/README.md",
+    "src/extensions/orchestration/README.md",
+    ".agents/directives/public-facing-writing.md",
+    ".agents/memory/crystallized/documents/maintenance/writing.md",
+    ".agents/memory/crystallized/documents/maintenance/project-voice.md",
+    ".agents/memory/crystallized/documents/maintenance/_maintenance.md",
+    ".agents/memory/crystallized/decisions/framework/user-facing-writing.md",
+    ".agents/memory/working/cli-development/tasks/source-framework-review.md"
+  ],
+  "findings": [],
+  "checks": {
+    "approved_readme_voice": "The README and package introductions use natural, varied, quietly proud prose; the forced 'We started with ideas' wording is absent.",
+    "shared_writing_boundary": "Rules and reference text retain the precise shared voice, while Project Voice defines README and introduction style with shared accuracy requirements.",
+    "meaning_and_scope": "Technical distinctions, authority boundaries, setup conditions, package dependencies, and deferred Extension gaps remain explicit.",
+    "navigation_and_questions": "Root static verification passed for 140 changed relative links and anchors, 12 category questions, metadata, generated navigation, and measured-file hashes.",
+    "cli_review_limit": "CLI prose was checked against the recorded develop-source facts and contracts; no CLI executable, build, test, global link, or runtime behavior was executed."
+  },
+  "sha256": {
+    ".agents/directives/public-facing-writing.md": "a9e36c2992c6ee68bdb02a87c29b5eaea8b24db82f890c4b9720431fd4eefcf2",
+    ".agents/memory/crystallized/decisions/framework/user-facing-writing.md": "ffa8dabc4c25415c4282b3226c713ebaafa0eda9d3d176f648570317ab1726ee",
+    ".agents/memory/crystallized/documents/maintenance/_maintenance.md": "726c8afebbb6c82df17592021a2b861f9f189afb335c35cd0a4735cef5677c02",
+    ".agents/memory/crystallized/documents/maintenance/writing.md": "35a8a6bd739d1bd9559dc44da35e17bbb45f8d676f07979369e064e09fd74025",
+    ".agents/memory/crystallized/documents/maintenance/project-voice.md": "aa0a4caacaaae72558b27a4db1720ef6437d725fc807de9abc5c2245177532ae",
+    ".agents/memory/working/cli-development/tasks/source-framework-review.md": "44e4bf48a2294df91e44822609f2b7f5a91c225241c58e25396820cb03d5d8a5",
+    "README.md": "87ddcf7ad8d44dd4d4d50ebe30ea1d30b8a422c853366b4a40b5a86b2bd5b401",
+    "docs/cli.md": "647ac8ca5dbd84f5c3cd9ecf92f709f058c92b24e3f3e2b9a1850258012e1a07",
+    "docs/development.md": "b3b7cf54e1ec3fc40001487d57d1386753b6eb0b886e27032669c2aee1fda82e",
+    "docs/extension-candidates/csharp-development.md": "47b40d569208ae5d19d48c14b04feef9892c0d79ecbd852facd02223b4137dc2",
+    "docs/extension-candidates/development.md": "02b01fa3701e0af24f0a8368e672310372b0998160bbd37f59f4988d5a8e8f1b",
+    "docs/extensions.md": "726a54251c06b131690b99cf265a279422e0e0b4d78b31a4d7b79b4f70fdab23",
+    "src/extensions/README.md": "42b5f04591fd51e67a7ee20420a9884fc9fec34ab946c3725ddd01243578fa2d",
+    "src/extensions/development-toolkit/README.md": "e3fbb0560ae0b862f29d60a3e77006d044d76e3e97a17ec5458d97a0f27c613b",
+    "src/extensions/orchestration/README.md": "905b7beace3718770b30255e74e69defd879e0f20acfe01fa3c86a7c9f47afc9"
+  }
+}

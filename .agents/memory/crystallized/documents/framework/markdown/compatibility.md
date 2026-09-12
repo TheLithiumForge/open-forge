@@ -156,7 +156,7 @@ unsettled. Parser acceptance must not grant Framework meaning to unknown syntax.
 - [Canonical Markdown syntax](syntax.md)
 - [Routed Markdown representation](routes.md)
 - [CLI MVP Architecture](../../cli/mvp-architecture.md)
-- [Historical CLI-v2 evidence](../../../archived/cli-v2/_cli-v2.md)
+- [Historical CLI-v2 evidence](../../../../archived/cli-v2/_cli-v2.md)
 
 ## Decisions And Rationale
 

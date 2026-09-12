@@ -17,7 +17,7 @@ open-forge:
 - [Open Forge states role and authority relationships directly, names semantic authority by source type, and reserves ownership for possession or managed lifecycle](authoritative-source-terminology.md) - #Memory #Decision #CurrentTruth #Terminology #Authority #Documentation
 - [Open Forge uses one canonical authoring form wherever Markdown carries Framework meaning while treating compatibility syntax as input-only](canonical-markdown.md) - #Memory #Decision #CurrentTruth #Framework #Markdown #Authoring #Syntax #Compatibility
 - [Core uses distinct reusable content roles instead of one generic knowledge bucket, and every new primitive must earn nonduplicative semantics](core-primitives.md) - #Memory #Decision #CurrentTruth #Core #Primitive
-- [Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from](loading-reliability.md) - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
+- [Why critical context loads early within selected routes and conditional context remains easy to select or skip](loading-reliability.md) - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
 - [Map replaces Workspace as the Core primitive for locating important local and external truth](map-primitive.md) - #Memory #Decision #CurrentTruth #Framework #Core #Map #Migration
 - [Memory preserves working, emerging, crystallized, and archived state without activating behavior it describes](memory-model.md) - #Memory #Decision #CurrentTruth #MemoryModel
 - [Small recursive `entrypoints` preserve local scope while one recognized `entrypoint` and explicit `root routes` remove routing ambiguity](routing-model.md) - #Memory #Decision #CurrentTruth #Routing

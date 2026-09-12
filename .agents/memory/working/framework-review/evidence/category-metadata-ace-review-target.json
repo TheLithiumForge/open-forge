@@ -1,0 +1,241 @@
+{
+  "base": "e91d2934545bb596d5d1929a7a04342ea4652375",
+  "status": "frozen for targeted completion of the focused review",
+  "paths": [
+    {
+      "path": ".agents/directives/_directives.md",
+      "sha256": "abac9fc8ffeb1ba198d28e9fabdce0e45e673c271222d6ef0903703422485d15"
+    },
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "sha256": "871915ae8f365544c36e664ea4836f1ffae5adc0b437661e786972416038eb8d"
+    },
+    {
+      "path": ".agents/loader.md",
+      "sha256": "e0c139e864b0553ff6ccea1d1ca66da2e66def5446f560065c439341c25b97ac"
+    },
+    {
+      "path": ".agents/maps/_maps.md",
+      "sha256": "c95533a03143c7df1f7cf8b777200d704cf2011063e5def72a3834b3ee35164e"
+    },
+    {
+      "path": ".agents/memory/_memory.md",
+      "sha256": "7896957b9bd1a582f26eac3d44b1ff599437d69f5569359b6dda5a195e4f63f7"
+    },
+    {
+      "path": ".agents/memory/archived/_archived.md",
+      "sha256": "eff3ee34909dfe9d0f43e6aaab5484050e55c5b15e7e4d67b24c180ac1f97e80"
+    },
+    {
+      "path": ".agents/memory/crystallized/_crystallized.md",
+      "sha256": "4bf159b336257ccef59fea0028375b2b05a7ecd459ca24c5ad7bf91bd4db5015"
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/_decisions.md",
+      "sha256": "f5a60767e14ed86e7a1ed91617e5b55a707f5b0db213520b98f502db9d7ab2b7"
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/framework/user-facing-writing.md",
+      "sha256": "4f3795ddeba13ed53a890f9143c2c760a7e1fd28b41d38685a86dccf44f0384e"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/_documents.md",
+      "sha256": "7ff24a0aa1a060bde83d4d24b65601581292d763a0663f5563763bd527071efd"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/markdown/routes.md",
+      "sha256": "0661619fa8de50cbfd35779b6f557d604ac611afe681619843df3068ba89a4ba"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/markdown/syntax.md",
+      "sha256": "2b0b5050e0cd9e564f5225163af715c78110b404cf38f7407747c564a8b40c98"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/helpers/dictionary.md",
+      "sha256": "7ddbf750825553ada22e3702933329874b954d5a5258e9f033f7327cdac1e015"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/loader.md",
+      "sha256": "d6320c2fee7db27677bfdbef03d940a8570b9987dc095fa6af8314078f6090f7"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/writing.md",
+      "sha256": "523cbdb296a9b4d1c4685656c1c87100b5211b2cc5205c8748319b32c646228d"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/vision.md",
+      "sha256": "3448f0635570cb144c694286743bc140fa2be4ee5fd662f03278a6bbf58866c1"
+    },
+    {
+      "path": ".agents/memory/emerging/_emerging.md",
+      "sha256": "d68419efbe6b16d3c9c3c6658062fb60db7c7fb5ae0244ec2d555cb46e58c44f"
+    },
+    {
+      "path": ".agents/memory/emerging/analysis/_analysis.md",
+      "sha256": "fb15ccd0987c4bfd1ae9aa66d317fa6a02d85f3d81722836ccaa1a385289eeca"
+    },
+    {
+      "path": ".agents/memory/emerging/ideas/_ideas.md",
+      "sha256": "443f88d9286139b8e546f9df42f2922e6ca39490f7a261a45fdc3b248161794c"
+    },
+    {
+      "path": ".agents/memory/emerging/observations/_observations.md",
+      "sha256": "43cebadd9b2a55e854d7879aed9a9635af4f0452a7b03fd66be6dea9f63a878b"
+    },
+    {
+      "path": ".agents/memory/working/_working.md",
+      "sha256": "ed4ebc1b2b3c4f9f3a3a132de11a98cba5fe34f46dd6d24905a3fb2346e62467"
+    },
+    {
+      "path": ".agents/memory/working/checkpoints/_checkpoints.md",
+      "sha256": "6b538371962504e131ac2b4119d428cad157cf58c01a4fc8f4842e5a525f41e8"
+    },
+    {
+      "path": ".agents/memory/working/handoffs/_handoffs.md",
+      "sha256": "03046a104e578ce87062f0a45c495d3195e13e0a6a122fc0fda97fd306bd6bfc"
+    },
+    {
+      "path": ".agents/patterns/_patterns.md",
+      "sha256": "5aa680790088670d5e962034dae110a4aba2cc017ec5e46989678dcfa8677d0a"
+    },
+    {
+      "path": ".agents/skills/_skills.md",
+      "sha256": "d923eb4a6f6ed41554fe0f2babf8f9e1f24dd3ccdb5139f23942ffb7a9d2e0ba"
+    },
+    {
+      "path": ".agents/templates/_templates.md",
+      "sha256": "a4266a90cbcb02049a6fdb58284242dca9d6849fbd10211ee156259587521383"
+    },
+    {
+      "path": ".agents/templates/documents/_documents.md",
+      "sha256": "61238c203aaddc7e7b8997cdea899755f7733c66ea323dea058bd12ab9137c1a"
+    },
+    {
+      "path": ".agents/templates/memory/_memory.md",
+      "sha256": "3413a92aa4cdde34c610184a71ef2e2c8c6afb2136e171bd0101b8da544dd06f"
+    },
+    {
+      "path": ".agents/workflows/_workflows.md",
+      "sha256": "7cc5675c50395a167964edc9a7318220a74c850b1be1183adc6dfd86a7da04c8"
+    },
+    {
+      "path": "README.md",
+      "sha256": "f57c7ef0ed50c0362b577fef157b0bcee501954ad8b75ecfc33004288fcee939"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/templates/documents/_documents.md",
+      "sha256": "18cbac26d62781f192ca15e15b0641b4874755ff624cb810d05ac48ee22c705b"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/templates/memory/_memory.md",
+      "sha256": "fdff3c4d60b807b4a0b52712d914afd02585bd577ea049edd57659d1ee0c549b"
+    },
+    {
+      "path": "src/open-forge/.agents/directives/_directives.md",
+      "sha256": "cc088b1d369d4f003e5ba5bfaee1d19e525121de0e64ed31762bd13d234e5175"
+    },
+    {
+      "path": "src/open-forge/.agents/guidance/_guidance.md",
+      "sha256": "1dc5388c1919eedeb5f29969fc022b0be0e00a442452f66ad9c63c9933c9f332"
+    },
+    {
+      "path": "src/open-forge/.agents/loader.md",
+      "sha256": "15b2fa7474d89bca16500135be8c5ae72d4d8f3f4076cadfb8cc7ccbea4eeabb"
+    },
+    {
+      "path": "src/open-forge/.agents/maps/_maps.md",
+      "sha256": "33a6a01c6cb1e16b5dd871345bbc3fa77ffd2d1a0bbae5445c7921a6614fb921"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/_memory.md",
+      "sha256": "d14d95e2c66bc30ef5bf7e902dbedf8f7d5527d40bf959d3947419bddafeb80a"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/archived/_archived.md",
+      "sha256": "f4d8627ba512da796c60295e6a5f6173b7e7e05d9479ba93f72e0bab157d33bc"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/crystallized/_crystallized.md",
+      "sha256": "4bf159b336257ccef59fea0028375b2b05a7ecd459ca24c5ad7bf91bd4db5015"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/crystallized/decisions/_decisions.md",
+      "sha256": "fa00eb675d492baec84150356fea4784e047abd6822eaec32d5c9825bbcf0156"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/crystallized/documents/_documents.md",
+      "sha256": "e00f1205da0d6ab7e7f235c831df3706d502b8c8290cf3dd29800f84c43747c9"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/emerging/_emerging.md",
+      "sha256": "6c56db884f4cb1b6c3a713f177945aa65ad7569bbf5c92ae4b5f5f078ef64861"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/emerging/analysis/_analysis.md",
+      "sha256": "79d79a64a7533ba72eb37f44d2727a79e3db430d9e82e72ec82e36a3dfba7f6f"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/emerging/ideas/_ideas.md",
+      "sha256": "2790499363fdd849486fdff6561d09999b28afed7e671438407040dd491997ee"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/emerging/observations/_observations.md",
+      "sha256": "77c6b5d92afd4632d852c309e61e45ee34b9c6f77a4ddc84d04ca914ff21ca80"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/working/_working.md",
+      "sha256": "270e83fa6658d1976c533adce8d66a3847d34c6e69286b6eba8d2b0d357993fa"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/working/checkpoints/_checkpoints.md",
+      "sha256": "0b92bbab594cd9016109c382f8e9fa67f1ea6e13777866106ee6a4de04ed46ed"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/working/handoffs/_handoffs.md",
+      "sha256": "5672b99d547034192de16179804f66c3e202b05a52bacdcf50f7397e9e3ebb11"
+    },
+    {
+      "path": "src/open-forge/.agents/patterns/_patterns.md",
+      "sha256": "1de75723e1b41b756f5b64921ec762ce49e795e33eab2f437ccba68050bc8f61"
+    },
+    {
+      "path": "src/open-forge/.agents/skills/_skills.md",
+      "sha256": "6fb7d22db1a07c0ff659876e88bfddefe5212a4a198e69f6f8107d07b2ab87a6"
+    },
+    {
+      "path": "src/open-forge/.agents/templates/_templates.md",
+      "sha256": "ff9555f19c53b23102e175a12f86faa6af3e6944ac06bb1cdc5438ee6d4006b6"
+    },
+    {
+      "path": "src/open-forge/.agents/workflows/_workflows.md",
+      "sha256": "1db19314fcd3dcf7309ff7973cda5aac5fe8c757948b6dd8450df1e9b0f802de"
+    }
+  ],
+  "scope": "21 public category openings, 21 local counterparts, 2 loaders, README and 7 current explanatory sources",
+  "selected_presentation": "H1 category name; H2 primary question without extra bold; definition and necessary explanation below",
+  "root_inspection": "All final public and companion diffs inspected; revised README and Vision openings and corrected representation list read directly. Matching edits verified across 22 source/local pairs.",
+  "excluded_root_bookkeeping": ".agents/memory/working/cli-development/tasks/source-framework-review.md",
+  "review_revisions": [
+    {
+      "reason": "Latest user ACE wording direction and CMAR-1 canonical-shape alignment",
+      "changed": [
+        {
+          "path": ".agents/memory/crystallized/documents/framework/markdown/routes.md",
+          "previous_sha256": "1652cefd5b33a7d8ab5409e582a5c23627414cb74aaf37c1353008435ac17bd9",
+          "sha256": "0661619fa8de50cbfd35779b6f557d604ac611afe681619843df3068ba89a4ba"
+        },
+        {
+          "path": ".agents/memory/crystallized/documents/vision.md",
+          "previous_sha256": "ca7de3d9883d94d35f87625157731c877919bb382b32f3659ccd562608c5f1f3",
+          "sha256": "3448f0635570cb144c694286743bc140fa2be4ee5fd662f03278a6bbf58866c1"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "107c548a44fc8095b9798479fdc7e6da146d615bcb774dc1f8969829bab66640",
+          "sha256": "f57c7ef0ed50c0362b577fef157b0bcee501954ad8b75ecfc33004288fcee939"
+        }
+      ],
+      "unchanged_paths": 49
+    }
+  ]
+}

@@ -12,12 +12,12 @@ Use this Guidance to explore an idea, resolve an important uncertainty, clarify 
 
 ## Preferred Approach
 
-- Start from what the user already said and what accepted context already settles.
+- Start with what the user has already said and what accepted context already settles.
 - Build the best current understanding before asking for more input.
-- Unless the user asks for deep analysis, begin with the understood outcome, the strongest recommendation, and at most one important open choice.
+- Unless the user asks for deep analysis, begin with the outcome as you understand it, the strongest recommendation, and at most one important open choice.
 - Work through one important open choice at a time. It may include a few tightly related questions.
 - Give the user something concrete to react to instead of asking them to invent the solution.
-- Keep accepted direction, recommendations, assumptions, and open questions visibly distinct.
+- Make clear which points are accepted direction, recommendations, assumptions, or open questions.
 
 ## Interaction Depth
 
@@ -25,7 +25,7 @@ Match the depth to the request:
 
 - When the outcome and constraints are already sufficient, proceed or give the requested plan without introductory discovery.
 - When one important choice remains, recommend a default and ask only for the judgment needed to resolve it.
-- When the desired outcome is still forming, compare a small number of meaningfully different directions through outcomes and tradeoffs.
+- When the desired outcome is still forming, compare a small number of meaningfully different directions by the outcomes and tradeoffs they offer.
 - When deep design is requested or currently necessary, provide the architecture, alternatives, risks, and verification without withholding useful detail.
 
 A short request does not imply low expertise. Technical language does not imply that the user wants a long response. Follow the available context, requested detail, and desired involvement.
@@ -65,6 +65,6 @@ When context isolation is available, start the reviewer without the implementati
 
 Progressive disclosure can omit detail the user would have valued. Keep deeper reasoning available and provide it when uncertainty, consequence, or explicit interest justifies the cost.
 
-Strong recommendations can anchor the conversation too early. Offer genuinely different directions when the desired outcome remains unclear, but avoid unbounded option catalogues.
+Strong recommendations can anchor the conversation too early. Offer meaningfully different directions when the desired outcome remains unclear, but avoid an unbounded catalogue of options.
 
 Independent review adds cost and can produce false positives when context is missing. Offer it only when the likely value justifies the cost, and check its findings against accepted sources.

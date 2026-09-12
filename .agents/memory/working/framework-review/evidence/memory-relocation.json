@@ -1,0 +1,524 @@
+{
+  "purpose": "Relocate authored Task 28 memory and useful review evidence into its proper routed Memory state",
+  "branch": "codex/task28-framework-review",
+  "baseline": "ab01ec4b",
+  "records": [
+    {
+      "from": "artifacts/task28-source-framework-review/category-wording-nitpicks.md",
+      "to": ".agents/memory/working/framework-review/reviews/category-wording-nitpicks.md",
+      "original_sha256": "0d533937fe7f10878482b072da64e5428f45c82f5c7196e7b24649f82ad7e0d0",
+      "relocated_sha256": "a47c4d6e94593bacd79f08985bd96188ebc1317604051fa3388a74e5e75668f6",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/cli-guide-review-notes.md",
+      "to": ".agents/memory/working/framework-review/reviews/cli-guide-review-notes.md",
+      "original_sha256": "873bfc94f158c4b441441130ffe3c35d1647754434255c5468744852e5eec1e9",
+      "relocated_sha256": "e3f106f6b5818d6ac897ed25469f0c7365a04adf1d10cc21c16c39b14c996ad4",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/current-cli-development-facts.md",
+      "to": ".agents/memory/working/framework-review/reviews/current-cli-development-facts.md",
+      "original_sha256": "184a446d211f8635c5fd49b3c03722971217b075e3ccf0f9e9b76cb341317c69",
+      "relocated_sha256": "ebd826c5076e3ea8a4c7879ce1327edc98667f90af35cbbe2bba08b5a43adad7",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/current-cli-doc-facts.md",
+      "to": ".agents/memory/working/framework-review/reviews/current-cli-doc-facts.md",
+      "original_sha256": "754cc18bc991c1a5b26066b5d58fbbb4b090c1c440294ca717b653b7f53baee8",
+      "relocated_sha256": "1f9cbca692d99f7bc1a1993cf0c7e4a4112a9f21c7753997adf352d0a27d780b",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/loader-inheritance-audit.md",
+      "to": ".agents/memory/working/framework-review/reviews/loader-inheritance-audit.md",
+      "original_sha256": "2fef6bcc24a720a4e3f865c3907076d08ca6ae5065142f1a46d6a55e3df6fa19",
+      "relocated_sha256": "a24346218cd6bc147e86c970e3e570cac4320bc8971ae0fb9436cc7d80e3986f",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/local-extension-comparison.md",
+      "to": ".agents/memory/working/framework-review/reviews/local-extension-comparison.md",
+      "original_sha256": "d0f8220b34ddda6713e0d67288397f66661d00a21550dad0cd82c41d825d8aa2",
+      "relocated_sha256": "ee7ae91bab5231cf792cef9007a34640e161b8a62a0435618dcdf702d1267f4b",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/markdown-language-analysis.md",
+      "to": ".agents/memory/working/framework-review/reviews/markdown-language-analysis.md",
+      "original_sha256": "df4b45ee0cc5f675794cc8745d6afdca6db8b273b2bdf01d8bf0eb985dc7d01f",
+      "relocated_sha256": "fdc5436fa8a041b0491bb58e7d3fa9b738543d095c54383dc28cb79e30b425a4",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/max-reassessment.md",
+      "to": ".agents/memory/working/framework-review/reviews/max-reassessment.md",
+      "original_sha256": "3304a4c38fd07447f20abb4f6d658d592ecfbdf250527614393a38be608f448e",
+      "relocated_sha256": "93b46398578a90a6fa32f3b3dec8c17c2672016076269d2267d50d94b8b80f35",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/source-only-report.md",
+      "to": ".agents/memory/working/framework-review/reviews/source-only-report.md",
+      "original_sha256": "06f56a6457e99750feae07f6cb2f33f9bacf015ef0ef801cb92dd38ab8150bf4",
+      "relocated_sha256": "7d5dddf374396f30511f90894bf283578d4385fb73df56bada8d23b285892d10",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/source-tag-proposals.md",
+      "to": ".agents/memory/working/framework-review/reviews/source-tag-proposals.md",
+      "original_sha256": "26d86f6eadc7a8294d2de56835f1cdd7f0206e5953f93f6b26ec9a31131ed615",
+      "relocated_sha256": "660cb6328920e6a9df546bef874103f982b4c11887adc91987eff20d5d015823",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/workflow-audit.md",
+      "to": ".agents/memory/working/framework-review/reviews/workflow-audit.md",
+      "original_sha256": "31c20205308c4a5922972b456a82d2d6c28541ba4c2f1f349f44cec013d2f497",
+      "relocated_sha256": "83e4dca99614a378dbc893e83e7cfff5fc9c8c476a973d7b932fefb3ee12b753",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/category-openings-proposal.md",
+      "to": ".agents/memory/working/framework-review/proposals/category-openings-proposal.md",
+      "original_sha256": "ec1faf4ef98ac49b7df7273d7065735d0c1d05749a91019fda12acb63a561d84",
+      "relocated_sha256": "4d7c5f3ff6877afb2d57b221dce658ac897d2fafe557968f9ff912527f18c750",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/p02-validation-acceptance-proposal.md",
+      "to": ".agents/memory/working/framework-review/proposals/p02-validation-acceptance-proposal.md",
+      "original_sha256": "c2cc082f794fce15c052d87852c8e06ad9cc8337824da59e965087ae366d19d6",
+      "relocated_sha256": "2802ab89a5bc13b20fc29f15c5f9ed069c04fb5b9bc2e85f4bcac80e30a95097",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/p03-scoped-loading-proposal.md",
+      "to": ".agents/memory/working/framework-review/proposals/p03-scoped-loading-proposal.md",
+      "original_sha256": "996836456e38bce781c649c1d3d94f99dd2aa40e3e95d20f61e0da3e5803656e",
+      "relocated_sha256": "1fd448e06f8772897b581b36f63fd5b66032d100c54edf52214f2c73c3f65e9b",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/p04-scoped-authority.md",
+      "to": ".agents/memory/working/framework-review/proposals/p04-scoped-authority.md",
+      "original_sha256": "5f492c0a08f46f2c121f9679d4880f4c5005df5e6b9d62f3ba3e0fea4c8375a4",
+      "relocated_sha256": "14ac06385ce46caed8d5622ae137977a96f1d66c1788ee3c2e826fb5fb2e26ca",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/release-language-examples.md",
+      "to": ".agents/memory/working/framework-review/proposals/release-language-examples.md",
+      "original_sha256": "fb81e412d8369fecf7d0280db9b3b2464a3a25a0d6263f4d8b0711cfd4b204b7",
+      "relocated_sha256": "9cf9d77ee513f84a2df7c68dcb0b04428f09ba3a129a244e8f8e6f1f8494d4f6",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/review-followup-instructions.md",
+      "to": ".agents/memory/working/framework-review/review-followup-instructions.md",
+      "original_sha256": "a031c34b4eb8508e03ea8eef411fb52d3a7eefd1a3cdfa368ab57b1f016edea0",
+      "relocated_sha256": "c9bd1b111818943af9c0bf1866cbe73b6fbdbd76f84619a98256d68079d5f5ca",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/e01-dogfood-evidence.md",
+      "to": ".agents/memory/emerging/analysis/framework-review/e01-dogfood-evidence.md",
+      "original_sha256": "8edc0fb100ddf17e9f20c951a06e796bb775edbec15326b4e7693cc640aee8f5",
+      "relocated_sha256": "b45c35c6ae6fb660909e94a291753f98b734aa17977cde0b87896f69f0ce6ebf",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/e01-review-workflow-draft.md",
+      "to": ".agents/memory/emerging/ideas/framework-review/review-workflow-draft.md",
+      "original_sha256": "4f2fbc6f7aaca195d7b2dfa5047b19020582a21d2edb669fd0fd053893c17e40",
+      "relocated_sha256": "17561e638d4d30b4a4afc2915f43dc18db698ac5db3943f52c0a26d8ae6ae44a",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/ideas/detailed-diagram.md",
+      "to": ".agents/memory/emerging/ideas/framework-review/detailed-diagram.md",
+      "original_sha256": "9cf09ceed35707cf48cee7cfcdf44cc9a098af5ba45735850bf1204ce939cbb1",
+      "relocated_sha256": "04dc0d349fe93e468edc51af5231844305210a88a2830be834baaecbe11a06a2",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/ideas/simplified-diagram.md",
+      "to": ".agents/memory/emerging/ideas/framework-review/simplified-diagram.md",
+      "original_sha256": "b78ade44f084b014961c57e691ae8102a0fa8da424c5fc3838f6826d49be8586",
+      "relocated_sha256": "6d70892069ba1e76eb24b924026440090825cdf43f01766f6d45f67a80a8eb78",
+      "change": "Memory classification and navigable reference repair"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/source-freeze.json",
+      "to": ".agents/memory/working/framework-review/evidence/source-freeze.json",
+      "original_sha256": "c64056d41f8890a05c29ef22d4a66c01289df8b78b077cdb50613e417688a3db",
+      "relocated_sha256": "c64056d41f8890a05c29ef22d4a66c01289df8b78b077cdb50613e417688a3db",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/source-inventory.json",
+      "to": ".agents/memory/working/framework-review/evidence/source-inventory.json",
+      "original_sha256": "644f4fae68b00f34a144493c0b6c1ecd3916f21fa28e83de0a597e7ecc2b1335",
+      "relocated_sha256": "644f4fae68b00f34a144493c0b6c1ecd3916f21fa28e83de0a597e7ecc2b1335",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/source-static-checks.json",
+      "to": ".agents/memory/working/framework-review/evidence/source-static-checks.json",
+      "original_sha256": "f6dd92e225d018098c88aef28debf35a2b9b715b7929c42e0e549a32493919a2",
+      "relocated_sha256": "f6dd92e225d018098c88aef28debf35a2b9b715b7929c42e0e549a32493919a2",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/worktree-receipt.json",
+      "to": ".agents/memory/working/framework-review/evidence/worktree-receipt.json",
+      "original_sha256": "12078fb23c05f41c24fe5facfce93e5e4866631caaed097334baf0e7221d75ae",
+      "relocated_sha256": "12078fb23c05f41c24fe5facfce93e5e4866631caaed097334baf0e7221d75ae",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/local-reviewed-files.json",
+      "to": ".agents/memory/working/framework-review/evidence/local-reviewed-files.json",
+      "original_sha256": "a5884f002af199c3eb60ae932cafc77e675227eb1bced80200ef92d680439e63",
+      "relocated_sha256": "a5884f002af199c3eb60ae932cafc77e675227eb1bced80200ef92d680439e63",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/local-agent-metadata.json",
+      "to": ".agents/memory/working/framework-review/evidence/local-agent-metadata.json",
+      "original_sha256": "b11a934405af6f6dee0f9406dd3dd90b37bffa6940059a0ba21201cee9ee2f6a",
+      "relocated_sha256": "b11a934405af6f6dee0f9406dd3dd90b37bffa6940059a0ba21201cee9ee2f6a",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/e01-evidence-identities.json",
+      "to": ".agents/memory/working/framework-review/evidence/e01-evidence-identities.json",
+      "original_sha256": "63330b74e2e3a9d000b19e50c3fec942f9bee478becfe5667b0522b85e710454",
+      "relocated_sha256": "63330b74e2e3a9d000b19e50c3fec942f9bee478becfe5667b0522b85e710454",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/current-cli-doc-facts.json",
+      "to": ".agents/memory/working/framework-review/evidence/current-cli-doc-facts.json",
+      "original_sha256": "d7c66aad3a7081f2344bf7c26e9269397bf33a0d0a81312932ac9a5fd540bca4",
+      "relocated_sha256": "d7c66aad3a7081f2344bf7c26e9269397bf33a0d0a81312932ac9a5fd540bca4",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/current-cli-development-facts.json",
+      "to": ".agents/memory/working/framework-review/evidence/current-cli-development-facts.json",
+      "original_sha256": "d72e0db57b87d85d014cdb54593a06408871c5e55b0c604cb6547e0694ce6ffc",
+      "relocated_sha256": "d72e0db57b87d85d014cdb54593a06408871c5e55b0c604cb6547e0694ce6ffc",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/current-entrypoints-audit.json",
+      "to": ".agents/memory/working/framework-review/evidence/current-entrypoints-audit.json",
+      "original_sha256": "3cb6d058d86d7287de26af170a379c29d40018cdbc47e7c9846f4d83a7545e9b",
+      "relocated_sha256": "3cb6d058d86d7287de26af170a379c29d40018cdbc47e7c9846f4d83a7545e9b",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/current-knowledge-audit.json",
+      "to": ".agents/memory/working/framework-review/evidence/current-knowledge-audit.json",
+      "original_sha256": "877e19c41367858bfa507decb0d9a6b2a2b51dd6e3a462cc439b06bfd23cece3",
+      "relocated_sha256": "877e19c41367858bfa507decb0d9a6b2a2b51dd6e3a462cc439b06bfd23cece3",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/current-operations-audit.json",
+      "to": ".agents/memory/working/framework-review/evidence/current-operations-audit.json",
+      "original_sha256": "47d701b3334eb65e7b0a84f69e4c42cb6fb76780ec6e0940bf7c8a897b429e3f",
+      "relocated_sha256": "47d701b3334eb65e7b0a84f69e4c42cb6fb76780ec6e0940bf7c8a897b429e3f",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/current-content-cleanup.json",
+      "to": ".agents/memory/working/framework-review/evidence/current-content-cleanup.json",
+      "original_sha256": "f076535dbba8bcd0fd7641321ad367d0d6f5f7dd6cb36a8ce4455370728014ad",
+      "relocated_sha256": "f076535dbba8bcd0fd7641321ad367d0d6f5f7dd6cb36a8ce4455370728014ad",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/current-entrypoint-static-audit.json",
+      "to": ".agents/memory/working/framework-review/evidence/current-entrypoint-static-audit.json",
+      "original_sha256": "e07fbc26142adc4fc2ff1fc5c77d1234bce0703dabb842fc5aff1c78dbc05d9e",
+      "relocated_sha256": "e07fbc26142adc4fc2ff1fc5c77d1234bce0703dabb842fc5aff1c78dbc05d9e",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/public-language-pass.json",
+      "to": ".agents/memory/working/framework-review/evidence/public-language-pass.json",
+      "original_sha256": "124d0e9318c151b226fe4ab9849cc342c88a7f410c29242b46f373f2d4152448",
+      "relocated_sha256": "124d0e9318c151b226fe4ab9849cc342c88a7f410c29242b46f373f2d4152448",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/public-language-review.json",
+      "to": ".agents/memory/working/framework-review/evidence/public-language-review.json",
+      "original_sha256": "d6d07dc9404340d701a30a92fab96717e48b52d9cf982f308a1f1752a05f598e",
+      "relocated_sha256": "d6d07dc9404340d701a30a92fab96717e48b52d9cf982f308a1f1752a05f598e",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/public-language-review-target.json",
+      "to": ".agents/memory/working/framework-review/evidence/public-language-review-target.json",
+      "original_sha256": "301ad90eef6e51801156ef3a6d743dd261efb2c1abcfe967b1234583fed808ee",
+      "relocated_sha256": "301ad90eef6e51801156ef3a6d743dd261efb2c1abcfe967b1234583fed808ee",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/category-metadata-ace-review.json",
+      "to": ".agents/memory/working/framework-review/evidence/category-metadata-ace-review.json",
+      "original_sha256": "e0083c3917aa9ba39e5b22436d29026b2a7ea9c1ab008fbce4a3fe9dcd488ce0",
+      "relocated_sha256": "e0083c3917aa9ba39e5b22436d29026b2a7ea9c1ab008fbce4a3fe9dcd488ce0",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/category-metadata-ace-review-target.json",
+      "to": ".agents/memory/working/framework-review/evidence/category-metadata-ace-review-target.json",
+      "original_sha256": "e16e2fa9a427964b04db876cbb8b7709c8b3f185b2ee6333f519e74eab8c4d2b",
+      "relocated_sha256": "e16e2fa9a427964b04db876cbb8b7709c8b3f185b2ee6333f519e74eab8c4d2b",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/observation-template-alignment.json",
+      "to": ".agents/memory/working/framework-review/evidence/observation-template-alignment.json",
+      "original_sha256": "73ca74547856b101691a7c2d3a241f53515176188837e6c1281aaada5b65c23c",
+      "relocated_sha256": "73ca74547856b101691a7c2d3a241f53515176188837e6c1281aaada5b65c23c",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/source-tag-audit.json",
+      "to": ".agents/memory/working/framework-review/evidence/source-tag-audit.json",
+      "original_sha256": "d76a98629397b9aab2c01b0e84369fbd29a0ba475e589d4a4dfe0b357906af89",
+      "relocated_sha256": "d76a98629397b9aab2c01b0e84369fbd29a0ba475e589d4a4dfe0b357906af89",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/source-clarifications-review.json",
+      "to": ".agents/memory/working/framework-review/evidence/source-clarifications-review.json",
+      "original_sha256": "627f6a16a081b9cfe6674df28e7b5638aae6b99a979fb4fe4e03cc554c303fc6",
+      "relocated_sha256": "627f6a16a081b9cfe6674df28e7b5638aae6b99a979fb4fe4e03cc554c303fc6",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/local-workflow-overwrite-review.json",
+      "to": ".agents/memory/working/framework-review/evidence/local-workflow-overwrite-review.json",
+      "original_sha256": "85fef58cc25977311d084b2e82967b068105805f980f0a6ca80b9cd3d2bc3889",
+      "relocated_sha256": "85fef58cc25977311d084b2e82967b068105805f980f0a6ca80b9cd3d2bc3889",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/context-token-counts.json",
+      "to": ".agents/memory/working/framework-review/evidence/context-token-counts.json",
+      "original_sha256": "64e9c3a4d3ee65dbc220557326f1d823bfc72b689be9fba670e95a58a409fc9f",
+      "relocated_sha256": "64e9c3a4d3ee65dbc220557326f1d823bfc72b689be9fba670e95a58a409fc9f",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/context-token-counts-before-nitpicks.json",
+      "to": ".agents/memory/working/framework-review/evidence/context-token-counts-before-nitpicks.json",
+      "original_sha256": "622b2fb2f8878706a5f518db5759b45f28c440e372392c6282d32103f85b8e71",
+      "relocated_sha256": "622b2fb2f8878706a5f518db5759b45f28c440e372392c6282d32103f85b8e71",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/nitpick-final-invariants.json",
+      "to": ".agents/memory/working/framework-review/evidence/nitpick-final-invariants.json",
+      "original_sha256": "f656c9bec0823f1a8a6aec83cb18cdd58ca51c4410d3207f63b96fe175380eda",
+      "relocated_sha256": "f656c9bec0823f1a8a6aec83cb18cdd58ca51c4410d3207f63b96fe175380eda",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/nitpick-content-verification.json",
+      "to": ".agents/memory/working/framework-review/evidence/nitpick-content-verification.json",
+      "original_sha256": "b4a15726a88e38e6099ab50b68ace7ef87d2bf4d66bf78e649cb0cec70e3af75",
+      "relocated_sha256": "b4a15726a88e38e6099ab50b68ace7ef87d2bf4d66bf78e649cb0cec70e3af75",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/integration-preparation.json",
+      "to": ".agents/memory/working/framework-review/evidence/integration-preparation.json",
+      "original_sha256": "ff4889a2a802ca0c6547dbdeab1c7dac3683a363907c45839c6235dc7e5bcea0",
+      "relocated_sha256": "ff4889a2a802ca0c6547dbdeab1c7dac3683a363907c45839c6235dc7e5bcea0",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/public-voice-review.json",
+      "to": ".agents/memory/working/framework-review/evidence/public-voice-review.json",
+      "original_sha256": "f89149fbac34d5b1efe760eec6b01c65f7cc64a6d8f547811f9b7f1b59f784e8",
+      "relocated_sha256": "f89149fbac34d5b1efe760eec6b01c65f7cc64a6d8f547811f9b7f1b59f784e8",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/public-voice-final-refinement-review.json",
+      "to": ".agents/memory/working/framework-review/evidence/public-voice-final-refinement-review.json",
+      "original_sha256": "4e753877109b97017450b3412aaf00aebe671677140f70f1632f5f8cdbe461ab",
+      "relocated_sha256": "4e753877109b97017450b3412aaf00aebe671677140f70f1632f5f8cdbe461ab",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/public-voice-verification.json",
+      "to": ".agents/memory/working/framework-review/evidence/public-voice-verification.json",
+      "original_sha256": "4859384aa8425d2a4e36edfad82c72eb2070e515eb9c6d4fe4f6c09c546c9a60",
+      "relocated_sha256": "4859384aa8425d2a4e36edfad82c72eb2070e515eb9c6d4fe4f6c09c546c9a60",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/content-verification.json",
+      "to": ".agents/memory/working/framework-review/evidence/content-verification.json",
+      "original_sha256": "bac2e2d4b12886bf2dc6605f477288bab8068b082b53756c7afbb0fb1c304fe6",
+      "relocated_sha256": "bac2e2d4b12886bf2dc6605f477288bab8068b082b53756c7afbb0fb1c304fe6",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/package-verification.json",
+      "to": ".agents/memory/working/framework-review/evidence/package-verification.json",
+      "original_sha256": "307b7a814dc056aa888f1adfb0f575f44fc1299c7f7c334998c6aeac3fb509aa",
+      "relocated_sha256": "307b7a814dc056aa888f1adfb0f575f44fc1299c7f7c334998c6aeac3fb509aa",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/baseline-package-verification.json",
+      "to": ".agents/memory/working/framework-review/evidence/baseline-package-verification.json",
+      "original_sha256": "815b91bc0b5b93156d26118f753e1a410aa285cf4c4b78cb05d0783d56c762e6",
+      "relocated_sha256": "815b91bc0b5b93156d26118f753e1a410aa285cf4c4b78cb05d0783d56c762e6",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/p02-application-receipt.json",
+      "to": ".agents/memory/working/framework-review/evidence/p02-application-receipt.json",
+      "original_sha256": "d109a923f58925335b4d76e9dec348f4cdee8863fbee4963ae702feb2f6f5e54",
+      "relocated_sha256": "d109a923f58925335b4d76e9dec348f4cdee8863fbee4963ae702feb2f6f5e54",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/p03-application-receipt.json",
+      "to": ".agents/memory/working/framework-review/evidence/p03-application-receipt.json",
+      "original_sha256": "ab99ff61511766c14ce62e23d71c58258ac1db6efb25b2212c3e3b2c24bb6818",
+      "relocated_sha256": "ab99ff61511766c14ce62e23d71c58258ac1db6efb25b2212c3e3b2c24bb6818",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/p04-scoped-authority-receipt.json",
+      "to": ".agents/memory/working/framework-review/evidence/p04-scoped-authority-receipt.json",
+      "original_sha256": "5d46dc0dff8f6d35355b48ae45ea8eb56c7ff113ecf5e9f9e10bef5c39f27be7",
+      "relocated_sha256": "5d46dc0dff8f6d35355b48ae45ea8eb56c7ff113ecf5e9f9e10bef5c39f27be7",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/p05-archival-receipt.json",
+      "to": ".agents/memory/working/framework-review/evidence/p05-archival-receipt.json",
+      "original_sha256": "4c2ea33d66e5eefe9778e5fabfa4499ba628d458583e77aecac8e31be5c7be18",
+      "relocated_sha256": "4c2ea33d66e5eefe9778e5fabfa4499ba628d458583e77aecac8e31be5c7be18",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/p06-overwrites-receipt.json",
+      "to": ".agents/memory/working/framework-review/evidence/p06-overwrites-receipt.json",
+      "original_sha256": "75319d8561ebb576891ede445b03a70732fc26494812c9166c9a7dc8810e056b",
+      "relocated_sha256": "75319d8561ebb576891ede445b03a70732fc26494812c9166c9a7dc8810e056b",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/p07-readme-orientation-receipt.json",
+      "to": ".agents/memory/working/framework-review/evidence/p07-readme-orientation-receipt.json",
+      "original_sha256": "570582effebd39c3806987448931a94ead7177a9e6bafa90150b7ce13aba33d5",
+      "relocated_sha256": "570582effebd39c3806987448931a94ead7177a9e6bafa90150b7ce13aba33d5",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/p08-catalogue-corrections-receipt.json",
+      "to": ".agents/memory/working/framework-review/evidence/p08-catalogue-corrections-receipt.json",
+      "original_sha256": "ed67eca8ebd592e190366bc2d6a77227b5e7fa5a5d1fc17d8611f1e70ede00d0",
+      "relocated_sha256": "ed67eca8ebd592e190366bc2d6a77227b5e7fa5a5d1fc17d8611f1e70ede00d0",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/p08-workflow-docs-receipt.json",
+      "to": ".agents/memory/working/framework-review/evidence/p08-workflow-docs-receipt.json",
+      "original_sha256": "6620273cac3f54650751ea09c99b95000cc9b4ff5c017307879ff36691dcf553",
+      "relocated_sha256": "6620273cac3f54650751ea09c99b95000cc9b4ff5c017307879ff36691dcf553",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/p08-workflows-receipt.json",
+      "to": ".agents/memory/working/framework-review/evidence/p08-workflows-receipt.json",
+      "original_sha256": "60e5c6f059dd8eade13d71b4d36fd816146bdea9ce64476ac88b86dd4a97534e",
+      "relocated_sha256": "60e5c6f059dd8eade13d71b4d36fd816146bdea9ce64476ac88b86dd4a97534e",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/t28-rs1-pattern-exception-application.json",
+      "to": ".agents/memory/working/framework-review/evidence/t28-rs1-pattern-exception-application.json",
+      "original_sha256": "3030ba1f1fb28b28f7c912e7b333059a2ee4470828cc4511e7b8b112ca7c5f89",
+      "relocated_sha256": "3030ba1f1fb28b28f7c912e7b333059a2ee4470828cc4511e7b8b112ca7c5f89",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/t28-rs2-archive-definition-application.json",
+      "to": ".agents/memory/working/framework-review/evidence/t28-rs2-archive-definition-application.json",
+      "original_sha256": "418700512f23c51f28c0d348ecd33d0f079794445cd77731d663cbcce28cecb7",
+      "relocated_sha256": "418700512f23c51f28c0d348ecd33d0f079794445cd77731d663cbcce28cecb7",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/t28-rs3-workflow-value-application.json",
+      "to": ".agents/memory/working/framework-review/evidence/t28-rs3-workflow-value-application.json",
+      "original_sha256": "671ca9f6639967e1a625bc2b0ac8e5d968ac87de95711a50bca962b54a76b0e9",
+      "relocated_sha256": "671ca9f6639967e1a625bc2b0ac8e5d968ac87de95711a50bca962b54a76b0e9",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/t28-rs4-worktree-delivery-application.json",
+      "to": ".agents/memory/working/framework-review/evidence/t28-rs4-worktree-delivery-application.json",
+      "original_sha256": "2e1dec0cc5522d90e17f35cb0200b341136d41f36c8d12646dc0df4817feeb77",
+      "relocated_sha256": "2e1dec0cc5522d90e17f35cb0200b341136d41f36c8d12646dc0df4817feeb77",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/t28-rs5-extension-source-split-application.json",
+      "to": ".agents/memory/working/framework-review/evidence/t28-rs5-extension-source-split-application.json",
+      "original_sha256": "c8ba6b5671d482f54f9075e01851290bcd18840eb0839d8755cb9e86d1de2fce",
+      "relocated_sha256": "c8ba6b5671d482f54f9075e01851290bcd18840eb0839d8755cb9e86d1de2fce",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/ideas/detailed-diagram.mmd",
+      "to": ".agents/memory/emerging/ideas/framework-review/detailed-diagram.mmd",
+      "original_sha256": "e9a0f3369257b9e0c22be86bf2c77f5defad4ce511900b8370d6d9b478b314c7",
+      "relocated_sha256": "e9a0f3369257b9e0c22be86bf2c77f5defad4ce511900b8370d6d9b478b314c7",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/ideas/simplified-diagram.mmd",
+      "to": ".agents/memory/emerging/ideas/framework-review/simplified-diagram.mmd",
+      "original_sha256": "74281e1256af3dde9d6bd2ccc0eb5c4b4433881f190513b52550b33b1fc07ce4",
+      "relocated_sha256": "74281e1256af3dde9d6bd2ccc0eb5c4b4433881f190513b52550b33b1fc07ce4",
+      "change": "byte-identical"
+    },
+    {
+      "from": "artifacts/task28-source-framework-review/e01-review-workflow-proposal.diff",
+      "to": ".agents/memory/emerging/ideas/framework-review/review-workflow-proposal.diff",
+      "original_sha256": "817e7818fbb3641a0b5ec10b1568edd5959726631e37cade2e97b89bf13f3bca",
+      "relocated_sha256": "817e7818fbb3641a0b5ec10b1568edd5959726631e37cade2e97b89bf13f3bca",
+      "change": "byte-identical"
+    }
+  ],
+  "excluded": "Build logs, raw command output, bulk generated inventories, temporary scripts, and test/candidate workspaces remain generated output. No source payload or CLI implementation changed.",
+  "validation": {
+    "markdown_files": 31,
+    "relative_links": 217,
+    "link_issues": [],
+    "entrypoints_and_metadata": "passed",
+    "all_relocated_files_tracked": true,
+    "authored_markdown_whitespace": "passed",
+    "preserved_raw_whitespace": [
+      "Original patch context lines contain their required single leading space.",
+      "Original source-clarifications-review.json retains its trailing blank line to preserve the evidence bytes."
+    ]
+  }
+}

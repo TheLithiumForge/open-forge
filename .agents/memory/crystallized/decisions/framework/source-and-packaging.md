@@ -22,7 +22,7 @@ Users own installed Framework files. Durable customization uses ordinary sibling
 
 ## Rationale
 
-Separating installed completeness from repository governance keeps the Framework human-readable and tool-optional while allowing maintainers to preserve deeper cross-source obligations.
+Separating installed completeness from repository governance keeps the Framework readable and tool-optional while allowing maintainers to preserve deeper cross-source obligations.
 
 Dogfooding the same payload exposes migration and usability failures. Visible local additions let the repository evolve without pretending every project needs its Maintenance and design system.
 
@@ -49,7 +49,7 @@ Maintaining dogfood and source representations still requires deliberate synchro
 - [Framework distribution and dogfood contract](../../documents/framework/architecture.md#distribution-and-dogfood)
 - [Payload Maintenance scope](../../documents/maintenance/payload/_payload.md)
 - [Installable Framework source](../../../../../src/open-forge/)
-- [Current build implementation](../../../../../build.ts)
+- [Current build and delivery implementation](../../../../../scripts/delivery/delivery.ts)
 - [Current overwrite contract](../../documents/framework/routing/overwrites.md)
 
 ## Decision Relationships

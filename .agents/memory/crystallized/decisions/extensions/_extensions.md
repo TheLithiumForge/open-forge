@@ -13,6 +13,7 @@ open-forge:
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [The pre-release first-party catalogue is one deliberately small development toolkit containing six lean Workflows, one Experience Design Skill, and nine Templates](development-toolkit.md) - #Memory #Decision #CurrentTruth #Extension #Workflow #Skill #Template #Catalogue #DevelopmentToolkit
-- [Extensions deliver optional whole files through existing routes, and installed files carry complete runtime meaning without package metadata or the CLI](extension-package-boundary.md) - #Memory #Decision #CurrentTruth #Extension #Package #RuntimeBoundary
+- [Why first-party development content was consolidated into one Development Toolkit package](development-toolkit.md) - #Memory #Decision #CurrentTruth #Extension #Workflow #Skill #Template #Catalogue #DevelopmentToolkit
+- [Extensions distribute optional whole files whose meaning comes from their Framework route or native consumer rather than package metadata or the CLI](extension-package-boundary.md) - #Memory #Decision #CurrentTruth #Extension #Package #RuntimeBoundary
+- [Why focused Extension packages replace Toolkit payload ownership and Experience Design leaves the catalogue](focused-extension-packages.md) - #Memory #Decision #CurrentTruth #Extension #Catalogue
 <!-- open-forge:generated-index:end -->

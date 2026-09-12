@@ -6,7 +6,9 @@ open-forge:
 
 # Guidance
 
-Guidance is advice that can be adapted to the current situation.
+## What approach is recommended, and when does it fit?
+
+Guidance recommends approaches for recurring situations and explains when they fit. Its advice can be adapted to the current situation.
 
 ## Axioms
 

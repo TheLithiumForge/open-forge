@@ -6,6 +6,8 @@ open-forge:
 
 # Working Memory
 
+## What temporary context is needed to continue or resume this work?
+
 Working Memory is temporary context for continuing or resuming active work.
 
 ## Axioms

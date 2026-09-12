@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Binding Bun-runner rules layered on generic test evidence and isolation requirements
+  description: Scope for Bun-specific testing instructions
   tags: [Directive, Testing, Bun, Isolation, Parallelism, Snapshot]
 ---
 

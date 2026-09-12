@@ -1,56 +1,25 @@
 # Developing Open Forge
 
-This guide describes how to develop and verify Open Forge. Start with the
-[README](../README.md) when you want to use the Framework.
+Use this guide to build the CLI locally, contribute to the Framework, and check a change before review. For everyday use, start with the [README](../README.md) or [CLI guide](cli.md).
 
 ## Enter The Workspace
 
-Read `AGENTS.md` and `.agents/loader.md` before changing Open Forge. Use the
-[Sources Of Truth map](../.agents/maps/sources-of-truth.md) to locate the source
-that defines each affected question.
+Read `AGENTS.md` and `.agents/loader.md`, then select the scopes relevant to your change. The [Sources Of Truth map](../.agents/maps/sources-of-truth.md) helps locate the file that defines each affected question.
 
-Current responsibilities are:
+| Location                | What belongs there                                               |
+| ----------------------- | ---------------------------------------------------------------- |
+| `src/open-forge/`       | Installable Framework files                                      |
+| `src/extensions/`       | First-party Extension packages                                   |
+| `src/cli/`              | Native CLI implementation and tests                             |
+| `scripts/`              | Repository build, delivery, package, and agent tooling            |
+| `.agents/`              | This repository's own rules, current knowledge, and work context |
+| `docs/` and `README.md` | Public introductions and practical guides                        |
+| `artifacts/`            | Generated build, publication, and verification output            |
 
-| Source                            | Responsibility                                                |
-| --------------------------------- | ------------------------------------------------------------- |
-| `src/open-forge/`                 | Installable Framework wording                                 |
-| `src/extensions/`                 | First-party Extension packages                                |
-| `.agents/`                        | Repository dogfood, current knowledge, rules, and active work |
-| `scripts/`                        | Repository build, delivery, package, and agent tooling        |
-| `src/cli/`                        | Replacement CLI source, projects, and active tests            |
-| `.agents/memory/archived/cli-v2/` | Deleted CLI-v2 raw historical input                           |
+Keep changes in their defining sources. Generated output and a machine's installed CLI do not establish what a worktree contains.
 
-## CLI Transition
+## Build And Test
 
-The retired TypeScript MVP and its build scripts remain available in Git history
-at `c4428a90`. The current CLI is C# under `src/cli/`; repository coordination
-scripts live under `scripts/`. Use the CLI built from this worktree for repository
-routing, development, review, and acceptance.
-
-CLI v2 was deleted. Its former Documents, Decisions, Directives, Patterns,
-plans, and implementation records live under
-`.agents/memory/archived/cli-v2/`. They are raw input, not accepted design.
-
-The native CLI uses:
-
-- One canonical .NET Native AOT executable
-- Optional agent-first acceleration over a complete Markdown Framework
-- Boring, explicit, predictable behavior for agents and occasional human use
-- Native AOT and trimming compatibility as hard implementation constraints
-- Thin package-manager wrappers that do not implement Framework behavior
-- npm as the first wrapper
-- The root `package.json` retained as an ecosystem-neutral orchestration layer
-
-The replacement CLI implements all 28 commands but remains unreleased. Its
-six-target npm package graph is implemented, with matching-host execution and
-package invocation proven locally on Linux x64. The other five native hosts
-have static workflow review; their runtime receipts remain unproven. Local linking is
-available for development; package publication remains a separate explicitly
-authorized release effect.
-
-Rune is outside the current release effort.
-
-## Current Repository Tooling
 
 The root `package.json` is the shared entry point for local development and CI.
 Small TypeScript scripts run the .NET build and test tools, synchronize versions,
@@ -248,41 +217,45 @@ npm run cli:unlink
 That command removes the known npm links. Remove an explicitly owned user-local
 PATH bridge only after resolving and revalidating its exact target.
 
-The public command name is `open-forge`. Retired MVP entry points are available
-in Git history and are no longer part of the repository's active tooling.
+The public command name is `open-forge`.
 
-Do not treat `dist/` or `.temp/` as authored authority. Do not edit generated
-output manually.
 
-For Framework-only changes, use proportionate checks with the artifact built
-from the same worktree. Preview generated navigation with `index --dry-run` when
-useful, then apply the authorized changes. Review the complete Git diff before
-closeout:
+## Framework And Extension Changes
+
+Treat the shipped Markdown as the product a workspace will read. Keep it understandable without repository-only explanations or the CLI. When shared meaning changes, update the defining source and its current maintenance explanation, then align the repository's own copy while preserving intentional local specialization.
+
+Check the affected questions, rules, frontmatter, links, generated `Entries`, and installed relationships. A wording edit must preserve conditions, authority, scope, and requirement strength. Extension checks should inspect the assembled result with its dependencies, as described in the [Extension guide](extensions.md#check-the-assembled-result).
+
+Use proportionate verification. With a current artifact available, `index --dry-run` can expose navigation drift and `doctor` can check structure without applying changes. These commands support review; they do not decide whether a sentence preserves its meaning.
+
+Review the final diff and check whitespace:
 
 ```sh
-./artifacts/publish/open-forge-dev/Release/open-forge-dev index
-./artifacts/publish/open-forge-dev/Release/open-forge-dev doctor
 git diff --check
+git diff
 ```
 
-Historical MVP tests and builds do not qualify the current CLI.
+## Measure Context Size
 
-## New CLI Evidence
+The README's context figures measure the Markdown in `src/open-forge/`, including hidden files, frontmatter, and generated `Entries`. They use [tiktoken](https://github.com/openai/tiktoken) with two named reference encodings:
 
-No prototype is working merely because source or test files exist. A native CLI
-claim requires reproducible restore, compilation, focused tests, Native AOT
-publication, actual binary execution, and wrapper evidence appropriate to the
-accepted slice.
+| Source set              | Files | `o200k_base` tokens | `cl100k_base` tokens |
+| ----------------------- | ----: | ------------------: | -------------------: |
+| Default startup context |    19 |               6,823 |                6,863 |
+| Complete base Framework |    23 |               8,267 |                8,309 |
 
-Design tests from observable risk and independent evidence needs. Do not inherit
-the deleted CLI-v2 test volume or tier structure automatically.
+For startup, start with the canonical `AGENTS.md` handoff and loader, then follow exposed `LoadNow` and `KeepInMind` entries through loaded parents in listed order. Include adjacent overwrites where present. The current default set leaves the archived entrypoint, Templates entrypoint, and on-demand Adaptive Collaboration guidance unloaded. The alternative `CLAUDE.md` bridge adds 24 `o200k_base` tokens when used and is included in the complete-file count.
 
-## Documentation
+Count each file's raw UTF-8 text independently with `len(encoding.encode(text))`, then sum the results. The measurements use tiktoken `0.14.0`. They exclude tool response wrappers, file separators, system and conversation context, project-specific files, and Extensions. Actual model and harness costs can differ.
 
-When accepted direction changes, update every source that answers a distinct
-affected question. Preserve useful old reasoning in the appropriate historical
-route instead of leaving competing current descriptions.
+Recalculate after changing the shipped files or their loading policy. Report the tokenizer, included source set, and final source revision with the verification record. Keep Core, Memory, and the complete Framework distinct when describing the result.
 
-Follow the repository [Writing Directive](../.agents/directives/public-facing-writing.md),
-[Writing Standard](../.agents/memory/crystallized/documents/maintenance/writing.md),
-and [Dictionary](../.agents/memory/crystallized/documents/maintenance/helpers/dictionary.md).
+## Documentation Voice
+
+Use [Project Voice](../.agents/memory/crystallized/documents/maintenance/project-voice.md) for READMEs and introductions: natural, welcoming, and quietly proud of what the project offers. Give rules and reference text the precise, conversational voice described in the [Writing Standard](../.agents/memory/crystallized/documents/maintenance/writing.md). Both share the same accuracy and terminology requirements. Choose the voice for the passage's purpose, so an inviting introduction can lead into exact setup instructions.
+
+The README should quickly explain what Open Forge is, why it helps, how to start, and where to learn more. Public guides explain use in more detail. Current repository documents preserve the complete accepted subjects, and maintenance files explain how their sources stay aligned. Link between them instead of maintaining competing detailed explanations.
+
+Keep category questions synchronized between the README and their defining files. A description helps a reader decide whether to open a file. An optional responsibility helps an editor decide what belongs in it.
+
+Follow the [Writing Directive](../.agents/directives/public-facing-writing.md) and [Dictionary](../.agents/memory/crystallized/documents/maintenance/helpers/dictionary.md). The Framework itself must remain understandable without these repository documents.

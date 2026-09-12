@@ -72,9 +72,9 @@ Before archival:
 2. Record what replaced the material when a replacement exists
 3. Preserve origin, scope, and useful rationale
 4. Update incoming relationships when the old path would imply current authority
-5. Remove active loading or continuity status that no longer applies
+5. Remove metadata that would continue the former behavioral role or assert current authority
 
-Archival preserves useful history. Material without plausible historical value may be pruned instead.
+Archive the remainder worth retaining after extracting still-current content. The destination's rules govern the archived material, including any later consolidation or transformation. Archival does not require retaining every detail. Material without plausible historical value may be pruned instead, and later deletion follows user direction or accepted retention preferences.
 
 ## Restoration
 

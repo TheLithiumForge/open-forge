@@ -31,6 +31,8 @@ Loading and tags make material visible or classifiable. Authority still comes fr
 
 ## Acceptance
 
+Validation establishes whether evidence supports a claim. Acceptance establishes which knowledge or decisions may be treated as current within their scope. Restoring or moving a record does not establish acceptance by itself.
+
 Clear direction is accepted within its stated scope without requiring a ritual phrase or redundant confirmation. A request to perform an action delegates the routine, reversible, in-scope choices required to carry it out when the request determines them clearly. It does not silently accept an unsettled consequential scope, risk, cost, external effect, irreversibility, or accepted direction.
 
 Tentative, comparative, exploratory, or ambiguous language remains contextual until dependent work requires clarification or the direction becomes clear.
@@ -53,7 +55,7 @@ Acceptance does not determine durability, reusable shape, or binding behavior. B
 
 When accepted direction changes current state:
 
-1. Update every authoritative document, `route`, implementation, external system, or other source whose distinct current meaning changes
+1. Update every affected authoritative document, `route`, implementation, external system, or other source for the distinct part of current meaning it defines
 2. Update only affected editable #Evergreen material before work depends on it and no later than closeout
 3. Preserve useful rationale in a Decision when the reason may matter later
 4. Put mandatory future behavior in the matching Directive or another applicable Axiom
@@ -72,7 +74,7 @@ Current documents integrate what is accepted now. Decisions preserve why importa
 
 An Evergreen current document explains the present concept without forcing readers to reconstruct it from decisions. A decision links forward to the authoritative source that expresses its current result, and that source may link back when the rationale helps.
 
-The [Memory model](memory/model.md#authority-boundary) defines why recorded behavior does not become active and why accepted behavior that should guide work moves to the matching #Core route.
+The [Memory model](memory/model.md#authority-boundary) defines the knowledge authority of accepted records and how relevant outcomes reach their matching categories without giving Memory those categories' roles.
 
 ## Boundaries
 

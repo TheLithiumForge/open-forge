@@ -1,0 +1,23 @@
+{
+  "review_head_at_inspection": "28cac0fc47e43671aa6458d318293594542d9bbf",
+  "develop_at_inspection": "2b54fdc598a48a12e44772a5cb323cf45e9e5a73",
+  "common_ancestor": "8463a2e26987cf5f5760d01caa9b69c67d3f921e",
+  "status": "read-only preparation; no merge attempted or authorized",
+  "source_and_non_cli_paths_changed_on_both_sides": [
+    "README.md"
+  ],
+  "limits": [
+    "Path overlap identifies integration review needs, not textual conflicts.",
+    "Newer task/ledger and CLI implementation state must be preserved during authorized integration.",
+    "The review branch predates later CLI work. The task change base and four task commits distinguish this task's reviewed changes from older branch history.",
+    "No merge or release is authorized. CLI implementation and qualification remain assigned to the separate tasks."
+  ],
+  "task_change_base": "8a52ede13ab6d622578a6cfae04031a9a5b2eb2d",
+  "task_commits": [
+    "0eea5e6557473a52ba24a5e42bdd1b0dd5c9485c",
+    "2b31f4e41d7c445f416408d6b192478e3b2d0eb4",
+    "e91d2934545bb596d5d1929a7a04342ea4652375",
+    "28cac0fc47e43671aa6458d318293594542d9bbf"
+  ],
+  "final_content_review": "PASS; see category-metadata-ace-review.json"
+}

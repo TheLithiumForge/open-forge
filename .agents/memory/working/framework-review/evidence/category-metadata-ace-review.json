@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "review": "category-metadata-ace-pack",
+  "baseline": "e91d2934545bb596d5d1929a7a04342ea4652375",
+  "target": {
+    "manifest": "artifacts/task28-source-framework-review/category-metadata-ace-review-target.json",
+    "frozen_paths": 52,
+    "prior_reviewed_paths": 49,
+    "targeted_recheck_paths": 3,
+    "targeted_recheck": [
+      "README.md",
+      ".agents/memory/crystallized/documents/vision.md",
+      ".agents/memory/crystallized/documents/framework/markdown/routes.md"
+    ],
+    "excluded_bookkeeping_path": ".agents/memory/working/cli-development/tasks/source-framework-review.md",
+    "sha256_identities_verified": true,
+    "final_target_hashes_verified": true
+  },
+  "prior_finding": {
+    "id": "CMAR-1",
+    "status": "resolved",
+    "resolution": "The canonical route representation now states `A primary question and compact definition of the category` as item 3, matching the question-first opening rule."
+  },
+  "coverage": {
+    "targeted_recheck_read_all_paths": true,
+    "ace_checks": [
+      "README and Vision begin the ACE definition with the accepted `builds on progressive disclosure and specification-driven development` wording.",
+      "ACE is defined as deliberate shaping and ongoing maintenance of context, with clear mechanisms for placement, relationships, authority, and progressive access to detail.",
+      "The prose describes people and agents refining context through accepted decisions and improved understanding; it does not claim automatic recording or automatic growth.",
+      "Development is presented as a proving ground rather than ACE's boundary, preserving broad applicability.",
+      "README and Vision each explain the concept without requiring the other, and the Framework meaning remains independent of README and repository maintenance documents.",
+      "The corrected route representation matches the selected H1, H2 question, definition, and explanation order."
+    ],
+    "checks": [
+      "All 52 target SHA-256 identities matched category-metadata-ace-review-target.json.",
+      "The 49 previously reviewed paths were verified unchanged by the refreshed manifest and were not re-reviewed.",
+      "git diff --check passes for the three targeted paths."
+    ]
+  },
+  "findings": [],
+  "conclusion": "The category, metadata, and ACE pack passes focused review. The route representation correction resolves CMAR-1. The revised README and Vision define ACE in a professional, friendly voice as Open Forge building on progressive disclosure and specification-driven development, explain its deliberate context-shaping mechanisms and ongoing maintenance, preserve broad applicability and proportionality, and avoid unsupported superiority or automatic-growth claims. Existing category questions, definitions, Axioms, Entries, frontmatter, authority, loading, and local specializations remain intact.",
+  "limitations": [
+    "CLI bodies, contracts, commands, tests, runtime/APM/agent sources, stored memory records, external behavior, and Git integration remain outside this review.",
+    "The known pre-existing syntax.md historical CLI-v2 link was not raised as a finding, per assignment.",
+    "This receipt does not review the earlier language pack or the later private current-content scrub beyond the target identity checks recorded here."
+  ]
+}

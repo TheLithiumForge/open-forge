@@ -1,0 +1,7 @@
+{
+  "id": "development",
+  "name": "Development",
+  "description": "Optional Development, Debugging, and Review Workflows that use project context",
+  "version": "0.1.0",
+  "dependencies": []
+}

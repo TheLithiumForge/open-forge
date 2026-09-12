@@ -6,7 +6,9 @@ open-forge:
 
 # Decisions
 
-Decisions record important accepted choices and why they were made.
+## What was chosen, why, and what follows from the choice?
+
+Decisions record important accepted choices and why they were made. They may also preserve consequences and other context when these help future work.
 
 ## Axioms
 

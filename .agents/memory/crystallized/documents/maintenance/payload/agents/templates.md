@@ -23,13 +23,13 @@ The [current Templates contract](../../../framework/primitives/templates.md) def
 - A Template result receives destination-specific metadata, scope, state, authority, and relationships. The source Template does not control the result, and later Template changes do not update it.
 - Continuing guidance or requirements belong to the matching #Core route. A Template may link to that source without copying its complete rules.
 - Generic Templates are fallbacks. A specialized Template exists only when it provides meaningfully different starting content.
-- Templates remain human-readable and usable through ordinary file operations. Tools may make selection and copying cheaper without defining Template meaning or result state.
+- Templates remain readable and usable through ordinary file operations. Tools may make selection and copying cheaper without defining Template meaning or result state.
 - Users may edit, replace, scope, or remove templates. Normal installation or upgrade does not silently restore a removed template.
 
 ### Distribution And Dogfood
 
 - The standard Framework ships only the Templates category contract.
-- The optional [`development-toolkit` payload](../../../../../../../src/extensions/development-toolkit/payload/.agents/templates/) is canonical for its packaged document and Memory Templates.
+- The optional [Project Documents](../../../../../../../src/extensions/project-documents/content/.agents/templates/documents/), [Memory Starters](../../../../../../../src/extensions/memory-starters/content/.agents/templates/memory/), and [Planning](../../../../../../../src/extensions/planning/content/.agents/templates/planning/) payloads are canonical for their respective packaged Templates. Development Toolkit includes them through dependencies.
 - Repository-local copies of packaged leaf Templates remain aligned through automated parity verification. Repository-only Templates remain dogfood candidates rather than installable defaults.
 - Promoting another dogfood Template into the package requires its own review of generic value, authority boundary, portability, and source verification.
 

@@ -6,6 +6,8 @@ open-forge:
 
 # Working Memory
 
+## What temporary context is needed to continue or resume this work?
+
 Working Memory is temporary context for continuing or resuming active work.
 
 ## Axioms
@@ -27,5 +29,6 @@ Working Memory is temporary context for continuing or resuming active work.
 - [Current open priorities for validating, evolving, dogfooding, and preparing Open Forge for release](backlog.md) - #Memory #Working #Backlog #Contextual
 - [Current state, current step, and next steps for one active workstream](checkpoints/_checkpoints.md) - #LoadNow #Memory #Working #Checkpoint #Contextual
 - [Active top-down architecture, Plan, Tasks, and evidence for the greenfield replacement CLI](cli-development/_cli-development.md) - #Memory #Working #Contextual #Active #KeepInMind #CLI #Architecture #Plan #Task #Development
+- [Task 28 discussion, proposals, and review evidence while the Framework branch awaits acceptance](framework-review/_framework-review.md) - #Memory #Working #Contextual #Framework #Review
 - [Sealed transfer snapshots that preserve one boundary for resumption](handoffs/_handoffs.md) - #LoadNow #Memory #Handoff #AgentCommunication #Contextual
 <!-- open-forge:generated-index:end -->

@@ -1,0 +1,44 @@
+{
+  "status": "prepared, not applied; CLI scope decision pending",
+  "date": "2026-09-11",
+  "depends_on": "P02 applied in the review worktree",
+  "files": [
+    {
+      "path": "src/open-forge/.agents/loader.md",
+      "before_sha256": "3fa9efce65766b5e0ebf71ec60f16293cb81a95868de9cbd825b85a05b3e6aad",
+      "candidate_sha256": "0c7b9a943d9e248722feb86bc85b7b459aa313715ba78f8632ccb459da7a8961",
+      "word_delta_whitespace_count": -60
+    },
+    {
+      "path": ".agents/loader.md",
+      "before_sha256": "c086cb9b98b141efc71930e1dc78f771d64c63cef450e52d2769875004322fab",
+      "candidate_sha256": "842c237e94193abdce716c55c2fa64c4967cd4c779da65a7b75c28564530cb62",
+      "word_delta_whitespace_count": -60
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/routing/loading.md",
+      "before_sha256": "dc01703aec74c41e24851d0dff481400806f2a5cb72f4a879e4d67ef0f86ca0b",
+      "candidate_sha256": "10bad8b92cb35b3a4e11c07e8432d85495f74f391183f58257c13cda42890f5c",
+      "word_delta_whitespace_count": -46
+    },
+    {
+      "path": "README.md",
+      "before_sha256": "01b08877f609ef1a5caade6decec0a4cf46b66202ec66d2636ded35beae6b17f",
+      "candidate_sha256": "8280f8f1bd051158e43d0e42f867d5f8be77e336aa4010c7d9dd703d8a8ea484",
+      "word_delta_whitespace_count": -10
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/architecture.md",
+      "before_sha256": "0204768f0f04d1cabd6b3eb360e0dc035c16127078784c2345a9195cca6726b1",
+      "candidate_sha256": "735edfa04d79c4f4fc091a4d6057e10e30d7be27146b33ef694aa64a431443cc",
+      "word_delta_whitespace_count": -4
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/loader.md",
+      "before_sha256": "f1896501f1b386e6e6a58b5924d0795db98cccca5647cd6de1491de1b4abef3f",
+      "candidate_sha256": "f4c8bb2d0753040192bef4756d590f344a106aa32c63668e19ad1df4ca74391f",
+      "word_delta_whitespace_count": -30
+    }
+  ],
+  "patch_check_passed": true
+}

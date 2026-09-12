@@ -36,7 +36,7 @@ It must make these questions cheap to answer:
 - Where should a new rule, result, idea, observation, or decision go?
 - How can the workspace evolve without accumulating competing truth?
 
-Human-readable Markdown contains the complete semantic answer. Deterministic tools may make every operation faster and safer, but the files remain sufficient to inspect, navigate, and maintain the Framework.
+Readable Markdown contains the complete semantic answer. Deterministic tools may make every operation faster and safer, but the files remain sufficient to inspect, navigate, and maintain the Framework.
 
 Once direction is sufficient, work continues through coherent in-scope steps until completion or until a material decision, conflict, uncertainty, or authority boundary requires user input. Routine continuation does not require another `continue` message.
 
@@ -49,7 +49,7 @@ The following structural constraints realize the [Open Forge Principles](../prin
 3. Loaded ancestor `Axioms` remain active below them without being copied into children
 4. Loading controls visibility and timing, not authority
 5. Scope is explicit in the `route` path, `entrypoint` meaning, `description`, and relationships
-6. Workspace meaning remains human-readable and reconstructable without the CLI, caches, receipts, or retrieval databases
+6. Workspace meaning remains readable and reconstructable without the CLI, caches, receipts, or retrieval databases
 7. Standard `routes` are useful defaults while remaining removable, replaceable, and recursively customizable
 8. Removed defaults stay removed unless restoration is explicitly requested
 9. Memory may describe any subject without activating behavior it records
@@ -140,7 +140,7 @@ Routing moves from the canonical loader through small `entrypoints` that expose 
 
 Work may select several scopes without merging them. Each keeps its own `route` chain and authority, explicit relationships connect them, and conflicts about a shared result are resolved by clear direction or the authoritative source for that result rather than by path depth or load order.
 
-Loading determines when routed context becomes visible, not what authority it has. Baseline context follows visible immediate-loading `routes`; target-sensitive continuity recovers applicable entrypoints and globally discoverable ordinary records across `route`, workstream, and context changes; other context remains selected on demand.
+Loading determines when routed context becomes visible, not what authority it has. Baseline and continuity context both follow loaded parent routes. Continuity content is refreshed while its scope remains active. Other context remains selected on demand.
 
 The detailed current contracts are separated by responsibility:
 
@@ -165,7 +165,7 @@ The operating rules are:
 5. A selected authoritative source governs the accepted state of its subject
 6. Narrower selected material of the same non-directive kind is preferred when it safely specializes broader material
 7. Loaded directives add constraints to ancestor directives rather than silently replacing them
-8. A user-owned overwrite has final precedence only within its base file's scope
+8. A user-owned overwrite is interpreted within its base file's role and scope and has final precedence only for corresponding content
 
 Loading a file makes it visible. A tag can classify it or affect loading. Neither operation creates authority by itself.
 
@@ -283,19 +283,13 @@ They may not silently promote a candidate, infer accepted direction, or make a p
 
 ## Extensions Boundary
 
-Extensions add optional reusable content through the same `routes` and primitive meanings. They do not create a second loader, root authority model, or runtime interpretation system.
+Extensions add optional reusable content and supporting files. Routed Extension content uses the same `routes` and primitive meanings as other Framework content. Packaging does not create a second loader, root authority model, or runtime interpretation system.
 
-After installation, an extension's files behave like ordinary directives, patterns, guidance, skills, templates, workflows, Map `routes`, or Memory. Its packaging metadata does not become necessary to understand its runtime meaning.
+After installation, routed content retains its destination's role, scope, loading behavior, and authority. Native formats and supporting files retain the meaning defined by their consumers. Package metadata is not required to interpret the installed content.
 
-The current extensions implementation remains an MVP. The [Extensions MVP
-Architecture](../extensions/architecture.md) is authoritative for its present
-manifests, dependency system, ownership lifecycle, and liabilities. The
-[Extensions evolution candidate](../../../emerging/ideas/extensions-overhaul.md)
-keeps future distribution, compatibility, migration, multi-root, dependency,
-and governance questions unsettled. The [CLI MVP
-Architecture](../cli/mvp-architecture.md) remains authoritative for the frozen
-legacy implementation. The new CLI must rediscover its Extension boundary from
-current Framework needs rather than inherit deleted CLI-v2 contracts.
+The [Extensions Architecture](../extensions/architecture.md) defines package meaning, composition, and the boundary with installed Framework behavior. The [Extension command contracts](../cli/contracts/extension/_extension.md) define the accepted package representation and managed operations.
+
+The [CLI MVP Architecture](../cli/mvp-architecture.md) records the frozen implementation. Further distribution, compatibility, migration, multi-root, dependency, and governance questions remain contextual in the [Extensions evolution candidate](../../../emerging/ideas/extensions-overhaul.md).
 
 ## Distribution And Dogfood
 
@@ -350,7 +344,7 @@ Correct behavior should be the cheapest path, but review remains part of any con
 - [Memory Architecture](memory/_memory.md)
 - [Accepted State and Synchronization](truth.md)
 - [Payload Maintenance](../maintenance/payload/_payload.md)
-- [Extensions MVP Architecture](../extensions/architecture.md)
+- [Extensions Architecture](../extensions/architecture.md)
 - [CLI MVP Architecture](../cli/mvp-architecture.md)
 - [Current replacement CLI Architecture](../cli/architecture.md)
 - [Historical CLI-v2 evidence](../../../archived/cli-v2/_cli-v2.md)
@@ -376,7 +370,3 @@ These decisions preserve useful rationale behind the current Framework architect
 - [Typed authority and role terminology](../../decisions/framework/authoritative-source-terminology.md)
 - [Canonical Markdown authoring rationale](../../decisions/framework/canonical-markdown.md)
 - [Adaptive decision elicitation](../../decisions/framework/adaptive-decision-elicitation.md)
-
-## Historical Context
-
-The [approved design baseline](../../../archived/sessions/2026-07-26_open-forge-design-baseline.md) preserves the broader reasoning used to establish this architecture without governing its current meaning.

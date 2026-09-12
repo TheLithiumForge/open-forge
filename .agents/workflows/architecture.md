@@ -21,6 +21,8 @@ Produce an accepted or decision-ready top-down structure that future work can ad
 7. Slice adoption into foundation and derivative outcomes with one owner, expected paths, protected paths, integration neighborhoods, and observable verification.
 8. After acceptance, update the source that defines current architecture and preserve only consequential rationale or unresolved alternatives in their matching roles.
 
+If an unresolved decision prevents a reliable structure, return the decision, supporting evidence, and recommended next step. Keep the structure visibly proposed until applicable authority accepts it.
+
 ## Completion
 
 - Starting condition, authority, and accepted horizon are explicit.

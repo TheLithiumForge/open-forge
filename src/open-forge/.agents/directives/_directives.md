@@ -6,14 +6,15 @@ open-forge:
 
 # Directives
 
-Directives contain required instructions.
+## What behavior is required in this scope?
+
+Directives state the instructions that must be followed within their scope.
 
 ## Axioms
 
 - Every sibling Directive listed under an entrypoint's `Entries` carries #LoadNow.
 - Each sibling Directive has one non-empty `## Instructions` section.
 - Sibling Directives listed by this root entrypoint apply throughout the workspace.
-- Select a child Directive route only when its path, description, tags, and parent routes match the work.
 - A selected child entrypoint sets the narrower scope before its sibling Directives load.
 - Those Instructions apply only within the child route's scope.
 - Child Directives add to active parent Directives. A narrower scope does not create higher authority.

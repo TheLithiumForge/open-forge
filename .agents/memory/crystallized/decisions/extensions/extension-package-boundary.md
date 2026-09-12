@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Extensions deliver optional whole files through existing routes, and installed files carry complete runtime meaning without package metadata or the CLI
+  description: Extensions distribute optional whole files whose meaning comes from their Framework route or native consumer rather than package metadata or the CLI
   tags: [Memory, Decision, CurrentTruth, Extension, Package, RuntimeBoundary]
 ---
 
@@ -17,12 +17,13 @@ integrity.
 ## Decision
 
 An Extension is an optional, content-agnostic installation and ownership unit
-for complete files placed through existing `routes`.
+for complete files.
 
-An Extension is not a runtime primitive or another `root route`. Installed
-files retain the meaning, loading behavior, scope, and authority of their
-destination `routes`. The #Extension tag records optional package provenance
-and composition without creating authority.
+An Extension is not a runtime primitive or another `root route`. Routed files
+retain the meaning, loading behavior, scope, and authority of their destination
+`routes`. Native and support files follow the rules of the capability or tool
+that uses them. The #Extension tag records optional package provenance and
+composition without creating authority.
 
 Package manifests, dependency edges, catalogue organization, and transparent
 lifecycle ownership state exist for installation and managed lifecycle
@@ -62,9 +63,9 @@ boundary.
 A content-agnostic unit lets one package contribute any useful combination of
 Core or Memory content without duplicating package machinery for each role.
 
-Whole files remain inspectable, diffable, independently routable, and manually
-installable. Keeping package metadata outside runtime meaning preserves Open
-Forge's file-native and tool-optional boundary.
+Whole files remain inspectable, diffable, and manually installable. Routed
+content uses ordinary Framework navigation. Keeping package metadata outside
+runtime meaning preserves Open Forge's file-native and tool-optional boundary.
 
 Transparent managed ownership makes safe reconciliation and removal possible
 without allowing the package manager to claim unowned content or become a
@@ -89,18 +90,19 @@ metadata that is operationally important even though it is not runtime meaning.
 
 ## Consequences
 
-- Package identity and source organization remain separate from installed route
-  meaning.
-- Dependencies select installable units, while installed files express their
-  runtime relationships through ordinary routes and links.
+- Package identity and source organization remain separate from installed
+  content's meaning.
+- Dependencies select installable units. Installed files express runtime
+  relationships through ordinary Framework routes and links or their native
+  consumer's conventions.
 - A package may contain one primitive, mixed content, support files, or only
   dependencies.
 - First-party catalogue growth must not silently turn optional packages into a
   universal methodology.
 - Lifecycle and CLI designs may evolve, but they must not make installed
   interpretation depend on private package state.
-- The Extensions MVP Architecture defines current Extension package and runtime
-  semantics. The replacement CLI Architecture and command contracts define the
+- The Extensions Architecture defines current package meaning, composition,
+  and runtime boundaries. The replacement CLI Architecture and command contracts define the
   accepted non-shipping replacement mechanics.
 - The CLI MVP Architecture and frozen source define only the executable
   historical reference.
@@ -109,7 +111,7 @@ metadata that is operationally important even though it is not runtime meaning.
 
 ### Extension Package And Runtime Boundary
 
-- [Extensions MVP Architecture](../../documents/extensions/architecture.md)
+- [Extensions Architecture](../../documents/extensions/architecture.md)
 - [Current Extension user contract](../../../../../docs/extensions.md)
 
 ### Accepted Replacement

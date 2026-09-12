@@ -36,7 +36,7 @@ A fail-closed manual migration avoids inferring ownership of user-authored files
 
 - [Core primitive model](../../documents/framework/primitives/model.md)
 - [Current Map document](../../documents/framework/primitives/map.md)
-- [Installed Maps entrypoint](../../../maps/_maps.md)
+- [Installed Maps entrypoint](../../../../maps/_maps.md)
 - [Maps maintenance contract](../../documents/maintenance/payload/agents/map.md)
 
 ## Decision Relationships

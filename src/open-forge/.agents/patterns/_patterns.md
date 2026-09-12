@@ -6,7 +6,9 @@ open-forge:
 
 # Patterns
 
-Patterns define reusable default shapes that keep related work consistent and easy to review.
+## What reusable shape makes related work easy to create and inspect?
+
+Patterns define reusable default shapes that make related work consistent, easy to create, and easy to inspect.
 
 ## Axioms
 
@@ -20,9 +22,9 @@ Patterns define reusable default shapes that keep related work consistent and ea
 ### Shape And Application
 
 - Keep a Pattern focused on one reusable shape.
-- Keep examples valid against the APIs, formats, and tools they use. Label intentionally incomplete examples as schematic.
-- Treat a Pattern that applies as the default shape for its scope. Use another shape only for a deliberate reason.
-- When a Pattern does not fit, report that and explain why.
+- Use examples that are valid for the APIs, formats, and tools they use. If an example is intentionally incomplete, label it as schematic.
+- Treat an applicable Pattern as the default shape for its scope. Use a different shape only for a deliberate reason, and explain the departure before work depends on it.
+- Use existing authority for an exception to an agreed shape. If that authority is missing, ask the user before proceeding.
 
 ## Entries
 

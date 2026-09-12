@@ -8,9 +8,7 @@ open-forge:
 
 ## Current Boundaries
 
-The shipped [Extensions MVP Architecture](../../crystallized/documents/extensions/architecture.md)
-owns current runtime behavior. Deleted CLI v2 proposed an initial next boundary
-for:
+The [Extensions Architecture](../../crystallized/documents/extensions/architecture.md) defines current package meaning, composition, and runtime boundaries. The [Extension command contracts](../../crystallized/documents/cli/contracts/extension/_extension.md) define accepted implementation mechanics. Deleted CLI-v2 proposals remain historical input for these topics:
 
 - A strict inspectable package and manifest shape.
 - Embedded Open Forge and explicit external filesystem catalogues.
@@ -21,9 +19,7 @@ for:
 - Git-first recovery, Gitless backups, formatting, route rebuilding, and
   explicit preservation decisions.
 
-Those choices are raw historical input, not accepted direction. Inspect them in
-the [CLI-v2 archive](../../archived/cli-v2/_cli-v2.md) when the new CLI reaches
-Extension lifecycle design.
+Those proposals do not establish accepted direction. Consult the [CLI-v2 archive](../../archived/cli-v2/_cli-v2.md) for relevant historical reasoning. Use the current contracts for accepted behavior.
 
 ## Remaining Opportunities
 

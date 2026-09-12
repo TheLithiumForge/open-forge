@@ -1,0 +1,21 @@
+{
+  "finding": "T28-RS3",
+  "status": "applied",
+  "authorization": "User approved the exact replacement paragraph.",
+  "proposal": "t28-rs3-workflow-value-proposal.diff",
+  "change": "Evaluate a Workflow by how its method helps achieve its stated goal. Any collaboration it uses should contribute to that result.",
+  "files": [
+    {
+      "path": ".agents/memory/crystallized/documents/framework/primitives/workflows.md",
+      "before_sha256": "f89d769f619a33ee554185e37c70f3a31648f3e4e84186e43272700d462be9ce",
+      "applied_sha256": "7b28f0e470024efdcb219817fb7beeb4eca90856ca3bdf93d8754dfff9ea1413"
+    }
+  ],
+  "checks": {
+    "before_sha256": "matched before application",
+    "candidate_sha256": "matched after application",
+    "exact_applied_prose": "inspected at line 70 with neighboring paragraphs",
+    "git_diff_check": "passed"
+  },
+  "scope": "Only the approved paragraph and this receipt were written. Council was not changed. No CLI work, builds, tests, commits, or merges."
+}

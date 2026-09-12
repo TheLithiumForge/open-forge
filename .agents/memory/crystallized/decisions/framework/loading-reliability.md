@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from
+  description: Why critical context loads early within selected routes and conditional context remains easy to select or skip
   tags: [Memory, Decision, CurrentTruth, Loading, Routing, Reliability]
 ---
 
@@ -14,9 +14,9 @@ The Framework needed reliable baseline and continuity context without loading ev
 
 ## Decision
 
-Reliability-critical context is read unconditionally and early. Conditional context remains cheap to select, cheap to skip, and cheap to recover from.
+Reliability-critical context is read early when its route is loaded. Conditional context remains cheap to select, cheap to skip, and cheap to recover from.
 
-Route selection establishes scope before routed content is read. Directives use ordinary #LoadNow traversal after their route establishes scope, without a second applicability gate inside each directive. Continuity makes #KeepInMind entrypoint proactivity target-sensitive while keeping ordinary routed #KeepInMind records globally discoverable; each applicable result follows its visible #LoadNow closure.
+Route selection establishes scope before routed content is read. Directives use ordinary #LoadNow traversal after their route establishes scope, without a second applicability gate inside each Directive. #KeepInMind also operates through loaded parent routes. Both entrypoints and records enter and refresh context within active scopes. The tag does not activate an unselected ancestor or scope.
 
 Loading instructions address the agent directly. Deterministic tools may batch the same plain-file traversal, but they do not create a separate loading contract or enforce reasoning.
 
@@ -28,11 +28,11 @@ Visible paths, descriptions, tags, ancestor meaning, and relative links make con
 
 ## Alternatives And Tradeoffs
 
-- Loading everything would reduce discovery risk but destroy relevance-scaled context
-- Deferring critical context until an agent judges it relevant reproduces the observed failure mode
-- A directive-body `Applies To` gate would ask for a second applicability decision after routing already established scope
-- Globally loading every #KeepInMind entrypoint would defeat relevance-scaled selection, while hiding ordinary records behind route-body discovery would create continuity gaps
-- Tool-implying phrases such as “is loaded” would overstate mechanical enforcement
+- Loading everything would reduce discovery risk but destroy relevance-scaled context.
+- Deferring critical context until an agent judges it relevant reproduces the observed failure mode.
+- A directive-body `Applies To` gate would ask for a second applicability decision after routing already established scope.
+- Loading every continuity route would defeat relevance-scaled selection. Within a loaded route, overlooking exposed continuity content would create gaps.
+- Tool-implying phrases such as “is loaded” would overstate mechanical enforcement.
 
 Unconditional context has a permanent attention cost, so only reliability-critical material should receive it.
 
@@ -53,7 +53,7 @@ Unconditional context has a permanent attention cost, so only reliability-critic
 
 ## Evidence
 
-- [Accepted evaluation syntheses](../../documents/evaluations/_evaluations.md)
+The original evaluation syntheses are preserved in Git at commit `a5dddf16b2e6`, under `.agents/memory/crystallized/documents/evaluations/`. They explain this Decision's origin. The linked current loading contract defines present behavior.
 
 ## Decision Relationships
 

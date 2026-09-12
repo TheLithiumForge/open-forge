@@ -17,7 +17,7 @@ It defines notation, not the behavior of routes, Framework primitives, Memory st
 
 Open Forge Markdown is designed to be:
 
-- Human-readable in raw text
+- Readable in raw text
 - Understandable without the CLI or a private database
 - Cheap for agents to scan and navigate
 - Stable and reviewable in Git
@@ -101,11 +101,11 @@ Authored frontmatter must be semantically complete: a non-empty natural-language
 
 The frozen MVP has not implemented this enforcement yet. It may fabricate a fallback description and tags; the [MVP Architecture](../../cli/mvp-architecture.md#metadata-and-overwrite-integrity) records that temporary liability without changing the canonical contract.
 
-The `description` is the pre-load selection surface. It explains enough purpose, trigger, or outcome for a reader to select or skip the route without opening its body. It is natural and suggestive rather than a repeated formula.
+The `description` helps a reader decide whether to open the file. It provides enough purpose, trigger, or outcome to select or skip the route before loading its body. It is natural and suggestive rather than a repeated formula.
 
-The optional `responsibility` states the stable boundary of what the file defines. It guides edits after the file is opened but creates no authority or loading behavior. Change it only through a deliberate redefinition, split, or merge. Move content with an independent responsibility to another authoritative source and link to it.
+The optional `responsibility` helps an editor decide what belongs in the file. It states the stable boundary of what the file defines and guides edits after the file is opened. It creates no authority or loading behavior. Change it only through a deliberate redefinition, split, or merge. Move content with an independent responsibility to another authoritative source and link to it.
 
-Use `responsibility` only when it adds a useful boundary beyond the route and description. Category entrypoints normally do not need it because their route, definition, and generated entries already express their responsibility.
+Use `responsibility` only when it adds a useful boundary beyond the route and description. Category entrypoints normally do not need it because their route, definition, primary question, and generated entries already express their responsibility.
 
 Direct-load files that are never indexed do not need Open Forge metadata unless another tool or contract requires it. Standard files such as `SKILL.md` keep the metadata required by their active runtime.
 
@@ -163,7 +163,7 @@ Prefer anchored relative links to repeated explanations when another authoritati
 
 - [Routed Markdown representation](routes.md)
 - [Markdown compatibility boundary](compatibility.md)
-- [Historical CLI-v2 evidence](../../../archived/cli-v2/_cli-v2.md)
+- [Historical CLI-v2 evidence](../../../../archived/cli-v2/_cli-v2.md)
 - [Framework Architecture](../architecture.md)
 - [Open Forge Writing Standard](../../maintenance/writing.md)
 - [Canonical loader](../../../../../loader.md)

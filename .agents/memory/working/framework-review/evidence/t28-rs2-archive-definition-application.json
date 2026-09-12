@@ -1,0 +1,30 @@
+{
+  "finding": "T28-RS2",
+  "status": "applied",
+  "authorization": "User approved the exact opening sentence for worktree application.",
+  "proposal": "t28-rs2-archive-definition-proposal.diff",
+  "change": "Archived Memory keeps useful history that does not govern current work.",
+  "files": [
+    {
+      "path": "src/open-forge/.agents/memory/archived/_archived.md",
+      "before_sha256": "2dbff1f6b03f572c93c4616c4fe86c19e511c3dc405d966b1261954c2256a8f0",
+      "applied_sha256": "7aac3eea64b95db888f1fd68b4ca5a583be818d508617bf662123830c719b4c5",
+      "unchanged_generated_entries_sha256": "671e4b2da13233d97a4367d168d2d5d20d52f665226a60222b4f4415f8e6ed60"
+    },
+    {
+      "path": ".agents/memory/archived/_archived.md",
+      "before_sha256": "a6864ec39cbe1796762621fb31ab65ed0ed53d5f21977cd4272e713e5ff6dea6",
+      "applied_sha256": "9e7a7123b7fcc71da278841a0c4c93464ac9c5064e3bf52a35951136bd7af4fe",
+      "unchanged_generated_entries_sha256": "26de28c9dc44a1e583e7371b9444bf3eb1f052698e004e2581008891e8632399"
+    }
+  ],
+  "checks": {
+    "before_sha256": "both matched before application",
+    "candidate_sha256": "both matched after application",
+    "exact_opening": "inspected in both files",
+    "source_dogfood_authored_parity": "passed, excluding generated Entries",
+    "generated_entries": "pre-application and post-application hashes identical",
+    "git_diff_check": "passed"
+  },
+  "scope": "Only the two approved opening sentences and this receipt were written. No CLI work, tests, commits, or merges."
+}

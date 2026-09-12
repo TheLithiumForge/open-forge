@@ -29,25 +29,26 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 ### Authority And Inheritance
 
 - Role and scope determine authority. File order alone does not.
+- The loader distinguishes evidence validation from acceptance and preserves scoped acceptance when classifying contextual material. The [accepted-state contract](../../../framework/truth.md#acceptance) defines the distinction.
 - Platform constraints and runtime safety bound every action. Clear user direction sets task goals, priorities, important choices, and accepted changes. A declared external source remains authoritative for the facts assigned to it.
 - Explanation and planning match the request. Unless the user asks for deeper analysis, the first response gives the current understanding, one recommendation, and no more than one unresolved important choice.
 - The agent continues when accepted direction or a stated reversible assumption makes progress safe. It states assumptions and stops when uncertainty, conflict, or an authority boundary could significantly change the work.
 - Only the loader and recognized loaded `entrypoints` define active `Axioms`. Child routes inherit ancestor Axioms. A child entrypoint adds only rules for its narrower scope.
 - Clear direction is not reconfirmed. A request to act allows routine, reversible, in-scope choices needed to complete the task. The user decides unresolved choices that could significantly change the result, scope, risk, cost, external effects, or ability to undo the work.
 - Apparent #CurrentTruth conflicts are investigated before either source changes. Accepted changes update the source that defines current state and keep useful prior context.
-- Loaded Axioms and Directives apply within their scope. Accepted workspace-specific state replaces Open Forge defaults in that scope, and unresolved conflicts are reported.
+- Loaded Axioms and Directives apply within their scope. Accepted workspace-specific content replaces corresponding Open Forge defaults for the same role, within its accepted scope. Unresolved conflicts are reported.
 - Narrower selected non-binding material may specialize broader material of the same kind. Loaded binding instructions add to one another and report conflicts instead of silently overriding one another.
 
 ### Routing And Loading
 
 - The loader defines an `axiom` only as a mandatory instruction under an `Axioms` heading in the loader or a recognized loaded `entrypoint`, keeps general file terms in `Terms`, and defines only four routing terms locally: `route`, `root route`, `slug`, and `managed route`.
-- `description` remains the pre-load route-selection surface. Optional `responsibility` bounds what an opened file is responsible for defining without creating authority or loading behavior.
+- `description` helps a reader decide whether to open a file and remains the pre-load route-selection surface. Optional `responsibility` helps an editor decide what belongs in the file by stating what it defines. It creates no authority or loading behavior.
 - The routing section separates short `Terms` and universal `Rules`.
 - A `root route` exists only where the loader exposes it; it cannot be scoped or recreated inside another `route`.
 - Any number of routed `slugs` may narrow a route below its root. A slug may appear before, between, or after deeper route segments and narrows everything that follows it.
 - A scope contains only the routes useful there. It does not need to copy another scope or the installed defaults.
 - Specialized material uses the narrowest useful scope. Workspace-wide placement is reserved for material that applies across the workspace
-- Each scoped entrypoint chooses on-demand, #LoadNow, or #KeepInMind behavior according to omission cost and continuity need. Scope alone implies no loading tag
+- Each scoped entrypoint keeps content on demand by default. #LoadNow is justified only when omission costs more than reading on each parent load. #KeepInMind also requires a continuity need for refreshing exposed content while its scope remains active. Scope alone implies no loading tag
 - Selection uses visible paths, descriptions, tags, ancestor routes, and explicit links. It follows relevant branches recursively, keeps separately selected scopes as separate chains, and rechecks them after an important task change. It does not load file bodies only to discover routes.
 - Scoping preserves deeper `route` order and meaning. Manager-declared `route` segments retain their order through every scope.
 - A familiar `slug` or tag alone creates neither root behavior nor managed status.
@@ -56,15 +57,15 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - Generated `Entries` remain navigation metadata. Detailed meaning comes from the routed destination or the authoritative source it identifies.
 - Loading and tags change visibility, timing, or classification without creating authority.
 - The loader remains authoritative for the meanings of #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, #CurrentTruth, and #Evergreen. Its #Memory definition identifies self-growing Markdown state without moving Memory mechanics into the loader. Undefined tags remain routing and search signals.
-- #LoadNow follows only entries exposed by an already-loaded parent. A #KeepInMind entrypoint loads proactively only during initial loader and #LoadNow traversal, in a selected route or scope, or when a file used by the task needs it as an ancestor. Every other routed #KeepInMind file loads across the workspace, so that form is reserved for continuity that must survive unrelated route changes. Missing ancestor entrypoints load first, then the tagged file and adjacent overwrite. #LoadNow continues through any `Entries` the tagged file exposes. Unrelated descendants stay excluded.
+- #LoadNow and #KeepInMind operate through loaded parent routes for both entrypoints and other files. Neither activates an unselected ancestor or scope. Read exposed continuity content when its parent loads, then refresh it at the defined boundaries while its scope remains active. Base files precede their adjacent overwrites, and entrypoints apply their child loading rules in listed order.
 - Every recovered result retains the authority and scope established by its `route` and content.
 - A user-owned `{name}.overwrite.md` is not an independent `route` and loads immediately after its base.
-- It inherits the base `route`, scope, and loading behavior. It is neither indexed nor selected independently. It wins only when the base and overwrite answer the same question differently, and only within the base scope. It does not override unrelated authority.
+- It is interpreted as part of the base source, within that source's role and scope, and inherits its route and loading behavior. It is neither indexed nor selected independently. Its precedence applies only to corresponding base content and does not override unrelated authority.
 
 ### Deterministic Assistance
 
 - CLI commands automate the complete plain-file contract and never become prerequisites for ordinary inspection.
-- The loader names the compact replacement CLI surface useful for entering and checking a workspace: `--help`, `context`, `route list`, `route inspect`, `find`, `references`, `index`, `status`, and `doctor`.
+- The loader names the compact CLI surface useful for entering and checking a workspace: `--help`, `context`, `route list`, `route inspect`, `find`, `references`, `index`, `status`, and `doctor`.
 - `index` rebuilds generated `Entries` after routed files or route metadata change. `doctor` diagnoses workspace, routes, references, lifecycle, and recovery without changes after Framework structure changes and before closeout.
 - Complete CLI help, installation lifecycles, unimplemented commands, and component internals stay outside the loader.
 

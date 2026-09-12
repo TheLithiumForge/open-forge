@@ -6,7 +6,9 @@ open-forge:
 
 # Document Templates
 
-Document Templates help create clear current documents without imposing a fixed document set or schema.
+## What starting structure fits this document?
+
+Document Templates provide starting structures for clear current documents. They do not impose a fixed document set or schema.
 
 ## Axioms
 

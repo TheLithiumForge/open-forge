@@ -1,7 +1,12 @@
 {
   "id": "development-toolkit",
   "name": "Development Toolkit",
-  "description": "Optional workflows, an experience-design Skill, and copy-ready templates for shaping and delivering work",
+  "description": "An optional bundle of project documents, Memory starters, planning, and development packages",
   "version": "0.1.0",
-  "dependencies": []
+  "dependencies": [
+    "development",
+    "memory-starters",
+    "planning",
+    "project-documents"
+  ]
 }

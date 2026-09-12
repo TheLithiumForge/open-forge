@@ -91,7 +91,7 @@ Ordinary Markdown may describe or link an explicitly trusted external location, 
 - [Overwrite customization](overwrites.md)
 - [Routed Markdown representation](../markdown/routes.md)
 - [CLI MVP Architecture](../../cli/mvp-architecture.md)
-- [Historical CLI-v2 evidence](../../../archived/cli-v2/_cli-v2.md)
+- [Historical CLI-v2 evidence](../../../../archived/cli-v2/_cli-v2.md)
 
 ## Decisions And Rationale
 

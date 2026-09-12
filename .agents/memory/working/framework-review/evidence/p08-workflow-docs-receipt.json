@@ -1,0 +1,52 @@
+{
+  "status": "applied in review worktree",
+  "files": [
+    {
+      "path": ".agents/workflows/managed-delivery.md",
+      "before_sha256": "e29af80ab18da51aa6b772c932bd8ea831b29c78c450e7e6885c0cd557683030",
+      "after_sha256": "483efeb3f6327d8a78952ee54f9a7bc2c980a06a3d2cad9d0f77ae610c53b8ff"
+    },
+    {
+      "path": "src/extensions/README.md",
+      "before_sha256": "6cd3da12b4ae20e412c02019ba192dff0c26cba74dd70eb7c409854278fdd03c",
+      "after_sha256": "ceef7b32252f69e5a6e8605e9f7c7e62ccc43a1de88ea5db48d739cac42bea24"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/primitives/workflows.md",
+      "before_sha256": "1fbbbf19e3910eac7d3bd20e4c598e4e5076928cc24a7973fa876b96df2f0962",
+      "after_sha256": "f89d769f619a33ee554185e37c70f3a31648f3e4e84186e43272700d462be9ce"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/workflows.md",
+      "before_sha256": "276d533a0784cb2a5a351ddf1586e2c2f64c78825707dba258fb9f46063a9b79",
+      "after_sha256": "b722df97c5b5f124a73c560b2309607e389fe5f9540b998e7022fdc558d99ff0"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/templates.md",
+      "before_sha256": "401fbe3b64cd1d8ee30c449c00c9339ca4cf266c1c3254be8db09afcb9fb5ba9",
+      "after_sha256": "75760270ef4f911b930df5ca5de9e4d1f499f71ef004195482d6298a0cc6d650"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/extensions/architecture.md",
+      "before_sha256": "a532da24c617505d98096dfabcd9d0733937617ed2d10d0500f70912170ebb34",
+      "after_sha256": "f3b0ce93ec702e0c76e5e8bb9e86baab6bfd618390ee86ac5cc7f24b51d9e65c"
+    },
+    {
+      "path": "docs/extensions.md",
+      "before_sha256": "38a48909d470a19d8049f97b9aa0b3d03ba86f4ae9d4a84ec583651f0ace52ae",
+      "after_sha256": "e7485cbf5db41445e109480a8e4b66dff4a787ac1996ac4bfce89ff59317498a"
+    },
+    {
+      "path": ".agents/workflows/_workflows.md",
+      "before_sha256": "592dbca737a557274b4330828ef33a19cc9ebf49ef7494b37aba3e974e4213cc",
+      "after_sha256": "4cf66b862e8a2f6590802791eab245d87cb4e4db132edcc93239f31d905e3ce1"
+    },
+    {
+      "path": ".agents/patterns/_patterns.md",
+      "before_sha256": "5940257c67e2110deee3c00fba0a5ab3ba0b8847d50db288b061fb39448c0077",
+      "after_sha256": "fce38a4070facc407493fd75c776eef60476e25c4ab43a5e365f3365b8e5a7f1"
+    }
+  ],
+  "committed": false,
+  "merged": false
+}

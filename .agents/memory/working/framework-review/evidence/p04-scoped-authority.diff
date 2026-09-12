@@ -1,0 +1,132 @@
+--- a/src/open-forge/.agents/loader.md
++++ b/src/open-forge/.agents/loader.md
+@@ -24,7 +24,7 @@
+ - State assumptions so they can be corrected. Stop when uncertainty, conflict, or an authority boundary could significantly change the work.
+ - Let each source answer one clear question. Link to related sources instead of repeating their detail. A link does not change either source's authority, scope, loading, or lifecycle.
+ - Only this loader and recognized loaded `entrypoints` can define active `Axioms`. A loaded child `route` inherits its ancestors' Axioms. A child entrypoint adds only rules for its narrower scope.
+-- Follow loaded Axioms and Directives within their scope. Accepted workspace-specific state replaces Open Forge defaults in that scope. Report unresolved conflicts.
++- Follow loaded Axioms and Directives within their scope. Accepted workspace-specific content replaces corresponding Open Forge defaults for the same role, within its accepted scope. Report unresolved conflicts.
+ - Narrower selected non-binding material may specialize broader material of the same kind. Loaded binding instructions add to one another; they do not silently override one another. Report conflicts.
+ - Validation establishes whether evidence supports a claim. Acceptance establishes which knowledge or decisions may be treated as current within their scope. Restoring or moving a record does not establish acceptance by itself.
+ - Investigate an apparent #CurrentTruth conflict before changing either source. When accepted direction changes current state, update the source that defines it and keep useful prior context.
+--- a/.agents/loader.md
++++ b/.agents/loader.md
+@@ -24,7 +24,7 @@
+ - State assumptions so they can be corrected. Stop when uncertainty, conflict, or an authority boundary could significantly change the work.
+ - Let each source answer one clear question. Link to related sources instead of repeating their detail. A link does not change either source's authority, scope, loading, or lifecycle.
+ - Only this loader and recognized loaded `entrypoints` can define active `Axioms`. A loaded child `route` inherits its ancestors' Axioms. A child entrypoint adds only rules for its narrower scope.
+-- Follow loaded Axioms and Directives within their scope. Accepted workspace-specific state replaces Open Forge defaults in that scope. Report unresolved conflicts.
++- Follow loaded Axioms and Directives within their scope. Accepted workspace-specific content replaces corresponding Open Forge defaults for the same role, within its accepted scope. Report unresolved conflicts.
+ - Narrower selected non-binding material may specialize broader material of the same kind. Loaded binding instructions add to one another; they do not silently override one another. Report conflicts.
+ - Validation establishes whether evidence supports a claim. Acceptance establishes which knowledge or decisions may be treated as current within their scope. Restoring or moving a record does not establish acceptance by itself.
+ - Investigate an apparent #CurrentTruth conflict before changing either source. When accepted direction changes current state, update the source that defines it and keep useful prior context.
+--- a/src/open-forge/.agents/memory/_memory.md
++++ b/src/open-forge/.agents/memory/_memory.md
+@@ -12,8 +12,8 @@
+ 
+ ### Authority And Classification
+ 
+-- User direction, runtime safety, platform constraints, relevant #Core `routes`, and declared external sources remain above Memory.
+-- Memory may record any subject, including how work is performed. Recording it does not make that behavior active.
++- User direction, runtime safety, and platform constraints bound Memory use. Follow declared external sources for the facts assigned to them.
++- Each Memory record answers its own question within its scope. Accepted records can define current knowledge or decisions. Recording another category's content does not give the record that category's role.
+ - Use #Contextual and #CurrentTruth to distinguish useful context from accepted current state.
+ - Treat clear user direction as accepted within its scope. Keep tentative, exploratory, inferred, or meaningfully unclear conclusions in a #Contextual Memory route until accepted.
+ 
+@@ -29,7 +29,7 @@
+ - If none applies, do not create a durable record.
+ - Show the source and uncertainty when they affect trust or later acceptance, including whether material was stated, observed, or inferred.
+ - Integrate each useful durable outcome before other work depends on it and before closeout. Do not leave it only in chat.
+-- Update every source that defines distinct current meaning, reasoning, required behavior, or a reusable shape. Link related sources instead of forcing several roles into one file.
++- When accepted direction changes durable meaning, update each affected source for the part it defines. Preserve useful reasoning in Memory and link related sources.
+ - Before closeout, account for:
+   - Accepted durable outcomes.
+   - Unsettled reusable findings.
+--- a/.agents/memory/_memory.md
++++ b/.agents/memory/_memory.md
+@@ -12,8 +12,8 @@
+ 
+ ### Authority And Classification
+ 
+-- User direction, runtime safety, platform constraints, relevant #Core `routes`, and declared external sources remain above Memory.
+-- Memory may record any subject, including how work is performed. Recording it does not make that behavior active.
++- User direction, runtime safety, and platform constraints bound Memory use. Follow declared external sources for the facts assigned to them.
++- Each Memory record answers its own question within its scope. Accepted records can define current knowledge or decisions. Recording another category's content does not give the record that category's role.
+ - Use #Contextual and #CurrentTruth to distinguish useful context from accepted current state.
+ - Treat clear user direction as accepted within its scope. Keep tentative, exploratory, inferred, or meaningfully unclear conclusions in a #Contextual Memory route until accepted.
+ 
+@@ -29,7 +29,7 @@
+ - If none applies, do not create a durable record.
+ - Show the source and uncertainty when they affect trust or later acceptance, including whether material was stated, observed, or inferred.
+ - Integrate each useful durable outcome before other work depends on it and before closeout. Do not leave it only in chat.
+-- Update every source that defines distinct current meaning, reasoning, required behavior, or a reusable shape. Link related sources instead of forcing several roles into one file.
++- When accepted direction changes durable meaning, update each affected source for the part it defines. Preserve useful reasoning in Memory and link related sources.
+ - Before closeout, account for:
+   - Accepted durable outcomes.
+   - Unsettled reusable findings.
+--- a/.agents/memory/crystallized/documents/framework/memory/model.md
++++ b/.agents/memory/crystallized/documents/framework/memory/model.md
+@@ -17,11 +17,13 @@
+ 
+ ## Authority Boundary
+ 
+-Memory is authoritative for the lifecycle of its recorded material: capture, classification, movement, consolidation, archival, and restoration.
++Memory rules govern the lifecycle of recorded material: capture, classification, movement, consolidation, archival, and restoration. Individual records answer distinct questions within their scopes. Accepted records can define current knowledge or decisions; recording a subject alone does not establish acceptance or replace another source's authority for it.
+ 
+-It is not automatically authoritative for the external fact, implementation, behavior, or product direction that a record describes. Those meanings remain at their matching authoritative source.
++A Decision records what was accepted and why. A current document explains the accepted subject without requiring readers to reconstruct it from Decisions. Link their supporting reasoning and keep affected Evergreen documents aligned when accepted meaning changes.
+ 
+-Memory may record any subject, including how work is performed, without activating it. Accepted behavior that should guide future work belongs in the matching #Core `route`. Memory may retain useful evidence, context, or rationale.
++Memory may record another category's content without acquiring that category's role. Integrate accepted outcomes into the sources that define their respective knowledge, required behavior, advice, reusable shape, or other distinct meaning. Keep useful evidence and reasoning in Memory. Each source defines its own part.
++
++User direction, runtime safety, and platform constraints continue to bound the work. Declared external sources remain authoritative for the facts assigned to them. Recording clear user direction preserves its acceptance within scope. Updating durable sources does not require approving that direction again.
+ 
+ ## State And Scope
+ 
+--- a/.agents/memory/crystallized/documents/framework/truth.md
++++ b/.agents/memory/crystallized/documents/framework/truth.md
+@@ -55,7 +55,7 @@
+ 
+ When accepted direction changes current state:
+ 
+-1. Update every authoritative document, `route`, implementation, external system, or other source whose distinct current meaning changes
++1. Update every affected authoritative document, `route`, implementation, external system, or other source for the distinct part of current meaning it defines
+ 2. Update only affected editable #Evergreen material before work depends on it and no later than closeout
+ 3. Preserve useful rationale in a Decision when the reason may matter later
+ 4. Put mandatory future behavior in the matching Directive or another applicable Axiom
+@@ -74,7 +74,7 @@
+ 
+ An Evergreen current document explains the present concept without forcing readers to reconstruct it from decisions. A decision links forward to the authoritative source that expresses its current result, and that source may link back when the rationale helps.
+ 
+-The [Memory model](memory/model.md#authority-boundary) defines why recorded behavior does not become active and why accepted behavior that should guide work moves to the matching #Core route.
++The [Memory model](memory/model.md#authority-boundary) defines the knowledge authority of accepted records and how relevant outcomes reach their matching categories without giving Memory those categories' roles.
+ 
+ ## Boundaries
+ 
+--- a/.agents/memory/crystallized/documents/maintenance/payload/agents/loader.md
++++ b/.agents/memory/crystallized/documents/maintenance/payload/agents/loader.md
+@@ -36,7 +36,7 @@
+ - Only the loader and recognized loaded `entrypoints` define active `Axioms`. Child routes inherit ancestor Axioms. A child entrypoint adds only rules for its narrower scope.
+ - Clear direction is not reconfirmed. A request to act allows routine, reversible, in-scope choices needed to complete the task. The user decides unresolved choices that could significantly change the result, scope, risk, cost, external effects, or ability to undo the work.
+ - Apparent #CurrentTruth conflicts are investigated before either source changes. Accepted changes update the source that defines current state and keep useful prior context.
+-- Loaded Axioms and Directives apply within their scope. Accepted workspace-specific state replaces Open Forge defaults in that scope, and unresolved conflicts are reported.
++- Loaded Axioms and Directives apply within their scope. Accepted workspace-specific content replaces corresponding Open Forge defaults for the same role, within its accepted scope. Unresolved conflicts are reported.
+ - Narrower selected non-binding material may specialize broader material of the same kind. Loaded binding instructions add to one another and report conflicts instead of silently overriding one another.
+ 
+ ### Routing And Loading
+--- a/.agents/memory/crystallized/documents/maintenance/payload/agents/memory/_memory.md
++++ b/.agents/memory/crystallized/documents/maintenance/payload/agents/memory/_memory.md
+@@ -17,11 +17,11 @@
+ 
+ - Frontmatter keeps #LoadNow, #Memory, and #OrganicGrowth so the root Memory contract enters baseline context with its Framework classification and growth role visible
+ - Memory can grow through useful records and routed scopes without a fixed structural ceiling, while unrelated branches stay outside active context. Growth remains deliberate rather than automatic
+-- The root `entrypoint` keeps Memory below applicable authority while allowing it to record any subject without activating behavior it describes
++- The root `entrypoint` preserves the scoped knowledge authority of accepted records while keeping user direction, platform constraints, runtime safety, and declared external facts applicable. Recording another category's content does not give Memory that category's role
+ - Communication, coordination, direction, uncertainty, and learning are saved when they must survive the current context. Ordinary conversation does not become Memory automatically
+ - Clear user direction is accepted within its scope. Tentative, exploratory, inferred, or meaningfully unclear conclusions remain in a #Contextual Memory route until accepted
+ - Before creating a durable record, the agent checks what must survive, what changes current meaning, whether reasoning will matter later, whether behavior is required, and whether a reusable shape should guide future work. When none apply, no durable record is needed
+-- Each useful durable outcome is integrated before other work depends on it and before closeout. Every source that defines distinct current meaning, reasoning, required behavior, or a reusable shape is updated. Related sources remain linked instead of forcing several roles into one file. Useful durable meaning does not remain only in chat
++- Each useful durable outcome is integrated before other work depends on it and before closeout. Each affected source is updated for the distinct part it defines. Useful reasoning remains in Memory and related sources are linked. Useful durable meaning does not remain only in chat
+ - Closeout accounts for accepted durable outcomes, unsettled reusable findings, and continuation state. Accepted durable meaning does not remain only in a #Contextual #Memory `route`. An accepted temporary choice may remain contextual when its source, scope, and expected expiration are clear.
+ - The Memory `entrypoint` relies on the loader's universal scoping and management contract instead of restating it
+ - Working, Emerging, Crystallized, and Archived remain the four standard state `routes`, each with its own `entrypoint` and positive state semantics

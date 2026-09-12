@@ -1,0 +1,51 @@
+{
+  "status": "applied within accepted S03 direction",
+  "date": "2026-09-11",
+  "files": [
+    {
+      "path": "src/open-forge/.agents/loader.md",
+      "before_sha256": "0c7b9a943d9e248722feb86bc85b7b459aa313715ba78f8632ccb459da7a8961",
+      "candidate_sha256": "0b0f0edbb4955f0d29bf4d2eb8058be777b8a177b15bf2f20284a656c42d3567"
+    },
+    {
+      "path": ".agents/loader.md",
+      "before_sha256": "842c237e94193abdce716c55c2fa64c4967cd4c779da65a7b75c28564530cb62",
+      "candidate_sha256": "4c0178e9e8f861af094f9fca497e144f76e9fcd073f3732ffda52b3cc1e19d7c"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/_memory.md",
+      "before_sha256": "f143ab94da17075e44704fee59e540bde1baab8f95cbb586770e6253bbc1bd1b",
+      "candidate_sha256": "3f2391b9fb30516e42d3c95e661937355be82f2e25d3f0673e02ec3893f75b0a"
+    },
+    {
+      "path": ".agents/memory/_memory.md",
+      "before_sha256": "0e7c908f9df300fbf10bf22ba2be22e4212b7d8ecbf6ea21a27ce735c5151b04",
+      "candidate_sha256": "2ffe33bc1e0f3ee40c3a3b16f6955a9141aea5816075b82c045bf83fac0f6aee"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/memory/model.md",
+      "before_sha256": "2909a45c51f68faeec86ac1eadafa87d5a78b15b0086985e508e10db8443a439",
+      "candidate_sha256": "b485d55bdcba34ac4c600742fb976d19ca443405788ba7a6403957f0d8d6ccd0"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/truth.md",
+      "before_sha256": "0c8193bdd48405805926b99a5f852411f9889433ad28f605aa29cd9941a41041",
+      "candidate_sha256": "aaab912381f6f9d147f61f580a809251a12924accabf765151b4c01f650d2558"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/loader.md",
+      "before_sha256": "f4c8bb2d0753040192bef4756d590f344a106aa32c63668e19ad1df4ca74391f",
+      "candidate_sha256": "0a336da16299126e0de5be81aa7019b7938edced41ab9de9020e12a1b24f24c3"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/_memory.md",
+      "before_sha256": "32f31e1d57ceb0fea1f810c4fa24a9453bba0abe475d6b3267f4600933b32fb4",
+      "candidate_sha256": "a3dc801a565259838160aa7929c660246372e0362799955ba89994139a38d9ab"
+    }
+  ],
+  "main_checkout_unchanged": true,
+  "diff_check": "passed",
+  "committed": false,
+  "merged": false,
+  "authored_rule_parity": "passed"
+}

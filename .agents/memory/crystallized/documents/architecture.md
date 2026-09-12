@@ -29,7 +29,7 @@ An Open Forge environment combines four areas:
 | Framework           | Shared routing, Core primitives, and Memory mechanics                           | No other Open Forge area                         |
 | Workspace context   | Local goals, knowledge, constraints, decisions, methods, history, and scopes    | The `routes` it uses                             |
 | Extensions          | Optional reusable capabilities                                                  | The `routes` they extend                         |
-| Deterministic tools | Mechanical loading, navigation, validation, installation, packaging, and safety | The human-readable files they inspect and change |
+| Deterministic tools | Mechanical loading, navigation, validation, installation, packaging, and safety | The readable files they inspect and change |
 
 User direction establishes goals and accepted direction. An agent runtime builds the best current model from that direction and accepted context, surfaces consequential unsettled choices, recommends coherent defaults, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose canonical Framework entries without defining independent policy.
 
@@ -45,11 +45,11 @@ Extensions are optional packages outside the base Framework. They add whole file
 
 ## Authority And Dependency Direction
 
-Human-readable Markdown is authoritative for Open Forge rules, recorded state, relationships, and workspace-specific context. A declared external system may be authoritative for source code, issues, product data, or another live subject when an Open Forge route points to it explicitly.
+Readable Markdown is authoritative for Open Forge rules, recorded state, relationships, and workspace-specific context. A declared external system may be authoritative for source code, issues, product data, or another live subject when an Open Forge route points to it explicitly.
 
 Generated `entries`, indexes, receipts, caches, and retrieval databases are derived from those authoritative sources. They may make discovery, validation, or change cheaper, but deleting and rebuilding them cannot change what the environment means.
 
-Dependencies point toward human-readable authoritative sources:
+Dependencies point toward readable authoritative sources:
 
 1. The framework is complete without workspace-specific content, extensions, deterministic tools, or a particular agent provider
 2. Workspace context and extensions build on installed `routes` without redefining their accepted meaning
@@ -135,7 +135,7 @@ The environment also evolves through Core primitives. Templates provide copy-rea
 
 ## Tool Boundary
 
-The CLI and compatible future tools perform deterministic operations over human-readable Open Forge files and their declared external relationships. They may batch context, traverse `routes`, validate structure, maintain derived indexes, and apply reviewable file changes.
+The CLI and compatible future tools perform deterministic operations over readable Open Forge files and their declared external relationships. They may batch context, traverse `routes`, validate structure, maintain derived indexes, and apply reviewable file changes.
 
 Tools must expose their effects through files or output. They may reduce reasoning and interaction cost, but they cannot silently infer accepted truth, become privately authoritative, or become required for ordinary inspection.
 
@@ -144,7 +144,7 @@ Tools must expose their effects through files or output. They may reduce reasoni
 The following constraints apply across every Open Forge area:
 
 1. Every important subject has one authoritative source for each distinct question
-2. Workspace meaning remains reconstructable from human-readable authoritative sources and declared external systems
+2. Workspace meaning remains reconstructable from readable authoritative sources and declared external systems
 3. Loading changes visibility and timing, not authority
 4. Unselected scopes do not routinely enter active context
 5. Generated and machine-optimized state remains replaceable
@@ -166,10 +166,10 @@ The architecture is intentionally split by authoritative scope:
 - This top architecture is authoritative for the system map and cross-cutting invariants
 - The [Framework Architecture](framework/architecture.md) is authoritative for Core and Memory internals
 - The [Open Forge Routing scope](framework/routing/_routing.md) is authoritative for navigation, recursive scope, inheritance, loading, continuity, and path identity
-- The [Extensions MVP Architecture](extensions/architecture.md) is authoritative for current optional capability composition, lifecycle, safety boundaries, and liabilities
+- The [Extensions Architecture](extensions/architecture.md) defines optional package composition and its boundary with installed Framework behavior
 - The [CLI MVP Architecture](cli/mvp-architecture.md) is authoritative for shipped commands, deterministic state, safety, verification, implementation, and liabilities
 
-The Extensions view documents its current MVP without treating implementation choices as permanent. The [replacement CLI Architecture](cli/architecture.md) defines the current greenfield implementation boundary, while the [CLI-v2 archive](../../archived/cli-v2/_cli-v2.md) preserves deleted designs without making them current.
+The Extensions view keeps package meaning separate from implementation mechanics. The [replacement CLI Architecture](cli/architecture.md) defines the current greenfield implementation boundary, while the [CLI-v2 archive](../../archived/cli-v2/_cli-v2.md) preserves deleted designs without making them current.
 
 ## Related Current Views
 

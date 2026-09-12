@@ -9,7 +9,7 @@ open-forge:
 
 ## Purpose
 
-Memory is self-growing Markdown state. It preserves useful records across work without turning every conversation, stored statement, or historical record into accepted truth or active behavior.
+Memory is Markdown state that evolves with the work. Its self-growing structure preserves useful records across work without turning every conversation, stored statement, or historical record into accepted truth or active behavior.
 
 It exists because working context decays, agents and people change, and useful learning should remain available without requiring private memory or full transcript reconstruction.
 
@@ -17,11 +17,13 @@ Memory can grow through records and routed scopes without a fixed structural cei
 
 ## Authority Boundary
 
-Memory is authoritative for the lifecycle of its recorded material: capture, classification, movement, consolidation, archival, and restoration.
+Memory rules govern the lifecycle of recorded material: capture, classification, movement, consolidation, archival, and restoration. Individual records answer distinct questions within their scopes. Accepted records can define current knowledge or decisions; recording a subject alone does not establish acceptance or replace another source's authority for it.
 
-It is not automatically authoritative for the external fact, implementation, behavior, or product direction that a record describes. Those meanings remain at their matching authoritative source.
+A Decision records what was accepted and why. A current document explains the accepted subject without requiring readers to reconstruct it from Decisions. Link their supporting reasoning and keep affected Evergreen documents aligned when accepted meaning changes.
 
-Memory may record any subject, including how work is performed, without activating it. Accepted behavior that should guide future work belongs in the matching #Core `route`. Memory may retain useful evidence, context, or rationale.
+Memory may record another category's content without acquiring that category's role. Integrate accepted outcomes into the sources that define their respective knowledge, required behavior, advice, reusable shape, or other distinct meaning. Keep useful evidence and reasoning in Memory. Each source defines its own part.
+
+User direction, runtime safety, and platform constraints continue to bound the work. Declared external sources remain authoritative for the facts assigned to them. Recording clear user direction preserves its acceptance within scope. Updating durable sources does not require approving that direction again.
 
 ## State And Scope
 
@@ -86,7 +88,7 @@ Ordinary conversation, duplicated facts, and raw activity without plausible futu
 
 ## Recursive Growth
 
-Self-growing means a workspace can add useful records and routed scopes as work produces knowledge. Growth is deliberate rather than automatic: each addition must meet the [recorded-state threshold](#recorded-state-threshold).
+The self-growing structure lets people and agents add useful records and routed scopes as work produces knowledge. Each addition is deliberate and must meet the [recorded-state threshold](#recorded-state-threshold).
 
 The installed states are stable semantic defaults beneath the Memory `root route`. Workspaces may add direct files or any number of routed scopes anywhere below that root. The [placement examples](#state-and-scope) show whether a subject narrows several states, one state, or one role.
 

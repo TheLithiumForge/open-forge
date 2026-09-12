@@ -14,11 +14,17 @@ Earlier Open Forge files mixed compressed fragments, repeated prohibitions, inte
 
 Open Forge maintainers write for technically literate readers who may be new to the Framework. Writing should be easy to understand on the first read, correct, consistent, predictable, and concise, in that order. Correctness remains a hard boundary.
 
-The voice is calm, neutral, boring, and direct. Open Forge uses the same term for the same concept and does not change words only for variety. It assumes basic software knowledge but does not require engineering or prior Open Forge experience.
+Rules and technical reference text use a calm, direct, conversational voice. READMEs and public introductions use a friendlier creator voice, with natural rhythm and quiet pride in the project. This distinction was accepted after a technically clear README felt too much like a lesson. A personal account of the project's origins and varied sentence structures support a more natural flow. Passive phrasing is useful where it reads well; dense comma-separated feature lists should give way to connected explanations. These choices preserve technical meaning. Predictable structure and clear flow make the text easy to navigate and enjoyable to read. Open Forge uses the same term for the same concept and does not change words only for variety. It assumes basic software knowledge but does not require engineering or prior Open Forge experience.
 
-The repository-only [Writing Directive](../../../../directives/public-facing-writing.md) makes this behavior mandatory. The [Writing Standard](../../documents/maintenance/writing.md) defines the complete practice, and this Decision records why it was chosen.
+Memory keeps the descriptor `self-growing` because growth through useful records and routed scopes is part of its identity. Clear prose explains that deliberate growth while retaining the term.
 
-Current installed and public files describe the accepted contract. Historical alternatives and rejected prototypes remain in Decisions or archives. Route descriptions stay compact but contain enough trigger, purpose, or outcome for selection, while detailed meaning stays in the routed destination.
+The repository-only [Writing Directive](../../../../directives/public-facing-writing.md) makes this behavior mandatory. The [Writing Standard](../../documents/maintenance/writing.md) defines shared requirements and the voice of rules and reference text. [Project Voice](../../documents/maintenance/project-voice.md) defines public introductions. This Decision records why these choices were made.
+
+Current installed and public files describe the accepted contract. Historical alternatives and rejected prototypes remain in Decisions or archives.
+
+A `description` helps a reader decide whether to open a file. It stays compact but contains enough trigger, purpose, or outcome for selection. An optional `responsibility` helps an editor decide what belongs in the file. Detailed meaning stays in the routed destination.
+
+Category openings keep the category name as the level-1 title, followed by the primary question as a level-2 heading and then the definition. This makes the role visible where it is used without adding a metadata field or special parsing or loading meaning. Necessary explanation stays in the opening, and the Framework remains understandable without README or maintenance context.
 
 Writing uses typed authority terminology, canonical Markdown when structure carries Framework meaning, relative links for navigable relationships, and code formatting for commands, literals, defined terms, or paths discussed as text.
 
@@ -50,6 +56,7 @@ Concise prose still requires judgment. The shortest wording is not always the cl
 
 - [Repository Writing Directive](../../../../directives/public-facing-writing.md)
 - [Open Forge Writing Standard](../../documents/maintenance/writing.md)
+- [Open Forge Project Voice](../../documents/maintenance/project-voice.md)
 - [Open Forge Dictionary](../../documents/maintenance/helpers/dictionary.md)
 - [Open Forge Markdown scope](../../documents/framework/markdown/_markdown.md)
 - [Current routing model](../../documents/framework/routing/model.md)

@@ -19,8 +19,10 @@ The [Archived state contract](../../../../framework/memory/archived.md) defines 
 - Archived material remains historical context without current authority
 - Archived keeps historical Memory records and links to retained sources when the history belongs elsewhere
 - The entrypoint records origin, archival reason, and replacement when one exists
-- Useful current meaning moves before archival to the route or system that should define it
-- Restoration targets an explicit current destination and validates historical material against current conditions
+- Still-current content is extracted before archival into the sources that define it. Retain the useful remainder without requiring lossless preservation
+- Destination rules replace the former category's behavioral role. Metadata must no longer activate that role or assert current authority
+- Consolidation and transformation preserve useful history; deletion follows user direction or accepted retention preferences
+- Restoration validates material against current conditions and uses an explicit destination. Current knowledge requires acceptance within its scope
 - The installed `route` begins empty and supports Memory scopes before or after the Archived state without requiring a mirrored archive taxonomy
 
 ## Verification

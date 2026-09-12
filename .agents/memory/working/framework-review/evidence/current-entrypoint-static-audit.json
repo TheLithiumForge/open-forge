@@ -1,0 +1,12 @@
+{
+  "base": "0eea5e6557473a52ba24a5e42bdd1b0dd5c9485c",
+  "scope": "current non-CLI entrypoint navigation",
+  "comparisons": 177,
+  "out_of_scope_targets_not_read": 9,
+  "issues": [
+    {
+      "file": ".agents/directives/csharp/_csharp.md",
+      "kind": "inherited-sentinel-with-local-axioms"
+    }
+  ]
+}

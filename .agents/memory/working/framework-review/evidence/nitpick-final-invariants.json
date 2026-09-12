@@ -1,0 +1,14 @@
+{
+  "source_md_files_audited": 44,
+  "source_tag_arrays": "unchanged",
+  "generated_links_checked": 29,
+  "readme_category_questions_matched": 12,
+  "loader_authored_nonempty_lines": 79,
+  "loader_authored_parity": "pass",
+  "workflow_authored_parity": "pass",
+  "local_overwrite_separate_indexing": false,
+  "token_file_hashes": "current",
+  "public_human_or_old_cli_occurrences": 0,
+  "cli_or_toolchain_changes": [],
+  "loader_line_count_method": "Exclude the generated Entries body, retaining the two boundary marker lines"
+}

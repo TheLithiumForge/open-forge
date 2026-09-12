@@ -14,6 +14,7 @@ open-forge:
 - Before accepting a product, Framework, or tooling direction that could affect identity, read the [Open Forge Principles](../../../memory/crystallized/documents/principles.md) and make any tension or required reconsideration explicit.
 - Keep baseline context and mandatory rules as small as possible. Every always-loaded addition must earn its ongoing attention cost.
 - Use existing routing, scope, relationship, and #Core semantics instead of adding special-case machinery when they can express the requirement clearly.
+- Keep generic first-party Workflows, Patterns, and Templates technology agnostic. Let applicable workspace sources supply project facts, conventions, tools, verification requirements, and accepted decisions. Provide useful methods and starting shapes without importing repository-local procedures or making optional records mandatory.
 
 ### Repository And Change Boundaries
 

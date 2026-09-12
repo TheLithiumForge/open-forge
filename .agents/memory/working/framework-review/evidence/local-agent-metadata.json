@@ -1,0 +1,110 @@
+{
+  ".apm/agents/advisor.agent.md": {
+    "sha256": "9d3c81ba08452262998fb83158eadfe23033a514d9ae2050f9a7b2da0a9e88e6",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/architect.agent.md": {
+    "sha256": "4004fd717f7a2a090d4cc49b146da8bc6e2f5ab463fd09424f0564d9e57f44a8",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/blue-structure-improver.agent.md": {
+    "sha256": "65b5314ca5ed80f62ce76dfe24a30249bde5b750a33fc4b23c1c9e7da2e5e210",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/brilliant-implementer.agent.md": {
+    "sha256": "a4801a517d6c6801c33ec3732c0bad5d6b8da6b62443f215314c32e45f6032bc",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/challenger-two.agent.md": {
+    "sha256": "b5187de75d8597ca75ef9e716f9e2e923d955472ed3c92a4691052c6111d254c",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/challenger.agent.md": {
+    "sha256": "ccb4027d6c9da2c90e4df8bc6cb74ea4d44c4e94ff5ba9e5cdd9d23b6402beeb",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/explorer.agent.md": {
+    "sha256": "344a87c111f5f4dfc85aacaeab752e20705dcef31d64363bbc829de7a6f22453",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/gray-contract-implementer.agent.md": {
+    "sha256": "d30c98a6519d6973e59deaddda7ba9ed8510533367022aa5838e82b2be0dbc4d",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/green-behavior-implementer.agent.md": {
+    "sha256": "13713d9d186edd083b19dceb6a866cb9f28b1cce0175d7d00aaa7f95b3db67d9",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/implementer.agent.md": {
+    "sha256": "51ea86b4f4044bb2cbd8e40efdc4710dcbfb85777eddadf102cb39c9965b11b8",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/improvement-reviewer.agent.md": {
+    "sha256": "04d7e96e0b9039626a56df355b136921367aa067b0c60a52bb271cc4b857999e",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/integration-mastermind.agent.md": {
+    "sha256": "4f74fb50e228251beb587dec9ee72708badfe920eb0a3d4dda00277989e3638d",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/overseer.agent.md": {
+    "sha256": "fbdead0879b0bc8e32dafe7902c0325ba48f99709632767181ede511fb34363d",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/purple-evidence-improver.agent.md": {
+    "sha256": "dcff0c0565e57c5c974fdf9604157c229fc78a619892fd5d37aa69b74567c68b",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/red-evidence-author.agent.md": {
+    "sha256": "659f51fd9fbdc6b8e790f11f1a1a776a3f06a095b5954a97906990d03c63d18f",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/researcher.agent.md": {
+    "sha256": "0d8e0b16996b7f2e467550f72d86ac79a66cff0bf92e0c5da24c00851224790e",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/review-mastermind.agent.md": {
+    "sha256": "d25cf91e66fb0548cf64845db0f63625f11e74d0b26afce68283e95e52b15746",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/reviewer-terra.agent.md": {
+    "sha256": "d72bb152b496aa7db77aa4f1fb3cd08e0c38b432de480f928614bab7866ffe9a",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/reviewer.agent.md": {
+    "sha256": "77a19258d81aab9012fc88adbcd3bfc146d25a8ced68c39b7d39feca56d8ed27",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/task-mastermind.agent.md": {
+    "sha256": "b627415722ef4ad9ff91ed189bb194c328ba0308dcf048de982dee29bfdc438a",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/topics/architecture-ownership-refactoring.agent.md": {
+    "sha256": "e5dc9229a5b48050a3ea14299ec92c4f9fffe6c7a422228b9ccfd8d5a8be50be",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/topics/behavior-contracts.agent.md": {
+    "sha256": "721e553218117ffe7f95a336bd31d8bd5c7cf4fba70fe9409a4a605f66328e81",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/topics/csharp-conformance.agent.md": {
+    "sha256": "2c3ccfb473f937ddcb1ffb9e21929c59dff1713b0c94464822fbf8f76283176a",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/topics/test-evidence.agent.md": {
+    "sha256": "e360acb192464997af604af5900cf1e2490910e914b2636b4bea9cec554df42a",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/workspace-operator.agent.md": {
+    "sha256": "480ffdfe4c73f4b10da87ad6ff775ad88b35f56bf2aecac845628f9f3ce4b790",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/writer.agent.md": {
+    "sha256": "ea0263f96fffbbfc24b6c1b99a04b544e54e66d7c959ffd938e27ff917b2fe4e",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  },
+  ".apm/agents/writing-reviewer.agent.md": {
+    "sha256": "ba806494eeeb4e4fbbcfb2237a83b320d45b3e2390a87da088ae532a84d5d72c",
+    "reviewed_lines": "1-9 only unless also present in local-reviewed-files.json"
+  }
+}

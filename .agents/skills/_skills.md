@@ -6,7 +6,9 @@ open-forge:
 
 # Skills
 
-Each Skill follows the rules in its own `SKILL.md`.
+## Which specialized capability would help with this work?
+
+Skills provide specialized capabilities through native `SKILL.md` packages. Each Skill follows the rules in its own `SKILL.md`.
 
 ## Axioms
 
@@ -17,5 +19,4 @@ Each Skill follows the rules in its own `SKILL.md`.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Analyze user journeys, interaction states, accessibility, design quality, and implementation handoff. Use when an interface or service needs experience-specific criteria.](experience-design/SKILL.md) - #Skill
 <!-- open-forge:generated-index:end -->

@@ -13,7 +13,7 @@ Preserve existing references to the former experimental workflow while routing a
 ## Steps
 
 1. Use [Program Development](program-development.md) for the complete current workflow.
-2. Update new references to target the stable route. Keep this file only for compatibility with existing links or installed configurations.
+2. When editing references within the authorized task, update new references to target the stable route. Keep this file only for compatibility with existing links or installed configurations.
 3. Do not copy, fork, or maintain a second set of program-development rules here.
 
 ## Completion

@@ -19,14 +19,14 @@ Produce prioritized actionable findings, or a clear no-findings result, without 
 5. Run or inspect verification matched to a suspected issue and known to be read-only. Challenge each candidate finding against existing safeguards and plausible false positives.
 6. Give every blocking or material finding a stable ID, severity, category, location, evidence, consequence, smallest credible correction, and earliest invalidated boundary. An ordinary finding may use an ID such as `R1`. A coordinated topic finding uses its unit-derived prefix and also records its snapshot key, inspected commit and tree, confidence, and missing verification.
 7. The Review Mastermind may link likely duplicates and must preserve material dissent. It does not disposition findings, repair artifacts, or change task state. Separate residual risk, optional material improvements, preferences, duplicate candidates, and missing verification.
-8. The original writer revalidates each finding against current relevant content, records `accepted`, `rejected`, `duplicate`, `preference`, `false-positive`, `fixed`, or `deferred`, and groups accepted findings into one repair packet.
+8. When corrections are authorized, the original writer revalidates each finding against current relevant content, records `accepted`, `rejected`, `duplicate`, `preference`, `false-positive`, `fixed`, or `deferred`, and groups accepted findings into one repair packet.
 9. After correction, run fresh affected evidence and recheck changed finding IDs and affected context. Create a new coherent immutable snapshot when a coordinated topic recheck is needed. Rerun the complete review only when the correction materially changes the artifact or review horizon.
 
 ## Completion
 
 - Every material finding has stable identity, evidence, consequence, and correction guidance.
 - False positives and existing safeguards were considered.
-- The target remained unchanged.
+- The review target remained unchanged during review. Any separately authorized repair has an explicit disposition and fresh affected evidence.
 - Verification gaps, residual risk, and uncertainty are explicit.
 - Duplicate review and repeated rationale were avoided.
 - Ordinary review remained compatible with an explicit changed and untracked target. Coordinated topic passes, when selected, stayed read-only, used at most one wave per task snapshot, grouped returns by snapshot and writer, and did not replace a required fresh holistic review.

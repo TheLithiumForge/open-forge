@@ -6,7 +6,9 @@ open-forge:
 
 # Emerging Memory
 
-Emerging Memory keeps useful material that is not accepted yet.
+## What is useful but still unsettled?
+
+Emerging Memory keeps useful findings, possibilities, and reasoning that are not accepted yet.
 
 ## Axioms
 
@@ -14,13 +16,13 @@ Emerging Memory keeps useful material that is not accepted yet.
 
 - At each #KeepInMind refresh that applies, read visible `Entries` and save useful candidate material before it is lost.
 - "No useful candidate material" is a valid result. Do not turn raw activity into Memory.
-- Treat Emerging Memory as contextual until it is validated, promoted, or explicitly accepted.
+- Treat Emerging Memory as contextual until accepted within its scope.
 - Keep uncertainty, source, and scope visible.
 
 ### Refinement And Transition
 
-- Refine material here while its validity, use, or final destination remains unsettled.
-- When material becomes accepted, move the durable result to the source that should define it. After keeping useful outcomes and reasoning, archive or prune rejected and replaced material.
+- Refine material here while its validity, use, or final destination is still unsettled.
+- When material becomes accepted, move the durable result to the source that should define it. Preserve useful outcomes and reasoning before archiving or pruning rejected and replaced material.
 - Revisit repeated or stale material and decide whether to consolidate, promote, archive, or prune it.
 
 ## Entries

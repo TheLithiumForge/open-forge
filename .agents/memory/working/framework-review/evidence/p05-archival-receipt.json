@@ -1,0 +1,77 @@
+{
+  "status": "applied in review worktree",
+  "files": [
+    {
+      "path": "src/open-forge/.agents/memory/archived/_archived.md",
+      "before_sha256": "d6b810abb3d2fb9a75f6aa0a913355fb7d5e25e4e77224989150876be709a4f7",
+      "after_sha256": "2dbff1f6b03f572c93c4616c4fe86c19e511c3dc405d966b1261954c2256a8f0"
+    },
+    {
+      "path": ".agents/memory/archived/_archived.md",
+      "before_sha256": "8e9d2180746d36d62cd5b1ac06775f29df2696748895b2c1f27ccc465090bc93",
+      "after_sha256": "a6864ec39cbe1796762621fb31ab65ed0ed53d5f21977cd4272e713e5ff6dea6"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/_memory.md",
+      "before_sha256": "3f2391b9fb30516e42d3c95e661937355be82f2e25d3f0673e02ec3893f75b0a",
+      "after_sha256": "f8957347ce3218548abf28573d1f8137b026820d8ba0f2933beed87765aab23c"
+    },
+    {
+      "path": ".agents/memory/_memory.md",
+      "before_sha256": "2ffe33bc1e0f3ee40c3a3b16f6955a9141aea5816075b82c045bf83fac0f6aee",
+      "after_sha256": "cc0665bb9ec16443792156a873e9eab42ef3fef4e4d4e57cd3bca8965bf37e82"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/working/handoffs/_handoffs.md",
+      "before_sha256": "dd7576ad185c7e8737b6d5d00c5795343514e6859e7ec566f91975dff4871113",
+      "after_sha256": "d704cdd21df601f1f22635a5b3abe7eabe17958a977aeee9b12c9f981a6eb0af"
+    },
+    {
+      "path": ".agents/memory/working/handoffs/_handoffs.md",
+      "before_sha256": "20e0f5f2ecf5369d7303fd8d9fa42e6386e26cda6d0286467a0d0c1c94a0d1d5",
+      "after_sha256": "6528bd682a1144bb64307562d086279aaa7dca92ca2ff205b8c443fad4bf97e1"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/templates/memory/handoff.md",
+      "before_sha256": "e61f8770e6209fb91a5dab28ff83d650ab7b9795eef44ca6c82289f1a7c4c422",
+      "after_sha256": "1d7bbf74393480dad68be41fd10dfd21c6545f7e52b86142cbeba3de06ae3551"
+    },
+    {
+      "path": ".agents/templates/memory/handoff.md",
+      "before_sha256": "e61f8770e6209fb91a5dab28ff83d650ab7b9795eef44ca6c82289f1a7c4c422",
+      "after_sha256": "1d7bbf74393480dad68be41fd10dfd21c6545f7e52b86142cbeba3de06ae3551"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/memory/archived.md",
+      "before_sha256": "32991f82dae1829a7e9948fb56aae8d53200a9635c68df1c345a28f01bac3189",
+      "after_sha256": "9131e727d095770f6936456dc1218daac5aee9d7f7e2bfbb1c8ab7654ceebf4e"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/memory/transitions.md",
+      "before_sha256": "64ced60da3cd8110ea469ad5d1e2994a98e34dbdc75e4858a050c8cc7297815f",
+      "after_sha256": "7bcfae20c8191aaf49628906a46ae84e7fb20622c26ec14d09be46d67221d592"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/memory/working.md",
+      "before_sha256": "46b6b5d6df447e31c17b3fec3d833c776b24bb33af60fa45eef7d273372233ff",
+      "after_sha256": "d714680eeddf526c2f64e82bfe0cb905b2bbe65ba8b55405a17c2bb2dbb75094"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/working/handoffs.md",
+      "before_sha256": "cd46d9796201de43e06c9b250128cc794ddd3b8e9b76e6a53d6e48e605a0a4c0",
+      "after_sha256": "3691ad0d247a2cb6e448adb5dc04c50ae6c3c514d9576e85a170d9b857f33ecf"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/archived.md",
+      "before_sha256": "b4cd3eab058c5a5d26c4c16f2755a6d2d40a2551d79d0c8984eab9a00db39f96",
+      "after_sha256": "96727a5a15db8264699a88fa52b6f65eb853ab1537b880c6963c5902894a4212"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/helpers/dictionary.md",
+      "before_sha256": "17c6093d453059f535b22a4a01db3edb09e952a8fc547d6d1db9333a1a09d873",
+      "after_sha256": "08b7efc5d12d94f842cb4da26e4f0f97b82b2078bae42b474ad82c47f9d3a4dd"
+    }
+  ],
+  "committed": false,
+  "merged": false
+}

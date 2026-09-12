@@ -1,0 +1,42 @@
+{
+  "status": "applied in review worktree",
+  "files": [
+    {
+      "path": "src/extensions/README.md",
+      "before_sha256": "ceef7b32252f69e5a6e8605e9f7c7e62ccc43a1de88ea5db48d739cac42bea24",
+      "after_sha256": "f1dbb8cf61300a4c702a934217aba4be346178773ee104599be39467ebd13bc1"
+    },
+    {
+      "path": "src/extensions/orchestration/README.md",
+      "before_sha256": "e0db6bb3c1cf1322c9bd95be8017658450861b8bf4bee19e1612526380a1ed2f",
+      "after_sha256": "65b1877034ec005ebb61305799cc815f70c663cc481a763008ecea241cc45107"
+    },
+    {
+      "path": "src/extensions/development-toolkit/README.md",
+      "before_sha256": "86640d976a1ba05d9e1483e3cc1ab98913e8165cced8ee391f0e1d18326a5512",
+      "after_sha256": "a2ccc51d8db08662c3d0099b8c6ef407790b53bcca189e9e2ea80e63cb52ce87"
+    },
+    {
+      "path": "README.md",
+      "before_sha256": "1beebfc412b40e08eb0c6020de98373ad0e86418f83ac3da3d69831430d107d3",
+      "after_sha256": "fe4ffd7287f0069a9e58374a994a83f46fba2bd8fc11443e6415650c69e11b70"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/routing/loading.md",
+      "before_sha256": "10bad8b92cb35b3a4e11c07e8432d85495f74f391183f58257c13cda42890f5c",
+      "after_sha256": "8d4acb3a33b4ffdfcf7a96df7876bcdef5298d60cdf54e5bc6e1224b2801df70"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/architecture.md",
+      "before_sha256": "54e230a95c0dd67bbaea445fed459ad4b2ba1a2d788edb7953fb5f9a3b419e52",
+      "after_sha256": "c3797160166a5b0ceafa16bf17f27a5d60ef6fad25032f7a932fbc7d25fd429b"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/extensions/architecture.md",
+      "before_sha256": "f3b0ce93ec702e0c76e5e8bb9e86baab6bfd618390ee86ac5cc7f24b51d9e65c",
+      "after_sha256": "5e1c30a1d5b7f71e84d9a914830241c78e8241300a26f4a5791c47020e5bcd86"
+    }
+  ],
+  "committed": false,
+  "merged": false
+}

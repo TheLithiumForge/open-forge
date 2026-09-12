@@ -1,0 +1,23 @@
+{
+  "finding": "T28-RS4",
+  "status": "applied",
+  "authorization": "User approved the exact reviewed one-file proposal.",
+  "proposal": "t28-rs4-worktree-delivery-proposal.diff",
+  "change": "Separate integrated delivery from a reviewable handoff when commits, integration, required review or checks, or acceptance remain pending.",
+  "files": [
+    {
+      "path": ".agents/workflows/worktree-program-development.md",
+      "before_sha256": "175368177a4053a65494bbc934e6a2a880f922d657331967654a13f8e4addc5b",
+      "applied_sha256": "ac5030ad10d191dff12d729a67f5f170d8bacf6b84f63e161acd6dcc42df57d6"
+    }
+  ],
+  "checks": {
+    "before_sha256": "matched before application",
+    "candidate_sha256": "matched after application",
+    "exact_applied_prose": "Goal, steps 10-17, and Completion inspected together",
+    "recipe_headings": "Goal, Steps, and Completion occur once, in order, with nonempty content",
+    "recipe_steps": "1-17 occur once in sequence",
+    "git_diff_check": "passed"
+  },
+  "scope": "Only the approved local workflow and this receipt were written. No CLI work, builds, tests, commits, merges, task dispatch, or other source changes."
+}

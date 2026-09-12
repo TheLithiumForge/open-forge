@@ -24,7 +24,7 @@ Frontmatter uses `description` as the natural-language pre-load selection surfac
 
 One authored form reduces agent decision cost, parser surface, inconsistent examples, and maintenance ambiguity while leaving ordinary Markdown expressive.
 
-Separating canonical output from compatible input allows migration and interoperability without teaching several competing contracts. Keeping the semantic contract in human-readable files also prevents CLI behavior from privately defining the Framework.
+Separating canonical output from compatible input allows migration and interoperability without teaching several competing contracts. Keeping the semantic contract in readable files also prevents CLI behavior from privately defining the Framework.
 
 Responsibility metadata deters opportunistic scope growth. A changed responsibility therefore calls for deliberate redefinition, splitting, or merging rather than wording that merely absorbs unrelated content.
 
@@ -58,4 +58,4 @@ Canonical forms require explicit documentation and careful migrations when an ac
 - [Routing surfaces](routing-surfaces.md)
 - [Tag semantics](tags.md)
 - [User-facing writing](user-facing-writing.md)
-- [CLI frontmatter YAML boundary](../cli/cli-frontmatter-yaml-boundary.md)
+- [CLI frontmatter YAML boundary (historical)](../../../archived/cli-v2/decisions/cli-frontmatter-yaml-boundary.md)

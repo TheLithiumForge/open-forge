@@ -6,6 +6,8 @@ open-forge:
 
 # Checkpoints
 
+## Where does this workstream stand, and what comes next?
+
 A Checkpoint records the current state, current step, and next steps for one active workstream. Update it as the work changes. It is not history or accepted truth.
 
 ## Axioms
@@ -23,7 +25,7 @@ A Checkpoint records the current state, current step, and next steps for one act
 
 ### Closeout
 
-- Before an actual transfer or explicitly planned resumption, update the Checkpoint. Create a Handoff only when that boundary needs a stable snapshot while the Checkpoint may continue to change. Routine pauses and ordinary closeout do not require one.
+- Update the Checkpoint before an actual transfer or explicitly planned resumption. Create a Handoff only when that boundary needs a stable snapshot while the Checkpoint may continue to change. Routine pauses and ordinary closeout do not require one.
 - At closeout, save durable outcomes outside the Checkpoint. When its active need ends, remove #Active and #KeepInMind, then archive or prune it.
 
 ## Entries

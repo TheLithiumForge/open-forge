@@ -1,75 +1,54 @@
 # Open Forge Extensions
 
-First-party Extension sources for the replacement Open Forge CLI live here.
-The replacement CLI is not released; the frozen legacy executable retains its
-historical package format and does not consume this catalogue layout.
-
-An Extension is one optional package that is installed and managed as a unit. Its payload may contain any deliberate combination of routed files. Installed files keep the meaning of their destination routes and remain usable without the manifest, source package, receipt, or CLI.
+We built these Extensions to give you more starting points as you make Open Forge your own. Each package is optional, so you can bring in what helps your work and adapt it to your workspace.
 
 ## Current Catalogue
 
-The pre-release catalogue contains one small package:
+| Package | Contents | Dependencies |
+| --- | --- | --- |
+| [Project Documents](project-documents/README.md) | Vision and Architecture Workflows, with four document Templates | None |
+| [Memory Starters](memory-starters/README.md) | Five Memory Templates | None |
+| [Planning](planning/README.md) | A planning Workflow, the Work Records Pattern, and four planning Templates | None |
+| [Development](development/README.md) | Development, Debugging, and Review Workflows | None |
+| [Orchestration](orchestration/README.md) | One Workflow for dependent tasks, recovery, and integration | Planning, Development |
+| [Development Toolkit](development-toolkit/README.md) | A bundle of Project Documents, Memory Starters, Planning, and Development | All four included packages |
 
-- `development-toolkit` adds six lean Workflows, one native Experience Design Skill, and nine copy-ready Templates
+Choose a focused package for the work at hand, or use Development Toolkit to bring its four dependencies in together. Orchestration is available separately when coordination across tasks would help.
 
-Install it only when the complete package is worth its context and maintenance cost:
+Use what fits, adapt it as your project changes, and remove content that adds no value. Installed Workflows stay optional.
+
+## Installation
+
+You can install a package with the CLI or copy the files yourself. The [Extension installation guide](../../docs/extensions.md#install-an-extension) covers both approaches.
+
+These commands let you browse the catalogue and preview a package before adding it to your workspace. Replace the example paths with your source catalogue and destination workspace, keeping the source checkout separate from that workspace.
 
 ```sh
-open-forge extension list --available
-open-forge extension install development-toolkit --dry-run
-open-forge extension install development-toolkit
-open-forge extension remove development-toolkit --dry-run
+open-forge extension list --available --source /path/to/open-forge/src/extensions --workspace /path/to/project
+open-forge extension install development-toolkit --source /path/to/open-forge/src/extensions --workspace /path/to/project --dry-run
+open-forge extension install orchestration --source /path/to/open-forge/src/extensions --workspace /path/to/project --dry-run
 ```
 
-The current CLI does not install individual features from a package. Users own installed files and may remove routes that provide no local value after reviewing the result.
+After reviewing the preview, apply the same command without `--dry-run`. The guide also covers updates, removal, and permissions. Managed state lives in `.agents/open-forge.lifecycle.json`. It does not become agent context.
+
+For [manual installation](../../docs/extensions.md#manual-installation), copy the `content/` files from the selected package and its dependencies into the workspace. A bundle has no separate payload to copy. Update affected `Entries`, check links in the assembled workspace, and review the changes. Manual copying does not create managed lifecycle state.
 
 ## Source Shape
 
-The current package uses:
+Each Extension adds complete files. A package contains `extension.json`, an optional `README.md`, and workspace-relative files under `content/`. A package containing only dependencies may omit `content/`.
 
-```text
-development-toolkit/
-  extension.json
-  README.md
-  content/
-    .agents/
-      skills/
-      templates/
-      workflows/
-```
+Routed content follows the roles and scopes of its destination in the Framework. Native formats and support files keep the meaning defined by their consumers. The installed files remain usable without the package manifest or CLI.
 
-A normal managed package contains `extension.json`, an optional `README.md`, and complete target-relative files under `content/`. A package that provides only dependencies may omit `content/`. The replacement CLI accepts an exact package or catalogue, not an unmanifested overlay.
+The manifest identifies the package and declares its dependencies. Dependencies resolve transitively before their dependents. The [package format](../../docs/extensions.md#package-format) defines the accepted representation. [Create an Extension](../../docs/extensions.md#create-an-extension) walks through assembling one.
 
-Every bundled package declares a stable lowercase id that does not depend on its folder name. A local package requires a valid manifest ID and uses separate lifecycle ownership. Consumer permission for external targets never supplies ownership.
+## Content And Verification
 
-The current manifest accepts:
+Each reusable file has one package source. Dependency packages provide shared files instead of competing copies. Runtime relationships use ordinary links and explicit Workflow steps because manifest dependencies describe installation only.
 
-- `id`
-- `name`
-- `description`
-- `version`
-- A duplicate-free `dependencies` array of bundled ids
+Keep native formats such as `SKILL.md` in their native form. Routed Open Forge files normally carry `Extension`, their role, and useful topic tags. Add eager-loading tags only when their loading cost is deliberate.
 
-Unknown fields are rejected. Dependencies resolve transitively and offline before their dependents. Installed files still express runtime relationships through ordinary links and route meaning because package metadata is not agent context.
+Check each dependency closure for conflicting destinations and missing links, and verify that its metadata and Workflow sections are valid. Check route indexing after assembly. Verify installation and removal in a separate workspace with a CLI built from the same source tree.
 
-## Payload Contract
+Keep packaged Templates and the Work Records Pattern aligned with their repository copies. Local Workflow profiles may differ where repository-specific rules justify it.
 
-Write payload files for their final workspace-relative locations. Open Forge files normally use #Extension with useful type and topic tags. Runtime-native files such as `SKILL.md` keep their native metadata. Add loading tags only when baseline or continuity loading is deliberate.
-
-Shared behavior has one exact package source. Identical-file deduplication prevents collisions; it does not justify competing first-party copies.
-
-The `development-toolkit` package defines its nine shipped Template files. This repository also keeps dogfood copies, which an automated parity check keeps identical.
-
-## Planning, Ownership, And Removal
-
-Before writing, the CLI validates selected manifests, source and target paths, receipts, dependencies, collisions, and route integrity. `--dry-run` prints the complete plan without changing files.
-
-Normal writes require recognizable tracked Core files and a clean Git checkpoint for the target. `--pro` bypasses only the Git and Core checkpoint. It never bypasses manifest, containment, collision, ownership, or route-integrity checks.
-
-The root `open-forge.extensions.json` receipt records managed packages, dependencies, requested packages, owned paths, shared owners, and payload digests. Reinstalling an id reconciles its files. Removal protects user changes, packages that are still needed, shared files, and reachable routed descendants.
-
-Payload writes, generated `Entries`, and receipt changes roll back together after handled failures. The MVP has no registry, network resolution, compatibility solver, automatic orphan pruning, migration hooks, persistent recovery journal, or crash recovery.
-
-## Catalogue Reset
-
-Earlier first-party package ids were removed before the stable release and are not aliases. Existing installed files remain ordinary workspace content. Their receipts are enough to preview and remove them without keeping the old source catalogue.
+Adding a package to this catalogue requires evidence of useful outcomes and clear decisions about dependencies and runtime boundaries. A successful local experiment alone does not establish that it belongs in the catalogue.

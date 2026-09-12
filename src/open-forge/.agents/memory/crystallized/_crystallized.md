@@ -6,6 +6,8 @@ open-forge:
 
 # Crystallized Memory
 
+## What accepted knowledge should remain current within this scope?
+
 Crystallized Memory contains accepted knowledge that should remain current within its scope.
 
 ## Axioms

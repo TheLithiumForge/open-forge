@@ -1,0 +1,26 @@
+{
+  "changed_markdown_files": 15,
+  "relative_links": 140,
+  "issues": [],
+  "readme_category_questions": 12,
+  "token_measurement_source_hashes": "unchanged",
+  "new_guide_navigation": "matches description and tags",
+  "source_changes": "extension READMEs only",
+  "identities": {
+    ".agents/directives/public-facing-writing.md": "a9e36c2992c6ee68bdb02a87c29b5eaea8b24db82f890c4b9720431fd4eefcf2",
+    ".agents/memory/crystallized/decisions/framework/user-facing-writing.md": "50e3afed8f4dfc49aa3a6407c253854605ecb1975bf9b90d75b8e07b81719ecf",
+    ".agents/memory/crystallized/documents/maintenance/_maintenance.md": "726c8afebbb6c82df17592021a2b861f9f189afb335c35cd0a4735cef5677c02",
+    ".agents/memory/crystallized/documents/maintenance/project-voice.md": "8f976200629ae2ec5a3866a808cf52bb54e483163129f8633a660ccadeb615d8",
+    ".agents/memory/crystallized/documents/maintenance/writing.md": "35a8a6bd739d1bd9559dc44da35e17bbb45f8d676f07979369e064e09fd74025",
+    ".agents/memory/working/cli-development/tasks/source-framework-review.md": "5e07a8e1a48d4ceaff680e539456edec9799aea0ae61d9c5ccfec194c3d986f9",
+    "README.md": "04c5b61a884a84830da49a6b43396dca8ab03f806fd910197807e10a5f555d61",
+    "docs/cli.md": "647ac8ca5dbd84f5c3cd9ecf92f709f058c92b24e3f3e2b9a1850258012e1a07",
+    "docs/development.md": "b3b7cf54e1ec3fc40001487d57d1386753b6eb0b886e27032669c2aee1fda82e",
+    "docs/extension-candidates/csharp-development.md": "47b40d569208ae5d19d48c14b04feef9892c0d79ecbd852facd02223b4137dc2",
+    "docs/extension-candidates/development.md": "02b01fa3701e0af24f0a8368e672310372b0998160bbd37f59f4988d5a8e8f1b",
+    "docs/extensions.md": "726a54251c06b131690b99cf265a279422e0e0b4d78b31a4d7b79b4f70fdab23",
+    "src/extensions/README.md": "b35ed9a4f963d2bec44dda07be087913fc284ab9fe9a66262af9f2a38d16403b",
+    "src/extensions/development-toolkit/README.md": "ac4629a5ea4be65a1750d8ae00eeb8707423476611e48087cf377597d06155fe",
+    "src/extensions/orchestration/README.md": "1dd654514ecbc3a5cb2daad24466a46aff84bf0be878eac409f61d59010e6b23"
+  }
+}

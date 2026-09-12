@@ -6,6 +6,8 @@ open-forge:
 
 # Ideas
 
+## What possibility is worth exploring?
+
 Ideas keep possibilities, experiments, open questions, and options worth exploring later.
 
 ## Axioms
@@ -28,6 +30,7 @@ Ideas keep possibilities, experiments, open questions, and options worth explori
 - [Explore an optional reusable record set for consequential multi-gate programs without adding another Core primitive or mandatory methodology](durable-program-records.md) - #Memory #Idea #Contextual #Candidate #Program #Plan #Audit #Decision #Checkpoint #Template #Pattern #Workflow #Extension
 - [Explore post-initial Extension distribution, compatibility, migration, multi-root ownership, dependency expressiveness, and catalogue governance](extensions-overhaul.md) - #Memory #Idea #Contextual #Candidate #Extension #Architecture #Product #Distribution
 - [Review Open Forge prose for inflated formality, avoidable jargon, and wording that makes simple ideas harder to understand](framework-plain-language-audit.md) - #Memory #Idea #Contextual #Candidate #Framework #Documentation #Writing #PlainLanguage #Review
+- [Deferred Framework diagrams and a retained review-method draft from Task 28](framework-review/_framework-review.md) - #Memory #Idea #Contextual #Candidate #Framework #Review
 - [Revisit focused CLI presentation snapshots after LithSnap has a Native-AOT-safe explicit baseline contract](lithsnap-backed-cli-snapshots.md) - #Memory #Idea #Contextual #Candidate #CLI #Testing #Snapshot #NativeAOT #LithSnap
 - [Explore residual distributed deduplication and promotion support for the accepted occurrence-based Observation contract](observations-rework.md) - #Memory #Idea #Contextual #Candidate #Observation #AgentLearning
 - [Explore parallel Luna implementers for already-frozen Red evidence while one Brilliant Implementer and Task Mastermind retain semantic ownership](parallel-red-evidence-implementation.md) - #Memory #Idea #Contextual #Candidate #Workflow #Testing #Red #Delegation #Parallelism #Luna #Efficiency

@@ -17,7 +17,7 @@ Give the primary owner one independent read-only assessment of the accepted outc
 3. Inspect or reproduce only read-only evidence that materially tests a concern. Do not fix findings.
 4. Give every blocking or material finding a stable ID, severity, category, exact location, evidence, consequence, smallest correction, and earliest invalidated boundary.
 5. Separate residual risk, optional material improvements, and preference-only observations.
-6. The primary owner groups accepted findings into one correction packet. Recheck only changed finding IDs and their affected neighborhood unless the correction invalidates the whole task.
+6. Before repair, the original writer revalidates findings against current content and records dispositions. The primary owner groups accepted findings into one correction packet. Recheck only changed finding IDs and their affected neighborhood unless the correction invalidates the whole task.
 7. Add a second reviewer only when one named distinct risk remains outside this review horizon.
 
 ## Completion

@@ -2,7 +2,7 @@
 open-forge:
   description: Current Archived Memory purpose, historical authority boundary, extraction, provenance, organization, and restoration
   responsibility: Define what makes non-current historical Memory useful without allowing it to govern present work
-  tags: [Memory, Document, CurrentTruth, Evergreen, Framework, MemoryModel, Archived, Contextual, Historical]
+  tags: [Memory, Document, CurrentTruth, Evergreen, Framework, MemoryModel, Archived, Historical]
 ---
 
 # Archived Memory
@@ -24,7 +24,9 @@ Before archival, useful present meaning is extracted to its current authoritativ
 - What replaced it when a replacement exists
 - Enough scope and provenance for later interpretation
 
-Material without plausible historical value may be pruned rather than archived.
+Archival may preserve, consolidate, reduce, or transform material according to its future value. It does not require keeping every record intact. Once material is archived, the destination's rules govern it. Remove metadata that would continue its former behavioral role or assert current authority.
+
+Material without plausible historical value may be pruned rather than archived. Retained material may later be deleted under user direction or accepted retention preferences.
 
 ## Organization And Restoration
 
@@ -36,7 +38,7 @@ Scope placement follows the Memory model. `memory/archived/mobile-app/` groups m
 
 Choose an archive destination for useful future discovery rather than mechanically mirroring every former path. Preserve the exact origin and replacement through explicit links or provenance.
 
-Restoration validates historical material against current conditions and creates an explicit Working, Emerging, Crystallized, #Core, or external destination. Reading or moving an archived file does not restore its former authority automatically.
+Restoration validates historical material against current conditions and places it in the source appropriate to its present meaning. Establish acceptance before treating restored material as current knowledge. Reading or moving an archived file does not restore its former authority automatically.
 
 ## Related Current Sources
 

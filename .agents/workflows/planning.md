@@ -10,6 +10,8 @@ open-forge:
 
 Produce an executable plan with one task source, one compact current context, explicit dependencies, bounded ownership, and verification that another capable owner can follow without rediscovering intent.
 
+Use the [Work Records Pattern](../patterns/work-records.md) when planning needs a predictable record. Keep the plan and current state together for small work. Use separate records only when they need separate maintenance.
+
 ## Steps
 
 1. Name the task source declared by the user or workspace. Use the current user task when no durable source is needed.
@@ -20,6 +22,8 @@ Produce an executable plan with one task source, one compact current context, ex
 6. Divide work into the smallest coherent outcomes with one owner each. Mark sequencing, non-overlapping parallel lanes, integration points, and conditions that require replan.
 7. Give every step an observable result and verification matched to its risk. Place full gates at coherent task, archetype, or batch boundaries.
 8. Update task or plan state only in its declared source. Link accepted reasoning and current sources instead of copying them.
+
+When evidence changes the plan, update the remaining steps and dependencies in their defining source. Preserve completed evidence, distinguish blocked work from work that can proceed, and name the next action.
 
 ## Completion
 

@@ -1,0 +1,30 @@
+flowchart TD
+    WORK["Do the work"]
+    DIRECTION["User direction<br/>and delegated decisions"]
+
+    subgraph MEMORY["Memory — context, knowledge and history"]
+        NOTES["Useful notes, evidence and ideas"]
+        KNOWLEDGE["Accepted knowledge<br/>What is current and why"]
+        HISTORY["Useful history<br/>No longer current"]
+    end
+
+    CHECK(["Check the evidence"])
+    ACCEPT(["Decide what to accept<br/>and where it applies"])
+
+    subgraph REUSE["Reusable ways of working"]
+        METHODS["Rules to follow · Advice to consider<br/>Structures and steps to reuse"]
+    end
+
+    WORK -->|Keep what is useful| NOTES
+    NOTES --> CHECK
+    CHECK --> ACCEPT
+    DIRECTION --> ACCEPT
+    ACCEPT --> KNOWLEDGE
+    KNOWLEDGE -->|Extract relevant lessons| METHODS
+    KNOWLEDGE -->|Use current knowledge| WORK
+    METHODS -->|Apply where relevant| WORK
+    KNOWLEDGE -->|When replaced, retain useful history| HISTORY
+    HISTORY -->|Reconsider for current use| CHECK
+
+    style MEMORY fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5
+    style REUSE fill:transparent,stroke:#94a3b8,stroke-dasharray:2 5

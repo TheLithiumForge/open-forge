@@ -6,13 +6,15 @@ open-forge:
 
 # Observations
 
+## What was observed, and why might it matter later?
+
 Observations preserve concrete occurrences or patterns noticed in evidence that may matter after the current work.
 
 ## Axioms
 
 ### Capture
 
-- Record an Observation before handoff or closeout when a concrete occurrence or pattern may matter later. Report a required write that is blocked.
+- Record an Observation before handoff or closeout when a concrete occurrence or pattern may matter later. If a required write is blocked, report it.
 - One occurrence is enough when it may be reusable, surprising, or costly to rediscover.
 - Keep the concrete evidence and occurrence details clear enough to verify and reuse.
 

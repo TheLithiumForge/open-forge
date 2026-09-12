@@ -1,0 +1,12 @@
+{
+  "reviewer": "primary",
+  "path": ".agents/workflows/_workflows.overwrite.md",
+  "sha256": "6f90f7a5012d34437dd32458ee690e2930311793f6a5f4273ff56bf539b390b8",
+  "result": "PASS",
+  "checks": [
+    "Exact accepted local rule retained",
+    "Interpreted as base Workflow entrypoint Axiom",
+    "No frontmatter tags or generated entry",
+    "Companion existence checked for commit; untracked path was absent from dedicated reviewer hash manifest"
+  ]
+}

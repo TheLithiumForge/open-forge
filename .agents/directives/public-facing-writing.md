@@ -10,6 +10,7 @@ open-forge:
 
 - Apply these rules whenever you write to the user. Give the answer or result first. Use a direct, calm, conversational voice. Match detail to the request. Separate facts, accepted direction, assumptions, recommendations, and open questions. Do not ask the user to confirm clear direction again.
 - Before adding, changing, or reviewing Open Forge source prose, read and follow the [Writing Standard](../memory/crystallized/documents/maintenance/writing.md), the [Open Forge Dictionary](../memory/crystallized/documents/maintenance/helpers/dictionary.md), applicable authority rules, and nearby authoritative prose.
+- For READMEs and public introductions, also follow [Project Voice](../memory/crystallized/documents/maintenance/project-voice.md). Choose the voice by the passage's purpose while preserving the shared accuracy and meaning requirements.
 - Source prose includes documentation, Markdown contracts, templates, CLI text, comments, and similar explanatory text. It excludes untouched prose, code identifiers, machine-readable syntax, external formats, quotations, and archived text unless the task targets them.
 - A rewrite must preserve meaning. Required rules remain required, optional choices remain optional, and uncertainty, conditions, exceptions, and tradeoffs remain visible.
 - Use a dedicated writer only when the prose pack is substantial and separable from the primary context. The primary owner should make small, context-heavy, or surgical prose changes directly.

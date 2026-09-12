@@ -19,7 +19,7 @@ An applicable Pattern remains relevant after a result is created. It is the esta
 
 A shape qualifies as a Pattern only when accepted direction establishes it as useful for future related results or repeated changes. A one-off implementation, temporary transition, or unsettled candidate does not qualify merely because it has visible structure. Temporary work may apply an existing reusable Pattern, but that does not make the temporary result itself a Pattern.
 
-A different shape may be chosen deliberately when the case warrants it. The reason should remain visible so the variation is distinguishable from accidental drift. When conformance must be binding, a Directive or another applicable Axiom owns that requirement.
+A different shape may be chosen deliberately when the case warrants it. Explain the departure before dependent work uses it so the variation is distinguishable from accidental drift. An exception to an agreed shape requires applicable authority. Use authority already granted for that exception, or ask the user before proceeding. When conformance must be binding, a Directive or another applicable Axiom owns that requirement.
 
 ## Scope
 

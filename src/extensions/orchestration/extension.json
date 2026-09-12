@@ -1,0 +1,10 @@
+{
+  "id": "orchestration",
+  "name": "Orchestration",
+  "description": "Coordinate dependent tasks through one optional managed-delivery workflow",
+  "version": "0.1.0",
+  "dependencies": [
+    "development",
+    "planning"
+  ]
+}

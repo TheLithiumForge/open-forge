@@ -11,7 +11,7 @@ open-forge:
 Task 13 is complete at phase 3/3, milestone 6/6. Feature `0101f25c` was
 squash-integrated at `1b8475ae`, with identical tree `5461e002`. Its [continuation capsule](tasks/delivery/02-native-ci.md#delivery-simplification-continuation)
 owns the full shared-command, version/package and workflow boundary. Tasks 7/22
-retain their historical completion receipts; Task 28 remains in the other chat.
+retain their historical completion receipts; Task 28 is accepted for integration below.
 
 The maintainer additionally required root `scripts/` placement, obsolete-script
 cleanup and current managed-marker verification, and explicitly authorized
@@ -86,7 +86,7 @@ at `73ef066a`, exactly matching feature `1b101bf2`. The
 findings, final review dispositions and exact evidence/platform limits.
 Wider refactoring, F13 and U07 stay deferred or paused; no product choice remains
 pending for this beta. All implementation/review helpers have finished.
-Task 28 continues in the separate user-owned chat; preserve its source and notes.
+Task 28 source and documentation are complete and accepted for local squash integration; preserve its source and notes.
 Tasks 7, 13, 21 and 22 remain locally complete. No remote operation or publication
 is authorized. Historical execution below does not reopen completed or deferred work.
 
@@ -165,7 +165,7 @@ workflow shell blocks pass syntax and ShellCheck. Runtime candidate
 `c2eb60b3` retains 6,421 passing executions and the real Linux package journey;
 reviewed correction `696c56b7` changes only explicit npm TAP reporting.
 The authorized CLI sequence Task 21 → Task 27 → Task 7 ARM64 expansion →
-Task 13 → Task 22 is complete locally. Task 28 continues in the other chat. On 2026-09-09 the user explicitly approved Tasks 21, 27, 13 and 22,
+Task 13 → Task 22 is complete locally. Task 28 is accepted for local squash integration. On 2026-09-09 the user explicitly approved Tasks 21, 27, 13 and 22,
 including Linux, macOS and Windows on x64 and ARM64. The current
 [Distribution document](../../crystallized/documents/cli/distribution.md) defines the six-target graph. Task 7's
 new expansion uses its Task-owned four-phase, six-milestone horizon; its earlier
@@ -179,13 +179,7 @@ mapping. Later publication and global installation refresh remain unauthorized.
 General test-environment cleanup remains an idea. The current Task capsules
 govern scoped execution; older snapshots below retain historical evidence only.
 
-Task 28 “Source Framework Wording and Logic Review” continues in the separate
-user-owned chat, with no phase or milestone horizon assigned here. Its source
-report and local Extension comparison are present; the user is reviewing
-proposals there. Preserve those reports and follow-up notes. Its
-[Task record](tasks/source-framework-review.md) freezes source-only review scope and the later local
-Framework evidence boundary. It does not authorize implementation or alter the
-CLI sequence.
+Task 28 “Framework Release Preparation” is complete for its accepted source and documentation scope. The user authorized local squash integration of `e245aa3b` on 2026-09-12, reserving final personal wording refinements for manual edits. Its [Task record](tasks/source-framework-review.md#integration) records the integration boundary and three separate CLI follow-ups. CLI implementation and publication are not part of this merge.
 
 ## Current Accepted Integration
 
@@ -587,7 +581,7 @@ identity, queue state, completion grace, worktree mapping, and integration state
 | Task 7 “npm Package Manager Release and Local Linking” | [npm Packages](tasks/delivery/01-npm-packages.md) | `DEQUEUED` | 0 | Implemented and locally qualified the accepted six-target graph. | Phase 4/4, milestone 6/6; integrated and accepted. | Derivative package expansion with explicit freezes | Feature6dc714c5 integrated at7eeeb19d; exact treec222861a. | Root, author, reviewer and operator completed. | All 6,421 executions, actual Linux native package journey, thirty-path integration and unrelated preservation accepted; other hosts remain Task13. |
 | Task 13 “Native CI and Reproducible Artifacts” | [Native CI and Reproducible Artifacts](tasks/delivery/02-native-ci.md) | `RECENTLY_COMPLETED` | 2 | Simplified shared local/CI commands, versioning, packaging and pipeline-only publication; retired obsolete CLI tooling. | Complete phase 3/3, milestone 6/6. | Standard with frozen CLI behavior and artifact/version failure evidence | Feature 0101f25c integrated at 1b8475ae; exact tree 5461e002. | Root, Astra/high author and reviewer completed. | 6997 C# executions, 32 tooling tests, actual package/portable/global-link evidence pass; five other platforms statically reviewed. |
 | Task 22 “Final Documentation, Acceptance, and Release” | [Accept And Release The Complete CLI](tasks/delivery/04-release.md) | `DEQUEUED` | 0 | Aligned docs/help and accepted the local delivery candidate. | Phase 3/3, milestone 6/6; integrated and locally accepted. | Public correctness and final acceptance | Feature 6d370632 integrated at 3bf03e0e; exact tree 33c98766. | Root and scoped reviewers completed. | Local completion accepted; shipping release excluded from this horizon. |
-| Task 28 “Source Framework Wording and Logic Review” | [Source Framework review](tasks/source-framework-review.md) | `ACTIVE` | Not applicable | Source report and local Extension comparison prepared; user reviews proposals in the separate chat. | Independent user-owned review; horizon unassigned here. | Review/report only | codex/task28-framework-review in its own worktree. | Separate user-owned chat. | Preserve reports and follow-up notes; no source integration authorized in this lane. |
+| Task 28 “Framework Release Preparation” | [Framework release preparation](tasks/source-framework-review.md) | `RECENTLY_COMPLETED` | 2 | Reviewed Framework, Extensions, public documentation, and current non-CLI context. | Accepted source scope complete; no artificial phase horizon assigned. | Source and documentation; CLI follow-ups separate | Reviewed feature `e245aa3b`; squash integration is the commit containing this record. | Separate user-owned chat; source work complete. | User-authorized local integration; personal refinements remain with the user. |
 
 Queue state uses `ACTIVE` for the selected task, `QUEUED` for ordered work,
 `CONDITIONAL` for Task 21 pending accepted findings, and `DEQUEUED` after

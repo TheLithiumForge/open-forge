@@ -6,16 +6,18 @@ open-forge:
 
 # Memory
 
-Memory is self-growing Markdown state for active work, coordination, accepted knowledge, candidates, and history. It can grow through useful records and routed scopes without a fixed structural ceiling, while unrelated branches stay outside active context. Growth is deliberate rather than automatic.
+## What is worth remembering for current or future work?
+
+Memory evolves with the work. It holds Markdown records for active work, coordination, accepted knowledge, candidates, and history.
+
+Its self-growing structure lets people and agents deliberately add useful records and routed scopes without a fixed structural limit. Unrelated branches stay outside the active context.
 
 ## Axioms
 
 ### Authority And Classification
 
-- User direction, runtime safety, platform constraints, relevant #Core `routes`, and declared external sources remain above Memory.
-- Memory may record any subject, including how work is performed. Recording it does not make that behavior active.
-- Use #Contextual and #CurrentTruth to distinguish useful context from accepted current state.
-- Treat clear user direction as accepted within its scope. Keep tentative, exploratory, inferred, or meaningfully unclear conclusions in a #Contextual Memory route until accepted.
+- Each Memory record answers its own question within its scope. If accepted, it can define current knowledge or decisions. Recording content from another category does not give the record that category's role.
+- Treat clear user direction as accepted within its scope. If a conclusion is tentative, exploratory, inferred, or unclear in a way that matters, keep it in a #Contextual Memory route until it is accepted.
 
 ### Durable Outcomes
 
@@ -29,7 +31,7 @@ Memory is self-growing Markdown state for active work, coordination, accepted kn
 - If none applies, do not create a durable record.
 - Show the source and uncertainty when they affect trust or later acceptance, including whether material was stated, observed, or inferred.
 - Integrate each useful durable outcome before other work depends on it and before closeout. Do not leave it only in chat.
-- Update every source that defines distinct current meaning, reasoning, required behavior, or a reusable shape. Link related sources instead of forcing several roles into one file.
+- When accepted direction changes durable meaning, update each affected source for the part it defines. Preserve useful reasoning in Memory and link related sources.
 - Before closeout, account for:
   - Accepted durable outcomes.
   - Unsettled reusable findings.
@@ -39,7 +41,7 @@ Memory is self-growing Markdown state for active work, coordination, accepted kn
 ### Placement And Lifecycle
 
 - Grow Memory through new records and routed scopes when their likely future value justifies the cost of finding and reviewing them.
-- Move material when its state, scope, or intended use changes. Do not leave a stale or competing copy.
+- Move material when its state, scope, or intended use changes. The destination's rules govern its new role. Do not leave a stale or competing copy.
 - Put accepted behavior that should guide future work in the matching #Core route. Keep useful context or reasoning in Memory.
 - If material does not fit the current Memory `routes`, propose a clearer route before writing it.
 - Get explicit user direction before creating a new top-level Memory state.

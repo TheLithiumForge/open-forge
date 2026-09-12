@@ -2,7 +2,7 @@
 open-forge:
   description: Current maintenance contracts for the installable Working Memory entrypoint and its Checkpoints and Handoffs routes
   responsibility: Preserve active resume state, expected expiration, durable-result extraction, standard nested roles, recursive scope, and source alignment
-  tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Working, Contextual]
+  tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Working]
 ---
 
 # Working Memory Maintenance Contract

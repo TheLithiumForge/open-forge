@@ -1,62 +1,25 @@
 # Development
 
-This extension will be developed later.
+Development offers three recipes to come back to as a project changes. They help you work through an accepted change, investigate a failure, or review the result, using the tools and expectations already defined in your workspace.
 
-For now, this directory intentionally contains only this planning file. Do not
-add an `extension.json`, payload, catalogue entry, receipt entry, or install
-behavior until the generic development sources have been validated across
-projects with different criticality, languages, and delivery profiles.
+## Contents
 
-## Intended Boundary
+| Workflow | Useful when |
+| --- | --- |
+| [Development](content/.agents/workflows/development.md) | An accepted change needs implementation and verification |
+| [Debugging](content/.agents/workflows/debugging.md) | A failure needs investigation before deciding what to change |
+| [Review](content/.agents/workflows/review.md) | A change or design needs prioritized findings grounded in evidence |
 
-The Development extension should provide project-independent development
-judgment and delivery structure. It should help a workspace choose proportionate
-rigor, keep architecture and implementation local, and avoid exceptional
-machinery when standard platform capabilities satisfy the real need.
+Select the recipe that would help with the work. Your project's applicable scopes supply its actual requirements and verification procedures. The recipes remain optional, and you can work directly when a Workflow would add no value.
 
-It must not contain Open Forge CLI product policy, one language's design rules,
-repository-specific working state, or orchestration runtime configuration.
+## Install
 
-## Candidate Files After Validation
+The [Extension installation guide](../../../docs/extensions.md#install-an-extension) covers setup. Preview this package with the CLI, replacing the example paths with your source catalogue and destination workspace. Keep the source checkout separate from that workspace.
 
-- `.agents/directives/proportional-development.md`
-- `.agents/directives/program-architecture.md`
-- `.agents/directives/source-locality.md`
-- `.agents/guidance/adaptive-design-delivery.md`
-- `.agents/workflows/adaptive-development.md`
-- `.agents/patterns/software/_software.md`
-- `.agents/patterns/software/source-locality/_source-locality.md`
-- `.agents/patterns/software/source-locality/nearest-shared-scope.md`
+```sh
+open-forge extension install development --source /path/to/open-forge/src/extensions --workspace /path/to/project --dry-run
+```
 
-The assured-development Workflow family is a candidate only if continued use
-shows that it remains valuable after proportional profile selection. Do not add
-it merely because it is more rigorous.
+Apply the reviewed plan with the same command without `--dry-run`. Review the resulting files and `.agents/open-forge.lifecycle.json`.
 
-## Core Relationships To Preserve
-
-The candidate sources currently rely on Core rules that should remain available
-through the base Framework or an explicit package dependency:
-
-- `.agents/directives/decision-authority.md`
-- `.agents/directives/execution-safety.md`
-- `.agents/directives/review-evidence.md`
-- `.agents/directives/public-facing-writing.md`
-- `.agents/guidance/adaptive-collaboration.md`
-- `.agents/guidance/calibrated-agent-reasoning.md`
-- `.agents/patterns/testing/`
-
-Links express these relationships after installation. Do not copy Core files
-into this package merely to make the package source self-contained.
-
-## Validation Before Extraction
-
-- Exercise the Direct, Standard, Assured, Derivative, and Batch profiles on
-  projects with materially different failure consequences.
-- Confirm that project criticality and realistic threat models change rigor
-  without permitting preventable user-data loss.
-- Confirm that ordinary work remains direct and that exceptional machinery is
-  surfaced before implementation.
-- Confirm that shared-capability promotion follows real consumers rather than
-  speculative reuse.
-- Freeze package identity, dependencies, installed routing, update behavior, and
-  removal behavior before creating the manifest and payload.
+For [manual installation](../../../docs/extensions.md#manual-installation), copy this package's `content/` files into the workspace. Update affected `Entries`, check links, and review the assembled files. This package has no Extension dependencies. Manual copying does not create managed lifecycle state.

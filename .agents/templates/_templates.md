@@ -6,17 +6,19 @@ open-forge:
 
 # Templates
 
-Templates are reusable starting files. Copy and adapt them, then maintain the result independently.
+## What starting content can be copied, adapted, and maintained independently?
+
+Templates are reusable starting files. Copy and adapt a Template, then maintain the result independently.
 
 ## Axioms
 
 ### Selection And Use
 
-- Check `Entries` when a new artifact would benefit from copy-ready starting content.
-- Choose the most relevant Template, then copy and adapt only what the destination needs.
-- Replace metadata and placeholders so they describe the destination's ownership, scope, state, authority, and relationships.
-- The new artifact becomes independent. Later Template changes do not update it.
-- Link a matching #Core route when the new artifact needs continuing guidance or requirements. The Template provides only starting content.
+- Check `Entries` when copy-ready starting content would help with a new artifact.
+- Choose the most relevant Template. Copy and adapt only what the destination needs.
+- Replace the metadata and placeholders so they describe the destination's ownership, scope, state, authority, and relationships.
+- The new artifact is independent of the Template. Later changes to the Template do not update it.
+- If the new artifact needs continuing guidance or requirements, link a matching #Core route. The Template provides only starting content.
 
 ### Catalog Maintenance
 
@@ -30,4 +32,5 @@ Templates are reusable starting files. Copy and adapt them, then maintain the re
 - [Copy-ready starting files for CLI documents, including command-local contract sets](cli/_cli.md) - #Template #CLI #Command #Contract #Interface #Behavior #TechnicalDesign
 - [Copy-ready starting structures for clear current documents](documents/_documents.md) - #Extension #Template #Document #CurrentView
 - [Copy-ready starting structures for useful Memory records](memory/_memory.md) - #Extension #Template #Memory
+- [Copy-ready starting structures for task outcomes, plans, backlogs, and current work](planning/_planning.md) - #Extension #Template #Planning #Memory
 <!-- open-forge:generated-index:end -->

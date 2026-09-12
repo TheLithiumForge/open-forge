@@ -1,0 +1,102 @@
+--- a/src/open-forge/.agents/loader.md
++++ b/src/open-forge/.agents/loader.md
+@@ -26,6 +26,7 @@
+ - Only this loader and recognized loaded `entrypoints` can define active `Axioms`. A loaded child `route` inherits its ancestors' Axioms. A child entrypoint adds only rules for its narrower scope.
+ - Follow loaded Axioms and Directives within their scope. Accepted workspace-specific state replaces Open Forge defaults in that scope. Report unresolved conflicts.
+ - Narrower selected non-binding material may specialize broader material of the same kind. Loaded binding instructions add to one another; they do not silently override one another. Report conflicts.
++- Validation establishes whether evidence supports a claim. Acceptance establishes which knowledge or decisions may be treated as current within their scope. Restoring or moving a record does not establish acceptance by itself.
+ - Investigate an apparent #CurrentTruth conflict before changing either source. When accepted direction changes current state, update the source that defines it and keep useful prior context.
+ 
+ ### Routing
+@@ -72,7 +73,7 @@
+ - #Core - Base routing and loading, workspace orientation, and reusable agent-facing roles.
+ - #Memory - Self-growing Markdown state for active work, coordination, accepted knowledge, candidates, and history.
+ - #Extension - Optional packaged routes, capabilities, integrations, and support files.
+-- #Contextual - Useful context that is not accepted current state unless restored, validated, accepted, or promoted.
++- #Contextual - Useful context. Treat it as unaccepted unless applicable authority establishes acceptance within its scope.
+ - #CurrentTruth - Accepted current state within its stated scope, below user direction, runtime safety, platform constraints, and declared external sources.
+ - #Evergreen - Material that must stay aligned with accepted current state. It creates no authority or loading behavior.
+   - Update affected #Evergreen material you may edit before work depends on it and no later than closeout. Batch related updates when safe.
+--- a/.agents/loader.md
++++ b/.agents/loader.md
+@@ -26,6 +26,7 @@
+ - Only this loader and recognized loaded `entrypoints` can define active `Axioms`. A loaded child `route` inherits its ancestors' Axioms. A child entrypoint adds only rules for its narrower scope.
+ - Follow loaded Axioms and Directives within their scope. Accepted workspace-specific state replaces Open Forge defaults in that scope. Report unresolved conflicts.
+ - Narrower selected non-binding material may specialize broader material of the same kind. Loaded binding instructions add to one another; they do not silently override one another. Report conflicts.
++- Validation establishes whether evidence supports a claim. Acceptance establishes which knowledge or decisions may be treated as current within their scope. Restoring or moving a record does not establish acceptance by itself.
+ - Investigate an apparent #CurrentTruth conflict before changing either source. When accepted direction changes current state, update the source that defines it and keep useful prior context.
+ 
+ ### Routing
+@@ -72,7 +73,7 @@
+ - #Core - Base routing and loading, workspace orientation, and reusable agent-facing roles.
+ - #Memory - Self-growing Markdown state for active work, coordination, accepted knowledge, candidates, and history.
+ - #Extension - Optional packaged routes, capabilities, integrations, and support files.
+-- #Contextual - Useful context that is not accepted current state unless restored, validated, accepted, or promoted.
++- #Contextual - Useful context. Treat it as unaccepted unless applicable authority establishes acceptance within its scope.
+ - #CurrentTruth - Accepted current state within its stated scope, below user direction, runtime safety, platform constraints, and declared external sources.
+ - #Evergreen - Material that must stay aligned with accepted current state. It creates no authority or loading behavior.
+   - Update affected #Evergreen material you may edit before work depends on it and no later than closeout. Batch related updates when safe.
+--- a/src/open-forge/.agents/memory/emerging/_emerging.md
++++ b/src/open-forge/.agents/memory/emerging/_emerging.md
+@@ -14,7 +14,7 @@
+ 
+ - At each #KeepInMind refresh that applies, read visible `Entries` and save useful candidate material before it is lost.
+ - "No useful candidate material" is a valid result. Do not turn raw activity into Memory.
+-- Treat Emerging Memory as contextual until it is validated, promoted, or explicitly accepted.
++- Treat Emerging Memory as contextual until accepted within its scope.
+ - Keep uncertainty, source, and scope visible.
+ 
+ ### Refinement And Transition
+--- a/.agents/memory/emerging/_emerging.md
++++ b/.agents/memory/emerging/_emerging.md
+@@ -14,7 +14,7 @@
+ 
+ - At each #KeepInMind refresh that applies, read visible `Entries` and save useful candidate material before it is lost.
+ - "No useful candidate material" is a valid result. Do not turn raw activity into Memory.
+-- Treat Emerging Memory as contextual until it is validated, promoted, or explicitly accepted.
++- Treat Emerging Memory as contextual until accepted within its scope.
+ - Keep uncertainty, source, and scope visible.
+ 
+ ### Refinement And Transition
+--- a/.agents/memory/crystallized/documents/framework/truth.md
++++ b/.agents/memory/crystallized/documents/framework/truth.md
+@@ -30,6 +30,8 @@
+ Loading and tags make material visible or classifiable. Authority still comes from the source type, scope, accepted direction, and declared external authority.
+ 
+ ## Acceptance
++
++Validation establishes whether evidence supports a claim. Acceptance establishes which knowledge or decisions may be treated as current within their scope. Restoring or moving a record does not establish acceptance by itself.
+ 
+ Clear direction is accepted within its stated scope without requiring a ritual phrase or redundant confirmation. A request to perform an action delegates the routine, reversible, in-scope choices required to carry it out when the request determines them clearly. It does not silently accept an unsettled consequential scope, risk, cost, external effect, irreversibility, or accepted direction.
+ 
+--- a/.agents/memory/crystallized/documents/framework/memory/emerging.md
++++ b/.agents/memory/crystallized/documents/framework/memory/emerging.md
+@@ -11,7 +11,7 @@
+ 
+ [Emerging Memory](../../../../emerging/_emerging.md) contains useful material whose validity, acceptance, knowledge role, or final destination remains unsettled.
+ 
+-Emerging material is contextual. It keeps source, scope, evidence, and uncertainty visible and does not become accepted merely because it was recorded or repeatedly encountered.
++Emerging material is contextual until accepted within its scope. Keep its source, scope, evidence, and uncertainty visible. Recording, repetition, validation, or movement alone does not establish acceptance.
+ 
+ ## Capture And Consolidation
+ 
+--- a/.agents/memory/crystallized/documents/maintenance/payload/agents/loader.md
++++ b/.agents/memory/crystallized/documents/maintenance/payload/agents/loader.md
+@@ -29,6 +29,7 @@
+ ### Authority And Inheritance
+ 
+ - Role and scope determine authority. File order alone does not.
++- The loader distinguishes evidence validation from acceptance and preserves scoped acceptance when classifying contextual material. The [accepted-state contract](../../../framework/truth.md#acceptance) defines the distinction.
+ - Platform constraints and runtime safety bound every action. Clear user direction sets task goals, priorities, important choices, and accepted changes. A declared external source remains authoritative for the facts assigned to it.
+ - Explanation and planning match the request. Unless the user asks for deeper analysis, the first response gives the current understanding, one recommendation, and no more than one unresolved important choice.
+ - The agent continues when accepted direction or a stated reversible assumption makes progress safe. It states assumptions and stops when uncertainty, conflict, or an authority boundary could significantly change the work.
+--- a/.agents/memory/crystallized/documents/maintenance/payload/agents/memory/emerging/_emerging.md
++++ b/.agents/memory/crystallized/documents/maintenance/payload/agents/memory/emerging/_emerging.md
+@@ -18,6 +18,7 @@
+ - Frontmatter preserves #KeepInMind, #Memory, #Emerging, #OrganicGrowth, #Contextual, and #Candidate classification
+ - The entrypoint keeps useful unsettled material visible at #KeepInMind boundaries that apply without turning raw activity into durable Memory
+ - Candidate source, scope, uncertainty, evidence, knowledge role, and intended destination remain visible when they affect later use
++- Emerging material remains contextual until acceptance is established within its scope
+ - Repeated or stale material is revisited for consolidation, promotion, archival, or pruning
+ - Accepted outcomes move to the route or system that should define them. Useful reasoning from rejected or replaced candidates is archived; material without future value is pruned
+ - Analysis, Ideas, and Observations remain the three standard nested roles with distinct candidate meanings

@@ -33,7 +33,7 @@ One `entrypoint` per folder removes ambiguity about whether a folder participate
 - A required `local.md` route would hard-code one organization model
 - Per-file companion metadata would multiply hidden routing surfaces; user-owned overwrites instead remain visible companions to an existing base
 
-Recursive routing adds `entrypoint` files and requires each `route` chain to remain structurally valid. Generic routing can navigate every valid tree, while lifecycle tools also need an explicit human-readable way to distinguish manager-recognized `route` segments from ordinary scope `slugs`.
+Recursive routing adds `entrypoint` files and requires each `route` chain to remain structurally valid. Generic routing can navigate every valid tree, while lifecycle tools also need an explicit readable way to distinguish manager-recognized `route` segments from ordinary scope `slugs`.
 
 ## Consequences
 

@@ -6,6 +6,8 @@ open-forge:
 
 # Handoffs
 
+## What state must survive this transfer or planned resumption?
+
 A Handoff is a sealed snapshot for another reader. It preserves the boundary-specific state needed to resume after an actual transfer or explicitly planned resumption after a context boundary.
 
 ## Axioms
@@ -22,7 +24,7 @@ A Handoff is a sealed snapshot for another reader. It preserves the boundary-spe
 
 - Keep Handoffs short. Link to current state, durable sources, code, or other details instead of copying them.
 - Record the boundary status, next action, blockers, and verification state in the Handoff itself. A live Checkpoint may supplement but not replace this snapshot.
-- Do not edit a sealed Handoff. Record later state in the active Checkpoint or a new Handoff.
+- Keep the snapshot unchanged while it serves as a sealed Handoff. Record later state in the active Checkpoint or a new Handoff.
 - When a Handoff no longer supports an active transfer, keep any useful result and archive it.
 
 ## Entries

@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "task": "Task 28: Framework Release Preparation",
+  "audit": "Current non-CLI operational .agents content",
+  "baseline": "0eea5e6557473a52ba24a5e42bdd1b0dd5c9485c",
+  "scope_inventory": "artifacts/task28-source-framework-review/current-content-operational-scope.json",
+  "scope_count": 71,
+  "coverage": {
+    "directives": {
+      "count": 13,
+      "disposition": "retained",
+      "paths": [
+        ".agents/directives/csharp/design.md",
+        ".agents/directives/csharp/style.md",
+        ".agents/directives/decision-authority.md",
+        ".agents/directives/execution-safety.md",
+        ".agents/directives/hierarchical-orchestration.md",
+        ".agents/directives/open-forge/framework/deliberate-framework-change.md",
+        ".agents/directives/open-forge/testing/evidence-integrity.md",
+        ".agents/directives/open-forge/typescript/typescript-source-structure.md",
+        ".agents/directives/program-architecture.md",
+        ".agents/directives/proportional-development.md",
+        ".agents/directives/public-facing-writing.md",
+        ".agents/directives/review-evidence.md",
+        ".agents/directives/source-locality.md"
+      ]
+    },
+    "guidance": {
+      "count": 4,
+      "disposition": "retained",
+      "paths": [
+        ".agents/guidance/adaptive-collaboration.md",
+        ".agents/guidance/adaptive-design-delivery.md",
+        ".agents/guidance/architectural-perspectives.md",
+        ".agents/guidance/calibrated-agent-reasoning.md"
+      ]
+    },
+    "maps": {
+      "count": 1,
+      "disposition": "retained_with_cli_rows_deferred",
+      "paths": [
+        ".agents/maps/sources-of-truth.md"
+      ]
+    },
+    "patterns": {
+      "count": 11,
+      "disposition": "retained_with_cli_sections_deferred",
+      "paths": [
+        ".agents/patterns/open-forge/maintenance-contract.md",
+        ".agents/patterns/open-forge/managed-root-entry.md",
+        ".agents/patterns/open-forge/typescript/contract-ownership.md",
+        ".agents/patterns/open-forge/typescript/focused-module.md",
+        ".agents/patterns/open-forge/typescript/named-values.md",
+        ".agents/patterns/open-forge/typescript/typed-transition-pipeline.md",
+        ".agents/patterns/software/contract-ownership.md",
+        ".agents/patterns/software/exhaustive-csharp-enum-switch.md",
+        ".agents/patterns/software/source-locality/nearest-shared-scope.md",
+        ".agents/patterns/testing/evidence-tiers.md",
+        ".agents/patterns/work-records.md"
+      ]
+    },
+    "native_skill": {
+      "count": 4,
+      "disposition": "retained",
+      "paths": [
+        ".agents/skills/experience-design/SKILL.md",
+        ".agents/skills/experience-design/references/map-user-experience.md",
+        ".agents/skills/experience-design/references/prepare-implementation-handoff.md",
+        ".agents/skills/experience-design/references/review-experience-design.md"
+      ]
+    },
+    "templates": {
+      "count": 17,
+      "disposition": "retained",
+      "paths": [
+        ".agents/templates/documents/architecture.md",
+        ".agents/templates/documents/contract.md",
+        ".agents/templates/documents/maintenance-contract.md",
+        ".agents/templates/documents/operating-context.md",
+        ".agents/templates/documents/principles.md",
+        ".agents/templates/documents/roadmap.md",
+        ".agents/templates/documents/strategy.md",
+        ".agents/templates/documents/vision.md",
+        ".agents/templates/memory/analysis.md",
+        ".agents/templates/memory/decision.md",
+        ".agents/templates/memory/handoff.md",
+        ".agents/templates/memory/idea.md",
+        ".agents/templates/memory/observation.md",
+        ".agents/templates/memory/plan.md",
+        ".agents/templates/memory/project-control-ledger.md",
+        ".agents/templates/memory/project-status.md",
+        ".agents/templates/memory/task.md"
+      ]
+    },
+    "workflows": {
+      "count": 21,
+      "disposition": "retained",
+      "paths": [
+        ".agents/workflows/adaptive-development.md",
+        ".agents/workflows/architecture.md",
+        ".agents/workflows/council.md",
+        ".agents/workflows/debugging.md",
+        ".agents/workflows/development/phase-0-preflight.md",
+        ".agents/workflows/development/phase-1-contract.md",
+        ".agents/workflows/development/phase-2-red.md",
+        ".agents/workflows/development/phase-3-green.md",
+        ".agents/workflows/development/phase-4-blue.md",
+        ".agents/workflows/development/phase-5-purple.md",
+        ".agents/workflows/development/phase-6-review.md",
+        ".agents/workflows/development/task-acceptance.md",
+        ".agents/workflows/development/task-lifecycle.md",
+        ".agents/workflows/experimental-development.md",
+        ".agents/workflows/managed-delivery.md",
+        ".agents/workflows/planning.md",
+        ".agents/workflows/program-development.md",
+        ".agents/workflows/review.md",
+        ".agents/workflows/supervised-luna-preparation-trial.md",
+        ".agents/workflows/vision.md",
+        ".agents/workflows/worktree-program-development.md"
+      ]
+    }
+  },
+  "deferred_sections": [
+    {
+      "path": ".agents/directives/csharp/style.md",
+      "location": "line 40",
+      "reason": "Replacement CLI folder and namespace specialization; semantic review belongs to the separate CLI work.",
+      "owner": "CLI follow-up"
+    },
+    {
+      "path": ".agents/maps/sources-of-truth.md",
+      "location": "lines 16-26 and 28, 31-32",
+      "reason": "CLI architecture, contracts, working/archive records, public docs, and frozen MVP rows; only path existence was checked.",
+      "owner": "CLI follow-up"
+    },
+    {
+      "path": ".agents/patterns/open-forge/typescript/named-values.md",
+      "location": "lines 61-71 and 84-88",
+      "reason": "CLI protocol examples and command values; general Pattern meaning was retained.",
+      "owner": "CLI follow-up"
+    },
+    {
+      "path": ".agents/patterns/software/source-locality/nearest-shared-scope.md",
+      "location": "lines 66-74 and 89-117",
+      "reason": "CLI topology and Shared/<Capability> specialization; general locality rules were retained.",
+      "owner": "CLI follow-up"
+    }
+  ],
+  "findings": [],
+  "evidence": [
+    {
+      "check": "Full candidate read",
+      "result": "All 71 paths were read from the immutable baseline, including the complete C# entrypoint, design, and style sources required by scope."
+    },
+    {
+      "check": "Workflow shape",
+      "result": "All 21 workflow files contain Goal, Steps, and Completion in the required order."
+    },
+    {
+      "check": "Current semantics",
+      "result": "Operational content consistently preserves narrow role and scope authority, optional workflow use, separate validation and acceptance, user authorization, and recoverable lifecycle boundaries."
+    },
+    {
+      "check": "Memory lifecycle",
+      "result": "The sealed Handoff wording is scoped to a Working transfer snapshot; the current Memory model says destination rules govern it after a category transition. Archive extraction, non-lossless retention, and pruning remain defined by current crystallized sources."
+    },
+    {
+      "check": "Authored links",
+      "result": "No missing authored file links were found in the operational scope. Directory links in the source map resolve to existing repository directories; a regex match in typed-transition-pipeline.md was code syntax, not a Markdown link."
+    },
+    {
+      "check": "Boundary",
+      "result": "No CLI commands, builds, tests, runtime profiles, CLI contracts, docs/cli.md, docs/extensions.md, or stored Working/Emerging/Archived records were inspected or changed."
+    }
+  ],
+  "next_check": "After the separate public language commit, review the final changed operational prose once for readability. Keep the four deferred CLI sections for the designated CLI follow-up.",
+  "confidence": "high",
+  "resolution": {
+    "commit": "e91d2934545bb596d5d1929a7a04342ea4652375",
+    "receipt": "current-content-cleanup.json",
+    "note": "The baseline audit above is preserved. The receipt records applied corrections, verification, the deferred CLI-history references, and the withdrawn loader-budget finding. The subsequent category/metadata/ACE work is a separate accepted change."
+  }
+}

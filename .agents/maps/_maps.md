@@ -6,7 +6,9 @@ open-forge:
 
 # Maps
 
-Routes under Maps point to important local and external sources. The destination still defines its own detail.
+## Where is a useful local or external source, and when should it be used?
+
+Routes under Maps point to important local and external sources and explain when they matter. Each destination still defines its own detail.
 
 ## Axioms
 

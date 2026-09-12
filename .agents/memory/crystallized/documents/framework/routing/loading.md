@@ -24,7 +24,7 @@ Open Forge uses three context classes:
 | Context    | Purpose                                                                                                |
 | ---------- | ------------------------------------------------------------------------------------------------------ |
 | Baseline   | Small universal and immediate context needed to enter and navigate the environment                     |
-| Continuity | Standing follow-ups and resumability context that must survive `route`, workstream, or context changes |
+| Continuity | Follow-ups and resumability context refreshed while their scope remains active |
 | Selected   | On-demand context chosen for the current goal                                                          |
 
 The shipped root `entrypoints` and compact route maps deliberately pay a small baseline cost so agents can discover the Framework and its standard roles. That cost should not grow with local specialization. Put specialized content in narrow scopes and let each scope choose on-demand, #LoadNow, or #KeepInMind loading according to the thresholds below.
@@ -41,21 +41,23 @@ Use #LoadNow only for context whose omission is more costly than its baseline at
 
 ## #KeepInMind
 
-#KeepInMind identifies continuity roots. A tagged `entrypoint` is proactive only when it appears during the initial loader and #LoadNow traversal, belongs to a selected route or scope, or is an ancestor of a direct sibling file or descendant currently active for work. Every routed #KeepInMind file that is not an `entrypoint` is read across the workspace regardless of ancestor activity. This exceptional reach is justified only when continuity must survive unrelated route changes. It does not mean every descendant below those routes.
+#KeepInMind identifies continuity content exposed by loaded parent routes. Tagged entrypoints and other tagged files use the same scope and parent-loading boundaries as #LoadNow. Neither tag activates an otherwise unselected ancestor or scope.
 
-For each applicable #KeepInMind `entrypoint` or other tagged file, read any missing parent `entrypoints` needed to establish its scope and inherited Axioms. Then read the tagged file and its adjacent overwrite when present. Follow #LoadNow in listed order through the `Entries` it exposes. Read or recheck this complete continuity set:
+Read a tagged entry when its parent loads, then read its adjacent overwrite when present. For an entrypoint, apply its visible child loading rules in listed order. Explicitly selecting an on-demand route establishes its parent chain and exposes the applicable loading rules within that scope.
+
+Refresh the applicable continuity content while its scope remains active:
 
 - At task start or resume
 - After detected context restoration
 - Before handoff
 - Before closeout
-- At another transition when its standing follow-ups may have changed
+- During work when the active continuity set may have changed
 
-#KeepInMind file discovery can cross the selected branch because continuity failures are most costly when a task, route, workstream, or context changes. Entrypoint proactivity remains target-sensitive. Its #LoadNow traversal still follows ordinary direct-child visibility, so unrelated descendants remain unloaded.
+After restoration, recover the active route chains from the current task context before refreshing their continuity content. A refresh does not reactivate an unrelated scope. Do not load file bodies merely to discover tagged content.
 
-Each result remains contextual or authoritative according to its routed source. #KeepInMind does not promote candidate material or make every follow-up binding.
+Each result retains the meaning and authority established by its source. #KeepInMind does not promote candidate material or make every follow-up binding.
 
-A broken #KeepInMind `route` is a structural defect to repair or report, not permission to silently omit its result.
+A broken applicable #KeepInMind route is a structural defect to repair or report, not permission to silently omit its result.
 
 ## Selected Context
 
@@ -65,8 +67,8 @@ Scan visible paths, `descriptions`, tags, ancestor meaning, explicit relationshi
 
 When deterministic assistance selects a route, include the parent entrypoint
 chain that establishes its scope and inherited Axioms. Loading a selected
-entrypoint makes its generated Entries visible, so its #LoadNow descendants
-apply normally.
+entrypoint makes its generated Entries visible, so its #LoadNow and #KeepInMind
+child loading rules apply normally.
 
 Conditional context must be cheap to select, cheap to skip, and recoverable when initially missed.
 
@@ -75,11 +77,10 @@ Conditional context must be cheap to select, cheap to skip, and recoverable when
 The effective order is:
 
 1. Read the canonical workspace entry and loader
-2. Traverse the visible #LoadNow closure in generated order
-3. Recover applicable #KeepInMind entrypoints and every routed #KeepInMind file that is not an entrypoint, with their visible #LoadNow closure
-4. Select other relevant `routes` from visible `entries`
-5. Follow explicit relationships and dependencies
-6. Recheck #KeepInMind at every required continuity boundary
+2. Apply #LoadNow and initial #KeepInMind reading through loaded parents in generated entry order
+3. Select other relevant `routes` and apply their child loading rules as the parent chains become active
+4. Follow explicit relationships and dependencies
+5. Refresh applicable #KeepInMind content at the required boundaries while its scope remains active
 
 When a base file has a user-owned `{name}.overwrite.md` companion, read it immediately after the base. The [overwrite contract](overwrites.md) owns its inherited `route`, scope, loading behavior, precedence, and independent-selection boundary.
 
@@ -118,4 +119,3 @@ Reliability-critical context therefore loads early, uses imperative wording, sta
 - [Loading reliability](../../../decisions/framework/loading-reliability.md)
 - [Routing model](../../../decisions/framework/routing-model.md)
 - [Tag semantics](../../../decisions/framework/tags.md)
-- [Current evaluation syntheses](../../evaluations/_evaluations.md)

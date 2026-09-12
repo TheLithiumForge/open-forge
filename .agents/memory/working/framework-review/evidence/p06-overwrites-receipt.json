@@ -1,0 +1,27 @@
+{
+  "status": "applied in review worktree",
+  "files": [
+    {
+      "path": "src/open-forge/.agents/loader.md",
+      "before_sha256": "0b0f0edbb4955f0d29bf4d2eb8058be777b8a177b15bf2f20284a656c42d3567",
+      "after_sha256": "81d499cbb2b72dc97284d18d4a4d0fb15af95ffc2be40d3ae38b1d95d461db06"
+    },
+    {
+      "path": ".agents/loader.md",
+      "before_sha256": "4c0178e9e8f861af094f9fca497e144f76e9fcd073f3732ffda52b3cc1e19d7c",
+      "after_sha256": "9ad72e5c13fa7e40b6698722b408ffd2fd19ee73c7599462c3cbd8f1a7fd5915"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/routing/overwrites.md",
+      "before_sha256": "3ee8b53ba1005c0849e36a0b49fde8a0a6becfa0e9b6c7072f223f9fac2feb5d",
+      "after_sha256": "c20f64c41476767af9b312376e5e586f5608b2028cd6238cdc03f09d34ed3bc9"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/loader.md",
+      "before_sha256": "0a336da16299126e0de5be81aa7019b7938edced41ab9de9020e12a1b24f24c3",
+      "after_sha256": "889971c4c3cfb883becf1d47b438f43b110275e3467750e7fc842ae84cb0ccba"
+    }
+  ],
+  "committed": false,
+  "merged": false
+}

@@ -2,7 +2,7 @@
 open-forge:
   description: Current Emerging Memory purpose, candidate authority, capture threshold, evidence, consolidation, promotion, and shipped candidate roles
   responsibility: Define what makes unsettled but potentially reusable material valid before acceptance or another final destination is known
-  tags: [Memory, Document, CurrentTruth, Evergreen, Framework, MemoryModel, Emerging, Contextual, Candidate]
+  tags: [Memory, Document, CurrentTruth, Evergreen, Framework, MemoryModel, Emerging, Candidate]
 ---
 
 # Emerging Memory
@@ -11,7 +11,7 @@ open-forge:
 
 [Emerging Memory](../../../../emerging/_emerging.md) contains useful material whose validity, acceptance, knowledge role, or final destination remains unsettled.
 
-Emerging material is contextual. It keeps source, scope, evidence, and uncertainty visible and does not become accepted merely because it was recorded or repeatedly encountered.
+Emerging material is contextual until accepted within its scope. Keep its source, scope, evidence, and uncertainty visible. Recording, repetition, validation, or movement alone does not establish acceptance.
 
 ## Capture And Consolidation
 

@@ -1,0 +1,323 @@
+{
+  "base": "0eea5e6557473a52ba24a5e42bdd1b0dd5c9485c",
+  "reviewed_count": 44,
+  "coverage": [
+    {
+      "path": ".agents/directives/_directives.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/directives/csharp/_csharp.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "fix-needed",
+      "reason": "CEA-001"
+    },
+    {
+      "path": ".agents/directives/open-forge/_open-forge.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/directives/open-forge/framework/_framework.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/directives/open-forge/testing/_testing.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/directives/open-forge/testing/bun/_bun.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "fix-needed",
+      "reason": "CEA-004"
+    },
+    {
+      "path": ".agents/directives/open-forge/typescript/_typescript.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/loader.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/maps/_maps.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/_memory.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/_crystallized.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/_decisions.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/_decisions.overwrite.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/extensions/_extensions.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/framework/_framework.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/product/_product.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/_documents.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/extensions/_extensions.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/_framework.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/markdown/_markdown.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/memory/_memory.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/primitives/_primitives.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/routing/_routing.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/_maintenance.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/helpers/_helpers.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "fix-needed",
+      "reason": "CEA-003"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/_payload.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/_agents.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/_memory.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/crystallized/_crystallized.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/emerging/_emerging.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/working/_working.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "fix-needed",
+      "reason": "CEA-002"
+    },
+    {
+      "path": ".agents/patterns/_patterns.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/patterns/open-forge/_open-forge.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/patterns/open-forge/typescript/_typescript.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/patterns/software/_software.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/patterns/software/source-locality/_source-locality.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/patterns/testing/_testing.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/skills/_skills.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/templates/_templates.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/templates/documents/_documents.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/templates/memory/_memory.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/workflows/_workflows.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    },
+    {
+      "path": ".agents/workflows/development/_development.md",
+      "read": "complete baseline body, metadata, and navigation",
+      "disposition": "retained-current",
+      "reason": "Current role, inherited rules, and explicit routing are consistent; preserve intentional local specialization. Navigation will follow any independently corrected child metadata."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CEA-001",
+      "severity": "material",
+      "path": ".agents/directives/csharp/_csharp.md",
+      "location": "Axioms",
+      "evidence": "Two substantive local Axioms are followed by an inherited sentinel asserting no local Axioms. Agents Runtime Maintenance expressly prohibits that combination.",
+      "correction": "Remove the contradictory inherited sentinel; retain both local Axioms and normal ancestor inheritance.",
+      "authority": "Existing routed Markdown shape and Maintenance rules; no new C# behavior.",
+      "status": "proposed"
+    },
+    {
+      "id": "CEA-002",
+      "severity": "material",
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/working/_working.md",
+      "location": "Frontmatter tags",
+      "evidence": "This current Maintenance contract carries both CurrentTruth and Contextual. The latter describes the subject state, not this accepted current explanation. Defined tags retain their classification meaning.",
+      "correction": "Remove Contextual from this current explanatory source and its parent generated entry. Keep all literal descriptions of Working metadata in the contract.",
+      "authority": "Loader-defined tags and each source\u2019s own role and scope.",
+      "status": "proposed"
+    },
+    {
+      "id": "CEA-003",
+      "severity": "material",
+      "path": ".agents/memory/crystallized/documents/maintenance/helpers/_helpers.md",
+      "location": "Opening paragraph",
+      "evidence": "The paragraph says the Writing Directive makes all these helpers mandatory for repository prose. That Directive names the Writing Standard and Dictionary, whereas the knowledge-role helper is a diagnostic aid and its use is conditional in the Decisions overwrite.",
+      "correction": "Name the Writing Standard and Dictionary as the mandatory prose sources without broadening that requirement to every helper.",
+      "authority": ".agents/directives/public-facing-writing.md and the helper\u2019s actual declared role.",
+      "status": "proposed"
+    },
+    {
+      "id": "CEA-004",
+      "severity": "minor",
+      "path": ".agents/directives/open-forge/testing/bun/_bun.md",
+      "location": "Description",
+      "evidence": "The route advertises binding Bun-runner rules but contains no local Axioms or descendants. The route itself remains a valid optional scope.",
+      "correction": "Describe it as a scope for Bun-specific testing instructions, and align its parent entry. Preserve the empty scope rather than infer authority to retire its intended placement.",
+      "authority": "Description selects a source by what it currently offers.",
+      "status": "proposed"
+    }
+  ],
+  "static_check": "current-entrypoint-static-audit.json",
+  "limitations": [
+    "CLI and stored Working/Emerging/Archived destinations were not read.",
+    "The current private-content scrub follows the separate public language commit.",
+    "The category-format proposal remains separate; this audit creates no new policy. The existing authored loader budget passes at 79 lines after excluding generated Entries."
+  ],
+  "resolution": {
+    "commit": "e91d2934545bb596d5d1929a7a04342ea4652375",
+    "receipt": "current-content-cleanup.json",
+    "note": "The baseline audit above is preserved. The receipt records applied corrections, verification, the deferred CLI-history references, and the withdrawn loader-budget finding. The subsequent category/metadata/ACE work is a separate accepted change."
+  }
+}

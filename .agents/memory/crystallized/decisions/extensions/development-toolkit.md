@@ -1,10 +1,14 @@
 ---
 open-forge:
-  description: The pre-release first-party catalogue is one deliberately small development toolkit containing six lean Workflows, one Experience Design Skill, and nine Templates
+  description: Why first-party development content was consolidated into one Development Toolkit package
   tags: [Memory, Decision, CurrentTruth, Extension, Workflow, Skill, Template, Catalogue, DevelopmentToolkit]
 ---
 
-# Development Toolkit Catalogue
+# Development Toolkit Consolidation
+
+## Current Result
+
+The recorded choice and its consequences below describe the earlier catalogue consolidation. The later [focused package decision](focused-extension-packages.md) supersedes the single-package distribution and Experience Design retention. Development Toolkit now bundles focused packages through dependencies. The [first-party catalogue](../../../../../src/extensions/README.md) defines current packages and contents.
 
 ## Context
 
@@ -14,9 +18,9 @@ The completed Workflow primitive migration made the runtime contract smaller, bu
 
 ## Decision
 
-Before a stable release, consolidate the complete first-party catalogue into one dependency-free Extension with the stable id `development-toolkit`.
+The consolidation chose one dependency-free Extension with the stable id `development-toolkit` for the complete first-party catalogue before a stable release.
 
-The package contains:
+The package at that point contained:
 
 - Six direct Workflows for Vision, Architecture, Planning, Development, Debugging, and Review
 - One native Experience Design Skill with three focused references
@@ -56,7 +60,7 @@ deliberate post-install removal the accepted current tradeoff.
 
 ## Consequences
 
-- The first-party catalogue advertises exactly one package
+- The first-party catalogue advertised exactly one package at that point
 - Package payload and isolated assembly tests cover all advertised content
 - The package source is canonical for the nine shipped Template leaves
 - Selected repository dogfood Template leaves remain aligned through automated parity verification
@@ -68,7 +72,7 @@ deliberate post-install removal the accepted current tradeoff.
 
 - [Development toolkit package](../../../../../src/extensions/development-toolkit/README.md)
 - [First-party catalogue](../../../../../src/extensions/README.md)
-- [Extensions MVP Architecture](../../documents/extensions/architecture.md)
+- [Extensions Architecture](../../documents/extensions/architecture.md)
 - [Workflow role](../../documents/framework/primitives/workflows.md)
 - [Template Maintenance contract](../../documents/maintenance/payload/agents/templates.md)
 - [Extension user guide](../../../../../docs/extensions.md)

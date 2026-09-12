@@ -55,7 +55,7 @@ safety, lifecycle, serialization, shared-placement, or test-meaning decisions.
    architecture, contract, evidence, scope, and false-green risk. Return all
    accepted findings to the same Luna/max Task Mastermind for at most one grouped
    correction. A second correction cycle ends the trial.
-7. **Measure the experiment.** Record elapsed critical-path time, child count,
+7. **Measure the experiment.** Record unavailable measurements explicitly and separate observed results from estimates. A useful preparation result alone does not establish a model or team advantage. Record elapsed critical-path time, child count,
    handoffs, missing-context returns, accepted and rejected review findings,
    correction cycles, stale preparation, revalidation cost, gate failures,
    integration conflict, and any defect found after acceptance. Do not compare

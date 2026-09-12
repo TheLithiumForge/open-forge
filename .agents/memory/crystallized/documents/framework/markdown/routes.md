@@ -27,10 +27,12 @@ An Open Forge-authored category entrypoint is represented by:
 
 1. Scoped frontmatter
 2. One level-1 title
-3. A compact definition of the category
+3. A primary question and compact definition of the category
 4. Any category-level `Axioms` or boundaries
 5. A final level-2 `Entries` section
 6. One bounded generated region
+
+The category's primary question appears as an ordinary level-2 heading immediately after the title, followed by the definition and any necessary supporting explanation. The question describes the role. This presentation adds no metadata field or special parsing or loading rule, and it does not make the entrypoint define every answer beneath it.
 
 Category meaning and `Axioms` appear before `Entries`. The [routing model](../routing/model.md) defines when a folder is routable and what an entrypoint exposes. The [scope and inheritance contract](../routing/scope.md) defines the meaning of local, missing, and sentinel Axioms.
 

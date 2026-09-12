@@ -16,7 +16,7 @@ Principles are accepted decision filters, not loaded behavioral rules. Directive
 
 ### User-Owned Meaning
 
-Workspace meaning remains in human-readable files users own or in external sources they explicitly declare. A proprietary runtime, hidden service, generated index, cache, or CLI must not become the only place where Open Forge meaning can be understood.
+Workspace meaning remains in readable files users own or in external sources they explicitly declare. A proprietary runtime, hidden service, generated index, cache, or CLI must not become the only place where Open Forge meaning can be understood.
 
 This favors inspectability, portability, and correctability over convenience that requires surrendering semantic ownership.
 

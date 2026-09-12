@@ -1,0 +1,219 @@
+{
+  "base": "0eea5e6557473a52ba24a5e42bdd1b0dd5c9485c",
+  "kind": "explicit mutable review target; tracked edits frozen by author",
+  "paths": [
+    {
+      "path": ".agents/loader.md",
+      "sha256": "340150735a96ceb14c832f350007f1dbf00659df8988aba49926030231a81b50"
+    },
+    {
+      "path": ".agents/memory/_memory.md",
+      "sha256": "302accfdc565389d31192ff5ef3cc0e55f112ae23aace399a7a006ed5eddd2c6"
+    },
+    {
+      "path": ".agents/memory/archived/_archived.md",
+      "sha256": "dad272e9498aad1af4f6f1c4823c7f2e86b744a3c0b29cdd4d2ec40ac98ab6c8"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/_documents.md",
+      "sha256": "947a90f80a27644462cc51ad97cd54a4920dde29ca155c4c45074c4c0bbfa09e"
+    },
+    {
+      "path": ".agents/memory/emerging/_emerging.md",
+      "sha256": "1be4c2f9b7e12012315e65040a7da2afc0781346e4b766b89be1db4890ab62a6"
+    },
+    {
+      "path": ".agents/memory/emerging/observations/_observations.md",
+      "sha256": "c93c914550c052e85635ef46a181be1ac67e2b8c3a6d9698bb7677b3f397c374"
+    },
+    {
+      "path": ".agents/memory/working/checkpoints/_checkpoints.md",
+      "sha256": "56442785e6bf5595acd6be5bc9a6c20dba08034d2c7c7f86f73aef2cffa85f82"
+    },
+    {
+      "path": ".agents/patterns/_patterns.md",
+      "sha256": "f0962f4368468fca8977125b7380840f644970d76ba5ded2eace2252a7ca6434"
+    },
+    {
+      "path": ".agents/patterns/work-records.md",
+      "sha256": "ae08a650cc9700b1dfdc16e0ad097edd92553f802f8f66fe9b6470e91d70bbd3"
+    },
+    {
+      "path": ".agents/templates/_templates.md",
+      "sha256": "b7374657f4f691ef550eefc08bc6274662ec1e3697aea41cadeb53067f6edb59"
+    },
+    {
+      "path": ".agents/templates/documents/architecture.md",
+      "sha256": "e105d6e5469bab2116c7f060287cccf54fd3ddda24e66094e5f554afd11ad7de"
+    },
+    {
+      "path": ".agents/templates/documents/maintenance-contract.md",
+      "sha256": "8aff3f74a4c0af8dda24e860a3d2ba3475aa5d6be6c407ccf52c024731fbc5f9"
+    },
+    {
+      "path": ".agents/templates/documents/vision.md",
+      "sha256": "19187c28e1dcb6dcc9ca4e5bd79b73a5851634985b64e64c0eabb03867f3e773"
+    },
+    {
+      "path": ".agents/templates/memory/_memory.md",
+      "sha256": "93d5a1dec61222ca728ec017dd0791cdf3abfc20446c88c2e538b9e2a2b4cad9"
+    },
+    {
+      "path": ".agents/templates/memory/analysis.md",
+      "sha256": "c41f4d9b6568502fe3ab1b4a1ba3510d8953a7900ca49d4310a3325ac162c843"
+    },
+    {
+      "path": ".agents/templates/memory/decision.md",
+      "sha256": "b5d201aa61aac17ec0d41ef0ef4717f08deccdcccf9ffd68053c9adac79e1f47"
+    },
+    {
+      "path": ".agents/templates/memory/handoff.md",
+      "sha256": "5d5bd60f125eb44a5547d8a396a197ee6522fa81f59513af93c8b02b04904eed"
+    },
+    {
+      "path": ".agents/templates/memory/idea.md",
+      "sha256": "28ed2b85a04efd9487a91aa78eaf5aa4158a45637061a159943156fae3e54241"
+    },
+    {
+      "path": ".agents/templates/memory/observation.md",
+      "sha256": "1190af7f7f9d1c3e0c9dd9f3d81f9bd70d7a58e368b0aea935e23092df3a0b22"
+    },
+    {
+      "path": ".agents/workflows/_workflows.md",
+      "sha256": "6997c49bcdece70f1fc1a038b7ae5bdfd077e93f22eb8ed3f57fc69e9858c27b"
+    },
+    {
+      "path": ".agents/workflows/managed-delivery.md",
+      "sha256": "00256b62d9b250ef0e6bdab72f3708c273fd9ec6ec239d20f3fd96b32a708a35"
+    },
+    {
+      "path": "README.md",
+      "sha256": "48cef35e5681e8caabb56df573db74ec866355366d5ce9a97ad9144dc4eb12b3"
+    },
+    {
+      "path": "src/extensions/README.md",
+      "sha256": "ccd6587b61bd19f508e6749d2e287e4a42cd0ebf5151a3cb35cf125c62563fe7"
+    },
+    {
+      "path": "src/extensions/development-toolkit/README.md",
+      "sha256": "36ca11023dd392f03aa20166e2391cfdadc512194c0068669ced038558a7777e"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/patterns/work-records.md",
+      "sha256": "ae08a650cc9700b1dfdc16e0ad097edd92553f802f8f66fe9b6470e91d70bbd3"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/templates/documents/architecture.md",
+      "sha256": "e105d6e5469bab2116c7f060287cccf54fd3ddda24e66094e5f554afd11ad7de"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/templates/documents/maintenance-contract.md",
+      "sha256": "8aff3f74a4c0af8dda24e860a3d2ba3475aa5d6be6c407ccf52c024731fbc5f9"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/templates/documents/vision.md",
+      "sha256": "19187c28e1dcb6dcc9ca4e5bd79b73a5851634985b64e64c0eabb03867f3e773"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/templates/memory/_memory.md",
+      "sha256": "6746769ecc930316ae08f33876674234101a4334c6ef0b1a3093920534504291"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/templates/memory/analysis.md",
+      "sha256": "c41f4d9b6568502fe3ab1b4a1ba3510d8953a7900ca49d4310a3325ac162c843"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/templates/memory/decision.md",
+      "sha256": "b5d201aa61aac17ec0d41ef0ef4717f08deccdcccf9ffd68053c9adac79e1f47"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/templates/memory/handoff.md",
+      "sha256": "5d5bd60f125eb44a5547d8a396a197ee6522fa81f59513af93c8b02b04904eed"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/templates/memory/idea.md",
+      "sha256": "28ed2b85a04efd9487a91aa78eaf5aa4158a45637061a159943156fae3e54241"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/templates/memory/observation.md",
+      "sha256": "1190af7f7f9d1c3e0c9dd9f3d81f9bd70d7a58e368b0aea935e23092df3a0b22"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/workflows/architecture.md",
+      "sha256": "8082c9f84a524b533e9b342120d4d2755153f68c300cb0912f8506a5f76b74e6"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/workflows/debugging.md",
+      "sha256": "d6a4142b0a79eaddbf78dfac683aca0de33c71a417159da9eb7b7c83f60e96a8"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/workflows/development.md",
+      "sha256": "ac80c5da7bf3cc5c8b8fe12aaaaa95f12b088bda8578910a5d351b00eefd4bf7"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/workflows/review.md",
+      "sha256": "c5390c9e2aa834c954d76e4e397364ca0b68f8ccf454653400c9c5ebdc56eb15"
+    },
+    {
+      "path": "src/extensions/development-toolkit/content/.agents/workflows/vision.md",
+      "sha256": "467ee3265ae1b619918cb0e95d8a569296ac60377d6f3ce4b54bea8da33a512d"
+    },
+    {
+      "path": "src/extensions/development-toolkit/extension.json",
+      "sha256": "a59bf5a89706eb0bbef8d8b0a3a3f812365f313c1e587444aba5c141e1707380"
+    },
+    {
+      "path": "src/extensions/orchestration/README.md",
+      "sha256": "798963d46b89b31dc7d0de547a708ac964fd55bf94c04bccb46f2ceb36ab5b47"
+    },
+    {
+      "path": "src/extensions/orchestration/content/.agents/workflows/managed-delivery.md",
+      "sha256": "c42e7e80f406b764325f8fba4e7b6f28bf19711fdc3b8410c78b2faa875212c8"
+    },
+    {
+      "path": "src/open-forge/.agents/guidance/adaptive-collaboration.md",
+      "sha256": "ef5c6c96107fbfa4d30b9c8fc2ca95b59669786bec919f3ebfec355cd91c3882"
+    },
+    {
+      "path": "src/open-forge/.agents/loader.md",
+      "sha256": "dabca5b7c8c6d17b87f2b0b19fe886ead5db77115c9cce55905c6df5d13c5cd0"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/_memory.md",
+      "sha256": "6a636c9a75007716d787de93f5cfa8b0f3b36d6c8b86d98191ff10b276861542"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/archived/_archived.md",
+      "sha256": "8f9e512334e0d50b9e0a0572b19e706525a449fdf31d8eff214b08de5efbc54d"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/crystallized/documents/_documents.md",
+      "sha256": "deede5a4b5901bbb0e65d1fce8bc11172ccae522631010229de42e14d9f0695b"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/emerging/_emerging.md",
+      "sha256": "44d1ac9c44ed6905b7e0238484f89ff66dc9c8cf9d926f3fdb06355579955a3e"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/emerging/observations/_observations.md",
+      "sha256": "91b469e049bd253416e008d0429f1c789f1f1018eeb2330d53fd82b6d1927377"
+    },
+    {
+      "path": "src/open-forge/.agents/memory/working/checkpoints/_checkpoints.md",
+      "sha256": "5d3fbde4876d0cda4c4a8cedae83efcd6cbbcb9e2035618d40b114e06364feaa"
+    },
+    {
+      "path": "src/open-forge/.agents/patterns/_patterns.md",
+      "sha256": "2dbd534123e5dcc6d9a0a65cb04f4ae780f1674f462c8589aaaa990ed15372e6"
+    },
+    {
+      "path": "src/open-forge/.agents/templates/_templates.md",
+      "sha256": "5457b32b4141a6d059a440148358645efd03a7ce131cef56caa80e03c46df8de"
+    },
+    {
+      "path": "src/open-forge/.agents/workflows/_workflows.md",
+      "sha256": "1dc2533d34255141ec139b2d9908d81d38996d924477693acf33efcdb1212e32"
+    }
+  ],
+  "untracked": []
+}

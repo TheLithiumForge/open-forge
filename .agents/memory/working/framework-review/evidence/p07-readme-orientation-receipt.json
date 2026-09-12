@@ -1,0 +1,32 @@
+{
+  "status": "applied in review worktree",
+  "files": [
+    {
+      "path": "README.md",
+      "before_sha256": "8280f8f1bd051158e43d0e42f867d5f8be77e336aa4010c7d9dd703d8a8ea484",
+      "after_sha256": "1beebfc412b40e08eb0c6020de98373ad0e86418f83ac3da3d69831430d107d3"
+    },
+    {
+      "path": "src/open-forge/.agents/loader.md",
+      "before_sha256": "81d499cbb2b72dc97284d18d4a4d0fb15af95ffc2be40d3ae38b1d95d461db06",
+      "after_sha256": "8400bc43834eb5d535cdbd305d38d411c8965f43c3b2f98837fc441d782971e5"
+    },
+    {
+      "path": ".agents/loader.md",
+      "before_sha256": "9ad72e5c13fa7e40b6698722b408ffd2fd19ee73c7599462c3cbd8f1a7fd5915",
+      "after_sha256": "e43460e9ef81685e5cc2bffa94a69665478c77f439b7a010d7d0c710a1574685"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/loader.md",
+      "before_sha256": "889971c4c3cfb883becf1d47b438f43b110275e3467750e7fc842ae84cb0ccba",
+      "after_sha256": "588777cf0c851690740532e190e2f61790d18408434fd9a95fc93b273bca5cea"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/architecture.md",
+      "before_sha256": "735edfa04d79c4f4fc091a4d6057e10e30d7be27146b33ef694aa64a431443cc",
+      "after_sha256": "54e230a95c0dd67bbaea445fed459ad4b2ba1a2d788edb7953fb5f9a3b419e52"
+    }
+  ],
+  "committed": false,
+  "merged": false
+}
