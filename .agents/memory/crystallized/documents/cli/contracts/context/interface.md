@@ -120,18 +120,14 @@ With no source operand, the command returns the sources required at task start o
 resume. This set is called the startup-required closure below. Resolve it in the
 Framework loading order:
 
-1. The canonical workspace entry and Loader.
-2. The visible #LoadNow closure in generated order.
-3. For each applicable #KeepInMind entrypoint or routed #KeepInMind file, load
-   any missing parent entrypoints needed to establish its route and inherited
-   `Axioms`.
-4. Load that #KeepInMind source and its overwrite companion immediately after
-   its base when present.
-5. Follow the visible #LoadNow closure exposed by that loaded entrypoint before
-   continuing to the next continuity source.
+1. Read the canonical workspace entry and Loader.
+2. Follow visible #LoadNow and #KeepInMind entries through loaded parents in
+   generated order. For a loaded entrypoint, apply its child loading rules.
+3. Place each valid overwrite companion immediately after its base.
 
-This operation follows the current target-sensitive entrypoint rules. It does
-not reproduce the frozen MVP's broad loading behavior.
+Both tags use the same parent and scope boundaries. Neither activates an
+otherwise unselected ancestor or scope. Inactive continuity metadata does not
+make this closure incomplete solely because it exists elsewhere in the workspace.
 
 ### Explicit Sources
 
@@ -146,7 +142,8 @@ meaning, it adds its selected closure to the startup-required closure:
    `Axioms`.
 2. The selected source itself.
 3. Its overwrite companion when present.
-4. Visible #LoadNow descendants exposed by a selected entrypoint.
+4. Visible #LoadNow and #KeepInMind descendants exposed by each entrypoint in
+   the selected ancestor chain.
 5. Applicable scope-local loading required by the current Framework contract.
 
 An explicit source does not activate unrelated sibling or descendant scopes.
@@ -674,7 +671,7 @@ ambiguous rather than an independent source.
 
 The startup-required closure follows Framework loading order. Explicit route
 closures follow operand order while preserving each route's internal parent,
-target, #LoadNow, and overwrite order. Link-expanded sources are appended in
+target, #LoadNow, #KeepInMind, and overwrite order. Link-expanded sources are appended in
 stable breadth-first order by link depth, source order, and document link order.
 
 When several relationships select the same source:
@@ -1238,8 +1235,8 @@ Gate 5 executable proof must cover:
 - IDs, exact paths, collisions, and disambiguation from the shared Source
   References contract.
 - Startup closure ordering.
-- Target-sensitive #KeepInMind entrypoint behavior.
-- Global routed #KeepInMind leaf recovery.
+- Parent-scoped #KeepInMind behavior for entrypoints and ordinary files.
+- Inactive continuity exclusion and explicitly selected scope loading.
 - Single and multiple route closures.
 - Sparse and nested scopes.
 - Base and overwrite ordering and orphan failure.

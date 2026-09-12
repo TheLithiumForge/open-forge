@@ -29,23 +29,15 @@ public sealed class RouteInspectOperationLoadingIntegrationTests
         Assert.False(Assert.IsType<bool>(profile.Reading.TaskStart.Value));
         var automatic = Assert.IsType<RouteInspectAutomaticReadings>(profile.Reading.Automatic.Value);
         var automaticReason = Assert.Single(automatic.Reasons);
-        Assert.Equal(RouteInspectAutomaticReadingKind.EntrypointKeepInMind, automaticReason.Kind);
+        Assert.Equal(RouteInspectAutomaticReadingKind.OnDemand, automaticReason.Kind);
         Assert.Equal(
             [
                 RouteInspectAutomaticReadingEvent.RouteSelected,
-                RouteInspectAutomaticReadingEvent.ScopeSelected,
             ],
             automaticReason.Events);
         var later = Assert.IsType<RouteInspectLaterReading>(profile.Reading.Later.Value);
-        Assert.True(later.MayBeReadAgain);
-        Assert.Equal(
-            [
-                RouteInspectLaterReadOccasion.ContextRestoration,
-                RouteInspectLaterReadOccasion.Handoff,
-                RouteInspectLaterReadOccasion.Closeout,
-                RouteInspectLaterReadOccasion.FollowupTransition,
-            ],
-            later.Occasions);
+        Assert.False(later.MayBeReadAgain);
+        Assert.Empty(later.Occasions);
 
         var topology = Assert.IsType<RouteInspectTopology>(profile.Topology.Value);
         Assert.Equal("root", topology.RootRoute);
@@ -96,7 +88,7 @@ public sealed class RouteInspectOperationLoadingIntegrationTests
         RouteInspectProfileIntegrationAssertions.AssertNoWriteOrInspectionState(before, workspace.Snapshot());
     }
 
-    [Fact(DisplayName = "Route inspect preserves global file continuity, selected-chain ancestor continuity, and on-demand exclusion without following ordinary links")]
+    [Fact(DisplayName = "Route inspect excludes unexposed continuity and inactive ancestors without following ordinary links")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task ContinuityAndOnDemandReasonsRemainIndependent()
     {
@@ -108,14 +100,13 @@ public sealed class RouteInspectOperationLoadingIntegrationTests
             TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Complete, global.Status);
         var globalProfile = Assert.IsType<RouteInspectProfile>(global.Profile);
-        Assert.True(Assert.IsType<bool>(globalProfile.Reading.TaskStart.Value));
+        Assert.False(Assert.IsType<bool>(globalProfile.Reading.TaskStart.Value));
         var globalReason = Assert.Single(
             Assert.IsType<RouteInspectAutomaticReadings>(globalProfile.Reading.Automatic.Value).Reasons);
-        Assert.Equal(RouteInspectAutomaticReadingKind.RoutedFileKeepInMind, globalReason.Kind);
+        Assert.Equal(RouteInspectAutomaticReadingKind.OnDemand, globalReason.Kind);
         Assert.Equal(
             [
-                RouteInspectAutomaticReadingEvent.TaskReview,
-                RouteInspectAutomaticReadingEvent.LaterReview,
+                RouteInspectAutomaticReadingEvent.RouteSelected,
             ],
             globalReason.Events);
         var globalAxioms = Assert.IsType<RouteInspectAxiomsProfile>(globalProfile.Axioms.Value);
@@ -135,11 +126,11 @@ public sealed class RouteInspectOperationLoadingIntegrationTests
             globalProfile.Measurements.TaskStartOverlap,
             workspace,
             ".agents/root/_root.md",
-            ".agents/root/baseline.md",
-            ".agents/root/global.md");
+            ".agents/root/baseline.md");
         RouteInspectProfileIntegrationAssertions.AssertMeasurement(
             globalProfile.Measurements.SelectionAddition,
-            workspace);
+            workspace,
+            ".agents/root/global.md");
         RouteInspectProfileIntegrationAssertions.AssertNotApplicable(globalProfile.Measurements.LoadNowDescendants);
         Assert.Equal(RouteInspectFactState.Value, globalProfile.Topology.State);
         Assert.Equal(
@@ -152,13 +143,11 @@ public sealed class RouteInspectOperationLoadingIntegrationTests
             TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Complete, ancestor.Status);
         var ancestorProfile = Assert.IsType<RouteInspectProfile>(ancestor.Profile);
-        Assert.True(Assert.IsType<bool>(ancestorProfile.Reading.TaskStart.Value));
+        Assert.False(Assert.IsType<bool>(ancestorProfile.Reading.TaskStart.Value));
         var ancestorReason = Assert.Single(
             Assert.IsType<RouteInspectAutomaticReadings>(ancestorProfile.Reading.Automatic.Value).Reasons);
-        Assert.Equal(RouteInspectAutomaticReadingKind.EntrypointKeepInMind, ancestorReason.Kind);
-        Assert.Contains(RouteInspectAutomaticReadingEvent.AncestorRequired, ancestorReason.Events);
+        Assert.Equal(RouteInspectAutomaticReadingKind.OnDemand, ancestorReason.Kind);
         Assert.Contains(RouteInspectAutomaticReadingEvent.RouteSelected, ancestorReason.Events);
-        Assert.Contains(RouteInspectAutomaticReadingEvent.ScopeSelected, ancestorReason.Events);
         RouteInspectProfileIntegrationAssertions.AssertMeasurement(
             ancestorProfile.Measurements.LoadNowDescendants,
             workspace,
@@ -183,6 +172,37 @@ public sealed class RouteInspectOperationLoadingIntegrationTests
             ".agents/root/selected/_selected.md",
             ".agents/root/selected/load-now-child.md",
             ".agents/root/selected/on-demand-child.md");
+        RouteInspectProfileIntegrationAssertions.AssertNoWriteOrInspectionState(before, workspace.Snapshot());
+    }
+
+    [Theory(DisplayName = "Route inspect measures exposed ordinary continuity with independent tag validation and excludes it from LoadNow-only descendants")]
+    [InlineData(false), InlineData(true)]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    public async Task ExposedContinuityAgreesWithSelectedAndStartupMeasurements(bool staleLoadNowTag)
+    {
+        using var workspace = CreateLoadingWorkspace();
+        var rootPath = workspace.Absolute(".agents/root/_root.md");
+        var tags = staleLoadNowTag ? "#LoadNow #KeepInMind" : "#KeepInMind";
+        File.WriteAllText(rootPath, File.ReadAllText(rootPath).Replace(
+            "<!-- open-forge:generated-index:end -->",
+            $"- [Continuity](global.md) - {tags}\n<!-- open-forge:generated-index:end -->",
+            StringComparison.Ordinal));
+        var before = workspace.Snapshot();
+        var result = await workspace.InspectAsync("root/global", TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        var profile = Assert.IsType<RouteInspectProfile>(result.Profile);
+        Assert.True(profile.Reading.TaskStart.Value);
+        var reason = Assert.Single(Assert.IsType<RouteInspectAutomaticReadings>(profile.Reading.Automatic.Value).Reasons);
+        Assert.Equal(RouteInspectAutomaticReadingKind.RoutedFileKeepInMind, reason.Kind);
+        Assert.Equal("root", reason.RelatedSourceId);
+        Assert.Equal([RouteInspectAutomaticReadingEvent.ExposingParentRead, RouteInspectAutomaticReadingEvent.LaterReview], reason.Events);
+        RouteInspectProfileIntegrationAssertions.AssertMeasurement(profile.Measurements.SelectionAddition, workspace);
+        RouteInspectProfileIntegrationAssertions.AssertMeasurement(profile.Measurements.TaskStartOverlap, workspace,
+            ".agents/root/_root.md", ".agents/root/baseline.md", ".agents/root/global.md");
+        var parentResult = await workspace.InspectAsync("root", TestContext.Current.CancellationToken);
+        var parentProfile = Assert.IsType<RouteInspectProfile>(parentResult.Profile);
+        RouteInspectProfileIntegrationAssertions.AssertMeasurement(parentProfile.Measurements.LoadNowDescendants, workspace,
+            ".agents/root/baseline.md");
         RouteInspectProfileIntegrationAssertions.AssertNoWriteOrInspectionState(before, workspace.Snapshot());
     }
 

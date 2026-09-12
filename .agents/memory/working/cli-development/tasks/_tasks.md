@@ -41,6 +41,8 @@ Read the [program Task](00-cli-development.md),
 - [x] [Task 25: Workspace Library Destination Projections](workspace-library-destination-projections.md) — Complete, phase 5/5, milestone 8/8; full managed/native acceptance, integrated at `3b4aba9d`
 - [x] [Task 26: Extension Internal Consolidation](extension-internal-consolidation.md) — Complete, phase 4/4, milestone 6/6; full managed/native and differential acceptance, integrated at `aab57058`
 
+- [x] [Task 29: Scoped Continuity Loading](scoped-continuity-loading.md) — Complete, phase 2/2, milestone 3/3; scoped-loading evidence passes, with three reproduced unrelated baseline integration failures recorded.
+
 ## Axioms
 
 - Read every parent Task before a child Task. Child scope inherits all parent

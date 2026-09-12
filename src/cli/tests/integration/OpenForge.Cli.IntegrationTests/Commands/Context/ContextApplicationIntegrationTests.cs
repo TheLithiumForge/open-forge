@@ -180,10 +180,10 @@ public sealed class ContextApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Theory(DisplayName = "Context composed application exposes malformed and unreadable global-continuity metadata as incomplete"), Trait("Feature", "context"), Trait("Evidence", "Integration"),
+    [Theory(DisplayName = "Context composed application exposes malformed and unreadable selected continuity metadata as incomplete"), Trait("Feature", "context"), Trait("Evidence", "Integration"),
      InlineData(false),
      InlineData(true)]
-    public static async Task GlobalContinuityMetadataFailureCannotFalseComplete(bool invalidEncoding)
+    public static async Task SelectedContinuityMetadataFailureCannotFalseComplete(bool invalidEncoding)
     {
         using var workspace = CreateWorkspace();
         var checkpoint = workspace.Combine(".agents/continuity/checkpoint.md");
@@ -200,7 +200,7 @@ public sealed class ContextApplicationIntegrationTests
         var before = workspace.SnapshotHashes();
 
         var result = await CliHostCapture.RunAsync(
-            ["context", "--content=metadata", "--json"],
+            ["context", "continuity", "--content=metadata", "--json"],
             workspace.Path);
 
         Assert.Equal(3, result.ExitCode);

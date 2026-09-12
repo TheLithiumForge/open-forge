@@ -202,25 +202,39 @@ internal sealed class ContextLoadingClosureResolver
     {
         var queue = new Queue<ContextGraphSource>(seeds);
         var traversed = new HashSet<string>(StringComparer.Ordinal);
-        while (queue.TryDequeue(out var parent) && traversed.Add(parent.CanonicalPath))
+        while (queue.TryDequeue(out var parent))
         {
-            foreach (var entry in ReadVisibleEntries(graph, parent).Where(entry => entry.LoadNow))
+            if (!traversed.Add(parent.CanonicalPath))
             {
-                if (selected.Add(
-                        entry.Target,
-                        new ContextInclusionReason(
-                            kind: ContextInclusionReasonKind.LoadNow,
-                            source: Identity(parent),
-                            reference: reference,
-                            depth: null,
-                            location: null))
-                    && entry.Target.IsEntrypoint)
+                continue;
+            }
+
+            foreach (var entry in ReadVisibleEntries(graph, parent).Where(entry => entry.LoadNow || entry.KeepInMind))
+            {
+                var added = false;
+                if (entry.LoadNow)
+                {
+                    added = selected.Add(entry.Target, ParentReason(ContextInclusionReasonKind.LoadNow, parent, reference));
+                }
+
+                if (entry.KeepInMind)
+                {
+                    added |= selected.Add(entry.Target, ParentReason(ContextInclusionReasonKind.KeepInMind, parent, reference));
+                }
+
+                if (added && entry.Target.IsEntrypoint)
                 {
                     queue.Enqueue(entry.Target);
                 }
             }
         }
     }
+
+    private static ContextInclusionReason ParentReason(
+        ContextInclusionReasonKind kind,
+        ContextGraphSource parent,
+        string reference)
+        => new(kind: kind, source: Identity(parent), reference: reference, depth: null, location: null);
 
     private IReadOnlyList<VisibleEntry> ReadVisibleEntries(ContextGraph graph, ContextGraphSource parent)
     {

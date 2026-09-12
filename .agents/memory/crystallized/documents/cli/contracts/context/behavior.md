@@ -61,18 +61,13 @@ With no explicit source, resolve the startup-required closure in the current
 Framework loading order. The resolution is:
 
 1. Read the canonical workspace entry and Loader.
-2. Traverse the visible #LoadNow closure in generated order.
-3. Recover every applicable #KeepInMind entrypoint and every routed
-   #KeepInMind file that is not an entrypoint. Read missing parent entrypoints
-   first so the route and inherited `Axioms` exist.
-4. Read each applicable continuity source and its adjacent overwrite companion
-   immediately after its base.
-5. Traverse the visible #LoadNow closure exposed by that loaded entrypoint before
-   continuing to the next continuity source.
+2. Follow visible #LoadNow and #KeepInMind entries through loaded parents in
+   generated order. For a loaded entrypoint, apply its child loading rules.
+3. Place each valid overwrite companion immediately after its base.
 
-Entrypoint proactivity remains target-sensitive under the Framework loading
-contract. This closure follows those current rules and does not substitute the
-frozen MVP's broad loading traversal.
+Both tags use the same parent and scope boundaries. Neither activates an
+otherwise unselected ancestor or scope. Inactive continuity metadata does not
+make this closure incomplete solely because it exists elsewhere in the workspace.
 
 ### Explicit Route Closure
 
@@ -83,7 +78,8 @@ closure:
    `Axioms`.
 2. The selected source.
 3. Its overwrite companion when present.
-4. Visible #LoadNow descendants exposed by a selected entrypoint.
+4. Visible #LoadNow and #KeepInMind descendants exposed by each entrypoint in
+   the selected ancestor chain.
 5. Applicable scope-local loading required by the current Framework contract.
 
 An explicit source does not activate unrelated sibling or descendant scopes.
@@ -100,7 +96,7 @@ established-route inclusion reason in the result.
 Resolve each routed source with its own parent chain, scope, authority, and
 inclusion reasons. Union the resulting physical layers without creating a
 combined scope. Preserve operand order and each route's internal parent, target,
-#LoadNow, and overwrite order. If several relationships select one physical
+#LoadNow, #KeepInMind, and overwrite order. If several relationships select one physical
 source, retain every reason but do not use route order to resolve a conflict or
 make a later selection higher authority.
 
@@ -316,7 +312,7 @@ independent source.
 
 Use Framework loading order for the startup-required closure. Append explicit
 route closures in operand order, preserving each route's parent, target,
-#LoadNow, and overwrite order. Append link-expanded sources in stable breadth-
+#LoadNow, #KeepInMind, and overwrite order. Append link-expanded sources in stable breadth-
 first order by link depth, source order, and document link order.
 
 For every repeated relationship:

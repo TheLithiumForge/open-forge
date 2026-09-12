@@ -199,12 +199,14 @@ physical files.
 
 Startup context is the complete context required when work starts or resumes:
 
-1. The canonical workspace entry and Loader.
-2. The visible #LoadNow closure in generated order.
-3. Every applicable #KeepInMind entrypoint and routed #KeepInMind file, including
-   parent entrypoints not already selected when needed to establish its route.
-4. The visible #LoadNow closure exposed by those continuity sources.
-5. Each valid overwrite companion immediately after its base.
+1. Read the canonical workspace entry and Loader.
+2. Follow visible #LoadNow and #KeepInMind entries through loaded parents in
+   generated order. For a loaded entrypoint, apply its child loading rules.
+3. Place each valid overwrite companion immediately after its base.
+
+Both tags use the same parent and scope boundaries. Neither activates an
+otherwise unselected ancestor or scope. Inactive continuity metadata does not
+make this closure incomplete solely because it exists elsewhere in the workspace.
 
 This is the same startup-required closure returned by `open-forge context` with
 no explicit source. Status measures that closure without rendering its content.
@@ -265,8 +267,9 @@ Coordinates](../shared/result-coordinates/interface.md).
 ### Continuity Context
 
 Continuity context is the subset of current startup context that may load again
-at a #KeepInMind boundary, including the parent and #LoadNow files required to
-load that complete continuity set.
+at a #KeepInMind boundary while the scope remains active. It includes exposed
+tagged sources and their applicable visible child closure, with adjacent
+overwrites. It does not add untagged ancestors solely for refresh.
 
 The human label is:
 

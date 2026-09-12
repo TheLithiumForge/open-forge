@@ -142,15 +142,13 @@ public sealed class RouteInspectPresentationTests
 
     [Theory(DisplayName = "Route Inspect KeepInMind explanations name the actual typed event")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
-    [InlineData((int)RouteInspectAutomaticReadingEvent.TaskStartVisible, "it is visible from task-start routing")]
-    [InlineData((int)RouteInspectAutomaticReadingEvent.RouteSelected, "its route is selected")]
-    [InlineData((int)RouteInspectAutomaticReadingEvent.ScopeSelected, "its scope is selected")]
-    [InlineData((int)RouteInspectAutomaticReadingEvent.AncestorRequired, "it is needed as an ancestor")]
+    [InlineData((int)RouteInspectAutomaticReadingEvent.ExposingParentRead, "its exposing parent is read")]
+    [InlineData((int)RouteInspectAutomaticReadingEvent.LaterReview, "a later review point is reached while its scope is active")]
     public void KeepInMindExplanationUsesActualEvent(int eventValue, string expected)
     {
         var reading = new RouteInspectAutomaticReading(
             RouteInspectAutomaticReadingKind.EntrypointKeepInMind,
-            null,
+            "parent",
             [(RouteInspectAutomaticReadingEvent)eventValue]);
 
         Assert.Equal(expected, RouteInspectHumanAutomaticReading.Explanation(reading));

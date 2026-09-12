@@ -59,10 +59,10 @@ public sealed class ContextOperationFindingTests
         Assert.Contains(result.Findings, finding => finding.Code == ContextFindingCode.InvalidSource);
     }
 
-    [Theory(DisplayName = "Context cannot report complete when global continuity membership metadata is malformed or unreadable"), Trait("Feature", "context"), Trait("Evidence", "Integration"),
+    [Theory(DisplayName = "Context ignores inactive malformed continuity but reports it when its scope is selected"), Trait("Feature", "context"), Trait("Evidence", "Integration"),
      InlineData(false),
      InlineData(true)]
-    public static async Task UnavailableGlobalContinuityMetadataIsIncomplete(bool invalidEncoding)
+    public static async Task UnavailableContinuityMetadataOnlyAffectsSelectedScope(bool invalidEncoding)
     {
         using var workspace = ContextOperationWorkspace.Create();
         if (invalidEncoding)
@@ -78,14 +78,18 @@ public sealed class ContextOperationFindingTests
 
         var result = await ExecuteAsync(workspace, [], Content("metadata"));
 
-        Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
-        Assert.Equal(ContextCoverageState.Incomplete, result.Coverage.State);
-        Assert.Equal(ContextCoverageState.Incomplete, result.Coverage.Selection);
-        var finding = Assert.Single(result.Findings, finding =>
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Empty(result.Findings);
+        Assert.DoesNotContain(result.Sources, source => source.Path.StartsWith(".agents/state/", StringComparison.Ordinal));
+
+        var selected = await ExecuteAsync(workspace, ["state"], Content("metadata"));
+        Assert.Equal(CliSemanticStatus.Incomplete, selected.Status);
+        Assert.Equal(ContextCoverageState.Incomplete, selected.Coverage.Selection);
+        var finding = Assert.Single(selected.Findings, finding =>
             finding.Code == ContextFindingCode.ClosureUnavailable
             && finding.Path == ".agents/state/checkpoint.md");
-        Assert.Contains("continuity membership", finding.Cause, StringComparison.Ordinal);
-        Assert.NotNull(result.Next);
+        Assert.Contains("visible child", finding.Cause, StringComparison.Ordinal);
+        Assert.NotNull(selected.Next);
     }
 
     [Fact(DisplayName = "Context ignores unavailable metadata on a definitively unrouted non-continuity source"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
@@ -104,7 +108,7 @@ public sealed class ContextOperationFindingTests
         Assert.DoesNotContain(result.Sources, source => source.Path == ".agents/unrouted.md");
     }
 
-    [Theory(DisplayName = "Context distinguishes valid and malformed routed native Skill metadata"),
+    [Theory(DisplayName = "Context ignores valid and malformed native Skill metadata in an inactive scope"),
      Trait("Feature", "context"), Trait("Evidence", "Integration"),
      InlineData(false),
      InlineData(true)]
@@ -123,39 +127,19 @@ public sealed class ContextOperationFindingTests
 
         var result = await ExecuteAsync(workspace, [], Content("metadata"));
 
-        Assert.Equal(
-            malformed ? CliSemanticStatus.Incomplete : CliSemanticStatus.Complete,
-            result.Status);
-        Assert.Equal(
-            malformed ? ContextCoverageState.Incomplete : ContextCoverageState.Complete,
-            result.Coverage.Selection);
-        if (malformed)
-        {
-            Assert.Contains(result.Findings, finding =>
-                finding.Code == ContextFindingCode.ClosureUnavailable
-                && finding.Path == skillPath);
-        }
-        else
-        {
-            Assert.DoesNotContain(result.Findings, finding => finding.Path == skillPath);
-        }
-
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(ContextCoverageState.Complete, result.Coverage.Selection);
+        Assert.DoesNotContain(result.Findings, finding => finding.Path == skillPath);
+        Assert.DoesNotContain(result.Sources, source => source.Path == skillPath);
         var rendered = ContextHumanRenderer.Render(CliPresentationStage.Create(
             result,
             new CliPresentation(CliOutputFormat.Human, CliView.Compact, CliVerbosity.Normal)));
-        Assert.StartsWith(malformed ? "context incomplete" : "context complete", rendered, StringComparison.Ordinal);
-        if (malformed)
-        {
-            Assert.Contains($"context.closure-unavailable subject={skillPath}", rendered, StringComparison.Ordinal);
-        }
-        else
-        {
-            Assert.DoesNotContain(skillPath, rendered, StringComparison.Ordinal);
-        }
+        Assert.StartsWith("context complete", rendered, StringComparison.Ordinal);
+        Assert.DoesNotContain(skillPath, rendered, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Context reports an authored global continuity source whose route is broken"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
-    public async Task BrokenGlobalContinuityRouteIsIncomplete()
+    [Fact(DisplayName = "Context ignores a broken continuity route in an inactive branch"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    public async Task BrokenInactiveContinuityRouteDoesNotAffectStartup()
     {
         using var workspace = ContextOperationWorkspace.Create();
         workspace.CreateDirectory(".agents/projects/ambiguous");
@@ -171,12 +155,9 @@ public sealed class ContextOperationFindingTests
 
         var result = await ExecuteAsync(workspace, [], Content("metadata"));
 
-        Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
-        Assert.Equal(ContextCoverageState.Incomplete, result.Coverage.Selection);
-        var finding = Assert.Single(result.Findings, finding =>
-            finding.Code == ContextFindingCode.ClosureUnavailable
-            && finding.Path == ".agents/projects/ambiguous/continuity.md");
-        Assert.Contains("route", finding.Cause, StringComparison.Ordinal);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(ContextCoverageState.Complete, result.Coverage.Selection);
+        Assert.Empty(result.Findings);
         Assert.DoesNotContain(result.Sources, source => source.Path == ".agents/projects/ambiguous/continuity.md");
     }
 

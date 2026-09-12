@@ -2,7 +2,6 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile.Models;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -109,67 +108,24 @@ internal sealed class RouteInspectReadingProfileBuilder
             return;
         }
 
-        if (_selected.Kind != RouteSourceKind.Entrypoint
-            && _selected.Metadata.Tags.Contains("KeepInMind", StringComparer.Ordinal)
-            && IsRouted())
-        {
-            reasons.Add(new RouteInspectAutomaticReading(
-                RouteInspectAutomaticReadingKind.RoutedFileKeepInMind,
-                null,
-                [
-                    RouteInspectAutomaticReadingEvent.TaskReview,
-                    RouteInspectAutomaticReadingEvent.LaterReview,
-                ]));
-        }
-
-        if (_selected.Kind != RouteSourceKind.Entrypoint
-            || !_selected.Metadata.Tags.Contains("KeepInMind", StringComparer.Ordinal))
+        var entry = _loading.VisibleEntries.Values
+            .SelectMany(entries => entries)
+            .FirstOrDefault(entry => entry.TargetPath == _selected.CanonicalPath && entry.KeepInMind);
+        if (entry is null)
         {
             return;
         }
 
-        var events = new List<RouteInspectAutomaticReadingEvent>();
-        if (_loading.StartupPaths.Contains(_selected.CanonicalPath))
-        {
-            events.Add(RouteInspectAutomaticReadingEvent.TaskStartVisible);
-        }
-
-        events.Add(RouteInspectAutomaticReadingEvent.RouteSelected);
-        if (IsScopeSelected())
-        {
-            events.Add(RouteInspectAutomaticReadingEvent.ScopeSelected);
-        }
-
-        if (_loading.RequiredAncestorPaths.Contains(_selected.CanonicalPath))
-        {
-            events.Add(RouteInspectAutomaticReadingEvent.AncestorRequired);
-        }
-
+        var parent = _graph.ProjectionSet.FindByPath(entry.ParentPath);
         reasons.Add(new RouteInspectAutomaticReading(
-            RouteInspectAutomaticReadingKind.EntrypointKeepInMind,
-            null,
-            events));
-    }
-
-    private bool IsScopeSelected()
-    {
-        var node = _graph.RouteFacts.Topology.FindByPath(_selected.CanonicalPath);
-        if (node is null || node.ParentState == SourceRouteParentState.None)
-        {
-            return true;
-        }
-
-        return _loading.RequiredAncestorPaths.Contains(_selected.CanonicalPath)
-            || node.ParentState == SourceRouteParentState.Resolved
-                && !_loading.StartupPaths.Contains(_selected.CanonicalPath)
-                && _loading.StartupPaths.Contains(node.ParentPaths[0]);
-    }
-
-    private bool IsRouted()
-    {
-        var topology = _graph.RouteFacts.Topology;
-        return topology.FindByPath(_selected.CanonicalPath) is not null
-            && topology.ReadAbsoluteDepth(_selected.CanonicalPath) is not null;
+            _selected.Kind == RouteSourceKind.Entrypoint
+                ? RouteInspectAutomaticReadingKind.EntrypointKeepInMind
+                : RouteInspectAutomaticReadingKind.RoutedFileKeepInMind,
+            parent?.Id,
+            [
+                RouteInspectAutomaticReadingEvent.ExposingParentRead,
+                RouteInspectAutomaticReadingEvent.LaterReview,
+            ]));
     }
 
     private static RouteInspectReadingProfile NotApplicable()

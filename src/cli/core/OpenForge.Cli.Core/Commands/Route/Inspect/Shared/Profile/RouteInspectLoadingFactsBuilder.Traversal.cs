@@ -27,7 +27,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
 
         foreach (var entry in read.Entries)
         {
-            if (entry.LoadNow || entry.KeepInMind && IsEntrypoint(entry.TargetPath))
+            if (entry.LoadNow || entry.KeepInMind)
             {
                 AddSource(paths, entry.TargetPath, queue, selected: false);
             }
@@ -49,7 +49,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
 
             foreach (var entry in read.Entries)
             {
-                if (entry.LoadNow || entry.KeepInMind && IsEntrypoint(entry.TargetPath))
+                if (entry.LoadNow || entry.KeepInMind)
                 {
                     AddSource(paths, entry.TargetPath, queue, selected: false);
                 }
@@ -57,7 +57,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
         }
     }
 
-    private HashSet<string> ReadSelectedLoadNow(IEnumerable<RouteSource> chain)
+    private HashSet<string> ReadSelectedLoading(IEnumerable<RouteSource> chain)
     {
         var descendants = new HashSet<string>(StringComparer.Ordinal);
         var queue = new Queue<string>(chain
@@ -74,7 +74,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
                 continue;
             }
 
-            foreach (var entry in read.Entries.Where(entry => entry.LoadNow))
+            foreach (var entry in read.Entries.Where(entry => entry.LoadNow || entry.KeepInMind))
             {
                 if (descendants.Add(entry.TargetPath) && IsEntrypoint(entry.TargetPath))
                 {
@@ -116,51 +116,6 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
         }
 
         return descendants;
-    }
-
-    private void ReadGlobalContinuity(
-        ISet<string> startupPaths,
-        Queue<string> startupQueue,
-        ISet<string> requiredAncestors)
-    {
-        foreach (var source in _graph.ProjectionSet.Sources
-                     .Where(source => source.Kind != RouteSourceKind.Entrypoint)
-                     .OrderBy(source => source.CanonicalPath, StringComparer.Ordinal))
-        {
-            CheckCancellation();
-            if (!IsRouted(source))
-            {
-                continue;
-            }
-
-            if (source.Metadata.State != RouteSourceMetadataState.Complete)
-            {
-                _startupAvailable = false;
-                _readingAvailable = false;
-
-                continue;
-            }
-
-            if (!source.Metadata.Tags.Contains("KeepInMind", StringComparer.Ordinal))
-            {
-                continue;
-            }
-
-            var chain = ReadChain(source.CanonicalPath);
-            if (chain is null)
-            {
-                _startupAvailable = false;
-                continue;
-            }
-
-            foreach (var ancestor in chain.Where(item => item.Kind == RouteSourceKind.Entrypoint))
-            {
-                requiredAncestors.Add(ancestor.CanonicalPath);
-                AddSource(startupPaths, ancestor.CanonicalPath, startupQueue, selected: false);
-            }
-
-            AddSource(startupPaths, source.CanonicalPath, null, selected: false);
-        }
     }
 
     private void UpdateReadingAvailability()

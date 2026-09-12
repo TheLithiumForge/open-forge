@@ -374,6 +374,12 @@ open-forge repair --automatic --dry-run
 explicit relink can select one source occurrence, expected destination, and
 target path:
 
+`LoadNow` and `KeepInMind` both load through exposed entries of already-loaded
+parents. Selecting an on-demand scope activates its applicable child loading
+rules; tagged files inside other inactive scopes stay excluded. `KeepInMind`
+adds refresh instructions while the scope remains active. The CLI resolves each
+invocation independently and does not track an agent session.
+
 ```text
 open-forge repair --relink <source-location> <expected-destination> <target-path>
 ```

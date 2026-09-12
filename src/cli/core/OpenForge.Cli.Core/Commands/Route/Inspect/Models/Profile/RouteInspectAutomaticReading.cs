@@ -39,7 +39,9 @@ internal sealed class RouteInspectAutomaticReading
         }
 
         if (kind is RouteInspectAutomaticReadingKind.ParentLoadNow
-            or RouteInspectAutomaticReadingKind.OverwriteAfterBase)
+            or RouteInspectAutomaticReadingKind.OverwriteAfterBase
+            or RouteInspectAutomaticReadingKind.EntrypointKeepInMind
+            or RouteInspectAutomaticReadingKind.RoutedFileKeepInMind)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(relatedSourceId);
         }
@@ -117,14 +119,12 @@ internal sealed class RouteInspectAutomaticReading
                 [RouteInspectAutomaticReadingEvent.ExposingParentRead],
             RouteInspectAutomaticReadingKind.EntrypointKeepInMind =>
             [
-                RouteInspectAutomaticReadingEvent.TaskStartVisible,
-                RouteInspectAutomaticReadingEvent.RouteSelected,
-                RouteInspectAutomaticReadingEvent.ScopeSelected,
-                RouteInspectAutomaticReadingEvent.AncestorRequired,
+                RouteInspectAutomaticReadingEvent.ExposingParentRead,
+                RouteInspectAutomaticReadingEvent.LaterReview,
             ],
             RouteInspectAutomaticReadingKind.RoutedFileKeepInMind =>
             [
-                RouteInspectAutomaticReadingEvent.TaskReview,
+                RouteInspectAutomaticReadingEvent.ExposingParentRead,
                 RouteInspectAutomaticReadingEvent.LaterReview,
             ],
             RouteInspectAutomaticReadingKind.OverwriteAfterBase =>

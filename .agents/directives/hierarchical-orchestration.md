@@ -21,6 +21,7 @@ open-forge:
   contracts, cross-subprogram ordering, acceptance, and all user communication.
   Do not add this layer for three or fewer tasks or when their semantic authority
   overlaps.
+- For repository implementation tasks, use a dedicated local branch and worktree, then squash-integrate the verified task into local `develop` when authorized by the user. Preserve unrelated work in the shared checkout. A small change does not waive this isolation rule.
 - Use parallel worktrees only when the user explicitly requests parallel execution or has explicitly authorized a managed parallel wave. Otherwise use direct or sequential execution.
 - Create one durable project control ledger only when work spans multiple tasks, worktrees, sessions, integration boundaries, or resumptions. Do not create project machinery for ordinary discussion or a small sequential change. Extend an existing ledger instead of creating a competing one.
 - Record execution profiles, maximum review, council, and correction budgets, and stable consumed IDs in Markdown execution capsules. Never put live execution controls or orchestration state in frontmatter. Treat these budgets as internal resource controls, not interactive spawn permissions.

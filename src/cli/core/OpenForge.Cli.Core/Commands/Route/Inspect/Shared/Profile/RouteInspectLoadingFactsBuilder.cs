@@ -53,7 +53,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
             AddSource(selectedPaths, source.CanonicalPath, null, selected: true);
         }
 
-        foreach (var path in ReadSelectedLoadNow(chain))
+        foreach (var path in ReadSelectedLoading(chain))
         {
             AddSource(selectedPaths, path, null, selected: true);
         }
@@ -77,11 +77,8 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
         }
 
         var startupPaths = new HashSet<string>(StringComparer.Ordinal);
-        var requiredAncestors = new HashSet<string>(StringComparer.Ordinal);
         var startupQueue = new Queue<string>();
         ReadLoaderStartup(startupPaths, startupQueue);
-        TraverseStartup(startupPaths, startupQueue);
-        ReadGlobalContinuity(startupPaths, startupQueue, requiredAncestors);
         TraverseStartup(startupPaths, startupQueue);
         UpdateReadingAvailability();
 
@@ -93,7 +90,6 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
             StartupPaths = startupPaths,
             SelectedPaths = selectedPaths,
             LoadNowDescendantPaths = narrowDescendants,
-            RequiredAncestorPaths = requiredAncestors,
         });
     }
 
@@ -124,7 +120,6 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
             StartupPaths = input.StartupPaths.ToHashSet(StringComparer.Ordinal),
             SelectedPaths = input.SelectedPaths.ToHashSet(StringComparer.Ordinal),
             LoadNowDescendantPaths = input.LoadNowDescendantPaths.ToHashSet(StringComparer.Ordinal),
-            RequiredAncestorPaths = input.RequiredAncestorPaths.ToHashSet(StringComparer.Ordinal),
             VisibleEntries = _visibleEntries
                 .Where(pair => pair.Value.IsAvailable)
                 .ToDictionary(pair => pair.Key, pair => pair.Value.Entries, StringComparer.Ordinal),

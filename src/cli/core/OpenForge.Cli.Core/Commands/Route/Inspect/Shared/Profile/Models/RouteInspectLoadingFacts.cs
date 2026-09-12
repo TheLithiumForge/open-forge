@@ -24,7 +24,6 @@ internal sealed class RouteInspectLoadingFacts
 
     internal IReadOnlySet<string> LoadNowDescendantPaths { get; init; } = new HashSet<string>(StringComparer.Ordinal);
 
-    internal IReadOnlySet<string> RequiredAncestorPaths { get; init; } = new HashSet<string>(StringComparer.Ordinal);
 
     internal IReadOnlyDictionary<string, IReadOnlyList<RouteInspectVisibleEntry>> VisibleEntries { get; init; }
         = new ReadOnlyDictionary<string, IReadOnlyList<RouteInspectVisibleEntry>>(
@@ -45,7 +44,6 @@ internal sealed class RouteInspectLoadingFactInputs
 
     internal IEnumerable<string> LoadNowDescendantPaths { get; init; } = [];
 
-    internal IEnumerable<string> RequiredAncestorPaths { get; init; } = [];
 }
 
 internal sealed class RouteInspectVisibleEntry

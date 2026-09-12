@@ -20,6 +20,7 @@ public sealed class RouteInspectOperationCompleteIntegrationTests
                     "Root",
                     "root/_root.md",
                     "LoadNow",
+                    "KeepInMind",
                     "Root"),
             ],
             "- Loader rules are inherited before route-local rules.");
@@ -134,9 +135,8 @@ public sealed class RouteInspectOperationCompleteIntegrationTests
             [RouteInspectAutomaticReadingEvent.ExposingParentRead],
             parentReason.Events);
         var continuityReason = automatic.Reasons[1];
-        Assert.Contains(RouteInspectAutomaticReadingEvent.TaskStartVisible, continuityReason.Events);
-        Assert.Contains(RouteInspectAutomaticReadingEvent.RouteSelected, continuityReason.Events);
-        Assert.Contains(RouteInspectAutomaticReadingEvent.ScopeSelected, continuityReason.Events);
+        Assert.Equal("loader", continuityReason.RelatedSourceId);
+        Assert.Equal([RouteInspectAutomaticReadingEvent.ExposingParentRead, RouteInspectAutomaticReadingEvent.LaterReview], continuityReason.Events);
         var later = Assert.IsType<RouteInspectLaterReading>(profile.Reading.Later.Value);
         Assert.True(later.MayBeReadAgain);
         Assert.Equal(

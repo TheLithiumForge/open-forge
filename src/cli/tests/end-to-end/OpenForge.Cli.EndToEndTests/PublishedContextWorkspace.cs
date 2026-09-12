@@ -70,11 +70,11 @@ internal sealed class PublishedContextWorkspace : IDisposable
                     "LoadNow, Core",
                     "# Startup\n\n## Entries\n\n"
                     + "<!-- open-forge:generated-index:start -->\n"
-                    + "- [Topic](topic.md) - #LoadNow #Core\n"
+                    + "- [Topic](topic.md) - #KeepInMind #Core\n"
                     + "<!-- open-forge:generated-index:end -->\n"));
             workspace.WriteText(
                 ".agents/startup/topic.md",
-                Document("Topic", "LoadNow, Core", "# Topic\n\nStartup topic.\n"));
+                Document("Topic", "KeepInMind, Core", "# Topic\n\nStartup topic.\n"));
             workspace.WriteText(
                 ".agents/projects/_projects.md",
                 Document(
@@ -82,7 +82,7 @@ internal sealed class PublishedContextWorkspace : IDisposable
                     "Project",
                     "# Projects\n\n## Entries\n\n"
                     + "<!-- open-forge:generated-index:start -->\n"
-                    + "- [Guide](guide.md) - #Guide\n"
+                    + "- [Guide](guide.md) - #KeepInMind #Guide\n"
                     + "- [Linked](linked.md) - #Guide\n"
                     + "- [Broken](broken.md) - #Guide\n"
                     + "<!-- open-forge:generated-index:end -->\n"));
@@ -90,7 +90,7 @@ internal sealed class PublishedContextWorkspace : IDisposable
                 ".agents/projects/guide.md",
                 Document(
                     "Guide",
-                    "Guide",
+                    "KeepInMind, Guide",
                     "# Guide\n\n## Rules\n\nBase rule.\n\n"
                     + "[Linked](linked.md#details) [Outside](../../README.md) "
                     + "[External](https://example.invalid/context).\n"));

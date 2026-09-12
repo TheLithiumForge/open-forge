@@ -266,11 +266,9 @@ The command explains the concrete trigger in ordinary language:
 - A source with `#LoadNow` is read when its exposing parent is read.
 - A source without an automatic trigger is read when its route is explicitly
   selected.
-- A routed `#KeepInMind` file that is not an entrypoint is read at the defined
-  task and later review points even when another route is active.
-- A `#KeepInMind` entrypoint is read when it is visible from task-start routing,
-  when work selects that route or scope, or when it is needed as an ancestor of
-  active content.
+- A `#KeepInMind` entrypoint or ordinary file is read when its exposing parent
+  is read, then refreshed at applicable review points while its scope remains
+  active. Neither loading tag activates an otherwise unselected ancestor or scope.
 - An overwrite is read immediately after its base.
 
 The human renderer names the actual exposing parent or event. It does not use
@@ -293,7 +291,10 @@ Read when this route is selected: yes
 Structured output keeps typed reason codes for automation, including on-demand,
 parent-triggered `#LoadNow`, entrypoint `#KeepInMind`, routed-file
 `#KeepInMind`, and overwrite inheritance. Human output always explains the
-corresponding event in ordinary words.
+corresponding event in ordinary words. For both `KeepInMind` kinds,
+`relatedSourceId` identifies the exposing parent and `events` contains
+`exposing-parent-read` followed by `later-review`. Later review applies only
+while that scope remains active.
 
 Detached entrypoints have no Loader-rooted automatic trigger. Their local
 `#LoadNow` descendants may still be measured as a local topology fact. Known

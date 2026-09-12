@@ -60,11 +60,10 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
                 };
             }
 
-            if (parent.Kind != RouteSourceKind.Loader
-                && ((loadNow && !HasTag(child, "LoadNow"))
-                    || (keepInMind && !HasTag(child, "KeepInMind"))))
+            if (parent.Kind != RouteSourceKind.Loader)
             {
-                continue;
+                loadNow &= HasTag(child, "LoadNow");
+                keepInMind &= HasTag(child, "KeepInMind");
             }
 
             var current = entries.GetValueOrDefault(targetPath);
@@ -96,12 +95,6 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
     private bool IsEntrypoint(string path)
     {
         return _graph.ProjectionSet.FindByPath(path)?.Kind == RouteSourceKind.Entrypoint;
-    }
-
-    private bool IsRouted(RouteSource source)
-    {
-        return _graph.RouteFacts.Topology.FindByPath(source.CanonicalPath) is not null
-            && _graph.RouteFacts.Topology.ReadAbsoluteDepth(source.CanonicalPath) is not null;
     }
 
     private void AddSource(

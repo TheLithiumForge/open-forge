@@ -131,9 +131,9 @@ public sealed class RouteInspectProfileBuilderReadingTests
         Assert.Equal(0, selectionAddition.PhysicalFileCount);
     }
 
-    [Fact(DisplayName = "Route inspect globally routed non-entrypoint KeepInMind retains its ancestor closure and every later occasion")]
+    [Fact(DisplayName = "Route inspect inactive continuity requires selection and retains scoped refresh occasions")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
-    public void GlobalRoutedFileKeepInMindRetainsAncestorsAndLaterOccasions()
+    public void InactiveContinuityRequiresScopeSelection()
     {
         var loader = RouteInspectSourceTestData.Source(
             ".agents/loader.md",
@@ -170,14 +170,14 @@ public sealed class RouteInspectProfileBuilderReadingTests
 
         var profile = Build(graph, continuity.CanonicalPath);
 
-        Assert.True(profile.Reading.TaskStart.Value);
+        Assert.False(profile.Reading.TaskStart.Value);
         var automaticReadings = Assert.IsType<RouteInspectAutomaticReadings>(profile.Reading.Automatic.Value);
         var automatic = Assert.Single(automaticReadings.Reasons);
         Assert.Equal(RouteInspectAutomaticReadingKind.RoutedFileKeepInMind, automatic.Kind);
-        Assert.Null(automatic.RelatedSourceId);
+        Assert.Equal("root/other", automatic.RelatedSourceId);
         Assert.Equal(
             [
-                RouteInspectAutomaticReadingEvent.TaskReview,
+                RouteInspectAutomaticReadingEvent.ExposingParentRead,
                 RouteInspectAutomaticReadingEvent.LaterReview,
             ],
             automatic.Events);
@@ -195,8 +195,8 @@ public sealed class RouteInspectProfileBuilderReadingTests
             ],
             later.Occasions);
         Assert.Equal(3, selectedClosure.PhysicalFileCount);
-        Assert.Equal(3, taskStartOverlap.PhysicalFileCount);
-        Assert.Equal(0, selectionAddition.PhysicalFileCount);
+        Assert.Equal(1, taskStartOverlap.PhysicalFileCount);
+        Assert.Equal(2, selectionAddition.PhysicalFileCount);
     }
 
     [Fact(DisplayName = "Route inspect selected KeepInMind entrypoints retain task-start visibility and route selection reasons")]
@@ -235,11 +235,11 @@ public sealed class RouteInspectProfileBuilderReadingTests
         var automaticReadings = Assert.IsType<RouteInspectAutomaticReadings>(profile.Reading.Automatic.Value);
         var automatic = Assert.Single(automaticReadings.Reasons);
         Assert.Equal(RouteInspectAutomaticReadingKind.EntrypointKeepInMind, automatic.Kind);
-        Assert.Null(automatic.RelatedSourceId);
+        Assert.Equal("root", automatic.RelatedSourceId);
         Assert.Equal(
             [
-                RouteInspectAutomaticReadingEvent.TaskStartVisible,
-                RouteInspectAutomaticReadingEvent.RouteSelected,
+                RouteInspectAutomaticReadingEvent.ExposingParentRead,
+                RouteInspectAutomaticReadingEvent.LaterReview,
             ],
             automatic.Events);
         var later = Assert.IsType<RouteInspectLaterReading>(profile.Reading.Later.Value);
@@ -295,7 +295,7 @@ public sealed class RouteInspectProfileBuilderReadingTests
         var selectedAutomatic = Assert.IsType<RouteInspectAutomaticReadings>(selectedProfile.Reading.Automatic.Value);
         var selectedReason = Assert.Single(selectedAutomatic.Reasons);
         Assert.Equal(RouteInspectAutomaticReadingKind.EntrypointKeepInMind, selectedReason.Kind);
-        Assert.Equal([RouteInspectAutomaticReadingEvent.RouteSelected], selectedReason.Events);
+        Assert.Equal([RouteInspectAutomaticReadingEvent.ExposingParentRead, RouteInspectAutomaticReadingEvent.LaterReview], selectedReason.Events);
         Assert.False(selectedProfile.Reading.TaskStart.Value);
         var leafSelectedClosure = Assert.IsType<RouteInspectMeasurement>(leafProfile.Measurements.SelectedClosure.Value);
         var leafSelectionAddition = Assert.IsType<RouteInspectMeasurement>(leafProfile.Measurements.SelectionAddition.Value);

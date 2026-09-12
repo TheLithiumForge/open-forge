@@ -20,6 +20,8 @@ public sealed class PublishedContextProcessTests
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         Assert.Contains("Result: complete", result.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Path: .agents/projects/", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("#KeepInMind from .agents/startup/_startup.md", result.StandardOutput, StringComparison.Ordinal);
         AssertOrdered(
             result.StandardOutput,
             "Path: AGENTS.md",

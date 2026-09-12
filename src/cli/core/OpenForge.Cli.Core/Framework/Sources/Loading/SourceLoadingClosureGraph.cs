@@ -46,32 +46,6 @@ internal sealed class SourceLoadingClosureGraph
         return direct ? target : null;
     }
 
-    internal IReadOnlyList<SourceLoadingClosureSource>? ReadRouteChain(
-        SourceLoadingClosureSource source)
-    {
-        var chain = new List<SourceLoadingClosureSource>();
-        var current = source;
-        var seen = new HashSet<string>(StringComparer.Ordinal);
-        while (seen.Add(current.Path))
-        {
-            chain.Add(current);
-            if (current.ParentPath is null)
-            {
-                chain.Reverse();
-                return _loaderRootPaths.Contains(current.Path, StringComparer.Ordinal)
-                    ? chain
-                    : null;
-            }
-
-            if (!_sourcesByPath.TryGetValue(current.ParentPath, out current))
-            {
-                return null;
-            }
-        }
-
-        return null;
-    }
-
     private static void ValidateSource(SourceLoadingClosureSource source)
     {
         _ = source.Form switch

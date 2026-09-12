@@ -183,9 +183,9 @@ The classifier evaluates the current Framework loading rules against the graph's
 exposing relationships and tags. It distinguishes parent-triggered
 `#LoadNow`, explicit selection for an on-demand source, routed-file
 `#KeepInMind`, entrypoint `#KeepInMind`, and overwrite inheritance. For an
-entrypoint `#KeepInMind` case it evaluates task-start visibility, selected route
-or scope, and ancestor need; for a routed `#KeepInMind` file it retains the
-defined task and later review reach. For `#LoadNow`, it retains the actual
+entrypoint or ordinary `#KeepInMind` file it retains the exposing parent and
+later review events while that scope remains active. Neither tag activates an
+otherwise unselected ancestor or scope. For `#LoadNow`, it retains the actual
 exposing parent. For an overwrite it retains the immediate-after-base
 relationship.
 
@@ -256,8 +256,8 @@ relationships after that entrypoint is read and forms the unique descendant set.
 It removes the inspected source and ancestor chain from this measure and places
 each valid overwrite immediately after its base. It does not include ordinary
 on-demand descendants merely because they are structural descendants. A
-routed-file `#KeepInMind` leaf recovered globally is not silently included in
-this narrow `#LoadNow` descendant measure. For an ordinary routed leaf, the
+source exposed only through `#KeepInMind` is not included in this narrow
+`#LoadNow` descendant measure. For an ordinary routed leaf, the
 measure is not applicable, not zero.
 
 An entrypoint with no visible `#LoadNow` descendants has a measured zero. A
@@ -459,15 +459,15 @@ Implementation evidence must cover:
   require rerunning with one listed exact path.
 - Task-start membership independent of the inspection operand.
 - On-demand, parent-triggered `#LoadNow`, visible and selected `#KeepInMind`
-  entrypoints, globally recovered routed `#KeepInMind` files, and overwrite
+  entrypoints, parent-exposed routed `#KeepInMind` files, and overwrite
   inheritance.
 - Plain human explanations for task-start, parent-triggered, selected, and
   later reads, including another transition that may affect standing follow-up
   work, without `target-sensitive` or `continuity boundary` labels.
 - Own-source, selected-closure, task-start-overlap, additions-beyond-startup,
   and `#LoadNow` descendant set definitions and deduplication.
-- Proof that the `#LoadNow` descendant measure excludes globally recovered
-  `#KeepInMind` leaves and is labelled narrowly enough not to hide that boundary.
+- Proof that the `#LoadNow` descendant measure excludes descendants reached only through
+  `#KeepInMind` and is labelled narrowly enough not to hide that boundary.
 - Physical file, character, UTF-8 byte, and estimated-token measurements,
   including zero, unavailable, not-applicable, and overwrite-layer cases.
 - Proof that estimated tokens are recomputed from aggregate characters and do

@@ -48,84 +48,7 @@ internal sealed class SourceLoadingClosureResolver
             var queue = new Queue<Traversal>();
             AddVisible(loader, parentIsContinuity: false, addSelections: true, queue);
             Traverse(queue);
-            AddGlobalContinuity();
             return Result();
-        }
-
-        private void AddGlobalContinuity()
-        {
-            foreach (var source in _graph.Sources
-                         .Where(source => !source.IsEntrypoint && !source.IsLoader)
-                         .OrderBy(source => source.Path, StringComparer.Ordinal))
-            {
-                if (source.Metadata.State != SourceAuthoredMetadataState.Complete)
-                {
-                    if (source.RouteState != SourceRouteState.Unrouted)
-                    {
-                        AddIssue(
-                            SourceLoadingClosureIssueKind.LoadingMetadataUnavailable,
-                            source.Path,
-                            "Global continuity membership is unavailable because source loading metadata is unavailable.");
-                    }
-
-                    continue;
-                }
-
-                if (!source.Metadata.Tags.Contains("KeepInMind", StringComparer.Ordinal))
-                {
-                    continue;
-                }
-
-                if (source.RouteState != SourceRouteState.Routed)
-                {
-                    AddIssue(
-                        SourceLoadingClosureIssueKind.ContinuityRouteUnavailable,
-                        source.Path,
-                        "The global continuity source route is unavailable or ambiguous.");
-                    continue;
-                }
-
-                AddGlobalContinuity(source);
-            }
-        }
-
-        private void AddGlobalContinuity(SourceLoadingClosureSource source)
-        {
-            var chain = _graph.ReadRouteChain(source);
-            if (chain is null)
-            {
-                AddIssue(
-                    SourceLoadingClosureIssueKind.ContinuityChainUnavailable,
-                    source.Path,
-                    "The continuity source route chain is unavailable.");
-                return;
-            }
-
-            var queue = new Queue<Traversal>();
-            foreach (var ancestor in chain.Take(chain.Count - 1)
-                         .Where(item => item.IsEntrypoint))
-            {
-                var addedToSelection = _selection.Add(
-                    ancestor.Path,
-                    new SourceLoadingClosureReason(
-                        SourceLoadingClosureReasonKind.AncestorRequired,
-                        source.Path));
-                if (AddContinuity(ancestor.Path))
-                {
-                    queue.Enqueue(new Traversal(
-                        ancestor,
-                        IsContinuity: true,
-                        AddSelections: addedToSelection));
-                }
-            }
-
-            _selection.Add(
-                source.Path,
-                new SourceLoadingClosureReason(
-                    SourceLoadingClosureReasonKind.KeepInMind,
-                    sourcePath: null));
-            AddContinuity(source.Path);
-            Traverse(queue);
         }
 
         private void Traverse(Queue<Traversal> queue)
@@ -166,17 +89,24 @@ internal sealed class SourceLoadingClosureResolver
             {
                 var visible = ReadVisible(parent, generated);
                 if (visible is null
-                    || !visible.LoadNow && !(visible.KeepInMind && visible.Target.IsEntrypoint))
+                    || !visible.LoadNow && !visible.KeepInMind)
                 {
                     continue;
                 }
 
-                var reasonKind = visible.LoadNow
-                    ? SourceLoadingClosureReasonKind.LoadNow
-                    : SourceLoadingClosureReasonKind.KeepInMind;
-                var addedToSelection = addSelections && _selection.Add(
-                    visible.Target.Path,
-                    new SourceLoadingClosureReason(reasonKind, parent.Path));
+                var addedToSelection = false;
+                if (addSelections && visible.LoadNow)
+                {
+                    addedToSelection = _selection.Add(visible.Target.Path,
+                        new SourceLoadingClosureReason(SourceLoadingClosureReasonKind.LoadNow, parent.Path));
+                }
+
+                if (addSelections && visible.KeepInMind)
+                {
+                    addedToSelection |= _selection.Add(visible.Target.Path,
+                        new SourceLoadingClosureReason(SourceLoadingClosureReasonKind.KeepInMind, parent.Path));
+                }
+
                 var isContinuity = parentIsContinuity || visible.KeepInMind;
                 var addedToContinuity = isContinuity && AddContinuity(visible.Target.Path);
                 if (visible.Target.IsEntrypoint

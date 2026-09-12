@@ -11,8 +11,8 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Status;
 
 public sealed class StatusRouteContextClosureTests
 {
-    [Fact(DisplayName = "Status route closure excludes unrouted global continuity"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
-    public void UnroutedGlobalContinuityIsExcludedAndIncomplete()
+    [Fact(DisplayName = "Status route closure excludes inactive continuity without making coverage incomplete"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
+    public void InactiveContinuityIsExcludedAndComplete()
     {
         var loader = Source(
             ".agents/loader.md",
@@ -38,21 +38,21 @@ public sealed class StatusRouteContextClosureTests
 
         Assert.DoesNotContain(closure.Startup, source => source.Path == detached.Path);
         Assert.DoesNotContain(closure.Continuity, source => source.Path == detached.Path);
-        Assert.False(closure.IsComplete);
+        Assert.True(closure.IsComplete);
     }
 
-    [Fact(DisplayName = "Status route closure keeps each continuity source with its visible closure"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
-    public void ContinuitySourceVisibleClosurePrecedesNextSource()
+    [Fact(DisplayName = "Status route closure includes exposed continuity and excludes inactive sibling scopes"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
+    public void ExposedContinuityDoesNotActivateSiblingScope()
     {
         var loader = Source(
             ".agents/loader.md",
             SourceDocumentForm.Loader,
-            Entries(),
+            Entries(Entry("alpha/_alpha.md", "KeepInMind")),
             parentPath: null);
         var alphaRoot = Source(
             ".agents/alpha/_alpha.md",
             SourceDocumentForm.CanonicalEntrypoint,
-            Entries(Entry("child.md", "LoadNow")),
+            Entries(Entry("continuity.md", "KeepInMind"), Entry("child.md", "LoadNow")),
             parentPath: null);
         var alphaContinuity = Source(
             ".agents/alpha/continuity.md",
@@ -69,7 +69,7 @@ public sealed class StatusRouteContextClosureTests
         var betaRoot = Source(
             ".agents/beta/_beta.md",
             SourceDocumentForm.CanonicalEntrypoint,
-            Entries(Entry("child.md", "LoadNow")),
+            Entries(Entry("continuity.md", "KeepInMind"), Entry("child.md", "LoadNow")),
             parentPath: null);
         var betaContinuity = Source(
             ".agents/beta/continuity.md",
@@ -93,11 +93,10 @@ public sealed class StatusRouteContextClosureTests
                 alphaRoot.Path,
                 alphaContinuity.Path,
                 alphaChild.Path,
-                betaRoot.Path,
-                betaContinuity.Path,
-                betaChild.Path,
             ],
             closure.Continuity.Select(source => source.Path));
+        Assert.True(closure.IsComplete);
+        Assert.DoesNotContain(closure.Startup, source => source.Path.StartsWith(".agents/beta/", StringComparison.Ordinal));
     }
 
     [Fact(DisplayName = "Status route closure keeps traversing after a duplicate entrypoint"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]

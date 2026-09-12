@@ -46,12 +46,13 @@ internal static class RouteInspectHumanAutomaticReading
     {
         return readingEvent switch
         {
+            RouteInspectAutomaticReadingEvent.ExposingParentRead => "its exposing parent is read",
             RouteInspectAutomaticReadingEvent.RouteSelected => "its route is selected",
             RouteInspectAutomaticReadingEvent.TaskStartVisible => "it is visible from task-start routing",
             RouteInspectAutomaticReadingEvent.ScopeSelected => "its scope is selected",
             RouteInspectAutomaticReadingEvent.AncestorRequired => "it is needed as an ancestor",
-            RouteInspectAutomaticReadingEvent.TaskReview => "a task review point is reached",
-            RouteInspectAutomaticReadingEvent.LaterReview => "a later review point is reached",
+            RouteInspectAutomaticReadingEvent.TaskReview => "a task review point is reached while its scope is active",
+            RouteInspectAutomaticReadingEvent.LaterReview => "a later review point is reached while its scope is active",
             _ => throw new ArgumentOutOfRangeException(
                 nameof(readingEvent),
                 readingEvent,

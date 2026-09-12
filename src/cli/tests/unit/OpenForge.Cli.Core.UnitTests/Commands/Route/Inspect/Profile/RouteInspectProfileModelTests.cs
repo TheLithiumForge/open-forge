@@ -13,8 +13,8 @@ public sealed class RouteInspectProfileModelTests
             Reading(RouteInspectAutomaticReadingKind.ParentLoadNow, "parent", RouteInspectAutomaticReadingEvent.ExposingParentRead),
             Reading(
                 RouteInspectAutomaticReadingKind.EntrypointKeepInMind,
-                null,
-                RouteInspectAutomaticReadingEvent.TaskStartVisible),
+                "parent",
+                RouteInspectAutomaticReadingEvent.ExposingParentRead),
             Reading(RouteInspectAutomaticReadingKind.OverwriteAfterBase, "base", RouteInspectAutomaticReadingEvent.BaseRead),
         ]);
 
@@ -33,8 +33,8 @@ public sealed class RouteInspectProfileModelTests
             Reading(RouteInspectAutomaticReadingKind.ParentLoadNow, "parent", RouteInspectAutomaticReadingEvent.ExposingParentRead),
             Reading(
                 RouteInspectAutomaticReadingKind.RoutedFileKeepInMind,
-                null,
-                RouteInspectAutomaticReadingEvent.TaskReview,
+                "parent",
+                RouteInspectAutomaticReadingEvent.ExposingParentRead,
                 RouteInspectAutomaticReadingEvent.LaterReview),
             Reading(RouteInspectAutomaticReadingKind.OverwriteAfterBase, "base", RouteInspectAutomaticReadingEvent.BaseRead),
         ]);
@@ -57,8 +57,8 @@ public sealed class RouteInspectProfileModelTests
             Reading(RouteInspectAutomaticReadingKind.ParentLoadNow, "root", RouteInspectAutomaticReadingEvent.ExposingParentRead),
             Reading(
                 RouteInspectAutomaticReadingKind.RoutedFileKeepInMind,
-                null,
-                RouteInspectAutomaticReadingEvent.TaskReview,
+                "parent",
+                RouteInspectAutomaticReadingEvent.ExposingParentRead,
                 RouteInspectAutomaticReadingEvent.LaterReview),
         ]);
 

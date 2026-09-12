@@ -200,13 +200,14 @@ closure that `open-forge context` returns without an explicit source. It follows
 the current target-sensitive Framework loading model rather than the frozen MVP's
 broad traversal. The closure is resolved in this order:
 
-1. Establish the canonical workspace entry and Loader.
-2. Follow visible #LoadNow entries in generated order.
-3. Resolve every applicable #KeepInMind entrypoint and routed #KeepInMind file,
-   including parent entrypoints not already selected when needed to establish the
-   route.
-4. Follow the visible #LoadNow closure exposed by those continuity sources.
-5. Place each valid overwrite companion immediately after its base.
+1. Read the canonical workspace entry and Loader.
+2. Follow visible #LoadNow and #KeepInMind entries through loaded parents in
+   generated order. For a loaded entrypoint, apply its child loading rules.
+3. Place each valid overwrite companion immediately after its base.
+
+Both tags use the same parent and scope boundaries. Neither activates an
+otherwise unselected ancestor or scope. Inactive continuity metadata does not
+make this closure incomplete solely because it exists elsewhere in the workspace.
 
 The [Framework loading contract](../../../framework/routing/loading.md)
 defines the loading and continuity relationships, and the [Context Behavior Contract](../context/behavior.md)
@@ -215,8 +216,8 @@ measurement; it does not render context content or import Context's projection,
 operand, or link-expansion surface.
 
 Continuity accounting selects the subset of current startup context that may load
-again at a defined #KeepInMind boundary. Required parents and #LoadNow files are
-included in that subset. The subset is measured separately and is never added to
+again at a defined #KeepInMind boundary. Tagged sources and their applicable visible child closure are
+included in that subset. Untagged ancestors are not added solely for refresh. The subset is measured separately and is never added to
 the startup total. A continuity source is not treated as loading on every model
 request, prompt, message, or tool call.
 

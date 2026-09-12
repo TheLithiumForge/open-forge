@@ -18,24 +18,63 @@ public sealed class ContextOperationTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.True(result.Selection.StartupIncluded);
         Assert.False(result.Selection.AdditionsOnly);
-        Assert.Equal(6, result.Selection.SourceCount);
+        Assert.Equal(4, result.Selection.SourceCount);
         Assert.Equal(
         [
             "AGENTS.md",
             ".agents/loader.md",
             ".agents/docs/_docs.md",
             ".agents/docs/topic.md",
-            ".agents/state/_state.md",
-            ".agents/state/checkpoint.md",
         ], result.Sources.Select(source => source.Path));
-        Assert.Equal(
-            [ContextInclusionReasonKind.AncestorRequired],
-            result.Sources[4].InclusionReasons.Select(reason => reason.Kind));
-        Assert.Equal(
-            [ContextInclusionReasonKind.KeepInMind],
-            result.Sources[5].InclusionReasons.Select(reason => reason.Kind));
         Assert.Empty(result.Findings);
         Assert.Null(result.Next);
+    }
+
+    [Theory(DisplayName = "Context reads ordinary continuity only through loaded or selected parents"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    [InlineData(false), InlineData(true)]
+    public async Task ContinuityUsesParentLoadingBoundary(bool loadParentAtStartup)
+    {
+        using var workspace = ContextOperationWorkspace.Create();
+        if (loadParentAtStartup)
+        {
+            workspace.ReplaceText(".agents/loader.md", workspace.ReadText(".agents/loader.md")
+                .Replace("#Memory", "#KeepInMind #Memory", StringComparison.Ordinal));
+        }
+
+        workspace.WriteText(".agents/state/checkpoint.overwrite.md", "# Continuity overwrite\n");
+        var result = await ExecuteAsync(workspace, loadParentAtStartup ? [] : ["state"], Content("metadata"), additionsOnly: !loadParentAtStartup);
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        var checkpoint = Assert.Single(result.Sources, source => source.Id == "state/checkpoint");
+        var reason = Assert.Single(checkpoint.InclusionReasons);
+        Assert.Equal(ContextInclusionReasonKind.KeepInMind, reason.Kind);
+        Assert.Equal(".agents/state/_state.md", reason.Source?.Path);
+        Assert.Equal([ContextSourceLayerKind.Base, ContextSourceLayerKind.Overwrite], checkpoint.Layers.Select(layer => layer.Kind));
+        Assert.DoesNotContain(result.Sources, source => source.Path.StartsWith(".agents/projects/", StringComparison.Ordinal));
+        Assert.Equal([".agents/state/_state.md", ".agents/state/checkpoint.md"],
+            result.Sources.Where(source => source.Path.StartsWith(".agents/state/", StringComparison.Ordinal)).Select(source => source.Path));
+    }
+
+    [Theory(DisplayName = "Context preserves both loading reasons and emits each exposed file once"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    [InlineData(false), InlineData(true)]
+    public async Task DualLoadingTagsPreserveReasonsWithoutDuplicateContent(bool selectScope)
+    {
+        using var workspace = ContextOperationWorkspace.Create();
+        const string scope = ".agents/state/_state.md";
+        const string record = ".agents/state/checkpoint.md";
+        workspace.ReplaceText(scope, workspace.ReadText(scope).Replace("#KeepInMind", "#LoadNow #KeepInMind", StringComparison.Ordinal));
+        workspace.ReplaceText(record, workspace.ReadText(record).Replace("KeepInMind, Memory", "LoadNow, KeepInMind, Memory", StringComparison.Ordinal));
+        if (!selectScope)
+        {
+            workspace.ReplaceText(".agents/loader.md", workspace.ReadText(".agents/loader.md")
+                .Replace("#Memory", "#LoadNow #Memory", StringComparison.Ordinal));
+        }
+
+        var result = await ExecuteAsync(workspace, selectScope ? ["state"] : [], Content("metadata"));
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        var checkpoint = Assert.Single(result.Sources, source => source.Path == record);
+        Assert.Equal([ContextInclusionReasonKind.LoadNow, ContextInclusionReasonKind.KeepInMind], checkpoint.InclusionReasons.Select(reason => reason.Kind));
+        Assert.All(checkpoint.InclusionReasons, reason => Assert.Equal(scope, reason.Source?.Path));
     }
 
     [Fact(DisplayName = "Context additions-only subtracts startup while retaining explicit closure order and overwrite layering"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
