@@ -87,6 +87,7 @@ define execution state.
 - [Remove redundant option-delimiter restrictions and use native parser value forms consistently](cli-native-delimiters.md) - #Memory #Working #Contextual #CLI #Task #Parsing #Refactoring
 - [Explain the tag delimiter defect, inventory manual parsing across CLI commands, and propose actionable Doctor diagnostics](cli-parsing-doctor-audit.md) - #Memory #Working #Contextual #CLI #Task #Audit #Parsing #Doctor #Dogfood
 - [Review all CLI presentation surfaces and sequence verified fixes for missing detail, duplication, and unclear writing](cli-presentation-audit.md) - #Memory #Working #Contextual #CLI #Task #Presentation #Writing #Dogfood
+- [Analyze readable command output, category grouping, severity filtering, implementation boundaries, and sequential evidence](cli-presentation-design.md) - #Memory #Working #Contextual #CLI #Task #Presentation #Design
 - [Remediate the accepted first-pass CLI architecture, C# design, authority, and test-evidence findings after Route Create and before Route Update](cli-quality-remediation.md) - #Memory #Working #CLI #Task #Audit #Architecture #Refactoring #Testing #Review #Contextual
 - [Record the bounded C# beta changes, exact qualification, deferred findings and local integration](csharp-beta-closeout.md) - #Memory #Working #Contextual #CLI #CSharp #Refactoring #Beta #Closeout
 - [Accepted scope, ownership and evidence boundaries for the comprehensive Task 27 continuation](csharp-comprehensive-preflight.md) - #Memory #Working #Contextual #CLI #CSharp #Refactoring #Preflight

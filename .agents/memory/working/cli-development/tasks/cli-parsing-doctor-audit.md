@@ -10,7 +10,7 @@ open-forge:
 
 The delimiter, catalogue and Doctor correctness issues below were fixed in the
 completed stages recorded in the sequential plan. Measurements describe their
-named earlier baselines. P2–P6 remain reported parsing follow-ups. The temporary
+named earlier baselines. P2–P6 are backlog by explicit user direction; the follow-up plan owns their queue. The temporary
 parser probe and task artifact directories have been removed; no experimental
 program was committed. Presentation analysis now preserves diagnostic kinds and
 JSON, concentrating on understandable output and presentation-only grouping.

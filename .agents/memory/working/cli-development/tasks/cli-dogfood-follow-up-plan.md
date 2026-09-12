@@ -18,18 +18,21 @@ qualified 29de40a0 native source, copied into global npm packages. Latest full g
 zero failures/skips. Those are prior qualification results, not a new test run.
 
 The parsing audit covers all commands; only its native-delimiter fix is complete.
-Further YAML/Markdown/parser simplifications are reported follow-ups, not work
-silently implemented or prerequisites for clearer rendering. The full 28-command
+Further YAML/Markdown/parser simplifications are backlog, not work silently
+implemented or prerequisites for clearer rendering. The full 28-command
 presentation surface audit is done; broad renderer changes and deduplication are
 not implemented. Six mutation-command comparisons expose ignored view selection
 and missing Library affected-path details.
 
-Next: analyze and freeze a consistent human/AI presentation shape with concrete
-representative before/after examples and snapshot boundaries. Preserve diagnostic
-kinds, JSON, typed findings, statuses and operation capabilities. Detailed grouping
-can be discussed later; do not treat diagnostic retirement as a required decision.
-Then implement the bounded command families in the presentation audit. Consolidate
-reusable CLI UX/development guidance and CLI/C# Directives at the very end.
+The [presentation design analysis](cli-presentation-design.md) is complete.
+Recommend Doctor category/subject/occurrence grouping over existing typed results,
+with unchanged diagnostic kinds, JSON and status. A Doctor-only severity filter
+is proposed separately; its JSON combination rule and typed presentation transport
+need design closure before implementation. No renderer or flag is changed yet.
+Remaining parsing simplifications P2–P6 are explicitly backlog, not prerequisites.
+Next: freeze Doctor/Status output examples, snapshots and affected contracts, then
+implement and qualify the first presentation set. Continue by bounded command
+family; consolidate reusable CLI UX/development Guidance and CLI/C# Directives last.
 
 Cleanup completed: the parser probe was outside the repository and has no matching
 committed project/path history. Its source/project and temporary compiled output,
@@ -70,17 +73,35 @@ pass (3,232 Unit, 1,745 Integration and 117 public cases per applicable mode).
 D1 was squash-integrated at `ef7bdb3b`; the installed CLI is its qualified build.
 
 The [presentation audit](cli-presentation-audit.md) records proposals,
-not implemented behavior. In particular, retiring seven redundant diagnostic
-kinds, changing default visibility, adding flags or changing JSON representation
-requires explicit user review before implementation. Preserve candidate facts,
+not implemented behavior. Diagnostic-kind retirement is withdrawn. Changing
+default visibility, adding flags or changing JSON representation requires
+explicit user review and an aligned public contract before implementation. Preserve candidate facts,
 counts, exact edit coordinates and real errors. A clearer human presentation
 must not silently remove useful information.
 
 D2 is complete. The [generated-navigation capsule](cli-generated-navigation-alignment.md)
 records source `29de40a0`, all six qualified suites, 24 direct native checks and
 the local integration receipt. The installed CLI is this candidate. Doctor
-presentation is next; diagnostic-kind retirement and default filtering still
-await the user’s explicit answers.
+presentation is next. Preserve diagnostic kinds and existing default visibility;
+the new severity-filter proposal is separate from renderer-only work.
+
+## Parsing Backlog — Accepted Deferral 2026-09-12
+
+The user explicitly moves the remaining parsing simplifications to backlog.
+They do not block presentation work. The [parsing audit](cli-parsing-doctor-audit.md)
+retains exact source owners, reasons and evidence required before each change.
+
+| Item | Deferred work | Boundary to resolve when selected |
+| --- | --- | --- |
+| P2 | References attached-token fallback | Prove parser-owned typed tokens preserve ordered include/exclude selection. |
+| P3 | Retain YAML event facts; simplify Skill metadata recovery | Preserve source spans, duplicate/alias semantics and byte-preserving edits; resolve differing Find alias policy explicitly. |
+| P4 | Route Inspect Markdown facts and compatible generated-entry recognizers | Keep canonical sentinel/heading rules, opaque sections and intentionally distinct generated-region policies. |
+| P5 | Evaluate library frontmatter support | Preserve incomplete-input behavior and exact leading-boundary spans; no automatic replacement. |
+| P6 | Library invalid-result operand extraction | Use typed argument facts where applicable; no demonstrated public misidentification yet. |
+
+P1 native option delimiters is complete. No deferred parser work is implemented
+in the presentation analysis. Human grouping also leaves repeated JSON payload
+size as a separate machine-output design candidate; no schema change is implied.
 
 ## Sequential Steps
 
@@ -194,8 +215,9 @@ claim that the later accepted changes remain unauthorized.
 
 Frozen sequence: automatic embedded catalogue and its parity evidence; native
 option delimiters; Doctor correctness; presentation review and bounded command
-sets; Doctor human/JSON deduplication. Freeze each stage's baseline, intended
-behavior delta, tests and applicable contracts before editing production.
+sets, including human deduplication. JSON compaction is separate backlog. Freeze
+each stage's baseline, intended behavior delta, tests and applicable contracts
+before editing production.
 Squash verified stages into local `develop` while preserving unrelated changes.
 
 - Done: Task 27's [native-delimiter stage](cli-native-delimiters.md), phase 3/3,

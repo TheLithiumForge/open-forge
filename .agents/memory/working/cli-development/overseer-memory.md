@@ -18,18 +18,21 @@ qualified 29de40a0 native source, copied into global npm packages. Latest full g
 zero failures/skips. Those are prior qualification results, not a new test run.
 
 The parsing audit covers all commands; only its native-delimiter fix is complete.
-Further YAML/Markdown/parser simplifications are reported follow-ups, not work
-silently implemented or prerequisites for clearer rendering. The full 28-command
+Further YAML/Markdown/parser simplifications are backlog, not work silently
+implemented or prerequisites for clearer rendering. The full 28-command
 presentation surface audit is done; broad renderer changes and deduplication are
 not implemented. Six mutation-command comparisons expose ignored view selection
 and missing Library affected-path details.
 
-Next: analyze and freeze a consistent human/AI presentation shape with concrete
-representative before/after examples and snapshot boundaries. Preserve diagnostic
-kinds, JSON, typed findings, statuses and operation capabilities. Detailed grouping
-can be discussed later; do not treat diagnostic retirement as a required decision.
-Then implement the bounded command families in the presentation audit. Consolidate
-reusable CLI UX/development guidance and CLI/C# Directives at the very end.
+The [presentation design analysis](tasks/cli-presentation-design.md) is complete.
+Recommend Doctor category/subject/occurrence grouping over existing typed results,
+with unchanged diagnostic kinds, JSON and status. A Doctor-only severity filter
+is proposed separately; its JSON combination rule and typed presentation transport
+need design closure before implementation. No renderer or flag is changed yet.
+Remaining parsing simplifications P2–P6 are explicitly backlog, not prerequisites.
+Next: freeze Doctor/Status output examples, snapshots and affected contracts, then
+implement and qualify the first presentation set. Continue by bounded command
+family; consolidate reusable CLI UX/development Guidance and CLI/C# Directives last.
 
 Cleanup completed: the parser probe was outside the repository and has no matching
 committed project/path history. Its source/project and temporary compiled output,
