@@ -182,3 +182,13 @@ Gate 5 executable proof must cover:
 - [Context Behavior Contract](../../context/behavior.md)
 - [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)
+
+## View Availability
+
+Each output format has a required expanded renderer and an optional compact
+renderer at composition. Explicit compact selection uses compact when available,
+otherwise expanded with an effective expanded view. Explicit expanded selection
+never falls back to compact. No other output format, operation retry or changed
+semantic result is selected. An exception while rendering propagates through
+ordinary failure handling; it is not a missing renderer. All delivered commands
+must implement both views; the fallback does not satisfy that requirement.

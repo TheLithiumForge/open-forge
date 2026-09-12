@@ -135,7 +135,12 @@ Rules:
   locations, arrows, provenance, and explanatory trees.
 - `--json` always emits the complete structured result. `--view` is accepted but
   has no effect when `--json` selects machine presentation.
-- A command with only one meaningful human shape accepts `--view` as a no-op.
+- Every command provides compact and expanded presentations. A result with no
+  additional meaningful explanation may have identical output in both views.
+- When a selected compact renderer is unavailable, presentation falls back to
+  the expanded renderer of the same format. It uses expanded detail for that
+  invocation. This does not change the operation, result, status or output stream.
+  Renderer failure is not unavailability and does not trigger fallback or retry.
 - `--verbose` remains a separate diagnostic dimension and does not select the
   expanded view.
 

@@ -33,18 +33,14 @@ presentation surface audit is done; broad renderer changes and deduplication are
 not implemented. Six mutation-command comparisons expose ignored view selection
 and missing Library affected-path details.
 
-The user endorses the natural expanded style in the
-[28-command gallery](tasks/cli-command-output-examples.md). The new
-[views, JSON and colour analysis](tasks/cli-view-format-color-analysis.md)
-recommends two explicit views, with compact serving people and AI; an additional
-AI view is not needed. Compact JSON projections and automatic terminal colour
-are proposed contract changes, not implemented behavior or approved defaults.
-Current view selection has no automatic fallback and JSON still ignores view.
-Next: review these added choices and freeze exact compact examples for the first
-Doctor/Status set. Update approved Interfaces before sequential implementation.
-Keep complete JSON/status/effects unchanged during the human-only stages.
-Parsing simplifications P2–P6 remain backlog. Reusable CLI UX/development Guidance
-and CLI/C# Directive consolidation remains the final stage.
+The user approved implementation of the presentation proposals, both views for
+all commands and JSON, compact-to-expanded fallback, and automatic terminal
+colour with no colour flag or configurable palette. No AI view is added.
+The [implementation capsule](tasks/cli-presentation-implementation.md) owns the
+sequential sets, frozen boundaries and evidence. Set 1 is active: neutral view
+resolution with unchanged existing command output. Subsequent sets implement
+all human renderers, compact JSON, automatic colour and final reusable guidance.
+Update each affected Interface with its approved set. Parsing P2–P6 stay backlog.
 
 Cleanup completed: the parser probe was outside the repository and has no matching
 committed project/path history. Its source/project and temporary compiled output,

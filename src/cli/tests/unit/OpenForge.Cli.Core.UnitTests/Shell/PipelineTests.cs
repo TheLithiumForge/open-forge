@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.UnitTests.Shell;
 
@@ -242,6 +243,98 @@ public sealed class PipelineTests
         Assert.Same(renderers.Read(CliOutputFormat.Human), renderers.Read(CliOutputFormat.Human));
         Assert.Same(renderers.Read(CliOutputFormat.Json), renderers.Read(CliOutputFormat.Json));
         Assert.Throws<ArgumentOutOfRangeException>(() => renderers.Read((CliOutputFormat)int.MaxValue));
+    }
+
+    [Theory(DisplayName = "Missing compact renderer falls back within its format without rerunning the operation"),
+     InlineData(false), InlineData(true), Trait("Feature", "cli-views"), Trait("Evidence", "Unit")]
+    public async Task MissingCompactFallsBackWithinSelectedFormat(bool json)
+    {
+        var result = Result(CliSemanticStatus.Blocked);
+        var operationCalls = 0;
+        var rendererCalls = 0;
+        var format = json ? CliOutputFormat.Json : CliOutputFormat.Human;
+        var presentation = new CliPresentation(format, CliView.Compact, CliVerbosity.Normal);
+        string Expanded(CliPresentationRequest<TestResult> request)
+        {
+            rendererCalls++;
+            Assert.Same(result, request.Result);
+            Assert.Equal(CliView.Expanded, request.Presentation.View);
+            Assert.Equal(format, request.Presentation.Format);
+            return json ? "{}" : "blocked";
+        }
+
+        static string Unexpected(CliPresentationRequest<TestResult> request) => throw new InvalidOperationException("Unselected format invoked.");
+        var selected = new CliViewRenderers<TestResult>(Expanded);
+        var unselected = new CliViewRenderers<TestResult>(Unexpected);
+        var renderers = json
+            ? new CliRendererSet<TestResult>(unselected, selected)
+            : new CliRendererSet<TestResult>(selected, unselected);
+        var pipeline = new CliCommandPipeline<string, TestResult>((request, token) =>
+        {
+            operationCalls++;
+            return ValueTask.FromResult(result);
+        }, renderers);
+        var output = new StringWriter();
+        var error = new StringWriter();
+
+        var completion = await pipeline.ExecuteAsync("request", presentation, new CliOutputWriters(output, error), TestContext.Current.CancellationToken);
+
+        Assert.Equal(1, operationCalls);
+        Assert.Equal(1, rendererCalls);
+        Assert.Equal(CliView.Compact, presentation.View);
+        Assert.Equal(5, completion.ExitCode);
+        Assert.Equal(json ? "{}" + Environment.NewLine : string.Empty, output.ToString());
+        Assert.Equal(json ? string.Empty : "blocked" + Environment.NewLine, error.ToString());
+    }
+
+    [Theory(DisplayName = "Available view invokes only the selected renderer with the original request"),
+     InlineData(false), InlineData(true), Trait("Feature", "cli-views"), Trait("Evidence", "Unit")]
+    public void AvailableViewUsesOriginalRequest(bool compact)
+    {
+        var view = compact ? CliView.Compact : CliView.Expanded;
+        var request = new CliPresentationRequest<TestResult>(Result(CliSemanticStatus.Complete), new(CliOutputFormat.Human, view, CliVerbosity.Normal));
+        var calls = new List<string>();
+        string Expanded(CliPresentationRequest<TestResult> actual)
+        {
+            Assert.Same(request, actual);
+            calls.Add("expanded");
+            return "expanded";
+        }
+
+        string Compact(CliPresentationRequest<TestResult> actual)
+        {
+            Assert.Same(request, actual);
+            calls.Add("compact");
+            return "compact";
+        }
+
+        var actual = new CliViewRenderers<TestResult>(Expanded, Compact).Render(request);
+
+        Assert.Equal(compact ? "compact" : "expanded", actual);
+        Assert.Equal([actual], calls);
+    }
+
+    [Fact(DisplayName = "Renderer exceptions do not fall back or retry"), Trait("Feature", "cli-views"), Trait("Evidence", "Unit")]
+    public void RendererFailureDoesNotFallBack()
+    {
+        var error = new InvalidOperationException("Rendering failed.");
+        var expandedCalls = 0;
+        var renderers = new CliViewRenderers<TestResult>(
+            request => { expandedCalls++; return "expanded"; },
+            request => throw error);
+        var request = new CliPresentationRequest<TestResult>(Result(CliSemanticStatus.Complete), new(CliOutputFormat.Human, CliView.Compact, CliVerbosity.Normal));
+
+        Assert.Same(error, Assert.Throws<InvalidOperationException>(() => renderers.Render(request)));
+        Assert.Equal(0, expandedCalls);
+    }
+
+    [Fact(DisplayName = "Undefined view is rejected before invoking a renderer"), Trait("Feature", "cli-views"), Trait("Evidence", "Unit")]
+    public void UndefinedViewDoesNotFallBack()
+    {
+        var renderers = new CliViewRenderers<TestResult>(request => throw new InvalidOperationException("Renderer invoked."));
+        var request = new CliPresentationRequest<TestResult>(Result(CliSemanticStatus.Complete), new(CliOutputFormat.Human, (CliView)int.MaxValue, CliVerbosity.Normal));
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => renderers.Render(request));
     }
 
     private static CliCommandPipeline<string, TestResult> CreatePipeline(CliSemanticStatus status)

@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Shell.Pipeline;
 
@@ -11,10 +12,17 @@ internal sealed class CliRendererSet<TResult>
     internal CliRendererSet(
         CliRenderer<TResult> human,
         CliRenderer<TResult> json)
+        : this(new CliViewRenderers<TResult>(human, human), new CliViewRenderers<TResult>(json, json))
     {
         ArgumentNullException.ThrowIfNull(human);
         ArgumentNullException.ThrowIfNull(json);
-        _renderers = [human, json];
+    }
+
+    internal CliRendererSet(
+        CliViewRenderers<TResult> human,
+        CliViewRenderers<TResult> json)
+    {
+        _renderers = [human.Render, json.Render];
     }
 
     internal CliRenderer<TResult> Read(CliOutputFormat format)
