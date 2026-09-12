@@ -1,14 +1,15 @@
 using System.Text;
 using OpenForge.Cli.Composition;
+using OpenForge.Cli.Composition.Models;
+using OpenForge.Cli.Core.Commands.Route.Remove;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
-using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.IntegrationTests.Framework.Lifecycle;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
 using OpenForge.Cli.IntegrationTests.TestSupport;
@@ -166,7 +167,7 @@ internal sealed class RouteRemoveIntegrationWorkspace : IDisposable
     internal async ValueTask<RouteRemovePlan> BuildApplicationPlanAsync(
         string sourceReference = LeafId)
     {
-        var build = await RouteRemovePlanBuilder.Create().BuildAsync(
+        var build = await RouteRemoveOperationFactory.CreatePlanBuilder().BuildAsync(
             new RouteRemoveRequest(Workspace, sourceReference, RouteRemoveMode.Apply),
             TestContext.Current.CancellationToken);
         return Assert.IsType<RouteRemovePlan>(build.Plan);
@@ -188,8 +189,9 @@ internal sealed class RouteRemoveIntegrationWorkspace : IDisposable
                 LockStoreRoot = LockStoreRoot,
             });
 
+        var argumentValues = arguments.ToArray();
         return await application.RunAsync(
-            arguments.ToArray(),
+            argumentValues,
             new CliProcessEnvironment(Path),
             new CliOutputWriters(standardOutput, standardError),
             TestContext.Current.CancellationToken);

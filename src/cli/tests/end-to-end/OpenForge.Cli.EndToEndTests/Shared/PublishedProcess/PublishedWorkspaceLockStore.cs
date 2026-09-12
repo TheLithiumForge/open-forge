@@ -39,6 +39,16 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
 
     internal IReadOnlyDictionary<string, string> EnvironmentVariables { get; }
 
+    internal string LocalApplicationDataDirectory => LocalApplicationDataPath();
+
+    internal string RecoveryStoreRoot => Path.Combine(LocalApplicationDataDirectory, "OpenForge", "recovery", "v1");
+
+    internal string RecoveryWorkspaceDirectory(string workspacePath)
+        => Path.Combine(RecoveryStoreRoot, RecoveryWorkspaceKey(workspacePath));
+
+    internal static string RecoveryWorkspaceKey(string workspacePath)
+        => WorkspaceKey(Normalize(workspacePath));
+
     internal static PublishedWorkspaceLockStore Create(string purpose)
     {
         var temporary = TemporaryWorkspace.Create(purpose);
@@ -95,12 +105,7 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
 
     internal void AssertNoRecoveryArtifacts(string workspacePath)
     {
-        var recoveryWorkspaceDirectory = Path.Combine(
-            LocalApplicationDataPath(),
-            "OpenForge",
-            "recovery",
-            "v1",
-            WorkspaceKey(Normalize(workspacePath)));
+        var recoveryWorkspaceDirectory = RecoveryWorkspaceDirectory(workspacePath);
         var attributes = AttributesIfPresent(recoveryWorkspaceDirectory);
         if (attributes is null)
         {
@@ -128,14 +133,7 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
 
     internal IReadOnlyList<string> RemoveRecoveryArtifacts(string workspacePath)
     {
-        var recoveryRoot = Path.Combine(
-            LocalApplicationDataPath(),
-            "OpenForge",
-            "recovery",
-            "v1");
-        var workspaceDirectory = Path.Combine(
-            recoveryRoot,
-            WorkspaceKey(Normalize(workspacePath)));
+        var workspaceDirectory = RecoveryWorkspaceDirectory(workspacePath);
         var attributes = AttributesIfPresent(workspaceDirectory);
         if (attributes is null)
         {

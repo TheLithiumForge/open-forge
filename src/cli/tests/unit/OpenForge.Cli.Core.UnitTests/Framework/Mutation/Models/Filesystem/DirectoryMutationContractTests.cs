@@ -1,4 +1,6 @@
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Mutation.Models.Filesystem;
 

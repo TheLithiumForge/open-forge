@@ -1,11 +1,13 @@
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 using OpenForge.Cli.Core.Commands.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
+using OpenForge.Cli.Core.Commands.Update.Shared.Validation;
 using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Update.Models.Result;
 
@@ -93,7 +95,7 @@ internal sealed record UpdateSource
         {
             throw new ArgumentException("Update source identity must be framework.", nameof(Id));
         }
-        if (!IsSha256(InventoryFingerprint))
+        if (!UpdateValueSyntax.IsSha256(InventoryFingerprint))
         {
             throw new ArgumentException("Update source inventory identity must be lowercase SHA-256.", nameof(InventoryFingerprint));
         }
@@ -102,10 +104,6 @@ internal sealed record UpdateSource
             throw new ArgumentOutOfRangeException(nameof(AssetCount), AssetCount, "Update source asset count cannot be negative.");
         }
     }
-
-    private static bool IsSha256(string value)
-        => value.Length == 64
-            && value.All(character => character is >= '0' and <= '9' or >= 'a' and <= 'f');
 }
 
 internal sealed record UpdateGeneratedNavigationRegion
@@ -201,6 +199,16 @@ internal sealed record UpdateResultFormation
 
 internal sealed record UpdateResult : ICliCommandResult
 {
+    private static readonly ImmutableArray<CliSemanticStatus> StatusPrecedence =
+    [
+        CliSemanticStatus.Failed,
+        CliSemanticStatus.Interrupted,
+        CliSemanticStatus.Invalid,
+        CliSemanticStatus.Blocked,
+        CliSemanticStatus.Incomplete,
+        CliSemanticStatus.Attention,
+    ];
+
     internal UpdateResult(UpdateResultFormation formation)
     {
         ArgumentNullException.ThrowIfNull(formation);
@@ -244,7 +252,7 @@ internal sealed record UpdateResult : ICliCommandResult
         Verification = formation.Verification;
         Findings = new ReadOnlyCollection<UpdateFinding>(findings);
         Status = ReadStatus(Findings);
-        Next = UpdateDefinitions.ReadNextAction(Status, Findings, Force, Prune, Automatic, Mode);
+        Next = UpdateDefinitions.ReadNextAction(Status, Findings, formation);
     }
 
     public string Command => UpdateDefinitions.CommandIdentity;
@@ -281,16 +289,7 @@ internal sealed record UpdateResult : ICliCommandResult
 
     private static CliSemanticStatus ReadStatus(IReadOnlyList<UpdateFinding> findings)
     {
-        var precedence = new[]
-        {
-            CliSemanticStatus.Failed,
-            CliSemanticStatus.Interrupted,
-            CliSemanticStatus.Invalid,
-            CliSemanticStatus.Blocked,
-            CliSemanticStatus.Incomplete,
-            CliSemanticStatus.Attention,
-        };
-        return precedence.FirstOrDefault(
+        return StatusPrecedence.FirstOrDefault(
             status => findings.Any(finding => finding.Status == status),
             CliSemanticStatus.Complete);
     }
@@ -342,7 +341,8 @@ internal sealed record UpdateResult : ICliCommandResult
 
     private static void ValidateEffect(UpdatePhysicalEffect effect)
     {
-        if (!IsCanonicalRelative(effect.Path))
+        if (string.IsNullOrWhiteSpace(effect.Path)
+            || !UpdateValueSyntax.IsCanonicalRelative(effect.Path))
         {
             throw new ArgumentException("Update effect paths must be canonical workspace-relative paths.");
         }
@@ -410,7 +410,8 @@ internal sealed record UpdateResult : ICliCommandResult
         var paths = new HashSet<string>(StringComparer.Ordinal);
         foreach (var path in protectedPaths)
         {
-            if (!IsCanonicalRelative(path))
+            if (string.IsNullOrWhiteSpace(path)
+                || !UpdateValueSyntax.IsCanonicalRelative(path))
             {
                 throw new ArgumentException(
                     "Update recovery protected paths must be canonical workspace-relative paths.",
@@ -458,7 +459,8 @@ internal sealed record UpdateResult : ICliCommandResult
         var paths = new HashSet<string>(StringComparer.Ordinal);
         foreach (var region in regions)
         {
-            if (!IsCanonicalRelative(region.Path))
+            if (string.IsNullOrWhiteSpace(region.Path)
+                || !UpdateValueSyntax.IsCanonicalRelative(region.Path))
             {
                 throw new ArgumentException("Generated navigation paths must be canonical workspace-relative paths.");
             }
@@ -501,19 +503,4 @@ internal sealed record UpdateResult : ICliCommandResult
             right.SourceAssetPath ?? string.Empty,
             StringComparison.Ordinal);
     }
-
-    private static bool IsCanonicalRelative(string? value)
-        => !string.IsNullOrWhiteSpace(value)
-            && !value.StartsWith('/')
-            && !IsDriveQualified(value)
-            && !value.Contains('\\')
-            && value.Split('/', StringSplitOptions.None).All(segment => segment.Length != 0
-                && segment != "."
-                && segment != ".."
-                && segment.All(character => !char.IsControl(character)));
-
-    private static bool IsDriveQualified(string value)
-        => value.Length >= 2
-            && char.IsAsciiLetter(value[0])
-            && value[1] == ':';
 }

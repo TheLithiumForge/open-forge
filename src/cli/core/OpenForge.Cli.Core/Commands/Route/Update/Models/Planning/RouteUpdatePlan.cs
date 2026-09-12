@@ -2,8 +2,8 @@ using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Shared.Templates.Models;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 

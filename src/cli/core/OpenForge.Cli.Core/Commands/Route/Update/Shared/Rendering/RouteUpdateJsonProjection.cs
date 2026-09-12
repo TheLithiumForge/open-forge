@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 
@@ -44,15 +45,7 @@ internal static partial class RouteUpdateJsonProjection
         => new()
         {
             Path = workspace.LexicalRoot,
-            SelectedBy = workspace.SelectedBy switch
-            {
-                CliWorkspaceSelectionMethod.CurrentDirectory => "current-directory",
-                CliWorkspaceSelectionMethod.ExplicitWorkspace => "explicit-workspace",
-                _ => throw new ArgumentOutOfRangeException(
-                    nameof(workspace),
-                    workspace.SelectedBy,
-                    "The workspace selection method is not defined."),
-            },
+            SelectedBy = WorkspaceSelectionWireVocabulary.Read(workspace.SelectedBy),
         };
 
     private static RouteUpdateJsonTarget Target(RouteUpdateTarget target)

@@ -4,11 +4,10 @@ using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 

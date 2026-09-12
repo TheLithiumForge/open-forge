@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Move.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.References;
@@ -5,17 +6,6 @@ using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Application;
-
-internal enum RouteMovePostMoveVerificationState
-{
-    Verified,
-    Failed,
-    Interrupted,
-}
-
-internal sealed record RouteMovePostMoveVerification(
-    RouteMovePostMoveVerificationState State,
-    string? Cause);
 
 internal sealed partial class RouteMovePostMoveObserver(
     RouteMoveSubjectResolver subjectResolver,

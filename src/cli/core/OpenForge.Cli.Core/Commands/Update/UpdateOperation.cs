@@ -137,6 +137,7 @@ internal sealed class UpdateOperation
             source: null,
             comparisons: [],
             new UpdateFinding(code, target: null, cause),
-            UpdateLifecycleTrust.NotRequested,
-            UpdateLifecycleCoverage.NotRequested);
+            UpdatePlanResultFactory.UnstartedLifecycle(
+                UpdateLifecycleTrust.NotRequested,
+                UpdateLifecycleCoverage.NotRequested));
 }

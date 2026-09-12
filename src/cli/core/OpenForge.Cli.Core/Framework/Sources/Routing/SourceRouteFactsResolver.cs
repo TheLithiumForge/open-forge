@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
@@ -252,21 +252,6 @@ internal sealed class SourceRouteFactsResolver
                     node.ParentPaths,
                     "The selected source has ambiguous authored route meaning.");
             }
-        }
-
-        foreach (var source in selectedSources.Where(source =>
-                     source.Base.Form != SourceDocumentForm.Loader
-                     && routeFacts.All(fact => !ReferenceEquals(fact.Identity, source.Identity))))
-        {
-            var identityUnique = selectedSources.Count(candidate =>
-                string.Equals(
-                    candidate.Identity.AutomaticId,
-                    source.Identity.AutomaticId,
-                    StringComparison.Ordinal)) == 1;
-            routeFacts.Add(new SourceRouteFact(
-                source.Identity,
-                areLoaderRootFactsComplete ? SourceRouteState.Unrouted : SourceRouteState.Unavailable,
-                identityUnique));
         }
 
         return new SourceRouteFacts(

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Shell.Presentation.Models;
+
 namespace OpenForge.Cli.Core.Shell.Definitions;
 
 internal enum CliOutputFormat
@@ -23,11 +25,6 @@ internal enum CliOutputTarget
     StandardOutput,
     StandardError,
 }
-
-internal sealed record CliPresentation(
-    CliOutputFormat Format,
-    CliView View,
-    CliVerbosity Verbosity);
 
 internal static class CliPresentationDefinitions
 {

@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.Distribution.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Identity;
 
 namespace OpenForge.Cli.Core.Framework.Lifecycle;
 

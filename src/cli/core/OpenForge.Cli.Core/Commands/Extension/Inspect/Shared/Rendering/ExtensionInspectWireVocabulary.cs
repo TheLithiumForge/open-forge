@@ -1,18 +1,9 @@
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
-using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Rendering;
 
 internal static class ExtensionInspectWireVocabulary
 {
-    internal static string WorkspaceSelection(CliWorkspaceSelectionMethod workspace)
-        => workspace switch
-        {
-            CliWorkspaceSelectionMethod.CurrentDirectory => "current-directory",
-            CliWorkspaceSelectionMethod.ExplicitWorkspace => "explicit-workspace",
-            _ => throw new ArgumentOutOfRangeException(nameof(workspace), workspace, "The workspace selection method is not defined."),
-        };
-
     internal static string SubjectForm(ExtensionInspectSubjectForm value)
         => value switch
         {

@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Models.Application;
 

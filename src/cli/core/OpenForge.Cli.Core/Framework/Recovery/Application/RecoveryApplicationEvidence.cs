@@ -1,6 +1,10 @@
 using System.IO.Compression;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Recovery.Application;
 
@@ -15,7 +19,7 @@ internal static class RecoveryApplicationEvidence
             workspace,
             preparation.BundlePath,
             cancellationToken).ConfigureAwait(false);
-        if (read.Verified is null || Matches(preparation, read.Verified))
+        if (read.Verified is null || RecoveryBundleIdentity.Matches(preparation.Verified, read.Verified))
         {
             return read;
         }
@@ -59,23 +63,4 @@ internal static class RecoveryApplicationEvidence
 
         return bytes;
     }
-
-    private static bool Matches(
-        RecoveryBundlePreparation preparation,
-        RecoveryBundleVerifiedRead verified)
-        => string.Equals(preparation.BundlePath, verified.BundlePath, PathComparison())
-            && string.Equals(
-                preparation.WorkspacePhysicalPath,
-                verified.WorkspacePhysicalPath,
-                PathComparison())
-            && string.Equals(preparation.WorkspaceKey, verified.WorkspaceKey, StringComparison.Ordinal)
-            && string.Equals(preparation.Command, verified.Command, StringComparison.Ordinal)
-            && preparation.Attribution == verified.Attribution
-            && preparation.OperationId == verified.OperationId
-            && preparation.Entries.SequenceEqual(verified.Entries);
-
-    private static StringComparison PathComparison()
-        => OperatingSystem.IsWindows()
-            ? StringComparison.OrdinalIgnoreCase
-            : StringComparison.Ordinal;
 }

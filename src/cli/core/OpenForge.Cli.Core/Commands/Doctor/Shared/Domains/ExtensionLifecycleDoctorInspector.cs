@@ -2,7 +2,7 @@ using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;

@@ -1,8 +1,7 @@
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 
@@ -172,13 +171,3 @@ internal sealed class LocalReferenceCandidateReader
         return string.IsNullOrWhiteSpace(leaf) ? null : leaf;
     }
 }
-
-internal sealed record LocalReferenceSourceObservation(
-    string Path,
-    string? Id,
-    IReadOnlyList<LocalReferenceParsedLayer> Layers);
-
-internal sealed record LocalReferenceParsedLayer(
-    string Path,
-    MarkdownDocumentFacts Document,
-    Utf8SourceMap Locations);

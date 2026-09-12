@@ -2,8 +2,9 @@ using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 using OpenForge.Cli.Core.Commands.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Update.Models.Planning;
 

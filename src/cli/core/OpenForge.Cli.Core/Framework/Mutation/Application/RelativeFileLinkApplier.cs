@@ -1,9 +1,9 @@
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Application;
 
@@ -168,7 +168,7 @@ internal static class RelativeFileLinkApplier
                 "Relative file-link verification was cancelled after the effect returned.");
         }
 
-        return Matches(input.Effect.Intended, after)
+        return input.Effect.Intended.MatchesObservation(after)
             ? RelativeFileLinkReceipt.Verified(input.Effect, before, after)
             : RelativeFileLinkReceipt.VerificationFailed(
                 input.Effect,
@@ -199,7 +199,7 @@ internal static class RelativeFileLinkApplier
         }
 
         var cause = "The relative file-link effect failed at the managed filesystem boundary.";
-        if (after is not null && Matches(effect.Intended, after))
+        if (after is not null && effect.Intended.MatchesObservation(after))
         {
             return RelativeFileLinkReceipt.Verified(effect, before, after);
         }
@@ -219,10 +219,4 @@ internal static class RelativeFileLinkApplier
             after,
             cause);
     }
-
-    private static bool Matches(
-        RelativeFileLinkState state,
-        NoFollowLeafObservation observation)
-        => state.State == observation.State
-            && (state.Link is null || state.Link == observation.RelativeFileLink);
 }

@@ -1,14 +1,15 @@
+using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
-using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Lifecycle.Operational;
 using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.OperationalContributors;
+using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Operational;
 using OpenForge.Cli.Core.Framework.Sources.Operational;
@@ -20,9 +21,9 @@ using OpenForge.Cli.Core.Framework.Workspace.Operational;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Composition;
 
@@ -170,17 +171,4 @@ internal static class CliCompositionRoot
                 heading: "Lifecycle",
                 body: "  Framework management is established or verified by install. Managed content is reconciled by update under its explicit force and prune authority."),
         ]);
-}
-
-internal sealed record CliCompositionInputs
-{
-    public required TextReader StandardInput { get; init; }
-
-    public required TextWriter PromptOutput { get; init; }
-
-    public required bool StandardInputRedirected { get; init; }
-
-    public required bool PromptOutputRedirected { get; init; }
-
-    public WorkspaceLockStoreRoot? LockStoreRoot { get; init; }
 }

@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Framework.Distribution.Models;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;

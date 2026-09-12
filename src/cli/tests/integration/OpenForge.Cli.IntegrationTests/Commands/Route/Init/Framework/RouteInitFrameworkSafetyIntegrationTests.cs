@@ -1,11 +1,13 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Commands.Route.Init.Shared.Rendering;
-using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Commands.Route.Init;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Commands.Route.Init.Shared.Rendering;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init.Framework;
 

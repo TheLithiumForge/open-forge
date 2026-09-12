@@ -1,6 +1,7 @@
-using System.Text;
 using System.Security.Cryptography;
+using System.Text;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Markdown;
 
@@ -33,10 +34,11 @@ internal sealed class MarkdownFingerprintReader
         }
 
         string source;
+        MarkdownDocumentFacts sourceFacts;
         try
         {
             source = StrictUtf8.GetString(bytes);
-            _ = _documentParser.Parse(source);
+            sourceFacts = _documentParser.Parse(source);
         }
         catch (Exception exception) when (exception is DecoderFallbackException or ArgumentException or InvalidOperationException)
         {
@@ -47,7 +49,9 @@ internal sealed class MarkdownFingerprintReader
         MarkdownDocumentFacts facts;
         try
         {
-            facts = _documentParser.Parse(normalized);
+            facts = ReferenceEquals(source, normalized)
+                ? sourceFacts
+                : _documentParser.Parse(normalized);
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
@@ -73,11 +77,11 @@ internal sealed class MarkdownFingerprintReader
             : normalized;
         var hash = Convert.ToHexStringLower(SHA256.HashData(StrictUtf8.GetBytes(output)));
         return new MarkdownFingerprintFacts(
-            MarkdownFingerprintState.Semantic,
-            Policy,
-            hash,
-            region,
-            null);
+            state: MarkdownFingerprintState.Semantic,
+            policy: Policy,
+            sha256: hash,
+            region: region,
+            cause: null);
     }
 
     private static MarkdownFingerprintFacts ExactFallback(
@@ -85,11 +89,11 @@ internal sealed class MarkdownFingerprintReader
         string cause,
         MarkdownFingerprintRegion? region = null)
         => new(
-            MarkdownFingerprintState.ExactBytes,
-            Policy,
-            Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(bytes)),
-            region ?? MarkdownFingerprintRegion.Invalid(MarkdownFingerprintRegionState.Unavailable),
-            cause);
+            state: MarkdownFingerprintState.ExactBytes,
+            policy: Policy,
+            sha256: Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(bytes)),
+            region: region ?? MarkdownFingerprintRegion.Invalid(MarkdownFingerprintRegionState.Unavailable),
+            cause: cause);
 
     private static string NormalizeLineEndings(string source)
     {
@@ -142,12 +146,12 @@ internal sealed class MarkdownFingerprintReader
         var startOffset = ByteCount(source, omission.Start);
         var endOffset = ByteCount(source, omission.End);
         return new MarkdownFingerprintRegion(
-            MarkdownFingerprintRegionState.Valid,
-            MarkdownGeneratedRegionSyntax.StartMarker,
-            MarkdownGeneratedRegionSyntax.EndMarker,
-            startOffset,
-            endOffset,
-            checked(endOffset - startOffset),
+            state: MarkdownFingerprintRegionState.Valid,
+            startMarker: MarkdownGeneratedRegionSyntax.StartMarker,
+            endMarker: MarkdownGeneratedRegionSyntax.EndMarker,
+            startByteOffset: startOffset,
+            endByteOffset: endOffset,
+            excludedInteriorByteLength: checked(endOffset - startOffset),
             markerLinesRetained: true);
     }
 

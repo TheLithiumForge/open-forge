@@ -4,7 +4,7 @@ using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
@@ -38,7 +38,7 @@ public sealed class RouteUpdateApplicationIntegrityIntegrationTests
                 OperationId = operationId.ToString("D"),
             },
             TestContext.Current.CancellationToken);
-        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(
+        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.Preparation.RecoveryBundlePreparation>(
             prepared.Preparation);
         workspace.TrackRecovery(preparation);
         workspace.ReplaceParentWithDirectory();
@@ -123,7 +123,7 @@ public sealed class RouteUpdateApplicationIntegrityIntegrationTests
                 OperationId = operationId.ToString("D"),
             },
             TestContext.Current.CancellationToken);
-        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(
+        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.Preparation.RecoveryBundlePreparation>(
             prepared.Preparation);
         workspace.TrackRecovery(preparation);
         var progress = await new RouteUpdateEffectApplication(

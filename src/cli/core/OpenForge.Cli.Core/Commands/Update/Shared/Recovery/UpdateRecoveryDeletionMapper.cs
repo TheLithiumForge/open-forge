@@ -1,5 +1,6 @@
+using OpenForge.Cli.Core.Commands.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Recovery;
 
@@ -92,13 +93,4 @@ internal static class UpdateRecoveryDeletionMapper
                 state,
                 "The recovery deletion state is not defined."),
         };
-}
-
-internal sealed record UpdateRecoveryDeletionOutcome
-{
-    public required UpdateRecoveryState State { get; init; }
-
-    public required string? ResidualPath { get; init; }
-
-    public required UpdateFinding? Finding { get; init; }
 }

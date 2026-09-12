@@ -1,8 +1,9 @@
 using System.Text.Json;
 using OpenForge.Cli.Composition;
-using OpenForge.Cli.Core.Shell.Invocation;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using static OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Interaction.RouteInspectInteractionIntegrationFixture;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Interaction;

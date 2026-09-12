@@ -3,11 +3,13 @@ using OpenForge.Cli.Core.Commands.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
@@ -68,7 +70,7 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
         try
         {
             var payloadSources = payloadAssets.Values
-                .Select(asset => CreatePayloadSource(request, asset))
+                .Select(asset => FrameworkPayloadSourceProjection.Create(request.Workspace, asset))
                 .ToDictionary(
                     source => source.Identity.CanonicalBasePath,
                     StringComparer.Ordinal);
@@ -132,14 +134,23 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                         "A complete Update overwrite input requires its exact snapshot."));
             }
 
-            var metadata = intendedSources
-                .Where(source => source.Base.Form != SourceDocumentForm.Loader)
-                .Select(source => new GeneratedNavigationMetadata(
+            var parsedDocuments = new Dictionary<string, MarkdownDocumentFacts>(StringComparer.Ordinal);
+            var metadata = new List<GeneratedNavigationMetadata>();
+            foreach (var source in intendedSources)
+            {
+                if (source.Base.Form == SourceDocumentForm.Loader)
+                {
+                    continue;
+                }
+
+                var canonicalPath = source.Identity.CanonicalBasePath;
+                var document = _markdownParser.Parse(documents[canonicalPath]);
+                parsedDocuments.Add(canonicalPath, document);
+                metadata.Add(new GeneratedNavigationMetadata(
                     source,
-                    _metadataParser.Parse(
-                        _markdownParser.Parse(documents[source.Identity.CanonicalBasePath]),
-                        source.Base.Form)))
-                .ToArray();
+                    _metadataParser.Parse(document, source.Base.Form)));
+            }
+
             var regionSources = payloadSources.Values
                 .Where(source => source.Base.Form == SourceDocumentForm.Loader
                     || SourceFormClassifier.IsEntrypoint(source.Base.Form))
@@ -147,9 +158,7 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                 .ToArray();
             var projection = _projector.Project(new GeneratedNavigationProjectionRequest(
                 formation,
-                regionSources.Select(source => new GeneratedNavigationRegionInput(
-                    source,
-                    _markdownParser.Parse(documents[source.Identity.CanonicalBasePath]))),
+                ReadRegionInputs(regionSources, documents, parsedDocuments),
                 metadata));
             var unavailable = projection.Regions.FirstOrDefault(region =>
                 region.State != GeneratedNavigationRegionState.Available);
@@ -222,29 +231,22 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
         };
     }
 
-    private static SourceLogicalSource CreatePayloadSource(
-        UpdateRequest request,
-        FrameworkPayloadAsset asset)
+    private IEnumerable<GeneratedNavigationRegionInput> ReadRegionInputs(
+        IEnumerable<SourceLogicalSource> sources,
+        IReadOnlyDictionary<string, string> documents,
+        Dictionary<string, MarkdownDocumentFacts> parsedDocuments)
     {
-        if (!SourceFormClassifier.TryClassify(asset.Path, out var form))
+        foreach (var source in sources)
         {
-            throw new InvalidDataException(
-                $"The embedded Framework asset '{asset.Path}' is not a recognized authored source.");
-        }
+            var canonicalPath = source.Identity.CanonicalBasePath;
+            if (!parsedDocuments.TryGetValue(canonicalPath, out var document))
+            {
+                document = _markdownParser.Parse(documents[canonicalPath]);
+                parsedDocuments.Add(canonicalPath, document);
+            }
 
-        var id = SourceIdentity.DeriveId(asset.Path)
-            ?? throw new InvalidDataException(
-                $"The embedded Framework asset '{asset.Path}' has no canonical source identity.");
-        var physicalPath = Path.GetFullPath(Path.Combine(
-            request.Workspace.PhysicalRoot,
-            asset.Path.Replace('/', Path.DirectorySeparatorChar)));
-        return new SourceLogicalSource(
-            new SourceLogicalIdentity(id, asset.Path),
-            new SourceLayer(
-                asset.Path,
-                physicalPath,
-                form,
-                SourceLayerKind.Base));
+            yield return new GeneratedNavigationRegionInput(source, document);
+        }
     }
 
     private static UpdateGeneratedNavigationBuild? ReadCatalogueBoundary(
@@ -292,12 +294,3 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                 target: null,
                 "Update generated-navigation planning was interrupted."));
 }
-
-internal sealed record UpdateGeneratedNavigationBuild(
-    IReadOnlyDictionary<string, byte[]> TargetBytes,
-    IReadOnlyList<FileStateSnapshot> ProjectionInputs,
-    UpdateFinding? Finding);
-
-internal sealed record UpdateProjectionInputRead(
-    FileStateSnapshot? Snapshot,
-    UpdateGeneratedNavigationBuild? Build);

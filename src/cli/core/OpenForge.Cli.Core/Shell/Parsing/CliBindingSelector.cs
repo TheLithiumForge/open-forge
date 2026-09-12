@@ -1,20 +1,7 @@
 using System.CommandLine;
-using OpenForge.Cli.Core.Shell.Composition;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Results;
 
 namespace OpenForge.Cli.Core.Shell.Parsing;
-
-internal enum CliBindingSelectionState
-{
-    Root,
-    Group,
-    Leaf,
-    NoLeaf,
-}
-
-internal sealed record CliBindingSelection(
-    CliBindingSelectionState State,
-    Command Command,
-    ICliCommandBinding? Binding);
 
 internal static class CliBindingSelector
 {

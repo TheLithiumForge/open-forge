@@ -1,28 +1,35 @@
-using OpenForge.Cli.Core.Framework.Libraries;
-using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
-using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using System.Security.Cryptography;
 using System.Text;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
+using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning.Reconciliation;
+using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning.Topology;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Selection;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
+using OpenForge.Cli.Core.Framework.Libraries;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Identity;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Shared.Planning;
 
@@ -101,7 +108,7 @@ internal sealed class ExtensionUpdatePlanner(
             && (allowedRecovery is null
                 ? recovery.Candidates.Length == 0
                 : recovery.Candidates.Length == 1
-                    && Matches(recovery.Candidates[0], allowedRecovery));
+                    && RecoveryBundleIdentity.Matches(recovery.Candidates[0], allowedRecovery));
         if (!recoveryIsExpected)
         {
             ExtensionUpdateFindingCode recoveryFinding;
@@ -989,28 +996,6 @@ internal sealed class ExtensionUpdatePlanner(
             ?? topology.GeneratedTargetBytes.GetValueOrDefault(path)
             ?? [];
         return bytes.Length > 0;
-    }
-
-    private static bool Matches(
-        RecoveryBundleCandidateSnapshot candidate,
-        RecoveryBundlePreparation preparation)
-    {
-        if (candidate.Kind != RecoveryBundleCandidateKind.Final
-            || candidate.Integrity != RecoveryBundleIntegrity.Verified
-            || candidate.Verified is not { } verified)
-        {
-            return false;
-        }
-
-        return PhysicalIdentityTracker.PathComparer.Equals(candidate.Path, preparation.BundlePath)
-            && PhysicalIdentityTracker.PathComparer.Equals(
-                verified.WorkspacePhysicalPath,
-                preparation.WorkspacePhysicalPath)
-            && string.Equals(verified.WorkspaceKey, preparation.WorkspaceKey, StringComparison.Ordinal)
-            && string.Equals(verified.Command, preparation.Command, StringComparison.Ordinal)
-            && verified.Attribution == preparation.Attribution
-            && verified.OperationId == preparation.OperationId
-            && verified.Entries.SequenceEqual(preparation.Entries);
     }
 
     private static FrameworkLifecycleState WithGeneratedBytes(

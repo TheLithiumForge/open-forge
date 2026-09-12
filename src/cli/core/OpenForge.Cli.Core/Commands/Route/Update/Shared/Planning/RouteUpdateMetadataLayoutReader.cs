@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;

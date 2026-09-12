@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
 

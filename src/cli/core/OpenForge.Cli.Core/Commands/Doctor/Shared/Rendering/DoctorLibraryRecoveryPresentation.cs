@@ -1,11 +1,13 @@
-using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using System.Text;
+using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Presentation;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization;
-using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Recovery.Serialization.Models;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Rendering;
 

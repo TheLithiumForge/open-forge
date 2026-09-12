@@ -1,7 +1,10 @@
 using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Lifecycle.Shared.Validation.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Shared.Validation;
 
 namespace OpenForge.Cli.Core.Framework.Lifecycle;
 
@@ -26,8 +29,7 @@ internal sealed partial class LifecycleStore
                 validation.Cause ?? "The intended Framework lifecycle section is blocked.");
         }
 
-        if (!TryCreateBasis(current, out var basis, out var cause)
-            || basis is null)
+        if (!TryCreateBasis(current, out var basis, out var cause))
         {
             return LifecycleWritePlanResult.Blocked(cause);
         }
@@ -38,10 +40,10 @@ internal sealed partial class LifecycleStore
             var frameworkElement = JsonSerializer.SerializeToElement(
                 framework,
                 LifecycleJsonContext.Default.FrameworkLifecycleState);
-            var candidate = ReplaceFramework(
+            var candidate = ReplaceSections(
                 basis.Envelope,
-                frameworkElement,
-                CanonicalizeExtensionsForWrite(extensions));
+                framework: frameworkElement,
+                extensions: CanonicalizeExtensionsForWrite(extensions));
             var collision = LifecycleFrameworkValidator.ValidateNoCrossSectionCollisions(
                 framework,
                 extensions);
@@ -75,8 +77,7 @@ internal sealed partial class LifecycleStore
                 "An Extension lifecycle update requires an Extension-selected read.");
         }
 
-        if (!TryCreateBasis(current, out var basis, out var cause)
-            || basis is null)
+        if (!TryCreateBasis(current, out var basis, out var cause))
         {
             return LifecycleWritePlanResult.Blocked(cause);
         }
@@ -87,10 +88,10 @@ internal sealed partial class LifecycleStore
             var extensionElement = JsonSerializer.SerializeToElement(
                 extensions,
                 LifecycleJsonContext.Default.ExtensionLifecycleState);
-            var candidate = ReplaceExtensions(
+            var candidate = ReplaceSections(
                 basis.Envelope,
-                extensionElement,
-                CanonicalizeFrameworkForWrite(framework));
+                extensions: extensionElement,
+                framework: CanonicalizeFrameworkForWrite(framework));
             var validation = LifecycleDocumentValidator.ValidateExtensions(
                 current.Workspace,
                 candidate,

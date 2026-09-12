@@ -1,5 +1,6 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Libraries.Operational.Shared.Attribution;
 

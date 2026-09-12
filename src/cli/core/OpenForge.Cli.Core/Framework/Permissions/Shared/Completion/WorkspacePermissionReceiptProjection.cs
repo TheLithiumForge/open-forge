@@ -1,4 +1,5 @@
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 
 namespace OpenForge.Cli.Core.Framework.Permissions.Shared.Completion;

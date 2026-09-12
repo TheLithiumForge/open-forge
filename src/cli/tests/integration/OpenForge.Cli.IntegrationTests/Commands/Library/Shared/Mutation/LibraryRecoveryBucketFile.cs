@@ -1,4 +1,4 @@
-using OpenForge.Cli.Core.Framework.Recovery;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 

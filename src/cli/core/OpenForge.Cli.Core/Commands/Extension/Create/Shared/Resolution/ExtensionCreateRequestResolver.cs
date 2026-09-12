@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Commands.Extension.Create.Shared.Manifest;
 using OpenForge.Cli.Core.Commands.Extension.Create.Shared.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction;
 

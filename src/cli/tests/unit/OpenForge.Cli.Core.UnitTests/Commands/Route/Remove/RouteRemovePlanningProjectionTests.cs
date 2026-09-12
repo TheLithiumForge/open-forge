@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Remove;
 
@@ -65,21 +65,16 @@ public sealed class RouteRemovePlanningProjectionTests
         Assert.False(planned.IsNoOp);
     }
 
-    [Fact(DisplayName = "Route Remove navigation and reference postconditions retain failure causes"),
+    [Fact(DisplayName = "Route Remove navigation postcondition retains its failure cause"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void PostconditionsRetainFailureCauses()
     {
         var navigation = new RouteRemoveNavigationPostRemoveResult(
             RouteRemoveNavigationPostRemoveState.Failed,
             "The generated region could not be verified.");
-        var references = new RouteRemoveReferencePostRemoveResult(
-            RouteRemoveReferencePostRemoveState.Interrupted,
-            "The reference pass was cancelled.");
 
         Assert.Equal(RouteRemoveNavigationPostRemoveState.Failed, navigation.State);
         Assert.Equal("The generated region could not be verified.", navigation.Cause);
-        Assert.Equal(RouteRemoveReferencePostRemoveState.Interrupted, references.State);
-        Assert.Equal("The reference pass was cancelled.", references.Cause);
     }
 
     private static RouteRemovePlanProjectionInput Projection(

@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 
@@ -7,8 +9,6 @@ namespace OpenForge.Cli.Core.Framework.Sources.Loading;
 
 internal static class SourceGeneratedEntriesParser
 {
-    private const string EmptySentinel = "- none - No entries - #Empty";
-
     internal static SourceGeneratedEntriesFacts Parse(MarkdownDocumentFacts document)
     {
         ArgumentNullException.ThrowIfNull(document);
@@ -34,7 +34,7 @@ internal static class SourceGeneratedEntriesParser
         var lines = content.Split('\n', StringSplitOptions.None)
             .Where(line => line.Length != 0)
             .ToArray();
-        if (lines.Length == 0 || lines is [EmptySentinel])
+        if (lines.Length == 0 || lines is [MarkdownGeneratedRegionSyntax.EmptyEntry])
         {
             return SourceGeneratedEntriesFacts.Complete([]);
         }
@@ -43,7 +43,7 @@ internal static class SourceGeneratedEntriesParser
         var searchStart = span.Start;
         foreach (var line in lines)
         {
-            if (line == EmptySentinel)
+            if (line == MarkdownGeneratedRegionSyntax.EmptyEntry)
             {
                 return SourceGeneratedEntriesFacts.Unavailable(
                     "The empty Entries sentinel must be the sole declaration.");

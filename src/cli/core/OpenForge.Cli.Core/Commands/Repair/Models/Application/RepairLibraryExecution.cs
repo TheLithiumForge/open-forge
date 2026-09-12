@@ -1,11 +1,13 @@
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Models.Application;
 

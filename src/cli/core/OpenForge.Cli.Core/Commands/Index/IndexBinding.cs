@@ -4,9 +4,8 @@ using OpenForge.Cli.Core.Commands.Index.Models.Result;
 using OpenForge.Cli.Core.Commands.Index.Shared.Result;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
-using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.Commands.Index;
 

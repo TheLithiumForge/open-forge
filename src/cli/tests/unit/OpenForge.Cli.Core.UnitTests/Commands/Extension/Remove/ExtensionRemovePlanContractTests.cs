@@ -4,9 +4,7 @@ using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Selection;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Remove;
 

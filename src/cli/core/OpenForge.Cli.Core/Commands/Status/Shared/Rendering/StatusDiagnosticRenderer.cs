@@ -1,6 +1,6 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.Commands.Status.Shared.Rendering;
 

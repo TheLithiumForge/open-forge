@@ -3,7 +3,8 @@ using OpenForge.Cli.Core.Commands.Cleanup.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Deletion.Models;
 
 namespace OpenForge.Cli.Core.Commands.Cleanup.Shared.Application;

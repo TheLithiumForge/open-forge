@@ -3,13 +3,12 @@ using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Binding;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
-using OpenForge.Cli.Core.Shell.Composition;
-using OpenForge.Cli.Core.Shell.Composition.Models;
-using OpenForge.Cli.Core.Shell.Invocation;
-using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Commands.Extension.Create.Shared.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
+using OpenForge.Cli.Core.Shell.Composition.Models;
+using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Parsing;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Create;
 

@@ -1,7 +1,9 @@
 using Markdig;
-using Markdig.Syntax;
 using Markdig.Renderers.Html;
+using Markdig.Syntax;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Markdown;
 

@@ -2,6 +2,7 @@ using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Serialization;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;

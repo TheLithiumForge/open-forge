@@ -2,10 +2,11 @@ using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
-using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
 

@@ -3,7 +3,7 @@ using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 

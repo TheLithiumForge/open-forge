@@ -1,16 +1,14 @@
 using OpenForge.Cli.Core.Commands.Library.Inspect.Models.Binding;
 using OpenForge.Cli.Core.Commands.Library.Inspect.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Inspect.Models.Result;
-using OpenForge.Cli.Core.Shell.Composition;
-using OpenForge.Cli.Core.Shell.Composition.Models;
-using OpenForge.Cli.Core.Shell.Invocation;
-using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Observation;
 using OpenForge.Cli.Core.Framework.Libraries;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 
 namespace OpenForge.Cli.Core.Commands.Library.Inspect.Shared.Binding;
 
@@ -125,7 +123,7 @@ internal static class LibraryInspectRequestBinder
             : string.Join(" ", input.InvalidInput.Diagnostics);
 
     private static LibraryInspectResult Invalid(
-        Framework.Workspace.CliWorkspace? workspace,
+        Framework.Workspace.Models.CliWorkspace? workspace,
         string? supplied)
         => new()
         {

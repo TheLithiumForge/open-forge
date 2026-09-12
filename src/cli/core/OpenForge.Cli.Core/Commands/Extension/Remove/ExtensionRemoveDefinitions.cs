@@ -1,8 +1,11 @@
 using OpenForge.Cli.Core.Commands.Extension.Models.Permissions;
+using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
+using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Selection;
-using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Definitions.Models;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove;
 

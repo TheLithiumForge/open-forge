@@ -1,16 +1,12 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Navigation;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
-
-internal sealed record RouteMoveSubjectResolutionRequest
-{
-    public required RouteMoveRequest Request { get; init; }
-}
 
 internal sealed record RouteMoveResolvedLayer
 {
@@ -33,21 +29,12 @@ internal sealed record RouteMoveResolvedSubject
 
     public SourceRouteFacts? RouteFacts { get; init; }
 
-    public RouteMoveNavigationExposure NavigationExposure { get; init; } = new()
+    public RouteNavigationExposure NavigationExposure { get; init; } = new()
     {
         IsCancelled = false,
     };
 
     public ImmutableArray<RouteMoveResolvedLayer> Layers { get; init; } = [];
-}
-
-internal sealed record RouteMoveNavigationExposure
-{
-    public ImmutableArray<string> ExposedPaths { get; init; } = [];
-
-    public ImmutableArray<string> UnavailableParents { get; init; } = [];
-
-    public required bool IsCancelled { get; init; }
 }
 
 internal sealed record RouteMoveSubjectSelection

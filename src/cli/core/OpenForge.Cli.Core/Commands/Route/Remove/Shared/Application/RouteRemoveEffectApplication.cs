@@ -1,9 +1,8 @@
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 
@@ -15,17 +14,6 @@ internal sealed partial class RouteRemoveEffectApplication(
     private readonly FileChangeApplier _fileChangeApplier = fileChangeApplier;
     private readonly DirectoryDeletionApplier _directoryDeletionApplier = directoryDeletionApplier;
     private readonly FileExpectationValidator _expectationValidator = expectationValidator;
-
-    internal static RouteRemoveEffectApplication Create()
-    {
-        var resolver = new PhysicalPathResolver();
-        var validator = new FileExpectationValidator(resolver);
-        var revalidator = new MutationRevalidator(validator);
-        return new RouteRemoveEffectApplication(
-            new FileChangeApplier(revalidator, validator),
-            new DirectoryDeletionApplier(revalidator, validator),
-            validator);
-    }
 
     internal async ValueTask<RouteRemoveApplicationProgress> ApplyAsync(
         RouteRemoveEffectApplicationInput input,

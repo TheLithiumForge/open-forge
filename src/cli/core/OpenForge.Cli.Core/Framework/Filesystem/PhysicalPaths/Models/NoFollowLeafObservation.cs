@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
+
 namespace OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 
 // The final component is classified without resolving a link target.  The

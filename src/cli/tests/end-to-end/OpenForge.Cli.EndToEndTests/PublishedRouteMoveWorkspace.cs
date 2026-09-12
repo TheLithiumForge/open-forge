@@ -1,20 +1,15 @@
 using System.Text;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using OpenForge.Cli.EndToEndTests.Shared.Route;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.EndToEndTests;
 
 internal sealed class PublishedRouteMoveWorkspace : IDisposable
 {
-    internal const string SourceId = "guidance/old guide";
-    internal const string SourcePath = ".agents/guidance/old guide.md";
-    internal const string SourceOverwritePath = ".agents/guidance/old guide.overwrite.md";
     internal const string DestinationPath = ".agents/archive/new guide.md";
     internal const string DestinationOverwritePath = ".agents/archive/new guide.overwrite.md";
-    internal const string CategoryPath = ".agents/guidance/topics/_topics.md";
     internal const string CategoryDestination = ".agents/archive/topics/_topics.md";
-    internal const string SourceText = "---\nopen-forge:\n  description: Old guide\n  tags: [Guide]\n---\n# Old guide\n\n[Archive](../archive/_archive.md#entries)\n";
-    internal const string OverwriteText = "[Archive override](../archive/_archive.md).\n";
 
     private readonly TemporaryWorkspace temporary;
     private readonly PublishedWorkspaceLockStore lockStore;
@@ -43,7 +38,7 @@ internal sealed class PublishedRouteMoveWorkspace : IDisposable
         PublishedWorkspaceLockStore? lockStore = null;
         try
         {
-            await PublishedRouteMoveSetup.SeedAsync(target, temporary);
+            await PublishedRouteWorkspaceSeed.SeedAsync(target, temporary);
             lockStore = PublishedWorkspaceLockStore.Create("e2e-route-move-lock-store");
             return new PublishedRouteMoveWorkspace(temporary, lockStore);
         }

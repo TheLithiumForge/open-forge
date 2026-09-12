@@ -1,6 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Models.Binding;
 

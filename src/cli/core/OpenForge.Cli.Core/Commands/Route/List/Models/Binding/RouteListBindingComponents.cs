@@ -1,6 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Models.Binding;
 

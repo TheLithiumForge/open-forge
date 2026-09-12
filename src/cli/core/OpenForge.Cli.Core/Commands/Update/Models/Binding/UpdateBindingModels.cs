@@ -1,6 +1,6 @@
 using System.CommandLine;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
-using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Definitions.Models;
 
 namespace OpenForge.Cli.Core.Commands.Update.Models.Binding;
 

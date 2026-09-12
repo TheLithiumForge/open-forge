@@ -1,14 +1,15 @@
-using OpenForge.Cli.Core.Commands.Library.Shared.Rendering.Coordinates;
-using OpenForge.Cli.Core.Commands.Library.Detach.Models.Presentation;
-using OpenForge.Cli.Core.Commands.Library.Models.Presentation.Envelope;
-using OpenForge.Cli.Core.Shell.Presentation;
-using System.Text.Json.Serialization;
-using OpenForge.Cli.Core.Commands.Library.Detach.Models.Result;
-using OpenForge.Cli.Core.Framework.Workspace;
-using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using OpenForge.Cli.Core.Commands.Library.Detach.Models.Presentation;
+using OpenForge.Cli.Core.Commands.Library.Detach.Models.Result;
+using OpenForge.Cli.Core.Commands.Library.Models.Presentation.Envelope;
+using OpenForge.Cli.Core.Commands.Library.Shared.Rendering.Coordinates;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.Commands.Library.Detach.Shared.Rendering;
 

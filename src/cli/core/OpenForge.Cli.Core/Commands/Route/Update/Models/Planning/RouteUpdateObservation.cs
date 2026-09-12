@@ -2,15 +2,10 @@ using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
-
-internal sealed record RouteUpdateObservationRequest
-{
-    public required RouteUpdateRequest Request { get; init; }
-}
 
 internal sealed record RouteUpdateObservation
 {

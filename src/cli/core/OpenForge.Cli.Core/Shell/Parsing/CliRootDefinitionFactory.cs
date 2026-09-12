@@ -1,13 +1,10 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Definitions.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 
 namespace OpenForge.Cli.Core.Shell.Parsing;
-
-internal sealed record CliRootDefinition(
-    RootCommand Root,
-    CliGlobalOptionSymbols Options,
-    IReadOnlyList<CliDelimiterPolicy> DelimiterPolicies);
 
 internal static class CliRootDefinitionFactory
 {

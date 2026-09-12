@@ -28,8 +28,7 @@ internal static class UpdateOperationFactory
                 lockStoreRoot is null
                     ? WorkspaceLockManager.CreateForCurrentUser()
                     : new WorkspaceLockManager(lockStoreRoot),
-                new UpdateApplicationPreflight(
-                    new UpdatePlanRevalidator(planBuilder, mutationRevalidator)),
+                new UpdatePlanRevalidator(planBuilder, mutationRevalidator),
                 new UpdateEffectApplication(
                     new FileChangeApplier(mutationRevalidator, validator)),
                 new UpdateAppliedVerifier(planBuilder)));

@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Extension.List.Shared.Result;

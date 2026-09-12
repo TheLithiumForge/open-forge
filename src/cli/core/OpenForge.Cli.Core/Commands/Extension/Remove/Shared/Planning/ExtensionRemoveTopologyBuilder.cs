@@ -4,15 +4,15 @@ using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
-using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
 
@@ -142,7 +142,7 @@ internal sealed class ExtensionRemoveTopologyBuilder
                 changed
                     ? ExtensionRemoveGeneratedRegionState.Changed
                     : ExtensionRemoveGeneratedRegionState.Unchanged));
-            intendedBytes.Add(region.CanonicalPath, change.ExpectedDocumentBytes.ToArray());
+            intendedBytes.Add(region.CanonicalPath, [.. change.ExpectedDocumentBytes]);
             generatedEntries.Add(region.CanonicalPath, region.Entries);
             if (!changed)
             {
@@ -184,16 +184,6 @@ internal sealed class ExtensionRemoveTopologyBuilder
             [],
             []);
 }
-
-internal sealed record ExtensionRemoveTopologyBuild(
-    ExtensionRemoveTopology Topology,
-    IReadOnlyList<ExtensionRemoveGeneratedRegion> Regions,
-    IReadOnlyList<ExtensionRemoveGeneratedChange> Changes);
-
-internal sealed record ExtensionRemoveGeneratedChange(
-    string Path,
-    PlannedFileChange Change,
-    FileStateSnapshot Before);
 
 internal sealed class ExtensionRemoveTopologyBlockedException(string message)
     : Exception(message);

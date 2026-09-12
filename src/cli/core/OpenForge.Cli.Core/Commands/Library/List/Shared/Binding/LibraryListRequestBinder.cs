@@ -1,14 +1,12 @@
 using OpenForge.Cli.Core.Commands.Library.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Library.List.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.List.Models.Result;
-using OpenForge.Cli.Core.Shell.Composition;
-using OpenForge.Cli.Core.Shell.Composition.Models;
-using OpenForge.Cli.Core.Shell.Invocation;
-using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Observation;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 
 namespace OpenForge.Cli.Core.Commands.Library.List.Shared.Binding;
 

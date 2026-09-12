@@ -1,6 +1,5 @@
-using System.Globalization;
-using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Help;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Rendering;
 
@@ -38,40 +37,9 @@ internal static class RouteInitHelpSections
                 "  open-forge route update — author an existing entrypoint.\n"
                 + "  open-forge doctor — inspect blocked or unavailable route and safety facts.\n"
                 + "  open-forge cleanup — remove a reported retained recovery artifact after review."),
-            new CliHelpSection("Results and streams", ResultsAndStreams()),
+            new CliHelpSection("Results and streams", CliResultHelp.ResultsAndStreams(RouteInitDefinitions.SchemaVersion)),
             new CliHelpSection(
                 "Notes",
                 "  Route Init does not instantiate a Template, infer route meaning, rewrite authored content, normalize compatibility filenames, repair malformed generated regions, manipulate Git, or create commits."),
         ]);
-
-    private static string ResultsAndStreams()
-    {
-        var lines = new List<string>
-        {
-            "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            string.Create(
-                CultureInfo.InvariantCulture,
-                $"  JSON writes one schema-version-{RouteInitDefinitions.SchemaVersion} envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr."),
-        };
-        foreach (var status in Enum.GetValues<CliSemanticStatus>())
-        {
-            var definition = CliStatusDefinitions.Read(status);
-            lines.Add(string.Create(
-                CultureInfo.InvariantCulture,
-                $"  {definition.MachineName}: exit {definition.Disposition.ExitCode} and human {Stream(definition.Disposition.HumanOutputTarget)}."));
-        }
-
-        return string.Join(Environment.NewLine, lines);
-    }
-
-    private static string Stream(CliOutputTarget target)
-        => target switch
-        {
-            CliOutputTarget.StandardOutput => "stdout",
-            CliOutputTarget.StandardError => "stderr",
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(target),
-                target,
-                "The output target is not defined."),
-        };
 }

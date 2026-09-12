@@ -27,7 +27,7 @@ internal static class PortableWorkspacePath
             return false;
         }
 
-        normalized = string.Join('/', segments);
+        normalized = value;
         return normalized.Length <= 4096;
     }
 

@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;

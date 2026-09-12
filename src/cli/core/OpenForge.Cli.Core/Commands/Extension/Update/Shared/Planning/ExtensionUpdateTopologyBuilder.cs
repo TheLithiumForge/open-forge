@@ -1,13 +1,14 @@
-using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
-using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Text;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
+using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning.Topology;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle;
@@ -241,13 +242,3 @@ internal sealed class ExtensionUpdateTopologyBuilder
         string Sha256,
         byte[] Bytes);
 }
-
-internal sealed record ExtensionUpdateTopologyInput(
-    ExtensionUpdateRequest Request,
-    IReadOnlyList<ExtensionPackageFact> Packages,
-    IReadOnlySet<string> RetiredPaths,
-    ExtensionUpdateTopologyAdmission Admission);
-
-internal sealed record ExtensionUpdateTopologyAdmission(
-    IReadOnlyDictionary<string, byte[]> Overrides,
-    IReadOnlySet<string> Exclusions);

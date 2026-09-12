@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Models.Operation;
 

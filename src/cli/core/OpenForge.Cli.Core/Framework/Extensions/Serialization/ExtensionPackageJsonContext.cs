@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using OpenForge.Cli.Core.Framework.Extensions.Models.Serialization;
 
 namespace OpenForge.Cli.Core.Framework.Extensions.Serialization;
 

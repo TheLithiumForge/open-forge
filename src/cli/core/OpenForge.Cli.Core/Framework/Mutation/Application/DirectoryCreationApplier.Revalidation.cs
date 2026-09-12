@@ -1,5 +1,6 @@
-using OpenForge.Cli.Core.Framework.Filesystem;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Application;
@@ -29,7 +30,7 @@ internal sealed partial class DirectoryCreationApplier
                 context,
                 FilesystemNotStartedReason.ApplicationFailed,
                 FilesystemFailure.FromException(
-                    FailureKind(exception),
+                    FilesystemFailure.ClassifyException(exception),
                     exception).DirectCause);
         }
 

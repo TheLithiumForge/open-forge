@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Libraries.Shared.Record;
@@ -61,6 +61,31 @@ public sealed class LibrariesRecordReaderIntegrationTests
         Assert.Null(result.Record);
         Assert.Equal("{\"schemaVersion\":1,\"libraries\":[]}", await File.ReadAllTextAsync(target, TestContext.Current.CancellationToken));
     }
+    [Theory(DisplayName = "Library file reader distinguishes ambiguous ownership from malformed ordering")]
+    [InlineData("a", "a", (int)LibrariesRecordReadState.Blocked, "The Library record contains ambiguous duplicate ownership.")]
+    [InlineData("b", "a", (int)LibrariesRecordReadState.Malformed, "The Library record is not exact schema v1.")]
+    public static async Task PreservesDecodedFailureClassification(string firstId, string secondId, int state, string cause)
+    {
+        using var temporary = TemporaryWorkspace.Create("library-record-classification");
+        var json = $$"""
+            {"schemaVersion":1,"libraries":[
+             {"id":"{{firstId}}","sourceRoot":"one","destinationRoot":"docs","paths":["a.md"]},
+             {"id":"{{secondId}}","sourceRoot":"two","destinationRoot":"other","paths":["a.md"]}]}
+            """;
+        temporary.CreateFile(".agents/open-forge.libraries.json", json);
+        var before = temporary.SnapshotHashes();
+        var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
+
+        var result = await LibrariesRecordReader.ReadAsync(new PhysicalPathResolver(), workspace, TestContext.Current.CancellationToken);
+
+        Assert.Equal((LibrariesRecordReadState)state, result.State);
+        Assert.Null(result.Record);
+        Assert.Equal(cause, result.Cause);
+        Assert.NotNull(result.Snapshot);
+        Assert.Equal(System.Text.Encoding.UTF8.GetBytes(json), result.Snapshot.Bytes.ToArray());
+        Assert.Equal(before, temporary.SnapshotHashes());
+    }
+
     [Fact(DisplayName = "Unreadable existing Library record is unavailable and grants no partial authority")]
     public async Task DistinguishesUnavailableFromMissing()
     {

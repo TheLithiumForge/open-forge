@@ -71,6 +71,12 @@ public sealed class ExtensionManifestFileReaderIntegrationTests
             Assert.Equal(ExtensionSourceFailureKind.PackageInvalid, failure.FailureKind);
             Assert.StartsWith("The Extension manifest is invalid: ", failure.Cause);
         }
+        if (scenario == "encoding")
+        {
+            Assert.Equal(
+                "The Extension manifest is invalid: Unable to translate bytes [FF] at index 0 from specified code page to Unicode.",
+                failure.Cause);
+        }
         Assert.Equal(before, source.SnapshotHashes());
     }
 

@@ -1,4 +1,5 @@
 using System.CommandLine;
+using OpenForge.Cli.Core.Shell.Definitions.Models;
 
 namespace OpenForge.Cli.Core.Commands.Context.Models.Binding;
 
@@ -40,7 +41,7 @@ internal sealed record ContextSymbols(
     }
 
     private static Option<string[]> CreateScalar(
-        Shell.Definitions.CliOptionDefinition<string[]> definition)
+        CliOptionDefinition<string[]> definition)
         => new(definition.Name)
         {
             Description = definition.Description,

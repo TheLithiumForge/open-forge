@@ -1,6 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Models.Binding;
 

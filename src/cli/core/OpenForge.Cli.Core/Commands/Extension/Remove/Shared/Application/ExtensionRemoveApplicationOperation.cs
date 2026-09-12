@@ -1,17 +1,17 @@
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Application;
-using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
-using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using static OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application.ExtensionRemoveApplicationResultFactory;
 using static OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application.ExtensionRemovePlanComparer;
 
@@ -471,12 +471,4 @@ internal sealed class ExtensionRemoveApplicationOperation(
                     "A successful recovery preparation does not require a failure finding."),
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The recovery preparation state is not defined."),
         };
-}
-
-internal enum ExtensionRemoveApplicationStage
-{
-    TargetEffect,
-    Lifecycle,
-    Verification,
-    Cleanup,
 }

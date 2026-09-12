@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 using OpenForge.Cli.Core.Shell.Interaction;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Interaction;

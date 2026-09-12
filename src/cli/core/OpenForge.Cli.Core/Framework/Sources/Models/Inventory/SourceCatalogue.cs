@@ -1,8 +1,9 @@
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
@@ -172,7 +173,7 @@ internal sealed class SourceCatalogue
             .ToHashSet(StringComparer.Ordinal);
         var selectedIssues = Issues
             .Where(issue => issue.Stage != SourceCatalogueIssueStage.Root)
-            .Select(issue => ProjectIssue(issue, selectedCandidatePaths, selectedSources, request))
+            .Select(issue => ProjectIssue(issue, selectedCandidatePaths, request))
             .Where(issue => issue is not null)
             .Cast<SourceCatalogueIssue>()
             .ToArray();
@@ -199,11 +200,6 @@ internal sealed class SourceCatalogue
         SourceCandidate candidate,
         SourceCatalogueSelectionRequest request)
     {
-        if (candidate.PhysicalParentPath is null)
-        {
-            return false;
-        }
-
         var included = request.IncludedScopes.Any(scope =>
             PhysicalContainment.Contains(scope.PhysicalDirectoryPath, candidate.PhysicalParentPath));
         if (!included)
@@ -218,7 +214,6 @@ internal sealed class SourceCatalogue
     private SourceCatalogueIssue? ProjectIssue(
         SourceCatalogueIssue issue,
         IReadOnlySet<string> selectedCandidatePaths,
-        IReadOnlyList<SourceLogicalSource> selectedSources,
         SourceCatalogueSelectionRequest request)
     {
         if (issue.Code == SourceCatalogueIssueCode.DirectoryUnavailable)

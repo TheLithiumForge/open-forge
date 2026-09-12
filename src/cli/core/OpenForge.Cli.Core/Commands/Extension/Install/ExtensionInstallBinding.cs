@@ -1,27 +1,22 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
+using OpenForge.Cli.Core.Commands.Extension.Install.Models.Binding;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
+using OpenForge.Cli.Core.Shell.Definitions.Models;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install;
 
-internal sealed record ExtensionInstallSymbols(
-    Command Command,
-    Argument<string[]> StableIds,
-    Option<string?> Source,
-    Option<bool> All,
-    Option<bool> Force,
-    Option<bool> Automatic,
-    Option<bool> DryRun)
+internal static class ExtensionInstallBinding
 {
-    internal static ExtensionInstallSymbols Create(Command extensionGroup)
+    internal static ExtensionInstallSymbols CreateSymbols(Command extensionGroup)
     {
         var command = new Command(
             ExtensionInstallDefinitions.InstallCommand.Name,
@@ -51,19 +46,6 @@ internal sealed record ExtensionInstallSymbols(
         return new ExtensionInstallSymbols(command, ids, source, all, force, automatic, dryRun);
     }
 
-    private static Option<bool> Boolean(CliOptionDefinition<bool> definition)
-        => new(definition.Name)
-        {
-            Description = definition.Description,
-            Arity = ArgumentArity.Zero,
-        };
-}
-
-internal static class ExtensionInstallBinding
-{
-    internal static ExtensionInstallSymbols CreateSymbols(Command extensionGroup)
-        => ExtensionInstallSymbols.Create(extensionGroup);
-
     internal static CliCommandBinding<ExtensionInstallRequest, ExtensionInstallResult> Close(
         ExtensionInstallSymbols symbols,
         CliHelpContent help,
@@ -85,6 +67,13 @@ internal static class ExtensionInstallBinding
                 DiagnosticRenderer = diagnosticRenderer,
             });
     }
+
+    private static Option<bool> Boolean(CliOptionDefinition<bool> definition)
+        => new(definition.Name)
+        {
+            Description = definition.Description,
+            Arity = ArgumentArity.Zero,
+        };
 }
 
 internal sealed class ExtensionInstallRequestBinder(ExtensionInstallSymbols symbols)
@@ -125,7 +114,7 @@ internal sealed class ExtensionInstallRequestBinder(ExtensionInstallSymbols symb
 
     private ExtensionInstallRequest ReadRequest(
         ParseResult result,
-        Framework.Workspace.CliWorkspace workspace,
+        Framework.Workspace.Models.CliWorkspace workspace,
         CliPresentation presentation)
     {
         var input = ReadInput(result);
@@ -201,7 +190,7 @@ internal sealed class ExtensionInstallRequestBinder(ExtensionInstallSymbols symb
     }
 
     private static ExtensionInstallResult Invalid(
-        Framework.Workspace.CliWorkspace? workspace,
+        Framework.Workspace.Models.CliWorkspace? workspace,
         ExtensionInstallBindingInput input,
         string cause)
         => ExtensionInstallResult.Empty(
@@ -222,8 +211,3 @@ internal sealed class ExtensionInstallRequestBinder(ExtensionInstallSymbols symb
                 request.Automatic),
             cause);
 }
-
-internal sealed record ExtensionInstallBindingInput(
-    ExtensionInstallMode Mode,
-    bool Force,
-    bool Automatic);

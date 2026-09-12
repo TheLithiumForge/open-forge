@@ -1,22 +1,23 @@
-using OpenForge.Cli.Core.Commands.Extension.Update.Models.Application;
-using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
-using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
+using System.Collections.Immutable;
 using System.Text.Json;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
+using OpenForge.Cli.Core.Commands.Extension.Update.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Effects;
-using OpenForge.Cli.Core.Commands.Extension.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Update.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Filesystem;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
 using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Shared.Application;
 
@@ -561,11 +562,11 @@ internal sealed class ExtensionUpdateApplicationOperation(
                 LifecycleJsonContext.Default.ExtensionLifecycleState));
 
     private static bool DictionaryEquals(
-        IReadOnlyDictionary<string, byte[]> expected,
-        IReadOnlyDictionary<string, byte[]> actual)
+        IReadOnlyDictionary<string, ImmutableArray<byte>> expected,
+        IReadOnlyDictionary<string, ImmutableArray<byte>> actual)
         => expected.Count == actual.Count
             && expected.All(pair => actual.TryGetValue(pair.Key, out var bytes)
-                && pair.Value.AsSpan().SequenceEqual(bytes));
+                && pair.Value.AsSpan().SequenceEqual(bytes.AsSpan()));
 
     private static bool ChangesEqual(
         IReadOnlyList<PlannedFileChange> expected,

@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Context.Models.Request;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Commands.Context.Models.Selection;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Context.Shared.Result;
 

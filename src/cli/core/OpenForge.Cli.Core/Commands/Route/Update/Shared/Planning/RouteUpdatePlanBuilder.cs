@@ -27,10 +27,7 @@ internal sealed class RouteUpdatePlanBuilder
         CancellationToken cancellationToken)
     {
         var observed = await _observer.ObserveAsync(
-                new RouteUpdateObservationRequest
-                {
-                    Request = request,
-                },
+                request,
                 cancellationToken)
             .ConfigureAwait(false);
         if (observed.Boundary is { } observationBoundary)
@@ -42,10 +39,7 @@ internal sealed class RouteUpdatePlanBuilder
             ?? throw new InvalidOperationException(
                 "Complete Route Update observation requires one observation.");
         var destination = await _destinationPlanner.BuildAsync(
-                new RouteUpdateDestinationInput
-                {
-                    Observation = observation,
-                },
+                observation,
                 cancellationToken)
             .ConfigureAwait(false);
         if (destination.Boundary is { } destinationBoundary)
@@ -57,10 +51,7 @@ internal sealed class RouteUpdatePlanBuilder
             ?? throw new InvalidOperationException(
                 "Complete Route Update destination planning requires one destination.");
         var navigation = await _navigationPlanner.BuildAsync(
-                new RouteUpdateNavigationInput
-                {
-                    Destination = completeDestination,
-                },
+                completeDestination,
                 cancellationToken)
             .ConfigureAwait(false);
         if (navigation.Boundary is { } navigationBoundary)

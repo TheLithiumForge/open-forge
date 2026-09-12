@@ -1,12 +1,16 @@
 using System.Text;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
+using OpenForge.Cli.Core.Framework.Extensions.Operational.Models.Registration;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
-using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
@@ -14,10 +18,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Operational;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
-using OpenForge.Cli.Core.Framework.Documents.Markdown;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Extensions.Operational;
 
@@ -25,7 +27,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
 {
     private const string ProjectionHost = "# Projection\n\n## Entries\n\n"
         + "<!-- open-forge:generated-index:start -->\n"
-        + "- none - No entries - #Empty\n"
+        + MarkdownGeneratedRegionSyntax.EmptyEntry + "\n"
         + "<!-- open-forge:generated-index:end -->\n";
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
     private readonly SourceCatalogueReader _catalogueReader = new();
@@ -500,17 +502,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
     private static ExtensionBridgeRegistrationObservation Create(
         BridgeCandidate candidate,
         BridgeObservationComparison comparison)
-        => new(
-            candidate.TargetPath,
-            candidate.Owners,
-            candidate.PackageId,
-            candidate.SourceIdentity,
-            candidate.SourceAssetPath,
-            comparison.ParentPath,
-            comparison.ExpectedEntry,
-            comparison.ActualEntry,
-            comparison.State,
-            comparison.Cause);
+        => new(candidate, comparison);
 
     private static byte[]? ReadSharedBytes(IEnumerable<BridgeCandidate> candidates)
     {
@@ -544,27 +536,6 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
             or SourceCatalogueIssueCode.EntrypointCompatibilityCollision
             or SourceCatalogueIssueCode.IdentityCollision
             or SourceCatalogueIssueCode.PhysicalAlias;
-
-    private sealed record BridgeCandidate(
-        string TargetPath,
-        IReadOnlyList<string> Owners,
-        string PackageId,
-        string SourceIdentity,
-        string SourceAssetPath,
-        byte[] Bytes);
-
-    private sealed class BridgeObservationComparison
-    {
-        internal required string ParentPath { get; init; }
-
-        internal required string ExpectedEntry { get; init; }
-
-        internal string? ActualEntry { get; init; }
-
-        internal required ExtensionBridgeRegistrationState State { get; init; }
-
-        internal string? Cause { get; init; }
-    }
 
     private sealed record CandidateRead(
         IReadOnlyList<BridgeCandidate> Candidates,

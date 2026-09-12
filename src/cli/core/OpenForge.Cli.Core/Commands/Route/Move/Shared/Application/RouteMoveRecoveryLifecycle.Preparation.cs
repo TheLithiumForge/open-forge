@@ -2,7 +2,9 @@ using OpenForge.Cli.Core.Commands.Route.Move.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Application;
@@ -10,7 +12,7 @@ namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Application;
 internal static partial class RouteMoveRecoveryLifecycle
 {
     internal static async ValueTask<RouteMoveRecoveryPreparationResult> PrepareAsync(
-        RouteMoveRecoveryPreparationInput input,
+        RouteMoveHeldApplication input,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(input);
@@ -38,7 +40,7 @@ internal static partial class RouteMoveRecoveryLifecycle
     }
 
     private static async ValueTask<RouteMoveRecoveryPreparationResult> PrepareBundleAsync(
-        RouteMoveRecoveryPreparationInput input,
+        RouteMoveHeldApplication input,
         CancellationToken cancellationToken)
     {
         try

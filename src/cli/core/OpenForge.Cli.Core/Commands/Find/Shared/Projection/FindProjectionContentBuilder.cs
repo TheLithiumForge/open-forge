@@ -4,8 +4,9 @@ using OpenForge.Cli.Core.Commands.Find.Models.Projection;
 using OpenForge.Cli.Core.Commands.Find.Models.Query;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
-using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Find.Shared.Projection;

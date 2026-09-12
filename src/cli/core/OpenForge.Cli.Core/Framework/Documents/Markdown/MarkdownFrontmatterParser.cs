@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Markdown;
 

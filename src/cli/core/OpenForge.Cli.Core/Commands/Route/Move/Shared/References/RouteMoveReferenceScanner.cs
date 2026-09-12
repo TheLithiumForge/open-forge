@@ -1,12 +1,11 @@
-using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
@@ -20,6 +19,7 @@ internal sealed partial class RouteMoveReferenceScanner(
     SourceLinkDestinationResolver destinationResolver,
     FileExpectationValidator expectationValidator)
 {
+    private static readonly UTF8Encoding StrictUtf8 = new(false, true);
     private readonly MarkdownDocumentParser _markdownParser = markdownParser;
     private readonly SourceLinkDestinationResolver _destinationResolver = destinationResolver;
     private readonly FileExpectationValidator _expectationValidator = expectationValidator;
@@ -51,8 +51,8 @@ internal sealed partial class RouteMoveReferenceScanner(
         return new RouteMoveReferenceScanResult(
             new RouteMoveReferenceScan
             {
-                Documents = documents.ToImmutableArray(),
-                Rewrites = rewrites.ToImmutableArray(),
+                Documents = [.. documents],
+                Rewrites = [.. rewrites],
                 OccurrenceCount = occurrences,
             },
             boundary: null);
@@ -126,7 +126,7 @@ internal sealed partial class RouteMoveReferenceScanner(
     }
 
     private async ValueTask<RouteMoveReferenceDocument?> ReadDocumentAsync(
-        Framework.Workspace.CliWorkspace workspace,
+        Framework.Workspace.Models.CliWorkspace workspace,
         string sourcePath,
         CancellationToken cancellationToken)
     {
@@ -144,7 +144,7 @@ internal sealed partial class RouteMoveReferenceScanner(
             var physicalPath = resolution.GetContainedPhysicalPath();
             var bytes = await File.ReadAllBytesAsync(physicalPath, cancellationToken)
                 .ConfigureAwait(false);
-            var text = new UTF8Encoding(false, true).GetString(bytes);
+            var text = StrictUtf8.GetString(bytes);
             var snapshot = FileStateSnapshot.File(logicalPath, physicalPath, bytes);
             var check = await _expectationValidator.ValidateAsync(
                 workspace,
@@ -256,8 +256,8 @@ internal sealed partial class RouteMoveReferenceScanner(
         => new(
             new RouteMoveReferenceReplacementScan
             {
-                Replacements = replacements.Values.ToImmutableArray(),
-                Meanings = meanings.ToImmutableArray(),
+                Replacements = [.. replacements.Values],
+                Meanings = [.. meanings],
                 OccurrenceCount = document.Facts.Links.Count(link => IsAuthoredLink(document, link)),
             },
             boundary: null);

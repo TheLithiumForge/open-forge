@@ -1,22 +1,21 @@
-using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
-using OpenForge.Cli.Core.Framework.Permissions;
-using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Shared.Completion;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Permissions;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Library.Attach.Shared.Completion;
 
 internal static class LibraryAttachCompletion
 {
-    // Completion consumes immutable observed evidence, never the derived
-    // Outcome.Application. Verified receipts remain monotonic residual truth;
-    // positive retained cleanup and unknown cleanup are distinct facts.
+    // Completion consumes immutable execution evidence. Verified receipts remain
+    // monotonic residual truth; retained and unknown cleanup are distinct facts.
     internal static LibraryAttachResult Complete(LibraryAttachCompletionInput input)
     {
         ArgumentNullException.ThrowIfNull(input);

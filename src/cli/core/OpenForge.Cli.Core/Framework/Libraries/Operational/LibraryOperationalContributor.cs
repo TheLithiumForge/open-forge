@@ -11,7 +11,7 @@ using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.Source;
 using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Libraries.Operational;
 

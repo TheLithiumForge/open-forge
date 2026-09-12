@@ -1,7 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
@@ -85,14 +86,10 @@ internal sealed partial class RouteUpdateNavigationPlanner
     private static bool TryReadText(
         SourceDocumentReadResult read,
         out string text,
-        out RouteUpdateFinding finding)
+        [NotNullWhen(false)] out RouteUpdateFinding? finding)
     {
         text = string.Empty;
-        finding = new RouteUpdateFinding(
-            RouteUpdateFindingCode.ProjectionIncomplete,
-            read.Read?.Failure?.DirectCause
-                ?? "A routed source required for navigation is unavailable.",
-            read.Layer.CanonicalPath);
+        finding = null;
         if (read.Verification.State == SourceLayerVerificationState.Verified
             && read.Read?.State == FileReadState.Complete
             && read.Read.Value is { } value)
@@ -100,6 +97,12 @@ internal sealed partial class RouteUpdateNavigationPlanner
             text = value;
             return true;
         }
+
+        finding = new RouteUpdateFinding(
+            RouteUpdateFindingCode.ProjectionIncomplete,
+            read.Read?.Failure?.DirectCause
+                ?? "A routed source required for navigation is unavailable.",
+            read.Layer.CanonicalPath);
 
         if (read.Read?.State == FileReadState.Cancelled)
         {

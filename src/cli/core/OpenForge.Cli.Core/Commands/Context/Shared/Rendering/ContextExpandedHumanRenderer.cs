@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using static OpenForge.Cli.Core.Commands.Context.Shared.Rendering.ContextHumanRenderingSupport;
 

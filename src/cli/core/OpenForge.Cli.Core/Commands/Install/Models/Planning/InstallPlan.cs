@@ -1,10 +1,11 @@
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
@@ -59,10 +60,14 @@ internal sealed record InstallPlan
 
     public bool IsComplete => Findings.Count == 0;
 
-    public bool IsNoOp => FileChanges.Count == 0;
+    public int PlannedFileCount => TargetEffects.Count + (LifecycleEffect is null ? 0 : 1);
 
-    public bool RequiresRecovery => FileChanges.Any(
-        change => change.Kind != PlannedFileChangeKind.Create);
+    public bool IsNoOp => TargetEffects.Count == 0 && LifecycleEffect is null;
+
+    public bool RequiresRecovery =>
+        TargetEffects.Any(static effect => effect.Change.Kind != PlannedFileChangeKind.Create)
+        || (LifecycleEffect is { } lifecycleEffect
+            && lifecycleEffect.Change.Kind != PlannedFileChangeKind.Create);
 }
 
 internal sealed record InstallPlanBuild

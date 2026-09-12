@@ -3,6 +3,7 @@ using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Planning;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Create.Shared.Planning;
 

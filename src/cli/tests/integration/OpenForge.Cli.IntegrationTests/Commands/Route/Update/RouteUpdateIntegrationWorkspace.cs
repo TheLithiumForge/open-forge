@@ -16,14 +16,13 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
@@ -158,10 +157,7 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
 
     internal ValueTask<RouteUpdateObservationBuild> ObserveAsync(string reference)
         => CreateTargetObserver().ObserveAsync(
-            new RouteUpdateObservationRequest
-            {
-                Request = Request(reference),
-            },
+            Request(reference),
             TestContext.Current.CancellationToken);
 
     internal static ValueTask<RouteUpdatePlanBuild> BuildPlanAsync(RouteUpdateRequest request)

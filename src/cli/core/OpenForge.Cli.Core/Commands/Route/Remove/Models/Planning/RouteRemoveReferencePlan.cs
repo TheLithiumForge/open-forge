@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.References;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 
@@ -104,14 +104,3 @@ internal sealed record RouteRemoveReferencePlanningResult
 
     internal RouteRemoveResultFormation? Boundary { get; }
 }
-
-internal enum RouteRemoveReferencePostRemoveState
-{
-    Verified,
-    Failed,
-    Interrupted,
-}
-
-internal sealed record RouteRemoveReferencePostRemoveResult(
-    RouteRemoveReferencePostRemoveState State,
-    string? Cause);

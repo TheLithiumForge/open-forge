@@ -2,7 +2,6 @@ using OpenForge.Cli.Core.Commands.Route.Move.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
-using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Application;
@@ -34,12 +33,7 @@ internal sealed partial class RouteMoveApplicationOperation(
         }
 
         var preparation = await RouteMoveRecoveryLifecycle.PrepareAsync(
-            new RouteMoveRecoveryPreparationInput
-            {
-                Plan = held.Plan,
-                OperationId = held.OperationId,
-                Lease = held.Lease,
-            },
+            held,
             cancellationToken).ConfigureAwait(false);
         if (preparation.State != RouteMoveRecoveryPreparationState.Prepared)
         {
@@ -113,8 +107,3 @@ internal sealed partial class RouteMoveApplicationOperation(
             cause);
     }
 }
-
-internal sealed record RouteMoveHeldApplication(
-    RouteMovePlan Plan,
-    Guid OperationId,
-    WorkspaceLockLease Lease);

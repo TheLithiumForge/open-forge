@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 
@@ -107,7 +107,7 @@ internal static class LocalReferenceGraphReader
         => string.Join("\n", finding.Occurrences.Select(ReadEdgeKey));
 
     private static string ReadEdgeKey(LocalReferenceObservation edge)
-        => edge.RoutePath + "\0" + edge.Destination + "\0" + edge.SourcePath;
+        => $"{edge.RoutePath}\0{edge.Destination}\0{edge.SourcePath}";
 
     private enum GraphColor
     {

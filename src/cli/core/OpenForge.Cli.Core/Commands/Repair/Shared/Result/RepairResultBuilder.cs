@@ -1,9 +1,9 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Result;
 

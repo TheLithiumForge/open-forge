@@ -1,8 +1,9 @@
+using System.Security.Cryptography;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
-using System.Security.Cryptography;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Reading;
 

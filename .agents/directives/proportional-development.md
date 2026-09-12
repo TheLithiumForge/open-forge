@@ -71,13 +71,37 @@ open-forge:
 
 ### Keep Analysis And Evidence Proportionate
 
+- Tie proposed work to a normal user journey, a plausible consequential failure,
+  or an invariant required by an accepted product guarantee. Name that connection
+  before expanding implementation, testing or review. A technically possible
+  input or state alone does not justify additional work.
+- Let standard libraries own the languages and mechanisms they implement. For
+  example, read a file, let the accepted library parse its format, and consume
+  the parsed values the product needs. Validate product requirements on those
+  values. Do not rescan syntax or add special handling merely to cover obscure
+  spellings, unusual dependency behavior or every feature of the format.
+- Keep users responsible for supplying meaningful input within the supported
+  contract. Use the existing bounded error path for unsupported or malformed
+  input. Add accommodation only when a real use case or accepted guarantee
+  needs it; do not make the product interpret arbitrary user intent.
 - Investigate likely and consequential failures first. Record unusual cases for
   triage; do not promote every theoretical edge case into a requirement,
   blocker, abstraction, or test.
+- Test behavior the project owns, including the internal invariants needed to
+  deliver it. Use ordinary dependency behavior without retesting the dependency
+  or operating system. Artificial private states and exhaustive language-feature
+  combinations need a demonstrated connection to the supported product.
 - Choose planning depth, delegation, tests, review, compatibility work, and
   platform coverage from novelty, consequence, and reversibility. File count or
   the presence of filesystem, concurrency, persistence, or security terminology
   does not by itself require the highest-assurance process.
+- Match effort to the delivery stage and current goal. During a bounded beta
+  closeout, prioritize working journeys and material regressions. Defer optional
+  architecture polish and low-impact edge cases. Existing preparation or time
+  already spent does not make a finding necessary for release.
+- Resolve routine out-of-scope edge cases through these rules. Ask the user only
+  when a real product choice or consequential tradeoff remains; do not turn an
+  exotic example into an unnecessary decision for them.
 - Explain residual risk honestly. Do not market ordinary safeguards as absolute
   guarantees, and do not reject a proportionate design merely because a more
   privileged or malicious actor could defeat it.

@@ -1,4 +1,6 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Markdown;
 
@@ -223,9 +225,3 @@ internal static class MarkdownGeneratedRegionParser
         End,
     }
 }
-
-internal sealed record MarkdownGeneratedRegionParseInput(
-    string Source,
-    MarkdownTextSpan BodySpan,
-    IReadOnlyList<MarkdownHeadingFact> Headings,
-    IReadOnlyList<MarkdownOpaqueSpan> OpaqueSpans);

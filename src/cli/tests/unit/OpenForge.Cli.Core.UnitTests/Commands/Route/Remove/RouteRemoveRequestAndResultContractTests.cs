@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Remove;
 

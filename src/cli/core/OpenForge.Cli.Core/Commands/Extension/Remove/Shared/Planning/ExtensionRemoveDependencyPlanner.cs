@@ -1,6 +1,5 @@
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
 

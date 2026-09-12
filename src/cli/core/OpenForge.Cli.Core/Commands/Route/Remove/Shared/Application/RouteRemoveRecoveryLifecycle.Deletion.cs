@@ -1,8 +1,9 @@
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
@@ -22,7 +23,7 @@ internal static partial class RouteRemoveRecoveryLifecycle
         }
 
         var candidate = catalogue.State == RecoveryBundleCatalogueState.Available
-            ? catalogue.Candidates.SingleOrDefault(value => Matches(value, input.Preparation))
+            ? catalogue.Candidates.SingleOrDefault(value => RecoveryBundleIdentity.Matches(value, input.Preparation))
             : null;
         if (candidate is null)
         {
@@ -42,7 +43,7 @@ internal static partial class RouteRemoveRecoveryLifecycle
     {
         try
         {
-            return await RecoveryBundleCatalogue.ReadAsync(input.Plan.Request.Workspace, cancellationToken)
+            return await RecoveryBundleCatalogue.ReadAsync(input.Held.Plan.Request.Workspace, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -64,7 +65,7 @@ internal static partial class RouteRemoveRecoveryLifecycle
         try
         {
             var deletion = await RecoveryBundleDeletionGuard.DeleteAsync(
-                input.Lease,
+                input.Held.Lease,
                 candidate,
                 cancellationToken).ConfigureAwait(false);
             return FromDeletion(input, deletion);
@@ -86,7 +87,7 @@ internal static partial class RouteRemoveRecoveryLifecycle
         {
             (RecoveryBundleDeletionState.Deleted, RecoveryBundleDisposition.Removed) => new()
             {
-                Recovery = Recovery(input.Plan, RouteRemoveRecoveryState.Removed, residualPath: null),
+                Recovery = Recovery(input.Held.Plan, RouteRemoveRecoveryState.Removed, residualPath: null),
             },
             (RecoveryBundleDeletionState.Cancelled, RecoveryBundleDisposition.Retained) =>
                 InterruptedDeletion(input, input.Preparation.BundlePath),
@@ -107,31 +108,17 @@ internal static partial class RouteRemoveRecoveryLifecycle
         => new()
         {
             Recovery = Recovery(
-                input.Plan,
+                input.Held.Plan,
                 retainedPath is null
                     ? RouteRemoveRecoveryState.Unknown
                     : RouteRemoveRecoveryState.Retained,
                 retainedPath),
             Finding = Finding(
-                input.Plan,
+                input.Held.Plan,
                 RouteRemoveFindingCode.Interrupted,
                 CliSemanticStatus.Interrupted,
                 "Route Remove recovery deletion was interrupted."),
         };
-
-    private static bool Matches(
-        RecoveryBundleCandidateSnapshot candidate,
-        RecoveryBundlePreparation preparation)
-        => candidate.Kind == RecoveryBundleCandidateKind.Final
-            && candidate.Integrity == RecoveryBundleIntegrity.Verified
-            && candidate.Verified is { } verified
-            && PhysicalIdentityTracker.PathComparer.Equals(candidate.Path, preparation.BundlePath)
-            && PhysicalIdentityTracker.PathComparer.Equals(
-                verified.WorkspacePhysicalPath,
-                preparation.WorkspacePhysicalPath)
-            && string.Equals(verified.Command, preparation.Command, StringComparison.Ordinal)
-            && verified.OperationId == preparation.OperationId
-            && verified.Entries.SequenceEqual(preparation.Entries);
 
     private static RouteRemoveRecoveryDeletionResult RetainedDeletion(
         RouteRemoveRecoveryDeletionInput input,
@@ -139,11 +126,11 @@ internal static partial class RouteRemoveRecoveryLifecycle
         => new()
         {
             Recovery = Recovery(
-                input.Plan,
+                input.Held.Plan,
                 RouteRemoveRecoveryState.Retained,
                 input.Preparation.BundlePath),
             Finding = Finding(
-                input.Plan,
+                input.Held.Plan,
                 RouteRemoveFindingCode.RecoveryArtifactRetained,
                 CliSemanticStatus.Attention,
                 cause),
@@ -154,9 +141,9 @@ internal static partial class RouteRemoveRecoveryLifecycle
         string cause)
         => new()
         {
-            Recovery = Recovery(input.Plan, RouteRemoveRecoveryState.Unknown, residualPath: null),
+            Recovery = Recovery(input.Held.Plan, RouteRemoveRecoveryState.Unknown, residualPath: null),
             Finding = Finding(
-                input.Plan,
+                input.Held.Plan,
                 RouteRemoveFindingCode.RecoveryFailed,
                 CliSemanticStatus.Failed,
                 cause),

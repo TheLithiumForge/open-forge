@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Framework.Extensions.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
+using OpenForge.Cli.Core.Framework.Extensions.Operational.Models.Registration;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 
 namespace OpenForge.Cli.Core.Framework.Extensions.Operational.Models;

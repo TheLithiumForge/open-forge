@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Commands.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Definitions.Models;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Update;
 
@@ -296,10 +298,7 @@ internal static class UpdateDefinitions
     internal static CliNextAction? ReadNextAction(
         CliSemanticStatus status,
         IReadOnlyList<UpdateFinding> findings,
-        bool force,
-        bool prune,
-        bool automatic,
-        UpdateMode mode)
+        UpdateResultFormation formation)
     {
         ArgumentNullException.ThrowIfNull(findings);
         return status switch
@@ -307,7 +306,7 @@ internal static class UpdateDefinitions
             CliSemanticStatus.Complete => null,
             CliSemanticStatus.Invalid when findings.Any(finding =>
                 finding.Code == UpdateFindingCode.ConfirmationRequired) => new CliNextAction(
-                BuildCommand(force, prune, automatic: true, UpdateMode.Apply),
+                BuildCommand(formation.Force, formation.Prune, automatic: true, UpdateMode.Apply),
                 "Rerun the same Update request with explicit automatic mode."),
             CliSemanticStatus.Invalid => new CliNextAction(
                 UpdateDefinitions.HelpCommand,
@@ -324,18 +323,18 @@ internal static class UpdateDefinitions
                 "Review and remove the reported recovery artifact after confirming the verified Update result."),
             CliSemanticStatus.Attention => new CliNextAction(
                 BuildCommand(
-                    force || findings.Any(finding => finding.Code is
+                    formation.Force || findings.Any(finding => finding.Code is
                         UpdateFindingCode.ManagedDivergence
                         or UpdateFindingCode.ManagedTargetMissing),
-                    prune || findings.Any(finding => finding.Code == UpdateFindingCode.RetiredContentPreserved),
-                    automatic,
-                    mode),
+                    formation.Prune || findings.Any(finding => finding.Code == UpdateFindingCode.RetiredContentPreserved),
+                    formation.Automatic,
+                    formation.Mode),
                 "Review the preserved Update divergence, then rerun with the named explicit authority."),
             CliSemanticStatus.Failed => new CliNextAction(
-                BuildCommand(force, prune, automatic, mode, verbose: true),
+                BuildCommand(formation.Force, formation.Prune, formation.Automatic, formation.Mode, verbose: true),
                 "Report the failure and retry the same Update request with bounded diagnostics."),
             CliSemanticStatus.Interrupted => new CliNextAction(
-                BuildCommand(force, prune, automatic, mode),
+                BuildCommand(formation.Force, formation.Prune, formation.Automatic, formation.Mode),
                 "Rerun the same Update request."),
             _ => throw new ArgumentOutOfRangeException(nameof(status), status, "The Update status is not defined."),
         };

@@ -22,12 +22,7 @@ internal sealed class RouteUpdateApplicationPipeline(
         try
         {
             prepared = await _preparer.PrepareAsync(
-                    new RouteUpdateApplicationPreparationInput
-                    {
-                        Plan = plan,
-                        Lease = input.Lease,
-                        OperationId = input.OperationId,
-                    },
+                    input,
                     cancellationToken)
                 .ConfigureAwait(false);
         }

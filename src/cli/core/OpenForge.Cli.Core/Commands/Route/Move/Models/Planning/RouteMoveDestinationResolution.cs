@@ -4,11 +4,6 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 
-internal sealed record RouteMoveDestinationResolutionRequest
-{
-    public required RouteMoveCategoryInventory Inventory { get; init; }
-}
-
 internal sealed record RouteMoveResolvedDestination
 {
     public required RouteMoveCategoryInventory Inventory { get; init; }

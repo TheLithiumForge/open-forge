@@ -1,4 +1,4 @@
-using OpenForge.Cli.Core.Framework.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Models.Reading;

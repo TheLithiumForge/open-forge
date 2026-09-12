@@ -1,9 +1,10 @@
-using OpenForge.Cli.Core.Framework.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Application;
 
@@ -155,7 +156,7 @@ internal sealed partial class FileChangeApplier(
                 context.Before,
                 FilesystemNotStartedReason.ApplicationFailed,
                 FilesystemFailure.FromException(
-                    FailureKind(exception),
+                    FilesystemFailure.ClassifyException(exception),
                     exception).DirectCause);
         }
 

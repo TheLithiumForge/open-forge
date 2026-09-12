@@ -3,10 +3,9 @@ using OpenForge.Cli.Core.Commands.Extension.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
-using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
 
 namespace OpenForge.Cli.Core.Commands.Extension.List;
@@ -51,7 +50,7 @@ internal sealed class ExtensionListRequestBinder(ExtensionListSymbols symbols)
             availableFlag: result.GetValue(symbols.Available));
 
     internal static ExtensionListResult CreateInvalidResult(
-        Framework.Workspace.CliWorkspace? workspace,
+        Framework.Workspace.Models.CliWorkspace? workspace,
         ExtensionListSelection selection,
         string? source,
         string cause)

@@ -267,8 +267,5 @@ public sealed class RouteUpdateMetadataPatcherTests
         string source,
         RouteUpdatePatchRequest patch)
         => RouteUpdateTestData.MetadataPatcher().Build(
-            new RouteUpdateMetadataPatchInput
-            {
-                Observation = RouteUpdateTestData.Observation(patch, source),
-            });
+            RouteUpdateTestData.Observation(patch, source));
 }

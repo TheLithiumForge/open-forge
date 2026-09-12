@@ -1,7 +1,12 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Lifecycle.Shared.Validation.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Shared.Validation;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Framework.Lifecycle;
 
@@ -9,7 +14,7 @@ internal sealed partial class LifecycleStore
 {
     private static bool TryCreateBasis(
         LifecycleStoreReadResult current,
-        out LifecyclePlanBasis? basis,
+        [NotNullWhen(true)] out LifecyclePlanBasis? basis,
         out string cause)
     {
         cause = string.Empty;
@@ -170,23 +175,10 @@ internal sealed partial class LifecycleStore
         return LifecycleWritePlanResult.Planned(change);
     }
 
-    private static LifecycleEnvelopeV1 ReplaceFramework(
+    private static LifecycleEnvelopeV1 ReplaceSections(
         LifecycleEnvelopeV1 envelope,
-        JsonElement framework,
+        JsonElement? framework,
         JsonElement? extensions)
-        => new()
-        {
-            SchemaVersion = envelope.SchemaVersion,
-            FingerprintPolicy = envelope.FingerprintPolicy,
-            WorkspacePath = envelope.WorkspacePath,
-            Framework = framework,
-            Extensions = extensions,
-        };
-
-    private static LifecycleEnvelopeV1 ReplaceExtensions(
-        LifecycleEnvelopeV1 envelope,
-        JsonElement extensions,
-        JsonElement? framework)
         => new()
         {
             SchemaVersion = envelope.SchemaVersion,

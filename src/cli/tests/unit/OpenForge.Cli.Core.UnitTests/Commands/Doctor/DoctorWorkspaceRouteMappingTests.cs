@@ -1,14 +1,15 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Operational.Models;
 

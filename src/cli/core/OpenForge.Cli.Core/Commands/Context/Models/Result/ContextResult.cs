@@ -1,8 +1,9 @@
+using OpenForge.Cli.Core.Commands.Context.Shared.Result;
 using OpenForge.Cli.Core.Commands.Context.Models.Selection;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Context.Models.Result;
 

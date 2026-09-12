@@ -7,10 +7,11 @@ using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
-using OpenForge.Cli.Core.Framework.Recovery.Serialization;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.Core.Framework.Recovery.Serialization.Models;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Rendering;
 

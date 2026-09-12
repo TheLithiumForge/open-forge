@@ -1,20 +1,21 @@
 using System.Text;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
-using OpenForge.Cli.Core.Framework.Sources.Locations;
 
 namespace OpenForge.Cli.Core.Framework.GeneratedNavigation;
 
 internal sealed class GeneratedNavigationRegionPlanner
 {
-    private const string EmptyBody = "- none - No entries - #Empty";
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
 
     internal GeneratedNavigationRegion Plan(
@@ -78,8 +79,12 @@ internal sealed class GeneratedNavigationRegionPlanner
         try
         {
             var entries = entryProjection.ReadValue();
-            var expectedBody = BuildExpectedBody(document.Source, contentSpan, entries);
-            var change = BuildChange(document, contentSpan, expectedBody);
+            var expectedBody = BuildExpectedBody(source: document.Source, beforeBody: beforeBody, entries: entries);
+            var change = BuildChange(
+                document: document,
+                contentSpan: contentSpan,
+                beforeBody: beforeBody,
+                expectedBody: expectedBody);
             return GeneratedNavigationRegion.Available(input.Source, entries, change);
         }
         catch (ArgumentException exception)
@@ -334,25 +339,24 @@ internal sealed class GeneratedNavigationRegionPlanner
 
     private static string BuildExpectedBody(
         string source,
-        MarkdownTextSpan contentSpan,
+        string beforeBody,
         IReadOnlyList<GeneratedNavigationEntry> entries)
     {
-        var lineEnding = ReadLineEnding(source, contentSpan);
+        var lineEnding = ReadLineEnding(source: source, beforeBody: beforeBody);
         var lines = entries.Count == 0
-            ? [EmptyBody]
+            ? [MarkdownGeneratedRegionSyntax.EmptyEntry]
             : entries.Select(entry => entry.Line).ToArray();
         return $"{lineEnding}{string.Join(lineEnding, lines)}{lineEnding}";
     }
 
-    private static string ReadLineEnding(string source, MarkdownTextSpan span)
+    private static string ReadLineEnding(string source, string beforeBody)
     {
-        var content = source[span.Start..span.End];
-        if (content.Contains("\r\n", StringComparison.Ordinal))
+        if (beforeBody.Contains("\r\n", StringComparison.Ordinal))
         {
             return "\r\n";
         }
 
-        if (content.Contains('\n'))
+        if (beforeBody.Contains('\n'))
         {
             return "\n";
         }
@@ -385,10 +389,10 @@ internal sealed class GeneratedNavigationRegionPlanner
     private static GeneratedNavigationBoundedChange BuildChange(
         MarkdownDocumentFacts document,
         MarkdownTextSpan contentSpan,
+        string beforeBody,
         string expectedBody)
     {
         var source = document.Source;
-        var beforeBody = source[contentSpan.Start..contentSpan.End];
         var prefix = source[..contentSpan.Start];
         var suffix = source[contentSpan.End..];
         var location = new Utf8SourceMap(source).Map(

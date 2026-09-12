@@ -1,5 +1,5 @@
 using System.CommandLine;
-using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Models.Binding;
 

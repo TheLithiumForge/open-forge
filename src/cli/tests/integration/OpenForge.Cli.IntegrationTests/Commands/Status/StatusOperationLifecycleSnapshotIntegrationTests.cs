@@ -1,8 +1,8 @@
 using OpenForge.Cli.Core.Commands.Status;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 
@@ -76,7 +76,7 @@ public sealed class StatusOperationLifecycleSnapshotIntegrationTests
         Assert.Equal(LifecycleDocumentSnapshotState.Available, invocation.Snapshot.State);
         Assert.Same(expectedWorkspace, invocation.Snapshot.Workspace);
         Assert.Equal(expectedToken, invocation.CancellationToken);
-        var file = Assert.IsType<OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.FileStateSnapshot>(
+        var file = Assert.IsType<OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files.FileStateSnapshot>(
             invocation.Snapshot.File);
         Assert.Equal(expectedBytes, file.Bytes.ToArray());
     }

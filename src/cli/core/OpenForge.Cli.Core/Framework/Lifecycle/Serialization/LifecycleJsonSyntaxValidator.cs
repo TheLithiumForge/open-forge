@@ -1,12 +1,7 @@
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Serialization;
 
 namespace OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
-
-internal enum LifecycleSection
-{
-    Framework,
-    Extensions,
-}
 
 internal static class LifecycleJsonSyntaxValidator
 {

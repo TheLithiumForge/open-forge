@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Filesystem;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
 using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
@@ -16,17 +18,16 @@ internal sealed class RouteRemoveCategoryInventoryReader(
     FileExpectationValidator expectationValidator,
     LifecycleOwnershipReader ownershipReader)
 {
-    private readonly RouteRemoveCategoryFilesystemReader _filesystemReader = new(
+    private readonly RouteCategoryFilesystemReader _filesystemReader = new(
         physicalPathResolver,
         expectationValidator);
     private readonly LifecycleOwnershipReader _ownershipReader = ownershipReader;
 
     internal async ValueTask<RouteRemoveCategoryInventoryResult> ReadAsync(
-        RouteRemoveCategoryInventoryRequest request,
+        RouteRemoveResolvedSubject subject,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(request);
-        var subject = request.Subject;
+        ArgumentNullException.ThrowIfNull(subject);
         var ownership = await _ownershipReader.ReadAsync(
             subject.Request.Workspace,
             cancellationToken).ConfigureAwait(false);
@@ -60,22 +61,37 @@ internal sealed class RouteRemoveCategoryInventoryReader(
             return ReadLeaf(subject, ownership);
         }
 
-        var read = await _filesystemReader.ReadAsync(subject, ownership, cancellationToken)
-            .ConfigureAwait(false);
+        var read = await _filesystemReader.ReadAsync(
+            new RouteCategoryFilesystemRequest
+            {
+                Workspace = subject.Request.Workspace,
+                EntrypointLogicalPath = subject.Layers[0].Snapshot.LogicalPath,
+                Catalogue = subject.Catalogue,
+                EntrypointPaths = [.. subject.Layers.Select(layer => layer.Layer.CanonicalPath)],
+                ExposedPaths = subject.NavigationExposure.ExposedPaths,
+            },
+            cancellationToken).ConfigureAwait(false);
         return ReadFilesystemResult(subject, ownership, read);
     }
 
     private static RouteRemoveCategoryInventoryResult ReadFilesystemResult(
         RouteRemoveResolvedSubject subject,
         LifecycleOwnershipReadResult ownership,
-        RouteRemoveCategoryFilesystemReadResult read)
+        RouteCategoryFilesystemRead read)
     {
-        if (read.Inventory is { } inventory)
+        if (read.State == RouteCategoryFilesystemReadState.Complete)
         {
-            return new RouteRemoveCategoryInventoryResult(inventory, boundary: null);
+            return new RouteRemoveCategoryInventoryResult(
+                new RouteRemoveCategoryInventory
+                {
+                    Subject = subject,
+                    Ownership = ownership,
+                    Items = [.. read.Items.Select(ProjectItem)],
+                },
+                boundary: null);
         }
 
-        if (read.State == RouteRemoveCategoryFilesystemReadState.Interrupted)
+        if (read.State == RouteCategoryFilesystemReadState.Interrupted)
         {
             return Stop(
                 subject,
@@ -85,7 +101,7 @@ internal sealed class RouteRemoveCategoryInventoryReader(
                 read.Cause ?? "Route Remove category inventory was interrupted.");
         }
 
-        if (read.State == RouteRemoveCategoryFilesystemReadState.Unsafe)
+        if (read.State == RouteCategoryFilesystemReadState.Unsafe)
         {
             return Stop(
                 subject,
@@ -103,6 +119,26 @@ internal sealed class RouteRemoveCategoryInventoryReader(
             read.Cause ?? "The complete category filesystem inventory could not be established.");
     }
 
+    private static RouteRemoveInventoryItem ProjectItem(RouteCategoryFilesystemItem item)
+        => new()
+        {
+            Kind = item.Kind switch
+            {
+                RouteCategoryFilesystemItemKind.Directory => RouteRemoveItemKind.Directory,
+                RouteCategoryFilesystemItemKind.Entrypoint => RouteRemoveItemKind.Entrypoint,
+                RouteCategoryFilesystemItemKind.NativeSource => RouteRemoveItemKind.NativeSource,
+                RouteCategoryFilesystemItemKind.RoutedMarkdown => RouteRemoveItemKind.RoutedMarkdown,
+                RouteCategoryFilesystemItemKind.UnroutedMarkdown => RouteRemoveItemKind.UnroutedMarkdown,
+                RouteCategoryFilesystemItemKind.Resource => RouteRemoveItemKind.Resource,
+                _ => throw new ArgumentOutOfRangeException(nameof(item), item.Kind, "The category item kind is not defined."),
+            },
+            Layer = item.Layer is { } layer ? ReadLayer(layer) : null,
+            SourceId = item.SourceId,
+            SourcePath = item.SourcePath,
+            RelativePath = item.RelativePath,
+            Snapshot = item.Snapshot,
+        };
+
     private static RouteRemoveCategoryInventoryResult ReadLeaf(
         RouteRemoveResolvedSubject subject,
         LifecycleOwnershipReadResult ownership)
@@ -111,7 +147,7 @@ internal sealed class RouteRemoveCategoryInventoryReader(
             {
                 Subject = subject,
                 Ownership = ownership,
-                Items = subject.Layers.Select(layer => new RouteRemoveInventoryItem
+                Items = [.. subject.Layers.Select(layer => new RouteRemoveInventoryItem
                 {
                     Kind = RouteRemoveItemKind.RoutedMarkdown,
                     Layer = ReadLayer(layer.Layer.Kind),
@@ -119,7 +155,7 @@ internal sealed class RouteRemoveCategoryInventoryReader(
                     SourcePath = layer.Snapshot.LogicalPath,
                     RelativePath = Path.GetFileName(layer.Snapshot.LogicalPath),
                     Snapshot = layer.Snapshot,
-                }).ToImmutableArray(),
+                })],
             },
             boundary: null);
 

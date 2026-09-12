@@ -1,4 +1,4 @@
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Status;

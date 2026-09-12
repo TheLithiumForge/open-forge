@@ -7,9 +7,10 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
-using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
+using OpenForge.Cli.Core.Shell.Definitions.Models;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init;
 
@@ -243,7 +244,7 @@ internal static class RouteInitBinding
     }
 
     private static CliBindResult<RouteInitRequest, RouteInitResult> Invalid(
-        OpenForge.Cli.Core.Framework.Workspace.CliWorkspace? workspace,
+        OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspace? workspace,
         string? requested,
         RouteInitFindingCode code,
         string cause)
@@ -257,7 +258,7 @@ internal static class RouteInitBinding
                     string.IsNullOrEmpty(requested) ? null : requested)));
 
     private static RouteInitResult CreateInvalidResult(
-        OpenForge.Cli.Core.Framework.Workspace.CliWorkspace? workspace,
+        OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspace? workspace,
         string requested,
         RouteInitFinding finding)
     {

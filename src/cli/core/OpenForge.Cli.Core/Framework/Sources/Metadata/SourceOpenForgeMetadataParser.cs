@@ -12,7 +12,11 @@ internal sealed class SourceOpenForgeMetadataParser
     internal SourceOpenForgeMetadataFacts Parse(MarkdownDocumentFacts document)
     {
         ArgumentNullException.ThrowIfNull(document);
-        var facts = _parser.Parse(document);
+        return Project(_parser.Parse(document));
+    }
+
+    internal static SourceOpenForgeMetadataFacts Project(FrameworkDocumentMetadataFacts facts)
+    {
         return facts.State switch
         {
             FrameworkDocumentMetadataState.Complete => Complete(facts),

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Commands.Route.Move.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Application;
 
@@ -24,7 +25,7 @@ internal sealed record RouteMovePostMoveExpectationProjection
             StringComparer.Ordinal);
         return new RouteMovePostMoveExpectationProjection
         {
-            DestinationLayout = BuildDestinationLayout(plan, effects),
+            DestinationLayout = BuildDestinationLayout(plan),
             OldSourceAbsence = BuildOldSourceAbsence(plan),
             ReferenceDocuments = BuildReferenceDocuments(plan, effects),
             GeneratedDocuments = BuildGeneratedDocuments(plan, effects),
@@ -43,8 +44,7 @@ internal sealed record RouteMovePostMoveExpectationProjection
             .Append(Lifecycle);
 
     private static ImmutableArray<RouteMovePostMoveObservation> BuildDestinationLayout(
-        RouteMovePlan plan,
-        IReadOnlyDictionary<string, PlannedFileChange> effects)
+        RouteMovePlan plan)
     {
         var values = new List<RouteMovePostMoveObservation>();
         values.AddRange(plan.Projection.DirectoryCreations.Select(creation =>
@@ -56,12 +56,12 @@ internal sealed record RouteMovePostMoveExpectationProjection
             .Select(change => new RouteMovePostMoveObservation(
                 "destination-file",
                 FileAfter(plan, change))));
-        return values.ToImmutableArray();
+        return [.. values];
     }
 
     private static ImmutableArray<RouteMovePostMoveObservation> BuildOldSourceAbsence(
         RouteMovePlan plan)
-        => plan.Projection.FileChanges.Where(change =>
+        => [.. plan.Projection.FileChanges.Where(change =>
                 change.Kind == PlannedFileChangeKind.Delete)
             .Select(change => new RouteMovePostMoveObservation(
                 "old-source-file",
@@ -69,15 +69,14 @@ internal sealed record RouteMovePostMoveExpectationProjection
             .Concat(plan.Projection.DirectoryDeletions.Select(deletion =>
                 new RouteMovePostMoveObservation(
                     "old-source-directory",
-                    FileExpectation.Missing(deletion.LogicalPath))))
-            .ToImmutableArray();
+                    FileExpectation.Missing(deletion.LogicalPath))))];
 
     private static ImmutableArray<RouteMovePostMoveObservation> BuildReferenceDocuments(
         RouteMovePlan plan,
         IReadOnlyDictionary<string, PlannedFileChange> effects)
     {
         var root = plan.Request.Workspace.LexicalRoot;
-        return plan.Projection.References.Documents.Select(document =>
+        return [.. plan.Projection.References.Documents.Select(document =>
         {
             var path = Path.Combine(
                 root,
@@ -85,7 +84,7 @@ internal sealed record RouteMovePostMoveExpectationProjection
             return new RouteMovePostMoveObservation(
                 "reference-document",
                 ExpectedDocument(plan, effects, document.Snapshot, path));
-        }).ToImmutableArray();
+        })];
     }
 
     private static ImmutableArray<RouteMovePostMoveObservation> BuildGeneratedDocuments(
@@ -98,7 +97,7 @@ internal sealed record RouteMovePostMoveExpectationProjection
                 root,
                 document.DestinationSourcePath.Replace('/', Path.DirectorySeparatorChar)),
             StringComparer.Ordinal);
-        return plan.Projection.Navigation.GeneratedNavigation.Regions.Select(region =>
+        return [.. plan.Projection.Navigation.GeneratedNavigation.Regions.Select(region =>
         {
             var path = Path.Combine(root, region.Path.Replace('/', Path.DirectorySeparatorChar));
             if (effects.TryGetValue(path, out var effect))
@@ -114,7 +113,7 @@ internal sealed record RouteMovePostMoveExpectationProjection
             return new RouteMovePostMoveObservation(
                 "generated-document",
                 document.Snapshot.Expectation);
-        }).ToImmutableArray();
+        })];
     }
 
     private static FileExpectation ExpectedDocument(
@@ -151,7 +150,3 @@ internal sealed record RouteMovePostMoveExpectationProjection
             plan.Request.Workspace.PhysicalRoot,
             Path.GetRelativePath(plan.Request.Workspace.LexicalRoot, logicalPath));
 }
-
-internal sealed record RouteMovePostMoveObservation(
-    string Meaning,
-    FileExpectation Expectation);

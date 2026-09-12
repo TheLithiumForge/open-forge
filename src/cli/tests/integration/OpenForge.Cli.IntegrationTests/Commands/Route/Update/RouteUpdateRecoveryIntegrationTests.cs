@@ -24,7 +24,7 @@ public sealed class RouteUpdateRecoveryIntegrationTests
         var prepared = await RouteUpdateRecoveryPreparer.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
-        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(
+        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.Preparation.RecoveryBundlePreparation>(
             prepared.Preparation);
         workspace.TrackRecovery(preparation);
         var collision = await RouteUpdateRecoveryPreparer.PrepareAsync(
@@ -55,7 +55,7 @@ public sealed class RouteUpdateRecoveryIntegrationTests
                 OperationId = operationId.ToString("D"),
             },
             TestContext.Current.CancellationToken);
-        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(
+        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.Preparation.RecoveryBundlePreparation>(
             prepared.Preparation);
         workspace.TrackRecovery(preparation);
         using var cancellation = new CancellationTokenSource();
@@ -93,7 +93,7 @@ public sealed class RouteUpdateRecoveryIntegrationTests
                 OperationId = operationId.ToString("D"),
             },
             TestContext.Current.CancellationToken);
-        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(
+        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.Preparation.RecoveryBundlePreparation>(
             prepared.Preparation);
         workspace.ReplaceRecoveryWithDirectory(preparation);
 

@@ -1,6 +1,6 @@
 using System.Text;
 using Markdig.Syntax.Inlines;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Markdown;
 

@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
 
 namespace OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
 

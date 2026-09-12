@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
-using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
 

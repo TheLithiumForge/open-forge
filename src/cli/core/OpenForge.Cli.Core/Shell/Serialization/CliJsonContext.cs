@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 
 namespace OpenForge.Cli.Core.Shell.Serialization;
 

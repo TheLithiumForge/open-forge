@@ -1,5 +1,7 @@
-using OpenForge.Cli.Core.Framework.Filesystem;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Application;
@@ -115,17 +117,6 @@ internal sealed partial class DirectoryDeletionApplier
 
     private static string DirectCause(Exception exception)
         => FilesystemFailure.FromException(
-            exception switch
-            {
-                UnauthorizedAccessException => FilesystemFailureKind.AccessDenied,
-                NotSupportedException or PlatformNotSupportedException =>
-                    FilesystemFailureKind.Unsupported,
-                ArgumentException or PathTooLongException => FilesystemFailureKind.InvalidPath,
-                IOException => FilesystemFailureKind.InputOutput,
-                _ => throw new ArgumentOutOfRangeException(
-                    nameof(exception),
-                    exception.GetType(),
-                    "The filesystem exception is not defined."),
-            },
+            FilesystemFailure.ClassifyException(exception),
             exception).DirectCause;
 }

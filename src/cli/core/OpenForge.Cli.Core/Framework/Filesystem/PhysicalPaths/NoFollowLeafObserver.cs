@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
 
 namespace OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 
@@ -116,11 +117,7 @@ internal static class NoFollowLeafObserver
                     NoFollowLinkTargetForm.Unavailable));
         }
 
-        var targetForm = Path.IsPathFullyQualified(rawTarget) || rawTarget.StartsWith('/')
-            ? NoFollowLinkTargetForm.Absolute
-            : rawTarget.Contains('\\')
-                ? NoFollowLinkTargetForm.Unsupported
-                : NoFollowLinkTargetForm.Relative;
+        var targetForm = ReadTargetForm(rawTarget);
         if (targetForm == NoFollowLinkTargetForm.Relative)
         {
             return NoFollowLeafObservation.CreateRelativeFileLink(
@@ -136,6 +133,21 @@ internal static class NoFollowLeafObserver
                 NoFollowLinkKind.SymbolicLink,
                 rawTarget,
                 targetForm));
+    }
+
+    private static NoFollowLinkTargetForm ReadTargetForm(string target)
+    {
+        if (Path.IsPathFullyQualified(target) || target.StartsWith('/'))
+        {
+            return NoFollowLinkTargetForm.Absolute;
+        }
+
+        if (target.Contains('\\'))
+        {
+            return NoFollowLinkTargetForm.Unsupported;
+        }
+
+        return NoFollowLinkTargetForm.Relative;
     }
 
     private static NoFollowLeafObservation ObserveOrdinary(

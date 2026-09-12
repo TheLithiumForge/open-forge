@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Documents.Yaml;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
@@ -30,7 +31,7 @@ internal sealed class SourceAuthoredMetadataParser
                 or SourceDocumentForm.IndexEntrypoint
                 or SourceDocumentForm.UnderscoreIndexEntrypoint
                 or SourceDocumentForm.ReferencesEntrypoint
-                or SourceDocumentForm.UnderscoreReferencesEntrypoint => ParseOpenForge(document),
+                or SourceDocumentForm.UnderscoreReferencesEntrypoint => ProjectOpenForge(_openForgeParser.Parse(document)),
             SourceDocumentForm.OverwriteCompanion => throw new ArgumentOutOfRangeException(
                 nameof(form),
                 form,
@@ -39,9 +40,8 @@ internal sealed class SourceAuthoredMetadataParser
         };
     }
 
-    private SourceAuthoredMetadataFacts ParseOpenForge(MarkdownDocumentFacts document)
+    internal static SourceAuthoredMetadataFacts ProjectOpenForge(SourceOpenForgeMetadataFacts facts)
     {
-        var facts = _openForgeParser.Parse(document);
         return facts.State switch
         {
             SourceOpenForgeMetadataState.Complete => SourceAuthoredMetadataFacts.Complete(

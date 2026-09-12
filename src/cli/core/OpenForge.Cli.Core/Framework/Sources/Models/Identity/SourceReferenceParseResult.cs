@@ -63,40 +63,40 @@ internal sealed class SourceReferenceParseResult
     internal static SourceReferenceParseResult ValidId(string attemptedId)
     {
         return new SourceReferenceParseResult(
-            SourceReferenceParseState.Valid,
-            SourceReferenceKind.SourceId,
-            attemptedId,
-            null,
-            null);
+            state: SourceReferenceParseState.Valid,
+            kind: SourceReferenceKind.SourceId,
+            attemptedId: attemptedId,
+            attemptedPath: null,
+            cause: null);
     }
 
     internal static SourceReferenceParseResult ValidPath(string attemptedPath)
     {
         return new SourceReferenceParseResult(
-            SourceReferenceParseState.Valid,
-            SourceReferenceKind.SourcePath,
-            null,
-            attemptedPath,
-            null);
+            state: SourceReferenceParseState.Valid,
+            kind: SourceReferenceKind.SourcePath,
+            attemptedId: null,
+            attemptedPath: attemptedPath,
+            cause: null);
     }
 
     internal static SourceReferenceParseResult InvalidId(string attemptedId, string cause)
     {
         return new SourceReferenceParseResult(
-            SourceReferenceParseState.Invalid,
-            SourceReferenceKind.SourceId,
-            attemptedId,
-            null,
-            cause);
+            state: SourceReferenceParseState.Invalid,
+            kind: SourceReferenceKind.SourceId,
+            attemptedId: attemptedId,
+            attemptedPath: null,
+            cause: cause);
     }
 
     internal static SourceReferenceParseResult InvalidPath(string attemptedPath, string cause)
     {
         return new SourceReferenceParseResult(
-            SourceReferenceParseState.Invalid,
-            SourceReferenceKind.SourcePath,
-            null,
-            attemptedPath,
-            cause);
+            state: SourceReferenceParseState.Invalid,
+            kind: SourceReferenceKind.SourcePath,
+            attemptedId: null,
+            attemptedPath: attemptedPath,
+            cause: cause);
     }
 }

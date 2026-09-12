@@ -3,7 +3,7 @@ using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Status;

@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Planning;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
 

@@ -2,7 +2,7 @@ using OpenForge.Cli.Core.Commands.Cleanup;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Planning;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
 using OpenForge.Cli.Core.Commands.Cleanup.Shared.Application;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Cleanup.Shared.Application;
 

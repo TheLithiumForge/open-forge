@@ -1,8 +1,9 @@
 using OpenForge.Cli.Composition;
+using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 
 namespace OpenForge.Cli.Hosting;
 

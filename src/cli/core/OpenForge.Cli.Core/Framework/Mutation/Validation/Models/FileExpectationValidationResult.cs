@@ -1,5 +1,5 @@
-using OpenForge.Cli.Core.Framework.Filesystem;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 

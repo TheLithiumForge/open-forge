@@ -5,7 +5,7 @@ using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Planning;
 
@@ -16,39 +16,41 @@ internal static class UpdatePlanResultFactory
         UpdateSource? source,
         IReadOnlyList<UpdateComparison> comparisons,
         UpdateFinding finding,
-        UpdateLifecycleTrust trust,
-        UpdateLifecycleCoverage coverage)
-        => Create(
-            request,
-            source,
-            comparisons,
-            generatedNavigation: null,
-            effects: [],
-            new UpdateLifecycle
-            {
-                Trust = trust,
-                Coverage = coverage,
-                Action = UpdateLifecycleAction.None,
-                Outcome = UpdateLifecycleOutcome.NotStarted,
-            },
-            new UpdateRecovery
-            {
-                State = UpdateRecoveryState.NotRequired,
-                ProtectedPaths = [],
-                ResidualPath = null,
-            },
-            UpdateVerificationState.NotRequested,
-            [finding]);
-
-    internal static UpdateResult Preview(
-        UpdateRequest request,
-        FrameworkPayload payload,
-        IReadOnlyList<UpdateComparisonObservation> observations,
-        UpdatePlanningPlan plan,
-        IReadOnlyList<UpdatePlannedEffect> effects,
-        PlannedFileChange? lifecycleChange,
-        IReadOnlyList<UpdateFinding> findings)
+        UpdateLifecycle lifecycle)
     {
+        IReadOnlyList<UpdatePhysicalEffect> effects = [];
+        var recovery = new UpdateRecovery
+        {
+            State = UpdateRecoveryState.NotRequired,
+            ProtectedPaths = [],
+            ResidualPath = null,
+        };
+        IReadOnlyList<UpdateFinding> findings = [finding];
+        return new UpdateResult(new UpdateResultFormation
+        {
+            Workspace = request.Workspace,
+            Mode = request.Mode,
+            Force = request.Force,
+            Prune = request.Prune,
+            Automatic = request.Automatic,
+            Source = source,
+            Comparisons = comparisons,
+            GeneratedNavigation = null,
+            Effects = effects,
+            Lifecycle = lifecycle,
+            Recovery = recovery,
+            Verification = UpdateVerificationState.NotRequested,
+            Findings = findings,
+        });
+    }
+
+    internal static UpdateResult Preview(UpdatePlanCompletion completion)
+    {
+        var request = completion.Request;
+        var observations = completion.Intended.Observations;
+        var effects = completion.Effects;
+        var lifecycleChange = completion.LifecycleChange;
+        var findings = completion.Findings;
         var existingTargetPaths = effects
             .Where(value => value.FileChange.Kind != PlannedFileChangeKind.Create)
             .Select(value => value.ResultEffect.Path)
@@ -59,38 +61,51 @@ internal static class UpdatePlanResultFactory
         }
 
         var requiresRecovery = existingTargetPaths.Count > 0;
-        return Create(
-            request,
-            Source(payload),
-            observations.Select(value => value.Comparison).ToArray(),
-            Navigation(observations),
-            effects.Select(value => value.ResultEffect).ToArray(),
-            new UpdateLifecycle
-            {
-                Trust = UpdateLifecycleTrust.Trusted,
-                Coverage = UpdateLifecycleCoverage.Complete,
-                Action = lifecycleChange is null
-                    ? UpdateLifecycleAction.Preserve
-                    : UpdateLifecycleAction.Publish,
-                Outcome = lifecycleChange is null
-                    ? UpdateLifecycleOutcome.AlreadyCurrent
-                    : UpdateLifecycleOutcome.Planned,
-            },
-            new UpdateRecovery
-            {
-                State = requiresRecovery
-                    ? UpdateRecoveryState.NotCreated
-                    : UpdateRecoveryState.NotRequired,
-                ProtectedPaths = existingTargetPaths,
-                ResidualPath = null,
-            },
-            request.Mode == UpdateMode.Apply
-                && plan.IsNoOp
-                && lifecycleChange is null
-                && findings.Count == 0
-                    ? UpdateVerificationState.Verified
-                    : UpdateVerificationState.NotRequested,
-            findings);
+        var source = Source(completion.Payload);
+        var comparisons = observations.Select(value => value.Comparison).ToArray();
+        var generatedNavigation = Navigation(observations);
+        var resultEffects = effects.Select(value => value.ResultEffect).ToArray();
+        var lifecycle = new UpdateLifecycle
+        {
+            Trust = UpdateLifecycleTrust.Trusted,
+            Coverage = UpdateLifecycleCoverage.Complete,
+            Action = lifecycleChange is null
+                ? UpdateLifecycleAction.Preserve
+                : UpdateLifecycleAction.Publish,
+            Outcome = lifecycleChange is null
+                ? UpdateLifecycleOutcome.AlreadyCurrent
+                : UpdateLifecycleOutcome.Planned,
+        };
+        var recovery = new UpdateRecovery
+        {
+            State = requiresRecovery
+                ? UpdateRecoveryState.NotCreated
+                : UpdateRecoveryState.NotRequired,
+            ProtectedPaths = existingTargetPaths,
+            ResidualPath = null,
+        };
+        var verification = request.Mode == UpdateMode.Apply
+            && completion.Plan.IsNoOp
+            && lifecycleChange is null
+            && findings.Count == 0
+                ? UpdateVerificationState.Verified
+                : UpdateVerificationState.NotRequested;
+        return new UpdateResult(new UpdateResultFormation
+        {
+            Workspace = request.Workspace,
+            Mode = request.Mode,
+            Force = request.Force,
+            Prune = request.Prune,
+            Automatic = request.Automatic,
+            Source = source,
+            Comparisons = comparisons,
+            GeneratedNavigation = generatedNavigation,
+            Effects = resultEffects,
+            Lifecycle = lifecycle,
+            Recovery = recovery,
+            Verification = verification,
+            Findings = findings,
+        });
     }
 
     internal static UpdateSource Source(FrameworkPayload payload)
@@ -100,6 +115,17 @@ internal static class UpdatePlanResultFactory
             Version = null,
             InventoryFingerprint = payload.InventoryFingerprint,
             AssetCount = payload.Assets.Length,
+        };
+
+    internal static UpdateLifecycle UnstartedLifecycle(
+        UpdateLifecycleTrust trust,
+        UpdateLifecycleCoverage coverage)
+        => new()
+        {
+            Trust = trust,
+            Coverage = coverage,
+            Action = UpdateLifecycleAction.None,
+            Outcome = UpdateLifecycleOutcome.NotStarted,
         };
 
     private static UpdateGeneratedNavigation Navigation(
@@ -135,30 +161,4 @@ internal static class UpdatePlanResultFactory
                 .ToArray(),
         };
 
-    private static UpdateResult Create(
-        UpdateRequest request,
-        UpdateSource? source,
-        IReadOnlyList<UpdateComparison> comparisons,
-        UpdateGeneratedNavigation? generatedNavigation,
-        IReadOnlyList<UpdatePhysicalEffect> effects,
-        UpdateLifecycle lifecycle,
-        UpdateRecovery recovery,
-        UpdateVerificationState verification,
-        IReadOnlyList<UpdateFinding> findings)
-        => new(new UpdateResultFormation
-        {
-            Workspace = request.Workspace,
-            Mode = request.Mode,
-            Force = request.Force,
-            Prune = request.Prune,
-            Automatic = request.Automatic,
-            Source = source,
-            Comparisons = comparisons,
-            GeneratedNavigation = generatedNavigation,
-            Effects = effects,
-            Lifecycle = lifecycle,
-            Recovery = recovery,
-            Verification = verification,
-            Findings = findings,
-        });
 }

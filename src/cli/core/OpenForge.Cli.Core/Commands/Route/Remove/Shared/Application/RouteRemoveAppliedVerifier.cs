@@ -1,6 +1,4 @@
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
-using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
@@ -11,17 +9,6 @@ internal sealed partial class RouteRemoveAppliedVerifier(
 {
     private readonly RouteRemovePostRemoveObserver _postRemoveObserver = postRemoveObserver;
     private readonly FileExpectationValidator _expectationValidator = expectationValidator;
-
-    internal static RouteRemoveAppliedVerifier Create()
-    {
-        var validator = new FileExpectationValidator(new PhysicalPathResolver());
-        var planBuilder = RouteRemovePlanBuilder.Create();
-        return new RouteRemoveAppliedVerifier(
-            new RouteRemovePostRemoveObserver(
-                planBuilder,
-                new RouteRemovePostRemoveVerifier()),
-            validator);
-    }
 
     internal async ValueTask<RouteRemoveAppliedVerification> VerifyAsync(
         RouteRemoveAppliedVerificationInput input,

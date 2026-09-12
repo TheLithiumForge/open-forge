@@ -1,6 +1,8 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Results;
 
 namespace OpenForge.Cli.Core.Shell.Parsing;
 

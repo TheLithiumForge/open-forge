@@ -40,7 +40,7 @@ internal sealed class SourceLayer
             throw new ArgumentOutOfRangeException(nameof(kind), kind, "The source layer kind is not defined.");
         }
 
-        var isOverwritePath = canonicalPath.EndsWith(".overwrite.md", StringComparison.Ordinal);
+        var isOverwritePath = SourceOverwritePath.HasSuffix(canonicalPath);
         if ((form == SourceDocumentForm.OverwriteCompanion) != isOverwritePath
             || (kind == SourceLayerKind.Overwrite) != isOverwritePath)
         {

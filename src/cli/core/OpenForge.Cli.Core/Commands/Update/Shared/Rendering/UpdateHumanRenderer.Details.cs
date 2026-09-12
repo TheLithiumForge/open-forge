@@ -1,4 +1,5 @@
 using System.Text;
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 using OpenForge.Cli.Core.Commands.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
@@ -34,10 +35,10 @@ internal static partial class UpdateHumanRenderer
             var baselineFingerprint = Value(comparison.BaselineFingerprint);
             var currentFingerprint = Value(comparison.CurrentFingerprint);
             var intendedFingerprint = Value(comparison.IntendedFingerprint);
-            builder.AppendLine(
-                $"    Source: {Value(comparison.SourceAssetPath)} / present={OptionalBoolean(comparison.SourceAssetPresentInCurrentInventory)}");
-            builder.AppendLine(
-                $"    Fingerprints: policy={fingerprintKind} / baseline={baselineFingerprint} / current={currentFingerprint} / intended={intendedFingerprint}");
+            builder.AppendLine($"""
+                    Source: {Value(comparison.SourceAssetPath)} / present={OptionalBoolean(comparison.SourceAssetPresentInCurrentInventory)}
+                    Fingerprints: policy={fingerprintKind} / baseline={baselineFingerprint} / current={currentFingerprint} / intended={intendedFingerprint}
+                """.Replace("\n", Environment.NewLine, StringComparison.Ordinal));
         }
     }
 
@@ -144,5 +145,5 @@ internal static partial class UpdateHumanRenderer
         };
 
     private static string Value(string? value)
-        => value is null ? "unavailable" : UpdateTextEscaping.Escape(value);
+        => value is null ? "unavailable" : CommandTextEscaping.Escape(value);
 }

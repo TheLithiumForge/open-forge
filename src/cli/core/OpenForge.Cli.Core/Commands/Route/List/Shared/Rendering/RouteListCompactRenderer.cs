@@ -1,5 +1,6 @@
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
 
@@ -180,12 +181,7 @@ internal static class RouteListCompactRenderer
             return "none";
         }
 
-        return workspace.SelectedBy switch
-        {
-            CliWorkspaceSelectionMethod.CurrentDirectory => "current-directory",
-            CliWorkspaceSelectionMethod.ExplicitWorkspace => "explicit-workspace",
-            _ => throw new ArgumentOutOfRangeException(nameof(workspace), workspace.SelectedBy, "The workspace selection method is not defined."),
-        };
+        return WorkspaceSelectionWireVocabulary.Read(workspace.SelectedBy);
     }
 
     private static string DepthExplanation(RouteListDepth? depth)

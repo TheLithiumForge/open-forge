@@ -2,7 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Binding;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update;
 

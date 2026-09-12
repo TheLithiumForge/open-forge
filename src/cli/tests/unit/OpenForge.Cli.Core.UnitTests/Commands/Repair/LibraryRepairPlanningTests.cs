@@ -2,7 +2,8 @@ using OpenForge.Cli.Core.Commands.Repair.Models.Application;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 

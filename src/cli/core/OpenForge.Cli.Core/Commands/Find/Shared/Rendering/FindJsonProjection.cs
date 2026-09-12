@@ -2,11 +2,12 @@ using OpenForge.Cli.Core.Commands.Find.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Find.Models.Query;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Models.Selection;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using FindJsonProjectionModel = OpenForge.Cli.Core.Commands.Find.Models.Presentation.FindJsonProjection;
 
@@ -47,15 +48,7 @@ internal static class FindJsonProjection
         return new FindJsonWorkspace
         {
             Path = workspace.LexicalRoot,
-            SelectedBy = workspace.SelectedBy switch
-            {
-                CliWorkspaceSelectionMethod.CurrentDirectory => "current-directory",
-                CliWorkspaceSelectionMethod.ExplicitWorkspace => "explicit-workspace",
-                _ => throw new ArgumentOutOfRangeException(
-                    nameof(workspace),
-                    workspace.SelectedBy,
-                    "The workspace selection method is not defined."),
-            },
+            SelectedBy = WorkspaceSelectionWireVocabulary.Read(workspace.SelectedBy),
         };
     }
 

@@ -1,10 +1,10 @@
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Result;
 
@@ -122,7 +122,7 @@ internal static class ExtensionInstallResultFactory
         var effects = input.EffectPlan.Effects.Select(effect => effect.Result).ToArray();
         var directories = input.EffectPlan.Effects
             .Select(effect => effect.DirectoryCreation)
-            .OfType<Framework.Mutation.Models.Filesystem.PlannedDirectoryCreation>()
+            .OfType<Framework.Mutation.Models.Filesystem.Directories.PlannedDirectoryCreation>()
             .Select(creation => Relative(input.Request, creation.LogicalPath))
             .Order(StringComparer.Ordinal)
             .ToArray();

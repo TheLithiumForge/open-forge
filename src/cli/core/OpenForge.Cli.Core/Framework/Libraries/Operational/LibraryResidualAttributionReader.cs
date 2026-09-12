@@ -1,15 +1,20 @@
-using OpenForge.Cli.Core.Framework.Permissions;
 using System.Collections.Immutable;
 using System.IO.Compression;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
-using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
+using OpenForge.Cli.Core.Framework.Permissions;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Libraries.Operational;
 
@@ -72,8 +77,15 @@ internal static class LibraryResidualAttributionReader
                     cancellationToken).ConfigureAwait(false)
                 : null;
             var record = libraries.Record.Record ?? prior?.Record;
-            if (record is null
-                || FindLibrary(record, verified.Entries) is not { } library)
+            if (record is null)
+            {
+                continue;
+            }
+
+            var librariesWithMappings = record.Libraries.Select(library => (
+                Library: library,
+                Mappings: LibraryPathIdentity.Mappings(library))).ToArray();
+            if (FindLibrary(librariesWithMappings, verified.Entries) is not { } attribution)
             {
                 continue;
             }
@@ -82,13 +94,13 @@ internal static class LibraryResidualAttributionReader
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 if (entry.State != RecoveryBundleTargetComparisonState.Intended
-                    || !IsAttributedEntry(library, entry.Input.Context.Entry))
+                    || !IsAttributedEntry(attribution.Mappings, entry.Input.Context.Entry))
                 {
                     continue;
                 }
 
                 attributed.Add(new LibraryResidualEvidence(
-                    library.Id,
+                    attribution.Library.Id,
                     libraries.Record,
                     prior,
                     residual,
@@ -110,17 +122,17 @@ internal static class LibraryResidualAttributionReader
             _ => false,
         };
 
-    private static LibraryRecord? FindLibrary(
-        LibrariesRecord record,
+    private static (LibraryRecord Library, ImmutableArray<LibraryMapping> Mappings)? FindLibrary(
+        (LibraryRecord Library, ImmutableArray<LibraryMapping> Mappings)[] libraries,
         IReadOnlyList<RecoveryEntry> entries)
     {
-        LibraryRecord? selected = null;
+        (LibraryRecord Library, ImmutableArray<LibraryMapping> Mappings)? selected = null;
         foreach (var entry in entries.Where(entry => entry.Kind is RecoveryEntryKind.RelativeFileLinkCreate
                      or RecoveryEntryKind.RelativeFileLinkDelete))
         {
-            var matches = record.Libraries.Where(library => IsAttributedLink(library, entry)).ToArray();
+            var matches = libraries.Where(library => IsAttributedLink(library.Mappings, entry)).ToArray();
             if (matches.Length != 1
-                || selected is not null && selected.Id != matches[0].Id)
+                || selected is { } previous && previous.Library.Id != matches[0].Library.Id)
             {
                 return null;
             }
@@ -128,22 +140,22 @@ internal static class LibraryResidualAttributionReader
             selected = matches[0];
         }
 
-        return selected ?? (record.Libraries.Length == 1 ? record.Libraries[0] : null);
+        return selected ?? (libraries.Length == 1 ? libraries[0] : null);
     }
 
-    private static bool IsAttributedEntry(LibraryRecord library, RecoveryEntry entry)
+    private static bool IsAttributedEntry(ImmutableArray<LibraryMapping> mappings, RecoveryEntry entry)
         => entry.TargetPath != WorkspacePermissionDefinitions.RelativePath && entry.Kind switch
         {
             RecoveryEntryKind.RelativeFileLinkCreate or RecoveryEntryKind.RelativeFileLinkDelete =>
-                IsAttributedLink(library, entry),
+                IsAttributedLink(mappings, entry),
             RecoveryEntryKind.OrdinaryCreate or RecoveryEntryKind.OrdinaryReplace
                 or RecoveryEntryKind.OrdinaryReplaceGeneratedRegion or RecoveryEntryKind.OrdinaryDelete => true,
             _ => throw new ArgumentOutOfRangeException(nameof(entry), entry.Kind, "The recovery entry kind is not defined."),
         };
 
-    private static bool IsAttributedLink(LibraryRecord library, RecoveryEntry entry)
+    private static bool IsAttributedLink(ImmutableArray<LibraryMapping> mappings, RecoveryEntry entry)
     {
-        var mapping = LibraryPathIdentity.Mappings(library).FirstOrDefault(value =>
+        var mapping = mappings.FirstOrDefault(value =>
             string.Equals(value.DestinationPath.Value, entry.TargetPath, StringComparison.Ordinal));
         if (mapping is null)
         {

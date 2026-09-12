@@ -22,10 +22,9 @@ internal sealed class RouteUpdateSourceSelector(
     private readonly PhysicalPathResolver _physicalPathResolver = physicalPathResolver;
 
     internal async ValueTask<RouteUpdateSourceSelectionBuild> SelectAsync(
-        RouteUpdateObservationRequest request,
+        RouteUpdateRequest operation,
         CancellationToken cancellationToken)
     {
-        var operation = request.Request;
         if (cancellationToken.IsCancellationRequested)
         {
             return Stop(

@@ -1,10 +1,13 @@
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Shared.Application;
 
@@ -66,7 +69,7 @@ internal static class ExtensionUpdateRecoveryApplication
         }
 
         var candidate = catalogue.State == RecoveryBundleCatalogueState.Available
-            ? catalogue.Candidates.SingleOrDefault(value => Matches(value, preparation))
+            ? catalogue.Candidates.SingleOrDefault(value => RecoveryBundleIdentity.Matches(value, preparation))
             : null;
         if (candidate is null)
         {
@@ -176,30 +179,4 @@ internal static class ExtensionUpdateRecoveryApplication
 
     private static string[] ProtectedPaths(RecoveryBundlePreparation preparation)
         => [.. preparation.Entries.OrderBy(entry => entry.Ordinal).Select(entry => entry.TargetPath)];
-
-    private static bool Matches(
-        RecoveryBundleCandidateSnapshot candidate,
-        RecoveryBundlePreparation preparation)
-    {
-        if (candidate.Kind != RecoveryBundleCandidateKind.Final
-            || candidate.Integrity != RecoveryBundleIntegrity.Verified
-            || candidate.Verified is not { } verified)
-        {
-            return false;
-        }
-
-        return PhysicalIdentityTracker.PathComparer.Equals(candidate.Path, preparation.BundlePath)
-            && PhysicalIdentityTracker.PathComparer.Equals(
-                verified.WorkspacePhysicalPath,
-                preparation.WorkspacePhysicalPath)
-            && string.Equals(verified.WorkspaceKey, preparation.WorkspaceKey, StringComparison.Ordinal)
-            && string.Equals(verified.Command, preparation.Command, StringComparison.Ordinal)
-            && verified.Attribution == preparation.Attribution
-            && verified.OperationId == preparation.OperationId
-            && verified.Entries.SequenceEqual(preparation.Entries);
-    }
 }
-
-internal sealed record ExtensionUpdateRecoveryCleanup(
-    ExtensionUpdateRecovery Recovery,
-    ExtensionUpdateFinding? Finding);

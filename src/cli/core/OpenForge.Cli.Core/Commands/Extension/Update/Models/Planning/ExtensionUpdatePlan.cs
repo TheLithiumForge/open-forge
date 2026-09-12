@@ -1,14 +1,18 @@
 using System.Collections.ObjectModel;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Effects;
+using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning.Topology;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Selection;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
 
@@ -117,13 +121,6 @@ internal sealed record ExtensionUpdatePlanBuild
     internal required ExtensionUpdateResult Result { get; init; }
 }
 
-internal sealed record ExtensionUpdatePlanResolution
-{
-    internal required ExtensionUpdatePlanBuild Build { get; init; }
-
-    internal required ExtensionUpdatePlan? Execution { get; init; }
-}
-
 internal sealed class ExtensionUpdatePlan
 {
     private ExtensionUpdatePlan(ExtensionUpdatePlanInput input)
@@ -134,11 +131,11 @@ internal sealed class ExtensionUpdatePlan
         Selection = new ExtensionUpdateSelection(input.Selection.SelectedBy, input.Selection.RootIds);
         Packages = Snapshot(input.Packages, nameof(input.Packages));
         FrameworkPayload = input.FrameworkPayload;
-        FrameworkLifecycle = input.FrameworkLifecycle;
+        FrameworkLifecycle = ExtensionLifecycleSnapshots.Framework(input.FrameworkLifecycle);
         LifecycleRead = input.LifecycleRead;
-        CurrentLifecycle = input.CurrentLifecycle;
-        IntendedLifecycle = input.IntendedLifecycle;
-        Topology = input.Topology;
+        CurrentLifecycle = ExtensionLifecycleSnapshots.Extensions(input.CurrentLifecycle);
+        IntendedLifecycle = ExtensionLifecycleSnapshots.Extensions(input.IntendedLifecycle);
+        Topology = new ExtensionUpdateTopologySnapshot(input.Topology);
         Result = new ExtensionUpdateResult(new ExtensionUpdateResultFormation
         {
             Workspace = input.Request.Workspace,
@@ -192,7 +189,7 @@ internal sealed class ExtensionUpdatePlan
 
     internal ExtensionUpdateResult Result { get; }
 
-    internal ExtensionUpdateTopology Topology { get; }
+    internal ExtensionUpdateTopologySnapshot Topology { get; }
 
     internal IReadOnlyList<ExtensionUpdatePlannedEffect> Effects { get; }
 
@@ -222,9 +219,8 @@ internal sealed class ExtensionUpdatePlan
 
     private static IReadOnlyList<T> Snapshot<T>(IEnumerable<T> values, string parameterName)
         where T : class
-        => new ReadOnlyCollection<T>(values
+        => new ReadOnlyCollection<T>([.. values
             .Select(value => value ?? throw new ArgumentException(
                 "Extension Update planning collections cannot contain null members.",
-                parameterName))
-            .ToArray());
+                parameterName))]);
 }

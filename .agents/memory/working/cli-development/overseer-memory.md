@@ -6,6 +6,121 @@ open-forge:
 
 # CLI Overseer Memory
 
+## Current Beta Closeout
+
+Task 27 is active at phase 4/4, milestone 7/8. The bounded beta implementation,
+all required local gates and final reviews are accepted. Root is sealing the
+final record before the authorized local develop squash. All helpers have
+finished. The [beta closeout](tasks/csharp-beta-closeout.md) owns the changes,
+findings, deferred work and evidence limits. Task 28 continues independently;
+preserve its source updates and notes. No remote effects are authorized.
+
+## Historical Comprehensive Execution
+
+The following receipts preserve earlier progress; they do not define current
+owners, queued work or acceptance state.
+
+Task 27 is active again on 2026-09-10 at phase 3/4, milestone 4/8. The user
+requested systematic duplication, streamlining and C# design conformance beyond
+the completed finite scope. The Task record and project ledger own the new
+horizon. Work is on `codex/csharp-complete-streamlining` from `2b54fdc5`.
+All 1,732 production bodies are assessed; accepted ownership and evidence
+boundaries are recorded. Six independent Update regressions are committed at
+`b42f6f08`; fix `4eb8b65c` passes 65 focused cases against frozen tests.
+Framework parse, inventory, syntax/decoder, Markdown ownership, retained-source
+facts and generated-navigation production slices are committed with focused
+passing evidence. Separate characterization and mapping Purple commits retain
+independent assertions. F15's committed Loader Red and isolated fix now pass
+192 focused cases; the known root and unresolved destination remain in partial
+results. F06's separate characterization is committed at `24147ddd`, with
+92 focused passes. Its decomposition at `423424bf` passes 127 focused cases;
+its direct lexical-outcome Purple at `0bb82faf` passes 39 Unit cases.
+F09/F11 and one narrow S04 guard correction at `18728aea` pass 317 focused
+cases. F12 Red at `836c4058` has one intended failure and 26 passing controls;
+the isolated correction at `37d4227d` passes 50 focused cases. Physical enum
+Purple is committed at `dd2544e3`, with 40 focused passes including 26 new
+cases. Its separate four-file Blue at `19854437` passes 91 focused cases
+against frozen assertions. F10 model placement at `db2a5d0e` preserves all
+65 type bodies and assertions, with 170 focused passes. M13's guard fixture
+Purple at `7d88c773` passes sixteen focused cases. Recovery model placement at
+`0ac2b77e` passes 142 focused cases. Separate header cleanup at `88c89efd`
+corrects nine redundant F10 imports. Empty IDE0005 receipts did not establish
+import cleanliness; current manual/header/compiler evidence owns that limit.
+Strict M13 identity restructuring is committed at `76e76196`, with 212 focused
+passes and frozen existing assertions. Separate Red at `799bb942` demonstrates
+all ten valid-artifact deletion omissions, with ten unchanged controls passing.
+The isolated correction at `dc6154b5` passes all twenty frozen cases plus 124
+existing controls, completing M13 and E07. M02 envelope formation and M04's
+independent nullable basis correction at `377e61d2` pass 38 focused cases.
+M03 ownership/empty-snapshot Purple at `01a5ec45` passes all fourteen focused
+Unit cases with all production unchanged. Its capture/placement Blue at
+`21a316df` passes 26 focused cases, with frozen assertions and clean final
+builds/whitespace. M03 is complete. M01 link identity and model placement at
+`c2c6d3ed` pass 39 focused cases with frozen assertions and no build corrections.
+M07 receipt values and remaining Mutation placement at `0eb0bc08` pass all
+40 focused cases, with frozen assertions and clean first-attempt gates.
+M14 Lifecycle placement at `9528081f` passes 56 focused cases with all type
+bodies/schema attributes/assertions preserved, closing the full M14 chain.
+M05 shared snapshot path validation at `1755de51` passes all sixteen focused
+Unit cases, with every test and surrounding guard unchanged. M06 UTF-8 Purple
+at `4b4cee42` passes 23 focused cases with all production unchanged. Its Blue
+at `876e7b83` passes the same full-message/state/byte oracles with exactly three
+substitutions and all tests unchanged, completing M06. M08 classifier Blue at
+`2df446b7` passes all 24 focused Integration cases with every test unchanged.
+Its direct Purple at `9cbcd79b` passes all twelve focused Unit cases and closes
+M08. M09 comparison-precedence Purple at `91abaf3d` passes all 27 focused Unit
+cases with production unchanged. Its Blue at `ba3a5d69` passes the same 27 cases
+with all tests unchanged, closing M09. M12 manifest mapping Purple at `d7faff64`
+passes all 52 selected Unit cases. Its Blue at `4eaf2893` passes the same
+52 Unit and three archive Integration cases with tests unchanged, closing M12.
+M11 lease identity reuse at `0e838c83` passes eight Unit and five Integration
+cases with tests unchanged, closing M11. M15 availability reuse at `4eccf835`
+passes twelve focused Integration cases with all tests unchanged, closing M15.
+M04 characterization at `a0f0d17b` and validation restructuring at `7e4d0a43`
+pass 29 Unit and 31 Integration cases with frozen tests, completing M04.
+M10 Red at `2cc70ab4` has seven intended failures and fifteen passing controls;
+correction `92753288` passes 43 Unit and seven Integration cases, completing M10
+and the mutation partition. P03 filesystem placement at `5c5ac7a4` passes
+34 Unit and twelve Integration cases with all type/consumer/assertion bodies
+preserved. P02 link-target precedence at `4accc8eb` passes fourteen Integration
+cases with all tests unchanged. The remaining P03 groups stay queued. U07-C01
+reproduction is paused after automated rejection, with no source/test changes
+or demonstrated write-through defect. U04 composition at `9e365492` passes
+33 Integration cases with frozen tests. U03 at `7e40388d` passes fifteen
+Integration cases with frozen tests. U08 at `672f8120` moves 25 declarations
+with nineteen Unit and 43 Integration passes; all bodies/tests preserved.
+U09 at `01189c63` passes thirty Unit and thirty Integration cases with frozen
+tests, after one root design correction. U10 Purple at `deb9dc8a` and Blue at
+`77d2fa2d` retain exact commands/reasons and pass 38 Unit/thirty Integration cases.
+Root corrected repeated lifecycle construction before final qualification. U05
+selected-input Purple at `20b58087` and Blue at `39fa77dc` pass the same 51
+Integration cases; all tests remain frozen. U06 Purple at `2a8703b2` and Blue at
+`3748663d` pass the same 66 Unit cases. U11 local renderer Purple at `cd53d35c`
+and Blue at `adb991fb` pass the same 36 Unit cases. S03 shared presentation
+Purple at `602c0071` passes 54 Unit cases with all original inputs unchanged;
+shared escaping Blue at `d9553e52` and help Blue at `ebadd8ef` pass the same
+54 cases, completing U11. Workspace labels at `c8f1e31d` pass the same 54 cases;
+separate assertion consolidation at `6b6a555b` passes the exact 52-case remainder
+and closes S03. The user requested Astra/high parallel work; the Task capsule
+owns the isolated Shell/package execution wave. Route
+mutation, Route discovery, discovery-command and test-support preparation are
+accepted. Corrected Extension
+preparation is accepted, retaining twelve private facts within their owners.
+Library/Repair/Cleanup preparation is accepted; L10 retains independent catalogue
+observations. The comprehensive preflight owns the exact remaining boundaries.
+The requested bounded branch sanity review found no material sampled issue.
+The user-requested Astra/xhigh extension-method ownership review follows
+structural/style work and precedes the final command-contract and Integration/
+public E2E evidence analysis; the Task capsule owns their scopes and budgets.
+F13's decoded Skill YAML meaning decision is pending with the user; continue
+other independent accepted work. The preflight owns this boundary.
+M13's real archive-admission trace is accepted for separate recovery identity
+Red/fix and fixture Purple work. The Task record owns each exact receipt.
+Implementation and build artifacts have one writer per isolated worktree;
+shared/public ownership and integration remain serialized.
+Protect the other chat's Framework source updates and Markdown notes.
+
+
 ## Current Continuation
 
 On 2026-09-09 the user explicitly resumed Tasks 27, 7, 13 and 22 in order.

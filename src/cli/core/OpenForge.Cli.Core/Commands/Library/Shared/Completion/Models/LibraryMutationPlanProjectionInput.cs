@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Library.Shared.Completion.Models;
 

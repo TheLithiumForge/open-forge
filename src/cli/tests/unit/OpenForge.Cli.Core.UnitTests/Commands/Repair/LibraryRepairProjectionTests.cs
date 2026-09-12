@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Commands.Repair.Models.Application;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Rendering;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 

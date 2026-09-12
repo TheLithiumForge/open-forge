@@ -3,7 +3,7 @@ using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Application;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Result;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;

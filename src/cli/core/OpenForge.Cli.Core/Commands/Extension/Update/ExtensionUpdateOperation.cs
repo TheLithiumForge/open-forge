@@ -1,7 +1,7 @@
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Planning;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
@@ -186,7 +186,7 @@ internal sealed class ExtensionUpdateOperation(
 
     private static ExtensionUpdateResult Application(
         ExtensionUpdatePlan plan,
-        Models.Operation.ExtensionUpdateApplicationOutcome outcome)
+        ExtensionUpdateApplicationOutcome outcome)
         => ExtensionUpdateResultFormationFactory.Create(
             plan.Request,
             ApplicationFacts(

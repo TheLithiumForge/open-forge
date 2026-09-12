@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Filesystem;

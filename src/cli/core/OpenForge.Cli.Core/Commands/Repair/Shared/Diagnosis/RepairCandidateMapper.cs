@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 

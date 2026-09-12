@@ -4,9 +4,10 @@ using OpenForge.Cli.Core.Commands.References.Models.Request;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
 using OpenForge.Cli.Core.Commands.References.Models.Source;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
-using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 
 namespace OpenForge.Cli.Core.Commands.References.Shared.Extraction;
 

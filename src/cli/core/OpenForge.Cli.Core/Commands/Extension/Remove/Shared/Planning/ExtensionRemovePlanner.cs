@@ -3,17 +3,17 @@ using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Selection;
-using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
 using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
-using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Shell.Interaction;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
@@ -361,7 +361,7 @@ internal sealed class ExtensionRemovePlanner(
         }
 
         return catalogue.Candidates.Length == 1
-            && ExtensionRemoveRecoveryApplication.Matches(catalogue.Candidates[0], allowed);
+            && RecoveryBundleIdentity.Matches(catalogue.Candidates[0], allowed);
     }
 
     private static ExtensionRemoveFindingCode ReadRecoveryFindingCode(
@@ -442,5 +442,3 @@ internal sealed class ExtensionRemovePlanner(
                 new ExtensionRemoveFinding(code, cause, target)),
         };
 }
-
-internal sealed record ExtensionRemoveRecoveryRead(ExtensionRemovePlanBuild? Boundary);

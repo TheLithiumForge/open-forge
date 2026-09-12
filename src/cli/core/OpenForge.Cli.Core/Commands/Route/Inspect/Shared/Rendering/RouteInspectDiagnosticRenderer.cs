@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
 
@@ -30,7 +31,7 @@ internal static class RouteInspectDiagnosticRenderer
 
     private static void AddWorkspace(
         ICollection<string> lines,
-        OpenForge.Cli.Core.Framework.Workspace.CliWorkspace? workspace)
+        OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspace? workspace)
     {
         if (workspace is null)
         {

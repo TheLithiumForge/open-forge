@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Route.Move.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.References;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Navigation;
 using OpenForge.Cli.Core.Commands.Route.Shared.References;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -59,7 +60,7 @@ internal static class RouteMoveOperationFactory
                         workspace.LexicalRoot,
                         canonicalPath.Replace('/', Path.DirectorySeparatorChar)))),
             new SourceRouteFactsResolver(),
-            new RouteMoveNavigationExposureReader(new MarkdownDocumentParser()),
+            new RouteNavigationExposureReader(new MarkdownDocumentParser()),
             expectationValidator);
 
     private static RouteMoveCategoryInventoryReader CreateInventoryReader(

@@ -138,7 +138,8 @@ occurs. The installed anchor includes the existing `.agents` Framework
 container, so Extension Install cannot form a plan or create `.agents` when that
 container is absent. This does not change the shared directory-creation
 capability: after the anchor is established, this command may use it only for
-explicitly planned missing descendant directories beneath `.agents`.
+explicitly planned missing descendant directories beneath the workspace for
+admitted targets.
 
 Before a workspace effect, the implementation must hold the persistent reusable
 zero-byte external lock under `LocalApplicationData/OpenForge/locks/v1` defined
@@ -566,10 +567,10 @@ single-package inference, dependency-first closure and failures, Framework-ancho
 and route-host prerequisites, absent/no-op/divergent/initial-force states,
 automatic and exact bounded prompt behavior, trusted/untrusted/absent handling,
 shared owners, Library-record and projection collisions, independent no-follow
-final-leaf guards, semantic fingerprints, generated navigation, strict
-`.agents/`-descendant payload targets, rejection before planning, directory
-effects limited to missing descendants beneath the established anchor, reserved
-paths, complete planning, dependency-first target/generated effects, topology
+final-leaf guards, semantic fingerprints, generated navigation, eligible
+workspace-relative payload targets, rejection before planning, directory effects
+limited to missing descendants beneath the workspace for admitted targets,
+reserved paths, complete planning, dependency-first target/generated effects, topology
 verification, last-effect Extension lifecycle publication, final target and
 lifecycle rereads, external recovery-bundle storage and verification, typed
 post-verification deletion state/disposition facts, dry-run parity, the exact

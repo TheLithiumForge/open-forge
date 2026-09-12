@@ -6,7 +6,7 @@ using OpenForge.Cli.Core.Commands.Context.Shared.Links;
 using OpenForge.Cli.Core.Commands.Context.Shared.Projection;
 using OpenForge.Cli.Core.Commands.Context.Shared.Result;
 using OpenForge.Cli.Core.Commands.Context.Shared.Selection;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Context;
 
@@ -39,8 +39,7 @@ internal sealed class ContextOperation
             var links = await new ContextLinkExpander()
                 .ExpandAsync(request, graph, closure, cancellationToken)
                 .ConfigureAwait(false);
-            var expandedClosure = closure.WithLinkExpansion(links);
-            var projection = new ContextProjectionBuilder().Build(expandedClosure, request.Content);
+            var projection = new ContextProjectionBuilder().Build(links.ResultSources, request.Content);
             return _resultBuilder.Build(request, closure, links, projection);
         }
         catch (OperationCanceledException)

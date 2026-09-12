@@ -9,7 +9,7 @@ namespace OpenForge.Cli.Core.Commands.Install.Shared.Operation;
 
 internal static class InstallApplicationOperationFactory
 {
-    internal static InstallApplicationComposition Create(
+    internal static InstallApplicationOperation Create(
         PhysicalPathResolver physicalPathResolver,
         FileExpectationValidator validator,
         LifecycleStore lifecycleStore,
@@ -29,9 +29,6 @@ internal static class InstallApplicationOperationFactory
             verifier: new InstallAppliedVerifier(
                 physicalPathResolver,
                 lifecycleStore));
-        return new InstallApplicationComposition(operation);
+        return operation;
     }
 }
-
-internal sealed record InstallApplicationComposition(
-    InstallApplicationOperation Operation);

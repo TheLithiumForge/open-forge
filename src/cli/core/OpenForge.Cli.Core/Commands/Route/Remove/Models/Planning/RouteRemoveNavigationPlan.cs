@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 

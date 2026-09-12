@@ -1,19 +1,19 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using OpenForge.Cli.EndToEndTests.Shared.Route;
 
 namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedRouteMoveProcessTests
 {
-    [Fact(DisplayName = "Published Route Move JSON dry-run previews the intended move without writes"),
-     Trait("Feature", "route-move"), Trait("Evidence", "EndToEnd")]
+    [Fact(DisplayName = "Published Route Move JSON dry-run previews the intended move without writes"), Trait("Feature", "route-move"), Trait("Evidence", "EndToEnd")]
     public async Task JsonDryRunIsReadOnly()
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = await PublishedRouteMoveWorkspace.CreateAsync(target);
         string[] arguments =
         [
-            "route", "move", PublishedRouteMoveWorkspace.SourceId,
+            "route", "move", PublishedRouteWorkspaceSeed.SourceId,
             PublishedRouteMoveWorkspace.DestinationPath,
             "--dry-run", "--json",
         ];
@@ -24,14 +24,13 @@ public sealed class PublishedRouteMoveProcessTests
         var result = document.RootElement.GetProperty("result");
         Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
         Assert.Equal("dry-run", result.GetProperty("mode").GetString());
-        Assert.Equal(PublishedRouteMoveWorkspace.SourcePath, result.GetProperty("source").GetProperty("path").GetString());
+        Assert.Equal(PublishedRouteWorkspaceSeed.SourcePath, result.GetProperty("source").GetProperty("path").GetString());
         Assert.Equal(PublishedRouteMoveWorkspace.DestinationPath, result.GetProperty("destination").GetProperty("path").GetString());
         Assert.NotEmpty(result.GetProperty("effects").EnumerateArray());
         workspace.AssertNoLockInfrastructure();
     }
 
-    [Fact(DisplayName = "Published Route Move applies a leaf overwrite references and navigation then old-source repeat is invalid"),
-     Trait("Feature", "route-move"), Trait("Evidence", "EndToEnd")]
+    [Fact(DisplayName = "Published Route Move applies a leaf overwrite references and navigation then old-source repeat is invalid"), Trait("Feature", "route-move"), Trait("Evidence", "EndToEnd")]
     public async Task LeafApplyPreservesBytesAndConsumesTheOldIdentity()
     {
         var target = PublishedExecutableTarget.Discover();
@@ -39,7 +38,7 @@ public sealed class PublishedRouteMoveProcessTests
         var lifecycleBefore = workspace.ReadBytes(".agents/open-forge.lifecycle.json");
         string[] arguments =
         [
-            "route", "move", PublishedRouteMoveWorkspace.SourceId,
+            "route", "move", PublishedRouteWorkspaceSeed.SourceId,
             PublishedRouteMoveWorkspace.DestinationPath,
         ];
 
@@ -52,13 +51,13 @@ public sealed class PublishedRouteMoveProcessTests
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
         Assert.Contains("Status: complete", applied.StandardOutput, StringComparison.Ordinal);
-        Assert.False(File.Exists(workspace.Combine(PublishedRouteMoveWorkspace.SourcePath)));
-        Assert.False(File.Exists(workspace.Combine(PublishedRouteMoveWorkspace.SourceOverwritePath)));
+        Assert.False(File.Exists(workspace.Combine(PublishedRouteWorkspaceSeed.SourcePath)));
+        Assert.False(File.Exists(workspace.Combine(PublishedRouteWorkspaceSeed.SourceOverwritePath)));
         Assert.Equal(
-            PublishedRouteMoveWorkspace.SourceText,
+            PublishedRouteWorkspaceSeed.SourceText,
             workspace.ReadText(PublishedRouteMoveWorkspace.DestinationPath));
         Assert.Equal(
-            PublishedRouteMoveWorkspace.OverwriteText,
+            PublishedRouteWorkspaceSeed.OverwriteText,
             workspace.ReadText(PublishedRouteMoveWorkspace.DestinationOverwritePath));
         Assert.Contains(
             ".agents/archive/new%20guide.md#section",
@@ -87,7 +86,7 @@ public sealed class PublishedRouteMoveProcessTests
         using var workspace = await PublishedRouteMoveWorkspace.CreateAsync(target);
         workspace.SeedOccupiedDestination();
         var result = await RunWithoutWritesAsync(target, workspace,
-            ["route", "move", PublishedRouteMoveWorkspace.SourceId, PublishedRouteMoveWorkspace.DestinationPath]);
+            ["route", "move", PublishedRouteWorkspaceSeed.SourceId, PublishedRouteMoveWorkspace.DestinationPath]);
 
         Assert.Equal(5, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardOutput);

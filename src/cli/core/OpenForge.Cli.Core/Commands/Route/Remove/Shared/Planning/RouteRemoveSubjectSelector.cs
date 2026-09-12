@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Navigation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
@@ -17,12 +18,12 @@ internal sealed partial class RouteRemoveSubjectSelector(
     SourceCatalogueReader catalogueReader,
     SourceReferenceResolver referenceResolver,
     SourceRouteFactsResolver routeFactsResolver,
-    RouteRemoveNavigationExposureReader exposureReader)
+    RouteNavigationExposureReader exposureReader)
 {
     private readonly SourceCatalogueReader _catalogueReader = catalogueReader;
     private readonly SourceReferenceResolver _referenceResolver = referenceResolver;
     private readonly SourceRouteFactsResolver _routeFactsResolver = routeFactsResolver;
-    private readonly RouteRemoveNavigationExposureReader _exposureReader = exposureReader;
+    private readonly RouteNavigationExposureReader _exposureReader = exposureReader;
 
     internal async ValueTask<RouteRemoveSubjectSelection> SelectAsync(
         RouteRemoveRequest request,
@@ -148,7 +149,10 @@ internal sealed partial class RouteRemoveSubjectSelector(
             return new RouteRemoveSubjectSelection(subject: null, boundary);
         }
 
-        var exposure = await _exposureReader.ReadAsync(discovery, cancellationToken)
+        var exposure = await _exposureReader.ReadAsync(
+            discovery.Request.Workspace,
+            discovery.Catalogue,
+            cancellationToken)
             .ConfigureAwait(false);
         var exposureBoundary = ReadExposureBoundary(discovery, routeFacts, exposure);
         return exposureBoundary is not null

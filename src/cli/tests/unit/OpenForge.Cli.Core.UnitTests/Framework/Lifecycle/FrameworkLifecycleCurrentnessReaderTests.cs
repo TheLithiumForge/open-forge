@@ -1,5 +1,4 @@
-using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Identity;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Lifecycle;
 

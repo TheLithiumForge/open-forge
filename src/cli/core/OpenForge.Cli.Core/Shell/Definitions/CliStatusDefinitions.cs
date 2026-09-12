@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Shell.Definitions.Models;
+
 namespace OpenForge.Cli.Core.Shell.Definitions;
 
 internal enum CliSemanticStatus
@@ -10,15 +12,6 @@ internal enum CliSemanticStatus
     Blocked,
     Interrupted,
 }
-
-internal sealed record CliProcessDisposition(
-    int ExitCode,
-    CliOutputTarget HumanOutputTarget);
-
-internal sealed record CliStatusDefinition(
-    CliSemanticStatus Status,
-    string MachineName,
-    CliProcessDisposition Disposition);
 
 internal static class CliStatusDefinitions
 {

@@ -1,6 +1,6 @@
+using OpenForge.Cli.Core.Commands.Route.Remove;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
-using OpenForge.Cli.Core.Commands.Route.Remove;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
@@ -56,21 +56,21 @@ public sealed class RouteRemoveDefinitionsAndBindingContractTests
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void DirectCallableSeamsRemainBoundedAndConstructible()
     {
-        var operation = new RouteRemoveOperation();
+        var operation = RouteRemoveOperationFactory.Create();
         Func<RouteRemoveRequest, CancellationToken, ValueTask<RouteRemoveResult>> execute = operation.ExecuteAsync;
-        var builder = RouteRemovePlanBuilder.Create();
+        var builder = RouteRemoveOperationFactory.CreatePlanBuilder();
         Func<RouteRemoveRequest, CancellationToken, ValueTask<RouteRemovePlanBuild>> build = builder.BuildAsync;
-        var revalidator = RouteRemovePlanRevalidator.Create();
+        var revalidator = RouteRemoveOperationFactory.CreatePlanRevalidator();
         Func<RouteRemovePlan, WorkspaceLockLease, CancellationToken, ValueTask<RouteRemovePlanRevalidation>> revalidate =
             revalidator.RevalidateAsync;
-        Func<RouteRemoveRecoveryPreparationInput, CancellationToken, ValueTask<RouteRemoveRecoveryPreparationResult>> prepare =
+        Func<RouteRemoveHeldApplication, CancellationToken, ValueTask<RouteRemoveRecoveryPreparationResult>> prepare =
             RouteRemoveRecoveryLifecycle.PrepareAsync;
         Func<RouteRemoveRecoveryDeletionInput, CancellationToken, ValueTask<RouteRemoveRecoveryDeletionResult>> delete =
             RouteRemoveRecoveryLifecycle.DeleteExactAsync;
-        var effects = RouteRemoveEffectApplication.Create();
+        var effects = RouteRemoveOperationFactory.CreateEffectApplication();
         Func<RouteRemoveEffectApplicationInput, CancellationToken, ValueTask<RouteRemoveApplicationProgress>> apply =
             effects.ApplyAsync;
-        var verifier = RouteRemoveAppliedVerifier.Create();
+        var verifier = RouteRemoveOperationFactory.CreateAppliedVerifier();
         Func<RouteRemoveAppliedVerificationInput, CancellationToken, ValueTask<RouteRemoveAppliedVerification>> verify =
             verifier.VerifyAsync;
 

@@ -1,11 +1,14 @@
 using OpenForge.Cli.Core.Commands.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Recovery;
 
@@ -76,7 +79,7 @@ internal static class UpdateRecoveryOperation
         }
 
         var candidate = catalogue.State == RecoveryBundleCatalogueState.Available
-            ? catalogue.Candidates.SingleOrDefault(value => Matches(value, preparation))
+            ? catalogue.Candidates.SingleOrDefault(value => RecoveryBundleIdentity.Matches(value, preparation))
             : null;
         if (candidate is null)
         {
@@ -129,19 +132,6 @@ internal static class UpdateRecoveryOperation
             },
             mapped.Finding);
     }
-
-    private static bool Matches(
-        RecoveryBundleCandidateSnapshot candidate,
-        RecoveryBundlePreparation preparation)
-        => candidate.Kind == RecoveryBundleCandidateKind.Final
-            && candidate.Integrity == RecoveryBundleIntegrity.Verified
-            && candidate.Verified is { } verified
-            && PhysicalIdentityTracker.PathComparer.Equals(
-                candidate.Path,
-                preparation.BundlePath)
-            && verified.OperationId == preparation.OperationId
-            && verified.Attribution == preparation.Attribution
-            && verified.Entries.SequenceEqual(preparation.Entries);
 
     private static UpdateRecoveryCleanup Boundary(
         UpdateFindingCode code,

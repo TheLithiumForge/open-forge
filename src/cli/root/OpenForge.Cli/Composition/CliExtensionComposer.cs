@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Binding;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Extension.Install;
+using OpenForge.Cli.Core.Commands.Extension.Install.Models.Binding;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Install.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Extension.List;
@@ -24,12 +25,11 @@ using OpenForge.Cli.Core.Commands.Extension.Update;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Binding;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Update.Shared.Rendering;
+using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Interaction;
-using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation;
-using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 
 namespace OpenForge.Cli.Composition;
 

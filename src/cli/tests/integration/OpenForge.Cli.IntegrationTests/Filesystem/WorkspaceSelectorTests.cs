@@ -1,6 +1,7 @@
-using OpenForge.Cli.Core.Framework.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Invocation;
 using OpenForge.Cli.TestSupport;
 

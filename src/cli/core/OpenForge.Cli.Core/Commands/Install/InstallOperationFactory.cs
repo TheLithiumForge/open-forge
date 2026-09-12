@@ -29,6 +29,6 @@ internal static class InstallOperationFactory
                 physicalPathResolver,
                 lifecycleStore),
             preflight: preflight,
-            applicationOperation: application.Operation);
+            applicationOperation: application);
     }
 }

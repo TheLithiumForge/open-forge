@@ -5,7 +5,8 @@ using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
 using OpenForge.Cli.Core.Commands.Cleanup.Shared.Application;
 using OpenForge.Cli.Core.Commands.Cleanup.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Cleanup.Shared.Rendering;
 

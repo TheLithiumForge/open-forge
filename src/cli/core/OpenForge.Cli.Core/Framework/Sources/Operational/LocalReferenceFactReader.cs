@@ -1,6 +1,6 @@
-using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
+using OpenForge.Cli.Core.Framework.Sources.Models.References;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 
@@ -33,7 +33,18 @@ internal static class LocalReferenceFactReader
                 when facts.Target.Path is not null => LocalReferenceFragmentObservation.Observed(
                     LocalReferenceFragmentState.Unverified,
                     fragment),
-            _ => LocalReferenceFragmentObservation.NotRequested(),
+            SourceLinkTargetResolution.Missing
+                or SourceLinkTargetResolution.Malformed
+                or SourceLinkTargetResolution.Absolute
+                or SourceLinkTargetResolution.Query
+                or SourceLinkTargetResolution.EncodingUnsupported
+                or SourceLinkTargetResolution.OutsideWorkspace
+                or SourceLinkTargetResolution.PhysicalEscape
+                or SourceLinkTargetResolution.Ambiguous
+                or SourceLinkTargetResolution.Unreadable
+                or SourceLinkTargetResolution.Unsupported
+                or SourceLinkTargetResolution.ExternalUnchecked => LocalReferenceFragmentObservation.NotRequested(),
+            _ => throw new ArgumentOutOfRangeException(nameof(facts), facts.Target.Resolution, "The source-link target resolution is not defined."),
         };
     }
 
@@ -78,26 +89,31 @@ internal static class LocalReferenceFactReader
         if (authoredPath.Length > 0
             && !string.Equals(authoredPath, canonicalPath, StringComparison.Ordinal))
         {
-            var kind = string.Equals(decodedPath, canonicalPath, StringComparison.Ordinal)
-                ? LocalReferenceCanonicalizationKind.Encoding
-                : string.Equals(decodedPath, canonicalPath, StringComparison.OrdinalIgnoreCase)
-                    ? LocalReferenceCanonicalizationKind.Case
-                    : LocalReferenceCanonicalizationKind.Path;
+            var kind = LocalReferenceCanonicalizationKind.Path;
+            if (string.Equals(decodedPath, canonicalPath, StringComparison.Ordinal))
+            {
+                kind = LocalReferenceCanonicalizationKind.Encoding;
+            }
+            else if (string.Equals(decodedPath, canonicalPath, StringComparison.OrdinalIgnoreCase))
+            {
+                kind = LocalReferenceCanonicalizationKind.Case;
+            }
+
             findings.Add(new LocalReferenceCanonicalization(
-                kind,
-                destination,
-                canonicalPath + suffix,
-                destinationLocation));
+                kind: kind,
+                expected: destination,
+                intended: $"{canonicalPath}{suffix}",
+                destinationLocation: destinationLocation));
         }
 
         if (facts.CanonicalFragment is { } fragment)
         {
+            var intendedPath = authoredPath.Length == 0 ? string.Empty : canonicalPath;
             findings.Add(new LocalReferenceCanonicalization(
-                LocalReferenceCanonicalizationKind.Fragment,
-                destination,
-                (authoredPath.Length == 0 ? string.Empty : canonicalPath)
-                    + "#" + Uri.EscapeDataString(fragment.Canonical),
-                destinationLocation));
+                kind: LocalReferenceCanonicalizationKind.Fragment,
+                expected: destination,
+                intended: $"{intendedPath}#{Uri.EscapeDataString(fragment.Canonical)}",
+                destinationLocation: destinationLocation));
         }
 
         return findings;

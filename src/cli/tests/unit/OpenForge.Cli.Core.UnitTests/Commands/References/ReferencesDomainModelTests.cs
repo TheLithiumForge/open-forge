@@ -1,6 +1,6 @@
 using OpenForge.Cli.Core.Commands.References;
-using OpenForge.Cli.Core.Commands.References.Models.Request;
 using OpenForge.Cli.Core.Commands.References.Models.Occurrence;
+using OpenForge.Cli.Core.Commands.References.Models.Request;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
 using OpenForge.Cli.Core.Commands.References.Models.Selection;
 using OpenForge.Cli.Core.Commands.References.Models.Source;
@@ -10,14 +10,14 @@ using OpenForge.Cli.Core.Commands.References.Shared.Inspection;
 using OpenForge.Cli.Core.Commands.References.Shared.Resolution;
 using OpenForge.Cli.Core.Commands.References.Shared.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Selection;
-using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Selection;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.References;
@@ -320,6 +320,116 @@ public sealed class ReferencesDomainModelTests
         Assert.Empty(result.Outgoing.Occurrences);
         Assert.Single(result.Findings, finding => finding.Code == ReferencesFindingCode.OperationFailed);
         Assert.Equal("open-forge references --verbose", result.Next!.Command);
+    }
+
+    [Theory(DisplayName = "References incoming requests admit interleaved duplicate selectors"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
+    [InlineData(false), InlineData(true)]
+    public void IncomingRequestsAdmitInterleavedDuplicates(bool both)
+    {
+        var selectors = new[]
+        {
+            new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Include, "docs", 1),
+            new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Exclude, ".agents/skip.md", 2),
+            new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Include, "docs", 3),
+            new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Exclude, "./.agents/skip.md", 4),
+        };
+        var request = new ReferencesRequest(
+            new CliWorkspace("/tmp/references-filtered", "/tmp/references-filtered", CliWorkspaceSelectionMethod.CurrentDirectory),
+            "docs",
+            both ? ReferencesDirection.Both : ReferencesDirection.In,
+            selectors);
+
+        Assert.True(request.RequestsIncoming);
+        Assert.Equal(both, request.RequestsOutgoing);
+        Assert.Equal([1, 2, 3, 4], request.SelectorOccurrences.Select(row => row.Position));
+        Assert.Equal(["docs", ".agents/skip.md", "docs", "./.agents/skip.md"], request.SelectorOccurrences.Select(row => row.Value));
+    }
+
+    [Theory(DisplayName = "References reader failure retains unresolved incoming selector rows"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
+    [InlineData(false), InlineData(true)]
+    public async Task EarlyReaderFailureRetainsIncomingSelectors(bool both)
+    {
+        SourcePhysicalPathResolver sourcePathResolver = static (_, _) => throw new InvalidOperationException("not reached");
+        var sourceReferenceResolver = new SourceReferenceResolver(sourcePathResolver);
+        ReferencesMarkdownParser markdownParser = static _ => throw new InvalidOperationException("not reached");
+        var operation = new ReferencesOperation(
+            new ReferencesSourceResolver(
+                static (_, _) => throw new InvalidOperationException("boundary failure"),
+                sourceReferenceResolver,
+                new SourceUniverseFilterResolver(sourceReferenceResolver)),
+            new ReferencesLayerInspector(
+                static (_, _, _) => throw new InvalidOperationException("not reached"),
+                markdownParser),
+            new ReferencesDestinationResolver(
+                static (_, _) => throw new InvalidOperationException("not reached"),
+                static (_, _, _) => throw new InvalidOperationException("not reached"),
+                markdownParser),
+            new ReferencesResultBuilder());
+        var selectors = new[]
+        {
+            new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Include, "docs", 1),
+            new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Exclude, ".agents/skip.md", 2),
+            new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Include, "docs", 3),
+            new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Exclude, "./.agents/skip.md", 4),
+        };
+        var request = new ReferencesRequest(
+            new CliWorkspace("/tmp/references-failed", "/tmp/references-failed", CliWorkspaceSelectionMethod.CurrentDirectory),
+            "docs",
+            both ? ReferencesDirection.Both : ReferencesDirection.In,
+            selectors);
+
+        var result = await operation.ExecuteAsync(request, CancellationToken.None);
+
+        Assert.Equal(CliSemanticStatus.Failed, result.Status);
+        var finding = Assert.Single(result.Findings);
+        Assert.Equal(ReferencesFindingCode.OperationFailed, finding.Code);
+        Assert.Null(finding.Direction);
+        Assert.Null(finding.Subject);
+        Assert.NotNull(result.Next);
+        Assert.Equal("open-forge references --verbose", result.Next.Command);
+        Assert.Null(result.Source);
+        var selection = Assert.IsType<ReferencesIncomingSelection>(result.IncomingSelection);
+        Assert.Equal(ReferencesSelectionMode.Filtered, selection.Mode);
+        Assert.Equal(
+            [
+                (SourceUniverseSelectorRole.Include, "docs"),
+                (SourceUniverseSelectorRole.Exclude, ".agents/skip.md"),
+                (SourceUniverseSelectorRole.Include, "docs"),
+                (SourceUniverseSelectorRole.Exclude, "./.agents/skip.md"),
+            ],
+            selection.Supplied.Select(row => (row.Role, row.Value)));
+        Assert.Equal(
+            [
+                (SourceUniverseSelectorRole.Include, 1, "docs", SourceReferenceKind.SourceId),
+                (SourceUniverseSelectorRole.Exclude, 1, ".agents/skip.md", SourceReferenceKind.SourcePath),
+                (SourceUniverseSelectorRole.Include, 2, "docs", SourceReferenceKind.SourceId),
+                (SourceUniverseSelectorRole.Exclude, 2, "./.agents/skip.md", SourceReferenceKind.SourcePath),
+            ],
+            selection.Resolved.Select(row => (row.Role, row.Occurrence, row.Supplied, row.Form)));
+        Assert.All(selection.Resolved, row =>
+        {
+            Assert.Equal(SourceReferenceResolutionState.Unknown, row.Resolution);
+            Assert.Null(row.Source);
+            Assert.Null(row.Expansion);
+            Assert.Empty(row.Candidates);
+        });
+        Assert.Empty(selection.EffectiveSources);
+        Assert.Empty(selection.InspectedSources);
+        var incoming = Assert.IsType<ReferencesSection>(result.Incoming);
+        Assert.Equal(ReferencesCoverage.Incomplete, incoming.Coverage);
+        Assert.Equal(0, incoming.OccurrenceCount);
+        Assert.Empty(incoming.Occurrences);
+        if (both)
+        {
+            var outgoing = Assert.IsType<ReferencesSection>(result.Outgoing);
+            Assert.Equal(ReferencesCoverage.Incomplete, outgoing.Coverage);
+            Assert.Equal(0, outgoing.OccurrenceCount);
+            Assert.Empty(outgoing.Occurrences);
+        }
+        else
+        {
+            Assert.Null(result.Outgoing);
+        }
     }
 
     private static ReferencesFinding CreateFinding(

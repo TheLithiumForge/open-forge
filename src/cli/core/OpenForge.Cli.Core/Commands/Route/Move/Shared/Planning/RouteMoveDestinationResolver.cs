@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
@@ -14,10 +15,10 @@ internal sealed class RouteMoveDestinationResolver(FileExpectationValidator expe
     private readonly FileExpectationValidator _expectationValidator = expectationValidator;
 
     internal RouteMoveDestinationResolution Resolve(
-        RouteMoveDestinationResolutionRequest request)
+        RouteMoveCategoryInventory inventory)
     {
-        ArgumentNullException.ThrowIfNull(request);
-        var projected = RouteMoveDestinationProjector.Project(request.Inventory);
+        ArgumentNullException.ThrowIfNull(inventory);
+        var projected = RouteMoveDestinationProjector.Project(inventory);
         if (projected.Boundary is { } projectionBoundary)
         {
             return new RouteMoveDestinationResolution(destination: null, projectionBoundary);
@@ -94,14 +95,14 @@ internal sealed class RouteMoveDestinationResolver(FileExpectationValidator expe
             Subject = new RouteMoveSubject
             {
                 Kind = subject.Kind,
-                Layers = subject.Layers.Select(layer => new RouteMoveSubjectLayer
+                Layers = [.. subject.Layers.Select(layer => new RouteMoveSubjectLayer
                 {
                     Layer = ReadLayer(layer.Layer.Kind),
                     SourcePath = layer.Layer.CanonicalPath,
                     DestinationPath = RouteMoveDestinationProjector.DestinationLayerPath(
                         projection.DestinationPath,
                         layer.Layer.Kind),
-                }).OrderBy(layer => layer.SourcePath, StringComparer.Ordinal).ToImmutableArray(),
+                }).OrderBy(layer => layer.SourcePath, StringComparer.Ordinal)],
                 Items = ProjectSubjectItems(projection),
             },
         };
@@ -116,7 +117,7 @@ internal sealed class RouteMoveDestinationResolver(FileExpectationValidator expe
             return [];
         }
 
-        return projection.Items.Select(item => new RouteMoveSubjectItem
+        return [.. projection.Items.Select(item => new RouteMoveSubjectItem
         {
             Kind = item.Item.Kind,
             Layer = item.Item.Layer,
@@ -125,7 +126,7 @@ internal sealed class RouteMoveDestinationResolver(FileExpectationValidator expe
                 subject.Request.Workspace.LexicalRoot,
                 item.Item.SourcePath),
             DestinationPath = item.DestinationPath,
-        }).OrderBy(item => item.SourcePath, StringComparer.Ordinal).ToImmutableArray();
+        }).OrderBy(item => item.SourcePath, StringComparer.Ordinal)];
     }
 
     private static RouteMoveLayerKind ReadLayer(SourceLayerKind kind)

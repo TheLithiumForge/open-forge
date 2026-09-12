@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Shared.References;
 using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Navigation;
 using OpenForge.Cli.Core.Commands.Route.Shared.References;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -35,6 +36,78 @@ internal static class RouteRemoveOperationFactory
         return new RouteRemoveOperation(planBuilder, applicationOperation, resultBuilder);
     }
 
+    internal static RouteRemovePlanBuilder CreatePlanBuilder()
+    {
+        var physical = new PhysicalPathResolver();
+        var expectation = new FileExpectationValidator(physical);
+        var markdown = new MarkdownDocumentParser();
+        var subject = new RouteRemoveSubjectResolver(
+            new SourceCatalogueReader(),
+            new SourceReferenceResolver((workspace, canonicalPath) =>
+                physical.ResolveCandidate(
+                    workspace.LexicalRoot,
+                    workspace.PhysicalRoot,
+                    Path.Combine(
+                        workspace.LexicalRoot,
+                        canonicalPath.Replace('/', Path.DirectorySeparatorChar)))),
+            new SourceRouteFactsResolver(),
+            new RouteNavigationExposureReader(markdown),
+            expectation);
+        var inventory = new RouteRemoveCategoryInventoryReader(
+            physical,
+            expectation,
+            new LifecycleOwnershipReader(physical));
+        var destinationResolver = new SourceLinkDestinationResolver(
+            (workspace, lexicalPath) => physical.ResolveCandidate(
+                workspace.LexicalRoot,
+                workspace.PhysicalRoot,
+                lexicalPath),
+            StrictUtf8FileReader.ReadAsync,
+            markdown.Parse);
+        var references = new RouteRemoveReferencePlanner(
+            new RouteMarkdownCatalogueReader(physical),
+            markdown,
+            destinationResolver,
+            expectation);
+        var navigation = new RouteRemoveNavigationPlanner(
+            new GeneratedNavigationFormationBuilder(),
+            new GeneratedNavigationRegionPlanner(),
+            new RouteRemoveNavigationSourceProjector());
+        var absence = new RouteRemoveCategoryAbsencePlanner(
+            new SourceCatalogueReader(),
+            physical,
+            new LifecycleOwnershipReader(physical),
+            new RouteNavigationExposureReader(markdown),
+            navigation,
+            references);
+        return new RouteRemovePlanBuilder(subject, inventory, references, navigation, absence);
+    }
+
+    internal static RouteRemovePlanRevalidator CreatePlanRevalidator()
+        => new(CreatePlanBuilder());
+
+    internal static RouteRemoveEffectApplication CreateEffectApplication()
+    {
+        var resolver = new PhysicalPathResolver();
+        var validator = new FileExpectationValidator(resolver);
+        var revalidator = new MutationRevalidator(validator);
+        return new RouteRemoveEffectApplication(
+            new FileChangeApplier(revalidator, validator),
+            new DirectoryDeletionApplier(revalidator, validator),
+            validator);
+    }
+
+    internal static RouteRemoveAppliedVerifier CreateAppliedVerifier()
+    {
+        var validator = new FileExpectationValidator(new PhysicalPathResolver());
+        var planBuilder = CreatePlanBuilder();
+        return new RouteRemoveAppliedVerifier(
+            new RouteRemovePostRemoveObserver(
+                planBuilder,
+                new RouteRemovePostRemoveVerifier()),
+            validator);
+    }
+
     private static RouteRemovePlanBuilder CreatePlanBuilder(
         PhysicalPathResolver physicalPathResolver,
         FileExpectationValidator expectationValidator)
@@ -52,7 +125,7 @@ internal static class RouteRemoveOperationFactory
                 new SourceCatalogueReader(),
                 physicalPathResolver,
                 new LifecycleOwnershipReader(physicalPathResolver),
-                new RouteRemoveNavigationExposureReader(new MarkdownDocumentParser()),
+                new RouteNavigationExposureReader(new MarkdownDocumentParser()),
                 navigationPlanner,
                 referencePlanner));
     }
@@ -70,7 +143,7 @@ internal static class RouteRemoveOperationFactory
                         workspace.LexicalRoot,
                         canonicalPath.Replace('/', Path.DirectorySeparatorChar)))),
             new SourceRouteFactsResolver(),
-            new RouteRemoveNavigationExposureReader(new MarkdownDocumentParser()),
+            new RouteNavigationExposureReader(new MarkdownDocumentParser()),
             expectationValidator);
 
     private static RouteRemoveCategoryInventoryReader CreateInventoryReader(

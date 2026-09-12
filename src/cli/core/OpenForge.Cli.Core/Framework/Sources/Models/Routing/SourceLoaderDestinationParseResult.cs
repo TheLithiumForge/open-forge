@@ -24,7 +24,7 @@ internal sealed class SourceLoaderDestinationParseResult
         ArgumentNullException.ThrowIfNull(attemptedDestination);
         if (state == SourceLoaderDestinationParseState.Valid)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(decodedDestination);
+            ArgumentException.ThrowIfNullOrEmpty(decodedDestination);
             ArgumentException.ThrowIfNullOrWhiteSpace(canonicalPath);
             if (cause is not null)
             {
@@ -71,11 +71,11 @@ internal sealed class SourceLoaderDestinationParseResult
         string canonicalPath)
     {
         return new SourceLoaderDestinationParseResult(
-            SourceLoaderDestinationParseState.Valid,
-            attemptedDestination,
-            decodedDestination,
-            canonicalPath,
-            null);
+            state: SourceLoaderDestinationParseState.Valid,
+            attemptedDestination: attemptedDestination,
+            decodedDestination: decodedDestination,
+            canonicalPath: canonicalPath,
+            cause: null);
     }
 
     internal static SourceLoaderDestinationParseResult Malformed(
@@ -83,11 +83,11 @@ internal sealed class SourceLoaderDestinationParseResult
         string cause)
     {
         return new SourceLoaderDestinationParseResult(
-            SourceLoaderDestinationParseState.Malformed,
-            attemptedDestination,
-            null,
-            null,
-            cause);
+            state: SourceLoaderDestinationParseState.Malformed,
+            attemptedDestination: attemptedDestination,
+            decodedDestination: null,
+            canonicalPath: null,
+            cause: cause);
     }
 
     internal static SourceLoaderDestinationParseResult Unsafe(
@@ -96,10 +96,10 @@ internal sealed class SourceLoaderDestinationParseResult
         string cause)
     {
         return new SourceLoaderDestinationParseResult(
-            SourceLoaderDestinationParseState.Unsafe,
-            attemptedDestination,
-            decodedDestination,
-            null,
-            cause);
+            state: SourceLoaderDestinationParseState.Unsafe,
+            attemptedDestination: attemptedDestination,
+            decodedDestination: decodedDestination,
+            canonicalPath: null,
+            cause: cause);
     }
 }

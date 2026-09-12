@@ -1,9 +1,10 @@
 using System.Text.Json;
 using OpenForge.Cli.Composition;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Composition.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;

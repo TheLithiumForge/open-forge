@@ -3,9 +3,10 @@ using OpenForge.Cli.Core.Commands.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Application;
 
@@ -113,11 +114,19 @@ internal sealed class UpdateEffectApplication(FileChangeApplier fileApplier)
             && receipt.VerificationState == FilesystemVerificationState.Verified;
 
     private static UpdateFindingCode ReadFinding(FileChangeReceipt receipt)
-        => receipt.NotStartedReason == FilesystemNotStartedReason.Cancelled
-            ? UpdateFindingCode.Interrupted
-            : receipt.EffectState == FilesystemEffectState.Applied
-                ? UpdateFindingCode.VerificationFailed
-                : UpdateFindingCode.WriteFailed;
+    {
+        if (receipt.NotStartedReason == FilesystemNotStartedReason.Cancelled)
+        {
+            return UpdateFindingCode.Interrupted;
+        }
+
+        if (receipt.EffectState == FilesystemEffectState.Applied)
+        {
+            return UpdateFindingCode.VerificationFailed;
+        }
+
+        return UpdateFindingCode.WriteFailed;
+    }
 
     private static UpdateApplicationAttempt Failed(
         IReadOnlyList<FileChangeReceipt> receipts,

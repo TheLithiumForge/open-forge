@@ -2,10 +2,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Sources.References.Shared.Resolution;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.References;
 
@@ -22,6 +24,8 @@ internal delegate MarkdownDocumentFacts SourceLinkMarkdownParser(string source);
 
 internal sealed class SourceLinkDestinationResolver
 {
+    private const string UndefinedLexicalPathStateMessage = "The source-link lexical path state is not defined.";
+
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
@@ -138,34 +142,26 @@ internal sealed class SourceLinkDestinationResolver
             return Malformed(rawFragment, SourceLinkTargetResolution.Malformed, "A local destination cannot use backslash separators.");
         }
 
-        var sourceLexicalPath = Path.Combine(
-            input.Workspace.LexicalRoot,
-            input.SourceCanonicalPath.Replace('/', Path.DirectorySeparatorChar));
-        var sourceDirectory = Path.GetDirectoryName(sourceLexicalPath);
-        if (sourceDirectory is null)
+        var lexical = SourceLinkLexicalPathResolver.Resolve(
+            lexicalRoot: input.Workspace.LexicalRoot,
+            sourceCanonicalPath: input.SourceCanonicalPath,
+            decodedPath: decodedPath);
+        if (lexical is not
+            { State: SourceLinkLexicalPathState.Complete, LexicalTarget: { } lexicalTarget, CanonicalPath: { } canonicalPath })
         {
-            return Unsafe(rawFragment, SourceLinkTargetResolution.PhysicalEscape, "The source layer has no containing directory.");
+            return lexical.State switch
+            {
+                SourceLinkLexicalPathState.SourceDirectoryMissing =>
+                    Unsafe(rawFragment, SourceLinkTargetResolution.PhysicalEscape, "The source layer has no containing directory."),
+                SourceLinkLexicalPathState.Malformed =>
+                    Malformed(rawFragment, SourceLinkTargetResolution.Malformed, "The local destination path is malformed."),
+                SourceLinkLexicalPathState.OutsideWorkspace =>
+                    Unsafe(rawFragment, SourceLinkTargetResolution.OutsideWorkspace, "The local destination leaves the selected workspace."),
+                SourceLinkLexicalPathState.Complete => throw new InvalidOperationException("A complete source-link lexical path requires both coordinates."),
+                _ => throw new ArgumentOutOfRangeException(nameof(lexical), lexical.State, UndefinedLexicalPathStateMessage),
+            };
         }
 
-        string lexicalTarget;
-        try
-        {
-            lexicalTarget = Path.GetFullPath(
-                string.IsNullOrEmpty(decodedPath)
-                    ? sourceLexicalPath
-                    : Path.Combine(sourceDirectory, decodedPath));
-        }
-        catch (Exception exception) when (exception is ArgumentException or NotSupportedException or PathTooLongException)
-        {
-            return Malformed(rawFragment, SourceLinkTargetResolution.Malformed, "The local destination path is malformed.");
-        }
-
-        if (!PhysicalContainment.Contains(input.Workspace.LexicalRoot, lexicalTarget))
-        {
-            return Unsafe(rawFragment, SourceLinkTargetResolution.OutsideWorkspace, "The local destination leaves the selected workspace.");
-        }
-
-        var canonicalPath = ReadCanonicalPath(input.Workspace.LexicalRoot, lexicalTarget);
         PhysicalPathResolution physical;
         try
         {
@@ -212,10 +208,16 @@ internal sealed class SourceLinkDestinationResolver
                     SourceLinkTargetResolution.Unreadable,
                     SourceLinkDestinationFindingCode.TargetUnreadable,
                     "The local destination target could not be read."),
-                _ => (
-                    SourceLinkTargetResolution.PhysicalEscape,
-                    SourceLinkDestinationFindingCode.TargetUnsafe,
-                    "The local destination physical boundary is unsafe."),
+                PhysicalPathState.Contained
+                    or PhysicalPathState.Missing
+                    or PhysicalPathState.Dangling
+                    or PhysicalPathState.External
+                    or PhysicalPathState.Cycle
+                    or PhysicalPathState.Unsupported => (
+                        SourceLinkTargetResolution.PhysicalEscape,
+                        SourceLinkDestinationFindingCode.TargetUnsafe,
+                        "The local destination physical boundary is unsafe."),
+                _ => throw new ArgumentOutOfRangeException(nameof(physical), physical.State, "The physical path state is not defined."),
             };
             return new SourceLinkDestinationFacts
             {
@@ -280,7 +282,7 @@ internal sealed class SourceLinkDestinationResolver
             return Malformed(rawFragment, SourceLinkTargetResolution.Malformed, "A local destination must identify a file, not a directory.");
         }
 
-        var layerMatches = ReadTargetLayers(input.Catalogue, physicalTargetPath);
+        var layerMatches = SourceLinkTargetIdentityReader.ReadTargetLayers(input.Catalogue.Sources, physicalTargetPath);
         if (layerMatches.Count > 1)
         {
             return new SourceLinkDestinationFacts
@@ -300,7 +302,7 @@ internal sealed class SourceLinkDestinationResolver
                 {
                     Code = SourceLinkDestinationFindingCode.TargetAmbiguous,
                     Cause = "More than one logical source or layer has the destination physical identity.",
-                    Candidates = layerMatches.Select(match => ToIdentity(match.Source)).Distinct().ToArray(),
+                    Candidates = layerMatches.Select(match => SourceLinkTargetIdentityReader.ToIdentity(match.Source)).Distinct().ToArray(),
                 },
             };
         }
@@ -308,8 +310,7 @@ internal sealed class SourceLinkDestinationResolver
         var canonicalSource = input.Catalogue.FindByPath(canonicalPath);
         var matchedLayer = canonicalSource is null
             ? null
-            : ReadLayers(canonicalSource)
-                .FirstOrDefault(layer => string.Equals(layer.CanonicalPath, canonicalPath, StringComparison.Ordinal));
+            : SourceLinkTargetIdentityReader.FindLayer(canonicalSource, canonicalPath);
         if (canonicalSource is not null
             && matchedLayer is not null
             && !PhysicalIdentityTracker.PathComparer.Equals(matchedLayer.PhysicalPath, physicalTargetPath))
@@ -331,7 +332,7 @@ internal sealed class SourceLinkDestinationResolver
                 {
                     Code = SourceLinkDestinationFindingCode.TargetAmbiguous,
                     Cause = "The authored target path and its current physical source identity disagree.",
-                    Candidates = [ToIdentity(canonicalSource)],
+                    Candidates = [SourceLinkTargetIdentityReader.ToIdentity(canonicalSource)],
                 },
             };
         }
@@ -353,7 +354,7 @@ internal sealed class SourceLinkDestinationResolver
         if (rawFragment is null)
         {
             return identityCandidates.Length > 1
-                ? IdentityCollision(target, identityCandidates)
+                ? SourceLinkTargetIdentityReader.ReadCollision(target, identityCandidates)
                 : new SourceLinkDestinationFacts
                 {
                     Fragment = null,
@@ -409,75 +410,24 @@ internal sealed class SourceLinkDestinationResolver
             };
         }
 
-        if (targetDocument.Headings.Any(heading =>
-                heading.IsCanonical
-                && heading.FragmentIdentifier is not null
-                && string.Equals(heading.FragmentIdentifier, decodedFragment, StringComparison.Ordinal)))
+        var fragmentFailure = SourceLinkFragmentProjection.ReadFailure(
+            headings: targetDocument.Headings,
+            target: target,
+            rawFragment: rawFragment,
+            decodedFragment: decodedFragment);
+        if (fragmentFailure is not null)
         {
-            return identityCandidates.Length > 1
-                ? IdentityCollision(target, identityCandidates, rawFragment)
-                : new SourceLinkDestinationFacts
-                {
-                    Fragment = rawFragment,
-                    Target = target,
-                    Finding = null,
-                };
+            return fragmentFailure;
         }
 
-        var canonicalFragmentCandidates = targetDocument.Headings
-            .Where(heading => heading.IsCanonical
-                && heading.FragmentIdentifier is not null
-                && string.Equals(
-                    heading.FragmentIdentifier,
-                    decodedFragment,
-                    StringComparison.OrdinalIgnoreCase))
-            .Select(heading => heading.FragmentIdentifier)
-            .OfType<string>()
-            .Distinct(StringComparer.Ordinal)
-            .ToArray();
-        if (canonicalFragmentCandidates.Length == 1)
-        {
-            return new SourceLinkDestinationFacts
+        return identityCandidates.Length > 1
+            ? SourceLinkTargetIdentityReader.ReadCollision(target, identityCandidates, rawFragment)
+            : new SourceLinkDestinationFacts
             {
                 Fragment = rawFragment,
-                Target = target with { Resolution = SourceLinkTargetResolution.FragmentMissing },
-                Finding = new SourceLinkDestinationFinding
-                {
-                    Code = SourceLinkDestinationFindingCode.FragmentMissing,
-                    Cause = "The authored fragment differs from one exact canonical fragment spelling.",
-                    Candidates = [],
-                },
-            }.WithCanonicalFragment(new SourceLinkCanonicalFragment(
-                rawFragment,
-                canonicalFragmentCandidates[0]));
-        }
-
-        if (targetDocument.Headings.Any(heading => heading.IsCanonical && heading.FragmentIdentifier is null))
-        {
-            return new SourceLinkDestinationFacts
-            {
-                Fragment = rawFragment,
-                Target = target with { Resolution = SourceLinkTargetResolution.Unreadable },
-                Finding = new SourceLinkDestinationFinding
-                {
-                    Code = SourceLinkDestinationFindingCode.TargetUnreadable,
-                    Cause = "A canonical target heading has no available fragment identifier.",
-                    Candidates = [],
-                },
+                Target = target,
+                Finding = null,
             };
-        }
-
-        return new SourceLinkDestinationFacts
-        {
-            Fragment = rawFragment,
-            Target = target with { Resolution = SourceLinkTargetResolution.FragmentMissing },
-            Finding = new SourceLinkDestinationFinding
-            {
-                Code = SourceLinkDestinationFindingCode.FragmentMissing,
-                Cause = "The authored fragment is not present on the target.",
-                Candidates = [],
-            },
-        };
     }
 
     private static bool TryReadAbsoluteUri(string raw, [NotNullWhen(true)] out Uri? uri)
@@ -509,20 +459,22 @@ internal sealed class SourceLinkDestinationResolver
         string rawDestination,
         string expectedCanonicalPath)
     {
-        if (!TryDecodeDestinationPath(rawDestination, out var decodedPath)
-            || !TryResolveCanonicalPath(
-                workspace,
-                sourceCanonicalPath,
-                decodedPath,
-                out var canonicalPath))
+        if (!TryDecodeDestinationPath(rawDestination, out var decodedPath))
         {
             return false;
         }
 
-        return string.Equals(
-            canonicalPath,
-            expectedCanonicalPath,
-            StringComparison.Ordinal);
+        var lexical = SourceLinkLexicalPathResolver.Resolve(
+            lexicalRoot: workspace.LexicalRoot,
+            sourceCanonicalPath: sourceCanonicalPath,
+            decodedPath: decodedPath);
+        return lexical switch
+        {
+            { State: SourceLinkLexicalPathState.Complete, CanonicalPath: { } canonicalPath } =>
+                string.Equals(canonicalPath, expectedCanonicalPath, StringComparison.Ordinal),
+            { State: SourceLinkLexicalPathState.SourceDirectoryMissing or SourceLinkLexicalPathState.Malformed or SourceLinkLexicalPathState.OutsideWorkspace } => false,
+            _ => throw new ArgumentOutOfRangeException(nameof(lexical), lexical.State, UndefinedLexicalPathStateMessage),
+        };
     }
 
     private static bool TryDecodeDestinationPath(
@@ -554,57 +506,11 @@ internal sealed class SourceLinkDestinationResolver
             && !decodedPath.StartsWith("/", StringComparison.Ordinal);
     }
 
-    private static bool TryResolveCanonicalPath(
-        CliWorkspace workspace,
-        string sourceCanonicalPath,
-        string decodedPath,
-        out string canonicalPath)
-    {
-        canonicalPath = string.Empty;
-        var sourceLexicalPath = Path.Combine(
-            workspace.LexicalRoot,
-            sourceCanonicalPath.Replace('/', Path.DirectorySeparatorChar));
-        var sourceDirectory = Path.GetDirectoryName(sourceLexicalPath);
-        if (sourceDirectory is null)
-        {
-            return false;
-        }
-
-        string lexicalTarget;
-        try
-        {
-            lexicalTarget = Path.GetFullPath(
-                string.IsNullOrEmpty(decodedPath)
-                    ? sourceLexicalPath
-                    : Path.Combine(sourceDirectory, decodedPath));
-        }
-        catch (Exception exception) when (exception is ArgumentException or NotSupportedException or PathTooLongException)
-        {
-            return false;
-        }
-
-        if (!PhysicalContainment.Contains(workspace.LexicalRoot, lexicalTarget))
-        {
-            return false;
-        }
-
-        canonicalPath = ReadCanonicalPath(workspace.LexicalRoot, lexicalTarget);
-        return true;
-    }
-
     private static bool IsDriveRooted(string value)
         => value.Length >= 3
             && char.IsLetter(value[0])
             && value[1] == ':'
             && (value[2] == '/' || value[2] == '\\');
-
-    private static string ReadCanonicalPath(string lexicalRoot, string target)
-    {
-        var relative = Path.GetRelativePath(lexicalRoot, target);
-        return relative == "."
-            ? "."
-            : relative.Replace(Path.DirectorySeparatorChar, '/').Replace(Path.AltDirectorySeparatorChar, '/');
-    }
 
     private static string DecodePercent(string value)
     {
@@ -725,43 +631,6 @@ internal sealed class SourceLinkDestinationResolver
                 Code = SourceLinkDestinationFindingCode.TargetUnsafe,
                 Cause = cause,
                 Candidates = [],
-            },
-        };
-
-    private static IReadOnlyList<(SourceLogicalSource Source, SourceLayer Layer)> ReadTargetLayers(
-        SourceCatalogue catalogue,
-        string physicalTargetPath)
-        => catalogue.Sources
-            .SelectMany(source => ReadLayers(source).Select(layer => (Source: source, Layer: layer)))
-            .Where(candidate => PhysicalIdentityTracker.PathComparer.Equals(candidate.Layer.PhysicalPath, physicalTargetPath))
-            .OrderBy(candidate => candidate.Source.Identity.AutomaticId, StringComparer.Ordinal)
-            .ThenBy(candidate => candidate.Source.Identity.CanonicalBasePath, StringComparer.Ordinal)
-            .ThenBy(candidate => candidate.Layer.Kind)
-            .ToArray();
-
-    private static IReadOnlyList<SourceLayer> ReadLayers(SourceLogicalSource source)
-        => source.Overwrite is { } overwrite ? [source.Base, overwrite] : [source.Base];
-
-    private static SourceLinkIdentity ToIdentity(SourceLogicalSource source)
-        => new()
-        {
-            Id = source.Identity.AutomaticId,
-            Path = source.Identity.CanonicalBasePath,
-        };
-
-    private static SourceLinkDestinationFacts IdentityCollision(
-        SourceLinkTarget target,
-        IEnumerable<SourceLogicalSource> candidates,
-        string? fragment = null)
-        => new()
-        {
-            Fragment = fragment,
-            Target = target,
-            Finding = new SourceLinkDestinationFinding
-            {
-                Code = SourceLinkDestinationFindingCode.IdentityCollision,
-                Cause = "The target path is exact, but its automatic source ID is shared by more than one logical source.",
-                Candidates = candidates.Select(ToIdentity).ToArray(),
             },
         };
 }

@@ -33,7 +33,7 @@ internal sealed class RouteMovePlanBuilder
     {
         ArgumentNullException.ThrowIfNull(request);
         var subject = await _subjectResolver.ResolveAsync(
-            new RouteMoveSubjectResolutionRequest { Request = request },
+            request,
             cancellationToken).ConfigureAwait(false);
         if (subject.Boundary is { } subjectBoundary)
         {
@@ -41,12 +41,9 @@ internal sealed class RouteMovePlanBuilder
         }
 
         var inventory = await _inventoryReader.ReadAsync(
-            new RouteMoveCategoryInventoryRequest
-            {
-                Subject = subject.Subject
+            subject.Subject
                     ?? throw new InvalidOperationException(
                         "A successful Route Move subject resolution requires its subject."),
-            },
             cancellationToken).ConfigureAwait(false);
         if (inventory.Boundary is { } inventoryBoundary)
         {
@@ -54,12 +51,9 @@ internal sealed class RouteMovePlanBuilder
         }
 
         var destination = _destinationResolver.Resolve(
-            new RouteMoveDestinationResolutionRequest
-            {
-                Inventory = inventory.Inventory
+            inventory.Inventory
                     ?? throw new InvalidOperationException(
-                        "A successful Route Move inventory requires its inventory."),
-            });
+                        "A successful Route Move inventory requires its inventory."));
         if (destination.Boundary is { } destinationBoundary)
         {
             return new RouteMovePlanBuild(plan: null, destinationBoundary);

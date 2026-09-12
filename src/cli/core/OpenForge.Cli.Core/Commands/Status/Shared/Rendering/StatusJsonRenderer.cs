@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Status.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using StatusJsonContextModel = OpenForge.Cli.Core.Commands.Status.Models.Presentation.StatusJsonContext;
 
 namespace OpenForge.Cli.Core.Commands.Status.Shared.Rendering;

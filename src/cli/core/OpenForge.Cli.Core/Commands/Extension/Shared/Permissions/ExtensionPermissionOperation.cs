@@ -1,9 +1,8 @@
-using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.Core.Commands.Extension.Models.Permissions;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Document;
@@ -13,8 +12,9 @@ using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using OpenForge.Cli.Core.Framework.Permissions.Shared.Completion;
 using OpenForge.Cli.Core.Framework.Permissions.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Permissions.Shared.Planning;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 
@@ -79,20 +79,7 @@ internal sealed class ExtensionPermissionOperation(CliInteractiveSession interac
         }
 
         var change = WorkspacePermissionChangePlanner.Plan(new(observation, evaluation));
-        var action = change?.Kind switch
-        {
-            null => WorkspacePermissionAction.None,
-            PlannedFileChangeKind.Create => WorkspacePermissionAction.Create,
-            PlannedFileChangeKind.Replace => WorkspacePermissionAction.Replace,
-            _ => throw new InvalidOperationException("Permission approval can only create or replace its consumer document."),
-        };
-        RecoveryBundleTarget? recovery = null;
-        if (change is not null && observation.Snapshot is { } before)
-        {
-            recovery = change.Kind == PlannedFileChangeKind.Create
-                ? RecoveryBundleTarget.CreateReversible(change, before)
-                : RecoveryBundleTarget.Create(change, before);
-        }
+        var (action, recovery) = WorkspacePermissionChangePlanner.ReadActionAndRecovery(observation, change);
         failure = evaluation.Decision switch
         {
             WorkspacePermissionDecision.Required => ExtensionPermissionFailure.Required,
@@ -125,10 +112,7 @@ internal sealed class ExtensionPermissionOperation(CliInteractiveSession interac
             return stage.Result.Decision == WorkspacePermissionDecision.NotRequired;
         }
         var current = await WorkspacePermissionReader.ReadAsync(_resolver, lease.Request.Workspace, cancellationToken).ConfigureAwait(false);
-        return before.State == current.State
-            && before.Snapshot is { } expected && current.Snapshot is { } actual
-            && expected.Expectation == actual.Expectation
-            && expected.Bytes.AsSpan().SequenceEqual(actual.Bytes.AsSpan());
+        return before.MatchesObservation(current);
     }
 
     internal async ValueTask<ExtensionPermissionApplication> ApplyAsync(

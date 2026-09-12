@@ -1,6 +1,6 @@
-using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
+using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Libraries;
@@ -9,11 +9,17 @@ using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Permissions;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Library.Shared.Application;
 
@@ -112,7 +118,7 @@ internal static class LibraryMutationOperationSupport
                     preparation.BundlePath);
         }
 
-        var candidate = catalogue.Candidates.SingleOrDefault(value => Matches(value, preparation));
+        var candidate = catalogue.Candidates.SingleOrDefault(value => RecoveryBundleIdentity.Matches(value, preparation));
         return candidate is null
             ? RecoveryBundleDeletionResult.BlockedUnknown(
                 "The prepared Library recovery bundle no longer has one exact recognized identity.",
@@ -172,21 +178,6 @@ internal static class LibraryMutationOperationSupport
 
         return snapshot;
     }
-
-    private static bool Matches(
-        RecoveryBundleCandidateSnapshot candidate,
-        RecoveryBundlePreparation preparation)
-        => candidate.Kind == RecoveryBundleCandidateKind.Final
-            && candidate.Integrity == RecoveryBundleIntegrity.Verified
-            && candidate.Verified is { } verified
-            && PhysicalIdentityTracker.PathComparer.Equals(candidate.Path, preparation.BundlePath)
-            && PhysicalIdentityTracker.PathComparer.Equals(
-                verified.WorkspacePhysicalPath,
-                preparation.WorkspacePhysicalPath)
-            && string.Equals(verified.WorkspaceKey, preparation.WorkspaceKey, StringComparison.Ordinal)
-            && string.Equals(verified.Command, preparation.Command, StringComparison.Ordinal)
-            && verified.OperationId == preparation.OperationId
-            && verified.Entries.SequenceEqual(preparation.Entries);
 
     private static string DirectoryKey(PlannedDirectoryCreation creation)
         => $"{creation.LogicalPath}\u001f{creation.Expectation.Kind}";

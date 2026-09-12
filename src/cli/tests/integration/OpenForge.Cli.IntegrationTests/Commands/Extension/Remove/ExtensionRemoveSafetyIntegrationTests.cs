@@ -1,5 +1,4 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;

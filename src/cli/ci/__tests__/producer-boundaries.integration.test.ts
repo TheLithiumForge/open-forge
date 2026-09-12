@@ -73,10 +73,10 @@ function packageExportFixture(root: string) {
   const main = putArtifact(root, "packs/main.tgz", "owned main");
   const platform = putArtifact(root, "packs/platform.tgz", "owned platform");
   const selections = [
-    ["unit", "artifacts/ci/managed/unit/OpenForge.Cli.Core.UnitTests.dll", 2860, 2882],
-    ["integration", "artifacts/ci/managed/integration/OpenForge.Cli.IntegrationTests.dll", 1603, 1603],
+    ["unit", "artifacts/ci/managed/unit/OpenForge.Cli.Core.UnitTests.dll", 3206, 3228],
+    ["integration", "artifacts/ci/managed/integration/OpenForge.Cli.IntegrationTests.dll", 1718, 1718],
     ["public", "artifacts/ci/managed/public/OpenForge.Cli.EndToEndTests.dll", 111, 111],
-    ["integration", "artifacts/publish/linux-x64/integration/OpenForge.Cli.IntegrationTests", 1603, 1603],
+    ["integration", "artifacts/publish/linux-x64/integration/OpenForge.Cli.IntegrationTests", 1718, 1718],
     ["public", "artifacts/publish/linux-x64/end-to-end/OpenForge.Cli.EndToEndTests", 111, 111],
     ["public", "artifacts/ci/managed/public-native/OpenForge.Cli.EndToEndTests.dll", 111, 111],
   ] as const;

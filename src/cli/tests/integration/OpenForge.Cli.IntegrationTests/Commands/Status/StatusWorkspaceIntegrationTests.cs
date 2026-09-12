@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Status;

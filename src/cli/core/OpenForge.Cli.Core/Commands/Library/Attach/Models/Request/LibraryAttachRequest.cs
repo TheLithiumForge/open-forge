@@ -1,6 +1,6 @@
 using OpenForge.Cli.Core.Commands.Library.Models.Request;
-using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Library.Attach.Models.Request;
 

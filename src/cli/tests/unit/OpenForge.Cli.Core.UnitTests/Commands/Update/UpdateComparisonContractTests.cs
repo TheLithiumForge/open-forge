@@ -161,6 +161,147 @@ public sealed class UpdateComparisonContractTests
         Assert.Equal("docs/z.md", ordered[2].RelativePath);
     }
 
+    [Theory(DisplayName = "Update comparison coordinates retain admitted relative-path syntax"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
+    [InlineData("docs/CON.md")]
+    [InlineData("docs/a?.md")]
+    [InlineData("docs/name.")]
+    [InlineData("docs/name ")]
+    [InlineData("docs/cafe\u0301.md")]
+    [InlineData("docs/a:b.md")]
+    [InlineData("é:x")]
+    public void RetainsAdmittedComparisonCoordinateSyntax(string path)
+    {
+        var comparison = Comparison(path) with
+        {
+            Kind = UpdateComparisonTargetKind.ManagedRegion,
+            RegionIdentity = path,
+            SourceAssetPath = path,
+        };
+
+        comparison.Validate();
+
+        Assert.Equal(path, comparison.RelativePath);
+        Assert.Equal(path, comparison.RegionIdentity);
+        Assert.Equal(path, comparison.SourceAssetPath);
+    }
+
+    [Theory(DisplayName = "Update comparison paths reject non-relative and segmented syntax"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
+    [InlineData("C:x")]
+    [InlineData("/x")]
+    [InlineData("docs\\x")]
+    [InlineData("docs//x")]
+    [InlineData("docs/x/")]
+    [InlineData("docs/./x")]
+    [InlineData("docs/../x")]
+    [InlineData("docs/\u0000x")]
+    [InlineData("docs/\u0085x")]
+    public void RejectsNonCanonicalComparisonPathSyntax(string path)
+    {
+        var exception = Assert.Throws<ArgumentException>(() => Comparison(path).Validate());
+
+        Assert.Equal("RelativePath", exception.ParamName);
+        Assert.Equal(
+            "Comparison paths must be canonical workspace-relative paths. (Parameter 'RelativePath')",
+            exception.Message);
+    }
+
+    [Fact(DisplayName = "Update comparison whitespace keeps path region and provenance precedence"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
+    public void KeepsComparisonWhitespaceAdmissionAndGuardPrecedence()
+    {
+        var path = Assert.Throws<ArgumentException>(() => (Comparison(" ") with
+        {
+            Kind = (UpdateComparisonTargetKind)int.MaxValue,
+        }).Validate());
+        var region = Assert.Throws<ArgumentException>(() => (Comparison("docs/index.md") with
+        {
+            Kind = UpdateComparisonTargetKind.ManagedRegion,
+            RegionIdentity = " ",
+            SourceAssetPath = "docs//source.md",
+        }).Validate());
+        var provenance = Assert.Throws<ArgumentException>(() => (Comparison("docs/index.md") with
+        {
+            SourceAssetPath = " ",
+            CurrentFingerprint = "invalid",
+        }).Validate());
+
+        Assert.Equal("RelativePath", path.ParamName);
+        Assert.Equal(
+            "Comparison paths must be canonical workspace-relative paths. (Parameter 'RelativePath')",
+            path.Message);
+        Assert.Equal("RegionIdentity", region.ParamName);
+        Assert.Equal(
+            "A region comparison requires one canonical region identity. (Parameter 'RegionIdentity')",
+            region.Message);
+        Assert.Equal("SourceAssetPath", provenance.ParamName);
+        Assert.Equal(
+            "Authored comparisons require source provenance. (Parameter 'SourceAssetPath')",
+            provenance.Message);
+    }
+
+    [Theory(DisplayName = "Update comparison fingerprints require exactly lowercase SHA-256 syntax"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
+    [InlineData("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")]
+    [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
+    [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
+    [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaag")]
+    public void RejectsComparisonFingerprintSyntax(string fingerprint)
+    {
+        var exception = Assert.Throws<ArgumentException>(() => (Comparison("docs/index.md") with
+        {
+            CurrentFingerprint = fingerprint,
+        }).Validate());
+
+        Assert.Equal("CurrentFingerprint", exception.ParamName);
+        Assert.Equal(
+            "Comparison fingerprints must be lowercase SHA-256 values. (Parameter 'CurrentFingerprint')",
+            exception.Message);
+    }
+
+    [Fact(DisplayName = "Update unavailable byte facts retain an independently available fingerprint"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
+    public void RetainsHashOnlyUnavailableComparisonBytes()
+    {
+        var facts = new UpdateComparisonByteFacts
+        {
+            ExactBytes = null,
+            Sha256 = Hash,
+        };
+
+        facts.Validate("bytes");
+
+        Assert.False(facts.IsAvailable);
+        Assert.Null(facts.ExactBytes);
+        Assert.Equal(Hash, facts.Sha256);
+    }
+
+    [Fact(DisplayName = "Update unavailable byte facts still reject uppercase fingerprints"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
+    public void RejectsInvalidFingerprintWithoutAvailableComparisonBytes()
+    {
+        var facts = new UpdateComparisonByteFacts
+        {
+            ExactBytes = null,
+            Sha256 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        };
+
+        var exception = Assert.Throws<ArgumentException>(() => facts.Validate("bytes"));
+
+        Assert.Equal("bytes", exception.ParamName);
+        Assert.Equal(
+            "Comparison byte facts require a lowercase SHA-256 fingerprint. (Parameter 'bytes')",
+            exception.Message);
+    }
+
+    [Fact(DisplayName = "Update available byte facts require their exact fingerprint"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
+    public void RejectsAvailableComparisonBytesWithoutFingerprint()
+    {
+        var facts = Bytes() with { Sha256 = null };
+
+        var exception = Assert.Throws<ArgumentException>(() => facts.Validate("bytes"));
+
+        Assert.Equal("bytes", exception.ParamName);
+        Assert.Equal(
+            "Available comparison bytes require an exact fingerprint. (Parameter 'bytes')",
+            exception.Message);
+    }
+
     private static UpdateComparison Comparison(string path)
         => new()
         {

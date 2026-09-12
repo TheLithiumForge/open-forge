@@ -1,10 +1,10 @@
 using System.Collections.Immutable;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Observation;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Planning;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Models.Permissions;
 

@@ -3,8 +3,8 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
@@ -12,9 +12,6 @@ namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 internal sealed class RouteRemovePlanRevalidator(RouteRemovePlanBuilder planBuilder)
 {
     private readonly RouteRemovePlanBuilder _planBuilder = planBuilder;
-
-    internal static RouteRemovePlanRevalidator Create()
-        => new(RouteRemovePlanBuilder.Create());
 
     internal async ValueTask<RouteRemovePlanRevalidation> RevalidateAsync(
         RouteRemovePlan plan,

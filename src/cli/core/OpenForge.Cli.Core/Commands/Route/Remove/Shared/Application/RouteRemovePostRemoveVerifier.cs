@@ -1,18 +1,8 @@
+using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
-
-internal enum RouteRemovePostRemoveVerificationState
-{
-    Verified,
-    Failed,
-    Interrupted,
-}
-
-internal sealed record RouteRemovePostRemoveVerification(
-    RouteRemovePostRemoveVerificationState State,
-    string? Cause);
 
 internal sealed class RouteRemovePostRemoveVerifier
 {
@@ -32,8 +22,7 @@ internal sealed class RouteRemovePostRemoveVerifier
         if (!formation.Findings.IsEmpty)
         {
             return Failed(
-                formation.Findings[0].Cause
-                    ?? "The final Route Remove absence observation was not complete and safe.");
+                formation.Findings[0].Cause);
         }
 
         if (observation.Plan is not null

@@ -1,12 +1,12 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using OpenForge.Cli.EndToEndTests.Shared.Route;
 
 namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedRouteRemoveProcessTests
 {
-    [Fact(DisplayName = "Published Route Remove help and invalid input remain write-free and truthful")]
-    [Trait("Feature", "route-remove"), Trait("Evidence", "EndToEnd")]
+    [Fact(DisplayName = "Published Route Remove help and invalid input remain write-free and truthful"), Trait("Feature", "route-remove"), Trait("Evidence", "EndToEnd")]
     public async Task HelpAndInvalidInputHaveExactPublicBoundaries()
     {
         var target = PublishedExecutableTarget.Discover();
@@ -46,8 +46,7 @@ public sealed class PublishedRouteRemoveProcessTests
         workspace.AssertNoLockInfrastructure();
     }
 
-    [Fact(DisplayName = "Published Route Remove previews then applies one leaf with label-preserving detachment")]
-    [Trait("Feature", "route-remove"), Trait("Evidence", "EndToEnd")]
+    [Fact(DisplayName = "Published Route Remove previews then applies one leaf with label-preserving detachment"), Trait("Feature", "route-remove"), Trait("Evidence", "EndToEnd")]
     public async Task LeafDryRunAndApplicationPreserveLifecycleAndSurroundingBytes()
     {
         var target = PublishedExecutableTarget.Discover();
@@ -58,7 +57,7 @@ public sealed class PublishedRouteRemoveProcessTests
             target,
             workspace,
             [
-                "route", "remove", PublishedRouteRemoveWorkspace.SourceId,
+                "route", "remove", PublishedRouteWorkspaceSeed.SourceId,
                 "--dry-run", "--json",
             ]);
 
@@ -84,21 +83,20 @@ public sealed class PublishedRouteRemoveProcessTests
         var applied = await PublishedProcessTestSupport.RunAsync(
             target,
             workspace.Path,
-            ["route", "remove", PublishedRouteRemoveWorkspace.SourceId],
+            ["route", "remove", PublishedRouteWorkspaceSeed.SourceId],
             workspace.ProcessEnvironment);
 
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
         Assert.Contains("Status: complete", applied.StandardOutput, StringComparison.Ordinal);
-        Assert.False(File.Exists(workspace.Combine(PublishedRouteRemoveWorkspace.SourcePath)));
-        Assert.False(File.Exists(workspace.Combine(PublishedRouteRemoveWorkspace.SourceOverwritePath)));
+        Assert.False(File.Exists(workspace.Combine(PublishedRouteWorkspaceSeed.SourcePath)));
+        Assert.False(File.Exists(workspace.Combine(PublishedRouteWorkspaceSeed.SourceOverwritePath)));
         Assert.Equal("Prefix Old guide suffix.\n", workspace.ReadText("README.md"));
         Assert.Equal(lifecycleBefore, workspace.ReadBytes(PublishedRouteRemoveWorkspace.LifecyclePath));
         workspace.AssertPersistentExternalLock();
     }
 
-    [Fact(DisplayName = "Published Route Remove applies a category projection and repeats as an honest verified no-op")]
-    [Trait("Feature", "route-remove"), Trait("Evidence", "EndToEnd")]
+    [Fact(DisplayName = "Published Route Remove applies a category projection and repeats as an honest verified no-op"), Trait("Feature", "route-remove"), Trait("Evidence", "EndToEnd")]
     public async Task CategoryApplicationProjectionAndRepeatAreStable()
     {
         var target = PublishedExecutableTarget.Discover();
@@ -106,7 +104,7 @@ public sealed class PublishedRouteRemoveProcessTests
         var applied = await PublishedProcessTestSupport.RunAsync(
             target,
             workspace.Path,
-            ["route", "remove", PublishedRouteRemoveWorkspace.CategoryId, "--json"],
+            ["route", "remove", PublishedRouteWorkspaceSeed.CategoryId, "--json"],
             workspace.ProcessEnvironment);
 
         Assert.Equal(0, applied.ExitCode);
@@ -121,17 +119,17 @@ public sealed class PublishedRouteRemoveProcessTests
             region => region.GetProperty("reasons").EnumerateArray()
                 .Any(reason => reason.GetString() == "old-parent"));
         Assert.False(Directory.Exists(workspace.Combine(".agents/guidance/topics")));
-        Assert.False(File.Exists(workspace.Combine(PublishedRouteRemoveWorkspace.CategoryPath)));
-        Assert.False(File.Exists(workspace.Combine(PublishedRouteRemoveWorkspace.CategoryChildPath)));
-        Assert.False(File.Exists(workspace.Combine(PublishedRouteRemoveWorkspace.CategoryNotesPath)));
-        Assert.False(File.Exists(workspace.Combine(PublishedRouteRemoveWorkspace.CategoryResourcePath)));
+        Assert.False(File.Exists(workspace.Combine(PublishedRouteWorkspaceSeed.CategoryPath)));
+        Assert.False(File.Exists(workspace.Combine(PublishedRouteWorkspaceSeed.CategoryChildPath)));
+        Assert.False(File.Exists(workspace.Combine(PublishedRouteWorkspaceSeed.CategoryNotesPath)));
+        Assert.False(File.Exists(workspace.Combine(PublishedRouteWorkspaceSeed.CategoryResourcePath)));
         Assert.DoesNotContain("Topics", workspace.ReadText(PublishedRouteRemoveWorkspace.ParentPath), StringComparison.Ordinal);
         workspace.AssertPersistentExternalLock();
 
         var repeated = await RunWithoutWritesAsync(
             target,
             workspace,
-            ["route", "remove", PublishedRouteRemoveWorkspace.CategoryId, "--json"]);
+            ["route", "remove", PublishedRouteWorkspaceSeed.CategoryId, "--json"]);
 
         Assert.Equal(0, repeated.ExitCode);
         Assert.Equal(string.Empty, repeated.StandardError);

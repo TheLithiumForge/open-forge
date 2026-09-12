@@ -1,5 +1,4 @@
-using System.Collections.ObjectModel;
-using System.Security.Cryptography;
+using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.EndToEndTests;
@@ -32,7 +31,7 @@ internal sealed class PublishedFindWorkspace : IDisposable
     {
         if (_lockedSnapshot is null)
         {
-            return SnapshotState(_workspace);
+            return PublishedWorkspaceTreeSnapshot.Capture(_workspace.Path);
         }
 
         if (!_lockedSnapshotRead)
@@ -42,7 +41,7 @@ internal sealed class PublishedFindWorkspace : IDisposable
         }
 
         _lockedFile?.Dispose();
-        return SnapshotState(_workspace);
+        return PublishedWorkspaceTreeSnapshot.Capture(_workspace.Path);
     }
 
     internal void AddUnavailableFrontmatterSources()
@@ -101,7 +100,7 @@ internal sealed class PublishedFindWorkspace : IDisposable
             else
             {
                 workspace.WriteText(".agents/unreadable.md", "---\nopen-forge:\n  tags: [Architecture]\n---\n# Architecture\n");
-                var snapshot = SnapshotState(workspace);
+                var snapshot = PublishedWorkspaceTreeSnapshot.Capture(workspace.Path);
                 lockedFile = new FileStream(
                     workspace.Combine(".agents/unreadable.md"),
                     FileMode.Open,
@@ -146,65 +145,4 @@ internal sealed class PublishedFindWorkspace : IDisposable
             "---\nopen-forge:\n  description: Guide\n  tags: [Reference]\n---\n# Guide\n\n## Details\n\nGuide body\n");
     }
 
-    private static IReadOnlyDictionary<string, string> SnapshotState(TemporaryWorkspace workspace)
-    {
-        var state = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        var root = new DirectoryInfo(workspace.Path);
-        SnapshotEntry(root, workspace.Path, ".", state);
-        return new ReadOnlyDictionary<string, string>(state);
-    }
-
-    private static void SnapshotEntry(
-        FileSystemInfo entry,
-        string rootPath,
-        string relativePath,
-        IDictionary<string, string> state)
-    {
-        entry.Refresh();
-        var attributes = entry.Attributes;
-        var isReparsePoint = (attributes & FileAttributes.ReparsePoint) != 0;
-        state[relativePath] = DescribeEntry(entry, relativePath, attributes, isReparsePoint);
-        if (isReparsePoint || (attributes & FileAttributes.Directory) == 0)
-        {
-            return;
-        }
-
-        foreach (var child in ((DirectoryInfo)entry)
-            .EnumerateFileSystemInfos("*", SearchOption.TopDirectoryOnly)
-            .OrderBy(child => GetRelativePath(rootPath, child.FullName), StringComparer.Ordinal))
-        {
-            SnapshotEntry(
-                child,
-                rootPath,
-                GetRelativePath(rootPath, child.FullName),
-                state);
-        }
-    }
-
-    private static string DescribeEntry(
-        FileSystemInfo entry,
-        string relativePath,
-        FileAttributes attributes,
-        bool isReparsePoint)
-    {
-        var type = isReparsePoint
-            ? (attributes & FileAttributes.Directory) != 0 ? "directory-reparse" : "file-reparse"
-            : (attributes & FileAttributes.Directory) != 0 ? "directory" : "file";
-        var description = $"type={type};attributes={(int)attributes};creationUtcTicks={entry.CreationTimeUtc.Ticks};lastWriteUtcTicks={entry.LastWriteTimeUtc.Ticks}";
-        if (isReparsePoint)
-        {
-            return $"{description};reparseIdentity={relativePath};linkTarget={entry.LinkTarget ?? "<null>"}";
-        }
-
-        if (entry is not FileInfo file)
-        {
-            return description;
-        }
-
-        var bytes = File.ReadAllBytes(file.FullName);
-        return $"{description};length={file.Length};sha256={Convert.ToHexString(SHA256.HashData(bytes))}";
-    }
-
-    private static string GetRelativePath(string rootPath, string path)
-        => System.IO.Path.GetRelativePath(rootPath, path).Replace('\\', '/');
 }

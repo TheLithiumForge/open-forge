@@ -322,10 +322,10 @@ jobs:
             node src/cli/ci/verify-test-results.ts record-execution . "artifacts/ci/receipts/$RID/build-manifest.json" "$RID" "$executable" "$discovery_exit" "$execution_exit" "$output/execution.json"
             node src/cli/ci/verify-test-results.ts "$suite" . "$output/discovery.json" "$output/results.json" "$output/execution.json" "$output/qualified.json"
           done <<SUITES
-          unit unit artifacts/ci/managed/unit/OpenForge.Cli.Core.UnitTests.dll 2860
-          integration integration artifacts/ci/managed/integration/OpenForge.Cli.IntegrationTests.dll 1603
+          unit unit artifacts/ci/managed/unit/OpenForge.Cli.Core.UnitTests.dll 3206
+          integration integration artifacts/ci/managed/integration/OpenForge.Cli.IntegrationTests.dll 1718
           public public artifacts/ci/managed/public/OpenForge.Cli.EndToEndTests.dll 111
-          native-integration integration artifacts/publish/$RID/integration/OpenForge.Cli.IntegrationTests${{ matrix.suffix }} 1603
+          native-integration integration artifacts/publish/$RID/integration/OpenForge.Cli.IntegrationTests${{ matrix.suffix }} 1718
           native-public public artifacts/publish/$RID/end-to-end/OpenForge.Cli.EndToEndTests${{ matrix.suffix }} 111
           public-native public artifacts/ci/managed/public-native/OpenForge.Cli.EndToEndTests.dll 111
           SUITES

@@ -1,8 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
-using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
-using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Models.Operation;
 
@@ -14,15 +12,6 @@ internal enum RouteUpdateApplicationPreparationState
     Blocked,
     Cancelled,
     Failed,
-}
-
-internal sealed record RouteUpdateApplicationPreparationInput
-{
-    public required RouteUpdatePlan Plan { get; init; }
-
-    public required WorkspaceLockLease Lease { get; init; }
-
-    public required Guid OperationId { get; init; }
 }
 
 internal sealed record RouteUpdateApplicationPreparation

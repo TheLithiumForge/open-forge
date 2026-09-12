@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Create.Shared.Rendering;
 

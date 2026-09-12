@@ -1,11 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
-using OpenForge.Cli.Core.Framework.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Inventory;
 
@@ -212,7 +214,13 @@ internal sealed class SourceCatalogueReader
             PhysicalPathState.Missing => SourceCatalogueIssueCode.RootMissing,
             PhysicalPathState.Inaccessible
                 or PhysicalPathState.InputOutputFailure => SourceCatalogueIssueCode.RootUnavailable,
-            _ => SourceCatalogueIssueCode.RootUnsafe,
+            PhysicalPathState.Contained
+                or PhysicalPathState.Dangling
+                or PhysicalPathState.External
+                or PhysicalPathState.Cycle
+                or PhysicalPathState.Invalid
+                or PhysicalPathState.Unsupported => SourceCatalogueIssueCode.RootUnsafe,
+            _ => throw new ArgumentOutOfRangeException(nameof(resolution), resolution.State, "The physical path state is not defined."),
         };
         return new SourceCatalogueIssue(
             code,
@@ -403,7 +411,6 @@ internal sealed class SourceCatalogueReader
         internal SourceCatalogue FormCatalogue(bool isCancelled)
         {
             var candidates = _candidatesByPath.Values.ToArray();
-            AddUnsupportedSources(candidates);
             var sources = FormSources(candidates);
             AddIdentityCollisions(sources, candidates);
             AddOrphanOverwrites(candidates, sources);
@@ -413,21 +420,6 @@ internal sealed class SourceCatalogueReader
                 sources,
                 Issues.Concat(RootIssues),
                 isCancelled);
-        }
-
-        private void AddUnsupportedSources(IReadOnlyList<SourceCandidate> candidates)
-        {
-            foreach (var candidate in candidates.Where(candidate =>
-                         candidate.Form is null
-                         && candidate.PhysicalState == PhysicalPathState.Contained))
-            {
-                AddIssue(new SourceCatalogueIssue(
-                    SourceCatalogueIssueCode.UnsupportedSource,
-                    candidate.CanonicalPath,
-                    [],
-                    candidate.PhysicalParentPath,
-                    failure: null));
-            }
         }
 
         private List<SourceLogicalSource> FormSources(IReadOnlyList<SourceCandidate> candidates)
@@ -452,7 +444,7 @@ internal sealed class SourceCatalogueReader
                     physicalPath,
                     form,
                     SourceLayerKind.Base);
-                var overwritePath = candidate.CanonicalPath[..^".md".Length] + ".overwrite.md";
+                var overwritePath = SourceOverwritePath.ReadAdjacentPath(candidate.CanonicalPath);
                 var overwrite = byPath.TryGetValue(overwritePath, out var overwriteCandidate)
                     && overwriteCandidate.Form == SourceDocumentForm.OverwriteCompanion
                     ? new SourceLayer(
@@ -489,12 +481,15 @@ internal sealed class SourceCatalogueReader
                     .Select(path => candidatesByPath[path].Form
                         ?? throw new InvalidOperationException("A retained source candidate requires a source form."))
                     .ToArray();
-                var code = forms.All(SourceFormClassifier.IsEntrypoint)
-                    ? forms.Any(form => form == SourceDocumentForm.CanonicalEntrypoint)
+                var code = SourceCatalogueIssueCode.IdentityCollision;
+                if (forms.All(SourceFormClassifier.IsEntrypoint))
+                {
+                    code = forms.Any(form => form == SourceDocumentForm.CanonicalEntrypoint)
                         && forms.Any(form => form != SourceDocumentForm.CanonicalEntrypoint)
                             ? SourceCatalogueIssueCode.EntrypointCompatibilityCollision
-                            : SourceCatalogueIssueCode.EntrypointAmbiguous
-                    : SourceCatalogueIssueCode.IdentityCollision;
+                            : SourceCatalogueIssueCode.EntrypointAmbiguous;
+                }
+
                 AddIssue(new SourceCatalogueIssue(
                     code,
                     paths[0],

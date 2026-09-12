@@ -1,7 +1,8 @@
 using System.IO.Compression;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery.Shared.LibraryResiduals;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;

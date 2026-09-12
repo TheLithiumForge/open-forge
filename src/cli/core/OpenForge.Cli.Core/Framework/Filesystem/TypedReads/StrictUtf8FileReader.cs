@@ -1,4 +1,6 @@
 using System.Text;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 
 namespace OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 

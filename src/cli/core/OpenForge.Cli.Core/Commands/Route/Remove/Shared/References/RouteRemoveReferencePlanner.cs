@@ -6,8 +6,8 @@ using OpenForge.Cli.Core.Commands.Route.Shared.Models.References;
 using OpenForge.Cli.Core.Commands.Route.Shared.References;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.References;
@@ -153,16 +153,4 @@ internal sealed class RouteRemoveReferencePlanner
                     ?? "Complete Markdown reference coverage could not be established."),
         };
     }
-
-    internal ValueTask<RouteRemoveReferencePostRemoveResult> ObserveAsync(
-        RouteRemovePlan plan,
-        CancellationToken cancellationToken)
-        => _scanner.ObserveAsync(plan, cancellationToken);
-}
-
-internal sealed record RouteRemoveReferenceAbsenceResult
-{
-    public required RouteRemoveReferences References { get; init; }
-
-    public RouteRemoveFinding? Finding { get; init; }
 }

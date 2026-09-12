@@ -1,26 +1,28 @@
-using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
-using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
-using OpenForge.Cli.IntegrationTests.Commands.Shared.LibraryRecovery;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair;
+using OpenForge.Cli.Core.Commands.Repair.Models.Application;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
-using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Application;
+using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
+using OpenForge.Cli.Core.Commands.Repair.Shared.Result;
+using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Recovery.Application;
-using OpenForge.Cli.Core.Commands.Repair.Models.Application;
-using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
-using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.LibraryRecovery;
 using OpenForge.Cli.IntegrationTests.Hosting;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Repair;
@@ -387,4 +389,65 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             Failure = null,
             Cause = null,
         };
+
+    [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
+    public async Task MatchingReceiptPrecedesAtomicFailureAttribution()
+    {
+        using var workspace = new LibraryResidualWorkspace();
+        await workspace.PrepareAsync("record-replace");
+        var plan = RepairLibraryRecoveryPlanner.Build(new RepairLibraryPlanningInput
+        {
+            Request = new RepairRequest(workspace.Files.Workspace, RepairMode.Apply, automatic: true, [], allowInteraction: false),
+            References = [],
+            Libraries = [new RepairLibraryRecoveryProposal(workspace.Evidence)],
+            WizardRelinks = [],
+            WizardLibraries = null,
+        });
+        Assert.False(plan.IsBlocked);
+        var step = Assert.Single(plan.LibrarySteps);
+        Assert.Equal(1, step.Ordinal);
+        Assert.NotNull(step.Effect);
+        var acquired = await WorkspaceLockManager.CreateForCurrentUser().AcquireAsync(
+            new WorkspaceLockRequest(workspace.Files.Workspace, "repair", Guid.NewGuid()), TestContext.Current.CancellationToken);
+        Assert.Equal(WorkspaceLockState.Acquired, acquired.State);
+        Assert.NotNull(acquired.Lease);
+        await using var lease = acquired.Lease;
+        var recovered = await OrdinaryFileRecoveryApplier.ApplyAsync(new PhysicalPathResolver(), lease,
+            workspace.Preparation, step.Effect.Entry, TestContext.Current.CancellationToken);
+        Assert.Equal(FilesystemEffectState.Applied, recovered.Effect);
+        Assert.Equal(FilesystemVerificationState.Verified, recovered.Verification);
+        var receipt = new RepairLibraryRecoveryReceipt(RepairLibraryRecoveryKind.Ordinary, step.Effect,
+            workspace.Preparation, recovered, relativeFileLink: null);
+        var execution = new RepairLibraryExecution
+        {
+            ReferenceReceipts = [],
+            LibraryReceipts = [receipt],
+            ForwardPreparation = null,
+            ForwardCleanup = null,
+            PostDiagnosis = null,
+            Cancellation = new RepairLibraryCancellation(RepairLibraryExecutionStage.Effect, 0),
+            UnexpectedFailure = new RepairLibraryUnexpectedFailure(RepairLibraryExecutionStage.Effect, 0, "Independent effect failure."),
+        };
+        var result = RepairLibraryResultFormation.Build(new RepairResultInput
+        {
+            Request = plan.Request,
+            Plan = plan,
+            LibraryExecution = execution,
+            Diagnosis = new RepairDiagnosisCoverage(RepairCoverageState.Complete, RepairCoverageState.Complete, RepairCoverageState.Complete, RepairCoverageState.Complete),
+            Findings = [],
+            InitialFindings = [],
+            Preflight = RepairPreflight.NotRequested,
+            Application = RepairApplication.NotRequested,
+            Verification = RepairVerification.NotRequested,
+            Recovery = RepairRecovery.NotRequired,
+            PostDiagnosis = RepairPostDiagnosis.NotRequested,
+        });
+
+        Assert.NotNull(result.Plan);
+        Assert.Equal(RepairStepOutcome.Verified, Assert.Single(result.Plan.LibrarySteps).Outcome);
+        Assert.Same(execution, result.LibraryExecution);
+        Assert.Same(receipt, Assert.Single(execution.LibraryReceipts));
+        Assert.Equal(workspace.PriorText, File.ReadAllText(workspace.TargetPath));
+        Assert.True(File.Exists(workspace.Preparation.BundlePath));
+    }
 }

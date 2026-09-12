@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Commands.Route.Move.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.References;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.References;
+using OpenForge.Cli.Core.Commands.Route.Shared.Navigation;
 using OpenForge.Cli.Core.Commands.Route.Shared.References;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -18,17 +19,16 @@ using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
 using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.Framework.Lifecycle;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
@@ -125,7 +125,7 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
                             workspace.LexicalRoot,
                             canonicalPath.Replace('/', Path.DirectorySeparatorChar)))),
                 new SourceRouteFactsResolver(),
-                new RouteMoveNavigationExposureReader(new MarkdownDocumentParser()),
+                new RouteNavigationExposureReader(new MarkdownDocumentParser()),
                 expectation),
             new RouteMoveCategoryInventoryReader(physical, expectation, ownership),
             new RouteMoveDestinationResolver(expectation),
@@ -406,7 +406,7 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
                                 workspace.LexicalRoot,
                                 canonicalPath.Replace('/', Path.DirectorySeparatorChar)))),
                     new SourceRouteFactsResolver(),
-                    new RouteMoveNavigationExposureReader(markdown),
+                    new RouteNavigationExposureReader(markdown),
                     validator),
                 new RouteMoveCategoryInventoryReader(
                     physical,

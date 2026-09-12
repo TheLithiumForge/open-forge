@@ -2,11 +2,15 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
@@ -15,8 +19,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
-using OpenForge.Cli.Core.Framework.Sources.Locations;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
@@ -86,12 +89,30 @@ internal sealed class RouteSourceInspector
             : null;
         var document = text is null ? null : _markdownParser.Parse(text);
         var locations = text is null ? null : new Utf8SourceMap(text);
-        var authoredMetadata = document is null
-            ? SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Malformed)
-            : _sourceMetadataParser.Parse(document, source.Base.Form);
-        var frameworkMetadata = document is null
-            ? FrameworkDocumentMetadataFacts.WithoutValues(FrameworkDocumentMetadataState.Malformed)
-            : _frameworkMetadataParser.Parse(document);
+        SourceAuthoredMetadataFacts authoredMetadata;
+        FrameworkDocumentMetadataFacts frameworkMetadata;
+        if (document is null)
+        {
+            authoredMetadata = SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Malformed);
+            frameworkMetadata = FrameworkDocumentMetadataFacts.WithoutValues(FrameworkDocumentMetadataState.Malformed);
+        }
+        else if (source.Base.Form is SourceDocumentForm.Markdown
+            or SourceDocumentForm.CanonicalEntrypoint
+            or SourceDocumentForm.IndexEntrypoint
+            or SourceDocumentForm.UnderscoreIndexEntrypoint
+            or SourceDocumentForm.ReferencesEntrypoint
+            or SourceDocumentForm.UnderscoreReferencesEntrypoint)
+        {
+            frameworkMetadata = _frameworkMetadataParser.Parse(document);
+            authoredMetadata = SourceAuthoredMetadataParser.ProjectOpenForge(
+                SourceOpenForgeMetadataParser.Project(frameworkMetadata));
+        }
+        else
+        {
+            authoredMetadata = _sourceMetadataParser.Parse(document, source.Base.Form);
+            frameworkMetadata = _frameworkMetadataParser.Parse(document);
+        }
+
         return new RouteSourceObservation
         {
             Source = source,

@@ -1,11 +1,16 @@
-using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Serialization.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Framework.Recovery.Serialization;
@@ -22,6 +27,19 @@ internal static class RecoveryBundleManifestCodec
     private const string OrdinaryFileStateKind = "ordinary-file";
     private const string RelativeFileLinkStateKind = "relative-file-link";
     private const string RelativeFileSymbolicLinkKind = "relative-file-symbolic-link";
+
+    private static readonly FrozenDictionary<RecoveryEntryKind, string> KindWire =
+        new Dictionary<RecoveryEntryKind, string>
+        {
+            [RecoveryEntryKind.OrdinaryCreate] = OrdinaryCreateKind,
+            [RecoveryEntryKind.OrdinaryReplace] = OrdinaryReplaceKind,
+            [RecoveryEntryKind.OrdinaryReplaceGeneratedRegion] = OrdinaryReplaceGeneratedRegionKind,
+            [RecoveryEntryKind.OrdinaryDelete] = OrdinaryDeleteKind,
+            [RecoveryEntryKind.RelativeFileLinkCreate] = RelativeFileLinkCreateKind,
+            [RecoveryEntryKind.RelativeFileLinkDelete] = RelativeFileLinkDeleteKind,
+        }.ToFrozenDictionary();
+    private static readonly FrozenDictionary<string, RecoveryEntryKind> WireKind =
+        KindWire.ToFrozenDictionary(static pair => pair.Value, static pair => pair.Key, StringComparer.Ordinal);
 
     private static readonly JsonSerializerOptions SerializerOptions = CreateSerializerOptions();
     private static readonly RecoveryBundleJsonContext SerializerContext = new(SerializerOptions);
@@ -263,20 +281,12 @@ internal static class RecoveryBundleManifestCodec
         };
 
     private static string Kind(RecoveryEntryKind kind)
-        => kind switch
-        {
-            RecoveryEntryKind.OrdinaryCreate => OrdinaryCreateKind,
-            RecoveryEntryKind.OrdinaryReplace => OrdinaryReplaceKind,
-            RecoveryEntryKind.OrdinaryReplaceGeneratedRegion =>
-                OrdinaryReplaceGeneratedRegionKind,
-            RecoveryEntryKind.OrdinaryDelete => OrdinaryDeleteKind,
-            RecoveryEntryKind.RelativeFileLinkCreate => RelativeFileLinkCreateKind,
-            RecoveryEntryKind.RelativeFileLinkDelete => RelativeFileLinkDeleteKind,
-            _ => throw new ArgumentOutOfRangeException(
+        => KindWire.TryGetValue(kind, out var wire)
+            ? wire
+            : throw new ArgumentOutOfRangeException(
                 nameof(kind),
                 kind,
-                "The recovery entry kind is not defined."),
-        };
+                "The recovery entry kind is not defined.");
 
     private static RecoveryBundleManifestStateV1 State(RecoveryEntryState state)
     {
@@ -315,24 +325,15 @@ internal static class RecoveryBundleManifestCodec
         };
     }
 
-    private static bool TryKind(string value, out RecoveryEntryKind kind)
+    private static bool TryKind(string? value, out RecoveryEntryKind kind)
     {
-        kind = value switch
+        kind = default;
+        if (value is null)
         {
-            OrdinaryCreateKind => RecoveryEntryKind.OrdinaryCreate,
-            OrdinaryReplaceKind => RecoveryEntryKind.OrdinaryReplace,
-            OrdinaryReplaceGeneratedRegionKind => RecoveryEntryKind.OrdinaryReplaceGeneratedRegion,
-            OrdinaryDeleteKind => RecoveryEntryKind.OrdinaryDelete,
-            RelativeFileLinkCreateKind => RecoveryEntryKind.RelativeFileLinkCreate,
-            RelativeFileLinkDeleteKind => RecoveryEntryKind.RelativeFileLinkDelete,
-            _ => default,
-        };
-        return value is OrdinaryCreateKind
-            or OrdinaryReplaceKind
-            or OrdinaryReplaceGeneratedRegionKind
-            or OrdinaryDeleteKind
-            or RelativeFileLinkCreateKind
-            or RelativeFileLinkDeleteKind;
+            return false;
+        }
+
+        return WireKind.TryGetValue(value, out kind);
     }
 
     private static bool TryState(

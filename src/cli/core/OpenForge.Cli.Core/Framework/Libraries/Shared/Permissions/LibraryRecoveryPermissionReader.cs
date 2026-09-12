@@ -1,10 +1,10 @@
-using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
-using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Permissions;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Document;
@@ -13,7 +13,7 @@ using OpenForge.Cli.Core.Framework.Permissions.Models.Planning;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using OpenForge.Cli.Core.Framework.Permissions.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Permissions.Shared.Planning;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Libraries.Shared.Permissions;
 

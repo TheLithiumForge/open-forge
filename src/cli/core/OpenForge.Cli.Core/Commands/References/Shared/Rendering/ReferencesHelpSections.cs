@@ -1,7 +1,6 @@
-using System.Globalization;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
-using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Help;
 
 namespace OpenForge.Cli.Core.Commands.References.Shared.Rendering;
 
@@ -36,36 +35,10 @@ internal static class ReferencesHelpSections
                 "  open-forge find — discover sources by authored predicates.\n"
                 + "  open-forge route list — list routed source identities.\n"
                 + "  open-forge doctor — inspect unavailable or blocked source facts."),
-            new CliHelpSection("Results and streams", ResultsAndStreams()),
+            new CliHelpSection("Results and streams", CliResultHelp.ResultsAndStreams(schemaVersion: 1)),
             new CliHelpSection(
                 "Notes",
                 "  References is a deterministic, read-only one-hop report. It does not fetch URLs, load target bodies, "
                 + "follow links, write files, build an index, or repair destinations."),
         ]);
-
-    private static string ResultsAndStreams()
-    {
-        var lines = new List<string>
-        {
-            "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            "  JSON writes one schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr.",
-        };
-        foreach (var status in Enum.GetValues<CliSemanticStatus>())
-        {
-            var definition = CliStatusDefinitions.Read(status);
-            lines.Add(
-                $"  {definition.MachineName}: exit {definition.Disposition.ExitCode.ToString(CultureInfo.InvariantCulture)} "
-                + $"and human {Stream(definition.Disposition.HumanOutputTarget)}.");
-        }
-
-        return string.Join(Environment.NewLine, lines);
-    }
-
-    private static string Stream(CliOutputTarget target)
-        => target switch
-        {
-            CliOutputTarget.StandardOutput => "stdout",
-            CliOutputTarget.StandardError => "stderr",
-            _ => throw new ArgumentOutOfRangeException(nameof(target), target, "The output target is not defined."),
-        };
 }

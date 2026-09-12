@@ -1,6 +1,6 @@
 using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;

@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Filesystem;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
 using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
@@ -16,17 +18,16 @@ internal sealed class RouteMoveCategoryInventoryReader(
     FileExpectationValidator expectationValidator,
     LifecycleOwnershipReader ownershipReader)
 {
-    private readonly RouteMoveCategoryFilesystemReader _filesystemReader = new(
+    private readonly RouteCategoryFilesystemReader _filesystemReader = new(
         physicalPathResolver,
         expectationValidator);
     private readonly LifecycleOwnershipReader _ownershipReader = ownershipReader;
 
     internal async ValueTask<RouteMoveCategoryInventoryResult> ReadAsync(
-        RouteMoveCategoryInventoryRequest request,
+        RouteMoveResolvedSubject subject,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(request);
-        var subject = request.Subject;
+        ArgumentNullException.ThrowIfNull(subject);
         var ownership = await _ownershipReader.ReadAsync(
             subject.Request.Workspace,
             cancellationToken).ConfigureAwait(false);
@@ -60,22 +61,37 @@ internal sealed class RouteMoveCategoryInventoryReader(
             return ReadLeaf(subject, ownership);
         }
 
-        var read = await _filesystemReader.ReadAsync(subject, ownership, cancellationToken)
-            .ConfigureAwait(false);
+        var read = await _filesystemReader.ReadAsync(
+            new RouteCategoryFilesystemRequest
+            {
+                Workspace = subject.Request.Workspace,
+                EntrypointLogicalPath = subject.Layers[0].Snapshot.LogicalPath,
+                Catalogue = subject.Catalogue,
+                EntrypointPaths = [.. subject.Layers.Select(layer => layer.Layer.CanonicalPath)],
+                ExposedPaths = subject.NavigationExposure.ExposedPaths,
+            },
+            cancellationToken).ConfigureAwait(false);
         return ReadFilesystemResult(subject, ownership, read);
     }
 
     private static RouteMoveCategoryInventoryResult ReadFilesystemResult(
         RouteMoveResolvedSubject subject,
         LifecycleOwnershipReadResult ownership,
-        RouteMoveCategoryFilesystemReadResult read)
+        RouteCategoryFilesystemRead read)
     {
-        if (read.Inventory is { } inventory)
+        if (read.State == RouteCategoryFilesystemReadState.Complete)
         {
-            return new RouteMoveCategoryInventoryResult(inventory, boundary: null);
+            return new RouteMoveCategoryInventoryResult(
+                new RouteMoveCategoryInventory
+                {
+                    Subject = subject,
+                    Ownership = ownership,
+                    Items = [.. read.Items.Select(ProjectItem)],
+                },
+                boundary: null);
         }
 
-        if (read.State == RouteMoveCategoryFilesystemReadState.Interrupted)
+        if (read.State == RouteCategoryFilesystemReadState.Interrupted)
         {
             return Stop(
                 subject,
@@ -85,7 +101,7 @@ internal sealed class RouteMoveCategoryInventoryReader(
                 read.Cause ?? "Route Move category inventory was interrupted.");
         }
 
-        if (read.State == RouteMoveCategoryFilesystemReadState.Unsafe)
+        if (read.State == RouteCategoryFilesystemReadState.Unsafe)
         {
             return Stop(
                 subject,
@@ -103,6 +119,26 @@ internal sealed class RouteMoveCategoryInventoryReader(
             read.Cause ?? "The complete category filesystem inventory could not be established.");
     }
 
+    private static RouteMoveInventoryItem ProjectItem(RouteCategoryFilesystemItem item)
+        => new()
+        {
+            Kind = item.Kind switch
+            {
+                RouteCategoryFilesystemItemKind.Directory => RouteMoveItemKind.Directory,
+                RouteCategoryFilesystemItemKind.Entrypoint => RouteMoveItemKind.Entrypoint,
+                RouteCategoryFilesystemItemKind.NativeSource => RouteMoveItemKind.NativeSource,
+                RouteCategoryFilesystemItemKind.RoutedMarkdown => RouteMoveItemKind.RoutedMarkdown,
+                RouteCategoryFilesystemItemKind.UnroutedMarkdown => RouteMoveItemKind.UnroutedMarkdown,
+                RouteCategoryFilesystemItemKind.Resource => RouteMoveItemKind.Resource,
+                _ => throw new ArgumentOutOfRangeException(nameof(item), item.Kind, "The category item kind is not defined."),
+            },
+            Layer = item.Layer is { } layer ? ReadLayer(layer) : null,
+            SourceId = item.SourceId,
+            SourcePath = item.SourcePath,
+            RelativePath = item.RelativePath,
+            Snapshot = item.Snapshot,
+        };
+
     private static RouteMoveCategoryInventoryResult ReadLeaf(
         RouteMoveResolvedSubject subject,
         LifecycleOwnershipReadResult ownership)
@@ -111,7 +147,7 @@ internal sealed class RouteMoveCategoryInventoryReader(
             {
                 Subject = subject,
                 Ownership = ownership,
-                Items = subject.Layers.Select(layer => new RouteMoveInventoryItem
+                Items = [.. subject.Layers.Select(layer => new RouteMoveInventoryItem
                 {
                     Kind = RouteMoveItemKind.RoutedMarkdown,
                     Layer = ReadLayer(layer.Layer.Kind),
@@ -119,7 +155,7 @@ internal sealed class RouteMoveCategoryInventoryReader(
                     SourcePath = layer.Snapshot.LogicalPath,
                     RelativePath = Path.GetFileName(layer.Snapshot.LogicalPath),
                     Snapshot = layer.Snapshot,
-                }).ToImmutableArray(),
+                })],
             },
             boundary: null);
 

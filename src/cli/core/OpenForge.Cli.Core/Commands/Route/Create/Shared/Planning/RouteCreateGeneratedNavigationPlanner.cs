@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
@@ -173,20 +174,22 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
         SourceDocumentReadResult read,
         string target,
         out string text,
-        out RouteCreateFinding finding)
+        [NotNullWhen(false)] out RouteCreateFinding? finding)
     {
         text = string.Empty;
-        finding = new RouteCreateFinding(
-            RouteCreateFindingCode.ProjectionIncomplete,
-            read.Read?.Failure?.DirectCause ?? "The routed source content is unavailable.",
-            target);
+        finding = null;
         if (read.Verification.State == SourceLayerVerificationState.Verified
-            && read.Read?.State == Framework.Filesystem.TypedReads.FileReadState.Complete
+            && read.Read?.State == Framework.Filesystem.TypedReads.Models.FileReadState.Complete
             && read.Read.Value is { } value)
         {
             text = value;
             return true;
         }
+
+        finding = new RouteCreateFinding(
+            RouteCreateFindingCode.ProjectionIncomplete,
+            read.Read?.Failure?.DirectCause ?? "The routed source content is unavailable.",
+            target);
 
         finding = read.Verification.State switch
         {

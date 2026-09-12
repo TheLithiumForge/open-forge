@@ -1,10 +1,16 @@
 using System.Buffers;
 using System.IO.Compression;
 using System.Security.Cryptography;
-using OpenForge.Cli.Core.Framework.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization;
+using OpenForge.Cli.Core.Framework.Recovery.Serialization.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Recovery;
 
@@ -59,7 +65,7 @@ internal static class RecoveryBundleReader
             cancellationToken).ConfigureAwait(false);
         if (read.Verified is not { } verified
             || candidate.Verified is not { } selected
-            || !MatchesSelectedFinal(selected, verified))
+            || !RecoveryBundleIdentity.Matches(selected, verified))
         {
             return new RecoveryBundleFinalReadResult
             {
@@ -328,20 +334,6 @@ internal static class RecoveryBundleReader
 
         return true;
     }
-
-    private static bool MatchesSelectedFinal(
-        RecoveryBundleVerifiedRead selected,
-        RecoveryBundleVerifiedRead observed)
-        => string.Equals(selected.BundlePath, observed.BundlePath, PathComparison())
-            && string.Equals(
-                selected.WorkspacePhysicalPath,
-                observed.WorkspacePhysicalPath,
-                PathComparison())
-            && string.Equals(selected.WorkspaceKey, observed.WorkspaceKey, StringComparison.Ordinal)
-            && string.Equals(selected.Command, observed.Command, StringComparison.Ordinal)
-            && selected.Attribution == observed.Attribution
-            && selected.OperationId == observed.OperationId
-            && selected.Entries.SequenceEqual(observed.Entries);
 
     private static async ValueTask<string> HashEntryAsync(
         ZipArchiveEntry entry,

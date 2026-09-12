@@ -224,16 +224,11 @@ internal sealed class RelocatedPublishedInstallLayout : IDisposable
         string workingDirectory,
         IReadOnlyList<string> arguments,
         IReadOnlyDictionary<string, string> environmentVariables)
-        => ProcessRunner.RunAsync(
-            new ProcessRunRequest(
-                ExecutablePath,
-                arguments,
-                workingDirectory,
-                timeout: TimeSpan.FromSeconds(30))
-            {
-                EnvironmentVariables = environmentVariables,
-            },
-            TestContext.Current.CancellationToken);
+        => PublishedProcessTestSupport.RunAsync(
+            executablePath: ExecutablePath,
+            workingDirectory: workingDirectory,
+            arguments: arguments,
+            environmentVariables: environmentVariables);
 
     public void Dispose() => _layout.Dispose();
 

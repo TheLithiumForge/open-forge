@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Navigation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -10,7 +11,7 @@ internal sealed partial class RouteRemoveSubjectSelector
     private static RouteRemoveResultFormation? ReadExposureBoundary(
         RouteRemoveSubjectDiscovery discovery,
         SourceRouteFacts routeFacts,
-        RouteRemoveNavigationExposure exposure)
+        RouteNavigationExposure exposure)
     {
         var formation = RouteRemoveBoundary.Start(discovery.Request) with { Source = discovery.Source };
         if (exposure.IsCancelled)
@@ -36,7 +37,7 @@ internal sealed partial class RouteRemoveSubjectSelector
     private static bool IsUnsupportedLeaf(
         RouteRemoveSubjectDiscovery discovery,
         SourceRouteFacts routeFacts,
-        RouteRemoveNavigationExposure exposure)
+        RouteNavigationExposure exposure)
     {
         if (discovery.Kind != RouteRemoveSubjectKind.Leaf)
         {

@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Commands.Update;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Update.Shared.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Update;
 

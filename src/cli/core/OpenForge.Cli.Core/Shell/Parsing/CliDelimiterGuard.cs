@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
+
 namespace OpenForge.Cli.Core.Shell.Parsing;
 
 internal enum CliDelimiterShape
@@ -5,8 +7,6 @@ internal enum CliDelimiterShape
     Separate,
     Equals,
 }
-
-internal sealed record CliDelimiterPolicy(string OptionName, CliDelimiterShape RequiredShape);
 
 internal sealed record CliDelimiterViolation(
     string OptionName,

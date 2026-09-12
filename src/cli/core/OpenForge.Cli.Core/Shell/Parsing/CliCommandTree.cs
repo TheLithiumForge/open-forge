@@ -1,32 +1,11 @@
 using System.Collections.ObjectModel;
 using System.CommandLine;
 using OpenForge.Cli.Core.Shell.Composition;
-using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Results;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.Shell.Parsing;
-
-internal sealed record CliGlobalOptionSymbols(
-    Option<string?> Workspace,
-    Option<bool> Json,
-    Option<CliView> View,
-    Option<bool> Verbose,
-    Option<bool> Help,
-    Option<bool> Version);
-
-internal sealed record CliRootBranch(
-    Command Command,
-    CliHelpContent Help,
-    IReadOnlyList<CliDelimiterPolicy> DelimiterPolicies);
-
-internal sealed record CliCommandHelp(Command Command, CliHelpContent Content);
-
-internal sealed record CliParseOutcome(
-    ParseResult Result,
-    CliCommandTree Tree,
-    CliGlobalOptionSymbols Options,
-    IReadOnlyList<string> OriginalArguments,
-    IReadOnlyList<CliDelimiterPolicy> DelimiterPolicies);
 
 internal sealed class CliCommandTree
 {
@@ -165,6 +144,7 @@ internal sealed class CliCommandTree
 
     internal CliParseOutcome Parse(string[] arguments)
     {
+        ArgumentNullException.ThrowIfNull(arguments);
         var originalArguments = Array.AsReadOnly(arguments.ToArray());
         return new CliParseOutcome(
             Root.Parse(originalArguments, _parserConfiguration),

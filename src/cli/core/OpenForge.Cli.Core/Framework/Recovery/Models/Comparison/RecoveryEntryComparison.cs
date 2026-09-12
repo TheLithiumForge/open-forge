@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+
 namespace OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 
 internal sealed record RecoveryEntryComparison

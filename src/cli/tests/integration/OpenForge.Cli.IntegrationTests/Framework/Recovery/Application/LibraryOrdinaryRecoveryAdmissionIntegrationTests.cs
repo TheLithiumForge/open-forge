@@ -1,7 +1,8 @@
 using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Recovery.Application;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery.Shared.LibraryResiduals;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Recovery.Application;

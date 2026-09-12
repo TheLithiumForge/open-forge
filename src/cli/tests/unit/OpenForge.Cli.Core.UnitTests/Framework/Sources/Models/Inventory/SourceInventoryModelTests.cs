@@ -1,5 +1,5 @@
-using OpenForge.Cli.Core.Framework.Filesystem;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
@@ -53,6 +53,24 @@ public sealed class SourceInventoryModelTests
         Assert.Equal(SourceInventoryTestData.Physical(".agents/root"), containedCandidate.PhysicalParentPath);
         Assert.Null(unrecognized.Form);
         Assert.Null(unrecognized.AutomaticId);
+    }
+
+    [Fact(DisplayName = "Source candidates reject undefined physical states at construction"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
+    public void CandidatesRejectUndefinedPhysicalState()
+    {
+        var undefined = (PhysicalPathState)int.MaxValue;
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new SourceCandidate(
+            canonicalPath: ".agents/subject.md",
+            form: SourceDocumentForm.Markdown,
+            automaticId: "subject",
+            physicalState: undefined,
+            physicalPath: null,
+            physicalParentPath: SourceInventoryTestData.Physical(".agents")));
+
+        Assert.Equal("physicalState", exception.ParamName);
+        Assert.Equal(undefined, exception.ActualValue);
+        Assert.StartsWith("The physical path state is not defined.", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Neutral layers and logical sources enforce exact base and adjacent overwrite identity")]

@@ -46,4 +46,39 @@ public sealed class TemporaryWorkspaceSafetyTests
             File.WriteAllText(ownedFile, "restored");
         }
     }
+
+    [Fact(DisplayName = "Temporary workspace replacement preserves exact UTF-8 bytes without a stale tail"), Trait("Feature", "cli-test-support"), Trait("Evidence", "Integration")]
+    public void TemporaryWorkspaceReplacementPreservesExactBytes()
+    {
+        using var workspace = TemporaryWorkspace.Create("replacement-bytes");
+        var ownedFile = workspace.CreateFile("owned.txt", "a longer original file");
+
+        workspace.ReplaceText("owned.txt", "Café\n");
+
+        byte[] expected = [0x43, 0x61, 0x66, 0xC3, 0xA9, 0x0A];
+        Assert.Equal(expected, File.ReadAllBytes(ownedFile));
+    }
+
+    [Fact(DisplayName = "Temporary workspace replacement refuses a substituted link and preserves its target"), Trait("Feature", "cli-test-support"), Trait("Evidence", "Integration")]
+    public void TemporaryWorkspaceReplacementRefusesReplacedLinkWithoutTouchingTarget()
+    {
+        using var external = TemporaryWorkspace.Create("external-replacement-target");
+        using var workspace = TemporaryWorkspace.Create("replacement-link");
+        var externalFile = external.CreateFile("external.txt", "unchanged sentinel");
+        var ownedFile = workspace.CreateFile("owned.txt", "owned");
+        try
+        {
+            File.Delete(ownedFile);
+            File.CreateSymbolicLink(ownedFile, externalFile);
+
+            Assert.Throws<InvalidOperationException>(() =>
+                workspace.ReplaceText("owned.txt", "changed"));
+            Assert.Equal("unchanged sentinel"u8.ToArray(), File.ReadAllBytes(externalFile));
+        }
+        finally
+        {
+            File.Delete(ownedFile);
+            File.WriteAllText(ownedFile, "restored");
+        }
+    }
 }

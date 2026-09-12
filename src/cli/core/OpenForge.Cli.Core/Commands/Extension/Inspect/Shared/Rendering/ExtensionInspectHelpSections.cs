@@ -1,6 +1,5 @@
-using System.Globalization;
-using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Help;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Rendering;
 
@@ -29,35 +28,9 @@ internal static class ExtensionInspectHelpSections
                 """),
             new CliHelpSection(
                 "Results and streams",
-                ResultsAndStreams()),
+                CliResultHelp.ResultsAndStreams(schemaVersion: 1)),
             new CliHelpSection(
                 "Fingerprint boundary",
                 "  open-forge-markdown-v1 uses strict UTF-8, LF-only normalization, exact final Entries marker exclusion, and exact-byte fallback. An authored lifecycle exact-bytes record remains read-only evidence and never creates mutation authority."),
         ]);
-
-    private static string ResultsAndStreams()
-    {
-        var lines = new List<string>
-        {
-            "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            "  JSON writes one schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr.",
-        };
-        foreach (var status in Enum.GetValues<CliSemanticStatus>())
-        {
-            var definition = CliStatusDefinitions.Read(status);
-            lines.Add(string.Create(
-                CultureInfo.InvariantCulture,
-                $"  {definition.MachineName}: exit {definition.Disposition.ExitCode} and human {Stream(definition.Disposition.HumanOutputTarget)}."));
-        }
-
-        return string.Join(Environment.NewLine, lines);
-    }
-
-    private static string Stream(CliOutputTarget target)
-        => target switch
-        {
-            CliOutputTarget.StandardOutput => "stdout",
-            CliOutputTarget.StandardError => "stderr",
-            _ => throw new ArgumentOutOfRangeException(nameof(target), target, "The output target is not defined."),
-        };
 }

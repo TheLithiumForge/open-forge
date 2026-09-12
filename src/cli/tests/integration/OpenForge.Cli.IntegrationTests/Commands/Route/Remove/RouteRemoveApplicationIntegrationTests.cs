@@ -1,8 +1,10 @@
+using OpenForge.Cli.Core.Commands.Route.Remove;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.TestSupport;
 
@@ -176,16 +178,11 @@ public sealed class RouteRemoveApplicationIntegrationTests
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var prepared = await RouteRemoveRecoveryLifecycle.PrepareAsync(
-            new RouteRemoveRecoveryPreparationInput
-            {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
-            },
+            new RouteRemoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
             TestContext.Current.CancellationToken);
         Assert.NotNull(prepared.Preparation);
 
-        var progress = await RouteRemoveEffectApplication.Create().ApplyAsync(
+        var progress = await RouteRemoveOperationFactory.CreateEffectApplication().ApplyAsync(
             new RouteRemoveEffectApplicationInput
             {
                 Plan = plan,
@@ -216,14 +213,9 @@ public sealed class RouteRemoveApplicationIntegrationTests
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var prepared = await RouteRemoveRecoveryLifecycle.PrepareAsync(
-            new RouteRemoveRecoveryPreparationInput
-            {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
-            },
+            new RouteRemoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
             TestContext.Current.CancellationToken);
-        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(
+        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.Preparation.RecoveryBundlePreparation>(
             prepared.Preparation);
         var laterChange = Assert.Single(
             plan.Projection.FileChanges,
@@ -233,7 +225,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         const string concurrentContents = "Concurrent later-target edit.\n";
         workspace.WriteText("notes.md", concurrentContents);
 
-        var progress = await RouteRemoveEffectApplication.Create().ApplyAsync(
+        var progress = await RouteRemoveOperationFactory.CreateEffectApplication().ApplyAsync(
             new RouteRemoveEffectApplicationInput
             {
                 Plan = plan,
@@ -272,16 +264,11 @@ public sealed class RouteRemoveApplicationIntegrationTests
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var prepared = await RouteRemoveRecoveryLifecycle.PrepareAsync(
-            new RouteRemoveRecoveryPreparationInput
-            {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
-            },
+            new RouteRemoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
             TestContext.Current.CancellationToken);
-        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(
+        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.Preparation.RecoveryBundlePreparation>(
             prepared.Preparation);
-        var progress = await RouteRemoveEffectApplication.Create().ApplyAsync(
+        var progress = await RouteRemoveOperationFactory.CreateEffectApplication().ApplyAsync(
             new RouteRemoveEffectApplicationInput
             {
                 Plan = plan,
@@ -295,7 +282,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
             plan.Projection.FileChanges.Length + plan.Projection.DirectoryDeletions.Length,
             progress.Receipts.Length);
         Assert.All(progress.Receipts, AssertVerifiedReceipt);
-        var absence = await RouteRemovePlanBuilder.Create().BuildAbsenceAsync(
+        var absence = await RouteRemoveOperationFactory.CreatePlanBuilder().BuildAbsenceAsync(
             plan,
             TestContext.Current.CancellationToken);
         Assert.Null(absence.Plan);
@@ -312,7 +299,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         workspace.WriteText("late.md", lateReference);
 
         var completion = await new RouteRemoveApplicationCompletion(
-            RouteRemoveAppliedVerifier.Create()).CompleteAsync(
+            RouteRemoveOperationFactory.CreateAppliedVerifier()).CompleteAsync(
                 new RouteRemoveHeldApplication(plan, operationId, lease),
                 prepared,
                 progress,
@@ -338,16 +325,11 @@ public sealed class RouteRemoveApplicationIntegrationTests
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var prepared = await RouteRemoveRecoveryLifecycle.PrepareAsync(
-            new RouteRemoveRecoveryPreparationInput
-            {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
-            },
+            new RouteRemoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
             TestContext.Current.CancellationToken);
-        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(
+        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.Preparation.RecoveryBundlePreparation>(
             prepared.Preparation);
-        var progress = await RouteRemoveEffectApplication.Create().ApplyAsync(
+        var progress = await RouteRemoveOperationFactory.CreateEffectApplication().ApplyAsync(
             new RouteRemoveEffectApplicationInput
             {
                 Plan = plan,
@@ -375,7 +357,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
             StringComparison.Ordinal);
 
         var completion = await new RouteRemoveApplicationCompletion(
-            RouteRemoveAppliedVerifier.Create()).CompleteAsync(
+            RouteRemoveOperationFactory.CreateAppliedVerifier()).CompleteAsync(
                 new RouteRemoveHeldApplication(plan, operationId, lease),
                 prepared,
                 progress,
@@ -403,16 +385,11 @@ public sealed class RouteRemoveApplicationIntegrationTests
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var prepared = await RouteRemoveRecoveryLifecycle.PrepareAsync(
-            new RouteRemoveRecoveryPreparationInput
-            {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
-            },
+            new RouteRemoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
             TestContext.Current.CancellationToken);
-        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(
+        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.Preparation.RecoveryBundlePreparation>(
             prepared.Preparation);
-        var progress = await RouteRemoveEffectApplication.Create().ApplyAsync(
+        var progress = await RouteRemoveOperationFactory.CreateEffectApplication().ApplyAsync(
             new RouteRemoveEffectApplicationInput
             {
                 Plan = plan,
@@ -428,7 +405,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         workspace.WriteText(latePath, lateText);
 
         var completion = await new RouteRemoveApplicationCompletion(
-            RouteRemoveAppliedVerifier.Create()).CompleteAsync(
+            RouteRemoveOperationFactory.CreateAppliedVerifier()).CompleteAsync(
                 new RouteRemoveHeldApplication(plan, operationId, lease),
                 prepared,
                 progress,

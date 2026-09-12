@@ -1,6 +1,6 @@
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Library.Detach.Models.Application;
 

@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
@@ -142,15 +143,7 @@ internal static class RouteListJsonProjection
     {
         return new RouteListJsonWorkspace(
             workspace.LexicalRoot,
-            workspace.SelectedBy switch
-            {
-                CliWorkspaceSelectionMethod.CurrentDirectory => "current-directory",
-                CliWorkspaceSelectionMethod.ExplicitWorkspace => "explicit-workspace",
-                _ => throw new ArgumentOutOfRangeException(
-                    nameof(workspace),
-                    workspace.SelectedBy,
-                    "The workspace selection method is not defined."),
-            });
+            WorkspaceSelectionWireVocabulary.Read(workspace.SelectedBy));
     }
 
     private static RouteListJsonSelection Selection(RouteListSelection selection)

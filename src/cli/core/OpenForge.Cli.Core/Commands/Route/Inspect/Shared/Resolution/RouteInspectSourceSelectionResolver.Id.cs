@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 

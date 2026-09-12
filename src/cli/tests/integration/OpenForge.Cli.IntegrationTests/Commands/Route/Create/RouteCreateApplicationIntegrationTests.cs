@@ -6,7 +6,7 @@ using OpenForge.Cli.Core.Commands.Route.Create.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Create.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Create;

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using OpenForge.Cli.Core.Commands.Route.Remove;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
@@ -40,7 +41,7 @@ public sealed class RouteRemoveRevalidationIntegrationTests
     public async Task ChangedGeneratedRegionBlocksApplicationWithoutWrites()
     {
         using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-generated-race");
-        var build = await RouteRemovePlanBuilder.Create().BuildAsync(
+        var build = await RouteRemoveOperationFactory.CreatePlanBuilder().BuildAsync(
             new RouteRemoveRequest(
                 workspace.Workspace,
                 RouteRemoveIntegrationWorkspace.LeafId,
@@ -58,7 +59,7 @@ public sealed class RouteRemoveRevalidationIntegrationTests
                     StringComparison.Ordinal));
         var beforeRevalidation = workspace.SnapshotHashes();
 
-        var revalidation = await RouteRemovePlanRevalidator.Create().RevalidateAsync(
+        var revalidation = await RouteRemoveOperationFactory.CreatePlanRevalidator().RevalidateAsync(
             original,
             lease,
             TestContext.Current.CancellationToken);
@@ -73,7 +74,7 @@ public sealed class RouteRemoveRevalidationIntegrationTests
     public async Task ChangedSubjectBytesBlockApplicationWithoutWrites()
     {
         using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-subject-race");
-        var build = await RouteRemovePlanBuilder.Create().BuildAsync(
+        var build = await RouteRemoveOperationFactory.CreatePlanBuilder().BuildAsync(
             new RouteRemoveRequest(
                 workspace.Workspace,
                 RouteRemoveIntegrationWorkspace.LeafId,
@@ -88,7 +89,7 @@ public sealed class RouteRemoveRevalidationIntegrationTests
                 + "\nConcurrent subject edit.\n");
         var beforeRevalidation = workspace.SnapshotHashes();
 
-        var revalidation = await RouteRemovePlanRevalidator.Create().RevalidateAsync(
+        var revalidation = await RouteRemoveOperationFactory.CreatePlanRevalidator().RevalidateAsync(
             original,
             lease,
             TestContext.Current.CancellationToken);

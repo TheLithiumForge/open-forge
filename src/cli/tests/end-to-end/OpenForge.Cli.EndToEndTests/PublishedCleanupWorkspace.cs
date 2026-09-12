@@ -34,9 +34,9 @@ internal sealed class PublishedCleanupWorkspace : IDisposable
         _workspace = workspace;
         _lockStore = lockStore;
         _lockPath = _lockStore.Track(workspace.Path);
-        _localApplicationData = ResolveLocalApplicationData(lockStore.EnvironmentVariables);
-        _recoveryStoreRoot = System.IO.Path.Combine(_localApplicationData, "OpenForge", "recovery", "v1");
-        _selectedRecoveryDirectory = System.IO.Path.Combine(_recoveryStoreRoot, WorkspaceKey(workspace.Path));
+        _localApplicationData = lockStore.LocalApplicationDataDirectory;
+        _recoveryStoreRoot = lockStore.RecoveryStoreRoot;
+        _selectedRecoveryDirectory = lockStore.RecoveryWorkspaceDirectory(workspace.Path);
         _foreignRecoveryDirectory = System.IO.Path.Combine(
             _recoveryStoreRoot,
             Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes("foreign-workspace"))));
@@ -202,7 +202,7 @@ internal sealed class PublishedCleanupWorkspace : IDisposable
     private static void WriteFinal(string path, string workspacePath, Guid operationId)
     {
         var priorBytes = Encoding.UTF8.GetBytes("previous target bytes\n");
-        var workspaceKey = WorkspaceKey(workspacePath);
+        var workspaceKey = PublishedWorkspaceLockStore.RecoveryWorkspaceKey(workspacePath);
         var manifest = $$"""
             {
               "schemaVersion": 1,
@@ -254,48 +254,8 @@ internal sealed class PublishedCleanupWorkspace : IDisposable
         payloadStream.Write(priorBytes);
     }
 
-    private static string WorkspaceKey(string workspacePath)
-    {
-        var fullPath = System.IO.Path.GetFullPath(workspacePath);
-        var normalized = System.IO.Path.TrimEndingDirectorySeparator(fullPath);
-        normalized = string.IsNullOrEmpty(normalized)
-            ? System.IO.Path.GetPathRoot(fullPath)
-                ?? throw new InvalidOperationException("The cleanup fixture requires a rooted workspace.")
-            : normalized;
-        var identity = OperatingSystem.IsWindows() ? normalized.ToUpperInvariant() : normalized;
-        return Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(identity)));
-    }
-
     private static string Hash(byte[] bytes)
         => Convert.ToHexStringLower(SHA256.HashData(bytes));
-
-    private static string ResolveLocalApplicationData(IReadOnlyDictionary<string, string> environment)
-    {
-        string localApplicationData;
-        if (OperatingSystem.IsWindows())
-        {
-            localApplicationData = Environment.GetFolderPath(
-                Environment.SpecialFolder.LocalApplicationData,
-                Environment.SpecialFolderOption.DoNotVerify);
-        }
-        else if (environment.TryGetValue("XDG_DATA_HOME", out var configured))
-        {
-            localApplicationData = configured;
-        }
-        else
-        {
-            throw new InvalidOperationException("The cleanup fixture requires isolated local application data.");
-        }
-
-        if (string.IsNullOrWhiteSpace(localApplicationData)
-            || !System.IO.Path.IsPathFullyQualified(localApplicationData))
-        {
-            throw new InvalidOperationException(
-                "The cleanup fixture requires an absolute local application-data path.");
-        }
-
-        return System.IO.Path.GetFullPath(localApplicationData);
-    }
 
     private static void CaptureDirectory(
         IDictionary<string, string> state,

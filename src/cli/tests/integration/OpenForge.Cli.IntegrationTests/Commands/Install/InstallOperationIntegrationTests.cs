@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Commands.Install.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 

@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Library.Shared.Completion;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Completion;

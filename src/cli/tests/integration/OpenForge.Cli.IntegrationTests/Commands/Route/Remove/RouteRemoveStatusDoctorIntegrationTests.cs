@@ -1,9 +1,10 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
@@ -23,12 +24,7 @@ public sealed class RouteRemoveStatusDoctorIntegrationTests
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var prepared = await RouteRemoveRecoveryLifecycle.PrepareAsync(
-            new RouteRemoveRecoveryPreparationInput
-            {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
-            },
+            new RouteRemoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
             TestContext.Current.CancellationToken);
         Assert.Equal(RouteRemoveRecoveryPreparationState.Prepared, prepared.State);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);

@@ -5,7 +5,7 @@ using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
@@ -18,10 +18,9 @@ internal sealed partial class RouteUpdateNavigationPlanner
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
 
     internal async ValueTask<RouteUpdateNavigationBuild> BuildAsync(
-        RouteUpdateNavigationInput input,
+        RouteUpdateDestinationPlan destination,
         CancellationToken cancellationToken)
     {
-        var destination = input.Destination;
         var observation = destination.Body.Metadata.Observation;
         var formation = new GeneratedNavigationFormationBuilder().Build(
             observation.Catalogue);
@@ -84,21 +83,21 @@ internal sealed partial class RouteUpdateNavigationPlanner
         var regionInputs = new List<GeneratedNavigationRegionInput>();
         var snapshots = new Dictionary<string, FileStateSnapshot>(
             StringComparer.Ordinal);
-        foreach (var region in regionSources)
+        foreach (var (source, isTarget) in regionSources)
         {
-            if (region.IsTarget)
+            if (isTarget)
             {
                 var text = StrictUtf8.GetString(destination.IntendedTargetBytes.AsSpan());
                 regionInputs.Add(new GeneratedNavigationRegionInput(
-                    region.Source,
+                    source,
                     new MarkdownDocumentParser().Parse(text)));
                 snapshots.Add(
-                    region.Source.Identity.CanonicalBasePath,
+                    source.Identity.CanonicalBasePath,
                     observation.TargetSnapshot);
                 continue;
             }
 
-            var read = await reader.ReadAsync(region.Source.Base, cancellationToken)
+            var read = await reader.ReadAsync(source.Base, cancellationToken)
                 .ConfigureAwait(false);
             if (!TryReadText(read, out var regionText, out var finding))
             {
@@ -106,10 +105,10 @@ internal sealed partial class RouteUpdateNavigationPlanner
             }
 
             regionInputs.Add(new GeneratedNavigationRegionInput(
-                region.Source,
+                source,
                 new MarkdownDocumentParser().Parse(regionText)));
             snapshots.Add(
-                region.Source.Identity.CanonicalBasePath,
+                source.Identity.CanonicalBasePath,
                 await new SourceDocumentSnapshotReader()
                     .ReadAsync(observation.Request.Workspace, read, cancellationToken)
                     .ConfigureAwait(false));
@@ -137,12 +136,12 @@ internal sealed partial class RouteUpdateNavigationPlanner
                 regionInputs,
                 metadata.Values));
         var plans = ImmutableArray.CreateBuilder<RouteUpdateGeneratedRegionPlan>();
-        foreach (var region in regionSources)
+        foreach (var (source, isTarget) in regionSources)
         {
             var projected = projection.Regions.Single(candidate =>
                 string.Equals(
                     candidate.Source.Identity.CanonicalBasePath,
-                    region.Source.Identity.CanonicalBasePath,
+                    source.Identity.CanonicalBasePath,
                     StringComparison.Ordinal));
             if (projected.State != GeneratedNavigationRegionState.Available
                 || projected.Change is not { } change)
@@ -160,10 +159,10 @@ internal sealed partial class RouteUpdateNavigationPlanner
 
             plans.Add(new RouteUpdateGeneratedRegionPlan
             {
-                Source = region.Source,
-                Snapshot = snapshots[region.Source.Identity.CanonicalBasePath],
+                Source = source,
+                Snapshot = snapshots[source.Identity.CanonicalBasePath],
                 Change = change,
-                IsTarget = region.IsTarget,
+                IsTarget = isTarget,
             });
         }
 

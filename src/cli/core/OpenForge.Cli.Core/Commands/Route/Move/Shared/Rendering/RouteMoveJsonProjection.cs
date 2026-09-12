@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 
@@ -47,15 +48,7 @@ internal static partial class RouteMoveJsonProjection
         => new()
         {
             Path = workspace.LexicalRoot,
-            SelectedBy = workspace.SelectedBy switch
-            {
-                CliWorkspaceSelectionMethod.CurrentDirectory => "current-directory",
-                CliWorkspaceSelectionMethod.ExplicitWorkspace => "explicit-workspace",
-                _ => throw new ArgumentOutOfRangeException(
-                    nameof(workspace),
-                    workspace.SelectedBy,
-                    "The workspace selection method is not defined."),
-            },
+            SelectedBy = WorkspaceSelectionWireVocabulary.Read(workspace.SelectedBy),
         };
 
     private static RouteMoveJsonSource Source(RouteMoveSource source)

@@ -3,7 +3,7 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Shared.Resolution;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Shared.Source;
 

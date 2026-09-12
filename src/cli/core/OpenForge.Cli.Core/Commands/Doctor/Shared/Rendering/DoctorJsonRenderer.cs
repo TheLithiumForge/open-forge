@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Doctor.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Rendering;
 

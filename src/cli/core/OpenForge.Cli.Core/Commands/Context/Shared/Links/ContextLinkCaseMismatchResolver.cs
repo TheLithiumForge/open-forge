@@ -1,17 +1,13 @@
+using OpenForge.Cli.Core.Commands.Context.Shared.Links.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Context.Shared.Links;
-
-internal sealed record ContextLinkDestinationResolution
-{
-    public required SourceLinkDestinationFacts Facts { get; init; }
-
-    public required bool CaseMismatch { get; init; }
-}
 
 internal static class ContextLinkCaseMismatchResolver
 {

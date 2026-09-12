@@ -1,12 +1,15 @@
 using System.Text;
 using System.Text.Json;
-using OpenForge.Cli.Core.Framework.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
+using OpenForge.Cli.Core.Framework.Lifecycle.Shared.Validation;
 using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Lifecycle;
 
@@ -311,29 +314,41 @@ public sealed class LifecycleSchemaContractTests
             Path.Combine(workspace.LexicalRoot, "forged.json"),
             Path.Combine(workspace.PhysicalRoot, "forged.json"),
             "bytes"u8);
-        Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Available(
+        var forgedPath = Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Available(
             workspace,
             LifecycleSection.Framework,
             forgedFile,
             canonicalEnvelope,
             framework,
             extensions: null));
+        Assert.Equal("file", forgedPath.ParamName);
+        Assert.Equal(
+            new ArgumentException(message: "A lifecycle file snapshot must use the canonical workspace lifecycle path.", paramName: "file").Message,
+            forgedPath.Message);
 
-        Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.SectionMissing(
+        var presentSection = Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.SectionMissing(
             workspace,
             LifecycleSection.Framework,
             file,
             canonicalEnvelope));
+        Assert.Equal("envelope", presentSection.ParamName);
+        Assert.Equal(
+            new ArgumentException(message: "A section-missing lifecycle read cannot carry its selected raw section.", paramName: "envelope").Message,
+            presentSection.Message);
 
-        Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Available(
+        var missingRaw = Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Available(
             workspace,
             LifecycleSection.Framework,
             file,
             Envelope(workspace, framework: null, extensions: null),
             framework,
             extensions: null));
+        Assert.Equal("envelope", missingRaw.ParamName);
+        Assert.Equal(
+            new ArgumentException(message: "An available lifecycle read requires a present selected raw section.", paramName: "envelope").Message,
+            missingRaw.Message);
 
-        Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Available(
+        var mismatchedRaw = Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Available(
             workspace,
             LifecycleSection.Framework,
             file,
@@ -343,8 +358,12 @@ public sealed class LifecycleSchemaContractTests
                 extensions: null),
             framework,
             extensions: null));
+        Assert.Equal("raw", mismatchedRaw.ParamName);
+        Assert.Equal(
+            new ArgumentException(message: "The selected Framework raw value does not equal its typed state.", paramName: "raw").Message,
+            mismatchedRaw.Message);
 
-        Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Available(
+        var mismatchedWorkspace = Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Available(
             workspace,
             LifecycleSection.Framework,
             file,
@@ -358,6 +377,10 @@ public sealed class LifecycleSchemaContractTests
             },
             framework,
             extensions: null));
+        Assert.Equal("envelope", mismatchedWorkspace.ParamName);
+        Assert.Equal(
+            new ArgumentException(message: "The lifecycle workspace binding does not match the selected workspace.", paramName: "envelope").Message,
+            mismatchedWorkspace.Message);
     }
 
     [Fact(DisplayName = "Lifecycle Framework planning emits exact canonical envelope bytes for a semantic change"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
@@ -474,6 +497,236 @@ public sealed class LifecycleSchemaContractTests
         Assert.Equal(LifecycleWritePlanState.Unchanged, result.State);
         Assert.Null(result.Change);
         Assert.Equal(originalBytes, retainedBytes);
+    }
+
+    [Fact(DisplayName = "Available lifecycle reads validate document facts before typed selection and workspace"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void AvailableChecksDocumentBeforeTypedSelectionAndWorkspace()
+    {
+        var workspace = Workspace();
+        var envelope = Envelope(workspace, FrameworkState(), extensions: null);
+        var missing = FileStateSnapshot.Missing(LifecyclePath(workspace));
+
+        var absentFile = Assert.Throws<ArgumentNullException>(() => LifecycleStoreReadResult.Available(
+            workspace: null!, selectedSection: (LifecycleSection)999, file: null!, envelope: null!, framework: null, extensions: null));
+        Assert.Equal("file", absentFile.ParamName);
+
+        var absentEnvelope = Assert.Throws<ArgumentNullException>(() => LifecycleStoreReadResult.Available(
+            workspace: null!, selectedSection: (LifecycleSection)999, file: missing, envelope: null!, framework: null, extensions: null));
+        Assert.Equal("envelope", absentEnvelope.ParamName);
+
+        var wrongFile = Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Available(
+            workspace: null!, selectedSection: (LifecycleSection)999, file: missing, envelope: envelope, framework: null, extensions: null));
+        Assert.Equal("file", wrongFile.ParamName);
+        Assert.Equal(new ArgumentException(message: "A lifecycle document read requires exact file bytes.", paramName: "file").Message, wrongFile.Message);
+    }
+
+    [Fact(DisplayName = "Available lifecycle reads check selected typed facts before workspace and undefined selection"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void AvailableChecksTypedSelectionBeforeWorkspaceAndUndefinedSection()
+    {
+        var workspace = Workspace();
+        var framework = FrameworkState();
+        var envelope = Envelope(workspace, framework, extensions: null);
+        var file = FileSnapshot(workspace, Serialize(envelope));
+
+        var missingTyped = Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Available(
+            workspace: null!, selectedSection: LifecycleSection.Framework, file: file, envelope: envelope, framework: null, extensions: null));
+        Assert.Equal("selectedSection", missingTyped.ParamName);
+        Assert.Equal(
+            new ArgumentException(message: "An available lifecycle read requires only its selected typed section.", paramName: "selectedSection").Message,
+            missingTyped.Message);
+
+        var undefinedTyped = Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Available(
+            workspace: null!, selectedSection: (LifecycleSection)999, file: file, envelope: envelope, framework: framework, extensions: null));
+        Assert.Equal("selectedSection", undefinedTyped.ParamName);
+        Assert.Equal(
+            new ArgumentException(message: "An available lifecycle read requires only its selected typed section.", paramName: "selectedSection").Message,
+            undefinedTyped.Message);
+    }
+
+    [Fact(DisplayName = "Missing lifecycle factories check their document facts before workspace and selection"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void MissingFactoriesCheckDocumentBeforeWorkspaceAndSelection()
+    {
+        var workspace = Workspace();
+        var envelope = Envelope(workspace, framework: null, extensions: ExtensionsState());
+        var file = FileSnapshot(workspace, Serialize(envelope));
+        var missing = FileStateSnapshot.Missing(LifecyclePath(workspace));
+
+        var documentMissing = Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.DocumentMissing(
+            workspace: null!, selectedSection: (LifecycleSection)999, file: file));
+        Assert.Equal("file", documentMissing.ParamName);
+        Assert.Equal(
+            new ArgumentException(message: "A missing lifecycle document requires a missing file snapshot.", paramName: "file").Message,
+            documentMissing.Message);
+
+        var sectionMissing = Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.SectionMissing(
+            workspace: null!, selectedSection: (LifecycleSection)999, file: missing, envelope: envelope));
+        Assert.Equal("file", sectionMissing.ParamName);
+        Assert.Equal(new ArgumentException(message: "A lifecycle document read requires exact file bytes.", paramName: "file").Message, sectionMissing.Message);
+    }
+
+    [Fact(DisplayName = "Invalid and blocked lifecycle reads check required causes before workspace and selection"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void InvalidAndBlockedCheckCauseBeforeWorkspaceAndSelection()
+    {
+        var workspace = Workspace();
+        var envelope = Envelope(workspace, FrameworkState(), extensions: null);
+        var file = FileSnapshot(workspace, Serialize(envelope));
+
+        var absentFile = Assert.Throws<ArgumentNullException>(() => LifecycleStoreReadResult.Invalid(
+            workspace: null!, selectedSection: (LifecycleSection)999, file: null!, cause: " "));
+        Assert.Equal("file", absentFile.ParamName);
+
+        var invalid = Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Invalid(
+            workspace: null!, selectedSection: (LifecycleSection)999, file: file, cause: " "));
+        Assert.Equal("cause", invalid.ParamName);
+
+        var blocked = Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Blocked(
+            workspace: null!, selectedSection: (LifecycleSection)999, file: null, cause: " "));
+        Assert.Equal("cause", blocked.ParamName);
+    }
+
+    [Fact(DisplayName = "Unavailable lifecycle reads require a failure before workspace and selection"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void UnavailableChecksFailureBeforeWorkspaceAndSelection()
+    {
+        var failure = Assert.Throws<ArgumentNullException>(() => LifecycleStoreReadResult.Unavailable(
+            workspace: null!, selectedSection: (LifecycleSection)999, failure: null!));
+
+        Assert.Equal("failure", failure.ParamName);
+    }
+
+    [Fact(DisplayName = "Lifecycle reads check workspace before selection and selection before snapshot path"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void LifecycleReadsCheckWorkspaceThenSectionThenSnapshotPath()
+    {
+        var workspace = Workspace();
+        var envelope = Envelope(workspace, FrameworkState(), extensions: null);
+        var foreignPath = Path.Combine(workspace.LexicalRoot, "foreign.json");
+        var foreignFile = FileStateSnapshot.File(logicalPath: foreignPath, physicalPath: foreignPath, bytes: Serialize(envelope));
+
+        var absentWorkspace = Assert.Throws<ArgumentNullException>(() => LifecycleStoreReadResult.Blocked(
+            workspace: null!, selectedSection: (LifecycleSection)999, file: foreignFile, cause: "Blocked."));
+        Assert.Equal("workspace", absentWorkspace.ParamName);
+
+        var undefinedSection = Assert.Throws<ArgumentOutOfRangeException>(() => LifecycleStoreReadResult.Blocked(
+            workspace: workspace, selectedSection: (LifecycleSection)999, file: foreignFile, cause: "Blocked."));
+        Assert.Equal("selectedSection", undefinedSection.ParamName);
+        Assert.Equal((LifecycleSection)999, undefinedSection.ActualValue);
+        Assert.Equal(
+            new ArgumentOutOfRangeException(paramName: "selectedSection", actualValue: (LifecycleSection)999, message: "The lifecycle section is not defined.").Message,
+            undefinedSection.Message);
+
+        var wrongPath = Assert.Throws<ArgumentException>(() => LifecycleStoreReadResult.Blocked(
+            workspace: workspace, selectedSection: LifecycleSection.Framework, file: foreignFile, cause: "Blocked."));
+        Assert.Equal("file", wrongPath.ParamName);
+        Assert.Equal(
+            new ArgumentException(message: "A lifecycle file snapshot must use the canonical workspace lifecycle path.", paramName: "file").Message,
+            wrongPath.Message);
+    }
+
+    [Fact(DisplayName = "Cancelled lifecycle reads check workspace before undefined selection"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void CancelledChecksWorkspaceBeforeUndefinedSection()
+    {
+        var absentWorkspace = Assert.Throws<ArgumentNullException>(() => LifecycleStoreReadResult.Cancelled(
+            workspace: null!, selectedSection: (LifecycleSection)999));
+        Assert.Equal("workspace", absentWorkspace.ParamName);
+
+        var undefinedSection = Assert.Throws<ArgumentOutOfRangeException>(() => LifecycleStoreReadResult.Cancelled(
+            workspace: Workspace(), selectedSection: (LifecycleSection)999));
+        Assert.Equal("selectedSection", undefinedSection.ParamName);
+        Assert.Equal((LifecycleSection)999, undefinedSection.ActualValue);
+        Assert.Equal(
+            new ArgumentOutOfRangeException(paramName: "selectedSection", actualValue: (LifecycleSection)999, message: "The lifecycle section is not defined.").Message,
+            undefinedSection.Message);
+    }
+
+    [Theory(DisplayName = "Invalid and blocked lifecycle reads retain exact facts and bounded untrimmed causes"), InlineData(false), InlineData(true)]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void InvalidAndBlockedRetainExactFactsAndBoundedCauses(bool oversized)
+    {
+        var workspace = Workspace();
+        var envelope = Envelope(workspace, FrameworkState(), extensions: null);
+        var originalBytes = Serialize(envelope);
+        var file = FileSnapshot(workspace, originalBytes);
+        var cause = oversized ? $"  {new string('c', 260)}  " : "  retained cause  ";
+        var expectedCause = oversized ? $"  {new string('c', 254)}" : "  retained cause  ";
+        var invalid = LifecycleStoreReadResult.Invalid(
+            workspace: workspace, selectedSection: LifecycleSection.Extensions, file: file, cause: cause);
+        var blocked = LifecycleStoreReadResult.Blocked(
+            workspace: workspace, selectedSection: LifecycleSection.Extensions, file: file, cause: cause);
+
+        Assert.Equal(LifecycleStoreReadState.Invalid, invalid.State);
+        Assert.Equal(LifecycleStoreReadState.Blocked, blocked.State);
+        LifecycleStoreReadResult[] results = [invalid, blocked];
+        foreach (var result in results)
+        {
+            Assert.Same(workspace, result.Workspace);
+            Assert.Equal(LifecycleSection.Extensions, result.SelectedSection);
+            Assert.Same(file, result.File);
+            var retainedFile = Assert.IsType<FileStateSnapshot>(result.File);
+            Assert.Equal(originalBytes, retainedFile.Bytes.ToArray());
+            Assert.Null(result.Envelope);
+            Assert.Null(result.Framework);
+            Assert.Null(result.Extensions);
+            Assert.Null(result.Failure);
+            Assert.Equal(expectedCause, result.Cause);
+        }
+    }
+
+    [Fact(DisplayName = "Blocked lifecycle reads retain absent file facts and untrimmed cause"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void BlockedRetainsNullableFileAndCause()
+    {
+        var workspace = Workspace();
+        var result = LifecycleStoreReadResult.Blocked(
+            workspace: workspace, selectedSection: LifecycleSection.Framework, file: null, cause: "  no file observed  ");
+
+        Assert.Equal(LifecycleStoreReadState.Blocked, result.State);
+        Assert.Same(workspace, result.Workspace);
+        Assert.Equal(LifecycleSection.Framework, result.SelectedSection);
+        Assert.Null(result.File);
+        Assert.Null(result.Envelope);
+        Assert.Null(result.Framework);
+        Assert.Null(result.Extensions);
+        Assert.Null(result.Failure);
+        Assert.Equal("  no file observed  ", result.Cause);
+    }
+
+    [Theory(DisplayName = "Unavailable lifecycle reads retain the admitted failure and its exact direct cause"), InlineData(false), InlineData(true)]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void UnavailableRetainsFailureAndDirectCause(bool oversized)
+    {
+        var workspace = Workspace();
+        var cause = oversized ? $"  {new string('f', 260)}  " : "  filesystem failure  ";
+        var expectedCause = oversized ? $"  {new string('f', 254)}" : "  filesystem failure  ";
+        var failure = new FilesystemFailure(FilesystemFailureKind.InputOutput, cause);
+        Assert.Equal(expectedCause, failure.DirectCause);
+
+        var result = LifecycleStoreReadResult.Unavailable(workspace, LifecycleSection.Extensions, failure);
+
+        Assert.Equal(LifecycleStoreReadState.Unavailable, result.State);
+        Assert.Same(workspace, result.Workspace);
+        Assert.Equal(LifecycleSection.Extensions, result.SelectedSection);
+        Assert.Null(result.File);
+        Assert.Null(result.Envelope);
+        Assert.Null(result.Framework);
+        Assert.Null(result.Extensions);
+        Assert.Same(failure, result.Failure);
+        Assert.Equal(expectedCause, result.Cause);
+        Assert.Same(failure.DirectCause, result.Cause);
+    }
+
+    [Fact(DisplayName = "Cancelled lifecycle reads retain only workspace and selected section"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void CancelledRetainsOnlyWorkspaceAndSelection()
+    {
+        var workspace = Workspace();
+        var result = LifecycleStoreReadResult.Cancelled(workspace, LifecycleSection.Extensions);
+
+        Assert.Equal(LifecycleStoreReadState.Cancelled, result.State);
+        Assert.Same(workspace, result.Workspace);
+        Assert.Equal(LifecycleSection.Extensions, result.SelectedSection);
+        Assert.Null(result.File);
+        Assert.Null(result.Envelope);
+        Assert.Null(result.Framework);
+        Assert.Null(result.Extensions);
+        Assert.Null(result.Failure);
+        Assert.Null(result.Cause);
     }
 
     private static FrameworkLifecycleState FrameworkState()

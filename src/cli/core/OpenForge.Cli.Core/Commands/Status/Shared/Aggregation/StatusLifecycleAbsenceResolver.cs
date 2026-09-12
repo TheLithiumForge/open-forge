@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Status.Models.Operation;
 using OpenForge.Cli.Core.Framework.OperationalContributors;
+using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 
 namespace OpenForge.Cli.Core.Commands.Status.Shared.Aggregation;
 

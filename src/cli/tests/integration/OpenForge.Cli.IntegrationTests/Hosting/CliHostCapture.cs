@@ -1,4 +1,4 @@
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Hosting;
 
 namespace OpenForge.Cli.IntegrationTests.Hosting;

@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Shared.Source;

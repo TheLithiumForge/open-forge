@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Create.Shared.Result;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Create.Shared.Application;

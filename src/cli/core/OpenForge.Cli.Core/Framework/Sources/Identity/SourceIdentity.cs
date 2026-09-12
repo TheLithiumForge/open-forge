@@ -19,7 +19,7 @@ internal static class SourceIdentity
         SourceFormClassifier.TryClassify(canonicalPath, out var form);
         if (form == SourceDocumentForm.OverwriteCompanion)
         {
-            fileName = fileName[..^".overwrite.md".Length] + ".md";
+            fileName = SourceOverwritePath.ReadBasePath(fileName);
             var basePath = string.Join('/', directorySegments.Append(fileName));
             var canonicalBasePath = $".agents/{basePath}";
             if (!SourceFormClassifier.TryClassify(canonicalBasePath, out form))

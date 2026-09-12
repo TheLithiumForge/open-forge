@@ -5,7 +5,7 @@ using OpenForge.Cli.Core.Commands.Find.Shared.Documents;
 using OpenForge.Cli.Core.Commands.Find.Shared.Matching;
 using OpenForge.Cli.Core.Commands.Find.Shared.Projection;
 using OpenForge.Cli.Core.Commands.Find.Shared.Selection;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;

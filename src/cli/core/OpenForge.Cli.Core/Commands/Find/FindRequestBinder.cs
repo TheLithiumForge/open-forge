@@ -7,17 +7,16 @@ using OpenForge.Cli.Core.Commands.Find.Models.Query;
 using OpenForge.Cli.Core.Commands.Find.Models.Request;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Models.Selection;
-using OpenForge.Cli.Core.Shell.Composition;
-using OpenForge.Cli.Core.Shell.Composition.Models;
-using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
-using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
-using OpenForge.Cli.Core.Commands.Find.Shared.Result;
 using OpenForge.Cli.Core.Commands.Find.Shared.Query;
+using OpenForge.Cli.Core.Commands.Find.Shared.Result;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Shell.Composition.Models;
+using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 
 namespace OpenForge.Cli.Core.Commands.Find;
 

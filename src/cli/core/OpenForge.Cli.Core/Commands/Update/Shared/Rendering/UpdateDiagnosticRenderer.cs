@@ -1,7 +1,9 @@
 using System.Globalization;
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Rendering;
 
@@ -39,14 +41,14 @@ internal static class UpdateDiagnosticRenderer
         {
             var target = finding.Target is null
                 ? "none"
-                : UpdateTextEscaping.Escape(
+                : CommandTextEscaping.Escape(
                     finding.Target,
-                    UpdateTextEscaping.DiagnosticValueLimit);
+                    CommandTextEscaping.DiagnosticValueLimit);
             values.Add(
-                $"finding={UpdateDefinitions.ReadMachineName(finding.Code)}:target={target}:cause={UpdateTextEscaping.Escape(finding.Cause, UpdateTextEscaping.DiagnosticValueLimit)}");
+                $"finding={UpdateDefinitions.ReadMachineName(finding.Code)}:target={target}:cause={CommandTextEscaping.Escape(finding.Cause, CommandTextEscaping.DiagnosticValueLimit)}");
         }
 
-        return UpdateTextEscaping.Escape(
+        return CommandTextEscaping.Escape(
             string.Join("; ", values),
             MaximumDiagnosticLength);
     }

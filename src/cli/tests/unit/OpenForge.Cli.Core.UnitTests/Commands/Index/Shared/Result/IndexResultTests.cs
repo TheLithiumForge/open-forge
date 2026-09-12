@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Commands.Index.Models.Selection;
 using OpenForge.Cli.Core.Commands.Index.Shared.Result;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.UnitTests.Commands.Index.Shared;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Index.Shared.Result;

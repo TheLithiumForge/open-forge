@@ -178,14 +178,6 @@ internal sealed class ContextRequestParser
         };
 }
 
-internal enum ContextBindingError
-{
-    Input,
-    Source,
-    Content,
-    LinkDepth,
-}
-
 internal sealed class ContextBindingException(
     ContextBindingError error,
     string? subject,

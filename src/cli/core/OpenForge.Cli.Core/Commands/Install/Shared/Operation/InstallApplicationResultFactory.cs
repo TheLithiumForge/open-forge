@@ -63,7 +63,7 @@ internal static class InstallApplicationResultFactory
             {
                 ManagementState = plan.ManagementState,
                 PlannedDirectoryCount = plan.DirectoryCreations.Count,
-                PlannedFileCount = plan.FileChanges.Count,
+                PlannedFileCount = plan.PlannedFileCount,
                 AppliedDirectoryCount = progress.AppliedDirectoryCount,
                 AppliedTargetFileCount = progress.AppliedTargetFileCount,
                 LifecyclePublished = progress.LifecyclePublished,

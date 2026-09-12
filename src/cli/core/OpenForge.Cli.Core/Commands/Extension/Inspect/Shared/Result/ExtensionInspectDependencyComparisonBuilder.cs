@@ -1,5 +1,4 @@
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Result;
 

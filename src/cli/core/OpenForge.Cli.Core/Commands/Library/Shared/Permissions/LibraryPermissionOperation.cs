@@ -2,9 +2,10 @@ using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Document;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Observation;
 using OpenForge.Cli.Core.Framework.Permissions.Models.Planning;
@@ -12,7 +13,7 @@ using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using OpenForge.Cli.Core.Framework.Permissions.Shared.Completion;
 using OpenForge.Cli.Core.Framework.Permissions.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Permissions.Shared.Planning;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Interaction;
 
 namespace OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
@@ -104,10 +105,7 @@ internal sealed class LibraryPermissionOperation(CliInteractiveSession interacti
             return stage.Result.Decision == WorkspacePermissionDecision.NotRequired;
         }
         var current = await WorkspacePermissionReader.ReadAsync(new PhysicalPathResolver(), lease.Request.Workspace, cancellationToken).ConfigureAwait(false);
-        return before.State == current.State
-            && before.Snapshot is { } expected && current.Snapshot is { } actual
-            && expected.Expectation == actual.Expectation
-            && expected.Bytes.AsSpan().SequenceEqual(actual.Bytes.AsSpan());
+        return before.MatchesObservation(current);
     }
 
     internal static async ValueTask<LibraryPermissionApplication> ApplyAsync(
@@ -157,20 +155,7 @@ internal sealed class LibraryPermissionOperation(CliInteractiveSession interacti
         PlannedFileChange? change,
         LibraryPermissionFailure? failure)
     {
-        var action = change?.Kind switch
-        {
-            null => WorkspacePermissionAction.None,
-            PlannedFileChangeKind.Create => WorkspacePermissionAction.Create,
-            PlannedFileChangeKind.Replace => WorkspacePermissionAction.Replace,
-            _ => throw new InvalidOperationException("Permission approval can only create or replace its consumer document."),
-        };
-        RecoveryBundleTarget? recovery = null;
-        if (change is not null && observation?.Snapshot is { } before)
-        {
-            recovery = change.Kind == PlannedFileChangeKind.Create
-                ? RecoveryBundleTarget.CreateReversible(change, before)
-                : RecoveryBundleTarget.Create(change, before);
-        }
+        var (action, recovery) = WorkspacePermissionChangePlanner.ReadActionAndRecovery(observation, change);
         return new()
         {
             Observation = observation,

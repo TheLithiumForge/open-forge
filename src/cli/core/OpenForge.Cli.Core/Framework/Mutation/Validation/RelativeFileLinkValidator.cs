@@ -1,6 +1,6 @@
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Validation;
@@ -23,7 +23,7 @@ internal static class RelativeFileLinkValidator
                 "The expected and observed link leaves do not identify the same logical path.");
         }
 
-        if (!Matches(effect.Expected, expected))
+        if (!effect.Expected.MatchesObservation(expected))
         {
             return RelativeFileLinkValidationResult.Blocked(
                 effect,
@@ -56,10 +56,4 @@ internal static class RelativeFileLinkValidator
                 actual,
                 "The destination leaf no longer matches the exact planned link state.");
     }
-
-    private static bool Matches(
-        RelativeFileLinkState expected,
-        NoFollowLeafObservation observation)
-        => expected.State == observation.State
-            && (expected.Link is null || expected.Link == observation.RelativeFileLink);
 }

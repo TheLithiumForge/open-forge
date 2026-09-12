@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 

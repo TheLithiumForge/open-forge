@@ -415,9 +415,9 @@ Conformance must cover source and selection rules, dependency failures and
 ordering, Framework-anchor gating, trusted/untrusted/absent/unavailable state,
 initial force and managed-divergence block, exact bounded prompt outcomes,
 shared owners, Library-record and projection collisions, independent no-follow
-final-leaf guards, semantic fingerprints, generated navigation, strict
-`.agents/`-descendant payload validation before planning, directory effects
-limited to missing descendants beneath the established anchor, reserved paths,
+final-leaf guards, semantic fingerprints, generated navigation, eligible
+workspace-relative payload validation before planning, directory effects limited
+to missing descendants beneath the workspace for admitted targets, reserved paths,
 complete planning, dependency-first target/generated application,
 target-topology verification, last-effect Extension lifecycle publication,
 final target, Extension lifecycle, and Framework lifecycle rereads, external

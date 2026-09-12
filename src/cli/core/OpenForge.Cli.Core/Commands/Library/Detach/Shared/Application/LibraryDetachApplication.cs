@@ -6,12 +6,12 @@ namespace OpenForge.Cli.Core.Commands.Library.Detach.Shared.Application;
 
 internal static class LibraryDetachApplication
 {
-    internal static async ValueTask<LibraryDetachApplicationOutcome> ApplyAsync(
+    internal static async ValueTask<LibraryExecutionEvidence> ApplyAsync(
         LibraryDetachApplicationInput input,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(input);
-        var run = await LibraryMutationApplicationRunner.ApplyAsync(
+        return await LibraryMutationApplicationRunner.ApplyAsync(
             new LibraryMutationApplicationRequest
             {
                 Permissions = input.Plan.Permissions,
@@ -24,11 +24,6 @@ internal static class LibraryDetachApplication
                 ProtectedSourceRoots = [.. (input.Plan.Input.Record.Record?.Libraries ?? []).Select(library => library.SourceRoot)],
             },
             cancellationToken).ConfigureAwait(false);
-        return new LibraryDetachApplicationOutcome
-        {
-            Application = run.Application,
-            Execution = run.Execution,
-        };
     }
 
 }

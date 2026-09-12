@@ -1,10 +1,11 @@
-using OpenForge.Cli.Core.Framework.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Comparison;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Recovery.Comparison;
 
@@ -100,6 +101,47 @@ public sealed class LibraryRecoveryEntryComparerTests
         Assert.Equal(RecoveryBundleTargetComparisonState.Unavailable, result.State);
         Assert.Null(result.Observed);
         Assert.False(string.IsNullOrWhiteSpace(result.Cause));
+    }
+
+    [Fact(DisplayName = "Equal prior and intended recovery identities retain Prior precedence")]
+    public void EqualPriorAndIntendedRetainsPriorPrecedence()
+    {
+        var priorIdentity = RecoveryContentIdentity.FromBytes("same"u8);
+        var intendedIdentity = RecoveryContentIdentity.FromBytes("same"u8);
+        var prior = RecoveryEntryState.Ordinary(priorIdentity);
+        var intended = RecoveryEntryState.Ordinary(intendedIdentity);
+        Assert.NotSame(priorIdentity, intendedIdentity);
+        Assert.Equal(priorIdentity, intendedIdentity);
+        Assert.NotSame(prior, intended);
+        Assert.Equal(prior, intended);
+        var workspacePath = Path.GetFullPath("comparison-workspace");
+        var workspace = new CliWorkspace(
+            lexicalRoot: workspacePath,
+            physicalRoot: workspacePath,
+            selectedBy: CliWorkspaceSelectionMethod.ExplicitWorkspace);
+        var entry = RecoveryEntry.Create(
+            ordinal: 0,
+            logicalPath: CanonicalRelativePath.Create(".agents/a.md"),
+            kind: RecoveryEntryKind.OrdinaryReplace,
+            prior: prior,
+            intended: intended,
+            priorPayload: "payloads/00000000.bin");
+        var context = new RecoveryEntryComparisonContext(workspace, entry);
+        var observedIdentity = RecoveryContentIdentity.FromBytes("same"u8);
+        var leaf = NoFollowLeafObservation.OrdinaryFile(context.LogicalPath);
+        var content = new RecoveryOrdinaryContentObservation(context.LogicalPath, observedIdentity, failure: null);
+        var input = new RecoveryEntryComparisonInput(context, leaf, content);
+
+        var result = RecoveryEntryComparer.Compare(input);
+
+        Assert.Equal(RecoveryBundleTargetComparisonState.Prior, result.State);
+        Assert.Same(input, result.Input);
+        var observed = Assert.IsType<RecoveryEntryState>(result.Observed);
+        Assert.Equal(prior, observed);
+        Assert.Equal(RecoveryEntryStateKind.OrdinaryFile, observed.Kind);
+        Assert.Same(observedIdentity, observed.OrdinaryFile);
+        Assert.Null(observed.RelativeFileLink);
+        Assert.Null(result.Cause);
     }
 
     private static RecoveryEntryComparisonContext Context(string operation)

@@ -2,9 +2,10 @@ using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Rendering;
 
@@ -46,12 +47,14 @@ internal static partial class UpdateHumanRenderer
 
     private static void AppendIdentity(StringBuilder builder, UpdateResult result)
     {
-        builder.AppendLine($"Workspace: {Value(result.Workspace?.LexicalRoot)}");
-        builder.AppendLine($"Selected by: {SelectedBy(result.Workspace)}");
         builder.AppendLine(string.Create(
             CultureInfo.InvariantCulture,
-            $"Flags: mode={UpdateDefinitions.ReadMachineName(result.Mode)}, force={MachineBoolean(result.Force)}, prune={MachineBoolean(result.Prune)}, automatic={MachineBoolean(result.Automatic)}"));
-        builder.AppendLine($"Status: {Status(result.Status)}");
+            $"""
+            Workspace: {Value(result.Workspace?.LexicalRoot)}
+            Selected by: {SelectedBy(result.Workspace)}
+            Flags: mode={UpdateDefinitions.ReadMachineName(result.Mode)}, force={MachineBoolean(result.Force)}, prune={MachineBoolean(result.Prune)}, automatic={MachineBoolean(result.Automatic)}
+            Status: {Status(result.Status)}
+            """).Replace("\n", Environment.NewLine, StringComparison.Ordinal));
     }
 
     private static void AppendSource(StringBuilder builder, UpdateSource? source)

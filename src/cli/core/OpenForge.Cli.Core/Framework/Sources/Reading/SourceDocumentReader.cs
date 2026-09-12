@@ -1,10 +1,12 @@
-using OpenForge.Cli.Core.Framework.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Reading;
 
@@ -109,13 +111,17 @@ internal sealed class SourceDocumentReader
                     SourceLayerVerificationState.Unsafe,
                     null,
                     null),
-            _ => new SourceLayerVerification(
-                layer,
-                SourceLayerVerificationState.Unavailable,
-                null,
-                resolution.Failure ?? new FilesystemFailure(
-                    FilesystemFailureKind.InputOutput,
-                    "Physical source-layer resolution was unavailable.")),
+            PhysicalPathState.Inaccessible
+                or PhysicalPathState.Invalid
+                or PhysicalPathState.Unsupported
+                or PhysicalPathState.InputOutputFailure => new SourceLayerVerification(
+                    layer,
+                    SourceLayerVerificationState.Unavailable,
+                    null,
+                    resolution.Failure ?? new FilesystemFailure(
+                        FilesystemFailureKind.InputOutput,
+                        "Physical source-layer resolution was unavailable.")),
+            _ => throw new ArgumentOutOfRangeException(nameof(resolution), resolution.State, "The physical path state is not defined."),
         };
     }
 

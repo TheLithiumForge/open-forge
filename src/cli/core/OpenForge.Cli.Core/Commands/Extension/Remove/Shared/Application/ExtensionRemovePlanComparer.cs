@@ -1,6 +1,7 @@
+using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application;
 
@@ -53,11 +54,11 @@ internal static class ExtensionRemovePlanComparer
             + $"{string.Join(',', decision.Path.RemainingOwnerIds)}:{decision.Disposition}";
 
     private static bool DictionaryEquals(
-        IReadOnlyDictionary<string, byte[]> expected,
-        IReadOnlyDictionary<string, byte[]> actual)
+        IReadOnlyDictionary<string, ImmutableArray<byte>> expected,
+        IReadOnlyDictionary<string, ImmutableArray<byte>> actual)
         => expected.Count == actual.Count
             && expected.All(pair => actual.TryGetValue(pair.Key, out var bytes)
-                && pair.Value.AsSpan().SequenceEqual(bytes));
+                && pair.Value.AsSpan().SequenceEqual(bytes.AsSpan()));
 
     private static bool ChangesEqual(
         IReadOnlyList<PlannedFileChange> expected,

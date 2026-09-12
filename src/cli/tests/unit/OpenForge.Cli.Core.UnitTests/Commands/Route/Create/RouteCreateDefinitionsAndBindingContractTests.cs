@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.Create;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Create.Shared.Binding;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Create;
@@ -64,7 +65,7 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
         ]);
 
         Assert.Empty(parse.Errors);
-        var bound = RouteCreateBinding.Bind(
+        var bound = RouteCreateRequestBinder.Bind(
             parse,
             RouteCreateTestData.Invocation(),
             symbols);
@@ -82,24 +83,24 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
     [Fact(DisplayName = "Route Create binding rejects missing required values and invalid metadata"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void BindingRejectsMissingRequiredValuesAndInvalidMetadata()
     {
-        var invalidCases = new[]
-        {
-            (Arguments: new[] { "create", "--description=Overview", "--tag=Docs" }, Code: RouteCreateFindingCode.InvalidTarget),
-            (Arguments: new[] { "create", RouteCreateTestData.TargetId, "--tag=Docs" }, Code: RouteCreateFindingCode.InvalidMetadata),
-            (Arguments: new[] { "create", RouteCreateTestData.TargetId, "--description=Overview" }, Code: RouteCreateFindingCode.InvalidMetadata),
-            (Arguments: new[] { "create", RouteCreateTestData.TargetId, "--description=", "--tag=Docs" }, Code: RouteCreateFindingCode.InvalidMetadata),
-            (Arguments: new[] { "create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=#Docs" }, Code: RouteCreateFindingCode.InvalidMetadata),
-            (Arguments: new[] { "create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--tag=Docs" }, Code: RouteCreateFindingCode.InvalidMetadata),
-            (Arguments: new[] { "create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--responsibility=   " }, Code: RouteCreateFindingCode.InvalidMetadata),
-            (Arguments: new[] { "create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--template=" }, Code: RouteCreateFindingCode.InvalidTemplate),
-        };
+        (string[] Arguments, RouteCreateFindingCode Code)[] invalidCases =
+        [
+            (Arguments: ["create", "--description=Overview", "--tag=Docs"], Code: RouteCreateFindingCode.InvalidTarget),
+            (Arguments: ["create", RouteCreateTestData.TargetId, "--tag=Docs"], Code: RouteCreateFindingCode.InvalidMetadata),
+            (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview"], Code: RouteCreateFindingCode.InvalidMetadata),
+            (Arguments: ["create", RouteCreateTestData.TargetId, "--description=", "--tag=Docs"], Code: RouteCreateFindingCode.InvalidMetadata),
+            (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=#Docs"], Code: RouteCreateFindingCode.InvalidMetadata),
+            (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--tag=Docs"], Code: RouteCreateFindingCode.InvalidMetadata),
+            (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--responsibility=   "], Code: RouteCreateFindingCode.InvalidMetadata),
+            (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--template="], Code: RouteCreateFindingCode.InvalidTemplate),
+        ];
 
-        foreach (var invalidCase in invalidCases)
+        foreach (var (arguments, expectedCode) in invalidCases)
         {
             var route = RouteBinding.CreateGroup();
             var symbols = RouteCreateBinding.CreateSymbols(route);
-            var bound = RouteCreateBinding.Bind(
-                route.Parse(invalidCase.Arguments),
+            var bound = RouteCreateRequestBinder.Bind(
+                route.Parse(arguments),
                 RouteCreateTestData.Invocation(),
                 symbols);
             var invalid = Assert.IsType<OpenForge.Cli.Core.Commands.Route.Create.Models.Result.RouteCreateResult>(bound.InvalidResult);
@@ -108,7 +109,7 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
             Assert.Equal(CliSemanticStatus.Invalid, invalid.Status);
             Assert.Contains(
                 invalid.Findings,
-                finding => finding.Code == invalidCase.Code);
+                finding => finding.Code == expectedCode);
         }
     }
 
@@ -126,7 +127,7 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
             "--responsibility",
             string.Empty,
         ]);
-        var bound = RouteCreateBinding.Bind(
+        var bound = RouteCreateRequestBinder.Bind(
             parse,
             RouteCreateTestData.Invocation(),
             symbols);
@@ -151,7 +152,7 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
             "--responsibility",
         ]);
 
-        var bound = RouteCreateBinding.Bind(
+        var bound = RouteCreateRequestBinder.Bind(
             parse,
             RouteCreateTestData.Invocation(),
             symbols);
@@ -165,12 +166,12 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
     {
         var route = RouteBinding.CreateGroup();
         var symbols = RouteCreateBinding.CreateSymbols(route);
-        var cases = new[]
-        {
-            new[] { "--description=One", "--description=One" },
-            new[] { "--responsibility=One", "--responsibility=One" },
-            new[] { "--template=templates/one", "--template=templates/one" },
-        };
+        string[][] cases =
+        [
+            ["--description=One", "--description=One"],
+            ["--responsibility=One", "--responsibility=One"],
+            ["--template=templates/one", "--template=templates/one"],
+        ];
 
         foreach (var repeated in cases)
         {
@@ -182,7 +183,7 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
                 "--tag=Docs",
             }.Concat(repeated).ToArray();
             var parse = route.Parse(arguments);
-            var bound = RouteCreateBinding.Bind(
+            var bound = RouteCreateRequestBinder.Bind(
                 parse,
                 RouteCreateTestData.Invocation(),
                 symbols);

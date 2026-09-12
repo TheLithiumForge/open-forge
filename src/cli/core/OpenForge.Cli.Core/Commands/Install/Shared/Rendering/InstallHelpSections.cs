@@ -1,6 +1,5 @@
-using System.Globalization;
-using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Help;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Rendering;
 
@@ -35,40 +34,9 @@ internal static class InstallHelpSections
                 body: "  open-forge update — reconcile an existing managed Framework installation.\n"
                 + "  open-forge doctor — inspect blocked or unavailable lifecycle and safety facts.\n"
                 + "  open-forge cleanup — remove a reported retained recovery artifact after review."),
-            new CliHelpSection(heading: "Results and streams", body: ResultsAndStreams()),
+            new CliHelpSection(heading: "Results and streams", body: CliResultHelp.ResultsAndStreams(InstallDefinitions.SchemaVersion)),
             new CliHelpSection(
                 heading: "Notes",
                 body: "  Install uses only the Framework payload embedded in the running CLI. It does not discover another workspace, fetch content, manipulate Git, repair markers, reconcile managed divergence, or roll back target effects."),
         ]);
-
-    private static string ResultsAndStreams()
-    {
-        var lines = new List<string>
-        {
-            "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            string.Create(
-                CultureInfo.InvariantCulture,
-                $"  JSON writes one schema-version-{InstallDefinitions.SchemaVersion} envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr."),
-        };
-        foreach (var status in Enum.GetValues<CliSemanticStatus>())
-        {
-            var definition = CliStatusDefinitions.Read(status);
-            lines.Add(string.Create(
-                CultureInfo.InvariantCulture,
-                $"  {definition.MachineName}: exit {definition.Disposition.ExitCode} and human {Stream(definition.Disposition.HumanOutputTarget)}."));
-        }
-
-        return string.Join(Environment.NewLine, lines);
-    }
-
-    private static string Stream(CliOutputTarget target)
-        => target switch
-        {
-            CliOutputTarget.StandardOutput => "stdout",
-            CliOutputTarget.StandardError => "stderr",
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(target),
-                target,
-                "The output target is not defined."),
-        };
 }

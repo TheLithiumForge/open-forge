@@ -1,11 +1,12 @@
-using OpenForge.Cli.Core.Framework.Permissions.Shared.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Permissions.Shared.Serialization;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Rendering;
 

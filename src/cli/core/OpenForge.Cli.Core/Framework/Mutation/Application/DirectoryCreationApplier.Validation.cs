@@ -1,7 +1,7 @@
-using OpenForge.Cli.Core.Framework.Filesystem;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Application;
@@ -91,18 +91,4 @@ internal sealed partial class DirectoryCreationApplier
             or PlatformNotSupportedException
             or ArgumentException
             or PathTooLongException;
-
-    private static FilesystemFailureKind FailureKind(Exception exception)
-        => exception switch
-        {
-            UnauthorizedAccessException => FilesystemFailureKind.AccessDenied,
-            NotSupportedException or PlatformNotSupportedException =>
-                FilesystemFailureKind.Unsupported,
-            ArgumentException or PathTooLongException => FilesystemFailureKind.InvalidPath,
-            IOException => FilesystemFailureKind.InputOutput,
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(exception),
-                exception.GetType(),
-                "The filesystem exception is not defined."),
-        };
 }

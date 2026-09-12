@@ -1,15 +1,9 @@
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Operational.Models;
 
 namespace OpenForge.Cli.Core.Framework.Workspace.Operational;
-
-internal enum WorkspaceObservedPathState
-{
-    Present,
-    Missing,
-    Incomplete,
-    Blocked,
-}
 
 internal sealed class WorkspacePathObserver(
     PhysicalPathResolver physicalPathResolver)

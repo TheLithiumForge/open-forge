@@ -275,7 +275,7 @@ internal sealed class RouteInitPlanningInspector
         foreach (var read in current.Reads.SelectMany(ReadLayers))
         {
             if (read.Verification.State == SourceLayerVerificationState.Cancelled
-                || read.Read?.State == OpenForge.Cli.Core.Framework.Filesystem.TypedReads.FileReadState.Cancelled)
+                || read.Read?.State == OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models.FileReadState.Cancelled)
             {
                 return new RouteInitPlanningBoundary(
                     RouteInitFindingCode.Interrupted,
@@ -297,7 +297,7 @@ internal sealed class RouteInitPlanningInspector
             }
 
             if (read.Verification.State != SourceLayerVerificationState.Verified
-                || read.Read?.State != OpenForge.Cli.Core.Framework.Filesystem.TypedReads.FileReadState.Complete)
+                || read.Read?.State != OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models.FileReadState.Complete)
             {
                 return new RouteInitPlanningBoundary(
                     RouteInitFindingCode.InspectionIncomplete,

@@ -1,10 +1,12 @@
 using System.Text;
 using System.Text.Json;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Lifecycle.Shared.Validation.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Shared.Validation;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
 
@@ -16,7 +18,7 @@ internal sealed partial class LifecycleOwnershipReader
     {
         try
         {
-            _ = StrictUtf8.GetString(snapshot.Bytes.AsSpan());
+            _ = StrictUtf8.GetCharCount(snapshot.Bytes.AsSpan());
             LifecycleJsonSyntaxValidator.ValidateNoDuplicateProperties(
                 snapshot.Bytes.AsSpan(),
                 LifecycleSection.Framework);

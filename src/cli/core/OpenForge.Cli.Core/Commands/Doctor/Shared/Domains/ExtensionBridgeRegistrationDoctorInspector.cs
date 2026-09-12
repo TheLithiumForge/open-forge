@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
-using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
+using OpenForge.Cli.Core.Framework.Extensions.Operational.Models.Registration;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
 

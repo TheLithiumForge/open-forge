@@ -1,10 +1,10 @@
-using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Models.Application;
 
@@ -207,3 +207,7 @@ internal sealed record ExtensionInstallApplicationProgress
             ExtensionInstallVerificationState.Unknown,
             ExtensionInstallVerificationState.Unknown);
 }
+
+internal sealed record ExtensionInstallEffectReceiptMapping(
+    ExtensionInstallEffectOutcome? RecordedOutcome,
+    ExtensionInstallFinding? Finding);

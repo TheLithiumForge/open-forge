@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Security.Cryptography;
+using OpenForge.Cli.Core.Commands.Update.Shared.Validation;
 
 namespace OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 
@@ -63,7 +64,7 @@ internal sealed record UpdateComparisonByteFacts
                 parameterName);
         }
 
-        if (Sha256 is not null && !IsSha256(Sha256))
+        if (Sha256 is not null && !UpdateValueSyntax.IsSha256(Sha256))
         {
             throw new ArgumentException(
                 "Comparison byte facts require a lowercase SHA-256 fingerprint.",
@@ -89,10 +90,6 @@ internal sealed record UpdateComparisonByteFacts
                 parameterName);
         }
     }
-
-    private static bool IsSha256(string value)
-        => value.Length == 64
-            && value.All(character => character is >= '0' and <= '9' or >= 'a' and <= 'f');
 }
 
 internal sealed record UpdateComparison
@@ -155,7 +152,7 @@ internal sealed record UpdateComparison
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(RegionIdentity) || !IsCanonicalRelative(RegionIdentity))
+        if (string.IsNullOrWhiteSpace(RegionIdentity) || !UpdateValueSyntax.IsCanonicalRelative(RegionIdentity))
         {
             throw new ArgumentException("A region comparison requires one canonical region identity.", nameof(RegionIdentity));
         }
@@ -163,7 +160,7 @@ internal sealed record UpdateComparison
 
     private void ValidateSourceProvenance()
     {
-        if (SourceAssetPath is not null && !IsCanonicalRelative(SourceAssetPath))
+        if (SourceAssetPath is not null && !UpdateValueSyntax.IsCanonicalRelative(SourceAssetPath))
         {
             throw new ArgumentException("Source asset provenance must be canonical and relative.", nameof(SourceAssetPath));
         }
@@ -241,7 +238,7 @@ internal sealed record UpdateComparison
 
     private static void ValidateFingerprint(string? value, string parameterName)
     {
-        if (value is not null && !IsSha256(value))
+        if (value is not null && !UpdateValueSyntax.IsSha256(value))
         {
             throw new ArgumentException("Comparison fingerprints must be lowercase SHA-256 values.", parameterName);
         }
@@ -249,27 +246,9 @@ internal sealed record UpdateComparison
 
     private static void ValidateRelativePath(string value, string parameterName)
     {
-        if (string.IsNullOrWhiteSpace(value) || !IsCanonicalRelative(value))
+        if (string.IsNullOrWhiteSpace(value) || !UpdateValueSyntax.IsCanonicalRelative(value))
         {
             throw new ArgumentException("Comparison paths must be canonical workspace-relative paths.", parameterName);
         }
     }
-
-    private static bool IsCanonicalRelative(string value)
-        => !value.StartsWith('/')
-            && !IsDriveQualified(value)
-            && !value.Contains('\\')
-            && value.Split('/').All(segment => segment.Length != 0
-                && segment != "."
-                && segment != ".."
-                && segment.All(character => !char.IsControl(character)));
-
-    private static bool IsDriveQualified(string value)
-        => value.Length >= 2
-            && char.IsAsciiLetter(value[0])
-            && value[1] == ':';
-
-    private static bool IsSha256(string value)
-        => value.Length == 64
-            && value.All(character => character is >= '0' and <= '9' or >= 'a' and <= 'f');
 }

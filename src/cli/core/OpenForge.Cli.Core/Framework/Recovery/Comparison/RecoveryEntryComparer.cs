@@ -1,6 +1,6 @@
-using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 
 namespace OpenForge.Cli.Core.Framework.Recovery.Comparison;
 
@@ -65,18 +65,30 @@ internal static class RecoveryEntryComparer
                     "The no-follow leaf state is not defined.");
         }
 
-        var entry = input.Context.Entry;
         return new RecoveryEntryComparison
         {
             Input = input,
-            State = observed == entry.Prior
-                ? RecoveryBundleTargetComparisonState.Prior
-                : observed == entry.Intended
-                    ? RecoveryBundleTargetComparisonState.Intended
-                    : RecoveryBundleTargetComparisonState.Third,
+            State = ReadComparisonState(observed, input.Context.Entry),
             Observed = observed,
             Cause = null,
         };
+    }
+
+    private static RecoveryBundleTargetComparisonState ReadComparisonState(
+        RecoveryEntryState observed,
+        RecoveryEntry entry)
+    {
+        if (observed == entry.Prior)
+        {
+            return RecoveryBundleTargetComparisonState.Prior;
+        }
+
+        if (observed == entry.Intended)
+        {
+            return RecoveryBundleTargetComparisonState.Intended;
+        }
+
+        return RecoveryBundleTargetComparisonState.Third;
     }
 
     private static RecoveryEntryComparison Classified(

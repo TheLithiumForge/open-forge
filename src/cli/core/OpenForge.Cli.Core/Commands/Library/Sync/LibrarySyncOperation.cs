@@ -1,14 +1,12 @@
-using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
-using OpenForge.Cli.Core.Framework.Libraries;
-using OpenForge.Cli.Core.Commands.Library.Shared.Planning.Models;
-using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Shared.Application;
+using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Shared.Planning;
+using OpenForge.Cli.Core.Commands.Library.Shared.Planning.Models;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Application;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Request;
@@ -18,8 +16,10 @@ using OpenForge.Cli.Core.Commands.Library.Sync.Shared.Completion;
 using OpenForge.Cli.Core.Commands.Library.Sync.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Libraries;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.Inventory;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
@@ -27,8 +27,9 @@ using OpenForge.Cli.Core.Framework.Libraries.Shared.Source;
 using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Library.Sync;
 
@@ -256,7 +257,7 @@ internal sealed class LibrarySyncOperation
                 return Complete(request, plan, observations, evidence);
             }
 
-            var outcome = await LibrarySyncApplication.ApplyAsync(
+            var applied = await LibrarySyncApplication.ApplyAsync(
                 new LibrarySyncApplicationInput
                 {
                     Lease = lease,
@@ -264,7 +265,7 @@ internal sealed class LibrarySyncOperation
                     RecoveryPreparation = preparation.Preparation,
                 },
                 cancellationToken).ConfigureAwait(false);
-            var execution = outcome.Execution with { RecoveryPreparationOutcome = preparation };
+            var execution = applied with { RecoveryPreparationOutcome = preparation };
             if (execution.Cancellation is null && execution.UnexpectedFailure is null && execution.Permission?.Failure is null)
             {
                 execution = LibraryMutationOperationSupport.WithCleanup(

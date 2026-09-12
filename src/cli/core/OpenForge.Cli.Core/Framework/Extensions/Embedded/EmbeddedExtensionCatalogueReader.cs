@@ -6,6 +6,7 @@ using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Serialization;
+using OpenForge.Cli.Core.Framework.Extensions.Models.Serialization;
 using OpenForge.Cli.Core.Framework.Extensions.Serialization;
 
 namespace OpenForge.Cli.Core.Framework.Extensions.Embedded;

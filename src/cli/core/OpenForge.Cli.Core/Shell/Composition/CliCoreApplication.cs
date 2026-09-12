@@ -1,18 +1,19 @@
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Presentation;
-using OpenForge.Cli.Core.Shell.Composition.Models;
 
 namespace OpenForge.Cli.Core.Shell.Composition;
 
 internal sealed class CliCoreApplication
 {
     private readonly CliProcessIdentity _process;
-    private readonly CliParser _parser;
+    private readonly CliCommandTree _tree;
     private readonly CliWorkspaceSelector _workspaceSelector;
 
     internal CliCoreApplication(
@@ -24,7 +25,7 @@ internal sealed class CliCoreApplication
         ArgumentNullException.ThrowIfNull(tree);
         ArgumentNullException.ThrowIfNull(workspaceSelector);
         _process = process;
-        _parser = new CliParser(tree);
+        _tree = tree;
         _workspaceSelector = workspaceSelector;
     }
 
@@ -38,7 +39,7 @@ internal sealed class CliCoreApplication
         ArgumentNullException.ThrowIfNull(environment);
         ArgumentNullException.ThrowIfNull(writers);
 
-        var parse = _parser.Parse(arguments);
+        var parse = _tree.Parse(arguments);
         var global = CliTerminalValidator.Validate(parse);
         if (global.InvalidInput is not null)
         {

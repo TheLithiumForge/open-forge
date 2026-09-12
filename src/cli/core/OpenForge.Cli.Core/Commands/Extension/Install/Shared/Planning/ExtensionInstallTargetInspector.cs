@@ -5,9 +5,9 @@ using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
 using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Shell.Interaction;
@@ -272,7 +272,7 @@ internal sealed class ExtensionInstallTargetInspector(
         }
     }
 
-    private async ValueTask<Observation> ObserveAsync(
+    private async ValueTask<ExtensionInstallTargetObservation> ObserveAsync(
         ExtensionInstallRequest request,
         string relativePath,
         CancellationToken cancellationToken)
@@ -286,7 +286,7 @@ internal sealed class ExtensionInstallTargetInspector(
             cancellationToken).ConfigureAwait(false);
         if (check.State == FileExpectationValidationState.Cancelled)
         {
-            return Observation.Stop(new ExtensionInstallFinding(
+            return ExtensionInstallTargetObservation.Stop(new ExtensionInstallFinding(
                 ExtensionInstallFindingCode.Interrupted,
                 "Extension target inspection was interrupted.",
                 relativePath));
@@ -296,13 +296,13 @@ internal sealed class ExtensionInstallTargetInspector(
             or FileExpectationValidationState.Failed
             || check.Actual is null)
         {
-            return Observation.Stop(new ExtensionInstallFinding(
+            return ExtensionInstallTargetObservation.Stop(new ExtensionInstallFinding(
                 ExtensionInstallFindingCode.TargetUnsafe,
                 check.Cause ?? check.Failure?.DirectCause ?? "The Extension target is unsafe or unavailable.",
                 relativePath));
         }
 
-        return Observation.Complete(check.Actual);
+        return ExtensionInstallTargetObservation.Complete(check.Actual);
     }
 
     private (string Fingerprint, string Kind) Fingerprint(byte[] bytes)
@@ -341,15 +341,4 @@ internal sealed class ExtensionInstallTargetInspector(
         string cause,
         string target)
         => new(null, new ExtensionInstallFinding(code, cause, target));
-
-    private sealed record Observation(
-        FileStateSnapshot? Snapshot,
-        ExtensionInstallFinding? Finding)
-    {
-        internal static Observation Complete(FileStateSnapshot snapshot)
-            => new(snapshot, null);
-
-        internal static Observation Stop(ExtensionInstallFinding finding)
-            => new(null, finding);
-    }
 }

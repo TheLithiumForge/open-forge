@@ -48,17 +48,6 @@ internal sealed record ContextClosureResolution
 
     internal bool SelectionBlocked { get; }
 
-    internal ContextClosureResolution WithLinkExpansion(ContextLinkExpansionFormation expansion)
-        => new(
-            requestedSources: RequestedSources,
-            startupSources: expansion.StartupSources,
-            combinedSources: expansion.CombinedSources,
-            resultSources: expansion.ResultSources,
-            findings: Findings,
-            startupIncluded: StartupIncluded,
-            selectionComplete: SelectionComplete,
-            selectionBlocked: SelectionBlocked);
-
     private static IReadOnlyList<T> Snapshot<T>(IEnumerable<T> values)
         where T : class
         => new ReadOnlyCollection<T>(values.ToArray());

@@ -2,11 +2,11 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 using OpenForge.Cli.Core.Framework.Sources.References;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 
@@ -73,7 +73,11 @@ internal sealed class LocalReferenceOperationalContributor(
                 continue;
             }
 
-            var document = _markdownParser.Parse(text);
+            var document = string.Equals(layer.Path, source.Source.Base.CanonicalPath, StringComparison.Ordinal)
+                && source.Document is { } retainedDocument
+                && string.Equals(retainedDocument.Source, text, StringComparison.Ordinal)
+                    ? retainedDocument
+                    : _markdownParser.Parse(text);
             var locations = new Utf8SourceMap(text);
             parsedLayers.Add(new LocalReferenceParsedLayer(
                 layer.Path,
@@ -95,6 +99,10 @@ internal sealed class LocalReferenceOperationalContributor(
                         },
                         cancellationToken)
                     .ConfigureAwait(false);
+                var location = locations.Map(link.Span.Start, link.Span.Length);
+                var destinationLocation = link.DestinationSpan is { } destinationSpan
+                    ? locations.Map(destinationSpan.Start, destinationSpan.Length)
+                    : null;
                 observations.References.Add(new LocalReferenceObservation
                 {
                     SourcePath = layer.Path,
@@ -102,18 +110,14 @@ internal sealed class LocalReferenceOperationalContributor(
                     Kind = reference.Kind,
                     Destination = link.RawDestination,
                     Label = link.Label,
-                    Location = locations.Map(link.Span.Start, link.Span.Length),
-                    DestinationLocation = link.DestinationSpan is { } destinationSpan
-                        ? locations.Map(destinationSpan.Start, destinationSpan.Length)
-                        : null,
+                    Location = location,
+                    DestinationLocation = destinationLocation,
                     Facts = facts,
                     Fragment = LocalReferenceFactReader.ReadFragment(facts),
                     Canonicalizations = LocalReferenceFactReader.ReadCanonicalizations(
                         layer.Path,
                         link.RawDestination,
-                        link.DestinationSpan is { } exactDestinationSpan
-                            ? locations.Map(exactDestinationSpan.Start, exactDestinationSpan.Length)
-                            : null,
+                        destinationLocation,
                         facts),
                 });
             }

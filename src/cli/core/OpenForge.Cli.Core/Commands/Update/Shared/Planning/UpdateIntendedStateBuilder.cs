@@ -2,14 +2,16 @@ using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 using OpenForge.Cli.Core.Commands.Update.Models.Planning;
-using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
+using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Identity;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Planning;
 
@@ -121,10 +123,15 @@ internal sealed class UpdateIntendedStateBuilder(
             }
         }
 
-        var currentSources = framework.Targets
-            .Where(target => target.SourceAssetPath is not null)
-            .Select(target => target.SourceAssetPath!)
-            .ToHashSet(StringComparer.Ordinal);
+        var currentSources = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var target in framework.Targets)
+        {
+            if (target.SourceAssetPath is { } path)
+            {
+                currentSources.Add(path);
+            }
+        }
+
         foreach (var asset in payload.Assets.Where(asset => !currentSources.Contains(asset.Path)))
         {
             var read = await ReadTargetAsync(
@@ -188,11 +195,19 @@ internal sealed class UpdateIntendedStateBuilder(
         IReadOnlyDictionary<string, byte[]> projectedTargetBytes,
         FileStateSnapshot snapshot)
     {
-        var kind = generated
-            ? UpdateComparisonTargetKind.GeneratedRegion
-            : target.Region is null
-                ? UpdateComparisonTargetKind.File
-                : UpdateComparisonTargetKind.ManagedRegion;
+        UpdateComparisonTargetKind kind;
+        if (generated)
+        {
+            kind = UpdateComparisonTargetKind.GeneratedRegion;
+        }
+        else if (target.Region is null)
+        {
+            kind = UpdateComparisonTargetKind.File;
+        }
+        else
+        {
+            kind = UpdateComparisonTargetKind.ManagedRegion;
+        }
         var fingerprintKind = generated
             ? UpdateComparisonFingerprintKind.ExactBytes
             : ReadFingerprintKind(target.FingerprintKind);
@@ -241,14 +256,19 @@ internal sealed class UpdateIntendedStateBuilder(
             currentFingerprint,
             intendedFingerprint,
             intendedDocumentBytes);
-        var intendedState = intendedFingerprint is null
-            ? UpdateComparisonIntendedState.Retired
-            : string.Equals(
-                target.BaselineFingerprint,
-                intendedFingerprint,
-                StringComparison.Ordinal)
-                ? UpdateComparisonIntendedState.Same
-                : UpdateComparisonIntendedState.Changed;
+        UpdateComparisonIntendedState intendedState;
+        if (intendedFingerprint is null)
+        {
+            intendedState = UpdateComparisonIntendedState.Retired;
+        }
+        else if (string.Equals(target.BaselineFingerprint, intendedFingerprint, StringComparison.Ordinal))
+        {
+            intendedState = UpdateComparisonIntendedState.Same;
+        }
+        else
+        {
+            intendedState = UpdateComparisonIntendedState.Changed;
+        }
         var retirement = ReadRetirementEligibility(
             intendedState,
             currentState,
@@ -320,6 +340,9 @@ internal sealed class UpdateIntendedStateBuilder(
         ReadOnlySpan<byte> bytes)
         => kind switch
         {
+            UpdateComparisonTargetKind.File when IsManagedRoot(target) => ReadManagedFingerprint(
+                bytes,
+                target.FingerprintKind),
             UpdateComparisonTargetKind.File => _contentIdentity.ReadSourceFingerprint(
                 bytes,
                 target.FingerprintKind),
@@ -389,10 +412,7 @@ internal sealed class UpdateIntendedStateBuilder(
         FileStateSnapshot snapshot,
         ReadOnlySpan<byte> intendedTargetBytes)
     {
-        if (target.Region is null
-            || target.SourceAssetPath is null
-            || target.Path is not (FrameworkPayloadAsset.RootAgentPath
-                or FrameworkPayloadAsset.RootClaudePath))
+        if (!IsManagedRoot(target))
         {
             return intendedTargetBytes.ToArray();
         }
@@ -402,7 +422,8 @@ internal sealed class UpdateIntendedStateBuilder(
             return intendedTargetBytes.ToArray();
         }
 
-        var block = _contentIdentity.ReadManagedBlock(snapshot.Bytes.AsSpan());
+        var current = StrictUtf8.GetString(snapshot.Bytes.AsSpan());
+        var block = _contentIdentity.ReadManagedBlock(current);
         if (block.State != FrameworkManagedBlockState.Present
             || block.Start is not { } start
             || block.EndExclusive is not { } end)
@@ -411,12 +432,18 @@ internal sealed class UpdateIntendedStateBuilder(
                 block.Cause ?? "A managed Update host requires one complete marker boundary.");
         }
 
-        return snapshot.Bytes.AsSpan()[..start]
+        var startByteOffset = StrictUtf8.GetByteCount(current.AsSpan(0, start));
+        var endByteOffset = StrictUtf8.GetByteCount(current.AsSpan(0, end));
+        return snapshot.Bytes.AsSpan()[..startByteOffset]
             .ToArray()
             .Concat(intendedTargetBytes.ToArray())
-            .Concat(snapshot.Bytes.AsSpan()[end..].ToArray())
+            .Concat(snapshot.Bytes.AsSpan()[endByteOffset..].ToArray())
             .ToArray();
     }
+
+    private static bool IsManagedRoot(FrameworkLifecycleTarget target)
+        => target.SourceAssetPath is not null
+            && target.Path is FrameworkPayloadAsset.RootAgentPath or FrameworkPayloadAsset.RootClaudePath;
 
     private static UpdateComparisonCurrentState ReadCurrentState(
         FileStateSnapshot snapshot,
@@ -538,9 +565,3 @@ internal sealed class UpdateIntendedStateBuilder(
                 "Update comparison was interrupted."),
             Cancelled: true);
 }
-
-internal sealed record UpdateIntendedStateBuild(
-    IReadOnlyList<UpdateComparisonObservation> Observations,
-    IReadOnlyList<FileStateSnapshot> ProjectionInputs,
-    UpdateFinding? Finding,
-    bool Cancelled);

@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+
 namespace OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 
 internal sealed class PathComponentWalker

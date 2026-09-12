@@ -3,11 +3,13 @@ using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
-using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Results;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Shell;
 
@@ -52,7 +54,7 @@ public sealed class ParserTests
     public void OptionResultFactsReaderReportsOmittedOptionAsImplicit()
     {
         var tree = CreateTree();
-        var parse = new CliParser(tree).Parse([]);
+        var parse = tree.Parse([]);
 
         AssertFacts(
             CliOptionResultFactsReader.Read(parse.Result, tree.Options.View),
@@ -128,7 +130,7 @@ public sealed class ParserTests
             tree.Root.Options.Select(option => option.Name));
         Assert.All(tree.Root.Options, option => Assert.Empty(option.Aliases));
 
-        var input = CliGlobalInputReader.Read(new CliParser(tree).Parse([]));
+        var input = CliGlobalInputReader.Read(tree.Parse([]));
         Assert.Null(input.WorkspaceValue);
         Assert.Equal(0, input.WorkspaceOccurrences);
         Assert.Equal(CliOutputFormat.Human, input.OutputFormat);
@@ -148,9 +150,8 @@ public sealed class ParserTests
     public void RepeatedScalarOptionsAreParserErrorsAndBooleansAreIdempotent()
     {
         var tree = CreateTree();
-        var parser = new CliParser(tree);
-        var scalar = parser.Parse(["--workspace", "one", "--workspace", "two"]);
-        var booleans = parser.Parse(["--json", "--json", "--verbose", "--verbose"]);
+        var scalar = tree.Parse(["--workspace", "one", "--workspace", "two"]);
+        var booleans = tree.Parse(["--json", "--json", "--verbose", "--verbose"]);
 
         Assert.NotEmpty(scalar.Result.Errors);
         AssertFacts(
@@ -182,9 +183,8 @@ public sealed class ParserTests
     public void RepeatedTerminalFlagsUseParserOwnedOccurrences()
     {
         var tree = CreateTree();
-        var parser = new CliParser(tree);
-        var help = parser.Parse(["--help", "--help"]);
-        var version = parser.Parse(["--version", "--version"]);
+        var help = tree.Parse(["--help", "--help"]);
+        var version = tree.Parse(["--version", "--version"]);
 
         Assert.Empty(help.Result.Errors);
         Assert.Empty(version.Result.Errors);
@@ -231,7 +231,7 @@ public sealed class ParserTests
         var arguments = separateValue is null
             ? new[] { option }
             : new[] { option, separateValue };
-        var resolution = CliTerminalValidator.Validate(new CliParser(CreateTree()).Parse(arguments));
+        var resolution = CliTerminalValidator.Validate(CreateTree().Parse(arguments));
 
         Assert.Null(resolution.InvalidInput);
         var input = Assert.IsType<CliGlobalInput>(resolution.Input);
@@ -250,7 +250,7 @@ public sealed class ParserTests
     [InlineData("--view:")]
     public void AttachedEmptyValueFormsAreInvalidWithoutGlobalFallback(string option)
     {
-        var resolution = CliTerminalValidator.Validate(new CliParser(CreateTree()).Parse([option]));
+        var resolution = CliTerminalValidator.Validate(CreateTree().Parse([option]));
 
         Assert.NotNull(resolution.InvalidInput);
         Assert.Null(resolution.Input);
@@ -262,7 +262,7 @@ public sealed class ParserTests
     public void ExplicitEmptyWorkspaceValueIsSemanticInvalidInput()
     {
         var resolution = CliTerminalValidator.Validate(
-            new CliParser(CreateTree()).Parse(["--workspace", string.Empty]));
+            CreateTree().Parse(["--workspace", string.Empty]));
 
         Assert.Equal(CliInvalidInputSource.Semantic, resolution.InvalidInput?.Source);
         Assert.Null(resolution.Input);
@@ -281,7 +281,7 @@ public sealed class ParserTests
         string[] arguments = separateValue is null
             ? ["route", "list", option]
             : ["route", "list", option, separateValue];
-        var parse = new CliParser(tree).Parse(arguments);
+        var parse = tree.Parse(arguments);
 
         Assert.Empty(parse.Result.Errors);
         var invalid = CliTerminalValidator.Validate(parse).InvalidInput;
@@ -289,7 +289,7 @@ public sealed class ParserTests
         Assert.Equal(CliInvalidInputSource.Delimiter, invalid.Source);
 
         var equals = CliTerminalValidator.Validate(
-            new CliParser(tree).Parse(["route", "list", "--depth=1"]));
+            tree.Parse(["route", "list", "--depth=1"]));
         Assert.Null(equals.InvalidInput);
     }
 
@@ -298,7 +298,7 @@ public sealed class ParserTests
     public void AggregatedDelimiterPoliciesDoNotRejectOptionLikeSiblingSourceAfterTerminator()
     {
         var tree = CreateRouteListPolicyTree(out var inspectSourceReference);
-        var parse = new CliParser(tree).Parse(["route", "inspect", "--", "--depth"]);
+        var parse = tree.Parse(["route", "inspect", "--", "--depth"]);
 
         Assert.Empty(parse.Result.Errors);
         Assert.Equal("--depth", parse.Result.GetValue(inspectSourceReference));
@@ -312,7 +312,7 @@ public sealed class ParserTests
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
     public void ParserDiagnosticsTakePrecedenceOverDelimiterViolations()
     {
-        var parse = new CliParser(CreateTree()).Parse(["--view", "compact", "--unknown"]);
+        var parse = CreateTree().Parse(["--view", "compact", "--unknown"]);
 
         var invalid = Assert.IsType<CliInvalidInput>(CliTerminalValidator.Validate(parse).InvalidInput);
         Assert.Equal(CliInvalidInputSource.Parser, invalid.Source);
@@ -324,9 +324,9 @@ public sealed class ParserTests
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
     public void TerminalValidationOccursBeforeShortCircuiting()
     {
-        var parser = new CliParser(CreateTree());
-        var version = CliTerminalValidator.Validate(parser.Parse(["--json", "--version"]));
-        var conflict = CliTerminalValidator.Validate(parser.Parse(["--help", "--version"]));
+        var tree = CreateTree();
+        var version = CliTerminalValidator.Validate(tree.Parse(["--json", "--version"]));
+        var conflict = CliTerminalValidator.Validate(tree.Parse(["--help", "--version"]));
 
         Assert.Equal(CliTerminalMode.Version, version.TerminalMode);
         Assert.Equal(CliOutputFormat.Json, version.Input?.OutputFormat);
@@ -379,7 +379,7 @@ public sealed class ParserTests
     public void TypedTerminalInputValidatorReportsDomainInput()
     {
         var tree = CreateTerminalTree();
-        var parse = new CliParser(tree).Parse(["group", "leaf", "--help", "source"]) with
+        var parse = tree.Parse(["group", "leaf", "--help", "source"]) with
         {
             OriginalArguments = Array.AsReadOnly<string>(["group", "leaf", "--help"]),
         };
@@ -407,16 +407,15 @@ public sealed class ParserTests
             CliHelpContent.Empty,
             [new CliRootBranch(group, CliHelpContent.Empty, [])],
             [binding]);
-        var parser = new CliParser(tree);
 
-        Assert.Equal(CliBindingSelectionState.Root, CliBindingSelector.Select(parser.Parse([])).State);
-        Assert.Equal(CliBindingSelectionState.Group, CliBindingSelector.Select(parser.Parse(["group"])).State);
-        var selected = CliBindingSelector.Select(parser.Parse(["group", "leaf"]));
+        Assert.Equal(CliBindingSelectionState.Root, CliBindingSelector.Select(tree.Parse([])).State);
+        Assert.Equal(CliBindingSelectionState.Group, CliBindingSelector.Select(tree.Parse(["group"])).State);
+        var selected = CliBindingSelector.Select(tree.Parse(["group", "leaf"]));
         Assert.Equal(CliBindingSelectionState.Leaf, selected.State);
         Assert.Same(binding, selected.Binding);
         Assert.Equal(
             CliBindingSelectionState.NoLeaf,
-            CliBindingSelector.Select(parser.Parse(["group", "unbound"])).State);
+            CliBindingSelector.Select(tree.Parse(["group", "unbound"])).State);
         Assert.Null(tree.FindBinding(new Command("leaf")));
     }
 
@@ -424,7 +423,7 @@ public sealed class ParserTests
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
     public void UnknownInputRemainsAParserFact()
     {
-        var parse = new CliParser(CreateTree()).Parse(["unknown"]);
+        var parse = CreateTree().Parse(["unknown"]);
 
         Assert.NotEmpty(parse.Result.Errors);
         Assert.Equal(CliInvalidInputSource.Parser, CliTerminalValidator.Validate(parse).InvalidInput?.Source);
@@ -459,7 +458,7 @@ public sealed class ParserTests
         string[] arguments,
         CliTerminalMode expectedMode)
     {
-        var resolution = CliTerminalValidator.Validate(new CliParser(tree).Parse(arguments));
+        var resolution = CliTerminalValidator.Validate(tree.Parse(arguments));
 
         Assert.Null(resolution.InvalidInput);
         Assert.Equal(expectedMode, resolution.TerminalMode);
@@ -470,7 +469,7 @@ public sealed class ParserTests
         CliCommandTree tree,
         string[] arguments)
     {
-        var resolution = CliTerminalValidator.Validate(new CliParser(tree).Parse(arguments));
+        var resolution = CliTerminalValidator.Validate(tree.Parse(arguments));
         var invalid = Assert.IsType<CliInvalidInput>(resolution.InvalidInput);
 
         Assert.Equal(CliInvalidInputSource.Semantic, invalid.Source);

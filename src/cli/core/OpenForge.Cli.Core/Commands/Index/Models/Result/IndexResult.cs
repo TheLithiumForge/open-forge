@@ -3,9 +3,9 @@ using OpenForge.Cli.Core.Commands.Index.Models.Operation;
 using OpenForge.Cli.Core.Commands.Index.Models.Planning;
 using OpenForge.Cli.Core.Commands.Index.Models.Request;
 using OpenForge.Cli.Core.Commands.Index.Models.Selection;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Index.Models.Result;
 

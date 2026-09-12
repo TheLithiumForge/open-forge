@@ -4,7 +4,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Distribution;
 
@@ -38,7 +38,7 @@ internal sealed class EmbeddedFrameworkSourceProjector
                 asset.Path,
                 form,
                 SourceLayerKind.Base);
-            var overwritePath = ReadAdjacentOverwritePath(asset.Path);
+            var overwritePath = SourceOverwritePath.ReadAdjacentPath(asset.Path);
             var overwrite = assetsByPath.TryGetValue(overwritePath, out var overwriteAsset)
                 ? CreateOverwrite(workspace, overwriteAsset)
                 : null;
@@ -53,7 +53,7 @@ internal sealed class EmbeddedFrameworkSourceProjector
                      && SourceFormClassifier.TryClassify(asset.Path, out var form)
                      && form == SourceDocumentForm.OverwriteCompanion))
         {
-            var basePath = ReadAdjacentBasePath(overwrite.Path);
+            var basePath = SourceOverwritePath.ReadBasePath(overwrite.Path);
             if (!assetsByPath.TryGetValue(basePath, out var baseAsset)
                 || !SourceFormClassifier.TryClassify(baseAsset.Path, out var baseForm)
                 || baseForm == SourceDocumentForm.OverwriteCompanion)
@@ -103,10 +103,4 @@ internal sealed class EmbeddedFrameworkSourceProjector
 
         return new SourceLayer(canonicalPath, physicalPath, form, kind);
     }
-
-    private static string ReadAdjacentOverwritePath(string basePath)
-        => basePath[..^".md".Length] + ".overwrite.md";
-
-    private static string ReadAdjacentBasePath(string overwritePath)
-        => overwritePath[..^".overwrite.md".Length] + ".md";
 }

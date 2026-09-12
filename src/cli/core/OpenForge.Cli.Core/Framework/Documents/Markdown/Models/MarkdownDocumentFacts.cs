@@ -1,3 +1,7 @@
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Shared.Construction;
+
 namespace OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 
 internal sealed record MarkdownDocumentFacts
@@ -11,19 +15,19 @@ internal sealed record MarkdownDocumentFacts
         ArgumentNullException.ThrowIfNull(structure);
         ArgumentNullException.ThrowIfNull(inlineFacts);
 
-        var materialized = MarkdownDocumentMaterialization.Create(structure, inlineFacts);
-        MarkdownDocumentStructureValidator.Validate(source, structure, materialized);
-        MarkdownDocumentInlineValidator.Validate(source, structure.BodySpan, materialized);
+        MarkdownDocumentConstructionValidator.Validate(structure, inlineFacts);
+        MarkdownDocumentStructureValidator.Validate(source, structure);
+        MarkdownDocumentInlineValidator.Validate(source, structure.BodySpan, inlineFacts);
 
         Source = source;
         Frontmatter = structure.Frontmatter;
         BodySpan = structure.BodySpan;
-        Headings = Array.AsReadOnly(materialized.Headings);
-        Sections = Array.AsReadOnly(materialized.Sections);
-        VisibleText = Array.AsReadOnly(materialized.VisibleText);
-        OpaqueSpans = Array.AsReadOnly(materialized.OpaqueSpans);
-        Links = Array.AsReadOnly(materialized.Links);
-        Images = Array.AsReadOnly(materialized.Images);
+        Headings = structure.Headings;
+        Sections = structure.Sections;
+        VisibleText = inlineFacts.VisibleText;
+        OpaqueSpans = inlineFacts.OpaqueSpans;
+        Links = inlineFacts.Links;
+        Images = inlineFacts.Images;
         GeneratedRegion = structure.GeneratedRegion;
     }
 
@@ -46,5 +50,4 @@ internal sealed record MarkdownDocumentFacts
     internal IReadOnlyList<MarkdownLinkFact> Images { get; }
 
     internal MarkdownGeneratedRegionFact GeneratedRegion { get; }
-
 }

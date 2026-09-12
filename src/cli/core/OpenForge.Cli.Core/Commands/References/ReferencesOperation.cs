@@ -324,12 +324,30 @@ internal sealed class ReferencesOperation
 
         if (incomingSelection is null && request.RequestsIncoming)
         {
+            var roleOccurrences = new Dictionary<SourceUniverseSelectorRole, int>();
+            var resolved = new List<ReferencesSelectorResolution>();
+            foreach (var selector in request.SelectorOccurrences)
+            {
+                roleOccurrences.TryGetValue(selector.Role, out var priorOccurrence);
+                var occurrence = priorOccurrence + 1;
+                roleOccurrences[selector.Role] = occurrence;
+                resolved.Add(new ReferencesSelectorResolution(
+                    role: selector.Role,
+                    occurrence: occurrence,
+                    supplied: selector.Value,
+                    form: SourceReferenceParser.Parse(selector.Value).Kind,
+                    resolution: SourceReferenceResolutionState.Unknown,
+                    source: null,
+                    expansion: null,
+                    candidates: []));
+            }
+
             incomingSelection = new ReferencesIncomingSelection(
-                request.SelectorOccurrences.Count == 0 ? ReferencesSelectionMode.Default : ReferencesSelectionMode.Filtered,
-                request.SelectorOccurrences.Select(ToSelectorOccurrence),
-                [],
-                [],
-                []);
+                mode: request.SelectorOccurrences.Count == 0 ? ReferencesSelectionMode.Default : ReferencesSelectionMode.Filtered,
+                supplied: request.SelectorOccurrences.Select(ToSelectorOccurrence),
+                resolved: resolved,
+                effectiveSources: [],
+                inspectedSources: []);
         }
 
         return _resultBuilder.Build(new ReferencesResultInput

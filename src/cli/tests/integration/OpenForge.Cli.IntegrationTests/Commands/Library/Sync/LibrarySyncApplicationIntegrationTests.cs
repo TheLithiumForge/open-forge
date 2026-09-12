@@ -1,16 +1,20 @@
 using System.Text;
+using OpenForge.Cli.Core.Commands.Library.Models.Application;
+using OpenForge.Cli.Core.Commands.Library.Models.Planning;
+using OpenForge.Cli.Core.Commands.Library.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Application;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Sync.Shared.Application;
 using OpenForge.Cli.Core.Commands.Library.Sync.Shared.Completion;
-using OpenForge.Cli.Core.Commands.Library.Models.Application;
-using OpenForge.Cli.Core.Commands.Library.Models.Planning;
-using OpenForge.Cli.Core.Commands.Library.Models.Request;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 using OpenForge.Cli.IntegrationTests.TestSupport;
@@ -69,17 +73,15 @@ public sealed class LibrarySyncApplicationIntegrationTests
                 await cancellation.CancelAsync();
             }
 
-            var outcome = await LibrarySyncApplication.ApplyAsync(new LibrarySyncApplicationInput
+            var execution = await LibrarySyncApplication.ApplyAsync(new LibrarySyncApplicationInput
             { Lease = lease, Plan = plan, RecoveryPreparation = preparation }, cancellation.Token);
-            Assert.Equal(outcome.Execution.Links, outcome.Links);
-            Assert.Same(outcome.Execution.Record, outcome.Record);
             Assert.Equal(LibraryMutationWorkspace.SourceBytes,
                 File.ReadAllText(workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/{LibraryMutationWorkspace.Leaf}")));
             if (scenario != "verified")
             {
                 Assert.Equal(before, workspace.Snapshot());
-                Assert.DoesNotContain(outcome.Links, receipt => receipt.EffectState != FilesystemEffectState.NotStarted);
-                Assert.True(outcome.Record is null || outcome.Record.EffectState == FilesystemEffectState.NotStarted);
+                Assert.DoesNotContain(execution.Links, receipt => receipt.EffectState != FilesystemEffectState.NotStarted);
+                Assert.True(execution.Record is null || execution.Record.EffectState == FilesystemEffectState.NotStarted);
                 if (preparation is not null)
                 {
                     Assert.True(File.Exists(preparation.BundlePath));
@@ -87,11 +89,11 @@ public sealed class LibrarySyncApplicationIntegrationTests
                 return;
             }
 
-            Assert.Equal(FilesystemVerificationState.Verified, Assert.Single(outcome.Links).VerificationState);
-            Assert.Equal(FilesystemVerificationState.Verified, Assert.IsType<FileChangeReceipt>(outcome.Record).VerificationState);
-            Assert.Same(preparation, outcome.Execution.RecoveryPreparation);
-            Assert.Equal(LibraryRecordPublicationOrder.Last, outcome.Execution.RecordPublicationOrder);
-            Assert.True(Assert.IsType<LibrarySourceEffectScopeFacts>(outcome.Execution.SourceEffectScope).IsComplete);
+            Assert.Equal(FilesystemVerificationState.Verified, Assert.Single(execution.Links).VerificationState);
+            Assert.Equal(FilesystemVerificationState.Verified, Assert.IsType<FileChangeReceipt>(execution.Record).VerificationState);
+            Assert.Same(preparation, execution.RecoveryPreparation);
+            Assert.Equal(LibraryRecordPublicationOrder.Last, execution.RecordPublicationOrder);
+            Assert.True(Assert.IsType<LibrarySourceEffectScopeFacts>(execution.SourceEffectScope).IsComplete);
             Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md", new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
             Assert.Equal(recordChange.IntendedBytes.ToArray(), File.ReadAllBytes(workspace.Absolute(LibraryMutationWorkspace.RecordPath)));
             var retained = Assert.IsType<RecoveryBundlePreparation>(preparation);
@@ -104,7 +106,7 @@ public sealed class LibrarySyncApplicationIntegrationTests
                 Request = plan.Input.Request,
                 Plan = plan,
                 Observations = plan.Input,
-                Execution = outcome.Execution with { RecoveryCleanup = cleanup },
+                Execution = execution with { RecoveryCleanup = cleanup },
             });
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
             Assert.Equal(LibraryRecoveryState.Removed, result.Result.Application.Recovery.State);

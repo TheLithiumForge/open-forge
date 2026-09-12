@@ -9,21 +9,18 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
 
 namespace OpenForge.Cli.Core.Commands.Library.Shared.Application;
 
 internal static class LibraryMutationApplicationRunner
 {
-    internal static ValueTask<LibraryMutationApplicationRun> ApplyAsync(
-        LibraryMutationApplicationRequest input,
-        CancellationToken cancellationToken)
-        => ApplyCoreAsync(input, cancellationToken);
-
-    private static async ValueTask<LibraryMutationApplicationRun> ApplyCoreAsync(
+    internal static async ValueTask<LibraryExecutionEvidence> ApplyAsync(
         LibraryMutationApplicationRequest input,
         CancellationToken cancellationToken)
     {
@@ -68,11 +65,11 @@ internal static class LibraryMutationApplicationRunner
         if (input.Permissions is { } permissions && (permissions.Failure is not null
             || !await LibraryPermissionOperation.RevalidateAsync(input.Lease, permissions, cancellationToken).ConfigureAwait(false)))
         {
-            var stopped = Stop(input, cancellation: null, unexpected: null).Execution with
+            var stopped = Stop(input, cancellation: null, unexpected: null) with
             {
                 Permission = new(permissions.Result, Receipt: null, permissions.Failure ?? LibraryPermissionFailure.Changed),
             };
-            return new(Summarize(stopped, noEffects: false), stopped);
+            return stopped;
         }
 
         var resolver = new PhysicalPathResolver();
@@ -258,9 +255,7 @@ internal static class LibraryMutationApplicationRunner
             },
             RecordPublicationOrder = publicationOrder,
         };
-        return new LibraryMutationApplicationRun(
-            Summarize(execution, reversibleEffects == 0),
-            execution);
+        return execution;
     }
 
     private static bool MatchesRecovery(LibraryMutationApplicationRequest input)
@@ -277,7 +272,7 @@ internal static class LibraryMutationApplicationRunner
                 || preparation.MatchesChange(input.Lease.Request, input.RecordChange));
     }
 
-    private static LibraryMutationApplicationRun Stop(
+    private static LibraryExecutionEvidence Stop(
         LibraryMutationApplicationRequest input,
         LibraryCancellationFact? cancellation,
         LibraryUnexpectedFailureFact? unexpected)
@@ -301,68 +296,7 @@ internal static class LibraryMutationApplicationRunner
             },
             RecordPublicationOrder = LibraryRecordPublicationOrder.NotObserved,
         };
-        return new LibraryMutationApplicationRun(Summarize(execution, noEffects: false), execution);
-    }
-
-    private static LibraryMutationApplication Summarize(
-        LibraryExecutionEvidence execution,
-        bool noEffects)
-    {
-        var failed = execution.UnexpectedFailure is not null || execution.Permission?.Failure is not null;
-        var interrupted = execution.Cancellation is not null;
-        var receipts = execution.Directories.Select(receipt => (receipt.EffectState, receipt.VerificationState))
-            .Concat(execution.Links.Select(receipt => (receipt.EffectState, receipt.VerificationState)))
-            .Concat(execution.GeneratedRegions.Select(receipt => (receipt.EffectState, receipt.VerificationState)))
-            .Concat(execution.Record is null
-                ? []
-                : [(execution.Record.EffectState, execution.Record.VerificationState)])
-            .Concat(execution.Permission?.Receipt is { } permission ? [(permission.EffectState, permission.VerificationState)] : [])
-            .ToArray();
-        var allVerified = receipts.All(receipt => Verified(receipt.EffectState, receipt.VerificationState));
-        return new LibraryMutationApplication
-        {
-            State = ReadApplicationState(interrupted, failed || !allVerified, noEffects),
-            Verification = ReadVerification(receipts.Length, allVerified),
-            Recovery = new LibraryRecoveryView
-            {
-                State = execution.RecoveryPreparation is null
-                    ? LibraryRecoveryState.NotRequested
-                    : LibraryRecoveryState.Prepared,
-                Path = execution.RecoveryPreparation?.BundlePath,
-            },
-            Residuals = [],
-            RecordPublication = new LibraryRecordPublication
-            {
-                State = execution.Record?.VerificationState == FilesystemVerificationState.Verified
-                    ? LibraryRecordPublicationState.Verified
-                    : LibraryRecordPublicationState.NotStarted,
-                PublishedLast = execution.RecordPublicationOrder == LibraryRecordPublicationOrder.Last
-                    ? true
-                    : null,
-            },
-        };
-    }
-
-    private static LibraryApplicationState ReadApplicationState(bool interrupted, bool failed, bool noEffects)
-    {
-        if (interrupted)
-        {
-            return LibraryApplicationState.Interrupted;
-        }
-        if (failed)
-        {
-            return LibraryApplicationState.Failed;
-        }
-        return noEffects ? LibraryApplicationState.NoOp : LibraryApplicationState.Applied;
-    }
-
-    private static LibraryVerificationState ReadVerification(int count, bool allVerified)
-    {
-        if (count == 0)
-        {
-            return LibraryVerificationState.NotStarted;
-        }
-        return allVerified ? LibraryVerificationState.Verified : LibraryVerificationState.Failed;
+        return execution;
     }
 
     private static bool ProtectsSources(LibraryMutationApplicationRequest input)

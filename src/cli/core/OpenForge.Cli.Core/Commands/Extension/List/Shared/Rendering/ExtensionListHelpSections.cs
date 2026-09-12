@@ -1,6 +1,5 @@
-using System.Globalization;
-using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Help;
 
 namespace OpenForge.Cli.Core.Commands.Extension.List.Shared.Rendering;
 
@@ -33,36 +32,10 @@ internal static class ExtensionListHelpSections
                 """),
             new CliHelpSection(
                 heading: "Results and streams",
-                body: ResultsAndStreams()),
+                body: CliResultHelp.ResultsAndStreams(schemaVersion: 1)),
             new CliHelpSection(
                 heading: "Notes",
                 body: "  Extension List is deterministic and read-only. Availability never proves installation; an installed fact survives source unavailability. "
                 + "The command writes no payload, lifecycle, generated navigation, backup, cache, temporary file, or diagnostic artifact."),
         ]);
-
-    private static string ResultsAndStreams()
-    {
-        var lines = new List<string>
-        {
-            "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            "  JSON writes one schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr.",
-        };
-        foreach (var status in Enum.GetValues<CliSemanticStatus>())
-        {
-            var definition = CliStatusDefinitions.Read(status);
-            lines.Add(string.Create(
-                CultureInfo.InvariantCulture,
-                $"  {definition.MachineName}: exit {definition.Disposition.ExitCode} and human {Stream(definition.Disposition.HumanOutputTarget)}."));
-        }
-
-        return string.Join(Environment.NewLine, lines);
-    }
-
-    private static string Stream(CliOutputTarget target)
-        => target switch
-        {
-            CliOutputTarget.StandardOutput => "stdout",
-            CliOutputTarget.StandardError => "stderr",
-            _ => throw new ArgumentOutOfRangeException(nameof(target), target, "The output target is not defined."),
-        };
 }

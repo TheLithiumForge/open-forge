@@ -1,12 +1,15 @@
-using System.Collections.ObjectModel;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 
@@ -49,21 +52,10 @@ internal sealed class ExtensionInstallPlan
         Selection = new ExtensionInstallSelection(input.Selection.SelectedBy, input.Selection.RootIds);
         Packages = Snapshot(input.Packages, nameof(input.Packages));
         FrameworkPayload = input.FrameworkPayload;
-        FrameworkLifecycle = ExtensionInstallLifecycleSnapshots.Framework(input.FrameworkLifecycle);
-        CurrentLifecycle = ExtensionInstallLifecycleSnapshots.Extensions(input.CurrentLifecycle);
-        IntendedLifecycle = ExtensionInstallLifecycleSnapshots.Extensions(input.IntendedLifecycle);
-        Topology = ExtensionInstallTopology.Create(
-            input.Topology.IntendedTargetBytes.ToDictionary(
-                pair => pair.Key,
-                pair => pair.Value.ToArray(),
-                StringComparer.Ordinal),
-            input.Topology.GeneratedTargetBytes.ToDictionary(
-                pair => pair.Key,
-                pair => pair.Value.ToArray(),
-                StringComparer.Ordinal),
-            input.Topology.Regions,
-            input.Topology.ProtectedPaths,
-            input.Topology.InitialForceEligiblePaths);
+        FrameworkLifecycle = ExtensionLifecycleSnapshots.Framework(input.FrameworkLifecycle);
+        CurrentLifecycle = ExtensionLifecycleSnapshots.Extensions(input.CurrentLifecycle);
+        IntendedLifecycle = ExtensionLifecycleSnapshots.Extensions(input.IntendedLifecycle);
+        Topology = input.Topology;
         Facts = ExtensionInstallResultFacts.Snapshot(input.Facts);
         Effects = Snapshot(input.Effects, nameof(input.Effects));
         LifecycleChange = input.LifecycleChange;
@@ -120,11 +112,13 @@ internal sealed class ExtensionInstallPlan
         where T : class
     {
         ArgumentNullException.ThrowIfNull(values, parameterName);
-        return new ReadOnlyCollection<T>(values
-            .Select(value => value ?? throw new ArgumentException(
+        T[] snapshot =
+        [
+            .. values.Select(value => value ?? throw new ArgumentException(
                 "Extension Install planning collections cannot contain null members.",
-                parameterName))
-            .ToArray());
+                parameterName)),
+        ];
+        return new ReadOnlyCollection<T>(snapshot);
     }
 }
 
@@ -143,11 +137,13 @@ internal sealed class ExtensionInstallTopology
     {
         IntendedTargetBytes = SnapshotBytes(intendedTargetBytes, nameof(intendedTargetBytes));
         GeneratedTargetBytes = SnapshotBytes(generatedTargetBytes, nameof(generatedTargetBytes));
-        Regions = new ReadOnlyCollection<ExtensionInstallGeneratedRegion>(regions
-            .Select(region => region ?? throw new ArgumentException(
+        ExtensionInstallGeneratedRegion[] regionSnapshot =
+        [
+            .. regions.Select(region => region ?? throw new ArgumentException(
                 "Extension Install topology regions cannot contain null members.",
-                nameof(regions)))
-            .ToArray());
+                nameof(regions))),
+        ];
+        Regions = new ReadOnlyCollection<ExtensionInstallGeneratedRegion>(regionSnapshot);
         ProtectedPaths = protectedPaths.ToImmutableHashSet(StringComparer.Ordinal);
         InitialForceEligiblePaths = initialForceEligiblePaths.ToImmutableHashSet(
             StringComparer.Ordinal);
@@ -211,11 +207,13 @@ internal sealed record ExtensionInstallSelectionResolution
         string parameterName)
     {
         ArgumentNullException.ThrowIfNull(packages, parameterName);
-        return new ReadOnlyCollection<ExtensionPackageFact>(packages
-            .Select(package => package ?? throw new ArgumentException(
+        ExtensionPackageFact[] snapshot =
+        [
+            .. packages.Select(package => package ?? throw new ArgumentException(
                 "Extension Install package collections cannot contain null members.",
-                parameterName))
-            .ToArray());
+                parameterName)),
+        ];
+        return new ReadOnlyCollection<ExtensionPackageFact>(snapshot);
     }
 }
 
@@ -267,21 +265,10 @@ internal sealed class ExtensionInstallFoundation
         ExtensionInstallTopology topology)
     {
         FrameworkPayload = frameworkPayload;
-        FrameworkLifecycle = ExtensionInstallLifecycleSnapshots.Framework(frameworkLifecycle);
+        FrameworkLifecycle = ExtensionLifecycleSnapshots.Framework(frameworkLifecycle);
         ExtensionsRead = extensionsRead;
-        CurrentExtensions = ExtensionInstallLifecycleSnapshots.Extensions(currentExtensions);
-        Topology = ExtensionInstallTopology.Create(
-            topology.IntendedTargetBytes.ToDictionary(
-                pair => pair.Key,
-                pair => pair.Value.ToArray(),
-                StringComparer.Ordinal),
-            topology.GeneratedTargetBytes.ToDictionary(
-                pair => pair.Key,
-                pair => pair.Value.ToArray(),
-                StringComparer.Ordinal),
-            topology.Regions,
-            topology.ProtectedPaths,
-            topology.InitialForceEligiblePaths);
+        CurrentExtensions = ExtensionLifecycleSnapshots.Extensions(currentExtensions);
+        Topology = topology;
     }
 
     internal FrameworkPayload FrameworkPayload { get; }
@@ -307,14 +294,15 @@ internal sealed record ExtensionInstallIntendedPath
         IEnumerable<string> owners)
     {
         Path = path;
-        _bytes = bytes.ToArray();
+        _bytes = [.. bytes];
         Fingerprint = fingerprint;
         FingerprintKind = fingerprintKind;
-        Owners = new ReadOnlyCollection<string>(owners.Order(StringComparer.Ordinal).ToArray());
+        string[] ownerSnapshot = [.. owners.Order(StringComparer.Ordinal)];
+        Owners = new ReadOnlyCollection<string>(ownerSnapshot);
     }
 
     internal string Path { get; }
-    internal byte[] Bytes => _bytes.ToArray();
+    internal byte[] Bytes => [.. _bytes];
     internal string Fingerprint { get; }
     internal string FingerprintKind { get; }
     internal IReadOnlyList<string> Owners { get; }
@@ -333,15 +321,11 @@ internal sealed class ExtensionInstallTargetState
         IntendedPaths = new ReadOnlyDictionary<string, ExtensionInstallIntendedPath>(
             intendedPaths.ToDictionary(
                 pair => pair.Key,
-                pair => new ExtensionInstallIntendedPath(
-                    pair.Value.Path,
-                    pair.Value.Bytes,
-                    pair.Value.Fingerprint,
-                    pair.Value.FingerprintKind,
-                    pair.Value.Owners),
+                pair => pair.Value,
                 StringComparer.Ordinal));
-        EligibleOccupants = new ReadOnlyCollection<string>(eligibleOccupants.Order(StringComparer.Ordinal).ToArray());
-        IntendedLifecycle = ExtensionInstallLifecycleSnapshots.Extensions(intendedLifecycle);
+        string[] occupantSnapshot = [.. eligibleOccupants.Order(StringComparer.Ordinal)];
+        EligibleOccupants = new ReadOnlyCollection<string>(occupantSnapshot);
+        IntendedLifecycle = ExtensionLifecycleSnapshots.Extensions(intendedLifecycle);
     }
 
     internal IReadOnlyDictionary<string, FileStateSnapshot> Observations { get; }
@@ -384,11 +368,13 @@ internal sealed class ExtensionInstallEffectPlan
         ExtensionInstallLifecycleAction lifecycleAction,
         ExtensionInstallFinding? finding)
     {
-        Effects = new ReadOnlyCollection<ExtensionInstallPlannedEffect>(effects
-            .Select(effect => effect ?? throw new ArgumentException(
+        ExtensionInstallPlannedEffect[] effectSnapshot =
+        [
+            .. effects.Select(effect => effect ?? throw new ArgumentException(
                 "Extension Install effect plans cannot contain null members.",
-                nameof(effects)))
-            .ToArray());
+                nameof(effects))),
+        ];
+        Effects = new ReadOnlyCollection<ExtensionInstallPlannedEffect>(effectSnapshot);
         LifecycleChange = lifecycleChange;
         LifecycleRecoveryTarget = lifecycleRecoveryTarget;
         LifecycleAction = lifecycleAction;
@@ -420,53 +406,4 @@ internal sealed record ExtensionInstallPlannedFactsInput
     internal required FrameworkLifecycleState FrameworkLifecycle { get; init; }
     internal required ExtensionInstallTopology Topology { get; init; }
     internal required ExtensionInstallEffectPlan EffectPlan { get; init; }
-}
-
-internal static class ExtensionInstallLifecycleSnapshots
-{
-    internal static FrameworkLifecycleState Framework(FrameworkLifecycleState value)
-        => new()
-        {
-            Coverage = value.Coverage,
-            Source = new FrameworkLifecycleSource
-            {
-                Id = value.Source.Id,
-                Version = value.Source.Version,
-                InventoryFingerprint = value.Source.InventoryFingerprint,
-            },
-            Targets = value.Targets.Select(target => new FrameworkLifecycleTarget
-            {
-                Path = target.Path,
-                SourceAssetPath = target.SourceAssetPath,
-                Region = target.Region,
-                BaselineFingerprint = target.BaselineFingerprint,
-                FingerprintKind = target.FingerprintKind,
-            }).ToArray(),
-            GeneratedRegions = value.GeneratedRegions.Select(region => new FrameworkGeneratedRegion
-            {
-                Path = region.Path,
-                Region = region.Region,
-            }).ToArray(),
-        };
-
-    internal static ExtensionLifecycleState Extensions(ExtensionLifecycleState value)
-        => new()
-        {
-            Coverage = value.Coverage,
-            Packages = value.Packages.Select(package => new LifecycleExtensionPackageV1
-            {
-                Id = package.Id,
-                Version = package.Version,
-                Source = package.Source,
-                Dependencies = package.Dependencies.ToArray(),
-                Paths = package.Paths.ToArray(),
-            }).ToArray(),
-            Paths = value.Paths.Select(path => new LifecycleExtensionPathV1
-            {
-                Path = path.Path,
-                Owners = path.Owners.ToArray(),
-                BaselineFingerprint = path.BaselineFingerprint,
-                FingerprintKind = path.FingerprintKind,
-            }).ToArray(),
-        };
 }

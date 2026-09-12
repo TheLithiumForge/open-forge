@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using System.Text;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
@@ -7,9 +6,6 @@ namespace OpenForge.Cli.EndToEndTests;
 
 internal sealed class PublishedStatusWorkspace : IDisposable
 {
-    private const string RecoveryApplicationDirectory = "OpenForge";
-    private const string RecoveryDirectory = "recovery";
-    private const string RecoveryVersionDirectory = "v1";
     private const string RecoveryDraftFileName = "operation-00000000000000000000000000000001.draft";
     private static readonly byte[] RecoveryDraftBytes = Encoding.UTF8.GetBytes("pending recovery draft bytes\n");
 
@@ -93,10 +89,8 @@ internal sealed class PublishedStatusWorkspace : IDisposable
         {
             SeedWorkspace(workspace);
             var lockPath = lockStore.Track(workspace.Path);
-            var recoveryStoreRoot = ResolveRecoveryStoreRoot(lockStore.EnvironmentVariables);
-            var recoveryWorkspaceDirectory = System.IO.Path.Combine(
-                recoveryStoreRoot,
-                WorkspaceKey(workspace.Path));
+            var recoveryStoreRoot = lockStore.RecoveryStoreRoot;
+            var recoveryWorkspaceDirectory = lockStore.RecoveryWorkspaceDirectory(workspace.Path);
             var recoveryDraftPath = System.IO.Path.Combine(
                 recoveryWorkspaceDirectory,
                 RecoveryDraftFileName);
@@ -152,46 +146,4 @@ internal sealed class PublishedStatusWorkspace : IDisposable
                 body: "\n# Status\n\nStatus evidence.\n"));
     }
 
-    private static string ResolveRecoveryStoreRoot(IReadOnlyDictionary<string, string> environment)
-    {
-        string localApplicationData;
-        if (OperatingSystem.IsWindows())
-        {
-            localApplicationData = Environment.GetFolderPath(
-                Environment.SpecialFolder.LocalApplicationData,
-                Environment.SpecialFolderOption.DoNotVerify);
-        }
-        else if (environment.TryGetValue("XDG_DATA_HOME", out var configuredLocalApplicationData))
-        {
-            localApplicationData = configuredLocalApplicationData;
-        }
-        else
-        {
-            throw new InvalidOperationException(
-                "The published status fixture requires an isolated local application-data path.");
-        }
-
-        if (string.IsNullOrWhiteSpace(localApplicationData)
-            || !System.IO.Path.IsPathFullyQualified(localApplicationData))
-        {
-            throw new InvalidOperationException(
-                "The published status fixture requires an absolute local application-data path.");
-        }
-
-        return System.IO.Path.Combine(
-            System.IO.Path.GetFullPath(localApplicationData),
-            RecoveryApplicationDirectory,
-            RecoveryDirectory,
-            RecoveryVersionDirectory);
-    }
-
-    private static string WorkspaceKey(string workspacePath)
-    {
-        var normalized = System.IO.Path.TrimEndingDirectorySeparator(
-            System.IO.Path.GetFullPath(workspacePath));
-        var identity = OperatingSystem.IsWindows()
-            ? normalized.ToUpperInvariant()
-            : normalized;
-        return Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(identity)));
-    }
 }

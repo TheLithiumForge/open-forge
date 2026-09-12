@@ -5,18 +5,18 @@ using OpenForge.Cli.Core.Commands.Update.Shared.Recovery;
 using OpenForge.Cli.Core.Commands.Update.Shared.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Application;
 
 internal sealed class UpdateApplicationOperation(
     WorkspaceLockManager lockManager,
-    UpdateApplicationPreflight preflight,
+    UpdatePlanRevalidator revalidator,
     UpdateEffectApplication effectApplication,
     UpdateAppliedVerifier verifier)
 {
     private readonly WorkspaceLockManager _lockManager = lockManager;
-    private readonly UpdateApplicationPreflight _preflight = preflight;
+    private readonly UpdatePlanRevalidator _revalidator = revalidator;
     private readonly UpdateEffectApplication _effectApplication = effectApplication;
     private readonly UpdateAppliedVerifier _verifier = verifier;
 
@@ -81,8 +81,8 @@ internal sealed class UpdateApplicationOperation(
         Guid operationId,
         CancellationToken cancellationToken)
     {
-        var preflight = await _preflight
-            .ValidateAsync(execution, lease, cancellationToken)
+        var preflight = await _revalidator
+            .RevalidateAsync(execution, lease, cancellationToken)
             .ConfigureAwait(false);
         if (preflight.State != UpdatePlanRevalidationState.Exact)
         {

@@ -91,10 +91,10 @@ public sealed class DoctorApplicationIntegrationTests
     private static IReadOnlyDictionary<string, string> SnapshotState(
         TemporaryWorkspace workspace)
     {
-        var cliWorkspace = new OpenForge.Cli.Core.Framework.Workspace.CliWorkspace(
+        var cliWorkspace = new OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspace(
             workspace.Path,
             workspace.Path,
-            OpenForge.Cli.Core.Framework.Workspace.CliWorkspaceSelectionMethod.ExplicitWorkspace);
+            OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var recoveryDirectory = RecoveryBundleStoreIntegrationTests.WorkspaceDirectory(cliWorkspace);
         var state = new SortedDictionary<string, string>(StringComparer.Ordinal)
         {

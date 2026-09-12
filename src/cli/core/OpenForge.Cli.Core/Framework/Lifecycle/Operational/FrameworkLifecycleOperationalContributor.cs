@@ -1,10 +1,11 @@
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Identity;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Lifecycle.Operational.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
+using OpenForge.Cli.Core.Framework.Lifecycle.Operational.Shared.Evaluation;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Lifecycle.Operational;
 
@@ -34,12 +35,13 @@ internal sealed class FrameworkLifecycleOperationalContributor(
         var lifecycle = lifecycleStore.Read(snapshot, LifecycleSection.Framework);
         var payload = EmbeddedFrameworkPayloadReader.Read();
         var targets = await ReadTargetsAsync(lifecycle, payload, cancellationToken).ConfigureAwait(false);
+        var sourceAvailability = ReadSourceAvailability(lifecycle, payload, targets);
         return new FrameworkLifecycleStatusView
         {
-            State = ReadViewState(lifecycle, payload, targets),
-            Presence = ReadPresence(lifecycle.State),
+            State = ReadViewState(lifecycle, sourceAvailability, targets),
+            Presence = FrameworkLifecycleEvaluation.ReadPresence(lifecycle.State),
             Lifecycle = ReadLifecycleState(lifecycle.State),
-            SourceAvailability = ReadSourceAvailability(lifecycle, payload, targets),
+            SourceAvailability = sourceAvailability,
             Targets = targets,
         };
     }
@@ -76,7 +78,7 @@ internal sealed class FrameworkLifecycleOperationalContributor(
 
     private static OperationalViewState ReadViewState(
         LifecycleStoreReadResult lifecycle,
-        FrameworkPayloadReadResult payload,
+        OperationalSourceAvailability sourceAvailability,
         IReadOnlyList<FrameworkManagedTargetObservation> targets)
     {
         if (lifecycle.State == LifecycleStoreReadState.Cancelled)
@@ -101,11 +103,7 @@ internal sealed class FrameworkLifecycleOperationalContributor(
             return OperationalViewState.Incomplete;
         }
 
-        return lifecycle.State == LifecycleStoreReadState.Available
-            && payload.State == FrameworkPayloadReadState.Available
-            && SourceMatches(lifecycle, payload)
-            && targets.All(target =>
-                target.Source.State == FrameworkLifecycleTargetSourceState.Valid)
+        return sourceAvailability == OperationalSourceAvailability.Available
             ? OperationalViewState.Complete
             : OperationalViewState.Incomplete;
     }
@@ -145,23 +143,6 @@ internal sealed class FrameworkLifecycleOperationalContributor(
             ? OperationalSourceAvailability.Available
             : OperationalSourceAvailability.Unavailable;
     }
-
-    private static OperationalLifecyclePresenceState ReadPresence(
-        LifecycleStoreReadState state)
-        => state switch
-        {
-            LifecycleStoreReadState.Available
-                or LifecycleStoreReadState.Invalid
-                or LifecycleStoreReadState.Blocked => OperationalLifecyclePresenceState.Present,
-            LifecycleStoreReadState.DocumentMissing
-                or LifecycleStoreReadState.SectionMissing => OperationalLifecyclePresenceState.Missing,
-            LifecycleStoreReadState.Unavailable
-                or LifecycleStoreReadState.Cancelled => OperationalLifecyclePresenceState.Unavailable,
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(state),
-                state,
-                "The Framework lifecycle presence state is not defined."),
-        };
 
     private static bool SourceMatches(
         LifecycleStoreReadResult lifecycle,

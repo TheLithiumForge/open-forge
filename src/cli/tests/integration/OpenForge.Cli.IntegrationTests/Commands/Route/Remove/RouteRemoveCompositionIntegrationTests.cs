@@ -1,9 +1,9 @@
-using System.Runtime.CompilerServices;
 using OpenForge.Cli.Composition;
-using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Results;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Composition;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Remove;
 
@@ -15,8 +15,7 @@ public sealed class RouteRemoveCompositionIntegrationTests
     {
         var application = CliCompositionRoot.Create(
             new CliProcessIdentity("open-forge", "test"));
-        var parser = CliCoreApplicationAccess.Parser(application);
-        var tree = CliParserAccess.Tree(parser);
+        var tree = CliCoreApplicationAccess.Tree(application);
         var route = Assert.Single(
             tree.Root.Subcommands,
             command => command.Name == "route");
@@ -56,17 +55,5 @@ public sealed class RouteRemoveCompositionIntegrationTests
         Assert.DoesNotContain("--recursive", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
         workspace.AssertNoLockInfrastructure();
-    }
-
-    private static class CliCoreApplicationAccess
-    {
-        [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_parser")]
-        internal static extern ref CliParser Parser(CliCoreApplication application);
-    }
-
-    private static class CliParserAccess
-    {
-        [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_tree")]
-        internal static extern ref CliCommandTree Tree(CliParser parser);
     }
 }

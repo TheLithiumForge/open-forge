@@ -1,10 +1,11 @@
-using OpenForge.Cli.Core.Commands.Index.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Index.Models.Operation;
 using OpenForge.Cli.Core.Commands.Index.Models.Planning;
+using OpenForge.Cli.Core.Commands.Index.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Index.Models.Request;
 using OpenForge.Cli.Core.Commands.Index.Models.Result;
 using OpenForge.Cli.Core.Commands.Index.Models.Selection;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 
@@ -44,15 +45,7 @@ internal static class IndexJsonProjection
         => new()
         {
             Path = workspace.LexicalRoot,
-            SelectedBy = workspace.SelectedBy switch
-            {
-                CliWorkspaceSelectionMethod.CurrentDirectory => "current-directory",
-                CliWorkspaceSelectionMethod.ExplicitWorkspace => "explicit-workspace",
-                _ => throw new ArgumentOutOfRangeException(
-                    nameof(workspace),
-                    workspace.SelectedBy,
-                    "The workspace selection method is not defined."),
-            },
+            SelectedBy = WorkspaceSelectionWireVocabulary.Read(workspace.SelectedBy),
         };
 
     private static IndexJsonSelection Selection(IndexSelection selection)

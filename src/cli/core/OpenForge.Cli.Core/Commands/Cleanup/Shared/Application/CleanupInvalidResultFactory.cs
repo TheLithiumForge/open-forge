@@ -1,8 +1,8 @@
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Planning;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Composition.Models;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 
 namespace OpenForge.Cli.Core.Commands.Cleanup.Shared.Application;
 

@@ -1,5 +1,6 @@
 using System.Text;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using OpenForge.Cli.EndToEndTests.Shared.Route;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.EndToEndTests;
@@ -10,14 +11,6 @@ internal sealed class PublishedRouteRemoveWorkspace : IDisposable
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
 
-    internal const string SourceId = "guidance/old guide";
-    internal const string SourcePath = ".agents/guidance/old guide.md";
-    internal const string SourceOverwritePath = ".agents/guidance/old guide.overwrite.md";
-    internal const string CategoryId = "guidance/topics";
-    internal const string CategoryPath = ".agents/guidance/topics/_topics.md";
-    internal const string CategoryChildPath = ".agents/guidance/topics/child.md";
-    internal const string CategoryNotesPath = ".agents/guidance/topics/notes.md";
-    internal const string CategoryResourcePath = ".agents/guidance/topics/image.bin";
     internal const string ParentPath = ".agents/guidance/_guidance.md";
     internal const string LifecyclePath = ".agents/open-forge.lifecycle.json";
 
@@ -46,7 +39,7 @@ internal sealed class PublishedRouteRemoveWorkspace : IDisposable
         PublishedWorkspaceLockStore? lockStore = null;
         try
         {
-            await PublishedRouteMoveSetup.SeedAsync(target, temporary);
+            await PublishedRouteWorkspaceSeed.SeedAsync(target, temporary);
             File.WriteAllText(
                 temporary.Combine("README.md"),
                 "Prefix [Old guide](.agents/guidance/old%20guide.md#section) suffix.\n",
@@ -83,9 +76,6 @@ internal sealed class PublishedRouteRemoveWorkspace : IDisposable
 
     internal byte[] ReadBytes(string relativePath)
         => File.ReadAllBytes(Combine(relativePath));
-
-    internal void WriteText(string relativePath, string contents)
-        => temporary.ReplaceText(relativePath, contents);
 
     internal void AssertNoLockInfrastructure()
         => lockStore.AssertNoInfrastructure();

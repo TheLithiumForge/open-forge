@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 
 namespace OpenForge.Cli.Core.Commands.Library.Models.Planning;
 

@@ -7,12 +7,17 @@ using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.Permissions;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Application;
 using OpenForge.Cli.Core.Framework.Recovery.Comparison;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Application;
@@ -345,7 +350,7 @@ internal static class RepairLibraryRecoveryApplication
             throw new ArgumentException("Atomic Repair application requires its held workspace lease.", nameof(prepared));
         }
 
-        var ordered = OrderEffects(prepared);
+        var ordered = RepairAtomicEffectOrder.Read(prepared.Plan);
         var references = ImmutableArray.CreateBuilder<FileChangeReceipt>();
         var libraries = ImmutableArray.CreateBuilder<RepairLibraryRecoveryReceipt>();
         foreach (var step in ordered)
@@ -445,38 +450,6 @@ internal static class RepairLibraryRecoveryApplication
             cancellation: null,
             failure: null,
             cancellationToken).ConfigureAwait(false);
-    }
-
-    private static ImmutableArray<RepairAtomicEffect> OrderEffects(RepairLibraryPreparedApplication prepared)
-    {
-        ArgumentNullException.ThrowIfNull(prepared);
-        var ordered = ImmutableArray.CreateBuilder<RepairAtomicEffect>();
-        foreach (var effect in prepared.Plan.Effects.OrderBy(
-            effect => effect.SourceCanonicalPath,
-            StringComparer.Ordinal))
-        {
-            ordered.Add(new RepairAtomicEffect(
-                ordered.Count,
-                RepairAtomicEffectKind.Reference,
-                effect,
-                libraryRecovery: null));
-        }
-
-        foreach (var effect in prepared.Plan.LibrarySteps
-            .Select(step => step.Effect)
-            .OfType<RepairLibraryRecoveryEffect>()
-            .OrderBy(effect => effect.Entry.Kind is RecoveryEntryKind.RelativeFileLinkCreate
-                or RecoveryEntryKind.RelativeFileLinkDelete ? 1 : 0)
-            .ThenBy(effect => effect.Entry.TargetPath, StringComparer.Ordinal))
-        {
-            ordered.Add(new RepairAtomicEffect(
-                ordered.Count,
-                RepairAtomicEffectKind.LibraryRecovery,
-                reference: null,
-                effect));
-        }
-
-        return ordered.ToImmutable();
     }
 
     private static async ValueTask<FileChangeReceipt> ApplyReferenceAsync(

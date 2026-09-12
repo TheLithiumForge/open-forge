@@ -1,4 +1,3 @@
-using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using OpenForge.Cli.Core.Commands.Extension.Install;
@@ -16,9 +15,11 @@ using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
@@ -410,7 +411,7 @@ public sealed class ExtensionInstallMutationIntegrationTests
                 WorkspacePermissionResult.NotEvaluated with { Decision = WorkspacePermissionDecision.NotRequired }, null, null, null)),
             operationId,
             TestContext.Current.CancellationToken);
-        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(
+        var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.Preparation.RecoveryBundlePreparation>(
             preparationResult.Preparation);
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();

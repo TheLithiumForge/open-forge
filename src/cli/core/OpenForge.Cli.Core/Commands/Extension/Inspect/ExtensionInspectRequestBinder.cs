@@ -3,9 +3,8 @@ using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
-using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
-using OpenForge.Cli.Core.Shell.Invocation;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect;

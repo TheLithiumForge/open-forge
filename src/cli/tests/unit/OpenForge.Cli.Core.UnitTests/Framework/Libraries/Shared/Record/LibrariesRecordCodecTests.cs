@@ -120,6 +120,87 @@ public sealed class LibrariesRecordCodecTests
         Assert.False(string.IsNullOrWhiteSpace(result.Cause));
     }
 
+    [Theory(DisplayName = "Library decoding preserves ambiguity and malformed precedence")]
+    [InlineData(
+        """
+        {"schemaVersion":1,"libraries":[
+         {"id":"a","sourceRoot":"one","destinationRoot":"docs","paths":["a.md"]},
+         {"id":"a","sourceRoot":"two","destinationRoot":"other","paths":["b.md"]}]}
+        """, (int)LibrariesRecordDecodeIssue.AmbiguousOwnership, "The Library record contains ambiguous duplicate ownership.")]
+    [InlineData(
+        """
+        {"schemaVersion":1,"libraries":[
+         {"id":"a","sourceRoot":"one","destinationRoot":"docs","paths":["a.md"]},
+         {"id":"b","sourceRoot":"two","destinationRoot":"docs","paths":["a.md"]}]}
+        """, (int)LibrariesRecordDecodeIssue.AmbiguousOwnership, "The Library record contains ambiguous duplicate ownership.")]
+    [InlineData(
+        """
+        {"schemaVersion":1,"libraries":[
+         {"id":"a","sourceRoot":"one","destinationRoot":"Docs","paths":["a.md"]},
+         {"id":"b","sourceRoot":"two","destinationRoot":"docs","paths":["a.md"]}]}
+        """, (int)LibrariesRecordDecodeIssue.AmbiguousOwnership, "The Library record contains ambiguous duplicate ownership.")]
+    [InlineData(
+        """{"schemaVersion":1,"libraries":[{"id":"a","sourceRoot":"one","destinationRoot":"docs","paths":["a.md","a.md"]}]}""",
+        (int)LibrariesRecordDecodeIssue.AmbiguousOwnership, "The Library record contains ambiguous duplicate ownership.")]
+    [InlineData(
+        """{"schemaVersion":1,"libraries":[{"id":"a","sourceRoot":"one","destinationRoot":"docs","paths":["A.md","a.md"]}]}""",
+        (int)LibrariesRecordDecodeIssue.AmbiguousOwnership, "The Library record contains ambiguous duplicate ownership.")]
+    [InlineData(
+        """
+        {"schemaVersion":1,"libraries":[
+         {"id":"b","sourceRoot":"one","destinationRoot":"docs","paths":["a.md"]},
+         {"id":"a","sourceRoot":"two","destinationRoot":"docs","paths":["a.md"]}]}
+        """, (int)LibrariesRecordDecodeIssue.Malformed, "The Library record is not exact schema v1.")]
+    [InlineData(
+        """{"schemaVersion":1,"libraries":[{"id":"a","sourceRoot":"one","destinationRoot":"docs","paths":["b.md","a.md","a.md"]}]}""",
+        (int)LibrariesRecordDecodeIssue.Malformed, "The Library record is not exact schema v1.")]
+    [InlineData(
+        """
+        {"schemaVersion":1,"libraries":[
+         {"id":"a","sourceRoot":"one","destinationRoot":"docs","paths":["a.md"]},
+         {"id":"a","sourceRoot":"two","destinationRoot":"docs","paths":["../a.md"]}]}
+        """, (int)LibrariesRecordDecodeIssue.Malformed, "The Library record is not exact schema v1.")]
+    [InlineData(
+        """
+        {"schemaVersion":1,"libraries":[
+         {"id":"a","sourceRoot":"one","destinationRoot":"docs","paths":["a.md"]},
+         {"id":"a","sourceRoot":"two","destinationRoot":"docs","paths":[".git/config"]}]}
+        """, (int)LibrariesRecordDecodeIssue.Malformed, "The Library record is not exact schema v1.")]
+    [InlineData(
+        """
+        {"schemaVersion":1,"libraries":[
+         {"id":"A","sourceRoot":"one","destinationRoot":"docs","paths":["a.md"]},
+         {"id":"a","sourceRoot":"two","destinationRoot":"docs","paths":["a.md"]}]}
+        """, (int)LibrariesRecordDecodeIssue.Malformed, "The Library record is not exact schema v1.")]
+    public void PreservesDecodeIssuePrecedence(string json, int issue, string cause)
+    {
+        var result = LibrariesRecordCodec.Read(Encoding.UTF8.GetBytes(json));
+
+        Assert.Equal(LibrariesRecordReadState.Malformed, result.State);
+        Assert.Equal((LibrariesRecordDecodeIssue)issue, result.Issue);
+        Assert.Null(result.Record);
+        Assert.Equal(cause, result.Cause);
+    }
+
+    [Fact(DisplayName = "Distinct Library destination roots admit the same source-relative suffix")]
+    public void DistinctDestinationRootsRetainSeparateOwnership()
+    {
+        const string json = """
+            {"schemaVersion":1,"libraries":[
+             {"id":"a","sourceRoot":"one","destinationRoot":"docs","paths":["a.md"]},
+             {"id":"b","sourceRoot":"two","destinationRoot":"other","paths":["a.md"]}]}
+            """;
+
+        var result = LibrariesRecordCodec.Read(Encoding.UTF8.GetBytes(json));
+
+        Assert.Equal(LibrariesRecordReadState.Complete, result.State);
+        Assert.Equal(LibrariesRecordDecodeIssue.None, result.Issue);
+        Assert.Null(result.Cause);
+        var record = Assert.IsType<LibrariesRecord>(result.Record);
+        Assert.Equal(["docs", "other"], record.Libraries.Select(library => library.DestinationRoot.Value));
+        Assert.All(record.Libraries, library => Assert.Equal("a.md", Assert.Single(library.Paths).Value));
+    }
+
     [Fact(DisplayName = "Library writer emits exactly schema-v1 fields and deterministic ordinal identities")]
     public void WritesExactDeterministicSchema()
     {

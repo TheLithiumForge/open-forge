@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.References;
 
@@ -42,9 +42,9 @@ internal static class RouteMoveReferenceChangeProjector
                 ToCanonical(workspace.LexicalRoot, item.SourcePath),
                 pair.Key,
                 StringComparison.Ordinal));
-            var intendedBytes = bySource.TryGetValue(pair.Key, out var document)
+            byte[] intendedBytes = bySource.TryGetValue(pair.Key, out var document)
                 ? Encoding.UTF8.GetBytes(document.IntendedText)
-                : sourceItem.Snapshot.Bytes.ToArray();
+                : [.. sourceItem.Snapshot.Bytes];
             var destinationLogicalPath = Path.Combine(
                 workspace.LexicalRoot,
                 pair.Value.Replace('/', Path.DirectorySeparatorChar));
@@ -54,8 +54,7 @@ internal static class RouteMoveReferenceChangeProjector
         }
 
         AddExternalReplacements(changes, documents);
-        return changes.OrderBy(change => change.LogicalPath, StringComparer.Ordinal)
-            .ToImmutableArray();
+        return [.. changes.OrderBy(change => change.LogicalPath, StringComparer.Ordinal)];
     }
 
     internal static string Apply(
@@ -78,29 +77,25 @@ internal static class RouteMoveReferenceChangeProjector
         ICollection<PlannedFileChange> changes,
         IEnumerable<RouteMoveReferenceDocumentPlan> documents)
     {
-        foreach (var document in documents.Where(RequiresExternalReplacement))
+        foreach (var document in documents)
         {
-            changes.Add(PlannedFileChange.Replace(
-                document.Snapshot.Expectation,
-                Encoding.UTF8.GetBytes(document.IntendedText)));
-        }
-    }
+            if (!string.Equals(
+                document.SourcePath,
+                document.DestinationSourcePath,
+                StringComparison.Ordinal))
+            {
+                continue;
+            }
 
-    private static bool RequiresExternalReplacement(RouteMoveReferenceDocumentPlan document)
-    {
-        if (!string.Equals(
-            document.SourcePath,
-            document.DestinationSourcePath,
-            StringComparison.Ordinal))
-        {
-            return false;
-        }
+            var intendedBytes = Encoding.UTF8.GetBytes(document.IntendedText);
+            var intendedHash = FileExpectation.Hash(intendedBytes);
+            if (string.Equals(document.Snapshot.ContentHash, intendedHash, StringComparison.Ordinal))
+            {
+                continue;
+            }
 
-        var intendedHash = FileExpectation.Hash(Encoding.UTF8.GetBytes(document.IntendedText));
-        return !string.Equals(
-            document.Snapshot.ContentHash,
-            intendedHash,
-            StringComparison.Ordinal);
+            changes.Add(PlannedFileChange.Replace(document.Snapshot.Expectation, intendedBytes));
+        }
     }
 
     private static string ToCanonical(string workspaceRoot, string logicalPath)

@@ -1,9 +1,16 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization;
+using OpenForge.Cli.Core.Framework.Recovery.Serialization.Models;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Recovery.Serialization;
 
@@ -85,6 +92,142 @@ public sealed class LibraryRecoveryManifestTests
         Assert.Equal(RecoveryBundleManifestState.Malformed, result.State);
         Assert.Null(result.Attribution);
         Assert.Empty(result.Entries);
+    }
+
+    [Theory(DisplayName = "Recovery entry kinds retain literal wire tokens and exact typed identities through serialization"), InlineData("ordinary-create"), InlineData("ordinary-replace")]
+    [InlineData("ordinary-replace-generated-region"), InlineData("ordinary-delete"), InlineData("relative-file-link-create"), InlineData("relative-file-link-delete")]
+    public void RoundtripsEveryEntryKindFromAdmittedTargets(string kind)
+    {
+        var (input, entry) = KindManifestInput(kind);
+
+        var bytes = RecoveryBundleManifestCodec.Serialize(input, [entry]);
+        using var document = JsonDocument.Parse(bytes);
+        var wireEntry = Assert.Single(document.RootElement.GetProperty("entries").EnumerateArray());
+        Assert.Equal(kind, wireEntry.GetProperty("kind").GetString());
+        var result = RecoveryBundleManifestCodec.Decode(bytes);
+
+        Assert.Equal(RecoveryBundleManifestState.Valid, result.State);
+        Assert.Null(result.Cause);
+        Assert.Equal(input.Attribution, result.Attribution);
+        var decoded = Assert.Single(result.Entries);
+        Assert.Equal(0, decoded.Ordinal);
+        Assert.Equal(".agents/a.md", decoded.LogicalPath.Value);
+        Assert.Equal(entry.Kind, decoded.Kind);
+        Assert.Equal(entry.Prior, decoded.Prior);
+        Assert.Equal(entry.Intended, decoded.Intended);
+        var expectedPayload = kind is "ordinary-replace" or "ordinary-replace-generated-region" or "ordinary-delete"
+            ? "payloads/00000000.bin"
+            : null;
+        Assert.Equal(expectedPayload, decoded.PriorPayload);
+    }
+
+    [Theory(DisplayName = "Recovery entry kind JSON null missing unknown and wrong-case values remain malformed"), InlineData("null"), InlineData("missing")]
+    [InlineData("unknown"), InlineData("wrong-case")]
+    public void RejectsAlteredEntryKindJson(string mutation)
+    {
+        var (input, entry) = KindManifestInput("ordinary-replace");
+        var original = RecoveryBundleManifestCodec.Serialize(input, [entry]);
+        Assert.Equal(RecoveryBundleManifestState.Valid, RecoveryBundleManifestCodec.Decode(original).State);
+        var json = Encoding.UTF8.GetString(original);
+        const string kindProperty = "\"kind\":\"ordinary-replace\",";
+        Assert.Equal(1, json.Split(kindProperty, StringSplitOptions.None).Length - 1);
+        var replacement = mutation switch
+        {
+            "null" => "\"kind\":null,",
+            "missing" => string.Empty,
+            "unknown" => "\"kind\":\"future\",",
+            "wrong-case" => "\"kind\":\"Ordinary-Replace\",",
+            _ => throw new ArgumentOutOfRangeException(nameof(mutation)),
+        };
+        var changedJson = json.Replace(kindProperty, replacement, StringComparison.Ordinal);
+        var changedBytes = Encoding.UTF8.GetBytes(changedJson);
+        Assert.NotEqual(json, changedJson);
+        Assert.False(original.AsSpan().SequenceEqual(changedBytes));
+        using var changedDocument = JsonDocument.Parse(changedBytes);
+        var changedEntry = Assert.Single(changedDocument.RootElement.GetProperty("entries").EnumerateArray());
+        if (mutation == "missing")
+        {
+            Assert.False(changedEntry.TryGetProperty("kind", out _));
+        }
+        else
+        {
+            Assert.Equal(replacement[7..^1], changedEntry.GetProperty("kind").GetRawText());
+        }
+
+        var result = RecoveryBundleManifestCodec.Decode(changedBytes);
+
+        Assert.Equal(RecoveryBundleManifestState.Malformed, result.State);
+        Assert.Empty(result.Entries);
+        Assert.Null(result.Attribution);
+    }
+
+    private static (RecoveryBundleInput Input, RecoveryEntry Entry) KindManifestInput(string kind)
+    {
+        var root = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "open-forge-kind-manifest"));
+        var workspace = new CliWorkspace(lexicalRoot: root, physicalRoot: root, selectedBy: CliWorkspaceSelectionMethod.ExplicitWorkspace);
+        var target = KindManifestTarget(kind: kind, path: Path.Combine(root, ".agents", "a.md"));
+        var (producer, operation, command) = kind switch
+        {
+            "ordinary-create" or "relative-file-link-create" =>
+                (RecoveryBundleProducer.Library, RecoveryBundleOperation.Attach, "library attach"),
+            "relative-file-link-delete" =>
+                (RecoveryBundleProducer.Library, RecoveryBundleOperation.Detach, "library detach"),
+            "ordinary-replace" or "ordinary-replace-generated-region" or "ordinary-delete" =>
+                (RecoveryBundleProducer.Index, RecoveryBundleOperation.Index, "index"),
+            _ => throw new ArgumentOutOfRangeException(nameof(kind)),
+        };
+        var input = RecoveryBundleInput.Create(
+            workspace: workspace,
+            command: command,
+            attribution: RecoveryBundleAttribution.Create(producer, operation, workspace),
+            operationId: Guid.ParseExact("123456781234123412341234567890ab", "N"),
+            targets: [target]);
+        Assert.Same(target, Assert.Single(input.Targets));
+        Assert.Same(target, Assert.Single(input.RecoveryTargets));
+        return (input, RecoveryEntry.FromTarget(input, target, ordinal: 0));
+    }
+
+    private static RecoveryBundleTarget KindManifestTarget(string kind, string path)
+    {
+        switch (kind)
+        {
+            case "ordinary-create":
+                var missing = FileStateSnapshot.Missing(path);
+                return RecoveryBundleTarget.CreateReversible(
+                    PlannedFileChange.Create(missing.Expectation, "after"u8.ToArray()),
+                    missing);
+
+            case "ordinary-replace":
+            case "ordinary-replace-generated-region":
+            case "ordinary-delete":
+                var before = FileStateSnapshot.File(logicalPath: path, physicalPath: path, bytes: "before"u8);
+                var change = kind switch
+                {
+                    "ordinary-replace" => PlannedFileChange.Replace(before.Expectation, "after"u8.ToArray()),
+                    "ordinary-replace-generated-region" => PlannedFileChange.ReplaceGeneratedRegion(before.Expectation, "after"u8.ToArray()),
+                    "ordinary-delete" => PlannedFileChange.Delete(before.Expectation),
+                    _ => throw new ArgumentOutOfRangeException(nameof(kind)),
+                };
+                return RecoveryBundleTarget.Create(change, before);
+
+            case "relative-file-link-create":
+            case "relative-file-link-delete":
+                var destination = CanonicalRelativePath.Create(".agents/a.md");
+                var link = RelativeFileLinkIdentity.Create(NoFollowLinkKind.SymbolicLink, "../shared/.agents/a.md");
+                if (kind == "relative-file-link-create")
+                {
+                    return RecoveryBundleTarget.Create(
+                        RelativeFileLinkEffect.Create(destination, link),
+                        NoFollowLeafObservation.Missing(path));
+                }
+
+                return RecoveryBundleTarget.Create(
+                    RelativeFileLinkEffect.Delete(destination, link),
+                    NoFollowLeafObservation.CreateRelativeFileLink(path, link));
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(kind));
+        }
     }
 
     private static string Manifest(string operation, string kind)

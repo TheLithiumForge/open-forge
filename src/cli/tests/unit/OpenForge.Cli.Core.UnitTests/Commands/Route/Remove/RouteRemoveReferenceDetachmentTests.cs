@@ -68,16 +68,4 @@ public sealed class RouteRemoveReferenceDetachmentTests
         Assert.Throws<ArgumentException>(
             () => new RouteRemoveReferenceScanResult(scan, RouteRemoveTestData.Formation()));
     }
-
-    [Fact(DisplayName = "Route Remove reference postcondition retains interruption state without inventing success"),
-     Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
-    public void ReferencePostconditionRetainsInterruption()
-    {
-        var result = new RouteRemoveReferencePostRemoveResult(
-            RouteRemoveReferencePostRemoveState.Interrupted,
-            "The complete reference verification was cancelled.");
-
-        Assert.Equal(RouteRemoveReferencePostRemoveState.Interrupted, result.State);
-        Assert.Equal("The complete reference verification was cancelled.", result.Cause);
-    }
 }

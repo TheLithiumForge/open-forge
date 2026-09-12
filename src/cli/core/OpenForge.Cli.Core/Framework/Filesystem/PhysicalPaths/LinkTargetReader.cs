@@ -1,21 +1,7 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+
 namespace OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-
-internal enum PathComponentState
-{
-    Ordinary,
-    Link,
-    Missing,
-    Inaccessible,
-    Unsupported,
-    InputOutputFailure,
-}
-
-internal sealed record PathComponent(
-    PathComponentState State,
-    string Path,
-    string? LinkTarget,
-    FileAttributes? Attributes,
-    FilesystemFailure? Failure);
 
 internal static class LinkTargetReader
 {

@@ -1,14 +1,16 @@
-using OpenForge.Cli.IntegrationTests.Hosting;
-using System.Runtime.CompilerServices;
 using OpenForge.Cli.Composition;
+using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Results;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
+using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Composition;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Create;
 
@@ -77,8 +79,7 @@ public sealed class RouteCreateCompositionIntegrationTests
     {
         var application = CliCompositionRoot.Create(
             new CliProcessIdentity("open-forge", "test"));
-        var parser = CliCoreApplicationAccess.Parser(application);
-        var tree = CliParserAccess.Tree(parser);
+        var tree = CliCoreApplicationAccess.Tree(application);
         var route = Assert.Single(
             tree.Root.Subcommands,
             command => command.Name == "route");
@@ -169,18 +170,6 @@ public sealed class RouteCreateCompositionIntegrationTests
             standardOutput.ToString(),
             standardError.ToString(),
             lockStore.InfrastructureExists);
-    }
-
-    private static class CliCoreApplicationAccess
-    {
-        [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_parser")]
-        internal static extern ref CliParser Parser(CliCoreApplication application);
-    }
-
-    private static class CliParserAccess
-    {
-        [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_tree")]
-        internal static extern ref CliCommandTree Tree(CliParser parser);
     }
 
     private sealed record RouteCreateCompositionRun(

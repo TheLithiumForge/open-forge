@@ -4,13 +4,13 @@ using OpenForge.Cli.Core.Commands.Index.Models.Request;
 using OpenForge.Cli.Core.Commands.Index.Models.Result;
 using OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Index.Shared.Result;
-using OpenForge.Cli.Core.Framework.Workspace;
-using OpenForge.Cli.Core.Shell.Composition;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Core.UnitTests.Commands.Index.Shared;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Index;

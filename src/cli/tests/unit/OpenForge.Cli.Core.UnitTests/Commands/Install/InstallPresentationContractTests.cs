@@ -2,13 +2,14 @@ using System.Reflection;
 using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Binding;
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
+using OpenForge.Cli.Core.Commands.Install.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
-using OpenForge.Cli.Core.Commands.Install.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Install.Shared.Rendering;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Install;
 
@@ -148,15 +149,6 @@ public sealed class InstallPresentationContractTests
         Assert.Contains("classification=none", diagnostics, StringComparison.Ordinal);
         Assert.Contains("recovery=not-required", diagnostics, StringComparison.Ordinal);
         Assert.Contains("finding=install.invalid-input", diagnostics, StringComparison.Ordinal);
-    }
-
-    [Fact(DisplayName = "Install diagnostic escaping truncates at complete tokens with one symbolic ellipsis"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
-    public void DiagnosticEscapingPreservesCompleteTokensAtTheLimit()
-    {
-        Assert.Equal("a...", InstallTextEscaping.Escape("abcdef", maximumLength: 4));
-        Assert.Equal("...", InstallTextEscaping.Escape("abcdef", maximumLength: 3));
-        Assert.Equal("..", InstallTextEscaping.Escape("abcdef", maximumLength: 2));
-        Assert.Equal("...", InstallTextEscaping.Escape("\u0001value", maximumLength: 7));
     }
 
     private static InstallResult InvalidResult()

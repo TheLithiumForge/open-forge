@@ -12,10 +12,10 @@ public sealed class EmbeddedFrameworkSourceProjectorTests
     [Fact(DisplayName = "Embedded Framework source projection maps canonical assets to contained sources and pairs adjacent overwrites"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void ProjectMapsCanonicalAssetsToContainedSourcesAndPairsOverwrites()
     {
-        var workspace = new OpenForge.Cli.Core.Framework.Workspace.CliWorkspace(
+        var workspace = new OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspace(
             Path.GetFullPath(Path.Combine(Path.GetTempPath(), "route-init-projector-red")),
             Path.GetFullPath(Path.Combine(Path.GetTempPath(), "route-init-projector-red")),
-            OpenForge.Cli.Core.Framework.Workspace.CliWorkspaceSelectionMethod.ExplicitWorkspace);
+            OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var payload = FrameworkPayload.Create(
         [
             Asset("AGENTS.md", "root agents\n"),
@@ -66,10 +66,10 @@ public sealed class EmbeddedFrameworkSourceProjectorTests
     public void ProjectReturnsImmutableCanonicalProjectionForShuffledAssets()
     {
         var root = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "route-init-projector-shuffled-red"));
-        var workspace = new OpenForge.Cli.Core.Framework.Workspace.CliWorkspace(
+        var workspace = new OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspace(
             root,
             root,
-            OpenForge.Cli.Core.Framework.Workspace.CliWorkspaceSelectionMethod.ExplicitWorkspace);
+            OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var agents = Asset("AGENTS.md", "agents");
         var claude = Asset("CLAUDE.md", "claude");
         var loader = Asset(".agents/loader.md", "loader");

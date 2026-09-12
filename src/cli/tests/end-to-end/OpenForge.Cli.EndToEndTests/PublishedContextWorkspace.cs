@@ -20,7 +20,7 @@ internal sealed class PublishedContextWorkspace : IDisposable
 
     internal void WriteText(string relativePath, string content) => _workspace.WriteText(relativePath, content);
 
-    internal void ReplaceText(string relativePath, string content) => File.WriteAllText(_workspace.Combine(relativePath), content);
+    internal void ReplaceText(string relativePath, string content) => _workspace.ReplaceText(relativePath, content);
 
     internal void AddRoutedSkills(IReadOnlyDictionary<string, string> documents)
     {

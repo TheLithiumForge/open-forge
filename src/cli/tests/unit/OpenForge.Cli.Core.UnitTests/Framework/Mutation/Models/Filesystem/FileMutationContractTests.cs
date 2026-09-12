@@ -1,5 +1,6 @@
 using System.Text;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Mutation.Models.Filesystem;
 
@@ -61,6 +62,85 @@ public sealed class FileMutationContractTests
         Assert.True(snapshot.HasBytes);
         Assert.Equal(BeforeBytes, snapshot.Bytes);
         Assert.Equal(FileExpectation.Hash(BeforeBytes), snapshot.ContentHash);
+    }
+
+    [Fact(DisplayName = "Empty file snapshots retain bytes and the empty hash unlike missing snapshots"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void EmptyFileSnapshotsDifferFromMissingSnapshots()
+    {
+        var paths = Paths();
+        var empty = FileStateSnapshot.File(
+            logicalPath: paths.Logical,
+            physicalPath: paths.Physical,
+            bytes: []);
+        var missing = FileStateSnapshot.Missing(paths.Logical);
+
+        Assert.Equal(FileExpectationKind.File, empty.Kind);
+        Assert.True(empty.HasBytes);
+        Assert.Empty(empty.Bytes);
+        Assert.Equal("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", empty.ContentHash);
+        Assert.Equal(paths.Physical, empty.PhysicalPath);
+        Assert.Equal(FileExpectationKind.Missing, missing.Kind);
+        Assert.False(missing.HasBytes);
+        Assert.Empty(missing.Bytes);
+        Assert.Null(missing.ContentHash);
+        Assert.Null(missing.PhysicalPath);
+    }
+
+    [Fact(DisplayName = "Created file changes own sliced caller intended bytes"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void CreatedChangesOwnSlicedIntendedBytes()
+    {
+        var paths = Paths();
+        var expectation = FileExpectation.Missing(paths.Logical);
+        var source = "|after\n|"u8.ToArray();
+        var change = PlannedFileChange.Create(expectation, source.AsSpan(start: 1, length: 6));
+
+        source.AsSpan(start: 1, length: 6).Fill((byte)'X');
+
+        Assert.Equal("|XXXXXX|"u8.ToArray(), source);
+        Assert.Equal("after\n"u8.ToArray(), change.IntendedBytes);
+        Assert.Same(expectation, change.Expectation);
+        Assert.Equal(PlannedFileChangeKind.Create, change.Kind);
+        Assert.True(change.HasIntendedBytes);
+    }
+
+    [Fact(DisplayName = "Replaced file changes own sliced caller intended bytes"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void ReplacedChangesOwnSlicedIntendedBytes()
+    {
+        var paths = Paths();
+        var expectation = FileExpectation.File(
+            logicalPath: paths.Logical,
+            physicalPath: paths.Physical,
+            contentHash: FileExpectation.Hash("before\n"u8));
+        var source = "|after\n|"u8.ToArray();
+        var change = PlannedFileChange.Replace(expectation, source.AsSpan(start: 1, length: 6));
+
+        source.AsSpan(start: 1, length: 6).Fill((byte)'X');
+
+        Assert.Equal("|XXXXXX|"u8.ToArray(), source);
+        Assert.Equal("after\n"u8.ToArray(), change.IntendedBytes);
+        Assert.Same(expectation, change.Expectation);
+        Assert.Equal(PlannedFileChangeKind.Replace, change.Kind);
+        Assert.True(change.HasIntendedBytes);
+    }
+
+    [Fact(DisplayName = "Generated region changes own sliced caller intended bytes"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void GeneratedRegionChangesOwnSlicedIntendedBytes()
+    {
+        var paths = Paths();
+        var expectation = FileExpectation.File(
+            logicalPath: paths.Logical,
+            physicalPath: paths.Physical,
+            contentHash: FileExpectation.Hash("before\n"u8));
+        var source = "|after\n|"u8.ToArray();
+        var change = PlannedFileChange.ReplaceGeneratedRegion(expectation, source.AsSpan(start: 1, length: 6));
+
+        source.AsSpan(start: 1, length: 6).Fill((byte)'X');
+
+        Assert.Equal("|XXXXXX|"u8.ToArray(), source);
+        Assert.Equal("after\n"u8.ToArray(), change.IntendedBytes);
+        Assert.Same(expectation, change.Expectation);
+        Assert.Equal(PlannedFileChangeKind.ReplaceGeneratedRegion, change.Kind);
+        Assert.True(change.HasIntendedBytes);
     }
 
     [Fact(DisplayName = "Planned file changes admit only their compatible expected states"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]

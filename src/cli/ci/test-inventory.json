@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "basis": "Accepted Task 7 full evidence; runtime identifiers are not portable identity. Case identities retain full display names and multiplicity.",
+  "basis": "Accepted Task 27 beta source discovery; runtime identifiers are not portable identity. Case identities retain full display names and multiplicity.",
   "suites": {
     "unit": {
-      "discovered": 2860,
-      "executed": 2882
+      "discovered": 3206,
+      "executed": 3228
     },
     "integration": {
-      "discovered": 1603,
-      "executed": 1603
+      "discovered": 1718,
+      "executed": 1718
     },
     "public": {
       "discovered": 111,
@@ -23,7 +23,7 @@
         "name": "Find all and any requirements aggregate evidence across ordered physical layers"
       },
       "sourcePath": "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Find/Shared/Matching/FindMatcherTests.cs",
-      "sourceSha256": "559b17a16ebbb18c9c68b90f90d5b84d05b14aa6feb79b4f04a70f757ff8f204",
+      "sourceSha256": "0a04d98d011aa937cdbee5214605ef3a4bd45018df88b9bb33585d201d72cf15",
       "executedCases": [
         {
           "identity": {
@@ -58,7 +58,7 @@
         "name": "Find missing and ambiguous sections retain only independently safe evidence"
       },
       "sourcePath": "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Find/Shared/Matching/FindMatcherTests.cs",
-      "sourceSha256": "559b17a16ebbb18c9c68b90f90d5b84d05b14aa6feb79b4f04a70f757ff8f204",
+      "sourceSha256": "0a04d98d011aa937cdbee5214605ef3a4bd45018df88b9bb33585d201d72cf15",
       "executedCases": [
         {
           "identity": {
@@ -85,7 +85,7 @@
         "name": "Find natural and explicit regions select exact authored tag, body, document, and section evidence"
       },
       "sourcePath": "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Find/Shared/Matching/FindMatcherTests.cs",
-      "sourceSha256": "559b17a16ebbb18c9c68b90f90d5b84d05b14aa6feb79b4f04a70f757ff8f204",
+      "sourceSha256": "0a04d98d011aa937cdbee5214605ef3a4bd45018df88b9bb33585d201d72cf15",
       "executedCases": [
         {
           "identity": {
@@ -238,7 +238,7 @@
         "name": "Find catalogue issues map to exact findings and candidate-count knowledge"
       },
       "sourcePath": "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Find/Shared/Selection/FindUniverseResolverTests.cs",
-      "sourceSha256": "7f6dd1e354a123885bbe87792ff31dcc5e0d23e296807291821ce89ceea518b0",
+      "sourceSha256": "28c57a6298054b339a914135fafbbd964b06cb55d794cbd2c6ad070dbc9e410c",
       "executedCases": [
         {
           "identity": {
@@ -281,7 +281,7 @@
         "name": "Find effective selection projects only in-scope candidates and catalogue issues"
       },
       "sourcePath": "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Find/Shared/Selection/FindUniverseResolverTests.cs",
-      "sourceSha256": "7f6dd1e354a123885bbe87792ff31dcc5e0d23e296807291821ce89ceea518b0",
+      "sourceSha256": "28c57a6298054b339a914135fafbbd964b06cb55d794cbd2c6ad070dbc9e410c",
       "executedCases": [
         {
           "identity": {
@@ -308,7 +308,7 @@
         "name": "Find include and exclude algebra deduplicates logical sources, is order independent, and gives exclusion priority"
       },
       "sourcePath": "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Find/Shared/Selection/FindUniverseResolverTests.cs",
-      "sourceSha256": "7f6dd1e354a123885bbe87792ff31dcc5e0d23e296807291821ce89ceea518b0",
+      "sourceSha256": "28c57a6298054b339a914135fafbbd964b06cb55d794cbd2c6ad070dbc9e410c",
       "executedCases": [
         {
           "identity": {
@@ -335,7 +335,7 @@
         "name": "Find selectors retain source-reference form, expansion kind, and typed unresolved outcomes"
       },
       "sourcePath": "src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Find/Shared/Selection/FindUniverseResolverTests.cs",
-      "sourceSha256": "7f6dd1e354a123885bbe87792ff31dcc5e0d23e296807291821ce89ceea518b0",
+      "sourceSha256": "28c57a6298054b339a914135fafbbd964b06cb55d794cbd2c6ad070dbc9e410c",
       "executedCases": [
         {
           "identity": {

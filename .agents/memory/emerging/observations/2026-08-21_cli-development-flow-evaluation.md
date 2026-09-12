@@ -6,6 +6,123 @@ open-forge:
 
 # CLI Development Flow Evaluation
 
+## Task 27 Comprehensive Assessment And First Correction
+
+On 2026-09-10, Astra/high assessors completed disjoint full-body review of all
+1,732 production C# files, plus a separate 27-file fixture-support assessment.
+Root checked the combined inventory for gaps, overlaps and changed source
+hashes. The top-down packet selected small neutral mechanisms while retaining
+command-owned permission, recovery and effect-order differences. The resulting
+findings include two Update host-preservation defects beyond the earlier finite
+review: default root files were interpreted as whole-file content, and managed
+block string offsets were used as UTF-8 byte offsets.
+
+The same warm author produced six independent real-workspace Red cases. All
+six reached their intended assertions and failed; the production-only fix
+`4eb8b65c` then passed those six plus 59 existing focused cases. Tests were
+committed first at `b42f6f08` and stayed frozen. Both builds had zero warnings;
+three existing informational style suggestions remained explicitly assigned to
+the later style slice. The task preflight and
+`artifacts/task27-complete-preflight/install-update/` bind the exact sources,
+runtime, discovered/executed cases and retained failed receipts.
+
+Root also corrected a high-confidence Library finding's public reachability:
+Shell stops parser-invalid input before command invalid factories. The actual
+public trigger was valid syntax followed by workspace-selection failure in
+Attach/Detach/Sync; Inspect already handled that public branch correctly.
+Complete local bodies and symbol callers did not establish the composed path.
+Likewise, input validation alone did not make a test invocation request a
+behavior-owning process runner for model-placement decisions.
+
+Preparing a 517-consumer namespace migration began delaying an already closed
+one-file parse simplification. Root preserved the map and narrowed the author
+to the first executable slice. Detailed future migration work should not hold
+up a separately frozen change. Mechanical test import/receiver adaptations are
+now explicitly mapped with their production move, preserving assertions and
+avoiding broken intermediate commits or compatibility scaffolding; substantive
+Purple changes and behavior fixes remain separate.
+
+These are observed quality and orchestration outcomes. There was no equivalent
+controlled Sol run or measured comparative cost/quality result. Full task-wide
+qualification and the remaining structural work were still pending when this
+observation was recorded.
+
+The later F05 characterization supplied 66 independent decoding/policy cases
+and passed all 151 selected cases against unchanged production. Root again had
+to correct separate InlineData attribute lists despite the author's personal
+directive read. The final grouping was verified and qualified before commit
+`2a337a0b`. Directive fingerprints and a green formatter do not establish every
+authored style rule; the author must apply rules outside formatter coverage
+before its final build. No assertion or vector changed for that correction.
+
+F02 exposed a more consequential evidence issue. The initial alias probe used
+`IList<T>.IsReadOnly` to decide whether indexed replacement was possible; that
+skipped arrays, which still permit replacing elements. Root corrected the probe
+to attempt indexed replacement and accept only `NotSupportedException` as
+rejection. Bypassing the six second copies then failed the intended ownership
+assertion, with the other 18 cases passing. Exact production bytes were restored
+and all 80 selected cases passed before test commit `9be2d2c3`. This establishes
+one targeted counterexample, not exhaustive mutation coverage. A collection's
+read-only interface or flag alone did not prove the needed alias-isolation
+property; testing the relevant mutation exposed the gap.
+
+F03 review removed two new redundant guards on trusted typed facts and replaced
+an open source-form branch with explicit supported forms and the original
+rejection owner. The corrected five-file slice passed 147 focused cases before
+commit `2793e70c`. F07 preparation initially proposed nullable classification
+for an undefined enum only to retain caller-specific exception attribution;
+one exhaustive mapping with an explicit diagnostic parameter retained that
+meaning more directly. Its accepted finding already required all named and
+undefined-value evidence, but direct tests were missing from the initial
+selection. Those cases were assigned a separate Purple boundary.
+
+Root's later narrowing of F07's observation-indexing input arrived after an
+initial passing gate, requiring one repeated qualification. Before the first
+build, review new helper signatures together for the narrowest consumed facts,
+trusted-internal guard rules, exhaustive enum behavior and the corresponding
+assertions. This lesson applies to root review timing as well as the author;
+it does not justify omitting checks for a subsequently changed source.
+
+F15 then used the grouped pre-build review boundary. Both builds passed on the
+first execution, and Red commit `b17ad765` retained two intended failures:
+the encoded-whitespace constructor rejection and a real Route List result of
+`failed` instead of `incomplete`. The composed test first proved complete
+inventory, retained Loader bytes and canonical declaration admission; its
+failure therefore did not come from malformed setup. The two null/empty
+construction controls passed. F05's earlier characterization had correctly
+preserved this behavior during extraction, but did not establish it as the
+desired product behavior. Independent composed Red made the later correction
+reviewable without weakening the extraction's frozen evidence.
+The isolated one-line fix `fbc2b0d7` then passed all 155 Unit and 37 Integration
+cases, including the later retained-root and diagnostic assertions; no tests
+changed after Red. This establishes the bounded correction, not exhaustive
+conformance of every Loader use.
+
+F06's separate characterization added 27 cases and qualified 92. One initial
+fixture setup used a new-file-only helper to replace an existing file; correcting
+the setup preserved every assertion. The production extraction then received
+one grouped pre-build review with no source correction requested. Root also
+noticed overlapping build and project-format timestamps: a single agent does
+not by itself serialize shared project artifacts. Subsequent artifact-affecting
+commands were explicitly required to run sequentially. No source drift or
+evidence failure was observed from the earlier overlap; no unnecessary repeat
+was requested solely to improve the historical receipt.
+
+F12's physical characterization also needed one explicit named rejection in
+a new test-fixture enum switch. The same C# conformance rule applies to setup
+helpers; personal fingerprints do not replace complete draft inspection. The
+first build passed before root identified the omission; corrected bytes were
+rebuilt without changing assertions. No claim of a production defect follows
+from that fixture-only correction.
+
+Root's isolated F13 diagnostic then proved two YAML tag/anchor interpretation
+differences after the Astra/high assessment identified the manual rescanning
+mechanism. The earlier routed-metadata foundation records an accepted Sol/xhigh
+correction review, but these exact vectors were not its evidence. The new
+counterexamples demonstrate additional evidence coverage, not a controlled
+model-quality comparison. Grammar acceptance remains a separate user decision;
+no implementation improvement is claimed from the diagnostic alone.
+
 ## Task 27 Bounded Structural Preparation
 
 A continuous Astra/high author traced twelve prepared candidates and found
@@ -1342,3 +1459,221 @@ mutable implementation state; copied pending-status sentences drift even when
 the executable work is complete. Neither review supplies the pending final
 combined runtime or foreign-host evidence, and no matched model-cost comparison
 was performed.
+
+### Broad model moves with bounded evidence
+
+Astra/high F10 moved 65 types and adapted 503 consumer/implementation bodies
+with exact body and qualified-reference comparisons. Three builds, 170 focused
+cases and scoped whitespace passed without binding corrections. Root added
+scoped IDE0005 information-level checks before commit; all three reports were
+empty, so no source correction or repeated runtime test was needed. Preselect
+that semantic import gate for later model moves. These receipts establish this
+move, not a controlled comparison with earlier models or global conformance.
+
+### Verify the diagnostic, not only its exit status
+
+The Recovery move exposed seven unnecessary imports despite empty IDE0005
+information-level formatter results. A known unused import remained undetected
+in bounded probes, including an execution-only configuration elevation. Root
+stopped that mechanism and accepted complete new-header inspection plus final
+compiler/body checks. Nine related F10 ancestor imports were then removed in
+a separate qualified commit. Earlier empty formatter receipts did not prove
+semantic cleanliness; their body and runtime evidence remains valid. Future
+import checks need a demonstrated positive diagnostic or explicit manual scope.
+
+Recovery evidence reconciliation also distinguishes discovery IDs from runner
+IDs and preserves duplicate display names as multiplicities. An initial
+uniqueness-only reconciliation rejected 24 legitimate object-valued theory
+rows; the parser was corrected without changing or rerunning tests. These are
+observed tool/workflow limits, not controlled model comparisons.
+
+### Separate the tested artifact from collateral snapshots
+
+M13's Red author initially reused an Extension snapshot that included the exact
+recovery archive being deliberately changed or removed. Both Extension cases
+therefore stopped at the collateral snapshot assertion, while nine other
+adapters exposed the intended deletion defect. Root and author retained every
+collateral key except that exact archive; its independent existence and byte
+assertions stayed intact. The qualified Red at `799bb942` then demonstrated all
+ten deletions with ten unchanged controls passing. Inspect a reused snapshot's
+domain before treating it as a no-change oracle, and preserve a direct oracle
+for each deliberately excluded subject. This was a fixture correction before
+acceptance, not evidence of ten passing defect assertions on the first run.
+
+## Include shortened namespace references in mechanical moves
+
+M03's Astra/high file-model move initially inventoried simple names and full
+qualified names but missed two shortened qualified return types. The first
+Unit build rejected them; a bounded six-type search found one further shortened
+enum reference before the final rebuild. The corrected 299-file move passed
+both builds and all 26 focused cases with exact body/assertion preservation.
+Future move inventories should include every qualified spelling of the moved
+types, including relative namespace prefixes, before application. Keep the
+failed receipt and refreeze the corrected map; do not infer completeness from
+a full-name-only search. This is one observed inventory limitation, not a
+comparison of model performance. M03's execution packet owns the details.
+
+The subsequent M07 preflight explicitly included one full and one shortened
+qualified reference before applying its map. Both builds passed on the first
+attempt; all 40 focused cases passed. This records use of the inventory lesson,
+without attributing the result to a model-level advantage.
+
+### Verify exception families before freezing mapping expectations
+
+M08 preparation incorrectly assigned InvalidDataException to the IOException
+family. The Astra/high implementer challenged that root-packet assumption; the
+actual unchanged classifier rejected it. The direct Purple at `9cbcd79b`
+freezes that rejection and passes all twelve selected Unit cases. Temporary
+BCL inheritance assertions were removed before final qualification; their
+preparation receipt remains evidence of the correction. Freeze the owned
+callable outcome from observed behavior, and use dependency type inspection
+for preparation instead of adding tests of upstream inheritance. No production
+behavior changed and no controlled model comparison was performed.
+
+### Make supplementary receipt verification fail closed
+
+Repeated receipt-shape assumptions caused avoidable verifier failures. One
+verification command placed shell fail-fast after its script; when a nested
+runtime inventory differed from the assumed flat list, the following local
+source commit still ran. The full semantic inspection and input hash check had
+passed, and corrected verification subsequently passed over identical committed
+inputs. No production correction or history rewrite was needed.
+
+Inspect the exact nested receipt shape before selecting fields. Run verification
+as a separate successful command before staging or committing; when using a
+combined shell boundary, enable fail-fast before its first operation. Preserve
+actual verification order instead of describing a later check as pre-commit
+proof. This changes execution discipline, not the evidence tier or product
+contract, and needs no new repository validation framework.
+
+### Preserve ownership while simplifying shape
+
+The Astra/high Extension preparation initially proposed widening private
+single-owner facts solely for file placement. Root's grouped correction kept
+twelve facts nested and accepted only the two observations with actual shared
+consumers. The predecessor packet remains alongside the corrected preparation.
+During Astra/xhigh U09 implementation, two new helpers received a complete
+target to read one property. Root replaced them with ordered local assignments
+at the original evaluation positions. Both versions passed the same sixty
+focused cases; the correction improved design without changing their evidence.
+
+Check actual consumers, visibility and member use before turning a local fact
+into a shared model or callable. A passing test run does not establish that the
+new shape follows the design directive. These are bounded model/role observations,
+not a controlled comparison with earlier model families or a superiority claim.
+The Task and ignored preparation/qualification packets retain the exact changes.
+
+U10 exposed another form of the same design risk: the accepted shorter Boundary
+signature led Astra/xhigh to repeat the identical four-member stopped lifecycle
+construction at eleven callers. Root retained the cohesive signature and asked
+for one narrow two-fact factory at the existing result-formation owner. The
+branches became shorter while their facts and argument positions stayed fixed;
+both versions passed the same 38 Unit and thirty Integration cases. Assess the
+whole caller/callee result when reducing parameter counts, including repeated
+construction moved into callers. This is one observed correction, not evidence
+of model superiority or a need for another framework or review layer.
+
+U05 Purple exposed a fixture-ownership mistake: Astra/xhigh wrote new local
+files directly without registering them with the existing workspace tracker.
+The first run passed 49 existing cases but both new tests failed in disposal,
+which could mask earlier assertion outcomes. A two-test correction used existing
+WriteText/RemoveFile ownership and retained every behavior oracle; all 51 cases
+then passed. Inspect fixture creation and disposal together before adding a
+file-backed test. Preserve failed receipts and re-execute the complete case;
+a disposal failure alone proves neither a product defect nor passing assertions.
+
+U06's Astra/xhigh implementation needed no design or build correction after
+the separate 66-case validation freeze. Four source files removed eleven
+duplicate predicates while retaining caller-specific admission and error order;
+all 66 case identities and test bytes stayed fixed. This supports the bounded
+syntax-sharing result, without establishing a comparative model ranking.
+
+During U11 preparation, root found that consolidating output lines requires
+checking which characters the existing escaper retains. A broad newline
+normalizer has a wider contract than replacing fixed template line feeds;
+escaped display values can still contain Unicode separators. The plan now
+preserves those values and includes them in the old-renderer literal vectors.
+This is a preparation correction, not a demonstrated production regression or
+an executed test result. Review the composed output transformation as well as
+the readability of the resulting string block.
+
+U11 subsequently qualified four independent full-output facts on the old
+renderers, then the exact same 36 selected Unit cases on the new blocks. The
+retained Unicode separators are now executable evidence. One test-authoring
+correction used collection expressions without changing values or assertions;
+the production slice needed no correction. This establishes the selected Linux
+output boundary and the inspected newline expression, not foreign-platform
+execution or a model comparison.
+
+S03's Astra/xhigh author caught a preparation assumption before editing source:
+three Route help builders append status text to Notes instead of exposing a
+Results and streams section. The corrected tests preserve complete literal
+Notes bodies and their newline boundary. All 54 selected cases passed without
+a build/test correction. Trace the caller's actual output placement when
+freezing a shared helper; identical helper bodies do not establish identical
+surrounding composition. This is a bounded preparation lesson, not a model
+ranking or an additional review requirement.
+
+S03's three Astra/xhigh production extractions retained the same 54 case
+identities without semantic correction or failed build/test gates. The later
+test-only consolidation retained 52 identities, removing exactly two duplicate
+cases while preserving all 21 shared vectors/guard cases. Preparation exposed
+two further tooling mistakes: an enum's guessed standalone filename and treating
+a JSON-formatted log as a JavaScript module. Root also replaced repeated ad hoc
+receipt parsing with a bounded ignored read-only verifier. Reuse hash-unchanged
+personal source reads and known artifact schemas between related slices; inspect
+actual changes rather than repeating discovery. These observations describe this
+prepared sequence, not a controlled model comparison or a reason to add reviews.
+
+The first Astra/high parallel wave exposed two bounded preparation gaps. Shell's
+older lexical map omitted two subsequently added U11 tests and one relative
+qualified type spelling; whole-solution compilation caught both before acceptance.
+The same owner refroze only those imports/receivers, preserving all 37 moved
+declarations, 105 test bodies and 168 selected cases. Refresh a prepared consumer
+map for subsequently added sources and relative namespace spellings before a
+cross-cutting move. Keep compiler evidence as the independent consumer gate.
+
+The Astra/high package owner challenged a test-coverage claim in the P06 packet:
+the real reader class did not yet exercise ambiguity versus malformed decoding.
+Root confirmed that gap, and two isolated passing Purple cases now freeze the
+adapter's distinct classifications before typed-candidate reuse. P10 and P05
+also passed their separated old-behavior oracles and production changes without
+source or assertion correction. These are observable outcomes of this prepared
+wave; different scopes and preparation prevent a controlled model ranking.
+
+Root's combined-wave selection initially used a set of class/method/display
+labels. xUnit truncates long theory arguments, so distinct rows can share that
+label. The discovery comparison rejected this collapse before test execution.
+Keeping per-label multiplicity across complete class receipts restored the exact
+320 Unit/134 Integration selection, which then passed. Display text is a readable
+label, not a unique case ID. Preserve multiplicity and source-bound argument
+identity when joining evidence; do not reduce a raw case collection to a set.
+
+The second package wave's Astra/high owner expanded its input inventory to the
+complete tracked tree, correctly including nine historical tracked artifacts.
+Root's verifier initially assumed the earlier source-only inventory convention
+and rejected those additional entries. The preserved checker now distinguishes
+the two complete scopes and hashes every member of the selected scope; partial
+coverage still fails. Reconcile an evidence schema change before treating a
+count mismatch as a source defect. No implementation or test change was needed.
+
+The Astra/high test-support owner completed four prepared Purple slices with
+45 selected executions, four warning-clean builds and no implementation
+correction. Root's immutable patch/source checks and combined 123 Unit,
+215 Integration and 48 public/process executions accepted their integration
+with the shared Package and Route changes. A precise bounded packet supported
+one continuous author across the four slices; a separate agent per color was
+unnecessary. This observation covers those exact fixtures and shared mechanisms,
+not unexecuted platform behavior or a controlled comparison against another model.
+
+The later command wave exposed both directions of consumer-map error. A broad
+lexical query initially classified eleven Library presentation-plan test
+receivers as internal plan consumers. Typed inspection rejected those matches
+before any edit or extra selection. Source spelling helps find candidates;
+actual receiver identity decides propagation. The same wave repeatedly found
+old informational style suggestions only after a successful build. Moving the
+read-only style check before the build avoided one repeated build at the next
+boundary. Separate style-only commits preserve reviewable behavior changes when
+an aggregate file also contains an already accepted later extraction. These
+observations establish bounded workflow corrections, not a controlled model
+ranking or a reason to suppress diagnostics.

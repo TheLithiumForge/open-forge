@@ -1,5 +1,5 @@
 using System.CommandLine;
-using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Definitions.Models;
 
 namespace OpenForge.Cli.Core.Commands.Find.Models.Binding;
 

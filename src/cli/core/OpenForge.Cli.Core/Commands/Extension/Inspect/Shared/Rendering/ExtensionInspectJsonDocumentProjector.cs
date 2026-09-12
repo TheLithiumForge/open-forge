@@ -1,7 +1,8 @@
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Rendering;
@@ -42,7 +43,7 @@ internal static class ExtensionInspectJsonDocumentProjector
         => new()
         {
             Path = workspace.LexicalRoot,
-            SelectedBy = ExtensionInspectWireVocabulary.WorkspaceSelection(workspace.SelectedBy),
+            SelectedBy = WorkspaceSelectionWireVocabulary.Read(workspace.SelectedBy),
         };
 
     private static ExtensionInspectJsonSubject Subject(ExtensionInspectSubject value)

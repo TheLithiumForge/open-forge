@@ -1,6 +1,5 @@
 using OpenForge.Cli.Core.Commands.Library.Attach.Shared.Planning;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Mutation;
 

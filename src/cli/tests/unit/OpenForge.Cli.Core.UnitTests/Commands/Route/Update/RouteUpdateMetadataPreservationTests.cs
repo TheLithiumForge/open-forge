@@ -60,12 +60,9 @@ public sealed class RouteUpdateMetadataPreservationTests
     private static void AssertExactPatch(string source, string expected)
     {
         var build = RouteUpdateTestData.MetadataPatcher().Build(
-            new RouteUpdateMetadataPatchInput
-            {
-                Observation = RouteUpdateTestData.Observation(
+            RouteUpdateTestData.Observation(
                     RouteUpdateTestData.DescriptionPatch("After"),
-                    source),
-            });
+                    source));
         var patch = Assert.IsType<RouteUpdateMetadataPatch>(build.Patch);
 
         Assert.Null(build.Boundary);

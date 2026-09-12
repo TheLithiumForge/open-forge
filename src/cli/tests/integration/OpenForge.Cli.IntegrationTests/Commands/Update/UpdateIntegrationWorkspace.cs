@@ -10,7 +10,7 @@ using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Update.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.IntegrationTests.Commands.Install;
@@ -369,6 +369,14 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
     {
         var lifecycle = ReadLifecycle();
         ReadSourceTarget(lifecycle, GeneratedPath)["region"] = "authored";
+        SortTargets(ReadTargets(lifecycle));
+        WriteLifecycle(lifecycle);
+    }
+
+    internal void SeedExplicitManagedHostRegion(string path)
+    {
+        var lifecycle = ReadLifecycle();
+        ReadSourceTarget(lifecycle, path)["region"] = "managed";
         SortTargets(ReadTargets(lifecycle));
         WriteLifecycle(lifecycle);
     }

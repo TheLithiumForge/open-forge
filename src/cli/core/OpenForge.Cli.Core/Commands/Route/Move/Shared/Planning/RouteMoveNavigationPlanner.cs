@@ -5,7 +5,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
@@ -48,13 +48,14 @@ internal sealed partial class RouteMoveNavigationPlanner(
         }
 
         var selectedRegions = SelectRegions(request, observedFormation, formation);
-        var documents = ReadDocuments(request, selectedRegions);
+        IReadOnlyDictionary<string, string>? movedPaths = null;
+        var documents = ReadDocuments(request, selectedRegions, ref movedPaths);
         if (documents.Boundary is { } documentBoundary)
         {
             return new RouteMoveNavigationPlanningResult(plan: null, documentBoundary);
         }
 
-        var metadata = ReadMetadata(request, formation);
+        var metadata = ReadMetadata(request, formation, ref movedPaths);
         if (metadata.Boundary is { } metadataBoundary)
         {
             return new RouteMoveNavigationPlanningResult(plan: null, metadataBoundary);

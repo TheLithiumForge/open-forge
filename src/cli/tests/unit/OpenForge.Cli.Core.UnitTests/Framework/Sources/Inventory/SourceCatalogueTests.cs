@@ -1,7 +1,7 @@
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Inventory;
 
@@ -151,8 +151,8 @@ public sealed class SourceCatalogueTests
             ".agents/root/private",
             [],
             Physical(".agents/root/private"),
-            new OpenForge.Cli.Core.Framework.Filesystem.FilesystemFailure(
-                OpenForge.Cli.Core.Framework.Filesystem.FilesystemFailureKind.AccessDenied,
+            new OpenForge.Cli.Core.Framework.Filesystem.Models.FilesystemFailure(
+                OpenForge.Cli.Core.Framework.Filesystem.Models.FilesystemFailureKind.AccessDenied,
                 "denied"));
         var collisionIssue = new SourceCatalogueIssue(
             SourceCatalogueIssueCode.IdentityCollision,

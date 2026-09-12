@@ -1,11 +1,12 @@
 using OpenForge.Cli.Core.Commands.References;
 using OpenForge.Cli.Core.Commands.References.Models.Occurrence;
 using OpenForge.Cli.Core.Commands.References.Models.Request;
-using OpenForge.Cli.Core.Commands.References.Models.Selection;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
+using OpenForge.Cli.Core.Commands.References.Models.Selection;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Selection;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.TestSupport;
 
@@ -315,6 +316,78 @@ public sealed class ReferencesOperationSmokeTests
         Assert.Empty(result.Incoming.Occurrences);
         Assert.Empty(result.Outgoing.Occurrences);
         Assert.Contains(result.Findings, finding => finding.Code == ReferencesFindingCode.InvalidSource);
+    }
+
+    [Theory(DisplayName = "References cancellation retains unresolved incoming selector rows"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
+    [InlineData(false), InlineData(true)]
+    public async Task PreCancelledOperationRetainsIncomingSelectors(bool both)
+    {
+        using var workspace = TemporaryWorkspace.Create("references-filtered-cancelled");
+        workspace.WriteText(".agents/docs.md", "# Docs\n");
+        workspace.WriteText(".agents/skip.md", "# Skip\n");
+        var selectors = new[]
+        {
+            new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Include, "docs", 1),
+            new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Exclude, ".agents/skip.md", 2),
+            new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Include, "docs", 3),
+            new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Exclude, "./.agents/skip.md", 4),
+        };
+        var request = CreateRequest(workspace, "docs", both ? ReferencesDirection.Both : ReferencesDirection.In, selectors);
+        var before = workspace.SnapshotHashes();
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+
+        var result = await ReferencesOperationFactory.Create().ExecuteAsync(request, cancellation.Token);
+
+        Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
+        var finding = Assert.Single(result.Findings);
+        Assert.Equal(ReferencesFindingCode.Interrupted, finding.Code);
+        Assert.Null(finding.Direction);
+        Assert.Null(finding.Subject);
+        Assert.Null(result.Source);
+        var selection = Assert.IsType<ReferencesIncomingSelection>(result.IncomingSelection);
+        Assert.Equal(ReferencesSelectionMode.Filtered, selection.Mode);
+        Assert.Equal(
+            [
+                (SourceUniverseSelectorRole.Include, "docs"),
+                (SourceUniverseSelectorRole.Exclude, ".agents/skip.md"),
+                (SourceUniverseSelectorRole.Include, "docs"),
+                (SourceUniverseSelectorRole.Exclude, "./.agents/skip.md"),
+            ],
+            selection.Supplied.Select(row => (row.Role, row.Value)));
+        Assert.Equal(
+            [
+                (SourceUniverseSelectorRole.Include, 1, "docs", SourceReferenceKind.SourceId),
+                (SourceUniverseSelectorRole.Exclude, 1, ".agents/skip.md", SourceReferenceKind.SourcePath),
+                (SourceUniverseSelectorRole.Include, 2, "docs", SourceReferenceKind.SourceId),
+                (SourceUniverseSelectorRole.Exclude, 2, "./.agents/skip.md", SourceReferenceKind.SourcePath),
+            ],
+            selection.Resolved.Select(row => (row.Role, row.Occurrence, row.Supplied, row.Form)));
+        Assert.All(selection.Resolved, row =>
+        {
+            Assert.Equal(SourceReferenceResolutionState.Unknown, row.Resolution);
+            Assert.Null(row.Source);
+            Assert.Null(row.Expansion);
+            Assert.Empty(row.Candidates);
+        });
+        Assert.Empty(selection.EffectiveSources);
+        Assert.Empty(selection.InspectedSources);
+        var incoming = Assert.IsType<ReferencesSection>(result.Incoming);
+        Assert.Equal(ReferencesCoverage.Incomplete, incoming.Coverage);
+        Assert.Equal(0, incoming.OccurrenceCount);
+        Assert.Empty(incoming.Occurrences);
+        if (both)
+        {
+            var outgoing = Assert.IsType<ReferencesSection>(result.Outgoing);
+            Assert.Equal(ReferencesCoverage.Incomplete, outgoing.Coverage);
+            Assert.Equal(0, outgoing.OccurrenceCount);
+            Assert.Empty(outgoing.Occurrences);
+        }
+        else
+        {
+            Assert.Null(result.Outgoing);
+        }
+        Assert.Equal(before, workspace.SnapshotHashes());
     }
 
     private static async Task<ReferencesResult> ExecuteAsync(

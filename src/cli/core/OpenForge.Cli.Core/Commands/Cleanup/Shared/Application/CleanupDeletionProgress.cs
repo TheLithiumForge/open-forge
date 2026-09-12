@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Planning;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 
 namespace OpenForge.Cli.Core.Commands.Cleanup.Shared.Application;
 

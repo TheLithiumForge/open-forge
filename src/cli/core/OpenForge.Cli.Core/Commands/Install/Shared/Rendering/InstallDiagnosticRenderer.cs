@@ -1,7 +1,9 @@
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Rendering;
 
@@ -33,14 +35,14 @@ internal static class InstallDiagnosticRenderer
         {
             var target = finding.Subject is null
                 ? "none"
-                : InstallTextEscaping.Escape(
+                : CommandTextEscaping.Escape(
                     finding.Subject,
-                    InstallTextEscaping.DiagnosticValueLimit);
+                    CommandTextEscaping.DiagnosticValueLimit);
             values.Add(
-                $"finding={InstallDefinitions.ReadMachineName(finding.Code)}:target={target}:cause={InstallTextEscaping.Escape(finding.Cause, InstallTextEscaping.DiagnosticValueLimit)}");
+                $"finding={InstallDefinitions.ReadMachineName(finding.Code)}:target={target}:cause={CommandTextEscaping.Escape(finding.Cause, CommandTextEscaping.DiagnosticValueLimit)}");
         }
 
-        return InstallTextEscaping.Escape(
+        return CommandTextEscaping.Escape(
             string.Join("; ", values),
             MaximumDiagnosticLength);
     }

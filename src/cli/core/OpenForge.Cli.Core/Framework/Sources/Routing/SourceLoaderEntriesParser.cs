@@ -1,13 +1,11 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Routing;
 
 internal static class SourceLoaderEntriesParser
 {
-    private const string EmptySentinel = "- none - No entries - #Empty";
-
     internal static SourceLoaderEntriesParseResult Parse(string loaderContents)
     {
         ArgumentNullException.ThrowIfNull(loaderContents);
@@ -44,7 +42,7 @@ internal static class SourceLoaderEntriesParser
 
         var lines = normalized[content.Start..content.End].Split('\n', StringSplitOptions.None);
         var nonBlank = lines.Where(line => line.Length != 0).ToArray();
-        if (nonBlank.Length == 0 || nonBlank.Length == 1 && nonBlank[0] == EmptySentinel)
+        if (nonBlank.Length == 0 || nonBlank.Length == 1 && nonBlank[0] == MarkdownGeneratedRegionSyntax.EmptyEntry)
         {
             return SourceLoaderEntriesParseResult.Valid([]);
         }
@@ -57,7 +55,7 @@ internal static class SourceLoaderEntriesParser
                 continue;
             }
 
-            if (line == EmptySentinel)
+            if (line == MarkdownGeneratedRegionSyntax.EmptyEntry)
             {
                 return SourceLoaderEntriesParseResult.Malformed(
                     "The empty Loader Entries sentinel must be the sole declaration.",

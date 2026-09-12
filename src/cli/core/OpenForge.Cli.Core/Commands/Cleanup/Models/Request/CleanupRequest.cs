@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Cleanup;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Cleanup.Models.Request;
 

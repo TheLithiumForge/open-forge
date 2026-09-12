@@ -1,6 +1,7 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.References;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.References;
 

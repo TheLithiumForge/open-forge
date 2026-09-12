@@ -33,6 +33,7 @@ internal sealed class RouteUpdateBodyPlanner
             ?? throw new InvalidOperationException(
                 "Complete Route Update frontmatter requires one body span.");
         var body = metadata.Observation.TargetText[bodySpan.Start..bodySpan.End];
+        var bodyIsWhitespace = body.All(char.IsWhiteSpace);
         var template = new RouteUpdateTemplate
         {
             Requested = selection.Requested,
@@ -40,11 +41,11 @@ internal sealed class RouteUpdateBodyPlanner
             Path = selection.Path,
             Classification = RouteUpdateTemplateClassification.Template,
             BodyByteLength = selection.BodyByteLength,
-            Decision = body.All(char.IsWhiteSpace)
+            Decision = bodyIsWhitespace
                 ? RouteUpdateTemplateDecision.Copied
                 : RouteUpdateTemplateDecision.AuthoredBodyProtected,
         };
-        if (!body.All(char.IsWhiteSpace))
+        if (!bodyIsWhitespace)
         {
             return Complete(
                 metadata,

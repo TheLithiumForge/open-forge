@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Commands.Library.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Planning;
 

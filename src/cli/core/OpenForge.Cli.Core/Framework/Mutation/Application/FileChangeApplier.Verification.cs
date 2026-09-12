@@ -1,5 +1,6 @@
-using OpenForge.Cli.Core.Framework.Filesystem;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Application;
@@ -39,7 +40,7 @@ internal sealed partial class FileChangeApplier
                 context.Change,
                 context.Before,
                 FilesystemFailure.FromException(
-                    FailureKind(exception),
+                    FilesystemFailure.ClassifyException(exception),
                     exception).DirectCause);
         }
 
@@ -90,7 +91,7 @@ internal sealed partial class FileChangeApplier
                     context.Before,
                     FilesystemNotStartedReason.ApplicationFailed,
                     FilesystemFailure.FromException(
-                        FailureKind(effectException),
+                        FilesystemFailure.ClassifyException(effectException),
                         effectException).DirectCause);
             }
 
@@ -100,7 +101,7 @@ internal sealed partial class FileChangeApplier
                 observed,
                 result.Cause
                     ?? FilesystemFailure.FromException(
-                        FailureKind(effectException),
+                        FilesystemFailure.ClassifyException(effectException),
                         effectException).DirectCause);
         }
 
@@ -111,7 +112,7 @@ internal sealed partial class FileChangeApplier
             result.Cause
                 ?? result.Failure?.DirectCause
                 ?? FilesystemFailure.FromException(
-                    FailureKind(effectException),
+                    FilesystemFailure.ClassifyException(effectException),
                     effectException).DirectCause);
     }
 
@@ -140,7 +141,7 @@ internal sealed partial class FileChangeApplier
             return FileExpectationValidationResult.Failed(
                 expectedAfter,
                 FilesystemFailure.FromException(
-                    FailureKind(exception),
+                    FilesystemFailure.ClassifyException(exception),
                     exception));
         }
     }

@@ -1,11 +1,13 @@
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 
 internal sealed class WorkspaceLockLease : IDisposable, IAsyncDisposable
 {
     private readonly FileStream _handle;
+    private readonly string _workspaceKey;
     private int _disposed;
 
     internal WorkspaceLockLease(
@@ -47,6 +49,7 @@ internal sealed class WorkspaceLockLease : IDisposable, IAsyncDisposable
         StoreRoot = storeRoot;
         LockPath = normalizedLockPath;
         _handle = handle;
+        _workspaceKey = WorkspaceIdentity.Key(request.Workspace.PhysicalRoot);
     }
 
     internal WorkspaceLockRequest Request { get; }
@@ -63,7 +66,7 @@ internal sealed class WorkspaceLockLease : IDisposable, IAsyncDisposable
     {
         return IsHeld
             && string.Equals(
-                WorkspaceIdentity.Key(Request.Workspace.PhysicalRoot),
+                _workspaceKey,
                 WorkspaceIdentity.Key(workspace.PhysicalRoot),
                 StringComparison.Ordinal)
             && string.Equals(

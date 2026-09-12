@@ -1,9 +1,12 @@
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Application;
 
@@ -207,7 +210,7 @@ internal static class RouteInitRecoveryLifecycle
         }
 
         var candidates = catalogue.Candidates
-            .Where(candidate => MatchesPreparation(candidate, preparation))
+            .Where(candidate => RecoveryBundleIdentity.Matches(candidate, preparation))
             .ToArray();
         if (candidates.Length != 1)
         {
@@ -313,28 +316,6 @@ internal static class RouteInitRecoveryLifecycle
                     ? RouteInitFindingCode.Interrupted
                     : RouteInitFindingCode.RecoveryFailed),
         };
-    }
-
-    private static bool MatchesPreparation(
-        RecoveryBundleCandidateSnapshot candidate,
-        RecoveryBundlePreparation preparation)
-    {
-        if (candidate.Kind != RecoveryBundleCandidateKind.Final
-            || candidate.Integrity != RecoveryBundleIntegrity.Verified
-            || candidate.Verified is not { } verified)
-        {
-            return false;
-        }
-
-        return PhysicalIdentityTracker.PathComparer.Equals(candidate.Path, preparation.BundlePath)
-            && PhysicalIdentityTracker.PathComparer.Equals(verified.BundlePath, preparation.BundlePath)
-            && PhysicalIdentityTracker.PathComparer.Equals(
-                verified.WorkspacePhysicalPath,
-                preparation.WorkspacePhysicalPath)
-            && string.Equals(verified.WorkspaceKey, preparation.WorkspaceKey, StringComparison.Ordinal)
-            && string.Equals(verified.Command, preparation.Command, StringComparison.Ordinal)
-            && verified.OperationId == preparation.OperationId
-            && verified.Entries.SequenceEqual(preparation.Entries);
     }
 
     private static RouteInitRecoveryPreparationResult Cancelled(string? ResidualPath)

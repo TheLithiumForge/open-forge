@@ -1,7 +1,7 @@
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Identity;
 
@@ -11,6 +11,9 @@ internal delegate PhysicalPathResolution SourcePhysicalPathResolver(
 
 internal sealed class SourceReferenceResolver
 {
+    private const string UndefinedPhysicalPathStateMessage = "The physical path state is not defined.";
+    private const string UnsafePhysicalPathCause = "The exact source path is outside an established safe physical boundary.";
+
     private readonly SourcePhysicalPathResolver _physicalPathResolver;
 
     internal SourceReferenceResolver(SourcePhysicalPathResolver physicalPathResolver)
@@ -28,11 +31,11 @@ internal sealed class SourceReferenceResolver
         if (parsed.State == SourceReferenceParseState.Invalid)
         {
             return Unresolved(
-                value,
-                parsed.Kind,
-                SourceReferenceResolutionState.Invalid,
-                ReadCanonicalPath(parsed.AttemptedPath),
-                parsed.Cause);
+                value: value,
+                form: parsed.Kind,
+                state: SourceReferenceResolutionState.Invalid,
+                canonicalPath: ReadCanonicalPath(parsed.AttemptedPath),
+                cause: parsed.Cause);
         }
 
         return parsed.Kind switch
@@ -59,32 +62,32 @@ internal sealed class SourceReferenceResolver
         if (sources.Count > 1)
         {
             return new SourceReferenceResolution(
-                value,
-                parsed.Kind,
-                SourceReferenceResolutionState.Ambiguous,
-                null,
-                sources,
-                null,
-                "The source ID resolves to more than one logical source.");
+                value: value,
+                form: parsed.Kind,
+                state: SourceReferenceResolutionState.Ambiguous,
+                source: null,
+                candidates: sources,
+                canonicalPath: null,
+                cause: "The source ID resolves to more than one logical source.");
         }
 
         var candidates = catalogue.FindAllCandidatesById(id);
         if (candidates.Any(candidate => IsUnsafe(candidate.PhysicalState)))
         {
             return Unresolved(
-                value,
-                parsed.Kind,
-                SourceReferenceResolutionState.Unsafe,
-                null,
-                "The source ID has a candidate outside an established safe physical boundary.");
+                value: value,
+                form: parsed.Kind,
+                state: SourceReferenceResolutionState.Unsafe,
+                canonicalPath: null,
+                cause: "The source ID has a candidate outside an established safe physical boundary.");
         }
 
         return Unresolved(
-            value,
-            parsed.Kind,
-            SourceReferenceResolutionState.Unknown,
-            null,
-            "The source ID does not identify a retained logical source.");
+            value: value,
+            form: parsed.Kind,
+            state: SourceReferenceResolutionState.Unknown,
+            canonicalPath: null,
+            cause: "The source ID does not identify a retained logical source.");
     }
 
     private SourceReferenceResolution ResolvePath(
@@ -104,20 +107,20 @@ internal sealed class SourceReferenceResolver
         if (candidate is not null)
         {
             return Unresolved(
-                value,
-                parsed.Kind,
-                ReadState(candidate.PhysicalState),
-                path,
-                ReadCandidateCause(candidate.PhysicalState));
+                value: value,
+                form: parsed.Kind,
+                state: ReadState(candidate.PhysicalState),
+                canonicalPath: path,
+                cause: ReadCandidateCause(candidate.PhysicalState));
         }
 
         var physical = _physicalPathResolver(catalogue.Workspace, path);
         return Unresolved(
-            value,
-            parsed.Kind,
-            ReadState(physical.State),
-            path,
-            ReadPhysicalCause(physical.State));
+            value: value,
+            form: parsed.Kind,
+            state: ReadState(physical.State),
+            canonicalPath: path,
+            cause: ReadPhysicalCause(physical.State));
     }
 
     private static SourceReferenceResolution Resolved(
@@ -125,13 +128,13 @@ internal sealed class SourceReferenceResolver
         SourceReferenceKind form,
         SourceLogicalSource source)
         => new(
-            value,
-            form,
-            SourceReferenceResolutionState.Resolved,
-            source,
-            [],
-            source.Identity.CanonicalBasePath,
-            null);
+            value: value,
+            form: form,
+            state: SourceReferenceResolutionState.Resolved,
+            source: source,
+            candidates: [],
+            canonicalPath: source.Identity.CanonicalBasePath,
+            cause: null);
 
     private static SourceReferenceResolution Unresolved(
         string value,
@@ -140,20 +143,27 @@ internal sealed class SourceReferenceResolver
         string? canonicalPath,
         string? cause)
         => new(
-            value,
-            form,
-            state,
-            null,
-            [],
-            canonicalPath,
-            cause ?? ReadCause(state));
+            value: value,
+            form: form,
+            state: state,
+            source: null,
+            candidates: [],
+            canonicalPath: canonicalPath,
+            cause: cause ?? ReadCause(state));
 
     private static SourceReferenceResolutionState ReadState(PhysicalPathState state)
         => state switch
         {
             PhysicalPathState.Contained => SourceReferenceResolutionState.Unsupported,
             PhysicalPathState.Missing => SourceReferenceResolutionState.Unknown,
-            _ => SourceReferenceResolutionState.Unsafe,
+            PhysicalPathState.Dangling
+                or PhysicalPathState.Inaccessible
+                or PhysicalPathState.External
+                or PhysicalPathState.Cycle
+                or PhysicalPathState.Invalid
+                or PhysicalPathState.Unsupported
+                or PhysicalPathState.InputOutputFailure => SourceReferenceResolutionState.Unsafe,
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, UndefinedPhysicalPathStateMessage),
         };
 
     private static bool IsUnsafe(PhysicalPathState state)
@@ -164,7 +174,14 @@ internal sealed class SourceReferenceResolver
         {
             PhysicalPathState.Contained => "The exact path is not an admitted logical source.",
             PhysicalPathState.Missing => "The exact source path is no longer present.",
-            _ => "The exact source path is outside an established safe physical boundary.",
+            PhysicalPathState.Dangling
+                or PhysicalPathState.Inaccessible
+                or PhysicalPathState.External
+                or PhysicalPathState.Cycle
+                or PhysicalPathState.Invalid
+                or PhysicalPathState.Unsupported
+                or PhysicalPathState.InputOutputFailure => UnsafePhysicalPathCause,
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, UndefinedPhysicalPathStateMessage),
         };
 
     private static string ReadPhysicalCause(PhysicalPathState state)
@@ -172,7 +189,14 @@ internal sealed class SourceReferenceResolver
         {
             PhysicalPathState.Contained => "The exact path is not an admitted logical source.",
             PhysicalPathState.Missing => "The exact source path does not exist.",
-            _ => "The exact source path is outside an established safe physical boundary.",
+            PhysicalPathState.Dangling
+                or PhysicalPathState.Inaccessible
+                or PhysicalPathState.External
+                or PhysicalPathState.Cycle
+                or PhysicalPathState.Invalid
+                or PhysicalPathState.Unsupported
+                or PhysicalPathState.InputOutputFailure => UnsafePhysicalPathCause,
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, UndefinedPhysicalPathStateMessage),
         };
 
     private static string ReadCause(SourceReferenceResolutionState state)

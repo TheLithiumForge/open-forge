@@ -1,8 +1,8 @@
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Presentation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Rendering;

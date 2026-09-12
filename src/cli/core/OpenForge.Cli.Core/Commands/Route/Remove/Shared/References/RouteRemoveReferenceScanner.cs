@@ -6,20 +6,21 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.References;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.References;
 
-internal sealed partial class RouteRemoveReferenceScanner(
+internal sealed class RouteRemoveReferenceScanner(
     MarkdownDocumentParser markdownParser,
     SourceLinkDestinationResolver destinationResolver,
     FileExpectationValidator expectationValidator)
@@ -91,13 +92,8 @@ internal sealed partial class RouteRemoveReferenceScanner(
                         sourcePath, "An incoming Markdown reference cannot be detached without losing authored meaning.");
                 }
 
-                var line = ReadLine(read.Value.Text, link.Span);
-                var expectedLine = line.Text.Remove(
-                    link.Span.Start - line.Start,
-                    link.Span.Length).Insert(
-                    link.Span.Start - line.Start,
-                    visibleLabel);
-                edits.Add(new LineEdit(line.Start, line.Text.Length, line.Text, expectedLine, link, visibleLabel));
+                var (start, text) = ReadLine(read.Value.Text, link.Span);
+                edits.Add(new LineEdit(start, text.Length, text, link, visibleLabel));
             }
 
             if (edits.Count == 0)
@@ -108,12 +104,12 @@ internal sealed partial class RouteRemoveReferenceScanner(
             var coalesced = Coalesce(edits);
             var intended = Apply(read.Value.Text, coalesced);
             var map = new Utf8SourceMap(read.Value.Text);
-            var documentEdits = coalesced.Select(edit => new RouteRemoveReferenceDocumentEdit
+            ImmutableArray<RouteRemoveReferenceDocumentEdit> documentEdits = [.. coalesced.Select(edit => new RouteRemoveReferenceDocumentEdit
             {
                 Location = map.Map(edit.Start, edit.Length),
                 Before = edit.Before,
                 Expected = edit.Expected,
-            }).ToImmutableArray();
+            })];
             detachments.AddRange(coalesced.SelectMany(edit => edit.Links.Select(link => new RouteRemoveReferenceDetachment
             {
                 SourcePath = sourcePath,
@@ -136,11 +132,10 @@ internal sealed partial class RouteRemoveReferenceScanner(
         return new RouteRemoveReferenceScanResult(
             new RouteRemoveReferenceScan
             {
-                Documents = documents.ToImmutableArray(),
-                Detachments = detachments
+                Documents = [.. documents],
+                Detachments = [.. detachments
                     .OrderBy(item => item.SourcePath, StringComparer.Ordinal)
-                    .ThenBy(item => item.Location.ByteOffset)
-                    .ToImmutableArray(),
+                    .ThenBy(item => item.Location.ByteOffset)],
                 OccurrenceCount = occurrenceCount,
             },
             boundary: null);
@@ -374,8 +369,8 @@ internal sealed partial class RouteRemoveReferenceScanner(
         return (start, text[start..end]);
     }
 
-    private static IReadOnlyList<CoalescedLineEdit> Coalesce(IEnumerable<LineEdit> edits)
-        => edits.GroupBy(edit => (edit.Start, edit.Length))
+    private static CoalescedLineEdit[] Coalesce(IEnumerable<LineEdit> edits)
+        => [.. edits.GroupBy(edit => (edit.Start, edit.Length))
             .Select(group =>
             {
                 var ordered = group.OrderByDescending(edit => edit.Link.Span.Start).ToArray();
@@ -391,10 +386,9 @@ internal sealed partial class RouteRemoveReferenceScanner(
                     group.Key.Length,
                     group.First().Before,
                     expected,
-                    group.Select(edit => (edit.Link, edit.VisibleLabel)).ToArray());
+                    [.. group.Select(edit => (edit.Link, edit.VisibleLabel))]);
             })
-            .OrderBy(edit => edit.Start)
-            .ToArray();
+            .OrderBy(edit => edit.Start)];
 
     private static string Apply(string source, IReadOnlyList<CoalescedLineEdit> edits)
     {
@@ -451,7 +445,6 @@ internal sealed partial class RouteRemoveReferenceScanner(
         int Start,
         int Length,
         string Before,
-        string Expected,
         MarkdownLinkFact Link,
         string VisibleLabel);
 
@@ -460,5 +453,5 @@ internal sealed partial class RouteRemoveReferenceScanner(
         int Length,
         string Before,
         string Expected,
-        IReadOnlyList<(MarkdownLinkFact Link, string VisibleLabel)> Links);
+        (MarkdownLinkFact Link, string VisibleLabel)[] Links);
 }

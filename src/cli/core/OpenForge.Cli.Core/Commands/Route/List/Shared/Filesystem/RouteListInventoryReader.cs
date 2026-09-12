@@ -1,6 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
@@ -148,8 +148,7 @@ internal sealed class RouteListInventoryReader
         string firstPath)
     {
         var firstCandidate = catalogue.FindCandidateByPath(firstPath);
-        if (firstCandidate?.PhysicalParentPath is null
-            || candidate.PhysicalParentPath is null
+        if (firstCandidate is null
             || !PhysicalIdentityTracker.PathComparer.Equals(
                 firstCandidate.PhysicalParentPath,
                 candidate.PhysicalParentPath))

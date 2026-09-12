@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
 

@@ -2,7 +2,7 @@ using System.CommandLine;
 using OpenForge.Cli.Core.Commands.Update;
 using OpenForge.Cli.Core.Commands.Update.Models.Binding;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Update;
 

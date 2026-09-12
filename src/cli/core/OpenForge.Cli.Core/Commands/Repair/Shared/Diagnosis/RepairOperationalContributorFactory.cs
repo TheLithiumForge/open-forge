@@ -7,7 +7,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Lifecycle.Operational;
 using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
-using OpenForge.Cli.Core.Framework.OperationalContributors;
+using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Operational;
 using OpenForge.Cli.Core.Framework.Sources.Operational;

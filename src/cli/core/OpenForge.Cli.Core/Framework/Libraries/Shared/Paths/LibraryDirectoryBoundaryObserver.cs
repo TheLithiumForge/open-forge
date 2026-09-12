@@ -1,7 +1,7 @@
-using OpenForge.Cli.Core.Framework.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Libraries.Shared.Paths;
 
@@ -106,13 +106,24 @@ internal static class LibraryDirectoryBoundaryObserver
     }
 
     private static NoFollowLinkTargetForm ReadTargetForm(string? target)
-        => target is null
-            ? NoFollowLinkTargetForm.Unavailable
-            : Path.IsPathFullyQualified(target) || target.StartsWith('/')
-                ? NoFollowLinkTargetForm.Absolute
-                : target.Contains('\\')
-                    ? NoFollowLinkTargetForm.Unsupported
-                    : NoFollowLinkTargetForm.Relative;
+    {
+        if (target is null)
+        {
+            return NoFollowLinkTargetForm.Unavailable;
+        }
+
+        if (Path.IsPathFullyQualified(target) || target.StartsWith('/'))
+        {
+            return NoFollowLinkTargetForm.Absolute;
+        }
+
+        if (target.Contains('\\'))
+        {
+            return NoFollowLinkTargetForm.Unsupported;
+        }
+
+        return NoFollowLinkTargetForm.Relative;
+    }
 
     private static NoFollowLeafObservation Unknown(string path, string cause)
         => NoFollowLeafObservation.Classified(

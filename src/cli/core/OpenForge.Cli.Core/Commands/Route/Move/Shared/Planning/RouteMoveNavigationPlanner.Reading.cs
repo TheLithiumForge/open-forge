@@ -4,7 +4,7 @@ using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.References;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -16,12 +16,13 @@ internal sealed partial class RouteMoveNavigationPlanner
 
     private NavigationMetadataRead ReadMetadata(
         RouteMoveNavigationPlanningRequest request,
-        GeneratedNavigationFormation formation)
+        GeneratedNavigationFormation formation,
+        ref IReadOnlyDictionary<string, string>? movedPaths)
     {
         var values = new List<GeneratedNavigationMetadata>();
         foreach (var source in formation.Sources)
         {
-            var read = ReadSourceText(request, source);
+            var read = ReadSourceText(request, source, ref movedPaths);
             if (read is null)
             {
                 return NavigationMetadataRead.Stop(StopFormation(
@@ -41,12 +42,13 @@ internal sealed partial class RouteMoveNavigationPlanner
 
     private RegionDocumentRead ReadDocuments(
         RouteMoveNavigationPlanningRequest request,
-        IEnumerable<SelectedRegion> regions)
+        IEnumerable<SelectedRegion> regions,
+        ref IReadOnlyDictionary<string, string>? movedPaths)
     {
         var values = new List<RegionDocument>();
         foreach (var region in regions)
         {
-            var read = ReadSourceText(request, region.Source);
+            var read = ReadSourceText(request, region.Source, ref movedPaths);
             if (read is null)
             {
                 return RegionDocumentRead.Stop(StopFormation(
@@ -65,12 +67,13 @@ internal sealed partial class RouteMoveNavigationPlanner
 
     private static SourceText? ReadSourceText(
         RouteMoveNavigationPlanningRequest request,
-        SourceLogicalSource source)
+        SourceLogicalSource source,
+        ref IReadOnlyDictionary<string, string>? movedPaths)
     {
         var destination = request.Destination;
         var workspace = destination.Inventory.Subject.Request.Workspace;
-        var moved = RouteMoveReferenceChangeProjector.BuildMovedPathMap(destination);
-        var originalPath = moved.FirstOrDefault(pair => string.Equals(
+        movedPaths ??= RouteMoveReferenceChangeProjector.BuildMovedPathMap(destination);
+        var originalPath = movedPaths.FirstOrDefault(pair => string.Equals(
             pair.Value,
             source.Identity.CanonicalBasePath,
             StringComparison.Ordinal)).Key;

@@ -1,6 +1,5 @@
-using System.Globalization;
-using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Help;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Rendering;
 
@@ -45,37 +44,6 @@ internal static class RouteUpdateHelpSections
             new CliHelpSection(
                 "Notes",
                 "  Global workspace, JSON, view, verbosity, help, and version options retain their shared meaning.\n"
-                + ResultsAndStreams()),
+                + CliResultHelp.ResultsAndStreams(RouteUpdateDefinitions.SchemaVersion)),
         ]);
-
-    private static string ResultsAndStreams()
-    {
-        var lines = new List<string>
-        {
-            "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            string.Create(
-                CultureInfo.InvariantCulture,
-                $"  JSON writes one schema-version-{RouteUpdateDefinitions.SchemaVersion} envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr."),
-        };
-        foreach (var status in Enum.GetValues<CliSemanticStatus>())
-        {
-            var definition = CliStatusDefinitions.Read(status);
-            lines.Add(string.Create(
-                CultureInfo.InvariantCulture,
-                $"  {definition.MachineName}: exit {definition.Disposition.ExitCode} and human {Stream(definition.Disposition.HumanOutputTarget)}."));
-        }
-
-        return string.Join(Environment.NewLine, lines);
-    }
-
-    private static string Stream(CliOutputTarget target)
-        => target switch
-        {
-            CliOutputTarget.StandardOutput => "stdout",
-            CliOutputTarget.StandardError => "stderr",
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(target),
-                target,
-                "The output target is not defined."),
-        };
 }

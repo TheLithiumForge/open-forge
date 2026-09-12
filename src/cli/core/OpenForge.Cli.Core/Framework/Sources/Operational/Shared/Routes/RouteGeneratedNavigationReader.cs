@@ -1,16 +1,18 @@
 using System.Text;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
@@ -32,38 +34,9 @@ internal sealed class RouteGeneratedNavigationReader
     {
         var paths = ReadExpectedPaths(payload, inspection);
         var formation = new GeneratedNavigationFormationBuilder().Build(inspection.Catalogue);
-        var observations = inspection.Sources.ToDictionary(
-            source => source.Source.Identity.CanonicalBasePath,
-            StringComparer.Ordinal);
-        var regions = new List<GeneratedNavigationRegionInput>();
-        foreach (var path in paths)
-        {
-            var source = formation.FindSource(path);
-            if (source is null)
-            {
-                continue;
-            }
-
-            var observation = observations.GetValueOrDefault(path);
-            regions.Add(observation?.Document is { } document
-                ? new GeneratedNavigationRegionInput(source, document)
-                : new GeneratedNavigationRegionInput(
-                    source,
-                    "The generated navigation source document is unavailable."));
-        }
-
-        var metadata = formation.Sources.Select(source =>
-        {
-            var observation = observations.GetValueOrDefault(
-                source.Identity.CanonicalBasePath);
-            return new GeneratedNavigationMetadata(
-                source,
-                observation?.AuthoredMetadata
-                    ?? throw new InvalidOperationException(
-                        "A generated-navigation formation source requires one retained observation."));
-        }).ToArray();
-        var projection = new GeneratedNavigationProjector().Project(
-            new GeneratedNavigationProjectionRequest(formation, regions, metadata));
+        var observations = RouteGeneratedNavigationProjection.IndexSources(inspection.Sources);
+        var sources = paths.Select(formation.FindSource).OfType<SourceLogicalSource>();
+        var projection = RouteGeneratedNavigationProjection.Project(formation, observations, sources);
         var projected = projection.Regions.ToDictionary(
             region => region.CanonicalPath,
             StringComparer.Ordinal);
@@ -156,29 +129,6 @@ internal sealed class RouteGeneratedNavigationReader
                 "An unavailable generated-navigation region requires one finite reason.");
         }
 
-        return reason switch
-        {
-            GeneratedNavigationRegionUnavailableReason.TopologyUnsafe
-                or GeneratedNavigationRegionUnavailableReason.DestinationUnsafe
-                or GeneratedNavigationRegionUnavailableReason.DestinationConflict =>
-                OperationalGeneratedNavigationState.Blocked,
-            GeneratedNavigationRegionUnavailableReason.GeneratedRegionMissing =>
-                OperationalGeneratedNavigationState.Missing,
-            GeneratedNavigationRegionUnavailableReason.RegionSourceUnsupported
-                or GeneratedNavigationRegionUnavailableReason.SourceDocumentUnavailable
-                or GeneratedNavigationRegionUnavailableReason.GeneratedRegionInvalid
-                or GeneratedNavigationRegionUnavailableReason.GeneratedRegionUnavailable
-                or GeneratedNavigationRegionUnavailableReason.GeneratedRegionLineEndingUnsupported
-                or GeneratedNavigationRegionUnavailableReason.TopologyUnavailable
-                or GeneratedNavigationRegionUnavailableReason.MetadataUnavailable
-                or GeneratedNavigationRegionUnavailableReason.MetadataInvalid
-                or GeneratedNavigationRegionUnavailableReason.MetadataUnrepresentable
-                or GeneratedNavigationRegionUnavailableReason.ProjectionUnavailable =>
-                OperationalGeneratedNavigationState.Unavailable,
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(region),
-                reason,
-                "The generated-navigation unavailable reason is not defined."),
-        };
+        return RouteGeneratedNavigationProjection.ReadUnavailableState(reason, nameof(region));
     }
 }

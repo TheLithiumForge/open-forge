@@ -2,8 +2,9 @@ using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 
@@ -17,17 +18,15 @@ internal static class RouteMoveEffectPlanner
         var directories = destination.Inventory.Items
             .Where(item => item.Kind == RouteMoveItemKind.Directory)
             .ToArray();
-        var creations = directories.Select(item => PlannedDirectoryCreation.Create(
+        ImmutableArray<PlannedDirectoryCreation> creations = [.. directories.Select(item => PlannedDirectoryCreation.Create(
                 FileExpectation.Missing(DestinationLogicalPath(destination, item))))
             .OrderBy(creation => PathDepth(creation.LogicalPath))
-            .ThenBy(creation => creation.LogicalPath, StringComparer.Ordinal)
-            .ToImmutableArray();
-        var deletions = directories.Select(item => PlannedDirectoryDeletion.DeleteIfEmpty(
+            .ThenBy(creation => creation.LogicalPath, StringComparer.Ordinal)];
+        ImmutableArray<PlannedDirectoryDeletion> deletions = [.. directories.Select(item => PlannedDirectoryDeletion.DeleteIfEmpty(
                 item.Snapshot.Expectation))
             .OrderByDescending(deletion => PathDepth(deletion.LogicalPath))
-            .ThenBy(deletion => deletion.LogicalPath, StringComparer.Ordinal)
-            .ToImmutableArray();
-        var files = BuildFileChanges(destination, references, navigation);
+            .ThenBy(deletion => deletion.LogicalPath, StringComparer.Ordinal)];
+        var files = BuildFileChanges(destination, references, navigation, out var documents);
         return new RouteMovePlanProjectionInput
         {
             Destination = destination,
@@ -41,23 +40,27 @@ internal static class RouteMoveEffectPlanner
                 destination,
                 references,
                 navigation,
-                files),
+                files,
+                documents),
         };
     }
 
     private static ImmutableArray<PlannedFileChange> BuildFileChanges(
         RouteMoveResolvedDestination destination,
         RouteMoveReferencePlan references,
-        RouteMoveNavigationPlan navigation)
+        RouteMoveNavigationPlan navigation,
+        out IReadOnlyDictionary<string, RouteMoveReferenceDocumentPlan>? documents)
     {
+        IReadOnlyDictionary<string, RouteMoveReferenceDocumentPlan>? documentMap = null;
         var intended = references.FileChanges.Concat(navigation.FileChanges)
             .GroupBy(change => change.LogicalPath, StringComparer.Ordinal)
             .Select(group => ComposeChange(
-                destination,
-                references,
                 navigation,
                 group.Key,
-                group.ToArray()))
+                [.. group],
+                documentMap ??= DocumentsByDestination(
+                    references,
+                    destination.Inventory.Subject.Request.Workspace.LexicalRoot)))
             .ToArray();
         var movedCreates = intended
             .Where(change => change.Kind == PlannedFileChangeKind.Create)
@@ -70,26 +73,25 @@ internal static class RouteMoveEffectPlanner
             .Select(item => PlannedFileChange.Delete(item.Snapshot.Expectation))
             .OrderByDescending(change => PathDepth(change.LogicalPath))
             .ThenBy(change => change.LogicalPath, StringComparer.Ordinal);
-        return movedCreates.Concat(replacements).Concat(sourceDeletes).ToImmutableArray();
+        ImmutableArray<PlannedFileChange> files = [.. movedCreates.Concat(replacements).Concat(sourceDeletes)];
+        documents = documentMap;
+        return files;
     }
 
     private static PlannedFileChange ComposeChange(
-        RouteMoveResolvedDestination destination,
-        RouteMoveReferencePlan references,
         RouteMoveNavigationPlan navigation,
         string logicalPath,
-        IReadOnlyList<PlannedFileChange> changes)
+        PlannedFileChange[] changes,
+        IReadOnlyDictionary<string, RouteMoveReferenceDocumentPlan> documents)
     {
-        var workspace = destination.Inventory.Subject.Request.Workspace;
-        var reference = DocumentsByDestination(references, workspace.LexicalRoot)
-            .GetValueOrDefault(logicalPath);
+        var reference = documents.GetValueOrDefault(logicalPath);
         var generated = navigation.DocumentEdits.SingleOrDefault(edit => string.Equals(
             edit.DestinationLogicalPath,
             logicalPath,
             StringComparison.Ordinal));
         if (generated is null)
         {
-            return changes.Count == 1
+            return changes.Length == 1
                 ? changes[0]
                 : throw new InvalidOperationException(
                     "Overlapping Route Move file changes require one generated-region projection.");
@@ -122,9 +124,9 @@ internal static class RouteMoveEffectPlanner
         edits.Add(new DocumentEdit(
             checked((int)generated.Location.ByteOffset),
             checked((int)generated.Location.ByteLength),
-            generated.BeforeBytes.ToArray(),
-            generated.ExpectedBytes.ToArray()));
-        return edits.OrderBy(edit => edit.Start).ToArray();
+            [.. generated.BeforeBytes],
+            [.. generated.ExpectedBytes]));
+        return [.. edits.OrderBy(edit => edit.Start)];
     }
 
     private static byte[] ApplyEdits(ReadOnlySpan<byte> source, IReadOnlyList<DocumentEdit> edits)
@@ -158,10 +160,11 @@ internal static class RouteMoveEffectPlanner
         RouteMoveResolvedDestination destination,
         RouteMoveReferencePlan references,
         RouteMoveNavigationPlan navigation,
-        IReadOnlyList<PlannedFileChange> fileChanges)
+        IReadOnlyList<PlannedFileChange> fileChanges,
+        IReadOnlyDictionary<string, RouteMoveReferenceDocumentPlan>? documents)
     {
         var workspaceRoot = destination.Inventory.Subject.Request.Workspace.LexicalRoot;
-        var snapshots = DocumentsByDestination(references, workspaceRoot)
+        var snapshots = (documents ?? DocumentsByDestination(references, workspaceRoot))
             .ToDictionary(pair => pair.Key, pair => pair.Value.Snapshot, StringComparer.Ordinal);
         foreach (var edit in navigation.DocumentEdits)
         {
@@ -174,11 +177,10 @@ internal static class RouteMoveEffectPlanner
             snapshots[item.Snapshot.LogicalPath] = item.Snapshot;
         }
 
-        return fileChanges.Where(change => change.Kind != PlannedFileChangeKind.Create)
+        return [.. fileChanges.Where(change => change.Kind != PlannedFileChangeKind.Create)
             .Select(change => RecoveryBundleTarget.Create(
                 change,
-                snapshots[change.LogicalPath]))
-            .ToImmutableArray();
+                snapshots[change.LogicalPath]))];
     }
 
     private static void EnsureSameSnapshot(

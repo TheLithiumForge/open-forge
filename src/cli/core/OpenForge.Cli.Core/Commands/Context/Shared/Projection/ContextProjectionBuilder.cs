@@ -2,7 +2,8 @@ using OpenForge.Cli.Core.Commands.Context.Models.Operation;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Commands.Context.Models.Selection;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
@@ -13,18 +14,18 @@ namespace OpenForge.Cli.Core.Commands.Context.Shared.Projection;
 internal sealed class ContextProjectionBuilder
 {
     internal ContextProjectionFormation Build(
-        ContextClosureResolution closure,
+        IReadOnlyList<ContextSelectedGraphSource> selectedSources,
         ContextContentSelection content)
     {
-        ArgumentNullException.ThrowIfNull(closure);
+        ArgumentNullException.ThrowIfNull(selectedSources);
         ArgumentNullException.ThrowIfNull(content);
         var state = new ProjectionAccumulator();
         var sources = new List<ContextSource>();
         var paths = new List<ContextPathProjection>();
         var pathPosition = 0;
-        for (var sourceIndex = 0; sourceIndex < closure.ResultSources.Count; sourceIndex++)
+        for (var sourceIndex = 0; sourceIndex < selectedSources.Count; sourceIndex++)
         {
-            var selected = closure.ResultSources[sourceIndex];
+            var selected = selectedSources[sourceIndex];
             var graphSource = selected.Source;
             var sourcePosition = sourceIndex + 1;
             var layers = new List<ContextLayer>();

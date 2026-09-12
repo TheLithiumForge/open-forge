@@ -3,8 +3,10 @@ using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Application;
 
@@ -406,7 +408,3 @@ internal sealed class ExtensionInstallEffectApplication(
             progress.RetainWorkspaceEffects(),
             new ExtensionInstallFinding(code, cause, target));
 }
-
-internal sealed record ExtensionInstallEffectReceiptMapping(
-    ExtensionInstallEffectOutcome? RecordedOutcome,
-    ExtensionInstallFinding? Finding);

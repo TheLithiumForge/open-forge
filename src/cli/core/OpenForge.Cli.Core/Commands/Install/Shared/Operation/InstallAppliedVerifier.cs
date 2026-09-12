@@ -2,9 +2,8 @@ using OpenForge.Cli.Core.Commands.Install.Models.Operation;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Operation;
 
@@ -148,7 +147,3 @@ internal sealed class InstallAppliedVerifier(
     private static InstallVerificationResult Cancelled()
         => new(InstallVerificationState.Cancelled, Cause: null);
 }
-
-internal sealed record InstallTargetVerificationRead(
-    IReadOnlyDictionary<string, InstallTargetRead> Reads,
-    InstallVerificationResult? Result);

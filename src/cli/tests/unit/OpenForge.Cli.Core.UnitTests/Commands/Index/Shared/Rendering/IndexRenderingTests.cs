@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Commands.Index.Models.Request;
 using OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Core.UnitTests.Commands.Index.Shared;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Index.Shared.Rendering;
@@ -165,14 +166,5 @@ public sealed class IndexRenderingTests
         var globalOptions = Assert.Single(help.Sections, section => section.Heading == "Global options");
         Assert.Contains("--view <compact|expanded>", globalOptions.Body, StringComparison.Ordinal);
         Assert.DoesNotContain("--view=<compact|expanded>", globalOptions.Body, StringComparison.Ordinal);
-    }
-
-    [Fact(DisplayName = "Index diagnostic escaping truncates only at complete escape tokens with one symbolic ellipsis"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
-    public void DiagnosticEscapingPreservesCompleteTokensAtTheLimit()
-    {
-        Assert.Equal("a...", IndexTextEscaping.Escape("abcdef", maximumLength: 4));
-        Assert.Equal("...", IndexTextEscaping.Escape("abcdef", maximumLength: 3));
-        Assert.Equal("..", IndexTextEscaping.Escape("abcdef", maximumLength: 2));
-        Assert.Equal("...", IndexTextEscaping.Escape("\u0001value", maximumLength: 7));
     }
 }

@@ -5,11 +5,6 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 
-internal sealed record RouteUpdateMetadataPatchInput
-{
-    public required RouteUpdateObservation Observation { get; init; }
-}
-
 internal sealed record RouteUpdateMetadataPatch
 {
     public required RouteUpdateObservation Observation { get; init; }
@@ -96,11 +91,6 @@ internal sealed class RouteUpdateBodyPlanBuild
     internal static RouteUpdateBodyPlanBuild Stop(
         RouteUpdatePlanningBoundary boundary)
         => new(body: null, boundary: boundary);
-}
-
-internal sealed record RouteUpdateDestinationInput
-{
-    public required RouteUpdateObservation Observation { get; init; }
 }
 
 internal sealed record RouteUpdateDestinationPlan

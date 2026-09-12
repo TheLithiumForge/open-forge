@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
 using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 
@@ -14,7 +14,7 @@ internal sealed class InstallPreservationVerifier(
     internal async ValueTask<InstallPreservationVerification> VerifyAsync(
         FrameworkLifecycleState current,
         InstallIntendedState intended,
-        OpenForge.Cli.Core.Framework.Workspace.CliWorkspace workspace,
+        OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspace workspace,
         CancellationToken cancellationToken)
     {
         var baseKeys = intended.TargetBytes.Keys

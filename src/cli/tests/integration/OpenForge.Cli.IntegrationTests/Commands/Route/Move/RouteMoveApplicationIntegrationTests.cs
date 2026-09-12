@@ -1,12 +1,12 @@
 using System.Text.Json;
-using OpenForge.Cli.TestSupport;
-using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.Application;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.IntegrationTests.Hosting;
+using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Move;
 
@@ -112,7 +112,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
-            new RouteMoveRecoveryPreparationInput { Plan = plan, OperationId = operationId, Lease = lease }, TestContext.Current.CancellationToken);
+            new RouteMoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease), TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         workspace.TrackRecovery(preparation);
         var progress = await RouteMoveIntegrationWorkspace.CreateEffectApplication().ApplyAsync(
@@ -263,12 +263,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var before = workspace.SnapshotHashes();
         var lifecycleBytes = workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath);
-        var input = new RouteMoveRecoveryPreparationInput
-        {
-            Plan = plan,
-            OperationId = operationId,
-            Lease = lease,
-        };
+        var input = new RouteMoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease);
 
         var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
             input,
@@ -306,12 +301,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var before = workspace.SnapshotHashes();
 
         var result = await RouteMoveRecoveryLifecycle.PrepareAsync(
-                new RouteMoveRecoveryPreparationInput
-                {
-                    Plan = plan,
-                    OperationId = operationId,
-                    Lease = lease,
-                },
+                new RouteMoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
                 TestContext.Current.CancellationToken);
 
         Assert.True(File.Exists(blockedPath));
@@ -334,12 +324,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
-            new RouteMoveRecoveryPreparationInput
-            {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
-            },
+            new RouteMoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         workspace.TrackRecovery(preparation);
@@ -393,12 +378,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
-            new RouteMoveRecoveryPreparationInput
-            {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
-            },
+            new RouteMoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         workspace.TrackRecovery(preparation);
@@ -438,12 +418,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var lifecycleBefore = workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath);
         var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
-            new RouteMoveRecoveryPreparationInput
-            {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
-            },
+            new RouteMoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         workspace.TrackRecovery(preparation);
@@ -484,9 +459,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var deletion = await RouteMoveRecoveryLifecycle.DeleteExactAsync(
             new RouteMoveRecoveryDeletionInput
             {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
+                Held = new RouteMoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
                 Preparation = preparation,
             },
             cancellation.Token);
@@ -509,12 +482,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
-            new RouteMoveRecoveryPreparationInput
-            {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
-            },
+            new RouteMoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         workspace.TrackRecovery(preparation);
@@ -557,12 +525,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
-            new RouteMoveRecoveryPreparationInput
-            {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
-            },
+            new RouteMoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         workspace.TrackRecovery(preparation);
@@ -618,12 +581,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
-            new RouteMoveRecoveryPreparationInput
-            {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
-            },
+            new RouteMoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         workspace.ReplaceRecoveryWithDirectory(preparation);
@@ -632,9 +590,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var deletion = await RouteMoveRecoveryLifecycle.DeleteExactAsync(
             new RouteMoveRecoveryDeletionInput
             {
-                Plan = plan,
-                OperationId = operationId,
-                Lease = lease,
+                Held = new RouteMoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
                 Preparation = preparation,
             },
             TestContext.Current.CancellationToken);

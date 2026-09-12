@@ -1,6 +1,7 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Manifest;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Request;
+using OpenForge.Cli.Core.Framework.Extensions.Models.Serialization;
 using OpenForge.Cli.Core.Framework.Extensions.Serialization;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Create.Shared.Manifest;

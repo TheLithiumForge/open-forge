@@ -4,6 +4,30 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Routing;
 
 public sealed class SourceLoaderParseModelTests
 {
+    [Fact(DisplayName = "A valid Loader destination rejects a null decoded value"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
+    public void ValidDestinationRejectsNullDecodedValue()
+    {
+        var exception = Assert.Throws<ArgumentNullException>(() =>
+            SourceLoaderDestinationParseResult.Valid(
+                attemptedDestination: "root/_root.md",
+                decodedDestination: null!,
+                canonicalPath: ".agents/root/_root.md"));
+
+        Assert.Equal("decodedDestination", exception.ParamName);
+    }
+
+    [Fact(DisplayName = "A valid Loader destination rejects an empty decoded value"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
+    public void ValidDestinationRejectsEmptyDecodedValue()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            SourceLoaderDestinationParseResult.Valid(
+                attemptedDestination: "root/_root.md",
+                decodedDestination: string.Empty,
+                canonicalPath: ".agents/root/_root.md"));
+
+        Assert.Equal("decodedDestination", exception.ParamName);
+    }
+
     [Fact(DisplayName = "Neutral Loader destination results retain valid, malformed, and unsafe field shapes")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void DestinationResultFactoriesAreTyped()

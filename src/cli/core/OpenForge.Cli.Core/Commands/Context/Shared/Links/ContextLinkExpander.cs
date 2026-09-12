@@ -1,9 +1,13 @@
+using OpenForge.Cli.Core.Commands.Context.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Context.Shared.Links.Models;
 using OpenForge.Cli.Core.Commands.Context.Models.Operation;
 using OpenForge.Cli.Core.Commands.Context.Models.Request;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Commands.Context.Models.Selection;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
@@ -75,7 +79,14 @@ internal sealed class ContextLinkExpander
         bool captureEvidence,
         CancellationToken cancellationToken)
     {
-        var selected = new Accumulator(seeds);
+        var selected = new ContextSelectionAccumulator();
+        foreach (var seed in seeds)
+        {
+            foreach (var reason in seed.InclusionReasons)
+            {
+                selected.Add(seed.Source, reason);
+            }
+        }
         var links = new List<ContextLink>();
         var findings = new List<ContextFinding>();
         var externalSources = new Dictionary<string, ContextGraphSource>(StringComparer.Ordinal);
@@ -287,51 +298,5 @@ internal sealed class ContextLinkExpander
         public required int Depth { get; init; }
 
         public required IReadOnlySet<string> Lineage { get; init; }
-    }
-
-    private sealed class Accumulator
-    {
-        private readonly List<MutableSelection> _values = [];
-        private readonly Dictionary<string, MutableSelection> _byPath = new(StringComparer.Ordinal);
-
-        internal Accumulator(IEnumerable<ContextSelectedGraphSource> seeds)
-        {
-            foreach (var seed in seeds)
-            {
-                foreach (var reason in seed.InclusionReasons)
-                {
-                    Add(seed.Source, reason);
-                }
-            }
-        }
-
-        internal IReadOnlyList<ContextSelectedGraphSource> Sources
-            => _values.Select(value => new ContextSelectedGraphSource
-            {
-                Source = value.Source,
-                InclusionReasons = value.Reasons.ToArray(),
-            }).ToArray();
-
-        internal bool Add(ContextGraphSource source, ContextInclusionReason reason)
-        {
-            if (_byPath.TryGetValue(source.CanonicalPath, out var existing))
-            {
-                if (!existing.Reasons.Contains(reason))
-                {
-                    existing.Reasons.Add(reason);
-                }
-
-                return false;
-            }
-
-            var value = new MutableSelection(source, [reason]);
-            _values.Add(value);
-            _byPath.Add(source.CanonicalPath, value);
-            return true;
-        }
-
-        private sealed record MutableSelection(
-            ContextGraphSource Source,
-            List<ContextInclusionReason> Reasons);
     }
 }

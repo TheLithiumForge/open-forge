@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.References;
 

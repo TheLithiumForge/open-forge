@@ -4,8 +4,8 @@ using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Selection;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 
@@ -157,8 +157,11 @@ internal sealed class ExtensionRemovePlan
         Request = input.Request;
         Selection = input.Selection;
         Dependencies = input.Dependencies;
-        Planning = input.Planning;
-        Topology = input.Topology;
+        Planning = input.Planning with
+        {
+            Decisions = new ReadOnlyCollection<ExtensionRemovePlanningDecision>([.. input.Planning.Decisions]),
+        };
+        Topology = new ExtensionRemoveTopologySnapshot(input.Topology);
         Effects = new ReadOnlyCollection<ExtensionRemovePlannedEffect>(input.Effects
             .Select(effect => effect ?? throw new ArgumentException(
                 "Extension Remove planned effects cannot contain null members.",
@@ -179,7 +182,7 @@ internal sealed class ExtensionRemovePlan
 
     internal ExtensionRemovePlanningPlan Planning { get; }
 
-    internal ExtensionRemoveTopology Topology { get; }
+    internal ExtensionRemoveTopologySnapshot Topology { get; }
 
     internal IReadOnlyList<ExtensionRemovePlannedEffect> Effects { get; }
 

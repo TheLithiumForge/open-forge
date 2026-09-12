@@ -1,16 +1,12 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Navigation;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
-
-internal sealed record RouteRemoveSubjectResolutionRequest
-{
-    public required RouteRemoveRequest Request { get; init; }
-}
 
 internal sealed record RouteRemoveResolvedLayer
 {
@@ -33,21 +29,12 @@ internal sealed record RouteRemoveResolvedSubject
 
     public SourceRouteFacts? RouteFacts { get; init; }
 
-    public RouteRemoveNavigationExposure NavigationExposure { get; init; } = new()
+    public RouteNavigationExposure NavigationExposure { get; init; } = new()
     {
         IsCancelled = false,
     };
 
     public ImmutableArray<RouteRemoveResolvedLayer> Layers { get; init; } = [];
-}
-
-internal sealed record RouteRemoveNavigationExposure
-{
-    public ImmutableArray<string> ExposedPaths { get; init; } = [];
-
-    public ImmutableArray<string> UnavailableParents { get; init; } = [];
-
-    public required bool IsCancelled { get; init; }
 }
 
 internal sealed record RouteRemoveSubjectSelection

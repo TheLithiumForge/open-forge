@@ -1,5 +1,6 @@
 using System.Collections.Frozen;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Serialization.Models;
 
 namespace OpenForge.Cli.Core.Framework.Recovery.Serialization;
 

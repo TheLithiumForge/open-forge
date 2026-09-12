@@ -18,16 +18,6 @@ internal sealed class RouteRemoveOperation(
     private readonly RouteRemoveApplicationOperation _applicationOperation = applicationOperation;
     private readonly RouteRemoveResultBuilder _resultBuilder = resultBuilder;
 
-    internal RouteRemoveOperation()
-        : this(RouteRemoveOperationFactory.Create())
-    {
-    }
-
-    private RouteRemoveOperation(RouteRemoveOperation operation)
-        : this(operation._planBuilder, operation._applicationOperation, operation._resultBuilder)
-    {
-    }
-
     internal async ValueTask<RouteRemoveResult> ExecuteAsync(
         RouteRemoveRequest request,
         CancellationToken cancellationToken)

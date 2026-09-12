@@ -1,8 +1,10 @@
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Index.Models.Request;
 using OpenForge.Cli.Core.Commands.Index.Models.Result;
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
 
@@ -30,10 +32,10 @@ internal static class IndexDiagnosticRenderer
         foreach (var finding in result.Findings)
         {
             values.Add(
-                $"finding={IndexDefinitions.ReadMachineName(finding.Code)}:cause={IndexTextEscaping.Escape(finding.Cause, IndexTextEscaping.DiagnosticValueLimit)}");
+                $"finding={IndexDefinitions.ReadMachineName(finding.Code)}:cause={CommandTextEscaping.Escape(finding.Cause, CommandTextEscaping.DiagnosticValueLimit)}");
         }
 
-        return IndexTextEscaping.Escape(
+        return CommandTextEscaping.Escape(
             string.Join("; ", values),
             MaximumDiagnosticLength);
     }

@@ -131,7 +131,7 @@ internal sealed class InstallOperation(
                 Summary(
                     plan.ManagementState,
                     plan.DirectoryCreations.Count,
-                    plan.FileChanges.Count),
+                    plan.PlannedFileCount),
                 InstallResultFactsFactory.DryRun(plan));
         }
 
@@ -244,7 +244,7 @@ internal sealed class InstallOperation(
             Summary(
                 plan.ManagementState,
                 plan.DirectoryCreations.Count,
-                plan.FileChanges.Count),
+                plan.PlannedFileCount),
             InstallResultFactsFactory.PlanBoundary(plan));
 
     private static InstallResult ApplicationUnknownResult(
@@ -257,7 +257,7 @@ internal sealed class InstallOperation(
             Summary(
                 plan.ManagementState,
                 plan.DirectoryCreations.Count,
-                plan.FileChanges.Count),
+                plan.PlannedFileCount),
             InstallResultFactsFactory.ApplicationUnknown(plan));
 
     private static InstallOperationSummary Summary(

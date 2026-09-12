@@ -94,7 +94,7 @@ internal static class UpdateResultBuilder
     internal static IReadOnlyList<string> ProtectedPaths(UpdatePlanExecution execution)
     {
         var paths = execution.Effects
-            .Where(effect => effect.FileChange.Kind != Framework.Mutation.Models.Filesystem.PlannedFileChangeKind.Create)
+            .Where(effect => effect.FileChange.Kind != Framework.Mutation.Models.Filesystem.Files.PlannedFileChangeKind.Create)
             .Select(effect => effect.ResultEffect.Path)
             .ToList();
         if (execution.LifecycleChange is not null)

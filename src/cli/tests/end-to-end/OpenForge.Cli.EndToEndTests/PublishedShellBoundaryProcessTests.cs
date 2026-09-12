@@ -1,5 +1,6 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using OpenForge.Cli.EndToEndTests.Shared.Route;
 using OpenForge.Cli.TestSupport;
 using static OpenForge.Cli.EndToEndTests.Shared.PublishedProcess.PublishedProcessTestSupport;
 
@@ -79,8 +80,7 @@ public sealed class PublishedShellBoundaryProcessTests
         Assert.Equal(before, working.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Published attached-empty depth preserves one typed JSON invalid result"),
-     Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
+    [Fact(DisplayName = "Published attached-empty depth preserves one typed JSON invalid result"), Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedAttachedEmptyDepthPreservesJsonInvalidResult()
     {
         var target = PublishedExecutableTarget.Discover();
@@ -102,8 +102,7 @@ public sealed class PublishedShellBoundaryProcessTests
         Assert.Equal(before, working.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Published route-list rejects repeated depth occurrences as one parser error"),
-     Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
+    [Fact(DisplayName = "Published route-list rejects repeated depth occurrences as one parser error"), Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRouteListRejectsRepeatedDepthOccurrencesAsParserError()
     {
         var target = PublishedExecutableTarget.Discover();
@@ -178,8 +177,7 @@ public sealed class PublishedShellBoundaryProcessTests
         Assert.Equal(before, working.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Published Route Inspect version bypasses a missing workspace in terminal mode"),
-     Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
+    [Fact(DisplayName = "Published Route Inspect version bypasses a missing workspace in terminal mode"), Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
     public async Task InspectVersionBypassesWorkspaceAndOperation()
     {
         var target = PublishedExecutableTarget.Discover();
@@ -206,8 +204,7 @@ public sealed class PublishedShellBoundaryProcessTests
         Assert.False(Directory.Exists(missingWorkspace));
     }
 
-    [Fact(DisplayName = "Published Route Inspect preserves an option-like operand after the process terminator"),
-     Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
+    [Fact(DisplayName = "Published Route Inspect preserves an option-like operand after the process terminator"), Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
     public async Task OptionLikeOperandAfterTerminatorRemainsDomainInput()
     {
         var target = PublishedExecutableTarget.Discover();
@@ -282,8 +279,7 @@ public sealed class PublishedShellBoundaryProcessTests
         Assert.False(Directory.Exists(missingWorkspace));
     }
 
-    [Fact(DisplayName = "Published Route Init rejects automatic mode without prompting or writing"),
-     Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
+    [Fact(DisplayName = "Published Route Init rejects automatic mode without prompting or writing"), Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
     public async Task AutomaticIsNotACommandMode()
     {
         var target = PublishedExecutableTarget.Discover();
@@ -302,8 +298,7 @@ public sealed class PublishedShellBoundaryProcessTests
         workspace.AssertNoLockInfrastructure();
     }
 
-    [Fact(DisplayName = "Published Route Move rejects a third positional operand at the shell boundary without writes"),
-     Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
+    [Fact(DisplayName = "Published Route Move rejects a third positional operand at the shell boundary without writes"), Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
     public async Task ThirdPositionalOperandIsShellInvalidWithoutDomainEffects()
     {
         var target = PublishedExecutableTarget.Discover();
@@ -312,7 +307,7 @@ public sealed class PublishedShellBoundaryProcessTests
             target,
             workspace,
             [
-                "route", "move", PublishedRouteMoveWorkspace.SourceId,
+                "route", "move", PublishedRouteWorkspaceSeed.SourceId,
                 PublishedRouteMoveWorkspace.DestinationPath, "extra",
             ]);
 

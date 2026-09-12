@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Find;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 
 namespace OpenForge.Cli.Core.Commands.Find.Models.Query;
 

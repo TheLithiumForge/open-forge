@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Shell.Composition;
-using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 
 namespace OpenForge.Cli.Composition.Models;
 

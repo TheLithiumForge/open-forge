@@ -6,6 +6,16 @@ open-forge:
 
 # Complete The Replacement CLI
 
+## Bounded C# Beta Closeout
+
+Task 27 is active at phase 4/4, milestone 7/8. The bounded implementation and
+fresh local qualification are accepted; final records and local develop squash
+remain. The [beta closeout](csharp-beta-closeout.md) records completed changes,
+all deferred findings, reviews and platform limits. Wider refactoring is deferred
+until after beta. Tasks 7, 13, 21 and 22 remain locally complete; historical queue
+entries below do not reopen them. Task 28 continues in the other user-owned chat.
+Preserve its source updates and notes. No remote operations are authorized.
+
 ## Current Sequential Continuation
 
 The user resumed the Astra Overseer on 2026-09-08 with sequential direct work

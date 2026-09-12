@@ -6,12 +6,12 @@ namespace OpenForge.Cli.Core.Commands.Library.Attach.Shared.Application;
 
 internal static class LibraryAttachApplication
 {
-    internal static async ValueTask<LibraryAttachApplicationOutcome> ApplyAsync(
+    internal static async ValueTask<LibraryExecutionEvidence> ApplyAsync(
         LibraryAttachApplicationInput input,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(input);
-        var run = await LibraryMutationApplicationRunner.ApplyAsync(
+        return await LibraryMutationApplicationRunner.ApplyAsync(
             new LibraryMutationApplicationRequest
             {
                 Permissions = input.Plan.Permissions,
@@ -25,10 +25,5 @@ internal static class LibraryAttachApplication
                     .Append(input.Plan.Input.Request.SourceRoot).Distinct()],
             },
             cancellationToken).ConfigureAwait(false);
-        return new LibraryAttachApplicationOutcome
-        {
-            Application = run.Application,
-            Execution = run.Execution,
-        };
     }
 }

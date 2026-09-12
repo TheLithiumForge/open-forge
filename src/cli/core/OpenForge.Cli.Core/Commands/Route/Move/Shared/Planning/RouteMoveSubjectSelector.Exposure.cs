@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Navigation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -10,7 +11,7 @@ internal sealed partial class RouteMoveSubjectSelector
     private static RouteMoveResultFormation? ReadExposureBoundary(
         RouteMoveSubjectDiscovery discovery,
         SourceRouteFacts routeFacts,
-        RouteMoveNavigationExposure exposure)
+        RouteNavigationExposure exposure)
     {
         var formation = RouteMoveBoundary.Start(discovery.Request) with { Source = discovery.Source };
         if (exposure.IsCancelled)
@@ -36,7 +37,7 @@ internal sealed partial class RouteMoveSubjectSelector
     private static bool IsUnsupportedLeaf(
         RouteMoveSubjectDiscovery discovery,
         SourceRouteFacts routeFacts,
-        RouteMoveNavigationExposure exposure)
+        RouteNavigationExposure exposure)
     {
         if (discovery.Kind != RouteMoveSubjectKind.Leaf)
         {

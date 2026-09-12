@@ -1,6 +1,6 @@
 using System.Text.Json;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Hosting;
-using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;

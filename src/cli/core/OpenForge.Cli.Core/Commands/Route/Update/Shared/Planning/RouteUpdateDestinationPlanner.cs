@@ -28,14 +28,11 @@ internal sealed class RouteUpdateDestinationPlanner
     }
 
     internal async ValueTask<RouteUpdateDestinationBuild> BuildAsync(
-        RouteUpdateDestinationInput input,
+        RouteUpdateObservation observation,
         CancellationToken cancellationToken)
     {
         var metadataBuild = _metadataPatcher.Build(
-            new RouteUpdateMetadataPatchInput
-            {
-                Observation = input.Observation,
-            });
+            observation);
         if (metadataBuild.Boundary is { } metadataBoundary)
         {
             return RouteUpdateDestinationBuild.Stop(metadataBoundary);
@@ -45,14 +42,14 @@ internal sealed class RouteUpdateDestinationPlanner
             ?? throw new InvalidOperationException(
                 "Complete Route Update metadata planning requires one patch.");
         RouteTemplateResolution? template = null;
-        if (input.Observation.Request.TemplateReference is { } reference)
+        if (observation.Request.TemplateReference is { } reference)
         {
             template = await _templateResolver.ResolveAsync(
                     new RouteTemplateResolutionRequest
                     {
-                        Workspace = input.Observation.Request.Workspace,
+                        Workspace = observation.Request.Workspace,
                         Reference = reference,
-                        Catalogue = input.Observation.Catalogue,
+                        Catalogue = observation.Catalogue,
                     },
                     cancellationToken)
                 .ConfigureAwait(false);

@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Navigation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Remove;
 
@@ -61,7 +62,7 @@ public sealed class RouteRemoveSubjectResolutionTests
             Kind = RouteRemoveSubjectKind.Category,
             Catalogue = null!,
             SelectedSource = null!,
-            NavigationExposure = new RouteRemoveNavigationExposure
+            NavigationExposure = new RouteNavigationExposure
             {
                 ExposedPaths = [".agents/guidance/_guidance.md"],
                 UnavailableParents = [".agents/loader.md"],

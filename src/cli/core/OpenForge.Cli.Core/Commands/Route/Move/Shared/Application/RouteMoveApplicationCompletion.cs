@@ -88,9 +88,7 @@ internal sealed class RouteMoveApplicationCompletion(
             var deletion = await RouteMoveRecoveryLifecycle.DeleteExactAsync(
                 new RouteMoveRecoveryDeletionInput
                 {
-                    Plan = held.Plan,
-                    OperationId = held.OperationId,
-                    Lease = held.Lease,
+                    Held = held,
                     Preparation = prepared,
                 },
                 cancellationToken).ConfigureAwait(false);

@@ -1,7 +1,8 @@
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Operation;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 
@@ -52,7 +53,7 @@ internal static class RouteUpdateRecoveryCompleter
         }
 
         var candidates = catalogue.Candidates
-            .Where(candidate => MatchesPreparation(candidate, input.Preparation))
+            .Where(candidate => RecoveryBundleIdentity.Matches(candidate, input.Preparation))
             .ToArray();
         if (candidates.Length != 1)
         {
@@ -82,29 +83,5 @@ internal static class RouteUpdateRecoveryCompleter
         }
 
         return RouteUpdateRecoveryResultProjector.FromDeletion(input.Preparation, deletion);
-    }
-
-    private static bool MatchesPreparation(
-        RecoveryBundleCandidateSnapshot candidate,
-        RecoveryBundlePreparation preparation)
-    {
-        if (candidate.Kind != RecoveryBundleCandidateKind.Final
-            || candidate.Integrity != RecoveryBundleIntegrity.Verified
-            || candidate.Verified is not { } verified)
-        {
-            return false;
-        }
-
-        return PhysicalIdentityTracker.PathComparer.Equals(candidate.Path, preparation.BundlePath)
-            && PhysicalIdentityTracker.PathComparer.Equals(
-                verified.BundlePath,
-                preparation.BundlePath)
-            && PhysicalIdentityTracker.PathComparer.Equals(
-                verified.WorkspacePhysicalPath,
-                preparation.WorkspacePhysicalPath)
-            && string.Equals(verified.WorkspaceKey, preparation.WorkspaceKey, StringComparison.Ordinal)
-            && string.Equals(verified.Command, preparation.Command, StringComparison.Ordinal)
-            && verified.OperationId == preparation.OperationId
-            && verified.Entries.SequenceEqual(preparation.Entries);
     }
 }

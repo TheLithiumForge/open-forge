@@ -54,7 +54,7 @@ internal static class LibrariesRecordCodec
                     "Library records and their paths must be in ordinal order.");
             }
 
-            if (HasAmbiguousOwnership(document))
+            if (HasAmbiguousOwnership(candidates))
             {
                 return new LibrariesRecordDecode
                 {
@@ -176,13 +176,14 @@ internal static class LibrariesRecordCodec
         }
     }
 
-    private static bool HasAmbiguousOwnership(LibrariesRecordDocument document)
+    private static bool HasAmbiguousOwnership(
+        (LibraryId Id, WorkspaceRelativeDirectory SourceRoot, LibraryDestinationRoot DestinationRoot, SourceRelativeEligiblePath[] Paths)[] candidates)
     {
         var ids = new HashSet<string>(StringComparer.Ordinal);
         var destinations = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var library in document.Libraries)
+        foreach (var library in candidates)
         {
-            if (!ids.Add(library.Id))
+            if (!ids.Add(library.Id.Value))
             {
                 return true;
             }
@@ -190,9 +191,9 @@ internal static class LibrariesRecordCodec
             foreach (var path in library.Paths)
             {
                 var mapping = LibraryPathIdentity.Map(
-                    WorkspaceRelativeDirectory.Create(library.SourceRoot),
-                    LibraryDestinationRoot.Create(library.DestinationRoot),
-                    SourceRelativeEligiblePath.Create(path));
+                    library.SourceRoot,
+                    library.DestinationRoot,
+                    path);
                 if (!destinations.Add(PortableWorkspacePath.CreatePortableKey(mapping.DestinationPath.Value)))
                 {
                     return true;

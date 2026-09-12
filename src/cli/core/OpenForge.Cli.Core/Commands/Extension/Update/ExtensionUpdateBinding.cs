@@ -6,10 +6,11 @@ using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
+using OpenForge.Cli.Core.Shell.Definitions.Models;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update;
 
@@ -183,7 +184,7 @@ internal static class ExtensionUpdateBinding
     private static ExtensionUpdateRequest ReadRequest(
         ParseResult result,
         ExtensionUpdateSymbols symbols,
-        Framework.Workspace.CliWorkspace workspace,
+        Framework.Workspace.Models.CliWorkspace workspace,
         CliPresentation presentation)
     {
         var automatic = result.GetValue(symbols.Automatic);
@@ -226,7 +227,7 @@ internal static class ExtensionUpdateBinding
     }
 
     private static ExtensionUpdateResult Invalid(
-        Framework.Workspace.CliWorkspace? workspace,
+        Framework.Workspace.Models.CliWorkspace? workspace,
         ExtensionUpdateBindingInput input,
         string cause)
         => ExtensionUpdateResult.Empty(

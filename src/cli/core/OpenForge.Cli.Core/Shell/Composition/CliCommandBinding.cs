@@ -1,46 +1,13 @@
 using System.CommandLine;
 using OpenForge.Cli.Core.Framework.Workspace;
-using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
 using OpenForge.Cli.Core.Shell.Composition.Models;
-using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.Shell.Composition;
-
-internal enum CliWorkspaceRequirement
-{
-    Required,
-    Absent,
-}
-
-internal sealed class CliBindResult<TRequest, TResult>
-    where TResult : ICliCommandResult
-{
-    private CliBindResult(TRequest? request, TResult? invalidResult)
-    {
-        Request = request;
-        InvalidResult = invalidResult;
-    }
-
-    internal TRequest? Request { get; }
-
-    internal TResult? InvalidResult { get; }
-
-    internal static CliBindResult<TRequest, TResult> Bound(TRequest request)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-        return new CliBindResult<TRequest, TResult>(request, default);
-    }
-
-    internal static CliBindResult<TRequest, TResult> Invalid(TResult result)
-    {
-        ArgumentNullException.ThrowIfNull(result);
-        CliOperationStage.ValidateResult(result);
-        return new CliBindResult<TRequest, TResult>(default, result);
-    }
-}
 
 internal delegate CliBindResult<TRequest, TResult> CliRequestBinder<TRequest, TResult>(
     CliBindingParse parse,

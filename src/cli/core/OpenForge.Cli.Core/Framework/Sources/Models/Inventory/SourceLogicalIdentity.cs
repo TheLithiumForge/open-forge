@@ -10,7 +10,7 @@ internal sealed class SourceLogicalIdentity
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(automaticId);
         if (!SourceLogicalPath.IsCanonicalSource(canonicalBasePath)
-            || canonicalBasePath.EndsWith(".overwrite.md", StringComparison.Ordinal))
+            || SourceOverwritePath.HasSuffix(canonicalBasePath))
         {
             throw new ArgumentException("The logical source base path is not canonical.", nameof(canonicalBasePath));
         }

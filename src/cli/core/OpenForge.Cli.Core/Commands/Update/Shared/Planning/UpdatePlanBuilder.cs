@@ -4,9 +4,10 @@ using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Planning;
 
@@ -50,14 +51,17 @@ internal sealed class UpdatePlanBuilder
         if (cancellationToken.IsCancellationRequested)
         {
             return Boundary(
-                request,
-                source: null,
-                [],
-                UpdateFindingCode.Interrupted,
-                target: null,
-                "Update planning was interrupted.",
-                UpdateLifecycleTrust.NotRequested,
-                UpdateLifecycleCoverage.NotRequested);
+                UpdatePlanResultFactory.Boundary(
+                    request,
+                    source: null,
+                    [],
+                    new UpdateFinding(
+                        UpdateFindingCode.Interrupted,
+                        target: null,
+                        cause: "Update planning was interrupted."),
+                    UpdatePlanResultFactory.UnstartedLifecycle(
+                        UpdateLifecycleTrust.NotRequested,
+                        UpdateLifecycleCoverage.NotRequested)));
         }
 
         var payloadRead = EmbeddedFrameworkPayloadReader.Read();
@@ -68,14 +72,17 @@ internal sealed class UpdatePlanBuilder
                 ? UpdateFindingCode.PayloadUnavailable
                 : UpdateFindingCode.PayloadInvalid;
             return Boundary(
-                request,
-                source: null,
-                [],
-                code,
-                target: null,
-                payloadRead.Cause ?? "The embedded Framework payload is unavailable.",
-                UpdateLifecycleTrust.NotRequested,
-                UpdateLifecycleCoverage.NotRequested);
+                UpdatePlanResultFactory.Boundary(
+                    request,
+                    source: null,
+                    [],
+                    new UpdateFinding(
+                        code,
+                        target: null,
+                        cause: payloadRead.Cause ?? "The embedded Framework payload is unavailable."),
+                    UpdatePlanResultFactory.UnstartedLifecycle(
+                        UpdateLifecycleTrust.NotRequested,
+                        UpdateLifecycleCoverage.NotRequested)));
         }
 
         var lifecycle = await _lifecycleStore
@@ -100,10 +107,11 @@ internal sealed class UpdatePlanBuilder
                         UpdatePlanResultFactory.Source(payload),
                         [],
                         finding,
-                        UpdateLifecycleTrust.Trusted,
-                        finding.Status == OpenForge.Cli.Core.Shell.Definitions.CliSemanticStatus.Incomplete
-                            ? UpdateLifecycleCoverage.Incomplete
-                            : UpdateLifecycleCoverage.Blocked)),
+                        UpdatePlanResultFactory.UnstartedLifecycle(
+                            UpdateLifecycleTrust.Trusted,
+                            finding.Status == OpenForge.Cli.Core.Shell.Definitions.CliSemanticStatus.Incomplete
+                                ? UpdateLifecycleCoverage.Incomplete
+                                : UpdateLifecycleCoverage.Blocked))),
                 Execution: null);
         }
 
@@ -120,8 +128,9 @@ internal sealed class UpdatePlanBuilder
                 observations.Select(value => value.Comparison).ToArray(),
                 findings.First(value => value.Status
                     == OpenForge.Cli.Core.Shell.Definitions.CliSemanticStatus.Blocked),
-                UpdateLifecycleTrust.Trusted,
-                UpdateLifecycleCoverage.Blocked);
+                UpdatePlanResultFactory.UnstartedLifecycle(
+                    UpdateLifecycleTrust.Trusted,
+                    UpdateLifecycleCoverage.Blocked));
             return new UpdatePlanResolution(new UpdatePlanBuild(plan, preview), Execution: null);
         }
 
@@ -131,25 +140,31 @@ internal sealed class UpdatePlanBuilder
         if (lifecyclePlan.State == LifecycleWritePlanState.Blocked)
         {
             return Boundary(
-                request,
-                UpdatePlanResultFactory.Source(payload),
-                observations.Select(value => value.Comparison).ToArray(),
-                UpdateFindingCode.LifecycleBlocked,
-                LifecycleSchema.RelativePath,
-                lifecyclePlan.Cause ?? "The intended Framework lifecycle state is blocked.",
-                UpdateLifecycleTrust.Blocked,
-                UpdateLifecycleCoverage.Blocked);
+                UpdatePlanResultFactory.Boundary(
+                    request,
+                    UpdatePlanResultFactory.Source(payload),
+                    observations.Select(value => value.Comparison).ToArray(),
+                    new UpdateFinding(
+                        UpdateFindingCode.LifecycleBlocked,
+                        target: LifecycleSchema.RelativePath,
+                        cause: lifecyclePlan.Cause ?? "The intended Framework lifecycle state is blocked."),
+                    UpdatePlanResultFactory.UnstartedLifecycle(
+                        UpdateLifecycleTrust.Blocked,
+                        UpdateLifecycleCoverage.Blocked)));
         }
 
         var lifecycleChange = lifecyclePlan.Change;
-        var completePreview = UpdatePlanResultFactory.Preview(
-            request,
-            payload,
-            observations,
-            plan,
-            effects,
-            lifecycleChange,
-            findings);
+        var completion = new UpdatePlanCompletion
+        {
+            Request = request,
+            Payload = payload,
+            Intended = intended,
+            Plan = plan,
+            Effects = effects,
+            LifecycleChange = lifecycleChange,
+            Findings = findings,
+        };
+        var completePreview = UpdatePlanResultFactory.Preview(completion);
         var build = new UpdatePlanBuild(plan, completePreview);
         return new UpdatePlanResolution(
             build,
@@ -172,52 +187,67 @@ internal sealed class UpdatePlanBuilder
         {
             LifecycleStoreReadState.Available when lifecycle.Framework is not null => null,
             LifecycleStoreReadState.DocumentMissing or LifecycleStoreReadState.SectionMissing => Boundary(
-                request,
-                UpdatePlanResultFactory.Source(payload),
-                [],
-                UpdateFindingCode.LifecycleMissing,
-                LifecycleSchema.RelativePath,
-                lifecycle.Cause ?? "Trusted Framework lifecycle state is missing.",
-                UpdateLifecycleTrust.Unavailable,
-                UpdateLifecycleCoverage.Incomplete),
+                UpdatePlanResultFactory.Boundary(
+                    request,
+                    UpdatePlanResultFactory.Source(payload),
+                    [],
+                    new UpdateFinding(
+                        UpdateFindingCode.LifecycleMissing,
+                        target: LifecycleSchema.RelativePath,
+                        cause: lifecycle.Cause ?? "Trusted Framework lifecycle state is missing."),
+                    UpdatePlanResultFactory.UnstartedLifecycle(
+                        UpdateLifecycleTrust.Unavailable,
+                        UpdateLifecycleCoverage.Incomplete))),
             LifecycleStoreReadState.Unavailable => Boundary(
-                request,
-                UpdatePlanResultFactory.Source(payload),
-                [],
-                UpdateFindingCode.LifecycleUnavailable,
-                LifecycleSchema.RelativePath,
-                lifecycle.Cause
-                    ?? lifecycle.Failure?.DirectCause
-                    ?? "Trusted Framework lifecycle state is unavailable.",
-                UpdateLifecycleTrust.Unavailable,
-                UpdateLifecycleCoverage.Incomplete),
+                UpdatePlanResultFactory.Boundary(
+                    request,
+                    UpdatePlanResultFactory.Source(payload),
+                    [],
+                    new UpdateFinding(
+                        UpdateFindingCode.LifecycleUnavailable,
+                        target: LifecycleSchema.RelativePath,
+                        cause: lifecycle.Cause
+                            ?? lifecycle.Failure?.DirectCause
+                            ?? "Trusted Framework lifecycle state is unavailable."),
+                    UpdatePlanResultFactory.UnstartedLifecycle(
+                        UpdateLifecycleTrust.Unavailable,
+                        UpdateLifecycleCoverage.Incomplete))),
             LifecycleStoreReadState.Cancelled => Boundary(
-                request,
-                UpdatePlanResultFactory.Source(payload),
-                [],
-                UpdateFindingCode.Interrupted,
-                LifecycleSchema.RelativePath,
-                "Update lifecycle inspection was interrupted.",
-                UpdateLifecycleTrust.NotRequested,
-                UpdateLifecycleCoverage.NotRequested),
+                UpdatePlanResultFactory.Boundary(
+                    request,
+                    UpdatePlanResultFactory.Source(payload),
+                    [],
+                    new UpdateFinding(
+                        UpdateFindingCode.Interrupted,
+                        target: LifecycleSchema.RelativePath,
+                        cause: "Update lifecycle inspection was interrupted."),
+                    UpdatePlanResultFactory.UnstartedLifecycle(
+                        UpdateLifecycleTrust.NotRequested,
+                        UpdateLifecycleCoverage.NotRequested))),
             LifecycleStoreReadState.Invalid or LifecycleStoreReadState.Blocked => Boundary(
-                request,
-                UpdatePlanResultFactory.Source(payload),
-                [],
-                UpdateFindingCode.LifecycleBlocked,
-                LifecycleSchema.RelativePath,
-                lifecycle.Cause ?? "Trusted Framework lifecycle state is blocked.",
-                UpdateLifecycleTrust.Blocked,
-                UpdateLifecycleCoverage.Blocked),
+                UpdatePlanResultFactory.Boundary(
+                    request,
+                    UpdatePlanResultFactory.Source(payload),
+                    [],
+                    new UpdateFinding(
+                        UpdateFindingCode.LifecycleBlocked,
+                        target: LifecycleSchema.RelativePath,
+                        cause: lifecycle.Cause ?? "Trusted Framework lifecycle state is blocked."),
+                    UpdatePlanResultFactory.UnstartedLifecycle(
+                        UpdateLifecycleTrust.Blocked,
+                        UpdateLifecycleCoverage.Blocked))),
             _ => Boundary(
-                request,
-                UpdatePlanResultFactory.Source(payload),
-                [],
-                UpdateFindingCode.LifecycleBlocked,
-                LifecycleSchema.RelativePath,
-                "Trusted Framework lifecycle state is incomplete.",
-                UpdateLifecycleTrust.Blocked,
-                UpdateLifecycleCoverage.Blocked),
+                UpdatePlanResultFactory.Boundary(
+                    request,
+                    UpdatePlanResultFactory.Source(payload),
+                    [],
+                    new UpdateFinding(
+                        UpdateFindingCode.LifecycleBlocked,
+                        target: LifecycleSchema.RelativePath,
+                        cause: "Trusted Framework lifecycle state is incomplete."),
+                    UpdatePlanResultFactory.UnstartedLifecycle(
+                        UpdateLifecycleTrust.Blocked,
+                        UpdateLifecycleCoverage.Blocked))),
         };
 
     private static FrameworkLifecycleState BuildLifecycle(
@@ -273,15 +303,24 @@ internal sealed class UpdatePlanBuilder
                 InventoryFingerprint = payload.InventoryFingerprint,
             },
             Targets = ordered,
-            GeneratedRegions = ordered
-                .Where(value => value.SourceAssetPath is null && value.Region is not null)
-                .Select(value => new FrameworkGeneratedRegion
-                {
-                    Path = value.Path,
-                    Region = value.Region!,
-                })
-                .ToArray(),
+            GeneratedRegions = ReadGeneratedRegions(ordered).ToArray(),
         };
+    }
+
+    private static IEnumerable<FrameworkGeneratedRegion> ReadGeneratedRegions(
+        IEnumerable<FrameworkLifecycleTarget> targets)
+    {
+        foreach (var target in targets)
+        {
+            if (target.SourceAssetPath is null && target.Region is { } region)
+            {
+                yield return new FrameworkGeneratedRegion
+                {
+                    Path = target.Path,
+                    Region = region,
+                };
+            }
+        }
     }
 
     private static IReadOnlyList<UpdateFinding> ReadFindings(UpdatePlanningPlan plan)
@@ -292,11 +331,7 @@ internal sealed class UpdatePlanBuilder
             var comparison = decision.Comparison;
             if (decision.Disposition == UpdatePlanningDisposition.Preserve)
             {
-                var code = comparison.IntendedState == Models.Comparison.UpdateComparisonIntendedState.Retired
-                    ? UpdateFindingCode.RetiredContentPreserved
-                    : comparison.CurrentState == Models.Comparison.UpdateComparisonCurrentState.Missing
-                        ? UpdateFindingCode.ManagedTargetMissing
-                        : UpdateFindingCode.ManagedDivergence;
+                var code = ReadPreservedFinding(comparison);
                 findings.Add(new UpdateFinding(
                     code,
                     comparison.RelativePath,
@@ -324,27 +359,25 @@ internal sealed class UpdatePlanBuilder
         return findings;
     }
 
-    private static UpdatePlanResolution Boundary(
-        UpdateRequest request,
-        UpdateSource? source,
-        IReadOnlyList<Models.Comparison.UpdateComparison> comparisons,
-        UpdateFindingCode code,
-        string? target,
-        string cause,
-        UpdateLifecycleTrust trust,
-        UpdateLifecycleCoverage coverage)
+    private static UpdateFindingCode ReadPreservedFinding(Models.Comparison.UpdateComparison comparison)
     {
-        var preview = UpdatePlanResultFactory.Boundary(
-            request,
-            source,
-            comparisons,
-            new UpdateFinding(code, target, cause),
-            trust,
-            coverage);
-        return new UpdatePlanResolution(
+        if (comparison.IntendedState == Models.Comparison.UpdateComparisonIntendedState.Retired)
+        {
+            return UpdateFindingCode.RetiredContentPreserved;
+        }
+
+        if (comparison.CurrentState == Models.Comparison.UpdateComparisonCurrentState.Missing)
+        {
+            return UpdateFindingCode.ManagedTargetMissing;
+        }
+
+        return UpdateFindingCode.ManagedDivergence;
+    }
+
+    private static UpdatePlanResolution Boundary(UpdateResult preview)
+        => new(
             new UpdatePlanBuild(plan: null, preview),
             Execution: null);
-    }
 
     private static (string Path, Models.Comparison.UpdateComparisonTargetKind Kind, string? Region) Identity(
         Models.Comparison.UpdateComparison comparison)

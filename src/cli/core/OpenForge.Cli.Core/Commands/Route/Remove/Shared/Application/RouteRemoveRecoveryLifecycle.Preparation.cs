@@ -2,7 +2,9 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
@@ -10,7 +12,7 @@ namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 internal static partial class RouteRemoveRecoveryLifecycle
 {
     internal static async ValueTask<RouteRemoveRecoveryPreparationResult> PrepareAsync(
-        RouteRemoveRecoveryPreparationInput input,
+        RouteRemoveHeldApplication input,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(input);
@@ -38,7 +40,7 @@ internal static partial class RouteRemoveRecoveryLifecycle
     }
 
     private static async ValueTask<RouteRemoveRecoveryPreparationResult> PrepareBundleAsync(
-        RouteRemoveRecoveryPreparationInput input,
+        RouteRemoveHeldApplication input,
         CancellationToken cancellationToken)
     {
         try

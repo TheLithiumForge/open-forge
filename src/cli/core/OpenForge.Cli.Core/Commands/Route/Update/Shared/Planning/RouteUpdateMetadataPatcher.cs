@@ -12,9 +12,8 @@ internal sealed class RouteUpdateMetadataPatcher(
     private readonly RouteUpdateMetadataByteEditor _byteEditor = byteEditor;
 
     internal RouteUpdateMetadataPatchBuild Build(
-        RouteUpdateMetadataPatchInput input)
+        RouteUpdateObservation observation)
     {
-        var observation = input.Observation;
         var layoutRead = _layoutReader.Read(observation);
         if (layoutRead.Layout is not { } layout)
         {

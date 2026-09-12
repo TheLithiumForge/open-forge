@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Help;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.Shell.Presentation;
 

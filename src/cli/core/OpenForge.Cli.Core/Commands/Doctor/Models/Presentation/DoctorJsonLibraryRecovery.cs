@@ -1,4 +1,4 @@
-using OpenForge.Cli.Core.Framework.Recovery.Serialization;
+using OpenForge.Cli.Core.Framework.Recovery.Serialization.Models;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Models.Presentation;
 

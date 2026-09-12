@@ -33,9 +33,8 @@ using OpenForge.Cli.Core.Commands.Route.Update.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Interaction;
-using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation;
 
 namespace OpenForge.Cli.Composition;
 

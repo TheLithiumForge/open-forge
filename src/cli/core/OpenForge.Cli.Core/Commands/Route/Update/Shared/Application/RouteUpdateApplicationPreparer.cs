@@ -20,7 +20,7 @@ internal sealed partial class RouteUpdateApplicationPreparer
     }
 
     internal async ValueTask<RouteUpdateApplicationPreparation> PrepareAsync(
-        RouteUpdateApplicationPreparationInput input,
+        RouteUpdateApplicationPipelineInput input,
         CancellationToken cancellationToken)
     {
         var revalidation = await _revalidator.RevalidateAsync(

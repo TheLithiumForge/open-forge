@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 

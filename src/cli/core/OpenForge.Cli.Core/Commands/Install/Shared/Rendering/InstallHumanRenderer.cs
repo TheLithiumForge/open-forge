@@ -1,8 +1,10 @@
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Rendering;
 
@@ -21,15 +23,16 @@ internal static class InstallHumanRenderer
     {
         var facts = result.Facts;
         var builder = new StringBuilder();
-        builder.AppendLine("Open Forge install");
-        builder.AppendLine($"Workspace: {Value(result.Workspace?.LexicalRoot)}");
-        builder.AppendLine(
-            $"Flags: mode={InstallDefinitions.ReadMachineName(result.Mode)}, force={MachineBoolean(result.Force)}, automatic={MachineBoolean(result.Automatic)}");
+        builder.AppendLine($"""
+            Open Forge install
+            Workspace: {Value(result.Workspace?.LexicalRoot)}
+            Flags: mode={InstallDefinitions.ReadMachineName(result.Mode)}, force={MachineBoolean(result.Force)}, automatic={MachineBoolean(result.Automatic)}
+            """.Replace("\n", Environment.NewLine, StringComparison.Ordinal));
         builder.AppendLine(facts.Source is null
             ? "Source: unavailable"
             : string.Create(
                 CultureInfo.InvariantCulture,
-                $"Source: {InstallTextEscaping.Escape(facts.Source.InventoryFingerprint)} / {facts.Source.AssetCount} assets"));
+                $"Source: {CommandTextEscaping.Escape(facts.Source.InventoryFingerprint)} / {facts.Source.AssetCount} assets"));
         builder.AppendLine(
             $"Classification: {(facts.Classification is { } classification ? InstallDefinitions.ReadMachineName(classification) : "unavailable")}");
         builder.AppendLine(facts.Footprint is null
@@ -51,25 +54,25 @@ internal static class InstallHumanRenderer
         foreach (var finding in result.Findings)
         {
             builder.AppendLine(
-                $"  {InstallDefinitions.ReadMachineName(finding.Code)}: {InstallTextEscaping.Escape(finding.Cause)}");
+                $"  {InstallDefinitions.ReadMachineName(finding.Code)}: {CommandTextEscaping.Escape(finding.Cause)}");
             if (finding.Subject is not null)
             {
-                builder.AppendLine($"    Target: {InstallTextEscaping.Escape(finding.Subject)}");
+                builder.AppendLine($"    Target: {CommandTextEscaping.Escape(finding.Subject)}");
             }
         }
 
-        builder.AppendLine(
-            $"Lifecycle: {InstallDefinitions.ReadMachineName(facts.Lifecycle.Action)} / {InstallDefinitions.ReadMachineName(facts.Lifecycle.Outcome)}");
-        builder.AppendLine(
-            $"Recovery: {InstallDefinitions.ReadMachineName(facts.Recovery.State)}{PathSuffix(facts.Recovery.ResidualPath)}");
-        builder.AppendLine(
-            $"Verification: {InstallDefinitions.ReadMachineName(facts.Verification.State)}");
-        builder.AppendLine(
-            $"Status: {Status(result.Status)}");
+        builder.AppendLine($"""
+            Lifecycle: {InstallDefinitions.ReadMachineName(facts.Lifecycle.Action)} / {InstallDefinitions.ReadMachineName(facts.Lifecycle.Outcome)}
+            Recovery: {InstallDefinitions.ReadMachineName(facts.Recovery.State)}{PathSuffix(facts.Recovery.ResidualPath)}
+            Verification: {InstallDefinitions.ReadMachineName(facts.Verification.State)}
+            Status: {Status(result.Status)}
+            """.Replace("\n", Environment.NewLine, StringComparison.Ordinal));
         if (result.Next is { } next)
         {
-            builder.AppendLine($"Next: {InstallTextEscaping.Escape(next.Command)}");
-            builder.AppendLine($"  {InstallTextEscaping.Escape(next.Reason)}");
+            builder.AppendLine($"""
+                Next: {CommandTextEscaping.Escape(next.Command)}
+                  {CommandTextEscaping.Escape(next.Reason)}
+                """.Replace("\n", Environment.NewLine, StringComparison.Ordinal));
         }
 
         return builder.ToString().TrimEnd();
@@ -81,19 +84,19 @@ internal static class InstallHumanRenderer
         bool expanded)
     {
         builder.Append(
-            $"  {InstallTextEscaping.Escape(effect.Path)}: {InstallDefinitions.ReadMachineName(effect.Kind)} / {InstallDefinitions.ReadMachineName(effect.Action)} / {InstallDefinitions.ReadMachineName(effect.Outcome)} / {InstallDefinitions.ReadMachineName(effect.Residual)}");
+            $"  {CommandTextEscaping.Escape(effect.Path)}: {InstallDefinitions.ReadMachineName(effect.Kind)} / {InstallDefinitions.ReadMachineName(effect.Action)} / {InstallDefinitions.ReadMachineName(effect.Outcome)} / {InstallDefinitions.ReadMachineName(effect.Residual)}");
         if (effect.SourceAssetPath is not null)
         {
             builder.Append(expanded
-                ? $" / source={InstallTextEscaping.Escape(effect.SourceAssetPath)}"
-                : $" / <- {InstallTextEscaping.Escape(effect.SourceAssetPath)}");
+                ? $" / source={CommandTextEscaping.Escape(effect.SourceAssetPath)}"
+                : $" / <- {CommandTextEscaping.Escape(effect.SourceAssetPath)}");
         }
 
         builder.AppendLine();
     }
 
     private static string Value(string? value)
-        => value is null ? "unavailable" : InstallTextEscaping.Escape(value);
+        => value is null ? "unavailable" : CommandTextEscaping.Escape(value);
 
     private static string MachineBoolean(bool value) => value ? "true" : "false";
 
@@ -103,5 +106,5 @@ internal static class InstallHumanRenderer
             : CliStatusDefinitions.Read(status).MachineName;
 
     private static string PathSuffix(string? path)
-        => path is null ? string.Empty : $" / {InstallTextEscaping.Escape(path)}";
+        => path is null ? string.Empty : $" / {CommandTextEscaping.Escape(path)}";
 }

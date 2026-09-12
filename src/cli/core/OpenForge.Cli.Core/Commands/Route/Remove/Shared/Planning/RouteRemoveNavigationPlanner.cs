@@ -1,11 +1,10 @@
-using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -77,13 +76,11 @@ internal sealed partial class RouteRemoveNavigationPlanner(
                 document.Region.Source,
                 _markdownParser.Parse(document.Text))),
             metadata);
-        var projected = documents.Select(document => new ProjectedRegion(
+        var projected = documents.Select((document, index) => new ProjectedRegion(
                 document,
                 _regionPlanner.Plan(
                     projectionRequest,
-                    new GeneratedNavigationRegionInput(
-                        document.Region.Source,
-                        _markdownParser.Parse(document.Text)))))
+                    projectionRequest.Regions[index])))
             .ToArray();
         var unavailable = projected.FirstOrDefault(region =>
             region.Projection.State != GeneratedNavigationRegionState.Available);
@@ -105,12 +102,11 @@ internal sealed partial class RouteRemoveNavigationPlanner(
                 GeneratedNavigation = new RouteRemoveGeneratedNavigation
                 {
                     Coverage = RouteRemoveCoverage.Complete,
-                    Regions = selected.Select(region => ProjectRegion(region, projected))
-                        .OrderBy(region => region.Path, StringComparer.Ordinal)
-                        .ToImmutableArray(),
+                    Regions = [.. selected.Select(region => ProjectRegion(region, projected))
+                        .OrderBy(region => region.Path, StringComparer.Ordinal)],
                 },
-                FileChanges = changes.Select(change => change.Change).ToImmutableArray(),
-                DocumentEdits = changes.Select(change => change.Edit).ToImmutableArray(),
+                FileChanges = [.. changes.Select(change => change.Change)],
+                DocumentEdits = [.. changes.Select(change => change.Edit)],
             },
             boundary: null);
     }

@@ -1,4 +1,4 @@
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Cleanup;

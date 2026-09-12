@@ -1,14 +1,9 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
-
-internal sealed record RouteRemoveCategoryInventoryRequest
-{
-    public required RouteRemoveResolvedSubject Subject { get; init; }
-}
 
 internal sealed record RouteRemoveInventoryItem
 {
@@ -32,23 +27,6 @@ internal sealed record RouteRemoveCategoryInventory
     public required LifecycleOwnershipReadResult Ownership { get; init; }
 
     public ImmutableArray<RouteRemoveInventoryItem> Items { get; init; } = [];
-}
-
-internal enum RouteRemoveCategoryFilesystemReadState
-{
-    Complete,
-    Incomplete,
-    Unsafe,
-    Interrupted,
-}
-
-internal sealed record RouteRemoveCategoryFilesystemReadResult
-{
-    internal required RouteRemoveCategoryFilesystemReadState State { get; init; }
-
-    internal RouteRemoveCategoryInventory? Inventory { get; init; }
-
-    internal string? Cause { get; init; }
 }
 
 internal sealed record RouteRemoveCategoryInventoryResult

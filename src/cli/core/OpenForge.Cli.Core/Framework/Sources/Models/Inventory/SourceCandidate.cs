@@ -1,4 +1,4 @@
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
@@ -76,7 +76,7 @@ internal sealed class SourceCandidate
 
     internal string? PhysicalPath { get; }
 
-    internal string? PhysicalParentPath { get; }
+    internal string PhysicalParentPath { get; }
 
     private static string? NormalizeOptionalPhysicalPath(string? path, string parameterName)
     {

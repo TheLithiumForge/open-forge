@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Find.Models.Operation;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Find.Shared.Result;
 

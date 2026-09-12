@@ -1,16 +1,11 @@
 using OpenForge.Cli.Core.Framework.Workspace;
-using OpenForge.Cli.Core.Shell.Composition;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 
 namespace OpenForge.Cli.Core.Shell.Invocation;
-
-internal sealed record CliInvocationResolution(
-    CliInvocation? Invocation,
-    CliInvalidInput? InvalidInput)
-{
-    internal CliWorkspaceSelectionState? WorkspaceSelectionState { get; init; }
-}
 
 internal static class CliInvocationResolver
 {

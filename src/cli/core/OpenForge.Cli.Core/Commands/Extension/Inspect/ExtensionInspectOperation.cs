@@ -4,8 +4,8 @@ using OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Result;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Reading;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect;

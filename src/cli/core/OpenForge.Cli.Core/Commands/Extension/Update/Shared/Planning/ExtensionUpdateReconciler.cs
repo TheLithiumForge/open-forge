@@ -1,16 +1,18 @@
 using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
+using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning.Reconciliation;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
 using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Shared.Planning;
 
@@ -744,26 +746,3 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
         internal required ExtensionLifecycleState Current { get; init; }
     }
 }
-
-internal sealed class ExtensionUpdateReconciliationInput
-{
-    internal required ExtensionUpdateRequest Request { get; init; }
-
-    internal required IReadOnlyList<ExtensionPackageFact> Packages { get; init; }
-
-    internal required ExtensionLifecycleState Current { get; init; }
-
-    internal required ExtensionUpdateTopology Topology { get; init; }
-
-    internal required string SourceIdentity { get; init; }
-}
-
-internal sealed record ExtensionUpdateReconciliation(
-    IReadOnlyList<ExtensionUpdateComparison> Comparisons,
-    IReadOnlyList<ExtensionUpdatePlannedEffect> Effects,
-    IReadOnlyList<PlannedDirectoryCreation> DirectoryCreations,
-    ExtensionLifecycleState IntendedLifecycle,
-    IReadOnlyList<ExtensionUpdateFinding> Findings,
-    IReadOnlyDictionary<string, byte[]> AdmittedOverrides,
-    IReadOnlySet<string> AdmittedExclusions,
-    ExtensionUpdateFinding? Finding);

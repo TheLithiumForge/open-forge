@@ -4,14 +4,16 @@ using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
-using OpenForge.Cli.Core.Framework.Workspace;
-using OpenForge.Cli.Core.Shell.Composition;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List;
 
@@ -109,21 +111,20 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
     public void CliOptionResultFactsExposeExplicitOccurrenceAndValueCounts()
     {
         var tree = CreateRouteListTree(out var symbols);
-        var parser = new CliParser(tree);
 
-        var omitted = parser.Parse(["route", "list"]);
+        var omitted = tree.Parse(["route", "list"]);
         var omittedFacts = CliOptionResultFactsReader.Read(omitted.Result, symbols.Depth);
         Assert.False(omittedFacts.IsExplicit);
         Assert.Equal(0, omittedFacts.IdentifierCount);
         Assert.Equal(0, omittedFacts.ValueCount);
 
-        var explicitValue = parser.Parse(["route", "list", "--depth=2"]);
+        var explicitValue = tree.Parse(["route", "list", "--depth=2"]);
         var explicitValueFacts = CliOptionResultFactsReader.Read(explicitValue.Result, symbols.Depth);
         Assert.True(explicitValueFacts.IsExplicit);
         Assert.Equal(1, explicitValueFacts.IdentifierCount);
         Assert.Equal(1, explicitValueFacts.ValueCount);
 
-        var explicitNoValue = parser.Parse(["route", "list", "--depth=", "--json"]);
+        var explicitNoValue = tree.Parse(["route", "list", "--depth=", "--json"]);
         var explicitNoValueFacts = CliOptionResultFactsReader.Read(explicitNoValue.Result, symbols.Depth);
         var jsonFacts = CliOptionResultFactsReader.Read(explicitNoValue.Result, tree.Options.Json);
         Assert.True(explicitNoValueFacts.IsExplicit);
@@ -133,7 +134,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.Equal(1, jsonFacts.IdentifierCount);
         Assert.Equal(0, jsonFacts.ValueCount);
 
-        var repeated = parser.Parse(["route", "list", "--depth=1", "--depth=2"]);
+        var repeated = tree.Parse(["route", "list", "--depth=1", "--depth=2"]);
         Assert.NotEmpty(repeated.Result.Errors);
         var repeatedFacts = CliOptionResultFactsReader.Read(repeated.Result, symbols.Depth);
         Assert.True(repeatedFacts.IsExplicit);
@@ -268,23 +269,22 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
     public void TerminalModesRejectDomainAndLocalInput()
     {
         var tree = CreateRouteListTree(out _);
-        var parser = new CliParser(tree);
 
-        var help = parser.Parse(["route", "list", "root", "--help", "--depth=0"]);
+        var help = tree.Parse(["route", "list", "root", "--help", "--depth=0"]);
         var helpResolution = CliTerminalValidator.Validate(help);
         var helpInvalid = Assert.IsType<CliInvalidInput>(helpResolution.InvalidInput);
         Assert.Null(helpResolution.Input);
         Assert.Equal(CliInvalidInputSource.Semantic, helpInvalid.Source);
         Assert.Single(helpInvalid.Diagnostics);
 
-        var version = parser.Parse(["route", "list", "--version", "--depth=0"]);
+        var version = tree.Parse(["route", "list", "--version", "--depth=0"]);
         var versionResolution = CliTerminalValidator.Validate(version);
         var versionInvalid = Assert.IsType<CliInvalidInput>(versionResolution.InvalidInput);
         Assert.Null(versionResolution.Input);
         Assert.Equal(CliInvalidInputSource.Semantic, versionInvalid.Source);
         Assert.Single(versionInvalid.Diagnostics);
 
-        var validGlobals = parser.Parse(
+        var validGlobals = tree.Parse(
             [
                 "route", "list", "--help", "--json", "--verbose", "--view=compact",
                 "--workspace", Path.GetTempPath(),

@@ -152,12 +152,7 @@ internal sealed partial class RouteRemoveApplicationOperation(
         }
 
         var preparation = await RouteRemoveRecoveryLifecycle.PrepareAsync(
-            new RouteRemoveRecoveryPreparationInput
-            {
-                Plan = held.Plan,
-                OperationId = held.OperationId,
-                Lease = held.Lease,
-            },
+            held,
             cancellationToken).ConfigureAwait(false);
         if (preparation.State != RouteRemoveRecoveryPreparationState.Prepared)
         {
@@ -242,8 +237,3 @@ internal sealed partial class RouteRemoveApplicationOperation(
             => new(Lease: null, progress);
     }
 }
-
-internal sealed record RouteRemoveHeldApplication(
-    RouteRemovePlan Plan,
-    Guid OperationId,
-    WorkspaceLockLease Lease);

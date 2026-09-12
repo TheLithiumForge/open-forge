@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Results;
 
 namespace OpenForge.Cli.Core.Shell.Parsing;
 

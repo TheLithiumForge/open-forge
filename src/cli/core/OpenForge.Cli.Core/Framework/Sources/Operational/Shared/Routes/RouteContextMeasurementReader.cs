@@ -1,6 +1,6 @@
 using System.Text;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Context;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
@@ -41,18 +41,7 @@ internal static class RouteContextMeasurementReader
         return closure.Continuity
             .Where(source => source.Id is not null
                 && source.Layers.All(layer => layer.Text is not null))
-            .Select(source => new ContextSourceContributionObservation
-            {
-                SourceId = source.Id
-                    ?? throw new InvalidOperationException(
-                        "A continuity contribution requires a source ID."),
-                Utf8Bytes = source.Layers.Sum(layer =>
-                    (long)StrictUtf8.GetByteCount(layer.Text ?? string.Empty)),
-                Layers = source.Layers.Select(layer =>
-                    new ContextLayerContributionObservation(
-                        layer.Path,
-                        StrictUtf8.GetByteCount(layer.Text ?? string.Empty))).ToArray(),
-            })
+            .Select(ReadContribution)
             .ToArray();
     }
 
@@ -65,6 +54,27 @@ internal static class RouteContextMeasurementReader
             OperationalValueState.Unavailable,
             null);
         return new ContextMeasurementObservation(value, value, value, value);
+    }
+
+    private static ContextSourceContributionObservation ReadContribution(RouteContextSource source)
+    {
+        var sourceId = source.Id
+            ?? throw new InvalidOperationException("A continuity contribution requires a source ID.");
+        var layers = new List<ContextLayerContributionObservation>();
+        var totalBytes = 0L;
+        foreach (var layer in source.Layers)
+        {
+            var bytes = StrictUtf8.GetByteCount(layer.Text ?? string.Empty);
+            totalBytes = checked(totalBytes + bytes);
+            layers.Add(new ContextLayerContributionObservation(layer.Path, bytes));
+        }
+
+        return new ContextSourceContributionObservation
+        {
+            SourceId = sourceId,
+            Utf8Bytes = totalBytes,
+            Layers = layers.ToArray(),
+        };
     }
 
     private static OperationalIntegerObservation Available(long value)

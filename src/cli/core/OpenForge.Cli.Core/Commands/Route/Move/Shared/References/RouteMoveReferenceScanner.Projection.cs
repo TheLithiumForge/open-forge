@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
@@ -18,41 +18,40 @@ internal sealed partial class RouteMoveReferenceScanner
         string intendedSourcePath,
         RouteMoveReferenceDocument document,
         RouteMoveReferenceReplacementScan replacements)
-        => new()
+    {
+        var intendedText = RouteMoveReferenceChangeProjector.Apply(document.Text, replacements.Replacements);
+        var map = new Utf8SourceMap(document.Text);
+        return new RouteMoveReferenceDocumentInspection
         {
             Document = new RouteMoveReferenceDocumentPlan
             {
                 SourcePath = sourcePath,
                 DestinationSourcePath = intendedSourcePath,
                 Snapshot = document.Snapshot,
-                IntendedText = RouteMoveReferenceChangeProjector.Apply(
-                    document.Text,
-                    replacements.Replacements),
-                Edits = ProjectEdits(document, replacements.Replacements),
+                IntendedText = intendedText,
+                Edits = ProjectEdits(map, replacements.Replacements),
                 Meanings = replacements.Meanings,
             },
             Rewrites = ProjectRewrites(
                 input,
                 sourcePath,
                 intendedSourcePath,
-                document,
+                map,
                 replacements.Replacements),
             OccurrenceCount = replacements.OccurrenceCount,
         };
+    }
 
     private static ImmutableArray<RouteMoveReferenceDocumentEdit> ProjectEdits(
-        RouteMoveReferenceDocument document,
+        Utf8SourceMap map,
         IEnumerable<RouteMoveReferenceReplacement> replacements)
-    {
-        var map = new Utf8SourceMap(document.Text);
-        return replacements.OrderBy(value => value.Span.Start).Select(replacement =>
+        => [.. replacements.OrderBy(value => value.Span.Start).Select(replacement =>
             new RouteMoveReferenceDocumentEdit
             {
                 Location = map.Map(replacement.Span.Start, replacement.Span.Length),
                 Before = replacement.Before,
                 Expected = replacement.Expected,
-            }).ToImmutableArray();
-    }
+            })];
 
     private static RouteMoveReferenceReplacementProjection ProjectReplacement(
         RouteMoveReferenceScanInput input,
@@ -145,15 +144,15 @@ internal sealed partial class RouteMoveReferenceScanner
         RouteMoveReferenceScanInput input,
         string sourcePath,
         string intendedSourcePath,
-        RouteMoveReferenceDocument document,
+        Utf8SourceMap map,
         IEnumerable<RouteMoveReferenceReplacement> replacements)
-        => replacements.OrderBy(value => value.Span.Start).Select(replacement =>
+        => [.. replacements.OrderBy(value => value.Span.Start).Select(replacement =>
             new RouteMoveReferenceRewrite
             {
                 SourcePath = sourcePath,
                 DestinationSourcePath = intendedSourcePath,
                 Layer = ReadLayer(replacement.Layer),
-                Location = new Utf8SourceMap(document.Text).Map(
+                Location = map.Map(
                     replacement.Span.Start,
                     replacement.Span.Length),
                 Before = replacement.Before,
@@ -169,7 +168,7 @@ internal sealed partial class RouteMoveReferenceScanner
                     Id = SourceIdentity.DeriveId(replacement.NewTarget),
                     Path = replacement.NewTarget,
                 },
-            }).ToImmutableArray();
+            })];
 
     private static string BuildDestination(
         string sourcePath,

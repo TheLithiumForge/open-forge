@@ -1,5 +1,5 @@
 using System.Text.Json;
-using System.Runtime.CompilerServices;
+using OpenForge.Cli.Composition;
 using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.Core.Commands.Find.Models.Operation;
 using OpenForge.Cli.Core.Commands.Find.Models.Presentation;
@@ -8,13 +8,14 @@ using OpenForge.Cli.Core.Commands.Find.Models.Request;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Find.Shared.Result;
-using OpenForge.Cli.Core.Framework.Workspace;
-using OpenForge.Cli.Core.Shell.Composition;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Composition;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Results;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Composition;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Find;
 
@@ -25,8 +26,7 @@ public sealed class FindApplicationIntegrationTests
     {
         var application = CliCompositionRoot.Create(
             new CliProcessIdentity("open-forge", "test"));
-        var parser = CliCoreApplicationAccess.Parser(application);
-        var tree = CliParserAccess.Tree(parser);
+        var tree = CliCoreApplicationAccess.Tree(application);
         var parse = tree.Parse(["find"]);
         var selection = CliBindingSelector.Select(parse);
 
@@ -803,17 +803,5 @@ public sealed class FindApplicationIntegrationTests
 
         private static string GetRelativePath(string rootPath, string path)
             => System.IO.Path.GetRelativePath(rootPath, path).Replace('\\', '/');
-    }
-
-    private static class CliCoreApplicationAccess
-    {
-        [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_parser")]
-        internal static extern ref CliParser Parser(CliCoreApplication application);
-    }
-
-    private static class CliParserAccess
-    {
-        [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_tree")]
-        internal static extern ref CliCommandTree Tree(CliParser parser);
     }
 }

@@ -1,10 +1,10 @@
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Identity;
+using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Lifecycle.Operational.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Lifecycle.Operational;
 
@@ -26,10 +26,10 @@ internal sealed class FrameworkLifecycleDoctorReader(
             cancellationToken).ConfigureAwait(false);
         var sourceAvailability = ReadSourceAvailability(lifecycle, payload, targets);
         var assessment = FrameworkLifecycleDoctorAssessment.Create(
-            ReadViewState(lifecycle, payload, targets),
+            ReadViewState(lifecycle, sourceAvailability, targets),
             ReadLifecycleState(lifecycle, sourceAvailability),
             sourceAvailability,
-            ReadManagedSet(lifecycle, payload, targets));
+            ReadManagedSet(sourceAvailability, targets));
         return FrameworkLifecycleDoctorView.Create(
             assessment,
             lifecycle,
@@ -53,8 +53,7 @@ internal sealed class FrameworkLifecycleDoctorReader(
     }
 
     private static FrameworkManagedSetState ReadManagedSet(
-        LifecycleStoreReadResult lifecycle,
-        FrameworkPayloadReadResult payload,
+        OperationalSourceAvailability sourceAvailability,
         IReadOnlyList<FrameworkManagedTargetDoctorObservation> targets)
     {
         if (targets.Count == 0)
@@ -62,11 +61,7 @@ internal sealed class FrameworkLifecycleDoctorReader(
             return FrameworkManagedSetState.Empty;
         }
 
-        if (lifecycle.State != LifecycleStoreReadState.Available
-            || payload.State != FrameworkPayloadReadState.Available
-            || !SourceMatches(lifecycle, payload)
-            || targets.Any(target => target.Target.Source.State
-                != FrameworkLifecycleTargetSourceState.Valid)
+        if (sourceAvailability != OperationalSourceAvailability.Available
             || targets.Any(target => target.Target.State is OperationalTargetState.Unavailable
                 or OperationalTargetState.Blocked))
         {
@@ -87,7 +82,7 @@ internal sealed class FrameworkLifecycleDoctorReader(
 
     private static OperationalViewState ReadViewState(
         LifecycleStoreReadResult lifecycle,
-        FrameworkPayloadReadResult payload,
+        OperationalSourceAvailability sourceAvailability,
         IReadOnlyList<FrameworkManagedTargetDoctorObservation> targets)
     {
         if (lifecycle.State == LifecycleStoreReadState.Cancelled)
@@ -108,11 +103,7 @@ internal sealed class FrameworkLifecycleDoctorReader(
             return OperationalViewState.Incomplete;
         }
 
-        return lifecycle.State == LifecycleStoreReadState.Available
-            && payload.State == FrameworkPayloadReadState.Available
-            && SourceMatches(lifecycle, payload)
-            && targets.All(target => target.Target.Source.State
-                == FrameworkLifecycleTargetSourceState.Valid)
+        return sourceAvailability == OperationalSourceAvailability.Available
             ? OperationalViewState.Complete
             : OperationalViewState.Incomplete;
     }

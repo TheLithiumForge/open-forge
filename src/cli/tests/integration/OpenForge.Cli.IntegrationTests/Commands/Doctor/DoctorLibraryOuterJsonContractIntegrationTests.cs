@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.LibraryRecovery;
 using OpenForge.Cli.IntegrationTests.Hosting;
 

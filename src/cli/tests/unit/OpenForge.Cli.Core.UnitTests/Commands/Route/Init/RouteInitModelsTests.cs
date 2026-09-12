@@ -3,8 +3,7 @@ using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Result;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Init;
@@ -136,12 +135,12 @@ public sealed class RouteInitModelsTests
     {
         var request = RouteInitRedTestData.Request();
         var formation = RouteInitRedTestData.Formation();
-        var directories = new List<OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.PlannedDirectoryCreation>
+        var directories = new List<OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories.PlannedDirectoryCreation>
         {
             RouteInitRedTestData.Directory(
                 Path.Combine(request.Workspace.LexicalRoot, ".agents")),
         };
-        var changes = new List<OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.PlannedFileChange>
+        var changes = new List<OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files.PlannedFileChange>
         {
             RouteInitRedTestData.CreateFile(
                 Path.Combine(request.Workspace.LexicalRoot, ".agents", "memory", "_memory.md"),

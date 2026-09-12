@@ -5,8 +5,11 @@ using OpenForge.Cli.Core.Commands.Index.Models.Planning;
 using OpenForge.Cli.Core.Commands.Index.Models.Request;
 using OpenForge.Cli.Core.Commands.Index.Models.Result;
 using OpenForge.Cli.Core.Commands.Index.Models.Selection;
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
 
@@ -62,7 +65,7 @@ internal static class IndexHumanRenderer
         {
             builder.AppendLine(
                 CultureInfo.InvariantCulture,
-                $"  {IndexTextEscaping.Escape(region.Source.Path)}: {EntryCount(region.BeforeEntryCount)} -> {EntryCount(region.ExpectedEntryCount)} entries ({Outcome(region.Outcome)})");
+                $"  {CommandTextEscaping.Escape(region.Source.Path)}: {EntryCount(region.BeforeEntryCount)} -> {EntryCount(region.ExpectedEntryCount)} entries ({Outcome(region.Outcome)})");
         }
 
         if (expanded)
@@ -177,7 +180,7 @@ internal static class IndexHumanRenderer
         builder.AppendLine($"Recovery: {IndexDefinitions.ReadMachineName(recovery.State)}");
         if (recovery.ResidualPath is not null)
         {
-            builder.AppendLine($"  {IndexTextEscaping.Escape(recovery.ResidualPath)}");
+            builder.AppendLine($"  {CommandTextEscaping.Escape(recovery.ResidualPath)}");
         }
     }
 
@@ -188,15 +191,15 @@ internal static class IndexHumanRenderer
             var label = finding.Status == CliSemanticStatus.Attention
                 ? "Requires attention"
                 : Capitalize(CliStatusDefinitions.Read(finding.Status).MachineName);
-            builder.AppendLine($"{label}: {IndexTextEscaping.Escape(finding.Cause)}");
+            builder.AppendLine($"{label}: {CommandTextEscaping.Escape(finding.Cause)}");
             if (finding.Source is not null)
             {
-                builder.AppendLine($"  {IndexTextEscaping.Escape(finding.Source.Path)}");
+                builder.AppendLine($"  {CommandTextEscaping.Escape(finding.Source.Path)}");
             }
 
             foreach (var candidate in finding.Candidates)
             {
-                builder.AppendLine($"  {IndexTextEscaping.Escape(candidate.Path)}");
+                builder.AppendLine($"  {CommandTextEscaping.Escape(candidate.Path)}");
             }
         }
     }
@@ -210,8 +213,8 @@ internal static class IndexHumanRenderer
 
         builder.AppendLine(
             $"""
-            Next: {IndexTextEscaping.Escape(next.Command)}
-            {IndexTextEscaping.Escape(next.Reason)}
+            Next: {CommandTextEscaping.Escape(next.Command)}
+            {CommandTextEscaping.Escape(next.Reason)}
             """.ReplaceLineEndings());
     }
 

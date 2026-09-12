@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
+using OpenForge.Cli.Core.Commands.Update.Shared.Validation;
 
 namespace OpenForge.Cli.Core.Commands.Update.Models.Effects;
 
@@ -83,7 +84,8 @@ internal sealed record UpdateLogicalChange
                     nameof(region));
             }
 
-            if (sourceAssetPath is null || !IsCanonicalRelative(sourceAssetPath))
+            if (string.IsNullOrWhiteSpace(sourceAssetPath)
+                || !UpdateValueSyntax.IsCanonicalRelative(sourceAssetPath))
             {
                 throw new ArgumentException(
                     "An authored file logical change requires canonical source provenance.",
@@ -93,7 +95,8 @@ internal sealed record UpdateLogicalChange
             return;
         }
 
-        if (region is null || !IsCanonicalRelative(region))
+        if (string.IsNullOrWhiteSpace(region)
+            || !UpdateValueSyntax.IsCanonicalRelative(region))
         {
             throw new ArgumentException(
                 "A managed or generated logical change requires one canonical region identity.",
@@ -102,7 +105,8 @@ internal sealed record UpdateLogicalChange
 
         if (kind == UpdateComparisonTargetKind.ManagedRegion)
         {
-            if (sourceAssetPath is null || !IsCanonicalRelative(sourceAssetPath))
+            if (string.IsNullOrWhiteSpace(sourceAssetPath)
+                || !UpdateValueSyntax.IsCanonicalRelative(sourceAssetPath))
             {
                 throw new ArgumentException(
                     "A managed logical change requires canonical source provenance.",
@@ -119,21 +123,6 @@ internal sealed record UpdateLogicalChange
                 nameof(sourceAssetPath));
         }
     }
-
-    private static bool IsCanonicalRelative(string value)
-        => !string.IsNullOrWhiteSpace(value)
-            && !value.StartsWith('/')
-            && !IsDriveQualified(value)
-            && !value.Contains('\\')
-            && value.Split('/', StringSplitOptions.None).All(segment => segment.Length != 0
-                && segment != "."
-                && segment != ".."
-                && segment.All(character => !char.IsControl(character)));
-
-    private static bool IsDriveQualified(string value)
-        => value.Length >= 2
-            && char.IsAsciiLetter(value[0])
-            && value[1] == ':';
 }
 
 internal sealed record UpdatePhysicalEffect
@@ -145,7 +134,8 @@ internal sealed record UpdatePhysicalEffect
         UpdatePhysicalEffectOutcome outcome,
         UpdatePhysicalEffectResidual residual)
     {
-        if (!IsCanonicalRelative(path))
+        if (string.IsNullOrWhiteSpace(path)
+            || !UpdateValueSyntax.IsCanonicalRelative(path))
         {
             throw new ArgumentException(
                 "Physical effect paths must be canonical workspace-relative paths.",
@@ -212,19 +202,4 @@ internal sealed record UpdatePhysicalEffect
     internal UpdatePhysicalEffectOutcome Outcome { get; }
 
     internal UpdatePhysicalEffectResidual Residual { get; }
-
-    private static bool IsCanonicalRelative(string value)
-        => !string.IsNullOrWhiteSpace(value)
-            && !value.StartsWith('/')
-            && !IsDriveQualified(value)
-            && !value.Contains('\\')
-            && value.Split('/', StringSplitOptions.None).All(segment => segment.Length != 0
-                && segment != "."
-                && segment != ".."
-                && segment.All(character => !char.IsControl(character)));
-
-    private static bool IsDriveQualified(string value)
-        => value.Length >= 2
-            && char.IsAsciiLetter(value[0])
-            && value[1] == ':';
 }

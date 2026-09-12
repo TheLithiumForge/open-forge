@@ -32,10 +32,10 @@ Read the [program Task](00-cli-development.md),
 - [x] [Operational Commands](operations/_operations.md) — Complete: Status, Doctor, Repair, and Cleanup are integrated; Task 20 Cleanup completed at phase 5/5, milestone 8/8 in `148d378d` — Implementer: Overseer-managed command lanes
 - [x] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is Complete, phase 3/3, milestone 5/5; integrated at `fbcec295`, seven findings selected for Task 21
 - [x] [CLI Command Surface Remediation](cli-command-surface-remediation.md) — Complete, phase 4/4, milestone 6/6; integrated at `75f6ff49`
-- [x] [C# Structural Streamlining](csharp-structural-streamlining.md) — Task 27 is Complete, phase 4/4, milestone 6/6; integrated at `81f22c43`
-- [ ] [Task 7 ARM64 package expansion](delivery/01-npm-packages.md#arm64-expansion-horizon) — Active, phase 2/4, milestone 2/6; frozen Red accepted
-- [ ] [CLI Delivery](delivery/_delivery.md) — Task 13 covers all six accepted platforms after Task 7; Task 22 remains last
-- [ ] [Source Framework Wording and Logic Review](source-framework-review.md) — Task 28 is a separate queued user-owned parallel review; no implementation or assigned horizon
+- [ ] [C# Structural Streamlining](csharp-structural-streamlining.md) — Task 27 bounded beta accepted at phase 4/4, milestone 7/8; final local squash pending. [Changes and remaining work](csharp-beta-closeout.md).
+- [x] [Task 7 ARM64 package expansion](delivery/01-npm-packages.md#arm64-expansion-horizon) — Complete, phase 4/4, milestone 6/6; integrated at `7eeeb19d`
+- [x] [CLI Delivery](delivery/_delivery.md) — Tasks 13 and 22 complete locally, phase 3/3, milestone 6/6; integrated at `3bf03e0e`, with Linux execution and static other-platform review
+- [ ] [Source Framework Wording and Logic Review](source-framework-review.md) — Task 28 is active in the separate user-owned chat; no horizon assigned here; preserve its updates and notes
 - [x] [Task 23: Workspace Libraries](workspace-libraries.md) — Complete, phase 5/5, milestone 8/8; Sol return and root placement correction accepted at `25c65bf8`.
 - [x] [Task 24: Extensions Evolution](extensions-evolution.md) — Complete, phase 5/5, milestone 8/8; integrated at `2eedaf87`
 - [x] [Task 25: Workspace Library Destination Projections](workspace-library-destination-projections.md) — Complete, phase 5/5, milestone 8/8; full managed/native acceptance, integrated at `3b4aba9d`
@@ -73,7 +73,6 @@ define execution state.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Parent outcome, scope, authority, and acceptance for the complete replacement CLI program](00-cli-development.md) - #Memory #Working #CLI #Task #Program #Architecture #Development #Contextual #Active
 - [Audit the current replacement CLI Architecture authority and route misplaced detail to narrower sources without changing accepted meaning](cli-architecture-authority-audit.md) - #Memory #Working #Contextual #Complete #CLI #Task #Architecture #Audit #Authority #Documentation
 - [Apply the accepted CLI Architecture authority audit without changing product behavior or requirement strength](cli-architecture-authority-remediation.md) - #Memory #Working #Contextual #Complete #CLI #Task #Architecture #Authority #Documentation #Remediation
@@ -81,6 +80,8 @@ define execution state.
 - [Review the complete retained CLI command surface for direct PR-level architecture, design, refactoring, and test-evidence problems](cli-command-surface-audit.md) - #Memory #Working #Contextual #Complete #CLI #Task #Audit #Architecture #Refactoring #Testing #Review
 - [Correct the seven validated CLI audit findings within accepted behavior, test tiers, and local callable ownership](cli-command-surface-remediation.md) - #Memory #Working #Contextual #Complete #CLI #Task #Remediation #Architecture #Refactoring #Testing
 - [Remediate the accepted first-pass CLI architecture, C# design, authority, and test-evidence findings after Route Create and before Route Update](cli-quality-remediation.md) - #Memory #Working #CLI #Task #Audit #Architecture #Refactoring #Testing #Review #Contextual
+- [Record the bounded C# beta changes, exact qualification, deferred findings and local integration](csharp-beta-closeout.md) - #Memory #Working #Contextual #CLI #CSharp #Refactoring #Beta #Closeout
+- [Accepted scope, ownership and evidence boundaries for the comprehensive Task 27 continuation](csharp-comprehensive-preflight.md) - #Memory #Working #Contextual #CLI #CSharp #Refactoring #Preflight
 - [Assess remaining C# internals and implement justified simplifications beyond the completed strategic command audit](csharp-structural-streamlining.md) - #Memory #Working #Contextual #CLI #Task #CSharp #Architecture #Refactoring
 - [Package, prove, document, and release the complete native CLI without partial publication](delivery/_delivery.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #SupplyChain #Release #Contextual
 - [Track accepted Extension manifest consolidation and exact managed/native behavior preservation](extension-internal-consolidation.md) - #Memory #Working #CLI #Task #Extension #Refactoring #Testing #Contextual #Complete
@@ -105,5 +106,4 @@ define execution state.
 - [Audit symbolic constants, generated-region authority, and composable active-test foundations across the replacement CLI](test-architecture-and-constants.md) - #Memory #Working #CLI #Task #Testing #Architecture #Constants #Fixtures #Snapshot #Contextual
 - [Execute the accepted Workspace Libraries contracts through bounded preparation, implementation, evidence, and integration](workspace-libraries.md) - #Memory #Working #CLI #Task #Workspace #Library #Contextual #Active
 - [Track accepted mapped Library leaf projections, scoped permissions, recovery and complete managed/native evidence](workspace-library-destination-projections.md) - #Memory #Working #CLI #Task #Workspace #Library #Destination #Symlink #Contextual #Complete
-
 <!-- open-forge:generated-index:end -->

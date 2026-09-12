@@ -1,6 +1,6 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
 

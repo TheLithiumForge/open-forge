@@ -1,23 +1,22 @@
 using System.Collections.Immutable;
 using System.Text;
-using OpenForge.Cli.Core.Commands.Library.Models.Planning;
-using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Request;
-using OpenForge.Cli.Core.Commands.Library.Sync.Models.Planning;
-using OpenForge.Cli.Core.Commands.Library.Sync.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Request;
+using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Models.Request;
+using OpenForge.Cli.Core.Commands.Library.Sync.Models.Planning;
+using OpenForge.Cli.Core.Commands.Library.Sync.Models.Request;
+using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Mutation;
 

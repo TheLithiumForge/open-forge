@@ -1,9 +1,11 @@
+using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Repair.Models.Application;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Commands.Repair.Shared.Application;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Result;
 
@@ -50,15 +52,19 @@ internal static class RepairLibraryResultFormation
     private static RepairPlan ProjectLibrarySteps(
         RepairPlan plan,
         RepairLibraryExecution? execution)
-        => new(plan.Request, plan.Selection, plan.Steps, plan.Conflicts,
+    {
+        var effects = execution is null ? [] : RepairAtomicEffectOrder.Read(plan);
+        return new RepairPlan(plan.Request, plan.Selection, plan.Steps, plan.Conflicts,
             [.. plan.LibrarySteps.Select(step => step with
             {
-                Outcome = ReadOutcome(step, execution),
+                Outcome = ReadOutcome(step, execution, effects),
             })]);
+    }
 
     private static RepairStepOutcome ReadOutcome(
         RepairLibraryRecoveryStep step,
-        RepairLibraryExecution? execution)
+        RepairLibraryExecution? execution,
+        ImmutableArray<RepairAtomicEffect> effects)
     {
         if (step.Effect is null || execution is null)
         {
@@ -78,15 +84,23 @@ internal static class RepairLibraryResultFormation
                         : RepairStepOutcome.Failed;
         }
 
-        if (execution.UnexpectedFailure?.EffectOrdinal == step.Ordinal)
+        if (MatchesEffect(execution.UnexpectedFailure?.EffectOrdinal, effects, step.Effect))
         {
             return RepairStepOutcome.Failed;
         }
 
-        return execution.Cancellation?.EffectOrdinal == step.Ordinal
+        return MatchesEffect(execution.Cancellation?.EffectOrdinal, effects, step.Effect)
             ? RepairStepOutcome.Interrupted
             : step.Outcome;
     }
+
+    private static bool MatchesEffect(
+        int? ordinal,
+        ImmutableArray<RepairAtomicEffect> effects,
+        RepairLibraryRecoveryEffect selected)
+        => ordinal is { } index
+            && (uint)index < (uint)effects.Length
+            && ReferenceEquals(effects[index].LibraryRecovery, selected);
 
     private static List<RepairFinding> AddSelectionFindings(
         RepairPlan plan,

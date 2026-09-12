@@ -1,3 +1,4 @@
+using System.CommandLine;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Result;
@@ -8,8 +9,37 @@ namespace OpenForge.Cli.Core.Commands.Extension.List;
 
 internal static class ExtensionListBinding
 {
-    internal static ExtensionListSymbols CreateSymbols(System.CommandLine.Command extensionGroup)
-        => ExtensionListSymbols.Create(extensionGroup);
+    internal static ExtensionListSymbols CreateSymbols(Command extensionGroup)
+    {
+        var command = new Command(
+            name: ExtensionListDefinitions.ListCommand.Name,
+            description: ExtensionListDefinitions.ListCommand.Description);
+        var installed = new Option<bool>(ExtensionListDefinitions.Installed.Name)
+        {
+            Description = ExtensionListDefinitions.Installed.Description,
+            Arity = ArgumentArity.Zero,
+        };
+        var available = new Option<bool>(ExtensionListDefinitions.Available.Name)
+        {
+            Description = ExtensionListDefinitions.Available.Description,
+            Arity = ArgumentArity.Zero,
+        };
+        var source = new Option<string?>(ExtensionListDefinitions.Source.Name)
+        {
+            Description = ExtensionListDefinitions.Source.Description,
+            HelpName = ExtensionListDefinitions.Source.ValueName,
+            Arity = ArgumentArity.ZeroOrOne,
+        };
+        command.Options.Add(installed);
+        command.Options.Add(available);
+        command.Options.Add(source);
+        extensionGroup.Add(command);
+        return new(
+            ListCommand: command,
+            Installed: installed,
+            Available: available,
+            Source: source);
+    }
 
     internal static CliCommandBinding<ExtensionListRequest, ExtensionListResult> Close(
         ExtensionListSymbols symbols,

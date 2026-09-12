@@ -1,9 +1,12 @@
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Recovery;
-using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Application;
 
@@ -66,7 +69,7 @@ internal static class ExtensionInstallRecoveryOperation
                     catalogue.Cause ?? "The prepared Extension Install recovery bundle is unavailable for cleanup.");
         }
 
-        var candidates = catalogue.Candidates.Where(candidate => Matches(
+        var candidates = catalogue.Candidates.Where(candidate => RecoveryBundleIdentity.Matches(
             candidate,
             request.Preparation)).ToArray();
         if (candidates.Length != 1)
@@ -179,25 +182,4 @@ internal static class ExtensionInstallRecoveryOperation
         => [.. preparation.Entries
             .OrderBy(entry => entry.Ordinal)
             .Select(entry => entry.TargetPath)];
-
-    private static bool Matches(
-        RecoveryBundleCandidateSnapshot candidate,
-        RecoveryBundlePreparation preparation)
-    {
-        if (candidate.Kind != RecoveryBundleCandidateKind.Final
-            || candidate.Integrity != RecoveryBundleIntegrity.Verified
-            || candidate.Verified is not { } verified)
-        {
-            return false;
-        }
-
-        return PhysicalIdentityTracker.PathComparer.Equals(candidate.Path, preparation.BundlePath)
-            && PhysicalIdentityTracker.PathComparer.Equals(
-                verified.WorkspacePhysicalPath,
-                preparation.WorkspacePhysicalPath)
-            && string.Equals(verified.WorkspaceKey, preparation.WorkspaceKey, StringComparison.Ordinal)
-            && string.Equals(verified.Command, preparation.Command, StringComparison.Ordinal)
-            && verified.OperationId == preparation.OperationId
-            && verified.Entries.SequenceEqual(preparation.Entries);
-    }
 }

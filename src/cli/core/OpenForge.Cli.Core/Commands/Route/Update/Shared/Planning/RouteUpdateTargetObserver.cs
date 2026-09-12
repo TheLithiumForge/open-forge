@@ -1,7 +1,8 @@
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
+using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Documents.Yaml;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 
@@ -19,7 +20,7 @@ internal sealed class RouteUpdateTargetObserver(
     private readonly YamlDocumentParser _yamlParser = yamlParser;
 
     internal async ValueTask<RouteUpdateObservationBuild> ObserveAsync(
-        RouteUpdateObservationRequest request,
+        RouteUpdateRequest request,
         CancellationToken cancellationToken)
     {
         var selectionBuild = await _sourceSelector.SelectAsync(request, cancellationToken)

@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using OpenForge.Cli.Core.Framework.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 

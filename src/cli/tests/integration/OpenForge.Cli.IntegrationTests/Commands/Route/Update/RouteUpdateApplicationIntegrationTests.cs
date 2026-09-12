@@ -1,5 +1,3 @@
-using OpenForge.Cli.TestSupport;
-using OpenForge.Cli.IntegrationTests.Hosting;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
@@ -7,13 +5,17 @@ using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
-using OpenForge.Cli.Core.Commands.Route.Update.Shared.Result;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Route.Update.Shared.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.IntegrationTests.Hosting;
+using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 
@@ -401,7 +403,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
                 planBuilder,
                 new RouteUpdatePlanEquivalence()),
             revalidator).PrepareAsync(
-                new RouteUpdateApplicationPreparationInput
+                new RouteUpdateApplicationPipelineInput
                 {
                     Plan = plan,
                     Lease = lease,
@@ -409,7 +411,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
                 },
                 TestContext.Current.CancellationToken);
         Assert.Equal(RouteUpdateApplicationPreparationState.Ready, preparation.State);
-        var recoveryPreparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(
+        var recoveryPreparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.Preparation.RecoveryBundlePreparation>(
             preparation.RecoveryPreparation);
         workspace.TrackRecovery(recoveryPreparation);
         var validation = Assert.IsType<OpenForge.Cli.Core.Framework.Mutation.Validation.Models.MutationValidationResult>(

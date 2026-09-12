@@ -6,12 +6,12 @@ namespace OpenForge.Cli.Core.Commands.Library.Sync.Shared.Application;
 
 internal static class LibrarySyncApplication
 {
-    internal static async ValueTask<LibrarySyncApplicationOutcome> ApplyAsync(
+    internal static async ValueTask<LibraryExecutionEvidence> ApplyAsync(
         LibrarySyncApplicationInput input,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(input);
-        var run = await LibraryMutationApplicationRunner.ApplyAsync(
+        return await LibraryMutationApplicationRunner.ApplyAsync(
             new LibraryMutationApplicationRequest
             {
                 Permissions = input.Plan.Permissions,
@@ -24,10 +24,5 @@ internal static class LibrarySyncApplication
                 ProtectedSourceRoots = [.. (input.Plan.Input.Record.Record?.Libraries ?? []).Select(library => library.SourceRoot)],
             },
             cancellationToken).ConfigureAwait(false);
-        return new LibrarySyncApplicationOutcome
-        {
-            Application = run.Application,
-            Execution = run.Execution,
-        };
     }
 }

@@ -1,16 +1,27 @@
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Install.Models.Binding;
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Shared.Result;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Install.Models.Result;
 
 internal sealed record InstallResult : ICliCommandResult
 {
+    private static readonly ImmutableArray<CliSemanticStatus> StatusPrecedence =
+    [
+        CliSemanticStatus.Failed,
+        CliSemanticStatus.Interrupted,
+        CliSemanticStatus.Invalid,
+        CliSemanticStatus.Blocked,
+        CliSemanticStatus.Incomplete,
+        CliSemanticStatus.Attention,
+    ];
+
     internal InstallResult(
         CliWorkspace? workspace,
         InstallBindingInput input,
@@ -106,16 +117,7 @@ internal sealed record InstallResult : ICliCommandResult
     private static CliSemanticStatus ReadStatus(
         IReadOnlyList<InstallFinding> findings)
     {
-        var precedence = new[]
-        {
-            CliSemanticStatus.Failed,
-            CliSemanticStatus.Interrupted,
-            CliSemanticStatus.Invalid,
-            CliSemanticStatus.Blocked,
-            CliSemanticStatus.Incomplete,
-            CliSemanticStatus.Attention,
-        };
-        return precedence.FirstOrDefault(
+        return StatusPrecedence.FirstOrDefault(
             status => findings.Any(finding => finding.Status == status),
             CliSemanticStatus.Complete);
     }

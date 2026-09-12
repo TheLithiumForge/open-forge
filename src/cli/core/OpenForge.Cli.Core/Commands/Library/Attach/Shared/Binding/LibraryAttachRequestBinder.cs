@@ -1,18 +1,16 @@
-using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Binding;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Result;
+using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Shared.Completion;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
-using OpenForge.Cli.Core.Framework.Workspace;
-using OpenForge.Cli.Core.Shell.Composition;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Invocation;
-using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 
 namespace OpenForge.Cli.Core.Commands.Library.Attach.Shared.Binding;
 
@@ -65,7 +63,6 @@ internal static class LibraryAttachRequestBinder
     internal static LibraryAttachResult CreateInvalid(CliInvalidBindingInput input)
     {
         ArgumentNullException.ThrowIfNull(input);
-        var supplied = ReadOperands(input.BindingParse.OriginalArguments);
         if (input.InvalidInput.Source == CliInvalidInputSource.Workspace)
         {
             var blocked = input.WorkspaceSelectionState is CliWorkspaceSelectionState.NotDirectory
@@ -74,12 +71,13 @@ internal static class LibraryAttachRequestBinder
             return Create(
                 status,
                 workspace: null,
-                supplied.ElementAtOrDefault(0),
-                supplied.ElementAtOrDefault(1),
+                input.BindingParse.Result.GetValue<string?>(LibraryDefinitions.LibraryId.Name),
+                input.BindingParse.Result.GetValue<string?>(LibraryDefinitions.SourceRoot.Name),
                 blocked ? LibraryAttachFindingCode.RecordBlocked : LibraryAttachFindingCode.RecordUnavailable,
                 ReadCause(input));
         }
 
+        var supplied = ReadOperands(input.BindingParse.OriginalArguments);
         return Create(
             CliSemanticStatus.Invalid,
             workspace: null,

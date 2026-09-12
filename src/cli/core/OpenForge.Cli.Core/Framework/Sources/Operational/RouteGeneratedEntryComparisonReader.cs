@@ -1,10 +1,10 @@
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
-using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
-using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 
@@ -35,10 +35,10 @@ internal static class RouteGeneratedEntryComparisonReader
             if (resolved is null || !expectedBySource.TryGetValue(resolved, out var expectedEntry))
             {
                 comparisons.Add(new RouteGeneratedEntryComparison(
-                    RouteGeneratedEntryComparisonKind.Extra,
+                    kind: RouteGeneratedEntryComparisonKind.Extra,
                     expected: null,
-                    entry.Destination,
-                    location));
+                    actual: entry.Destination,
+                    location: location));
                 continue;
             }
 
@@ -47,36 +47,36 @@ internal static class RouteGeneratedEntryComparisonReader
             if (!string.Equals(entry.Destination, expectedEntry.Destination, StringComparison.Ordinal))
             {
                 comparisons.Add(new RouteGeneratedEntryComparison(
-                    RouteGeneratedEntryComparisonKind.Path,
-                    expectedEntry.Destination,
-                    entry.Destination,
-                    location));
+                    kind: RouteGeneratedEntryComparisonKind.Path,
+                    expected: expectedEntry.Destination,
+                    actual: entry.Destination,
+                    location: location));
             }
 
             if (!string.Equals(entry.Description, expectedEntry.Description, StringComparison.Ordinal))
             {
                 comparisons.Add(new RouteGeneratedEntryComparison(
-                    RouteGeneratedEntryComparisonKind.Description,
-                    expectedEntry.Description,
-                    entry.Description,
-                    location));
+                    kind: RouteGeneratedEntryComparisonKind.Description,
+                    expected: expectedEntry.Description,
+                    actual: entry.Description,
+                    location: location));
             }
 
             if (!entry.Tags.SequenceEqual(expectedEntry.Tags, StringComparer.Ordinal))
             {
                 comparisons.Add(new RouteGeneratedEntryComparison(
-                    RouteGeneratedEntryComparisonKind.Tags,
-                    string.Join(",", expectedEntry.Tags),
-                    string.Join(",", entry.Tags),
-                    location));
+                    kind: RouteGeneratedEntryComparisonKind.Tags,
+                    expected: string.Join(",", expectedEntry.Tags),
+                    actual: string.Join(",", entry.Tags),
+                    location: location));
             }
         }
 
         foreach (var entry in expected.Where(entry => !matched.Contains(entry.CanonicalPath)))
         {
             comparisons.Add(new RouteGeneratedEntryComparison(
-                RouteGeneratedEntryComparisonKind.Missing,
-                entry.Destination,
+                kind: RouteGeneratedEntryComparisonKind.Missing,
+                expected: entry.Destination,
                 actual: null,
                 location: null));
         }
@@ -88,10 +88,10 @@ internal static class RouteGeneratedEntryComparisonReader
             && !currentOrder.SequenceEqual(expectedOrder, StringComparer.Ordinal))
         {
             comparisons.Add(new RouteGeneratedEntryComparison(
-                RouteGeneratedEntryComparisonKind.Order,
-                string.Join("|", expectedOrder),
-                string.Join("|", currentOrder),
-                locations.Map(current.Entries[0].Span.Start, current.Entries[^1].Span.End - current.Entries[0].Span.Start)));
+                kind: RouteGeneratedEntryComparisonKind.Order,
+                expected: string.Join("|", expectedOrder),
+                actual: string.Join("|", currentOrder),
+                location: locations.Map(current.Entries[0].Span.Start, current.Entries[^1].Span.End - current.Entries[0].Span.Start)));
         }
 
         return comparisons

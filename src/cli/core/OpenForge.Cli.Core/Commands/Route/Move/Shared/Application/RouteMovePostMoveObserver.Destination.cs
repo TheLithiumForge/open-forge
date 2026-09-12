@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Move.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
@@ -17,7 +18,7 @@ internal sealed partial class RouteMovePostMoveObserver
             ?? throw new InvalidOperationException("A complete Route Move plan requires its destination path.");
         var request = new RouteMoveRequest(plan.Request.Workspace, path, path, RouteMoveMode.Apply);
         var resolved = await _subjectResolver.ResolveAsync(
-            new RouteMoveSubjectResolutionRequest { Request = request },
+            request,
             cancellationToken).ConfigureAwait(false);
         if (resolved.Subject is not { } subject)
         {
@@ -25,7 +26,7 @@ internal sealed partial class RouteMovePostMoveObserver
         }
 
         var read = await _inventoryReader.ReadAsync(
-            new RouteMoveCategoryInventoryRequest { Subject = subject },
+            subject,
             cancellationToken).ConfigureAwait(false);
         if (read.Inventory is not { } inventory)
         {

@@ -6,8 +6,9 @@ using OpenForge.Cli.Core.Commands.Route.Update;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Parsing;
 
@@ -31,8 +32,8 @@ public sealed class SystemCommandLineBehaviorTests
         [
             "route", "update", "memory/project-alpha/overview", "--responsibility",
         ];
-        var attached = new CliParser(tree).Parse(attachedArguments);
-        var bare = new CliParser(tree).Parse(bareArguments);
+        var attached = tree.Parse(attachedArguments);
+        var bare = tree.Parse(bareArguments);
         var attachedResult = Assert.IsType<OptionResult>(
             attached.Result.GetResult(symbols.Responsibility));
         var bareResult = Assert.IsType<OptionResult>(
@@ -63,9 +64,8 @@ public sealed class SystemCommandLineBehaviorTests
     public void PinnedParserReportsScalarRepetitionAndCountsBooleanOccurrences()
     {
         var tree = CliCommandTree.Create(CliHelpContent.Empty, [], []);
-        var parser = new CliParser(tree);
-        var scalar = parser.Parse(["--view=compact", "--view=expanded"]);
-        var booleans = parser.Parse(["--json", "--json"]);
+        var scalar = tree.Parse(["--view=compact", "--view=expanded"]);
+        var booleans = tree.Parse(["--json", "--json"]);
 
         Assert.NotEmpty(scalar.Result.Errors);
         var scalarResult = Assert.IsType<OptionResult>(scalar.Result.GetResult(tree.Options.View));
@@ -105,7 +105,7 @@ public sealed class SystemCommandLineBehaviorTests
         string[] arguments = separateValue is null
             ? [option]
             : [option, separateValue];
-        var parse = new CliParser(tree).Parse(arguments);
+        var parse = tree.Parse(arguments);
 
         Assert.Empty(parse.Result.Errors);
         Assert.Equal(arguments, parse.OriginalArguments);
@@ -147,7 +147,7 @@ public sealed class SystemCommandLineBehaviorTests
     public void ParserAttachedEmptyGlobalValuesRemainInvalid(string option)
     {
         var tree = CliCommandTree.Create(CliHelpContent.Empty, [], []);
-        var resolution = CliTerminalValidator.Validate(new CliParser(tree).Parse([option]));
+        var resolution = CliTerminalValidator.Validate(tree.Parse([option]));
 
         Assert.NotNull(resolution.InvalidInput);
         Assert.Null(resolution.Input);
@@ -178,7 +178,7 @@ public sealed class SystemCommandLineBehaviorTests
         string followingOptionName)
     {
         var tree = CliCommandTree.Create(CliHelpContent.Empty, [], []);
-        var parse = new CliParser(tree).Parse([emptyOption, followingOption]);
+        var parse = tree.Parse([emptyOption, followingOption]);
 
         Assert.Empty(parse.Result.Errors);
         AssertFacts(
@@ -279,7 +279,7 @@ public sealed class SystemCommandLineBehaviorTests
             [new CliRootBranch(symbols.RouteGroup, CliHelpContent.Empty, symbols.DelimiterPolicies)],
             []);
 
-        var parse = new CliParser(tree).Parse(["route", "list", emptyDepth, followingOption]);
+        var parse = tree.Parse(["route", "list", emptyDepth, followingOption]);
 
         Assert.Empty(parse.Result.Errors);
         AssertFacts(

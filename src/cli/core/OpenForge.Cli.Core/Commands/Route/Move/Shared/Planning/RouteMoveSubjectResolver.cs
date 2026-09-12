@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
+using OpenForge.Cli.Core.Commands.Route.Move.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Navigation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -9,7 +11,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
@@ -23,7 +25,7 @@ internal sealed class RouteMoveSubjectResolver
         SourceCatalogueReader catalogueReader,
         SourceReferenceResolver referenceResolver,
         SourceRouteFactsResolver routeFactsResolver,
-        RouteMoveNavigationExposureReader exposureReader,
+        RouteNavigationExposureReader exposureReader,
         FileExpectationValidator expectationValidator)
     {
         _selector = new RouteMoveSubjectSelector(
@@ -35,11 +37,11 @@ internal sealed class RouteMoveSubjectResolver
     }
 
     internal async ValueTask<RouteMoveSubjectResolution> ResolveAsync(
-        RouteMoveSubjectResolutionRequest request,
+        RouteMoveRequest request,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
-        var selection = await _selector.SelectAsync(request.Request, cancellationToken)
+        var selection = await _selector.SelectAsync(request, cancellationToken)
             .ConfigureAwait(false);
         if (selection.Boundary is { } boundary)
         {
@@ -87,10 +89,10 @@ internal sealed class RouteMoveSubjectResolver
             results.Add(new RouteMoveResolvedLayer { Layer = layer, Snapshot = snapshot });
         }
 
-        return results.ToImmutableArray();
+        return [.. results];
     }
 
-    private async ValueTask<Framework.Mutation.Models.Filesystem.FileStateSnapshot?> ReadLayerAsync(
+    private async ValueTask<Framework.Mutation.Models.Filesystem.Files.FileStateSnapshot?> ReadLayerAsync(
         CliWorkspace workspace,
         SourceDocumentReader reader,
         SourceDocumentSnapshotReader snapshotReader,
@@ -99,7 +101,7 @@ internal sealed class RouteMoveSubjectResolver
     {
         var read = await reader.ReadAsync(layer, cancellationToken).ConfigureAwait(false);
         if (read.Verification.State != SourceLayerVerificationState.Verified
-            || read.Read?.State != Framework.Filesystem.TypedReads.FileReadState.Complete)
+            || read.Read?.State != Framework.Filesystem.TypedReads.Models.FileReadState.Complete)
         {
             return null;
         }

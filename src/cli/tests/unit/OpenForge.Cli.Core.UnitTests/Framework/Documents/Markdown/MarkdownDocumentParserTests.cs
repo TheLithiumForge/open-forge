@@ -3,6 +3,8 @@ using Markdig.Extensions.AutoIdentifiers;
 using Markdig.Syntax;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Markdown;
 

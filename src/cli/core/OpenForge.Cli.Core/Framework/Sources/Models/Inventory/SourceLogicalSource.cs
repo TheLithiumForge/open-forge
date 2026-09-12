@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+
 namespace OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 internal sealed class SourceLogicalSource
@@ -18,7 +20,7 @@ internal sealed class SourceLogicalSource
         if (overwrite is not null)
         {
             if (overwrite.Kind != SourceLayerKind.Overwrite
-                || !string.Equals(overwrite.CanonicalPath, ReadAdjacentOverwritePath(@base.CanonicalPath), StringComparison.Ordinal))
+                || !string.Equals(overwrite.CanonicalPath, SourceOverwritePath.ReadAdjacentPath(@base.CanonicalPath), StringComparison.Ordinal))
             {
                 throw new ArgumentException("The overwrite layer must be the exact adjacent companion of the base.", nameof(overwrite));
             }
@@ -34,9 +36,4 @@ internal sealed class SourceLogicalSource
     internal SourceLayer Base { get; }
 
     internal SourceLayer? Overwrite { get; }
-
-    private static string ReadAdjacentOverwritePath(string canonicalBasePath)
-    {
-        return canonicalBasePath[..^".md".Length] + ".overwrite.md";
-    }
 }

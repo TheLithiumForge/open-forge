@@ -1,6 +1,7 @@
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Markdown;
 
@@ -136,15 +137,4 @@ internal static class MarkdownInlineFactCollector
             visibleText.Add(new MarkdownVisibleTextFact(documentSpan));
         }
     }
-}
-
-internal sealed class MarkdownInlineFactCollections
-{
-    internal List<MarkdownVisibleTextFact> VisibleText { get; } = [];
-
-    internal List<MarkdownOpaqueSpan> OpaqueSpans { get; } = [];
-
-    internal List<MarkdownLinkFact> Links { get; } = [];
-
-    internal List<MarkdownLinkFact> Images { get; } = [];
 }
