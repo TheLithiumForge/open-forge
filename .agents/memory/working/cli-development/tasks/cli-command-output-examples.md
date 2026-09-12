@@ -6,6 +6,16 @@ open-forge:
 
 # CLI Output Review Gallery
 
+## Latest View And Colour Analysis
+
+The user endorses the natural human style. The
+[views, JSON and colour analysis](cli-view-format-color-analysis.md) now compares
+compact output for people and AI, explicit compact JSON projections and optional
+terminal colour. These additions remain proposals. Earlier promises to preserve
+full JSON apply to the human-only implementation stages; a JSON-view change
+requires its own approved contract and qualification. There is no automatic view
+fallback and no separate AI view is recommended.
+
 ## How To Review
 
 These are proposed human layouts for all 28 commands, using small illustrative

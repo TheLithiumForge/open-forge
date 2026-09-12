@@ -24,14 +24,16 @@ presentation surface audit is done; broad renderer changes and deduplication are
 not implemented. Six mutation-command comparisons expose ignored view selection
 and missing Library affected-path details.
 
-The [per-command output proposal](../cli-development/tasks/cli-command-output-proposals.md)
-and [28-command example gallery](../cli-development/tasks/cli-command-output-examples.md) are ready
-for user review. Warning/error/info was an illustrative idea, not a required
-vocabulary or flag. Preserve existing statuses; improve grouping and compact/
-expanded views first. No new filter is selected or required for this work.
-No renderer or public contract is changed yet. User approval precedes updates
-to each affected command Interface and frozen implementation snapshots.
-Next: review the examples with the user, then implement approved sets sequentially.
+The user endorses the natural expanded style in the
+[28-command gallery](../cli-development/tasks/cli-command-output-examples.md). The new
+[views, JSON and colour analysis](../cli-development/tasks/cli-view-format-color-analysis.md)
+recommends two explicit views, with compact serving people and AI; an additional
+AI view is not needed. Compact JSON projections and automatic terminal colour
+are proposed contract changes, not implemented behavior or approved defaults.
+Current view selection has no automatic fallback and JSON still ignores view.
+Next: review these added choices and freeze exact compact examples for the first
+Doctor/Status set. Update approved Interfaces before sequential implementation.
+Keep complete JSON/status/effects unchanged during the human-only stages.
 Parsing simplifications P2–P6 remain backlog. Reusable CLI UX/development Guidance
 and CLI/C# Directive consolidation remains the final stage.
 
