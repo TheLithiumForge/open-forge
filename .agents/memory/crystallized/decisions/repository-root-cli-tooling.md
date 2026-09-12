@@ -17,6 +17,14 @@ could run.
 
 ## Decision
 
+The root `package.json` supplies the ordinary local and CI command interface.
+Small TypeScript scripts invoke the standard .NET tools, prepare tested native
+artifacts and synchronize one product version across package shims. Native
+delivery uses Node/npm and root `scripts/` coordination tooling. The retired MVP
+and its build scripts remain in Git history. Public
+release belongs to the pipeline. Local commands stop at built, tested and packed
+artifacts that can be copied to a matching supported host.
+
 The repository root owns `OpenForge.Cli.slnx`, `global.json`, `NuGet.Config`,
 `Directory.Build.props`, and `Directory.Packages.props`. Replacement source,
 projects, and tests remain below `src/cli/`. All .NET output uses the ignored root
@@ -71,8 +79,9 @@ shell profiles or IDE launch configuration.
 
 ## Consequences
 
-- Root `dotnet restore`, `dotnet build`, and `dotnet test` are the ordinary
-  developer workflow.
+- Root `npm run restore`, `npm run build`, and `npm test` are the ordinary
+  developer workflow. The underlying root .NET solution remains available to
+  IDEs and direct tool use.
 - IDE test runners build the EndToEnd project and receive the same local
   publication.
 - Root `artifacts/` is the only .NET output boundary.
@@ -81,7 +90,8 @@ shell profiles or IDE launch configuration.
   than arbitrary ambient paths.
 - Native AOT remains explicit evidence and is never implied by the development
   publication.
-- Local-link rollback removes the known npm links from the owning repository.
+- Local unlink removes the known global npm links. The private tooling package
+  does not need a repository-local npm dependency link.
   An explicitly owned user-local PATH bridge is removed only after its exact
   target is resolved and revalidated.
 

@@ -122,7 +122,7 @@ metadata that is operationally important even though it is not runtime meaning.
 ### Frozen Executable
 
 - [CLI MVP Architecture](../../documents/cli/mvp-architecture.md)
-- [Frozen MVP Extension implementation](../../../../../src/cli-mvp/cli.ts)
+- `git show c4428a90:src/cli-mvp/cli.ts`
 
 ### Current Catalogue
 

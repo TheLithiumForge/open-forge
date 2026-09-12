@@ -1,0 +1,23 @@
+name: Package linux
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: true
+      build_run_id:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  package:
+    uses: ./.github/workflows/release-package.yml
+    with:
+      ref: ${{ inputs.ref }}
+      build_run_id: ${{ inputs.build_run_id }}
+      matrix: '{"include":[{"rid":"linux-x64","runner":"ubuntu-24.04","architecture":"x64"},{"rid":"linux-arm64","runner":"ubuntu-24.04-arm","architecture":"arm64"}]}'

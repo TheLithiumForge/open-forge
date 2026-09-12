@@ -6,6 +6,15 @@ open-forge:
 
 # CLI Development Checkpoint
 
+## Current Delivery Continuation
+
+Task 13 is active at phase 3/3, milestone 5/6 on
+`codex/streamlined-delivery`. The [Task continuation](../cli-development/tasks/delivery/02-native-ci.md#delivery-simplification-continuation)
+owns the shared-script/version/workflow changes, current evidence, review fixes,
+and accepted root-scripts/global-link extension. The [control ledger](../cli-development/project-control.md)
+owns queue state. Task 27 remains complete and Task 28 continues in the other
+chat. Preserve its sources and notes.
+
 ## Current Beta Closeout
 
 Task 27 is complete at phase 4/4, milestone 8/8. The bounded beta implementation,

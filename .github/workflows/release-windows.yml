@@ -1,0 +1,23 @@
+name: Package windows
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: true
+      build_run_id:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  package:
+    uses: ./.github/workflows/release-package.yml
+    with:
+      ref: ${{ inputs.ref }}
+      build_run_id: ${{ inputs.build_run_id }}
+      matrix: '{"include":[{"rid":"win-x64","runner":"windows-2025","architecture":"x64"},{"rid":"win-arm64","runner":"windows-11-vs2026-arm","architecture":"arm64"}]}'

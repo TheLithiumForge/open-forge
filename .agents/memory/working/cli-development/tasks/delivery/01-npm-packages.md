@@ -6,6 +6,15 @@ open-forge:
 
 # Task 7: npm Package Manager Release and Local Linking
 
+## Delivery Simplification Follow-Up
+
+The approved [Task 13 continuation](02-native-ci.md#delivery-simplification-continuation)
+owns the shared-script, synchronized version and pipeline-only publication
+changes begun on 2026-09-12. Its current capsule supersedes the older version,
+workflow and main-only release constraints below for that bounded change. This
+Task retains its completed historical evidence; no shipping release or remote
+execution is authorized by the follow-up.
+
 ## Task State
 
 - State: ARM64 expansion Complete, phase 4/4, milestone 6/6, after accepted

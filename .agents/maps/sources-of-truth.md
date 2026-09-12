@@ -19,7 +19,7 @@ Route map for this repository's important authoritative sources and representati
 - [current caller-visible shared CLI result envelope, source-location, semantic-status, process-exit, primary-stream, and compatibility coordinates.](../memory/crystallized/documents/cli/contracts/shared/result-coordinates/_result-coordinates.md) - #CurrentTruth #Evergreen #CLI #Replacement #Contract #Result #Document
 - [current cross-command operation conventions for the non-shipping replacement CLI.](../memory/crystallized/documents/cli/shared-operation-contract.md) - #CurrentTruth #Evergreen #CLI #Replacement #Contract #Document
 - [current exact realization designs for shared replacement CLI capabilities.](../memory/crystallized/documents/cli/technical-designs/_technical-designs.md) - #CurrentTruth #Evergreen #CLI #Replacement #TechnicalDesign #Document
-- [current replacement CLI package graph, x64 platform horizon, staging, packing, checksum, proof, and atomic publication boundary.](../memory/crystallized/documents/cli/distribution.md) - #CurrentTruth #Evergreen #CLI #Replacement #Distribution #Document
+- [current replacement CLI package graph, x64 and ARM64 targets, staging, packing, checksums, proof, and publication boundary.](../memory/crystallized/documents/cli/distribution.md) - #CurrentTruth #Evergreen #CLI #Replacement #Distribution #Document
 - [current rationale for replacement CLI dependency roles, central exact-version ownership, and Native AOT constraints.](../memory/crystallized/decisions/cli-dependency-policy.md) - #CurrentTruth #Evergreen #CLI #Replacement #Dependency #Decision
 - [historical frozen CLI MVP role, command surface, deterministic state, safety model, verification boundary, proven properties, and liabilities.](../memory/crystallized/documents/cli/mvp-architecture.md) - #CurrentTruth #Evergreen #Architecture #CLI #MVP #Legacy #Document
 - [active top-down work graph, Task state, and evidence for the greenfield replacement CLI.](../memory/working/cli-development/_cli-development.md) - #Contextual #CLI #Architecture #Plan #Task #Development
@@ -28,16 +28,15 @@ Route map for this repository's important authoritative sources and representati
 - [current public contract for the non-shipping replacement CLI commands, options, safety behavior, outputs, and limitations.](../../docs/cli.md) - #CurrentTruth #Evergreen #Documentation #CLI #Replacement
 - [current maintainer contracts for reviewed source and repository surfaces.](../memory/crystallized/documents/maintenance/_maintenance.md) - #CurrentTruth #Evergreen #Maintenance #Governance #Document
 - [the installable payload users receive; runtime truth for installed workspaces, including this one.](../../src/open-forge/) - #CurrentTruth #Payload
-- [frozen MVP build support retained beside the frozen source, not replacement source.](../../src/cli-mvp/build/) - #CLI #Implementation #MVP #Historical #Build
-- [frozen MVP implementation retained for explicit comparison and existing evidence.](../../src/cli-mvp/cli.ts) - #CLI #Implementation #MVP #Historical
+- [current C# CLI implementation, projects and required resources.](../../src/cli/) - #CLI #Implementation
+- [current repository build, delivery, package and agent tooling.](../../scripts/) - #Tooling #Build
 - [current first-party extension catalogue.](../../src/extensions/README.md) - #CurrentTruth #Extension #Catalogue
 - [bundled first-party extension source packages and manifests.](../../src/extensions/) - #Extension #Implementation
-- [build script](../../build.ts) - #Build
-- [build output; never edit it by hand.](../../dist/) - #Build #Generated
+- [shared local and CI commands](../../package.json) - #Build
+- [build output; never edit it by hand.](../../artifacts/) - #Build #Generated
 - [current repository workflow for changing, verifying, building, packaging, and releasing Open Forge.](../../docs/development.md) - #Documentation #Development
 - [current user and author contract for choosing, installing, creating, updating, and removing Extensions.](../../docs/extensions.md) - #CurrentTruth #Evergreen #Documentation #Extension
 
-The frozen MVP has no active development or verification gate. The replacement
-Architecture is accepted, but the .NET Native AOT CLI remains non-shipping until
-Gate 5 implements every retained command and accepts the complete evidence,
-package, and release proof.
+The retired MVP remains available in Git history at `c4428a90`. All 28 native
+CLI commands are implemented. The current Task records distinguish accepted
+local evidence from matching-host execution and publication still unperformed.

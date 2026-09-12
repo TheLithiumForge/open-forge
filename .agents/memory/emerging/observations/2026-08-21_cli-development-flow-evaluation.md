@@ -6,6 +6,32 @@ open-forge:
 
 # CLI Development Flow Evaluation
 
+## Task 13 Shared Delivery And Repository Cleanup
+
+On 2026-09-12 one continuous Astra/high author implemented the shared npm/TS
+delivery commands, version synchronization and six-target workflows. A separate
+Astra/high review found two ordinary release defects: a pre-existing version tag
+could name another commit, and a numeric prerelease identifier was unsuitable
+as its npm channel. One grouped correction at `737444e0` and the bounded cleanup
+delta review at `b4983d53` closed both findings. The
+[Task receipt](../../working/cli-development/tasks/delivery/02-native-ci.md#delivery-simplification-continuation)
+owns exact scope, commits, assertion mapping and execution limits.
+
+The user then requested root-script placement, old CLI retirement and a real
+global link. That journey exposed unnecessary private-root dependency resolution
+which the existing installed-package fixture did not exercise. Removing that
+extra local link kept the standard three-step npm global flow. Two migrated
+agent-tooling suites preserved 49 assertion sites and eight selections. The
+review caught one residual source-document locator for the other source owner's
+handoff. These are observed task outcomes, not a controlled comparison with Sol
+or Luna. No model-cost or overall-quality advantage is established.
+
+Initial Green receipts were visible only in tool output, so acceptance required
+saved logs. Local sandbox execution also flattened Node child-process results;
+the same probe with approved execution permission exposed named assertions.
+Keep the standard test runner and qualify its actual evidence instead of adding
+a repository-wide sandbox workaround.
+
 ## Task 27 Comprehensive Assessment And First Correction
 
 On 2026-09-10, Astra/high assessors completed disjoint full-body review of all

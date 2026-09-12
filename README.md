@@ -316,7 +316,7 @@ open-forge route inspect .agents/memory/crystallized/documents/_documents.md
 open-forge doctor
 ```
 
-The frozen TypeScript MVP remains in `src/cli-mvp/` as historical reference. Its commands and state formats do not define the native CLI.
+The retired TypeScript MVP remains available in Git history. Its commands and state formats do not define the native CLI.
 
 ## Working Without The CLI
 

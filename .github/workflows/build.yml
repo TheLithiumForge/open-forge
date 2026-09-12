@@ -1,0 +1,159 @@
+name: Build
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_MULTILEVEL_LOOKUP: "0"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "1"
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24.19.0"
+          package-manager-cache: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.111"
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run check:delivery
+      - run: npm run test:delivery
+      - run: npm run test:package-layout
+      - run: npm run test:package-manager
+      - run: npm run restore
+      - run: npm run check:dotnet
+
+  build:
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { rid: linux-x64, runner: ubuntu-24.04, architecture: x64 }
+          - { rid: linux-arm64, runner: ubuntu-24.04-arm, architecture: arm64 }
+          - { rid: osx-x64, runner: macos-15-intel, architecture: x64 }
+          - { rid: osx-arm64, runner: macos-15, architecture: arm64 }
+          - { rid: win-x64, runner: windows-2025, architecture: x64 }
+          - { rid: win-arm64, runner: windows-11-vs2026-arm, architecture: arm64 }
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24.19.0"
+          architecture: ${{ matrix.architecture }}
+          package-manager-cache: false
+      - name: Isolate SDK selection
+        run: printf 'DOTNET_INSTALL_DIR=%s/dotnet\nDOTNET_ROOT=%s/dotnet\n' "$RUNNER_TEMP" "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.111"
+          architecture: ${{ matrix.architecture }}
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run restore
+      - name: Build and preserve diagnostics
+        run: |
+          mkdir -p artifacts/delivery/logs/${{ matrix.rid }}
+          npm run build:native -- --rid ${{ matrix.rid }} 2>&1 | tee artifacts/delivery/logs/${{ matrix.rid }}/build.log
+      - name: Archive complete prebuilt closures
+        run: tar -cf build-${{ matrix.rid }}.tar artifacts/delivery/${{ matrix.rid }} artifacts/publish/open-forge-dev/Release artifacts/publish/${{ matrix.rid }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: build-${{ matrix.rid }}.tar
+          archive: false
+          if-no-files-found: error
+          retention-days: 7
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: failure()
+        with:
+          name: build-failure-${{ matrix.rid }}
+          path: artifacts/delivery/logs/${{ matrix.rid }}
+          retention-days: 7
+
+  test:
+    needs: build
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { rid: linux-x64, runner: ubuntu-24.04, architecture: x64 }
+          - { rid: linux-arm64, runner: ubuntu-24.04-arm, architecture: arm64 }
+          - { rid: osx-x64, runner: macos-15-intel, architecture: x64 }
+          - { rid: osx-arm64, runner: macos-15, architecture: arm64 }
+          - { rid: win-x64, runner: windows-2025, architecture: x64 }
+          - { rid: win-arm64, runner: windows-11-vs2026-arm, architecture: arm64 }
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24.19.0"
+          architecture: ${{ matrix.architecture }}
+          package-manager-cache: false
+      - name: Isolate SDK selection
+        run: printf 'DOTNET_INSTALL_DIR=%s/dotnet\nDOTNET_ROOT=%s/dotnet\n' "$RUNNER_TEMP" "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.111"
+          architecture: ${{ matrix.architecture }}
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: build-${{ matrix.rid }}.tar
+          skip-decompress: true
+          digest-mismatch: error
+      - run: tar -xf build-${{ matrix.rid }}.tar
+      - name: Test and preserve diagnostics
+        run: |
+          mkdir -p artifacts/delivery/logs/${{ matrix.rid }}
+          npm run test:built -- --rid ${{ matrix.rid }} 2>&1 | tee artifacts/delivery/logs/${{ matrix.rid }}/test.log
+      - name: Archive tested closures and reports
+        run: tar -cf tested-${{ matrix.rid }}.tar artifacts/delivery/${{ matrix.rid }} artifacts/publish/open-forge-dev/Release artifacts/publish/${{ matrix.rid }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          path: tested-${{ matrix.rid }}.tar
+          archive: false
+          if-no-files-found: error
+          retention-days: 7
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: failure()
+        with:
+          name: test-failure-${{ matrix.rid }}
+          path: |
+            artifacts/delivery/logs/${{ matrix.rid }}
+            artifacts/delivery/${{ matrix.rid }}/reports-*
+          retention-days: 7

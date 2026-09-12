@@ -1,0 +1,133 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Commit or ref to release
+        type: string
+        default: main
+      target:
+        description: Publication destination
+        type: choice
+        options: [github, npm, all]
+        default: all
+      build_run_id:
+        description: Optional successful Build run for the exact selected commit
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  select:
+    runs-on: ubuntu-24.04
+    outputs:
+      sha: ${{ steps.selection.outputs.sha }}
+      version: ${{ steps.selection.outputs.version }}
+      target: ${{ steps.selection.outputs.target }}
+      build_run_id: ${{ steps.selection.outputs.build_run_id }}
+      channel: ${{ steps.selection.outputs.channel }}
+      prerelease: ${{ steps.selection.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24.19.0"
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - id: selection
+        run: node scripts/ci/prepare-release.ts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_name || '' }}
+          RELEASE_TARGET: ${{ inputs.target || vars.RELEASE_TARGET || 'all' }}
+          BUILD_RUN_ID: ${{ inputs.build_run_id }}
+
+  build:
+    needs: select
+    if: needs.select.outputs.build_run_id == ''
+    uses: ./.github/workflows/build.yml
+    with:
+      ref: ${{ needs.select.outputs.sha }}
+
+  linux:
+    needs: [select, build]
+    if: ${{ !cancelled() && needs.select.result == 'success' && (needs.build.result == 'success' || needs.build.result == 'skipped') }}
+    uses: ./.github/workflows/release-linux.yml
+    with:
+      ref: ${{ needs.select.outputs.sha }}
+      build_run_id: ${{ needs.select.outputs.build_run_id || github.run_id }}
+
+  macos:
+    needs: [select, build]
+    if: ${{ !cancelled() && needs.select.result == 'success' && (needs.build.result == 'success' || needs.build.result == 'skipped') }}
+    uses: ./.github/workflows/release-macos.yml
+    with:
+      ref: ${{ needs.select.outputs.sha }}
+      build_run_id: ${{ needs.select.outputs.build_run_id || github.run_id }}
+
+  windows:
+    needs: [select, build]
+    if: ${{ !cancelled() && needs.select.result == 'success' && (needs.build.result == 'success' || needs.build.result == 'skipped') }}
+    uses: ./.github/workflows/release-windows.yml
+    with:
+      ref: ${{ needs.select.outputs.sha }}
+      build_run_id: ${{ needs.select.outputs.build_run_id || github.run_id }}
+
+  publish:
+    needs: [select, linux, macos, windows]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.select.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24.19.0"
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: package-*
+          path: artifacts/release-input
+          digest-mismatch: error
+      - run: node scripts/ci/collect-packages.ts artifacts/release-input artifacts/release
+      - name: Publish six platform packages before the main package
+        if: needs.select.outputs.target == 'npm' || needs.select.outputs.target == 'all'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION: ${{ needs.select.outputs.version }}
+          CHANNEL: ${{ needs.select.outputs.channel }}
+        run: |
+          for platform in linux-x64 linux-arm64 darwin-x64 darwin-arm64 win-x64 win-arm64; do
+            npm publish "artifacts/release/thelithiumforge-open-forge-$platform-$VERSION.tgz" --access public --tag "$CHANNEL"
+          done
+          npm publish "artifacts/release/thelithiumforge-open-forge-$VERSION.tgz" --access public --tag "$CHANNEL"
+      - name: Publish GitHub release
+        if: needs.select.outputs.target == 'github' || needs.select.outputs.target == 'all'
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: v${{ needs.select.outputs.version }}
+          target_commitish: ${{ needs.select.outputs.sha }}
+          prerelease: ${{ needs.select.outputs.prerelease == 'true' }}
+          fail_on_unmatched_files: true
+          files: |
+            artifacts/release/*.tar.gz
+            artifacts/release/SHA256SUMS

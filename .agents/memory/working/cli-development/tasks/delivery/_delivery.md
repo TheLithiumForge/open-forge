@@ -6,6 +6,15 @@ open-forge:
 
 # CLI Delivery
 
+## Delivery Simplification Continuation
+
+The maintainer approved shared local/CI build, test and packaging commands,
+synchronized versioning and pipeline-only releases on 2026-09-12.
+[Task 13](02-native-ci.md#delivery-simplification-continuation) owns this new
+bounded continuation. Its current capsule supersedes earlier workflow/
+version constraints for this change only. Earlier completed horizons and
+the local-only external-effect boundary remain intact.
+
 ## Task State
 
 - State: Complete locally; Tasks 13 and 22 are squash-integrated at `3bf03e0e`.

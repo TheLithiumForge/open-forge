@@ -704,13 +704,28 @@ gaps, staging, packing, checksums, and proof ownership are defined by
 [Distribution](distribution.md). Additional support and supply-chain claims
 require explicit acceptance.
 
-CI keeps separate native build and test matrices for the six accepted targets.
-A manual artifact workflow reuses verification within the same run, then stages
-and invokes packages from the exact tested native files before collecting the
-complete graph. Workflow YAML owns scheduling and direct tool commands. Focused
-TypeScript under `src/cli/ci/` owns only host, receipt, checksum and evidence
-qualification; its tests remain in the nearest `__tests__/` scope. It is not
-CLI domain code and introduces no production dependency or general CI framework.
+The root package.json scripts own the repeatable local and CI build, test,
+version and package commands. Focused TypeScript under `scripts/delivery/`
+coordinates the standard .NET, Node and npm tools. Package-manager source owns
+shim layout and staging under `scripts/package-managers/`; pipeline-only helpers under `scripts/ci/` own release
+preparation. Tests stay beside each tooling boundary in focused projects.
+These scripts contain no CLI domain behavior or general build framework.
+`src/cli/` contains only C# implementation, projects and their required resources.
+Maintained repository agent tooling belongs under `scripts/agent-tooling/`.
+
+CI keeps separate native build and test matrices for all six accepted targets,
+with platform-independent checks once. Reusable platform packaging workflows
+consume the tested artifacts, and one release coordinator handles manual or
+version-tag publication to the selected implemented destinations. Workflow YAML
+owns runners, scheduling, artifact transfer and external publication; its build,
+test and package steps call the same root scripts as local development.
+
+Root package.json owns one product version. Standard npm version handling and a
+small synchronization utility set that exact version in .NET and every existing
+shim. Builds stamp the selected version before compilation. Optional SHA builds
+change only the produced artifact version. Tests, packages and releases consume
+that identity rather than supplying a second version. A release may reuse a
+successful build only for the selected source commit and version.
 
 Build jobs preserve complete managed test closures before native publication
 and a separate managed-public-on-native closure afterward. Test jobs consume
@@ -752,7 +767,7 @@ the complete retained command set, accepted package graph and platform target,
 documentation, and release evidence are accepted together.
 
 The exact six-target package graph, platform horizon, implementation state,
-synchronized versions, staging, packing, checksums, proof ownership, and atomic
+synchronized versions, staging, packing, checksums, proof ownership, and complete
 publication boundary live in [CLI Distribution](distribution.md). New RIDs,
 architectures, operating systems, libc variants, channels, signatures, SBOM,
 provenance, OIDC attestation, or support-floor claims require a later explicit

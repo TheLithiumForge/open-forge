@@ -6,6 +6,15 @@ open-forge:
 
 # Task 22: Final Documentation, Acceptance, and Release
 
+## Delivery Simplification Follow-Up
+
+The approved [Task 13 continuation](02-native-ci.md#delivery-simplification-continuation)
+owns the shared-script, synchronized version and pipeline-only publication
+changes begun on 2026-09-12. Its current capsule supersedes the older version,
+workflow and main-only release constraints below for that bounded change. This
+Task retains its completed historical evidence; no shipping release or remote
+execution is authorized by the follow-up.
+
 ## Task State
 
 - State: Complete and squash-integrated under the accepted local-only horizon.

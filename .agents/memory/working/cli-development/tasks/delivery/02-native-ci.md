@@ -6,6 +6,289 @@ open-forge:
 
 # Task 13: Native CI and Reproducible Artifacts
 
+## Delivery Simplification Continuation
+
+- State: Active on `codex/streamlined-delivery` from local baseline
+  `ae433e200123f59ebc35d4a88c98167edee8e474`, tree
+  `c21012fd024d22c39996d5b96d16dd89bdea6e91`.
+- Current phase: 3/3. Completed milestones: 5/6.
+- Owner: Astra Overseer; Astra/high author and fresh reviewer completed.
+- Authority: The maintainer approved the complete shared-script and pipeline
+  proposal on 2026-09-12. This continuation includes the directly required
+  version/package changes formerly mapped to Tasks 7/22; their earlier
+  completion receipts remain historical, not new execution evidence.
+
+### Outcome And Execution Capsule
+
+Deliver one simple package-script interface for local development and all six
+native CI targets. Local build, test and pack commands create portable artifacts;
+only the release pipeline publishes externally. Use the accepted delivery
+simplification in the project ledger. Standard profile, with explicit frozen
+CLI behavior and focused Red evidence for new version/artifact behavior. Keep
+production changes and test-policy removals reviewable as coherent commits.
+
+The project is a local developer tool. This change affects regenerable build
+outputs and version-controlled tooling. Ordinary command failure, stale or
+mismatched artifacts, incomplete platform sets and package-version drift are the
+supported risks. Standard npm, Node, .NET and Actions mechanisms suffice;
+exceptional machinery: none. No new runtime dependency or CLI behavior is needed.
+
+Root package.json owns the version. Use native npm version handling without
+commits/tags, then synchronize the exact resulting value to .NET and every
+implemented shim. Optional SHA builds derive a prerelease version without
+editing tracked versions. Builds stamp the version before compilation. Tests,
+packaging and release consume that identity. Reject missing or mismatched
+artifacts; preserve native bytes between stages. Build/test/pack operate for the
+current native host by default. Full CI always covers the accepted six targets.
+
+Use short reusable platform packaging workflows and one release coordinator.
+Manual invocation accepts a ref/commit and destination github/npm/all; automatic
+version-tag invocation uses the configured destination, default all. A tag must
+match the committed version. Reuse a successful build for the exact selected
+commit when supplied; otherwise call the same build workflow once. Never reuse
+an unrelated or failed build, or rebuild inside test/package/publication jobs.
+GitHub creation and registry publication stay pipeline-only. Publication must
+wait for complete package preparation; npm platform packages precede the main
+package. No claim of a cross-registry transaction is made.
+
+Expected paths: package.json and its dependency lock, Directory.Build.props,
+focused root scripts delivery/CI and package-manager TypeScript tooling/tests,
+.github/workflows, and directly affected development/distribution prose.
+Protected: CLI C# source and behavioral tests, src/open-forge,
+src/extensions, unrelated Markdown/Task 28 work, other worktrees, and all
+existing evidence. Report a required protected-path change before proceeding.
+No Python or authored JS/MJS/CJS, no dependency downloads, remote Git/GitHub
+operations, hosted runs or publication during this task. The accepted cleanup
+extension below separately authorizes the current native global link.
+
+Review budget: one fresh Astra/high whole-change review D13-R1 and one
+user-scope-extension delta review D13-R2.
+Correction budget: one grouped cycle D13-C1, rechecked at affected boundaries.
+Council budget: zero. Consumed IDs: D13-R1, D13-C1 and D13-R2. D13-R2 reviews cleanup candidate
+`b4983d53`, tree `420a32a46`, including the earlier release corrections. D13-R1 was assigned to the fresh whole-change
+review of candidate `a446897d`, tree `63980a39`, against baseline `ae433e20`.
+
+### Accepted Repository Cleanup Extension
+
+On 2026-09-12 the maintainer required coordination scripts under root
+`scripts/`, C# implementation and required .NET resources only under
+`src/cli/`, removal of unused scripts/package entries, a current managed-marker
+check, and explicit global linking of the new CLI. This supersedes the prior
+local-link prohibition only for the current native CLI and its known npm links.
+Remote operations, downloads, hosted runs and publication remain prohibited.
+
+Move delivery, CI, npm staging/launcher tooling and maintained agent tooling
+into cohesive children of `scripts/`; update their real consumers and scoped
+compiler projects. Preserve C# behavior/tests, Framework/Extension source and
+all unrelated Markdown. Remove obsolete MVP build entrypoints and unused
+package dependencies after inspecting their consumers. The old CLI can be
+retired once the refreshed native link is verified; retain its history in Git.
+
+M4 includes qualification through the final script paths and M6 includes the
+verified global link. The fixed phase/milestone horizon remains 3 phases and
+6 milestones. Review budget increases to two because the user added a new
+placement/linking boundary after the first immutable review: D13-R2 is a focused
+delta review of that boundary, not a repetition of D13-R1. D13-C1 groups the two
+accepted release-selection fixes. Root owns live placement and documentation;
+the implementation owner prepares C1 in isolated draft files while current
+build artifacts remain frozen.
+
+### Evidence And Fixed Horizon
+
+1. Phase 1: M1 freeze the accepted behavior, script/artifact interfaces and
+   focused failure evidence against the inspected baseline.
+2. Phase 2: M2 implement shared commands/version/packaging; M3 implement the
+   six-target workflows and pipeline-only release coordinator.
+3. Phase 3: M4 pass tooling checks and the complete managed/Linux native and
+   actual packed-install journeys through the new commands; M5 pass fresh
+   review and grouped corrections; M6 finish documentation, exact local
+   integration and the changes/findings/evidence record.
+
+Use separate focused Node test projects for pure version/artifact checks and
+real filesystem/package integration. Do not retain upstream parser/OS tests or
+hand-maintained C# case inventories. Runner failures, missing/empty evidence,
+required suite execution and relevant warnings/skips remain failures. Retain
+normal test reports and compact SHA/version/RID/artifact hashes. The build/package
+boundary triggers the complete managed plus supported Linux AOT gate once the
+implementation is coherent. Other native hosts receive static review only,
+as accepted by the maintainer; hosted execution and shipping remain unclaimed.
+
+The seven-package graph and all current C# behavior/tests are frozen at the
+baseline. Existing Task 27 receipts supply only the starting runtime baseline.
+Current scripts must produce fresh ending evidence. Preserve the prior CI helper
+behavior that protects owned outcomes, and explicitly account for obsolete
+host probes and exact-count/hash test bookkeeping replaced by standard results.
+
+### Observations
+
+D13-O1: The local execution sandbox flattened Node process-isolated test
+reports to file-level results and omitted child output. The identical two-test
+probe outside the sandbox reported two named assertions. Keep the standard
+Node runner; use approved execution permission for local child-process evidence
+rather than adding a repository-wide isolation workaround. The five Red
+assertions were independently visible against callable stubs before Green.
+
+### Progress
+
+Done: Final `b4983d53` qualification passed all 6997 C# executions, 32 tooling
+tests, installed-native npm and portable extraction journeys; review passed.
+The simplified global-link command exited zero and exposes the exact qualified
+version/native hash.
+Now: Phase 3, milestone 5/6; documentation/evidence closure and local integration.
+Next: Freeze the final metadata, squash into current local develop and verify
+exact tree equality.
+Blocker: None. Foreign-host execution and public release remain unclaimed.
+
+### Final Qualification And Remaining Work
+
+The final code/tooling candidate is `b4983d53f154261371e38cdd0c0f915933013c0d`,
+tree `420a32a467a1936237ee4346244a4eb66bd895d4`. Its SHA build version is
+`0.0.0-dev.sha-b4983d53f154261371e38cdd0c0f915933013c0d`. Subsequent closeout
+changes touch only prose/coordination, not executable or package inputs.
+
+The canonical saved receipt is
+`artifacts/task13-simplification/final-qualification/qualification.json`;
+that directory preserves all six standard test reports. Root npm commands
+passed offline restore, C# formatting/diagnostics, native build, prebuilt tests,
+packing and global linking. Both build summaries reported zero warnings/errors.
+
+| Selection | Passed |
+| --- | ---: |
+| Unit | 3228 |
+| Managed Integration | 1718 |
+| Managed public E2E | 111 |
+| Native Integration | 1718 |
+| Native public E2E | 111 |
+| Managed public E2E on native CLI | 111 |
+| Delivery/CI helpers | 16 |
+| Agent tooling | 8 |
+| npm package layouts | 7 |
+| Installed npm fixture | 1 |
+
+The C# rows are repeated execution of shared suites under supported build modes,
+not 6997 distinct behaviors. All rows have zero failures/skips. The real packed
+native npm journey is separate from the installed fixture row. Native publication,
+packed npm, extracted portable execution and the global command share SHA256
+`bca2542b7dadc6ee32a68d7fd4a9681b7cbfff07c39c2d281d96ff6c1575ce5a`.
+The final package directory is `artifacts/delivery/linux-x64/packages-nExnNk`.
+
+Strict root/focused TS projects, root/delivery lint, delivery formatting, C#
+formatting and warning diagnostics passed. Final YAML parsed through Prettier;
+all 26 Bash blocks passed syntax and ShellCheck. `D13-R1`, grouped `D13-C1`
+and focused `D13-R2` are closed. C# core/root/tests and Framework/Extension
+payload source match the starting `ae433e20` baseline exactly. All removed
+legacy files have Git identities; every moved and formerly untracked authored
+file is included in the reviewed commits. No Python or authored JS/MJS/CJS was
+introduced. `src/cli` has C# source/tests, required .NET resources/projects and
+its preserved test README; TypeScript tooling is under root `scripts/`.
+
+Remaining outside this local acceptance horizon: execute the five other native
+hosts when authorized; enable publication credentials and perform a separately
+authorized release; let Task 28's source owner correct the one README locator
+recorded below. Broader C# refactoring remains deferred under Task 27's beta
+closeout. No remote operation, hosted run, download or publication occurred.
+
+### Current Cleanup And Qualification Checkpoint
+
+The first full candidate `a446897d` passed all six selections: 3228 Unit,
+1718 managed Integration, 111 managed public, 1718 native Integration, 111 native
+public and 111 managed public on native (6997 executions, zero failure/skip).
+Native publication had zero warnings/errors. The actual installed npm journey
+and extracted portable executable passed with identical native SHA256
+`065995dc64f53fe1281d4f9c32c725f5baaf926e654a755e5d40f7c48d497d5e`.
+The full initial receipt is
+`artifacts/task13-simplification/initial-qualification/qualification.json`.
+
+D13-R1 found two material release-selection defects. Both are fixed in isolated
+commit `737444e0`: an existing version tag must resolve to the selected commit,
+and numeric prereleases use npm channel `next`. The correction has focused
+matching/mismatching/annotated/missing-tag and ordinary request-failure evidence.
+Its isolated patch and receipts remain under
+`artifacts/task13-simplification/correction-draft/`.
+
+Commit `c4428a90` migrated two maintained agent-tooling test files to Node while
+preserving all 49 assertion sites and eight selections. The mapping and receipts
+remain under `artifacts/task13-simplification/agent-test-draft/`.
+The following placement moves and package cleanup preserve the C# implementation
+and assertions. All relocated helper evidence passed: delivery16, agent tooling8,
+package layout7 and installed fixture1. Strict root/delivery projects passed.
+Final exact-path native qualification and D13-R2 subsequently passed as recorded above.
+
+The first global-link invocation completed global package links but failed at
+its unnecessary final repository dependency-link step because offline npm tried
+to resolve an uncached development dependency. The global command nevertheless
+matched the qualified native version and exact hash above. The root/staged
+unlink coupling was removed from the helper, and the two previously known
+repository-local symlinks were verified, recorded and removed. Final execution
+of the simplified global link subsequently passed as recorded above. No dependency was downloaded.
+
+The legacy CLI/build retirement covers exactly ten unchanged tracked TypeScript
+files, recorded with blob identities in
+`artifacts/task13-simplification/retired-scripts.txt`. Their last active snapshot
+is `c4428a90`; every Markdown document is preserved. Current source and map
+references now point to native C# and root scripts; historical MVP references
+use the retained Git snapshot. Required .NET project/resource files stay in
+`src/cli/`; there is no TypeScript implementation there.
+
+The marker inspection personally read the complete current C# directive trio:
+`_csharp.md` SHA256 `31045ebcb02d5bfeee8ba9f3112d307b1f72a2186cda618fbf7d22e7d1d90b53`,
+`design.md` `76aa8fc7aaaa79d9535998f5557150f3754e3d80520a7a06864b61659373c1a9`,
+`style.md` `c3fa9d31575e77fedb103ca397f0ccf10ab7236e6edbef1658c7fe36138457cb`.
+`FrameworkContentIdentity` still recognizes the `open-forge:start` and
+`open-forge:end` managed-host comments; Install/Update use that recognition and
+existing Integration assertions prove the resulting blocks and preserved bytes.
+No C# source or contract changed.
+
+D13-O2: The real global-link journey exposed dependency resolution caused by a
+repository-local npm link in a private tooling root. The existing offline package
+fixture did not exercise that extra step. Keep globally installed package linking
+independent of the repository development dependency graph.
+
+D13-O3: Astra/high produced the coherent tooling implementation and a fresh review
+that found one additional normal-use prerelease defect beyond the author's tag
+finding. Two later bounded correction/test-migration packets returned saved
+receipts and assertion mapping. Initial Green receipts existed only in tool
+output, so final acceptance requires explicit saved logs. This is task-specific
+observational evidence, not a controlled Astra/Sol/Luna quality comparison.
+
+D13-R2 passed the focused delta at `b4983d53`, tree `420a32a46`. It confirmed
+relocated consumers/compiler projects, preserved agent assertions, scoped dependency
+removal and the simplified three-step global link. D13-R1-F1/F2 are closed.
+Root also passed all 26 final workflow Bash blocks through syntax and ShellCheck,
+plus full root lint. No hosted workflow was executed.
+
+One nonblocking source-chat handoff remains: in
+`src/extensions/orchestration/README.md`, replace the literal
+`src/agent-tooling/review/inspect-git-objects.ts` with
+`scripts/agent-tooling/review/inspect-git-objects.ts`. The actual OpenCode bridge
+is already correct. Leave that protected Extension prose to its existing owner.
+
+The two inspected obsolete generated files `dist/cli.mjs` and
+`.temp/cli/embedded-assets.generated.ts` were removed after recording their
+hashes in `artifacts/task13-simplification/retired-build-outputs.json`. Nearby
+Markdown, transfer packets and other existing evidence remain preserved.
+
+### Evidence Replacement Map
+
+- Host-receipt probes moved to normal setup actions and current-host/RID
+  validation. SDK-directory and upstream host assumptions are no longer tests.
+- Manifest Integration evidence preserves source/version/RID, native byte and
+  required closure checks; per-file mode and absolute-host inventories retired.
+- Standard CTRF qualification plus runner flags preserve nonempty execution,
+  failures, skips, warnings and suite errors. Exact global case counts, deferred
+  case hashes and duplicate subject inventories were removed deliberately.
+- Build/package producer fixtures moved to built-manifest qualification, the
+  unchanged installed-native journey, and actual offline all-six archive/seven
+  package collection. SHA/version/byte mismatches and missing targets still fail.
+- Existing npm layout and installed-fixture assertions remain. The native journey
+  adds a precompiled launcher input while preserving its assertions.
+- New version evidence covers derivation, synchronized manifests, the real npm
+  version hook and lockfile, and absence of a created commit or tag. Release
+  selection covers the exact successful build and beta/stable channel mapping.
+
+
+## Historical Completed Horizon
+
 ## Task State
 
 - State: Complete and squash-integrated under the accepted local-only horizon.

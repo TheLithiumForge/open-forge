@@ -71,7 +71,7 @@ internal payload concepts, or stable effect tags. Those describe contributed
 data, rather than a directory. Path values in them use `content/` when they
 identify source files. Manifest and lifecycle schemas stay unchanged. Installed
 ownership identifies destinations and does not depend on the package folder.
-The frozen legacy `src/cli-mvp/` implementation remains historical and is not
+The retired MVP implementation remains in Git history and is not
 a second supported source format for the replacement CLI.
 
 ## Consumer Permissions

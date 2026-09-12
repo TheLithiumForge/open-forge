@@ -6,6 +6,15 @@ open-forge:
 
 # Replacement CLI Development Plan
 
+## Delivery Simplification Continuation
+
+The maintainer approved shared local/CI build, test and packaging commands,
+synchronized versioning and pipeline-only releases on 2026-09-12.
+[Task 13](tasks/delivery/02-native-ci.md#delivery-simplification-continuation) owns this new
+bounded continuation. Its current capsule supersedes earlier workflow/
+version constraints for this change only. Earlier completed horizons and
+the local-only external-effect boundary remain intact.
+
 ## Bounded C# Beta Closeout
 
 Task 27 is complete at phase 4/4, milestone 8/8. The bounded implementation and

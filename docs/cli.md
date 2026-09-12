@@ -1661,10 +1661,9 @@ canonical path.
 
 ## Legacy CLI
 
-`src/cli-mvp/` contains the frozen source for `open-forge-old`. Neither
-`src/cli-mvp/` nor `open-forge-old` is replacement implementation or contract
-authority. Keep this source frozen during new-CLI development. Do not modify,
-build, test, repair, or extend it.
+The retired `open-forge-old` source and tests are available in Git history at
+`c4428a90`, under their former `src/cli-mvp/` paths. They are historical reference
+and do not define the native CLI's implementation or contracts.
 
 The [historical MVP architecture](../.agents/memory/crystallized/documents/cli/mvp-architecture.md)
 records that implementation's commands and state formats. The native CLI does

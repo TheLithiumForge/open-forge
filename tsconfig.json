@@ -27,6 +27,6 @@
     "allowUnusedLabels": false,
     "skipLibCheck": false
   },
-  "include": ["eslint.config.ts", "src/agent-tooling/**/*.ts", "src/cli-mvp/build/**/*.ts", "src/cli/package-managers/npm/**/*.ts", ".temp/cli/embedded-assets.generated.ts"],
-  "exclude": ["src/agent-tooling/**/*.test.ts"]
+  "include": ["eslint.config.ts", "scripts/**/*.ts"],
+  "exclude": ["scripts/**/*.test.ts"]
 }

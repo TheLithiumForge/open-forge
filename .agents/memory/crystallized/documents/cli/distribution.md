@@ -11,7 +11,7 @@ open-forge:
 
 This document defines the accepted public package graph, platform horizon,
 package identities, staging and packing boundary, checksum ownership, proof
-boundary, and atomic complete-publication rule for the non-shipping replacement
+boundary, and complete-publication rule for the non-shipping replacement
 CLI. It does not claim that every accepted target is implemented or released.
 
 [Task 7](../../../working/cli-development/tasks/delivery/01-npm-packages.md)
@@ -84,6 +84,27 @@ Repository-local `open-forge-dev` publication and local development linking are
 private developer tooling. They are not public package identities, release
 channels, or fallback behavior.
 
+## Versions And Local Artifacts
+
+The root package.json owns the product version. Native npm version handling
+calculates the next version or accepts an explicit version without creating a
+commit or tag. A small TypeScript utility synchronizes that exact value to .NET
+properties, existing shim manifests and exact npm optional dependencies. New
+shims add explicit consumers when implemented; they do not bump independently.
+
+Local build, test and pack commands are the same root package scripts used by
+CI. Native build defaults to the matching host, and optional SHA qualification
+produces a development prerelease without changing tracked versions. The
+artifact manifest records source commit, effective version, RID, binary identity
+and qualification. Dirty local builds remain distinguishable from release
+candidates. Tests and packaging reject missing or mismatched artifacts and
+preserve the native payload bytes.
+
+Portable archives contain the native executable and license for one supported
+OS/architecture. They need no npm installation. npm tarballs contain the thin
+launcher and appropriate native package. All local outputs remain under ignored
+artifacts; public publication is pipeline-only.
+
 ## Staging, Packing, And Checksums
 
 Package-owned tooling stages the main package plus the selected host packages
@@ -99,10 +120,11 @@ journey asserts Open Forge package placement, launcher reachability, argument an
 process handoff, and the candidate version. It does not test npm, Node, the
 operating system, or unrelated CLI command behavior.
 
-SHA-256 manifests bind the exact accepted native executable, packed packages,
-and source archive for the candidate. A checksum pass proves traceable identity
-and integrity. Byte-for-byte reproducibility requires a separate repeated-build
-comparison and is not implied by one manifest.
+SHA-256 manifests bind the exact accepted native executable and packed packages
+to the candidate source commit. GitHub provides source archives for the release
+tag; the pipeline does not create another source archive. A checksum pass proves
+traceable identity and integrity. Byte-for-byte reproducibility requires a
+separate repeated-build comparison and is not implied by one manifest.
 
 Task 7 owns the synchronized six-target package graph, staging and packing,
 and package-owned journeys. Task 13 owns native build and smoke, packed
@@ -115,10 +137,21 @@ release must distinguish the available platform proof from static inspection.
 
 ## Publication Boundary
 
-Public release is one complete atomic product event. No command subset, platform
-subset presented as the complete accepted graph, partial package graph, or
-warning-bearing artifact is published. Every main-package optional dependency
-must be available at the synchronized version when the main package is released.
+The release coordinator supports manual source-ref/commit selection and
+automatic version-tag invocation. Its destination selects GitHub, npm or all
+implemented destinations. All six targets are prepared and tested before any
+publication begins. A supplied build run must be successful, from the expected
+repository/workflow, and match the selected source commit and version; otherwise
+the reusable build workflow produces the candidate once.
+
+GitHub receives one release with the complete portable target set and checksums.
+npm publishes every platform package at the synchronized version before the
+main package. No command subset, platform subset presented as complete,
+partial graph presented as a successful release, or warning-bearing artifact is
+accepted. Publication across packages and services is not a transaction: a
+failure can leave earlier uploads present and requires inspection before retry.
+The replacement is shipping only after all selected destination results agree.
+Prerelease versions use a prerelease channel; stable versions use latest.
 
 Credentials, registry contact, remote publication, signatures, SBOM, provenance,
 OIDC attestation, and support-floor matrices remain outside local preparation

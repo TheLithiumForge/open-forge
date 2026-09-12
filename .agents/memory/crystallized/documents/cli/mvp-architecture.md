@@ -8,9 +8,10 @@ open-forge:
 
 ## Status And Scope
 
-The frozen Open Forge CLI MVP is the previously shipped implementation and an
-explicitly invoked historical reference during replacement work. This document
-defines the coherent view of:
+The retired Open Forge CLI MVP is preserved in Git history at `c4428a90`. Its
+source, tests and build scripts were removed from active tooling after the native
+CLI was qualified and linked. Present-tense descriptions below refer to that
+historical snapshot, not the current workspace. This document preserves:
 
 - The CLI's role in Open Forge
 - Its current commands and internal responsibilities
@@ -55,13 +56,10 @@ The governing invariant is:
 
 ## Frozen Runtime And Distribution
 
-`src/cli-mvp/` contains the frozen TypeScript source for `open-forge-old`, at
-[`src/cli-mvp/cli.ts`](../../../../../src/cli-mvp/cli.ts). It remains directly
-runnable through `bun run cli:old` during replacement development. The
-transitional package build uses this source and the helpers under
-`src/cli-mvp/build/`. Neither `src/cli-mvp/` nor `open-forge-old` is replacement
-implementation or contract authority. The replacement C# implementation is
-currently reset. Its accepted greenfield boundary is below `src/cli/`.
+The historical TypeScript source can be read with
+`git show c4428a90:src/cli-mvp/cli.ts`. Its former build helpers and tests are
+preserved at the same commit. The current C# implementation is under `src/cli/`
+and implements all 28 retained commands; repository tooling is under `scripts/`.
 
 The frozen MVP's build and package facts remain historical MVP context. They do
 not describe the replacement executable, solution, Native AOT output, or
@@ -229,11 +227,11 @@ Closure coverage includes indexing, installation, extension composition, depende
 
 The primary current test sources are:
 
-- [`cli.unit.test.ts`](../../../../../src/cli-mvp/cli.unit.test.ts)
-- [`cli.closure.test.ts`](../../../../../src/cli-mvp/cli.closure.test.ts)
-- [`extension-safety.closure.test.ts`](../../../../../src/cli-mvp/extension-safety.closure.test.ts)
-- [`extensions.integration.closure.test.ts`](../../../../../src/cli-mvp/extensions.integration.closure.test.ts)
-- [`packaged-layouts.closure.test.ts`](../../../../../src/cli-mvp/packaged-layouts.closure.test.ts)
+- `git show c4428a90:src/cli-mvp/cli.unit.test.ts`
+- `git show c4428a90:src/cli-mvp/cli.closure.test.ts`
+- `git show c4428a90:src/cli-mvp/extension-safety.closure.test.ts`
+- `git show c4428a90:src/cli-mvp/extensions.integration.closure.test.ts`
+- `git show c4428a90:src/cli-mvp/packaged-layouts.closure.test.ts`
 
 Tests demonstrate mechanical behavior. They do not prove that agents will interpret or follow the context emitted by the CLI.
 
@@ -310,7 +308,7 @@ Recognition of a `managed route` is still path-based and requires the canonical
 `route` that intentionally adopts the same contract. Generic validation,
 scaffolding, and native Skill indexing use explicit `entrypoint` metadata instead
 of granting behavior from a familiar root `slug` alone. The
-[frozen source](../../../../../src/cli-mvp/cli.ts) defines that historical
+`git show c4428a90:src/cli-mvp/cli.ts` defines that historical
 behavior. The replacement needs an explicit human-readable way to distinguish
 manager-recognized `route` segments from ordinary scope `slugs` instead of
 adding more path-shape exceptions.
@@ -365,7 +363,7 @@ Semantic relevance, remote registries, provider orchestration, and Rune integrat
 - [Replacement Shared Operation Contract](shared-operation-contract.md)
 - [Replacement detailed contracts](contracts/_contracts.md)
 - [Replacement CLI public contract](../../../../../docs/cli.md)
-- [Frozen MVP source](../../../../../src/cli-mvp/cli.ts)
+- `git show c4428a90:src/cli-mvp/cli.ts`
 
 ## Historical Context
 

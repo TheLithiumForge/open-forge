@@ -1,6 +1,6 @@
 import { tool } from "@opencode-ai/plugin";
 
-import { GitObjectInspectionError, GitObjectOperations, inspectGitObjects } from "../../src/agent-tooling/review/inspect-git-objects.ts";
+import { GitObjectInspectionError, GitObjectOperations, inspectGitObjects } from "../../scripts/agent-tooling/review/inspect-git-objects.ts";
 
 export async function executeInspectionRequest(args: unknown, worktree: string) {
   try {

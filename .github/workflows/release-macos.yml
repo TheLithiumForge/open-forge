@@ -1,0 +1,23 @@
+name: Package macos
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: true
+      build_run_id:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  package:
+    uses: ./.github/workflows/release-package.yml
+    with:
+      ref: ${{ inputs.ref }}
+      build_run_id: ${{ inputs.build_run_id }}
+      matrix: '{"include":[{"rid":"osx-x64","runner":"macos-15-intel","architecture":"x64"},{"rid":"osx-arm64","runner":"macos-15","architecture":"arm64"}]}'

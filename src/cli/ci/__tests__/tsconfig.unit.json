@@ -1,5 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "include": ["verify-test-results.test.ts", "host-receipt.test.ts"],
-  "exclude": ["*.integration.test.ts", "*-fixtures.ts"]
-}

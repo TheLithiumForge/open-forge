@@ -1,9 +1,7 @@
-import eslint from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
 import typescriptEslint from "typescript-eslint";
 
 const authoredSourceFiles = ["**/*.{js,mjs,cjs,ts,mts,cts}"];
-const frozenCliBuildFiles = ["src/cli-mvp/build/**/*.ts"];
 const typeOnlyModuleFiles = ["**/*.types.ts"];
 
 const importSyntaxRestrictions = [
@@ -39,28 +37,9 @@ const typeOnlyModuleRestrictions = [
   },
 ];
 
-const typeCheckedFrozenCliBuildConfigs = [...typescriptEslint.configs.strictTypeChecked, ...typescriptEslint.configs.stylisticTypeChecked].map((configuration) => ({
-  ...configuration,
-  files: frozenCliBuildFiles,
-}));
-
 export default typescriptEslint.config(
   {
     ignores: ["artifacts/**", "coverage/**", "dist/**", "node_modules/**", ".agents/memory/archived/**", ".temp/**"],
-  },
-  {
-    ...eslint.configs.recommended,
-    files: frozenCliBuildFiles,
-  },
-  ...typeCheckedFrozenCliBuildConfigs,
-  {
-    files: frozenCliBuildFiles,
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
   },
   {
     files: authoredSourceFiles,

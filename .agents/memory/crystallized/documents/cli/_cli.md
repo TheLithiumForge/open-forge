@@ -14,9 +14,8 @@ acceptance are pending. The active [CLI
 Development](../../../working/cli-development/_cli-development.md) route records
 exact implementation and evidence state.
 
-The frozen TypeScript MVP remains historical reference under `src/cli-mvp/`.
-Replacement work uses the executable built in the same worktree and does not
-change, build, or test the frozen MVP.
+The retired TypeScript MVP remains historical reference in Git at `c4428a90`.
+Replacement work uses the executable built in the same worktree.
 
 ## Authority Map
 

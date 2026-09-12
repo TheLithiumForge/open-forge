@@ -22,7 +22,7 @@ The [source and packaging decision](../../../decisions/framework/source-and-pack
 
 ### Installation
 
-- The bridge follows the [managed root entry pattern](../../../../../patterns/open-forge/managed-root-entry.md), currently implemented by the [frozen MVP CLI](../../../../../../src/cli-mvp/cli.ts) until the Framework installation slice is ported.
+- The bridge follows the [managed root entry pattern](../../../../../patterns/open-forge/managed-root-entry.md), implemented by the [native Install command](../../../../../../src/cli/core/OpenForge.Cli.Core/Commands/Install/InstallOperation.cs).
 
 ### External Contract
 
@@ -30,6 +30,7 @@ The [source and packaging decision](../../../decisions/framework/source-and-pack
 
 ## Verification
 
-- The `patches canonical and bridged root entries without replacing workspace instructions` case in [`src/cli-mvp/cli.closure.test.ts`](../../../../../../src/cli-mvp/cli.closure.test.ts) verifies both exact imports, source/dogfood managed-block equality, workspace-content preservation, and idempotence.
-- The `rejects malformed or duplicate managed root entry markers before mutation` case verifies valid marker topology and failure atomicity.
+- [Install integration tests](../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Install/InstallOperationIntegrationTests.cs) verify exact installed AGENTS and CLAUDE blocks and one matching marker pair.
+- [Managed-host Update tests](../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Update/UpdateManagedHostIntegrationTests.cs) verify block updates, preservation of outside bytes and repeated no-op behavior.
+- Check source and dogfood block equality directly when this maintenance contract changes.
 - Recheck the linked Claude Code documentation when bridge syntax or loading behavior changes.

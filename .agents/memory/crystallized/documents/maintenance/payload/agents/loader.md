@@ -79,7 +79,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 
 ## Verification
 
-- The frozen [`src/cli-mvp/cli.closure.test.ts`](../../../../../../../src/cli-mvp/cli.closure.test.ts) remains legacy-only evidence for source and dogfood authored parity. It does not verify replacement command behavior.
+- The frozen `git show c4428a90:src/cli-mvp/cli.closure.test.ts` remains legacy-only evidence for source and dogfood authored parity. It does not verify replacement command behavior.
 - Replacement [`CliProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/CliProcessTests.cs) verifies root and route-family help plus the read-only `route list` interface.
 - Replacement [`PublishedContextProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedContextProcessTests.cs) verifies `context` help, startup and selected context, and read-only results.
 - Replacement [`PublishedRouteInspectProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInspectProcessTests.cs) verifies `route inspect` help, route facts, and read-only results.
