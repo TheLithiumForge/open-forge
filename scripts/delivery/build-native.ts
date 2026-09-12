@@ -2,9 +2,10 @@ import { cpSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { SupportedRuntime } from "./package-model.ts";
 import { compileLauncher } from "./npm/stage.ts";
+import { runStage } from "./stage.ts";
 import { reportFailure, run } from "./process.ts";
 import { managedBuild, type BuildRestoreOptions } from "./managed-build.ts";
-import { readBuildOptions } from "./options.ts";
+import { readOptions } from "./options.ts";
 import { repositoryRoot } from "./repository.ts";
 import { candidateVersion, committedVersion } from "./version.ts";
 import { Configuration, hostRuntime, deliveryDirectory, DevelopmentPublish, nativeDirectory, Projects, suites, TestAssemblies } from "./layout.ts";
@@ -18,8 +19,8 @@ function nativeBuild(root: string, rid: SupportedRuntime, version: string, optio
   const absolute = resetOutput(root, directory);
   mkdirSync(join(absolute, "build"), { recursive: true });
   const source = sourceIdentity(root);
-  compileLauncher(root, join(absolute, "build/launcher"));
-  managedBuild(root, version, options);
+  runStage("Compile npm launcher", () => compileLauncher(root, join(absolute, "build/launcher")));
+  runStage("Build managed solution", () => managedBuild(root, version, options));
   for (const [name, assembly] of Object.entries(TestAssemblies)) cpSync(join(root, "artifacts/bin", assembly, "release"), join(absolute, "build", name), { recursive: true });
   const properties = ["-p:OpenForgeSkipDevelopmentPublish=true", `-p:OpenForgeCliVersion=${version}`];
   for (const [project, folder] of [
@@ -28,26 +29,30 @@ function nativeBuild(root: string, rid: SupportedRuntime, version: string, optio
     [Projects.public, "end-to-end"],
   ]) {
     if (project === undefined || folder === undefined) throw new Error("Missing publish project.");
-    run(
-      "dotnet",
-      [
-        "publish",
-        project,
-        "--configuration",
-        Configuration,
-        "--runtime",
-        rid,
-        "--self-contained",
-        "true",
-        "--no-restore",
-        "--output",
-        `${nativeDirectory(rid)}/${folder}`,
-        ...properties,
-      ],
-      root,
+    runStage(`Publish native ${folder} (${rid})`, () =>
+      run(
+        "dotnet",
+        [
+          "publish",
+          project,
+          "--configuration",
+          Configuration,
+          "--runtime",
+          rid,
+          "--self-contained",
+          "true",
+          "--no-restore",
+          "--output",
+          `${nativeDirectory(rid)}/${folder}`,
+          ...properties,
+        ],
+        root,
+      ),
     );
   }
-  run("dotnet", ["build", Projects.public, "--configuration", Configuration, "--no-restore", `-p:OpenForgeEndToEndTargetRuntimeIdentifier=${rid}`, ...properties], root);
+  runStage("Build managed tests targeting the native CLI", () =>
+    run("dotnet", ["build", Projects.public, "--configuration", Configuration, "--no-restore", `-p:OpenForgeEndToEndTargetRuntimeIdentifier=${rid}`, ...properties], root),
+  );
   cpSync(join(root, "artifacts/bin", TestAssemblies.public, "release"), join(absolute, "build/public-native"), { recursive: true });
   const native = suites(rid)
     .filter((suite) => suite.name.startsWith("native-"))
@@ -59,10 +64,12 @@ function nativeBuild(root: string, rid: SupportedRuntime, version: string, optio
 }
 
 try {
-  const values = readBuildOptions(true, true);
-  const version = committedVersion(repositoryRoot);
-  const rid = hostRuntime(values.rid);
-  nativeBuild(repositoryRoot, rid, candidateVersion(version, values.sha ? sourceIdentity(repositoryRoot).sha : undefined), values);
+  const values = readOptions("build:native");
+  if (values) {
+    const version = committedVersion(repositoryRoot);
+    const rid = hostRuntime(values.rid);
+    nativeBuild(repositoryRoot, rid, candidateVersion(version, values.sha ? sourceIdentity(repositoryRoot).sha : undefined), values);
+  }
 } catch (error) {
   reportFailure(error);
 }

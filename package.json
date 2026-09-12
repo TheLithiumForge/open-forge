@@ -10,24 +10,24 @@
     "url": "git+https://github.com/TheLithiumForge/open-forge.git"
   },
   "scripts": {
-    "setup": "node scripts/delivery/setup.ts",
-    "clean": "node scripts/delivery/clean.ts",
-    "restore": "node scripts/delivery/restore.ts",
-    "build": "node scripts/delivery/build.ts",
-    "test": "node scripts/delivery/test.ts",
-    "build:native": "node scripts/delivery/build-native.ts",
-    "test:built": "node scripts/delivery/test-built.ts",
-    "pack": "node scripts/delivery/pack.ts",
-    "dist": "node scripts/delivery/dist.ts",
+    "setup": "node scripts/delivery/cli.ts setup",
+    "clean": "node scripts/delivery/cli.ts clean",
+    "restore": "node scripts/delivery/cli.ts restore",
+    "build": "node scripts/delivery/cli.ts build",
+    "test": "node scripts/delivery/cli.ts test",
+    "build:native": "node scripts/delivery/cli.ts build:native",
+    "test:built": "node scripts/delivery/cli.ts test:built",
+    "pack": "node scripts/delivery/cli.ts pack",
+    "dist": "node scripts/delivery/cli.ts dist",
     "verify": "npm run check:delivery && npm run test:delivery && npm run test:package-layout && npm run check:dotnet",
-    "dist:wrapper": "node scripts/delivery/npm/wrapper-dist.ts",
-    "publish:native": "node scripts/delivery/npm/publish.ts native",
-    "publish:wrapper": "node scripts/delivery/npm/publish.ts wrapper",
-    "release:select": "node scripts/delivery/release/prepare-release.ts",
-    "release:collect": "node scripts/delivery/release/collect-packages.ts",
-    "publish:release": "node scripts/delivery/release/publish-release.ts",
-    "version:bump": "npm version --no-git-tag-version",
-    "version": "node scripts/delivery/version-sync.ts",
+    "dist:wrapper": "node scripts/delivery/cli.ts dist:wrapper",
+    "publish:native": "node scripts/delivery/cli.ts publish:native",
+    "publish:wrapper": "node scripts/delivery/cli.ts publish:wrapper",
+    "release:select": "node scripts/delivery/cli.ts release:select",
+    "release:collect": "node scripts/delivery/cli.ts release:collect",
+    "publish:release": "node scripts/delivery/cli.ts publish:release",
+    "version:bump": "node scripts/delivery/cli.ts version",
+    "version": "node scripts/delivery/cli.ts version:sync",
     "cli:dev": "dotnet run --project src/cli/root/OpenForge.Cli/OpenForge.Cli.csproj --configuration Release --no-restore --",
     "cli:link": "node scripts/delivery/npm/manage.ts link",
     "cli:unlink": "node scripts/delivery/npm/manage.ts unlink",
@@ -48,7 +48,8 @@
     "typecheck:delivery": "tsc --project tsconfig.json",
     "test:delivery": "node --test scripts/delivery/__tests__/*.test.ts scripts/delivery/release/__tests__/*.test.ts scripts/delivery/npm/__tests__/publication.integration.test.ts",
     "test:agent-tooling": "node --test scripts/agent-tooling/agent-projections/*.test.ts scripts/agent-tooling/review/*.test.ts",
-    "build:launcher": "tsc --project scripts/delivery/npm/tsconfig.build.json"
+    "build:launcher": "tsc --project scripts/delivery/npm/tsconfig.build.json",
+    "forge": "node scripts/delivery/cli.ts"
   },
   "engines": {
     "node": ">=22.18.0"
@@ -63,5 +64,8 @@
     "semver": "7.8.5",
     "typescript": "npm:@typescript/typescript6@6.0.2",
     "typescript-eslint": "^8.65.0"
+  },
+  "bin": {
+    "forge": "scripts/delivery/cli.ts"
   }
 }

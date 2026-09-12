@@ -1,7 +1,7 @@
 import { resetOutput } from "./output.ts";
 import { TestAssemblies } from "./layout.ts";
 import { managedBuild } from "./managed-build.ts";
-import { readBuildOptions } from "./options.ts";
+import { readOptions } from "./options.ts";
 import { reportFailure } from "./process.ts";
 import { repositoryRoot } from "./repository.ts";
 import { runSuites } from "./test-suites.ts";
@@ -13,9 +13,11 @@ function testManaged(root: string): void {
 }
 
 try {
-  const values = readBuildOptions(false, true);
-  managedBuild(repositoryRoot, committedVersion(repositoryRoot), values);
-  testManaged(repositoryRoot);
+  const values = readOptions("test");
+  if (values) {
+    managedBuild(repositoryRoot, committedVersion(repositoryRoot), values);
+    testManaged(repositoryRoot);
+  }
 } catch (error) {
   reportFailure(error);
 }

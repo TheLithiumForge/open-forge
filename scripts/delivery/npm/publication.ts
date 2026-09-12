@@ -10,6 +10,8 @@ import { validateOutput } from "../output.ts";
 
 import { readPublicationPackage, type Publication } from "./publication-package.ts";
 
+import { AllTargets, readTargets } from "../targets.ts";
+
 export type PublicationKind = "native" | "wrapper";
 
 export function readPublication(root: string, kind: PublicationKind): Publication {
@@ -19,6 +21,7 @@ export function readPublication(root: string, kind: PublicationKind): Publicatio
   let name: string;
   let expectedVersion: string;
   let files: unknown;
+  let targets = AllTargets;
   if (kind === "native") {
     const rid = hostRuntime();
     const built = readBuilt(root, rid, true);
@@ -28,6 +31,7 @@ export function readPublication(root: string, kind: PublicationKind): Publicatio
     assert.equal(packed["sha"], source.sha);
     assert.equal(packed["version"], built.version);
     assert.equal(packed["rid"], rid);
+    assert.equal(packed["tested"], true, "Untested packages cannot be published; pack without --skip-tests after qualification.");
     files = packed["files"];
     name = PlatformPackages[rid].packageName;
     expectedVersion = built.version;
@@ -39,8 +43,9 @@ export function readPublication(root: string, kind: PublicationKind): Publicatio
     assert.equal(packed["dirty"], source.dirty);
     assert.ok(packed["version"] === version || packed["version"] === candidateVersion(version, source.sha));
     expectedVersion = packed["version"];
+    targets = readTargets(packed["targets"]);
     files = [packed["package"]];
     name = MainPackageName;
   }
-  return readPublicationPackage(root, directory, files, name, expectedVersion, source.dirty);
+  return readPublicationPackage(root, directory, files, name, expectedVersion, source.dirty, targets);
 }

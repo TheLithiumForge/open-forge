@@ -6,6 +6,15 @@ open-forge:
 
 # CLI Delivery
 
+## Target Selection Continuation
+
+The maintainer accepts an exact target subset for an individual published
+version. The wrapper must list precisely that selection, and release collection
+and publication validate it as a complete selected graph. The default Actions
+graph remains all six. [Task 13](02-native-ci.md#unified-delivery-cli-and-visible-stages)
+records this accepted continuation, which supersedes earlier fixed-graph
+constraints only for explicitly selected versions.
+
 ## Delivery Simplification Continuation
 
 The maintainer approved shared local/CI build, test and packaging commands,

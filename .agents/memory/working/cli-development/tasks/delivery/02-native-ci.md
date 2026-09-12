@@ -6,6 +6,84 @@ open-forge:
 
 # Task 13: Native CI and Reproducible Artifacts
 
+## Unified Delivery CLI And Visible Stages
+
+The maintainer requested clearer arguments and pipeline stages, packing despite
+failing local Mac tests, and a small unified CLI for setup/build/test/pack/version.
+Selected design: dependency-free Node/TypeScript `forge` entry point plus one command
+catalog, short npm aliases, existing focused task modules, dist --plan and
+named stage diagnostics. The private root npm package registers the `forge` bin,
+so `npx forge <command> [options]` works from the repository root without the
+extra argument separator. npm owns local command installation and invocation.
+No bootstrap compilation or global link is needed. Offline fixture execution
+proves the registered command works before node_modules exists and passes its
+options through. All 41 delivery regressions pass after this addition.
+The six suites mean execution modes on the current host, not six platforms.
+
+Worktree: /tmp/open-forge-delivery-stages; branch codex/delivery-stages;
+original base 8770d24a7, rebased onto 5bb4aefa without conflicts. Verified
+implementation commit 72101ed5 became 9e6855e79dfc28fd0809725312bd63ca2f39b6b8
+(tree b73f2f463150c649852022c0324df5b2a7ed89eb). Delivery code, tests, package
+configuration, workflows and delivery prose are byte-identical across that
+rebase. Concurrent C# view work is preserved; the remaining closeout changes
+only task state. Standard direct implementation and self-review, no helpers.
+The original phase 3/3 implementation and local verification passed. The
+maintainer accepted the direction and extended this horizon with target-selective
+publication. The maintainer confirmed exact wrapper dependencies for the
+selected version. Extension phase 3/3, milestone 3/3: implementation, verification and direct
+review passed. This closeout accompanies the authorized local squash. Selection is
+frozen at pack time and recorded through wrapper/native package metadata and
+release.json. The default Actions graph stays all six. Existing wrapper
+versions with different dependencies fail preflight before any uploads.
+Evidence covers owned target parsing, argument propagation, real tarballs and
+subset collection without Linux, plus a simulated registry mismatch. No .NET
+source, dependency, compiler or native build input changes in this extension. No push, remote publication
+or global install is selected.
+Pack --skip-tests and dist --skip-tests bypass qualification/installation tests,
+preserve source/artifact/license checks, and mark outputs untested. Native
+publication and complete release collection reject those outputs. Test
+compilation remains part of build:native. CI keeps all qualification gates and
+uses separate build/test/pack steps with one shared RID and retained stage logs.
+
+Verification scope: owned CLI routing/bootstrap, argument routing, stage failure
+and stop behavior, untested packaging/integrity/publication rejection, existing
+package layout/installation checks, and real Linux npm installation with a prior
+native binary as an explicit packaging fixture. No fresh .NET or Mac qualification
+is claimed for TypeScript orchestration changes. Earlier gate evidence remains
+bound to its original candidate below.
+
+Final extension result: 47 delivery regressions, seven package layout cases, the installed-command
+smoke check, TypeScript/lint/formatting and actionlint passed. The refactored npm
+packer and installed-native helper passed against the prior 0.0.0 Linux binary
+as an explicit fixture. Unified setup succeeded with no node_modules: 95 cached
+npm packages installed and .NET restored offline. The unified version command
+and its .NET lifecycle hook passed in a disposable fixture. The product version,
+global installation and registry state are unchanged. No blocking review findings.
+The x64-only wrapper built and previewed through real offline npx with exactly
+three dependencies and the license. A Linux-only wrapper/native installation
+passed using the prior 0.0.0 native binary as a packaging fixture. Source review
+confirms npm’s multi-field view returns the version/dependency object checked
+by retry preflight. No registry was contacted. The test boundary remains owned
+selection, packaging, installation and orchestration, not upstream npm behavior.
+
+Reproduce with Node 24.19.0/npm 11.17.0 and the configured .NET SDK:
+
+```sh
+npx forge setup --offline
+npm run check:delivery
+npm run test:delivery
+npm run test:package-layout
+npm run test:package-manager
+npx forge dist --skip-tests --no-restore --plan
+```
+
+For a real local untested package, run forge build:native and then forge
+pack --skip-tests, or forge dist --skip-tests. Native tests still compile in
+the build. New-schema host package manifests require tested: true and recorded targets;
+historical intermediate/package sets lacking that field must be regenerated.
+Logs and the optional review receipt live under artifacts/delivery-stage-review
+in the worktree. This tracked capsule owns the durable outcome and limits.
+
 ## Retryable Publication And Local Integration
 
 The maintainer authorized publication retries, simpler version/.NET orchestration,

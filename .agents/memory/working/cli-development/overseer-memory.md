@@ -6,6 +6,19 @@ open-forge:
 
 # CLI Overseer Memory
 
+## Unified Delivery CLI Follow-up
+
+Task 13’s unified `forge` CLI, named stages, explicit argument help/plan
+and untested local packing are implemented and locally verified. The maintainer
+accepted the direction and added target-selective publication. The maintainer confirmed that the
+wrapper must list exactly the selected targets for that published version.
+Implementation, focused verification and direct review passed. This closeout
+accompanies the authorized local squash into develop. No push or publication
+occurred. The
+[capsule](tasks/delivery/02-native-ci.md#unified-delivery-cli-and-visible-stages)
+owns current behavior, reproduction and evidence limits. Earlier delivery
+trial notes are historical. The separate presentation queue is preserved.
+
 ## Delivery Follow-up — 2026-09-12
 
 Task 13's local/CI delivery simplification and retryable npm publication are

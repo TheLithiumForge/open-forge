@@ -1,9 +1,11 @@
 import { MainPackageName, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
 import { validateVersion } from "../version.ts";
 
+import { AllTargets, targetDependencies } from "../targets.ts";
+
 const publication = { license: "MIT", publishConfig: { access: "public" } } as const;
 
-export function wrapperManifest(version: string) {
+export function wrapperManifest(version: string, targets: readonly SupportedRuntime[] = AllTargets) {
   return {
     ...publication,
     name: MainPackageName,
@@ -13,7 +15,7 @@ export function wrapperManifest(version: string) {
     bin: { "open-forge": "./bin/open-forge.js" },
     files: ["bin", "package-model.js", "LICENSE"],
     engines: { node: ">=22.18.0" },
-    optionalDependencies: Object.fromEntries(Object.values(PlatformPackages).map((platform) => [platform.packageName, version])),
+    optionalDependencies: targetDependencies(version, targets),
   };
 }
 

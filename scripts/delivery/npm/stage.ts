@@ -17,6 +17,7 @@ export interface StageRequest {
   nativeArtifact: string;
   version: StageVersion;
   compiledLauncher?: string;
+  targets?: readonly SupportedRuntime[];
 }
 
 export interface StagedPackages {
@@ -44,7 +45,7 @@ export function stagePackages(request: StageRequest): StagedPackages {
   const platformBinDirectory = join(platformPackageDirectory, "bin");
   mkdirSync(platformBinDirectory, { recursive: true });
 
-  stageWrapperPackage(request.repositoryRoot, mainPackageDirectory, version, launcherDirectory);
+  stageWrapperPackage(request.repositoryRoot, mainPackageDirectory, version, launcherDirectory, request.targets);
   copyExecutable(request.nativeArtifact, join(platformBinDirectory, platformPackage.nativeFileName));
   copyFileSync(join(request.repositoryRoot, "LICENSE"), join(platformPackageDirectory, "LICENSE"));
 

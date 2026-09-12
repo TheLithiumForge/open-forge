@@ -9,9 +9,10 @@ import { MainPackageName, PlatformPackages } from "../package-model.ts";
 const publisher = new URL("../npm/publish-packages.ts", import.meta.url).href;
 const names = [...Object.values(PlatformPackages).map((platform) => platform.packageName), MainPackageName];
 const version = "1.2.3";
+const dependencies = { [PlatformPackages["linux-x64"].packageName]: version };
 const existingNames = [names[0], names[3], MainPackageName];
 
-for (const scenario of ["fresh", "partial", "all-existing", "lookup-failure", "upload-failure", "dry-run"] as const) {
+for (const scenario of ["fresh", "partial", "all-existing", "lookup-failure", "graph-failure", "upload-failure", "dry-run"] as const) {
   test(`publication orchestration: ${scenario}`, (context) => {
     const root = mkdtempSync(join(tmpdir(), "open-forge-publication-retry-"));
     context.after(() => rmSync(root, { recursive: true, force: true }));
@@ -23,7 +24,7 @@ for (const scenario of ["fresh", "partial", "all-existing", "lookup-failure", "u
       fakeNpm,
       `
       import { appendFileSync } from "node:fs";
-      const [command, spec] = process.argv.slice(2);
+      const [command, spec, field, extraField] = process.argv.slice(2);
       appendFileSync(${JSON.stringify(log)}, JSON.stringify({ command, spec }) + "\\n");
       const scenario = ${JSON.stringify(scenario)};
       if (command === "view") {
@@ -31,7 +32,7 @@ for (const scenario of ["fresh", "partial", "all-existing", "lookup-failure", "u
           console.log(JSON.stringify({ error: { code: "E401" } })); process.exit(1);
         }
         if (scenario === "all-existing" || (scenario !== "fresh" && ${JSON.stringify(existingNames.map((name) => `${name}@${version}`))}.includes(spec))) {
-          console.log(JSON.stringify(${JSON.stringify(version)}));
+          console.log(JSON.stringify(extraField === "optionalDependencies" ? { version: ${JSON.stringify(version)}, optionalDependencies: scenario === "graph-failure" ? {} : ${JSON.stringify(dependencies)} } : ${JSON.stringify(version)}));
         } else {
           console.log(JSON.stringify({ error: { code: "E404" } })); process.exit(1);
         }
@@ -39,7 +40,14 @@ for (const scenario of ["fresh", "partial", "all-existing", "lookup-failure", "u
       else if (command !== "publish") process.exit(2);
     `,
     );
-    const publications = names.map((name) => ({ name, version, tarball: `${name}.tgz`, sha256: "fixture", dirty: false }));
+    const publications = names.map((name) => ({
+      name,
+      version,
+      tarball: `${name}.tgz`,
+      sha256: "fixture",
+      dirty: false,
+      ...(name === MainPackageName ? { optionalDependencies: dependencies } : {}),
+    }));
     const completion = spawnSync(
       process.execPath,
       [
@@ -64,6 +72,7 @@ for (const scenario of ["fresh", "partial", "all-existing", "lookup-failure", "u
       for (const name of existingNames) assert.ok(completion.stderr.includes(`Warning: ${name}@${version} already exists; skipping`));
     } else if (scenario === "upload-failure") assert.deepEqual(lines, [...expectedLookups, expectedUploads[0]]);
     else assert.deepEqual(lines, expectedLookups);
+    if (scenario === "graph-failure") assert.match(completion.stderr, /Published wrapper targets differ/);
     if (scenario === "lookup-failure") assert.match(completion.stderr, /E401/);
     if (scenario === "all-existing") for (const name of names) assert.ok(completion.stderr.includes(`Warning: ${name}@${version} already exists; skipping`));
   });

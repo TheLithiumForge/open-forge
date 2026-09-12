@@ -728,18 +728,28 @@ The root package.json scripts own the repeatable local and CI build, test,
 version and package commands. Focused TypeScript under `scripts/delivery/`
 coordinates the standard .NET, Node and npm tools. Each delivery task has a
 direct entry point. Shared capabilities stay at their nearest common delivery
-scope. The `npm/` child contains the launcher, manifest generation and staging;
+scope. A dependency-free Node entry point, cli.ts, routes named commands from
+one command/options catalog. The private root package registers its `forge` bin
+for `npx forge <command> [options]`; npm scripts are short aliases. No bootstrap
+build or global link is needed for setup. The `npm/` child contains the launcher, manifest generation and staging;
 the `release/` child contains release coordination. Tests stay beside the
 behavior they verify and remain independently selectable. One root strict Node
 configuration checks scripts and tests, while one focused configuration emits
 only the shipped launcher.
+Target selection is shared by wrapper generation, host packing and release
+collection. The recorded wrapper dependency graph defines that version’s
+selected platforms. Release publication validates exactly those native packages
+and publishes the wrapper last. Default selection remains all six targets.
 These scripts contain no CLI domain behavior or general build framework.
 `src/cli/` contains only C# implementation, projects and their required resources.
 Maintained repository agent tooling belongs under `scripts/agent-tooling/`.
 
 CI keeps one native matrix for all six accepted targets. A shared-check job
-runs setup and verify once; each matrix runner runs setup and dist to build,
-test and package on that host. Only finished packages and diagnostics cross
+runs setup and verify once; each matrix runner runs setup and the explicit
+build:native, test:built and pack stages on that host. Local dist declares those
+stages, prints effective arguments and identifies stage failures. Explicit
+--skip-tests enables unqualified local packing; its packages are marked untested
+and rejected by native publication and complete release collection. Only finished packages and diagnostics cross
 the job boundary. One release coordinator handles manual or version-tag
 publication to selected destinations. Workflow YAML owns runners, scheduling,
 toolchain installation, artifact transfer and credentials; repeatable build,

@@ -22,7 +22,7 @@ implementation state and evidence receipts.
 
 ## Accepted Package Graph
 
-The accepted public graph contains exactly one main package and six
+The default public graph contains exactly one main package and six
 platform packages:
 
 | Package                                    | Native payload                 | npm platform metadata                        |
@@ -35,14 +35,14 @@ platform packages:
 | `@thelithiumforge/open-forge-darwin-arm64` | `osx-arm64` executable         | `os: [darwin]`, `cpu: [arm64]`               |
 | `@thelithiumforge/open-forge-win-arm64`    | `win-arm64` executable         | `os: [win32]`, `cpu: [arm64]`                |
 
-The main package uses exact synchronized optional dependencies on all accepted
-platform packages. They are not peer dependencies. Every staged public manifest
+The main package uses exact synchronized optional dependencies on the platforms
+selected for that version, with all six as the default. They are not peer dependencies. Every staged public manifest
 uses the same release or development version. The main package alone owns the
 `open-forge` executable mapping. Each platform package contains only its
 manifest, license, and native executable.
 
 The maintainer accepted ARM64 alongside x64 on Linux, macOS, and Windows on
-2026-09-09. This defines the required target graph, not completed implementation
+2026-09-09. This defines the available target graph, not completed implementation
 or native proof. Additional operating systems, architectures, RIDs, libc variants,
 channels, or support-floor claims require a new maintainer decision.
 
@@ -142,6 +142,12 @@ success cannot substitute for native execution. Local acceptance follows the
 explicit maintainer boundary recorded above. A future separately authorized
 release must distinguish the available platform proof from static inspection.
 
+Local packaging can explicitly bypass tests with pack --skip-tests, or build
+and package through dist --skip-tests. Source and artifact identity checks stay
+mandatory. Skipped outputs record tested: false, do not claim installation proof,
+and cannot enter native publication or complete release collection. Normal pack
+still requires successful .NET qualification and tests the installed npm package.
+
 ## Publication Boundary
 
 The maintainer accepted independent local publication commands as a worktree
@@ -150,25 +156,32 @@ compiles and packs the main wrapper without native files or .NET. The native
 and wrapper publishers each select one validated existing tarball, require an
 explicit tag, and require committed matching source for an actual upload.
 Their dry runs print an offline publication plan without registry contact.
-Wrapper manifests retain all six exact-version optional dependencies. Successful
+Wrapper manifests default to all six exact-version optional dependencies.
+The maintainer also accepts an explicit target selection for one published
+version. `dist:wrapper`, `pack` and `dist` accept `--targets` and generate exactly
+that dependency graph. Collection requires the same selection from every
+selected host and records it in release.json. Publication consumes that graph;
+omitted platforms are not required or uploaded. A changed selection requires
+repacking and, after publication, a new version. Successful
 publication of one package is not a complete release, and an unavailable native
 package leaves its platform unsupported at that version. The following
 complete-release rules apply to the release coordinator.
 
 The release coordinator supports manual source-ref/commit selection and
 automatic version-tag invocation. Its destination selects GitHub, npm or all
-implemented destinations. All six targets are prepared and tested before any
+implemented destinations. The default Actions release prepares and tests all six targets before any
 publication begins. A supplied build run must be successful, from the expected
 repository/workflow, and match the selected source commit and version; otherwise
 the reusable build workflow produces the candidate once.
 
 The accepted Actions trial uses only build.yml and release.yml. Build's one
-six-host matrix calls the same setup and dist commands as local development;
+six-host matrix calls setup and the explicit build:native, test:built and pack
+stages declared by the local dist pipeline;
 verify runs once in a shared-check job. Each host builds, tests and packages
 before uploading its finished package set. Release collection consumes those
 packages directly, and npm publication shares archive validation and upload
-code with the individual local publishers. The release publisher validates all
-seven npm packages before uploading any and places the wrapper last. Its input
+code with the individual local publishers. The release publisher validates every
+native package and wrapper in the recorded selection before uploading any and places the wrapper last. Its input
 is collected packages, independent of the publication host and native build
 directories. Intermediate-only historical builds do not supply the new inputs.
 
@@ -179,7 +192,9 @@ partial graph presented as a successful release, or warning-bearing artifact is
 accepted. Publication across packages and services is not a transaction: a
 failure can leave earlier uploads present. Before any npm upload, the shared
 publisher queries every selected exact version. An existing version emits a
-warning and is skipped without retagging; only npm E404 means missing. Other
+warning and is skipped without retagging when its identity matches. Existing
+wrappers must have exactly the selected dependencies; a mismatch rejects before
+any upload and requires a new version. Only npm E404 means missing. Other
 lookup failures stop publication before uploads. Rerunning the same candidate
 therefore fills missing packages in native-first order. Availability checks do
 not prove remote byte equality or make uploads atomic. Dry runs stay offline.

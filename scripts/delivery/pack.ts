@@ -1,19 +1,26 @@
 import assert from "node:assert/strict";
-import { chmodSync, copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { AllTargets, parseTargets, readTargets } from "./targets.ts";
+import { chmodSync, copyFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 import { PlatformPackages, type SupportedRuntime } from "./package-model.ts";
 import { readBuilt } from "./built-artifacts.ts";
 import { reportFailure, run } from "./process.ts";
-import { readBuildOptions } from "./options.ts";
+import { readOptions } from "./options.ts";
 import { repositoryRoot } from "./repository.ts";
 import { committedVersion } from "./version.ts";
 import { deliveryDirectory, hostRuntime, nativeDirectory } from "./layout.ts";
 import { hashArtifact } from "./manifest.ts";
 import { removeOutputs, resetOutput } from "./output.ts";
+import { packNpmPackages } from "./npm/pack-packages.ts";
+import { testInstalledNative } from "./npm/__tests__/installed-native.ts";
+import { runStage } from "./stage.ts";
 import { recordWrapper } from "./npm/wrapper-artifact.ts";
 
-function pack(root: string, rid: SupportedRuntime): void {
-  const manifest = readBuilt(root, rid, true);
+export function pack(root: string, rid: SupportedRuntime, skipTests = false, targets: readonly SupportedRuntime[] = AllTargets): void {
+  targets = readTargets(targets);
+  assert.ok(targets.includes(rid), "The wrapper target selection must include the native package being packed.");
+  const manifest = readBuilt(root, rid, !skipTests);
+  if (skipTests) process.stderr.write("Warning: tests skipped; these packages are untested and cannot enter the native release publisher.\n");
   const directory = join(root, deliveryDirectory(rid));
   removeOutputs(root, [`${deliveryDirectory(rid)}/package-path.txt`]);
   const output = resetOutput(root, `${deliveryDirectory(rid)}/packages`);
@@ -26,43 +33,49 @@ function pack(root: string, rid: SupportedRuntime): void {
   copyFileSync(join(root, "LICENSE"), join(portable, "LICENSE"));
   const archive = `open-forge-${manifest.version}-${rid}.tar.gz`;
   run("tar", ["-czf", join(output, archive), "-C", portable, platform.nativeFileName, "LICENSE"], root);
-  const journey = join(output, "journey");
-  run(
-    process.execPath,
-    [
-      "scripts/delivery/npm/__tests__/native-package-journey.ts",
-      journey,
-      rid,
-      join(root, native),
-      "release",
-      manifest.version,
-      manifest.version,
-      join(directory, "build/launcher"),
-    ],
-    root,
+  const packages = runStage("Create npm tarballs", () =>
+    packNpmPackages({
+      repositoryRoot: root,
+      artifactsRoot: output,
+      outputDirectory: output,
+      runtime: rid,
+      targets,
+      nativeArtifact: join(root, native),
+      version: { kind: "release", value: manifest.version },
+      compiledLauncher: join(directory, "build/launcher"),
+    }),
   );
-  const receipt: unknown = JSON.parse(readFileSync(join(journey, "receipt.json"), "utf8"));
-  assert.ok(typeof receipt === "object" && receipt !== null && "outcome" in receipt && receipt.outcome === "passed");
-  const packs = readdirSync(join(journey, "packs"), { recursive: true, withFileTypes: true }).filter((file) => file.isFile() && file.name.endsWith(".tgz"));
-  assert.equal(packs.length, 2, "Expected main and matching platform npm packages.");
-  for (const file of packs) copyFileSync(join(file.parentPath, file.name), join(output, file.name));
-  const paths = [archive, ...packs.map((file) => file.name)];
+  if (!skipTests)
+    runStage("Test installed npm package", () =>
+      testInstalledNative({
+        resultRoot: join(output, "journey"),
+        runtime: rid,
+        nativeArtifact: join(root, native),
+        expectedVersion: manifest.version,
+        ...packages,
+      }),
+    );
+  const paths = [archive, basename(packages.mainTarball), basename(packages.platformTarball)];
   const files = paths.map((path) => ({ path, sha256: hashArtifact(output, path) }));
   writeFileSync(join(output, "SHA256SUMS"), files.map((file) => `${file.sha256}  ${basename(file.path)}\n`).join(""));
+  readBuilt(root, rid, !skipTests);
+  recordWrapper(root, join(output, `thelithiumforge-open-forge-${manifest.version}.tgz`), manifest.version, targets);
   writeFileSync(
     join(output, "package.json"),
-    `${JSON.stringify({ sha: manifest.sha, version: manifest.version, rid, nativeSha256: hashArtifact(root, native), files }, null, 2)}\n`,
+    `${JSON.stringify({ sha: manifest.sha, version: manifest.version, rid, targets, tested: !skipTests, nativeSha256: hashArtifact(root, native), files }, null, 2)}\n`,
   );
-  readBuilt(root, rid, true);
-  recordWrapper(root, join(output, `thelithiumforge-open-forge-${manifest.version}.tgz`), manifest.version);
   writeFileSync(join(directory, "package-path.txt"), relative(root, output).replaceAll("\\", "/"));
   process.stdout.write(`Packed ${manifest.version}: ${relative(root, output)}\n`);
 }
 
-try {
-  const values = readBuildOptions(true);
-  committedVersion(repositoryRoot);
-  pack(repositoryRoot, hostRuntime(values.rid));
-} catch (error) {
-  reportFailure(error);
+if (import.meta.main) {
+  try {
+    const values = readOptions("pack");
+    if (values) {
+      committedVersion(repositoryRoot);
+      runStage("Pack artifacts", () => pack(repositoryRoot, hostRuntime(values.rid), values["skip-tests"], parseTargets(values.targets)));
+    }
+  } catch (error) {
+    reportFailure(error);
+  }
 }

@@ -41,6 +41,8 @@ jobs:
     needs: checks
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
+    env:
+      RID: ${{ matrix.rid }}
     strategy:
       fail-fast: false
       matrix:
@@ -71,10 +73,16 @@ jobs:
           dotnet-version: "10.0.111"
           architecture: ${{ matrix.architecture }}
       - run: npm run setup
-      - name: Build, test and package
+      - name: Show delivery plan
+        run: npm run dist -- --rid "$RID" --no-restore --plan
+      - name: Build native artifacts
         run: |
-          mkdir -p artifacts/delivery/logs/${{ matrix.rid }}
-          npm run dist -- --rid ${{ matrix.rid }} --no-restore 2>&1 | tee artifacts/delivery/logs/${{ matrix.rid }}/dist.log
+          mkdir -p "artifacts/delivery/logs/$RID"
+          npm run build:native -- --rid "$RID" --no-restore 2>&1 | tee "artifacts/delivery/logs/$RID/build.log"
+      - name: Test managed and native suites
+        run: npm run test:built -- --rid "$RID" 2>&1 | tee "artifacts/delivery/logs/$RID/test.log"
+      - name: Pack and test npm installation
+        run: npm run pack -- --rid "$RID" 2>&1 | tee "artifacts/delivery/logs/$RID/pack.log"
       - uses: actions/upload-artifact@v7.0.1
         with:
           name: package-${{ matrix.rid }}

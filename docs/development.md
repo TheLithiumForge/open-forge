@@ -20,7 +20,27 @@ Keep changes in their defining sources. Generated output and a machine's install
 
 ## Build And Test
 
-The root `package.json` is the shared entry point for local development and CI.
+The delivery CLI is the shared entry point for local development and CI.
+It runs directly as TypeScript with the required Node version, so a fresh
+checkout can run setup before dependencies or a compiled build tool exist.
+Run `npx forge` from the repository root. The private root package registers the
+local command, so no global link or bootstrap compilation is needed. Arguments
+after `forge` go directly to the tool without an extra `--` separator. Root npm
+scripts remain short aliases for the same CLI:
+
+```sh
+npx forge --help
+npx forge setup
+npx forge build
+npx forge version patch
+npx forge dist --help
+npx forge dist --no-restore --plan
+```
+
+The command catalog is scripts/delivery/commands.ts. It defines each command's
+implementation, description and supported options. Focused task modules own
+execution; dist-plan.ts declares the pipeline and routes flags to their stages.
+Use either the unified CLI or an alias such as npm run build.
 Small TypeScript scripts coordinate native tests and packaging. Standard npm
 and .NET commands own version increments, restore, compilation and uploads. Repository tooling uses Node and npm, including its tests.
 
@@ -117,9 +137,9 @@ npm run dist -- --no-restore
 ```
 
 `verify` runs formatting, lint, type checking and delivery/package-layout tests.
-`dist` builds the native CLI and its test executables, runs the managed/native
-suites, and packs the
-portable archive plus main and host npm packages. The installed-package journey
+`dist` prints its selected host, stages and effective commands, then builds the
+native CLI and its test executables, runs the managed/native suites, and packs
+the portable archive plus main and host npm packages. The installed-package journey
 checks the exact native payload through the launcher. No upload or global
 installation occurs. Use `-- --sha` for a commit-qualified development version,
 `-- --offline` for cached restore, or `-- --no-restore` after preparation.
@@ -139,12 +159,35 @@ executables on Linux or other cross-OS compilation. The CI matrix supplies all
 six matching hosts. See [.NET cross-compilation](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/cross-compile).
 
 `build:native` produces the native CLI and the managed/native test executables.
-`test:built` runs the existing artifacts without compiling them. `pack` requires
+`test:built` runs the existing artifacts without compiling them. Its six suites
+are six execution modes on one host: managed unit and integration tests, managed
+public tests against the managed CLI, native integration and public tests, and
+managed public tests against the native CLI. Integration tests therefore run
+in two modes and public tests in three; this does not run other OS targets.
+
+By default, `pack` requires
 their successful qualification, creates the portable archive and current-host
 npm packages, and checks the installed npm launcher against the native binary.
 The commands print their output locations under `artifacts/delivery/<RID>/`.
 The current reports are in `reports/`, and the packages are in `packages/`.
 `package-path.txt` is written only after packaging succeeds.
+
+To package locally when tests are failing or have not been run:
+
+```sh
+npm run pack -- --skip-tests                 # existing matching build
+npm run dist -- --skip-tests                 # build, then package
+npm run dist -- --skip-tests --plan          # inspect without executing
+```
+
+`--skip-tests` bypasses .NET qualification and the npm installation/invocation
+test. It does not bypass source, artifact-hash or license checks. The native
+build still compiles the test executables. Packages record `tested: false`;
+native publication and complete release collection reject them. To qualify
+later, run `npm run test:built` and `npm run pack` without the flag.
+
+Stages print START/PASS/FAIL with their names. A failed .NET suite reports its
+name, log location and the end of its failure output; later stages stop.
 
 Copy the `open-forge-<version>-<RID>.tar.gz` archive and its checksums to a
 supported machine with the same OS and architecture. Extract it, then run
@@ -168,8 +211,8 @@ npm run publish:wrapper -- --tag preview --dry-run
 ```
 
 `dist:wrapper` compiles the launcher and packs it with the license and exact
-versioned optional dependencies for all six platforms. Its output is
-`artifacts/delivery/wrapper/packages/`. `-- --sha` uses the same optional
+versioned optional dependencies for the selected platforms (all six by default). Its output is
+`artifacts/delivery/wrapper/packages/`. `--sha` uses the same optional
 commit-qualified version convention as native builds.
 
 After `dist` succeeds, preview publication of only the host's native package:
@@ -187,7 +230,7 @@ Before any upload, the shared publisher queries npm for each selected exact
 version. Existing versions print a warning and are skipped; missing versions
 are published. Authentication, network and unexpected lookup errors stop the
 run before uploads. Rerun the same command after an interrupted publication.
-The complete release checks all seven packages first and publishes remaining
+The release checks every selected native package and the wrapper first and publishes remaining
 native packages before the wrapper. Existing versions keep their npm tags;
 skipping checks availability, not whether remote bytes match a local rebuild.
 Dry runs remain offline and cannot report which versions already exist.
@@ -198,9 +241,43 @@ Changing source or version requires rebuilding the affected distribution.
 Publish each native package at the synchronized version, then publish the main
 wrapper once. No publisher needs all native tarballs locally. The wrapper's
 optional dependencies do need to exist in the registry for their platforms to
-work. Publishing a subset is a preview, not proof of a complete release.
+work. A release is complete for its recorded selection when every listed native
+package and its wrapper are published.
 The platform package alone contains no npm command mapping; the main package
 provides the `open-forge` command.
+
+### Select Targets For One Version
+
+Choose the wrapper’s exact dependencies when packing it:
+
+```sh
+npx forge dist:wrapper --targets linux-x64,osx-x64,win-x64
+npx forge publish:wrapper --tag preview --dry-run
+```
+
+This wrapper version lists exactly those three x64 packages. It has no ARM
+dependencies and requires no native builds locally. Publish its three native
+packages separately before publishing the wrapper. A target selection belongs
+to one version: adding ARM later requires a new wrapper version. If that
+version already exists with different dependencies, publication fails before
+any upload instead of skipping an incompatible wrapper.
+
+For collection and publication of a selected release, pass the same list to
+`pack` (or `dist`) on each selected host, then to collection:
+
+```sh
+npx forge pack --targets linux-x64,osx-x64,win-x64
+npx forge release:collect artifacts/release-input artifacts/release --targets linux-x64,osx-x64,win-x64
+npx forge publish:release --tag preview --dry-run
+```
+
+The input contains each selected host’s `package-<RID>` directory. Collection
+requires their tested packages and matching wrapper dependencies. It records
+the selection in `release.json`; publication uses that exact graph and uploads
+the wrapper last. Omitted target artifacts are neither required nor uploaded.
+Changing selection requires repacking, but not rebuilding native executables.
+Without `--targets`, packaging and collection select all six. The existing
+Actions workflows continue to build and release all six by default.
 
 ### Clean Generated Outputs
 
@@ -251,7 +328,10 @@ the version afterward requires a new build and test run.
 
 `build.yml` runs `setup` and `verify` once for shared checks. Its single native
 matrix covers Linux, macOS and Windows on x64 and ARM64. Each runner uses
-`setup` and `dist -- --no-restore` to build, test and package on the same machine.
+`setup` followed by explicit `build:native -- --no-restore`, `test:built` and
+`pack` steps on the same machine. These are the stages shown by `dist --plan`;
+CI passes one shared RID and never supplies `--skip-tests`. GitHub shows the
+failed stage directly and retains separate build/test/pack logs.
 The explicit matrix RID is an assertion that the host matches the target.
 The build uploads finished packages and diagnostics from stable output paths.
 There are no intermediate build/test transfers or platform packaging workflows.
@@ -262,7 +342,7 @@ an existing successful build run for that exact commit. Without a supplied
 build run, it runs the reusable build workflow once. The release job downloads
 the finished `package-<RID>` artifacts from the selected run and calls
 `npm run release:collect -- artifacts/release-input artifacts/release`.
-Collection checks all six targets and replaces its generated release output.
+The default collection checks all six targets and replaces its generated release output.
 Older build runs containing only intermediate test artifacts cannot be reused.
 Release does not compile, repack or change the product version.
 
@@ -271,7 +351,7 @@ must match the source version. Automatic runs use the `RELEASE_TARGET`
 repository variable, defaulting to `all`. Merely bumping the local version does
 not release anything.
 
-For a complete release, all six platform packages must be prepared before publication begins. npm
+For the default complete release, all six platform packages must be prepared before publication begins. npm
 publishes the platform packages before the main package that references them.
 GitHub receives one release containing the portable archives and checksums.
 Prereleases use a prerelease channel; stable releases use `latest`. Selecting

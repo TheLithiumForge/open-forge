@@ -1,15 +1,22 @@
-import { readBuildOptions } from "./options.ts";
+import { readOptions } from "./options.ts";
 import { hostRuntime } from "./layout.ts";
 import { npm, reportFailure } from "./process.ts";
 import { repositoryRoot } from "./repository.ts";
+import { distPlan } from "./dist-plan.ts";
+import { runStage } from "./stage.ts";
 
 try {
-  const values = readBuildOptions(true, true);
-  const rid = hostRuntime(values.rid);
-  const buildFlags = ["--rid", rid, ...(values.sha ? ["--sha"] : []), ...(values.offline ? ["--offline"] : []), ...(values["no-restore"] ? ["--no-restore"] : [])];
-  npm(["run", "build:native", "--", ...buildFlags], repositoryRoot);
-  npm(["run", "test:built", "--", "--rid", rid], repositoryRoot);
-  npm(["run", "pack", "--", "--rid", rid], repositoryRoot);
+  const options = readOptions("dist");
+  if (options) {
+    const rid = hostRuntime(options.rid);
+    const stages = distPlan(rid, options);
+    process.stdout.write(`Native target: ${rid}\n`);
+    for (const [index, stage] of stages.entries())
+      process.stdout.write(`${index + 1}. ${stage.name}${stage.skipped ? " [SKIPPED]" : ""}: npm run ${stage.script} -- ${stage.args.join(" ")}\n`);
+    if (!options.plan) {
+      for (const stage of stages) if (!stage.skipped) runStage(stage.name, () => npm(["run", stage.script, "--", ...stage.args], repositoryRoot));
+    }
+  }
 } catch (error) {
   reportFailure(error);
 }

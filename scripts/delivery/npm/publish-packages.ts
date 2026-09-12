@@ -26,7 +26,7 @@ export function publishPackages(root: string, publications: readonly Publication
   );
   if (dryRun) return;
   // Check the complete selection before starting uploads; a failed lookup must not mean "missing".
-  const existing = publications.map((publication) => registryVersionExists(root, publication.name, publication.version));
+  const existing = publications.map((publication) => registryVersionExists(root, publication.name, publication.version, publication.optionalDependencies));
   for (const [index, publication] of publications.entries()) {
     if (existing[index]) {
       process.stderr.write(`Warning: ${publication.name}@${publication.version} already exists; skipping publication and leaving its npm tags unchanged.\n`);

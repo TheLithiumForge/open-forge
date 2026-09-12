@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { basename, join, resolve, sep } from "node:path";
-import { MainPackageName, PlatformPackages } from "../package-model.ts";
+import { MainPackageName, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
 import { hashArtifact } from "../manifest.ts";
 import { readPackage } from "../package-json.ts";
 import { committedVersion } from "../version.ts";
@@ -11,16 +11,22 @@ import { sourceIdentity } from "../source.ts";
 import { inspectPackageContents } from "../package-contents.ts";
 import { resetOutput } from "../output.ts";
 
-export function collectPackages(input: string, output: string, sha: string, version: string): void {
-  const dependencies = Object.fromEntries(Object.values(PlatformPackages).map((platform) => [platform.packageName, version]));
+import { parseArgs } from "node:util";
+import { AllTargets, parseTargets, readTargets, targetDependencies } from "../targets.ts";
+
+export function collectPackages(input: string, output: string, sha: string, version: string, targets: readonly SupportedRuntime[] = AllTargets): void {
+  targets = readTargets(targets);
+  const dependencies = targetDependencies(version, targets);
   const selected = new Map<string, { source: string; sha256: string }>();
   let mainContents: string | undefined;
-  for (const platform of Object.values(PlatformPackages)) {
+  for (const platform of targets.map((target) => PlatformPackages[target])) {
     const directory = join(input, `package-${platform.runtime}`);
     const manifest = readPackage(join(directory, "package.json"));
     assert.equal(manifest["sha"], sha, "Package source mismatch.");
     assert.equal(manifest["version"], version, "Package version mismatch.");
     assert.equal(manifest["rid"], platform.runtime, "Missing or repeated platform.");
+    assert.equal(manifest["tested"], true, "Release collection requires tested packages; --skip-tests outputs are local only.");
+    assert.deepEqual(readTargets(manifest["targets"]), targets, "Package targets differ; repack every selected host with the same --targets.");
     const files = manifest["files"];
     assert.ok(Array.isArray(files) && files.length === 3, "Incomplete packaged artifacts.");
     let mainFound = false;
@@ -41,7 +47,7 @@ export function collectPackages(input: string, output: string, sha: string, vers
           const fingerprint = JSON.stringify(contents.files);
           if (mainContents === undefined) mainContents = fingerprint;
           else assert.equal(fingerprint, mainContents, "Main package contents differ across platforms.");
-          if (platform.runtime !== "linux-x64") continue;
+          if (platform.runtime !== targets[0]) continue;
         } else {
           assert.equal(platformFound, false, "Duplicate platform package.");
           platformFound = true;
@@ -68,11 +74,13 @@ export function collectPackages(input: string, output: string, sha: string, vers
   }
   writeFileSync(join(output, "SHA256SUMS"), `${checksums.sort().join("\n")}\n`);
   const artifacts = [...selected].map(([path, artifact]) => ({ path, sha256: artifact.sha256 }));
-  writeFileSync(join(output, "release.json"), `${JSON.stringify({ sha, version, artifacts }, null, 2)}\n`);
+  writeFileSync(join(output, "release.json"), `${JSON.stringify({ sha, version, targets, artifacts }, null, 2)}\n`);
 }
 
 if (import.meta.main) {
-  const [input, output, ...extra] = process.argv.slice(2);
+  const { values, positionals } = parseArgs({ allowPositionals: true, options: { targets: { type: "string" } } });
+  const targets = parseTargets(values.targets);
+  const [input, output, ...extra] = positionals;
   assert.ok(input && output && extra.length === 0, "Provide downloaded packages and release output directories.");
   const source = sourceIdentity(process.cwd());
   assert.equal(source.dirty, false, "Release collection requires committed source.");
@@ -84,5 +92,5 @@ if (import.meta.main) {
     "Release input and output directories must be separate.",
   );
   resetOutput(process.cwd(), output);
-  collectPackages(input, output, source.sha, version);
+  collectPackages(input, output, source.sha, version, targets);
 }

@@ -3,9 +3,11 @@ import { basename, join } from "node:path";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { hashArtifact } from "../manifest.ts";
-import { MainPackageName, PlatformPackages } from "../package-model.ts";
+import { MainPackageName, type SupportedRuntime } from "../package-model.ts";
 import { inspectPackageContents } from "../package-contents.ts";
 import { validateOutput } from "../output.ts";
+
+import { AllTargets, targetDependencies } from "../targets.ts";
 
 export interface Publication {
   name: string;
@@ -13,9 +15,18 @@ export interface Publication {
   tarball: string;
   sha256: string;
   dirty: boolean;
+  optionalDependencies?: Record<string, string>;
 }
 
-export function readPublicationPackage(root: string, directory: string, files: unknown, name: string, version: string, dirty: boolean): Publication {
+export function readPublicationPackage(
+  root: string,
+  directory: string,
+  files: unknown,
+  name: string,
+  version: string,
+  dirty: boolean,
+  targets: readonly SupportedRuntime[] = AllTargets,
+): Publication {
   assert.ok(Array.isArray(files));
   const expectedFile = `${name.replace(/^@/u, "").replaceAll("/", "-")}-${version}.tgz`;
   const matches = files.filter((entry: unknown) => typeof entry === "object" && entry !== null && "path" in entry && entry.path === expectedFile);
@@ -33,7 +44,7 @@ export function readPublicationPackage(root: string, directory: string, files: u
     .digest("hex");
   assert.equal(contents.files.find((entry) => entry.path === "LICENSE")?.sha256, licenseHash, "Package license does not match the source.");
   if (name === MainPackageName) {
-    assert.deepEqual(contents.optionalDependencies, Object.fromEntries(Object.values(PlatformPackages).map((platform) => [platform.packageName, version])));
+    assert.deepEqual(contents.optionalDependencies, targetDependencies(version, targets));
   }
-  return { name, version, tarball, sha256: file.sha256, dirty };
+  return { name, version, tarball, sha256: file.sha256, dirty, ...(name === MainPackageName ? { optionalDependencies: targetDependencies(version, targets) } : {}) };
 }

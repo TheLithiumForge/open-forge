@@ -5,7 +5,7 @@ import { readBuilt } from "./built-artifacts.ts";
 import { resetOutput, removeOutputs } from "./output.ts";
 import { reportFailure } from "./process.ts";
 import { runSuites } from "./test-suites.ts";
-import { readBuildOptions } from "./options.ts";
+import { readOptions } from "./options.ts";
 import { repositoryRoot } from "./repository.ts";
 import { committedVersion } from "./version.ts";
 import { deliveryDirectory, hostRuntime, suites } from "./layout.ts";
@@ -22,9 +22,11 @@ function testBuilt(root: string, rid: SupportedRuntime): void {
 }
 
 try {
-  const values = readBuildOptions(true);
-  committedVersion(repositoryRoot);
-  testBuilt(repositoryRoot, hostRuntime(values.rid));
+  const values = readOptions("test:built");
+  if (values) {
+    committedVersion(repositoryRoot);
+    testBuilt(repositoryRoot, hostRuntime(values.rid));
+  }
 } catch (error) {
   reportFailure(error);
 }
