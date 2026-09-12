@@ -22,7 +22,7 @@ public sealed class PublishedIndexProcessTests
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
-        Assert.Contains("Generated Entries would be updated.", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Preview of generated navigation changes", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
             "@@ {\"id\":\"root\",\"path\":\".agents/root/_root.md\",\"scope\":\"detached\"} @@",
             result.StandardOutput,

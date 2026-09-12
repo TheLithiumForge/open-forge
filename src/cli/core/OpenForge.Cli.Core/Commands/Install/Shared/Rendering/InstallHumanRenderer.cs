@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Rendering;
 
@@ -14,27 +15,24 @@ internal static class InstallHumanRenderer
     {
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
-        return Render(
-            presentation.Result,
-            presentation.Presentation.View == CliView.Expanded);
-    }
-
-    private static string Render(InstallResult result, bool expanded)
-    {
+        var result = presentation.Result;
+        var expanded = presentation.Presentation.View == CliView.Expanded;
         var facts = result.Facts;
         var builder = new StringBuilder();
-        builder.AppendLine($"""
-            Open Forge install
-            Workspace: {Value(result.Workspace?.LexicalRoot)}
-            Flags: mode={InstallDefinitions.ReadMachineName(result.Mode)}, force={MachineBoolean(result.Force)}, automatic={MachineBoolean(result.Automatic)}
-            """.Replace("\n", Environment.NewLine, StringComparison.Ordinal));
+        CliHumanText.AppendHeader(builder, presentation, "Open Forge install");
+        builder.AppendLine($"Mode: {InstallDefinitions.ReadMachineName(result.Mode)}; force: {MachineBoolean(result.Force)}; automatic: {MachineBoolean(result.Automatic)}");
         builder.AppendLine(facts.Source is null
             ? "Source: unavailable"
             : string.Create(
                 CultureInfo.InvariantCulture,
-                $"Source: {CommandTextEscaping.Escape(facts.Source.InventoryFingerprint)} / {facts.Source.AssetCount} assets"));
+                $"Source: embedded Framework; {facts.Source.AssetCount} assets"));
+        if (expanded && facts.Source is { } source)
+        {
+            builder.AppendLine($"  Inventory fingerprint: {Value(source.InventoryFingerprint)}");
+        }
+
         builder.AppendLine(
-            $"Classification: {(facts.Classification is { } classification ? InstallDefinitions.ReadMachineName(classification) : "unavailable")}");
+            $"Installation state: {Classification(facts.Classification)}");
         builder.AppendLine(facts.Footprint is null
             ? "Footprint: unavailable"
             : string.Create(
@@ -54,7 +52,7 @@ internal static class InstallHumanRenderer
         foreach (var finding in result.Findings)
         {
             builder.AppendLine(
-                $"  {InstallDefinitions.ReadMachineName(finding.Code)}: {CommandTextEscaping.Escape(finding.Cause)}");
+                $"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {CommandTextEscaping.Escape(finding.Cause)} [{InstallDefinitions.ReadMachineName(finding.Code)}]");
             if (finding.Subject is not null)
             {
                 builder.AppendLine($"    Target: {CommandTextEscaping.Escape(finding.Subject)}");
@@ -65,15 +63,8 @@ internal static class InstallHumanRenderer
             Lifecycle: {InstallDefinitions.ReadMachineName(facts.Lifecycle.Action)} / {InstallDefinitions.ReadMachineName(facts.Lifecycle.Outcome)}
             Recovery: {InstallDefinitions.ReadMachineName(facts.Recovery.State)}{PathSuffix(facts.Recovery.ResidualPath)}
             Verification: {InstallDefinitions.ReadMachineName(facts.Verification.State)}
-            Status: {Status(result.Status)}
             """.Replace("\n", Environment.NewLine, StringComparison.Ordinal));
-        if (result.Next is { } next)
-        {
-            builder.AppendLine($"""
-                Next: {CommandTextEscaping.Escape(next.Command)}
-                  {CommandTextEscaping.Escape(next.Reason)}
-                """.Replace("\n", Environment.NewLine, StringComparison.Ordinal));
-        }
+        CliHumanText.AppendNext(builder, presentation);
 
         return builder.ToString().TrimEnd();
     }
@@ -84,26 +75,29 @@ internal static class InstallHumanRenderer
         bool expanded)
     {
         builder.Append(
-            $"  {CommandTextEscaping.Escape(effect.Path)}: {InstallDefinitions.ReadMachineName(effect.Kind)} / {InstallDefinitions.ReadMachineName(effect.Action)} / {InstallDefinitions.ReadMachineName(effect.Outcome)} / {InstallDefinitions.ReadMachineName(effect.Residual)}");
-        if (effect.SourceAssetPath is not null)
+            $"  {CommandTextEscaping.Escape(effect.Path)}: {InstallDefinitions.ReadMachineName(effect.Action)} {InstallDefinitions.ReadMachineName(effect.Kind)}; {InstallDefinitions.ReadMachineName(effect.Outcome)}; residual: {InstallDefinitions.ReadMachineName(effect.Residual)}");
+        if (expanded && effect.SourceAssetPath is not null)
         {
-            builder.Append(expanded
-                ? $" / source={CommandTextEscaping.Escape(effect.SourceAssetPath)}"
-                : $" / <- {CommandTextEscaping.Escape(effect.SourceAssetPath)}");
+            builder.Append($"; source: {CommandTextEscaping.Escape(effect.SourceAssetPath)}");
         }
 
         builder.AppendLine();
     }
 
+    private static string Classification(InstallManagementClassification? value) => value switch
+    {
+        null => "unavailable",
+        InstallManagementClassification.SafeAbsence => "no existing installation content",
+        InstallManagementClassification.TrustedExact => "matches the installed Framework",
+        InstallManagementClassification.ManagedDivergence => "local changes to managed content",
+        InstallManagementClassification.EligibleInitialOccupant => "existing content at installation paths",
+        _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The installation state is not defined."),
+    };
+
     private static string Value(string? value)
         => value is null ? "unavailable" : CommandTextEscaping.Escape(value);
 
     private static string MachineBoolean(bool value) => value ? "true" : "false";
-
-    private static string Status(CliSemanticStatus status)
-        => status == CliSemanticStatus.Attention
-            ? "requires attention"
-            : CliStatusDefinitions.Read(status).MachineName;
 
     private static string PathSuffix(string? path)
         => path is null ? string.Empty : $" / {CommandTextEscaping.Escape(path)}";

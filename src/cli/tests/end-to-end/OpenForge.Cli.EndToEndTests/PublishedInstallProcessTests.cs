@@ -43,7 +43,7 @@ public sealed class PublishedInstallProcessTests
 
         Assert.Equal(0, noOp.ExitCode);
         Assert.Equal(string.Empty, noOp.StandardError);
-        Assert.Contains("Classification: trusted-exact", noOp.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Installation state: matches the installed Framework", noOp.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Effects: 0", noOp.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Verification: verified", noOp.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotState());

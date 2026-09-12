@@ -53,9 +53,9 @@ public sealed class PublishedCleanupProcessTests
 
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
-        Assert.Contains("Open Forge cleanup", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Recovery-data cleanup", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Removed and verified", applied.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Result: complete", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Status: complete", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(Path.GetFileName(workspace.EligibleFinalPath), applied.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(Path.GetFileName(workspace.EligibleDraftPath), applied.StandardOutput, StringComparison.Ordinal);
         Assert.False(File.Exists(workspace.EligibleFinalPath));
@@ -76,7 +76,7 @@ public sealed class PublishedCleanupProcessTests
 
         Assert.Equal(0, repeated.ExitCode);
         Assert.Equal(string.Empty, repeated.StandardError);
-        Assert.Contains("Result: complete", repeated.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Status: complete", repeated.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Removed and verified", repeated.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(unknownHash, PublishedCleanupWorkspace.HashFile(workspace.UnknownPath));
         Assert.Equal(blockedHash, PublishedCleanupWorkspace.HashFile(workspace.ForeignBlockedPath));

@@ -369,13 +369,16 @@ package source.
 
 ## Output And Streams
 
-The default human result leads with the operation and exact workspace. It reports
-normal or force mode, automatic and dry-run state, recognized footprint counts,
-created or replaced effects, preserved divergence, generated projections,
-lifecycle publication or preservation, recovery facts, status, and at
-most one required `Next:` action. Compact view retains identity, mode, key
-effects, safety facts, status, and the bounded next action. JSON carries one
-complete structured result from the same typed result for every status.
+Human output starts with the operation, semantic status, exact workspace and
+selection method. Both views retain normal/force, automatic and apply/dry-run
+mode, source identity, footprint counts, every effect path and its actual action,
+outcome and residual, every finding, lifecycle and recovery state, verification
+and at most one actual `Next:` command. Findings lead with uppercase status and
+cause, followed by the stable code. Compact identifies the embedded Framework;
+expanded adds its inventory fingerprint and each available source-asset path.
+Expanded also includes the reason for Next. Neither mode implies that an effect
+completed merely because the request was apply. JSON remains the complete
+structured result from the same typed operation result for every status.
 
 The command-local JSON `result` uses camel-case properties in exactly this
 order. Every property is present for every semantic status:

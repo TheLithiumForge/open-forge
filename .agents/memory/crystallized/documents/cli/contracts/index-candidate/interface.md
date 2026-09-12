@@ -478,62 +478,37 @@ assigned stream; an `incomplete` result does not split safe facts from its
 findings. Separate bounded diagnostics use stderr. Human output avoids internal
 stage terms when the user only needs the outcome.
 
-The default expanded view uses the complete examples below and includes
-per-target counts, evidence, provenance, and next actions. Compact view keeps
-the semantic result, changed and unchanged counts, affected paths, required
-safety findings, and next actions. A compact dry run still includes every exact
-bounded diff because view selection cannot weaken effect review.
+Both views put the outcome, semantic status, workspace and selection method first.
+They retain mode, changed and unchanged region counts, verification counts, every
+changed path and before/after entry count, all findings and recovery facts. A
+compact dry run includes every exact bounded diff; view selection cannot weaken
+effect review. Expanded adds source-selection details and the reason for the
+actual `Next:` command. A partial failure names each affected path and its typed
+outcome; the heading does not claim that no writes occurred.
 
-When the typed semantic status is `attention`, human output renders it as
-`requires attention` because the phrase explains the relationship more clearly
-on first read.
+`attention` is displayed as `requires attention`. Finding lines lead with the
+uppercase status and cause, followed by the stable code in brackets. There is no
+new diagnostic kind or severity. `--verbose` remains separate bounded diagnostics.
 
-Default human output does not name successful internal planning stages.
-`--verbose` may add bounded command diagnostics, but it cannot add structured
-schema members or expose GN or M1 stage objects.
-
-A verified no-op uses this output:
+Illustrative compact no-op:
 
 ```text
 Generated Entries are up to date.
-Checked 12 regions. No files changed.
-```
-
-A successful application begins with this summary:
-
-```text
-Generated Entries were updated.
-Checked 12 regions: 2 updated, 10 already up to date.
-All 12 regions match the routed sources.
-```
-
-The default successful-application result lists each changed path and its
-before-and-after entry count. It does not list every unchanged path unless
-`--verbose` is selected.
-
-A successful dry run uses this output:
-
-```text
-Generated Entries would be updated.
-Checked 12 regions: 2 need updates, 10 are up to date.
-
-<exact bounded diffs>
-
-No files changed (--dry-run).
-```
-
-A blocked result uses this output:
-
-```text
-Generated Entries were not updated.
-
-Blocked: the generated markers are ambiguous.
-  .agents/memory/_memory.md
+Status: complete
+Workspace: /work/demo
+Selected by: current directory
+Mode: apply
+Regions: 12; updates: 0; already current: 12; verified: 12
 
 No files changed.
-Next: keep one complete generated marker pair in the final Entries section,
-then rerun open-forge index.
 ```
+
+A successful application uses `Generated Entries were updated.` and includes
+all changed paths with before/after entry counts and actual outcomes. Unchanged
+paths remain summarized by count. A dry run uses `Preview of generated navigation
+changes`, retains the existing exact diff framing and body bytes, and ends with
+`No files changed (--dry-run).` The exact operation Next command appears once
+when present; rendering never substitutes an instruction for that command.
 
 Every ordinary error names the `index` operation, affected source or region,
 direct cause, and useful next action when one exists. Its primary human

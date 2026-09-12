@@ -67,6 +67,28 @@ public sealed class CleanupHumanSafetyProjectionTests
         Assert.DoesNotContain("Removed and verified", text, StringComparison.Ordinal);
     }
 
+    [Theory(DisplayName = "Both Cleanup human views expose candidate-only previews and avoid repeated effect paths"),
+        InlineData(false), InlineData(true),
+        Trait("Feature", "cleanup-c1-human"), Trait("Evidence", "Unit")]
+    public void CandidateOnlyPreviewRemainsVisible(bool expanded)
+    {
+        var view = expanded ? CliView.Expanded : CliView.Compact;
+        var plan = CleanupTestData.Plan(CleanupTestData.Request(mode: CleanupMode.DryRun));
+        var builder = new CleanupResultBuilder(plan);
+        var candidateOnly = builder.Build();
+        var path = plan.DeletionEntries[0].Path;
+        var before = CleanupPresentation.Json(Presentation(candidateOnly, view));
+        var text = CleanupPresentation.Human(Presentation(candidateOnly, view));
+        Assert.Contains(path, text, StringComparison.Ordinal);
+        Assert.DoesNotContain("Removed and verified", text, StringComparison.Ordinal);
+        Assert.Equal(before, CleanupPresentation.Json(Presentation(candidateOnly, view)));
+
+        builder.Effects = [.. plan.DeletionEntries.Select(entry =>
+            CleanupEffect.Create(entry, CleanupEffectOutcome.Planned, CleanupEffectResidual.None))];
+        text = CleanupPresentation.Human(Presentation(builder.Build(), view));
+        Assert.Equal(1, text.Split(path, StringSplitOptions.None).Length - 1);
+    }
+
     private static CliPresentationRequest<CleanupResult> Presentation(CleanupResult result, CliView view)
         => new(result, new CliPresentation(CliOutputFormat.Human, view, CliVerbosity.Normal));
 }

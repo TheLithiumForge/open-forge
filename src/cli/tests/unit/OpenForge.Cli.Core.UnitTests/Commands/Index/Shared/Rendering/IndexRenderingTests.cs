@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Index.Models.Planning;
 using OpenForge.Cli.Core.Commands.Index.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Index.Models.Request;
 using OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
@@ -14,6 +15,30 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Index.Shared.Rendering;
 
 public sealed class IndexRenderingTests
 {
+    [Theory(DisplayName = "Both Index human views keep no-op identity and full failed-effect paths"),
+        InlineData(false), InlineData(true),
+        Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void HumanViewsRetainNoOpIdentityAndPartialEffects(bool expanded)
+    {
+        var view = expanded ? CliView.Expanded : CliView.Compact;
+        var noOp = IndexTestData.Result();
+        var noOpText = IndexHumanRenderer.Render(IndexTestData.Presentation(noOp, view));
+        Assert.Contains(Assert.IsType<CliWorkspace>(noOp.Workspace).LexicalRoot, noOpText, StringComparison.Ordinal);
+        Assert.Contains("Status: complete", noOpText, StringComparison.Ordinal);
+        Assert.Contains("No files changed.", noOpText, StringComparison.Ordinal);
+
+        var failed = IndexTestData.Result(
+            regions: [IndexTestData.Update(IndexRegionOutcome.Unknown)],
+            findings: [IndexTestData.Finding(IndexFindingCode.WriteFailed)],
+            recovery: new IndexRecovery(IndexRecoveryState.Unknown, null));
+        var before = IndexJsonRenderer.Render(IndexTestData.Presentation(failed));
+        var failedText = IndexHumanRenderer.Render(IndexTestData.Presentation(failed, view));
+        Assert.Contains(failed.Regions[0].Source.Path, failedText, StringComparison.Ordinal);
+        Assert.Contains("unknown", failedText, StringComparison.Ordinal);
+        Assert.DoesNotContain("were not updated", failedText, StringComparison.Ordinal);
+        Assert.Equal(before, IndexJsonRenderer.Render(IndexTestData.Presentation(failed)));
+    }
+
     [Fact(DisplayName = "Index dry-run diff retains every LF CRLF empty and final-newline token without truncation"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void DiffRetainsExactBodyTokens()
     {

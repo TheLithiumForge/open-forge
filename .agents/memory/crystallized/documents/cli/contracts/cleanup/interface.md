@@ -262,8 +262,12 @@ and integrity condition, every planned or verified deletion, preserved or
 remaining items, residual facts, and semantic status.
 
 Compact output retains the workspace identity, mode, deterministic artifact
-order, every exact planned or verified effect, completeness and safety facts,
-semantic status, and at most one required `Next:` action. It does not replace
+order, every candidate path and its kind, integrity and eligibility, every exact
+planned or verified effect, completeness and safety facts, semantic status, all
+findings, and at most one actual `Next:` command. Candidate facts appear beneath
+their effect without repeating the path. Candidate-only preview rows stay visible.
+Expanded adds workspace-lock and final-validation details during preview and the
+reason for Next. Both views retain actual lock and validation facts during apply. It does not replace
 the artifact list with a count.
 
 Primary human `complete`, `attention`, and `incomplete` results go to stdout.
@@ -271,31 +275,14 @@ Primary human `invalid`, `blocked`, `failed`, and `interrupted` results go to
 stderr. Each primary result remains together on its assigned stream. Human
 output may say `requires attention` for the `attention` status.
 
-Representative complete application:
-
-```text
-Open Forge cleanup
-Workspace: <workspace-path>
-Selected by: current directory
-Removed and verified:
-  <recognized-artifact-path>
-  <recognized-artifact-path>
-All planned artifacts were removed and verified.
-Result: complete
-```
-
-Representative dry run:
-
-```text
-Open Forge cleanup
-Workspace: <workspace-path>
-Mode: preview
-Would remove after same-workspace lease acquisition and final validation:
-  <recognized-artifact-path>
-  <recognized-artifact-path>
-No files changed (--dry-run).
-Result: complete
-```
+Both views lead with the operation, status, workspace and selection method.
+A preview is headed `Preview of recovery-data cleanup`; apply uses `Recovery-data
+cleanup`. Each row reports the typed outcome, residual and candidate facts.
+Only verified effects say `Removed and verified`. A planned removal explicitly
+requires the workspace lock and final validation before application. Preview
+ends with `No files changed (--dry-run).` Finding lines start with uppercase
+status and cause, followed by the stable code. Neither mode changes operation
+status, candidate eligibility or deletion behavior.
 
 An empty catalogue is a verified complete no-op, acquires no lease, and does not
 prompt. A partial result names every artifact already deleted and verified and

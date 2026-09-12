@@ -67,13 +67,14 @@ trials pass both human views and JSON, preserve exact Context body bytes and Fin
 TSV rows, and leave workspace/state unchanged. This closeout accompanies the
 authorized local squash onto develop; its commit completes the narrowed slice.
 
-Route List/Inspect human views are qualified at source `939ab802`: 3,310 Unit,
+Human views are complete for 23 of 28 commands. Core maintenance (Index,
+Install, Update, Repair and Cleanup) is qualified at source `6aaec0ee`: 3,325 Unit,
 1,745 Integration in each managed/native mode and 123 public journeys in each
 of three runtime configurations pass, with zero failures/skips. This closeout
-accompanies their local squash. Human views are complete for 18 of 28 commands.
-Next are core maintenance human views, Route mutation human views, then accepted
-command JSON views. Stop after command work and before colour; final guidance
-remains pending. The overall task estimate is about 60%, including pending JSON.
+accompanies its local squash. Route List/Inspect was integrated as `5c325960`.
+Next are Route Create/Init/Update/Move/Remove human views, then accepted command
+JSON views. Stop after command work and before colour; final guidance remains
+pending. Command coverage is distinct from completion of the JSON work.
 Expanded remains the default. Result limits, a compact default and an even smaller
 file-oriented view are saved proposals; none is implemented. Display filtering,
 parser simplifications P2–P6 and configurable-threshold analysis stay backlog.

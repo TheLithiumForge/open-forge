@@ -59,7 +59,7 @@ public sealed class IndexApplicationIntegrationTests
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
-        Assert.Contains("Generated Entries would be updated.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Preview of generated navigation changes", result.Output, StringComparison.Ordinal);
         Assert.Contains(
             "@@ {\"id\":\"root\",\"path\":\".agents/root/_root.md\",\"scope\":\"detached\"} @@",
             result.Output,
@@ -172,7 +172,8 @@ public sealed class IndexApplicationIntegrationTests
             finding => finding.GetProperty("code").GetString() == expectedFinding);
         Assert.Equal(expectedExit, human.ExitCode);
         Assert.Equal(string.Empty, human.Output);
-        Assert.Contains("Generated Entries were not updated.", human.Error, StringComparison.Ordinal);
+        Assert.Contains($"Status: {expectedStatus}", human.Error, StringComparison.Ordinal);
+        Assert.Contains(expectedFinding, human.Error, StringComparison.Ordinal);
         Assert.DoesNotContain("private.md", human.Error, StringComparison.Ordinal);
     }
 

@@ -1018,3 +1018,156 @@ as one squash onto clean local develop `5fa590a4`, checking candidate/integratio
 tree equality and preserving feature/test `b88f5e7af99c02fd85626ba1fc6182c32ed17798`.
 Human presentation coverage becomes 18/28 commands. No colour or final guidance
 work has started. The next bounded set is the five core maintenance human views.
+
+## Set 5C Core Maintenance Human Views: Frozen Scope
+
+Begin from feature `b6d1cb6e`, integrating qualified develop `5c325960`.
+Own only Index, Install, Update, Repair and Cleanup human rendering, their direct
+projection evidence and affected presentation contracts. Keep JSON serializers,
+operation results, effects, selection, confirmation, recovery and status policies
+unchanged. Existing typed result facts and neutral CliHumanText framing suffice;
+standard StringBuilder and source-generated serializers suffice. Exceptional
+machinery: none. This is reversible source work, but misleading mutation output
+can hide partial changes or recovery needs, so those facts are mandatory in both
+views. Git restores renderer source; operations retain existing filesystem and
+cooperating-process guarantees without a new threat model.
+
+Implement outcome/status/workspace first, full paths and selected previews in
+both views, causes before technical finding codes, actual Next commands and
+expanded-only supporting explanations. Keep exact Index diff rendering. Keep
+Cleanup's existing no-follow preservation decision. Repair must expose every
+finding and selected change, actual repaired/new counts and Library attribution.
+Expanded may add selection evidence, fingerprint/source details and preflight
+explanation. Never claim an apply effect completed from mode alone.
+
+Qualify pure projections plus existing affected Integration and public journeys.
+Add focused evidence for formerly hidden compact facts and nonduplication. Freeze
+source after formatting and direct contract review, then run one complete
+managed/native six-suite integration gate before the next local squash. Artifacts
+remain disposable; this record retains reproduction and acceptance. Continue
+sequentially to Route mutations and command JSON afterward, stopping before colour.
+
+### Set 5C Implementation And Focused Checkpoint
+
+All five maintenance human renderers are implemented, with the five Interfaces
+aligned. Index retains exact diff bytes and now reports no-op identity and every
+partial-effect path. Install separates compact source identity from expanded
+inventory/source detail and explains installation classification. Update groups
+comparisons with effect paths, retains paths without effects and all protected
+paths, and reports failures without claiming no writes. Cleanup includes
+candidate-only previews in both views and groups candidate facts under effects;
+its original no-follow preservation decision is unchanged. Repair keeps all
+findings and selected exact changes in compact, reports repaired/new counts,
+keeps Library path/attribution/link identity, and removes repeated application
+framing. Its presentation code is split by help/binding, human composition and
+human detail within the same leaf; there is no new callable layer.
+
+Focused source before the last wording correction passed 367 Unit and 152
+Integration. Two public failures were stale Cleanup/Install labels and are
+corrected; final public rerun remains required. Earlier seven Unit and four
+Integration stale expectations were corrected without dropping status, stream,
+identity, effect, preservation or JSON assertions. One initial compile error was
+an unsupported conditional interpolation-handler call; ordinary branches fix it.
+Another test compile error was a missing namespace import; corrected.
+
+Direct managed CLI previews passed both human views and unchanged JSON for
+Install and Index, with no workspace/XDG file changes. The first trial then
+stopped because its zero-exit assertion rejected Update's existing attention
+result after Index changed generated navigation. Inspection confirms that Update
+preserves that change under its existing policy. This is not a new operation
+failure. Its generic preservation cause was opaque and shared across three
+existing finding codes. Human rendering now explains changed, missing and retired
+managed paths from their typed codes. Six cases check the wording and unchanged
+JSON cause. No Update planning, force/prune authority or status changed. Re-run
+the complete direct trial with the expected attention result represented.
+
+Changed-file formatting verified before that final bounded wording correction;
+reverify its changed files before freezing. Final build/focused/public checks,
+full direct trial, immutable managed/native gate and squash are still pending.
+The user-defined stop remains after command work and before colour. Main develop
+is `5c325960`; feature/test remains `b88f5e7a`. No further set has started.
+
+### Set 5C Focused Qualification Complete
+
+Final behavioral source passes 373 Unit, 152 Integration and 15 published CLI
+journeys, with zero failures/skips. Release build reports zero warnings/errors.
+The last test-only adjustment preserves full escaped-path assertions on Windows;
+its Linux values are unchanged and the complete gate will compile/run it.
+
+Direct managed CLI trials cover six cases in one disposable installed workspace:
+Install preview, no-op Update preview, changed Index preview, preserving Update
+preview after Index, Repair preview and Cleanup preview. Each runs compact and
+expanded human output plus both JSON view selections. Full JSON is equal across
+views and snapshots of every file, directory and link in workspace/XDG state are
+unchanged by each preview. Expected exits are 0 except the existing Update
+preservation case, which is 2 with empty stderr. All trial files are removed.
+Observed compact/expanded byte counts were Install 3,623/4,727; no-op Update
+7,047/21,127; Index 449/498; preserving Update 7,248/21,414; Repair 914/943;
+Cleanup 275/342. These fixture-specific byte counts are not token estimates.
+
+The changed pack stays inside command-owned rendering, direct tests, Interfaces
+and this checkpoint. Inspecting Behavior contracts confirms unchanged operation,
+preview, recovery and output-stream requirements. No JSON implementation, parser,
+configuration, dependency or effect code changed. Freeze after final formatting
+verification, then run `npm run build:native -- --sha --no-restore` and
+`npm run test:built`. Expected complete counts are Unit 3,325; Integration 1,745
+per managed/native lane; public 123 per each of three runtime configurations.
+Keep executable inputs and HEAD fixed through that gate. Integration will bring
+human command coverage to 23/28; Route mutations and command JSON remain next.
+Stop before colour and final guidance as requested.
+
+### Set 5D Read-Only Preparation During The Set 5C Gate
+
+The remaining five human commands are Route Create, Init, Update, Move and
+Remove. Their current renderers, typed result members, output contracts and
+affected assertions have been inspected. No source in this set has changed.
+After the qualified maintenance squash, freeze a leaf-only rendering set that
+uses CliHumanText for outcome/status/workspace and the actual Next command.
+Show all findings with full target identity, uppercase status, cause and stable
+code; keep recovery and verification in compact as well as expanded.
+
+Create/Init/Update currently hide some compact findings or recovery details.
+Create/Move/Remove and Init failure headings can claim no mutation despite
+partial effects. Replace those headings with the actual semantic outcome.
+Init's mode-derived "did" and combined planned/created counts also need truthful
+typed outcome wording; keep every effect, unchanged path, draft and preview.
+Show the typed Next command instead of substituting lowercased explanatory prose.
+
+Route Update's requested patch fields already carry Requested, State, Before
+and Expected values. Display each selected description/responsibility/tags field,
+including unchanged and unresolved states. Preserve absent versus unavailable
+values and empty versus unknown tag arrays. Do not imply a requested value was
+applied. Keep existing exact effect/preview evidence, including fingerprints
+required by the current compact contract. Template body protection remains one
+visible fact with its finding code and target; no instruction to overwrite an
+authored body is introduced.
+
+Move/Remove reference rewrites/detachments already carry SourceLocation. Render
+source path plus line/column and exact before/expected literals in both views;
+byte coordinates remain JSON detail. Preserve every subject layer/category
+member, ownership condition, navigation coverage, effect outcome, unchanged and
+protected path. Expanded retains ownership claims and the reason for Next.
+Use existing ordinal identities and operation ordering; no new grouping policy,
+result filtering, schema, parser or mutation behavior belongs to this set.
+
+Known changed assertions are primarily Route Update ordering/patch summaries,
+Init's Next prose and Create/Update failure headings. Keep their status, stream,
+partial-effect, JSON, preview and no-write checks. Add focused evidence for
+formerly hidden compact facts before the set's full managed/native gate.
+
+### Set 5C Complete Gate And Integration Closeout
+
+Frozen source `6aaec0ee6246bbc6a92fe6b3eb4260a9d70c73f5` passes the complete Linux
+managed/native build and all six suites: Unit 3,325; managed/native Integration
+1,745 each; managed public, native public and managed-on-native public 123 each.
+All report zero failed, pending, skipped or other results; build warnings/errors
+are zero. The delivery manifest reports dirty=false and tested=true. Native CLI
+SHA-256 is `3e306c5a2e4e1f68675bae871c5f14e699edafe610bb920712f927d57422ad74`.
+Reproduce from that source with `npm run build:native -- --sha --no-restore`, then
+`npm run test:built`. No executable inputs or HEAD changed during qualification;
+only the tracked read-only preparation note was added.
+
+Integrate this closeout as one squash on clean develop `5c325960`, verifying the
+candidate/integration tree and feature/test `b88f5e7af99c02fd85626ba1fc6182c32ed17798`.
+Coverage becomes 23/28 human commands. Next is the frozen Route mutation set,
+then compact JSON. Colour and final guidance remain pending by user direction.

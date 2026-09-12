@@ -2,10 +2,10 @@ using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Rendering;
 
@@ -18,18 +18,14 @@ internal static partial class UpdateHumanRenderer
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
         var builder = new StringBuilder();
-        builder.AppendLine(Summary(result));
-        AppendIdentity(builder, result);
-        AppendSource(builder, result.Source);
-        AppendComparisons(builder, result.Comparisons, expanded);
+        CliHumanText.AppendHeader(builder, presentation, Summary(result));
+        builder.AppendLine($"Mode: {UpdateDefinitions.ReadMachineName(result.Mode)}; force: {MachineBoolean(result.Force)}; prune: {MachineBoolean(result.Prune)}; automatic: {MachineBoolean(result.Automatic)}");
+        AppendSource(builder, result.Source, expanded);
+        AppendFindings(builder, result.Findings);
+        AppendEffects(builder, result, expanded);
         AppendGeneratedNavigation(builder, result.GeneratedNavigation);
-        AppendEffects(builder, result.Effects);
         AppendLifecycle(builder, result.Lifecycle);
-        AppendRecovery(
-            builder,
-            result.Recovery,
-            expanded || result.Recovery.State is UpdateRecoveryState.Retained or UpdateRecoveryState.Unknown);
-        AppendFindings(builder, result.Findings, result.Findings.Count != 0);
+        AppendRecovery(builder, result.Recovery);
         builder.AppendLine(
             $"Verification: {UpdateDefinitions.ReadMachineName(result.Verification)}");
         if (result.Mode == UpdateMode.DryRun)
@@ -37,27 +33,12 @@ internal static partial class UpdateHumanRenderer
             builder.AppendLine("No files changed (--dry-run).");
         }
 
-        if (result.Next is { } next)
-        {
-            builder.AppendLine($"Next: {Value(next.Command)} — {Value(next.Reason)}");
-        }
+        CliHumanText.AppendNext(builder, presentation);
 
         return builder.ToString().TrimEnd();
     }
 
-    private static void AppendIdentity(StringBuilder builder, UpdateResult result)
-    {
-        builder.AppendLine(string.Create(
-            CultureInfo.InvariantCulture,
-            $"""
-            Workspace: {Value(result.Workspace?.LexicalRoot)}
-            Selected by: {SelectedBy(result.Workspace)}
-            Flags: mode={UpdateDefinitions.ReadMachineName(result.Mode)}, force={MachineBoolean(result.Force)}, prune={MachineBoolean(result.Prune)}, automatic={MachineBoolean(result.Automatic)}
-            Status: {Status(result.Status)}
-            """).Replace("\n", Environment.NewLine, StringComparison.Ordinal));
-    }
-
-    private static void AppendSource(StringBuilder builder, UpdateSource? source)
+    private static void AppendSource(StringBuilder builder, UpdateSource? source, bool expanded)
     {
         if (source is null)
         {
@@ -65,9 +46,12 @@ internal static partial class UpdateHumanRenderer
             return;
         }
 
-        builder.AppendLine(string.Create(
-            CultureInfo.InvariantCulture,
-            $"Source: {Value(source.Id)} / version={Value(source.Version)} / inventory={Value(source.InventoryFingerprint)} / assets={source.AssetCount}"));
+        builder.AppendLine(CultureInfo.InvariantCulture,
+            $"Source: embedded Framework; {source.AssetCount} assets");
+        if (expanded)
+        {
+            builder.AppendLine($"  ID: {Value(source.Id)}; version: {Value(source.Version)}; inventory fingerprint: {Value(source.InventoryFingerprint)}");
+        }
     }
 
     private static string Summary(UpdateResult result)
@@ -79,29 +63,13 @@ internal static partial class UpdateHumanRenderer
             CliSemanticStatus.Attention => "The managed Framework update requires attention.",
             CliSemanticStatus.Incomplete => "The managed Framework update is incomplete.",
             CliSemanticStatus.Invalid or CliSemanticStatus.Blocked or CliSemanticStatus.Failed or CliSemanticStatus.Interrupted
-                => "The managed Framework was not updated.",
+                => CliHumanText.Outcome("Framework update", result.Status),
             _ => throw new ArgumentOutOfRangeException(
                 nameof(result),
                 result.Status,
                 "The Update status is not defined."),
         };
 
-    private static string SelectedBy(CliWorkspace? workspace)
-        => workspace?.SelectedBy switch
-        {
-            null => "unavailable",
-            CliWorkspaceSelectionMethod.CurrentDirectory => "current directory",
-            CliWorkspaceSelectionMethod.ExplicitWorkspace => "--workspace",
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(workspace),
-                workspace.SelectedBy,
-                "The workspace selection method is not defined."),
-        };
-
     private static string MachineBoolean(bool value) => value ? "true" : "false";
 
-    private static string Status(CliSemanticStatus status)
-        => status == CliSemanticStatus.Attention
-            ? "requires attention"
-            : CliStatusDefinitions.Read(status).MachineName;
 }

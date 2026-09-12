@@ -1,4 +1,5 @@
 using System.Text.Json;
+using OpenForge.Cli.Core.Commands.Repair;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
@@ -94,10 +95,10 @@ public sealed class RepairProjectionTests
             RepairJsonRenderer.Render(Presentation(result, CliOutputFormat.Json)));
         var projected = document.RootElement.GetProperty("result");
 
-        Assert.Contains("Open Forge repair", human, StringComparison.Ordinal);
+        Assert.Contains("Preview of selected repairs", human, StringComparison.Ordinal);
         Assert.Contains("Mode: dry-run", human, StringComparison.Ordinal);
         Assert.Contains("Plan: 1 steps / 0 effects / 1 no-ops", human, StringComparison.Ordinal);
-        Assert.Contains("no-op: .agents/docs/guide.md@1:1", human, StringComparison.Ordinal);
+        Assert.Contains("no-op: .agents/docs/guide.md:1:1", human, StringComparison.Ordinal);
         Assert.Contains("No files changed (--dry-run).", human, StringComparison.Ordinal);
         Assert.Contains("Status: complete", human, StringComparison.Ordinal);
 
@@ -109,6 +110,29 @@ public sealed class RepairProjectionTests
         Assert.Equal(
             projected.GetProperty("counts").GetProperty("noOps").GetInt32(),
             projected.GetProperty("plan").GetProperty("noOps").GetArrayLength());
+    }
+
+    [Theory(DisplayName = "Both Repair human views preserve selected no-ops and every failure cause"),
+        InlineData(false), InlineData(true),
+        Trait("Feature", "repair"), Trait("Evidence", "Unit")]
+    public void HumanViewsKeepSelectedChangesAndFailures(bool expanded)
+    {
+        var view = expanded ? CliView.Expanded : CliView.Compact;
+        var result = NoOpResult();
+        var presentation = new CliPresentationRequest<RepairResult>(result,
+            new CliPresentation(CliOutputFormat.Human, view, CliVerbosity.Normal));
+        var before = RepairJsonRenderer.Render(presentation);
+        var text = RepairPresentation.RenderHuman(presentation);
+        Assert.Contains("no-op: .agents/docs/guide.md:1:1", text, StringComparison.Ordinal);
+        Assert.Contains("Repaired: 0; new findings: 0", text, StringComparison.Ordinal);
+        Assert.Equal(before, RepairJsonRenderer.Render(presentation));
+
+        var failure = RepairTestData.Result(findings:
+            [new RepairFinding(RepairFindingCode.InvalidInput, "Select a current link.")]);
+        text = RepairPresentation.RenderHuman(new CliPresentationRequest<RepairResult>(failure,
+            new CliPresentation(CliOutputFormat.Human, view, CliVerbosity.Normal)));
+        Assert.Contains("Select a current link.", text, StringComparison.Ordinal);
+        Assert.Contains("INVALID:", text, StringComparison.Ordinal);
     }
 
     private static RepairResult NoOpResult()

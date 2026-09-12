@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
+using OpenForge.Cli.Core.Commands.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
@@ -92,17 +93,46 @@ internal static class RepairLibraryPresentation
         builder.AppendLine("Library residual recovery:");
         builder.AppendLine($"  Selected: {selection?.Selected.Length ?? 0}");
         builder.AppendLine($"  Unselected: {selection?.Unselected.Length ?? 0}");
+        if (selection is not null)
+        {
+            foreach (var selected in selection.Selected)
+            {
+                AppendProposal(builder, selected.Proposal, "Selected");
+            }
+
+            foreach (var unselected in selection.Unselected)
+            {
+                AppendProposal(builder, unselected, "Not selected");
+            }
+        }
+
         if (result.LibraryExecution is { } execution)
         {
             builder.AppendLine($"  Receipts: {execution.LibraryReceipts.Length}");
-            builder.AppendLine($"  Forward recovery: {execution.ForwardPreparation?.BundlePath ?? "not required"}");
+            builder.AppendLine($"  Forward recovery: {CommandTextEscaping.Escape(execution.ForwardPreparation?.BundlePath ?? "not required")}");
             builder.AppendLine($"  Forward cleanup: {(execution.ForwardCleanup is { } cleanup ? DeletionState(cleanup.State) : "not requested")}");
             foreach (var receipt in execution.LibraryReceipts)
             {
                 var projection = Receipt(receipt);
-                builder.AppendLine($"  {projection.Proposal.LibraryId}: {projection.Proposal.EntryKind} {projection.Verification}");
-                builder.AppendLine($"    original residual: {projection.OriginalBundlePath}");
+                builder.AppendLine($"  {CommandTextEscaping.Escape(projection.Proposal.LogicalPath)}: {projection.Effect}; verification: {projection.Verification}");
+                builder.AppendLine($"    Recovery data: {CommandTextEscaping.Escape(projection.OriginalBundlePath)}");
+                if (projection.Cause is { } cause)
+                {
+                    builder.AppendLine($"    {CommandTextEscaping.Escape(cause)}");
+                }
             }
+        }
+    }
+
+    private static void AppendProposal(StringBuilder builder, RepairLibraryRecoveryProposal proposal, string label)
+    {
+        var value = Proposal(proposal);
+        builder.AppendLine($"  {label}: {CommandTextEscaping.Escape(value.LogicalPath)}");
+        builder.AppendLine($"    Library: {CommandTextEscaping.Escape(value.LibraryId)}; {value.EntryKind}; current state: {value.Comparison}");
+        builder.AppendLine($"    Recovery data: {CommandTextEscaping.Escape(value.BundlePath)}");
+        if (value.Observed?.RawRelativeTarget is { } target)
+        {
+            builder.AppendLine($"    Observed link target (not followed): {CommandTextEscaping.Escape(target)}");
         }
     }
 

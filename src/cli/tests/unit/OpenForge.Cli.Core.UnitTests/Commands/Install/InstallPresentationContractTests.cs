@@ -79,8 +79,8 @@ public sealed class InstallPresentationContractTests
 
         Assert.StartsWith("Open Forge install", output, StringComparison.Ordinal);
         Assert.Contains("Workspace:", output, StringComparison.Ordinal);
-        Assert.Contains("Flags:", output, StringComparison.Ordinal);
-        Assert.Contains("Classification:", output, StringComparison.Ordinal);
+        Assert.Contains("Mode:", output, StringComparison.Ordinal);
+        Assert.Contains("Installation state:", output, StringComparison.Ordinal);
         Assert.Contains("Footprint:", output, StringComparison.Ordinal);
         Assert.Contains("Effects:", output, StringComparison.Ordinal);
         Assert.Contains("Findings:", output, StringComparison.Ordinal);

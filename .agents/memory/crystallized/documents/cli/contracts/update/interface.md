@@ -326,12 +326,21 @@ bundles but never auto-binds or restores them.
 
 ## Output, Streams, And Status
 
-Human output leads with exact workspace, source, normal/force/prune/automatic and
-apply/dry-run mode, baseline/current/intended facts, safe and preserved effects,
-generated projection, lifecycle publication or preservation, bundle and
-recovery facts, status, and at most one required `Next:` action. Compact output is a
-density projection, not a weaker plan. JSON emits one complete typed result from
-the same operation result for every status.
+Human output starts with the outcome, semantic status, exact workspace and
+selection method, then source identity and normal/force/prune/automatic and
+apply/dry-run mode. Both views show every finding, effect and comparison path,
+current/intended/retirement state, generated navigation, lifecycle trust and
+publication, verification, recovery data and every protected path. A comparison
+appears beside its effect path once; paths without effects remain visible.
+Findings lead with uppercase status and cause, with the stable code afterward.
+Expanded adds embedded-source version and inventory fingerprint, source-asset
+facts and baseline/current/intended comparison fingerprints. Compact is a density
+projection and retains partial effects and uncertainty. The actual `Next:` command
+appears once, with its reason in expanded output. JSON remains complete and
+unchanged. A failed or interrupted heading does not claim no writes occurred.
+The three preservation finding kinds explain local changes kept, missing paths
+left absent, and retired paths not removed. Their original producer causes stay
+unchanged in JSON; human wording does not change force/prune requirements.
 
 Primary human `complete`, `attention`, and `incomplete` results go to stdout.
 Primary human `invalid`, `blocked`, `failed`, and `interrupted` results go to

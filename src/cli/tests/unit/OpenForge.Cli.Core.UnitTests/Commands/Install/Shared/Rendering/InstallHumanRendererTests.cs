@@ -34,20 +34,20 @@ public sealed class InstallHumanRendererTests
             RecoveryState = InstallRecoveryState.NotRequired,
             RecoveryResidualPath = null,
         });
-        var escapedRoot = Path.DirectorySeparatorChar == '\\' ? root[..^1] + "\\\\" : "/";
         var expected = string.Join(Environment.NewLine,
             "Open Forge install",
-            $"Workspace: {escapedRoot}install-rendering",
-            "Flags: mode=apply, force=false, automatic=false",
+            "Status: complete",
+            $"Workspace: {root}install-rendering",
+            "Selected by: --workspace",
+            "Mode: apply; force: false; automatic: false",
             "Source: unavailable",
-            "Classification: trusted-exact",
+            "Installation state: matches the installed Framework",
             "Footprint: unavailable",
             "Effects: 0",
             "Findings: 0",
             "Lifecycle: preserve / already-current",
             "Recovery: not-required",
-            "Verification: not-requested",
-            "Status: complete");
+            "Verification: not-requested");
 
         var output = InstallHumanRenderer.Render(new CliPresentationRequest<InstallResult>(
             result,
@@ -56,9 +56,10 @@ public sealed class InstallHumanRendererTests
         Assert.Equal(expected, output);
     }
 
-    [Fact(DisplayName = "Install expanded output preserves populated facts, escaping, retained recovery and next action"),
+    [Theory(DisplayName = "Install human output preserves populated facts, escaping, retained recovery and next action"),
+        InlineData(false), InlineData(true),
         Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
-    public void RendersCompletePopulatedExpandedOutput()
+    public void RendersCompletePopulatedHumanOutput(bool expanded)
     {
         const string inventoryFingerprint = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         var root = Path.GetFullPath(Path.DirectorySeparatorChar.ToString());
@@ -120,28 +121,43 @@ public sealed class InstallHumanRendererTests
         var escapedRoot = Path.DirectorySeparatorChar == '\\' ? root[..^1] + "\\\\" : "/";
         var expected = string.Join(Environment.NewLine,
             "Open Forge install",
-            $"Workspace: {escapedRoot}workspace-\u2028\u2029-end",
-            "Flags: mode=apply, force=true, automatic=true",
-            $"Source: {inventoryFingerprint} / 2 assets",
-            "Classification: eligible-initial-occupant",
+            "Status: requires attention",
+            $"Workspace: {root}workspace-\u2028\u2029-end",
+            "Selected by: --workspace",
+            "Mode: apply; force: true; automatic: true",
+            "Source: embedded Framework; 2 assets",
+            $"  Inventory fingerprint: {inventoryFingerprint}",
+            "Installation state: existing content at installation paths",
             "Footprint: 1 payload files, 0 managed regions, 1 generated regions",
             "Effects: 2",
-            "  .agents/loader.md: file / replace / verified / none / source=framework/loader.md",
-            "  .agents/memory/_memory.md: generated-region / replace / verified / none",
+            "  .agents/loader.md: replace file; verified; residual: none; source: framework/loader.md",
+            "  .agents/memory/_memory.md: replace generated-region; verified; residual: none",
             "Findings: 1",
-            "  install.recovery-artifact-retained: Keep\\u000d\\u000a\\u0009\\\"copy\\\"\\\\😀\\ud800\u2028\u2029.",
+            "REQUIRES ATTENTION: Keep\\u000d\\u000a\\u0009\\\"copy\\\"\\\\😀\\ud800\u2028\u2029. [install.recovery-artifact-retained]",
             "    Target: recovery\\u0009\\\"copy\\\"\\\\\u2028\u2029.zip",
             "Lifecycle: publish / verified",
             $"Recovery: retained / {escapedRoot}recovery-\u2028\u2029.zip",
             "Verification: verified",
-            "Status: requires attention",
             "Next: open-forge cleanup",
-            "  Review and remove the reported recovery artifact after confirming the verified Install result.");
+            "Review and remove the reported recovery artifact after confirming the verified Install result.");
 
         var output = InstallHumanRenderer.Render(new CliPresentationRequest<InstallResult>(
             result,
-            new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal)));
+            new CliPresentation(CliOutputFormat.Human, expanded ? CliView.Expanded : CliView.Compact, CliVerbosity.Normal)));
 
-        Assert.Equal(expected, output);
+        if (expanded)
+        {
+            Assert.Equal(expected, output);
+        }
+        else
+        {
+            Assert.Contains("Status: requires attention", output, StringComparison.Ordinal);
+            Assert.Contains("Next: open-forge cleanup", output, StringComparison.Ordinal);
+            Assert.DoesNotContain("inventory fingerprint:", output, StringComparison.OrdinalIgnoreCase);
+            foreach (var effect in result.Facts.Effects)
+            {
+                Assert.Contains(effect.Path, output, StringComparison.Ordinal);
+            }
+        }
     }
 }

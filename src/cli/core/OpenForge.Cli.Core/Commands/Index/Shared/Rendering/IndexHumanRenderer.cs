@@ -4,145 +4,102 @@ using OpenForge.Cli.Core.Commands.Index.Models.Operation;
 using OpenForge.Cli.Core.Commands.Index.Models.Planning;
 using OpenForge.Cli.Core.Commands.Index.Models.Request;
 using OpenForge.Cli.Core.Commands.Index.Models.Result;
-using OpenForge.Cli.Core.Commands.Index.Models.Selection;
 using OpenForge.Cli.Core.Commands.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
 
 internal static class IndexHumanRenderer
 {
-    private const string UnknownEntryCount = "unknown";
-
     internal static string Render(CliPresentationRequest<IndexResult> presentation)
     {
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
-        return RenderResult(
-            presentation.Result,
-            expanded: presentation.Presentation.View == CliView.Expanded);
-    }
-
-    private static string RenderResult(IndexResult result, bool expanded)
-    {
-        if (result.Status is not (CliSemanticStatus.Complete or CliSemanticStatus.Attention))
+        var result = presentation.Result;
+        var builder = new StringBuilder();
+        CliHumanText.AppendHeader(builder, presentation, Summary(result));
+        builder.AppendLine($"Mode: {IndexDefinitions.ReadMachineName(result.Mode)}");
+        builder.AppendLine(CultureInfo.InvariantCulture,
+            $"Regions: {result.Counts.Regions}; updates: {result.Counts.Updates}; already current: {result.Counts.Unchanged}; verified: {result.Counts.Verified}");
+        if (presentation.Presentation.View == CliView.Expanded)
         {
-            return RenderNonSuccess(result, expanded);
+            builder.AppendLine(CultureInfo.InvariantCulture,
+                $"Selection: {IndexDefinitions.ReadMachineName(result.Selection.Origin)} / {IndexDefinitions.ReadMachineName(result.Selection.Scope)} / {result.Selection.Sources.Count} sources");
+        }
+
+        foreach (var finding in result.Findings)
+        {
+            builder.AppendLine($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Text(finding.Cause)} [{IndexDefinitions.ReadMachineName(finding.Code)}]");
+            if (finding.Source is { } source)
+            {
+                builder.AppendLine($"  {Text(source.Path)}");
+            }
+
+            foreach (var candidate in finding.Candidates)
+            {
+                builder.AppendLine($"  Candidate: {Text(candidate.Path)}");
+            }
+        }
+
+        builder.AppendLine();
+        foreach (var region in result.Regions.Where(region => region.Action == IndexRegionAction.Update))
+        {
+            if (result.Mode == IndexMode.DryRun)
+            {
+                builder.Append(IndexDiffRenderer.Render(region));
+                builder.AppendLine();
+            }
+            else
+            {
+                builder.AppendLine(CultureInfo.InvariantCulture,
+                    $"  {Text(region.Source.Path)}: {EntryCount(region.BeforeEntryCount)} -> {EntryCount(region.ExpectedEntryCount)} entries ({IndexDefinitions.ReadMachineName(region.Outcome)})");
+            }
         }
 
         if (result.Mode == IndexMode.DryRun)
         {
-            return RenderDryRun(result, expanded);
+            builder.AppendLine("No files changed (--dry-run).");
         }
-
-        return RenderApplication(result, expanded);
-    }
-
-    private static string RenderApplication(IndexResult result, bool expanded)
-    {
-        if (result.Counts.Updates == 0)
+        else if (result.Status is not (CliSemanticStatus.Complete or CliSemanticStatus.Attention))
         {
-            return string.Create(
-                CultureInfo.InvariantCulture,
-                $"""
-                Generated Entries are up to date.
-                Checked {result.Counts.Regions} regions. No files changed.
-                """).ReplaceLineEndings();
+            AppendEffectSummary(builder, result.Regions);
         }
-
-        var builder = new StringBuilder();
-        builder.Append(string.Create(
-            CultureInfo.InvariantCulture,
-            $"""
-            Generated Entries were updated.
-            Checked {result.Counts.Regions} regions: {result.Counts.Updates} updated, {result.Counts.Unchanged} already up to date.
-            All {result.Counts.Verified} regions match the routed sources.{Environment.NewLine}
-            """).ReplaceLineEndings());
-        foreach (var region in result.Regions.Where(region => region.Action == IndexRegionAction.Update))
+        else if (result.Counts.Updates == 0)
         {
-            builder.AppendLine(
-                CultureInfo.InvariantCulture,
-                $"  {CommandTextEscaping.Escape(region.Source.Path)}: {EntryCount(region.BeforeEntryCount)} -> {EntryCount(region.ExpectedEntryCount)} entries ({Outcome(region.Outcome)})");
+            builder.AppendLine("No files changed.");
         }
 
-        if (expanded)
+        if (result.Recovery.State != IndexRecoveryState.NotRequired)
         {
-            AppendSelection(builder, result.Selection);
+            builder.AppendLine($"Recovery: {IndexDefinitions.ReadMachineName(result.Recovery.State)}");
+            if (result.Recovery.ResidualPath is { } path)
+            {
+                builder.AppendLine($"  {Text(path)}");
+            }
         }
 
-        AppendRecovery(builder, result.Recovery);
-        AppendFindings(builder, result.Findings);
-        AppendNext(builder, result.Next);
+        CliHumanText.AppendNext(builder, presentation);
         return builder.ToString().TrimEnd();
     }
 
-    private static string RenderDryRun(IndexResult result, bool expanded)
-    {
-        if (result.Counts.Updates == 0)
+    private static string Summary(IndexResult result)
+        => result.Status switch
         {
-            return string.Create(
-                CultureInfo.InvariantCulture,
-                $"""
-                Generated Entries are up to date.
-                Checked {result.Counts.Regions} regions. No files changed (--dry-run).
-                """).ReplaceLineEndings();
-        }
+            CliSemanticStatus.Complete or CliSemanticStatus.Attention when result.Counts.Updates == 0
+                => "Generated Entries are up to date.",
+            CliSemanticStatus.Complete or CliSemanticStatus.Attention when result.Mode == IndexMode.DryRun
+                => "Preview of generated navigation changes",
+            CliSemanticStatus.Complete or CliSemanticStatus.Attention => "Generated Entries were updated.",
+            _ => CliHumanText.Outcome("Generated navigation update", result.Status),
+        };
 
-        var builder = new StringBuilder();
-        builder.Append(string.Create(
-            CultureInfo.InvariantCulture,
-            $"""
-            Generated Entries would be updated.
-            Checked {result.Counts.Regions} regions: {result.Counts.Updates} need updates, {result.Counts.Unchanged} are up to date.{Environment.NewLine}{Environment.NewLine}
-            """).ReplaceLineEndings());
-        foreach (var region in result.Regions.Where(region => region.Action == IndexRegionAction.Update))
-        {
-            builder.Append(IndexDiffRenderer.Render(region));
-            builder.AppendLine();
-        }
-
-        builder.AppendLine("No files changed (--dry-run).");
-        if (expanded)
-        {
-            AppendSelection(builder, result.Selection);
-        }
-
-        AppendFindings(builder, result.Findings);
-        AppendNext(builder, result.Next);
-        return builder.ToString().TrimEnd();
-    }
-
-    private static string RenderNonSuccess(IndexResult result, bool expanded)
-    {
-        var builder = new StringBuilder();
-        builder.Append(
-            """
-            Generated Entries were not updated.
-
-
-            """.ReplaceLineEndings());
-        AppendFindings(builder, result.Findings);
-        if (expanded)
-        {
-            AppendSelection(builder, result.Selection);
-        }
-
-        AppendEffectSummary(builder, result.Regions);
-        AppendRecovery(builder, result.Recovery);
-        AppendNext(builder, result.Next);
-        return builder.ToString().TrimEnd();
-    }
-
-    private static void AppendEffectSummary(
-        StringBuilder builder,
-        IReadOnlyList<IndexRegion> regions)
+    private static void AppendEffectSummary(StringBuilder builder, IReadOnlyList<IndexRegion> regions)
     {
         var affected = regions.Count(region => region.Outcome is IndexRegionOutcome.Applied
-            or IndexRegionOutcome.Verified
-            or IndexRegionOutcome.Unknown);
+            or IndexRegionOutcome.Verified or IndexRegionOutcome.Unknown);
         if (affected == 0)
         {
             builder.AppendLine("No files changed.");
@@ -152,79 +109,17 @@ internal static class IndexHumanRenderer
         var uncertain = regions.Count(region => region.Outcome == IndexRegionOutcome.Unknown);
         if (uncertain == 0)
         {
-            builder.AppendLine(
-                CultureInfo.InvariantCulture,
-                $"{affected} files changed before the operation stopped.");
-            return;
+            builder.AppendLine(CultureInfo.InvariantCulture, $"{affected} files changed before the operation stopped.");
         }
-
-        builder.AppendLine(
-            CultureInfo.InvariantCulture,
-            $"{affected} files may have changed before the operation stopped; {uncertain} have an unknown final outcome.");
-    }
-
-    private static void AppendSelection(StringBuilder builder, IndexSelection selection)
-    {
-        builder.AppendLine(
-            CultureInfo.InvariantCulture,
-            $"Selection: {IndexDefinitions.ReadMachineName(selection.Origin)} / {IndexDefinitions.ReadMachineName(selection.Scope)} / {selection.Sources.Count} sources");
-    }
-
-    private static void AppendRecovery(StringBuilder builder, IndexRecovery recovery)
-    {
-        if (recovery.State == IndexRecoveryState.NotRequired)
+        else
         {
-            return;
-        }
-
-        builder.AppendLine($"Recovery: {IndexDefinitions.ReadMachineName(recovery.State)}");
-        if (recovery.ResidualPath is not null)
-        {
-            builder.AppendLine($"  {CommandTextEscaping.Escape(recovery.ResidualPath)}");
+            builder.AppendLine(CultureInfo.InvariantCulture,
+                $"{affected} files may have changed before the operation stopped; {uncertain} have an unknown final outcome.");
         }
     }
 
-    private static void AppendFindings(StringBuilder builder, IReadOnlyList<IndexFinding> findings)
-    {
-        foreach (var finding in findings)
-        {
-            var label = finding.Status == CliSemanticStatus.Attention
-                ? "Requires attention"
-                : Capitalize(CliStatusDefinitions.Read(finding.Status).MachineName);
-            builder.AppendLine($"{label}: {CommandTextEscaping.Escape(finding.Cause)}");
-            if (finding.Source is not null)
-            {
-                builder.AppendLine($"  {CommandTextEscaping.Escape(finding.Source.Path)}");
-            }
-
-            foreach (var candidate in finding.Candidates)
-            {
-                builder.AppendLine($"  {CommandTextEscaping.Escape(candidate.Path)}");
-            }
-        }
-    }
-
-    private static void AppendNext(StringBuilder builder, CliNextAction? next)
-    {
-        if (next is null)
-        {
-            return;
-        }
-
-        builder.AppendLine(
-            $"""
-            Next: {CommandTextEscaping.Escape(next.Command)}
-            {CommandTextEscaping.Escape(next.Reason)}
-            """.ReplaceLineEndings());
-    }
-
-    private static string Capitalize(string value) => char.ToUpperInvariant(value[0]) + value[1..];
-
-    private static string Outcome(IndexRegionOutcome outcome)
-        => IndexDefinitions.ReadMachineName(outcome);
+    private static string Text(string value) => CommandTextEscaping.Escape(value);
 
     private static string EntryCount(int? count)
-        => count is { } value
-            ? string.Create(CultureInfo.InvariantCulture, $"{value}")
-            : UnknownEntryCount;
+        => count is { } value ? value.ToString(CultureInfo.InvariantCulture) : "unknown";
 }

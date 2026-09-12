@@ -86,7 +86,7 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, applied.Status);
         Assert.Equal(ConfirmationPrompt, applied.StandardError);
         Assert.StartsWith("Open Forge install", applied.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Classification: safe-absence", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Installation state: no existing installation content", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("remaining", applied.RemainingInput);
         Assert.True(workspace.AgentsDirectoryExists());
         Assert.True(applied.LockInfrastructureExists);
@@ -102,7 +102,7 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Equal(0, noOp.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, noOp.Status);
         Assert.Equal(string.Empty, noOp.StandardError);
-        Assert.Contains("Classification: trusted-exact", noOp.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Installation state: matches the installed Framework", noOp.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("unused", noOp.RemainingInput);
         Assert.Equal(afterApply, workspace.SnapshotHashes());
         Assert.False(noOp.LockInfrastructureExists);

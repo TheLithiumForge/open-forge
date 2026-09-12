@@ -531,9 +531,14 @@ claims a rollback.
 
 The default human view is `expanded`. Compact output retains identity, status,
 mode, coverage, effect and finding counts, selected and remaining resolution
-lanes, affected paths, and required next actions. Expanded output adds evidence,
-provenance, locations, candidate basis, exact effects, bounded diffs or
-fingerprints, and lifecycle facts. No view emits a health score or percentage.
+lanes, affected paths, every finding, selected exact destination changes and
+no-ops, recovery state and required next actions. Human locations use file line
+and column; JSON retains byte coordinates. Expanded adds candidate evidence and
+selection-step detail. Library selections retain Library and logical-path
+identity, recovery-data path, observed link target without following it, and
+actual effect and verification outcomes. The operation header precedes Library
+details. The actual `Next:` command appears once, with its reason in expanded
+output. No view emits a health score or percentage.
 
 Human output leads with the result. It does not require the reader to understand
 planning stages to understand a normal success or failure. `--verbose` is a

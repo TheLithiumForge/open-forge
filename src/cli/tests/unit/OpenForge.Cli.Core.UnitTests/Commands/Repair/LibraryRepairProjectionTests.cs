@@ -1,3 +1,4 @@
+using System.Text;
 using OpenForge.Cli.Core.Commands.Repair.Models.Application;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Rendering;
@@ -7,6 +8,26 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class LibraryRepairProjectionTests
 {
+    [Fact(DisplayName = "Repair Library human details retain the selected path, attribution and observed link identity"),
+        Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    public void HumanDetailsRetainSelectedLibraryIdentity()
+    {
+        var evidence = LibraryRepairData.Evidence();
+        var plan = LibraryRepairData.Plan(evidence);
+        var result = RepairTestData.Result(facts: RepairTestData.CompleteFacts(
+            selection: plan.Selection, plan: plan));
+        var builder = new StringBuilder();
+
+        RepairLibraryPresentation.Append(builder, result);
+
+        var text = builder.ToString();
+        Assert.Contains(evidence.Entry.Input.Context.LogicalPath.Replace("\\", "\\\\", StringComparison.Ordinal), text, StringComparison.Ordinal);
+        Assert.Contains("team-knowledge", text, StringComparison.Ordinal);
+        Assert.Contains(evidence.Residual.Candidate.Path.Replace("\\", "\\\\", StringComparison.Ordinal), text, StringComparison.Ordinal);
+        Assert.Contains("../../shared/team-knowledge/.agents/directives/review.md", text, StringComparison.Ordinal);
+        Assert.Contains("not followed", text, StringComparison.Ordinal);
+    }
+
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("OrdinaryCreate", "ordinary-create"), InlineData("OrdinaryReplace", "ordinary-replace")]
     [InlineData("OrdinaryReplaceGeneratedRegion", "ordinary-replace-generated-region"), InlineData("OrdinaryDelete", "ordinary-delete")]

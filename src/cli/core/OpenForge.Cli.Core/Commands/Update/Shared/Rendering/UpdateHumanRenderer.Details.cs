@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 using OpenForge.Cli.Core.Commands.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Rendering;
 
@@ -10,13 +11,11 @@ internal static partial class UpdateHumanRenderer
 {
     private static void AppendComparisons(
         StringBuilder builder,
-        IReadOnlyList<UpdateComparison> comparisons,
+        IEnumerable<UpdateComparison> comparisons,
         bool expanded)
     {
-        builder.AppendLine($"Comparisons: {comparisons.Count}");
         foreach (var comparison in comparisons)
         {
-            var path = Value(comparison.RelativePath);
             var kind = UpdateDefinitions.ReadMachineName(comparison.Kind);
             var region = comparison.RegionIdentity is null
                 ? string.Empty
@@ -25,7 +24,7 @@ internal static partial class UpdateHumanRenderer
             var intended = UpdateDefinitions.ReadMachineName(comparison.IntendedState);
             var retirement = UpdateDefinitions.ReadMachineName(comparison.RetirementEligibility);
             builder.AppendLine(
-                $"  {path}: {kind}{region} / current={current} / intended={intended} / retirement={retirement}");
+                $"    Comparison: {kind}{region}; current: {current}; intended: {intended}; retirement: {retirement}");
             if (!expanded)
             {
                 continue;
@@ -63,20 +62,40 @@ internal static partial class UpdateHumanRenderer
 
     private static void AppendEffects(
         StringBuilder builder,
-        IReadOnlyList<UpdatePhysicalEffect> effects)
+        UpdateResult result,
+        bool expanded)
     {
-        builder.AppendLine($"Effects: {effects.Count}");
-        foreach (var effect in effects)
+        var comparisons = result.Comparisons.ToLookup(comparison => comparison.RelativePath, StringComparer.Ordinal);
+        var represented = new HashSet<string>(StringComparer.Ordinal);
+        builder.AppendLine($"Effects: {result.Effects.Count}");
+        foreach (var effect in result.Effects)
         {
             var action = UpdateDefinitions.ReadMachineName(effect.Action);
             var outcome = UpdateDefinitions.ReadMachineName(effect.Outcome);
             var residual = UpdateDefinitions.ReadMachineName(effect.Residual);
             builder.AppendLine(
-                $"  {Value(effect.Path)}: {action} / {outcome} / residual={residual}");
+                $"  {Value(effect.Path)}: {action}; {outcome}; residual: {residual}");
             foreach (var change in effect.Changes)
             {
                 AppendLogicalChange(builder, change);
             }
+
+            if (represented.Add(effect.Path))
+            {
+                AppendComparisons(builder, comparisons[effect.Path], expanded);
+            }
+        }
+
+        var otherPaths = comparisons.Where(group => !represented.Contains(group.Key)).ToArray();
+        if (otherPaths.Length != 0)
+        {
+            builder.AppendLine("Inspected paths without effects:");
+        }
+
+        foreach (var group in otherPaths)
+        {
+            builder.AppendLine($"  {Value(group.Key)}");
+            AppendComparisons(builder, group, expanded);
         }
     }
 
@@ -102,16 +121,10 @@ internal static partial class UpdateHumanRenderer
 
     private static void AppendRecovery(
         StringBuilder builder,
-        UpdateRecovery recovery,
-        bool showProtectedPaths)
+        UpdateRecovery recovery)
     {
         builder.AppendLine(
             $"Recovery: {UpdateDefinitions.ReadMachineName(recovery.State)} / residual={Value(recovery.ResidualPath)}");
-        if (!showProtectedPaths)
-        {
-            return;
-        }
-
         foreach (var path in recovery.ProtectedPaths)
         {
             builder.AppendLine($"  Protected: {Value(path)}");
@@ -120,21 +133,26 @@ internal static partial class UpdateHumanRenderer
 
     private static void AppendFindings(
         StringBuilder builder,
-        IReadOnlyList<UpdateFinding> findings,
-        bool showFindings)
+        IReadOnlyList<UpdateFinding> findings)
     {
-        builder.AppendLine($"Findings: {findings.Count}");
-        if (!showFindings)
-        {
-            return;
-        }
-
         foreach (var finding in findings)
         {
             builder.AppendLine(
-                $"  {UpdateDefinitions.ReadMachineName(finding.Code)} / target={Value(finding.Target)} / {Value(finding.Cause)}");
+                $"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {FindingCause(finding)} [{UpdateDefinitions.ReadMachineName(finding.Code)}]");
+            if (finding.Target is { } target)
+            {
+                builder.AppendLine($"  {Value(target)}");
+            }
         }
     }
+
+    private static string FindingCause(UpdateFinding finding) => finding.Code switch
+    {
+        UpdateFindingCode.ManagedDivergence => "Local changes were kept because replacement was not requested.",
+        UpdateFindingCode.ManagedTargetMissing => "The managed path is missing. Update left it absent.",
+        UpdateFindingCode.RetiredContentPreserved => "This path is no longer in the selected Framework. Update did not remove it.",
+        _ => Value(finding.Cause),
+    };
 
     private static string OptionalBoolean(bool? value)
         => value switch

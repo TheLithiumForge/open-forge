@@ -16,46 +16,18 @@ public sealed class UpdateHumanRendererTests
     [Fact(DisplayName = "Update compact output preserves the complete sparse result and final trimming"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void RendersCompleteSparseCompactOutput()
     {
-        var result = new UpdateResult(new UpdateResultFormation
-        {
-            Workspace = null,
-            Mode = UpdateMode.Apply,
-            Force = false,
-            Prune = false,
-            Automatic = false,
-            Source = null,
-            Comparisons = [],
-            GeneratedNavigation = null,
-            Effects = [],
-            Lifecycle = new UpdateLifecycle
-            {
-                Trust = UpdateLifecycleTrust.NotRequested,
-                Coverage = UpdateLifecycleCoverage.NotRequested,
-                Action = UpdateLifecycleAction.None,
-                Outcome = UpdateLifecycleOutcome.NotRequested,
-            },
-            Recovery = new UpdateRecovery
-            {
-                State = UpdateRecoveryState.NotRequired,
-                ProtectedPaths = [],
-                ResidualPath = null,
-            },
-            Verification = UpdateVerificationState.NotRequested,
-            Findings = [],
-        });
+        var result = SparseResult([]);
         var expected = string.Join(Environment.NewLine,
             "The managed Framework is up to date.",
+            "Status: complete",
             "Workspace: unavailable",
             "Selected by: unavailable",
-            "Flags: mode=apply, force=false, prune=false, automatic=false",
-            "Status: complete",
+            "Mode: apply; force: false; prune: false; automatic: false",
             "Source: unavailable",
-            "Comparisons: 0",
-            "Generated navigation: unavailable",
             "Effects: 0",
+            "Generated navigation: unavailable",
             "Lifecycle: trust=not-requested / coverage=not-requested / action=none / outcome=not-requested",
             "Recovery: not-required / residual=unavailable",
-            "Findings: 0",
             "Verification: not-requested");
 
         var output = UpdateHumanRenderer.Render(new CliPresentationRequest<UpdateResult>(
@@ -65,9 +37,10 @@ public sealed class UpdateHumanRendererTests
         Assert.Equal(expected, output);
     }
 
-    [Fact(DisplayName = "Update expanded output preserves populated facts, escaping, dry-run, retained recovery and next action"),
+    [Theory(DisplayName = "Update human output preserves populated facts, escaping, dry-run, retained recovery and next action"),
+        InlineData(false), InlineData(true),
         Trait("Feature", "update"), Trait("Evidence", "Unit")]
-    public void RendersCompletePopulatedExpandedOutput()
+    public void RendersCompletePopulatedHumanOutput(bool expanded)
     {
         const string baselineFingerprint = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         const string intendedFingerprint = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
@@ -163,37 +136,105 @@ public sealed class UpdateHumanRendererTests
                 target: "recovery\t\"copy\"\\\u2028\u2029.zip",
                 cause: "Keep\r\n\t\"copy\"\\😀\ud800\u2028\u2029.")],
         });
-        var escapedRoot = Path.DirectorySeparatorChar == '\\' ? root[..^1] + "\\\\" : "/";
         var expected = string.Join(Environment.NewLine,
             "The managed Framework update requires attention.",
-            $"Workspace: {escapedRoot}workspace-\u2028\u2029-end",
-            "Selected by: --workspace",
-            "Flags: mode=dry-run, force=true, prune=true, automatic=true",
             "Status: requires attention",
-            $"Source: framework / version=v1\\u0009\\\"x\\\"\\\\😀\\ud800\u2028\u2029-end / inventory={baselineFingerprint} / assets=2",
-            "Comparisons: 1",
-            "  docs/index.md: managed-region / region=entries-\u2028\u2029-end / current=baseline-equivalent / intended=changed / retirement=not-applicable",
+            $"Workspace: {root}workspace-\u2028\u2029-end",
+            "Selected by: --workspace",
+            "Mode: dry-run; force: true; prune: true; automatic: true",
+            "Source: embedded Framework; 2 assets",
+            $"  ID: framework; version: v1\\u0009\\\"x\\\"\\\\😀\\ud800\u2028\u2029-end; inventory fingerprint: {baselineFingerprint}",
+            "REQUIRES ATTENTION: Keep\\u000d\\u000a\\u0009\\\"copy\\\"\\\\😀\\ud800\u2028\u2029. [update.recovery-artifact-retained]",
+            "  recovery\\u0009\\\"copy\\\"\\\\\u2028\u2029.zip",
+            "Effects: 1",
+            "  docs/index.md: replace; planned; residual: none",
+            "    managed-region: replace / region=entries-\u2028\u2029-end / source=framework/source-\u2028\u2029.md",
+            "    Comparison: managed-region / region=entries-\u2028\u2029-end; current: baseline-equivalent; intended: changed; retirement: not-applicable",
             "    Source: framework/source-\u2028\u2029.md / present=true",
             $"    Fingerprints: policy=open-forge-markdown-v1 / baseline={baselineFingerprint} / current={baselineFingerprint} / intended={intendedFingerprint}",
             "Generated navigation: complete",
             "  .agents/memory/_memory.md: changed",
-            "Effects: 1",
-            "  docs/index.md: replace / planned / residual=none",
-            "    managed-region: replace / region=entries-\u2028\u2029-end / source=framework/source-\u2028\u2029.md",
             "Lifecycle: trust=trusted / coverage=complete / action=publish / outcome=planned",
             "Recovery: retained / residual=recovery-\u2028\u2029.zip",
             "  Protected: docs/index.md",
             "  Protected: .agents/open-forge.lifecycle.json",
-            "Findings: 1",
-            "  update.recovery-artifact-retained / target=recovery\\u0009\\\"copy\\\"\\\\\u2028\u2029.zip / Keep\\u000d\\u000a\\u0009\\\"copy\\\"\\\\😀\\ud800\u2028\u2029.",
             "Verification: not-requested",
             "No files changed (--dry-run).",
-            "Next: open-forge cleanup — Review and remove the reported recovery artifact after confirming the verified Update result.");
+            "Next: open-forge cleanup",
+            "Review and remove the reported recovery artifact after confirming the verified Update result.");
 
         var output = UpdateHumanRenderer.Render(new CliPresentationRequest<UpdateResult>(
             result,
-            new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal)));
+            new CliPresentation(CliOutputFormat.Human, expanded ? CliView.Expanded : CliView.Compact, CliVerbosity.Normal)));
 
-        Assert.Equal(expected, output);
+        if (expanded)
+        {
+            Assert.Equal(expected, output);
+        }
+        else
+        {
+            Assert.Contains("Status: requires attention", output, StringComparison.Ordinal);
+            Assert.Contains("Next: open-forge cleanup", output, StringComparison.Ordinal);
+            Assert.DoesNotContain("inventory fingerprint:", output, StringComparison.OrdinalIgnoreCase);
+            foreach (var effect in result.Effects)
+            {
+                Assert.Contains(effect.Path, output, StringComparison.Ordinal);
+            }
+        }
     }
+    [Theory(DisplayName = "Update explains each preserved-state kind without changing the producer's JSON cause"),
+        InlineData((int)UpdateFindingCode.ManagedDivergence, "Local changes were kept", false),
+        InlineData((int)UpdateFindingCode.ManagedDivergence, "Local changes were kept", true),
+        InlineData((int)UpdateFindingCode.ManagedTargetMissing, "The managed path is missing", false),
+        InlineData((int)UpdateFindingCode.ManagedTargetMissing, "The managed path is missing", true),
+        InlineData((int)UpdateFindingCode.RetiredContentPreserved, "Update did not remove it", false),
+        InlineData((int)UpdateFindingCode.RetiredContentPreserved, "Update did not remove it", true),
+        Trait("Feature", "update"), Trait("Evidence", "Unit")]
+    public void PreservedStateExplanationFollowsItsTypedKind(int code, string explanation, bool expanded)
+    {
+        const string cause = "Update preserved trusted managed divergence without the required explicit authority.";
+        var result = SparseResult([new UpdateFinding((UpdateFindingCode)code, "docs/guide.md", cause)]);
+        var presentation = new CliPresentationRequest<UpdateResult>(result,
+            new CliPresentation(CliOutputFormat.Human, expanded ? CliView.Expanded : CliView.Compact, CliVerbosity.Normal));
+        var before = UpdateJsonRenderer.Render(presentation);
+
+        var text = UpdateHumanRenderer.Render(presentation);
+
+        Assert.Contains(explanation, text, StringComparison.Ordinal);
+        Assert.Contains("docs/guide.md", text, StringComparison.Ordinal);
+        Assert.Contains(cause, before, StringComparison.Ordinal);
+        Assert.Equal(before, UpdateJsonRenderer.Render(presentation));
+    }
+
+    private static UpdateResult SparseResult(IReadOnlyList<UpdateFinding> findings)
+    {
+        return new UpdateResult(new UpdateResultFormation
+        {
+            Workspace = null,
+            Mode = UpdateMode.Apply,
+            Force = false,
+            Prune = false,
+            Automatic = false,
+            Source = null,
+            Comparisons = [],
+            GeneratedNavigation = null,
+            Effects = [],
+            Lifecycle = new UpdateLifecycle
+            {
+                Trust = UpdateLifecycleTrust.NotRequested,
+                Coverage = UpdateLifecycleCoverage.NotRequested,
+                Action = UpdateLifecycleAction.None,
+                Outcome = UpdateLifecycleOutcome.NotRequested,
+            },
+            Recovery = new UpdateRecovery
+            {
+                State = UpdateRecoveryState.NotRequired,
+                ProtectedPaths = [],
+                ResidualPath = null,
+            },
+            Verification = UpdateVerificationState.NotRequested,
+            Findings = findings,
+        });
+    }
+
 }
