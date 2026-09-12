@@ -6,6 +6,155 @@ open-forge:
 
 # Task 13: Native CI and Reproducible Artifacts
 
+## Script Tooling And Architecture Follow-up
+
+State: Complete. Phase 2/2, milestone 3/3. Completion grace: 2.
+The maintainer requested workspace TypeScript 7 and direct tool commands, an
+explanation/locality assessment of scripts and compiler projects, and review of
+their dot-lith-cli task-orchestrator branch as a possible reusable .NET core.
+Baseline: local develop `f84fa53f`; preserve the separately integrated Framework
+changes and all C# source/tests. Dependency installation and cloning the named
+repository are explicitly authorized; push, publication and hosted actions remain
+prohibited. No adoption of the external core or package-manager migration is
+accepted merely by investigating it.
+
+Direct profile. M1 inspect current consumers, tool compatibility and the external
+core; M2 install the requested compiler and simplify direct package commands with
+focused checks; M3 record findings, recommendations and local changes. Phase 1
+owns M1; phase 2 owns M2/M3. Existing assertions and package behavior remain
+frozen. Expected implementation paths: package.json/lock and directly affected
+compiler invocation consumers; structural reorganization is a proposal until its
+tradeoffs are explained. No C# or Framework payload changes.
+
+One bounded Astra/high external-core assessment runs read-only alongside root's
+local tooling work. Review budget: one focused tooling delta review only if the
+compiler upgrade changes emission behavior. Correction budget: one grouped cycle.
+No council or full CLI qualification is needed for command spelling alone;
+changed launcher emission requires its real package boundary evidence.
+
+### Tooling Outcome And Evidence
+
+Code commit: `5cfdf9d88b436509d7421bc4cc9026c658651f6f` on local develop.
+Workspace commands now call tsc and eslint directly. TypeScript 7.0.2 supplies
+`tsc`; Microsoft's documented TypeScript 6 API alias remains available to
+ESLint through the `typescript` dependency. This is the supported
+[side-by-side installation](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/),
+not a custom compatibility layer. Installed ESLint is 10.9.1.
+Launcher staging calls the shared `build:launcher` package command instead of
+resolving a compiler's private JavaScript entry point. npm remains the package
+manager. No structural migration or external-core adoption was implemented.
+
+Qualification: root typecheck/lint, focused delivery typecheck/lint/format and
+launcher compilation passed. All 32 tooling tests passed: 16 delivery/release,
+8 agent tooling, 7 package layout and 1 package fixture. Both emitted launcher
+files are byte-identical to the previously qualified TypeScript 6 output.
+The actual installed-native package journey passed using the new launcher and
+the unchanged, previously qualified Linux native binary. C# tests and foreign
+hosts were not rerun; this evidence qualifies tooling, not new CLI behavior.
+
+A fresh isolated lockfile installation passed using authorized dependency
+downloads, with the installed compiler and linter executables checked directly.
+The first offline attempt failed because an existing isexe tarball was absent
+from the cache; it is not recorded as a successful offline installation.
+Logs and exact hashes are in `artifacts/task13-ts7/qualification.json` and its
+referenced logs. Existing tests were unchanged. Byte-identical emission did not
+trigger the capsule's conditional additional code review.
+
+### Scripts Assessment And Proposed Follow-up
+
+Inventory: 41 TypeScript files, approximately 2801 lines including tests,
+11 nested compiler configurations plus the root configuration. The directories
+have useful responsibilities, but configuration and shared ownership can be
+simplified. The following changes are proposals, not completed implementation.
+
+| Current directory | Responsibility | Recommended treatment |
+| --- | --- | --- |
+| scripts/delivery | Restore, build, native output, built tests, versions and artifact identity | Keep one meaningful entry point per task and topic-local shared capabilities. |
+| scripts/ci | Release selection, complete platform collection, checksums and archive inspection | Group as release tooling within delivery; retain checks at actual release boundaries. |
+| scripts/package-managers/npm | Seven manifest templates, thin launcher, staging, packing, local linking and package journeys | Keep npm-specific code together; share delivery facts without importing task entry points. |
+| scripts/agent-tooling | Agent projections and Git-object review tooling | Keep separate from product delivery. |
+
+Use one root strict Node no-emit configuration for tooling and tests, plus one
+small emitting configuration for the shipped npm launcher. Most current nested
+projects only vary file selection within the same Node environment. Unit,
+integration and public package journeys can still run separately using their
+existing test entry points. When implementing consolidation, clarify the scoped
+Node compiler-project rule explicitly; do not weaken C# test-tier projects.
+The emitting configuration earns its place by excluding build/release helpers
+and tests from published JavaScript.
+
+Shared version, platform, source identity, artifact and process mechanisms belong
+at their nearest common delivery scope. Currently delivery imports a SHA rule
+from the npm model, while npm imports delivery version handling; release helpers
+also consume both. These are opposing folder dependencies, not a demonstrated
+runtime module cycle. Move shared facts toward their real owner, preserving the
+thin launcher's dependency boundary and package evidence. Avoid a generic global
+utils bucket, a command registry or a custom workflow engine.
+
+Prefer direct commands for tsc, eslint and formatting. Meaningful operations such
+as restore/build/test/pack can each have a small task entry point using focused
+shared modules. Do not replace direct commands with one-line TypeScript wrappers.
+The existing semver package can be called through its API instead of spawning its
+CLI merely to validate a version. Keep existing boundary assertions while moving
+code; remove tests only when their owned behavior is explicitly replaced.
+
+Keep npm for now. There is one private development package, and npm scripts
+already expose workspace binaries. The six platform package directories are
+output templates, not six independently developed workspace packages. pnpm would
+change dependency management without fixing the present responsibility split.
+
+### External Core Assessment
+
+The explicitly authorized clone selected branch `feature/task-orchestrator`,
+commit `92ad9fd9a105816fd8a8336a120d719cd42e9e97`. Read-only review covered
+TypeScript source and tests; no external code was installed or executed.
+
+The core offers build/publish/run/pack/clean/rebuild argument handling, Node
+process execution and workflow scheduling. Its publish options cover native AOT,
+self-contained output, trimming and single-file output. No dedicated restore or
+prebuilt-test operation was found. NuGet pack is distinct from our npm package
+staging. Our artifact identity, test-result handling and release collection would
+still be needed.
+
+Recommendation: keep Open Forge delivery local now. A future small extraction
+could provide pure .NET argument builders and an executable-plus-arguments Node
+process helper. Keep project discovery, persisted configuration, UI metadata and
+workflow scheduling above that reusable boundary.
+
+Material static findings supporting this recommendation:
+
+- The [core manifest](https://github.com/TheLithiumForge/dot-lith-cli/blob/92ad9fd9a105816fd8a8336a120d719cd42e9e97/packages/core/package.json)
+  points to a missing index.ts and lacks a consumable exports/build surface.
+  Existing consumers reach into source through aliases or relative imports.
+  Bun owns repository build/test commands; the inspected runtime uses Node APIs,
+  so Bun is not established as a runtime requirement.
+- Build and publish wrappers persist .lith-cli.json after successful execution,
+  including when defaults were not requested. Publish also changes cwd to the
+  project's directory while retaining a relative project path, which can make
+  a nested path resolve twice. These are wrapper policy and path concerns,
+  separate from useful argument-building functions.
+- The [process helper](https://github.com/TheLithiumForge/dot-lith-cli/blob/92ad9fd9a105816fd8a8336a120d719cd42e9e97/packages/core/src/utils/system/exec-helper.ts)
+  uses shell command strings and a two-minute default timeout that the inspected
+  build/publish command schemas do not expose. Native AOT can exceed that limit.
+- The [workflow scheduler](https://github.com/TheLithiumForge/dot-lith-cli/blob/92ad9fd9a105816fd8a8336a120d719cd42e9e97/packages/core/src/commands/extensions/workflows/run-workflow/run-workflow.ts)
+  treats a running dependency as an available result and can finalize its
+  dependent as skipped when another parallel node completes first. Skipped
+  results count toward overall success. This is a static control-flow finding,
+  not an executed reproduction; the inspected tests do not cover that case.
+
+### Follow-up Observation And Closeout
+
+One bounded Astra/high reader inspected the external core while root handled
+workspace compatibility and validation. Root checked the consequential source
+findings before accepting them. This supplied an independent assessment without
+an implementation team or review council. There is no controlled comparison
+with prior Luna/Sol performance, so no relative model-quality claim is supported.
+
+Done: M1 assessment, M2 compiler/direct commands and M3 durable findings complete.
+Now: Phase 2/2, milestone 3/3; local code committed and documentation recorded.
+Next: Structural consolidation and any external extraction remain proposals.
+Blocker: None. No hosted run, publication or external-core adoption occurred.
+
 ## Delivery Simplification Continuation
 
 - State: Complete and locally integrated at `1b8475ae` from baseline

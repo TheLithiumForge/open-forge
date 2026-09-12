@@ -25,6 +25,13 @@ The root `package.json` is the shared entry point for local development and CI.
 Small TypeScript scripts run the .NET build and test tools, synchronize versions,
 and prepare packages. Repository tooling uses Node and npm, including its tests.
 
+Package scripts invoke workspace tools directly: `tsc`, `eslint`, and `prettier`.
+`tsc` uses TypeScript 7. The `@typescript/native` npm alias supplies that compiler;
+the `typescript` alias supplies Microsoft's TypeScript 6 API package for ESLint.
+This follows the supported [side-by-side installation](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/).
+`npm run build:launcher` compiles only the thin npm launcher. Delivery and local
+linking use that same command when they need emitted JavaScript.
+
 The replacement C# implementation follows the current [CLI
 Architecture](../.agents/memory/crystallized/documents/cli/architecture.md) and
 [active Plan](../.agents/memory/working/cli-development/plan.md). Source and

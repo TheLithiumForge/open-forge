@@ -6,7 +6,17 @@ open-forge:
 
 # CLI Project Control Ledger
 
-## Current Delivery Execution
+## Current Script Tooling Follow-up
+
+Task 13 “Native CI and Reproducible Artifacts” completed the script/tooling
+follow-up at phase 2/2, milestone 3/3. Commit `5cfdf9d8` installed workspace
+TypeScript 7 and direct tool commands. All 32 tooling tests and the installed
+native-package journey passed, with unchanged launcher emission. The
+[Task assessment](tasks/delivery/02-native-ci.md#scripts-assessment-and-proposed-follow-up)
+records configuration/locality improvements and the external-core recommendation.
+Root and the bounded Astra/high reader finished; structural migration remains a proposal.
+
+## Completed Delivery Execution
 
 Task 13 is complete at phase 3/3, milestone 6/6. Feature `0101f25c` was
 squash-integrated at `1b8475ae`, with identical tree `5461e002`. Its [continuation capsule](tasks/delivery/02-native-ci.md#delivery-simplification-continuation)
@@ -579,7 +589,7 @@ identity, queue state, completion grace, worktree mapping, and integration state
 | Task 21 “CLI Command Surface Remediation”              | [CLI Command Surface Remediation](tasks/cli-command-surface-remediation.md)                     | `DEQUEUED` | Consumed | Correct the seven validated audit findings within existing contracts and refactoring authority.                     | Phase 4/4, milestone 6/6; exact integration accepted. | Bounded sequential remediation                           | Accepted feature6173fb5b integrated at75f6ff49; exact tree0b7ed8e6. | Root; author/reviewer completed. | All 6,418 executions and protected/static gates passed; canonical Task receipt owns details. |
 | Task 27 “C# Structural Streamlining” | [C# Structural Streamlining](tasks/csharp-structural-streamlining.md) | `DEQUEUED` | 0 | Completed the bounded beta batch; broader refactoring is deferred. | Phase 4/4, milestone 8/8; accepted and integrated locally. | Explicit Gray/Blue/Purple freezes and final qualification | Feature `1b101bf2` integrated as `73ef066a`; exact tree `43407622`. | Root and all helpers complete. | [Complete changes, findings and evidence](tasks/csharp-beta-closeout.md); 6,997 C# executions and native package journey pass. |
 | Task 7 “npm Package Manager Release and Local Linking” | [npm Packages](tasks/delivery/01-npm-packages.md) | `DEQUEUED` | 0 | Implemented and locally qualified the accepted six-target graph. | Phase 4/4, milestone 6/6; integrated and accepted. | Derivative package expansion with explicit freezes | Feature6dc714c5 integrated at7eeeb19d; exact treec222861a. | Root, author, reviewer and operator completed. | All 6,421 executions, actual Linux native package journey, thirty-path integration and unrelated preservation accepted; other hosts remain Task13. |
-| Task 13 “Native CI and Reproducible Artifacts” | [Native CI and Reproducible Artifacts](tasks/delivery/02-native-ci.md) | `RECENTLY_COMPLETED` | 2 | Simplified shared local/CI commands, versioning, packaging and pipeline-only publication; retired obsolete CLI tooling. | Complete phase 3/3, milestone 6/6. | Standard with frozen CLI behavior and artifact/version failure evidence | Feature 0101f25c integrated at 1b8475ae; exact tree 5461e002. | Root, Astra/high author and reviewer completed. | 6997 C# executions, 32 tooling tests, actual package/portable/global-link evidence pass; five other platforms statically reviewed. |
+| Task 13 “Native CI and Reproducible Artifacts” | [Native CI and Reproducible Artifacts](tasks/delivery/02-native-ci.md) | `RECENTLY_COMPLETED` | 2 | Upgraded workspace tooling and assessed scripts/core simplification. | Phase 2/2, milestone 3/3. | Direct with focused compiler/package checks | Code 5cfdf9d8; 32 tests and installed-native journey passed. | Root and Astra/high external-core reader finished. | Structural migration remains proposed; earlier delivery qualification is historical. |
 | Task 22 “Final Documentation, Acceptance, and Release” | [Accept And Release The Complete CLI](tasks/delivery/04-release.md) | `DEQUEUED` | 0 | Aligned docs/help and accepted the local delivery candidate. | Phase 3/3, milestone 6/6; integrated and locally accepted. | Public correctness and final acceptance | Feature 6d370632 integrated at 3bf03e0e; exact tree 33c98766. | Root and scoped reviewers completed. | Local completion accepted; shipping release excluded from this horizon. |
 | Task 28 “Framework Release Preparation” | [Framework release preparation](tasks/source-framework-review.md) | `RECENTLY_COMPLETED` | 2 | Reviewed Framework, Extensions, public documentation, and current non-CLI context. | Accepted source scope complete; no artificial phase horizon assigned. | Source and documentation; CLI follow-ups separate | Reviewed feature `e245aa3b`; squash integration is the commit containing this record. | Separate user-owned chat; source work complete. | User-authorized local integration; personal refinements remain with the user. |
 
