@@ -1,18 +1,18 @@
 using System.Globalization;
 using System.Text.Json;
-using OpenForge.Cli.Core.Commands.Extension;
-using OpenForge.Cli.Core.Commands.Extension.List;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.List.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Extension.List.Shared.Result;
+using OpenForge.Cli.Core.Commands.Extension.List;
+using OpenForge.Cli.Core.Commands.Extension;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.List;
@@ -69,24 +69,36 @@ public sealed class ExtensionListBindingAndPresentationTests
                 new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal)));
 
         Assert.Equal(
-            """
-            Extension list: installed=1; available=1; source=available; status=complete
-            Installed: toolkit; trusted
-            Available: toolkit 1.0.0
-            """,
-            compact);
-        Assert.Equal(
-            """
-            Open Forge extension list
-            Workspace: /tmp/workspace
-            Source: embedded catalogue; embedded-catalogue; available
-            Installed (coverage: complete; trust: trusted)
-            - toolkit 1.0.0; trusted; 2 managed paths; source available
-            Available (coverage: complete)
-            - toolkit 1.0.0; 1 package; 0 dependencies
+            $"""
+            Extension list
             Status: complete
-            """,
-            expanded);
+            Workspace: {result.Workspace?.LexicalRoot}
+            Selected by: --workspace
+            Source: embedded catalogue; available
+            Installed: coverage complete; record trusted
+              toolkit; version 1.0.0; trusted; source available
+            Available: coverage complete
+              toolkit; version 1.0.0
+            """.ReplaceLineEndings("\n"),
+            compact.ReplaceLineEndings("\n"));
+        Assert.Equal(
+            $"""
+            Extension list
+            Status: complete
+            Workspace: {result.Workspace?.LexicalRoot}
+            Selected by: --workspace
+            Source: embedded catalogue; available
+              Source kind: embedded-catalogue
+            Installed: coverage complete; record trusted
+              toolkit; version 1.0.0; trusted; source available
+                Managed paths: 2
+            Available: coverage complete
+              toolkit; version 1.0.0
+                Name: Toolkit
+                Description: A toolkit.
+                Packages: 1; dependencies: 0
+            """.ReplaceLineEndings("\n"),
+            expanded.ReplaceLineEndings("\n"));
     }
 
     [Theory(DisplayName = "Extension List maps every cancelled discovery state to interrupted"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit")]
@@ -193,6 +205,33 @@ public sealed class ExtensionListBindingAndPresentationTests
             Selection = ExtensionListSelection.Create(installedFlag: true, availableFlag: true),
             ExplicitSource = null,
         };
+
+    [Theory(DisplayName = "Extension List distinguishes a known empty installation from unavailable inventory"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit")]
+    [InlineData(ExtensionListCoverage.Complete, "No packages.")]
+    [InlineData(ExtensionListCoverage.Incomplete, "No packages could be established from the available facts.")]
+    public void EmptyCoverageIsHonest(object coverageValue, string expected)
+    {
+        var coverage = (ExtensionListCoverage)coverageValue;
+        var result = new ExtensionListResult(
+            status: coverage == ExtensionListCoverage.Complete ? CliSemanticStatus.Complete : CliSemanticStatus.Incomplete,
+            workspace: null,
+            selection: ExtensionListSelection.Create(installedFlag: true, availableFlag: false),
+            source: null,
+            lifecycleTrust: coverage == ExtensionListCoverage.Complete ? LifecycleExtensionTrust.Trusted : LifecycleExtensionTrust.Incomplete,
+            installedCoverage: coverage,
+            availableCoverage: ExtensionListCoverage.NotRequested,
+            installed: [], available: [], findings: [], next: null);
+        foreach (var view in new[] { CliView.Compact, CliView.Expanded })
+        {
+            var text = ExtensionListHumanRenderer.Render(new(result, new(CliOutputFormat.Human, view, CliVerbosity.Normal)));
+            Assert.Contains(expected, text, StringComparison.Ordinal);
+            Assert.DoesNotContain("Available: coverage", text, StringComparison.Ordinal);
+            if (coverage == ExtensionListCoverage.Incomplete)
+            {
+                Assert.DoesNotContain("No packages.", text, StringComparison.Ordinal);
+            }
+        }
+    }
 
     private static ExtensionListResult CreateResult()
         => new(

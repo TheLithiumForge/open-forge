@@ -35,13 +35,13 @@ public sealed class ExtensionInstallInteractionIntegrationTests
         Assert.Contains("toolkit", run.StandardError, StringComparison.Ordinal);
         Assert.True(Count(run.StandardError, "base") >= 2, "The complete finite inventory must be shown again after an invalid answer.");
         Assert.True(Count(run.StandardError, "toolkit") >= 2, "The complete finite inventory must be shown again after an invalid answer.");
-        Assert.Contains("Packages:", run.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Packages in dependency order:", run.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("base", run.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("toolkit", run.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Selection: interactive-ids", run.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Root IDs: toolkit", run.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("  base (selected root: false)", run.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("  toolkit (selected root: true)", run.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Package selection: interactive-ids", run.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Selected packages: toolkit", run.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("  base: required dependency; requires none", run.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("  toolkit: selected; requires base", run.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("remaining", run.RemainingInput);
         Assert.True(File.Exists(workspace.Combine(".agents/base/_base.md")));
         Assert.True(File.Exists(workspace.Combine(".agents/toolkit/_toolkit.md")));

@@ -3,9 +3,11 @@ using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Selection;
+using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Remove;
 
@@ -52,6 +54,7 @@ public sealed class ExtensionRemoveResultContractTests
                 new ExtensionRemoveGeneratedRegion(
                     ".agents/_index.md",
                     ExtensionRemoveGeneratedRegionState.Changed),
+                new ExtensionRemoveGeneratedRegion(".agents/unchanged-navigation.md", ExtensionRemoveGeneratedRegionState.Unchanged),
             ]),
             Effects = [effect],
             Lifecycle = new ExtensionRemoveLifecycle(
@@ -108,6 +111,23 @@ public sealed class ExtensionRemoveResultContractTests
             result.Findings.Select(finding => finding.Code));
         Assert.True(result.PackageSourceUnchanged);
         Assert.Null(result.Next);
+        foreach (var view in new[] { CliView.Compact, CliView.Expanded })
+        {
+            var request = new CliPresentationRequest<ExtensionRemoveResult>(result, new(CliOutputFormat.Human, view, CliVerbosity.Normal));
+            var jsonBefore = ExtensionRemoveJsonProjection.RenderJson(request);
+            var rendered = ExtensionRemovePresentation.RenderHuman(request);
+            Assert.Contains("Status: blocked", rendered, StringComparison.Ordinal);
+            Assert.Contains(".agents/unsafe.md", rendered, StringComparison.Ordinal);
+            Assert.Contains(".agents/_index.md", rendered, StringComparison.Ordinal);
+            Assert.Equal(view == CliView.Expanded, rendered.Contains(".agents/unchanged-navigation.md", StringComparison.Ordinal));
+            Assert.Equal(view == CliView.Compact, rendered.Contains("Unchanged navigation paths summarized: 1", StringComparison.Ordinal));
+            Assert.Contains("planned", rendered, StringComparison.Ordinal);
+            Assert.DoesNotContain("verified", rendered, StringComparison.Ordinal);
+            Assert.Contains("Protected paths: .agents/toolkit.md", rendered, StringComparison.Ordinal);
+            Assert.Equal(1, rendered.ReplaceLineEndings("\n").Split('\n').Count(line => line == "  .agents/toolkit.md"));
+            Assert.Equal(jsonBefore, ExtensionRemoveJsonProjection.RenderJson(request));
+        }
+
     }
 
     [Fact(DisplayName = "Extension Remove empty result initializes every typed safety fact and next action"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]

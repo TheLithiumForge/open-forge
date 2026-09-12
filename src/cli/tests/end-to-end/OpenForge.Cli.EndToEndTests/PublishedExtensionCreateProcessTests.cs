@@ -46,7 +46,7 @@ public sealed class PublishedExtensionCreateProcessTests
 
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
-        Assert.Contains("intended=2; applied=2", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("2 intended; 2 applied", applied.StandardOutput, StringComparison.Ordinal);
         Assert.True(File.Exists(working.ManifestPath));
         Assert.True(Directory.Exists(working.PayloadAgentsPath));
         using (var manifest = JsonDocument.Parse(await File.ReadAllTextAsync(working.ManifestPath, TestContext.Current.CancellationToken)))
@@ -67,7 +67,7 @@ public sealed class PublishedExtensionCreateProcessTests
 
         Assert.Equal(0, noOp.ExitCode);
         Assert.Equal(string.Empty, noOp.StandardError);
-        Assert.Contains("intended=2; applied=0", noOp.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("2 intended; 0 applied", noOp.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(afterApply, working.SnapshotCatalogue());
         Assert.Equal(beforeWorkspace, working.SnapshotWorkspace());
         lockStore.AssertNoInfrastructure();

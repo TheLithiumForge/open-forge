@@ -1,16 +1,16 @@
 using System.Globalization;
-using OpenForge.Cli.Core.Commands.Extension.Create;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Manifest;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Create.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Extension.Create;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Create;
@@ -160,25 +160,27 @@ public sealed class ExtensionCreatePresentationTests
                 result,
                 new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal)));
 
-        Assert.Contains("extension create", compact, StringComparison.Ordinal);
+        Assert.Contains("Extension creation", compact, StringComparison.Ordinal);
         Assert.Contains("development-toolkit", compact, StringComparison.Ordinal);
-        Assert.Contains("catalogue=/catalogue", compact, StringComparison.Ordinal);
+        Assert.Contains("Catalogue: /catalogue", compact, StringComparison.Ordinal);
         Assert.Contains("/catalogue/development-toolkit", compact, StringComparison.Ordinal);
         Assert.Contains("Mode: apply", compact, StringComparison.Ordinal);
-        Assert.Contains("verification=catalogue=verified", compact, StringComparison.Ordinal);
-        Assert.Contains("workspace=unchanged", compact, StringComparison.Ordinal);
+        Assert.Contains("Verification: catalogue verified", compact, StringComparison.Ordinal);
+        Assert.Contains("Workspace installation: unchanged", compact, StringComparison.Ordinal);
         Assert.Contains("complete", compact, StringComparison.Ordinal);
-        Assert.Contains("Open Forge extension create", expanded, StringComparison.Ordinal);
+        Assert.Contains("Extension creation", expanded, StringComparison.Ordinal);
         Assert.Contains("Catalogue: /catalogue", expanded, StringComparison.Ordinal);
         Assert.Contains("Destination: /catalogue/development-toolkit", expanded, StringComparison.Ordinal);
-        Assert.Contains("ID: development-toolkit", expanded, StringComparison.Ordinal);
+        Assert.Contains("Package: development-toolkit", expanded, StringComparison.Ordinal);
         Assert.Contains("Mode: apply", expanded, StringComparison.Ordinal);
-        Assert.Contains("Manifest: Development Toolkit; Open Forge Extension package development-toolkit.; 0.1.0", expanded, StringComparison.Ordinal);
+        Assert.Contains("Description: Open Forge Extension package development-toolkit.", expanded, StringComparison.Ordinal);
+        Assert.Contains("Name: Development Toolkit", expanded, StringComparison.Ordinal);
+        Assert.Contains("Version: 0.1.0", expanded, StringComparison.Ordinal);
         Assert.Contains("Dependencies: none", expanded, StringComparison.Ordinal);
         Assert.Contains("extension.json", expanded, StringComparison.Ordinal);
         Assert.Contains("content/.agents", expanded, StringComparison.Ordinal);
-        Assert.Contains("Verification: catalogue=verified, destination=verified, manifest=verified, payload=verified", expanded, StringComparison.Ordinal);
-        Assert.Contains("Workspace lifecycle: unchanged", expanded, StringComparison.Ordinal);
+        Assert.Contains("Verification: catalogue verified; destination verified; manifest verified; content verified", expanded, StringComparison.Ordinal);
+        Assert.Contains("Workspace installation: unchanged", expanded, StringComparison.Ordinal);
         Assert.Contains("Status: complete", expanded, StringComparison.Ordinal);
     }
 
@@ -206,8 +208,8 @@ public sealed class ExtensionCreatePresentationTests
 
         foreach (var rendered in new[] { compact, expanded })
         {
-            Assert.Contains("subject=/catalogue/collision", rendered, StringComparison.Ordinal);
-            Assert.Contains("cause=The destination contains an existing occupant.", rendered, StringComparison.Ordinal);
+            Assert.Contains("/catalogue/collision", rendered, StringComparison.Ordinal);
+            Assert.Contains("The destination contains an existing occupant.", rendered, StringComparison.Ordinal);
             Assert.Contains("Next: open-forge extension create --dry-run", rendered, StringComparison.Ordinal);
         }
     }
@@ -274,6 +276,21 @@ public sealed class ExtensionCreatePresentationTests
         var rendered = $"human:{result.Command}{Environment.NewLine}";
         Assert.Equal(expectedTarget == CliOutputTarget.StandardOutput ? rendered : string.Empty, standardOutput.ToString());
         Assert.Equal(expectedTarget == CliOutputTarget.StandardError ? rendered : string.Empty, standardError.ToString());
+    }
+
+    [Theory(DisplayName = "Both Extension Create views keep every intended path without claiming an unchanged scaffold was applied"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
+    [InlineData((int)CliView.Compact)]
+    [InlineData((int)CliView.Expanded)]
+    public void VerifiedNoOpRetainsPaths(int view)
+    {
+        var result = CreateResult(CliSemanticStatus.Complete) with { AppliedEffects = [] };
+        var rendered = ExtensionCreateHumanRenderer.Render(new(result, new(CliOutputFormat.Human, (CliView)view, CliVerbosity.Normal)));
+        Assert.Contains("Scaffold: 2 intended; 0 applied", rendered, StringComparison.Ordinal);
+        Assert.Contains("/catalogue/development-toolkit/extension.json: intended; not applied", rendered, StringComparison.Ordinal);
+        Assert.Contains("/catalogue/development-toolkit/content/.agents/: intended; not applied", rendered, StringComparison.Ordinal);
+        Assert.Contains("manifest verified", rendered, StringComparison.Ordinal);
+        Assert.DoesNotContain("Workspace: unavailable", rendered, StringComparison.Ordinal);
+        Assert.Empty(result.AppliedEffects);
     }
 
     private static ExtensionCreateResult CreateResult(

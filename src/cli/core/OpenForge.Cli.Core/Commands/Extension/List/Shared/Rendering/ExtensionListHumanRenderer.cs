@@ -1,10 +1,10 @@
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Result;
-using OpenForge.Cli.Core.Commands.Extension.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Extension.List.Shared.Rendering;
 
@@ -14,101 +14,58 @@ internal static class ExtensionListHumanRenderer
     {
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
-        return presentation.Presentation.View switch
-        {
-            CliView.Compact => RenderCompact(presentation.Result),
-            CliView.Expanded => RenderExpanded(presentation.Result),
-            _ => throw new ArgumentOutOfRangeException(nameof(presentation), presentation.Presentation.View, "The Extension List view is not defined."),
-        };
-    }
-
-    private static string RenderExpanded(ExtensionListResult result)
-    {
+        var result = presentation.Result;
+        var expanded = presentation.Presentation.View == CliView.Expanded;
         var builder = new StringBuilder();
-        var workspace = result.Workspace is null ? "unavailable" : Escape(result.Workspace.LexicalRoot);
-        builder.AppendLine($"""
-            Open Forge extension list
-            Workspace: {workspace}
-            """);
-        AppendSource(builder, result.Source);
+        CliHumanText.AppendHeader(builder, presentation, "Extension list");
+        foreach (var finding in result.Findings)
+        {
+            builder.AppendLine($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Text(finding.Cause)} [{ExtensionListDefinitions.ReadFindingCode(finding.Code)}]");
+            if (finding.Subject is { } subject)
+            {
+                builder.AppendLine($"  {Text(subject)}");
+            }
+        }
+
+        AppendSource(builder, result.Source, expanded);
         if (result.Selection.Installed)
         {
-            var trust = result.LifecycleTrust is null
-                ? "unavailable"
-                : ExtensionListJsonProjection.Trust(result.LifecycleTrust.Value);
-            builder.AppendLine(
-                $"Installed (coverage: {ExtensionListJsonProjection.Coverage(result.InstalledCoverage)}; trust: {trust})");
-            if (result.Installed.Count == 0)
+            var trust = result.LifecycleTrust is { } value ? ExtensionListJsonProjection.Trust(value) : "unavailable";
+            builder.AppendLine($"Installed: coverage {ExtensionListJsonProjection.Coverage(result.InstalledCoverage)}; record {trust}");
+            AppendEmpty(builder, result.Installed.Count, result.InstalledCoverage);
+            foreach (var row in result.Installed)
             {
-                builder.AppendLine("- none established");
-            }
-            else
-            {
-                foreach (var row in result.Installed)
+                builder.AppendLine($"  {Text(row.Id)}; version {Text(row.Version ?? "unknown")}; {ExtensionListJsonProjection.Trust(row.Trust)}; source {(row.SourceAvailable ? "available" : "unavailable")}");
+                if (expanded)
                 {
-                    var version = row.Version is null ? string.Empty : $" {Escape(row.Version)}";
-                    var availability = row.SourceAvailable ? "available" : "unavailable";
-                    builder.AppendLine(
-                        CultureInfo.InvariantCulture,
-                        $"- {Escape(row.Id)}{version}; {ExtensionListJsonProjection.Trust(row.Trust)}; {row.ManagedPathCount} managed paths; source {availability}");
+                    builder.AppendLine(CultureInfo.InvariantCulture, $"    Managed paths: {row.ManagedPathCount}");
                 }
             }
         }
 
         if (result.Selection.Available)
         {
-            builder.AppendLine($"Available (coverage: {ExtensionListJsonProjection.Coverage(result.AvailableCoverage)})");
-            if (result.Available.Count == 0)
+            builder.AppendLine($"Available: coverage {ExtensionListJsonProjection.Coverage(result.AvailableCoverage)}");
+            AppendEmpty(builder, result.Available.Count, result.AvailableCoverage);
+            foreach (var row in result.Available)
             {
-                builder.AppendLine("- none established");
-            }
-            else
-            {
-                foreach (var row in result.Available)
+                builder.AppendLine($"  {Text(row.Id)}; version {Text(row.Version)}");
+                if (expanded)
                 {
-                    var packageNoun = row.PackageCount == 1 ? "package" : "packages";
-                    var dependencyNoun = row.DependencyCount == 1 ? "dependency" : "dependencies";
-                    builder.AppendLine(
-                        CultureInfo.InvariantCulture,
-                        $"- {Escape(row.Id)} {Escape(row.Version)}; {row.PackageCount} {packageNoun}; {row.DependencyCount} {dependencyNoun}");
+                    builder.AppendLine($"""
+                            Name: {Text(row.Name)}
+                            Description: {Text(row.Description)}
+                        """);
+                    builder.AppendLine(CultureInfo.InvariantCulture, $"    Packages: {row.PackageCount}; dependencies: {row.DependencyCount}");
                 }
             }
         }
 
-        AppendFindings(builder, result.Findings);
-        AppendCompletion(builder, result);
+        CliHumanText.AppendNext(builder, presentation);
         return builder.ToString().TrimEnd();
     }
 
-    private static string RenderCompact(ExtensionListResult result)
-    {
-        var builder = new StringBuilder();
-        object installed = result.Selection.Installed ? result.Installed.Count : "not-requested";
-        object available = result.Selection.Available ? result.Available.Count : "not-requested";
-        var source = result.Source is null ? "unavailable" : ExtensionListJsonProjection.SourceState(result.Source.State);
-        builder.AppendLine(
-            CultureInfo.InvariantCulture,
-            $"Extension list: installed={installed}; available={available}; source={source}; status={ReadHumanStatus(result.Status)}");
-        foreach (var row in result.Installed)
-        {
-            builder.AppendLine($"Installed: {Escape(row.Id)}; {ExtensionListJsonProjection.Trust(row.Trust)}");
-        }
-
-        foreach (var row in result.Available)
-        {
-            builder.AppendLine($"Available: {Escape(row.Id)} {Escape(row.Version)}");
-        }
-
-        AppendFindings(builder, result.Findings);
-        if (result.Next is not null)
-        {
-            builder.AppendLine($"Next: {result.Next.Command}");
-        }
-
-        return builder.ToString().TrimEnd();
-    }
-
-    private static void AppendSource(StringBuilder builder, ExtensionListSource? source)
+    private static void AppendSource(StringBuilder builder, ExtensionListSource? source, bool expanded)
     {
         if (source is null)
         {
@@ -116,37 +73,20 @@ internal static class ExtensionListHumanRenderer
             return;
         }
 
-        var kind = source.Kind is null
-            ? string.Empty
-            : $"; {ExtensionListJsonProjection.SourceKind(source.Kind.Value)}";
-        builder.AppendLine($"Source: {Escape(source.Identity)}{kind}; {ExtensionListJsonProjection.SourceState(source.State)}");
-    }
-
-    private static void AppendFindings(
-        StringBuilder builder,
-        IEnumerable<ExtensionListFinding> findings)
-    {
-        foreach (var finding in findings)
+        builder.AppendLine($"Source: {Text(source.Identity)}; {ExtensionListJsonProjection.SourceState(source.State)}");
+        if (expanded && source.Kind is { } kind)
         {
-            var subject = finding.Subject is null ? string.Empty : $"; {Escape(finding.Subject)}";
-            builder.AppendLine(
-                $"Finding: {ExtensionListDefinitions.ReadFindingCode(finding.Code)}{subject}; {Escape(finding.Cause)}");
+            builder.AppendLine($"  Source kind: {ExtensionListJsonProjection.SourceKind(kind)}");
         }
     }
 
-    private static void AppendCompletion(StringBuilder builder, ExtensionListResult result)
+    private static void AppendEmpty(StringBuilder builder, int count, ExtensionListCoverage coverage)
     {
-        builder.AppendLine($"Status: {ReadHumanStatus(result.Status)}");
-        if (result.Next is not null)
+        if (count == 0)
         {
-            builder.AppendLine($"Next: {result.Next.Command}");
+            builder.AppendLine(coverage == ExtensionListCoverage.Complete ? "  No packages." : "  No packages could be established from the available facts.");
         }
     }
 
-    private static string ReadHumanStatus(CliSemanticStatus status)
-        => status == CliSemanticStatus.Attention
-            ? "requires attention"
-            : CliStatusDefinitions.Read(status).MachineName;
-
-    private static string Escape(string value) => ExtensionTextEscaping.Escape(value);
+    private static string Text(string value) => CliHumanText.Text(value);
 }

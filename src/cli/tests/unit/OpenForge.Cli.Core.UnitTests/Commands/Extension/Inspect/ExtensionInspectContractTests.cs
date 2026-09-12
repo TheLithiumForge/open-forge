@@ -1,9 +1,9 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Commands.Extension;
-using OpenForge.Cli.Core.Commands.Extension.Inspect;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Result;
+using OpenForge.Cli.Core.Commands.Extension.Inspect;
+using OpenForge.Cli.Core.Commands.Extension;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
@@ -295,7 +295,7 @@ public sealed class ExtensionInspectContractTests
                 new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal)));
 
         Assert.Contains("extension-inspect.invalid-stable-id", compact, StringComparison.Ordinal);
-        Assert.Contains("status=invalid", compact, StringComparison.Ordinal);
+        Assert.Contains("Status: invalid", compact, StringComparison.Ordinal);
         Assert.Contains("extension-inspect.invalid-stable-id", expanded, StringComparison.Ordinal);
         Assert.Contains("Status: invalid", expanded, StringComparison.Ordinal);
     }

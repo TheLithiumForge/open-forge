@@ -27,7 +27,7 @@ public sealed class ExtensionCreateCompositionIntegrationTests
             $"Stable ID (lowercase ASCII letters or digits separated by single hyphens):{Environment.NewLine}"
             + $"Catalogue path (existing ordinary directory; aliases are allowed):{Environment.NewLine}",
             run.StandardError);
-        Assert.Contains("ID: development-toolkit", run.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Package: development-toolkit", run.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Mode: dry-run", run.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Status: complete", run.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Stable ID", run.StandardOutput, StringComparison.Ordinal);

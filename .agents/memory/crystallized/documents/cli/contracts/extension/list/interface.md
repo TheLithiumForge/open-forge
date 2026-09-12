@@ -109,27 +109,36 @@ applicable availability condition.
 
 ## Output
 
-The expanded human result leads with the exact workspace and source. It renders
-separate `Installed` and `Available` sections, stable IDs, descriptive versions
-when present, package or dependency counts, managed-path and trust facts, source
-availability, status, and at most one useful `Next:` action. Compact output keeps
-section identity, IDs, key state, counts, and status. JSON emits one complete
-typed result on stdout for every semantic status; `--view` is a no-op in JSON.
+Both human views begin with outcome, status, exact workspace and selection
+method, then the selected source and separate requested Installed and Available
+sections. Each section keeps its own coverage. Installed rows retain stable IDs,
+known versions, record trust and source availability; Available rows retain IDs
+and versions. Empty observed rows under incomplete or unavailable coverage do not
+mean that no packages are installed or available.
 
-An illustrative result is:
+Expanded adds authored package names/descriptions, dependency/package counts and
+managed-path counts. Compact uses short rows. Findings retain their own status,
+code, exact subject and cause in both views, followed by the actual Next command
+when supplied; expanded may add its reason. Paths and IDs are not truncated.
+JSON emits one complete typed result for every status; `--view` does not alter JSON.
+
+An expanded excerpt for one available package is:
 
 ```text
-Open Forge extension list
-Workspace: D:/work/example
-Source: embedded catalogue
-Installed
-- development-toolkit 0.1.0; trusted; 21 managed paths
-Available
-- development-toolkit 0.1.0; 1 package; 0 dependencies
+Extension list
 Status: complete
+Workspace: /work/example
+Selected by: current directory
+Source: embedded catalogue; available
+  Source kind: embedded-catalogue
+Available: coverage complete
+  planning; version 0.1.0
+    Name: Planning
+    Description: <authored package description>
+    Packages: 1; dependencies: 0
 ```
 
-Values are illustrative and do not claim current inventory or implementation.
+Values are illustrative. Other selected rows remain visible in actual output.
 
 Primary human `complete`, `attention`, and `incomplete` results go to stdout.
 Primary human `invalid`, `blocked`, `failed`, and `interrupted` results go to

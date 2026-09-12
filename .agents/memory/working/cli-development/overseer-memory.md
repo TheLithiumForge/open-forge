@@ -56,11 +56,14 @@ colour with no colour flag or configurable palette. No AI view is added.
 The [implementation capsule](tasks/cli-presentation-implementation.md) owns the
 sequential sets, frozen boundaries and evidence. Set 1 is squash-merged as
 `5bb4aefa`; Set 2 Doctor/Status is squash-merged as `54c28134`. Set 3
-Library human views pass all six managed/native suites at `4d61ecb6`: 3,270 Unit,
-1,745 Integration in both modes and 123 public cases in all three modes, with
-zero failures/skips. Its authorized local squash closes this set. Set 4 Extension
-human views is next, followed by remaining human views, compact JSON, automatic
-colour and guidance. Optional display filtering remains explicit backlog.
+Library human views are squash-integrated as `56538d63`. Set 4 Extension human
+views pass all six suites at `3deb2ebc`: 3,283 Unit, 1,745 Integration in both
+modes and 123 public cases in all three modes, with zero failures/skips. Its
+authorized local squash closes this set. Set 5A Context, Find, References and
+Route List/Inspect is next, then the remaining mutation views, compact JSON,
+automatic colour and guidance. Optional display filtering remains explicit
+backlog. The user's configurable-threshold idea is queued for analysis after
+this presentation task; it changes no current configuration or diagnostics.
 Update each affected Interface with its approved set. Parsing P2–P6 stay backlog.
 
 Cleanup completed: the parser probe was outside the repository and has no matching

@@ -601,10 +601,10 @@ uses only the exact values shown.
 | `attention` with an actionable trusted complete semantic three-way divergence | `{ command: "open-forge extension update {subject.id}", reason: "Apply the trusted current-source change for this stable ID with the explicit update command." }` | `Next: open-forge extension update {subject.id}`               |
 | other `attention`                                                             | `null`                                                                                                                                                            | no line                                                        |
 | `incomplete`                                                                  | `{ command: "open-forge doctor", reason: "Inspect unavailable lifecycle, source, dependency, path, or fingerprint facts before relying on this result." }`        | `Next: open-forge doctor`                                      |
-| `invalid`                                                                     | `{ command: "open-forge extension inspect --help", reason: "Correct the named Extension Inspect input, then rerun the request." }`                                | `Next: correct the named Extension Inspect input.`             |
+| `invalid`                                                                     | `{ command: "open-forge extension inspect --help", reason: "Correct the named Extension Inspect input, then rerun the request." }`                                | `Next: open-forge extension inspect --help`             |
 | `blocked`                                                                     | `{ command: "open-forge doctor", reason: "Inspect the blocked workspace, source, identity, or ownership boundary before rerunning Extension Inspect." }`          | `Next: open-forge doctor`                                      |
-| `failed`                                                                      | `{ command: "open-forge extension inspect --verbose", reason: "Report the failure and retry Extension Inspect with bounded diagnostics." }`                       | `Next: report the failure and retry with bounded diagnostics.` |
-| `interrupted`                                                                 | `{ command: "open-forge extension inspect", reason: "Rerun the same Extension Inspect request." }`                                                                | `Next: rerun the same request.`                                |
+| `failed`                                                                      | `{ command: "open-forge extension inspect --verbose", reason: "Report the failure and retry Extension Inspect with bounded diagnostics." }`                       | `Next: open-forge extension inspect --verbose` |
+| `interrupted`                                                                 | `{ command: "open-forge extension inspect", reason: "Rerun the same Extension Inspect request." }`                                                                | `Next: open-forge extension inspect`                                |
 
 An actionable three-way divergence is deliberately narrow. It requires all of
 the following:
@@ -754,29 +754,48 @@ Foundation; this read-only contract only reports the record it receives.
 
 ## Output, Status, And Errors
 
-Expanded human output leads with the exact workspace and selected source. It
-reports the stable ID, installed and available state, lifecycle trust and
-coverage, package and dependency closure, declared and current paths,
-baseline/current/intended comparison, generated navigation as derived,
-findings, counts, status, and at most one `Next:` action. Compact output keeps
-the ID, source state, key lifecycle and package states, comparison mode, counts,
-status, and required safety or next-action information. `--view` is a no-op in
-JSON; JSON emits the complete graph above.
+Both human views begin with outcome, status, exact workspace and selection,
+selected package ID/source, installed and available state, and installation-record
+trust/coverage. Counts come from the nullable result counts. An unavailable source
+or absent available-package object never supplies a fabricated zero intended count.
 
-Illustrative human output:
+Compact retains comparison mode and coverage, significant path differences,
+required dependency/ownership conditions and every finding with its exact
+subject, package/dependency/path identity, location and candidates when supplied.
+Healthy unchanged and available source-only paths may be summarized by count;
+unavailable observations stay visible. Files with no generated region may also
+be counted. Expanded adds complete known dependency and path inventories, package metadata,
+and installed-baseline/current-workspace/selected-package comparison facts with
+owner and fingerprint details. Generated navigation stays explicitly derived.
+Group matching observations beside exact path identities, retain unmatched facts
+and keep distinct values separate. This changes human layout only; it never
+recomputes or reorders the result or its JSON arrays.
+
+Both views retain the actual required Next command; expanded may add its reason.
+Paths are not truncated. `--view` does not alter JSON, which emits the complete graph above.
+
+An inspection excerpt is:
 
 ```text
-Open Forge extension inspect development-toolkit
-Source: embedded catalogue; available
-Installed: yes; trust: trusted
-Available: yes; version: 0.2.0
-Dependencies: 0 declared; 1 package in the resolved closure
-Paths: 1 declared; 1 current; 1 intended
-Comparison: baseline / current / intended; 1 changed
-Generated: derived navigation, not package-owned authored bytes
+Extension inspection
 Status: requires attention
-Next: open-forge extension update development-toolkit
+Workspace: /work/example
+Selected by: current directory
+Package: review-tools; resolved
+Source: embedded catalogue; available
+Installed: present; version 0.1.0
+Available: present; version 0.2.0
+Installation record: complete; trusted; coverage complete
+Comparison: installed baseline, current workspace and selected package; complete
+Paths: 1 current; 1 intended; 0 unchanged
+Path checks: complete
+  .agents/guidance/review.md
+    Comparison: selected package differs; workspace still matches the installed baseline
+Next: open-forge extension update review-tools
 ```
+
+The full result also retains supplied findings and dependency/generated-navigation
+facts. Expanded includes the underlying fingerprints and owner observations.
 
 The values are illustrative and are not current inventory or implementation
 evidence. Primary human `complete`, `attention`, and `incomplete` results go to

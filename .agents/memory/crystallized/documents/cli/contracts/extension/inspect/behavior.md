@@ -417,8 +417,9 @@ output uses stderr. Diagnostics are bounded and remain on stderr.
 Human compact and expanded output are projections only. They preserve the
 subject, source, lifecycle trust/coverage, package/dependency/path state,
 comparison, generated-navigation ownership, findings, counts, aggregate status,
-and at most one exact next line. `--view` does not alter JSON. No renderer
-reorders facts or recomputes any result member.
+and at most one exact next line. Human output may group matching observations by
+exact path identity while preserving distinct and unmatched facts. It does not
+recompute a result member or change operation/JSON ordering. `--view` does not alter JSON.
 
 ## Scenario Behavior Matrix
 

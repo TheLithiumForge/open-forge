@@ -1,10 +1,10 @@
-using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Rendering;
 
@@ -14,96 +14,61 @@ internal static class ExtensionInspectHumanRenderer
     {
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
-        return presentation.Presentation.View switch
-        {
-            CliView.Compact => RenderCompact(presentation.Result),
-            CliView.Expanded => RenderExpanded(presentation.Result),
-            _ => throw new ArgumentOutOfRangeException(nameof(presentation), presentation.Presentation.View, "The Extension Inspect view is not defined."),
-        };
-    }
-
-    private static string RenderCompact(ExtensionInspectResult result)
-    {
+        var result = presentation.Result;
+        var expanded = presentation.Presentation.View == CliView.Expanded;
         var builder = new StringBuilder();
-        builder.AppendLine(
-            CultureInfo.InvariantCulture,
-            $"Extension inspect: id={Value(result.Subject.Id)}; source={ExtensionInspectWireVocabulary.SourceState(result.Source.State)}; comparison={ExtensionInspectWireVocabulary.ComparisonMode(result.Comparison.Mode)}; status={HumanStatus(result.Status)}");
-        builder.AppendLine(
-            CultureInfo.InvariantCulture,
-            $"Installed: {ExtensionInspectWireVocabulary.InstalledState(result.Installed.State)}; available: {ExtensionInspectWireVocabulary.AvailableState(result.Available.State)}; findings: {result.Findings.Count}");
-        foreach (var finding in result.Findings)
+        CliHumanText.AppendHeader(builder, presentation, "Extension inspection");
+        builder.AppendLine($"""
+            Package: {Value(result.Subject.Id ?? result.Subject.Supplied)}; {ExtensionInspectWireVocabulary.SubjectState(result.Subject.State)}
+            Source: {Value(result.Source.Identity ?? result.Source.Supplied)}; {ExtensionInspectWireVocabulary.SourceState(result.Source.State)}
+            Installed: {ExtensionInspectWireVocabulary.InstalledState(result.Installed.State)}; version {Value(result.Installed.Package?.Version)}
+            Available: {ExtensionInspectWireVocabulary.AvailableState(result.Available.State)}; version {Value(result.Available.Package?.Version)}
+            Installation record: {ExtensionInspectWireVocabulary.LifecycleReadState(result.Lifecycle.ReadState)}; {ExtensionInspectWireVocabulary.LifecycleTrust(result.Lifecycle.Trust)}; coverage {ExtensionInspectWireVocabulary.Coverage(result.Lifecycle.Coverage)}
+            Comparison: {ComparisonMode(result.Comparison.Mode)}; {ExtensionInspectWireVocabulary.ComparisonState(result.Comparison.State)}
+            Paths: {ExtensionHumanText.Count(result.Counts.CurrentPaths)} current; {ExtensionHumanText.Count(result.Counts.IntendedPaths)} intended; {ExtensionHumanText.Count(result.Counts.UnchangedPaths)} unchanged
+            """);
+        ExtensionInspectFindingHumanRenderer.Append(builder, result.Findings.Where(finding => finding.Path is null));
+        ExtensionInspectFindingHumanRenderer.AppendCandidates(builder, result.Subject.Candidates);
+        ExtensionInspectPathsHumanRenderer.Append(builder, presentation);
+        ExtensionInspectDetailsHumanRenderer.AppendDependencies(builder, presentation);
+        if (expanded)
         {
-            builder.AppendLine($"Finding: {ExtensionInspectDefinitions.ReadFindingCode(finding.Code)}; {Escape(finding.Cause)}");
+            ExtensionInspectDetailsHumanRenderer.AppendPackage(builder, result);
         }
 
-        if (result.Next is not null)
+        builder.AppendLine($"Generated navigation: {ExtensionInspectWireVocabulary.GeneratedState(result.Generated.State)}; derived content");
+        var absentRegions = result.Generated.Regions.Count(region => region.State == ExtensionInspectGeneratedRegionState.Absent);
+        if (!expanded && absentRegions > 0)
         {
-            builder.AppendLine($"Next: {Escape(result.Next.Command)}");
+            builder.AppendLine($"  No generated region in {ExtensionHumanText.Count(absentRegions)} checked files.");
         }
 
-        return builder.ToString().TrimEnd();
-    }
-
-    private static string RenderExpanded(ExtensionInspectResult result)
-    {
-        var builder = new StringBuilder();
-        var workspace = result.Workspace is null ? "unavailable" : Escape(result.Workspace.LexicalRoot);
-        builder.AppendLine($"Open Forge extension inspect {Value(result.Subject.Id)}");
-        builder.AppendLine($"Workspace: {workspace}");
-        builder.AppendLine(
-            $"Source: {Value(result.Source.Identity)}; {ExtensionInspectWireVocabulary.SourceState(result.Source.State)}");
-        builder.AppendLine(
-            $"Lifecycle: {ExtensionInspectWireVocabulary.LifecycleReadState(result.Lifecycle.ReadState)}; trust: {ExtensionInspectWireVocabulary.LifecycleTrust(result.Lifecycle.Trust)}; coverage: {ExtensionInspectWireVocabulary.Coverage(result.Lifecycle.Coverage)}");
-        builder.AppendLine(
-            $"Installed: {ExtensionInspectWireVocabulary.InstalledState(result.Installed.State)}{InstalledVersion(result.Installed)}");
-        builder.AppendLine(
-            $"Available: {ExtensionInspectWireVocabulary.AvailableState(result.Available.State)}{AvailableVersion(result.Available)}");
-        builder.AppendLine(
-            CultureInfo.InvariantCulture,
-            $"Dependencies: {result.Dependencies.Declared.Count} declared; {result.Dependencies.Resolved.Count} package(s) in the resolved closure");
-        builder.AppendLine(
-            CultureInfo.InvariantCulture,
-            $"Paths: {result.PathFacts.Declared.Count} declared; {result.PathFacts.Current.Count} current; {result.Available.Package?.Payload.Count ?? 0} intended");
-        builder.AppendLine(
-            $"Comparison: {ExtensionInspectWireVocabulary.ComparisonMode(result.Comparison.Mode)}; {Count(result.Counts.ChangedPaths)} changed");
-        builder.AppendLine("Generated: derived navigation, not package-owned authored bytes");
         foreach (var region in result.Generated.Regions)
         {
-            builder.AppendLine(
-                $"Generated region: {Escape(region.Path)}; {ExtensionInspectWireVocabulary.GeneratedRegionState(region.State)}");
+            if (!expanded && region.State == ExtensionInspectGeneratedRegionState.Absent)
+            {
+                continue;
+            }
+
+            builder.AppendLine($"  {Value(region.Path)}: {ExtensionInspectWireVocabulary.GeneratedRegionState(region.State)}");
+            if (expanded)
+            {
+                builder.AppendLine($"    Markers: {Value(region.StartMarker)} / {Value(region.EndMarker)}; marker lines retained: {region.MarkerLinesRetained.ToString().ToLowerInvariant()}");
+            }
         }
 
-        foreach (var finding in result.Findings)
-        {
-            var subject = finding.Subject is null ? string.Empty : $"; {Escape(finding.Subject)}";
-            var path = finding.Path is null ? string.Empty : $"; {Escape(finding.Path)}";
-            builder.AppendLine(
-                $"Finding: {ExtensionInspectDefinitions.ReadFindingCode(finding.Code)}{subject}{path}; {Escape(finding.Cause)}");
-        }
-
-        builder.AppendLine($"Status: {HumanStatus(result.Status)}");
-        if (result.Next is not null)
-        {
-            builder.AppendLine($"Next: {Escape(result.Next.Command)}");
-        }
-
+        CliHumanText.AppendNext(builder, presentation);
         return builder.ToString().TrimEnd();
     }
 
-    private static string InstalledVersion(ExtensionInspectInstalled installed)
-        => installed.Package?.Version is { } version ? $"; version: {Escape(version)}" : string.Empty;
+    private static string ComparisonMode(ExtensionInspectComparisonMode value) => value switch
+    {
+        ExtensionInspectComparisonMode.None => "not compared",
+        ExtensionInspectComparisonMode.InstalledOnly => "installed package only",
+        ExtensionInspectComparisonMode.AvailableOnly => "selected package only",
+        ExtensionInspectComparisonMode.ThreeWay => "installed baseline, current workspace and selected package",
+        _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The comparison mode is not defined."),
+    };
 
-    private static string AvailableVersion(ExtensionInspectAvailable available)
-        => available.Package?.Version is { } version ? $"; version: {Escape(version)}" : string.Empty;
-
-    private static string Count(int? value) => value?.ToString(CultureInfo.InvariantCulture) ?? "unknown";
-
-    private static string Value(string? value) => value is null ? "unavailable" : Escape(value);
-
-    private static string HumanStatus(CliSemanticStatus status)
-        => status == CliSemanticStatus.Attention
-            ? "requires attention"
-            : CliStatusDefinitions.Read(status).MachineName;
-
-    private static string Escape(string value) => ExtensionTextEscaping.Escape(value);
+    private static string Value(string? value) => ExtensionHumanText.Value(value);
 }

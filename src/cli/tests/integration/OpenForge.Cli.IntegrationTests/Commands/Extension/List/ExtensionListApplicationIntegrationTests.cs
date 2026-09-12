@@ -155,8 +155,8 @@ public sealed class ExtensionListApplicationIntegrationTests
 
         Assert.Equal(0, human.ExitCode);
         Assert.Equal(string.Empty, human.Error);
-        Assert.Contains("Installed (coverage: complete; trust: trusted)", human.Output, StringComparison.Ordinal);
-        Assert.Contains("Available (coverage: complete)", human.Output, StringComparison.Ordinal);
+        Assert.Contains("Installed: coverage complete; record trusted", human.Output, StringComparison.Ordinal);
+        Assert.Contains("Available: coverage complete", human.Output, StringComparison.Ordinal);
         Assert.Equal(0, json.ExitCode);
         Assert.Equal(string.Empty, json.Error);
         using var document = JsonDocument.Parse(json.Output);

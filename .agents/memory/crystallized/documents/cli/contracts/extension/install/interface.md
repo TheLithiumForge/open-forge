@@ -355,14 +355,29 @@ separate lease-bound contract.
 ## Output And Results
 
 Human and JSON presentation consume one immutable `ExtensionInstallResult`.
-Expanded human output presents the result facts in the same order as the JSON
-payload: mode, force, automatic, selection, source, packages, Framework anchor,
-footprint, effects, Generated Navigation, permissions, lifecycle, recovery, verification,
-findings, status, and at most one next action. Compact output may omit
-supporting detail, but it cannot change a fact, finding, status, next action,
-stream, or exit. Help describes the same exact selection, interaction, force,
-and no-write rules. Bounded diagnostics project only already-known result or
-finding facts and never change the result.
+Both human views lead with outcome or preview, status, exact workspace/selection,
+source and selected packages/dependency closure. Findings and permission/safety
+conditions precede the affected paths. Every effect retains its actual action,
+outcome and residual; a planned path is not presented as an applied change.
+
+Human output groups effects by exact package/path identity and preserves any
+payload or directory footprint path not represented by an effect. Expanded adds supporting Framework,
+footprint, generated-navigation, permission, installation-record and verification
+facts. Compact uses shorter rows while retaining package dependencies, effective
+force/automatic/preview choices, blockers, affected/preserved paths and recovery
+state/residual paths. Both show the actual Next command once when supplied;
+expanded may add its reason. Paths are not truncated.
+
+Compact may summarize navigation-only footprint paths by count when their
+observed navigation is unchanged and they have no payload, directory or effect
+that must remain visible. Expanded retains
+those observations. Every changed or uncertain path and every actual effect
+remains visible in both views.
+
+Human grouping does not change dependency/effect order in the operation or JSON.
+JSON retains the complete payload and declared order below. Help retains the
+same selection, interaction, force and no-write rules. Diagnostics remain bounded
+and project only known result facts without changing the result.
 
 The command-local JSON `result` uses camel-case properties in exactly this
 order. Every property is present for every semantic status:

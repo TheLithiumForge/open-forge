@@ -154,11 +154,19 @@ accepted manifest shape but performs no source lookup or dependency closure.
 
 ## Output And Results
 
-Human output leads with the exact catalogue and package destination, stable ID,
-resolved manifest metadata and dependency IDs,
-scaffold files, dry-run/application mode, workspace-lifecycle unchanged fact,
-verification facts, status, and at most one next action. JSON emits one
-complete typed result from the same result as human output.
+Both human views begin with the creation outcome or preview and status, then
+exact catalogue/package destination, stable ID, resolved manifest metadata and
+dependency IDs. Create has no selected workspace: its null workspace does not
+mean that a workspace lookup failed. State that workspace installation/lifecycle
+was unchanged.
+
+Both views retain every planned and applied scaffold path. Group equal effect
+identities and distinguish an intended file from an applied file, especially
+when creation is blocked, fails or is interrupted. Expanded explains the effect
+kind and concrete verification states/cause. Compact uses shorter rows. Findings
+retain status, code, exact subject and cause. Show the actual Next command once
+when supplied; expanded may add its reason. Paths are not truncated. JSON
+emits the complete typed result from the same result as human output.
 
 The command-local JSON `result` uses camel-case properties in exactly this order:
 
@@ -176,18 +184,25 @@ The command-local JSON `result` uses camel-case properties in exactly this order
 The shared envelope already owns command, status, workspace, and next-action
 coordinates; none is duplicated inside this result.
 
-Illustrative output:
+An applied-result excerpt is:
 
 ```text
-Open Forge extension create development-toolkit
-Catalogue: D:/packages/open-forge
-Created: D:/packages/open-forge/development-toolkit/extension.json
-Created: D:/packages/open-forge/development-toolkit/content/.agents/
-Workspace lifecycle: unchanged
+Extension creation completed.
 Status: complete
+Package: review-tools
+Catalogue: /packages/open-forge
+Destination: /packages/open-forge/review-tools
+Mode: apply
+Scaffold: 2 intended; 2 applied
+  /packages/open-forge/review-tools/extension.json: applied
+  /packages/open-forge/review-tools/content/.agents: applied
+Verification: catalogue verified; destination verified; manifest verified; content verified
+Workspace installation: unchanged
 ```
 
-The values are illustrative and do not claim implementation evidence.
+The full output also includes manifest metadata. Expanded adds effect kinds and
+verification explanations. A verified no-op reports zero applied effects even
+when the intended scaffold is already present. Values are illustrative.
 
 Primary human complete/attention/incomplete results go to stdout. Primary human
 invalid/blocked/failed/interrupted results go to stderr. Bounded diagnostics use

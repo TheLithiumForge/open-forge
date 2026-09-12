@@ -27,17 +27,7 @@ internal static class LibraryHumanText
             LibraryMode.Apply => operation,
             _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, "The mode is not defined."),
         };
-        return status switch
-        {
-            CliSemanticStatus.Complete => $"{label} completed.",
-            CliSemanticStatus.Attention => $"{label} requires attention.",
-            CliSemanticStatus.Incomplete => $"{label} could not finish.",
-            CliSemanticStatus.Invalid => $"{label} could not start because the input is invalid.",
-            CliSemanticStatus.Blocked => $"{label} is blocked.",
-            CliSemanticStatus.Failed => $"{label} failed.",
-            CliSemanticStatus.Interrupted => $"{label} was interrupted.",
-            _ => throw new ArgumentOutOfRangeException(nameof(status), status, "The status is not defined."),
-        };
+        return CliHumanText.Outcome(label, status);
     }
 
     internal static void AppendFinding(StringBuilder builder, CliSemanticStatus status, string code, string cause, string? path)

@@ -1,8 +1,8 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Commands.Extension.Remove;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Extension.Remove;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
@@ -115,12 +115,12 @@ public sealed class ExtensionRemovePresentationTests
                     CliView.Expanded,
                     CliVerbosity.Normal)));
 
-        Assert.Contains("Open Forge extension remove", rendered, StringComparison.Ordinal);
+        Assert.Contains("Extension removal", rendered, StringComparison.Ordinal);
         Assert.Contains("Workspace: unavailable", rendered, StringComparison.Ordinal);
         Assert.Contains("Mode: dry-run", rendered, StringComparison.Ordinal);
         Assert.Contains("Prune: false", rendered, StringComparison.Ordinal);
         Assert.Contains("Automatic: true", rendered, StringComparison.Ordinal);
-        Assert.Contains("Selection: unavailable", rendered, StringComparison.Ordinal);
+        Assert.Contains("Selected packages: unavailable", rendered, StringComparison.Ordinal);
         Assert.Contains("Dependencies: unavailable", rendered, StringComparison.Ordinal);
         Assert.Contains("Recovery: not-required", rendered, StringComparison.Ordinal);
         Assert.Contains("Package source unchanged: true", rendered, StringComparison.Ordinal);

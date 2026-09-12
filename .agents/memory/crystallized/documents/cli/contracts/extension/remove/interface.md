@@ -280,13 +280,25 @@ formatter executes or produces persisted formatter state.
 
 ## Output And Results
 
-Human output leads with exact workspace, selected IDs, retained dependents,
-shared/final owners, Keep-as-unmanaged or Delete choice, normal/automatic and
-apply/dry-run mode, released ownership, deleted/retained/preserved paths,
-generated projection, lifecycle publication, source unchanged, recovery-bundle
-facts,
-status, and at most one next action. JSON emits one complete typed result from
-the same result for every status.
+Both human views lead with outcome or preview, status, exact workspace/selection,
+selected IDs and effective prune/automatic/preview choices. Retained dependents,
+findings and permission/safety conditions precede changes. Group each exact path's
+owner/keep/delete decision with its actual effects, retaining unmatched facts and
+every action, outcome and residual. Keeping a file unmanaged remains distinct
+from retaining package ownership.
+
+Compact keeps every affected/preserved path, retained dependency and
+blocker, source-unchanged fact and recovery state/residual path. Expanded explains
+shared/final owners and selected decisions beside their paths, then supporting
+generated-navigation, installation-record and verification facts. Planned effects
+never imply verified deletion. Both show the actual required Next command once;
+expanded may add its reason. Paths are not truncated. Removal remains source
+independent. JSON retains the complete result and original ordering for every status.
+
+Compact may summarize unchanged navigation paths by count only when they have no
+planned path, comparison or effect that must remain visible. Expanded retains
+those observations. Every changed or uncertain path and every actual effect
+remains visible in both views.
 
 | Result        | Meaning for `extension remove`                                                                                                                                                                                                                                                               |
 | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -455,3 +455,266 @@ set's commit/squash; their frozen implementation is next. Main develop's separat
 `b88f5e7a` delivery/help documentation change has no CLI source changes and is
 preserved during local integration. No remote action or global CLI refresh occurs
 in this set; the final installation refresh remains Set 8.
+
+Set 3 squash is `56538d635ce0722fdb9bc8fd53a0a810970b84a0` on local develop.
+The main checkout had concurrently switched to feature/test at b88f5e7a; the
+squash initially landed there. After checking its exact HEAD and clean state,
+the commit was assigned to develop with a compare-and-swap ref update, then
+feature/test was restored with `reset --keep` to its unchanged b88f5e7a parent.
+Both refs and the clean main checkout were verified. The presentation branch
+merged develop and has an identical committed tree. Future integrations use an
+owned integration checkout or explicit guarded ref operation, not an assumed
+main-checkout branch. Set 4 implementation now starts from that qualified tree.
+
+## Set 4 Implementation Checkpoint
+
+All six Extension human renderers now consume their existing typed results.
+List preserves selected sections, coverage, source availability and versions;
+expanded adds names/descriptions and inventory counts. Create keeps every exact
+scaffold path and separates intended from applied effects, including verified
+no-ops. Inspect groups full path identities, retains findings/candidates and
+unknown counts, and expands dependency/fingerprint/owner observations. Unmatched
+source files with no target are not joined to workspace paths.
+
+Install/Update/Remove now honor both views, place findings and permissions before
+paths, retain every effect action/outcome and recovery fact, and group repeated
+path observations without changing result arrays or operation policy. The shared
+Library outcome wording is promoted unchanged to neutral CliHumanText for actual
+Extension consumers. No JSON source graph, diagnostics, parser, operation or
+filesystem source changes are part of this set.
+
+The initial 656 existing Extension/Library/Shell Unit cases pass. Added evidence
+now covers unknown counts, long finding paths and source line/column, verified
+Create no-op paths, preserved planned effects in Update/Remove, and interrupted
+Install effects plus unmatched footprint/recovery paths. Focused and public
+verification of the revised source is pending; no Set 4 qualification is claimed.
+The published Create/Remove wording assertions are aligned while all exit,
+stream, real filesystem, unchanged-source and no-op evidence stays intact.
+
+The user's later instruction is to leave feature/test alone. The branch had
+already been restored before that instruction arrived; no further operation
+will target it. Develop already contains the qualified Set 3 squash, so no
+duplicate Library squash is needed. Continue only in owned task/integration
+worktrees and verify the branch identity at every integration boundary.
+
+## Set 4 Direct Dogfood Corrections
+
+The initial revised candidate passes 665 focused Unit cases and all 18 existing
+Extension public journeys (managed runner/managed CLI). The first public filter
+command used an unsupported middle wildcard; the runner rejected it before
+execution. The corrected supported prefix is `--filter-class
+'OpenForge.Cli.EndToEndTests.PublishedExtension*' --minimum-expected-tests 18`.
+No test platform workaround was added.
+
+Direct managed List/Inspect against the worktree confirms incomplete installation
+coverage and six available embedded packages. Inspect exposed a human-only
+misstatement: Subject.Candidates also retains a resolved package, so a blanket
+“no choice made” label was false. The label is now neutral “Package matches”;
+a regression preserves resolved identity. Counts.Dependencies is the resolved
+package count, including the selected package, so the output now says “resolved
+packages” instead of implying that every resolved package is a dependency.
+
+Compact Inspect now counts healthy unchanged/source-only observations and files
+without generated regions. Exact unavailable paths remain visible. Expanded keeps
+all observations and shared source paths are shown once beside their declarations.
+The count and omission hint are explicit. Added regressions cover these distinctions
+and known-empty versus unavailable List inventory. These are presentation-only
+corrections; the final candidate is being rebuilt and tested before native freeze.
+
+The next managed candidate passes 669 focused Unit cases and all 18 Extension
+public journeys, with zero failures/skips and warning-clean builds. A direct
+17-invocation managed journey uses an owned temporary workspace/catalogue and
+isolated XDG state: Framework install; both Create previews and scaffold apply;
+both List views; both Install previews and apply; both Inspect views; a source
+edit, both Update previews and apply; both Remove previews and apply. All return
+exit 0 and empty stderr. All 12 read-only/preview calls preserve complete
+file/directory/link/state snapshots. Install/Update destination bytes match source;
+Remove deletes the managed target while preserving source bytes. All fixtures
+are deleted by the owning TemporaryDirectory; no experiment program is retained.
+
+That journey exposed 20 unchanged navigation paths in compact mutation output.
+The final correction counts navigation-only unchanged observations when no
+footprint path, comparison, plan or effect needs that path. Changed, uncertain
+and actual-effect rows remain visible; expanded retains the full observations.
+Existing typed fixtures now assert this omission rule and one path heading per
+effect/comparison group. List snapshot comparison normalizes line endings through
+the BCL to avoid platform-dependent wording evidence. Qualify the corrected
+source before native freeze; prior receipts do not claim this correction passed.
+
+The new grouping assertions caught that a finding target and an effect path used
+identical unlabelled rows. Finding targets now have an explicit Target label.
+They remain separate from path/effect groups: a finding's general Target string
+is not always a typed workspace path, so equal text alone cannot justify merging
+those identities. The assertions still prove one actual comparison/effect heading.
+
+Source inspection of ExtensionInstallResultFactory clarifies that footprint
+generatedRegions includes every topology observation, including unchanged hosts;
+those are not all planned writes. The human label now describes an observation.
+Compact may count these navigation-only unchanged observations when no payload,
+directory or effect needs the path; unknown/unmatched footprint rows stay visible.
+This refines the initial all-footprint-path retention statement using the actual
+typed meaning. Payload/directory paths and every effect remain in both views.
+The install fixture explicitly covers an unchanged navigation footprint row.
+
+## Set 4 Native Freeze
+
+Final focused source builds without warnings/errors and passes 669 Unit cases
+(Extension, Library and Shell) plus all 18 Extension managed public journeys.
+The final explicit-target-label and navigation-only-footprint rules are included.
+The prior two failed grouping assertions are resolved; they were not removed or
+weakened. Source metadata/paths, finding status/cause, planned/unknown effects,
+recovery, unchanged JSON and command status/stream boundaries remain covered.
+
+Direct corrected Update/Remove previews retain the affected package path and
+summarize only unchanged navigation. Both views return exit 0/empty stderr and
+preserve all owned fixture/state bytes. Compact Update is 1,123 bytes versus
+3,043 expanded; Compact Remove is 1,087 versus 2,634 expanded for those temporary
+paths. These are output-size observations, not token or runtime benchmarks.
+Formatting verification passed before the last bounded text/navigation changes;
+their builds and focused/public evidence are current. The complete native build
+and six-suite acceptance run are next. No Set 4 squash is authorized by evidence
+until that final gate passes.
+
+## Set 4 Full-Gate Fixture Correction
+
+Frozen 00ebcf68 builds managed and all Linux native targets without warnings or
+errors. Final changed-source formatting verification passes. Full Unit passes
+3,283 cases; Integration passes 1,738 of 1,745 and stops the six-suite gate on
+seven stale human-label expectations across four Extension test files. Permission
+reapproval still saves the reviewed grant and verifies the affected bytes; Create,
+Install and List retain their stream/selection/no-write assertions. Align the
+labels with the approved output while preserving all those behavioral assertions.
+No product correction or weakened assertion is required by this failure.
+
+The direct final native journey passes 14 calls, including ten read-only calls
+that preserve complete file/directory/link/XDG snapshots. Both views cover List,
+Inspect and Install/Update/Remove previews. Applied Install/Update match package
+bytes and Remove deletes its managed target while preserving the source. Native
+SHA-256 is `4c555f3fd04eeffa057ecaf44ad00dbdc3a113cff74c83e2f0b96e813d0bd728`.
+Compact Install is 1,055 bytes versus 3,811 expanded in the owned fixture; these
+are size observations, not token or runtime benchmarks. An initial temporary
+journey check expected a different hint phrase and stopped after the first
+preview; correcting that wording expectation allowed the full journey to pass.
+No experiment program is retained.
+
+An owned detached integration checkout is prepared from develop 56538d63. A
+fresh read shows the main checkout now has develop checked out. Before final
+integration, recheck branch identity and clean state; update only develop through
+the authorized integration boundary. Never alter feature/test.
+
+All 35 Integration cases in the four corrected classes now pass, with zero
+failures/skips and a warning-clean Release build. Install's assertions retain
+selected-versus-dependency identity and order in the new labels. The permission
+assertion now names the complete approved/replace/verified record outcome. No
+production source changed after 00ebcf68. Freeze this corrected evidence and
+repeat the full managed/native gate before qualification.
+
+## Set 5A Read-Command Freeze
+
+After Set 4 qualifies and integrates, implement Context, Find, References, Route
+List and Route Inspect human views sequentially. This is a rendering-only set:
+requests, operations, typed facts, ordering, source selection, scan boundaries,
+statuses, exits, diagnostic kinds and JSON remain unchanged. It uses existing
+BCL formatting and leaf-local helpers. No dependency or exceptional machinery.
+The risk is hiding a partial result, confusing a candidate with a resolved target,
+or altering selected authored content; edits are reversible in Git.
+
+Context keeps exact projection text and overwrite boundaries. Put workspace,
+status, selected content/link depth, startup inclusion and incomplete findings
+before content. Compact prints each ordered path at its source boundary, or as
+the selected paths-only projection, instead of duplicating the full path list
+before source blocks. Expanded adds existing loading reasons and layer metadata.
+Keep all unresolved links and full finding coordinates in both views; raw byte
+ranges remain JSON. Do not infer new loading or safety facts.
+
+Find compact retains its exact TSV summary and ID/path rows. Findings retain
+full coordinates and candidates without the old 240-character subject clamp.
+Expanded leads with match count, status and coverage, then the actual query,
+selection and match evidence. Requested projections remain exact. Keep authored
+content helpers separate from framing so future colour never touches them.
+Use the existing typed Next command rather than substituting generic prose for
+it; retain the reason in expanded output. Update the corresponding Interface
+examples and Next presentation requirements in this same set.
+
+References keeps requested directions, per-section status/coverage, occurrence
+count and every physical occurrence in the existing order. Name the operation
+“Direct links” and replace “Level 1” with that clear boundary. Findings precede
+occurrences and retain code/status, cause, exact subject/path/line/column and
+candidates. Compact uses source-to-target rows with resolution and layer facts;
+expanded adds authored destination, fragment, target identity/layer, destination
+line/column and actual scan origin in plain language. External URLs explicitly
+remain unchecked over the network. Use exhaustive typed resolution vocabulary,
+not transformations of enum spellings. Do not collapse distinct occurrences.
+The authoritative contract remains under references-candidate; this work does
+not perform its separate route migration.
+
+Route List keeps every ordered hierarchical ID/path/description/tag row. Compact
+omits repeated structural explanations while retaining root/depth/coverage and
+all unresolved boundaries/findings. Expanded adds each row's actual parent,
+depths, child count and source/selection facts once. Share only the identical
+leaf-local vocabulary and framing between the two views. Do not invent tree
+ancestors or use generated navigation as authored topology.
+
+Route Inspect puts status and meaningful observations/conditions before the
+profile and keeps exact candidates and operation Next. Group the existing
+profile into route structure, when it is read, context size and customization.
+Expanded includes inherited/local Axioms, selected closure and task-start overlap
+measurements once; compact retains its required own/addition/descendant measures
+and unavailable/not-applicable distinctions. Keep physical layer identities and
+full observation paths. Do not diagnose content or invent advice.
+
+Evidence: adapt small authored presentation fixtures and direct field/identity,
+order, uncertainty and exact-content assertions. Run the affected Unit and
+Integration/public classes during implementation, retaining their read-only
+snapshots, stream and exit checks. Include the Integration boundary from the
+start so human wording assertions are not discovered only in the final gate.
+The five-command public presentation wave triggers complete managed/native
+qualification before its squash. Sets 5B/5C remain the ten mutation commands;
+compact JSON, automatic colour and reusable guidance follow as Sets 6–8.
+
+## Follow-Up After This Presentation Task: Configurable Thresholds
+
+The user requests analysis after the current presentation task is complete.
+Investigate a thresholds object in open-forge.json for relevant diagnostics or
+commands, with typed shared defaults and explicit default/override combination.
+Their starting example is a warning threshold of ten sibling files for files
+without useful scope. This is an analysis request, not accepted configuration
+syntax, diagnostic behavior or a literal universal limit.
+
+After Sets 5–8, inspect the actual configuration schema, loading/validation,
+existing thresholds, affected typed diagnostics, and ownership of defaults.
+Clarify which counted files and route/scope relationships the sibling example
+means; compare configuration-level and command-specific ownership. Recommend
+units, boundary comparison, missing/null/invalid handling, partial override
+semantics, default placement, output visibility and evidence. Avoid duplicate
+constants or a generic untyped settings engine. Return the concrete proposal
+before implementing new configuration or changing diagnostic behavior.
+
+Progress reported at this request: approximately 40% of the full approved
+presentation task, an estimate rather than a measured work ratio. Human views
+for 13 of 28 commands are implemented; Sets 1–3 are integrated and Set 4 is in
+final qualification. Remaining human views, compact JSON, automatic colours,
+guidance and final install/dogfood remain required work before this analysis.
+
+## Set 4 Qualification
+
+The final frozen candidate is `3deb2ebcea8193ce3c922ac6f63f89451c1ca69b`.
+`npm run build:native -- --sha --no-restore` builds all managed and Linux native
+targets without warnings/errors. `npm run test:built` passes all six suites:
+3,283 Unit; 1,745 Integration in managed and native modes; 123 public cases in
+managed/managed, native/native and managed/native modes. Failures, skips, pending
+and other results are zero. The manifest confirms tested=true, dirty=false, the
+exact source SHA and unchanged artifact closures. Native CLI SHA-256 is
+`c2ad4ae425ea73a2e2902a970a40f3e18d467bef291e31ff38376d68789bfad4`.
+
+Reproduction starts from that committed candidate using the two commands above.
+All required inputs are tracked; build outputs and reports are disposable. The
+seven stale Integration wording cases are corrected and covered by this final
+run. Product source is unchanged from 00ebcf68; the final native journey on that
+product is recorded above. Final source formatting and diff checks pass.
+
+This qualifies the six Extension human views and the neutral outcome-helper
+promotion. Operation behavior, typed result graphs, statuses/exits, JSON,
+permissions, recovery and filesystem semantics are unchanged. Update local
+develop through the owned integration checkout and verify the qualified tree.
+Feature/test remains outside every mutation target.

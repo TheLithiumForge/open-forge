@@ -41,7 +41,7 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
                 Assert.Contains(source.Path, run.StandardError, StringComparison.Ordinal);
             }
             Assert.Contains("Permissions: approved", run.StandardOutput, StringComparison.Ordinal);
-            Assert.Contains("Outcome: verified", run.StandardOutput, StringComparison.Ordinal);
+            Assert.Contains("Permissions: approved; record replace; verified", run.StandardOutput, StringComparison.Ordinal);
             using var permission = JsonDocument.Parse(workspace.ReadText(PermissionFixture.PermissionPath));
             Assert.Equal("team", Assert.Single(permission.RootElement.GetProperty("extensions").EnumerateArray()).GetProperty("id").GetString());
             if (command == "remove")

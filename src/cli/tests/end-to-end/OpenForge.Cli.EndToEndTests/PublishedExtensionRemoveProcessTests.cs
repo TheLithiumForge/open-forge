@@ -59,7 +59,7 @@ public sealed class PublishedExtensionRemoveProcessTests
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
         Assert.Contains("Status: complete", applied.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("IDs: toolkit", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Selected packages: toolkit", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Prune: false", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Package source unchanged: true", applied.StandardOutput, StringComparison.Ordinal);
         Assert.False(File.Exists(working.TargetPath));

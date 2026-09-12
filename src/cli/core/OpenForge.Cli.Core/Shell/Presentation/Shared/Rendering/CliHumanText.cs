@@ -34,6 +34,21 @@ internal static class CliHumanText
         }
     }
 
+    internal static string Outcome(string label, CliSemanticStatus status)
+    {
+        return status switch
+        {
+            CliSemanticStatus.Complete => $"{label} completed.",
+            CliSemanticStatus.Attention => $"{label} requires attention.",
+            CliSemanticStatus.Incomplete => $"{label} could not finish.",
+            CliSemanticStatus.Invalid => $"{label} could not start because the input is invalid.",
+            CliSemanticStatus.Blocked => $"{label} is blocked.",
+            CliSemanticStatus.Failed => $"{label} failed.",
+            CliSemanticStatus.Interrupted => $"{label} was interrupted.",
+            _ => throw new ArgumentOutOfRangeException(nameof(status), status, "The status is not defined."),
+        };
+    }
+
     internal static string Status(CliSemanticStatus value)
         => value == CliSemanticStatus.Attention ? "requires attention" : CliStatusDefinitions.Read(value).MachineName;
 
