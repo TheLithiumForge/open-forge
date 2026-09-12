@@ -40,7 +40,7 @@ internal static class ExtensionCreateHelpSections
                 "Modes and global options",
                 """
                   Apply is the default. --dry-run previews the same exact plan without writes; --automatic suppresses interaction but adds no inferred input or authority.
-                  --workspace is accepted as a no-op. --json, --view <compact|expanded>, --verbose, --help, and --version retain their shared meaning; --view is ignored with --json.
+                  --workspace is accepted as a no-op. --json, --view <compact|expanded>, --verbose, --help, and --version retain their shared meaning; --view selects detail in text and JSON.
                 """),
             new CliHelpSection(
                 "Examples",

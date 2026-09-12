@@ -89,8 +89,7 @@ read and whose incoming references are sought.
 
 The applicable global flags are `--workspace <path>`, `--json`,
 `--view=compact|expanded`, `--verbose`, `--help`, and `--version`. `--view`
-changes only human presentation. `--view` is accepted as a no-op when `--json`
-selects structured presentation. `--help` and `--version` stop before reference
+selects detail in human and JSON presentation. `--help` and `--version` stop before reference
 inspection under the shared terminal-mode rules.
 
 Direction values are exact and case-sensitive at the command grammar boundary:
@@ -324,7 +323,7 @@ per-section coverage and status, inspected-source evidence for incoming work, an
 every typed occurrence with direction, direct level `1`, locations, raw
 destination, resolution, target kind, layer, and provenance. A filtered-out
 direction is absent, not represented as complete.
-`--view` has no effect under JSON.
+JSON view selection follows the compact and expanded projections defined here.
 
 ### Exact Schema-v1 Command-Local Result
 
@@ -630,10 +629,10 @@ not valid in this mode:
 open-forge references .agents/loader.md --direction=out
 ```
 
-Request the complete typed result. The view is a JSON no-op:
+Request the complete expanded typed result:
 
 ```text
-open-forge references memory --direction=both --json --view=compact
+open-forge references memory --direction=both --json --view=expanded
 ```
 
 ## Non-Goals And Relationships
@@ -694,7 +693,7 @@ Conformance evidence must cover:
 - One-hop-only behavior: no transitive closure, graph merge, result cap, or target
   body loading.
 - Compact, expanded, and JSON parity, including complete typed occurrences and
-  `--view` being a JSON no-op.
+  defined compact JSON membership.
 - Stable repeated results and honest complete, attention, incomplete, invalid,
   blocked, failed, and interrupted outcomes.
 
@@ -706,3 +705,27 @@ Conformance evidence must cover:
 - [Source Universe Filters Interface Contract](../shared/source-universe-filters/interface.md)
 - [Context Interface Contract](../context/interface.md)
 - [CLI Architecture](../../architecture.md)
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+All selection, coverage, status, findings and occurrence counts remain, as
+does every occurrence in its existing order. Occurrences retain direction,
+level, source, rawDestination, fragment and the complete target object.
+Occurrence location contains line and column; its byteOffset and byteLength,
+destinationLocation and provenance are omitted. Finding locations retain their
+full shape. These omissions do not indicate missing locations or incomplete
+inspection; choose expanded on the original call for exact byte spans.
+
+Compact omissions are defined field membership, distinct from unavailable data,
+null values, empty collections or incomplete inspection. No collection is
+truncated and no finding is filtered. Counts describe the original operation.
+Select expanded on the original invocation when supporting evidence is needed.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

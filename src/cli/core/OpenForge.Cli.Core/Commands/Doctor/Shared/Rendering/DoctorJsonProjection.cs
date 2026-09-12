@@ -85,7 +85,7 @@ internal static class DoctorJsonProjection
             Actions = [.. domain.Actions.Select(Action)],
         };
 
-    private static DoctorJsonCounts Counts(DoctorFindingCounts counts)
+    internal static DoctorJsonCounts Counts(DoctorFindingCounts counts)
         => new()
         {
             Resolution = new DoctorJsonResolutionCounts

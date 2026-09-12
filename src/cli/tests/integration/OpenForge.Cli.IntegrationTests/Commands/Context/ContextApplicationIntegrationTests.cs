@@ -34,7 +34,7 @@ public sealed class ContextApplicationIntegrationTests
         var expandedResult = expandedDocument.RootElement.GetProperty("result");
         Assert.Equal("compact", compactResult.GetProperty("presentation").GetProperty("view").GetProperty("supplied").GetString());
         Assert.Equal("expanded", expandedResult.GetProperty("presentation").GetProperty("view").GetProperty("supplied").GetString());
-        Assert.Equal(compactResult.GetProperty("sources").GetRawText(), expandedResult.GetProperty("sources").GetRawText());
+        Assert.True(JsonViewComparison.RetainsResult(compact.Output, expanded.Output, ["paths.*.inclusionReasons", "sources.*.inclusionReasons", "sources.*.layers.*.inclusionReasons"], allowViewEcho: true));
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

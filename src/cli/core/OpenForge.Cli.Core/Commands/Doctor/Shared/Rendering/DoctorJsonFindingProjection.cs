@@ -20,7 +20,7 @@ internal static class DoctorJsonFindingProjection
             Actions = [.. finding.Actions.Select(DoctorJsonProjection.Action)],
         };
 
-    private static DoctorJsonSubject Subject(DoctorSubject subject)
+    internal static DoctorJsonSubject Subject(DoctorSubject subject)
     {
         if (subject.Library is { } librarySubject && subject.Kind != librarySubject.Kind)
         {
@@ -46,7 +46,7 @@ internal static class DoctorJsonFindingProjection
             Location = DoctorJsonProjection.Location(provenance.Location),
         };
 
-    private static DoctorJsonCandidates Candidates(DoctorCandidateSet candidates)
+    internal static DoctorJsonCandidates Candidates(DoctorCandidateSet candidates)
         => new()
         {
             Cardinality = DoctorFindingWireVocabulary.Cardinality(candidates.Cardinality),
@@ -63,7 +63,7 @@ internal static class DoctorJsonFindingProjection
             })],
         };
 
-    private static DoctorJsonProposal Proposal(DoctorExactProposal proposal)
+    internal static DoctorJsonProposal Proposal(DoctorExactProposal proposal)
     {
         var libraryEntry = proposal.Kind switch
         {

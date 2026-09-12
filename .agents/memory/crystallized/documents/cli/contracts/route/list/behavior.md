@@ -201,7 +201,7 @@ parent, absolute and relative depths, kind, applicable child count, provenance,
 coverage evidence, and explanation.
 
 JSON retains the complete typed result and all route rows regardless of human
-view. `--view` is a presentation no-op under JSON. `--verbose` may add bounded
+view. JSON view selects the expanded or compact projection. `--verbose` may add bounded
 diagnostics but cannot change the typed result.
 
 ## Safety And Recovery
@@ -235,7 +235,7 @@ Gate 5 executable proof should cover at least these observable scenarios:
 7. Exact descriptions and tags, parent facts, both depth values, kinds, child
    counts, and provenance remain identical across repeated invocations.
 8. Compact, expanded, and JSON use identical row membership, order, and coverage;
-   JSON ignores `--view`.
+   JSON retains its defined core under compact view.
 9. Unsafe and ambiguous references block, invalid depth and source kinds are
    invalid, and incomplete topology never reports `complete`.
 

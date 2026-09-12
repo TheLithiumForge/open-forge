@@ -177,15 +177,15 @@ paths and the no-follow observation of each corresponding consumer entry.
 
 For each destination, Inspect records whether:
 
-| Relation | Meaning |
-| --- | --- |
-| `current` | The eligible source exists, the path is registered, and the destination is the expected relative file link. |
-| `added` | The complete eligible source inventory contains a path absent from the registered record. |
-| `retired` | The registered record contains a path absent from the complete eligible source inventory. |
-| `missing` | The source path is eligible and registered, but its destination entry is absent. |
-| `changed` | The source path is eligible and registered, but the destination occupant or link target differs from the expected relative file link. |
-| `unavailable` | A required source or destination fact cannot be established completely. |
-| `blocked` | Source, destination, link, containment, or mapping identity is unsafe or ambiguous. |
+| Relation      | Meaning                                                                                                                               |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `current`     | The eligible source exists, the path is registered, and the destination is the expected relative file link.                           |
+| `added`       | The complete eligible source inventory contains a path absent from the registered record.                                             |
+| `retired`     | The registered record contains a path absent from the complete eligible source inventory.                                             |
+| `missing`     | The source path is eligible and registered, but its destination entry is absent.                                                      |
+| `changed`     | The source path is eligible and registered, but the destination occupant or link target differs from the expected relative file link. |
+| `unavailable` | A required source or destination fact cannot be established completely.                                                               |
+| `blocked`     | Source, destination, link, containment, or mapping identity is unsafe or ambiguous.                                                   |
 
 The exact comparison is set equality over canonical source and destination paths
 plus exact expected-link text and observed relative-link identity. A complete
@@ -278,15 +278,15 @@ comparison. The inspected Library ID is not copied into `sourceId`.
 
 The command uses the shared seven statuses:
 
-| Status | Meaning for `library inspect` |
-| --- | --- |
-| `complete` | The exact requested record, valid source root, complete eligible inventory, and exact registered/observed comparison are established with no drift. |
-| `attention` | The source inventory and projection comparison are complete and safe, with additions, retirements, missing links, or changed links. |
-| `incomplete` | A record, source-root, inventory, or projection fact is unavailable or incomplete. The command does not claim an empty or exact projection. |
-| `invalid` | The Library ID is malformed, missing, or unknown, or the strict record or source-root structure is invalid. |
-| `blocked` | Unsafe identity, containment, record, mapping, or link ambiguity prevents a safe comparison. |
-| `failed` | An unexpected operation or result-formation failure occurred. |
-| `interrupted` | The caller interrupted the operation before its result was complete. |
+| Status        | Meaning for `library inspect`                                                                                                                       |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | The exact requested record, valid source root, complete eligible inventory, and exact registered/observed comparison are established with no drift. |
+| `attention`   | The source inventory and projection comparison are complete and safe, with additions, retirements, missing links, or changed links.                 |
+| `incomplete`  | A record, source-root, inventory, or projection fact is unavailable or incomplete. The command does not claim an empty or exact projection.         |
+| `invalid`     | The Library ID is malformed, missing, or unknown, or the strict record or source-root structure is invalid.                                         |
+| `blocked`     | Unsafe identity, containment, record, mapping, or link ambiguity prevents a safe comparison.                                                        |
+| `failed`      | An unexpected operation or result-formation failure occurred.                                                                                       |
+| `interrupted` | The caller interrupted the operation before its result was complete.                                                                                |
 
 When several ordinary conditions apply, status precedence is `failed`,
 `invalid`, `blocked`, `incomplete`, `attention`, then `complete`, with
@@ -398,3 +398,24 @@ EndToEnd journeys beyond the three above.
 - [CLI Source References Interface Contract](../../shared/source-references/interface.md)
 - [Shared Result Coordinates Interface Contract](../../shared/result-coordinates/interface.md)
 - [CLI Architecture](../../../architecture.md)
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+The compact result retains the complete command-owned result graph defined by
+its structured schema, including every nullable value and ordered collection.
+Its core already carries the facts needed to use the result. For mutation
+commands this includes plans, exact previews, effects, permissions when
+applicable, verification, findings and recovery. Rendering never asks a caller
+to rerun a mutation to recover an omitted receipt.
+
+No collection is truncated and no finding is filtered. Counts describe the
+original operation. Both JSON views retain the same result facts.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

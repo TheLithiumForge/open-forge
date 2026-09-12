@@ -255,9 +255,13 @@ new trust boundary or exceptional machinery. Raw artifacts remain disposable.
 
 ## Current Checkpoint
 
-Set 1 squash: `5bb4aefa`. Set 2 squash: `54c28134`. Set 3 Library human
-rendering is implemented; focused preservation tests and prose review are active.
-Sets 4–8 remain required. User approval already covers these changes.
+Done: Sets 1–6 are qualified. All 28 commands have compact and expanded human
+and JSON views, aligned contracts/help, and passing managed/native evidence.
+Now: Command work is complete at the user's explicit stop before colour. This
+closeout accompanies the qualified Set 6 squash onto local develop.
+Next: Wait for the user's next direction. Colour, final reusable guidance and
+saved proposals remain pending; do not start them automatically.
+Blocker: None. Defaults, filters, limits and diagnostic kinds remain unchanged.
 
 ## Set 2 Final Qualification
 
@@ -1329,3 +1333,130 @@ Integrate this closeout as one squash on clean develop 638a850e, verify identica
 candidate/integration trees and preserve feature/test b88f5e7a. This completes
 28/28 human commands. Begin the compact JSON slice from that qualified squash;
 colour and final guidance remain pending at the explicit user stop boundary.
+
+## Set 6 Compact JSON: Frozen Implementation Scope
+
+Set 5D is squash-integrated as 1120d560acc193664c49cf69ad4adebb2e9c8d1b, identical
+candidate/integration tree bdb930afcfb17b9cca840d9bee0ace6b82ea95c2. The task lane
+is 62389226. All three worktrees are clean; feature/test remains b88f5e7a.
+
+Implement the 28-command compact schema, exact seven reduced projections and
+21 retained result cores specified in the preparation above. These decisions
+close the authorized JSON-view design within the approved two-view interface.
+No operation, status, effect, prompt, parser, diagnostic kind or default changes.
+Use the existing typed source-generation contexts, normal serializer settings,
+shared process coordinates and exact Doctor candidate comparer. The new shared
+compact envelope owns identical neutral coordinates for all 28 real consumers;
+its generic payload is always closed to the command's concrete presentation type.
+Exceptional machinery: none. All changes are reversible through Git; callers
+explicitly opt into compact, and mutation receipts remain complete. Full managed
+and supported Native AOT qualification is required because this changes wire
+representation and a shared presentation boundary. Focused shape/semantic tests
+and composed no-write journeys precede that gate. Update the global flags,
+shared coordinates, Architecture, command Interfaces and contradictory Behavior
+wording in this set. Stop before colour and final guidance when command work is
+qualified and squash-integrated.
+
+### Set 6 First Implementation Checkpoint
+
+All 28 command renderers now select the compact schema. Seven leaf projections
+omit only the frozen supporting fields; the other 21 retain their full result
+core. Doctor uses the existing exact comparer and a per-document first-use
+candidate table. Reduced projections map directly from typed results rather
+than constructing the expanded graph first. Route List JSON models moved to
+Models/Presentation with their consumers; converter behavior remains in Rendering.
+
+The shared compact envelope contains only process coordinates and a statically
+closed payload. Each existing generated context registers that concrete shape.
+Compact options clone the generated context's options, retaining all Library
+converters, and set WriteIndented=false. Compiler nullable analysis rejected a
+Default.Options access inside the context's static initializer, including its
+inline lambda. An ordinary deferred factory method resolves initialization
+without a suppression or altered serializer configuration. Generated source was
+inspected under a disposable artifacts directory; no experiment program exists.
+
+The first compile passes exposed omitted-field declarations and one renamed
+property reference; these are corrected. A full Release rebuild is currently
+running. There is no passing compact execution or qualification claim yet.
+All command Interfaces now document compact membership; global view/coordinate
+Interfaces, Behavior and Architecture alignment has started. Next: finish
+contradictory wording/help checks, verify serializer execution, update full-schema
+tests to request expanded, add compact shape/core parity and Doctor reference
+integrity evidence, format/review, and run the frozen full managed/native gate.
+No colour, operation, parser, default, filter or result-limit change is included.
+
+### Set 6 Managed Evidence And Direct Dogfood
+
+The full managed Release build passes with zero warnings/errors. Unit 3336 and
+Integration 1774 pass, with zero failed, pending, skipped or other results.
+The 28-command integration theory exercises both JSON views through real command
+composition, preserving shared coordinates, exits and workspace bytes. Nonempty
+Find, Context, References, Route List, Status and Extension Inspect tests compare
+all retained fields against expanded output. Doctor separately proves exact
+candidate reference integrity, first-use order, null versus empty, and distinct
+candidate ordering, evidence and provenance. Full-schema tests still assert the
+expanded graph; compact tests omit only contract-defined fields.
+
+Direct managed invocations against this worktree cover Doctor, Status, Find by
+CSharp tag with body content, Context C# design body content, References, Route
+List, Extension Inspect development-toolkit, and Install/Update/Index dry runs.
+Both views preserve command/status/workspace/next and exits, with empty stderr.
+All authored workspace file hashes remain unchanged. Doctor reconstruction from
+compact references matches every expanded finding and retained domain/result
+field: 2889 references share 444 candidate sets. Compact/expanded bytes were
+31379043/170841358 for Doctor, 22195/32155 Status, 470014/491636 Find,
+499137/549451 Context, 640841/924003 References, 20651/36792 Route List and
+14536/37720 Extension Inspect. Find/Context retain selected body bytes exactly;
+dry-run mutation result cores are identical. Existing workspace conditions still
+produce their original attention/incomplete/blocked statuses, without writes.
+These byte counts describe this observation, not a fixed output-size guarantee.
+
+Review found remaining JSON no-op claims in Find/Status/Cleanup contracts and
+schema-v1-only help sentences. Contracts and public CLI instructions now define
+both JSON views; schema-v1 help statements are scoped to expanded. A final
+source-generated build and all managed/native suites must pass from the frozen
+source before squash. No colour or guidance work is included. Disposable logs
+and reports are reproducible with the normal build/test commands; no experiment
+program or artifact is a required input.
+
+### Set 6 Complete Gate, Installation And Closeout
+
+Frozen source: dbe5cbc5a44778df6e5ed83be8f1c6bfdfc3322c, including the compact
+implementation at 67a707e6 and its file-ending correction. Qualification held
+HEAD and all executable/build inputs fixed. Only this tracked checkpoint changed
+during the gate. The full managed Release and supported linux-x64 Native AOT
+builds pass with zero warnings/errors. All six suites pass: Unit 3336; managed
+and native Integration 1774 each; managed public, native public and
+managed-on-native public 123 each. Every suite reports zero failed, pending,
+skipped or other results. The delivery manifest reports dirty=false/tested=true.
+Native CLI SHA-256:
+b79d4f4f494c48bff79c1d89c46454799a67f55dc969a7f2970298109b9101ec.
+
+Reproduce from the frozen source with `npm run build:native -- --sha --no-restore`,
+`npm run test:built`, then `npm run pack -- --targets linux-x64`. The local
+PackageEndToEnd installation journey passes, with installed native bytes matching
+the build. Direct native and managed compact Doctor, Find CSharp body, and Context
+C# design body invocations produce byte-identical output and identical exits.
+
+The first global npm install was intercepted by Volta and updated its separate
+package store while the existing launcher still traversed old artifact links.
+Inspection caught that distinction. Installing both qualified local tarballs
+with ordinary npm into the launcher's exact Node prefix replaces those links
+with package copies. Installation used offline mode, ignored scripts, and disabled
+audit/funding requests; no registry contact or dependency download was needed.
+Both package manifests and `open-forge --version` now report
+0.0.0-dev.sha-dbe5cbc5a44778df6e5ed83be8f1c6bfdfc3322c. Neither package directory is a
+symlink, and the installed native hash matches the value above. Direct installed
+`open-forge find --tag CSharp --json --view=compact` emits schemaVersion 2,
+view compact, 12 matches, empty stderr and the workspace's existing incomplete
+status/exit 3. No source or recovery repair is claimed.
+
+This final closeout is squash-integrated on local develop 1120d560 after verifying
+clean worktrees, the exact candidate/integration tree and protected feature/test
+b88f5e7af99c02fd85626ba1fc6182c32ed17798. The task branch then rejoins develop.
+No source, helper, fixture or required evidence exists only under artifacts;
+ordinary generated outputs and raw reports remain disposable. The previous
+Set 5D human squash is 1120d560. All 28 commands now complete both text and JSON
+views. Stop here before colour and final guidance. Filters, result limits,
+compact-default/minimal-view discussion, parser simplifications and configurable
+thresholds remain recorded proposals, with no new behavior implemented.

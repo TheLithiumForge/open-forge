@@ -48,7 +48,7 @@ internal static partial class RepairPresentation
                     ])),
             new CliHelpSection(
                 "Global options",
-                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
+                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view selects detail in text and JSON."),
             new CliHelpSection("Results and streams", ResultsAndStreams()),
             new CliHelpSection(
                 "Notes",

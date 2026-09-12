@@ -27,7 +27,7 @@ internal static class UpdateHelpSections
                 + "JSON and redirected execution never prompt."),
             new CliHelpSection(
                 heading: "Global options",
-                body: "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
+                body: "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view selects detail in text and JSON."),
             new CliHelpSection(
                 heading: "Examples",
                 body: "  open-forge update\n"

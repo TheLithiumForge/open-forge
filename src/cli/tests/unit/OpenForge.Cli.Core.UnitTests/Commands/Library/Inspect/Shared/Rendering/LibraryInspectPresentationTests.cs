@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Library.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Inspect.Shared.Rendering;
@@ -97,7 +98,15 @@ public sealed class LibraryInspectPresentationTests
                 }
 
                 Assert.Contains("library-inspect.link-missing", human, StringComparison.Ordinal);
-                Assert.Equal(json, LibraryInspectPresentation.RenderJson(new(result, new(CliOutputFormat.Json, view, verbosity))));
+                var rendered = LibraryInspectPresentation.RenderJson(new(result, new(CliOutputFormat.Json, view, verbosity)));
+                if (view == CliView.Compact)
+                {
+                    Assert.True(JsonViewComparison.RetainsResult(rendered, json));
+                }
+                else
+                {
+                    Assert.Equal(json, rendered);
+                }
             }
         }
     }

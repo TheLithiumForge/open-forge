@@ -836,7 +836,7 @@ The exact finite Status finding codes and their status are:
 | `library-projection-changed`       | `attention`   |
 | `library-projection-unavailable`   | `incomplete`  |
 | `library-projection-blocked`       | `blocked`     |
-| `library-extension-collision`     | `blocked`     |
+| `library-extension-collision`      | `blocked`     |
 | `operation-failed`                 | `failed`      |
 | `interrupted`                      | `interrupted` |
 
@@ -905,15 +905,15 @@ attention`. Numeric process-exit mapping follows the [Shared Result
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                             | Process completion status        |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| `complete`    | Every applicable status fact was measured and no attention condition exists                                                                                         | Shared result-coordinate mapping |
+| Result        | Meaning                                                                                                                                                                                                                       | Process completion status        |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| `complete`    | Every applicable status fact was measured and no attention condition exists                                                                                                                                                   | Shared result-coordinate mapping |
 | `attention`   | Measurement completed, but trusted managed files are changed or missing, a registered Library projection is safely missing or changed, a verified recovery final is present, or a finite lifecycle/source observation remains | Shared result-coordinate mapping |
-| `incomplete`  | Safe facts are available, but one or more applicable measurements or bounded Library facts are unavailable or incomplete, including an incomplete draft or a safely reportable invalid final | Shared result-coordinate mapping |
-| `invalid`     | Command input does not follow the accepted grammar                                                                                                                  | Shared result-coordinate mapping |
-| `blocked`     | The command cannot establish the selected workspace or a safe inspection boundary                                                                                   | Shared result-coordinate mapping |
-| `failed`      | An unexpected internal failure prevents normal completion                                                                                                           | Shared result-coordinate mapping |
-| `interrupted` | The caller cancels or interrupts the operation before completion                                                                                                    | Shared result-coordinate mapping |
+| `incomplete`  | Safe facts are available, but one or more applicable measurements or bounded Library facts are unavailable or incomplete, including an incomplete draft or a safely reportable invalid final                                  | Shared result-coordinate mapping |
+| `invalid`     | Command input does not follow the accepted grammar                                                                                                                                                                            | Shared result-coordinate mapping |
+| `blocked`     | The command cannot establish the selected workspace or a safe inspection boundary                                                                                                                                             | Shared result-coordinate mapping |
+| `failed`      | An unexpected internal failure prevents normal completion                                                                                                                                                                     | Shared result-coordinate mapping |
+| `interrupted` | The caller cancels or interrupts the operation before completion                                                                                                                                                              | Shared result-coordinate mapping |
 
 An uninstalled workspace is a valid completed state when its absence can be
 established safely. Differences in context size and added or removed root
@@ -1013,8 +1013,8 @@ open-forge status --json
 The command exposes one structured result containing the typed facts listed under
 [Structured Output](#structured-output). The exact schema and numeric process
 exit follow the [Shared Result
-Coordinates](../shared/result-coordinates/interface.md). A well-formed `--view` is accepted as a
-no-op under the shared Global CLI Flags contract.
+Coordinates](../shared/result-coordinates/interface.md). `--view` selects compact
+or expanded JSON detail under the shared Global CLI Flags contract.
 
 ### Uninstalled workspace
 
@@ -1162,3 +1162,24 @@ Native AOT, OS locking, isolated tests, and package journeys.
 Library registered links retain separate source-relative and mapped destination
 paths. A destination outside the existing `.agents` source-reference contract has
 `sourceId: null`; neither the management ID nor an empty string replaces it.
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+The result retains every field except context.continuitySources. Context
+measurements, coverage states, findings, lifecycle targets, Library records and
+recovery paths remain complete. Omitting the source breakdown does not alter
+its measured totals or imply that no continuity sources exist.
+
+Compact omissions are defined field membership, distinct from unavailable data,
+null values, empty collections or incomplete inspection. No collection is
+truncated and no finding is filtered. Counts describe the original operation.
+Select expanded on the original invocation when supporting evidence is needed.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

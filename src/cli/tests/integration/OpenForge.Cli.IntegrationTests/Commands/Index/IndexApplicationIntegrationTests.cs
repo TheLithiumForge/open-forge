@@ -73,7 +73,7 @@ public sealed class IndexApplicationIntegrationTests
             await workspace.ReadRecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
     }
 
-    [Fact(DisplayName = "Composed Index JSON is view-neutral and verbose diagnostics stay bounded on stderr"),
+    [Fact(DisplayName = "Composed Index JSON retains its complete receipt across views and verbose diagnostics stay bounded on stderr"),
      Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
     public async Task JsonViewAndVerboseDoNotChangePrimaryResult()
     {
@@ -94,7 +94,7 @@ public sealed class IndexApplicationIntegrationTests
         Assert.Equal(0, compact.ExitCode);
         Assert.Equal(compact.ExitCode, expanded.ExitCode);
         Assert.Equal(compact.ExitCode, verbose.ExitCode);
-        Assert.Equal(compact.Output, expanded.Output);
+        Assert.True(JsonViewComparison.RetainsResult(compact.Output, expanded.Output));
         Assert.Equal(compact.Output, verbose.Output);
         Assert.Equal(string.Empty, compact.Error);
         Assert.Equal(string.Empty, expanded.Error);

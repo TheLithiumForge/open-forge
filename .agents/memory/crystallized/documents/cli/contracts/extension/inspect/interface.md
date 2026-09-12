@@ -595,16 +595,16 @@ The top-level `next` member is the Architecture shape `{ command, reason }` or
 `null`. It is not repeated inside `InspectResult`. This table is exhaustive and
 uses only the exact values shown.
 
-| Condition                                                                     | Top-level `next`                                                                                                                                                  | Compact human line                                             |
-| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| `complete`                                                                    | `null`                                                                                                                                                            | no line                                                        |
-| `attention` with an actionable trusted complete semantic three-way divergence | `{ command: "open-forge extension update {subject.id}", reason: "Apply the trusted current-source change for this stable ID with the explicit update command." }` | `Next: open-forge extension update {subject.id}`               |
-| other `attention`                                                             | `null`                                                                                                                                                            | no line                                                        |
-| `incomplete`                                                                  | `{ command: "open-forge doctor", reason: "Inspect unavailable lifecycle, source, dependency, path, or fingerprint facts before relying on this result." }`        | `Next: open-forge doctor`                                      |
-| `invalid`                                                                     | `{ command: "open-forge extension inspect --help", reason: "Correct the named Extension Inspect input, then rerun the request." }`                                | `Next: open-forge extension inspect --help`             |
-| `blocked`                                                                     | `{ command: "open-forge doctor", reason: "Inspect the blocked workspace, source, identity, or ownership boundary before rerunning Extension Inspect." }`          | `Next: open-forge doctor`                                      |
-| `failed`                                                                      | `{ command: "open-forge extension inspect --verbose", reason: "Report the failure and retry Extension Inspect with bounded diagnostics." }`                       | `Next: open-forge extension inspect --verbose` |
-| `interrupted`                                                                 | `{ command: "open-forge extension inspect", reason: "Rerun the same Extension Inspect request." }`                                                                | `Next: open-forge extension inspect`                                |
+| Condition                                                                     | Top-level `next`                                                                                                                                                  | Compact human line                               |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `complete`                                                                    | `null`                                                                                                                                                            | no line                                          |
+| `attention` with an actionable trusted complete semantic three-way divergence | `{ command: "open-forge extension update {subject.id}", reason: "Apply the trusted current-source change for this stable ID with the explicit update command." }` | `Next: open-forge extension update {subject.id}` |
+| other `attention`                                                             | `null`                                                                                                                                                            | no line                                          |
+| `incomplete`                                                                  | `{ command: "open-forge doctor", reason: "Inspect unavailable lifecycle, source, dependency, path, or fingerprint facts before relying on this result." }`        | `Next: open-forge doctor`                        |
+| `invalid`                                                                     | `{ command: "open-forge extension inspect --help", reason: "Correct the named Extension Inspect input, then rerun the request." }`                                | `Next: open-forge extension inspect --help`      |
+| `blocked`                                                                     | `{ command: "open-forge doctor", reason: "Inspect the blocked workspace, source, identity, or ownership boundary before rerunning Extension Inspect." }`          | `Next: open-forge doctor`                        |
+| `failed`                                                                      | `{ command: "open-forge extension inspect --verbose", reason: "Report the failure and retry Extension Inspect with bounded diagnostics." }`                       | `Next: open-forge extension inspect --verbose`   |
+| `interrupted`                                                                 | `{ command: "open-forge extension inspect", reason: "Rerun the same Extension Inspect request." }`                                                                | `Next: open-forge extension inspect`             |
 
 An actionable three-way divergence is deliberately narrow. It requires all of
 the following:
@@ -1355,3 +1355,27 @@ the envelope, source-location shape, and status exit map. The [CLI
 Architecture](../../../architecture.md) owns parser/runtime boundaries and
 system-level evidence. This Interface owns the Inspect result, finding,
 fingerprint, scenario, and `next` meanings above.
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+The result retains every member except supporting comparison fingerprints.
+Comparison baseline/current/intended sides retain state but omit fingerprints.
+Comparison paths retain path, relation and baseline/current/intended owners,
+while omitting their baseline/current/intended fingerprint objects. Comparison
+state, mode, dependency comparison, all path facts, available package contents,
+findings and counts remain. Omitted fingerprints do not imply unavailable or
+equal content.
+
+Compact omissions are defined field membership, distinct from unavailable data,
+null values, empty collections or incomplete inspection. No collection is
+truncated and no finding is filtered. Counts describe the original operation.
+Select expanded on the original invocation when supporting evidence is needed.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

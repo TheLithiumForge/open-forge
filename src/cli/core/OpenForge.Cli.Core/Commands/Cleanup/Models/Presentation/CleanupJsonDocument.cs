@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using System.Text.Json.Serialization;
 
 namespace OpenForge.Cli.Core.Commands.Cleanup.Models.Presentation;
@@ -296,4 +297,13 @@ internal sealed record CleanupJsonNext
     WriteIndented = true,
     GenerationMode = JsonSourceGenerationMode.Serialization)]
 [JsonSerializable(typeof(CleanupJsonDocument))]
-internal sealed partial class CleanupJsonContext : JsonSerializerContext;
+[JsonSerializable(typeof(CliCompactJsonDocument<CleanupJsonResult>), TypeInfoPropertyName = "CompactDocument")]
+internal sealed partial class CleanupJsonContext : JsonSerializerContext
+{
+    private static readonly Lazy<CleanupJsonContext> CompactContext = new(CreateCompact);
+
+    private static CleanupJsonContext CreateCompact()
+        => new(new System.Text.Json.JsonSerializerOptions(Default.Options) { WriteIndented = false });
+
+    internal static CleanupJsonContext Compact => CompactContext.Value;
+}

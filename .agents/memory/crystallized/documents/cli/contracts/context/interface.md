@@ -1305,3 +1305,25 @@ claiming that the suite or artifacts exist.
 - [Route Scope And Inheritance](../../../framework/routing/scope.md)
 - [Routing Paths And Identity](../../../framework/routing/paths.md)
 - [Overwrite Customization](../../../framework/routing/overwrites.md)
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+The result retains selection, presentation, coverage, all paths, links, sources
+and findings in the same order. Only inclusionReasons on paths, sources and
+layers are omitted. Identity, positions, route/scope, layers and all selected
+projections remain, including exact body text. Links, their disposition and
+coverage remain complete.
+
+Compact omissions are defined field membership, distinct from unavailable data,
+null values, empty collections or incomplete inspection. No collection is
+truncated and no finding is filtered. Counts describe the original operation.
+Select expanded on the original invocation when supporting evidence is needed.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

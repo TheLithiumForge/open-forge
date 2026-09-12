@@ -25,7 +25,7 @@ internal static class RouteListHelpSections
             new CliHelpSection(
                 "Inherited global options",
                 "  Available on this command: --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, "
-                + "and --version. --view changes only text detail and is ignored with --json."),
+                + "and --version. --view selects detail in text and JSON."),
             new CliHelpSection(
                 "Exit and streams",
                 BuildExitAndStreamBody()),

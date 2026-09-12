@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
@@ -19,7 +20,15 @@ internal static class CleanupPresentation
     {
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
-        return JsonSerializer.Serialize(CleanupJsonProjection.Create(presentation.Result), CleanupJsonContext.Default.CleanupJsonDocument);
+        var document = CleanupJsonProjection.Create(presentation.Result);
+        if (presentation.Presentation.View == CliView.Compact)
+        {
+            return JsonSerializer.Serialize(
+                CliCompactJsonProjection.Create(presentation.Result, document.Result),
+                CleanupJsonContext.Compact.CompactDocument);
+        }
+
+        return JsonSerializer.Serialize(document, CleanupJsonContext.Default.CleanupJsonDocument);
     }
 
     internal static string Human(CliPresentationRequest<CleanupResult> presentation)

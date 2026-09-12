@@ -21,7 +21,7 @@ internal static class IndexHelpSections
                 "  Omit --dry-run to apply bounded generated-interior changes. --dry-run previews the same complete checked plan and writes nothing. Repeating the command makes no further changes."),
             new CliHelpSection(
                 "Global options",
-                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
+                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view selects detail in text and JSON."),
             new CliHelpSection(
                 "Examples",
                 """

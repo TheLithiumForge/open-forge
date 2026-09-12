@@ -250,7 +250,7 @@ public sealed class ExtensionInspectContractTests
         var json = ExtensionInspectJsonRenderer.Render(
             new CliPresentationRequest<ExtensionInspectResult>(
                 result,
-                new CliPresentation(CliOutputFormat.Json, CliView.Compact, CliVerbosity.Normal)));
+                new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal)));
 
         using var document = JsonDocument.Parse(json);
         var root = document.RootElement;

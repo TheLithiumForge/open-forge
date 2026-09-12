@@ -97,7 +97,7 @@ public sealed class LibraryListCompositionTests
         Assert.Equal("current-directory", current.RootElement.GetProperty("workspace").GetProperty("selectedBy").GetString());
         Assert.Equal(child, explicitWorkspace.RootElement.GetProperty("workspace").GetProperty("path").GetString());
         Assert.Equal("explicit-workspace", explicitWorkspace.RootElement.GetProperty("workspace").GetProperty("selectedBy").GetString());
-        Assert.Equal(current.RootElement.GetProperty("result").GetRawText(), explicitWorkspace.RootElement.GetProperty("result").GetRawText());
+        Assert.True(JsonElement.DeepEquals(current.RootElement.GetProperty("result"), explicitWorkspace.RootElement.GetProperty("result")));
         fixture.AssertNoPersistentState();
     }
 }

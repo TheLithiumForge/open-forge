@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Presentation;
@@ -16,6 +18,13 @@ internal static class RouteInspectJsonRenderer
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var document = RouteInspectJsonProjection.Create(presentation.Result);
+        if (presentation.Presentation.View == CliView.Compact)
+        {
+            return JsonSerializer.Serialize(
+                CliCompactJsonProjection.Create(presentation.Result, document.Result),
+                RouteInspectJsonContext.Compact.CompactDocument);
+        }
+
         return JsonSerializer.Serialize(
             document,
             RouteInspectJsonContext.Default.RouteInspectJsonDocument);
@@ -27,4 +36,13 @@ internal static class RouteInspectJsonRenderer
     WriteIndented = true,
     GenerationMode = JsonSourceGenerationMode.Serialization)]
 [JsonSerializable(typeof(RouteInspectJsonDocument))]
-internal sealed partial class RouteInspectJsonContext : JsonSerializerContext;
+[JsonSerializable(typeof(CliCompactJsonDocument<RouteInspectJsonResult>), TypeInfoPropertyName = "CompactDocument")]
+internal sealed partial class RouteInspectJsonContext : JsonSerializerContext
+{
+    private static readonly Lazy<RouteInspectJsonContext> CompactContext = new(CreateCompact);
+
+    private static RouteInspectJsonContext CreateCompact()
+        => new(new System.Text.Json.JsonSerializerOptions(Default.Options) { WriteIndented = false });
+
+    internal static RouteInspectJsonContext Compact => CompactContext.Value;
+}

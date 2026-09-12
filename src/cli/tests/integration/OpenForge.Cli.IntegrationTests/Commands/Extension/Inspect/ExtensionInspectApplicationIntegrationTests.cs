@@ -17,6 +17,30 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Inspect;
 
 public sealed class ExtensionInspectApplicationIntegrationTests
 {
+    [Fact(DisplayName = "Compact Extension Inspect retains relations and paths while omitting repeated comparison fingerprints")]
+    [Trait("Feature", "compact-json"), Trait("Evidence", "Integration")]
+    public async Task CompactComparisonRetainsObservedChangesWithoutWrites()
+    {
+        using var fixture = InspectFixture.Create(fingerprintKind: "exact-bytes", intendedContent: "beta\n");
+        var beforeWorkspace = fixture.Workspace.SnapshotHashes();
+        var beforeSource = fixture.Source.SnapshotHashes();
+        string[] arguments = ["extension", "inspect", "toolkit", "--workspace", fixture.Workspace.Path, "--source", fixture.Source.Path, "--json"];
+        var expanded = await CliHostCapture.RunAsync([.. arguments, "--view=expanded"], fixture.Workspace.Path);
+        var compact = await CliHostCapture.RunAsync([.. arguments, "--view=compact"], fixture.Workspace.Path);
+
+        Assert.Equal(0, expanded.ExitCode);
+        Assert.Equal(expanded.ExitCode, compact.ExitCode);
+        Assert.Equal(string.Empty, compact.Error);
+        Assert.Equal(string.Empty, expanded.Error);
+        using var document = JsonDocument.Parse(expanded.Output);
+        Assert.NotEmpty(document.RootElement.GetProperty("result").GetProperty("comparison").GetProperty("paths").EnumerateArray());
+        Assert.True(JsonViewComparison.RetainsResult(compact.Output, expanded.Output,
+            ["comparison.baseline.fingerprints", "comparison.current.fingerprints", "comparison.intended.fingerprints",
+                "comparison.paths.*.baseline", "comparison.paths.*.current", "comparison.paths.*.intended"]));
+        Assert.Equal(beforeWorkspace, fixture.Workspace.SnapshotHashes());
+        Assert.Equal(beforeSource, fixture.Source.SnapshotHashes());
+    }
+
     [Fact(DisplayName = "Extension Inspect help exposes exact grammar and the read-only boundary"), Trait("Feature", "extension-inspect"), Trait("Evidence", "Integration")]
     public async Task InspectHelpExposesExactGrammarAndReadOnlyBoundary()
     {

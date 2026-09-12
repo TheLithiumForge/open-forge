@@ -22,7 +22,7 @@ internal static class ExtensionListHelpSections
             new CliHelpSection(
                 heading: "Global options",
                 body: "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. "
-                + "--view is ignored with --json."),
+                + "--view selects detail in text and JSON."),
             new CliHelpSection(
                 heading: "Examples",
                 body: """

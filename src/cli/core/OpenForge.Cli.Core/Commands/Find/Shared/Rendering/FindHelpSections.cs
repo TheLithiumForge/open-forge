@@ -28,7 +28,7 @@ internal static class FindHelpSections
             new CliHelpSection(
                 "Content and views",
                 "  --content shows metadata, frontmatter, headings, body, or section:<name>. "
-                + "Text --view values are compact and expanded; --view is ignored with --json."
+                + "--view selects compact or expanded detail in text and JSON."
                 ),
             new CliHelpSection(
                 "Inherited global options",
@@ -63,7 +63,7 @@ internal static class FindHelpSections
         var lines = new List<string>
         {
             "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            "  JSON writes one complete schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use stderr and remain bounded.",
+            "  Expanded JSON writes one complete schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use stderr and remain bounded.",
         };
         foreach (var status in new[]
         {

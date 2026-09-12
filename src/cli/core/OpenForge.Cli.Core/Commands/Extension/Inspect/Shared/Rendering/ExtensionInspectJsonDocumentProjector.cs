@@ -7,7 +7,7 @@ using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Rendering;
 
-internal static class ExtensionInspectJsonDocumentProjector
+internal static partial class ExtensionInspectJsonDocumentProjector
 {
     internal static ExtensionInspectJsonDocument Create(ExtensionInspectResult result)
         => new()

@@ -67,13 +67,13 @@ or generic mutation dispatcher.
 
 ## Operands And Repetition
 
-| Operand or flag | Role | Accepted value | Omission and repetition |
-| --- | --- | --- | --- |
-| `<library-id>` | Select the new management identity | One value matching the library-ID grammar below | Required and singleton. A repeated positional value is invalid. An already registered ID is blocked, not last-wins. |
-| `<source-root>` | Select the source directory relative to the selected workspace | One portable workspace-relative path satisfying the source-root boundary below | Required and singleton. A repeated positional value is invalid. |
-| `--to <workspace-relative-directory>` | Destination root | `.` or a canonical portable child directory | Defaults to `.`. Singleton; repetition is invalid. Native spaced, equals and colon option-value forms follow the pinned parser. |
-| `--dry-run` | Write policy | Boolean flag with no value | Application is selected when omitted. Repetition is accepted and idempotent. |
-| Shared global flags | Workspace and presentation | Defined by the shared global contract | Shared defaults and repetition rules apply. |
+| Operand or flag                       | Role                                                           | Accepted value                                                                 | Omission and repetition                                                                                                         |
+| ------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `<library-id>`                        | Select the new management identity                             | One value matching the library-ID grammar below                                | Required and singleton. A repeated positional value is invalid. An already registered ID is blocked, not last-wins.             |
+| `<source-root>`                       | Select the source directory relative to the selected workspace | One portable workspace-relative path satisfying the source-root boundary below | Required and singleton. A repeated positional value is invalid.                                                                 |
+| `--to <workspace-relative-directory>` | Destination root                                               | `.` or a canonical portable child directory                                    | Defaults to `.`. Singleton; repetition is invalid. Native spaced, equals and colon option-value forms follow the pinned parser. |
+| `--dry-run`                           | Write policy                                                   | Boolean flag with no value                                                     | Application is selected when omitted. Repetition is accepted and idempotent.                                                    |
+| Shared global flags                   | Workspace and presentation                                     | Defined by the shared global contract                                          | Shared defaults and repetition rules apply.                                                                                     |
 
 `--to` selects the recorded destination root. No flag changes source selection, ownership, collision,
 containment, record, recovery, or route authority. A dry run does not grant
@@ -358,15 +358,15 @@ not disclose or materialize source content.
 
 ## Semantic Results
 
-| Result | Meaning |
-| --- | --- |
-| `complete` | A complete safe dry-run plan was established, or application and final verification completed. An empty eligible source inventory is complete when its record and any permitted generated projection are verified. |
-| `attention` | Target effects verified, but post-verification recovery cleanup has a positively observed retained residual under the shared recovery boundary. Planned changes alone do not create `attention`. |
-| `incomplete` | A valid request has an unavailable or inaccessible existing record or source fact, incomplete source inventory, incomplete generated projection, or unavailable required application recovery preparation. No effect begins. |
-| `invalid` | Command input, operand cardinality, library-ID grammar, source-root spelling, a malformed strict record, a missing or non-ordinary mandatory source root, or terminal-mode use is outside this interface. |
-| `blocked` | The request is syntactically valid but duplicate or ambiguous identity, unsafe containment or physical aliasing, an unsafe or colliding record or destination, an unsafe generated region, unavailable real-link capability, or another mutation precondition prevents a safe complete attach. No effect begins. |
-| `failed` | An unexpected application, verification, or unknown recovery-disposition failure occurs after a persistent effect begins. |
-| `interrupted` | The caller cancels before completion. Effects already verified remain residual truth; an unexpected post-effect failure remains `failed`. |
+| Result        | Meaning                                                                                                                                                                                                                                                                                                          |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | A complete safe dry-run plan was established, or application and final verification completed. An empty eligible source inventory is complete when its record and any permitted generated projection are verified.                                                                                               |
+| `attention`   | Target effects verified, but post-verification recovery cleanup has a positively observed retained residual under the shared recovery boundary. Planned changes alone do not create `attention`.                                                                                                                 |
+| `incomplete`  | A valid request has an unavailable or inaccessible existing record or source fact, incomplete source inventory, incomplete generated projection, or unavailable required application recovery preparation. No effect begins.                                                                                     |
+| `invalid`     | Command input, operand cardinality, library-ID grammar, source-root spelling, a malformed strict record, a missing or non-ordinary mandatory source root, or terminal-mode use is outside this interface.                                                                                                        |
+| `blocked`     | The request is syntactically valid but duplicate or ambiguous identity, unsafe containment or physical aliasing, an unsafe or colliding record or destination, an unsafe generated region, unavailable real-link capability, or another mutation precondition prevents a safe complete attach. No effect begins. |
+| `failed`      | An unexpected application, verification, or unknown recovery-disposition failure occurs after a persistent effect begins.                                                                                                                                                                                        |
+| `interrupted` | The caller cancels before completion. Effects already verified remain residual truth; an unexpected post-effect failure remains `failed`.                                                                                                                                                                        |
 
 For ordinary conditions, status precedence is `blocked` > `incomplete` >
 `attention` > `complete`. Invalid input stops before operation resolution. The
@@ -498,3 +498,24 @@ public EndToEnd journey:
 
 - [library attach Contract Set](_attach.md)
 - [library attach Behavior Contract](behavior.md)
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+The compact result retains the complete command-owned result graph defined by
+its structured schema, including every nullable value and ordered collection.
+Its core already carries the facts needed to use the result. For mutation
+commands this includes plans, exact previews, effects, permissions when
+applicable, verification, findings and recovery. Rendering never asks a caller
+to rerun a mutation to recover an omitted receipt.
+
+No collection is truncated and no finding is filtered. Counts describe the
+original operation. Both JSON views retain the same result facts.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

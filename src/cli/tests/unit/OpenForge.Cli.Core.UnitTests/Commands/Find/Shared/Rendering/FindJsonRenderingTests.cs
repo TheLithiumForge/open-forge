@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.Core.Commands.Find.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find;
@@ -87,8 +88,8 @@ public sealed class FindJsonRenderingTests
         Assert.Equal(expected.Item6, document.Next?.Reason);
     }
 
-    [Fact(DisplayName = "Find JSON rendering serializes the concrete document for compact and expanded view requests without changing its graph"), Trait("Feature", "find-presentation"), Trait("Evidence", "Unit")]
-    public void JsonViewIsANoopAcrossViews()
+    [Fact(DisplayName = "Find JSON rendering serializes the concrete document for compact and expanded view requests with defined compact evidence omission"), Trait("Feature", "find-presentation"), Trait("Evidence", "Unit")]
+    public void JsonViewsRetainCoreAndOmitSupportingEvidence()
     {
         var result = FindPresentationTestData.CompleteResult();
         var compact = FindPresentationTestData.PresentationRequest(
@@ -103,7 +104,7 @@ public sealed class FindJsonRenderingTests
         var compactText = FindJsonRenderer.Render(compact);
         var expandedText = FindJsonRenderer.Render(expanded);
 
-        Assert.Equal(compactText, expandedText);
+        Assert.True(JsonViewComparison.RetainsResult(compactText, expandedText, ["matches.*.evidence"]));
     }
 
     [Fact(DisplayName = "Find JSON projection preserves a null supplied view and compact effective view"), Trait("Feature", "find-presentation"), Trait("Evidence", "Unit")]

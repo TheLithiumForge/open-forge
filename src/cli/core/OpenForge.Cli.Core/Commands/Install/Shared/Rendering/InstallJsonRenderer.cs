@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OpenForge.Cli.Core.Commands.Install.Models.Presentation;
@@ -14,8 +16,15 @@ internal static class InstallJsonRenderer
     {
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
-        return JsonSerializer.Serialize(
-            InstallJsonProjection.Create(presentation.Result),
+        var document = InstallJsonProjection.Create(presentation.Result);
+        if (presentation.Presentation.View == CliView.Compact)
+        {
+            return JsonSerializer.Serialize(
+                CliCompactJsonProjection.Create(presentation.Result, document.Result),
+                InstallJsonContext.Compact.CompactDocument);
+        }
+
+        return JsonSerializer.Serialize(document,
             InstallJsonContext.Default.InstallJsonDocument);
     }
 }
@@ -25,4 +34,13 @@ internal static class InstallJsonRenderer
     WriteIndented = true,
     GenerationMode = JsonSourceGenerationMode.Serialization)]
 [JsonSerializable(typeof(InstallJsonDocument))]
-internal sealed partial class InstallJsonContext : JsonSerializerContext;
+[JsonSerializable(typeof(CliCompactJsonDocument<InstallJsonResult>), TypeInfoPropertyName = "CompactDocument")]
+internal sealed partial class InstallJsonContext : JsonSerializerContext
+{
+    private static readonly Lazy<InstallJsonContext> CompactContext = new(CreateCompact);
+
+    private static InstallJsonContext CreateCompact()
+        => new(new System.Text.Json.JsonSerializerOptions(Default.Options) { WriteIndented = false });
+
+    internal static InstallJsonContext Compact => CompactContext.Value;
+}

@@ -70,11 +70,11 @@ requested library.
 
 ## Operand And Repetition
 
-| Operand or flag | Role | Accepted value | Omission and repetition |
-| --- | --- | --- | --- |
-| `<library-id>` | Select one registered management identity | One value matching the library-ID grammar below | Required and singleton. An unknown ID is invalid; a malformed record is blocked. |
-| `--dry-run` | Write policy | Boolean flag with no value | Application is selected when omitted. Repetition is accepted and idempotent. |
-| Shared global flags | Workspace and presentation | Defined by the shared global contract | Shared defaults and repetition rules apply. |
+| Operand or flag     | Role                                      | Accepted value                                  | Omission and repetition                                                          |
+| ------------------- | ----------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------- |
+| `<library-id>`      | Select one registered management identity | One value matching the library-ID grammar below | Required and singleton. An unknown ID is invalid; a malformed record is blocked. |
+| `--dry-run`         | Write policy                              | Boolean flag with no value                      | Application is selected when omitted. Repetition is accepted and idempotent.     |
+| Shared global flags | Workspace and presentation                | Defined by the shared global contract           | Shared defaults and repetition rules apply.                                      |
 
 No flag adds retirement authority, bypasses expected-link proof, chooses a
 source root, or changes record ownership. Sync never treats a recommendation
@@ -111,9 +111,7 @@ The record must have exactly schema-v1 shape:
       "id": "team-knowledge",
       "sourceRoot": "shared/team-knowledge",
       "destinationRoot": ".",
-      "paths": [
-        ".agents/directives/review.md"
-      ]
+      "paths": [".agents/directives/review.md"]
     }
   ]
 }
@@ -183,16 +181,16 @@ Let the complete current eligible path set be `P` and the selected record's
 registered path set be `R`. Both sets use the same portable source-relative
 strings. Both sets use the recorded destination root; Sync cannot change it.
 
-| Relationship | Destination fact | Sync effect |
-| --- | --- | --- |
-| `P ∩ R` | Exact registered relative file symlink remains at the mapped destination and its raw target is the derived target | Preserve the link and record path. |
-| `P ∩ R` | Destination leaf is missing and its parent path is safe | Create the exact relative file symlink. |
-| `P ∩ R` | Destination is an ordinary file, directory, different link, special entry, unsafe path, unknown state, or separately owned path | Block the whole Sync. |
-| `P \ R` | Destination leaf is exactly missing and its parent path is safe | Create a new exact relative file symlink and add the path to the record. |
-| `P \ R` | Any destination occupant exists or is unsafe, including an unregistered matching link | Block the whole Sync. |
-| `R \ P` | Destination is the exact registered relative symlink with the derived raw target, whether its source target is present or dangling | Delete only that exact link and remove the path from the record. |
-| `R \ P` | Destination is positively missing, even with safe no-follow parents | Block the whole Sync because the registered link cannot be proven for retirement. |
-| `R \ P` | Destination is an ordinary file, directory, different link, special entry, unsafe path, unknown state, or separately owned path | Block the whole Sync. |
+| Relationship | Destination fact                                                                                                                   | Sync effect                                                                       |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `P ∩ R`      | Exact registered relative file symlink remains at the mapped destination and its raw target is the derived target                  | Preserve the link and record path.                                                |
+| `P ∩ R`      | Destination leaf is missing and its parent path is safe                                                                            | Create the exact relative file symlink.                                           |
+| `P ∩ R`      | Destination is an ordinary file, directory, different link, special entry, unsafe path, unknown state, or separately owned path    | Block the whole Sync.                                                             |
+| `P \ R`      | Destination leaf is exactly missing and its parent path is safe                                                                    | Create a new exact relative file symlink and add the path to the record.          |
+| `P \ R`      | Any destination occupant exists or is unsafe, including an unregistered matching link                                              | Block the whole Sync.                                                             |
+| `R \ P`      | Destination is the exact registered relative symlink with the derived raw target, whether its source target is present or dangling | Delete only that exact link and remove the path from the record.                  |
+| `R \ P`      | Destination is positively missing, even with safe no-follow parents                                                                | Block the whole Sync because the registered link cannot be proven for retirement. |
+| `R \ P`      | Destination is an ordinary file, directory, different link, special entry, unsafe path, unknown state, or separately owned path    | Block the whole Sync.                                                             |
 
 The source inventory must be complete before the `R \ P` set is formed. A
 source file becoming excluded is absent from `P` and follows the same exact
@@ -363,15 +361,15 @@ envelope, including:
 
 ## Semantic Results
 
-| Result | Meaning |
-| --- | --- |
-| `complete` | A complete safe no-op or dry-run reconciliation was established, or all planned additions, exact retirements, generated-region changes, and final record publication verified. |
-| `attention` | Target effects verified, but post-verification recovery cleanup has a positively observed retained residual under the shared recovery boundary. Planned additions or retirements do not create `attention`. |
-| `incomplete` | The selected record or source has a required coverage or application fact that cannot be completely inspected or prepared, most importantly an unavailable or incomplete source inventory. No effect begins. |
-| `invalid` | Command input, operand cardinality, library-ID grammar, unknown ID, source selection through an operand, or terminal-mode use is outside this interface. |
-| `blocked` | The request is syntactically valid but malformed record data, unsafe containment or aliasing, a changed occupant, an unproven expected raw target, a collision, an unsafe generated region, unavailable real-link capability, or another mutation precondition prevents a safe complete reconciliation. No effect begins. |
-| `failed` | An unexpected application, verification, or unknown recovery-disposition failure occurs after a persistent effect begins. |
-| `interrupted` | The caller cancels before completion. Effects already verified remain residual truth; an unexpected post-effect failure remains `failed`. |
+| Result        | Meaning                                                                                                                                                                                                                                                                                                                   |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | A complete safe no-op or dry-run reconciliation was established, or all planned additions, exact retirements, generated-region changes, and final record publication verified.                                                                                                                                            |
+| `attention`   | Target effects verified, but post-verification recovery cleanup has a positively observed retained residual under the shared recovery boundary. Planned additions or retirements do not create `attention`.                                                                                                               |
+| `incomplete`  | The selected record or source has a required coverage or application fact that cannot be completely inspected or prepared, most importantly an unavailable or incomplete source inventory. No effect begins.                                                                                                              |
+| `invalid`     | Command input, operand cardinality, library-ID grammar, unknown ID, source selection through an operand, or terminal-mode use is outside this interface.                                                                                                                                                                  |
+| `blocked`     | The request is syntactically valid but malformed record data, unsafe containment or aliasing, a changed occupant, an unproven expected raw target, a collision, an unsafe generated region, unavailable real-link capability, or another mutation precondition prevents a safe complete reconciliation. No effect begins. |
+| `failed`      | An unexpected application, verification, or unknown recovery-disposition failure occurs after a persistent effect begins.                                                                                                                                                                                                 |
+| `interrupted` | The caller cancels before completion. Effects already verified remain residual truth; an unexpected post-effect failure remains `failed`.                                                                                                                                                                                 |
 
 For ordinary conditions, status precedence is `blocked` > `incomplete` >
 `attention` > `complete`. Invalid input stops before operation resolution. The
@@ -520,3 +518,24 @@ without creating additional public journeys.
 
 - [library sync Contract Set](_sync.md)
 - [library sync Interface Contract](interface.md)
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+The compact result retains the complete command-owned result graph defined by
+its structured schema, including every nullable value and ordered collection.
+Its core already carries the facts needed to use the result. For mutation
+commands this includes plans, exact previews, effects, permissions when
+applicable, verification, findings and recovery. Rendering never asks a caller
+to rerun a mutation to recover an omitted receipt.
+
+No collection is truncated and no finding is filtered. Counts describe the
+original operation. Both JSON views retain the same result facts.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

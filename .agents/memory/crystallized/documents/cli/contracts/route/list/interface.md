@@ -63,8 +63,7 @@ no alias. Depth accepts the native value forms `--depth 2`, `--depth=2`, and
 
 The applicable global flags are `--workspace <path>`, `--json`,
 `--view=compact|expanded`, `--verbose`, `--help`, and `--version`. `--view`
-changes only human presentation. `--view` is accepted as a no-op when `--json`
-selects structured presentation. `--help` and `--version` stop before route
+selects detail in human and JSON presentation. `--help` and `--version` stop before route
 resolution under the shared terminal-mode rules.
 
 An empty depth value, a negative value, a non-integer value, an unknown value, or
@@ -259,7 +258,7 @@ selection, ordering, coverage or status.
 It retains the selected workspace and root-selection facts, requested and
 effective depth, semantic result, coverage, findings, and every route row with
 all fields listed above. It retains empty result sets and incomplete coverage
-explicitly. `--view` is accepted but has no effect under JSON.
+explicitly. JSON view selection follows the compact and expanded projections defined here.
 
 The camel-case structured shape is fixed for schema version 1:
 
@@ -348,7 +347,7 @@ open-forge route list .agents/workspace/_workspace.md --depth=all
 The last request is valid only when that exact path is one unambiguous routed
 entrypoint; it does not make `workspace` a Loader root.
 
-Request complete machine facts. The view value is a no-op here:
+Request the compact machine projection:
 
 ```text
 open-forge route list --depth=2 --json --view=compact
@@ -388,8 +387,7 @@ filesystem walk. It must cover:
 - Exact authored descriptions and tags, parent/hierarchy, absolute and relative
   depths, kind, applicable child counts, and provenance.
 - Parent-before-child deterministic ordering across repeated invocations.
-- Compact, expanded, and JSON parity, including `--view` being a no-op under
-  JSON and complete empty results.
+- Compact, expanded, and JSON core parity with defined supporting-field omissions and complete empty results.
 - Honest `attention`, `incomplete`, `invalid`, `blocked`, `failed`, and
   `interrupted` outcomes without a silent result cap or false `complete` status.
 
@@ -402,3 +400,24 @@ filesystem walk. It must cover:
 - [Context Interface Contract](../../context/interface.md)
 - [CLI Command Contract Set overview](../../../command-contract-set.md)
 - [CLI Architecture](../../../architecture.md)
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+All selection, requested/effective depth, coverage and findings remain.
+Every ordered row retains id, path, parentId, parentPath, absoluteDepth,
+relativeDepth, kind, description, tags and directChildCount. Only each row's
+provenance object is omitted. No row or hierarchy level is filtered.
+
+Compact omissions are defined field membership, distinct from unavailable data,
+null values, empty collections or incomplete inspection. No collection is
+truncated and no finding is filtered. Counts describe the original operation.
+Select expanded on the original invocation when supporting evidence is needed.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

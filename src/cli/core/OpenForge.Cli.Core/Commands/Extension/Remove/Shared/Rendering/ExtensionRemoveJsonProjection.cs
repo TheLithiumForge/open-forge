@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
@@ -14,8 +16,15 @@ internal static class ExtensionRemoveJsonProjection
     internal static string RenderJson(CliPresentationRequest<ExtensionRemoveResult> presentation)
     {
         CliOperationStage.ValidateResult(presentation.Result);
-        return JsonSerializer.Serialize(
-            Create(presentation.Result),
+        var document = Create(presentation.Result);
+        if (presentation.Presentation.View == CliView.Compact)
+        {
+            return JsonSerializer.Serialize(
+                CliCompactJsonProjection.Create(presentation.Result, document.Result),
+                ExtensionRemoveJsonContext.Compact.CompactDocument);
+        }
+
+        return JsonSerializer.Serialize(document,
             ExtensionRemoveJsonContext.Default.ExtensionRemoveJsonDocument);
     }
 

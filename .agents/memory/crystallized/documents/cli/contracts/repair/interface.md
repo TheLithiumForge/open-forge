@@ -824,3 +824,24 @@ blocks the selected recovery. Existing `.agents` implicit permission remains;
 protected controls, all selected/registered source trees, exact no-follow link
 identity and collision checks still apply to each actual effect. Recovery adds
 no permission prompt or broad grant. Original residual bytes remain unchanged.
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+The compact result retains the complete command-owned result graph defined by
+its structured schema, including every nullable value and ordered collection.
+Its core already carries the facts needed to use the result. For mutation
+commands this includes plans, exact previews, effects, permissions when
+applicable, verification, findings and recovery. Rendering never asks a caller
+to rerun a mutation to recover an omitted receipt.
+
+No collection is truncated and no finding is filtered. Counts describe the
+original operation. Both JSON views retain the same result facts.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

@@ -68,11 +68,11 @@ copy mode, saved plan, partial selector, or generic mutation dispatcher.
 
 ## Operand And Repetition
 
-| Operand or flag | Role | Accepted value | Omission and repetition |
-| --- | --- | --- | --- |
-| `<library-id>` | Select one registered management identity | One value matching the library-ID grammar below | Required and singleton. An unknown ID is invalid; a successful prior detach does not establish a repeat no-op. |
-| `--dry-run` | Write policy | Boolean flag with no value | Application is selected when omitted. Repetition is accepted and idempotent. |
-| Shared global flags | Workspace and presentation | Defined by the shared global contract | Shared defaults and repetition rules apply. |
+| Operand or flag     | Role                                      | Accepted value                                  | Omission and repetition                                                                                        |
+| ------------------- | ----------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `<library-id>`      | Select one registered management identity | One value matching the library-ID grammar below | Required and singleton. An unknown ID is invalid; a successful prior detach does not establish a repeat no-op. |
+| `--dry-run`         | Write policy                              | Boolean flag with no value                      | Application is selected when omitted. Repetition is accepted and idempotent.                                   |
+| Shared global flags | Workspace and presentation                | Defined by the shared global contract           | Shared defaults and repetition rules apply.                                                                    |
 
 The library ID supplies record selection only. It does not select a source
 reference, route, or destination outside the selected workspace.
@@ -108,9 +108,7 @@ The record must have exactly schema-v1 shape:
       "id": "team-knowledge",
       "sourceRoot": "shared/team-knowledge",
       "destinationRoot": ".",
-      "paths": [
-        ".agents/directives/review.md"
-      ]
+      "paths": [".agents/directives/review.md"]
     }
   ]
 }
@@ -175,11 +173,11 @@ route or generated region is created.
 For each recorded mapping, detach distinguishes these current destination
 facts:
 
-| Destination fact | Detach treatment |
-| --- | --- |
-| Exact registered relative file symlink with the derived raw target | Plan one link deletion. The target may exist or be dangling; detach does not follow it. |
-| Positively missing leaf with safe no-follow parents | Block the complete request because the registered link identity cannot be verified. |
-| Ordinary file, directory, different link, junction, special entry, changed raw target, unsafe parent, unknown state, or separately owned occupant | Block the complete request and preserve every occupant and the record. |
+| Destination fact                                                                                                                                  | Detach treatment                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Exact registered relative file symlink with the derived raw target                                                                                | Plan one link deletion. The target may exist or be dangling; detach does not follow it. |
+| Positively missing leaf with safe no-follow parents                                                                                               | Block the complete request because the registered link identity cannot be verified.     |
+| Ordinary file, directory, different link, junction, special entry, changed raw target, unsafe parent, unknown state, or separately owned occupant | Block the complete request and preserve every occupant and the record.                  |
 
 An exact registered dangling link is still an exact registered link. Detach may
 remove it even when both source and target are absent because raw target
@@ -350,15 +348,15 @@ The result does not follow, disclose, or materialize source bytes.
 
 ## Semantic Results
 
-| Result | Meaning |
-| --- | --- |
-| `complete` | A complete safe dry-run plan was established, or all exact registered links and permitted generated effects verified and the resulting record was published or removed. Every registered destination had an exact link identity. |
-| `attention` | Target effects verified, but post-verification recovery cleanup has a positively observed retained residual under the shared recovery boundary. Planned detach effects do not create `attention`. |
-| `incomplete` | A valid record or consumer boundary has a required coverage or application fact that cannot be completely inspected or prepared. No effect begins. Source unavailability alone is not incomplete because detach is source-independent. |
-| `invalid` | Command input, operand cardinality, library-ID grammar, unknown ID, malformed selection, source-root operand, or terminal-mode use is outside this interface. |
-| `blocked` | The request is syntactically valid but a malformed record, unsafe recorded path, changed or unsafe occupant, unproven raw target, collision, unsafe generated region, unavailable real-link capability, or another mutation precondition prevents a safe complete detach. No effect begins. |
-| `failed` | An unexpected application, verification, or unknown recovery-disposition failure occurs after a persistent effect begins. |
-| `interrupted` | The caller cancels before completion. Effects already verified remain residual truth; an unexpected post-effect failure remains `failed`. |
+| Result        | Meaning                                                                                                                                                                                                                                                                                     |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | A complete safe dry-run plan was established, or all exact registered links and permitted generated effects verified and the resulting record was published or removed. Every registered destination had an exact link identity.                                                            |
+| `attention`   | Target effects verified, but post-verification recovery cleanup has a positively observed retained residual under the shared recovery boundary. Planned detach effects do not create `attention`.                                                                                           |
+| `incomplete`  | A valid record or consumer boundary has a required coverage or application fact that cannot be completely inspected or prepared. No effect begins. Source unavailability alone is not incomplete because detach is source-independent.                                                      |
+| `invalid`     | Command input, operand cardinality, library-ID grammar, unknown ID, malformed selection, source-root operand, or terminal-mode use is outside this interface.                                                                                                                               |
+| `blocked`     | The request is syntactically valid but a malformed record, unsafe recorded path, changed or unsafe occupant, unproven raw target, collision, unsafe generated region, unavailable real-link capability, or another mutation precondition prevents a safe complete detach. No effect begins. |
+| `failed`      | An unexpected application, verification, or unknown recovery-disposition failure occurs after a persistent effect begins.                                                                                                                                                                   |
+| `interrupted` | The caller cancels before completion. Effects already verified remain residual truth; an unexpected post-effect failure remains `failed`.                                                                                                                                                   |
 
 For ordinary conditions, status precedence is `blocked` > `incomplete` >
 `attention` > `complete`. Invalid input stops before operation resolution. The
@@ -495,3 +493,24 @@ without creating additional public journeys.
 
 - [library detach Contract Set](_detach.md)
 - [library detach Interface Contract](interface.md)
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+The compact result retains the complete command-owned result graph defined by
+its structured schema, including every nullable value and ordered collection.
+Its core already carries the facts needed to use the result. For mutation
+commands this includes plans, exact previews, effects, permissions when
+applicable, verification, findings and recovery. Rendering never asks a caller
+to rerun a mutation to recover an omitted receipt.
+
+No collection is truncated and no finding is filtered. Counts describe the
+original operation. Both JSON views retain the same result facts.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

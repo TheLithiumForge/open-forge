@@ -41,7 +41,7 @@ public sealed class ExtensionListBindingAndPresentationTests
         var json = ExtensionListJsonRenderer.Render(
             new CliPresentationRequest<ExtensionListResult>(
                 result,
-                new CliPresentation(CliOutputFormat.Json, CliView.Compact, CliVerbosity.Normal)));
+                new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal)));
 
         using var document = JsonDocument.Parse(json);
         var root = document.RootElement;

@@ -19,7 +19,7 @@ internal static class ExtensionInspectHelpSections
                 "  Inspect reports independently trusted lifecycle, available package, dependency, path, current-byte, fingerprint, generated-boundary, and comparison facts. It never writes, mutates, executes package content, or invokes another command."),
             new CliHelpSection(
                 "Global options",
-                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
+                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view selects detail in text and JSON."),
             new CliHelpSection(
                 "Examples",
                 """

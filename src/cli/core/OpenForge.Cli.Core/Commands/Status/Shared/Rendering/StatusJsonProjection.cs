@@ -4,7 +4,7 @@ using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Status.Shared.Rendering;
 
-internal static class StatusJsonProjection
+internal static partial class StatusJsonProjection
 {
     internal static StatusJsonDocument Create(StatusResult result)
         => new()

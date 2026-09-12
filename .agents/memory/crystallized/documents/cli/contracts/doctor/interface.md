@@ -269,8 +269,8 @@ seventh Doctor domain:
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | `library.record-malformed`            | A present `.agents/open-forge.libraries.json` file is not a supported schema-v1 record, or its IDs, roots, or mappings are malformed, duplicated, or ambiguous.                                                                               | `blocked-repair`; preserve the record and correct its authored shape.                                  |
 | `library.record-unavailable`          | A present Library record cannot be read or its required record fact is unavailable; Library coverage is `incomplete`. A safely proven absent record is valid zero-Library evidence and does not produce this finding.                         | `informational`; report the unavailable boundary and do not treat it as an empty record.               |
-| `library.source-root-invalid`         | A typed `sourceRoot` is malformed, not contained, or not an ordinary directory.                                                                                                      | `blocked-repair`; correct the exact source-root boundary without creating or adopting it.              |
-| `library.source-root-aliased`         | A source root or its ancestry physically aliases another identity or cannot be assigned one safe physical identity.                                                                                                        | `blocked-repair`; resolve the physical identity ambiguity.                                             |
+| `library.source-root-invalid`         | A typed `sourceRoot` is malformed, not contained, or not an ordinary directory.                                                                                                                                                               | `blocked-repair`; correct the exact source-root boundary without creating or adopting it.              |
+| `library.source-root-aliased`         | A source root or its ancestry physically aliases another identity or cannot be assigned one safe physical identity.                                                                                                                           | `blocked-repair`; resolve the physical identity ambiguity.                                             |
 | `library.inventory-incomplete`        | Complete eligible inventory cannot be established for one or more Library source roots named by a readable strict record; Library coverage is `incomplete` and no source addition or retirement is inferred.                                  | `informational`; report incomplete coverage and do not narrow the inventory silently.                  |
 | `library.projection-missing`          | A typed registered destination has no current directory entry.                                                                                                                                                                                | `manual-decision`; report projection drift and leave link creation to the accepted Library operation.  |
 | `library.projection-dangling`         | The expected relative link is present, but its source target is unavailable; Doctor does not follow it to read source bytes.                                                                                                                  | `blocked-repair`; preserve the link and resolve the source boundary explicitly.                        |
@@ -1017,3 +1017,31 @@ Conformance evidence must cover:
 - [Global CLI Flags Interface Contract](../shared/global-flags/interface.md)
 - [CLI Source References Interface Contract](../shared/source-references/interface.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+All diagnosis and domain counts, coverage, limitations, actions and findings remain.
+Each finding retains kind, severity, message, subject, evidence, resolution,
+proposal and actions; its supporting provenance is omitted. A nullable
+candidateSet integer replaces the finding's candidates object.
+The result's candidateSets array contains { id, cardinality, items }, retaining
+the complete candidate subject, basis evidence and provenance graph. IDs start
+at 1 in first-use domain/finding order. Every reference resolves to exactly one
+entry. Equal ordered sets share an entry only when cardinality, subject,
+provenance and basis evidence are equal. Different order or evidence remains
+distinct. Null means no candidate set; a present empty set has an ID.
+No finding kind, severity or occurrence is collapsed.
+
+Compact omissions are defined field membership, distinct from unavailable data,
+null values, empty collections or incomplete inspection. No collection is
+truncated and no finding is filtered. Counts describe the original operation.
+Select expanded on the original invocation when supporting evidence is needed.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

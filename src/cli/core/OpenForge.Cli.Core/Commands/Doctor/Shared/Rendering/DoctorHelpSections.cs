@@ -15,7 +15,7 @@ internal static class DoctorHelpSections
                 "  Check the workspace, recovery data, routes, references, managed Framework files, and managed Extensions without changing them."),
             new CliHelpSection(
                 "Global options",
-                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
+                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view selects detail in text and JSON."),
             new CliHelpSection("Results and streams", ResultsAndStreams()),
             new CliHelpSection(
                 "Notes",
@@ -27,7 +27,7 @@ internal static class DoctorHelpSections
         var lines = new List<string>
         {
             "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            string.Create(CultureInfo.InvariantCulture, $"  JSON writes one schema-version-{DoctorDefinitions.SchemaVersion} envelope to stdout for every semantic status."),
+            string.Create(CultureInfo.InvariantCulture, $"  Expanded JSON writes one schema-version-{DoctorDefinitions.SchemaVersion} envelope to stdout for every semantic status."),
         };
         foreach (var status in Enum.GetValues<CliSemanticStatus>())
         {

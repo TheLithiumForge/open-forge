@@ -493,10 +493,9 @@ complete public selection, matching, projection, and result meaning.
 
 ### Structured Result
 
-- `--json` serializes the complete typed result rather than the
-  compact or expanded human projection. A well-formed `--view` is accepted as a
-  no-op because JSON always returns the complete structured result. `--content`
-  continues to select result content in the structured result.
+- `--json` serializes the selected structured projection of the typed result.
+  `--view` selects compact or expanded JSON detail. `--content` continues to
+  select exact result content in either view.
 - Repeating `--view`, `--content`, or `--within` is invalid.
   Several parts must be composed inside one comma-separated value for that
   dimension.
@@ -885,7 +884,7 @@ status-deterministic except for the selector-ambiguity-only blocked branch.
   `--tag`.
 - A repeated `--require`, invalid `--view` value, or malformed
   list grammar is invalid.
-- `--view` with `--json` is accepted as a no-op under the shared
+- `--view` with `--json` selects the JSON projection under the shared
   global-flag contract.
 - `--require` or `--within` without a predicate is invalid.
 - An entirely incompatible predicate and region selection is
@@ -1542,8 +1541,8 @@ contract.
   the result, not as predicate evidence.
 - JSON results expose the same supplied and resolved selector
   facts, default-or-filtered universe state, and effective candidate, inspected,
-  and matched counts in the complete typed result. A well-formed `--view` remains
-  an accepted no-op with JSON under the shared global contract.
+  and matched counts in either JSON view. `--view` selects the structured
+  projection under the shared global contract.
 - Compact output visibly marks the universe as `default` or
   `filtered` in its summary line. A filtered compact result does not repeat the
   full include and exclude selector detail; it still keeps the result, coverage,
@@ -1654,7 +1653,7 @@ contract.
   ```
 
   Compact output marks `universe=filtered`. JSON echoes supplied and resolved
-  selectors, and the well-formed `--view` is accepted as a no-op.
+  selectors, with the well-formed `--view` selecting the JSON projection.
 
 ### Filter-Specific Errors And Non-Goals
 
@@ -1719,3 +1718,24 @@ contract.
 - [CLI Implementation Reset](../../../../../archived/cli-release/implementation-reset-2026-08-21.md)
 - [CLI Architecture](../../architecture.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+The result retains universe, query, presentation, coverage, findings and every
+ordered match. Each match retains position, id, path, description and complete
+selected projections. Only the match's evidence array is omitted. Requested
+authored content, headings and projection states remain exact.
+
+Compact omissions are defined field membership, distinct from unavailable data,
+null values, empty collections or incomplete inspection. No collection is
+truncated and no finding is filtered. Counts describe the original operation.
+Select expanded on the original invocation when supporting evidence is needed.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

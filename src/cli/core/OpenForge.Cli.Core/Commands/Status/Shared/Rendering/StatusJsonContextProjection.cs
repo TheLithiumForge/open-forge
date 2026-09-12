@@ -4,7 +4,7 @@ using StatusJsonContextModel = OpenForge.Cli.Core.Commands.Status.Models.Present
 
 namespace OpenForge.Cli.Core.Commands.Status.Shared.Rendering;
 
-internal static class StatusJsonContextProjection
+internal static partial class StatusJsonContextProjection
 {
     internal static StatusJsonContextModel Create(StatusContext context)
         => new()

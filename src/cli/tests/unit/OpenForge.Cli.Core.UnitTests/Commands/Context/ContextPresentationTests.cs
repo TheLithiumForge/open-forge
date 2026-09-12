@@ -148,7 +148,7 @@ public sealed class ContextPresentationTests
             result,
             new CliPresentation(
                 Format: CliOutputFormat.Json,
-                View: CliView.Compact,
+                View: CliView.Expanded,
                 Verbosity: CliVerbosity.Normal)));
         using var document = JsonDocument.Parse(json);
         var root = document.RootElement;

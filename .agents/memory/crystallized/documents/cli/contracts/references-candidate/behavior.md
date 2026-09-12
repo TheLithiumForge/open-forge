@@ -423,7 +423,7 @@ A conforming implementation should prove at least these observable scenarios:
 13. One-hop behavior does not follow targets, merge cycles, load target bodies
     into context, build a graph, or apply a hidden result cap.
 14. Compact, expanded, and JSON have identical section membership, occurrence
-    identity, order, locations, findings, and coverage; JSON ignores `--view`.
+    identity, order, locations, findings, and coverage; JSON retains its defined core under compact view.
 15. The exact schema-v1 result always includes its ordered members, nullable
     values, arrays, finite values, selector duplicates, and source-layer evidence;
     each finding code has its declared status and aggregate effect.

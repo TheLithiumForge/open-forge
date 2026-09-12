@@ -24,7 +24,7 @@ internal static class ReferencesHelpSections
             new CliHelpSection(
                 "Global options",
                 "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version "
-                + "apply to this command. --view is ignored with --json."),
+                + "apply to this command. --view selects detail in text and JSON."),
             new CliHelpSection(
                 "Examples",
                 "  open-forge references memory\n"

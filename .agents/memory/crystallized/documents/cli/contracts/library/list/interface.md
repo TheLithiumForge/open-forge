@@ -143,14 +143,14 @@ destination to read source bytes or to discover unregistered files.
 
 The observation is one of:
 
-| State | Meaning |
-| --- | --- |
-| `current` | The destination is a relative file link and its stored target text exactly equals the derived expected relative link. |
-| `missing` | No destination entry is present. |
-| `changed` | A destination entry is safely observable but is not the expected relative file link. |
-| `unavailable` | The destination fact cannot be read completely. |
-| `blocked` | Link type, identity, containment, or alias meaning is unsafe or ambiguous. |
-| `not-started` | An earlier boundary prevented observation. |
+| State         | Meaning                                                                                                               |
+| ------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `current`     | The destination is a relative file link and its stored target text exactly equals the derived expected relative link. |
+| `missing`     | No destination entry is present.                                                                                      |
+| `changed`     | A destination entry is safely observable but is not the expected relative file link.                                  |
+| `unavailable` | The destination fact cannot be read completely.                                                                       |
+| `blocked`     | Link type, identity, containment, or alias meaning is unsafe or ambiguous.                                            |
+| `not-started` | An earlier boundary prevented observation.                                                                            |
 
 `sourceId` in a path observation is the normal destination-derived automatic
 source ID when the destination is an eligible `.agents` file. It is retained
@@ -222,15 +222,15 @@ compact human output, expanded human output, and JSON.
 
 The command uses the shared seven statuses:
 
-| Status | Meaning for `library list` |
-| --- | --- |
-| `complete` | The record is known missing and therefore has zero libraries, or every bounded record, source-root, and registered-link fact is complete and safe with no drift. |
-| `attention` | Bounded facts are complete and safe, and one or more registered links are missing or changed. No complete source inventory was performed. |
-| `incomplete` | A required record, source-root, or registered-link fact is unavailable or incomplete. The command does not report an empty substitute. |
-| `invalid` | The command input or strict record shape is invalid, including a source root that is not an ordinary directory. |
-| `blocked` | Unsafe identity, containment, record identity, or link ambiguity prevents safe observation. |
-| `failed` | An unexpected operation or result-formation failure occurred. |
-| `interrupted` | The caller interrupted the operation before its result was complete. |
+| Status        | Meaning for `library list`                                                                                                                                       |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | The record is known missing and therefore has zero libraries, or every bounded record, source-root, and registered-link fact is complete and safe with no drift. |
+| `attention`   | Bounded facts are complete and safe, and one or more registered links are missing or changed. No complete source inventory was performed.                        |
+| `incomplete`  | A required record, source-root, or registered-link fact is unavailable or incomplete. The command does not report an empty substitute.                           |
+| `invalid`     | The command input or strict record shape is invalid, including a source root that is not an ordinary directory.                                                  |
+| `blocked`     | Unsafe identity, containment, record identity, or link ambiguity prevents safe observation.                                                                      |
+| `failed`      | An unexpected operation or result-formation failure occurred.                                                                                                    |
+| `interrupted` | The caller interrupted the operation before its result was complete.                                                                                             |
 
 When several ordinary conditions apply, the shared status precedence is
 `failed`, `invalid`, `blocked`, `incomplete`, `attention`, then `complete`, with
@@ -350,3 +350,24 @@ not add public EndToEnd journeys beyond the three above.
 - [CLI Source References Interface Contract](../../shared/source-references/interface.md)
 - [Shared Result Coordinates Interface Contract](../../shared/result-coordinates/interface.md)
 - [CLI Architecture](../../../architecture.md)
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+The compact result retains the complete command-owned result graph defined by
+its structured schema, including every nullable value and ordered collection.
+Its core already carries the facts needed to use the result. For mutation
+commands this includes plans, exact previews, effects, permissions when
+applicable, verification, findings and recovery. Rendering never asks a caller
+to rerun a mutation to recover an omitted receipt.
+
+No collection is truncated and no finding is filtered. Counts describe the
+original operation. Both JSON views retain the same result facts.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

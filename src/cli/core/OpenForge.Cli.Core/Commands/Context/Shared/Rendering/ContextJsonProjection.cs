@@ -10,7 +10,7 @@ using OpenForge.Cli.Core.Shell.Pipeline;
 
 namespace OpenForge.Cli.Core.Commands.Context.Shared.Rendering;
 
-internal static class ContextJsonProjector
+internal static partial class ContextJsonProjector
 {
     internal static ContextJsonDocument Create(ContextResult result)
     {

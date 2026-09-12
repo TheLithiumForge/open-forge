@@ -21,7 +21,7 @@ internal static class RouteInspectHelpSections
                 "Inherited global options",
                 "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version.\n"
                 + "  You can also use --view=<compact|expanded> or --view:<compact|expanded>.\n"
-                + "  --view selects text detail and is ignored with --json."),
+                + "  --view selects detail in text and JSON."),
             new CliHelpSection("Results and streams", BuildResultsBody()),
             new CliHelpSection(
                 "Examples",
@@ -48,7 +48,7 @@ internal static class RouteInspectHelpSections
         var lines = new List<string>
         {
             "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            "  JSON writes one schema-version-1 result to stdout for every status. Verbose diagnostics use stderr.",
+            "  Expanded JSON writes one schema-version-1 result to stdout for every status. Verbose diagnostics use stderr.",
         };
         foreach (var status in Enum.GetValues<CliSemanticStatus>())
         {

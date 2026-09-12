@@ -51,8 +51,8 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(string.Empty, compact.Error);
         Assert.Equal(0, expanded.ExitCode);
         Assert.Equal(string.Empty, expanded.Error);
-        Assert.Equal(compact.Output, expanded.Output);
-        using var document = JsonDocument.Parse(compact.Output);
+        Assert.True(JsonViewComparison.RetainsResult(compact.Output, expanded.Output, ["rows.*.provenance"]));
+        using var document = JsonDocument.Parse(expanded.Output);
         var result = document.RootElement.GetProperty("result");
         Assert.Equal("all", result.GetProperty("requestedDepth").GetString());
         Assert.Equal("all", result.GetProperty("effectiveDepth").GetString());
@@ -527,5 +527,4 @@ public sealed class RouteListApplicationIntegrationTests
     {
         workspace.Write(path, RouteListFilesystemIntegrationWorkspace.OpenForgeMetadata(description, tag));
     }
-
 }

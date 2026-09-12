@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
@@ -27,7 +28,7 @@ public sealed class RouteInspectJsonPresentationTests
         var json = RouteInspectJsonRenderer.Render(
             RouteInspectPresentationTestData.Presentation(
                 result,
-                CliView.Compact,
+                CliView.Expanded,
                 CliOutputFormat.Json));
 
         using var document = JsonDocument.Parse(json);
@@ -47,7 +48,7 @@ public sealed class RouteInspectJsonPresentationTests
 
     [Fact(DisplayName = "Route Inspect JSON projection retains complete typed identity profile facts and ordered arrays independent of view")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
-    public void JsonProjectionRetainsCompleteTypedGraphAndViewNoOp()
+    public void JsonProjectionRetainsCompleteTypedGraphAcrossViews()
     {
         var result = RouteInspectPresentationTestData.CompleteResult();
         var compact = RouteInspectJsonRenderer.Render(
@@ -55,7 +56,7 @@ public sealed class RouteInspectJsonPresentationTests
         var expanded = RouteInspectJsonRenderer.Render(
             RouteInspectPresentationTestData.Presentation(result, CliView.Expanded, CliOutputFormat.Json));
 
-        Assert.Equal(compact, expanded);
+        Assert.True(JsonViewComparison.RetainsResult(compact, expanded));
         using var document = JsonDocument.Parse(compact);
         var root = document.RootElement;
         var workspace = root.GetProperty("workspace");

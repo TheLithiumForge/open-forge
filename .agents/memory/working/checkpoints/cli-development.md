@@ -6,14 +6,14 @@ open-forge:
 
 # CLI Development Checkpoint
 
-## Current Status And Next Work — 2026-09-12
+## Current Status And Next Work — 2026-09-13
 
 Completed and squash-integrated: stale fixture repairs plus the brittle-fixture
 Observation and automatic Extension embedding (b4a06740); native option delimiter
 alignment (6b6f054b); Doctor coverage/source correctness (ef7bdb3b); Doctor/Status
 generated-navigation alignment (c5883662); documentation, source examples and
-durable artifact-independent checkpoints (5e34f1a8). The installed CLI is the
-qualified 29de40a0 native source, copied into global npm packages. Latest full gate:
+durable artifact-independent checkpoints (5e34f1a8). An earlier installation used the
+qualified 29de40a0 native source. Its qualification passed:
 3,232 Unit, 1,745 Integration in both modes, 123 public cases in all three modes,
 zero failures/skips. Those are prior qualification results, not a new test run.
 
@@ -21,8 +21,8 @@ The parsing audit covers all commands; only its native-delimiter fix is complete
 Further YAML/Markdown/parser simplifications are backlog, not work silently
 implemented or prerequisites for clearer rendering. The full 28-command
 presentation surface audit is done; Doctor/Status renderer changes and deduplication are
-implemented and fully qualified. Six mutation-command comparisons expose ignored view selection
-and missing Library affected-path details.
+implemented and fully qualified. Earlier mutation-command comparisons identified ignored view selection
+and missing Library affected-path details; the completed human views address both.
 
 The user approved implementation of the presentation proposals, both views for
 all commands and JSON, compact-to-expanded fallback, and automatic terminal
@@ -41,17 +41,27 @@ trials pass both human views and JSON, preserve exact Context body bytes and Fin
 TSV rows, and leave workspace/state unchanged. This closeout accompanies the
 authorized local squash onto develop; its commit completes the narrowed slice.
 
-Human views are complete for all 28 commands. Route Create/Init/Update/Move/
-Remove is qualified at source `c31915e3`: 3,334 Unit, 1,745 Integration in each
-managed/native mode and 123 public journeys in each of three runtime
-configurations pass, with zero failed, pending, skipped or other results.
-This closeout accompanies its local squash. Core maintenance is integrated as
-`638a850e`; Route List/Inspect as `5c325960`. Accepted compact JSON is next, with
-field membership and implementation readiness recorded in the capsule.
-Stop after command work and before colour; final guidance remains pending.
-Human command coverage is distinct from completion of the JSON work.
-The installed command was directly observed at `56538d63`; this set uses the
-qualified built executables and did not change the global installation.
+All 28 commands now provide compact and expanded human and JSON views.
+Set 6 is qualified at source `dbe5cbc5a44778df6e5ed83be8f1c6bfdfc3322c`:
+3,336 Unit, 1,774 Integration in each managed/native mode and 123 public
+journeys in each of three runtime configurations pass. Every suite reports zero
+failed, pending, skipped or other results. The full Release/native build has
+zero warnings/errors; the manifest is clean and tested. The local package
+installation journey also passes. This closeout accompanies the authorized
+Set 6 squash onto develop `1120d560`; the squash carries this exact final tree.
+
+The installed CLI is refreshed to the qualified `dbe5cbc5` native source.
+Both package directories are copies, with no dependency on `/artifacts` links,
+and the installed native SHA-256 matches the qualified build. Direct installed
+compact Find succeeds as an invocation, retaining this workspace's existing
+incomplete status. No workspace repair is implied by a presentation change.
+
+Command work is complete at the user's stop boundary. Colour and final reusable
+guidance are paused. Compact JSON uses the identified schema-v2 projection;
+expanded retains the full schema-v1 result. Mutation receipts and selected
+content remain complete. Doctor candidate sharing reduced one observed JSON
+output from 170.8 MB to 31.4 MB without removing findings or changing counts.
+The implementation capsule records exact evidence and reproduction commands.
 Expanded remains the default. Result limits, a compact default and an even smaller
 file-oriented view are saved proposals; none is implemented. Display filtering,
 parser simplifications P2–P6 and configurable-threshold analysis stay backlog.
@@ -253,7 +263,6 @@ Red/fix and fixture Purple work. The Task record owns each exact receipt.
 Implementation and build artifacts have one writer per isolated worktree;
 shared/public ownership and integration remain serialized.
 Protect the other chat's Framework source updates and Markdown notes.
-
 
 ## Current Sequential Continuation
 

@@ -14,8 +14,8 @@ public sealed class DoctorHumanGroupingTests
     [Theory(DisplayName = "Doctor views show shared candidates once and retain both findings"), InlineData(false), InlineData(true), Trait("Feature", "doctor-presentation"), Trait("Evidence", "Unit")]
     public void SharedCandidateDetailsRenderOnceWithoutLosingFindings(bool expanded)
     {
-        var first = Finding(DoctorFindingKind.ReferenceTargetMissing);
-        var second = Finding(DoctorFindingKind.ReferenceCandidatesOne);
+        var first = DoctorCandidateTestData.Finding(DoctorFindingKind.ReferenceTargetMissing);
+        var second = DoctorCandidateTestData.Finding(DoctorFindingKind.ReferenceCandidatesOne);
         var findings = new[] { first, second };
         var view = expanded ? CliView.Expanded : CliView.Compact;
 
@@ -33,7 +33,7 @@ public sealed class DoctorHumanGroupingTests
     [Fact(DisplayName = "Distinct link occurrences retain separate candidate groups"), Trait("Feature", "doctor-presentation"), Trait("Evidence", "Unit")]
     public void DistinctLocationsDoNotMerge()
     {
-        var first = Finding(DoctorFindingKind.ReferenceTargetMissing);
+        var first = DoctorCandidateTestData.Finding(DoctorFindingKind.ReferenceTargetMissing);
         var second = first with { Subject = first.Subject with { Location = new SourceLocation(12, 4, 250, 40) } };
 
         var text = Render([first, second], CliView.Compact);
@@ -45,8 +45,8 @@ public sealed class DoctorHumanGroupingTests
     [Fact(DisplayName = "Candidate grouping preserves different evidence and ordering"), Trait("Feature", "doctor-presentation"), Trait("Evidence", "Unit")]
     public void CandidateEqualityRetainsDistinctFacts()
     {
-        var first = Finding(DoctorFindingKind.ReferenceTargetMissing).Candidates!;
-        var clone = Finding(DoctorFindingKind.ReferenceTargetMissing).Candidates!;
+        var first = DoctorCandidateTestData.Finding(DoctorFindingKind.ReferenceTargetMissing).Candidates!;
+        var clone = DoctorCandidateTestData.Finding(DoctorFindingKind.ReferenceTargetMissing).Candidates!;
         var candidate = Assert.Single(first.Items);
         var changed = first with { Items = [candidate with { Provenance = candidate.Provenance with { Source = DoctorProvenanceSource.RouteInventory } }] };
         var other = candidate with { Subject = candidate.Subject with { Path = ".agents/guidance/another.md" } };
@@ -69,8 +69,8 @@ public sealed class DoctorHumanGroupingTests
             Reason = "Check the linked heading before choosing a target.",
         };
         var other = action with { Reason = "Confirm the intended source file." };
-        var first = Finding(DoctorFindingKind.ReferenceTargetMissing) with { Actions = [action] };
-        var second = Finding(DoctorFindingKind.ReferenceCandidatesOne) with { Actions = [action, other] };
+        var first = DoctorCandidateTestData.Finding(DoctorFindingKind.ReferenceTargetMissing) with { Actions = [action] };
+        var second = DoctorCandidateTestData.Finding(DoctorFindingKind.ReferenceCandidatesOne) with { Actions = [action, other] };
 
         var text = Render([first, second], CliView.Expanded);
 
@@ -85,7 +85,7 @@ public sealed class DoctorHumanGroupingTests
         var shared = new DoctorNextAction { Kind = DoctorNextActionKind.ReviewCandidates, Operation = null, Command = "review shared", Reason = "Shared review." };
         var categoryOnly = shared with { Command = "review category" };
         var overallOnly = shared with { Command = "review overall" };
-        var finding = Finding(DoctorFindingKind.ReferenceTargetMissing) with { Actions = [shared] };
+        var finding = DoctorCandidateTestData.Finding(DoctorFindingKind.ReferenceTargetMissing) with { Actions = [shared] };
         var counts = DoctorFindingAggregation.Count([finding]);
         var domain = new DoctorDomainReport
         {
@@ -131,7 +131,7 @@ public sealed class DoctorHumanGroupingTests
     public void LongPathsAreNotTruncated()
     {
         var path = ".agents/" + new string('a', 600) + "/document.md";
-        var finding = Finding(DoctorFindingKind.ReferenceTargetMissing);
+        var finding = DoctorCandidateTestData.Finding(DoctorFindingKind.ReferenceTargetMissing);
         var text = Render([finding with { Subject = finding.Subject with { Path = path } }], CliView.Compact);
 
         Assert.Contains(path + ":12:4", text, StringComparison.Ordinal);
@@ -156,49 +156,4 @@ public sealed class DoctorHumanGroupingTests
         return builder.ToString().Trim().ReplaceLineEndings("\n");
     }
 
-    private static DoctorFinding Finding(DoctorFindingKind kind)
-    {
-        var location = new SourceLocation(12, 4, 200, 40);
-        var provenance = new DoctorProvenance
-        {
-            Domain = DoctorDomainKind.LocalReferences,
-            Source = DoctorProvenanceSource.LocalReferences,
-            Path = ".agents/directives/review.md",
-            Location = location,
-        };
-        return new DoctorFinding
-        {
-            Kind = kind,
-            Severity = DoctorFindingSeverity.Warning,
-            Message = "The linked file was not found.",
-            Subject = new DoctorSubject
-            {
-                Kind = DoctorSubjectKind.SourceOccurrence,
-                Path = provenance.Path,
-                Identifier = "../guidance/testing.md",
-                Location = location,
-            },
-            Evidence = [new DoctorStateEvidence(DoctorObservedState.Missing)],
-            Provenance = provenance,
-            Resolution = DoctorResolutionLane.GuidedChoice,
-            Candidates = new DoctorCandidateSet
-            {
-                Cardinality = DoctorCandidateCardinality.One,
-                Items = [new DoctorCandidate
-                {
-                    Subject = new DoctorSubject
-                    {
-                        Kind = DoctorSubjectKind.Target,
-                        Path = ".agents/guidance/testing.md",
-                        Identifier = null,
-                        Location = null,
-                    },
-                    Evidence = [new DoctorCandidateBasis { Kind = DoctorCandidateBasisKind.Filename, Value = "testing.md", Location = null }],
-                    Provenance = provenance with { Path = ".agents/guidance/testing.md", Location = null },
-                }],
-            },
-            Proposal = null,
-            Actions = [],
-        };
-    }
 }

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
@@ -14,8 +16,15 @@ internal static class ExtensionUpdateJsonProjection
     internal static string RenderJson(CliPresentationRequest<ExtensionUpdateResult> presentation)
     {
         CliOperationStage.ValidateResult(presentation.Result);
-        return JsonSerializer.Serialize(
-            Create(presentation.Result),
+        var document = Create(presentation.Result);
+        if (presentation.Presentation.View == CliView.Compact)
+        {
+            return JsonSerializer.Serialize(
+                CliCompactJsonProjection.Create(presentation.Result, document.Result),
+                ExtensionUpdateJsonContext.Compact.CompactDocument);
+        }
+
+        return JsonSerializer.Serialize(document,
             ExtensionUpdateJsonContext.Default.ExtensionUpdateJsonDocument);
     }
 

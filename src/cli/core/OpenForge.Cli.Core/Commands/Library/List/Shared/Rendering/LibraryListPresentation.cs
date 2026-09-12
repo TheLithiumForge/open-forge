@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Library.List.Models.Presentation;
@@ -35,6 +36,13 @@ internal static class LibraryListPresentation
     {
         Validate(presentation);
         var result = presentation.Result;
+        if (presentation.Presentation.View == CliView.Compact)
+        {
+            return JsonSerializer.Serialize(
+                CliCompactJsonProjection.Create(presentation.Result, presentation.Result.Result),
+                LibraryListJsonContext.Compact.CompactDocument);
+        }
+
         return JsonSerializer.Serialize(
             new LibraryListJsonDocument
             {
@@ -69,7 +77,6 @@ internal static class LibraryListPresentation
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The workspace selection method is not defined."),
         };
 
-
 }
 
 [JsonSourceGenerationOptions(
@@ -87,4 +94,13 @@ internal static class LibraryListPresentation
         typeof(LibrarySourceRootViewStateConverter),
     })]
 [JsonSerializable(typeof(LibraryListJsonDocument))]
-internal sealed partial class LibraryListJsonContext : JsonSerializerContext;
+[JsonSerializable(typeof(CliCompactJsonDocument<LibraryListPayload>), TypeInfoPropertyName = "CompactDocument")]
+internal sealed partial class LibraryListJsonContext : JsonSerializerContext
+{
+    private static readonly Lazy<LibraryListJsonContext> CompactContext = new(CreateCompact);
+
+    private static LibraryListJsonContext CreateCompact()
+        => new(new System.Text.Json.JsonSerializerOptions(Default.Options) { WriteIndented = false });
+
+    internal static LibraryListJsonContext Compact => CompactContext.Value;
+}

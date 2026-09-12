@@ -819,8 +819,7 @@ Coordinates](../../shared/result-coordinates/interface.md), and concrete
 serialization relationships are defined by the [CLI
 Architecture](../../../architecture.md).
 
-`--view` is accepted with `--json` but has no effect because JSON always emits
-the complete structured result under the shared global contract.
+With JSON, view selection uses the expanded or compact shared envelope. This command retains its complete result core in both.
 
 ## Semantic Results
 
@@ -906,7 +905,7 @@ open-forge route inspect memory/working/checkpoints --json --view=compact
 ```
 
 The first two select human density, the third returns the complete typed result,
-and the fourth accepts `--view` as a JSON no-op. A verbose request adds bounded
+and the fourth selects the compact JSON envelope. A verbose request adds bounded
 diagnostics without changing the result:
 
 ```text
@@ -1050,3 +1049,24 @@ there, including the required direct, integration, and built-process evidence.
 - [Open Forge Framework Architecture](../../../../framework/architecture.md)
 - [Accepted State And Synchronization](../../../../framework/truth.md)
 - [Open Forge Principles](../../../../principles.md)
+
+## Compact JSON Output
+
+Normal `--json` uses expanded output and the full schema-v1 document. Explicit
+`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
+`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
+`result` and `next`.
+It is minified through the serializer. The command/status/workspace/next values
+and process exit remain unchanged; expanded remains the default.
+
+The compact result retains the complete command-owned result graph defined by
+its structured schema, including every nullable value and ordered collection.
+Its core already carries the facts needed to use the result. For mutation
+commands this includes plans, exact previews, effects, permissions when
+applicable, verification, findings and recovery. Rendering never asks a caller
+to rerun a mutation to recover an omitted receipt.
+
+No collection is truncated and no finding is filtered. Counts describe the
+original operation. Both JSON views retain the same result facts.
+The complete structured schema and examples elsewhere in this contract describe
+expanded output unless explicitly labelled compact.

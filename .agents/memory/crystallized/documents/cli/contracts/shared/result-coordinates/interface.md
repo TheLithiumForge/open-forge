@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Public schema-v1 envelope, source-location, status, exit, stream, and compatibility coordinates shared by CLI results
+  description: Public expanded and compact envelopes, source-location, status, exit, stream, and compatibility coordinates shared by CLI results
   responsibility: Define the exact caller-visible result coordinates shared by replacement CLI commands
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Shared, Interface, Result, JSON, Status, Compatibility, CurrentTruth]
 ---
@@ -10,7 +10,7 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Interface Contract for the public result coordinates
-shared by replacement CLI commands. It defines the schema-v1 envelope, the
+shared by replacement CLI commands. It defines the expanded and compact envelopes, the
 authored source-location primitive, semantic statuses, numeric process exits,
 primary human streams, structured-output stream, terminal bypass, and shared
 compatibility boundary.
@@ -21,7 +21,7 @@ reorder, omit, rename, duplicate, or reinterpret a shared coordinate.
 
 ## Schema-V1 Envelope
 
-For a domain operation using JSON presentation, the top-level object uses
+For a domain operation using expanded JSON presentation, the top-level object uses
 camel-case members in exactly this order. Every member is present, including a
 member whose value is `null`:
 
@@ -44,6 +44,35 @@ either `{ command, reason }` or `null`.
 
 The shared `command`, `status`, `workspace`, and `next` members are not duplicated
 inside the command-local `result` object.
+
+## Compact JSON Envelope
+
+Explicit --json --view=compact uses this exact ordered envelope. Every envelope
+member is present, including null workspace or next:
+
+```text
+CliCompactJsonEnvelope {
+  schemaVersion: integer(2),
+  view: "compact",
+  command: exact command-owned machine identity,
+  status: existing semantic status,
+  workspace: { path: string, selectedBy: "current-directory" | "explicit-workspace" } | null,
+  result: command-owned compact object,
+  next: { command: string, reason: string } | null
+}
+```
+
+The serializer emits minified JSON. Shared identity, status, workspace, next,
+exit and stream semantics are identical to expanded output. Command Interfaces
+define exact compact membership; omission of supporting evidence is neither null
+nor an empty or unavailable observation. Counts and coverage describe the whole
+operation. No arbitrary truncation or filtering is implied.
+
+A command may retain its complete result as its compact core when its facts are
+all needed, especially for mutation receipts that cannot safely be recovered by
+rerunning the operation. Requested authored content remains exact. Any compact
+location shape that omits byte coordinates is explicitly defined by its command
+contract; all retained coordinates preserve the meanings below.
 
 ## Source Location
 

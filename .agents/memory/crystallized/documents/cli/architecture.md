@@ -387,7 +387,7 @@ concrete source-generated metadata. The interface is never a wire type.
 
 The shared [Result Coordinates Interface
 Contract](contracts/shared/result-coordinates/interface.md) defines the exact
-schema-v1 envelope, authored source-location coordinates, semantic statuses,
+expanded and compact envelopes, authored source-location coordinates, semantic statuses,
 numeric exits, primary streams, and compatibility. Its [Behavior
 Contract](contracts/shared/result-coordinates/behavior.md) defines technology-
 neutral formation and conformance.
@@ -397,7 +397,11 @@ pipeline exposes shared process facts through the non-wire result interface,
 keeps command payloads on concrete records, serializes only concrete source-
 generated graphs, and derives one process completion from the selected semantic
 status. It does not create a universal wire result or command-independent
-payload.
+payload. Compact JSON shares only the neutral envelope coordinates through a
+generic presentation model closed to a concrete command-owned payload. Each
+command registers that closed graph in its source-generated context. Shell
+does not reference command payload types, and the non-wire result interface
+is never serialized.
 
 ## Presentation, Help, And Diagnostics
 

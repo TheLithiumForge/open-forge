@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.References.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -54,7 +55,7 @@ public sealed class ReferencesJsonRenderingTests
                 ReferencesPresentationTestData.Presentation(
                     ReferencesPresentationTestData.AttentionResult(),
                     CliOutputFormat.Json,
-                    CliView.Compact)));
+                    CliView.Expanded)));
         var root = document.RootElement;
         var result = root.GetProperty("result");
         Assert.Equal("out", result.GetProperty("requestedDirection").GetString());
@@ -114,8 +115,8 @@ public sealed class ReferencesJsonRenderingTests
         AssertPropertyOrder(root.GetProperty("next"), "command", "reason");
     }
 
-    [Fact(DisplayName = "References JSON view selection is a no-op and invalid or blocked results retain their nullable section rules"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
-    public void JsonViewIsNoOpAndInvalidBlockedShapesRemainTyped()
+    [Fact(DisplayName = "References JSON views omit only supporting occurrence detail and invalid or blocked results retain their nullable section rules"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
+    public void JsonViewsRetainOccurrencesAndInvalidBlockedShapesRemainTyped()
     {
         var compact = ReferencesJsonRenderer.Render(
             ReferencesPresentationTestData.Presentation(
@@ -127,7 +128,7 @@ public sealed class ReferencesJsonRenderingTests
                 ReferencesPresentationTestData.CompleteResult(),
                 CliOutputFormat.Json,
                 CliView.Expanded));
-        Assert.Equal(compact, expanded);
+        Assert.True(JsonViewComparison.RetainsResult(compact, expanded, ["incoming.occurrences.*.provenance", "incoming.occurrences.*.destinationLocation", "incoming.occurrences.*.location.byteOffset", "incoming.occurrences.*.location.byteLength", "outgoing.occurrences.*.provenance", "outgoing.occurrences.*.destinationLocation", "outgoing.occurrences.*.location.byteOffset", "outgoing.occurrences.*.location.byteLength"]));
 
         using var invalid = JsonDocument.Parse(
             ReferencesJsonRenderer.Render(

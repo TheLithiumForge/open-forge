@@ -17,7 +17,7 @@ internal static class StatusHelpSections
                 "  Inspect the selected workspace's installation, startup and continuity context, generated navigation, lifecycle, managed targets, and exact recovery candidates."),
             new CliHelpSection(
                 "Global options",
-                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
+                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view selects detail in text and JSON."),
             new CliHelpSection(
                 "Related commands",
                 """

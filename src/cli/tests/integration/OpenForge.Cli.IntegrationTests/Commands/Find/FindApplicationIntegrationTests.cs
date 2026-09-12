@@ -157,7 +157,7 @@ public sealed class FindApplicationIntegrationTests
         Assert.DoesNotContain(".agents/guide.md", result.Output, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Composed Find JSON is one complete document and --view is a no-op while content remains typed"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Composed Find JSON views retain matching and complete selected content"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
     public async Task JsonViewAndContentRemainOneTypedDocument()
     {
         using var workspace = FindWorkspace.CreateBare();
@@ -512,22 +512,11 @@ public sealed class FindApplicationIntegrationTests
         Assert.Equal("compact", compactView.GetProperty("effective").GetString());
         Assert.Equal("expanded", expandedView.GetProperty("supplied").GetString());
         Assert.Equal("expanded", expandedView.GetProperty("effective").GetString());
-        Assert.Equal(compactRoot.GetProperty("schemaVersion").GetRawText(), expandedRoot.GetProperty("schemaVersion").GetRawText());
-        Assert.Equal(compactRoot.GetProperty("command").GetRawText(), expandedRoot.GetProperty("command").GetRawText());
-        Assert.Equal(compactRoot.GetProperty("status").GetRawText(), expandedRoot.GetProperty("status").GetRawText());
-        Assert.Equal(compactRoot.GetProperty("workspace").GetRawText(), expandedRoot.GetProperty("workspace").GetRawText());
-        Assert.Equal(compactRoot.GetProperty("next").GetRawText(), expandedRoot.GetProperty("next").GetRawText());
-
-        var compactResult = compactRoot.GetProperty("result");
-        var expandedResult = expandedRoot.GetProperty("result");
-        foreach (var property in new[] { "universe", "query", "coverage", "findings", "matches" })
-        {
-            Assert.Equal(compactResult.GetProperty(property).GetRawText(), expandedResult.GetProperty(property).GetRawText());
-        }
-
-        Assert.Equal(
-            compactResult.GetProperty("presentation").GetProperty("content").GetRawText(),
-            expandedResult.GetProperty("presentation").GetProperty("content").GetRawText());
+        Assert.True(JsonViewComparison.RetainsResult(
+            compactRoot.GetRawText(),
+            expandedRoot.GetRawText(),
+            ["matches.*.evidence"],
+            allowViewEcho: true));
     }
 
     private static void AssertHeadingProjection(

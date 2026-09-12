@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OpenForge.Cli.Core.Commands.Index.Models.Presentation;
@@ -14,8 +16,15 @@ internal static class IndexJsonRenderer
     {
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
-        return JsonSerializer.Serialize(
-            IndexJsonProjection.Create(presentation.Result),
+        var document = IndexJsonProjection.Create(presentation.Result);
+        if (presentation.Presentation.View == CliView.Compact)
+        {
+            return JsonSerializer.Serialize(
+                CliCompactJsonProjection.Create(presentation.Result, document.Result),
+                IndexJsonContext.Compact.CompactDocument);
+        }
+
+        return JsonSerializer.Serialize(document,
             IndexJsonContext.Default.IndexJsonDocument);
     }
 }
@@ -25,4 +34,13 @@ internal static class IndexJsonRenderer
     WriteIndented = true,
     GenerationMode = JsonSourceGenerationMode.Serialization)]
 [JsonSerializable(typeof(IndexJsonDocument))]
-internal sealed partial class IndexJsonContext : JsonSerializerContext;
+[JsonSerializable(typeof(CliCompactJsonDocument<IndexJsonResult>), TypeInfoPropertyName = "CompactDocument")]
+internal sealed partial class IndexJsonContext : JsonSerializerContext
+{
+    private static readonly Lazy<IndexJsonContext> CompactContext = new(CreateCompact);
+
+    private static IndexJsonContext CreateCompact()
+        => new(new System.Text.Json.JsonSerializerOptions(Default.Options) { WriteIndented = false });
+
+    internal static IndexJsonContext Compact => CompactContext.Value;
+}

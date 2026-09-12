@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Library.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.List.Shared.Rendering;
@@ -66,7 +67,7 @@ public sealed class LibraryListPresentationTests
             LibraryListResultFixture.Create((CliSemanticStatus)status),
             new CliRendererSet<LibraryListResult>(LibraryListPresentation.RenderHuman, LibraryListPresentation.RenderJson), text, exit);
 
-    [Fact(DisplayName = "Library List views retain finding and identity facts while JSON ignores view and verbosity"), Trait("Feature", "library-read"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Library List views retain finding and identity facts while JSON retains its core across views and verbosity"), Trait("Feature", "library-read"), Trait("Evidence", "Unit")]
     public void SameFactsAcrossPresentations()
     {
         var result = LibraryListResultFixture.Create();
@@ -82,7 +83,15 @@ public sealed class LibraryListPresentationTests
                 }
 
                 Assert.Contains("library-list.link-missing", human, StringComparison.Ordinal);
-                Assert.Equal(json, LibraryListPresentation.RenderJson(new(result, new(CliOutputFormat.Json, view, verbosity))));
+                var rendered = LibraryListPresentation.RenderJson(new(result, new(CliOutputFormat.Json, view, verbosity)));
+                if (view == CliView.Compact)
+                {
+                    Assert.True(JsonViewComparison.RetainsResult(rendered, json));
+                }
+                else
+                {
+                    Assert.Equal(json, rendered);
+                }
             }
         }
     }

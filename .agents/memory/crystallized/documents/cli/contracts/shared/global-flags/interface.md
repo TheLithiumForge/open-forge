@@ -35,14 +35,14 @@ change one command into another job and does not grant unrelated authority.
 
 ## Accepted Flags
 
-| Flag                         | Value                    | Meaning                                                                               |
-| ---------------------------- | ------------------------ | ------------------------------------------------------------------------------------- |
-| `--workspace <path>`         | One exact directory path | Use that directory as the workspace instead of the current directory                  |
-| `--json`                     | None                     | Render one structured result from the same typed result used for human output         |
-| `--view=<compact\|expanded>` | `compact` or `expanded`  | Select token-friendly or explanatory human result presentation; default to `expanded` |
-| `--verbose`                  | None                     | Add bounded diagnostic detail without changing operation behavior or status           |
-| `--help`                     | None                     | Show help for the selected command path without running the operation                 |
-| `--version`                  | None                     | Show the distributed CLI version without running a domain operation                   |
+| Flag                         | Value                    | Meaning                                                                         |
+| ---------------------------- | ------------------------ | ------------------------------------------------------------------------------- |
+| `--workspace <path>`         | One exact directory path | Use that directory as the workspace instead of the current directory            |
+| `--json`                     | None                     | Render one structured result from the same typed result used for human output   |
+| `--view=<compact\|expanded>` | `compact` or `expanded`  | Select token-friendly or explanatory result presentation; default to `expanded` |
+| `--verbose`                  | None                     | Add bounded diagnostic detail without changing operation behavior or status     |
+| `--help`                     | None                     | Show help for the selected command path without running the operation           |
+| `--version`                  | None                     | Show the distributed CLI version without running a domain operation             |
 
 Short aliases are not accepted yet. Add one only when it is familiar, useful,
 globally unique, and keeps the complete meaning of the canonical flag.
@@ -110,7 +110,7 @@ Result Coordinates](../result-coordinates/interface.md).
 
 ## `--view=<compact|expanded>`
 
-`--view` selects human result density:
+`--view` selects human or JSON result density:
 
 ```text
 open-forge find --view=compact
@@ -125,7 +125,7 @@ required safety or next-action information while omitting optional explanation.
 
 Rules:
 
-- Change only human presentation. Do not change selection, parsing, planning,
+- Change only presentation. Do not change selection, parsing, planning,
   effects, verification, findings, semantic status, or process result.
 - Preserve authored content bytes selected by a content projection. A view may
   change generated framing around that content but never summarize or truncate
@@ -133,8 +133,12 @@ Rules:
 - Keep results structured by their domain relationships. Compact output may use
   rows or indented levels; expanded output may add labelled evidence, source
   locations, arrows, provenance, and explanatory trees.
-- `--json` always emits the complete structured result. `--view` is accepted but
-  has no effect when `--json` selects machine presentation.
+- Normal --json emits the complete expanded schema-v1 document. Explicit
+  --json --view=compact emits the identified schema-v2 compact document using
+  each command's defined core and omitted supporting fields. The serializer
+  minifies compact JSON. No collection is arbitrarily truncated or filtered.
+  Mutation receipts retain their full command result; selected authored content
+  remains exact in either view.
 - Every command provides compact and expanded presentations. A result with no
   additional meaningful explanation may have identical output in both views.
 - When a selected compact renderer is unavailable, presentation falls back to
@@ -252,7 +256,7 @@ Global flags do not replace operation-specific flag roles:
 - Repeating a Boolean global flag has no additional effect.
 - Repeating `--workspace` is invalid because one invocation has one exact
   workspace.
-- Repeating `--view` is invalid because one human result has one selected
+- Repeating `--view` is invalid because one result has one selected
   presentation density.
 
 ## Related Sources

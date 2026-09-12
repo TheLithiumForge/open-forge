@@ -22,7 +22,7 @@ internal static class InstallHelpSections
                 body: "  An interactive text request asks for confirmation once, after checks, if it would write files. Dry-run, unchanged installations, --automatic, JSON, and redirected requests never prompt. Redirected text requests that would write require --automatic."),
             new CliHelpSection(
                 heading: "Global options",
-                body: "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
+                body: "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view selects detail in text and JSON."),
             new CliHelpSection(
                 heading: "Examples",
                 body: "  open-forge install\n"

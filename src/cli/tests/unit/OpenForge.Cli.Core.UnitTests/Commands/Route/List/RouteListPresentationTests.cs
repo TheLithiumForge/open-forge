@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.List;
@@ -128,8 +129,8 @@ public sealed class RouteListPresentationTests
         var complete = CompleteResult();
         var json = RouteListJsonRenderer.Render(Presentation(complete, CliView.Compact, CliOutputFormat.Json));
         var expandedJson = RouteListJsonRenderer.Render(Presentation(complete, CliView.Expanded, CliOutputFormat.Json));
-        Assert.Equal(json, expandedJson);
-        using var document = JsonDocument.Parse(json);
+        Assert.True(JsonViewComparison.RetainsResult(json, expandedJson, ["rows.*.provenance"]));
+        using var document = JsonDocument.Parse(expandedJson);
         var root = document.RootElement;
 
         Assert.Equal(

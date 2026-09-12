@@ -25,7 +25,7 @@ internal static class RouteInitHelpSections
                 "  Omit --dry-run to apply the complete checked plan. --dry-run previews the same directories, entrypoints, generated-region effects, and bounded changes without writing files. Repeating the command makes no further changes."),
             new CliHelpSection(
                 "Global options",
-                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
+                "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view selects detail in text and JSON."),
             new CliHelpSection(
                 "Examples",
                 "  open-forge route init memory/project-alpha/documents\n"

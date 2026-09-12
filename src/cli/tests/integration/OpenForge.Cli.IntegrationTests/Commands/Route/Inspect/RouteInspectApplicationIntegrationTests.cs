@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport;
 using System.Text.Json;
 using OpenForge.Cli.Hosting;
 using OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Shared.Profile;
@@ -105,7 +106,7 @@ public sealed class RouteInspectApplicationIntegrationTests
 
     [Fact(DisplayName = "CLI Route Inspect JSON view is stable across view selection and keeps diagnostics on stderr"),
      Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
-    public async Task JsonViewIsNoOpAndVerboseDiagnosticsStaySeparate()
+    public async Task JsonViewsRetainCoreAndVerboseDiagnosticsStaySeparate()
     {
         using var workspace = CompleteWorkspace();
         var before = workspace.Snapshot();
@@ -125,8 +126,8 @@ public sealed class RouteInspectApplicationIntegrationTests
         Assert.Equal(0, expandedJson.ExitCode);
         Assert.Equal(string.Empty, expandedJson.Error);
         Assert.Equal(0, verboseJson.ExitCode);
-        Assert.Equal(json.Output, expandedJson.Output);
-        Assert.Equal(json.Output, verboseJson.Output);
+        Assert.True(JsonViewComparison.RetainsResult(json.Output, expandedJson.Output));
+        Assert.Equal(expandedJson.Output, verboseJson.Output);
         Assert.Contains("status=complete", verboseJson.Error, StringComparison.Ordinal);
         Assert.DoesNotContain("Open Forge route inspect", json.Output, StringComparison.Ordinal);
         using var document = JsonDocument.Parse(json.Output);
@@ -544,5 +545,4 @@ public sealed class RouteInspectApplicationIntegrationTests
             conditionCode,
             result.GetProperty("conditions")[0].GetProperty("code").GetString());
     }
-
 }

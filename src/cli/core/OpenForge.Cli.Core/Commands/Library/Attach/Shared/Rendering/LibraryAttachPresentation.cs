@@ -39,6 +39,13 @@ internal static class LibraryAttachPresentation
     {
         Validate(presentation);
         var result = presentation.Result;
+        if (presentation.Presentation.View == CliView.Compact)
+        {
+            return JsonSerializer.Serialize(
+                CliCompactJsonProjection.Create(presentation.Result, presentation.Result.Result),
+                LibraryAttachJsonContext.Compact.CompactDocument);
+        }
+
         return JsonSerializer.Serialize(new LibraryAttachJsonDocument
         {
             SchemaVersion = 1,
@@ -100,7 +107,6 @@ internal static class LibraryAttachPresentation
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
     }
-
 }
 
 [JsonSourceGenerationOptions(
@@ -132,4 +138,13 @@ internal static class LibraryAttachPresentation
         typeof(LibraryVerificationStateConverter),
     })]
 [JsonSerializable(typeof(LibraryAttachJsonDocument))]
-internal sealed partial class LibraryAttachJsonContext : JsonSerializerContext;
+[JsonSerializable(typeof(CliCompactJsonDocument<LibraryAttachPayload>), TypeInfoPropertyName = "CompactDocument")]
+internal sealed partial class LibraryAttachJsonContext : JsonSerializerContext
+{
+    private static readonly Lazy<LibraryAttachJsonContext> CompactContext = new(CreateCompact);
+
+    private static LibraryAttachJsonContext CreateCompact()
+        => new(new System.Text.Json.JsonSerializerOptions(Default.Options) { WriteIndented = false });
+
+    internal static LibraryAttachJsonContext Compact => CompactContext.Value;
+}

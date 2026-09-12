@@ -22,7 +22,7 @@ internal static class ContextHelpSections
                 body: "  --follow-links accepts a positive base-10 depth or all. It follows contained local Markdown links breadth-first, never fetches external URLs, and records broken edges."),
             new CliHelpSection(
                 heading: "Global options",
-                body: "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view is ignored with --json."),
+                body: "  --workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version apply to this command. --view selects detail in text and JSON."),
             new CliHelpSection(
                 heading: "Examples",
                 body: """

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OpenForge.Cli.Core.Commands.Find.Models.Presentation;
@@ -15,6 +17,13 @@ internal static class FindJsonRenderer
         ArgumentNullException.ThrowIfNull(presentation);
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
+        if (presentation.Presentation.View == CliView.Compact)
+        {
+            return JsonSerializer.Serialize(
+                CliCompactJsonProjection.Create(presentation.Result, FindJsonProjection.CreateCompact(presentation.Result)),
+                FindJsonContext.Compact.CompactDocument);
+        }
+
         var document = FindJsonProjection.Create(presentation.Result);
         return JsonSerializer.Serialize(
             document,
@@ -27,4 +36,13 @@ internal static class FindJsonRenderer
     WriteIndented = true,
     GenerationMode = JsonSourceGenerationMode.Serialization)]
 [JsonSerializable(typeof(FindJsonDocument))]
-internal sealed partial class FindJsonContext : JsonSerializerContext;
+[JsonSerializable(typeof(CliCompactJsonDocument<FindCompactJsonResult>), TypeInfoPropertyName = "CompactDocument")]
+internal sealed partial class FindJsonContext : JsonSerializerContext
+{
+    private static readonly Lazy<FindJsonContext> CompactContext = new(CreateCompact);
+
+    private static FindJsonContext CreateCompact()
+        => new(new System.Text.Json.JsonSerializerOptions(Default.Options) { WriteIndented = false });
+
+    internal static FindJsonContext Compact => CompactContext.Value;
+}

@@ -27,13 +27,13 @@ internal static class CliSyntaxDefinitions
 
     internal static readonly CliOptionDefinition<bool> Json = new(
         "--json",
-        "Write the complete JSON result; --view has no effect.",
+        "Write JSON; --view selects compact or expanded detail.",
         CliOptionArity.None,
         false);
 
     internal static readonly CliOptionDefinition<CliView> View = new(
         "--view",
-        "Text detail: compact or expanded.",
+        "Result detail: compact or expanded.",
         CliOptionArity.ExactlyOne,
         CliView.Expanded,
         "view",

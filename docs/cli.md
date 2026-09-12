@@ -51,7 +51,7 @@ them.
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--workspace <path>`       | Use one exact directory instead of the current directory. Relative paths resolve from the process current directory. The CLI does not search parent directories. |
 | `--json`                   | Write one complete structured result to standard output. The operation and its status are the same as in text output.                                            |
-| `--view=compact\|expanded` | Choose text-output density. `expanded` is the default; `compact` keeps the identities, order, status, and next action needed for scanning.                       |
+| `--view=compact\|expanded` | Choose text or JSON detail. `expanded` is the default; `compact` keeps the identities, order, status, and next action needed for scanning.                       |
 | `--verbose`                | Add bounded diagnostic detail. Diagnostics go to standard error and do not change the operation or its status.                                                   |
 | `--help`                   | Show help for the selected command path and exit.                                                                                                                |
 | `--version`                | Show the executable version and exit.                                                                                                                            |
@@ -60,6 +60,13 @@ them.
 or run a domain operation, and they cannot be used together. Other well-formed
 global options may accompany them, but command operands and command-specific
 options remain invalid in a terminal invocation.
+
+`--json` uses the full expanded document by default. Add `--view=compact` for
+a minified document that retains core facts and selected content while omitting
+specified supporting evidence. Compact JSON identifies itself with
+`schemaVersion: 2` and `view: "compact"`; expanded JSON uses `schemaVersion: 1`.
+Mutation commands retain complete plans, effects and recovery details in both
+JSON views.
 
 `--json` always writes its result to standard output. In text mode, `complete`,
 `attention`, and `incomplete` results use standard output. `failed`, `invalid`,

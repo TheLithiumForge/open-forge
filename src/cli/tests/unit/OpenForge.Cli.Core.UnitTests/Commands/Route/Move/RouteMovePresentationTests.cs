@@ -90,7 +90,7 @@ public sealed class RouteMovePresentationTests
             Presentation(
                 Result(CliSemanticStatus.Attention),
                 CliOutputFormat.Json,
-                CliView.Compact,
+                CliView.Expanded,
                 CliVerbosity.Normal));
         using var document = JsonDocument.Parse(json);
         var root = document.RootElement;

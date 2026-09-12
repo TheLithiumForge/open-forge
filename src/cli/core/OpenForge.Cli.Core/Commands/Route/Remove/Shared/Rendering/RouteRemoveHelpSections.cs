@@ -37,7 +37,7 @@ internal static class RouteRemoveHelpSections
             "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"  JSON writes one schema-version-{RouteRemoveDefinitions.SchemaVersion} envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr."),
+                $"  Expanded JSON writes one schema-version-{RouteRemoveDefinitions.SchemaVersion} envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr."),
         };
         foreach (var status in Enum.GetValues<CliSemanticStatus>())
         {

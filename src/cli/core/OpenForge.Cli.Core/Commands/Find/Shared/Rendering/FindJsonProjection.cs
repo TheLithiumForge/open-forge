@@ -13,7 +13,7 @@ using FindJsonProjectionModel = OpenForge.Cli.Core.Commands.Find.Models.Presenta
 
 namespace OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
 
-internal static class FindJsonProjection
+internal static partial class FindJsonProjection
 {
     internal static FindJsonDocument Create(FindResult result)
     {

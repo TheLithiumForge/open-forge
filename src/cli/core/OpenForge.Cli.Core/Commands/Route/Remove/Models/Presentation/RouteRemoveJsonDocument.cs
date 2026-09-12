@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using System.Text.Json.Serialization;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Models.Presentation;
@@ -233,4 +234,13 @@ internal sealed record RouteRemoveJsonNext
     WriteIndented = true,
     GenerationMode = JsonSourceGenerationMode.Serialization)]
 [JsonSerializable(typeof(RouteRemoveJsonDocument))]
-internal sealed partial class RouteRemoveJsonContext : JsonSerializerContext;
+[JsonSerializable(typeof(CliCompactJsonDocument<RouteRemoveJsonResult>), TypeInfoPropertyName = "CompactDocument")]
+internal sealed partial class RouteRemoveJsonContext : JsonSerializerContext
+{
+    private static readonly Lazy<RouteRemoveJsonContext> CompactContext = new(CreateCompact);
+
+    private static RouteRemoveJsonContext CreateCompact()
+        => new(new System.Text.Json.JsonSerializerOptions(Default.Options) { WriteIndented = false });
+
+    internal static RouteRemoveJsonContext Compact => CompactContext.Value;
+}

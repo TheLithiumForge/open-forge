@@ -82,10 +82,10 @@ and compatibility rules are defined by the [Shared Result
 Coordinates](../result-coordinates/interface.md), as stated in [the public JSON
 contract](interface.md#--json).
 
-## Human Presentation
+## View Presentation
 
-Human presentation consumes the same typed operation result regardless of the
-selected view. View resolution changes only generated framing and density. It
+Human and JSON presentation consumes the same typed operation result regardless of the
+selected view. View resolution changes only generated framing, density and the supporting JSON fields defined by the selected view. It
 does not change selection, parsing, planning, effects, verification, findings,
 semantic status, or process result.
 
@@ -95,6 +95,12 @@ required by the [public view contract](interface.md#--viewcompactexpanded),
 and expanded remains the default. A command with one meaningful human shape may
 accept `--view` without changing its result. `--verbose` is a separate
 diagnostic dimension.
+
+Expanded JSON uses the complete schema-v1 projection. Compact JSON uses the
+identified schema-v2 projection and normal serializer minification. Omitted
+supporting fields are defined per command, distinct from null, empty and
+unavailable values. Preserve counts, findings, requested content and all mutation
+receipts. Never rerun the operation to obtain a second view.
 
 ## Diagnostic Presentation
 

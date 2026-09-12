@@ -23,7 +23,7 @@ public sealed class CliResultHelpTests
     {
         var expected = string.Join(Environment.NewLine,
             "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            "  JSON writes one schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr.",
+            "  Expanded JSON writes one schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr.",
             "  complete: exit 0 and human stdout.",
             "  failed: exit 1 and human stderr.",
             "  attention: exit 2 and human stdout.",
@@ -53,7 +53,7 @@ public sealed class CliResultHelpTests
     {
         var expected = string.Join(Environment.NewLine,
             "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            "  JSON writes one complete schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use stderr and remain bounded.",
+            "  Expanded JSON writes one complete schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use stderr and remain bounded.",
             "  complete: exit 0 and human stdout.",
             "  attention: exit 2 and human stdout.",
             "  incomplete: exit 3 and human stdout.",
@@ -70,7 +70,7 @@ public sealed class CliResultHelpTests
     {
         var expected = string.Join(Environment.NewLine,
             "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            "  JSON writes one schema-version-1 envelope to stdout for every semantic status.",
+            "  Expanded JSON writes one schema-version-1 envelope to stdout for every semantic status.",
             "  complete: exit 0.",
             "  failed: exit 1.",
             "  attention: exit 2.",
@@ -87,7 +87,7 @@ public sealed class CliResultHelpTests
     {
         var results = string.Join(Environment.NewLine,
             "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            "  JSON writes one schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr.",
+            "  Expanded JSON writes one schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr.",
             "  complete: 0 (stdout)",
             "  failed: 1 (stderr)",
             "  attention: 2 (stdout)",

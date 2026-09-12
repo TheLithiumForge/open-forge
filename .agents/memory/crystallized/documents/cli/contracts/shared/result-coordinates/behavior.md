@@ -26,7 +26,7 @@ presentation. That result supplies one command identity, one semantic status,
 genuine workspace presence or absence, one non-null command-local payload, and
 one next action or `null`.
 
-Structured presentation projects those facts once into the exact schema-v1
+Structured presentation projects those facts once into the selected envelope
 member order from the Interface Contract. It emits every shared member, preserves
 typed `null` values, and does not move a shared fact into or duplicate it under
 `result`. Human and structured presentation consume the same concrete result and
