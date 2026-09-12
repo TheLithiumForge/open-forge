@@ -8,10 +8,10 @@ open-forge:
 
 ## Current Beta Closeout
 
-Task 27 is active at phase 4/4, milestone 7/8. The bounded beta implementation,
-all required local gates and final reviews are accepted. Root is sealing the
-final record before the authorized local develop squash. All helpers have
-finished. The [beta closeout](tasks/csharp-beta-closeout.md) owns the changes,
+Task 27 is complete at phase 4/4, milestone 8/8. The bounded beta implementation,
+all required local gates and final reviews are accepted. Feature `1b101bf2` is
+squash-integrated into local develop at `73ef066a`, with exact tree
+`43407622824112eb305f0e9903bff0d87dabd7c3`. Root and all helpers have finished. The [beta closeout](tasks/csharp-beta-closeout.md) owns the changes,
 findings, deferred work and evidence limits. Task 28 continues independently;
 preserve its source updates and notes. No remote effects are authorized.
 

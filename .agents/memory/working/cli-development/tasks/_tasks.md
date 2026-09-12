@@ -32,7 +32,7 @@ Read the [program Task](00-cli-development.md),
 - [x] [Operational Commands](operations/_operations.md) — Complete: Status, Doctor, Repair, and Cleanup are integrated; Task 20 Cleanup completed at phase 5/5, milestone 8/8 in `148d378d` — Implementer: Overseer-managed command lanes
 - [x] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is Complete, phase 3/3, milestone 5/5; integrated at `fbcec295`, seven findings selected for Task 21
 - [x] [CLI Command Surface Remediation](cli-command-surface-remediation.md) — Complete, phase 4/4, milestone 6/6; integrated at `75f6ff49`
-- [ ] [C# Structural Streamlining](csharp-structural-streamlining.md) — Task 27 bounded beta accepted at phase 4/4, milestone 7/8; final local squash pending. [Changes and remaining work](csharp-beta-closeout.md).
+- [x] [C# Structural Streamlining](csharp-structural-streamlining.md) — Task 27 bounded beta complete at phase 4/4, milestone 8/8; integrated at `73ef066a`, exact feature tree. [Changes and remaining work](csharp-beta-closeout.md).
 - [x] [Task 7 ARM64 package expansion](delivery/01-npm-packages.md#arm64-expansion-horizon) — Complete, phase 4/4, milestone 6/6; integrated at `7eeeb19d`
 - [x] [CLI Delivery](delivery/_delivery.md) — Tasks 13 and 22 complete locally, phase 3/3, milestone 6/6; integrated at `3bf03e0e`, with Linux execution and static other-platform review
 - [ ] [Source Framework Wording and Logic Review](source-framework-review.md) — Task 28 is active in the separate user-owned chat; no horizon assigned here; preserve its updates and notes

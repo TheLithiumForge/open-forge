@@ -8,14 +8,16 @@ open-forge:
 
 ## Current Beta Acceptance — 2026-09-12
 
-Task 27 “C# Structural Streamlining” is active at phase 4/4, milestone 7/8.
+Task 27 “C# Structural Streamlining” is complete at phase 4/4, milestone 8/8.
 The bounded implementation, evidence/style accounting, extension-method pass,
 contract/test review, holistic review and grouped correction recheck are accepted.
 All 6,997 C# executions and the Linux installed-package journey pass; the dependent
 CI checks also pass. Candidate `31f9340f` retains the C# runtime built at `7f0a9112`.
 The [beta closeout](csharp-beta-closeout.md) records every completed, retained,
 partial, deferred and paused finding, exact evidence and platform limits.
-M8 now owns only final record sealing and the authorized local develop squash.
+M8 is complete: feature `1b101bf2` is squash-integrated at `73ef066a`,
+with exact tree `43407622824112eb305f0e9903bff0d87dabd7c3`. The closeout record
+owns the full integration identities and canonical qualification hash.
 All implementation/review agents have finished. Wider refactoring stays deferred;
 Task 28 source and all other worktrees remain protected.
 

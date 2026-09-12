@@ -8,9 +8,9 @@ open-forge:
 
 ## Current State
 
-Task 27's bounded beta batch is accepted at phase 4/4, milestone 7/8.
-Implementation, evidence accounting, independent reviews and local qualification
-are complete. Local squash integration is the remaining milestone.
+Task 27's bounded beta batch is complete at phase 4/4, milestone 8/8.
+Implementation, evidence accounting, independent reviews, local qualification
+and the authorized local develop squash are complete.
 The accepted executable/CI candidate is `31f9340f6af51effddb8b48f59454e21f28db364`;
 its C# runtime was built from `7f0a9112beff7b66b7df8e2eaba79fd47ca609bc`.
 Both descend from local develop `2b54fdc598a48a12e44772a5cb323cf45e9e5a73`.
@@ -24,6 +24,18 @@ has been tested. [Task 27](csharp-structural-streamlining.md) owns execution and
 [the comprehensive preflight](csharp-comprehensive-preflight.md) preserves the
 original analysis and accepted boundaries. Task 28's independent source updates
 and notes remain protected.
+
+## Local Integration
+
+Accepted feature `1b101bf224f6c7c64b6dac3101e758fce9ce1c8b` was squash-integrated into local develop as
+`73ef066a8a7f2b4944af49e299608abf1dc541e0` — “Streamlined the CLI and corrected beta behavior”.
+The integration parent is `2b54fdc598a48a12e44772a5cb323cf45e9e5a73`. Both feature and integration have
+exact tree `43407622824112eb305f0e9903bff0d87dabd7c3`; all 3,335 tracked paths match.
+The integration receipt is `artifacts/task27-beta-final/integration-receipt.json`.
+A separate documentation-only completion commit records this identity and final
+Task state. The feature history, earlier failed evidence, ignored drafts and
+other worktrees remain preserved. Task 28's independent source work was not
+integrated. No remote operation or publication occurred.
 
 ## Completed Changes
 
