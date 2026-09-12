@@ -210,68 +210,48 @@ parentless selection reports a null parent with the matching provenance.
 
 ## Human And Structured Output
 
-The default human view is expanded. Both human views begin with the semantic
-result and coverage; a non-complete result states the required finding and next
-action before safe rows.
+The default human view is expanded. Both views lead with Routes (or Routes under
+the resolved source ID), status, workspace, selection method, coverage, selected
+root count, effective depth and row count. Unresolved boundaries, findings and
+any actual Next command appear before safe rows. An incomplete empty result is
+not described as a complete empty route set.
 
 ### Compact View
 
-Compact output is token-friendly and retains the facts needed to navigate the
-result:
+Compact prints one hierarchically indented ID/path row and one metadata line per
+source, preserving exact authored descriptions, tags and typed row order. It does
+not infer ancestor rows or replace authored metadata with a summary. Structural
+explanation belongs to expanded view.
+
+Illustrative excerpt:
 
 ```text
-result=complete  coverage=complete  roots=2  depth=1  rows=5
+Routes under guidance
+Status: complete
+Workspace: /work/demo
+Selected by: current directory
+Coverage: complete; roots: 1; depth: 1; routes: 2
 
-<root-id>  .agents/<root-entrypoint>.md  description="<exact authored description>"  tags=[<exact authored tags>]
-  <child-id>  .agents/<child>.md  description="<exact authored description>"  tags=[<exact authored tags>]
+guidance  .agents/guidance/_guidance.md
+  Advice for recurring choices; tags: ["Guidance"]
+  guidance/review  .agents/guidance/review.md
+    Review proposed changes; tags: ["Review"]
 ```
-
-Rows are deterministically indented to show hierarchy. The summary identifies
-the selected root set, effective depth, coverage, and count. The compact row does
-not replace authored descriptions or tags with a summary, inferred label, or
-metadata filter.
 
 ### Expanded View
 
-Expanded output adds the workspace framing, root-selection explanation, explicit
-parent, absolute and relative depths, kind, direct-child count where applicable,
-source layer/provenance, coverage evidence, and bounded explanations:
+Expanded adds the actual supplied/resolved selection, requested depth and its
+meaning, and nonempty coverage confirmations. Each row adds its actual parent
+ID/path, absolute and relative depth, kind, applicable direct-child count,
+selection/source facts and overwrite state. Shared facts appear once; absent
+findings or unresolved boundaries do not create empty sections.
 
-```text
-Open Forge route list
-Workspace: <selected workspace>
-Selected roots: <root selection summary>
-Depth: 1 (selected roots plus direct routed children)
-Result: complete
-Coverage: complete
-Rows: 2
-
-ID: <root-id>
-Path: .agents/<root-entrypoint>.md
-Parent: none
-Absolute depth: 0
-Relative depth: 0
-Kind: entrypoint
-Direct children: 1
-Description: <exact authored description>
-Tags: [<exact authored tags>]
-Provenance: Loader root; established from authored topology
-
-  ID: <child-id>
-  Path: .agents/<child>.md
-  Parent: <root-id>
-  Absolute depth: 1
-  Relative depth: 1
-  Kind: routed-leaf
-  Description: <exact authored description>
-  Tags: [<exact authored tags>]
-  Provenance: direct routed child of <root-id>
-```
-
-The labels above describe the observable facts; implementations may arrange
-framing without changing their meaning. `--verbose` adds bounded diagnostic
-detail under the shared global contract but does not change rows, selection,
-order, coverage, or status.
+Both views preserve every finding's status, code, cause, subject and candidate
+paths. Generated human values are escaped without truncating source identities
+or authored metadata. Next shows the command already formed by the operation;
+expanded includes its reason. No renderer chooses a new action. JSON retains the
+complete typed facts. `--verbose` adds bounded diagnostics without changing rows,
+selection, ordering, coverage or status.
 
 ### JSON
 

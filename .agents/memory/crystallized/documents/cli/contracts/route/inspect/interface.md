@@ -473,8 +473,18 @@ understanding one source. It uses plain explanations instead of internal stage
 terms. It does not diagnose the workspace or recommend a route or content
 change.
 
-Both human views begin with the selected workspace, selection method, source ID,
-and canonical path. Workspace identity remains separate from route identity.
+Both human views lead with the route ID (or Route inspection when unresolved),
+status, selected workspace, selection method and canonical path. Workspace
+identity remains separate from route identity. Observations and availability
+conditions precede the profile, retaining their stable code, exact subject and
+all paths. Generated human values are escaped without truncation.
+
+The profile groups where the source belongs, when it is read, and context size.
+Expanded adds applicable inherited/local Axioms, the status explanation, selected
+closure and task-start overlap measurements. Each measurement and automatic
+reading explanation appears once. Physical layer identities remain visible in
+both views. The operation's actual Next command appears once at the end, with its
+reason in expanded output. Rendering does not select an action or change facts.
 
 Compact view is one stable summary. It retains:
 
@@ -494,25 +504,25 @@ condition into a diagnosis.
 Illustrative output:
 
 ```text
-Open Forge route inspect
+Route: memory/working/checkpoints
+Status: complete
 Workspace: D:/Repositories/open-forge
 Selected by: current directory
-ID: memory/working/checkpoints
 Path: .agents/memory/working/checkpoints/_checkpoints.md
 Entrypoint: canonical
 
-Reading behavior
+When it is read
   Read at task start or resume: yes
   Why: memory/working exposes it as context that should be revisited during the task
   May be read again: yes
   When: after context restoration, before handoff or closeout, or after a change that may affect its follow-up work
 
-Context cost
+Context size
   This source: 3.7 KiB · ~955 tokens
   Selecting this route adds: none; its required context is already read at task start
   Automatically read below it through #LoadNow: 1 file · 2.1 KiB · ~525 tokens
 
-Route structure
+Where this source belongs
   Parent: memory/working
   Route chain: memory → working → checkpoints
   Depth: 3
@@ -530,10 +540,10 @@ The values are illustrative. They do not claim to measure this repository.
 An illustrative compact result is:
 
 ```text
-Open Forge route inspect
+Route: memory/working/checkpoints
+Status: complete
 Workspace: D:/Repositories/open-forge
 Selected by: current directory
-ID: memory/working/checkpoints
 Path: .agents/memory/working/checkpoints/_checkpoints.md
 Source state: routed entrypoint
 Route state: routed
@@ -550,7 +560,6 @@ Own source: 1 file · 3.7 KiB · ~955 tokens
 Selecting this route adds: none (0 files · 0 B · 0 tokens)
 Automatically read below it through #LoadNow: 1 file · 2.1 KiB · ~525 tokens
 Overwrite: none
-Status: complete
 Completeness: complete
 Safety: safe
 ```
@@ -579,20 +588,13 @@ stderr. `--json` writes one complete structured result to stdout for every
 semantic status. Separate bounded diagnostics use stderr, and no human text is
 mixed into JSON stdout.
 
-Human results expose at most one required `Next:` line:
-
-- `complete`: no `Next:` line.
-- `attention`: only an interactive source disambiguation adds
-  `Next: rerun with the exact path for non-interactive use.` An exact-path
-  selection preserves the non-unique-ID observation without inventing an action.
-- An unresolved source-ID collision in a non-interactive or JSON request is
-  `blocked`, retains every candidate path, and uses `Next: rerun with one of the
-listed exact paths.`
-- `incomplete` or another structural `blocked`: name a direct safe correction
-  when it is known; otherwise use `Next: open-forge doctor`.
-- `invalid`: `Next: correct the named source or input.`
-- `failed`: `Next: report the failure and retry with bounded diagnostics.`
-- `interrupted`: `Next: rerun the same request.`
+Human results expose at most one `Next:` line containing the actual typed
+`next.command` listed below. Ordinary quoting is retained so commands with exact
+paths can be copied. Expanded output adds `next.reason`. Complete results and
+attention after exact-path selection have no Next. Interactive attention keeps
+the exact-path command selected by the operation. Blocked collisions retain all
+candidate paths alongside the operation's first-candidate command; displaying it
+does not resolve the ambiguity or run it.
 
 A direct safe correction names only the observed input or safety boundary when
 that correction is already known. It is not a route mutation proposal.
@@ -926,11 +928,12 @@ route-dependent fields not-applicable. An unresolved ambiguous identity or route
 relationship returns `blocked`.
 
 When an automatic-ID collision is resolved interactively, the selected source
-and route can be complete while the result is `attention`:
+and route can be complete while the result is `attention`. Illustrative Next
+excerpt when the selected path is `.agents/root/collision.md`:
 
 ```text
-Observation: automatic ID is not unique
-Next: rerun with the exact path for non-interactive use.
+Next: open-forge route inspect ".agents/root/collision.md"
+Rerun with the exact path for non-interactive use.
 ```
 
 When the same source is selected by its exact path, the result preserves the

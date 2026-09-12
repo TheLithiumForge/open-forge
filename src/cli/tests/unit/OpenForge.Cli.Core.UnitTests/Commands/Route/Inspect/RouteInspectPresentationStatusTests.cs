@@ -13,7 +13,7 @@ public sealed class RouteInspectPresentationStatusTests
     {
         AssertExactNext(
             RouteInspectPresentationTestData.InteractiveAttentionResult(),
-            "rerun with the exact path for non-interactive use.");
+            "open-forge route inspect \".agents/root/item/_item.md\"");
     }
 
     [Fact(DisplayName = "Route Inspect unresolved collision blocked emits the exact listed-path Next wording")]
@@ -22,7 +22,7 @@ public sealed class RouteInspectPresentationStatusTests
     {
         AssertExactNext(
             RouteInspectPresentationTestData.BlockedCollisionResult(),
-            "rerun with one of the listed exact paths.");
+            "open-forge route inspect \".agents/root/collision.md\"");
     }
 
     [Fact(DisplayName = "Route Inspect invalid result emits the exact correction Next wording")]
@@ -31,7 +31,7 @@ public sealed class RouteInspectPresentationStatusTests
     {
         AssertExactNext(
             RouteInspectPresentationTestData.InvalidResult(),
-            "correct the named source or input.");
+            "open-forge route inspect --help");
     }
 
     [Fact(DisplayName = "Route Inspect failed result emits the exact bounded-diagnostics Next wording")]
@@ -40,7 +40,7 @@ public sealed class RouteInspectPresentationStatusTests
     {
         AssertExactNext(
             RouteInspectPresentationTestData.FailedResult(),
-            "report the failure and retry with bounded diagnostics.");
+            "open-forge route inspect");
     }
 
     [Fact(DisplayName = "Route Inspect interrupted result emits the exact rerun Next wording")]
@@ -49,7 +49,7 @@ public sealed class RouteInspectPresentationStatusTests
     {
         AssertExactNext(
             RouteInspectPresentationTestData.InterruptedResult(),
-            "rerun the same request.");
+            "open-forge route inspect");
     }
 
     [Fact(DisplayName = "Route Inspect incomplete result falls back to the exact doctor Next wording")]
@@ -76,7 +76,7 @@ public sealed class RouteInspectPresentationStatusTests
     {
         AssertExactNext(
             RouteInspectPresentationTestData.DirectCorrectionBlockedResult(),
-            "rerun with the exact source path after resolving the ambiguous route.");
+            "open-forge route inspect \"root/ambiguous\"");
     }
 
     [Fact(DisplayName = "Route Inspect complete result omits the Next line")]

@@ -1,40 +1,39 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
-using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
 
 internal static class RouteInspectCompactMessages
 {
-    internal static void Add(
-        ICollection<string> lines,
-        RouteInspectResult result)
+    internal static void Add(ICollection<string> lines, RouteInspectResult result)
     {
         foreach (var observation in result.Observations)
         {
-            lines.Add($"Observation: {RouteInspectHumanValues.Text(observation.Message)}");
+            lines.Add($"Note: {RouteInspectHumanValues.Text(observation.Message)} [{observation.MachineCode}]");
+            AddSubject(lines, observation.Subject, observation.Paths);
         }
-
-        if (result.Status is CliSemanticStatus.Complete or CliSemanticStatus.Attention)
-        {
-            return;
-        }
-
         foreach (var condition in result.Conditions)
         {
-            lines.Add($"Condition: {RouteInspectHumanValues.Text(condition.Message)}");
-            if (condition.Paths.Count != 0)
-            {
-                lines.Add($"Condition paths: {string.Join(", ", condition.Paths.Select(RouteInspectHumanValues.Text))}");
-            }
+            lines.Add($"{CliHumanText.Status(condition.Status).ToUpperInvariant()}: {RouteInspectHumanValues.Text(condition.Message)} [{condition.MachineCode}]");
+            AddSubject(lines, condition.Subject, condition.Paths);
         }
     }
 
-    internal static void AddNext(
-        ICollection<string> lines,
-        RouteInspectResult result)
+    private static void AddSubject(ICollection<string> lines, string subject, IReadOnlyList<string> paths)
     {
-        var next = RouteInspectHumanNext.Line(result);
-        if (next is not null)
+        if (!paths.Contains(subject, StringComparer.Ordinal))
+        {
+            lines.Add($"  Subject: {RouteInspectHumanValues.Text(subject)}");
+        }
+        foreach (var path in paths)
+        {
+            lines.Add($"  Path: {RouteInspectHumanValues.Text(path)}");
+        }
+    }
+
+    internal static void AddNext(ICollection<string> lines, RouteInspectResult result)
+    {
+        if (RouteInspectHumanNext.Line(result) is { } next)
         {
             lines.Add(next);
         }

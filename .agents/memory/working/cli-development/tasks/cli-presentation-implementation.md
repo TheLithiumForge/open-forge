@@ -882,3 +882,139 @@ Route List/Inspect, remaining mutations, compact JSON, colour, final reusable
 guidance and installed-CLI refresh. Keep the expanded default and current compact
 views until the user discusses the proposed even more minimal output. Limits,
 filters, a compact default and configurable thresholds remain saved proposals.
+
+## Remaining Commands Resumed; Stop Before Colour
+
+The user resumes the remaining command presentation work and explicitly requires
+a stop before colour. Complete remaining human command views and the accepted
+command JSON-view work sequentially, then report and stop. Do not begin automatic
+colour or final guidance in this continuation. Limits, display filters, compact
+defaults, a third/minimal view and threshold configuration remain proposals only.
+At resumption, human views are complete for 16 of 28 commands; the overall
+presentation estimate is about 55%, not a measured effort ratio. The completed
+References/Context/Find slice is 100% and squash-integrated as 5fa590a4.
+
+Set 5B starts with Route List and Route Inspect. Preserve operation results,
+row membership/order, typed reading facts, exact paths, measurements, uncertainty,
+status/exits, stream policy and read-only effects. Align human output with the
+approved gallery: useful route identity/tree first, understandable reading
+behavior, concise compact rows, expanded facts without repeated empty sections.
+Both views retain required coverage, findings and actual typed Next commands.
+Existing defaults and JSON schemas remain unchanged during the human slice.
+
+Applicability: these reversible renderer edits affect displayed CLI facts, not
+workspace mutation. Reuse typed command results, existing text escaping, neutral
+CliHumanText presentation and ordinary BCL formatting. No new library, custom
+parser, compatibility shim, reflection or exceptional machinery. Keep helpers
+in the owning command's Shared/Rendering scope. Freeze each coherent set before
+its full managed/native integration gate; use focused in-memory rendering and
+existing application/public journeys to establish the local boundary first.
+Direct review checks the applicable Interface/Behavior/maintenance meaning.
+Update affected contracts and checkpoints with each qualified local squash.
+Keep feature/test untouched; use no agents, experiments retained in source, or
+remote operations. Current baseline is clean develop 5fa590a4 and feature a91a3c8b.
+
+## Set 5B Route Human Views: Focused Qualification
+
+Route List/Inspect implementation and affected Interface/Behavior presentation
+wording are complete. Production changes are confined to leaf Shared/Rendering.
+List shares identical local vocabulary/framing and preserves every ordered
+ID/path/description/tag row; expanded adds actual structure and source facts.
+Inspect keeps physical layers, reading and measurement facts, moves meaningful
+conditions before the profile, and removes repeated measurements/explanations.
+Both display the actual operation Next command. Ordinary quotes in a Next command
+remain usable; source fields retain existing escaping without the old human
+subject clamp. No operation, parser, JSON serializer or configuration changed.
+
+Focused final evidence: 226 Unit, 178 Integration and six public journeys pass,
+with zero failures/skips. Release build reports zero warnings/errors. Direct
+managed CLI trials in an isolated installed workspace pass compact, expanded and
+JSON for both commands; JSON is identical across human views and full workspace/
+XDG snapshots remain unchanged. The disposable fixture is removed; no experiment
+program is retained.
+
+The initial Unit/application/public failures were old labels and are corrected
+without dropping stream, selection, effect or status assertions. Strengthening
+an existing ordering check exposed a false-positive pattern: IndexOf returned -1
+for an absent Next line and the old less-than comparison passed. The corrected
+check verifies presence and order only when the typed action exists, and absence
+when it does not. Four added Inspect cases prove conditions-before-profile,
+unchanged JSON, nonduplicated own-size output and complete long subjects. Local
+helper/test variable name collisions were fixed through explicit naming.
+
+Freeze after final changed-file formatting verification. This two-command
+integration set requires the full Linux managed/native build and six-suite gate.
+Expected full counts: 3310 Unit, 1745 Integration per managed/native lane, and
+123 public journeys per each of three runtime configurations. Keep HEAD and
+executable inputs unchanged during that gate. After its qualified local squash,
+continue the ten remaining mutation human views, then accepted command JSON
+views. The user requires a stop before colour; guidance remains pending.
+
+Final changed-file `dotnet format --verify-no-changes --severity warn` passes.
+The Set 5B source is ready to freeze for the complete managed/native gate.
+
+## Remaining Human Mutation Work: Investigation Checkpoint
+
+While the immutable Route gate runs, read-only inspection covers the approved
+gallery, output contracts and current renderers for Index, Install, Update,
+Repair, Cleanup and Route Create/Init/Update/Move/Remove. No mutation-renderer
+source has changed yet. Use two bounded sets after Route integration: core
+maintenance (Index, Install, Update, Repair, Cleanup), then the five Route
+mutation commands. Each gets focused checks from the start and one complete
+managed/native integration gate before its squash.
+
+Common retained facts: every actual affected/preserved/protected path, mode and
+authorization flags, typed outcome and uncertainty, coverage/safety, verification,
+residual/recovery identity, exact preview/diff and actual Next command. Compact
+may omit repeated explanation, absent optional fields and expanded fingerprint
+detail; it cannot hide failures, partial effects or required review content.
+No schema, effect, consent, lock, recovery, parser or status policy changes belong
+to these human sets. Keep shared neutral framing with CliHumanText and semantic
+wording at its real command owner; no universal mutation payload model.
+
+Concrete presentation issues for the next sets:
+
+- Index no-op early returns omit common identity/status/framing and can bypass
+  findings. Retain verified no-op meaning while rendering required facts once.
+  Keep every exact bounded dry-run diff and every partial effect identity.
+- Install exposes inventory fingerprints in compact output before useful effects.
+  Put embedded-source identity and footprint together, with expanded provenance.
+- Update should put useful effect/preservation rows first and comparisons beside
+  their paths; retain force/prune, lifecycle trust, protected paths and uncertainty.
+- Repair starts Library details before the command header, hides most findings
+  and selected effect details in compact, and repeats application information.
+  Both views need actual selection/effect/remaining facts and preview content;
+  extended candidate evidence and preflight explanation can remain expanded.
+- Cleanup compact omits candidate-only preview rows; preserve every candidate and
+  effect, distinguish intended removal from verified removal, and explain final
+  workspace validation without claiming it ran during preview.
+- Route Create/Init/Update hide some findings or recovery detail in compact.
+  Init also substitutes its own prose for the typed Next command. Preserve all
+  required cases and display the operation action. Avoid describing planned or
+  unknown effects as completed merely from apply mode.
+- Route Update should show each supplied field's actual changed/unchanged values,
+  retain Template protection and show its cause once.
+- Move/Remove must retain every rewrite/detachment, source location, category
+  member, effect and protected path. Fingerprints and detailed source evidence
+  may be expanded, but exact preview evidence and uncertainty stay visible.
+
+These are renderer alignment choices under the accepted examples. Confirm each
+against its concrete result and contract before implementation; do not infer new
+operation behavior from the examples. The user-defined stop remains before colour.
+
+## Set 5B Complete Gate And Integration Closeout
+
+Frozen source `939ab802c18fa672ee38b269121a87419a2e08e2` passes the complete Linux
+managed/native build and all six suites: Unit 3,310; managed and native Integration
+1,745 each; managed public, native public and managed-on-native public 123 each.
+All report zero failed, pending, skipped and other results. Build reports zero
+warnings/errors. Reproduce with `npm run build:native -- --sha --no-restore`, then
+`npm run test:built` on that source. The delivery manifest reports `dirty: false`
+and `tested: true`. Native CLI SHA-256:
+`637d1e8a0b16ce8448c03bd6d732b52a1c71d91fbea5a8c8b04113abf3a50e78`.
+
+Only tracked checkpoint prose changed during this gate. Integrate this closeout
+as one squash onto clean local develop `5fa590a4`, checking candidate/integration
+tree equality and preserving feature/test `b88f5e7af99c02fd85626ba1fc6182c32ed17798`.
+Human presentation coverage becomes 18/28 commands. No colour or final guidance
+work has started. The next bounded set is the five core maintenance human views.

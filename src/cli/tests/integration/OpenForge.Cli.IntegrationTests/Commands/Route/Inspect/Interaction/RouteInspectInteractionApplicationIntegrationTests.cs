@@ -36,7 +36,7 @@ public sealed class RouteInspectInteractionApplicationIntegrationTests
         Assert.Equal(2, completion.ExitCode);
         Assert.Equal(CliSemanticStatus.Attention, completion.Status);
         Assert.Equal(ExpectedPrompt(), standardError.ToString());
-        Assert.Contains("Status: attention", standardOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Status: requires attention", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains(
             $"Selection: source ID; interactive selection; requested \"{CollisionId}\"",
             standardOutput.ToString(),
@@ -104,12 +104,12 @@ public sealed class RouteInspectInteractionApplicationIntegrationTests
         Assert.Equal(CliSemanticStatus.Attention, run.Completion.Status);
         Assert.Equal(ExpectedPrompt(), run.StandardError);
         Assert.DoesNotContain("matches more than one source", run.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Status: attention", run.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Status: requires attention", run.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
             $"Selection: source ID; interactive selection; requested \"{CollisionId}\"",
             run.StandardOutput,
             StringComparison.Ordinal);
-        Assert.Contains("Next: rerun with the exact path for non-interactive use.", run.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge route inspect \".agents/root/collision.md\"", run.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("remaining", run.RemainingInput);
     }
 }

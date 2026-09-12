@@ -2,8 +2,6 @@ namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
 
 internal static class RouteInspectTextEscaping
 {
-    internal const int HumanValueLimit = 512;
-
     internal const int DiagnosticValueLimit = 240;
 
     internal const int DefaultValueLimit = 8192;

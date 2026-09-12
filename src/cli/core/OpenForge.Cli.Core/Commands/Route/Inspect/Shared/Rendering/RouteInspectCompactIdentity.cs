@@ -18,7 +18,6 @@ internal static class RouteInspectCompactIdentity
             return;
         }
 
-        lines.Add($"ID: {RouteInspectHumanValues.Text(identity.Id)}");
         lines.Add($"Path: {RouteInspectHumanValues.Text(identity.CanonicalWorkspaceRelativePath)}");
         lines.Add($"Source state: {RouteInspectHumanValues.SourceState(identity)}");
         lines.Add($"Route state: {RouteInspectHumanValues.RouteState(identity.RouteState)}");

@@ -29,10 +29,10 @@ public sealed class RouteListApplicationIntegrationTests
         var defaults = await CliHostCapture.RunAsync(["route", "list"], workspace.Path);
         Assert.Equal(0, defaults.ExitCode);
         Assert.Equal(string.Empty, defaults.Error);
-        Assert.Contains("Result: complete", defaults.Output, StringComparison.Ordinal);
+        Assert.Contains("Status: complete", defaults.Output, StringComparison.Ordinal);
         Assert.Contains("Requested depth: 1", defaults.Output, StringComparison.Ordinal);
-        Assert.Contains("ID: workspace-defined", defaults.Output, StringComparison.Ordinal);
-        Assert.DoesNotContain("ID: detached", defaults.Output, StringComparison.Ordinal);
+        Assert.Contains("workspace-defined  ", defaults.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("detached  ", defaults.Output, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
         var detached = await CliHostCapture.RunAsync(["route", "list", "detached", "--depth=1", "--json"], workspace.Path);
         Assert.Equal(0, detached.ExitCode);
@@ -87,15 +87,15 @@ public sealed class RouteListApplicationIntegrationTests
 
         Assert.Equal(2, attentionResult.ExitCode);
         Assert.Equal(string.Empty, attentionResult.Error);
-        Assert.Contains("Result: attention", attentionResult.Output, StringComparison.Ordinal);
+        Assert.Contains("Status: requires attention", attentionResult.Output, StringComparison.Ordinal);
         Assert.Contains("route-list.authored-form", attentionResult.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("Next:", attentionResult.Output, StringComparison.Ordinal);
         Assert.Equal(3, incompleteResult.ExitCode);
         Assert.Equal(string.Empty, incompleteResult.Error);
-        Assert.StartsWith("result=incomplete  coverage=incomplete", incompleteResult.Output, StringComparison.Ordinal);
+        Assert.Contains("Coverage: incomplete", incompleteResult.Output, StringComparison.Ordinal);
         var rowIndex = incompleteResult.Output.IndexOf("root  .agents/root/_root.md", StringComparison.Ordinal);
-        var findingIndex = incompleteResult.Output.IndexOf("finding code=", StringComparison.Ordinal);
-        var nextIndex = incompleteResult.Output.IndexOf("next command=", StringComparison.Ordinal);
+        var findingIndex = incompleteResult.Output.IndexOf("[route-list.", StringComparison.Ordinal);
+        var nextIndex = incompleteResult.Output.IndexOf("Next:", StringComparison.Ordinal);
         Assert.InRange(findingIndex, 0, rowIndex - 1);
         Assert.InRange(nextIndex, 0, rowIndex - 1);
         Assert.Equal(attentionBefore, attention.SnapshotHashes());
@@ -162,7 +162,7 @@ public sealed class RouteListApplicationIntegrationTests
 
         Assert.Equal(0, human.ExitCode);
         Assert.Equal(string.Empty, human.Error);
-        Assert.Contains("result=complete", human.Output, StringComparison.Ordinal);
+        Assert.Contains("Status: complete", human.Output, StringComparison.Ordinal);
         Assert.Contains("root  .agents/root/_root.md", human.Output, StringComparison.Ordinal);
         Assert.Contains("root/child", human.Output, StringComparison.Ordinal);
 
@@ -209,7 +209,7 @@ public sealed class RouteListApplicationIntegrationTests
             workspace.Path);
         Assert.Equal(0, baseline.ExitCode);
         Assert.Equal(string.Empty, baseline.Error);
-        Assert.Contains("ID: root", baseline.Output, StringComparison.Ordinal);
+        Assert.Contains("root  ", baseline.Output, StringComparison.Ordinal);
 
         foreach (var (Name, Arguments) in workspaceForms)
         {

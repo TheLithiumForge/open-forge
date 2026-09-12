@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
 
@@ -9,29 +10,24 @@ internal static class RouteInspectCompactRenderer
     {
         ArgumentNullException.ThrowIfNull(result);
         var lines = new List<string>();
-        Add(lines, result, includeMessages: true);
+        Add(lines, result);
+        RouteInspectCompactMessages.AddNext(lines, result);
         return string.Join(Environment.NewLine, lines);
     }
 
     internal static void Add(
         ICollection<string> lines,
-        RouteInspectResult result,
-        bool includeMessages)
+        RouteInspectResult result)
     {
-        lines.Add("Open Forge route inspect");
+        lines.Add(result.Identity is { } identity ? $"Route: {RouteInspectHumanValues.Text(identity.Id)}" : "Route inspection");
+        lines.Add($"Status: {CliHumanText.Status(result.Status)}");
         lines.Add($"Workspace: {Workspace(result)}");
         lines.Add($"Selected by: {RouteInspectHumanValues.SelectedBy(result.Workspace)}");
         lines.Add($"Selection: {Selection(result.Selection)}");
         AddCandidates(lines, result.Selection);
         RouteInspectCompactIdentity.Add(lines, result.Identity);
+        RouteInspectCompactMessages.Add(lines, result);
         RouteInspectCompactProfile.Add(lines, result.Profile);
-        if (includeMessages)
-        {
-            RouteInspectCompactMessages.Add(lines, result);
-        }
-
-        lines.Add($"Status: {RouteInspectHumanValues.Status(result.Status)}");
-        RouteInspectCompactMessages.AddNext(lines, result);
     }
 
     private static string Workspace(RouteInspectResult result)

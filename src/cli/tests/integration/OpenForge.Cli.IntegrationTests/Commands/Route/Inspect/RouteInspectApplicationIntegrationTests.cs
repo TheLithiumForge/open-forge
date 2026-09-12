@@ -65,7 +65,7 @@ public sealed class RouteInspectApplicationIntegrationTests
 
         Assert.Equal(0, compact.ExitCode);
         Assert.Equal(string.Empty, compact.Error);
-        Assert.Contains("ID: root", compact.Output, StringComparison.Ordinal);
+        Assert.Contains("Route: root", compact.Output, StringComparison.Ordinal);
         Assert.Contains(".agents/root/_root.md", compact.Output, StringComparison.Ordinal);
         Assert.Contains("Status: complete", compact.Output, StringComparison.Ordinal);
         Assert.Contains("Own source:", compact.Output, StringComparison.Ordinal);
@@ -382,8 +382,8 @@ public sealed class RouteInspectApplicationIntegrationTests
 
         Assert.Equal(2, exactPath.ExitCode);
         Assert.Equal(string.Empty, exactPath.Error);
-        Assert.Contains("Status: attention", exactPath.Output, StringComparison.Ordinal);
-        Assert.Contains("Observation:", exactPath.Output, StringComparison.Ordinal);
+        Assert.Contains("Status: requires attention", exactPath.Output, StringComparison.Ordinal);
+        Assert.Contains("Note:", exactPath.Output, StringComparison.Ordinal);
         Assert.Contains("not unique", exactPath.Output, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("Next:", exactPath.Output, StringComparison.Ordinal);
     }
@@ -443,7 +443,7 @@ public sealed class RouteInspectApplicationIntegrationTests
 
         Assert.Equal(4, invalid.ExitCode);
         Assert.Empty(invalid.Output);
-        Assert.Contains("Next: correct the named source or input.", invalid.Error, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge route inspect --help", invalid.Error, StringComparison.Ordinal);
     }
 
     private static RouteInspectProfileIntegrationWorkspace CompleteWorkspace(

@@ -54,7 +54,7 @@ public sealed class PublishedRouteInspectProcessTests
 
         Assert.Equal(2, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
-        Assert.Contains("Status: attention", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Status: requires attention", result.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Next:", result.StandardOutput, StringComparison.Ordinal);
     }
 
@@ -75,7 +75,7 @@ public sealed class PublishedRouteInspectProcessTests
         Assert.DoesNotContain("matches more than one source", result.StandardError, StringComparison.Ordinal);
         Assert.DoesNotContain("Choose a source by number or exact path", result.StandardError, StringComparison.Ordinal);
         Assert.Contains("Status: blocked", result.StandardError, StringComparison.Ordinal);
-        Assert.Contains("Next: rerun with one of the listed exact paths.", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge route inspect \".agents/root/collision.md\"", result.StandardError, StringComparison.Ordinal);
     }
 
 }

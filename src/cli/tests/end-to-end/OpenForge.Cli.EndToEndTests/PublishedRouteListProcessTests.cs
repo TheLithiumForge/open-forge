@@ -41,8 +41,8 @@ public sealed class PublishedRouteListProcessTests
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
-        Assert.Contains("result=complete  coverage=complete", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("requestedDepth=0 effectiveDepth=0", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Status: complete", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("roots: 1; depth: 0; routes: 1", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("root  .agents/root/_root.md", result.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("root/child", result.StandardOutput, StringComparison.Ordinal);
     }

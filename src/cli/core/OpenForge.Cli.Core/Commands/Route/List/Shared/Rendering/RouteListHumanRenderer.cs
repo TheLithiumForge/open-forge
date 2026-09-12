@@ -1,4 +1,8 @@
+using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
+using static OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering.RouteListHumanValues;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
 
@@ -7,14 +11,63 @@ internal static class RouteListHumanRenderer
     internal static string Render(CliPresentationRequest<RouteListResult> presentation)
     {
         ArgumentNullException.ThrowIfNull(presentation);
-        return presentation.Presentation.View switch
+        CliOperationStage.ValidateResult(presentation.Result);
+        CliPresentationDefinitions.Validate(presentation.Presentation);
+        var result = presentation.Result;
+        var expanded = presentation.Presentation.View == CliView.Expanded;
+        var heading = result.Selection.ResolvedId is { } id ? $"Routes under {Escape(id)}" : "Routes";
+        var lines = new List<string>
         {
-            Shell.Definitions.CliView.Compact => RouteListCompactRenderer.Render(presentation.Result),
-            Shell.Definitions.CliView.Expanded => RouteListExpandedRenderer.Render(presentation.Result),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(presentation),
-                presentation.Presentation.View,
-                "The route-list human view is not defined."),
+            heading,
+            $"Status: {CliHumanText.Status(result.Status)}",
+            $"Workspace: {Optional(result.Workspace?.LexicalRoot)}",
+            $"Selected by: {SelectedBy(result.Workspace)}",
+            $"Coverage: {CoverageState(result.Coverage.State)}; roots: {result.Coverage.SelectedRootCount}; depth: {Depth(result.EffectiveDepth)}; routes: {result.Rows.Count}",
         };
+        if (expanded)
+        {
+            lines.Add($"Selection: {RouteListHumanValues.Selection(result.Selection)}");
+            lines.Add($"Requested depth: {Depth(result.RequestedDepth)} ({DepthExplanation(result.RequestedDepth)})");
+            foreach (var evidence in result.Coverage.Evidence)
+            {
+                lines.Add($"Confirmed: {Escape(evidence)}");
+            }
+        }
+        foreach (var boundary in result.Coverage.UnresolvedBoundaries)
+        {
+            lines.Add($"Unresolved: {Escape(boundary)}");
+        }
+        foreach (var finding in result.Findings)
+        {
+            lines.Add($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Escape(finding.Cause)} [{finding.MachineCode}]");
+            if (finding.Subject is { } subject)
+            {
+                lines.Add($"  Subject: {Escape(subject)}");
+            }
+            foreach (var candidate in finding.CandidatePaths)
+            {
+                lines.Add($"  Candidate: {Escape(candidate)}");
+            }
+        }
+        if (result.Next is { } next)
+        {
+            lines.Add($"Next: {CliHumanText.Text(next.Command)}");
+            if (expanded)
+            {
+                lines.Add(Escape(next.Reason));
+            }
+        }
+        lines.Add(string.Empty);
+        if (result.Rows.Count == 0)
+        {
+            lines.Add(result.Coverage.State == RouteListCoverageState.Complete
+                ? "No routes found."
+                : "No routes established; the listing is not complete.");
+        }
+        foreach (var row in result.Rows)
+        {
+            RouteListRowsHumanRenderer.Add(lines, row, expanded);
+        }
+        return string.Join(Environment.NewLine, lines);
     }
 }

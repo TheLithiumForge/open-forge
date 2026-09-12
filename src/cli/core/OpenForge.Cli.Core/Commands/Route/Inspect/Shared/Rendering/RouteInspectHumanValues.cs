@@ -9,7 +9,7 @@ internal static class RouteInspectHumanValues
 {
     internal static string Text(string value)
     {
-        return RouteInspectTextEscaping.Escape(value, RouteInspectTextEscaping.HumanValueLimit);
+        return RouteInspectTextEscaping.Escape(value, int.MaxValue);
     }
 
     internal static string Status(CliSemanticStatus status)

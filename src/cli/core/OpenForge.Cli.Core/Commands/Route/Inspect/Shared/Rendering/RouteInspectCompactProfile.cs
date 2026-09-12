@@ -19,9 +19,15 @@ internal static class RouteInspectCompactProfile
             return;
         }
 
-        AddReading(lines, profile.Reading);
-        AddMeasurements(lines, profile.Measurements);
+        lines.Add(string.Empty);
+        lines.Add("Where this source belongs");
         AddTopology(lines, profile.Topology);
+        lines.Add(string.Empty);
+        lines.Add("When it is read");
+        AddReading(lines, profile.Reading);
+        lines.Add(string.Empty);
+        lines.Add("Context size");
+        AddMeasurements(lines, profile.Measurements);
         lines.Add($"Completeness: {RouteInspectHumanValues.Completeness(profile.Completeness)}");
         lines.Add($"Safety: {RouteInspectHumanValues.Safety(profile.Safety)}");
     }
@@ -30,7 +36,6 @@ internal static class RouteInspectCompactProfile
         ICollection<string> lines,
         RouteInspectReadingProfile reading)
     {
-        lines.Add("Reading behavior");
         lines.Add($"Read at task start or resume: {BooleanFact(reading.TaskStart)}");
         if (reading.Automatic.State == RouteInspectFactState.Value)
         {

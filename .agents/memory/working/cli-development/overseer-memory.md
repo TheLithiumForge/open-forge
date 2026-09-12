@@ -67,14 +67,17 @@ trials pass both human views and JSON, preserve exact Context body bytes and Fin
 TSV rows, and leave workspace/state unchanged. This closeout accompanies the
 authorized local squash onto develop; its commit completes the narrowed slice.
 
-Route List/Inspect, remaining mutation views, compact JSON, automatic colour,
-final guidance and installed-CLI refresh are deferred. Expanded remains the
-default. Result limits, a compact default and an even smaller file-oriented view
-are saved proposals for discussion; none is implemented. Optional display
-filtering and parser simplifications P2–P6 stay backlog. The configurable-threshold
-idea is saved for later analysis and changes no configuration or diagnostics.
-After this three-command closeout, report completion and pause for the user’s
-minimal-output discussion. No other command implementation is active.
+Route List/Inspect human views are qualified at source `939ab802`: 3,310 Unit,
+1,745 Integration in each managed/native mode and 123 public journeys in each
+of three runtime configurations pass, with zero failures/skips. This closeout
+accompanies their local squash. Human views are complete for 18 of 28 commands.
+Next are core maintenance human views, Route mutation human views, then accepted
+command JSON views. Stop after command work and before colour; final guidance
+remains pending. The overall task estimate is about 60%, including pending JSON.
+Expanded remains the default. Result limits, a compact default and an even smaller
+file-oriented view are saved proposals; none is implemented. Display filtering,
+parser simplifications P2–P6 and configurable-threshold analysis stay backlog.
+The implementation capsule records each sequential freeze and qualified squash.
 
 Cleanup completed: the parser probe was outside the repository and has no matching
 committed project/path history. Its source/project and temporary compiled output,

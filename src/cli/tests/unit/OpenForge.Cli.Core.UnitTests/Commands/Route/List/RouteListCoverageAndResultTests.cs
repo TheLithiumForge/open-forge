@@ -155,22 +155,23 @@ public sealed class RouteListCoverageAndResultTests
                 new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal)));
             using var document = JsonDocument.Parse(json);
 
-            Assert.Contains($"result={expectedStatus}", compact, StringComparison.Ordinal);
-            Assert.Contains($"Result: {expectedStatus}", expanded, StringComparison.Ordinal);
+            var humanStatus = result.Status == CliSemanticStatus.Attention ? "requires attention" : expectedStatus;
+            Assert.Contains($"Status: {humanStatus}", compact, StringComparison.Ordinal);
+            Assert.Contains($"Status: {humanStatus}", expanded, StringComparison.Ordinal);
             Assert.Equal(expectedStatus, document.RootElement.GetProperty("status").GetString());
             if (result.Rows.Count > 0 && result.Findings.Count > 0)
             {
-                Assert.True(
-                    compact.IndexOf("finding code=", StringComparison.Ordinal)
-                    < compact.IndexOf(
-                        $"{Environment.NewLine}{result.Rows[0].Id}  {result.Rows[0].Path}  description=",
-                        StringComparison.Ordinal));
-                Assert.True(
-                    expanded.IndexOf("Finding 1:", StringComparison.Ordinal)
-                    < expanded.IndexOf($"ID: {result.Rows[0].Id}", StringComparison.Ordinal));
-                Assert.True(
-                    expanded.IndexOf("Next:", StringComparison.Ordinal)
-                    < expanded.IndexOf($"ID: {result.Rows[0].Id}", StringComparison.Ordinal));
+                var rowText = $"{result.Rows[0].Id}  {result.Rows[0].Path}";
+                Assert.InRange(compact.IndexOf(result.Findings[0].MachineCode, StringComparison.Ordinal), 0, compact.IndexOf(rowText, StringComparison.Ordinal) - 1);
+                Assert.InRange(expanded.IndexOf(result.Findings[0].MachineCode, StringComparison.Ordinal), 0, expanded.IndexOf(rowText, StringComparison.Ordinal) - 1);
+                if (result.Next is not null)
+                {
+                    Assert.InRange(expanded.IndexOf("Next:", StringComparison.Ordinal), 0, expanded.IndexOf(rowText, StringComparison.Ordinal) - 1);
+                }
+                else
+                {
+                    Assert.DoesNotContain("Next:", expanded, StringComparison.Ordinal);
+                }
             }
         }
         Assert.Equal(1, complete.SchemaVersion);

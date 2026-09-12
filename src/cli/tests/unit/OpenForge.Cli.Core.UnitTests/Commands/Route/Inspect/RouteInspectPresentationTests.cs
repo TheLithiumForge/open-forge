@@ -17,10 +17,10 @@ public sealed class RouteInspectPresentationTests
                 RouteInspectPresentationTestData.CompleteResult(),
                 CliView.Compact));
 
-        Assert.Contains("Open Forge route inspect", output, StringComparison.Ordinal);
+        Assert.StartsWith($"Route: root/item{Environment.NewLine}Status: complete", output, StringComparison.Ordinal);
         Assert.Contains("Workspace:", output, StringComparison.Ordinal);
         Assert.Contains("Selected by:", output, StringComparison.Ordinal);
-        Assert.Contains("ID:", output, StringComparison.Ordinal);
+        Assert.Contains("Route: root/item", output, StringComparison.Ordinal);
         Assert.Contains("Path:", output, StringComparison.Ordinal);
         Assert.Contains("Source state:", output, StringComparison.Ordinal);
         Assert.Contains("Route state:", output, StringComparison.Ordinal);

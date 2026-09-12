@@ -10,12 +10,16 @@ internal static class RouteInspectExpandedRenderer
     {
         ArgumentNullException.ThrowIfNull(result);
         var lines = new List<string>();
-        RouteInspectCompactRenderer.Add(lines, result, includeMessages: false);
+        RouteInspectCompactRenderer.Add(lines, result);
         lines.Add(string.Empty);
         AddExplanations(lines, result);
-        AddMessages(lines, result);
         AddAxioms(lines, result.Profile);
-        AddEvidence(lines, result);
+        AddAdditionalMeasurements(lines, result);
+        RouteInspectCompactMessages.AddNext(lines, result);
+        if (result.Next is { } next)
+        {
+            lines.Add(RouteInspectHumanValues.Text(next.Reason));
+        }
         return string.Join(Environment.NewLine, lines);
     }
 
@@ -25,53 +29,13 @@ internal static class RouteInspectExpandedRenderer
     {
         lines.Add("Explanations:");
         lines.Add($"  Why: {StatusReason(result.Status)}");
-        if (result.Profile?.Reading.Automatic is { State: RouteInspectFactState.Value } automatic)
-        {
-            foreach (var reason in automatic.ReadValue().Reasons)
-            {
-                lines.Add($"  Why: the source is read when {RouteInspectHumanAutomaticReading.Explanation(reason)}");
-            }
-        }
-    }
-
-    private static void AddMessages(
-        ICollection<string> lines,
-        RouteInspectResult result)
-    {
-        lines.Add("Observations:");
-        if (result.Observations.Count == 0)
-        {
-            lines.Add("  none");
-        }
-        else
-        {
-            foreach (var observation in result.Observations)
-            {
-                lines.Add($"  - {RouteInspectHumanValues.Text(observation.Message)}");
-                AddPaths(lines, observation.Paths);
-            }
-        }
-
-        lines.Add("Conditions:");
-        if (result.Conditions.Count == 0)
-        {
-            lines.Add("  none");
-        }
-        else
-        {
-            foreach (var condition in result.Conditions)
-            {
-                lines.Add($"  - {RouteInspectHumanValues.Text(condition.Message)}");
-                AddPaths(lines, condition.Paths);
-            }
-        }
     }
 
     private static void AddAxioms(
         ICollection<string> lines,
         RouteInspectProfile? profile)
     {
-        lines.Add("Axioms:");
+        lines.Add("Applicable rules (Axioms):");
         if (profile is null)
         {
             lines.Add("  not established");
@@ -90,44 +54,15 @@ internal static class RouteInspectExpandedRenderer
         lines.Add($"  Local: {Local(value.Local)}");
     }
 
-    private static void AddEvidence(
+    private static void AddAdditionalMeasurements(
         ICollection<string> lines,
         RouteInspectResult result)
     {
-        lines.Add("Evidence:");
-        lines.Add($"  Selection: {RouteInspectHumanValues.ReferenceKind(result.Selection.ReferenceKind)} via "
-            + RouteInspectHumanValues.SelectionMethod(result.Selection.SelectionMethod));
-        if (result.Identity is { } identity)
-        {
-            lines.Add($"  Physical layers: {identity.PhysicalLayers.Count}");
-            foreach (var layer in identity.PhysicalLayers)
-            {
-                lines.Add($"  - {RouteInspectHumanValues.Text(layer.WorkspaceRelativePath)}");
-            }
-        }
-        else
-        {
-            lines.Add("  Physical layers: not established");
-        }
-
         if (result.Profile is { } profile)
         {
-            lines.Add("  Measurements:");
-            lines.Add($"    own source: {RouteInspectHumanMeasurements.Measurement(profile.Measurements.OwnSource)}");
-            lines.Add($"    selected closure: {RouteInspectHumanMeasurements.Measurement(profile.Measurements.SelectedClosure)}");
-            lines.Add($"    task-start overlap: {RouteInspectHumanMeasurements.Measurement(profile.Measurements.TaskStartOverlap)}");
-            lines.Add($"    selection addition: {RouteInspectHumanMeasurements.Measurement(profile.Measurements.SelectionAddition)}");
-            lines.Add($"    #LoadNow descendants: {RouteInspectHumanMeasurements.Measurement(profile.Measurements.LoadNowDescendants)}");
-        }
-    }
-
-    private static void AddPaths(
-        ICollection<string> lines,
-        IReadOnlyList<string> paths)
-    {
-        if (paths.Count != 0)
-        {
-            lines.Add($"    Paths: {string.Join(", ", paths.Select(RouteInspectHumanValues.Text))}");
+            lines.Add("Additional context size details:");
+            lines.Add($"  Selected context: {RouteInspectHumanMeasurements.Measurement(profile.Measurements.SelectedClosure)}");
+            lines.Add($"  Already in startup context: {RouteInspectHumanMeasurements.Measurement(profile.Measurements.TaskStartOverlap)}");
         }
     }
 

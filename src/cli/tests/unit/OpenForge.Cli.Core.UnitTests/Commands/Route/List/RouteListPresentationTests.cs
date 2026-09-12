@@ -108,18 +108,18 @@ public sealed class RouteListPresentationTests
         var compact = RouteListHumanRenderer.Render(Presentation(result, CliView.Compact));
         var expanded = RouteListHumanRenderer.Render(Presentation(result, CliView.Expanded));
 
-        Assert.StartsWith("result=complete  coverage=complete", compact, StringComparison.Ordinal);
-        Assert.Contains("coverage-evidence=", compact, StringComparison.Ordinal);
+        Assert.StartsWith($"Routes{Environment.NewLine}Status: complete", compact, StringComparison.Ordinal);
+        Assert.Contains("Coverage: complete; roots: 1; depth: 1; routes: 2", compact, StringComparison.Ordinal);
         Assert.Contains("memory  .agents/memory/_memory.md", compact, StringComparison.Ordinal);
         Assert.True(compact.IndexOf("memory  ", StringComparison.Ordinal) < compact.IndexOf("memory/child", StringComparison.Ordinal));
         Assert.StartsWith(
-            $"Open Forge route list{Environment.NewLine}Result: complete{Environment.NewLine}Coverage: complete",
+            $"Routes{Environment.NewLine}Status: complete",
             expanded,
             StringComparison.Ordinal);
-        Assert.Contains("Coverage evidence:", expanded, StringComparison.Ordinal);
-        Assert.Contains("Parent ID: memory", expanded, StringComparison.Ordinal);
-        Assert.Contains("Provenance: descendant; authored topology leaf", expanded, StringComparison.Ordinal);
-        Assert.True(expanded.IndexOf("ID: memory", StringComparison.Ordinal) < expanded.IndexOf("ID: memory/child", StringComparison.Ordinal));
+        Assert.Contains("Confirmed:", expanded, StringComparison.Ordinal);
+        Assert.Contains("Parent: memory; .agents/memory/_memory.md", expanded, StringComparison.Ordinal);
+        Assert.Contains("Source: authored routed file; overwrite: none", expanded, StringComparison.Ordinal);
+        Assert.True(expanded.IndexOf("memory  ", StringComparison.Ordinal) < expanded.IndexOf("memory/child  ", StringComparison.Ordinal));
     }
 
     [Fact(DisplayName = "Route list JSON projection keeps its envelope, scalar depth forms, and nullable facts"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]

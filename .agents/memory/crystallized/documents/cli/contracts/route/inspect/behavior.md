@@ -406,9 +406,12 @@ construction, source resolution, classification, measurement, topology, or
 verification, and they do not reinterpret the semantic result.
 
 The renderer applies the shared `--view` and `--verbose` presentation rules
-after inspection. Expanded human output adds the explanations, evidence,
-provenance, locations, and next actions described by the [Human Output](interface.md#human-output)
-contract. Both human views retain workspace identity, selection method, source
+after inspection. Both views put status and meaningful observations/conditions
+before the profile, with full subject/path identities. Expanded adds the distinct
+explanations, Axioms and measurements described by the
+[Human Output](interface.md#human-output) contract, without repeating the same
+measurement or reading explanation. Human Next displays the action already formed
+by the operation; expanded adds its reason. Both human views retain workspace identity, selection method, source
 ID, and canonical path. Compact output also retains source and route state,
 route chain, applicable topology, reading behavior, own-source,
 selection-addition, and `#LoadNow` descendant measurements, overwrite state,
