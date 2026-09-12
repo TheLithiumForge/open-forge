@@ -140,8 +140,10 @@ No new dependency or custom parsing framework is authorized.
 Focused managed evidence is the default inner loop. Broader managed and Linux
 Native AOT gates apply when shared parsing, public results, serialization or
 composition changes. No foreign-host execution or publication is claimed.
-Record exact commands, fresh artifacts, counts and failures in ignored receipts,
-with concise conclusions and links in the Task. Keep all unrelated work intact.
+Record source identity, exact reproduction commands, toolchain, counts, failures
+and conclusions in tracked Task/checkpoint records. Raw logs, generated binaries
+and full machine reports under `artifacts/` are disposable. Required regression
+code and helpers belong in tracked source. Keep all unrelated work intact.
 
 ## Current State
 
@@ -179,3 +181,65 @@ Squash verified stages into local `develop` while preserving unrelated changes.
   into local develop at `b4a06740`. The earlier catalogue mismatch is fixed;
   Task 30 records native qualification and existing ownership-transition limits.
   No remote operations occurred.
+
+## Final Stage: Reusable CLI And C# Guidance
+
+Requested by the user after D2; perform this consolidation at the end of the
+remaining CLI presentation/refactoring sequence. This is required queued work,
+not a completed guideline. Update the existing CLI implementation Directive and
+C# design Directive, then add or extend focused CLI design Guidance that can be
+shared between projects. Keep project-specific wire contracts in their owners.
+
+Cover native parser/runtime/library behavior before custom code; manifest/resource
+discovery instead of duplicate catalogues; no speculative unreleased-version
+compatibility or migration rules; focused snapshots for actual presentation
+contracts and authored fixtures for behavior; disposable generated output and
+tracked recovery records. Remove solved exceptions from current guidance instead
+of carrying old decision history into product text. A required current exception
+needs a demonstrated capability gap and explicit scope.
+
+For CLI experience, cover predictable command/flag meanings, useful defaults,
+concise outcome-first output, clear severity/path/line/action, progressive detail,
+nonduplicated information, human versus JSON output, compact/expanded/verbose
+roles, help/examples, terminal/piped/noninteractive behavior, prompts, dry-run
+review, exit status/streams, and optional colours/accessibility. Preserve useful
+capabilities; do not infer new defaults, diagnostic kinds or schemas from wording.
+For implementation, keep parser, typed request, operation, result and rendering
+boundaries clear; reuse standard capabilities and keep related tests/contracts
+with their owner. Record verified lessons from each completed stage.
+
+Existing authorities to reconcile: the CLI shared-operation contract, shared
+global-flags and result-coordinates contracts, CLI Architecture, Writing Standard,
+CLI implementation Directive and C# design/style Directives. No active portable
+CLI UX Guidance was found in the current Guidance routes. Historical CLI design
+notes are archived and do not define current rules. Choose one reusable guidance
+owner and link it from the selected CLI route; avoid duplicating full contracts.
+
+Acceptance: the full current presentation pass supplies real examples; guidelines
+cover the listed experience and implementation lessons; current contracts remain
+aligned; obsolete exceptions and artifact-only requirements are absent; navigation
+and links work. Squash this final reviewed documentation set into develop.
+
+### Review-Correction Stage Verification
+
+The documentation-only stage starts at D2 squash `c5883662` on
+`codex/cli-guidance-follow-up`. All 14 changed Markdown files have valid local
+file links; `git diff --check` passes. No CLI production, test or build source
+changed, so the previous qualified native binary remains applicable. Installed
+Extension Install and Update help both expose `--source` and `--dry-run`.
+
+The global npm packages were installed from the tested staged package tarballs
+with `npm install --global --offline --ignore-scripts --no-audit --no-fund`.
+Both installed packages are copies, with the native version/hash recorded in the
+checkpoint. Running `open-forge extension list --available --json` from a fresh
+temporary directory returns complete with empty stderr. Packaging inputs under
+artifacts may be deleted; the installed packages do not link back to them.
+
+Artifact-rule locations: CLI implementation Directive, Physical Workspace And
+Projects; Testing Evidence Integrity, canonical execution receipts; this plan's
+Execution And Evidence section. These now distinguish generated output from
+durable tracked state. Calibrated Agent Reasoning recommends raw logs in artifacts;
+that concerns disposable raw output, not exclusive storage for required inputs.
+No tracked source/build entry imports the exploratory task scripts, and Git tracks
+zero files under `artifacts/`. This is a documentation and local-install
+verification, not a new execution of the full CLI suites.

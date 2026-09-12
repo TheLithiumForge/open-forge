@@ -87,32 +87,12 @@ wrapper initially assumed complete for retained-dependency attention, then used
 the wrong blocked exit code. Both harness expectations were corrected against
 the existing contract; neither required a product or committed-test change.
 
-Eight additional native controls at
-`artifacts/task30-automatic-catalogue/journeys/transition-controls.json` compare
-the retained baseline executable with the new one and apply the unchanged old
-Toolkit remove/reinstall/update sequence. Removing the new bundle retains its
-four dependencies and reports attention. Obsolete Experience Design files from
-the old unchanged package are removed by ordinary source-independent removal.
+The user confirmed that unreleased package revisions have no legacy migration
+requirement. Exploratory comparisons with the superseded Toolkit do not define
+supported behavior or a future compatibility task. Current package ownership and
+local-change protection remain covered by the tracked command tests.
 
-- T30-DOG01: old Toolkit update reports attention because Update cannot introduce
-  an uninstalled dependency. Normal and force/prune dry-runs produce no effects
-  for unchanged, edited, missing-default and overwrite variants. This stage adds
-  no ownership migration. Further lifecycle behavior needs its own frozen stage.
-- T30-DOG02: removing the old Toolkit with a local edit preserves that edit, but
-  subsequent install encounters a Framework generated-index baseline mismatch.
-  The old executable also blocks, at the old catalogue's Skills host; the new
-  catalogue first reports Patterns. Record this pre-existing lifecycle/index
-  interaction for the Doctor correctness investigation.
-- T30-DOG03: overwrite companions survive removal; the now-orphaned companion
-  prevents the next install's authored-source validation in both executables.
-  Do not delete the companion or invent automatic adoption to make this pass.
-- Deliberately missing files remain absent during all update previews and old
-  package removal. A later explicit fresh install is a new selection, not a
-  promise to preserve a retired installation's missing defaults.
-
-Public setup guidance now states the transition limitation. No migration command,
-receipt rewriting, force expansion, package-source change or Doctor suppression
-is included. Direct review of the final production, independent parity evidence,
+Direct review of the final production, independent parity evidence,
 and coherent changed documentation found no material remaining defect in the
 automatic embedding stage. All 16 changed Markdown files' relative link targets
 exist. Required changed-C# whitespace and style checks pass.
@@ -159,16 +139,36 @@ Include these files in catalogue parity and dependency-closure verification. Che
 
 Task 28's source-package checks are preparation evidence only. They do not establish embedded catalogue parity or the implementation task's acceptance.
 
-### Package Ownership Transition
+### Current Catalogue Verification
 
-Verify the transition from the previous Toolkit-owned payload to focused package ownership at unchanged installed paths. Do not assume byte equality authorizes adoption, or that ordinary update already supports this transition. Establish the supported sequence against current ownership and lifecycle contracts before documenting it.
-
-Cover prior receipts, unchanged files, local edits, overwrite companions, deliberately removed defaults, obsolete Experience Design files, retained dependencies, and removal of either the bundle or a focused package. A dependency-only bundle has no payload to adopt. Protect workspace changes and retain recovery evidence where required. If the implementation lacks a supported transition, report that gap and prepare the necessary behavior work in the CLI task rather than silently rewriting receipts or widening force semantics.
-
-Update source-to-dogfood parity checks for the new package paths. The review worktree removes its local Experience Design copies and route entry; it does not regenerate lifecycle receipts or qualify managed retirement. Preserve general native Skill support and use an appropriate fixture for its verification.
+Verify the current package manifests, resource bytes, dependency closure and
+ordinary installation/update/removal behavior against current contracts. Use
+current fixtures. Do not add migration requirements for unreleased package
+revisions. Preserve current local-change, ownership and recovery protections.
 
 ## Existing Diagnostic Gaps Observed During Preparation
 
 The same-worktree native CLI installed the revised source catalogue, repeated installation without changes, removed Orchestration while reporting the retained Toolkit dependency, and then removed Toolkit explicitly. Doctor reported incomplete coverage after installation and removal. A control installation using the original Toolkit from the review base also produced incomplete Doctor coverage.
 
 Observed findings include native Skill files classified as missing routed metadata or unreachable sources, and Framework-managed category indexes classified as changed after Extension-generated navigation updates. Preserve the native Skill contract and category indexing behavior. Triage these CLI findings against a fresh baseline and record any required separate fix; do not alter package meaning or suppress diagnostics merely to claim a passing check.
+
+## Durable Qualification Summary
+
+Generated logs and machine reports mentioned above are disposable. This tracked
+summary, committed regression sources and ordinary build scripts retain the
+required result and reproduction path. Exploratory task scripts are not build
+inputs or a substitute for committed regressions.
+
+- Qualified source: `ee5a55999d830c337c6510fb94953a2bac3bcd53`; local squash: `b4a06740`.
+- Native target: `linux-x64`; version: `0.0.0-dev.sha-ee5a55999d830c337c6510fb94953a2bac3bcd53`.
+- Native CLI SHA-256: `33cda49d8cd1f8541724b5b4fddd1a819cea69021f13411abf1fdf52bf0dd546`.
+- Gate result: 3,231 Unit; 1,724 Integration in both modes; 112 public in all three modes; zero failures/skips.
+- Toolchain: .NET SDK 10.0.111, Node 24.19.0, npm 11.17.0, Linux x64.
+- Reproduce from that source commit with repository dependencies restored:
+  `npm run build:native -- --sha`, then `npm run test:built`.
+  These tracked scripts generate fresh outputs and validate all six suites.
+- Required regression sources: `src/cli/tests/`; build/test orchestration:
+  `scripts/delivery/`. No required helper exists only in `artifacts/`.
+
+These are recorded past results. Deleting outputs discards raw receipts and
+binaries; rerun the commands before claiming fresh execution evidence.

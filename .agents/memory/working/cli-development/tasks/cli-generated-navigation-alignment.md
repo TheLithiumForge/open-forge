@@ -155,3 +155,24 @@ stages in the full 28-command audit. The two proposed changes—retiring seven
 redundant diagnostic kinds while preserving candidate evidence, and summarizing
 information by default—still await explicit user answers. No such change is
 implemented. Preserve useful functionality and continue updating this checkpoint.
+
+## Durable Qualification Summary
+
+Generated logs and machine reports mentioned above are disposable. This tracked
+summary, committed regression sources and ordinary build scripts retain the
+required result and reproduction path. Exploratory task scripts are not build
+inputs or a substitute for committed regressions.
+
+- Qualified source: `29de40a0de6a55cb6ee2c7c50b64a3d79854046e`; local squash: `c5883662`.
+- Native target: `linux-x64`; version: `0.0.0-dev.sha-29de40a0de6a55cb6ee2c7c50b64a3d79854046e`.
+- Native CLI SHA-256: `c5d0f27ca425305a1d3a396fdef638cf584980d700919225a3bf8f479a9f2009`.
+- Gate result: 3,232 Unit; 1,745 Integration in both modes; 123 public in all three modes; zero failures/skips.
+- Toolchain: .NET SDK 10.0.111, Node 24.19.0, npm 11.17.0, Linux x64.
+- Reproduce from that source commit with repository dependencies restored:
+  `npm run build:native -- --sha`, then `npm run test:built`.
+  These tracked scripts generate fresh outputs and validate all six suites.
+- Required regression sources: `src/cli/tests/`; build/test orchestration:
+  `scripts/delivery/`. No required helper exists only in `artifacts/`.
+
+These are recorded past results. Deleting outputs discards raw receipts and
+binaries; rerun the commands before claiming fresh execution evidence.

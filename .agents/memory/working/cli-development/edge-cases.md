@@ -132,28 +132,6 @@ Use these current Task links when assigning or closing an item.
   cross-products, add or reuse real public evidence for them, and resolve or
   explicitly accept any remaining breadth boundary before their gates complete.
 
-### CLI-EDGE-005 — Native option delimiters
-
-- **Accepted continuation:** The user requested ordinary library handling for
-  `--tag` and continued after the manual-parsing audit. Task 27's
-  [native-delimiter stage](tasks/cli-native-delimiters.md) retires the former
-  equals-only Route List depth exception and the globally aggregated tag guards.
-  Native space, equals and colon forms have identical typed values. Missing,
-  empty and repeated singleton values remain invalid through typed validation.
-- **Frozen evidence:** At `b4a06740`, composed-root regression cases have seven
-  passing equals controls and fourteen failing space/colon forms. All 21 are
-  accepted by the pinned parser itself. The global guard causes the failure.
-- **Boundary:** Parser-owned value aggregation, command selection and `--`
-  remain unchanged. Route Update's independent `CLI-EDGE-016` exact-empty
-  responsibility recognizer remains accepted. No raw value parser replaces the
-  deleted restriction.
-- **History:** Earlier parser-remediation evidence qualified typed occurrence and
-  value facts while retaining the equals-only exception. That accepted exception
-  is superseded here; its historical receipts do not qualify this new stage.
-- **Closed:** Candidate `5bef9a24` removes the guards and plumbing, passes the
-  frozen evidence, full managed/native gate and 19 direct native checks. The
-  native-delimiter completion record accompanies authorized local squash.
-
 ### CLI-EDGE-007 — Terminal modes with domain input
 
 - **Current behavior and evidence:** The shared Shell validates parser
@@ -459,10 +437,9 @@ Use these current Task links when assigning or closing an item.
   invalid. Ordinary valued forms, including `--responsibility ""`, keep their
   Interface-contract meaning. Inspection stops at `--`, and original arguments
   enter neither the typed request nor domain behavior.
-- **Separation from CLI-EDGE-005:** This edge belongs exclusively to Route
-  Update's responsibility grammar. `CLI-EDGE-005` retires the former Route List
-  depth-delimiter exception. This responsibility recognizer does not parse a
-  value, count occurrences, cross `--`, or become general binding authority.
+- **Boundary:** Option delimiters use the parser defaults. This recognizer
+  belongs only to Route Update's attached-empty responsibility grammar. It does
+  not parse a value, count occurrences, cross `--`, or become general binding authority.
 - **Risk:** A generic raw-argument workaround could create a second parser,
   reinterpret ordinary values, leak raw arguments into the domain, or merge two
   unrelated command grammars.

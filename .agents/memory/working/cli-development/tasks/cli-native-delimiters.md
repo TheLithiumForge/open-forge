@@ -120,3 +120,24 @@ is authorized and this completion record accompanies it; no remote effects.
 
 Fresh Doctor journeys capture the next stage's defects in the audit. Their
 expected non-success outcomes are diagnostic evidence, not a delimiter failure.
+
+## Durable Qualification Summary
+
+Generated logs and machine reports mentioned above are disposable. This tracked
+summary, committed regression sources and ordinary build scripts retain the
+required result and reproduction path. Exploratory task scripts are not build
+inputs or a substitute for committed regressions.
+
+- Qualified source: `5bef9a241432766d0468c1ac4ff985a6050fef7a`; local squash: `6b6f054b`.
+- Native target: `linux-x64`; version: `0.0.0-dev.sha-5bef9a241432766d0468c1ac4ff985a6050fef7a`.
+- Native CLI SHA-256: `d73d14395c765bcd06ffb0c1a3407753e9466c7c57832bebb713a44b713bacf2`.
+- Gate result: 3,232 Unit; 1,745 Integration in both modes; 114 public in all three modes; zero failures/skips.
+- Toolchain: .NET SDK 10.0.111, Node 24.19.0, npm 11.17.0, Linux x64.
+- Reproduce from that source commit with repository dependencies restored:
+  `npm run build:native -- --sha`, then `npm run test:built`.
+  These tracked scripts generate fresh outputs and validate all six suites.
+- Required regression sources: `src/cli/tests/`; build/test orchestration:
+  `scripts/delivery/`. No required helper exists only in `artifacts/`.
+
+These are recorded past results. Deleting outputs discards raw receipts and
+binaries; rerun the commands before claiming fresh execution evidence.

@@ -93,7 +93,11 @@ open-forge:
   compile items, or link production source across projects.
 - Route every C# binary, intermediate, test, publish, and package output through
   the ignored repository-root `/artifacts/` directory. No project-local `bin/`
-  or `obj/` is accepted.
+  or `obj/` is accepted. Treat these outputs as disposable and reproducible.
+  Keep required source, test helpers, fixtures and reusable scripts in tracked
+  source locations; keep decisions, exact reproduction commands and acceptance
+  summaries in tracked work records. A deleted artifact must not erase the only
+  copy of a required input or prevent task recovery.
 - Let an ordinary non-RID CLI build publish the managed `open-forge-dev` artifact
   used by local EndToEnd evidence. Use the explicit
   `OpenForgeSkipDevelopmentPublish=true` property only when that build does not

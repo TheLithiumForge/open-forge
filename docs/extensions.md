@@ -43,6 +43,14 @@ Set up the base Framework first. From your project, preview the selected package
 open-forge extension install orchestration --dry-run
 ```
 
+To preview the package from a local source catalogue instead:
+
+```sh
+open-forge extension install orchestration \
+  --source /path/to/open-forge/src/extensions \
+  --dry-run
+```
+
 Review the proposed files, then repeat the command without `--dry-run` to apply it. If you are running from another directory, add `--workspace /path/to/project` to both commands. Check the resulting diff before adopting the content.
 
 You can select several package IDs in one request. `--all` selects all packages in the chosen source. `--automatic` disables prompting; it does not select packages or authorize overwrites for you.
@@ -59,6 +67,14 @@ open-forge extension list --installed
 open-forge extension update orchestration --dry-run
 ```
 
+For an update from a local source catalogue:
+
+```sh
+open-forge extension update orchestration \
+  --source /path/to/open-forge/src/extensions \
+  --dry-run
+```
+
 Normal updates preserve locally changed files, missing files, and retired content that needs a deliberate choice. Use the result to decide which differences to keep:
 
 | Option              | What it selects                                                    |
@@ -68,14 +84,6 @@ Normal updates preserve locally changed files, missing files, and retired conten
 | `--automatic`       | Non-interactive execution with the choices already supplied        |
 
 Preview those options before applying them. They have specific boundaries; none is a general permission to overwrite the workspace.
-
-An older Development Toolkit installation may own files that now belong to the
-focused packages. Automatic catalogue embedding does not migrate that ownership.
-Update currently reports attention when the new Toolkit requires dependencies
-that are not installed. `--force` and `--prune` do not resolve that limitation.
-Inspect the removal plan and preserve local changes before choosing a new
-installation. Removing an unchanged old Toolkit allows a fresh install; retained
-edits or overwrite files can require further review before reinstallation.
 
 To remove a package, first inspect the plan:
 

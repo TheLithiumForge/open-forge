@@ -137,3 +137,24 @@ mutation, ownership or recovery functionality changes. The [presentation audit](
 records the full surface pass and pending proposals. The user must approve
 public diagnostic-kind retirement or changed default visibility before those
 are implemented. This closeout accompanies authorized local squash integration.
+
+## Durable Qualification Summary
+
+Generated logs and machine reports mentioned above are disposable. This tracked
+summary, committed regression sources and ordinary build scripts retain the
+required result and reproduction path. Exploratory task scripts are not build
+inputs or a substitute for committed regressions.
+
+- Qualified source: `c8d786ed92d11de79361c6e5139151fa223d3d1d`; local squash: `ef7bdb3b`.
+- Native target: `linux-x64`; version: `0.0.0-dev.sha-c8d786ed92d11de79361c6e5139151fa223d3d1d`.
+- Native CLI SHA-256: `a54a18bf6292b7c3829dddd8f5e2726d51a95bacda5007fbe2a9e860670eb53d`.
+- Gate result: 3,232 Unit; 1,745 Integration in both modes; 117 public in all three modes; zero failures/skips.
+- Toolchain: .NET SDK 10.0.111, Node 24.19.0, npm 11.17.0, Linux x64.
+- Reproduce from that source commit with repository dependencies restored:
+  `npm run build:native -- --sha`, then `npm run test:built`.
+  These tracked scripts generate fresh outputs and validate all six suites.
+- Required regression sources: `src/cli/tests/`; build/test orchestration:
+  `scripts/delivery/`. No required helper exists only in `artifacts/`.
+
+These are recorded past results. Deleting outputs discards raw receipts and
+binaries; rerun the commands before claiming fresh execution evidence.

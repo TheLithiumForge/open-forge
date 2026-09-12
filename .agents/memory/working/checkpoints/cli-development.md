@@ -6,6 +6,28 @@ open-forge:
 
 # CLI Development Checkpoint
 
+## Review Corrections And Final Guidance Queue — 2026-09-12
+
+D2 squash is `c5883662cfb229e1dc8ae6f059305df8920cf5da`, exact tree
+`4d10f5a139533dc9ddbf985a0fda6db1c8891a5e`; feature closeout `ed054ad8`.
+The user rejects legacy migration requirements for this unreleased product.
+Current docs remove the old Toolkit migration paragraph and retired delimiter
+exception; embedded and explicit-source install/update examples are both shown.
+No current attached-empty responsibility behavior is changed.
+
+Artifacts are disposable. Required tests live under `src/cli/tests` and delivery
+helpers under `scripts/delivery`. Tracked Task/checkpoint records own acceptance
+summaries and exact reproduction commands; artifact paths identify optional raw
+outputs only. No source/build command imports the exploratory task scripts.
+The installed native CLI is now a copied offline npm installation, not a link to
+staging. Version remains `0.0.0-dev.sha-29de40a0de6a55cb6ee2c7c50b64a3d79854046e`;
+installed SHA-256 is `c5d0f27ca425305a1d3a396fdef638cf584980d700919225a3bf8f479a9f2009`.
+Deleting repository artifacts cannot remove those installed package files.
+
+The follow-up plan now requires reusable CLI UX and implementation Guidance plus
+CLI/C# Directive updates as the final stage after the remaining presentation
+work. Doctor diagnostic-kind/default-visibility choices still await user answers.
+
 ## Current Sequential Dogfood Checkpoint
 
 D2 is COMPLETE phase 3/3, milestone 3/3. Qualified source candidate
