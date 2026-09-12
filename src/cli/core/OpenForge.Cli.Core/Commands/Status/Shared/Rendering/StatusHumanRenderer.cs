@@ -2,10 +2,10 @@ using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Status.Shared.Rendering;
 
@@ -17,12 +17,7 @@ internal static class StatusHumanRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
         var builder = new StringBuilder();
-        builder.AppendLine($"""
-            {Installation(result.Facts.Installation.State)}
-            Status: {Status(result.Status)}
-            Workspace: {Text(result.Workspace?.LexicalRoot ?? "unavailable")}
-            Selected by: {Selection(result)}
-            """);
+        CliHumanText.AppendHeader(builder, presentation, Installation(result.Facts.Installation.State));
         StatusFindingHumanRenderer.Append(builder, result);
         builder.AppendLine();
         builder.AppendLine("Context");
@@ -36,14 +31,7 @@ internal static class StatusHumanRenderer
         StatusLifecycleHumanRenderer.Append(builder, result.Facts.Lifecycle, presentation.Presentation.View);
         StatusLibraryPresentation.Append(builder, result.Facts.Library);
         AppendRecovery(builder, result.Facts.Recovery);
-        if (result.Next is { } next)
-        {
-            builder.AppendLine($"Next: {Text(next.Command)}");
-            if (presentation.Presentation.View == CliView.Expanded)
-            {
-                builder.AppendLine(Text(next.Reason));
-            }
-        }
+        CliHumanText.AppendNext(builder, presentation);
 
         return builder.ToString().TrimEnd();
     }
@@ -148,21 +136,6 @@ internal static class StatusHumanRenderer
         _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The installation state is not defined."),
     };
 
-    private static string Selection(StatusResult result)
-        => result.Workspace is { } workspace
-            ? workspace.SelectedBy switch
-            {
-                CliWorkspaceSelectionMethod.CurrentDirectory => "current directory",
-                CliWorkspaceSelectionMethod.ExplicitWorkspace => "--workspace",
-                _ => throw new ArgumentOutOfRangeException(nameof(result), workspace.SelectedBy, "The workspace selection is not defined."),
-            }
-            : "unavailable";
-
-    private static string Status(CliSemanticStatus status)
-        => status == CliSemanticStatus.Attention
-            ? "requires attention"
-            : CliStatusDefinitions.Read(status).MachineName;
-
     internal static string Text(string value)
-        => string.Concat(value.Select(character => char.IsControl(character) ? '\uFFFD' : character));
+        => CliHumanText.Text(value);
 }

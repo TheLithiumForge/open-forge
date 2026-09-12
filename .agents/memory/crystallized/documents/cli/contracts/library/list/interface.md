@@ -242,45 +242,34 @@ reports observations; it does not select a repair or another operation.
 
 ## Human And Structured Output
 
-The default human view is expanded. It begins with the selected workspace and
-record state, identifies that source inventory is not requested, and then
-renders each Library in deterministic order with its source-root state and
-registered-link observations. A safe drift result identifies the affected path
-and uses `Status: attention`.
+Both human views begin with the registration outcome, status, exact workspace
+and selection method, followed by the record path/state and coverage. They state
+that source inventory was not scanned. Human `requires attention` represents the
+typed `attention` status. A missing or known-empty record says that no Libraries
+are registered. An invalid, unavailable or unchecked record does not become an
+empty result merely because no rows were returned.
 
-An empty or missing record may render:
+Each Library retains its ID, source and destination roots, source-root state,
+registered source/destination paths, source IDs when available, and observed
+link states. Expanded is the default and adds exact expected/observed link
+targets and supporting explanations. Compact uses short mapping rows. Both
+retain every finding and safety/availability state. Paths are not truncated.
 
-```text
-Open Forge library list
-Workspace: <selected workspace>
-Record: .agents/open-forge.libraries.json (missing; zero libraries)
-Inventory: not requested
-Libraries: 0
-Status: complete
-```
-
-A healthy record may render:
+For example, a missing record may render:
 
 ```text
-Open Forge library list
-Workspace: <selected workspace>
-Record: .agents/open-forge.libraries.json (complete)
-Inventory: not requested
-
-Library: team-knowledge
-Source root: shared/team-knowledge (available)
-  .agents/directives/review.md -> .agents/directives/review.md
-  Source ID: directives/review
-  Link: current
-
+No Libraries are registered.
 Status: complete
+Workspace: <selected workspace>
+Selected by: current directory
+Record: missing (.agents/open-forge.libraries.json)
+Registered Libraries: 0
+Source inventory: not scanned (library list checks registered links only)
+Checks: complete
 ```
 
-Compact output retains the result, coverage, `inventory=not-requested`, Library
-IDs, source roots, registered paths, source IDs when available, link state, and
-status. It omits optional explanation but does not omit a finding or safety
-state. `--verbose` adds bounded diagnostic detail without changing facts or
-status.
+The values are illustrative. `--verbose` remains a separate bounded diagnostic
+surface and does not change facts or status.
 
 `--json` emits one complete structured result from the same typed result for
 every semantic status. It does not follow links, start an inventory, or prompt.

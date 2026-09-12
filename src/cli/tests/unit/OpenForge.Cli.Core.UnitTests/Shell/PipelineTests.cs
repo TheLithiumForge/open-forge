@@ -1,9 +1,9 @@
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
@@ -344,6 +344,31 @@ public sealed class PipelineTests
             new CliRendererSet<TestResult>(
                 presentation => "human",
                 presentation => "{\"status\":\"value\"}"));
+    }
+
+    [Theory(DisplayName = "Human result headers preserve status, workspace and one next action in both views"), Trait("Feature", "cli-pipeline"), Trait("Evidence", "Unit")]
+    [InlineData((int)CliView.Compact)]
+    [InlineData((int)CliView.Expanded)]
+    public void HumanHeaderAndNext(int value)
+    {
+        var result = new TestResult("test", CliSemanticStatus.Attention,
+            new CliWorkspace("/work/repo", "/work/repo", CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            new CliNextAction("open-forge doctor", "Review the findings."));
+        var request = new CliPresentationRequest<TestResult>(result, new(CliOutputFormat.Human, (CliView)value, CliVerbosity.Normal));
+        var builder = new System.Text.StringBuilder();
+        CliHumanText.AppendHeader(builder, request, "Checks finished.");
+        CliHumanText.AppendNext(builder, request);
+        var text = builder.ToString();
+        Assert.StartsWith("Checks finished." + Environment.NewLine + "Status: requires attention", text, StringComparison.Ordinal);
+        Assert.Contains("Workspace: " + Path.GetFullPath("/work/repo"), text, StringComparison.Ordinal);
+        Assert.Contains("Selected by: --workspace", text, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge doctor", text, StringComparison.Ordinal);
+        Assert.Equal(value == (int)CliView.Expanded, text.Contains("Review the findings.", StringComparison.Ordinal));
+        Assert.Equal("exact/path\uFFFDname\uFFFD", CliHumanText.Text("exact/path\nname\u001b"));
+        Assert.Equal(new string('x', 900), CliHumanText.Text(new string('x', 900)));
+        Assert.Equal("current directory", CliHumanText.Selection(CliWorkspaceSelectionMethod.CurrentDirectory));
+        Assert.Throws<ArgumentOutOfRangeException>(() => CliHumanText.Selection((CliWorkspaceSelectionMethod)999));
+        Assert.Throws<ArgumentOutOfRangeException>(() => CliHumanText.Status((CliSemanticStatus)999));
     }
 
     private static TestResult Result(CliSemanticStatus status)

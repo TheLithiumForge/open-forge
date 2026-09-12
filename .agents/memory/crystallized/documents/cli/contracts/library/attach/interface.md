@@ -296,40 +296,40 @@ The primary human result for `complete`, `attention`, and `incomplete` goes to
 stdout. The primary human result for `invalid`, `blocked`, `failed`, and
 `interrupted` goes to stderr. Bounded diagnostics use stderr.
 
-### Dry-run example
+Both views lead with the operation outcome or preview, status, exact workspace
+and selection method, then Library identity and the recorded roots. Human
+`requires attention` represents the typed `attention` status. Findings and
+blockers remain prominent before a plan can be mistaken for completed work.
+
+The observed record and links are labelled as before-change facts. Comparison
+labels describe membership in the intended Library and never imply a source scan
+for Detach. Mappings and effects are grouped beside their exact paths. Both views retain
+all affected or preserved paths, permission decisions, application and
+verification state, recovery disposition and residual paths. Expanded adds
+supporting source, ownership, expected-state and hash details. Plan rows remain
+labelled as planned when application is incomplete, failed or interrupted;
+rendering does not infer that an individual planned effect was applied. A
+source file and the relative link exposing it remain distinct identities.
+No path is truncated. At most one required Next action comes from the result.
+
+### Dry-run excerpt
 
 ```text
-The library would be attached.
-Library: team-knowledge
-Source root: shared/team-knowledge
-Projected paths: 1
-Record: create
-
-No files changed (--dry-run).
+Library attach preview completed.
+Status: complete
 ```
 
-### Applied example
+The identity and checks precede the planned changes:
 
 ```text
-The library was attached.
-Library: team-knowledge
-Source root: shared/team-knowledge
-Projected paths: 1
-Generated regions updated: 1
-Record: published
+Plan: complete
+  Create link: docs/guide.md -> ../shared/team-knowledge/guide.md
+  Record: create (.agents/open-forge.libraries.json)
 ```
 
-### Collision example
-
-```text
-The library was not attached.
-Library: team-knowledge
-Blocked: .agents/directives/review.md has an existing consumer occupant.
-Next: move or remove the occupant, then run attach again.
-```
-
-The paths in these examples are repository-relative illustrative values. A
-complete result has no required `Next:` action.
+The dry run also prints `No files changed (--dry-run).` Application remains
+`not started`. A completed apply reports its actual application, verification
+and record-publication states; planned paths alone never establish success.
 
 ## Structured Output
 

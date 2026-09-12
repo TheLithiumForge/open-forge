@@ -299,40 +299,44 @@ safety, every created or retired path, every blocker, and at most one required
 `incomplete` goes to stdout. The primary human result for `invalid`, `blocked`,
 `failed`, and `interrupted` goes to stderr. Bounded diagnostics use stderr.
 
-### Unchanged no-op example
+Both views lead with the operation outcome or preview, status, exact workspace
+and selection method, then Library identity and the recorded roots. Human
+`requires attention` represents the typed `attention` status. Findings and
+blockers remain prominent before a plan can be mistaken for completed work.
+
+The observed record and links are labelled as before-change facts. Comparison
+labels describe membership in the intended Library and never imply a source scan
+for Detach. Mappings and effects are grouped beside their exact paths. Both views retain
+all affected or preserved paths, permission decisions, application and
+verification state, recovery disposition and residual paths. Expanded adds
+supporting source, ownership, expected-state and hash details. Plan rows remain
+labelled as planned when application is incomplete, failed or interrupted;
+rendering does not infer that an individual planned effect was applied. A
+source file and the relative link exposing it remain distinct identities.
+No path is truncated. At most one required Next action comes from the result.
+
+### No-op and reconciliation excerpts
+
+A successful no-op includes:
 
 ```text
-The library is already synchronized.
-Library: team-knowledge
-Source root: shared/team-knowledge
-Created links: 0
-Retired links: 0
-Record: unchanged
+Library sync completed.
+Status: complete
 ```
 
-### Reconciliation dry-run example
+Its application line says `no changes needed`. A reconciliation preview lists
+actual new and retired link effects under its plan:
 
 ```text
-The library would be synchronized.
-Library: team-knowledge
-Create: .agents/guidance/new.md
-Retire: .agents/guidance/old.md
-Record paths: 1
-
-No files changed (--dry-run).
+Plan: complete
+  Create link: docs/new.md -> ../shared/team-knowledge/new.md
+  Remove link: docs/old.md -> ../shared/team-knowledge/old.md
+  Record: replace (.agents/open-forge.libraries.json)
 ```
 
-### Changed occupant example
-
-```text
-The library was not synchronized.
-Library: team-knowledge
-Blocked: .agents/guidance/new.md has a changed consumer occupant.
-Next: restore the expected missing destination, then run sync again.
-```
-
-The paths in these examples are repository-relative illustrative values. A
-complete no-op and a successful application have no required `Next:` action.
+The preview also prints `No files changed (--dry-run).` A blocker appears with
+its status, code, cause and path before the plan. Next is shown only when the
+result supplies a required action.
 
 ## Structured Output
 

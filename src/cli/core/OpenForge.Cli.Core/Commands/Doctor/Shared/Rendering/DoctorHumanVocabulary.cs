@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Rendering;
 
@@ -18,15 +19,9 @@ internal static class DoctorHumanVocabulary
         _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The status is not defined."),
     };
 
-    internal static string Status(CliSemanticStatus value)
-        => value == CliSemanticStatus.Attention ? "requires attention" : CliStatusDefinitions.Read(value).MachineName;
+    internal static string Status(CliSemanticStatus value) => CliHumanText.Status(value);
 
-    internal static string Selection(CliWorkspaceSelectionMethod value) => value switch
-    {
-        CliWorkspaceSelectionMethod.CurrentDirectory => "current directory",
-        CliWorkspaceSelectionMethod.ExplicitWorkspace => "--workspace",
-        _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The workspace selection is not defined."),
-    };
+    internal static string Selection(CliWorkspaceSelectionMethod value) => CliHumanText.Selection(value);
 
     internal static string Domain(DoctorDomainKind value) => value switch
     {

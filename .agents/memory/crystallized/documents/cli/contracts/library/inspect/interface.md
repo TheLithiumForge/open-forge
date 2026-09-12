@@ -298,35 +298,22 @@ reports the exact comparison and does not select a repair or another operation.
 
 ## Human And Structured Output
 
-The default human view is expanded. It identifies the exact Library ID, record
-path and state, source root state, inventory coverage, deterministic eligible
-paths, registered paths, observed link state, comparison relations, findings,
-and status. It states `attention` only when all required inventory and
-comparison facts are safe and complete.
+Both human views begin with the inspection outcome, status, exact workspace
+and selection method, then Library identity, record state, source/destination
+roots, source-root state and inventory/comparison coverage. Human
+`requires attention` represents typed `attention`; it does not turn an incomplete
+inventory into a complete drift report.
 
-An exact healthy result may render:
+Comparison rows group source/destination identity, source ID, actual registration
+and eligibility membership, and the exact comparison relation. Registered or
+eligible paths absent from the comparison remain explicitly visible as not
+compared. No rendering step rescans files or infers membership from a relation.
+Every finding and safety/availability condition remains visible.
 
-```text
-Open Forge library inspect
-Library: team-knowledge
-Record: .agents/open-forge.libraries.json (complete)
-Source root: shared/team-knowledge (available)
-Inventory: complete (1 eligible path)
-
-.agents/directives/review.md
-  Source ID: directives/review
-  Registered: yes
-  Observed link: current
-  Relation: current
-
-Status: complete
-```
-
-Compact output retains the Library ID, record and source-root states, inventory
-coverage, source and destination paths, destination-derived source IDs, exact
-comparison relations, findings, and status. It omits optional explanation but
-does not omit a safety or availability state. `--verbose` adds bounded
-diagnostics without changing the typed result.
+Expanded is the default and adds expected/observed relative link targets and
+supporting observations. Compact uses shorter rows while retaining all required
+identities, relations and findings. Paths are not truncated. `--verbose` remains
+a separate bounded diagnostic surface and never changes the typed result.
 
 `--json` emits one complete structured result from the same typed result for
 every semantic status and never prompts. Human `complete`, `attention`, and

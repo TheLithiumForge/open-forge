@@ -2,9 +2,11 @@ using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Detach.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
+using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Effects;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Mutation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Detach.Shared.Rendering;
@@ -56,6 +58,32 @@ public sealed class LibraryDetachPresentationTests
         Assert.Equal("not-requested", application.GetProperty("recovery").GetProperty("state").GetString());
         Assert.Equal(JsonValueKind.Null, application.GetProperty("recordPublication").GetProperty("publishedLast").ValueKind);
         Assert.Empty(application.GetProperty("residuals").EnumerateArray());
+    }
+
+    [Theory(DisplayName = "Library Detach views preserve planned paths and interrupted recovery without claiming application"), Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    [InlineData((int)CliView.Compact)]
+    [InlineData((int)CliView.Expanded)]
+    public void InterruptedViews(int value)
+    {
+        var seed = Result((int)CliSemanticStatus.Interrupted);
+        var result = seed with
+        {
+            Next = new CliNextAction("open-forge doctor", "Review recovery before continuing."),
+            Result = seed.Result with
+            {
+                Plan = LibraryHumanPresentationData.Plan(LibraryLinkEffectKind.Delete),
+                Application = LibraryHumanPresentationData.Interrupted(),
+                Permissions = LibraryHumanPresentationData.GrantedPermission(),
+            },
+        };
+        var before = LibraryDetachPresentation.RenderJson(new(result, new(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal)));
+        var text = LibraryDetachPresentation.RenderHuman(new(result, new(CliOutputFormat.Human, (CliView)value, CliVerbosity.Normal)));
+        LibraryHumanPresentationData.AssertInterrupted(text, value == (int)CliView.Expanded);
+        Assert.Equal(1, text.Split("Next: open-forge doctor", StringSplitOptions.None).Length - 1);
+        Assert.Equal(value == (int)CliView.Expanded, text.Contains("Review recovery before continuing.", StringComparison.Ordinal));
+        Assert.Equal(before, LibraryDetachPresentation.RenderJson(new(result, new(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal))));
+        Assert.Contains("Source files are not scanned for this operation.", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("Source location:", text, StringComparison.Ordinal);
     }
 
     private static LibraryDetachResult Result(int statusValue)

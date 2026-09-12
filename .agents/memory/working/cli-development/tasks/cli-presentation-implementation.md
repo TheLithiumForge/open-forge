@@ -48,6 +48,18 @@ qualified set into local develop. Keep required source/tests/snapshots and these
 records tracked; artifact outputs are disposable. Existing unrelated delivery
 work at 6cd93fcf remains intact.
 
+## Deferred Display Filtering
+
+The optional display filter remains backlog, reconfirmed by the user during
+implementation. No spelling or global status/severity vocabulary is selected.
+After the new views are dogfooded, evaluate Doctor category filtering first and
+per-finding status/severity filtering where the command actually has that fact.
+Overall command status is distinct from individual finding severity. Any future
+display filter must disclose omitted rows/categories and preserve overall
+coverage, status, exit, operation behavior and recovery information. The
+[filtering recommendation](cli-command-output-proposals.md#filtering-recommendation)
+owns the analysis. This does not block the approved presentation sets.
+
 ## Set 1 Freeze
 
 Baseline: `8770d24a`. Branch: `codex/cli-presentation-implementation`, existing
@@ -243,9 +255,9 @@ new trust boundary or exceptional machinery. Raw artifacts remain disposable.
 
 ## Current Checkpoint
 
-Set 1 squash: `5bb4aefa`. Set 2 is qualified and ready for its authorized local
-squash. Set 3 contracts are drafted; implementation starts after that squash.
-Sets 3–8 remain required. User approval already covers these changes.
+Set 1 squash: `5bb4aefa`. Set 2 squash: `54c28134`. Set 3 Library human
+rendering is implemented; focused preservation tests and prose review are active.
+Sets 4–8 remain required. User approval already covers these changes.
 
 
 ## Set 2 Final Qualification
@@ -274,3 +286,172 @@ remain visible. Earlier Doctor output-size evidence remains above; no operation,
 kind, count, exit, default visibility or JSON changes occurred in this set.
 Required evidence and snapshots are tracked; raw artifacts are disposable.
 This receipt accompanies the authorized local squash; no remote effect occurred.
+
+
+## Set 2 Integration And Set 3 Progress
+
+Local squash `54c28134` preserves the concurrent delivery integration `e3f803bc`.
+CLI source/tests are identical to qualified `39f0ec39`; the repository tree also
+contains that separately integrated delivery tooling and its work records. After
+merging develop into the presentation branch, both committed trees equal
+`3857d425cf78499d6c6e100ffae63532673884aa`. The Set 2 six-suite receipt belongs
+to its exact source/tooling predecessor, not a rerun using the newer delivery
+scripts. The next full gate uses the integrated delivery entry point.
+
+Set 3 implements neutral human headers/Next/text and all five Library views.
+Existing 472 Library/Doctor/Status Unit cases pass after the initial source
+change, including Doctor/Status snapshots. New fixtures cover incomplete and
+interrupted output, exact paths, membership, unknown counts, planned effects,
+permissions and unchanged JSON. An initial new-test build found a nullable test
+access and three missing test imports; corrected before qualification. No product
+or operation issue was inferred from those compile errors. Shared headers retain
+Doctor/Status output. Required fixtures remain tracked source, not artifacts.
+
+
+Set 3 focused verification: 574 Library, Doctor, Status and Shell Unit cases
+passed, zero failures/skips, after the corrected test build (zero warnings/errors).
+Review corrected the human `retired` label to `no longer eligible`: retirement
+must not claim that source bytes were physically removed. `added` is `new eligible
+file`. The pending final gate includes this wording correction. The reviewed
+List snapshot is authored from a small fixture; semantic assertions independently
+cover counts, IDs, paths, unknown state and unchanged JSON. Existing public
+journey counts and full JSON graphs remain unchanged.
+
+
+Set 3 final review retained blocked/unavailable ownership observations in compact
+output even when the result has no duplicate collision finding. The corresponding
+Unit regression is part of the final candidate. Finding Library IDs differing
+from the selected identity are also retained. No operation or JSON projection
+changed. The final native build and six-suite gate now own qualification of all
+source, tests and these bounded corrections.
+
+
+## Set 3 Dogfood Review — Observation Labels
+
+The managed 4bd30bd7 CLI passed 12 direct Library calls in an owned temporary
+workspace: both views of Attach preview, List, Inspect, Sync preview and Detach
+preview; then Attach and source-independent Detach application. All exits were
+zero with empty stderr. The ten read-only calls preserved a complete snapshot
+of files, directories, raw links and isolated external state. Source bytes were
+preserved by Attach; Detach succeeded after the source file was deliberately
+removed and deleted only the registered link. All temporary fixtures were removed.
+
+This exposed a presentation correction before acceptance. Mutation relation
+Retired includes source-independent Detach, so `no longer eligible` overstates a
+source observation. LibraryMutationCompletionProjection.Relation confirms that
+meaning. Use `not in the intended Library` and a neutral `Comparison` label.
+Label the mutation record and link observations as before-change facts, so a
+completed detach does not make the observed prior record/link appear still
+installed. The current frozen build may finish, but it is not the final accepted
+candidate and will not be squash-merged. Apply this bounded wording correction,
+add a direct regression, and qualify the revised source before integration.
+
+## Set 4 Freeze — Extension Human Views
+
+Starts after the qualified Library squash. Cover List, Inspect, Create, Install,
+Update and Remove using their existing typed results. Update each affected
+Interface and Inspect Behavior's prohibition on human regrouping while keeping
+operation and JSON ordering unchanged. No command selection, dependency closure,
+force/prune/permission policy, ownership, filesystem effect, recovery, finding
+kind, status, exit or JSON change is included. The user-approved compact JSON and
+colour remain separate later sets. No dependency or exceptional machinery.
+
+Use the neutral human header/status/Next/text behavior already accepted in Set 3.
+Create operates on a catalogue and always has Workspace=null by contract; retain
+its catalogue/destination framing and unchanged workspace-lifecycle fact rather
+than implying a failed workspace lookup. If Library and Extension need identical
+outcome wording, promote that small complete formatting behavior to CliHumanText
+and preserve Library output; do not introduce a common command result or engine.
+Keep command-specific facts and rendering below each leaf's Shared/Rendering.
+Retain Extension diagnostic escaping and its limits; human metadata alone uses
+neutral control-character sanitization with exact untruncated paths.
+
+List preserves separate selected Installed/Available sections, exact source,
+coverage/trust, IDs and known versions. Expanded adds authored name/description,
+counts and managed-path details. An empty returned array with incomplete coverage
+is not an unqualified empty installation. Inspect keeps the exact ID/source,
+installed/available and lifecycle states, nullable counts, dependency coverage,
+comparison mode and all significant path differences. Expanded explains installed
+baseline/current workspace/selected package sides, ownership and fingerprint
+facts, full known dependency/path inventories and derived generated navigation.
+Unknown intended counts stay unknown; no renderer converts a missing package to
+zero. Preserve all finding identities, locations and candidates; never infer a
+new repair from a relation or a missing source.
+
+Create shows manifest metadata/dependencies and all intended/applied scaffold
+paths in both views; group exact effect identities without calling an intended
+path applied. Expanded adds concrete verification and generated-file detail.
+Keep failed/interrupted or no-op outcome distinctions from the typed result.
+
+Install/Update/Remove place outcome, workspace/source/selected packages, findings
+and safety conditions before changes. Preserve dependency ordering in operation
+and JSON; human grouping uses exact path/package identities and preserves every
+effect action, outcome and residual. Update groups comparisons beside actual
+effects; Remove groups owner/keep/delete facts beside effects while distinguishing
+kept ownership from files kept unmanaged. Install retains footprint paths absent
+from its effect rows. Keep additional unmatched facts, not just joined rows.
+Expanded adds full supporting Framework/lifecycle/verification/permission details;
+both retain effective force/prune/automatic/preview choices, retained dependents,
+protected local content, residual recovery path/state and the actual required Next.
+
+Evidence: small authored snapshots plus independent identity/count/unknown-state,
+partial-effect/recovery, grouping and unchanged-JSON assertions. Keep all existing
+public journey counts. Readability does not justify new operation behavior or
+claims about deleted source bytes. Direct managed/native command dogfood and the
+full six-suite gate qualify this coherent family and any neutral promotion before
+its authorized local squash. Source is reversible in Git; temporary fixtures and
+raw artifacts are disposable, with tracked reproduction/evidence records here.
+
+
+The before-change/retirement wording correction is now implemented with a direct
+Unit regression. The 4bd30bd7 native build finished with zero warnings/errors,
+but its six-suite gate was intentionally not run because dogfood had already
+identified the wording issue. The revised candidate replaces that build as the
+acceptance target. No issue was found with the actual source-independent Detach
+behavior, which remains unchanged.
+
+
+## Set 3 Public Evidence Alignment
+
+Candidate cccfa3b9 builds with zero warnings/errors; its 3,270 Unit and 1,745
+managed Integration cases pass. The managed public suite passes 122/123 and
+exposes one outdated heading assertion in RequiredIdOmissionIsInvalidWithoutObservation.
+It expected lower-case `library inspect` inside the old heading. The new heading
+is `Library inspection: invalid.`. Direct native omission returns the expected
+exit 4, empty stdout and exact stable `library-inspect.invalid-id` finding.
+Replace the wording assertion with that diagnostic-code assertion; retain exit,
+stream, cause/status and unchanged-workspace/infrastructure checks. No production
+fix is needed. The gate stopped before its final three modes, so no full-suite
+pass is claimed for cccfa3b9. Qualify the fixture-aligned candidate next.
+
+
+Set 4 evidence order: after focused in-memory tests and a managed publish, run
+all changed Extension public command classes before the native freeze. Their
+human assertions include Create intended/applied counts and Remove selected IDs,
+prune/source-preservation/no-op facts. Align wording assertions deliberately while
+retaining independent effect, stream, status and unchanged-byte evidence. This
+catches presentation-fixture mismatches before the expensive native qualification;
+it does not replace the final six-suite gate. No additional public journey is added.
+
+## Set 3 Qualified Closeout
+
+Qualified source: `4d61ecb63244b3d3468d90ea5e94a6511c908d84`.
+`npm run build:native -- --sha --no-restore` passes with zero warnings/errors;
+`npm run test:built` passes all six Linux suites: 3,270 Unit, 1,745 Integration
+in managed and native modes, and 123 public cases in each of managed, native
+runner/native CLI, and managed runner/native CLI modes. All report zero failures,
+skips, pending or other outcomes. The manifest confirms clean executable source
+and `tested: true`; source and built closures were checked before and after tests.
+Native CLI SHA-256: `d02f337ffbc370fcfc5f4608a67574a2566ea067ea120891f3aaebcb40bb6cb4`.
+Reports under `artifacts/delivery/linux-x64/reports` are disposable; the commands,
+source identity and receipt here are the durable evidence.
+
+This closes Library List/Inspect/Attach/Sync/Detach human views and the neutral
+header/Next promotion. Existing JSON graphs and mutation behavior are preserved.
+The one public assertion correction checks stable diagnostic identity instead
+of old heading wording. The direct managed/native dogfood and focused semantic
+regressions are recorded above. Extension contract drafts are excluded from this
+set's commit/squash; their frozen implementation is next. Main develop's separate
+`b88f5e7a` delivery/help documentation change has no CLI source changes and is
+preserved during local integration. No remote action or global CLI refresh occurs
+in this set; the final installation refresh remains Set 8.

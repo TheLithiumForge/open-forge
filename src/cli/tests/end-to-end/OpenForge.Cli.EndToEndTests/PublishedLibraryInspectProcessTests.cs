@@ -32,7 +32,7 @@ public sealed class PublishedLibraryInspectProcessTests
             $"Expected exit 4, actual {response.ExitCode}.\nStandard error:\n{response.StandardError}\nStandard output:\n{response.StandardOutput}");
         Assert.Equal(string.Empty, response.StandardOutput);
         Assert.Contains("invalid", response.StandardError, StringComparison.Ordinal);
-        Assert.Contains("library inspect", response.StandardError, StringComparison.Ordinal);
+        Assert.Contains("library-inspect.invalid-id", response.StandardError, StringComparison.Ordinal);
         workspace.AssertNoInfrastructure();
     }
 

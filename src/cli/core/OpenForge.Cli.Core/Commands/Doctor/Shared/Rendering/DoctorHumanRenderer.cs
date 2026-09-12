@@ -1,8 +1,9 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Rendering;
 
@@ -15,13 +16,8 @@ internal static class DoctorHumanRenderer
         var result = presentation.Result;
         var view = presentation.Presentation.View;
         var builder = new StringBuilder();
-        builder.AppendLine($"""
-            {DoctorHumanVocabulary.Outcome(result.Status)} No files changed.
-            Status: {DoctorHumanVocabulary.Status(result.Status)}
-            Workspace: {Text(result.Workspace?.LexicalRoot ?? "unavailable")}
-            Selected by: {Selection(result)}
-            Checks: {DoctorWireVocabulary.Coverage(result.Diagnosis.Coverage)}
-            """);
+        CliHumanText.AppendHeader(builder, presentation, $"{DoctorHumanVocabulary.Outcome(result.Status)} No files changed.");
+        builder.AppendLine($"Checks: {DoctorWireVocabulary.Coverage(result.Diagnosis.Coverage)}");
         DoctorCountsHumanRenderer.Append(builder, result.Diagnosis.Counts, string.Empty);
         foreach (var domain in result.Diagnosis.Domains)
         {
@@ -65,11 +61,6 @@ internal static class DoctorHumanRenderer
         DoctorActionHumanRenderer.Append(builder, domain.Actions.Where(action => !represented.Contains(action)).ToArray(), view, "  ");
     }
 
-    private static string Selection(DoctorResult result)
-        => result.Workspace is { } workspace
-            ? DoctorHumanVocabulary.Selection(workspace.SelectedBy)
-            : "unavailable";
-
     internal static string Text(string value)
-        => string.Concat(value.Select(character => char.IsControl(character) ? '\uFFFD' : character));
+        => CliHumanText.Text(value);
 }

@@ -1,15 +1,17 @@
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json;
+using System.Text;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Models.Presentation.Envelope;
 using OpenForge.Cli.Core.Commands.Library.Shared.Rendering.Coordinates;
+using OpenForge.Cli.Core.Commands.Library.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 namespace OpenForge.Cli.Core.Commands.Library.Attach.Shared.Rendering;
 
@@ -32,7 +34,7 @@ internal static class LibraryAttachPresentation
             """),
     ]);
     internal static string RenderHuman(CliPresentationRequest<LibraryAttachResult> presentation)
-        => Render(presentation, "attach");
+        => Render(presentation);
     internal static string RenderJson(CliPresentationRequest<LibraryAttachResult> presentation)
     {
         Validate(presentation);
@@ -52,25 +54,32 @@ internal static class LibraryAttachPresentation
         }, LibraryAttachJsonContext.Default.LibraryAttachJsonDocument);
     }
 
-    private static string Render(CliPresentationRequest<LibraryAttachResult> presentation, string leaf)
+    private static string Render(CliPresentationRequest<LibraryAttachResult> presentation)
     {
         Validate(presentation);
         var result = presentation.Result;
+        var payload = result.Result;
+        var view = presentation.Presentation.View;
         var builder = new StringBuilder();
-        builder.Append("Library ").Append(leaf).Append(": id=")
-            .Append(Escape(result.Result.Identity.LibraryId ?? "unavailable"))
-            .Append("; mode=").Append(LibraryModeConverter.ReadWireValue(result.Result.Identity.Mode))
-            .Append("; plan=").Append(LibraryPlanStateConverter.ReadWireValue(result.Result.Plan.State))
-            .Append("; status=").AppendLine(CliStatusDefinitions.Read(result.Status).MachineName);
-        foreach (var finding in result.Result.Findings)
+        CliHumanText.AppendHeader(builder, presentation, LibraryHumanText.Heading("Library attach", result.Status, payload.Identity.Mode));
+        LibraryObservationHumanRenderer.AppendIdentity(builder, payload.Identity);
+        foreach (var finding in payload.Findings)
         {
-            builder.Append("Finding: ").Append(LibraryAttachDefinitions.ReadFindingCode(finding.Code))
-                .Append("; path=").Append(Escape(finding.Path ?? "unavailable"))
-                .Append("; ").AppendLine(Escape(finding.Cause));
+            LibraryHumanText.AppendFinding(builder, finding.Status,
+                code: LibraryAttachDefinitions.ReadFindingCode(finding.Code), cause: finding.Cause, path: finding.Path);
+            if (finding.LibraryId is { } id && id != payload.Identity.LibraryId)
+            {
+                builder.AppendLine($"  Library: {LibraryHumanText.Value(id)}");
+            }
         }
-
-        builder.Append("Status: ").Append(CliStatusDefinitions.Read(result.Status).MachineName);
-        return builder.ToString();
+        LibraryApplicationHumanRenderer.Append(builder, payload.Application, view);
+        LibraryObservationHumanRenderer.AppendRecord(builder, payload.Record, view);
+        LibraryObservationHumanRenderer.AppendSource(builder, payload.Source, view);
+        LibraryObservationHumanRenderer.AppendProjection(builder, payload.Projection, view);
+        LibraryPlanHumanRenderer.Append(builder, payload.Plan, payload.Record.Path, view);
+        LibraryPermissionHumanRenderer.Append(builder, payload.Permissions, view);
+        CliHumanText.AppendNext(builder, presentation);
+        return builder.ToString().TrimEnd();
     }
 
     private static LibraryJsonWorkspace? Workspace(CliWorkspace? workspace)
@@ -92,7 +101,6 @@ internal static class LibraryAttachPresentation
         CliPresentationDefinitions.Validate(presentation.Presentation);
     }
 
-    private static string Escape(string value) => value.Replace('\r', ' ').Replace('\n', ' ');
 }
 
 [JsonSourceGenerationOptions(

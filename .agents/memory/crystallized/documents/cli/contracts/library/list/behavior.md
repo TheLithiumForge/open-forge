@@ -195,8 +195,9 @@ observation boundary and does not select a repair or follow-up operation.
 
 Human and structured renderers consume one typed result. Compact presentation
 retains IDs, source roots, registered paths, source IDs, link states, coverage,
-the explicit `inventory=not-requested` fact, findings, and status. Expanded
-presentation adds workspace framing and bounded causes. `--verbose` adds only
+the explicit fact that source inventory was not scanned, findings, and status. Expanded
+presentation adds raw link targets and bounded causes. Both views retain
+workspace identity and selection. `--verbose` adds only
 bounded diagnostics. JSON preserves the complete command-local result and the
 shared envelope for every status.
 

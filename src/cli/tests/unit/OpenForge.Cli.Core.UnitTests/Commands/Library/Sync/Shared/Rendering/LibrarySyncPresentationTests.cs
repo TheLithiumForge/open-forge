@@ -1,10 +1,12 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
+using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Effects;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Sync.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Mutation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Sync.Shared.Rendering;
@@ -56,6 +58,30 @@ public sealed class LibrarySyncPresentationTests
         Assert.Equal("not-requested", application.GetProperty("recovery").GetProperty("state").GetString());
         Assert.Equal(JsonValueKind.Null, application.GetProperty("recordPublication").GetProperty("publishedLast").ValueKind);
         Assert.Empty(application.GetProperty("residuals").EnumerateArray());
+    }
+
+    [Theory(DisplayName = "Library Sync views preserve planned paths and interrupted recovery without claiming application"), Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    [InlineData((int)CliView.Compact)]
+    [InlineData((int)CliView.Expanded)]
+    public void InterruptedViews(int value)
+    {
+        var seed = Result((int)CliSemanticStatus.Interrupted);
+        var result = seed with
+        {
+            Next = new CliNextAction("open-forge doctor", "Review recovery before continuing."),
+            Result = seed.Result with
+            {
+                Plan = LibraryHumanPresentationData.Plan(LibraryLinkEffectKind.Create),
+                Application = LibraryHumanPresentationData.Interrupted(),
+                Permissions = LibraryHumanPresentationData.GrantedPermission(),
+            },
+        };
+        var before = LibrarySyncPresentation.RenderJson(new(result, new(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal)));
+        var text = LibrarySyncPresentation.RenderHuman(new(result, new(CliOutputFormat.Human, (CliView)value, CliVerbosity.Normal)));
+        LibraryHumanPresentationData.AssertInterrupted(text, value == (int)CliView.Expanded);
+        Assert.Equal(1, text.Split("Next: open-forge doctor", StringSplitOptions.None).Length - 1);
+        Assert.Equal(value == (int)CliView.Expanded, text.Contains("Review recovery before continuing.", StringComparison.Ordinal));
+        Assert.Equal(before, LibrarySyncPresentation.RenderJson(new(result, new(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal))));
     }
 
     private static LibrarySyncResult Result(int statusValue)

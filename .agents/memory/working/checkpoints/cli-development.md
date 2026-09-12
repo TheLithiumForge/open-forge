@@ -29,10 +29,12 @@ all commands and JSON, compact-to-expanded fallback, and automatic terminal
 colour with no colour flag or configurable palette. No AI view is added.
 The [implementation capsule](../cli-development/tasks/cli-presentation-implementation.md) owns the
 sequential sets, frozen boundaries and evidence. Set 1 is squash-merged as
-`5bb4aefa`. Set 2 implements Doctor/Status human views, typed grouping and full
-paths; all six final managed/native suites pass at `39f0ec39`. Set 3 starts
-with Library after the authorized Set 2 squash. Later sets implement
-Extension and remaining human views, compact JSON, automatic colour and guidance.
+`5bb4aefa`; Set 2 Doctor/Status is squash-merged as `54c28134`. Set 3
+Library human views pass all six managed/native suites at `4d61ecb6`: 3,270 Unit,
+1,745 Integration in both modes and 123 public cases in all three modes, with
+zero failures/skips. Its authorized local squash closes this set. Set 4 Extension
+human views is next, followed by remaining human views, compact JSON, automatic
+colour and guidance. Optional display filtering remains explicit backlog.
 Update each affected Interface with its approved set. Parsing P2–P6 stay backlog.
 
 Cleanup completed: the parser probe was outside the repository and has no matching

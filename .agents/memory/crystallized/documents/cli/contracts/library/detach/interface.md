@@ -288,39 +288,41 @@ every removed or safely absent path, every blocker, and at most one required
 `incomplete` goes to stdout. The primary human result for `invalid`, `blocked`,
 `failed`, and `interrupted` goes to stderr. Bounded diagnostics use stderr.
 
-### Dry-run example
+Both views lead with the operation outcome or preview, status, exact workspace
+and selection method, then Library identity and the recorded roots. Human
+`requires attention` represents the typed `attention` status. Findings and
+blockers remain prominent before a plan can be mistaken for completed work.
+
+The observed record and links are labelled as before-change facts. Comparison
+labels describe membership in the intended Library and never imply a source scan
+for Detach. Mappings and effects are grouped beside their exact paths. Both views retain
+all affected or preserved paths, permission decisions, application and
+verification state, recovery disposition and residual paths. Expanded adds
+supporting source, ownership, expected-state and hash details. Plan rows remain
+labelled as planned when application is incomplete, failed or interrupted;
+rendering does not infer that an individual planned effect was applied. A
+source file and the relative link exposing it remain distinct identities.
+No path is truncated. At most one required Next action comes from the result.
+
+### Dry-run excerpt
 
 ```text
-The library would be detached.
-Library: team-knowledge
-Registered paths: 1
-Exact links to remove: 1
-
-No files changed (--dry-run).
+Library detach preview completed.
+Status: complete
 ```
 
-### Applied dangling-link example
+Identity includes the recorded source and destination roots and the statement
+`Source files are not scanned for this operation.` The plan lists exact links:
 
 ```text
-The library was detached.
-Library: team-knowledge
-Removed exact links: 1
-Dangling exact links removed: 1
-Record: removed
-Source: preserved
+Plan: complete
+  Remove link: docs/guide.md -> ../shared/team-knowledge/guide.md
+  Record: delete (.agents/open-forge.libraries.json)
 ```
 
-### Changed occupant example
-
-```text
-The library was not detached.
-Library: team-knowledge
-Blocked: .agents/directives/review.md no longer has its registered link.
-Next: restore the exact registered link or move the changed occupant, then run detach again.
-```
-
-The paths in these examples are repository-relative illustrative values. A
-complete result has no required `Next:` action.
+The preview also prints `No files changed (--dry-run).` A completed apply reports
+actual application and verification states. A failed or interrupted apply keeps
+its recovery disposition and residual paths visible beside those states.
 
 ## Structured Output
 

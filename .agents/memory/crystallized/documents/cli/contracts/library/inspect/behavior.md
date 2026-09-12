@@ -226,8 +226,10 @@ facts and does not select a repair or mutation operation.
 Human and structured renderers consume one typed result. Compact output retains
 the exact Library ID, record and source-root state, complete-inventory state,
 source and destination paths, destination-derived source IDs, relations,
-findings, and status. Expanded output adds bounded explanations and workspace
-framing. `--verbose` adds bounded diagnostics only. JSON retains the complete
+findings, and status. Both views retain workspace identity and selection.
+Expanded output adds raw link targets and bounded explanations. Comparison
+rows may group actual registration and eligibility facts; unmatched registered
+or eligible rows remain visible. `--verbose` adds bounded diagnostics only. JSON retains the complete
 result for every status.
 
 Read-only execution leaves record, source, destination, and unrelated workspace
