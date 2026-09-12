@@ -100,7 +100,7 @@ public sealed class FindApplicationIntegrationTests
         Assert.Contains($"Workspace: {workspace.Path}", result.Output, StringComparison.Ordinal);
         Assert.Contains("Selected by: current directory", result.Output, StringComparison.Ordinal);
         Assert.Contains("Coverage: complete", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Matches: 3", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Found 3 matching sources.", result.Output, StringComparison.Ordinal);
         Assert.Contains("docs", result.Output, StringComparison.Ordinal);
         Assert.Contains("guide", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("result=complete", result.Output, StringComparison.Ordinal);
@@ -117,7 +117,7 @@ public sealed class FindApplicationIntegrationTests
         Assert.Contains($"Workspace: {workspace.Path}", result.Output, StringComparison.Ordinal);
         Assert.Contains("Selected by: --workspace", result.Output, StringComparison.Ordinal);
         Assert.Contains("Coverage: complete", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Matches: 3", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Found 3 matching sources.", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("result=complete", result.Output, StringComparison.Ordinal);
     }
 
@@ -151,7 +151,7 @@ public sealed class FindApplicationIntegrationTests
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
         Assert.Contains("Coverage: complete", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Matches: 1", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Found 1 matching source.", result.Output, StringComparison.Ordinal);
         Assert.Contains("docs", result.Output, StringComparison.Ordinal);
         Assert.Contains("Path: .agents/docs.md", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain(".agents/guide.md", result.Output, StringComparison.Ordinal);
@@ -317,7 +317,7 @@ public sealed class FindApplicationIntegrationTests
         {
             Assert.Equal(plain.Output, verbose.Output);
             Assert.Contains("Coverage: complete", verbose.Output, StringComparison.Ordinal);
-            Assert.Contains("Matches: 3", verbose.Output, StringComparison.Ordinal);
+            Assert.Contains("Found 3 matching sources.", verbose.Output, StringComparison.Ordinal);
         }
         else
         {
@@ -352,8 +352,8 @@ public sealed class FindApplicationIntegrationTests
     }
 
     [Theory(DisplayName = "Direct typed Find terminal results preserve exact compact summaries and next actions"),
-        InlineData("failed", "result=failed\tcoverage=failed\tuniverse=default\tmatches=1", "Next: report the failure and retry with bounded diagnostics."),
-        InlineData("interrupted", "result=interrupted\tcoverage=interrupted\tuniverse=default\tmatches=1", "Next: rerun the same request."),
+        InlineData("failed", "result=failed\tcoverage=failed\tuniverse=default\tmatches=1", "Next: open-forge find --verbose"),
+        InlineData("interrupted", "result=interrupted\tcoverage=interrupted\tuniverse=default\tmatches=1", "Next: open-forge find"),
         Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
     public void DirectTypedTerminalResultsPreserveSummaryAndNext(
         string statusValue,

@@ -96,7 +96,7 @@ public sealed class ContextApplicationIntegrationTests
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
-        Assert.Contains("Result: complete", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Status: complete", result.Output, StringComparison.Ordinal);
         AssertOrdered(
             result.Output,
             "Path: AGENTS.md",

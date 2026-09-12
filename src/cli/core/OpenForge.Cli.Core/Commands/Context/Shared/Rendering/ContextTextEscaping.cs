@@ -15,7 +15,7 @@ internal static class ContextTextEscaping
                 "The text limit must be positive.");
         }
 
-        var escapedValue = EscapeValue(value);
+        var escapedValue = Escape(value);
         if (escapedValue.Length <= maximumLength)
         {
             return escapedValue;
@@ -43,7 +43,7 @@ internal static class ContextTextEscaping
         return builder.ToString();
     }
 
-    private static string EscapeValue(string value)
+    internal static string Escape(string value)
     {
         var builder = new StringBuilder(value.Length);
         for (var index = 0; index < value.Length; index++)

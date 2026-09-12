@@ -363,10 +363,12 @@ location. Include selectors precede exclude selectors, and selector occurrences
 retain their role-local 1-based number. Failed and interrupted event findings are
 last. This order is fixed before either renderer runs.
 
-Compact rendering groups only requested sections, reports per-section coverage,
-and places direct occurrences under `Level 1`. Expanded rendering adds
-directional pointers, locations, raw destinations, resolution and target facts,
-layers, scan evidence, and provenance. JSON retains the complete typed sections,
+Human rendering names the one-hop boundary “Direct links” and retains every
+physical occurrence in the requested sections. Both views report per-section
+coverage and status, source/target identity, line/column, authored destination,
+resolution and source layer. Findings precede occurrence rows. Expanded adds
+fragment and destination coordinates, target layer and the actual scan origin
+in plain language. It does not repeat byte ranges outside JSON. JSON retains the complete typed sections,
 occurrences, coverage, and findings. `--view` cannot change JSON.
 
 ## Safety And Recovery

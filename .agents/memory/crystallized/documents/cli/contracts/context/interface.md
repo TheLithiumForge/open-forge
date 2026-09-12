@@ -340,16 +340,16 @@ open-forge context \
   --content=metadata
 ```
 
-returns metadata blocks without frontmatter or bodies:
+returns metadata blocks without frontmatter or bodies. Illustrative excerpt:
 
 ```text
-Open Forge context
+Context
+Status: complete
 Workspace: D:/work/example
 Selected by: current directory
-Result: complete
-Startup context included: no (--additions-only)
+Sources: 3; coverage complete
 Content: metadata
-Sources: 3 logical sources, 4 emitted layers
+Startup context included: no; additions only: yes
 
 Path: .agents/memory/project-alpha/_project-alpha.md
 ID: memory/project-alpha
@@ -735,11 +735,22 @@ Every result reports:
 - Ordered source count.
 - Findings and missing boundaries.
 
-Default expanded human output provides labelled framing, reasons, and provenance
-before source content. Compact human output uses token-friendly rows and
-preserves required status, completeness, safety, and next actions. Selected
-authored content bytes remain exact in both views. JSON exposes the same complete
-facts and source order from the same typed result.
+Both human views begin with Context, status, workspace/selection, source count,
+coverage, content selection, startup inclusion, additions-only and link depth.
+Requested references and unresolved findings appear before content, with exact
+subjects, paths and available line/column. Unknown counts remain unknown.
+
+Compact keeps short source boundaries and selected authored content. A paths-only
+request lists the ordered paths; when bodies or other projections are also
+selected, each path appears at its source boundary rather than in a duplicate
+path list. Expanded adds existing source order, ID, route, layer and loading
+reasons. Every unresolved link remains in compact; expanded shows all observed
+links. Human framing uses line/column; JSON retains full byte coordinates.
+
+The actual Next command appears once after content when present, with its reason
+in expanded output. Generated labels are escaped without truncating paths or
+subjects. Selected authored text stays exact, including whitespace and overwrite
+boundaries, in both views. JSON remains the complete unchanged typed result.
 
 ### Exact Schema-v1 Command-Local Result
 

@@ -78,8 +78,11 @@ public sealed class FindHumanRenderingTests
         Assert.Contains("Filters:", rendered, StringComparison.Ordinal);
         Assert.Contains("Source universe:", rendered, StringComparison.Ordinal);
         Assert.Contains("Coverage:", rendered, StringComparison.Ordinal);
-        Assert.Contains("Projection coverage:", rendered, StringComparison.Ordinal);
-        Assert.Contains($"Matches: {result.Matches.Count}", rendered, StringComparison.Ordinal);
+        if (result.Presentation.Content.IsRequested)
+        {
+            Assert.Contains("Projection coverage:", rendered, StringComparison.Ordinal);
+        }
+        Assert.StartsWith($"Found {result.Matches.Count} matching ", rendered, StringComparison.Ordinal);
         AssertExactNext(rendered, ExpectedCompactNext(statusValue));
     }
 
@@ -123,8 +126,8 @@ public sealed class FindHumanRenderingTests
             {
                 "zero" => null,
                 "incomplete" => "Next: open-forge doctor",
-                "failed" => "Next: report the failure and retry with bounded diagnostics.",
-                "interrupted" => "Next: rerun the same request.",
+                "failed" => "Next: open-forge find --verbose",
+                "interrupted" => "Next: open-forge find",
                 _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "The compact row scenario is not defined."),
             });
     }
@@ -156,14 +159,14 @@ public sealed class FindHumanRenderingTests
         var rendered = FindCompactRenderer.Render(result);
 
         Assert.Contains(
-            "finding code=find.frontmatter-unavailable status=incomplete subject=.agents/first.md",
+            "  .agents/first.md",
             rendered,
             StringComparison.Ordinal);
         Assert.Contains(
-            "finding code=find.frontmatter-unavailable status=incomplete subject=.agents/second.md",
+            "  .agents/second.md",
             rendered,
             StringComparison.Ordinal);
-        Assert.DoesNotContain("find.frontmatter-unavailable status=incomplete subject=none", rendered, StringComparison.Ordinal);
+        Assert.DoesNotContain("Subject: none", rendered, StringComparison.Ordinal);
     }
 
     [Theory(DisplayName = "Find expanded query and universe evidence distinguish default and filtered selections"),
@@ -182,7 +185,7 @@ public sealed class FindHumanRenderingTests
             universeKind == "filtered" ? "Mode:       filtered" : "Mode:       default",
             rendered,
             StringComparison.Ordinal);
-        Assert.Contains($"Matches: {result.Matches.Count}", rendered, StringComparison.Ordinal);
+        Assert.StartsWith($"Found {result.Matches.Count} matching ", rendered, StringComparison.Ordinal);
         Assert.Equal(
             universeKind == "filtered" ? FindUniverseMode.Filtered : FindUniverseMode.Default,
             result.Universe.Mode);
@@ -261,10 +264,10 @@ public sealed class FindHumanRenderingTests
         InlineData("Complete", ""),
         InlineData("Attention", ""),
         InlineData("Incomplete", "Next: open-forge doctor"),
-        InlineData("Invalid", "Next: correct the named Find input."),
+        InlineData("Invalid", "Next: open-forge find --help"),
         InlineData("Blocked", "Next: open-forge doctor"),
-        InlineData("Failed", "Next: report the failure and retry with bounded diagnostics."),
-        InlineData("Interrupted", "Next: rerun the same request."),
+        InlineData("Failed", "Next: open-forge find --verbose"),
+        InlineData("Interrupted", "Next: open-forge find"),
         Trait("Feature", "find-presentation"), Trait("Evidence", "Unit")]
     public void ExpandedRendererUsesExactNextText(string statusValue, string expectedNext)
     {
@@ -450,12 +453,11 @@ public sealed class FindHumanRenderingTests
         Assert.Contains("Heading: body", rendered, StringComparison.Ordinal);
         Assert.Contains("Mode:       filtered", rendered, StringComparison.Ordinal);
         Assert.Contains("Include:    docs", rendered, StringComparison.Ordinal);
-        Assert.Contains("Exclude:    omitted", rendered, StringComparison.Ordinal);
-        Assert.Contains("Candidates: 1", rendered, StringComparison.Ordinal);
-        Assert.Contains("Inspected:  1", rendered, StringComparison.Ordinal);
+        Assert.DoesNotContain("Exclude:    omitted", rendered, StringComparison.Ordinal);
+        Assert.Contains("Inspected: 1 of 1 candidates", rendered, StringComparison.Ordinal);
         Assert.Contains("Coverage: complete", rendered, StringComparison.Ordinal);
         Assert.Contains("Projection coverage: complete", rendered, StringComparison.Ordinal);
-        Assert.Contains("Matches: 1", rendered, StringComparison.Ordinal);
+        Assert.Contains("Found 1 matching source.", rendered, StringComparison.Ordinal);
         Assert.Contains("Path: .agents/docs.md", rendered, StringComparison.Ordinal);
         Assert.Contains($"Description: {EscapeHumanValue(description)}", rendered, StringComparison.Ordinal);
         Assert.Contains("Target", rendered, StringComparison.Ordinal);
@@ -491,12 +493,12 @@ public sealed class FindHumanRenderingTests
 
         AssertInOrder(
             rendered,
-            "Filters:",
-            "Source universe:",
+            "Found 1 matching source.",
             "Coverage: complete",
             "Projection coverage: complete",
-            "Matches: 1",
             "Matched:",
+            "Filters:",
+            "Source universe:",
             "Projection: metadata",
             "Projection: frontmatter",
             "Projection: headings",
@@ -538,7 +540,7 @@ public sealed class FindHumanRenderingTests
             FirstLine(rendered));
         AssertExactNext(
              rendered,
-             "Next: rerun with one listed exact path for each ambiguous selector.");
+             "Next: open-forge find");
     }
 
     [Fact(DisplayName = "Find expanded rendering places the selector-ambiguity next action after its finding and match boundary"), Trait("Feature", "find-presentation"), Trait("Evidence", "Unit")]
@@ -548,11 +550,11 @@ public sealed class FindHumanRenderingTests
 
         var rendered = FindExpandedRenderer.Render(result);
         var lines = Lines(rendered);
-        const string expectedNext = "Next: rerun with one listed exact path for each ambiguous selector.";
+        const string expectedNext = "Next: open-forge find";
         var finding = IndexOfLine(
             lines,
             line => line.Contains("find.selector-ambiguous", StringComparison.Ordinal));
-        var matches = IndexOfLine(lines, line => line.Trim() == "Matches: 0");
+        var matches = IndexOfLine(lines, line => line.Trim() == "Found 0 matching sources.");
         var next = IndexOfLine(lines, line => line == expectedNext);
 
         Assert.Equal(1, lines.Count(line => line == expectedNext));
@@ -578,10 +580,10 @@ public sealed class FindHumanRenderingTests
         {
             "Complete" or "Attention" => null,
             "Incomplete" => "Next: open-forge doctor",
-            "Invalid" => "Next: correct the named Find input.",
+            "Invalid" => "Next: open-forge find --help",
             "Blocked" => "Next: open-forge doctor",
-            "Failed" => "Next: report the failure and retry with bounded diagnostics.",
-            "Interrupted" => "Next: rerun the same request.",
+            "Failed" => "Next: open-forge find --verbose",
+            "Interrupted" => "Next: open-forge find",
             _ => throw new ArgumentOutOfRangeException(nameof(statusValue), statusValue, "The Find status is not defined."),
         };
 
@@ -683,7 +685,7 @@ public sealed class FindHumanRenderingTests
         var matched = IndexOfLine(lines, line => line.Trim() == "Matched:");
         var projection = IndexOfLine(
             lines,
-            (line, index) => index > matched && line.TrimStart().StartsWith("Projection:", StringComparison.Ordinal));
+            (line, index) => index > matched && line == "Search details:");
         return [.. lines[(matched + 1)..projection]
             .Where(line => !string.IsNullOrWhiteSpace(line))
             .Select(line => line.Trim())];

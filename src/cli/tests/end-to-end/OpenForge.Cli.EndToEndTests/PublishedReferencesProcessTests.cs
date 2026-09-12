@@ -22,7 +22,7 @@ public sealed class PublishedReferencesProcessTests
         Assert.Contains("Direction: both", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Incoming", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Outgoing", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Level 1", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Direct links", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("target.md", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("unicodé.md", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("space file.md", result.StandardOutput, StringComparison.Ordinal);

@@ -362,53 +362,40 @@ complete public selection, matching, projection, and result meaning.
   ambiguous requested content uses `projection=incomplete`. The projection field
   is absent from compact output only when `--content` is omitted.
 
-- `expanded` emits the complete human-readable query and match
-  explanation. Its representative shape is:
+- `expanded` leads with the number of matching sources, status, workspace,
+  selection method and coverage. Findings appear before matches. Each match
+  retains its exact ID/path, description when present, and the evidence that
+  explains why it matched. Search details follow the useful answer: predicates,
+  requirement, effective regions, supplied selectors and their resolved identities,
+  default/filtered source universe and inspected/candidate counts. Optional absent
+  selector detail is omitted rather than printed as a series of `none` fields.
+  Unknown counts remain explicit; incomplete search is never a complete empty
+  answer. Matching coverage is shown when it differs from overall coverage;
+  projection coverage is shown when content was requested.
+
+  Illustrative excerpt before search details:
 
   ```text
-  Workspace: D:/Repositories/open-forge
+  Found 1 matching source.
+  Status: complete
+  Workspace: /work/demo
   Selected by: current directory
-
-  Filters:
-    Tag:     Directive
-    Heading: Instructions
-  Require: all
-  Within:
-    Tag:     frontmatter
-    Heading: body
-  Source universe:
-    Mode:       default
-    Include:    omitted
-    Exclude:    omitted
-    Candidates: <effective-candidate-count>
-    Inspected:  <effective-inspected-count>
   Coverage: complete
-  Projection coverage: not requested
-  Matches: 2
 
-  directives/public-facing-writing
-    Path: .agents/directives/public-facing-writing.md
-    Description: Write clear, consistent user communication and source prose
+  directives/review
+    Path: .agents/directives/review.md
+    Description: Review proposed changes
     Matched:
-      Directive — frontmatter, base
-      Instructions — heading, base, line 9
-
-  directives/security
-    Path: .agents/directives/security.md
-    Description: Apply required workspace security boundaries
-    Matched:
-      Directive — frontmatter, base
-      Instructions — heading, base, line 11
+      Testing — frontmatter, base
   ```
 
-  For a filtered universe, the same block uses `Mode: filtered` and shows the
-  supplied include and exclude occurrences together with their resolved
-  selector identities. Its candidate, inspected, and matched counts describe
-  only the effective universe. Expanded output always shows `Projection
-coverage:` as `not requested`, `not started`, `complete`, `incomplete`,
-  `blocked`, `failed`, or `interrupted`; the corresponding structured values use
-  hyphens where shown in the exact schema, including `not-requested` and
-  `not-started`.
+  Both views retain every finding's status/code, cause, full source coordinates
+  and candidate identities. Human locations use line/column; byte ranges remain
+  in JSON. Compact keeps the TSV summary and rows above. It no longer truncates
+  finding subjects. The actual typed Next command is printed once when present;
+  expanded adds its existing reason. Expanded Next remains after match/search
+  explanation and before requested projection blocks. Selected authored text
+  remains exact, including its existing content-block boundaries.
 
 - `--verbose` retains its shared diagnostic meaning. It does
   not select expanded view. The command never changes view based on terminal
@@ -844,16 +831,16 @@ It includes a fixed option only when that option is the action itself; a reason
 that says to rerun the same request requires the caller to preserve the original
 Find arguments.
 
-| Condition                                                              | Top-level `next`                                                                                                                      | Compact human line                                                    |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `complete`                                                             | `null`                                                                                                                                | no line                                                               |
-| `attention`                                                            | `null`                                                                                                                                | no line                                                               |
-| `incomplete`                                                           | `{ command: "open-forge doctor", reason: "Inspect the unavailable source or projection facts before relying on this Find result." }`  | `Next: open-forge doctor`                                             |
-| `invalid`                                                              | `{ command: "open-forge find --help", reason: "Correct the named Find input, then rerun the request." }`                              | `Next: correct the named Find input.`                                 |
-| `blocked` where `find.selector-ambiguous` is the only blocking finding | `{ command: "open-forge find", reason: "Replace every ambiguous selector with one listed exact path, then rerun the same request." }` | `Next: rerun with one listed exact path for each ambiguous selector.` |
-| other `blocked`                                                        | `{ command: "open-forge doctor", reason: "Inspect the blocked workspace or source boundary before rerunning Find." }`                 | `Next: open-forge doctor`                                             |
-| `failed`                                                               | `{ command: "open-forge find --verbose", reason: "Report the failure and retry the same request with bounded diagnostics." }`         | `Next: report the failure and retry with bounded diagnostics.`        |
-| `interrupted`                                                          | `{ command: "open-forge find", reason: "Rerun the same Find request." }`                                                              | `Next: rerun the same request.`                                       |
+| Condition                                                              | Top-level `next`                                                                                                                      | Compact human line                |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| `complete`                                                             | `null`                                                                                                                                | no line                           |
+| `attention`                                                            | `null`                                                                                                                                | no line                           |
+| `incomplete`                                                           | `{ command: "open-forge doctor", reason: "Inspect the unavailable source or projection facts before relying on this Find result." }`  | `Next: open-forge doctor`         |
+| `invalid`                                                              | `{ command: "open-forge find --help", reason: "Correct the named Find input, then rerun the request." }`                              | `Next: open-forge find --help`    |
+| `blocked` where `find.selector-ambiguous` is the only blocking finding | `{ command: "open-forge find", reason: "Replace every ambiguous selector with one listed exact path, then rerun the same request." }` | `Next: open-forge find`           |
+| other `blocked`                                                        | `{ command: "open-forge doctor", reason: "Inspect the blocked workspace or source boundary before rerunning Find." }`                 | `Next: open-forge doctor`         |
+| `failed`                                                               | `{ command: "open-forge find --verbose", reason: "Report the failure and retry the same request with bounded diagnostics." }`         | `Next: open-forge find --verbose` |
+| `interrupted`                                                          | `{ command: "open-forge find", reason: "Rerun the same Find request." }`                                                              | `Next: open-forge find`           |
 
 Find never recommends mutation, repair, or content rewriting. These values are
 status-deterministic except for the selector-ambiguity-only blocked branch.
@@ -873,7 +860,7 @@ status-deterministic except for the selector-ambiguity-only blocked branch.
 - A complete search with zero matches is successful. Compact
   human output states `result=complete`, `coverage=complete`, the default or
   filtered `universe`, and `matches=0`, followed by `No matches.` Expanded output
-  states `Matches: 0`. JSON returns an empty match array with complete coverage.
+  states `Found 0 matching sources.`. JSON returns an empty match array with complete coverage.
 - An incomplete search may emit independently verified safe
   matches. Compact mode starts with `result=incomplete` and
   `coverage=incomplete`, marks the default or filtered `universe`, writes safe

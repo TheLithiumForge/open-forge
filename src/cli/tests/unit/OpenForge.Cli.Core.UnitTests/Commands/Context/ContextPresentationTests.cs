@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Context;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
@@ -61,12 +60,21 @@ public sealed class ContextPresentationTests
             ContextPresentationTestData.Content(ContextContentPartKind.Metadata));
 
         var rendered = ContextHumanRenderer.Render(Presentation(result, CliView.Compact));
-        var rows = result.Sources
-            .SelectMany(source => source.Layers.Select(layer => string.Create(
-                CultureInfo.InvariantCulture,
-                $"{layer.PathPosition} {source.Id ?? "none"} {layer.Path} {LayerName(layer.Kind)}{Environment.NewLine}")));
         Assert.Equal(ExpectedSourceCount, result.Sources.Count);
-        var expected = $"context complete coverage=complete sources={ExpectedSourceCount}{Environment.NewLine}" + string.Concat(rows);
+        var expected = $"""
+            Context
+            Status: complete
+            Workspace: {result.Workspace?.LexicalRoot}
+            Selected by: current directory
+            Sources: 2; coverage complete
+            Content: metadata
+            Startup context included: no; additions only: yes
+            Follow links: none
+            Requested: projects/guide -> resolved; projects/guide; .agents/projects/guide.md
+            Source: .agents/docs/topic.md; docs/topic; base; order 1
+            Source: .agents/projects/guide.md; projects/guide; base; order 2
+            Source: .agents/projects/guide.overwrite.md; projects/guide; overwrite; order 3
+            """.ReplaceLineEndings(Environment.NewLine) + Environment.NewLine;
 
         Assert.Equal(expected, rendered);
     }
@@ -88,20 +96,20 @@ public sealed class ContextPresentationTests
         var rendered = ContextHumanRenderer.Render(Presentation(result, CliView.Compact));
 
         Assert.Contains(
-            $"context.closure-unavailable subject={firstPath}: Loading metadata is unavailable.",
+            $"  {firstPath}",
             rendered,
             StringComparison.Ordinal);
         Assert.Contains(
-            $"context.closure-unavailable subject={secondPath}: Loading metadata is unavailable.",
+            $"  {secondPath}",
             rendered,
             StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Context compact finding subjects are escaped and bounded")]
+    [Fact(DisplayName = "Context compact finding subjects are escaped without truncation")]
     [Trait("Feature", "context"), Trait("Evidence", "Unit")]
-    public void CompactFindingSubjectsAreEscapedAndBounded()
+    public void CompactFindingSubjectsAreEscapedWithoutTruncation()
     {
-        var hostileSubject = $"line{Environment.NewLine}{new string('x', 300)}";
+        var hostileSubject = $"line\n{new string('x', 300)}";
         var finding = new ContextFinding(
             code: ContextFindingCode.ClosureUnavailable,
             subject: hostileSubject,
@@ -121,11 +129,11 @@ public sealed class ContextPresentationTests
         var rendered = ContextHumanRenderer.Render(Presentation(result, CliView.Compact));
         var findingLine = Assert.Single(
             rendered.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
-            line => line.StartsWith("context.closure-unavailable", StringComparison.Ordinal));
+            line => line.StartsWith("  Subject:", StringComparison.Ordinal));
 
         Assert.DoesNotContain(hostileSubject, findingLine, StringComparison.Ordinal);
-        Assert.Contains("subject=line\\u000a", findingLine, StringComparison.Ordinal);
-        Assert.EndsWith("...: Loading metadata is unavailable.", findingLine, StringComparison.Ordinal);
+        Assert.Contains("Subject: line\\u000a", findingLine, StringComparison.Ordinal);
+        Assert.EndsWith(new string('x', 300), findingLine, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Context JSON uses the frozen ordered schema from the same typed result")]
@@ -199,8 +207,29 @@ public sealed class ContextPresentationTests
                 View: view,
                 Verbosity: verbosity));
 
-    private static string LayerName(ContextSourceLayerKind kind)
-        => kind == ContextSourceLayerKind.Base ? "base" : "overwrite";
+    [Theory(DisplayName = "Context views retain exact content and place incomplete findings before source blocks"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [InlineData((int)CliView.Compact)]
+    [InlineData((int)CliView.Expanded)]
+    public void ViewsKeepContentAndPartialFacts(int viewValue)
+    {
+        var result = ContextPresentationTestData.Create(
+            ContextPresentationTestData.Content(ContextContentPartKind.Paths, ContextContentPartKind.Body),
+            findings: [ClosureFinding(".agents/missing.md")]);
+        var jsonRequest = new CliPresentationRequest<ContextResult>(result, new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal));
+        var json = ContextJsonRenderer.Render(jsonRequest);
+        var rendered = ContextHumanRenderer.Render(Presentation(result, (CliView)viewValue));
+
+        Assert.Contains(ContextPresentationTestData.GuideBody, rendered, StringComparison.Ordinal);
+        Assert.Contains("Status: incomplete", rendered, StringComparison.Ordinal);
+        Assert.Contains(".agents/missing.md", rendered, StringComparison.Ordinal);
+        Assert.True(rendered.IndexOf("context.closure-unavailable", StringComparison.Ordinal) < rendered.IndexOf(ContextPresentationTestData.GuideBody, StringComparison.Ordinal));
+        Assert.DoesNotContain("Ordered paths", rendered, StringComparison.Ordinal);
+        var sourceRows = rendered.Split(Environment.NewLine).Where(line =>
+            line.StartsWith("Source: .agents/docs/topic.md", StringComparison.Ordinal)
+            || line.StartsWith("Path: .agents/docs/topic.md", StringComparison.Ordinal));
+        Assert.Single(sourceRows);
+        Assert.Equal(json, ContextJsonRenderer.Render(jsonRequest));
+    }
 
     private static ContextFinding ClosureFinding(string path)
         => new(

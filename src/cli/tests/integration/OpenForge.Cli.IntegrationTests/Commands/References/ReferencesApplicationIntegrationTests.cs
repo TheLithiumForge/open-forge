@@ -70,7 +70,7 @@ public sealed class ReferencesApplicationIntegrationTests
         Assert.Contains("Direction: both", result.Output, StringComparison.Ordinal);
         Assert.Contains("Incoming", result.Output, StringComparison.Ordinal);
         Assert.Contains("Outgoing", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Coverage: complete", result.Output, StringComparison.Ordinal);
+        Assert.Contains("coverage complete", result.Output, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
@@ -186,9 +186,9 @@ public sealed class ReferencesApplicationIntegrationTests
 
         Assert.Equal(compact.ExitCode, expanded.ExitCode);
         Assert.Equal(compact.Error, expanded.Error);
-        Assert.Contains("Level 1", compact.Output, StringComparison.Ordinal);
-        Assert.Contains("raw destination:", expanded.Output, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("target:", expanded.Output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Direct links", compact.Output, StringComparison.Ordinal);
+        Assert.Contains("Written as:", expanded.Output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Links to:", expanded.Output, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("target.md", compact.Output, StringComparison.Ordinal);
         Assert.Contains("target.md", expanded.Output, StringComparison.Ordinal);
     }

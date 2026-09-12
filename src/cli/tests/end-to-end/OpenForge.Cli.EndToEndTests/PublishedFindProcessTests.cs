@@ -21,7 +21,7 @@ public sealed class PublishedFindProcessTests
         Assert.Contains($"Workspace: {working.Path}", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Selected by: current directory", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Coverage: complete", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Matches: 3", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Found 3 matching sources.", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("docs", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("guide", result.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("result=complete", result.StandardOutput, StringComparison.Ordinal);

@@ -134,7 +134,7 @@ public sealed class ContextOperationFindingTests
         var rendered = ContextHumanRenderer.Render(CliPresentationStage.Create(
             result,
             new CliPresentation(CliOutputFormat.Human, CliView.Compact, CliVerbosity.Normal)));
-        Assert.StartsWith("context complete", rendered, StringComparison.Ordinal);
+        Assert.StartsWith($"Context{Environment.NewLine}Status: complete", rendered, StringComparison.Ordinal);
         Assert.DoesNotContain(skillPath, rendered, StringComparison.Ordinal);
     }
 

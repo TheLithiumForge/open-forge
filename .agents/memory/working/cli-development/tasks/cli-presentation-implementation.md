@@ -259,7 +259,6 @@ Set 1 squash: `5bb4aefa`. Set 2 squash: `54c28134`. Set 3 Library human
 rendering is implemented; focused preservation tests and prose review are active.
 Sets 4–8 remain required. User approval already covers these changes.
 
-
 ## Set 2 Final Qualification
 
 Frozen source: `39f0ec3950aaa0caab76436c8e4727bc4f9dd9cd`. The R2 correction
@@ -287,7 +286,6 @@ kind, count, exit, default visibility or JSON changes occurred in this set.
 Required evidence and snapshots are tracked; raw artifacts are disposable.
 This receipt accompanies the authorized local squash; no remote effect occurred.
 
-
 ## Set 2 Integration And Set 3 Progress
 
 Local squash `54c28134` preserves the concurrent delivery integration `e3f803bc`.
@@ -307,7 +305,6 @@ access and three missing test imports; corrected before qualification. No produc
 or operation issue was inferred from those compile errors. Shared headers retain
 Doctor/Status output. Required fixtures remain tracked source, not artifacts.
 
-
 Set 3 focused verification: 574 Library, Doctor, Status and Shell Unit cases
 passed, zero failures/skips, after the corrected test build (zero warnings/errors).
 Review corrected the human `retired` label to `no longer eligible`: retirement
@@ -317,14 +314,12 @@ List snapshot is authored from a small fixture; semantic assertions independentl
 cover counts, IDs, paths, unknown state and unchanged JSON. Existing public
 journey counts and full JSON graphs remain unchanged.
 
-
 Set 3 final review retained blocked/unavailable ownership observations in compact
 output even when the result has no duplicate collision finding. The corresponding
 Unit regression is part of the final candidate. Finding Library IDs differing
 from the selected identity are also retained. No operation or JSON projection
 changed. The final native build and six-suite gate now own qualification of all
 source, tests and these bounded corrections.
-
 
 ## Set 3 Dogfood Review — Observation Labels
 
@@ -402,14 +397,12 @@ full six-suite gate qualify this coherent family and any neutral promotion befor
 its authorized local squash. Source is reversible in Git; temporary fixtures and
 raw artifacts are disposable, with tracked reproduction/evidence records here.
 
-
 The before-change/retirement wording correction is now implemented with a direct
 Unit regression. The 4bd30bd7 native build finished with zero warnings/errors,
 but its six-suite gate was intentionally not run because dogfood had already
 identified the wording issue. The revised candidate replaces that build as the
 acceptance target. No issue was found with the actual source-independent Detach
 behavior, which remains unchanged.
-
 
 ## Set 3 Public Evidence Alignment
 
@@ -423,7 +416,6 @@ Replace the wording assertion with that diagnostic-code assertion; retain exit,
 stream, cause/status and unchanged-workspace/infrastructure checks. No production
 fix is needed. The gate stopped before its final three modes, so no full-suite
 pass is claimed for cccfa3b9. Qualify the fixture-aligned candidate next.
-
 
 Set 4 evidence order: after focused in-memory tests and a managed publish, run
 all changed Extension public command classes before the native freeze. Their
@@ -718,3 +710,175 @@ promotion. Operation behavior, typed result graphs, statuses/exits, JSON,
 permissions, recovery and filesystem semantics are unchanged. Update local
 develop through the owned integration checkout and verify the qualified tree.
 Feature/test remains outside every mutation target.
+
+## Set 4 Integration And Set 5A Activation
+
+Set 4 is squash-integrated into local develop as
+`a8a2e48f73e0d4b960f639d0f8c31a5c99ab8501`. The owned integration checkout's
+squash tree equals qualified closeout 49ad3397 exactly. The main checkout was
+verified clean and on develop immediately before its fast-forward; it remains
+clean and the feature/test ref is unchanged. The presentation branch merges this
+develop result and has the same tree. No remote action occurred.
+
+Set 5A is active, beginning with References, followed by Context, Find and Route
+List/Inspect. Its frozen meaning and evidence boundary above remain in force.
+References Interface and Behavior now describe the approved human presentation;
+JSON and operation contracts remain unchanged.
+
+## User Pause: Reconsider Default Detail And Result Limits
+
+The user explicitly pauses implementation to review the presentation direction.
+Do not continue Set 5A or later implementation until the discussion resumes it.
+Sets 1–4 remain qualified and integrated. Set 5A has only uncommitted References
+Interface/Behavior wording edits and this activation record; no Set 5A renderer,
+operation, test or JSON source has changed. No build/test process remains active.
+
+Save these new proposals without treating them as approved behavior:
+
+- A global --limit or equivalent for large result sets. Analyze whether it limits
+  displayed rows or executed work, what counts as a result per command, ordering,
+  truncation disclosure, total counts, JSON behavior and required effect/recovery
+  details. No spelling, default or limit policy is selected.
+- Make compact the default. The currently implemented/default contract remains
+  expanded; the user is reconsidering it because ordinary output exposes too
+  much explanatory detail. Separate useful expanded output from verbose/debug
+  diagnostics rather than assuming those roles are interchangeable.
+- Make common queries much smaller, especially Find by tag: the useful answer
+  may be only the matching files. Reassess whether the existing compact TSV
+  summary plus ID/path rows is still too much and whether compact should become
+  simpler or another explicitly justified view is needed. Do not add a third
+  view, remove identity/coverage, or change defaults without this discussion.
+
+At this pause, revised human renderers are implemented for Doctor, Status; all
+five Library commands; and all six Extension commands: thirteen of twenty-eight.
+Context, Find, References, Route List/Inspect and the ten remaining mutation
+commands still use their earlier renderers. Compact JSON, automatic colour and
+final reusable guidance/install refresh remain unimplemented. View fallback is
+already integrated. Optional filtering and configurable-threshold analysis remain
+saved follow-ups. Overall task progress was last estimated at forty percent;
+this direction review can change the remaining scope and estimate.
+
+## Resumed Priority Slice: References, Context And Find
+
+The user resumes implementation for exactly References, then Context, then Find.
+This narrows Set 5A to those three high-value read commands. Route List/Inspect,
+remaining mutations, compact JSON, colours and final guidance are deferred.
+Complete and qualify this three-command slice, squash it into develop, then
+report completion and stop for the user's minimal-output discussion. Keep current
+expanded defaults, Find TSV and both existing views; no limit/filter/third view or
+threshold configuration is authorized by this resumption. Existing frozen safety,
+exact authored content, result/JSON and read-only boundaries remain unchanged.
+Use focused evidence for each leaf and one complete managed/native gate for this
+three-command presentation wave. No agents, remotes or feature/test changes.
+
+## Three-Command Implementation Checkpoint
+
+References human implementation is complete at the focused boundary: 64 Unit,
+25 Integration and three public journeys pass. It retains every typed occurrence,
+section coverage, location, target uncertainty and finding; JSON remains unchanged.
+Two stale Integration labels were aligned without weakening behavior evidence.
+A local name collision between a rendering helper and the Resolution namespace
+was corrected through an explicit typed helper call, without a parser workaround.
+
+Context initially passes 25 Unit, 51 Integration and three public journeys.
+The final inspection retains the explicitly required compact layer sequence as
+an order value. Findings now precede authored content; source boundaries avoid a
+second path list when the content already includes source blocks. Exact selected
+text and overwrite framing remain unchanged. Presentation fixtures normalize
+platform framing newlines while preserving authored-text assertions, and a
+control-character case uses an explicit newline rather than host line endings.
+
+Find places the useful match list ahead of query explanation. Compact TSV is
+unchanged; both human views retain complete finding subjects/coordinates and
+actual typed Next commands. The immutable FindResult already validates Next, so
+rendering no longer duplicates its command-selection policy or substitutes prose
+for the command. Selected-content rendering is a separate leaf-local helper;
+its body/section bytes and framing remain unchanged. Byte offsets remain JSON.
+Projection-only vocabulary stays with that content helper, while the two views
+share their actual common vocabulary. The first Find Unit run passes 207/208;
+one stale zero-match boundary label is corrected. Full focused rechecks of all
+three commands are running before direct dogfood and the immutable full gate.
+No operation, parser, diagnostic kind, serializer or configuration source changes
+are part of this slice. The user-deferred remainder stays deferred.
+
+## Three-Command Qualification Freeze
+
+Final focused evidence passes 297 Unit, 117 Integration and 11 public journeys,
+with no failures or skips. Release build has zero warnings/errors; changed C#
+files pass dotnet format verification at warning severity. Direct managed CLI
+trials pass compact, expanded and JSON for References, Context and Find in an
+isolated installed workspace. Each read leaves the complete workspace and XDG
+state snapshot unchanged. Context preserves selected body bytes including a tab,
+trailing spaces and mixed newlines. Find preserves its compact TSV ID/path rows.
+
+The initial cross-view JSON comparison incorrectly expected identical documents.
+Context and Find already record supplied/effective view in result.presentation;
+the unchanged serializers and existing contracts establish that metadata. Trials
+validate those exact view values separately and compare all remaining JSON data.
+References JSON is identical across views. These checks pass; no serializer or
+operation change was needed. The disposable trial workspace was removed and no
+experiment script was retained.
+
+Freeze the current three-command source for the complete Linux managed/native
+build and all six suites. Expected counts are 3306 Unit, 1745 Integration per
+managed/native lane and 123 public journeys per each of three runtime lanes.
+Do not change executable inputs or HEAD during this gate. The narrowed user
+scope remains References, Context and Find only; after qualification and local
+squash, report completion and stop for the minimal-output discussion.
+
+Direct native trials on the frozen 39eed987 CLI also pass References, Context
+and Find in compact, expanded and JSON modes, including exact Context body bytes,
+Find TSV rows, documented view metadata and unchanged workspace/XDG state. The
+managed build reports zero warnings/errors. Full native test executable build is
+still running; do not treat these direct trials as the complete suite receipt.
+Find Interface table formatting is normalized by Prettier; all four changed
+contract documents pass the formatting check after this prose-only correction.
+
+## Three-Command Final Qualification And Closeout
+
+Qualified source: `39eed987361464e427aeb55724ce7dee78bd005a`. The complete
+`npm run build:native -- --sha --no-restore` and `npm run test:built` gate passes
+on Linux x64. Both managed build steps report zero warnings/errors. The delivery
+manifest records this clean source and `tested: true` after validating artifact
+closures. Final counts, each with zero failures, pending, skips or other results:
+
+| Suite                                      | Passed |
+| ------------------------------------------ | -----: |
+| Unit                                       |   3306 |
+| Managed Integration                        |   1745 |
+| Managed public journeys                    |    123 |
+| Native Integration                         |   1745 |
+| Native public journeys                     |    123 |
+| Managed public journeys against native CLI |    123 |
+
+Native CLI SHA-256:
+`55e905f0f1fadb5e55269c8784a315e78a1bf702d4e2d8ddfd30beb767583432`.
+Reports and native binaries are disposable build outputs. This tracked receipt,
+normal build/test commands and committed source/tests retain the qualification
+meaning without depending on artifacts. The focused and direct managed/native
+receipts above supplement the complete suites. The final formatting correction
+and continuity edits change only Markdown outside executable build inputs.
+
+References now presents direct links, readable resolution states and actionable
+source coordinates. Context puts findings before exact authored content and
+avoids duplicate path lists when content already has source boundaries. Find
+places matches before search details and retains its existing compact TSV. Both
+human views keep typed status, coverage, uncertainty and actual Next commands;
+JSON data, parsing, operation behavior, diagnostics and authored content remain
+unchanged. Affected command Interfaces and References presentation wording in
+Behavior are aligned. No maintenance policy or operation contract change is
+needed for this renderer-only slice.
+
+This closeout accompanies the authorized squash onto develop from baseline
+`a8a2e48f73e0d4b960f639d0f8c31a5c99ab8501`. Integration must retain exactly
+this closeout tree, verify the clean develop checkout before fast-forward, and
+leave feature/test at its observed `b88f5e7af99c02fd85626ba1fc6182c32ed17798`.
+Merge the resulting develop squash back into the presentation branch with the
+same tree. No remote action or installed-CLI refresh belongs to this closeout.
+
+The requested three-command slice is complete. Report completion after local
+integration and stop. All other presentation work remains deferred, including
+Route List/Inspect, remaining mutations, compact JSON, colour, final reusable
+guidance and installed-CLI refresh. Keep the expanded default and current compact
+views until the user discusses the proposed even more minimal output. Limits,
+filters, a compact default and configurable thresholds remain saved proposals.

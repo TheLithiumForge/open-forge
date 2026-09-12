@@ -70,15 +70,25 @@ colour with no colour flag or configurable palette. No AI view is added.
 The [implementation capsule](tasks/cli-presentation-implementation.md) owns the
 sequential sets, frozen boundaries and evidence. Set 1 is squash-merged as
 `5bb4aefa`; Set 2 Doctor/Status is squash-merged as `54c28134`. Set 3
-Library human views are squash-integrated as `56538d63`. Set 4 Extension human
-views pass all six suites at `3deb2ebc`: 3,283 Unit, 1,745 Integration in both
-modes and 123 public cases in all three modes, with zero failures/skips. Its
-authorized local squash closes this set. Set 5A Context, Find, References and
-Route List/Inspect is next, then the remaining mutation views, compact JSON,
-automatic colour and guidance. Optional display filtering remains explicit
-backlog. The user's configurable-threshold idea is queued for analysis after
-this presentation task; it changes no current configuration or diagnostics.
-Update each affected Interface with its approved set. Parsing P2–P6 stay backlog.
+Library human views are squash-integrated as `56538d63`; Set 4 Extension human
+views are squash-integrated as `a8a2e48f` after all six suites passed. The user
+narrowed the next slice to References, Context and Find, then a pause for the
+minimal-output discussion. References, Context and Find human views and affected
+contracts are complete at qualified source `39eed987`: 3,306 Unit, 1,745
+Integration in each managed/native mode and 123 public journeys in each of three
+runtime configurations pass, with zero failures/skips. Managed and native direct
+trials pass both human views and JSON, preserve exact Context body bytes and Find
+TSV rows, and leave workspace/state unchanged. This closeout accompanies the
+authorized local squash onto develop; its commit completes the narrowed slice.
+
+Route List/Inspect, remaining mutation views, compact JSON, automatic colour,
+final guidance and installed-CLI refresh are deferred. Expanded remains the
+default. Result limits, a compact default and an even smaller file-oriented view
+are saved proposals for discussion; none is implemented. Optional display
+filtering and parser simplifications P2–P6 stay backlog. The configurable-threshold
+idea is saved for later analysis and changes no configuration or diagnostics.
+After this three-command closeout, report completion and pause for the user’s
+minimal-output discussion. No other command implementation is active.
 
 Cleanup completed: the parser probe was outside the repository and has no matching
 committed project/path history. Its source/project and temporary compiled output,

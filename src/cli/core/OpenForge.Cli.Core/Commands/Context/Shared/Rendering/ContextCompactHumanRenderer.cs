@@ -1,22 +1,25 @@
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
-using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using static OpenForge.Cli.Core.Commands.Context.Shared.Rendering.ContextHumanRenderingSupport;
 
 namespace OpenForge.Cli.Core.Commands.Context.Shared.Rendering;
 
 internal static class ContextCompactHumanRenderer
 {
-    private const int MaximumFindingSubjectLength = 240;
-
-    internal static string Render(ContextResult result)
+    internal static string Render(CliPresentationRequest<ContextResult> presentation)
     {
+        var result = presentation.Result;
         var builder = new StringBuilder();
-        builder.AppendLine($"context {CliStatusDefinitions.Read(result.Status).MachineName} coverage={Coverage(result.Coverage.State)} sources={ReadCount(result)}");
-        foreach (var path in result.Paths)
+        ContextFramingHumanRenderer.AppendHeader(builder, presentation);
+        if (IsPathsOnly(result))
         {
-            builder.AppendLine(path.Path);
+            foreach (var path in result.Paths)
+            {
+                builder.AppendLine(ContextTextEscaping.Escape(path.Path));
+            }
         }
 
         if (!IsPathsOnly(result))
@@ -27,14 +30,14 @@ internal static class ContextCompactHumanRenderer
                 {
                     builder.AppendLine(
                         CultureInfo.InvariantCulture,
-                        $"{layer.PathPosition} {source.Id ?? "none"} {layer.Path} {Layer(layer.Kind)}");
+                        $"Source: {ContextTextEscaping.Escape(layer.Path)}; {ContextTextEscaping.Escape(source.Id ?? "unavailable")}; {Layer(layer.Kind)}; order {layer.PathPosition}");
                     RenderProjections(builder, layer);
                 }
             }
         }
 
-        RenderLinks(builder, result.Links);
-        RenderFindingsAndNext(builder, result);
+        ContextFramingHumanRenderer.AppendLinks(builder, presentation);
+        CliHumanText.AppendNext(builder, presentation);
         return builder.ToString();
     }
 
@@ -66,35 +69,4 @@ internal static class ContextCompactHumanRenderer
         }
     }
 
-    private static void RenderLinks(StringBuilder builder, IReadOnlyList<ContextLink> links)
-    {
-        foreach (var link in links.Where(link => link.Disposition == ContextLinkDisposition.Unresolved))
-        {
-            builder.AppendLine(
-                CultureInfo.InvariantCulture,
-                $"link depth={link.Depth} source={link.Source.Path} target={link.Target.Path ?? link.RawDestination} unresolved={LinkResolution(link.Target.Resolution)}");
-        }
-    }
-
-    private static void RenderFindingsAndNext(StringBuilder builder, ContextResult result)
-    {
-        foreach (var finding in result.Findings)
-        {
-            builder.AppendLine(
-                $"{ContextDefinitions.Read(finding.Code).Code} subject={FindingSubject(finding)}: {finding.Cause}");
-        }
-
-        if (result.Next is { } next)
-        {
-            builder.AppendLine($"Next: {next.Command} — {next.Reason}");
-        }
-    }
-
-    private static string FindingSubject(ContextFinding finding)
-    {
-        var coordinate = finding.Subject ?? finding.Source?.Path ?? finding.Path;
-        return coordinate is null
-            ? "none"
-            : ContextTextEscaping.Escape(coordinate, MaximumFindingSubjectLength);
-    }
 }

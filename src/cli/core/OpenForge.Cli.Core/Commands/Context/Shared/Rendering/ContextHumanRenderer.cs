@@ -14,8 +14,8 @@ internal static class ContextHumanRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         return presentation.Presentation.View switch
         {
-            CliView.Compact => ContextCompactHumanRenderer.Render(presentation.Result),
-            CliView.Expanded => ContextExpandedHumanRenderer.Render(presentation.Result),
+            CliView.Compact => ContextCompactHumanRenderer.Render(presentation),
+            CliView.Expanded => ContextExpandedHumanRenderer.Render(presentation),
             _ => throw new ArgumentOutOfRangeException(
                 nameof(presentation),
                 presentation.Presentation.View,

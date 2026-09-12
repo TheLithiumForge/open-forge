@@ -1,35 +1,23 @@
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
-using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using static OpenForge.Cli.Core.Commands.Context.Shared.Rendering.ContextHumanRenderingSupport;
 
 namespace OpenForge.Cli.Core.Commands.Context.Shared.Rendering;
 
 internal static class ContextExpandedHumanRenderer
 {
-    internal static string Render(ContextResult result)
+    internal static string Render(CliPresentationRequest<ContextResult> presentation)
     {
+        var result = presentation.Result;
         var builder = new StringBuilder();
-        var selectedBy = SelectedBy(result);
-        builder.AppendLine($$"""
-            Open Forge context
-            Workspace: {{result.Workspace?.LexicalRoot ?? "unavailable"}}
-            Selected by: {{selectedBy}}
-            Result: {{CliStatusDefinitions.Read(result.Status).MachineName}}
-            Coverage: {{Coverage(result.Coverage.State)}} (selection {{Coverage(result.Coverage.Selection)}}, links {{OptionalCoverage(result.Coverage.Links)}}, projection {{Coverage(result.Coverage.Projection)}})
-            Startup context included: {{(result.Selection.StartupIncluded ? "yes" : "no (--additions-only)")}}
-            Content: {{string.Join(',', result.Presentation.Content.Effective.Select(part => part.CanonicalValue))}}
-            Follow links: {{LinkExpansion(result.Selection.LinkExpansion)}}
-            Sources: {{ReadCount(result)}}
-            """);
-        foreach (var requested in result.Selection.RequestedSources)
+        ContextFramingHumanRenderer.AppendHeader(builder, presentation);
+        if (IsPathsOnly(result))
         {
-            builder.AppendLine($"Requested source: {requested.Supplied} -> {SourceResolution(requested.Resolution)}");
+            RenderPaths(builder, result.Paths);
         }
-
-        RenderPaths(builder, result.Paths);
         if (!IsPathsOnly(result))
         {
             foreach (var source in result.Sources)
@@ -38,27 +26,11 @@ internal static class ContextExpandedHumanRenderer
             }
         }
 
-        RenderLinks(builder, result.Links);
-        RenderFindings(builder, result.Findings);
-        if (result.Next is { } next)
-        {
-            EnsureLineBoundary(builder);
-            builder.AppendLine($"Next: {next.Command} — {next.Reason}");
-        }
+        ContextFramingHumanRenderer.AppendLinks(builder, presentation);
+        EnsureLineBoundary(builder);
+        CliHumanText.AppendNext(builder, presentation);
 
         return builder.ToString();
-    }
-
-    private static string SelectedBy(ContextResult result)
-    {
-        if (result.Workspace is null)
-        {
-            return "unavailable";
-        }
-
-        return result.Workspace.SelectedBy == CliWorkspaceSelectionMethod.CurrentDirectory
-            ? "current directory"
-            : "explicit --workspace";
     }
 
     private static void RenderPaths(StringBuilder builder, IReadOnlyList<ContextPathProjection> paths)
@@ -72,14 +44,14 @@ internal static class ContextExpandedHumanRenderer
         builder.AppendLine("Ordered paths");
         foreach (var path in paths)
         {
-            builder.AppendLine(CultureInfo.InvariantCulture, $"{path.Position}  {path.Path}");
+            builder.AppendLine(CultureInfo.InvariantCulture, $"{path.Position}  {ContextTextEscaping.Escape(path.Path)}");
             builder.AppendLine($$"""
-                   ID: {{path.Id ?? "none"}}
+                   ID: {{ContextTextEscaping.Escape(path.Id ?? "none")}}
                    Layer: {{Layer(path.Layer)}}
                 """);
             foreach (var reason in path.InclusionReasons)
             {
-                builder.AppendLine($"   Included because: {Reason(reason)}");
+                builder.AppendLine($"   Included because: {ContextTextEscaping.Escape(Reason(reason))}");
             }
         }
     }
@@ -96,16 +68,16 @@ internal static class ContextExpandedHumanRenderer
             }
 
             builder.AppendLine(CultureInfo.InvariantCulture, $$"""
-                Path: {{layer.Path}}
-                ID: {{source.Id ?? "none"}}
-                Route: {{source.Route ?? "none"}}
-                Scope: {{source.Scope ?? "none"}}
+                Path: {{ContextTextEscaping.Escape(layer.Path)}}
+                ID: {{ContextTextEscaping.Escape(source.Id ?? "none")}}
+                Route: {{ContextTextEscaping.Escape(source.Route ?? "none")}}
+                Scope: {{ContextTextEscaping.Escape(source.Scope ?? "none")}}
                 Order: {{layer.PathPosition}}
                 Layer: {{Layer(layer.Kind)}}
                 """);
             foreach (var reason in layer.InclusionReasons)
             {
-                builder.AppendLine($"Included because: {Reason(reason)}");
+                builder.AppendLine($"Included because: {ContextTextEscaping.Escape(Reason(reason))}");
             }
 
             foreach (var projection in layer.Projections)
@@ -144,45 +116,4 @@ internal static class ContextExpandedHumanRenderer
         }
     }
 
-    private static void RenderLinks(StringBuilder builder, IReadOnlyList<ContextLink> links)
-    {
-        if (links.Count == 0)
-        {
-            return;
-        }
-
-        EnsureBlankFramingLine(builder);
-        builder.AppendLine("Links");
-        foreach (var link in links)
-        {
-            builder.AppendLine(
-                CultureInfo.InvariantCulture,
-                $"depth {link.Depth}  {link.Source.Path} -> {link.Target.Path ?? link.RawDestination}  {LinkDisposition(link.Disposition)}  {LinkResolution(link.Target.Resolution)}");
-        }
-    }
-
-    private static void RenderFindings(StringBuilder builder, IReadOnlyList<ContextFinding> findings)
-    {
-        if (findings.Count == 0)
-        {
-            return;
-        }
-
-        EnsureBlankFramingLine(builder);
-        builder.AppendLine("Findings");
-        foreach (var finding in findings)
-        {
-            builder.AppendLine(
-                $"{ContextDefinitions.Read(finding.Code).Code} [{CliStatusDefinitions.Read(finding.Status).MachineName}]: {finding.Cause}");
-            if (finding.Subject is not null)
-            {
-                builder.AppendLine($"  Subject: {finding.Subject}");
-            }
-
-            if (finding.Path is not null)
-            {
-                builder.AppendLine($"  Path: {finding.Path}");
-            }
-        }
-    }
 }

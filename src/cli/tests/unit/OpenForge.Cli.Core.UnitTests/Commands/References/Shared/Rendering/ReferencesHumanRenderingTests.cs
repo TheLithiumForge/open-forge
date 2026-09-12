@@ -6,7 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.References.Shared.Rendering;
 
 public sealed class ReferencesHumanRenderingTests
 {
-    [Fact(DisplayName = "References compact rendering preserves requested sections, coverage, counts, Level 1 rows, findings, and next action"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "References compact rendering preserves requested sections, coverage, counts, direct-link rows, findings, and next action"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void CompactRenderingPreservesDirectEvidence()
     {
         var output = ReferencesHumanRenderer.Render(
@@ -15,11 +15,11 @@ public sealed class ReferencesHumanRenderingTests
                 CliOutputFormat.Human,
                 CliView.Compact));
 
-        Assert.Contains("result=attention", output, StringComparison.Ordinal);
+        Assert.Contains("Status: requires attention", output, StringComparison.Ordinal);
         Assert.Contains("Outgoing", output, StringComparison.Ordinal);
-        Assert.Contains("coverage=complete", output, StringComparison.Ordinal);
-        Assert.Contains("occurrences=2", output, StringComparison.Ordinal);
-        Assert.Contains("Level 1", output, StringComparison.Ordinal);
+        Assert.Contains("coverage complete", output, StringComparison.Ordinal);
+        Assert.Contains("Outgoing links: 2", output, StringComparison.Ordinal);
+        Assert.Contains("Direct links", output, StringComparison.Ordinal);
         Assert.Contains("mailto:docs@example.invalid", output, StringComparison.Ordinal);
         Assert.Contains("references.destination-unsupported", output, StringComparison.Ordinal);
         Assert.Contains("Next:", output, StringComparison.Ordinal);
@@ -39,12 +39,12 @@ public sealed class ReferencesHumanRenderingTests
         Assert.Contains("Source:", output, StringComparison.Ordinal);
         Assert.Contains("Direction: both", output, StringComparison.Ordinal);
         Assert.Contains("include", output, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("layer: base", output, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("layer: overwrite", output, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("location:", output, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("raw destination:", output, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("resolution: complete", output, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("provenance:", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("source: base file", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("source: overwrite file", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(".agents/alpha.md:7:3", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Written as:", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("resolution: target found", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Found by:", output, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("Incoming", output, StringComparison.Ordinal);
         Assert.Contains("Outgoing", output, StringComparison.Ordinal);
     }

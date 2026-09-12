@@ -262,64 +262,59 @@ merely because no network request was attempted.
 
 ## Human And Structured Output
 
-The default human view is expanded. Both human views preserve separate requested
-Incoming and Outgoing sections, direct `Level 1` grouping, per-section coverage,
-and required findings before safe occurrence rows.
+The default human view is expanded. Both views identify the selected workspace,
+selection method, source and status, then report findings before occurrences.
+“Direct links” states the one-hop boundary. Only requested Incoming links and
+Outgoing links sections appear. Each section retains its own count, status and
+coverage; an incomplete empty section does not establish that no links exist.
+The renderer preserves every physical occurrence and its established order.
 
 ### Compact View
 
-Compact output is a token-friendly direct-level projection. It reports the
-aggregate result and requested sections without merging their coverage:
+Compact uses short source-to-target rows. It keeps exact source ID, path and
+line/column, target identity when established, authored destination, resolution,
+and source layer. External URLs remain explicitly unchecked over the network.
+Findings retain status, code, cause, subject, available coordinates and candidates.
+The actual operation Next command appears once when present.
+
+Illustrative excerpt:
 
 ```text
-result=complete  references=3
-
-Incoming — coverage=complete  occurrences=2  scan=default
-  Level 1
-    <source-id>  .agents/<source>.md  -> <selected-source-id>
-    <source-id>  .agents/<other-source>.md  -> <selected-source-id>
-
-Outgoing — coverage=complete  occurrences=1
-  Level 1
-    <selected-source-id>  -> <target-id>  .agents/<target>.md
+Direct links for directives/review
+Status: complete
+Workspace: /work/demo
+Selected by: current directory
+Source: .agents/directives/review.md
+Direction: out
+Outgoing links: 1; coverage complete; status complete
+  directives/review  .agents/directives/review.md:7:3 -> https://example.com/review
+    Resolution: external URL; not checked over the network; source: base file
 ```
-
-For an external outgoing occurrence, the direct row retains the raw URL and
-external kind rather than pretending that a local ID or path exists. The compact
-view may omit explanatory locations and resolution detail, but it never omits a
-requested occurrence or section coverage.
 
 ### Expanded View
 
-Expanded output adds directional pointers, exact authored source locations, raw
-destinations, local or external target facts, resolution status, physical layer,
-and provenance:
+Expanded gives each occurrence a readable source block, followed by its target
+and authored destination. It retains fragment, destination line/column, target
+ID and layer when established, and the actual origin of the scan in plain words.
+Byte offsets and lengths remain in JSON. Fields without applicable local target
+identity do not appear for external URLs. Incoming selection shows supplied
+filters and inspected source layers. The existing Next reason accompanies its
+command. No renderer chooses a candidate or suggests an unsupported repair.
+
+Illustrative occurrence excerpt:
 
 ```text
-Incoming — Level 1
-  .agents/<source>.md:<line>:<column> -> .agents/<selected>.md
-    direction: in
-    raw destination: <authored destination>
-    target: <selected-source-id>
-    layer: base
-    resolution: complete
-    provenance: default eligible .agents Markdown scan
-
-Outgoing — Level 1
-  .agents/<selected>.md:<line>:<column> -> <authored destination>
-    direction: out
-    target kind: external
-    local ID: null
-    local path: null
-    resolution: external-unchecked
-    network: network-not-attempted
-    layer: overwrite
+  .agents/workflows/release.md:18:4
+    Source ID: workflows/release
+    Links to: .agents/directives/review.md
+    Target ID: directives/review
+    Written as: ../directives/review.md
+    Resolution: target found; source: base file
+    Found by: default incoming scan
 ```
 
-Expanded framing also identifies the selected workspace, source logical identity,
-requested direction, effective incoming universe when applicable, and each
-section's status and coverage. `--verbose` adds bounded diagnostic detail without
-changing occurrences, order, coverage, or status.
+`--verbose` retains its separate bounded diagnostic meaning. View selection
+changes no occurrence, scan boundary, order, coverage, status or exit code.
 
 ### JSON
 
