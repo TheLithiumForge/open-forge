@@ -394,6 +394,11 @@ The stage realizes the route catalogue:
 - `route.compatibility-conflict` retains every conflicting route form and does
   not choose a canonical winner.
 
+Generated-region comparison applies to the Loader and recognized entrypoints.
+Ordinary Markdown leaves supply child metadata and reference facts; they do not
+require generated regions. Unavailable or malformed eligible hosts still retain
+their diagnostic boundary.
+
 Generated drift belongs to `index`. Route authoring, topology, metadata, and
 overwrite intent belong to accepted route operations or manual decisions. Doctor
 never invokes the targeted operation and Repair never absorbs these findings.
@@ -555,6 +560,13 @@ The Extension lifecycle stage diagnoses the isolated `extensions` section of
 `.agents/open-forge.lifecycle.json`, schema v1, plus manifest, dependency,
 source, ownership, bridge, and registration evidence without installing,
 updating, removing, creating, adopting, or registering an Extension.
+
+A complete present empty Extension section is trusted and requires no warning.
+The recorded source identity `embedded catalogue` refers to the embedded package
+catalogue; recorded explicit filesystem paths retain their exact source and
+safety checks. Reading a complete exact source does not require a separate
+workspace manifest scan or an unconditional coverage limitation. Actual source
+and bridge unavailability remains incomplete or blocked.
 
 The stage preserves installed IDs, ownership, and recorded paths when package
 source bytes are unavailable. It marks source-dependent comparison incomplete and

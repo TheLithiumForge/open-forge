@@ -21,7 +21,7 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
     {
         if (cancellationToken.IsCancellationRequested)
         {
-            return ValueTask.FromResult(Cancelled(explicitSource ?? "embedded catalogue"));
+            return ValueTask.FromResult(Cancelled(explicitSource ?? EmbeddedExtensionCatalogueReader.Identity));
         }
 
         if (explicitSource is null)

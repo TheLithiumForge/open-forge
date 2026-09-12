@@ -1,14 +1,13 @@
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Extensions.Embedded;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Result;
 
 internal static class ExtensionInspectSubjectSourceBuilder
 {
-    private const string EmbeddedIdentity = "embedded catalogue";
-
     internal static ExtensionInspectSubjectPackageSelection ReadSelection(
         ExtensionInspectSubjectPackageInput input,
         int sourceMatches)
@@ -70,7 +69,7 @@ internal static class ExtensionInspectSubjectSourceBuilder
         if (source.State == ExtensionSourceReadState.Complete
             && source.Kind == ExtensionSourceKind.EmbeddedCatalogue)
         {
-            return EmbeddedIdentity;
+            return EmbeddedExtensionCatalogueReader.Identity;
         }
 
         return source.Identity;

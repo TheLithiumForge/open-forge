@@ -982,6 +982,11 @@ Conformance evidence must cover:
 - The six fixed domains in order, with every domain retained when a dependency is
   incomplete or blocked.
 - Complete, incomplete, and blocked coverage independently of finding health.
+- A fresh Framework installation with a trusted empty Extension section has
+  complete coverage and no false error. Installed embedded packages retain their
+  recorded source identity without being treated as filesystem paths.
+- Ordinary Markdown leaves do not require generated regions; missing or malformed
+  regions on the Loader and recognized entrypoints remain diagnosable.
 - Independent severity and resolution, stable kinds, typed subjects, evidence,
   provenance, candidates, proposals, and typed next actions.
 - Every workspace and entry kind, including Loader, entrypoint, compatibility,

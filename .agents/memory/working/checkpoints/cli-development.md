@@ -8,21 +8,31 @@ open-forge:
 
 ## Current Sequential Dogfood Follow-Up
 
-Task 30 [catalogue synchronization](../cli-development/tasks/extension-catalogue-synchronization.md)
-and the fixture/helper set are squash-integrated at `b4a06740`.
-Task 27's [native-delimiter stage](../cli-development/tasks/cli-native-delimiters.md)
-is complete, phase 3/3, milestone 3/3, candidate `5bef9a24`: 3,232 Unit,
-1,745 Integration and 114 public cases pass in all applicable managed/native
-modes, plus 19 native command checks. The global CLI is refreshed; this record
-accompanies authorized local squash integration.
+Local develop is `6b6f054b`: catalogue/fixture/helper stage `b4a06740`, then
+native-delimiter stage `6b6f054b`, both qualified and squash-integrated.
+Installed CLI is delimiter source candidate `5bef9a24` until D1 qualifies.
 
-Next: Doctor correctness, then the full presentation pass and deduplication in
-frozen stages. Fresh Framework/Extension install journeys reproduce five
-correctness problems recorded in the
-[audit](../cli-development/tasks/cli-parsing-doctor-audit.md). The
-[plan](../cli-development/tasks/cli-dogfood-follow-up-plan.md) owns the sequence.
-Root works directly and sequentially. No remote effects are authorized;
-unrelated develop changes remain intact.
+[Doctor D1](../cli-development/tasks/cli-doctor-correctness.md) is COMPLETE,
+phase 3/3, milestone 3/3, candidate
+`c8d786ed92d11de79361c6e5139151fa223d3d1d`. All six managed/native suites pass:
+3,232 Unit, 1,745 Integration in both modes, 117 public cases in all three modes,
+zero failures/skips. Reports: `reports-V1s3Yj`; retained qualification manifest
+and logs: `artifacts/task27-doctor-correctness/`. Four native dogfood checks
+preserve workspace and external-state hashes. The installed CLI is refreshed
+from `5bef9a24` to `c8d786ed`. This record accompanies local squash integration.
+
+The [presentation audit](../cli-development/tasks/cli-presentation-audit.md)
+covers all 28 leaf surfaces and six concrete compact/expanded/JSON comparisons.
+It records ignored views and missing Library dry-run details as pending fixes.
+The original managed public run had one superseded Doctor coverage expectation;
+the corrected case and frozen new regressions pass. The final native gate supersedes that earlier failure.
+
+User boundary: preserve useful functionality; do alignment fixes, improvements
+and optimizations. Check with the user before any other change. Diagnostic-kind
+retirement, JSON changes and default warning filtering remain proposals, not
+implemented behavior. Keep the [plan](../cli-development/tasks/cli-dogfood-follow-up-plan.md)
+and this checkpoint current. Next: record D1 integration, then the bounded generated
+navigation alignment. No remote effects or helpers are authorized.
 
 ## Current Script Structure Continuation
 

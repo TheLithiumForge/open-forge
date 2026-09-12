@@ -13,7 +13,8 @@ internal sealed class RouteDoctorGeneratedNavigationReader
     {
         var formation = new GeneratedNavigationFormationBuilder().Build(inspection.Catalogue);
         var observations = RouteGeneratedNavigationProjection.IndexSources(inspection.Sources);
-        var projection = RouteGeneratedNavigationProjection.Project(formation, observations, formation.Sources);
+        var regionSources = formation.Sources.Where(GeneratedNavigationRegionPlanner.IsRegionSource).ToArray();
+        var projection = RouteGeneratedNavigationProjection.Project(formation, observations, regionSources);
         return projection.Regions
             .OrderBy(region => region.CanonicalPath, StringComparer.Ordinal)
             .Select(region => Project(region, observations[region.CanonicalPath]))

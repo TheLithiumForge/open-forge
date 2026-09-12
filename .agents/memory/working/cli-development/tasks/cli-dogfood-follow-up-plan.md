@@ -22,6 +22,34 @@ behavior, the Architecture defines placement, and the public-facing writing
 standard governs revised explanations. This plan does not accept unreviewed
 parser behavior changes or hide genuine product defects by changing tests.
 
+## User Boundary — 2026-09-12 Continuation
+
+The user explicitly requires preservation of useful functionality. Authorized
+work is alignment fixes, improvements and optimizations. Check with the user
+before any other behavior change. Keep the plan and checkpoints current so the
+reasoning, frozen baseline, exact changes and next action survive restoration.
+
+Implemented so far: stale fixture repairs and Observation; automatic Extension
+embedding from manifests/resources; native option delimiters with typed validation
+preserved; D1 Doctor coverage/source/host alignment. No diagnostic kind, JSON
+field, warning visibility default, mutation capability, ownership or recovery
+policy has been removed. D1 source candidate `c8d786ed` is qualified: all six managed/native suites
+pass (3,232 Unit, 1,745 Integration and 117 public cases per applicable mode).
+The installed CLI is refreshed. This record accompanies authorized local squash.
+
+The [presentation audit](cli-presentation-audit.md) records proposals,
+not implemented behavior. In particular, retiring seven redundant diagnostic
+kinds, changing default visibility, adding flags or changing JSON representation
+requires explicit user review before implementation. Preserve candidate facts,
+counts, exact edit coordinates and real errors. A clearer human presentation
+must not silently remove useful information.
+
+Next: record the D1 squash commit, then freeze the generated-navigation alignment
+stage against real fresh-install/index/stale/authored-drift controls. The draft
+public test file is `/tmp/PublishedDoctorGeneratedNavigationProcessTests.cs`;
+it is outside the source tree, unbuilt and not accepted evidence. Any proposed
+scope/behavior change beyond alignment remains pending user review.
+
 ## Sequential Steps
 
 ### 1. Repair Outdated Fixtures

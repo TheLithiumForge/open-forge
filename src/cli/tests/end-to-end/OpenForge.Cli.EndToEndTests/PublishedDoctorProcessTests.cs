@@ -109,8 +109,6 @@ public sealed class PublishedDoctorProcessTests
     {
         const string roleHorizon =
             "Typed Extension bridge-registration role and observed-state authority is unavailable; no target role was inferred.";
-        const string manifestHorizon =
-            "A bounded contained Extension manifest candidate universe is unavailable; no installed manifest scan was inferred.";
         var extension = Assert.Single(
             root.GetProperty("result")
                 .GetProperty("domains")
@@ -123,9 +121,7 @@ public sealed class PublishedDoctorProcessTests
             .EnumerateArray()
             .Select(limitation => limitation.GetProperty("message").GetString())
             .ToArray();
-        Assert.Equal(
-            [roleHorizon, manifestHorizon],
-            limitations.Where(message => message is roleHorizon or manifestHorizon));
+        Assert.Contains(roleHorizon, limitations);
     }
 
     private sealed class DoctorWorkspace : IDisposable

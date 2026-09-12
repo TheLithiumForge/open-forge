@@ -206,12 +206,13 @@ public sealed class PublishedUpdateProcessTests
             workspace,
             ["doctor", "--json"]);
 
-        Assert.Equal(3, doctor.ExitCode);
+        Assert.Equal(2, doctor.ExitCode);
         Assert.Equal(string.Empty, doctor.StandardError);
         using var doctorDocument = JsonDocument.Parse(doctor.StandardOutput);
         var doctorRoot = doctorDocument.RootElement;
         Assert.Equal("doctor", doctorRoot.GetProperty("command").GetString());
-        Assert.Equal("incomplete", doctorRoot.GetProperty("status").GetString());
+        Assert.Equal("attention", doctorRoot.GetProperty("status").GetString());
+        Assert.Equal("complete", doctorRoot.GetProperty("result").GetProperty("coverage").GetString());
         var domains = doctorRoot
             .GetProperty("result")
             .GetProperty("domains")

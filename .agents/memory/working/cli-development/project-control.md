@@ -6,6 +6,34 @@ open-forge:
 
 # CLI Project Control Ledger
 
+## User Boundary — 2026-09-12 Continuation
+
+The user explicitly requires preservation of useful functionality. Authorized
+work is alignment fixes, improvements and optimizations. Check with the user
+before any other behavior change. Keep the plan and checkpoints current so the
+reasoning, frozen baseline, exact changes and next action survive restoration.
+
+Implemented so far: stale fixture repairs and Observation; automatic Extension
+embedding from manifests/resources; native option delimiters with typed validation
+preserved; D1 Doctor coverage/source/host alignment. No diagnostic kind, JSON
+field, warning visibility default, mutation capability, ownership or recovery
+policy has been removed. D1 source candidate `c8d786ed` is qualified: all six managed/native suites
+pass (3,232 Unit, 1,745 Integration and 117 public cases per applicable mode).
+The installed CLI is refreshed. This record accompanies authorized local squash.
+
+The [presentation audit](tasks/cli-presentation-audit.md) records proposals,
+not implemented behavior. In particular, retiring seven redundant diagnostic
+kinds, changing default visibility, adding flags or changing JSON representation
+requires explicit user review before implementation. Preserve candidate facts,
+counts, exact edit coordinates and real errors. A clearer human presentation
+must not silently remove useful information.
+
+Next: record the D1 squash commit, then freeze the generated-navigation alignment
+stage against real fresh-install/index/stale/authored-drift controls. The draft
+public test file is `/tmp/PublishedDoctorGeneratedNavigationProcessTests.cs`;
+it is outside the source tree, unbuilt and not accepted evidence. Any proposed
+scope/behavior change beyond alignment remains pending user review.
+
 ## Current Sequential Dogfood Plan
 
 Task 30 and the earlier fixture/helper changes are complete and squash-integrated
@@ -13,18 +41,18 @@ at `b4a06740`, with exact accepted tree `64e88bdee3337295ae5712dbff78422c3f707d0
 The [catalogue Task](tasks/extension-catalogue-synchronization.md) records the full
 managed/native gate, isolated package journeys and existing transition limits.
 
-Task 27's [native-delimiter stage](tasks/cli-native-delimiters.md) is COMPLETE,
-phase 3/3, milestone 3/3, candidate `5bef9a24`. All six managed/native suites
-pass: 3,232 Unit, 1,745 Integration and 114 public cases per applicable mode.
-Nineteen direct native commands and changed-C# checks pass. This completion
-record accompanies its authorized local squash. The installed CLI is refreshed.
-Typed validation and the separate attached-empty responsibility exception remain.
+Task 27's [native-delimiter stage](tasks/cli-native-delimiters.md) is complete
+and squash-integrated at `6b6f054b`, exact tree
+`939a3f1cfc52db9613b872d49cddd26ab83dcfc4`. The installed native CLI is its
+qualified source candidate `5bef9a24`.
 
-Doctor correctness and the full presentation pass follow sequentially, using the
-[follow-up plan](tasks/cli-dogfood-follow-up-plan.md) and
-[audit](tasks/cli-parsing-doctor-audit.md). The user accepted clearer Doctor
-messages and deduplication. Root works directly; no helpers or remote operations
-are selected. Squash each verified set locally and preserve unrelated changes.
+[Doctor correctness](tasks/cli-doctor-correctness.md) D1 is COMPLETE phase 3/3,
+milestone 3/3, candidate `c8d786ed`. All six managed/native suites and four
+native dogfood checks pass. This record accompanies its local squash. Generated
+baseline diagnosis is the next bounded D2 stage. The [follow-up plan](tasks/cli-dogfood-follow-up-plan.md) and
+[audit](tasks/cli-parsing-doctor-audit.md) preserve the full presentation and
+nonduplication horizon. Root works directly and sequentially. Squash each
+verified set locally; no remote effects or helpers are selected.
 
 ## Current Script Tooling Follow-up
 

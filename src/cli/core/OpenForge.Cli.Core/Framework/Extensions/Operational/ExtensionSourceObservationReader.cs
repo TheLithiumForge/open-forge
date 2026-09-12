@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Extensions.Embedded;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
@@ -15,7 +16,7 @@ internal sealed class ExtensionSourceObservationReader(ExtensionSourceReader sou
         CancellationToken cancellationToken)
     {
         var includesEmbedded = includeEmbedded;
-        var explicitSources = new SortedSet<string>(StringComparer.Ordinal);
+        var recordedSources = new SortedSet<string>(StringComparer.Ordinal);
         foreach (var package in packages)
         {
             if (package.Source is null)
@@ -24,24 +25,30 @@ internal sealed class ExtensionSourceObservationReader(ExtensionSourceReader sou
             }
             else
             {
-                explicitSources.Add(package.Source);
+                recordedSources.Add(package.Source);
             }
         }
 
         var observations = new List<ExtensionSourceObservation>();
-        if (includesEmbedded)
+        ExtensionSourceReadResult? embedded = null;
+        if (includesEmbedded || recordedSources.Contains(EmbeddedExtensionCatalogueReader.Identity))
         {
-            var source = await sourceReader
+            embedded = await sourceReader
                 .ReadAsync(workspace, explicitSource: null, cancellationToken)
                 .ConfigureAwait(false);
-            observations.Add(new ExtensionSourceObservation(RecordedSource: null, source));
+            if (includesEmbedded)
+            {
+                observations.Add(new ExtensionSourceObservation(RecordedSource: null, embedded));
+            }
         }
 
-        foreach (var recordedSource in explicitSources)
+        foreach (var recordedSource in recordedSources)
         {
-            var source = await sourceReader
-                .ReadAsync(workspace, recordedSource, cancellationToken)
-                .ConfigureAwait(false);
+            var source = string.Equals(recordedSource, EmbeddedExtensionCatalogueReader.Identity, StringComparison.Ordinal)
+                ? embedded ?? throw new InvalidOperationException("The recorded embedded source requires its catalogue observation.")
+                : await sourceReader
+                    .ReadAsync(workspace, recordedSource, cancellationToken)
+                    .ConfigureAwait(false);
             observations.Add(new ExtensionSourceObservation(recordedSource, source));
         }
 

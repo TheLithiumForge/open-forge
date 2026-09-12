@@ -9,6 +9,8 @@ namespace OpenForge.Cli.Core.Framework.Extensions.Embedded;
 
 internal static class EmbeddedExtensionCatalogueReader
 {
+    internal const string Identity = "embedded catalogue";
+
     internal static ExtensionSourceReadResult Read()
     {
         try
@@ -22,7 +24,7 @@ internal static class EmbeddedExtensionCatalogueReader
             return new(
                 state: ExtensionSourceReadState.Complete,
                 kind: ExtensionSourceKind.EmbeddedCatalogue,
-                identity: "embedded catalogue",
+                identity: Identity,
                 packages: packages,
                 cause: null);
         }
@@ -31,7 +33,7 @@ internal static class EmbeddedExtensionCatalogueReader
             return new(
                 state: ExtensionSourceReadState.Invalid,
                 kind: ExtensionSourceKind.EmbeddedCatalogue,
-                identity: "embedded catalogue",
+                identity: Identity,
                 packages: [],
                 cause: $"The embedded Extension catalogue is invalid: {exception.Message}");
         }

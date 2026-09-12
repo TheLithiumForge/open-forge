@@ -96,7 +96,7 @@ internal sealed class GeneratedNavigationRegionPlanner
         }
     }
 
-    private static bool IsRegionSource(SourceLogicalSource source)
+    internal static bool IsRegionSource(SourceLogicalSource source)
     {
         return source.Base.Form == SourceDocumentForm.Loader
             || SourceFormClassifier.IsEntrypoint(source.Base.Form);

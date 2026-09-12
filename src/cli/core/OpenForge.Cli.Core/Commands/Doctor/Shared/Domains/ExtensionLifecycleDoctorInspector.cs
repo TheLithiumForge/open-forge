@@ -41,9 +41,6 @@ internal static class ExtensionLifecycleDoctorInspector
             findings,
             limitations,
             ref coverage);
-        ExtensionObservationHorizonDoctorInspector.AddLimitations(
-            limitations,
-            ref coverage);
 
         return new DoctorDomainReport
         {
@@ -69,7 +66,7 @@ internal static class ExtensionLifecycleDoctorInspector
         var descriptor = view.Section switch
         {
             ExtensionLifecycleSectionState.Present
-                when lifecycle.Trust == LifecycleExtensionTrust.Trusted => null,
+                when lifecycle.Trust is LifecycleExtensionTrust.Trusted or LifecycleExtensionTrust.Absent => null,
             ExtensionLifecycleSectionState.DocumentMissing => DoctorDomainSupport.Information(
                 DoctorFindingKind.ExtensionLifecycleDocumentMissing,
                 lifecycle.Cause ?? "The lifecycle document is missing."),
