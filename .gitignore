@@ -2,8 +2,6 @@
 node_modules/
 dist/
 .temp/
-benchmarks/runs/
-/open-forge-agents.zip
 .codex
 .opencode
 .omo
@@ -17,13 +15,8 @@ apm_modules/
 **/.claude
 
 # Expose only the repository-owned OpenCode Git-object inspection adapter.
-!/.opencode/
-/.opencode/*
-!/.opencode/tools/
-/.opencode/tools/*
-!/.opencode/tools/inspect-git-objects.ts
+**/.opencode
 
 # .NET build output
 **/bin/
 **/obj/
-/artifacts/
