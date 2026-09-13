@@ -17,6 +17,9 @@ open-forge:
   leaf Task before changing source. The command contracts define behavior. The
   Architecture defines structure. The Task defines the bounded outcome and
   allowed changes.
+- Use [CLI Design Guidance](../../../guidance/cli-design.md) for reusable UX and
+  implementation tradeoffs. The current command contracts remain authoritative
+  for exact defaults, schemas, statuses and interaction behavior.
 - Do not implement an unresolved architecture choice. The Overseer owns the
   project foundation, cross-cutting shell and Framework contracts, composition
   boundaries, and integration changes, working directly or through a bounded
@@ -106,6 +109,11 @@ open-forge:
   variables or arbitrary paths.
 - Keep generated source deterministic and explicit. It is the only production
   compile-item exception.
+- Discover bundled catalogue data from the existing embedded-resource inventory
+  and package manifests. Keep package IDs and dependencies in those manifests,
+  not in a second C# catalogue. Use deterministic resource names and validate
+  catalogue identity and dependency relationships. Keep parity checks against
+  the actual packaged source strict.
 
 ### Source And Dependency Direction
 
@@ -164,6 +172,11 @@ open-forge:
   Consider an upgrade only through the explicit dependency decision and evidence
   required by the Architecture. The maintainer must explicitly accept any
   resulting product behavior.
+- Remove resolved exceptions from the active ledger, comments and instructions.
+  Keep useful investigation history in its work record. This unreleased CLI does
+  not require speculative migration paths or compatibility prose for superseded
+  internal package shapes. Existing accepted interface and safety contracts still
+  apply; changing them requires accepted direction.
 
 ### Construction, Parsing, And Pipeline
 
@@ -208,6 +221,41 @@ open-forge:
   primary result, and return one fixed process completion.
 - Pass output writers and cancellation explicitly. Do not cache ambient console
   state or terminate the process inside Core.
+- Let the accepted YAML serializer and Markdown parser own their format syntax.
+  Consume typed models, tokens, syntax trees and source spans before applying
+  Framework rules. Keep product-defined marker or value grammars at their declared
+  shared boundary. Do not add command-local YAML/Markdown parsers, string scans
+  or regular expressions for syntax those dependencies already expose. Preserve
+  original bytes and exact spans where edits require them; that is not authority
+  to introduce a second general parser.
+
+### Human Views And Interaction
+
+- Lead with the useful result or outcome. Describe findings with a clear status
+  or severity, affected source, available editing location and supported next
+  action. Distinguish missing, unreadable and uncertain facts. Apply the Writing
+  Standard instead of exposing unexplained implementation vocabulary.
+- Provide compact and expanded renderers for every command and both accepted
+  formats. Follow the shared view contract for defaults and fallback. Compact
+  keeps core facts and required actions; expanded adds relevant explanation.
+  Verbose diagnostics remain separate. Do not add an AI view, change a default
+  or invent filtering and limit behavior through a presentation refactor.
+- Group repeated supporting details using the result's domain relationships.
+  Retain distinct occurrences, findings, evidence and order. Deduplication must
+  not change diagnostic kinds, counts, semantic status or operation behavior.
+- Preserve selected authored content exactly. Keep mutation plans, effects,
+  retained paths, safety conditions and recovery facts sufficient for review in
+  every view. JSON field omission follows an explicit command schema and view
+  contract, not an incidental serializer optimization.
+- Apply the shared automatic-colour policy at generated rendering sites using
+  typed status or severity. Keep written labels and restore foreground styling
+  before source data. The host supplies per-stream capability; Core does not
+  discover it from ambient Console state. Test terminal, redirected and plain
+  preference behavior. JSON and selected authored content receive no colour.
+- Preserve shared prompt, noninteractive, stream and exit behavior. A view never
+  grants write authority, reruns an operation, changes its result or turns a
+  preview into an effect. Validate public examples against the actual composed
+  CLI, including useful bundled-source and explicit-source journeys.
 
 ### Results, Help, Diagnostics, And Serialization
 
@@ -299,8 +347,15 @@ open-forge:
   architecture wholesale.
 - Every test owns its mutable workspace, home, temporary files, Git repository,
   cache, process, and artifacts. No parallel test shares mutable state.
-- Use snapshots only for stable projections. Assert safety, identity, effects,
-  status, stream selection, and exits directly.
+- Use small authored fixtures for behavior tests so unrelated Markdown wording
+  does not invalidate semantic evidence. When wording and layout are the actual
+  contract, use focused reviewed snapshots and explicit snapshot updates. Assert
+  safety, identity, effects, status, stream selection and exits directly. Keep
+  shipped-resource parity tests tied to the real payload instead of weakening
+  them into static fixtures.
+- Remove temporary experiment scripts and programs after their findings have
+  been recorded. Promote necessary regression evidence into the appropriate
+  tracked test or support scope before deleting its only reusable implementation.
 
 ### Integration And Acceptance
 

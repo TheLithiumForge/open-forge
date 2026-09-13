@@ -259,12 +259,11 @@ Done: Sets 1–7 are qualified. All 28 commands have compact and expanded human
 and JSON views plus automatic terminal colour, aligned contracts/help and passing
 managed/native evidence. Both local CLI installations use the qualified Set 7
 native build without artifact links.
-Now: Set 7 closeout accompanies the authorized squash onto local develop.
-Next: Final reusable CLI/C# guidance remains queued. Saved filters, limits,
-compact-default/minimal-view ideas, parser simplifications and thresholds remain
-proposals. The existing terminal keypad prefix is a separate recorded finding.
-Blocker: None for colour. Windows uses plain text under the frozen scope.
-Defaults, diagnostic kinds, statuses and operation behavior remain unchanged.
+Now: Set 8 final documentation closeout carries the authorized develop squash
+and feature/test rebase, with the completion guards recorded below.
+Next: No further implementation is requested in this closeout. Saved product
+proposals remain deferred.
+Blocker: None. Runtime behavior and qualified inputs are unchanged.
 
 ## Set 2 Final Qualification
 
@@ -1597,3 +1596,85 @@ Colour and command presentation are complete. Final reusable guidance remains
 queued; no new default, filtering, limits, thresholds or diagnostic kinds were
 introduced. Required tests/contracts/checkpoints are tracked; raw reports and
 build products remain disposable, and temporary experiment fixtures are removed.
+
+## Set 8 Final Guidance: Frozen Scope
+
+The user authorized final guidance, its local squash into develop, then rebasing
+feature/test onto that develop on 2026-09-13. This supersedes the earlier
+feature/test protection only for that requested rebase. Start from develop
+87795a19 and task 84752f73, both clean. feature/test is b88f5e7a and is already
+an ancestor of develop, with no unique commits and no checked-out worktree.
+
+Work directly and sequentially. Add one portable on-demand CLI design Guidance
+under `.agents/guidance`, link it from the CLI implementation Directive, and
+consolidate verified parser/resource/rendering/test lessons in the existing CLI
+and C# design Directives. Keep the guide independent of this project's palette,
+status catalogue, flag defaults, schema versions and historical task names.
+Project contracts retain those exact facts. Do not change shipped payloads,
+package scope, executable behavior or unresolved proposals.
+
+This is reversible documentation work for a local development tool. No runtime,
+serializer, build, dependency or mutation-safety boundary changes. Evidence is
+one direct coherent prose review, changed-file Markdown formatting, CLI routing
+and generated-navigation validation, local links, and unchanged executable input
+paths. The qualified Set 7 managed/native result remains applicable; no new full
+runtime gate is triggered. Keep required text and checkpoints tracked. No
+experiment program, remote action or publication is needed.
+
+Sequence: author guidance and directives; validate and freeze the prose set;
+squash the exact candidate tree into develop; run the authorized local rebase
+of feature/test; verify branch ancestry, identical trees and clean worktrees.
+If branch state changes, inspect the new commits before integrating rather than
+replacing unrelated work. Completion requires all three requested outcomes.
+
+### Set 8 Review And Verification
+
+The coherent prose review covers the portable guide, both changed Directives,
+the Guidance entrypoint and the brittle-fixture Observation's promotion links.
+The guide separates adaptable advice from each project's exact contract. CLI
+rules retain expanded default, both JSON schemas, existing status/stream/exit,
+selected-content preservation, mutation safety and the accepted bounded parser
+exception. No backlog proposal became runtime behavior. C# rules keep product
+validation separate from library syntax and resource data separate from reflective
+command registration. No unresolved material prose finding remains.
+
+The installed CLI indexed exactly one Guidance region, adding the new entry.
+A repeated Index dry run reported zero updates. Route Inspect resolves the new
+source as routed and safe, but reports incomplete loading facts; the unchanged
+calibrated-agent-reasoning sibling reproduces that limitation. Outgoing References
+checks resolve the changed local links. External links are unchanged and not
+network-checked. No general Doctor repair is implied by these scoped checks.
+
+Prettier passes the authored changed Markdown files. Its normal formatter adds
+blank lines inside the generated Guidance region that Index removes on the next
+run. Keep the generated region in Index's canonical form and validate it with
+Index idempotence instead of adding ignore comments or changing runtime formatting
+in this documentation set. The initial apply attempt could not acquire the normal
+workspace lock inside the sandbox; ordinary authorized execution with access to
+the host lock directory succeeded, removed its recovery data and verified the
+one intended file. No product workaround was added.
+
+All changed paths are under `.agents/`; executable, build, package and shipped
+payload inputs are unchanged from Set 7. Its 3,347 Unit, 1,814 Integration in each
+runtime and 123 public tests in each of three configurations remain the applicable
+runtime evidence, not a newly rerun suite. The final prose freeze requires clean
+whitespace, resolved new local links, a current generated region and a clean
+candidate worktree after commit. Integration uses exact-tree squash identity,
+then the explicitly authorized feature/test rebase, and verifies clean worktrees.
+
+### Set 8 Final Checkpoint And Branch Completion
+
+Validation passes for the final 11-file documentation set: ten authored Markdown
+files pass Prettier, all nine new or changed authored local links resolve through
+References, generated guidance navigation has zero pending Index updates, and
+`git diff --check` is clean. References excludes generated Entries by contract;
+the entrypoint is validated through Index and routed-source inspection instead.
+All executable and shipped-data inputs remain unchanged.
+
+This closeout carries the authorized guidance squash and subsequent feature/test
+rebase. The starting develop is 87795a19 and starting feature/test is b88f5e7a,
+with zero unique feature commits. Completion requires develop to match this
+candidate tree, feature/test to match the resulting develop after rebase, and
+main/task/integration worktrees to remain clean. The rebase retains all existing
+history because the starting feature tip is already an ancestor. Git refs and
+reflogs preserve the resulting commit identities. No remote update is authorized.

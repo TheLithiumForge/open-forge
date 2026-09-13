@@ -88,10 +88,13 @@ each runtime and 123 public journeys in each of three configurations pass, with
 zero failures/skips. Both local CLI installations now use that qualified native
 build, without artifact dependencies. Direct managed/native/installed terminal
 and piped-JSON checks pass. The capsule records the separate existing runtime
-keypad-prefix observation and the Windows plain-text fallback. This closeout
-accompanies the authorized squash onto develop 5082732a. Final reusable guidance,
-filters, limits, compact-default/minimal-view proposals and configurable
-thresholds remain pending. Work stays sequential; feature/test is unchanged.
+keypad-prefix observation and the Windows plain-text fallback. The colour set
+was squash-integrated as 87795a19. Final reusable guidance is now complete in
+`.agents/guidance/cli-design.md` and the CLI/C# Directives. The current closeout
+squashes that documentation set into develop, then rebases feature/test as the
+user requested. Filters, limits, compact-default/minimal-view proposals and
+configurable thresholds remain deferred. The Set 8 capsule records validation
+and branch guards. Work stays sequential and local.
 
 Cleanup completed: the parser probe was outside the repository and has no matching
 committed project/path history. Its source/project and temporary compiled output,

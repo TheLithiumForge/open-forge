@@ -21,6 +21,38 @@ open-forge:
 - Do not nest or chain conditional (`?:`) expressions. Use ordered `if` returns for precedence and guard flow, or one clear exhaustive switch when it reads better. A single non-nested conditional expression is acceptable only for one obvious two-way value; never use indentation to make a conditional chain appear simpler than it is.
 - Do not declare custom operator overloads or user-defined implicit or explicit conversion operators. Prefer visible named construction and conversion methods such as `Parse`, `TryParse`, `From`, `Create`, or `Read`. If an exceptional external boundary truly requires implicit framework invocation, obtain maintainer acceptance and annotate/register that behavior explicitly at the boundary; do not rely on hidden conversion or convention as ordinary application flow.
 
+### Standard Capabilities And Authored Data
+
+- Use the pinned runtime, BCL and accepted dependencies before writing replacement
+  mechanics. Read their supported call surface and consume typed results. A
+  product validation rule is not a reason to recreate tokenization, option
+  aggregation, format parsing or serialization.
+- Let the accepted YAML, Markdown and JSON libraries interpret their formats.
+  Use their models, tokens, syntax trees and source spans for the facts the
+  application needs. Keep product-specific grammar and validation explicit and
+  local. Do not rescan raw text with splits or regular expressions to duplicate
+  syntax the library already handles. Exact source edits may retain original
+  bytes and spans without reparsing the surrounding language.
+- When shipping embedded data, derive its inventory from declared resources and
+  manifests. Use ordinary project resource inclusion and resource access instead
+  of maintaining a second list of payload files, IDs or dependencies in C#.
+  Keep resource names deterministic and validate the discovered data through its
+  typed contract. Resource enumeration does not imply reflective type discovery
+  or dynamic command registration.
+- Keep formatting and terminal state outside domain behavior. Pass the narrow
+  immutable presentation facts a renderer needs, and style generated labels from
+  typed values. Do not parse finished human output or mutate ambient console
+  state inside reusable domain capabilities.
+- Give behavior tests small fixtures that express the scenario independently of
+  unrelated documentation wording. Use reviewed snapshots for deliberate text
+  projections. Assert semantic facts and effects independently of those snapshots.
+  Tests of packaged-data parity must still compare the actual shipped inputs.
+- Keep custom substitutes and compatibility shims tied to an accepted requirement
+  and a demonstrated standard-capability gap. Follow the
+  [Proportionate Development Directive](../proportional-development.md) for that
+  decision. Remove a solved exception from active instructions instead of
+  preserving obsolete workaround advice.
+
 ### Nullability And Runtime Validation
 
 - Declare nullable reference intent accurately and keep nullable compiler analysis

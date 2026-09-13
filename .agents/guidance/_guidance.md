@@ -24,4 +24,5 @@ Guidance recommends approaches for recurring situations and explains when they f
 - [Deliver greenfield and brownfield work through explicit authority, profile-based rigor, compact context, persistent ownership, and proportionate review](adaptive-design-delivery.md) - #Core #Guidance #Design #Implementation #Adaptive #Greenfield #Brownfield #Context #Planning #Authority #Review #Efficiency
 - [Apply explicit top-down architecture, task decomposition, bounded implementation, and integration-review perspectives without multiplying owners](architectural-perspectives.md) - #Core #Guidance #Architecture #Planning #Task #Delegation #Review #Perspective #Efficiency
 - [Calibrate delegated reasoning, ownership continuity, review depth, and parallelism to bounded work and concrete risk](calibrated-agent-reasoning.md) - #Core #Guidance #Collaboration #Orchestration #Delegation #Reasoning #Review #Risk #Efficiency
+- [Design command-line tools with useful output, predictable interaction, and simple implementation boundaries](cli-design.md) - #Guidance #CLI #Design #UserExperience #Presentation #Development #Testing
 <!-- open-forge:generated-index:end -->

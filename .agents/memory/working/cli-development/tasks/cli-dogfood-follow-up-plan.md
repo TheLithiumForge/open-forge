@@ -62,10 +62,13 @@ each runtime and 123 public journeys in each of three configurations pass, with
 zero failures/skips. Both local CLI installations now use that qualified native
 build, without artifact dependencies. Direct managed/native/installed terminal
 and piped-JSON checks pass. The capsule records the separate existing runtime
-keypad-prefix observation and the Windows plain-text fallback. This closeout
-accompanies the authorized squash onto develop 5082732a. Final reusable guidance,
-filters, limits, compact-default/minimal-view proposals and configurable
-thresholds remain pending. Work stays sequential; feature/test is unchanged.
+keypad-prefix observation and the Windows plain-text fallback. The colour set
+was squash-integrated as 87795a19. Final reusable guidance is now complete in
+`.agents/guidance/cli-design.md` and the CLI/C# Directives. The current closeout
+squashes that documentation set into develop, then rebases feature/test as the
+user requested. Filters, limits, compact-default/minimal-view proposals and
+configurable thresholds remain deferred. The Set 8 capsule records validation
+and branch guards. Work stays sequential and local.
 
 Cleanup completed: the parser probe was outside the repository and has no matching
 committed project/path history. Its source/project and temporary compiled output,
@@ -272,41 +275,28 @@ Squash verified stages into local `develop` while preserving unrelated changes.
 
 ## Final Stage: Reusable CLI And C# Guidance
 
-Requested by the user after D2; perform this consolidation at the end of the
-remaining CLI presentation/refactoring sequence. This is required queued work,
-not a completed guideline. Update the existing CLI implementation Directive and
-C# design Directive, then add or extend focused CLI design Guidance that can be
-shared between projects. Keep project-specific wire contracts in their owners.
+Completed in Set 8 under the user's 2026-09-13 direction. The
+[portable CLI design guide](../../../../guidance/cli-design.md) covers command
+shape, useful defaults, clear findings and actions, compact/expanded/verbose
+roles, JSON, grouping, colour, terminal and noninteractive behavior, prompts,
+dry runs, implementation boundaries and evidence tradeoffs. It can be copied
+between projects without importing Open Forge's exact status or schema catalogue.
 
-Cover native parser/runtime/library behavior before custom code; manifest/resource
-discovery instead of duplicate catalogues; no speculative unreleased-version
-compatibility or migration rules; focused snapshots for actual presentation
-contracts and authored fixtures for behavior; disposable generated output and
-tracked recovery records. Remove solved exceptions from current guidance instead
-of carrying old decision history into product text. A required current exception
-needs a demonstrated capability gap and explicit scope.
+The [CLI implementation Directive](../../../../directives/open-forge/cli/implementation.md)
+and [C# design Directive](../../../../directives/csharp/design.md) incorporate
+standard parsing/serialization, resource and manifest discovery, presentation
+boundaries, explicit fixtures, reviewed snapshots, strict shipped-data parity,
+removal of solved exceptions and disposable experiments. The original brittle-
+fixture Observation links to these destinations. Existing parser delimiter rules
+and artifact-independent recovery rules remain in their established sections.
 
-For CLI experience, cover predictable command/flag meanings, useful defaults,
-concise outcome-first output, clear severity/path/line/action, progressive detail,
-nonduplicated information, human versus JSON output, compact/expanded/verbose
-roles, help/examples, terminal/piped/noninteractive behavior, prompts, dry-run
-review, exit status/streams, and optional colours/accessibility. Preserve useful
-capabilities; do not infer new defaults, diagnostic kinds or schemas from wording.
-For implementation, keep parser, typed request, operation, result and rendering
-boundaries clear; reuse standard capabilities and keep related tests/contracts
-with their owner. Record verified lessons from each completed stage.
-
-Existing authorities to reconcile: the CLI shared-operation contract, shared
-global-flags and result-coordinates contracts, CLI Architecture, Writing Standard,
-CLI implementation Directive and C# design/style Directives. No active portable
-CLI UX Guidance was found in the current Guidance routes. Historical CLI design
-notes are archived and do not define current rules. Choose one reusable guidance
-owner and link it from the selected CLI route; avoid duplicating full contracts.
-
-Acceptance: the full current presentation pass supplies real examples; guidelines
-cover the listed experience and implementation lessons; current contracts remain
-aligned; obsolete exceptions and artifact-only requirements are absent; navigation
-and links work. Squash this final reviewed documentation set into develop.
+Current command interfaces, behavior contracts and Architecture continue to
+define exact product behavior. No default, filter, limit, threshold, schema,
+diagnostic kind, shipped payload or executable source changed in this prose set.
+The [Set 8 capsule](cli-presentation-implementation.md#set-8-final-guidance-frozen-scope)
+records direct review, checks, the generated-index formatter mismatch, prior
+runtime evidence and local integration/rebase boundaries. This closeout completes
+the guidance squash and the requested feature/test rebase in that order.
 
 ### Review-Correction Stage Verification
 

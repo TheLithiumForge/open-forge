@@ -46,7 +46,7 @@ intentional; headings and explanatory sentences no longer define its scenario.
 The [follow-up plan](../../working/cli-development/tasks/cli-dogfood-follow-up-plan.md)
 tracks the wider audit and qualification.
 
-## User Direction And Future Guidance
+## User Direction And Guidance
 
 The user explicitly asked to avoid brittle tests that fail merely because a
 Markdown sentence changes, and prefers snapshots where they are the best fit.
@@ -65,3 +65,10 @@ Snapshots do not make every wording change irrelevant: an intentional output
 contract change should produce a focused, reviewable snapshot diff. The useful
 distinction is whether prose is the test's subject or an incidental dependency.
 No new snapshot library or blanket test rewrite is implied by this Observation.
+
+The final presentation guidance incorporates this lesson in the
+[C# design rules](../../../directives/csharp/design.md#standard-capabilities-and-authored-data),
+[CLI test rules](../../../directives/open-forge/cli/implementation.md#test-evidence)
+and [reusable CLI guide](../../../guidance/cli-design.md#keep-evidence-and-guidance-useful).
+This record preserves the original occurrence and evidence; those sources now
+provide the reusable instructions and advice.
