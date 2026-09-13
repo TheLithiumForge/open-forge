@@ -21,6 +21,7 @@ internal static class ExtensionInstallHumanRenderer
         var expanded = presentation.Presentation.View == CliView.Expanded;
         var mode = ExtensionInstallDefinitions.ReadMachineName(result.Mode);
         var operation = result.Mode == ExtensionInstallMode.DryRun ? "Extension installation preview" : "Extension installation";
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, CliHumanText.Outcome(operation, result.Status));
         builder.AppendLine($"""
@@ -33,7 +34,7 @@ internal static class ExtensionInstallHumanRenderer
         builder.AppendLine($"Package selection: {selectionMethod}");
         foreach (var finding in result.Findings)
         {
-            ExtensionHumanText.AppendFinding(builder, finding.Status, ExtensionInstallDefinitions.ReadMachineName(finding.Code), finding.Cause, finding.Target);
+            ExtensionHumanText.AppendFinding(builder, style.Finding(finding.Status), ExtensionInstallDefinitions.ReadMachineName(finding.Code), finding.Cause, finding.Target);
         }
 
         if (result.Source is { } source)

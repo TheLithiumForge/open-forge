@@ -18,10 +18,11 @@ internal static class ExtensionCreateHumanRenderer
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
         var operation = result.Mode == ExtensionCreateMode.DryRun ? "Extension creation preview" : "Extension creation";
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         builder.AppendLine($"""
-            {CliHumanText.Outcome(operation, result.Status)}
-            Status: {CliHumanText.Status(result.Status)}
+            {style.Information(CliHumanText.Outcome(operation, result.Status))}
+            {style.Information("Status:")} {style.Status(CliHumanText.Status(result.Status), result.Status)}
             Package: {Text(result.StableId)}
             Catalogue: {Text(result.Catalogue)}
             Destination: {Text(result.Destination)}
@@ -29,7 +30,7 @@ internal static class ExtensionCreateHumanRenderer
             """);
         foreach (var finding in result.Findings)
         {
-            builder.AppendLine($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Text(finding.Cause)} [{ExtensionCreateDefinitions.ReadFindingCode(finding.Code)}]");
+            builder.AppendLine($"{style.Finding(finding.Status)}: {Text(finding.Cause)} [{ExtensionCreateDefinitions.ReadFindingCode(finding.Code)}]");
             if (finding.Subject is { } subject)
             {
                 builder.AppendLine($"  {Text(subject)}");

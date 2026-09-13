@@ -12,6 +12,7 @@ internal static class LibraryInspectHumanRenderer
     internal static string Render(CliPresentationRequest<LibraryInspectResult> presentation)
     {
         var payload = presentation.Result.Result;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, $"Library inspection: {CliHumanText.Status(presentation.Result.Status)}.");
         var inventory = payload.Source.State == LibraryInventoryViewState.NotStarted
@@ -26,7 +27,7 @@ internal static class LibraryInspectHumanRenderer
             """);
         foreach (var finding in payload.Findings)
         {
-            LibraryHumanText.AppendFinding(builder, finding.Status,
+            LibraryHumanText.AppendFinding(builder, style.Finding(finding.Status),
                 code: LibraryInspectDefinitions.ReadFindingCode(finding.Code), cause: finding.Cause, path: finding.Path);
             if (finding.LibraryId is { } id && id != payload.Record.Id)
             {

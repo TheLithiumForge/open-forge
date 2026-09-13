@@ -16,6 +16,7 @@ internal static partial class RouteUpdateHumanRenderer
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, Summary(result));
         if (result.Target.Id is { } id)
@@ -54,7 +55,7 @@ internal static partial class RouteUpdateHumanRenderer
             var cause = finding.Code == RouteUpdateFindingCode.TemplateBodyProtected
                 ? "Template body not applied: the target already has authored body content."
                 : Value(finding.Cause);
-            builder.AppendLine($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {cause} [{RouteUpdateDefinitions.ReadMachineName(finding.Code)}]");
+            builder.AppendLine($"{style.Finding(finding.Status)}: {cause} [{RouteUpdateDefinitions.ReadMachineName(finding.Code)}]");
             if (finding.Target is { } target)
             {
                 builder.AppendLine($"  {Value(target)}");

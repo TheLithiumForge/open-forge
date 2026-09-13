@@ -198,3 +198,14 @@ never falls back to compact. No other output format, operation retry or changed
 semantic result is selected. An exception while rendering propagates through
 ordinary failure handling; it is not a missing renderer. All delivered commands
 must implement both views; the fallback does not satisfy that requirement.
+
+## Colour Conformance
+
+Apply the [automatic colour policy](interface.md#automatic-colour) only after
+forming the command result. Select capability for its actual primary output
+stream. Style generated labels from typed statuses or severities, then restore
+the default foreground immediately. Do not recognize words in finished output.
+Removing generated accents must recover the plain result exactly. JSON must be
+byte-identical with colour capability enabled or disabled. Verify both views,
+independent stream capabilities, terminal fallback and selected-content/preview
+preservation.

@@ -133,12 +133,12 @@ internal static partial class UpdateHumanRenderer
 
     private static void AppendFindings(
         StringBuilder builder,
-        IReadOnlyList<UpdateFinding> findings)
+        IReadOnlyList<UpdateFinding> findings, CliHumanStyle style)
     {
         foreach (var finding in findings)
         {
             builder.AppendLine(
-                $"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {FindingCause(finding)} [{UpdateDefinitions.ReadMachineName(finding.Code)}]");
+                $"{style.Finding(finding.Status)}: {FindingCause(finding)} [{UpdateDefinitions.ReadMachineName(finding.Code)}]");
             if (finding.Target is { } target)
             {
                 builder.AppendLine($"  {Value(target)}");

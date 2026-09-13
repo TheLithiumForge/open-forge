@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -14,8 +15,8 @@ internal static class FindHumanRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         return presentation.Presentation.View switch
         {
-            CliView.Compact => FindCompactRenderer.Render(presentation.Result),
-            CliView.Expanded => FindExpandedRenderer.Render(presentation.Result),
+            CliView.Compact => FindCompactRenderer.Render(presentation.Result, CliHumanStyle.For(presentation)),
+            CliView.Expanded => FindExpandedRenderer.Render(presentation.Result, CliHumanStyle.For(presentation)),
             _ => throw new ArgumentOutOfRangeException(
                 nameof(presentation),
                 presentation.Presentation.View,

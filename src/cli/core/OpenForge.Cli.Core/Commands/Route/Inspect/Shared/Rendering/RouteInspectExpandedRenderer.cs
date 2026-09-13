@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -6,11 +7,11 @@ namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
 
 internal static class RouteInspectExpandedRenderer
 {
-    internal static string Render(RouteInspectResult result)
+    internal static string Render(RouteInspectResult result, CliHumanStyle style)
     {
         ArgumentNullException.ThrowIfNull(result);
         var lines = new List<string>();
-        RouteInspectCompactRenderer.Add(lines, result);
+        RouteInspectCompactRenderer.Add(lines, result, style);
         lines.Add(string.Empty);
         AddExplanations(lines, result);
         AddAxioms(lines, result.Profile);

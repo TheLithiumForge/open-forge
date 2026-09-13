@@ -14,9 +14,9 @@ internal static class ExtensionHumanText
     internal static string Values(IReadOnlyList<string> values)
         => values.Count == 0 ? "none" : string.Join(", ", values.Select(Value));
 
-    internal static void AppendFinding(StringBuilder builder, CliSemanticStatus status, string code, string cause, string? target)
+    internal static void AppendFinding(StringBuilder builder, string statusLabel, string code, string cause, string? target)
     {
-        builder.AppendLine($"{CliHumanText.Status(status).ToUpperInvariant()}: {Value(cause)} [{code}]");
+        builder.AppendLine($"{statusLabel}: {Value(cause)} [{code}]");
         if (target is not null)
         {
             builder.AppendLine($"  Target: {Value(target)}");

@@ -17,11 +17,12 @@ internal static partial class UpdateHumanRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, Summary(result));
         builder.AppendLine($"Mode: {UpdateDefinitions.ReadMachineName(result.Mode)}; force: {MachineBoolean(result.Force)}; prune: {MachineBoolean(result.Prune)}; automatic: {MachineBoolean(result.Automatic)}");
         AppendSource(builder, result.Source, expanded);
-        AppendFindings(builder, result.Findings);
+        AppendFindings(builder, result.Findings, style);
         AppendEffects(builder, result, expanded);
         AppendGeneratedNavigation(builder, result.GeneratedNavigation);
         AppendLifecycle(builder, result.Lifecycle);

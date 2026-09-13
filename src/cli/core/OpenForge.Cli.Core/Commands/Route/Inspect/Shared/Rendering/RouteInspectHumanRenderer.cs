@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -14,8 +15,8 @@ internal static class RouteInspectHumanRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         return presentation.Presentation.View switch
         {
-            CliView.Compact => RouteInspectCompactRenderer.Render(presentation.Result),
-            CliView.Expanded => RouteInspectExpandedRenderer.Render(presentation.Result),
+            CliView.Compact => RouteInspectCompactRenderer.Render(presentation.Result, CliHumanStyle.For(presentation)),
+            CliView.Expanded => RouteInspectExpandedRenderer.Render(presentation.Result, CliHumanStyle.For(presentation)),
             _ => throw new ArgumentOutOfRangeException(
                 nameof(presentation),
                 presentation.Presentation.View,

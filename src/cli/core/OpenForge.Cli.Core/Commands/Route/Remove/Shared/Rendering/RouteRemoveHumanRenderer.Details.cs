@@ -131,12 +131,12 @@ internal static partial class RouteRemoveHumanRenderer
 
     private static void AppendFindings(
         StringBuilder builder,
-        IReadOnlyList<RouteRemoveFinding> findings)
+        IReadOnlyList<RouteRemoveFinding> findings, CliHumanStyle style)
     {
         foreach (var finding in findings)
         {
             builder.AppendLine(
-                $"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Value(finding.Cause)} [{RouteRemoveDefinitions.ReadMachineName(finding.Code)}]");
+                $"{style.Finding(finding.Status)}: {Value(finding.Cause)} [{RouteRemoveDefinitions.ReadMachineName(finding.Code)}]");
             if (finding.Target is { } target)
             {
                 builder.AppendLine($"  {Value(target)}");

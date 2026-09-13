@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
@@ -149,10 +150,23 @@ public sealed class DoctorHumanGroupingTests
         Assert.Throws<ArgumentOutOfRangeException>(() => DoctorFindingTitles.Read((DoctorFindingKind)int.MaxValue));
     }
 
+    [Theory(DisplayName = "Doctor colours the typed finding severity without recolouring its source path"), Trait("Feature", "cli-color"), Trait("Evidence", "Unit")]
+    [InlineData((int)DoctorFindingSeverity.Information, "36", "INFO")]
+    [InlineData((int)DoctorFindingSeverity.Warning, "33", "WARNING")]
+    [InlineData((int)DoctorFindingSeverity.Error, "31", "ERROR")]
+    public void FindingSeverityHasItsOwnAccent(int severity, string code, string label)
+    {
+        var finding = DoctorCandidateTestData.Finding(DoctorFindingKind.ReferenceTargetMissing) with { Severity = (DoctorFindingSeverity)severity };
+        var builder = new StringBuilder();
+        DoctorFindingHumanRenderer.Append(builder, [finding], CliView.Expanded, CliHumanStyle.Color);
+        Assert.Contains($"\u001b[{code}m{label}\u001b[39m", builder.ToString(), StringComparison.Ordinal);
+        Assert.Contains(".agents/directives/review.md", builder.ToString(), StringComparison.Ordinal);
+    }
+
     private static string Render(IReadOnlyList<DoctorFinding> findings, CliView view)
     {
         var builder = new StringBuilder();
-        DoctorFindingHumanRenderer.Append(builder, findings, view);
+        DoctorFindingHumanRenderer.Append(builder, findings, view, CliHumanStyle.Plain);
         return builder.ToString().Trim().ReplaceLineEndings("\n");
     }
 

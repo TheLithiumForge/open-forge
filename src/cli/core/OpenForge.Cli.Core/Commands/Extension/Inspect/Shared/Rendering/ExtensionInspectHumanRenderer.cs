@@ -16,6 +16,7 @@ internal static class ExtensionInspectHumanRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, "Extension inspection");
         builder.AppendLine($"""
@@ -27,7 +28,7 @@ internal static class ExtensionInspectHumanRenderer
             Comparison: {ComparisonMode(result.Comparison.Mode)}; {ExtensionInspectWireVocabulary.ComparisonState(result.Comparison.State)}
             Paths: {ExtensionHumanText.Count(result.Counts.CurrentPaths)} current; {ExtensionHumanText.Count(result.Counts.IntendedPaths)} intended; {ExtensionHumanText.Count(result.Counts.UnchangedPaths)} unchanged
             """);
-        ExtensionInspectFindingHumanRenderer.Append(builder, result.Findings.Where(finding => finding.Path is null));
+        ExtensionInspectFindingHumanRenderer.Append(builder, result.Findings.Where(finding => finding.Path is null), style);
         ExtensionInspectFindingHumanRenderer.AppendCandidates(builder, result.Subject.Candidates);
         ExtensionInspectPathsHumanRenderer.Append(builder, presentation);
         ExtensionInspectDetailsHumanRenderer.AppendDependencies(builder, presentation);

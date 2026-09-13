@@ -255,13 +255,16 @@ new trust boundary or exceptional machinery. Raw artifacts remain disposable.
 
 ## Current Checkpoint
 
-Done: Sets 1–6 are qualified. All 28 commands have compact and expanded human
-and JSON views, aligned contracts/help, and passing managed/native evidence.
-Now: Command work is complete at the user's explicit stop before colour. This
-closeout accompanies the qualified Set 6 squash onto local develop.
-Next: Wait for the user's next direction. Colour, final reusable guidance and
-saved proposals remain pending; do not start them automatically.
-Blocker: None. Defaults, filters, limits and diagnostic kinds remain unchanged.
+Done: Sets 1–7 are qualified. All 28 commands have compact and expanded human
+and JSON views plus automatic terminal colour, aligned contracts/help and passing
+managed/native evidence. Both local CLI installations use the qualified Set 7
+native build without artifact links.
+Now: Set 7 closeout accompanies the authorized squash onto local develop.
+Next: Final reusable CLI/C# guidance remains queued. Saved filters, limits,
+compact-default/minimal-view ideas, parser simplifications and thresholds remain
+proposals. The existing terminal keypad prefix is a separate recorded finding.
+Blocker: None for colour. Windows uses plain text under the frozen scope.
+Defaults, diagnostic kinds, statuses and operation behavior remain unchanged.
 
 ## Set 2 Final Qualification
 
@@ -1460,3 +1463,137 @@ Set 5D human squash is 1120d560. All 28 commands now complete both text and JSON
 views. Stop here before colour and final guidance. Filters, result limits,
 compact-default/minimal-view discussion, parser simplifications and configurable
 thresholds remain recorded proposals, with no new behavior implemented.
+
+## Set 7 Automatic Colour: Frozen Scope
+
+The user resumed colour on 2026-09-13 after the command-work stop. Base develop is
+5082732a; task branch 7b1d83d0, both clean. Work directly and sequentially in the
+existing task worktree. Final guidance means reusable CLI UX/development guidance
+and consolidation of the CLI/C# directives requested earlier. This turn implements
+colour and explains that remaining prose work; it does not start the guidance set.
+
+Colour is a presentation-only addition. Use fixed green success, yellow attention/
+warning/incomplete/interrupted, red invalid/blocked/failed/error, and cyan generated
+headings/information labels. Keep written labels and all plain text unchanged.
+Style explicitly generated labels at their rendering sites, never recognize or
+replace words in completed output. Selected authored content, TSV match rows,
+preview diffs, paths, IDs, commands, JSON, diagnostics, prompts and terminal
+help/version retain their plain rendering in this slice. Reset foreground styling
+immediately after each generated label. There is no new flag, palette configuration,
+dependency, terminal parser, native interop or Console mutation in Core.
+
+The host samples stdout/stderr redirection and nonempty NO_COLOR. ANSI accents
+are enabled on Unix terminal streams with a nonempty TERM other than dumb.
+Unknown terminals and Windows fall back to plain text; the .NET Console API does
+not expose a supported ANSI-mode query, and the inspected .NET 10 Windows Console
+implementation does not enable virtual-terminal processing itself. Do not infer
+that redirection alone proves ANSI support or add native console machinery.
+The source is https://github.com/dotnet/runtime/blob/v10.0.0/src/libraries/System.Console/src/System/ConsolePal.Windows.cs.
+
+Host-owned immutable per-stream capabilities travel with output writers. The
+presentation pipeline supplies them only after operation completion. A neutral
+style helper chooses the actual primary stream from format and semantic status;
+JSON always selects plain. Leaf helpers receive the selected immutable style.
+Default injected writers and directly constructed presentations are plain, so
+existing tests and nonterminal hosts keep exact text without ambient state.
+
+Qualification: shared palette/stream/JSON/reset tests, real composed command
+parity with only the four generated ANSI codes removed, authored-content and
+preview preservation, both human views for all 28 commands, meaningful findings
+including Doctor severity, native/managed redirected and pseudo-terminal trials,
+and the complete managed/native gate for this shared presentation boundary.
+Update the shared presentation contracts, Architecture, public CLI guide and
+continuity records. Refresh the qualified installed CLI and squash to develop;
+feature/test remains protected. Source/operation/status/default/filter/limit/
+threshold/diagnostic-kind behavior remains unchanged. All outputs are reversible
+source changes; existing stable-workspace and cooperating-process guarantees stay
+intact. Exceptional machinery: none.
+
+### Set 7 Preflight And Source Freeze
+
+The first managed preflight passed 3,347 Unit and 1,814 Integration cases with
+zero failures/skips. Release compilation passed with zero warnings/errors.
+These receipts precede the final source-ID heading boundary correction and its
+unit assertion; the frozen managed/native gate must qualify that correction.
+Formatting covers changed C# and Markdown files. Direct review found no operation,
+parser, finding, count, payload or exit changes. All 28 commands accent primary
+human status; command finding labels use their existing typed status, and Doctor
+uses its actual typed severity. Shared headings keep appended source IDs plain.
+
+New evidence covers all status colours and both primary streams, terminal-policy
+fallbacks, every command in both human/JSON views, Doctor's three severities,
+exact selected Find/Context bodies and Find rows, and Index's actual generated
+preview syntax. The content fixture deliberately has incomplete context/navigation;
+its existing exit 3 is retained instead of manufacturing a successful result.
+The initial fixture assumptions were corrected against direct executable output.
+No fixture generator or experiment program is retained.
+
+### Set 7 Direct Terminal Evidence
+
+Frozen source: `8d75099e2f9f7a18a332219ea15b3454fe0cc2ef`. Both managed and
+native executables pass six terminal-policy cases, two independently redirected
+stderr cases and both JSON views. The comparison uses identical terminal
+conditions with colour enabled versus nonempty NO_COLOR. Removing only generated
+SGR foreground accents recovers identical human text and exit behavior. Selected
+Find body bytes remain exact. Redirected JSON parses without terminal escapes;
+terminal JSON is byte-identical with colour enabled or disabled. TERM=dumb,
+unset TERM and nonempty NO_COLOR suppress generated colour. Empty NO_COLOR does
+not suppress it. No experiment program was retained.
+
+### Observed Host Terminal Initialization: Separate Follow-up
+
+The real pseudo-terminal trial found `ESC[?1h ESC=` before stdout when TERM=xterm,
+including JSON and version output with NO_COLOR=1. The previously installed
+Set 6 native CLI (dbe5cbc5) and the Set 7 managed/native executables reproduce the
+same prefix. Redirected stdout does not contain it. This is an existing host
+terminal-initialization behavior, not generated colour or a changed result.
+
+The [.NET 10 Unix Console implementation](https://github.com/dotnet/runtime/blob/v10.0.0/src/libraries/System.Console/src/System/ConsolePal.Unix.cs)
+initializes terminal/signal handling, selects stdout when it is a terminal, and
+passes terminfo KeypadXmit to the native runtime. Console stream writes call
+that initialization. The current root also subscribes to CancelKeyPress.
+Do not claim raw terminal captures are escape-free JSON. Colour tests prove
+unchanged terminal JSON and clean piped JSON; they do not qualify a fix for this
+existing terminal behavior.
+
+Queue a separate host-boundary investigation if strict raw terminal JSON is
+required. Preserve cancellation, prompts, help width, stream routing and the
+BCL-first constraint. Do not strip finished output or add native interop as an
+incidental colour fix. No host initialization change is implemented in Set 7.
+
+### Set 7 Final Qualification And Integration Receipt
+
+Reproduction on frozen `8d75099e2f9f7a18a332219ea15b3454fe0cc2ef`:
+`npm run build:native -- --sha --no-restore`, `npm run test:built`, then
+`npm run pack -- --targets linux-x64`. Managed and native compilation completed
+without warnings or errors. All six suites passed with failed/pending/skipped/
+other equal to zero: Unit 3,347; managed Integration 1,814; native Integration
+1,814; managed public 123; native public 123; managed public against the native
+CLI 123. The manifest records dirty=false and tested=true and verifies source
+and executable closures. PackageEndToEnd passed for the installed npm candidate.
+The final heading-value correction and its assertion are included in this gate.
+
+Native CLI SHA-256:
+`bcff7842e90e77bd9a95da969350025feac37da943a204ae35f0a70e450c0685`.
+Native Integration SHA-256:
+`762e866781986313df52c37931e2224e72e11024bae14aede44743a58d7f21bb`.
+Native public runner SHA-256:
+`5d01fe0e9f2cce00f4fffa87b5fda31ab47696b1dc7afd3e9ac01ac294749fb5`.
+
+The exact offline wrapper/native tarballs refreshed both Volta's package store
+and the Node 24.19.0 global prefix used by `.local/bin/open-forge`. The active
+PATH resolved Volta's older shim after only the Node-prefix update, so the Volta
+installation was refreshed too. Both commands now report
+`0.0.0-dev.sha-8d75099e2f9f7a18a332219ea15b3454fe0cc2ef`; package directories
+are real copies, both native hashes match the qualified binary, and installed
+Find terminal colour plus piped compact JSON checks pass. No artifact symlink
+is required by either installation.
+
+This tracked closeout accompanies the local squash onto develop 5082732a.
+Integration requires clean main/task/integration worktrees, unchanged protected
+feature/test `b88f5e7af99c02fd85626ba1fc6182c32ed17798`, exact candidate-tree
+identity after squash, and a guarded fast-forward of develop. No remote action.
+Colour and command presentation are complete. Final reusable guidance remains
+queued; no new default, filtering, limits, thresholds or diagnostic kinds were
+introduced. Required tests/contracts/checkpoints are tracked; raw reports and
+build products remain disposable, and temporary experiment fixtures are removed.

@@ -15,6 +15,7 @@ internal static class LibraryListHumanRenderer
     internal static string Render(CliPresentationRequest<LibraryListResult> presentation)
     {
         var payload = presentation.Result.Result;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, Heading(payload.Record));
         var count = payload.Record.LibraryCount?.ToString(CultureInfo.InvariantCulture) ?? "unavailable";
@@ -28,7 +29,7 @@ internal static class LibraryListHumanRenderer
             """);
         foreach (var finding in payload.Findings)
         {
-            LibraryHumanText.AppendFinding(builder, finding.Status,
+            LibraryHumanText.AppendFinding(builder, style.Finding(finding.Status),
                 code: LibraryListDefinitions.ReadFindingCode(finding.Code), cause: finding.Cause, path: finding.Path);
             if (finding.LibraryId is { } id)
             {

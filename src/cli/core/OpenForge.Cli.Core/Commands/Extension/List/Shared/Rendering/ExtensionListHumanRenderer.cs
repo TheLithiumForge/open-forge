@@ -16,11 +16,12 @@ internal static class ExtensionListHumanRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, "Extension list");
         foreach (var finding in result.Findings)
         {
-            builder.AppendLine($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Text(finding.Cause)} [{ExtensionListDefinitions.ReadFindingCode(finding.Code)}]");
+            builder.AppendLine($"{style.Finding(finding.Status)}: {Text(finding.Cause)} [{ExtensionListDefinitions.ReadFindingCode(finding.Code)}]");
             if (finding.Subject is { } subject)
             {
                 builder.AppendLine($"  {Text(subject)}");

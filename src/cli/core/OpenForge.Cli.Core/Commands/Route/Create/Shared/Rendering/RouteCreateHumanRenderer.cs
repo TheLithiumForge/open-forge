@@ -17,6 +17,7 @@ internal static class RouteCreateHumanRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, Summary(result));
         builder.AppendLine($"Target: {Value(result.Target.Id ?? result.Target.Requested)}");
@@ -38,7 +39,7 @@ internal static class RouteCreateHumanRenderer
         AppendUnchanged(builder, result.UnchangedPaths);
         foreach (var finding in result.Findings)
         {
-            builder.AppendLine($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Value(finding.Cause)} [{RouteCreateDefinitions.ReadMachineName(finding.Code)}]");
+            builder.AppendLine($"{style.Finding(finding.Status)}: {Value(finding.Cause)} [{RouteCreateDefinitions.ReadMachineName(finding.Code)}]");
             if (finding.Target is { } target)
             {
                 builder.AppendLine($"  {Value(target)}");

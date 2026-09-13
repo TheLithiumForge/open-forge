@@ -5,16 +5,16 @@ namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
 
 internal static class RouteInspectCompactMessages
 {
-    internal static void Add(ICollection<string> lines, RouteInspectResult result)
+    internal static void Add(ICollection<string> lines, RouteInspectResult result, CliHumanStyle style)
     {
         foreach (var observation in result.Observations)
         {
-            lines.Add($"Note: {RouteInspectHumanValues.Text(observation.Message)} [{observation.MachineCode}]");
+            lines.Add($"{style.Information("Note:")} {RouteInspectHumanValues.Text(observation.Message)} [{observation.MachineCode}]");
             AddSubject(lines, observation.Subject, observation.Paths);
         }
         foreach (var condition in result.Conditions)
         {
-            lines.Add($"{CliHumanText.Status(condition.Status).ToUpperInvariant()}: {RouteInspectHumanValues.Text(condition.Message)} [{condition.MachineCode}]");
+            lines.Add($"{style.Finding(condition.Status)}: {RouteInspectHumanValues.Text(condition.Message)} [{condition.MachineCode}]");
             AddSubject(lines, condition.Subject, condition.Paths);
         }
     }

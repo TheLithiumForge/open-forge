@@ -6,11 +6,11 @@ namespace OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
 
 internal static class FindFindingHumanRenderer
 {
-    internal static void Add(ICollection<string> lines, FindResult result)
+    internal static void Add(ICollection<string> lines, FindResult result, CliHumanStyle style)
     {
         foreach (var finding in result.Findings)
         {
-            lines.Add($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {FindTextEscaping.Escape(finding.Cause)} [{FindDefinitions.ReadFindingCode(finding.Code)}]");
+            lines.Add($"{style.Finding(finding.Status)}: {FindTextEscaping.Escape(finding.Cause)} [{FindDefinitions.ReadFindingCode(finding.Code)}]");
             if (finding.Subject is { } subject && subject != finding.Path)
             {
                 lines.Add($"  Subject: {FindTextEscaping.Escape(subject)}");

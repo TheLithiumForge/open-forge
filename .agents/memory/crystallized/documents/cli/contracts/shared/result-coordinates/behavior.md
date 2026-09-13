@@ -45,7 +45,9 @@ The command-local contract selects one of the seven semantic statuses from its
 accepted conditions. The shared mapping then selects the fixed process exit and
 human primary stream without command-local override. JSON always selects one
 complete stdout document for that same status. Diagnostics remain bounded on
-stderr.
+stderr. Human colour capability follows that selected primary stream under the
+[automatic colour contract](../global-flags/interface.md#automatic-colour); it
+does not participate in result formation or structured serialization.
 
 Terminal help and version stop before domain result formation and use their
 shared text-only behavior. They do not manufacture a successful JSON envelope.

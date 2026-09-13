@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using System.Text.Json;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Core.Commands.Find;
@@ -373,7 +374,7 @@ public sealed class FindApplicationIntegrationTests
             statusValue == "failed" ? "open-forge find --verbose" : "open-forge find",
             result.Next!.Command);
 
-        var rendered = FindCompactRenderer.Render(result);
+        var rendered = FindCompactRenderer.Render(result, CliHumanStyle.Plain);
 
         Assert.Equal(expectedSummary, NonEmptyLines(rendered)[0]);
         Assert.Equal(

@@ -17,6 +17,7 @@ internal static partial class RepairPresentation
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, result.Mode == RepairMode.DryRun
             ? "Preview of selected repairs"
@@ -94,7 +95,7 @@ internal static partial class RepairPresentation
 
         foreach (var finding in result.Findings)
         {
-            builder.AppendLine($"{CliHumanText.Status(RepairDefinitions.ReadStatus(finding.Code)).ToUpperInvariant()}: {Text(finding.Cause)} [{RepairDefinitions.ReadMachineName(finding.Code)}]");
+            builder.AppendLine($"{style.Finding(RepairDefinitions.ReadStatus(finding.Code))}: {Text(finding.Cause)} [{RepairDefinitions.ReadMachineName(finding.Code)}]");
             if (finding.SourceCanonicalPath is { } source)
             {
                 builder.AppendLine($"  {Text(source)}{FormatLocation(finding.Occurrence)}");

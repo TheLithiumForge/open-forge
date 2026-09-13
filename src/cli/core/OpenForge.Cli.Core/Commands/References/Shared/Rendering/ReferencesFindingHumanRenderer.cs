@@ -8,11 +8,11 @@ namespace OpenForge.Cli.Core.Commands.References.Shared.Rendering;
 
 internal static class ReferencesFindingHumanRenderer
 {
-    internal static void Append(StringBuilder builder, IReadOnlyList<ReferencesFinding> findings)
+    internal static void Append(StringBuilder builder, IReadOnlyList<ReferencesFinding> findings, CliHumanStyle style)
     {
         foreach (var finding in findings)
         {
-            builder.AppendLine($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Text(finding.Cause)} [{ReferencesDefinitions.ReadMachineName(finding.Code)}]");
+            builder.AppendLine($"{style.Finding(finding.Status)}: {Text(finding.Cause)} [{ReferencesDefinitions.ReadMachineName(finding.Code)}]");
             if (finding.Subject is { } subject && subject != finding.Path)
             {
                 builder.AppendLine($"  Subject: {Text(subject)}");

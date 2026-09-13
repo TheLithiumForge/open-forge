@@ -16,11 +16,12 @@ internal static class StatusHumanRenderer
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, Installation(result.Facts.Installation.State));
-        StatusFindingHumanRenderer.Append(builder, result);
+        StatusFindingHumanRenderer.Append(builder, result, style);
         builder.AppendLine();
-        builder.AppendLine("Context");
+        builder.AppendLine(style.Information("Context"));
         AppendStartup(builder, result.Facts.Context);
         if (presentation.Presentation.View == CliView.Expanded)
         {

@@ -119,12 +119,12 @@ internal static partial class RouteMoveHumanRenderer
 
     private static void AppendFindings(
         StringBuilder builder,
-        IReadOnlyList<RouteMoveFinding> findings)
+        IReadOnlyList<RouteMoveFinding> findings, CliHumanStyle style)
     {
         foreach (var finding in findings)
         {
             builder.AppendLine(
-                $"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Value(finding.Cause)} [{RouteMoveDefinitions.ReadMachineName(finding.Code)}]");
+                $"{style.Finding(finding.Status)}: {Value(finding.Cause)} [{RouteMoveDefinitions.ReadMachineName(finding.Code)}]");
             if (finding.Target is { } target)
             {
                 builder.AppendLine($"  {Value(target)}");

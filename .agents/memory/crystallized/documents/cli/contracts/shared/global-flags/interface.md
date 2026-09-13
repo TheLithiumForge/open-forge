@@ -148,6 +148,21 @@ Rules:
 - `--verbose` remains a separate diagnostic dimension and does not select the
   expanded view.
 
+## Automatic Colour
+
+Both human views accent generated status labels and selected headings when the
+primary output stream is a supported terminal. The fixed palette is green for
+complete, yellow for attention/incomplete/interrupted and warnings, red for
+invalid/blocked/failed and errors, and cyan for information labels and headings.
+Written labels remain present. There is no colour flag or configurable palette.
+
+Unix terminal streams use colour when `TERM` is nonempty and not `dumb` and
+`NO_COLOR` is empty or absent. Redirection is checked independently for stdout
+and stderr. Windows and terminals without that capability evidence use plain
+text. JSON, selected authored content, Find TSV rows, preview diffs, paths,
+identifiers and commands retain their plain rendering. Diagnostics, prompts,
+help and version remain plain. Colour never changes facts, status, stream or exit.
+
 ## `--verbose`
 
 `--verbose` adds diagnostic detail to the selected presentation.

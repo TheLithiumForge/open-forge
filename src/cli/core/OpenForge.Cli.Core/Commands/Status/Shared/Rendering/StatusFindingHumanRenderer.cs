@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
@@ -7,7 +8,7 @@ namespace OpenForge.Cli.Core.Commands.Status.Shared.Rendering;
 
 internal static class StatusFindingHumanRenderer
 {
-    internal static void Append(StringBuilder builder, StatusResult result)
+    internal static void Append(StringBuilder builder, StatusResult result, CliHumanStyle style)
     {
         var navigationPaths = result.Facts.Structure.GeneratedNavigation
             .Where(target => target.State != OperationalGeneratedNavigationState.Current)
@@ -16,7 +17,7 @@ internal static class StatusFindingHumanRenderer
         foreach (var group in result.Findings.GroupBy(finding => (finding.Code, finding.Status, finding.Cause)))
         {
             var status = group.Key.Status == CliSemanticStatus.Attention ? "requires attention" : CliStatusDefinitions.Read(group.Key.Status).MachineName;
-            builder.AppendLine($"{status.ToUpperInvariant()}: {StatusHumanRenderer.Text(group.Key.Cause)} [{StatusDefinitions.ReadFindingCode(group.Key.Code)}]");
+            builder.AppendLine($"{style.Status(status.ToUpperInvariant(), group.Key.Status)}: {StatusHumanRenderer.Text(group.Key.Cause)} [{StatusDefinitions.ReadFindingCode(group.Key.Code)}]");
             var shownUnderRoutes = false;
             foreach (var subject in group.Select(finding => finding.Subject).OfType<string>().Distinct(StringComparer.Ordinal))
             {

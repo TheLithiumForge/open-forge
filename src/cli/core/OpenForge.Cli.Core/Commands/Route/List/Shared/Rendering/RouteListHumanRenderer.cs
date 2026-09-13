@@ -14,12 +14,13 @@ internal static class RouteListHumanRenderer
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
+        var style = CliHumanStyle.For(presentation);
         var expanded = presentation.Presentation.View == CliView.Expanded;
-        var heading = result.Selection.ResolvedId is { } id ? $"Routes under {Escape(id)}" : "Routes";
+        var heading = result.Selection.ResolvedId is { } id ? $"{style.Information("Routes under")} {Escape(id)}" : style.Information("Routes");
         var lines = new List<string>
         {
             heading,
-            $"Status: {CliHumanText.Status(result.Status)}",
+            $"{style.Information("Status:")} {style.Status(CliHumanText.Status(result.Status), result.Status)}",
             $"Workspace: {Optional(result.Workspace?.LexicalRoot)}",
             $"Selected by: {SelectedBy(result.Workspace)}",
             $"Coverage: {CoverageState(result.Coverage.State)}; roots: {result.Coverage.SelectedRootCount}; depth: {Depth(result.EffectiveDepth)}; routes: {result.Rows.Count}",
@@ -39,7 +40,7 @@ internal static class RouteListHumanRenderer
         }
         foreach (var finding in result.Findings)
         {
-            lines.Add($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Escape(finding.Cause)} [{finding.MachineCode}]");
+            lines.Add($"{style.Finding(finding.Status)}: {Escape(finding.Cause)} [{finding.MachineCode}]");
             if (finding.Subject is { } subject)
             {
                 lines.Add($"  Subject: {Escape(subject)}");
@@ -51,7 +52,7 @@ internal static class RouteListHumanRenderer
         }
         if (result.Next is { } next)
         {
-            lines.Add($"Next: {CliHumanText.Text(next.Command)}");
+            lines.Add($"{style.Information("Next:")} {CliHumanText.Text(next.Command)}");
             if (expanded)
             {
                 lines.Add(Escape(next.Reason));

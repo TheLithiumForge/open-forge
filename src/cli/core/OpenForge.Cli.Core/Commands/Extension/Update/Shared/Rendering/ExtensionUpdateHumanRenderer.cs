@@ -20,6 +20,7 @@ internal static class ExtensionUpdateHumanRenderer
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
         var operation = result.Mode == ExtensionUpdateMode.DryRun ? "Extension update preview" : "Extension update";
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, CliHumanText.Outcome(operation, result.Status));
         builder.AppendLine($"""
@@ -33,7 +34,7 @@ internal static class ExtensionUpdateHumanRenderer
         builder.AppendLine($"Package selection: {selectionMethod}");
         foreach (var finding in result.Findings)
         {
-            ExtensionHumanText.AppendFinding(builder, finding.Status, ExtensionUpdateDefinitions.ReadMachineName(finding.Code), finding.Cause, finding.Target);
+            ExtensionHumanText.AppendFinding(builder, style.Finding(finding.Status), ExtensionUpdateDefinitions.ReadMachineName(finding.Code), finding.Cause, finding.Target);
         }
 
         if (result.Source is { } source)

@@ -36,6 +36,7 @@ internal static class CleanupPresentation
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, result.Mode == CleanupMode.DryRun
             ? "Preview of recovery-data cleanup"
@@ -86,7 +87,7 @@ internal static class CleanupPresentation
         AppendObservedCandidates(builder, result);
         foreach (var finding in result.Findings)
         {
-            builder.AppendLine($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Escape(finding.Cause)} [{CleanupWireVocabulary.FindingCode(finding.Code)}]");
+            builder.AppendLine($"{style.Finding(finding.Status)}: {Escape(finding.Cause)} [{CleanupWireVocabulary.FindingCode(finding.Code)}]");
             if (finding.Subject is { } subject)
             {
                 builder.AppendLine($"    {Escape(subject)}");

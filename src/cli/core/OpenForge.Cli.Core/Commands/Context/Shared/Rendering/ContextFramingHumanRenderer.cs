@@ -13,6 +13,7 @@ internal static class ContextFramingHumanRenderer
     internal static void AppendHeader(StringBuilder builder, CliPresentationRequest<ContextResult> presentation)
     {
         var result = presentation.Result;
+        var style = CliHumanStyle.For(presentation);
         CliHumanText.AppendHeader(builder, presentation, "Context");
         builder.AppendLine($"Sources: {ReadCount(result)}; coverage {Coverage(result.Coverage.State)}");
         builder.AppendLine($"Content: {string.Join(", ", result.Presentation.Content.Effective.Select(part => ContextTextEscaping.Escape(part.CanonicalValue)))}");
@@ -33,7 +34,7 @@ internal static class ContextFramingHumanRenderer
                 builder.AppendLine($"  Candidate: {ContextTextEscaping.Escape(candidate.Id ?? "unavailable")}; {ContextTextEscaping.Escape(candidate.Path)}");
             }
         }
-        ContextFindingHumanRenderer.Append(builder, result.Findings);
+        ContextFindingHumanRenderer.Append(builder, result.Findings, style);
     }
 
     internal static void AppendLinks(StringBuilder builder, CliPresentationRequest<ContextResult> presentation)

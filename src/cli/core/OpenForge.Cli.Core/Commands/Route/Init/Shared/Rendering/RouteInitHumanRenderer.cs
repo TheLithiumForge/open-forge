@@ -19,6 +19,7 @@ internal static class RouteInitHumanRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, Summary(result));
         AppendIdentity(builder, result);
@@ -37,7 +38,7 @@ internal static class RouteInitHumanRenderer
             AppendFramework(builder, result.Framework);
         }
 
-        AppendFindings(builder, result.Findings);
+        AppendFindings(builder, result.Findings, style);
         builder.AppendLine($"Lifecycle: {RouteInitDefinitions.ReadMachineName(result.Lifecycle.Action)} / {RouteInitDefinitions.ReadMachineName(result.Lifecycle.Outcome)}");
         builder.AppendLine($"Recovery: {RouteInitDefinitions.ReadMachineName(result.Recovery.State)}{PathSuffix(result.Recovery.ResidualPath)}");
         builder.AppendLine($"Verification: {RouteInitDefinitions.ReadMachineName(result.Verification)}");
@@ -185,12 +186,12 @@ internal static class RouteInitHumanRenderer
 
     private static void AppendFindings(
         StringBuilder builder,
-        IReadOnlyList<RouteInitFinding> findings)
+        IReadOnlyList<RouteInitFinding> findings, CliHumanStyle style)
     {
         foreach (var finding in findings)
         {
             builder.AppendLine(
-                $"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {RouteTextEscaping.Escape(finding.Cause)} [{RouteInitDefinitions.ReadMachineName(finding.Code)}]");
+                $"{style.Finding(finding.Status)}: {RouteTextEscaping.Escape(finding.Cause)} [{RouteInitDefinitions.ReadMachineName(finding.Code)}]");
             if (finding.Target is not null)
             {
                 builder.AppendLine($"  Target: {RouteTextEscaping.Escape(finding.Target)}");

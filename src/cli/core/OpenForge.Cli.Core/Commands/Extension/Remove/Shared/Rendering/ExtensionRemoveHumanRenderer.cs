@@ -18,6 +18,7 @@ internal static class ExtensionRemoveHumanRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
         var operation = result.Mode == ExtensionRemoveMode.DryRun ? "Extension removal preview" : "Extension removal";
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, CliHumanText.Outcome(operation, result.Status));
         builder.AppendLine($"""
@@ -30,7 +31,7 @@ internal static class ExtensionRemoveHumanRenderer
         builder.AppendLine($"Package selection: {selectionMethod}");
         foreach (var finding in result.Findings)
         {
-            ExtensionHumanText.AppendFinding(builder, finding.Status, ExtensionRemoveDefinitions.ReadMachineName(finding.Code), finding.Cause, finding.Target);
+            ExtensionHumanText.AppendFinding(builder, style.Finding(finding.Status), ExtensionRemoveDefinitions.ReadMachineName(finding.Code), finding.Cause, finding.Target);
         }
 
         AppendDependencies(builder, presentation);

@@ -40,7 +40,7 @@ internal sealed class CliCommandPipeline<TRequest, TResult>
         CliPresentation presentation,
         CliOutputWriters writers)
     {
-        var presentationRequest = CliPresentationStage.Create(result, presentation);
+        var presentationRequest = CliPresentationStage.Create(result, presentation with { Colors = writers.Colors });
         var rendered = CliRenderingStage.Render(presentationRequest, _renderers, _diagnosticRenderer);
         var receipt = await CliOutputStage
             .WriteAsync(rendered, writers, CancellationToken.None)

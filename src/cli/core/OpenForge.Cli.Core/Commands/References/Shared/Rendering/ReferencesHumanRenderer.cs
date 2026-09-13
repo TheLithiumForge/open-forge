@@ -19,15 +19,16 @@ internal static class ReferencesHumanRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
-        var heading = result.Source is { } source ? $"Direct links for {Text(source.Id)}" : "Direct links";
-        CliHumanText.AppendHeader(builder, presentation, heading);
+        var heading = result.Source is null ? "Direct links" : "Direct links for";
+        CliHumanText.AppendHeader(builder, presentation, heading, result.Source is { } source ? Text(source.Id) : null);
         builder.AppendLine($"Source: {Text(result.Source?.Path ?? "unavailable")}");
         builder.AppendLine($"Direction: {(result.RequestedDirection is { } direction ? Direction(direction) : "unavailable")}");
-        ReferencesFindingHumanRenderer.Append(builder, result.Findings);
+        ReferencesFindingHumanRenderer.Append(builder, result.Findings, style);
         AppendSelection(builder, result.IncomingSelection, expanded);
-        AppendSection(builder, "Incoming", result.Incoming, expanded);
-        AppendSection(builder, "Outgoing", result.Outgoing, expanded);
+        AppendSection(builder, "Incoming", result.Incoming, expanded, style);
+        AppendSection(builder, "Outgoing", result.Outgoing, expanded, style);
         CliHumanText.AppendNext(builder, presentation);
         return builder.ToString().TrimEnd();
     }
@@ -55,14 +56,14 @@ internal static class ReferencesHumanRenderer
         }
     }
 
-    private static void AppendSection(StringBuilder builder, string heading, ReferencesSection? section, bool expanded)
+    private static void AppendSection(StringBuilder builder, string heading, ReferencesSection? section, bool expanded, CliHumanStyle style)
     {
         if (section is null)
         {
             return;
         }
 
-        builder.AppendLine(CultureInfo.InvariantCulture, $"{heading} links: {section.OccurrenceCount}; coverage {Coverage(section.Coverage)}; status {CliHumanText.Status(section.Status)}");
+        builder.AppendLine(CultureInfo.InvariantCulture, $"{style.Information(heading)} links: {section.OccurrenceCount}; coverage {Coverage(section.Coverage)}; status {style.Status(CliHumanText.Status(section.Status), section.Status)}");
         if (section.Occurrences.Count == 0)
         {
             builder.AppendLine(section.Coverage == ReferencesCoverage.Complete

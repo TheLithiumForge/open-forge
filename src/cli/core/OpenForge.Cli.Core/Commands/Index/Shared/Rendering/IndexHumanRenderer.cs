@@ -19,6 +19,7 @@ internal static class IndexHumanRenderer
         CliOperationStage.ValidateResult(presentation.Result);
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, Summary(result));
         builder.AppendLine($"Mode: {IndexDefinitions.ReadMachineName(result.Mode)}");
@@ -32,7 +33,7 @@ internal static class IndexHumanRenderer
 
         foreach (var finding in result.Findings)
         {
-            builder.AppendLine($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Text(finding.Cause)} [{IndexDefinitions.ReadMachineName(finding.Code)}]");
+            builder.AppendLine($"{style.Finding(finding.Status)}: {Text(finding.Cause)} [{IndexDefinitions.ReadMachineName(finding.Code)}]");
             if (finding.Source is { } source)
             {
                 builder.AppendLine($"  {Text(source.Path)}");

@@ -10,15 +10,15 @@ namespace OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
 
 internal static class FindExpandedRenderer
 {
-    internal static string Render(FindResult result)
+    internal static string Render(FindResult result, CliHumanStyle style)
     {
         ArgumentNullException.ThrowIfNull(result);
         CliOperationStage.ValidateResult(result);
         var noun = result.Matches.Count == 1 ? "source" : "sources";
         var lines = new List<string>
         {
-            $"Found {result.Matches.Count} matching {noun}.",
-            $"Status: {CliHumanText.Status(result.Status)}",
+            style.Information($"Found {result.Matches.Count} matching {noun}."),
+            $"{style.Information("Status:")} {style.Status(CliHumanText.Status(result.Status), result.Status)}",
             $"Workspace: {FindTextEscaping.Escape(Workspace(result.Workspace))}",
             $"Selected by: {SelectedBy(result.Workspace)}",
             $"Coverage: {Coverage(result.Coverage.State)}",
@@ -31,7 +31,7 @@ internal static class FindExpandedRenderer
         {
             lines.Add($"Projection coverage: {ProjectionCoverage(result.Coverage.Projection)}");
         }
-        FindFindingHumanRenderer.Add(lines, result);
+        FindFindingHumanRenderer.Add(lines, result, style);
         lines.Add(string.Empty);
         AddMatches(lines, result.Matches);
         if (result.Matches.Count == 0 && result.Coverage.State != FindCoverageState.Complete)
@@ -39,13 +39,13 @@ internal static class FindExpandedRenderer
             lines.Add("No matches established; the search is not complete.");
         }
         lines.Add(string.Empty);
-        lines.Add("Search details:");
-        lines.Add("Filters:");
+        lines.Add(style.Information("Search details:"));
+        lines.Add(style.Information("Filters:"));
         AddPredicates(lines, result.Query.Predicates);
         lines.Add($"Require: {Requirement(result.Query.Requirement)}");
-        lines.Add("Within:");
+        lines.Add(style.Information("Within:"));
         AddWithin(lines, result.Query.Within);
-        lines.Add("Source universe:");
+        lines.Add(style.Information("Source universe:"));
         lines.Add($"  Mode:       {UniverseMode(result.Universe.Mode)}");
         AddSelectors(lines, "Include", result.Universe.Include);
         AddSelectors(lines, "Exclude", result.Universe.Exclude);

@@ -17,6 +17,7 @@ internal static partial class RouteRemoveHumanRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, Summary(result));
         AppendIdentity(builder, result);
@@ -27,7 +28,7 @@ internal static partial class RouteRemoveHumanRenderer
         AppendEffects(builder, result.Effects);
         AppendUnchanged(builder, result.UnchangedPaths);
         AppendRecovery(builder, result.Recovery);
-        AppendFindings(builder, result.Findings);
+        AppendFindings(builder, result.Findings, style);
         builder.AppendLine($"Verification: {RouteRemoveDefinitions.ReadMachineName(result.Verification)}");
         if (result.Mode == RouteRemoveMode.DryRun)
         {

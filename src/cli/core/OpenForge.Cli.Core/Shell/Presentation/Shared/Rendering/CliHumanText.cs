@@ -8,16 +8,17 @@ namespace OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 
 internal static class CliHumanText
 {
-    internal static void AppendHeader<TResult>(StringBuilder builder, CliPresentationRequest<TResult> presentation, string heading)
+    internal static void AppendHeader<TResult>(StringBuilder builder, CliPresentationRequest<TResult> presentation, string heading, string? headingValue = null)
         where TResult : ICliCommandResult
     {
         var result = presentation.Result;
+        var style = CliHumanStyle.For(presentation);
         var selection = result.Workspace is { } workspace ? Selection(workspace.SelectedBy) : "unavailable";
         builder.AppendLine($"""
-            {heading}
-            Status: {Status(result.Status)}
-            Workspace: {Text(result.Workspace?.LexicalRoot ?? "unavailable")}
-            Selected by: {selection}
+            {style.Information(heading)}{(headingValue is null ? string.Empty : " " + headingValue)}
+            {style.Information("Status:")} {style.Status(Status(result.Status), result.Status)}
+            {style.Information("Workspace:")} {Text(result.Workspace?.LexicalRoot ?? "unavailable")}
+            {style.Information("Selected by:")} {selection}
             """);
     }
 
@@ -26,7 +27,7 @@ internal static class CliHumanText
     {
         if (presentation.Result.Next is { } next)
         {
-            builder.AppendLine($"Next: {Text(next.Command)}");
+            builder.AppendLine($"{CliHumanStyle.For(presentation).Information("Next:")} {Text(next.Command)}");
             if (presentation.Presentation.View == CliView.Expanded)
             {
                 builder.AppendLine(Text(next.Reason));

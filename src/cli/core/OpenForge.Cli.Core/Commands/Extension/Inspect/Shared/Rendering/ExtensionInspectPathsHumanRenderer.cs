@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
@@ -12,6 +13,7 @@ internal static class ExtensionInspectPathsHumanRenderer
     internal static void Append(StringBuilder builder, CliPresentationRequest<ExtensionInspectResult> presentation)
     {
         var result = presentation.Result;
+        var style = CliHumanStyle.For(presentation);
         var expanded = presentation.Presentation.View == CliView.Expanded;
         var comparisons = result.Comparison.Paths.ToLookup(item => item.Path, StringComparer.Ordinal);
         var findings = result.Findings.Where(item => item.Path is not null).ToLookup(item => item.Path, StringComparer.Ordinal);
@@ -46,7 +48,7 @@ internal static class ExtensionInspectPathsHumanRenderer
             }
 
             builder.AppendLine($"  {Value(path)}");
-            ExtensionInspectFindingHumanRenderer.Append(builder, findings[path]);
+            ExtensionInspectFindingHumanRenderer.Append(builder, findings[path], style);
             foreach (var comparison in comparisons[path])
             {
                 builder.AppendLine($"    Comparison: {Relation(comparison.Relation)}");

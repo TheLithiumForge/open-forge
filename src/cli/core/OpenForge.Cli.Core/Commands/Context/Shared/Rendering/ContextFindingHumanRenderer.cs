@@ -7,11 +7,11 @@ namespace OpenForge.Cli.Core.Commands.Context.Shared.Rendering;
 
 internal static class ContextFindingHumanRenderer
 {
-    internal static void Append(StringBuilder builder, IReadOnlyList<ContextFinding> findings)
+    internal static void Append(StringBuilder builder, IReadOnlyList<ContextFinding> findings, CliHumanStyle style)
     {
         foreach (var finding in findings)
         {
-            builder.AppendLine($"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {Text(finding.Cause)} [{ContextDefinitions.Read(finding.Code).Code}]");
+            builder.AppendLine($"{style.Finding(finding.Status)}: {Text(finding.Cause)} [{ContextDefinitions.Read(finding.Code).Code}]");
             var path = finding.Path ?? finding.Source?.Path;
             if (finding.Subject is { } subject && subject != path)
             {

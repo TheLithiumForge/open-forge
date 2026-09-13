@@ -30,9 +30,9 @@ internal static class LibraryHumanText
         return CliHumanText.Outcome(label, status);
     }
 
-    internal static void AppendFinding(StringBuilder builder, CliSemanticStatus status, string code, string cause, string? path)
+    internal static void AppendFinding(StringBuilder builder, string statusLabel, string code, string cause, string? path)
     {
-        builder.AppendLine($"{CliHumanText.Status(status).ToUpperInvariant()}: {Value(cause)} [{code}]");
+        builder.AppendLine($"{statusLabel}: {Value(cause)} [{code}]");
         if (path is not null)
         {
             builder.AppendLine($"  {Value(path)}");

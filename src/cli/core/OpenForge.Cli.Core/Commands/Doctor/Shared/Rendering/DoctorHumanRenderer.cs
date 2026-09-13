@@ -15,6 +15,7 @@ internal static class DoctorHumanRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         var result = presentation.Result;
         var view = presentation.Presentation.View;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, $"{DoctorHumanVocabulary.Outcome(result.Status)} No files changed.");
         builder.AppendLine($"Checks: {DoctorWireVocabulary.Coverage(result.Diagnosis.Coverage)}");
@@ -22,7 +23,7 @@ internal static class DoctorHumanRenderer
         foreach (var domain in result.Diagnosis.Domains)
         {
             builder.AppendLine();
-            AppendDomain(builder, domain, view);
+            AppendDomain(builder, domain, view, style);
         }
 
         var represented = result.Diagnosis.Domains
@@ -32,9 +33,9 @@ internal static class DoctorHumanRenderer
         return builder.ToString().TrimEnd();
     }
 
-    private static void AppendDomain(StringBuilder builder, DoctorDomainReport domain, CliView view)
+    private static void AppendDomain(StringBuilder builder, DoctorDomainReport domain, CliView view, CliHumanStyle style)
     {
-        builder.AppendLine($"{DoctorHumanVocabulary.Domain(domain.Domain)}: checks {DoctorWireVocabulary.Coverage(domain.Coverage)}");
+        builder.AppendLine($"{style.Information(DoctorHumanVocabulary.Domain(domain.Domain))}: checks {DoctorWireVocabulary.Coverage(domain.Coverage)}");
         if (domain.Lifecycle is { } lifecycle)
         {
             builder.AppendLine($"  Installation record: {DoctorWireVocabulary.Lifecycle(lifecycle)}");
@@ -56,7 +57,7 @@ internal static class DoctorHumanRenderer
             builder.AppendLine($"  Check {DoctorWireVocabulary.Limitation(limitation.Kind)}: {Text(limitation.Message)}");
         }
 
-        DoctorFindingHumanRenderer.Append(builder, domain.Findings, view);
+        DoctorFindingHumanRenderer.Append(builder, domain.Findings, view, style);
         var represented = domain.Findings.SelectMany(finding => finding.Actions).ToHashSet();
         DoctorActionHumanRenderer.Append(builder, domain.Actions.Where(action => !represented.Contains(action)).ToArray(), view, "  ");
     }

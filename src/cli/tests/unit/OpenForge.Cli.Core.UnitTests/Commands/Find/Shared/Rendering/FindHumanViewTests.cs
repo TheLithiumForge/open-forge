@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -34,7 +35,7 @@ public sealed class FindHumanViewTests
     [Fact(DisplayName = "Find expanded places matches before search details and incomplete findings before matches"), Trait("Feature", "find-presentation"), Trait("Evidence", "Unit")]
     public void AnswerPrecedesExplanation()
     {
-        var output = FindExpandedRenderer.Render(FindPresentationTestData.IncompleteResult());
+        var output = FindExpandedRenderer.Render(FindPresentationTestData.IncompleteResult(), CliHumanStyle.Plain);
         Assert.Contains("Status: incomplete", output, StringComparison.Ordinal);
         var match = output.IndexOf("Path: .agents/docs.md", StringComparison.Ordinal);
         Assert.True(match >= 0);

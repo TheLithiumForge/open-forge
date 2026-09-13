@@ -73,6 +73,13 @@ JSON views.
 `blocked`, and `interrupted` results use standard error. This keeps command
 output usable in a pipeline without hiding the operation's status.
 
+Human results use colour automatically on supported Unix terminals: green for
+success, yellow for conditions that need attention, red for errors, and cyan for
+information labels. Written status labels always remain visible. Redirected
+output, Windows, missing or `dumb` `TERM`, and a nonempty `NO_COLOR` environment
+variable use plain text. JSON, selected file content and preview diffs stay plain.
+There is no colour option to configure.
+
 ### Status and exit codes
 
 Every operation reports one status and the corresponding process exit

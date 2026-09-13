@@ -64,12 +64,13 @@ internal static class LibraryDetachPresentation
         var result = presentation.Result;
         var payload = result.Result;
         var view = presentation.Presentation.View;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, LibraryHumanText.Heading("Library detach", result.Status, payload.Identity.Mode));
         LibraryObservationHumanRenderer.AppendIdentity(builder, payload.Identity);
         foreach (var finding in payload.Findings)
         {
-            LibraryHumanText.AppendFinding(builder, finding.Status,
+            LibraryHumanText.AppendFinding(builder, style.Finding(finding.Status),
                 code: LibraryDetachDefinitions.ReadFindingCode(finding.Code), cause: finding.Cause, path: finding.Path);
             if (finding.LibraryId is { } id && id != payload.Identity.LibraryId)
             {

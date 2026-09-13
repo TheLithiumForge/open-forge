@@ -82,16 +82,16 @@ and the installed native SHA-256 matches the qualified build. Direct installed
 compact Find succeeds as an invocation, retaining this workspace's existing
 incomplete status. No workspace repair is implied by a presentation change.
 
-Command work is complete at the user's stop boundary. Colour and final reusable
-guidance are paused. Compact JSON uses the identified schema-v2 projection;
-expanded retains the full schema-v1 result. Mutation receipts and selected
-content remain complete. Doctor candidate sharing reduced one observed JSON
-output from 170.8 MB to 31.4 MB without removing findings or changing counts.
-The implementation capsule records exact evidence and reproduction commands.
-Expanded remains the default. Result limits, a compact default and an even smaller
-file-oriented view are saved proposals; none is implemented. Display filtering,
-parser simplifications P2–P6 and configurable-threshold analysis stay backlog.
-The implementation capsule records each sequential freeze and qualified squash.
+Set 7 automatic colour is qualified at source
+`8d75099e2f9f7a18a332219ea15b3454fe0cc2ef`: 3,347 Unit, 1,814 Integration in
+each runtime and 123 public journeys in each of three configurations pass, with
+zero failures/skips. Both local CLI installations now use that qualified native
+build, without artifact dependencies. Direct managed/native/installed terminal
+and piped-JSON checks pass. The capsule records the separate existing runtime
+keypad-prefix observation and the Windows plain-text fallback. This closeout
+accompanies the authorized squash onto develop 5082732a. Final reusable guidance,
+filters, limits, compact-default/minimal-view proposals and configurable
+thresholds remain pending. Work stays sequential; feature/test is unchanged.
 
 Cleanup completed: the parser probe was outside the repository and has no matching
 committed project/path history. Its source/project and temporary compiled output,

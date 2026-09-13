@@ -410,6 +410,16 @@ Shell presentation owns finite format selection, primary target selection,
 diagnostic target, output messages, and process completion. Both renderers
 consume the same concrete result.
 
+The executable host observes terminal capability independently for stdout and
+stderr and carries immutable capabilities with output writers. The pipeline
+supplies them to presentation after operation completion. Shell's neutral human
+style helper selects the actual primary stream from the shared status mapping;
+command renderers accent explicit generated labels using typed status/severity.
+Core does not inspect or mutate Console state. Injected writers default to plain
+text. JSON always remains plain, as do selected authored content, preview diffs
+and machine-readable rows. The public terminal fallback and palette are defined
+by [Automatic Colour](contracts/shared/global-flags/interface.md#automatic-colour).
+
 Standard help comes from the exact composed `System.CommandLine` symbol graph.
 Bindings provide ordered product sections such as Discovery, examples, related
 commands and bounded notes. The implementation

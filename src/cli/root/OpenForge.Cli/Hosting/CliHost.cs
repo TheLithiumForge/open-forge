@@ -1,3 +1,4 @@
+using OpenForge.Cli.Hosting.Shared.Presentation;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Shell.Composition;
@@ -13,7 +14,7 @@ internal static class CliHost
         string[] arguments,
         CancellationToken cancellationToken = default)
     {
-        var writers = new CliOutputWriters(Console.Out, Console.Error);
+        var writers = new CliOutputWriters(Console.Out, Console.Error) { Colors = CliHostColorPolicy.Read() };
         return RunApplicationAsync(
             arguments: arguments,
             environment: new CliProcessEnvironment(Environment.CurrentDirectory, ReadHelpWidth()),

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Find.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Find.Models.Query;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
@@ -43,7 +44,7 @@ public sealed class FindHumanRenderingTests
     {
         var result = FindPresentationTestData.ForStatus(Enum.Parse<CliSemanticStatus>(statusValue));
 
-        var rendered = FindCompactRenderer.Render(result);
+        var rendered = FindCompactRenderer.Render(result, CliHumanStyle.Plain);
 
         Assert.Equal(ExpectedCompactSummary(statusValue), FirstLine(rendered));
         if (statusValue == "Blocked")
@@ -71,7 +72,7 @@ public sealed class FindHumanRenderingTests
     {
         var result = FindPresentationTestData.ForStatus(Enum.Parse<CliSemanticStatus>(statusValue));
 
-        var rendered = FindExpandedRenderer.Render(result);
+        var rendered = FindExpandedRenderer.Render(result, CliHumanStyle.Plain);
 
         Assert.Contains("Workspace:", rendered, StringComparison.Ordinal);
         Assert.Contains("Selected by:", rendered, StringComparison.Ordinal);
@@ -103,7 +104,7 @@ public sealed class FindHumanRenderingTests
             _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "The compact row scenario is not defined."),
         };
 
-        var rendered = FindCompactRenderer.Render(result);
+        var rendered = FindCompactRenderer.Render(result, CliHumanStyle.Plain);
 
         Assert.Equal(
             scenario switch
@@ -138,7 +139,7 @@ public sealed class FindHumanRenderingTests
     {
         var result = FindPresentationTestData.OrderedFindingsResult();
 
-        var rendered = FindCompactRenderer.Render(result);
+        var rendered = FindCompactRenderer.Render(result, CliHumanStyle.Plain);
 
         Assert.Equal(
             "result=attention\tcoverage=complete\tprojection=complete\tuniverse=default\tmatches=1",
@@ -146,7 +147,7 @@ public sealed class FindHumanRenderingTests
         AssertInOrder(rendered, "find.identity-collision", "find.projection-missing");
         AssertExpectedNext(rendered, null);
 
-        var omitted = FindCompactRenderer.Render(FindPresentationTestData.OmittedContentResult());
+        var omitted = FindCompactRenderer.Render(FindPresentationTestData.OmittedContentResult(), CliHumanStyle.Plain);
         Assert.DoesNotContain("find.projection-missing", omitted, StringComparison.Ordinal);
     }
 
@@ -156,7 +157,7 @@ public sealed class FindHumanRenderingTests
     {
         var result = FindPresentationTestData.SourceSpecificFrontmatterFindingsResult();
 
-        var rendered = FindCompactRenderer.Render(result);
+        var rendered = FindCompactRenderer.Render(result, CliHumanStyle.Plain);
 
         Assert.Contains(
             "  .agents/first.md",
@@ -179,7 +180,7 @@ public sealed class FindHumanRenderingTests
             ? FindPresentationTestData.ZeroMatchesResult()
             : FindPresentationTestData.CompleteResult();
 
-        var rendered = FindExpandedRenderer.Render(result);
+        var rendered = FindExpandedRenderer.Render(result, CliHumanStyle.Plain);
 
         Assert.Contains(
             universeKind == "filtered" ? "Mode:       filtered" : "Mode:       default",
@@ -273,7 +274,7 @@ public sealed class FindHumanRenderingTests
     {
         var result = FindPresentationTestData.ForStatus(Enum.Parse<CliSemanticStatus>(statusValue));
 
-        var rendered = FindExpandedRenderer.Render(result);
+        var rendered = FindExpandedRenderer.Render(result, CliHumanStyle.Plain);
 
         AssertExpectedNext(rendered, expectedNext.Length == 0 ? null : expectedNext);
     }
@@ -285,7 +286,7 @@ public sealed class FindHumanRenderingTests
         var tag = result.Query.EffectivePredicates[0].SuppliedValue;
         var heading = result.Query.EffectivePredicates[1].SuppliedValue;
 
-        var rendered = FindExpandedRenderer.Render(result);
+        var rendered = FindExpandedRenderer.Render(result, CliHumanStyle.Plain);
 
         Assert.Contains(tag, rendered, StringComparison.Ordinal);
         Assert.Contains(EscapeHumanValue(heading), rendered, StringComparison.Ordinal);
@@ -438,7 +439,7 @@ public sealed class FindHumanRenderingTests
     {
         var result = FindPresentationTestData.CompleteResult();
         var match = Assert.Single(result.Matches);
-        var rendered = FindExpandedRenderer.Render(result);
+        var rendered = FindExpandedRenderer.Render(result, CliHumanStyle.Plain);
 
         var tag = result.Query.EffectivePredicates[0].SuppliedValue;
         var heading = result.Query.EffectivePredicates[1].SuppliedValue;
@@ -512,7 +513,7 @@ public sealed class FindHumanRenderingTests
     public void ExpandedRenderingPlacesNextBetweenMatchAndProjectionBlocks()
     {
         var rendered = FindExpandedRenderer.Render(
-            FindPresentationTestData.IncompleteResult());
+            FindPresentationTestData.IncompleteResult(), CliHumanStyle.Plain);
 
         var lines = Lines(rendered);
         var matchPath = IndexOfLine(lines, line => line.Contains("Path: .agents/docs.md", StringComparison.Ordinal));
@@ -533,7 +534,7 @@ public sealed class FindHumanRenderingTests
     {
         var result = FindPresentationTestData.SelectorAmbiguousBlockedResult();
 
-        var rendered = FindCompactRenderer.Render(result);
+        var rendered = FindCompactRenderer.Render(result, CliHumanStyle.Plain);
 
         Assert.Equal(
             "result=blocked\tcoverage=blocked\tuniverse=filtered\tmatches=0",
@@ -548,7 +549,7 @@ public sealed class FindHumanRenderingTests
     {
         var result = FindPresentationTestData.SelectorAmbiguousBlockedResult();
 
-        var rendered = FindExpandedRenderer.Render(result);
+        var rendered = FindExpandedRenderer.Render(result, CliHumanStyle.Plain);
         var lines = Lines(rendered);
         const string expectedNext = "Next: open-forge find";
         var finding = IndexOfLine(

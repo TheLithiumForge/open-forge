@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Shell.Presentation.Models;
+
 namespace OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 
 internal sealed record CliOutputWriters
@@ -9,6 +11,8 @@ internal sealed record CliOutputWriters
         StandardOutput = standardOutput;
         StandardError = standardError;
     }
+
+    internal CliOutputColors Colors { get; init; } = CliOutputColors.Plain;
 
     internal TextWriter StandardOutput { get; }
 

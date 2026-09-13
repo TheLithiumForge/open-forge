@@ -18,6 +18,7 @@ internal static class InstallHumanRenderer
         var result = presentation.Result;
         var expanded = presentation.Presentation.View == CliView.Expanded;
         var facts = result.Facts;
+        var style = CliHumanStyle.For(presentation);
         var builder = new StringBuilder();
         CliHumanText.AppendHeader(builder, presentation, "Open Forge install");
         builder.AppendLine($"Mode: {InstallDefinitions.ReadMachineName(result.Mode)}; force: {MachineBoolean(result.Force)}; automatic: {MachineBoolean(result.Automatic)}");
@@ -52,7 +53,7 @@ internal static class InstallHumanRenderer
         foreach (var finding in result.Findings)
         {
             builder.AppendLine(
-                $"{CliHumanText.Status(finding.Status).ToUpperInvariant()}: {CommandTextEscaping.Escape(finding.Cause)} [{InstallDefinitions.ReadMachineName(finding.Code)}]");
+                $"{style.Finding(finding.Status)}: {CommandTextEscaping.Escape(finding.Cause)} [{InstallDefinitions.ReadMachineName(finding.Code)}]");
             if (finding.Subject is not null)
             {
                 builder.AppendLine($"    Target: {CommandTextEscaping.Escape(finding.Subject)}");

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -6,7 +7,7 @@ namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Rendering;
 
 internal static class DoctorFindingHumanRenderer
 {
-    internal static void Append(StringBuilder builder, IReadOnlyList<DoctorFinding> findings, CliView view)
+    internal static void Append(StringBuilder builder, IReadOnlyList<DoctorFinding> findings, CliView view, CliHumanStyle style)
     {
         foreach (var group in findings.GroupBy(finding => finding.Subject))
         {
@@ -15,7 +16,7 @@ internal static class DoctorFindingHumanRenderer
             var explanations = new HashSet<string>(StringComparer.Ordinal);
             foreach (var finding in group)
             {
-                var heading = $"{DoctorHumanVocabulary.Severity(finding.Severity)}  {DoctorFindingTitles.Read(finding.Kind)} [{DoctorDefinitions.ReadFindingKind(finding.Kind)}]";
+                var heading = $"{Severity(finding.Severity, style)}  {DoctorFindingTitles.Read(finding.Kind)} [{DoctorDefinitions.ReadFindingKind(finding.Kind)}]";
                 if (view == CliView.Compact)
                 {
                     builder.AppendLine($"  {heading}; {DoctorHumanVocabulary.Resolution(finding.Resolution)}");
@@ -57,6 +58,18 @@ internal static class DoctorFindingHumanRenderer
 
             DoctorActionHumanRenderer.Append(builder, group.SelectMany(finding => finding.Actions).Distinct().ToArray(), view, "    ");
         }
+    }
+
+    private static string Severity(DoctorFindingSeverity severity, CliHumanStyle style)
+    {
+        var label = DoctorHumanVocabulary.Severity(severity);
+        return severity switch
+        {
+            DoctorFindingSeverity.Information => style.Information(label),
+            DoctorFindingSeverity.Warning => style.Warning(label),
+            DoctorFindingSeverity.Error => style.Error(label),
+            _ => throw new ArgumentOutOfRangeException(nameof(severity), severity, "The severity is not defined."),
+        };
     }
 
     private static void AppendCandidates(StringBuilder builder, DoctorCandidateSet candidates, CliView view)

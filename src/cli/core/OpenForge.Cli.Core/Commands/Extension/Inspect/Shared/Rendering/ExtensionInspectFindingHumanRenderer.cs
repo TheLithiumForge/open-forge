@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
@@ -7,12 +8,12 @@ namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Rendering;
 
 internal static class ExtensionInspectFindingHumanRenderer
 {
-    internal static void Append(StringBuilder builder, IEnumerable<ExtensionInspectFinding> findings)
+    internal static void Append(StringBuilder builder, IEnumerable<ExtensionInspectFinding> findings, CliHumanStyle style)
     {
         var displayedCandidates = new List<IReadOnlyList<ExtensionInspectCandidate>>();
         foreach (var finding in findings)
         {
-            ExtensionHumanText.AppendFinding(builder, finding.Status, ExtensionInspectDefinitions.ReadFindingCode(finding.Code), finding.Cause, null);
+            ExtensionHumanText.AppendFinding(builder, style.Finding(finding.Status), ExtensionInspectDefinitions.ReadFindingCode(finding.Code), finding.Cause, null);
             if (finding.Subject is { } subject && subject != finding.Path && subject != finding.PackageId)
             {
                 builder.AppendLine($"  Subject: {ExtensionHumanText.Value(subject)}");
