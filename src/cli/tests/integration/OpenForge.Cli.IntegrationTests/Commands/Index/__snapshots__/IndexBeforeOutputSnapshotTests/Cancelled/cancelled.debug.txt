@@ -1,0 +1,7 @@
+Index was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  <workspace>  Index was cancelled [index.interrupted]
+         Index was cancelled. Nothing was changed.
+No recovery bundle was needed.
+  Rerun the same Index request.
+Next: open-forge index

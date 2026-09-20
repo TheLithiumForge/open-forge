@@ -1,0 +1,11 @@
+status=failed
+mode=apply
+target=documents/design
+scaffold=generic
+completeness=complete
+safety=safe
+effects=3
+recovery=retained
+verification=unknown
+findings=1
+UnauthorizedAccessException (0x80070005): Filesystem access was denied.

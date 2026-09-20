@@ -1,0 +1,11 @@
+Would update the Entries section in 2 of 2 files.
+Workspace: <workspace>
+  .agents/loader.md      1 -> 1 entries
+  .agents/root/_root.md  unknown -> 1 entries
+--- .agents/loader.md  (Entries section)
+- - [Root](root/_root.md) - #LoadNow #Docs
++ - [Root](root/_root.md) - #Docs
+--- .agents/root/_root.md  (Entries section)
+- - stale
++ - [Child](child.md) - #Docs
+No files were changed.

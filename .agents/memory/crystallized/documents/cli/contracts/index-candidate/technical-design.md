@@ -116,7 +116,7 @@ Navigation into an applier or universal coordinator.
 
 Markdig is used through one fixed CommonMark pipeline only where Markdown
 structure is needed. The pipeline supplies the structural facts required to
-recognize the accepted final `Entries` boundary and relevant routed Markdown
+recognize the accepted heading-owned `Entries` boundary and relevant routed Markdown
 structure. Its configuration is not selected per file or inferred from authored
 content.
 
@@ -128,17 +128,17 @@ exact version. It contributes typed semantic facts
 without inventing descriptions, tags, routing, scope, or authority, and it does
 not rewrite authored YAML bytes.
 
-Source reads use strict UTF-8 validation and retain exact UTF-8 byte ranges. A
-local generated-region scanner establishes the marker pair and returns the byte
-range of the generated interior. It fails closed when the accepted ownership
-boundary cannot be established. The scanner handles bounded replacement; it is
+Source reads use strict UTF-8 validation and retain exact UTF-8 byte ranges. The shared
+Markdown semantic-section reader uses Markdig heading facts and returns the byte
+range of the heading-owned body. It fails closed when the accepted ownership
+boundary cannot be established. The section reader handles bounded replacement; it is
 not a whole-document formatter.
 
 The design never renders a whole Markdown or YAML document back from parsed
 facts. Markdig provides structure where structure is needed, while replacement uses the exact
 local byte range and preserves every byte outside the generated interior,
 including authored frontmatter, headings, prose, links, whitespace, line
-endings, and marker tokens. Serialization emits stable accepted generated
+endings. Serialization emits stable accepted generated
 bytes, canonical containing-file-relative destinations, and no query strings or
 fragments.
 
@@ -156,13 +156,13 @@ facts.
 
 Structured output uses source-generated `System.Text.Json` metadata for the
 [Shared Result Coordinates](../shared/result-coordinates/interface.md) schema.
-`--json` renders one complete document from the
+`--format json` renders one complete document from the
 same typed result used by human output. It never prompts, reruns planning,
 applies effects, or mixes ordinary human text into JSON stdout. Bounded
 diagnostics remain on stderr.
 
-The design keeps the Interface Contract's stream assignment, compact and
-expanded views, exact dry-run diffs, semantic statuses, and next-action rules.
+The design keeps the Interface Contract's stream assignment, minimal and
+standard views, exact dry-run diffs, semantic statuses, and next-action rules.
 It does not expose private staging, recovery-bundle payload, or other recovery
 material through an ordinary result.
 
@@ -189,8 +189,8 @@ for a completely parsed bounded interior; a valid replaceable but unparseable
 interior retains `null`. Available projections always retain a non-null expected
 count. No second generated-entry parser or cause-string classification exists.
 
-Human dry-run presentation emits every exact generated-interior diff in compact
-and expanded views. It constructs the JSON-escaped header from typed source
+Human dry-run presentation emits every exact generated-interior diff in minimal
+and standard views. It constructs the JSON-escaped header from typed source
 facts, tokenizes before and expected bodies with exact LF/CRLF retention, and
 does not truncate, elide, add context, or inspect bytes outside the generated
 interior. JSON retains the exact before and expected bodies rather than the
@@ -229,8 +229,8 @@ that region `not-started`, retains the final bundle, and stops new effects.
 
 After whole-command verification, delete only the positively recognized bundle
 created by that operation. `Deleted`/`Removed` maps to recovery `removed` and,
-absent another finding, `complete`. `Failed`/`Retained` requires positive
-remaining presence and maps to `attention`,
+absent another finding, `completed`. `Failed`/`Retained` requires positive
+remaining presence and maps to `completed-with-warnings`,
 `index.recovery-artifact-retained`, and the exact residual path.
 `Failed`/`Unknown` maps to `failed`, `index.recovery-failed`, and recovery
 `unknown`, carrying the exact expected path only when M1 returns it. `Blocked`
@@ -267,7 +267,7 @@ Tests mirror the Interface, Behavior, and technical boundaries. Managed unit
 and integration test subjects mirror their production command or capability
 paths, while complete process tests remain in the separate system boundary.
 Direct tests cover typed request normalization, resolved-path and alias behavior, topology-derived
-projection, metadata admission, canonical output, byte ranges, marker
+projection, metadata admission, canonical output, byte ranges, heading
 ownership, ordering, result formation, and no-op behavior. Focused integration
 tests use real temporary rooted and detached source trees, external recovery
 bundles, filesystem failures, expected-state changes, concurrency changes,

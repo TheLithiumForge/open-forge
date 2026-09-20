@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Identity;
 
 public sealed class SourceIdentityListRegressionTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral source identity derives the accepted automatic ID for every source form"),
         InlineData(".agents/loader.md", "loader"),
         InlineData(".agents/memory/_memory.md", "memory"),
@@ -24,6 +25,7 @@ public sealed class SourceIdentityListRegressionTests
         Assert.Equal(expectedId, SourceIdentity.DeriveId(canonicalPath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source identity rejects null, empty, outside, and traversal paths")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void DeriveIdRejectsUnusablePaths()

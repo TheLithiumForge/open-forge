@@ -8,6 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Remove;
 
 public sealed class ExtensionRemoveRegressionIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension Remove reports unavailable topology for invalid UTF-8 retained sources without effects"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
@@ -37,30 +38,30 @@ public sealed class ExtensionRemoveRegressionIntegrationTests
         var run = await workspace.RunAsync(
         [
             "extension", "remove", "alpha",
-            "--automatic", "--json",
+            "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(3, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Incomplete, run.Status);
         Assert.Equal(string.Empty, run.StandardError);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
+        var result = document.RootElement.GetProperty("data");
         Assert.Contains(
-            result.GetProperty("findings").EnumerateArray(),
+            document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString()
                 == "extension-remove.projection-unavailable");
         Assert.Empty(result.GetProperty("effects").EnumerateArray());
-        Assert.Equal("not-required", result.GetProperty("recovery").GetProperty("state").GetString());
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeSource, source.Snapshot());
         Assert.Equal(retainedBytes, File.ReadAllBytes(workspace.Combine(".agents/retained.md")));
         Assert.Equal(beforeLockInfrastructure, workspace.LockInfrastructureExists);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
-        DisplayName = "Extension Remove uses exact-byte fallback for invalid semantic targets with Keep and same-request prune"),
+        DisplayName = "Extension Remove uses exact-byte fallback for invalid semantic targets with deletion and recovery planning"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
-    public async Task InvalidSemanticTargetUsesExactBytesForKeepAndPrune()
+    public async Task InvalidSemanticTargetUsesExactBytesForDeletion()
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             "extension-remove-invalid-semantic-target");
@@ -79,59 +80,34 @@ public sealed class ExtensionRemoveRegressionIntegrationTests
         var beforeSource = source.Snapshot();
         var beforeLockInfrastructure = workspace.LockInfrastructureExists;
 
-        var keep = await workspace.RunAsync(
-        [
-            "extension", "remove", "toolkit",
-            "--automatic", "--dry-run", "--json",
-        ]);
-
-        Assert.Equal(2, keep.ExitCode);
-        Assert.Equal(CliSemanticStatus.Attention, keep.Status);
-        Assert.Equal(string.Empty, keep.StandardError);
-        using var keepDocument = JsonDocument.Parse(keep.StandardOutput);
-        var keepResult = keepDocument.RootElement.GetProperty("result");
-        var keepPath = Assert.Single(
-            keepResult.GetProperty("paths").EnumerateArray(),
-            value => value.GetProperty("path").GetString() == ".agents/toolkit.md");
-        Assert.Equal("changed-final-owner", keepPath.GetProperty("classification").GetString());
-        Assert.Equal("keep-as-unmanaged", keepPath.GetProperty("action").GetString());
-        Assert.Contains(
-            keepResult.GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("code").GetString()
-                == "extension-remove.managed-divergence");
-        Assert.Equal(beforeWorkspace, workspace.Snapshot());
-        Assert.Equal(beforeSource, source.Snapshot());
-        Assert.Equal(invalidBytes, File.ReadAllBytes(workspace.Combine(".agents/toolkit.md")));
-        Assert.Equal(beforeLockInfrastructure, workspace.LockInfrastructureExists);
-
         var prune = await workspace.RunAsync(
         [
             "extension", "remove", "toolkit",
-            "--prune", "--automatic", "--dry-run", "--json",
+            "--automatic", "--dry-run", "--format", "json",
         ]);
 
         Assert.Equal(0, prune.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, prune.Status);
         Assert.Equal(string.Empty, prune.StandardError);
         using var pruneDocument = JsonDocument.Parse(prune.StandardOutput);
-        var pruneResult = pruneDocument.RootElement.GetProperty("result");
+        var pruneResult = pruneDocument.RootElement.GetProperty("data");
         var prunePath = Assert.Single(
-            pruneResult.GetProperty("paths").EnumerateArray(),
+            pruneResult.GetProperty("effects").EnumerateArray(),
             value => value.GetProperty("path").GetString() == ".agents/toolkit.md");
-        Assert.Equal("changed-final-owner", prunePath.GetProperty("classification").GetString());
         Assert.Equal("delete", prunePath.GetProperty("action").GetString());
         Assert.Contains(
             pruneResult.GetProperty("effects").EnumerateArray(),
             effect => effect.GetProperty("path").GetString() == ".agents/toolkit.md"
                 && effect.GetProperty("action").GetString() == "delete"
                 && effect.GetProperty("outcome").GetString() == "planned");
-        Assert.Empty(pruneResult.GetProperty("findings").EnumerateArray());
+        Assert.Empty(pruneDocument.RootElement.GetProperty("findings").EnumerateArray());
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeSource, source.Snapshot());
         Assert.Equal(invalidBytes, File.ReadAllBytes(workspace.Combine(".agents/toolkit.md")));
         Assert.Equal(beforeLockInfrastructure, workspace.LockInfrastructureExists);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension Remove blocks a malformed affected generated region without effects"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
@@ -154,11 +130,10 @@ public sealed class ExtensionRemoveRegressionIntegrationTests
 
         workspace.ReplaceText(
             ".agents/library/_library.md",
-            "# Library\n\n## Entries\n\n"
-            + "<!-- open-forge:generated-index:start -->\n"
-            + "- [Child](child.md) - #Extension\n"
-            + "<!-- open-forge:generated-index:end -->\n"
-            + "<!-- open-forge:generated-index:end -->\n");
+            OpenForge.Cli.TestSupport.OpenForgeDocumentSeed.Metadata(
+                "Library",
+                ["Extension"],
+                "# Library\n\n## Entries\n\n- [Child](child.md) - #Extension\n\n## Entries\n"));
         var beforeWorkspace = workspace.Snapshot();
         var beforeSource = source.Snapshot();
         var beforeLockInfrastructure = workspace.LockInfrastructureExists;
@@ -166,25 +141,25 @@ public sealed class ExtensionRemoveRegressionIntegrationTests
         var run = await workspace.RunAsync(
         [
             "extension", "remove", "child",
-            "--automatic", "--json",
+            "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(5, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Blocked, run.Status);
         Assert.Equal(string.Empty, run.StandardError);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
+        var result = document.RootElement.GetProperty("data");
         Assert.Contains(
-            result.GetProperty("findings").EnumerateArray(),
+            document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString()
                 == "extension-remove.generated-region-unsafe");
         Assert.Empty(result.GetProperty("effects").EnumerateArray());
-        Assert.Equal("not-required", result.GetProperty("recovery").GetProperty("state").GetString());
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeSource, source.Snapshot());
         Assert.Equal(beforeLockInfrastructure, workspace.LockInfrastructureExists);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension Remove blocks a retained generated route host without effects"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
@@ -210,16 +185,16 @@ public sealed class ExtensionRemoveRegressionIntegrationTests
         var run = await workspace.RunAsync(
         [
             "extension", "remove", "alpha",
-            "--automatic", "--json",
+            "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(5, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Blocked, run.Status);
         Assert.Equal(string.Empty, run.StandardError);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
+        var result = document.RootElement.GetProperty("data");
         Assert.Contains(
-            result.GetProperty("findings").EnumerateArray(),
+            document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString()
                 == "extension-remove.generated-region-unsafe");
         Assert.Empty(result.GetProperty("effects").EnumerateArray());
@@ -227,6 +202,7 @@ public sealed class ExtensionRemoveRegressionIntegrationTests
         Assert.Equal(beforeSource, source.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension Remove accepts a complete descendant closure in a write-free preview"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
@@ -252,31 +228,32 @@ public sealed class ExtensionRemoveRegressionIntegrationTests
         var run = await workspace.RunAsync(
         [
             "extension", "remove", "alpha", "beta",
-            "--automatic", "--dry-run", "--json",
+            "--automatic", "--dry-run", "--format", "json",
         ]);
 
         Assert.Equal(0, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
         Assert.Equal(string.Empty, run.StandardError);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
+        var result = document.RootElement.GetProperty("data");
         Assert.Equal(
             ["alpha", "beta"],
-            result.GetProperty("selection").GetProperty("ids")
-                .EnumerateArray().Select(value => value.GetString()));
+            result.GetProperty("packages").EnumerateArray()
+                .Select(value => value.GetProperty("id").GetString()));
         Assert.Equal(
             ["alpha", "beta"],
-            result.GetProperty("dependencies").GetProperty("packages")
-                .EnumerateArray().Select(value => value.GetProperty("id").GetString()));
-        Assert.Empty(result.GetProperty("findings").EnumerateArray());
+            result.GetProperty("packages").EnumerateArray()
+                .Select(value => value.GetProperty("id").GetString()));
+        Assert.Empty(document.RootElement.GetProperty("findings").EnumerateArray());
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeSource, source.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension Remove blocks an Extension claim on a Framework target without effects"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
-    public async Task FrameworkTargetOwnershipConflictBlocksPrune()
+    public async Task FrameworkTargetOwnershipConflictBlocksRemoval()
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             "extension-remove-framework-target-conflict");
@@ -289,57 +266,37 @@ public sealed class ExtensionRemoveRegressionIntegrationTests
             (".agents/toolkit.md", Document("Toolkit")));
         await InstallAsync(workspace, source);
 
-        var lifecycle = JsonNode.Parse(
-                workspace.ReadText(ExtensionInstallIntegrationWorkspace.LifecyclePath))
-            ?.AsObject()
-            ?? throw new InvalidOperationException("The lifecycle fixture must be an object.");
-        var extensions = lifecycle["extensions"]?.AsObject()
-            ?? throw new InvalidOperationException("The lifecycle fixture must contain extensions.");
-        var package = extensions["packages"]?.AsArray()?.Single()?.AsObject()
-            ?? throw new InvalidOperationException("The toolkit lifecycle package is missing.");
-        var packagePaths = package["paths"]?.AsArray()
-            ?? throw new InvalidOperationException("The toolkit lifecycle paths are missing.");
-        packagePaths.Clear();
-        packagePaths.Add((JsonNode?)JsonValue.Create(".agents/loader.md"));
-
-        var extensionPath = extensions["paths"]?.AsArray()?.Single()?.AsObject()
-            ?? throw new InvalidOperationException("The toolkit lifecycle path is missing.");
-        extensionPath["path"] = ".agents/loader.md";
-        extensionPath["fingerprintKind"] = "exact-bytes";
-        extensionPath["baselineFingerprint"] = Convert.ToHexString(
-                SHA256.HashData(File.ReadAllBytes(
-                    workspace.Combine(".agents/loader.md"))))
-            .ToLowerInvariant();
-        workspace.ReplaceText(
-            ExtensionInstallIntegrationWorkspace.LifecyclePath,
-            lifecycle.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
+        const string ownershipPath = ".agents/open-forge.lock.json";
+        var ownership = JsonNode.Parse(workspace.ReadText(ownershipPath))!;
+        ownership["extensions"]![0]!["paths"] = new JsonArray(JsonValue.Create(".agents/loader.md"));
+        workspace.ReplaceText(ownershipPath, ownership.ToJsonString());
 
         var beforeWorkspace = workspace.Snapshot();
         var beforeLifecycle = workspace.ReadText(
-            ExtensionInstallIntegrationWorkspace.LifecyclePath);
-        var beforeFramework = workspace.ReadFrameworkLifecycle().GetRawText();
+            ExtensionInstallIntegrationWorkspace.OwnershipPath);
+        var beforeFramework = workspace.ReadFrameworkOwnership().GetRawText();
         var beforeSource = source.Snapshot();
 
         var run = await workspace.RunAsync(
         [
             "extension", "remove", "toolkit",
-            "--prune", "--automatic", "--json",
+            "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(5, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Blocked, run.Status);
         Assert.Equal(string.Empty, run.StandardError);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
+        var result = document.RootElement.GetProperty("data");
         Assert.Contains(
-            result.GetProperty("findings").EnumerateArray(),
+            document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString()
                 == "extension-remove.ownership-conflict");
         Assert.Empty(result.GetProperty("effects").EnumerateArray());
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeLifecycle, workspace.ReadText(
-            ExtensionInstallIntegrationWorkspace.LifecyclePath));
-        Assert.Equal(beforeFramework, workspace.ReadFrameworkLifecycle().GetRawText());
+            ExtensionInstallIntegrationWorkspace.OwnershipPath));
+        Assert.Equal(beforeFramework, workspace.ReadFrameworkOwnership().GetRawText());
         Assert.Equal(beforeSource, source.Snapshot());
     }
 
@@ -351,7 +308,7 @@ public sealed class ExtensionRemoveRegressionIntegrationTests
         [
             "extension", "install", "toolkit",
             "--source", source.Path,
-            "--automatic", "--json",
+            "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(0, run.ExitCode);
@@ -367,7 +324,7 @@ public sealed class ExtensionRemoveRegressionIntegrationTests
         [
             "extension", "install", "--all",
             "--source", source.Path,
-            "--automatic", "--json",
+            "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(0, run.ExitCode);

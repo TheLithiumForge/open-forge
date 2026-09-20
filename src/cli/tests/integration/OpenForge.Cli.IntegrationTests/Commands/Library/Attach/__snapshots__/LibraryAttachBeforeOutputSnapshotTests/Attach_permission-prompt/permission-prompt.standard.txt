@@ -1,0 +1,7 @@
+Registered the team-knowledge Library from shared/team-knowledge.
+Workspace: <workspace>
+  docs/review.md  -> ../shared/team-knowledge/docs/review.md
+  Created 1 link under docs
+  Saved a grant for docs to .agents/open-forge.json
+  Source inventory: 1 eligible file, 0 excluded items
+  .agents/open-forge.lock.json records the Library

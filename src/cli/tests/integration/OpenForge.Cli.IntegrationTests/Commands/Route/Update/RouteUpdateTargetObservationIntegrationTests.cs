@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 
 public sealed class RouteUpdateTargetObservationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update selects one logical target by ID base path or overwrite path")]
     [InlineData(RouteUpdateIntegrationWorkspace.TargetId, (int)RouteUpdateTargetSelection.SourceId)]
     [InlineData(RouteUpdateIntegrationWorkspace.TargetPath, (int)RouteUpdateTargetSelection.BasePath)]
@@ -45,6 +46,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update preserves ordinary canonical and compatibility entrypoint identity")]
     [InlineData(RouteUpdateIntegrationWorkspace.TargetPath, (int)RouteUpdateTargetForm.OrdinaryMarkdown)]
     [InlineData(".agents/memory/project-alpha/overview/_overview.md", (int)RouteUpdateTargetForm.CanonicalEntrypoint)]
@@ -77,6 +79,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
         Assert.Null(observation.OverwriteSnapshot);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update maps missing and unsafe workspace roots before target resolution")]
     [InlineData(false, (int)RouteUpdateFindingCode.WorkspaceUnavailable)]
     [InlineData(true, (int)RouteUpdateFindingCode.WorkspaceUnsafe)]
@@ -108,6 +111,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
         Assert.Equal(outsideBefore, outside.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update blocks a selected source physical alias before planning")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task SelectedPhysicalAliasIsBlockedBeforePlanning()
@@ -129,6 +133,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update blocks an ambiguous logical target before mutation")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task AmbiguousTargetIsBlocked()
@@ -148,6 +153,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update rejects unknown IDs and missing exact paths as invalid targets")]
     [InlineData("memory/project-alpha/missing")]
     [InlineData(".agents/memory/project-alpha/missing.md")]
@@ -172,6 +178,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update rejects detached routed forms instead of adopting them")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task DetachedTargetIsInvalid()
@@ -195,6 +202,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update rejects an orphan overwrite selection instead of adopting its base")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task OrphanOverwriteTargetIsInvalid()
@@ -219,6 +227,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update keeps unavailable overwrite route facts incomplete")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task UnavailableOverwriteRouteFactsAreIncompleteAndWriteFree()
@@ -243,6 +252,7 @@ public sealed class RouteUpdateTargetObservationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update rejects protected native sources before patching")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task ProtectedNativeTargetIsInvalid()

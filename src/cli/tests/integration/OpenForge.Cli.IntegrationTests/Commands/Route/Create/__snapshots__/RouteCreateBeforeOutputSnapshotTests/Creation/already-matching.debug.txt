@@ -1,0 +1,16 @@
+.agents/memory/project-alpha/overview.md already has the requested content. Nothing to do.
+Workspace: <workspace>
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project
+--- .agents/memory/project-alpha/overview.md (new file) ---
+---
+open-forge:
+  description: Project overview
+  tags: [Docs, Overview]
+  responsibility: Explains the project
+---
+  Entries section: .agents/memory/project-alpha/_project-alpha.md
+    Before: <sha256>
+    After: <sha256>
+    Verification: verified

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Keep one CLI command definition, named handler, focused support, and direct tests in one inspectable behavioral slice
+  description: "Historical CLI-v2 source: Keep one CLI command definition, named handler, focused support, and direct tests in one inspectable behavioral slice"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

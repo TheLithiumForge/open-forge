@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Context;
 
 public sealed class ContextOperationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context resolves the startup-required closure in exact loading and continuity order"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task ResolvesStartupClosureInExactOrder()
     {
@@ -30,6 +31,7 @@ public sealed class ContextOperationTests
         Assert.Null(result.Next);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Context reads ordinary continuity only through loaded or selected parents"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     [InlineData(false), InlineData(true)]
     public async Task ContinuityUsesParentLoadingBoundary(bool loadParentAtStartup)
@@ -55,6 +57,7 @@ public sealed class ContextOperationTests
             result.Sources.Where(source => source.Path.StartsWith(".agents/state/", StringComparison.Ordinal)).Select(source => source.Path));
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Context preserves both loading reasons and emits each exposed file once"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     [InlineData(false), InlineData(true)]
     public async Task DualLoadingTagsPreserveReasonsWithoutDuplicateContent(bool selectScope)
@@ -77,6 +80,7 @@ public sealed class ContextOperationTests
         Assert.All(checkpoint.InclusionReasons, reason => Assert.Equal(scope, reason.Source?.Path));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context additions-only subtracts startup while retaining explicit closure order and overwrite layering"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task AdditionsOnlySubtractsStartupAndRetainsLayers()
     {
@@ -106,6 +110,7 @@ public sealed class ContextOperationTests
             guide.InclusionReasons.Select(reason => reason.Kind));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context traverses visible LoadNow from every entrypoint in a selected ancestor chain"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task SelectedAncestorChainExposesLoadNowDescendants()
     {
@@ -130,6 +135,7 @@ public sealed class ContextOperationTests
         Assert.Equal("projects/guide", reason.Reference);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context projects exact authored text and structural headings and sections in canonical layer order"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task ProjectsExactAuthoredContentInCanonicalOrder()
     {
@@ -158,6 +164,7 @@ public sealed class ContextOperationTests
         Assert.All(baseLayer.Projections, projection => Assert.Equal(ContextProjectionState.Available, projection.State));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context preserves Setext heading form in structural projection"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task SetextHeadingsRetainExactForm()
     {
@@ -178,6 +185,7 @@ public sealed class ContextOperationTests
             Assert.Single(layer.Projections).Headings.Select(heading => (heading.Text, heading.Level, heading.Form)));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context distinguishes duplicate ambiguous sections from matching base and overwrite sections"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task SectionProjectionRetainsLayerMeaningAndDuplicateAmbiguity()
     {
@@ -215,6 +223,7 @@ public sealed class ContextOperationTests
         Assert.Equal(ContextProjectionState.Ambiguous, Assert.Single(ambiguousBase.Projections).State);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Context classifies section absence across each complete logical source"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     [InlineData(true, false, 1, 1, false)]
     [InlineData(false, true, 1, 1, false)]
@@ -269,6 +278,7 @@ public sealed class ContextOperationTests
                 && finding.Source?.Path == ".agents/projects/guide.md"));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context follows links breadth-first with cycles, external observations, and additions set subtraction"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task FollowsLinksBreadthFirstWithoutFetchingOrRepeatingSources()
     {
@@ -294,6 +304,7 @@ public sealed class ContextOperationTests
         Assert.Empty(result.Findings);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context reports a missing fragment without selecting the destination"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task MissingFragmentIsIncompleteAndUnresolved()
     {
@@ -317,6 +328,7 @@ public sealed class ContextOperationTests
         Assert.Contains(result.Findings, finding => finding.Code == ContextFindingCode.FragmentMissing);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Context applies bounded breadth-first traversal at depth two and higher"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     [InlineData(2, 4)]
     [InlineData(3, 5)]
@@ -349,6 +361,7 @@ public sealed class ContextOperationTests
         Assert.All(result.Links, link => Assert.InRange(link.Depth, 1, depth));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context additions subtracts the startup closure after equal-depth link expansion"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task AdditionsSubtractExpandedStartupSources()
     {
@@ -381,8 +394,8 @@ public sealed class ContextOperationTests
                 additionsOnly: additionsOnly,
                 content: content,
                 linkExpansion: linkExpansion ?? ContextLinkExpansion.None,
-                suppliedView: null,
-                effectiveView: CliView.Expanded),
+                suppliedDetail: null,
+                effectiveView: CliDetail.Standard),
             CancellationToken.None);
 
     private static ContextContentSelection Content(params string[] values)

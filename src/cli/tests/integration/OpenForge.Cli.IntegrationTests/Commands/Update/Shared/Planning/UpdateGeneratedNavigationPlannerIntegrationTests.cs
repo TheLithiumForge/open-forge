@@ -10,13 +10,14 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Update.Shared.Planning;
 
 public sealed class UpdateGeneratedNavigationPlannerIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update generated planning observes invalid UTF-8 overwrite bytes without selecting them for projection"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task RetainsExactOverwriteSnapshotWithoutDecodingUnselectedBytes()
     {
         using var workspace = UpdateIntegrationWorkspace.Create("update-unselected-overwrite");
         await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
-        var basePath = Path.Combine(workspace.PhysicalPath, ".agents/memory/local-note.md");
-        var overwritePath = Path.Combine(workspace.PhysicalPath, ".agents/memory/local-note.overwrite.md");
+        var basePath = Path.Combine(workspace.PhysicalPath, ".agents", "memory", "local-note.md");
+        var overwritePath = Path.Combine(workspace.PhysicalPath, ".agents", "memory", "local-note.overwrite.md");
         const string baseText = """
             ---
             open-forge:
@@ -36,7 +37,8 @@ public sealed class UpdateGeneratedNavigationPlannerIntegrationTests
 
             var build = await new UpdateGeneratedNavigationPlanner(new PhysicalPathResolver()).BuildAsync(
                 workspace.Request(UpdateMode.DryRun),
-                payload,
+                payload.Assets,
+                new HashSet<string>(StringComparer.Ordinal),
                 new HashSet<string>(StringComparer.Ordinal),
                 TestContext.Current.CancellationToken);
 
@@ -47,7 +49,7 @@ public sealed class UpdateGeneratedNavigationPlannerIntegrationTests
                 StringComparison.Ordinal);
             Assert.Equal(
                 [basePath, overwritePath],
-                build.ProjectionInputs.Select(input => input.LogicalPath));
+                build.ProjectionInputs.Select(input => input.LogicalPath).ToArray());
             var overwrite = Assert.Single(
                 build.ProjectionInputs,
                 input => input.LogicalPath == overwritePath);

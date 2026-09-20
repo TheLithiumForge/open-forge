@@ -1,0 +1,9 @@
+No errors. 1 warning was recorded.
+Routes and Entries
+  Warning  .agents/directives/_directives.md  Entries section is stale
+         The Entries section of .agents/directives/_directives.md does not match its routed files.
+         open-forge index
+         Update deterministic generated navigation.
+  21 links and 20 routes checked.
+  Update deterministic generated navigation.
+Next: open-forge index

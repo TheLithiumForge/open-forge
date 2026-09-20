@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 3,
+  "command": "index",
+  "status": "blocked",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot rebuild the Entries section of <workspace>.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "index.workspace-lock-unavailable",
+      "title": "Workspace lock is held",
+      "message": "Another Open Forge command holds the workspace lock. Nothing was changed.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "<workspace>",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/root/_root.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesChecked": 0,
+    "filesUpdated": 0,
+    "filesCurrent": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "changes": [
+      {
+        "path": ".agents/root/_root.md",
+        "before": null,
+        "after": 1,
+        "diff": [
+          "- - stale\n",
+          "+ - [Child](child.md) - #Docs\n"
+        ]
+      }
+    ],
+    "unchanged": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge index",
+    "reason": "Retry when the other command finishes."
+  }
+}

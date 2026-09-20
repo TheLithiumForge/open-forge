@@ -19,6 +19,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Index;
 
 public sealed class IndexRecoveryIdentityIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory, InlineData(false), InlineData(true), Trait("Feature", "index"), Trait("Evidence", "Integration")]
     public async Task CleanupRequiresThePreparedAttribution(bool changed)
     {

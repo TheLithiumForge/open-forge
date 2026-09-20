@@ -1,0 +1,6 @@
+Open Forge is installed, but 1 file needs attention.
+  Warning  .agents/guidance/_guidance.md  Changed since it was installed
+         changed since it was installed
+         open-forge update
+  Startup reads 11 of 13 routed files, about 5.7k tokens.
+Next: open-forge update

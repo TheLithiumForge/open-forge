@@ -1,0 +1,15 @@
+Cannot detach team-knowledge: it writes outside .agents and no grant allows that. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/open-forge.json  Permission is required [library-detach.permission-required]
+         Cannot detach: it writes outside .agents and no grant allows that.
+         use open-forge library detach team-knowledge --allow-path docs/review.md --automatic
+         open-forge library detach team-knowledge --allow-path docs/review.md --automatic
+         Grant the destination path, then rerun the detach request.
+  docs/review.md  not started
+  .agents/open-forge.lock.json  not started
+  Expected docs/review.md: relative-file-link; length unavailable; SHA-256 unavailable; target ../shared/team-knowledge/docs/review.md
+  Expected .agents/open-forge.lock.json: ordinary-file; length unavailable; SHA-256 <sha256>; target unavailable
+  Verification: was not requested; registration was not published.
+  Recovery: no recovery bundle was required; no residual effects.
+  Grant the destination path, then rerun the detach request.
+Next: open-forge library detach team-knowledge --allow-path docs/review.md --automatic

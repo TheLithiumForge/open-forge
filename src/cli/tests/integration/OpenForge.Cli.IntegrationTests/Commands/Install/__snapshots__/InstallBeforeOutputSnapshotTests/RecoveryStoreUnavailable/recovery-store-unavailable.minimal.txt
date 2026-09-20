@@ -1,0 +1,6 @@
+Install could not start: The recovery workspace storage path is not a directory. Nothing was changed.
+Workspace: <workspace>
+  Warning  <workspace>  Recovery data is unavailable
+         Recovery data could not be prepared at <workspace>. Nothing was changed.
+         open-forge doctor
+Next: open-forge doctor

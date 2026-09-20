@@ -6,6 +6,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Resolution;
 
 public sealed class RouteInspectResolverSourceFormsIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route inspect resolves the canonical and every compatibility entrypoint form"),
         InlineData(".agents/canonical/_canonical.md", "canonical", nameof(RouteInspectSourceForm.CanonicalEntrypoint), nameof(SourceDocumentForm.CanonicalEntrypoint)),
         InlineData(".agents/index/index.md", "index", nameof(RouteInspectSourceForm.CompatibilityEntrypoint), nameof(SourceDocumentForm.IndexEntrypoint)),
@@ -45,6 +46,7 @@ public sealed class RouteInspectResolverSourceFormsIntegrationTests
         Assert.Empty(result.Issues);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route inspect resolves routed Markdown and native Skill sources with authored parent topology"),
         InlineData(".agents/root/leaf.md", "root/leaf", nameof(RouteInspectSourceKind.Markdown)),
         InlineData(".agents/root/native/SKILL.md", "root/native", nameof(RouteInspectSourceKind.Native))]
@@ -88,6 +90,7 @@ public sealed class RouteInspectResolverSourceFormsIntegrationTests
         Assert.Same(projection.LogicalSource.Identity, node.Identity);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect resolves a detached entrypoint without fabricating Loader roots")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task DetachedEntrypointRetainsLocalTopologyOnly()
@@ -112,6 +115,7 @@ public sealed class RouteInspectResolverSourceFormsIntegrationTests
         Assert.Same(projection.LogicalSource.Identity, node.Identity);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route inspect reports known supported unrouted Markdown and native sources without route facts"),
         InlineData(".agents/flat.md", nameof(RouteInspectSourceKind.Markdown), nameof(RouteInspectSourceForm.Markdown)),
         InlineData(".agents/native/SKILL.md", nameof(RouteInspectSourceKind.Native), nameof(RouteInspectSourceForm.Native))]
@@ -148,6 +152,7 @@ public sealed class RouteInspectResolverSourceFormsIntegrationTests
         Assert.Equal(path, projection.LogicalSource.Identity.CanonicalBasePath);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect derives authored topology without treating generated Entries as graph edges")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task GeneratedNavigationDoesNotDefineAuthoredParentage()
@@ -161,10 +166,7 @@ public sealed class RouteInspectResolverSourceFormsIntegrationTests
                 # Root
 
                 ## Entries
-
-                <!-- open-forge:generated-index:start -->
                 - [Detached](../detached/_detached.md) - #Detached
-                <!-- open-forge:generated-index:end -->
                 """);
         const string detachedPath = ".agents/detached/_detached.md";
         workspace.Write(

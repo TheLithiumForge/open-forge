@@ -1,0 +1,10 @@
+status=invalid-input
+mode=apply
+target=../outside
+completeness=incomplete
+safety=not-established
+effects=0
+recovery=not required
+verification=not run
+findings=1
+A source ID must contain non-empty path segments without traversal or control characters.

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: The accepted replacement command boundary uses Commander with inferred TypeScript definitions and contract-preserving shell completion
+  description: "Historical CLI-v2 source: The accepted replacement command boundary uses Commander with inferred TypeScript definitions and contract-preserving shell completion"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

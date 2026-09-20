@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "failed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Route remove stopped after 2 of 4 changes.",
+    "kind": "failed"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-remove.write-failed",
+      "title": "Write failed",
+      "message": "Writing .agents/guidance/old guide.md failed. Stopped after 2 of 4 changes. Recovery data: <recovery-bundle>.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/guidance/old guide.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "README.md",
+      "kind": "link",
+      "action": "detached",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/guidance/old guide.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/guidance/old guide.overwrite.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesRemoved": 0,
+    "sectionsUpdated": 1,
+    "linksDetached": 1,
+    "filesScanned": 11,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "removed": [
+      ".agents/guidance/old guide.md",
+      ".agents/guidance/old guide.overwrite.md"
+    ],
+    "detachedLinks": [
+      {
+        "path": "README.md",
+        "location": "1:8",
+        "before": "Prefix [Old guide](.agents/guidance/old%20guide.md#part) suffix.",
+        "after": "Prefix Old guide suffix."
+      }
+    ]
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge cleanup",
+    "reason": "after reviewing the bundle"
+  }
+}

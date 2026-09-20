@@ -1,0 +1,11 @@
+status=blocked
+mode=apply
+target=memory/project-alpha/overview
+completeness=complete
+safety=safe
+body=preserved
+effects=2
+recovery=not created
+verification=not run
+findings=1
+IOException (0x80070020): The filesystem operation failed.

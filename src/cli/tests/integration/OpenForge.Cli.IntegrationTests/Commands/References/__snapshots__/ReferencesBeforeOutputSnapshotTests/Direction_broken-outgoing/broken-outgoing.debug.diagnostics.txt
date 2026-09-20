@@ -1,0 +1,5 @@
+status=completed-with-warnings
+incoming=0
+outgoing=1
+scanned=4
+The local destination path does not exist.

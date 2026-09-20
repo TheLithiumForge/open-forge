@@ -8,6 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Parsing;
 
 public sealed class NativeOptionDelimiterIntegrationTests
 {
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Composed CLI accepts native tag delimiters and preserves repeated value order")]
     [Trait("Feature", "native-option-delimiters"), Trait("Evidence", "Integration")]
     [InlineData("find", " ")]
@@ -43,6 +44,7 @@ public sealed class NativeOptionDelimiterIntegrationTests
         Assert.Equal(["Second", "First"], values);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Composed Route List accepts native depth delimiters without changing the value")]
     [Trait("Feature", "native-option-delimiters"), Trait("Evidence", "Integration")]
     [InlineData("0", " ")]

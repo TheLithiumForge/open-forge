@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: The replacement CLI groups commands by semantic locality, names every operation explicitly, and keeps flags orthogonal, globally consistent, and predictable
+  description: "Historical CLI-v2 source: The replacement CLI groups commands by semantic locality, names every operation explicitly, and keeps flags orthogonal, globally consistent, and predictable"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

@@ -1,0 +1,2 @@
+Open Forge is not installed in <workspace>.
+Next: open-forge install --dry-run

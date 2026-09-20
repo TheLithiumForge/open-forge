@@ -1,4 +1,3 @@
-using OpenForge.Cli.Core.Shell.Presentation.Shared.Rendering;
 using System.Text.Json;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Core.Commands.Find;
@@ -7,26 +6,29 @@ using OpenForge.Cli.Core.Commands.Find.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Find.Models.Query;
 using OpenForge.Cli.Core.Commands.Find.Models.Request;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
-using OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Find.Shared.Result;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Presentation.Find;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Shell.Parsing.Models.Results;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Composition;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
-using OpenForge.Cli.IntegrationTests.Commands.Shared.Composition;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Find;
 
 public sealed class FindApplicationIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed CliCompositionRoot registers Find as a direct root leaf with one exact binding"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
     public void ComposedRootRegistersFindAsDirectRootLeaf()
     {
-        var application = CliCompositionRoot.Create(
-            new CliProcessIdentity("open-forge", "test"));
+        var application = CliCompositionRoot.Create(new CliProcessIdentity("open-forge", "test"));
         var tree = CliCoreApplicationAccess.Tree(application);
         var parse = tree.Parse(["find"]);
         var selection = CliBindingSelector.Select(parse);
@@ -34,193 +36,196 @@ public sealed class FindApplicationIntegrationTests
         Assert.Equal("find", selection.Command.Name);
         Assert.False(tree.IsGroup(selection.Command));
         Assert.Equal(CliBindingSelectionState.Leaf, selection.State);
-        var binding = tree.FindBinding(selection.Command);
-        Assert.NotNull(binding);
-        Assert.Same(binding, selection.Binding);
-        Assert.Same(selection.Command, binding!.Command);
+        Assert.Same(selection.Command, tree.FindBinding(selection.Command)!.Command);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed root help exposes the direct Find leaf exactly once in Commands"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
     public async Task ComposedRootHelpExposesFindOnceInCommands()
     {
         using var workspace = FindWorkspace.CreateBare();
         var missing = workspace.Combine("missing-root-help-workspace");
-        AssertPathAbsent(missing);
-
-        var result = await RunWithoutWrites(
-            workspace,
-            ["--help", "--workspace", missing]);
+        var result = await RunWithoutWrites(workspace, ["--help", "--workspace", missing]);
 
         Assert.Equal(0, result.ExitCode);
-        Assert.Equal(string.Empty, result.Error);
+        Assert.Empty(result.Error);
         var lines = result.Output.Split(Environment.NewLine, StringSplitOptions.None);
-        var discovery = Array.FindIndex(
-            lines,
-            line => line.Equals("Commands:", StringComparison.Ordinal));
-        Assert.True(discovery >= 0, "Root help must contain the Commands section.");
-        var findLines = lines[(discovery + 1)..]
-            .TakeWhile(line => line.StartsWith("  ", StringComparison.Ordinal))
-            .Where(line =>
-            {
-                var trimmed = line.Trim();
-                return trimmed.Equals("find", StringComparison.Ordinal)
-                    || trimmed.StartsWith("find ", StringComparison.Ordinal);
-            })
-            .ToArray();
-        Assert.Single(findLines);
-        Assert.Contains("find", findLines[0], StringComparison.Ordinal);
-        AssertPathAbsent(missing);
+        var discovery = Array.FindIndex(lines, line => line.Equals("Commands:", StringComparison.Ordinal));
+        Assert.True(discovery >= 0);
+        Assert.Single(
+            lines[(discovery + 1)..]
+                .TakeWhile(line => line.StartsWith("  ", StringComparison.Ordinal)),
+            line => line.Trim().Equals("find", StringComparison.Ordinal)
+                || line.Trim().StartsWith("find ", StringComparison.Ordinal));
     }
 
-    [Fact(DisplayName = "Composed CliHost exposes the registered direct Find leaf and its binding-owned help"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
-    public async Task ComposedHostExposesFindHelpAndRegistration()
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed host exposes Find help and registration"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
+    public async Task ComposedHostExposesFindHelp()
     {
         using var workspace = FindWorkspace.CreateBare();
-        var missing = workspace.Combine("missing-find-help-workspace");
-        AssertPathAbsent(missing);
-        var result = await RunWithoutWrites(
-            workspace,
-            ["find", "--help", "--workspace", missing]);
+        var result = await RunWithoutWrites(workspace, ["find", "--help", "--workspace", workspace.Path]);
 
         Assert.Equal(0, result.ExitCode);
-        Assert.Equal(string.Empty, result.Error);
+        Assert.Empty(result.Error);
         Assert.Contains("open-forge find", result.Output, StringComparison.Ordinal);
         Assert.Contains("Source references", result.Output, StringComparison.Ordinal);
         Assert.Contains("Results and streams", result.Output, StringComparison.Ordinal);
-        AssertPathAbsent(missing);
     }
 
-    [Fact(DisplayName = "Composed Find bare invocation uses the current directory and default expanded view"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
-    public async Task BareInvocationUsesCurrentDirectoryAndDefaultExpandedView()
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed Find bare invocation uses the current directory and native minimal rows"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
+    public async Task BareInvocationUsesNativeMinimalRows()
     {
         using var workspace = FindWorkspace.CreateBare();
         var result = await RunWithoutWrites(workspace, ["find"]);
+        var json = await RunWithoutWrites(workspace, ["find", "--format", "json"]);
 
         Assert.Equal(0, result.ExitCode);
-        Assert.Equal(string.Empty, result.Error);
-        Assert.Contains($"Workspace: {workspace.Path}", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Selected by: current directory", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Coverage: complete", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Found 3 matching sources.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("docs", result.Output, StringComparison.Ordinal);
-        Assert.Contains("guide", result.Output, StringComparison.Ordinal);
-        Assert.DoesNotContain("result=complete", result.Output, StringComparison.Ordinal);
+        Assert.Empty(result.Error);
+        Assert.Equal(
+            [
+                "  docs    .agents/docs.md",
+                "  guide   .agents/guide.md",
+                "  loader  .agents/loader.md",
+            ],
+            NonEmptyLines(result.Output));
+        Assert.DoesNotContain("result=", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Workspace:", result.Output, StringComparison.Ordinal);
+
+        using var document = JsonDocument.Parse(json.Output);
+        Assert.Equal("minimal", document.RootElement.GetProperty("detail").GetString());
+        Assert.Equal("current-directory", document.RootElement.GetProperty("workspace").GetProperty("selectedBy").GetString());
+        Assert.Equal(3, document.RootElement.GetProperty("data").GetProperty("matches").GetArrayLength());
     }
 
-    [Fact(DisplayName = "Composed Find explicit --workspace uses the default expanded view without duplicate compact coverage"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
-    public async Task ExplicitWorkspaceUsesDefaultExpandedView()
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed Find explicit workspace retains native minimal rows and workspace selection"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
+    public async Task ExplicitWorkspaceUsesNativeMinimalRows()
     {
         using var workspace = FindWorkspace.CreateBare();
         var result = await RunWithoutWrites(workspace, ["find", "--workspace", workspace.Path]);
+        var json = await RunWithoutWrites(workspace, ["find", "--workspace", workspace.Path, "--format", "json"]);
 
         Assert.Equal(0, result.ExitCode);
-        Assert.Equal(string.Empty, result.Error);
-        Assert.Contains($"Workspace: {workspace.Path}", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Selected by: --workspace", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Coverage: complete", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Found 3 matching sources.", result.Output, StringComparison.Ordinal);
-        Assert.DoesNotContain("result=complete", result.Output, StringComparison.Ordinal);
+        Assert.Empty(result.Error);
+        Assert.Equal(4, NonEmptyLines(result.Output).Length);
+        Assert.DoesNotContain("result=", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Workspace: ", result.Output, StringComparison.Ordinal);
+
+        using var document = JsonDocument.Parse(json.Output);
+        Assert.Equal("explicit-workspace", document.RootElement.GetProperty("workspace").GetProperty("selectedBy").GetString());
     }
 
-    [Fact(DisplayName = "Composed Find compact tag filtering returns exactly the ordinary matching source"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
-    public async Task CompactTagFilteringReturnsExactlyOneSource()
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed Find minimal tag filtering returns exactly the ordinary matching source"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
+    public async Task MinimalTagFilteringReturnsExactlyOneSource()
     {
         using var workspace = FindWorkspace.CreateBare();
-        var result = await RunWithoutWrites(
-            workspace,
-            ["find", "--workspace", workspace.Path, "--view=compact", "--tag=Architecture"]);
+        var result = await RunWithoutWrites(workspace, ["find", "--workspace", workspace.Path, "--detail=minimal", "--tag=Architecture"]);
 
         Assert.Equal(0, result.ExitCode);
-        Assert.Equal(string.Empty, result.Error);
-        Assert.Equal(
-            [
-                "result=complete\tcoverage=complete\tuniverse=default\tmatches=1",
-                "docs\t.agents/docs.md",
-            ],
-            NonEmptyLines(result.Output));
-        Assert.DoesNotContain("guide\t.agents/guide.md", result.Output, StringComparison.Ordinal);
+        Assert.Empty(result.Error);
+        Assert.Equal(2, NonEmptyLines(result.Output).Length);
+        Assert.Contains("  docs  .agents/docs.md", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("guide", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("loader", result.Output, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Composed Find expanded heading filtering returns exactly one source and excludes the distinct ordinary source"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
-    public async Task ExpandedHeadingFilteringReturnsExactlyOneSource()
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed Find standard heading filtering returns one source with its description"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
+    public async Task StandardHeadingFilteringReturnsOneSource()
     {
         using var workspace = FindWorkspace.CreateBare();
-        var result = await RunWithoutWrites(
-            workspace,
-            ["find", "--workspace", workspace.Path, "--view=expanded", "--heading=Architecture"]);
+        var result = await RunWithoutWrites(workspace, ["find", "--workspace", workspace.Path, "--detail=standard", "--heading=Architecture"]);
 
         Assert.Equal(0, result.ExitCode);
-        Assert.Equal(string.Empty, result.Error);
-        Assert.Contains("Coverage: complete", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Found 1 matching source.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("docs", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Path: .agents/docs.md", result.Output, StringComparison.Ordinal);
+        Assert.Empty(result.Error);
+        Assert.Equal("1 source matches --heading Architecture.", NonEmptyLines(result.Output)[0]);
+        Assert.Contains("  docs  .agents/docs.md", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Docs", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain(".agents/guide.md", result.Output, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Composed Find JSON views retain matching and complete selected content"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
-    public async Task JsonViewAndContentRemainOneTypedDocument()
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed Find JSON keeps selected matches, evidence, parts, and source-set detail"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
+    public async Task JsonUsesNativeDetailShape()
     {
         using var workspace = FindWorkspace.CreateBare();
-        var compact = await RunWithoutWrites(
-            workspace,
-            ["find", "--workspace", workspace.Path, "--tag=Architecture", "--json", "--view=compact", "--content=metadata,frontmatter,headings,body,section:Target"]);
-        var expanded = await RunWithoutWrites(
-            workspace,
-            ["find", "--workspace", workspace.Path, "--tag=Architecture", "--json", "--view=expanded", "--content=metadata,frontmatter,headings,body,section:Target"]);
+        var minimal = await RunWithoutWrites(workspace, ["find", "--workspace", workspace.Path, "--tag=Architecture", "--format", "json", "--detail=minimal", "--content=metadata,frontmatter,headings,body,section:Target"]);
+        var standard = await RunWithoutWrites(workspace, ["find", "--workspace", workspace.Path, "--tag=Architecture", "--format", "json", "--detail=standard", "--content=metadata,frontmatter,headings,body,section:Target"]);
+        var full = await RunWithoutWrites(workspace, ["find", "--workspace", workspace.Path, "--tag=Architecture", "--format", "json", "--detail=full", "--content=metadata,frontmatter,headings,body,section:Target"]);
 
-        Assert.Equal(0, compact.ExitCode);
-        Assert.Equal(0, expanded.ExitCode);
-        Assert.Equal(string.Empty, compact.Error);
-        Assert.Equal(string.Empty, expanded.Error);
-        using var compactDocument = JsonDocument.Parse(compact.Output);
-        using var expandedDocument = JsonDocument.Parse(expanded.Output);
-        AssertJsonViewChangesOnlyEchoedSelection(compactDocument, expandedDocument);
-        AssertCompleteDocsProjection(compactDocument);
-        AssertCompleteDocsProjection(expandedDocument);
+        Assert.Equal(0, minimal.ExitCode);
+        Assert.Equal(0, standard.ExitCode);
+        Assert.Equal(0, full.ExitCode);
+        Assert.Empty(minimal.Error);
+        Assert.Empty(standard.Error);
+        Assert.Empty(full.Error);
+        using var minimalDocument = JsonDocument.Parse(minimal.Output);
+        using var standardDocument = JsonDocument.Parse(standard.Output);
+        using var fullDocument = JsonDocument.Parse(full.Output);
+
+        var minimalData = minimalDocument.RootElement.GetProperty("data");
+        Assert.False(minimalData.TryGetProperty("query", out _));
+        Assert.False(minimalData.TryGetProperty("sourceSet", out _));
+        Assert.True(minimalData.GetProperty("matches")[0].TryGetProperty("parts", out _));
+        var standardData = standardDocument.RootElement.GetProperty("data");
+        Assert.True(standardData.TryGetProperty("query", out _));
+        Assert.True(standardData.GetProperty("matches")[0].TryGetProperty("evidence", out _));
+        Assert.False(standardData.TryGetProperty("sourceSet", out _));
+        var fullData = fullDocument.RootElement.GetProperty("data");
+        Assert.True(fullData.TryGetProperty("sourceSet", out _));
+        Assert.Equal(3, fullData.GetProperty("sourceSet").GetProperty("candidates").GetInt32());
+        Assert.Contains(
+            fullData.GetProperty("matches")[0].GetProperty("parts").EnumerateArray(),
+            part => part.GetProperty("part").GetString() == "body");
     }
 
-    [Fact(DisplayName = "Composed Find typed invalid input uses the Find envelope for malformed content"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
-    public async Task TypedInvalidInputUsesFindEnvelope()
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed Find invalid input uses the native error envelope"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
+    public async Task InvalidInputUsesNativeEnvelope()
     {
         using var workspace = FindWorkspace.CreateBare();
-        var result = await RunWithoutWrites(
-            workspace,
-            ["find", "--workspace", workspace.Path, "--json", "--content=not-a-part"]);
+        var result = await RunWithoutWrites(workspace, ["find", "--workspace", workspace.Path, "--format", "json", "--content=not-a-part"]);
 
         Assert.Equal(4, result.ExitCode);
-        Assert.Equal(string.Empty, result.Error);
+        Assert.Empty(result.Error);
         using var document = JsonDocument.Parse(result.Output);
-        Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
-        Assert.Equal("not-started", document.RootElement.GetProperty("result").GetProperty("coverage").GetProperty("projection").GetString());
-        Assert.Equal([], document.RootElement.GetProperty("result").GetProperty("presentation").GetProperty("content").GetProperty("effective").EnumerateArray().Select(value => value.GetString()));
+        Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
+        Assert.Empty(document.RootElement.GetProperty("data").GetProperty("matches").EnumerateArray());
+        Assert.Contains(
+            document.RootElement.GetProperty("findings").EnumerateArray(),
+            finding => finding.GetProperty("code").GetString() == "find.invalid-input");
+        Assert.False(document.RootElement.GetProperty("data").TryGetProperty("presentation", out _));
     }
 
-    [Fact(DisplayName = "Composed Find blocked workspace selection emits a typed blocked result with workspace null"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed Find blocked workspace selection emits a native blocked result with workspace null"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
     public async Task BlockedWorkspaceUsesNullWorkspaceInEnvelope()
     {
         using var workspace = FindWorkspace.CreateBare();
         var missing = workspace.Combine("missing-workspace");
-        AssertPathAbsent(missing);
-        var result = await RunWithoutWrites(
-            workspace,
-            ["find", "--workspace", missing, "--json"]);
+        var result = await RunWithoutWrites(workspace, ["find", "--workspace", missing, "--format", "json"]);
 
         Assert.Equal(5, result.ExitCode);
-        Assert.Equal(string.Empty, result.Error);
+        Assert.Empty(result.Error);
         using var document = JsonDocument.Parse(result.Output);
         Assert.Equal("blocked", document.RootElement.GetProperty("status").GetString());
         Assert.Equal(JsonValueKind.Null, document.RootElement.GetProperty("workspace").ValueKind);
-        AssertPathAbsent(missing);
+        Assert.Contains(
+            document.RootElement.GetProperty("findings").EnumerateArray(),
+            finding => finding.GetProperty("code").GetString() == "find.workspace-unavailable");
     }
 
-    [Theory(DisplayName = "Composed Find exposes deterministic attention, missing-projection, lock, and invalid-encoding findings"),
-        InlineData("attention", "attention", 2, "find.identity-collision"),
-        InlineData("missing-projection", "attention", 2, "find.projection-missing"),
+    [Trait("Boundary", "Host")]
+    [Theory(DisplayName = "Composed Find exposes stable native findings and exits"),
+        InlineData("attention", "completed-with-warnings", 2, "find.identity-collision"),
+        InlineData("missing-projection", "completed-with-warnings", 2, "find.projection-missing"),
         InlineData("unreadable", "incomplete", 3, "find.inspection-unavailable"),
         InlineData("invalid-encoding", "incomplete", 3, "find.invalid-encoding"),
         Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
-    public async Task RealSourceFindingsUseStableTypedStatuses(
+    public async Task RealSourceFindingsUseNativeEnvelope(
         string scenario,
         string expectedStatus,
         int expectedExitCode,
@@ -240,36 +245,33 @@ public sealed class FindApplicationIntegrationTests
             "missing-projection" => "section:Missing",
             _ => "metadata,body",
         };
-        var result = await RunWithoutWrites(
-            workspace,
-            ["find", "--workspace", workspace.Path, "--json", $"--content={content}"]);
+        var result = await Run(workspace, ["find", "--workspace", workspace.Path, "--format", "json", $"--content={content}"]);
 
         Assert.Equal(expectedExitCode, result.ExitCode);
-        Assert.Equal(string.Empty, result.Error);
+        Assert.Empty(result.Error);
         using var document = JsonDocument.Parse(result.Output);
         Assert.Equal(expectedStatus, document.RootElement.GetProperty("status").GetString());
-        var findings = document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray().ToArray();
-        Assert.Contains(findings, finding => finding.GetProperty("code").GetString() == expectedFindingCode);
-        var coverage = document.RootElement.GetProperty("result").GetProperty("coverage");
-        Assert.Equal(expectedStatus == "incomplete" ? "incomplete" : "complete", coverage.GetProperty("state").GetString());
+        var findings = document.RootElement.GetProperty("findings").EnumerateArray().ToArray();
+        Assert.Contains(findings, value => value.GetProperty("code").GetString() == expectedFindingCode);
+        var finding = findings.First(value => value.GetProperty("code").GetString() == expectedFindingCode);
         if (scenario is "unreadable" or "invalid-encoding")
         {
             var expectedPath = scenario == "unreadable" ? ".agents/unreadable.md" : ".agents/bad.md";
-            Assert.Contains(findings, finding =>
-                finding.GetProperty("code").GetString() == expectedFindingCode
-                && finding.GetProperty("path").GetString() == expectedPath);
+            Assert.Equal(expectedPath, finding.GetProperty("subject").GetProperty("path").GetString());
         }
-        if (expectedStatus == "attention")
-        {
-            Assert.Equal(JsonValueKind.Null, document.RootElement.GetProperty("next").ValueKind);
-        }
-        else
+
+        if (expectedStatus == "incomplete")
         {
             Assert.Equal("open-forge doctor", document.RootElement.GetProperty("next").GetProperty("command").GetString());
         }
+        else
+        {
+            Assert.Equal(JsonValueKind.Null, document.RootElement.GetProperty("next").ValueKind);
+        }
     }
 
-    [Theory(DisplayName = "Composed Find verbose mode keeps primary output and diagnostics on separate streams for every terminal status"),
+    [Trait("Boundary", "Host")]
+    [Theory(DisplayName = "Composed Find keeps primary output and debug diagnostics on their assigned streams"),
         InlineData("complete", 0),
         InlineData("invalid", 4),
         InlineData("blocked", 5),
@@ -277,7 +279,6 @@ public sealed class FindApplicationIntegrationTests
     public async Task VerboseStreamsRemainSeparated(string expectedStatus, int expectedExitCode)
     {
         using var workspace = FindWorkspace.CreateBare();
-        string? missing = null;
         string[] arguments;
         if (expectedStatus == "complete")
         {
@@ -287,110 +288,95 @@ public sealed class FindApplicationIntegrationTests
         {
             arguments = ["find", "--workspace", workspace.Path, "--content=bad"];
         }
-        else if (expectedStatus == "blocked")
+        else
         {
-            missing = workspace.Combine("missing");
-            AssertPathAbsent(missing);
+            var missing = workspace.Combine("missing");
             arguments = ["find", "--workspace", missing];
         }
-        else
-        {
-            throw new ArgumentOutOfRangeException(nameof(expectedStatus), expectedStatus, "The verbose status is not defined.");
-        }
 
-        var plain = await RunWithoutWrites(workspace, arguments);
-        if (missing is not null)
-        {
-            AssertPathAbsent(missing);
-        }
+        var full = await RunWithoutWrites(workspace, [.. arguments, "--detail", "full"]);
+        var debug = await RunWithoutWrites(workspace, [.. arguments, "--detail", "debug"]);
 
-        var verbose = await RunWithoutWrites(workspace, [.. arguments, "--verbose"]);
-        if (missing is not null)
-        {
-            AssertPathAbsent(missing);
-        }
-
-        Assert.Equal(expectedExitCode, plain.ExitCode);
-        Assert.Equal(plain.ExitCode, verbose.ExitCode);
-        Assert.Contains("status", verbose.Error, StringComparison.OrdinalIgnoreCase);
-        Assert.InRange(verbose.Error.Length, 1, 4096);
+        Assert.Equal(expectedExitCode, full.ExitCode);
+        Assert.Equal(full.ExitCode, debug.ExitCode);
+        Assert.InRange(debug.Error.Length, 1, 4096);
         if (expectedStatus == "complete")
         {
-            Assert.Equal(plain.Output, verbose.Output);
-            Assert.Contains("Coverage: complete", verbose.Output, StringComparison.Ordinal);
-            Assert.Contains("Found 3 matching sources.", verbose.Output, StringComparison.Ordinal);
+            Assert.Equal(full.Output, debug.Output);
+            Assert.Contains("Search details:", debug.Output, StringComparison.Ordinal);
+            Assert.Contains("status=completed", debug.Error, StringComparison.Ordinal);
         }
         else
         {
-            Assert.Equal(string.Empty, plain.Output);
-            Assert.Equal(string.Empty, verbose.Output);
+            Assert.Empty(full.Output);
+            Assert.Empty(debug.Output);
+            Assert.Contains("Cannot search:", full.Error, StringComparison.Ordinal);
         }
     }
 
-    [Fact(DisplayName = "Composed Find invalid JSON keeps primary output, status, and exit invariant under verbose diagnostics"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed Find invalid JSON debug mode preserves the primary native document"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
     public async Task InvalidJsonVerboseModePreservesPrimaryDocument()
     {
         using var workspace = FindWorkspace.CreateBare();
-        string[] arguments = ["find", "--workspace", workspace.Path, "--json", "--content=bad"];
+        string[] arguments = ["find", "--workspace", workspace.Path, "--format", "json", "--content=bad"];
         var plain = await RunWithoutWrites(workspace, arguments);
-        var verbose = await RunWithoutWrites(workspace, arguments.Append("--verbose").ToArray());
+        var debug = await RunWithoutWrites(workspace, [.. arguments, "--detail", "debug"]);
 
         Assert.Equal(4, plain.ExitCode);
-        Assert.Equal(plain.ExitCode, verbose.ExitCode);
-        Assert.Equal(string.Empty, plain.Error);
-        Assert.Equal(plain.Output, verbose.Output);
-        Assert.InRange(verbose.Error.Length, 1, 4096);
+        Assert.Equal(plain.ExitCode, debug.ExitCode);
+        Assert.Empty(plain.Error);
+        Assert.InRange(debug.Error.Length, 1, 4096);
 
         using var plainDocument = JsonDocument.Parse(plain.Output);
-        using var verboseDocument = JsonDocument.Parse(verbose.Output);
-        Assert.Equal("invalid", plainDocument.RootElement.GetProperty("status").GetString());
+        using var debugDocument = JsonDocument.Parse(debug.Output);
+        Assert.Equal("invalid-input", plainDocument.RootElement.GetProperty("status").GetString());
         Assert.Equal(
             plainDocument.RootElement.GetProperty("status").GetString(),
-            verboseDocument.RootElement.GetProperty("status").GetString());
+            debugDocument.RootElement.GetProperty("status").GetString());
         Assert.Equal(
-            plainDocument.RootElement.GetProperty("result").GetProperty("coverage").GetProperty("projection").GetString(),
-            verboseDocument.RootElement.GetProperty("result").GetProperty("coverage").GetProperty("projection").GetString());
+            plainDocument.RootElement.GetProperty("data").GetProperty("matches").GetArrayLength(),
+            debugDocument.RootElement.GetProperty("data").GetProperty("matches").GetArrayLength());
+        Assert.False(plainDocument.RootElement.GetProperty("data").TryGetProperty("presentation", out _));
+        Assert.False(debugDocument.RootElement.GetProperty("data").TryGetProperty("presentation", out _));
     }
 
-    [Theory(DisplayName = "Direct typed Find terminal results preserve exact compact summaries and next actions"),
-        InlineData("failed", "result=failed\tcoverage=failed\tuniverse=default\tmatches=1", "Next: open-forge find --verbose"),
-        InlineData("interrupted", "result=interrupted\tcoverage=interrupted\tuniverse=default\tmatches=1", "Next: open-forge find"),
+    [Trait("Boundary", "Host")]
+    [Theory(DisplayName = "Direct typed Find terminal results preserve catalogue headlines and streams"),
+        InlineData("failed", "Find stopped because of an unexpected error:"),
+        InlineData("interrupted", "Find was cancelled."),
         Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
-    public void DirectTypedTerminalResultsPreserveSummaryAndNext(
-        string statusValue,
-        string expectedSummary,
-        string expectedNext)
+    public void DirectTypedTerminalResultsPreserveHeadlines(string statusValue, string expectedHeadline)
     {
         var result = CreateTerminalResult(statusValue);
 
-        Assert.Equal(
-            statusValue == "failed" ? CliSemanticStatus.Failed : CliSemanticStatus.Interrupted,
-            result.Status);
         Assert.Equal(
             statusValue == "failed" ? FindFindingCode.OperationFailed : FindFindingCode.Interrupted,
             Assert.Single(result.Findings).Code);
         Assert.NotNull(result.Next);
         Assert.Equal(
-            statusValue == "failed" ? "open-forge find --verbose" : "open-forge find",
+            statusValue == "failed" ? "open-forge find --detail debug" : "open-forge find",
             result.Next!.Command);
 
-        var rendered = FindCompactRenderer.Render(result, CliHumanStyle.Plain);
+        var rendered = CliRenderingStage.Render(
+            new CliPresentationRequest<FindResult>(result, new CliPresentation(CliFormat.Text, CliDetail.Standard, null)),
+            FindPresentation.Rendering);
 
-        Assert.Equal(expectedSummary, NonEmptyLines(rendered)[0]);
-        Assert.Equal(
-            [expectedNext],
-            NonEmptyLines(rendered)
-                .Where(line => line.StartsWith("Next:", StringComparison.Ordinal)));
+        Assert.Equal(statusValue == "failed" ? CliSemanticStatus.Failed : CliSemanticStatus.Interrupted, rendered.Status);
+        Assert.Equal(CliOutputTarget.StandardError, rendered.PrimaryTarget);
+        Assert.StartsWith(expectedHeadline, rendered.PrimaryContent, StringComparison.Ordinal);
+        Assert.DoesNotContain("Next:", rendered.PrimaryContent, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Parser-native global failures remain Shell diagnostics and do not invent a typed Find envelope"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Parser-native global failures remain Shell diagnostics without a Find envelope"), Trait("Feature", "find-presentation"), Trait("Evidence", "Integration")]
     public async Task ParserNativeFailuresRemainShellDiagnostics()
     {
         using var workspace = FindWorkspace.CreateBare();
         var result = await RunWithoutWrites(workspace, ["--unknown-global-option"]);
 
         Assert.Equal(4, result.ExitCode);
-        Assert.Equal(string.Empty, result.Output);
+        Assert.Empty(result.Output);
         Assert.InRange(result.Error.Length, 1, 4096);
         Assert.DoesNotContain("schemaVersion", result.Error, StringComparison.Ordinal);
     }
@@ -398,12 +384,7 @@ public sealed class FindApplicationIntegrationTests
     private static Task<CliHostCaptureResult> Run(FindWorkspace workspace, string[] arguments)
         => CliHostCapture.RunAsync(arguments, workspace.Path);
 
-    private static Task<CliHostCaptureResult> RunWithoutWrites(FindWorkspace workspace, string[] arguments)
-        => RunWithoutWritesCore(workspace, arguments);
-
-    private static async Task<CliHostCaptureResult> RunWithoutWritesCore(
-        FindWorkspace workspace,
-        string[] arguments)
+    private static async Task<CliHostCaptureResult> RunWithoutWrites(FindWorkspace workspace, string[] arguments)
     {
         var before = workspace.SnapshotState();
         var result = await Run(workspace, arguments);
@@ -413,141 +394,6 @@ public sealed class FindApplicationIntegrationTests
 
     private static string[] NonEmptyLines(string output)
         => output.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
-
-    private static void AssertCompleteDocsProjection(JsonDocument document)
-    {
-        var root = document.RootElement;
-        Assert.Equal("find", root.GetProperty("command").GetString());
-        Assert.Equal("complete", root.GetProperty("status").GetString());
-        Assert.Equal(3, root.GetProperty("result").GetProperty("universe").GetProperty("candidateCount").GetInt32());
-        Assert.Equal(3, root.GetProperty("result").GetProperty("universe").GetProperty("inspectedCount").GetInt32());
-        Assert.Equal(1, root.GetProperty("result").GetProperty("universe").GetProperty("matchedCount").GetInt32());
-
-        var presentation = root.GetProperty("result").GetProperty("presentation");
-        string[] expectedContent = ["metadata", "frontmatter", "headings", "body", "section:Target"];
-        Assert.Equal(expectedContent, presentation.GetProperty("content").GetProperty("supplied").EnumerateArray().Select(value => value.GetString()));
-        Assert.Equal(expectedContent, presentation.GetProperty("content").GetProperty("effective").EnumerateArray().Select(value => value.GetString()));
-
-        var match = Assert.Single(root.GetProperty("result").GetProperty("matches").EnumerateArray());
-        Assert.Equal("docs", match.GetProperty("id").GetString());
-        Assert.Equal(".agents/docs.md", match.GetProperty("path").GetString());
-        Assert.Equal(
-            ["metadata", "frontmatter", "headings", "body", "section", "frontmatter", "headings", "body", "section"],
-            match.GetProperty("projections").EnumerateArray().Select(projection => projection.GetProperty("part").GetString()));
-        Assert.Equal(
-            ["available", "available", "available", "available", "available", "available", "available", "available", "available"],
-            match.GetProperty("projections").EnumerateArray().Select(projection => projection.GetProperty("state").GetString()));
-
-        var projections = match.GetProperty("projections").EnumerateArray().ToArray();
-        Assert.Equal(
-            ["metadata", "frontmatter", "headings", "body", "section", "frontmatter", "headings", "body", "section"],
-            projections.Select(projection => projection.GetProperty("part").GetString()));
-        Assert.Equal(
-            new string?[] { null, "base", "base", "base", "base", "overwrite", "overwrite", "overwrite", "overwrite" },
-            projections.Select(projection => projection.GetProperty("layer").GetString()));
-        Assert.Equal(
-            new string?[] { null, ".agents/docs.md", ".agents/docs.md", ".agents/docs.md", ".agents/docs.md", ".agents/docs.overwrite.md", ".agents/docs.overwrite.md", ".agents/docs.overwrite.md", ".agents/docs.overwrite.md" },
-            projections.Select(projection => projection.GetProperty("path").GetString()));
-
-        var metadata = projections[0].GetProperty("metadata");
-        Assert.Equal("docs", metadata.GetProperty("id").GetString());
-        Assert.Equal(".agents/docs.md", metadata.GetProperty("path").GetString());
-        Assert.Equal("unrouted", metadata.GetProperty("routeState").GetString());
-        Assert.Null(metadata.GetProperty("route").GetString());
-        var metadataLayers = metadata.GetProperty("layers").EnumerateArray().ToArray();
-        Assert.Equal(["base", "overwrite"], metadataLayers.Select(layer => layer.GetProperty("kind").GetString()));
-        Assert.Equal(
-            [".agents/docs.md", ".agents/docs.overwrite.md"],
-            metadataLayers.Select(layer => layer.GetProperty("path").GetString()));
-
-        AssertHeadingProjection(
-            projections[2],
-            ["Architecture", "Target"],
-            [6, 8]);
-        AssertHeadingProjection(
-            projections[6],
-            ["Architecture", "Target"],
-            [5, 7]);
-
-        AssertTextProjection(
-            projections[1],
-            ".agents/docs.md",
-            "---\nopen-forge:\n  description: Docs\n  tags: [Architecture]\n---",
-            1);
-        AssertTextProjection(
-            projections[3],
-            ".agents/docs.md",
-            "# Architecture\n\n## Target\n\nTarget body\n",
-            6);
-        AssertTextProjection(
-            projections[4],
-            ".agents/docs.md",
-            "## Target\n\nTarget body\n",
-            8);
-        AssertTextProjection(
-            projections[5],
-            ".agents/docs.overwrite.md",
-            "---\nopen-forge:\n  tags: [Architecture]\n---",
-            1);
-        AssertTextProjection(
-            projections[7],
-            ".agents/docs.overwrite.md",
-            "# Architecture\n\n## Target\n\nOverwrite body\n",
-            5);
-        AssertTextProjection(
-            projections[8],
-            ".agents/docs.overwrite.md",
-            "## Target\n\nOverwrite body\n",
-            7);
-    }
-
-    private static void AssertJsonViewChangesOnlyEchoedSelection(
-        JsonDocument compactDocument,
-        JsonDocument expandedDocument)
-    {
-        var compactRoot = compactDocument.RootElement;
-        var expandedRoot = expandedDocument.RootElement;
-        var compactView = compactRoot.GetProperty("result").GetProperty("presentation").GetProperty("view");
-        var expandedView = expandedRoot.GetProperty("result").GetProperty("presentation").GetProperty("view");
-        Assert.Equal("compact", compactView.GetProperty("supplied").GetString());
-        Assert.Equal("compact", compactView.GetProperty("effective").GetString());
-        Assert.Equal("expanded", expandedView.GetProperty("supplied").GetString());
-        Assert.Equal("expanded", expandedView.GetProperty("effective").GetString());
-        Assert.True(JsonViewComparison.RetainsResult(
-            compactRoot.GetRawText(),
-            expandedRoot.GetRawText(),
-            ["matches.*.evidence"],
-            allowViewEcho: true));
-    }
-
-    private static void AssertHeadingProjection(
-        JsonElement projection,
-        string[] expectedTexts,
-        int[] expectedLines)
-    {
-        Assert.Equal("headings", projection.GetProperty("part").GetString());
-        var headings = projection.GetProperty("headings").EnumerateArray().ToArray();
-        Assert.Equal(expectedTexts, headings.Select(heading => heading.GetProperty("text").GetString()));
-        Assert.Equal(expectedLines, headings.Select(heading => heading.GetProperty("location").GetProperty("line").GetInt32()));
-        Assert.All(
-            headings,
-            heading => Assert.NotEqual(JsonValueKind.Null, heading.GetProperty("location").ValueKind));
-    }
-
-    private static void AssertTextProjection(
-        JsonElement projection,
-        string expectedPath,
-        string expectedText,
-        int expectedLine)
-    {
-        Assert.Equal("available", projection.GetProperty("state").GetString());
-        Assert.Equal(expectedPath, projection.GetProperty("path").GetString());
-        Assert.Equal(expectedText, projection.GetProperty("text").GetString());
-        var location = projection.GetProperty("location");
-        Assert.NotEqual(JsonValueKind.Null, location.ValueKind);
-        Assert.Equal(expectedLine, location.GetProperty("line").GetInt32());
-        Assert.Equal(1, location.GetProperty("column").GetInt32());
-    }
 
     private static FindResult CreateTerminalResult(string statusValue)
     {
@@ -561,26 +407,14 @@ public sealed class FindApplicationIntegrationTests
                 [],
                 [new FindRegion(FindRegionKind.Frontmatter, null, FindDefinitions.Frontmatter)],
                 [new FindRegion(FindRegionKind.Body, null, FindDefinitions.Body)]));
-        var presentation = new FindPresentationSelection(
-            null,
-            CliView.Expanded,
-            new FindContentSelection([], []));
-        var request = new FindRequestEcho(
-            workspace,
-            new FindUniverseFilter([], []),
-            query,
-            presentation);
+        var presentation = new FindPresentationSelection(null, CliDetail.Standard, new FindContentSelection([], []));
+        var request = new FindRequestEcho(workspace, new FindUniverseFilter([], []), query, presentation);
         var terminal = statusValue switch
         {
-            "failed" => new FindTerminalEvent(
-                FindTerminalEventKind.Failed,
-                "The Find operation failed at its bounded operating boundary."),
-            "interrupted" => new FindTerminalEvent(
-                FindTerminalEventKind.Interrupted,
-                "The Find operation was interrupted at its bounded operating boundary."),
+            "failed" => new FindTerminalEvent(FindTerminalEventKind.Failed, "The Find operation failed at its bounded operating boundary."),
+            "interrupted" => new FindTerminalEvent(FindTerminalEventKind.Interrupted, "The Find operation was interrupted at its bounded operating boundary."),
             _ => throw new ArgumentOutOfRangeException(nameof(statusValue), statusValue, "The terminal status is not defined."),
         };
-
         return new FindResultBuilder().Build(new FindResultInput(
             request,
             null,
@@ -588,55 +422,26 @@ public sealed class FindApplicationIntegrationTests
             [new FindMatch(1, "docs", ".agents/docs.md", null, [], [])],
             [],
             [],
-            new FindStageCompletion(
-                FindCoverageState.Complete,
-                FindProjectionCoverageState.NotRequested),
+            new FindStageCompletion(FindCoverageState.Complete, FindProjectionCoverageState.NotRequested),
             terminal));
-    }
-
-    private static void AssertPathAbsent(string path)
-    {
-        Assert.False(File.Exists(path));
-        Assert.False(Directory.Exists(path));
     }
 
     private sealed class FindWorkspace : IDisposable
     {
         private readonly TemporaryWorkspace _workspace;
         private readonly FileStream? _lockedFile;
-        private readonly IReadOnlyDictionary<string, string>? _lockedSnapshot;
-        private bool _lockedSnapshotRead;
 
-        private FindWorkspace(
-            TemporaryWorkspace workspace,
-            FileStream? lockedFile = null,
-            IReadOnlyDictionary<string, string>? lockedSnapshot = null)
+        private FindWorkspace(TemporaryWorkspace workspace, FileStream? lockedFile = null)
         {
             _workspace = workspace;
             _lockedFile = lockedFile;
-            _lockedSnapshot = lockedSnapshot;
         }
 
         internal string Path => _workspace.Path;
 
         internal string Combine(string relativePath) => _workspace.Combine(relativePath);
 
-        internal IReadOnlyDictionary<string, string> SnapshotState()
-        {
-            if (_lockedSnapshot is null)
-            {
-                return SnapshotState(_workspace);
-            }
-
-            if (!_lockedSnapshotRead)
-            {
-                _lockedSnapshotRead = true;
-                return _lockedSnapshot;
-            }
-
-            _lockedFile?.Dispose();
-            return SnapshotState(_workspace);
-        }
+        internal IReadOnlyDictionary<string, string> SnapshotState() => _workspace.SnapshotHashes();
 
         internal static FindWorkspace CreateBare()
         {
@@ -655,14 +460,13 @@ public sealed class FindApplicationIntegrationTests
 
         internal static FindWorkspace CreateCollision()
         {
-            var workspace = TemporaryWorkspace.Create("integration-find-collision");
+            var workspace = CreateBare();
             try
             {
-                WriteBaseDocuments(workspace);
-                workspace.WriteText(
+                workspace._workspace.WriteText(
                     ".agents/docs/_docs.md",
                     "---\nopen-forge:\n  tags: [Architecture]\n---\n# Architecture\nCollision entrypoint\n");
-                return new FindWorkspace(workspace);
+                return workspace;
             }
             catch
             {
@@ -673,30 +477,26 @@ public sealed class FindApplicationIntegrationTests
 
         internal static FindWorkspace CreateIncomplete(bool invalidEncoding)
         {
-            var workspace = TemporaryWorkspace.Create(invalidEncoding
-                ? "integration-find-invalid-encoding"
-                : "integration-find-unreadable");
+            var workspace = TemporaryWorkspace.Create(invalidEncoding ? "integration-find-invalid-encoding" : "integration-find-unreadable");
             FileStream? lockedFile = null;
             try
             {
                 WriteBaseDocuments(workspace);
                 if (invalidEncoding)
                 {
-                    workspace.WriteBytes(".agents/bad.md", [0xFF, 0xFE, 0x00, 0x01]);
+                    workspace.WriteBytes(".agents/bad.md", [0xff, 0xfe, 0x00, 0x01]);
                 }
                 else
                 {
                     workspace.WriteText(".agents/unreadable.md", "---\nopen-forge:\n  tags: [Architecture]\n---\n# Architecture\n");
-                    var snapshot = SnapshotState(workspace);
                     lockedFile = new FileStream(
                         workspace.Combine(".agents/unreadable.md"),
                         FileMode.Open,
                         FileAccess.Read,
                         FileShare.None);
-                    return new FindWorkspace(workspace, lockedFile, snapshot);
                 }
 
-                return new FindWorkspace(workspace);
+                return new FindWorkspace(workspace, lockedFile);
             }
             catch
             {
@@ -716,11 +516,7 @@ public sealed class FindApplicationIntegrationTests
         {
             workspace.WriteText(
                 ".agents/loader.md",
-                "---\nopen-forge:\n  description: Loader\n  tags: [LoadNow]\n---\n# Loader\n\n"
-                + "## Entries\n\n"
-                + "<!-- open-forge:generated-index:start -->\n"
-                + "- none - No entries - #Empty\n"
-                + "<!-- open-forge:generated-index:end -->\n");
+                "---\nopen-forge:\n  description: Loader\n  tags: [LoadNow]\n---\n# Loader\n\n## Entries\n\n- none - No entries - #Empty\n");
             workspace.WriteText(
                 ".agents/docs.md",
                 "---\nopen-forge:\n  description: Docs\n  tags: [Architecture]\n---\n# Architecture\n\n## Target\n\nTarget body\n");
@@ -731,67 +527,5 @@ public sealed class FindApplicationIntegrationTests
                 ".agents/guide.md",
                 "---\nopen-forge:\n  description: Guide\n  tags: [Reference]\n---\n# Guide\n\n## Details\n\nGuide body\n");
         }
-
-        private static IReadOnlyDictionary<string, string> SnapshotState(TemporaryWorkspace workspace)
-        {
-            var state = new SortedDictionary<string, string>(StringComparer.Ordinal);
-            var root = new DirectoryInfo(workspace.Path);
-            SnapshotEntry(root, workspace.Path, ".", state);
-            return new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(state);
-        }
-
-        private static void SnapshotEntry(
-            FileSystemInfo entry,
-            string rootPath,
-            string relativePath,
-            IDictionary<string, string> state)
-        {
-            entry.Refresh();
-            var attributes = entry.Attributes;
-            var isReparsePoint = (attributes & FileAttributes.ReparsePoint) != 0;
-            state[relativePath] = DescribeEntry(entry, relativePath, attributes, isReparsePoint);
-            if (isReparsePoint || (attributes & FileAttributes.Directory) == 0)
-            {
-                return;
-            }
-
-            foreach (var child in ((DirectoryInfo)entry)
-                .EnumerateFileSystemInfos("*", SearchOption.TopDirectoryOnly)
-                .OrderBy(child => GetRelativePath(rootPath, child.FullName), StringComparer.Ordinal))
-            {
-                SnapshotEntry(
-                    child,
-                    rootPath,
-                    GetRelativePath(rootPath, child.FullName),
-                    state);
-            }
-        }
-
-        private static string DescribeEntry(
-            FileSystemInfo entry,
-            string relativePath,
-            FileAttributes attributes,
-            bool isReparsePoint)
-        {
-            var type = isReparsePoint
-                ? (attributes & FileAttributes.Directory) != 0 ? "directory-reparse" : "file-reparse"
-                : (attributes & FileAttributes.Directory) != 0 ? "directory" : "file";
-            var description = $"type={type};attributes={(int)attributes};creationUtcTicks={entry.CreationTimeUtc.Ticks};lastWriteUtcTicks={entry.LastWriteTimeUtc.Ticks}";
-            if (isReparsePoint)
-            {
-                return $"{description};reparseIdentity={relativePath};linkTarget={entry.LinkTarget ?? "<null>"}";
-            }
-
-            if (entry is not FileInfo file)
-            {
-                return description;
-            }
-
-            var bytes = File.ReadAllBytes(file.FullName);
-            return $"{description};length={file.Length};sha256={Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes))}";
-        }
-
-        private static string GetRelativePath(string rootPath, string path)
-            => System.IO.Path.GetRelativePath(rootPath, path).Replace('\\', '/');
     }
 }

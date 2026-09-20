@@ -22,7 +22,7 @@ route records implementation and executable evidence, including the current
 native-target limits.
 
 The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
-the shared schema-v1 JSON envelope, source-location primitive, and status/process
+the shared schema-3 JSON envelope, source-location primitive, and status/process
 coordinates. The Find Interface
 defines the exact command-local result schema, finding codes, finite values, and
 `next` contents. This design uses those definitions and does not redefine either
@@ -30,8 +30,8 @@ authority.
 
 ## Contract Traceability
 
-| Contract boundary                                                                                                                                                                    | Accepted design response                                                                                                                                                                                                                                                                                               | Evidence state                                       |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Contract boundary                                                                                                                                                                    | Accepted design response                                                                                                                                                                                                                                                                                               | Evidence state                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | [Structured Result Fields](interface.md#structured-result-fields) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)           | Produce one typed result rich enough for the public workspace, universe, query, projection, counts, coverage, ordered sources, evidence, content, findings, and semantic status. Follow the exact Find Interface command-local schema inside the shared result-coordinate envelope and use its status-to-exit mapping. | Design accepted; evidence is tracked in CLI Development. |
 | [Semantic Results](interface.md#semantic-results) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)                           | Map semantic results to process completion behavior without changing the named semantic conditions.                                                                                                                                                                                                                    | Design accepted; evidence is tracked in CLI Development. |
 | [Public Heading Matching](interface.md#public-heading-matching) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)             | Use the fixed accepted Markdig CommonMark pipeline to expose the required structural heading nodes, visible inline text, source forms, levels, locations, and section boundaries.                                                                                                                                      | Design accepted; evidence is tracked in CLI Development. |
@@ -141,8 +141,8 @@ authored spelling.
 
 ## Results And Process Status
 
-Result construction produces the one typed result consumed by compact, expanded,
-content-projected, verbose, and structured renderers. Human and structured
+Result construction produces the one typed result consumed by minimal, standard,
+full, debug, content-projected, and structured renderers. Human and structured
 renderers do not rerun enumeration, parsing, matching, projection, or verification.
 The shared envelope fields, location primitive, compatibility rules, and numeric
 process-status mapping come from the [Shared Result Coordinates](../shared/result-coordinates/interface.md).
@@ -165,7 +165,7 @@ or artifacts already exist.
   overwrite layers, malformed and non-UTF-8 candidates, structural headings,
   body tags, regions, source locations, and containment failures.
 - **EndToEnd** evidence should exercise a built Native AOT process through the
-  public boundary for compact, expanded, structured, culture, and exit behavior.
+  public boundary for minimal, standard, structured, culture, and exit behavior.
 - **PackageEndToEnd** evidence should exercise packaged execution and the same
   public behavior from the delivered package boundary.
 

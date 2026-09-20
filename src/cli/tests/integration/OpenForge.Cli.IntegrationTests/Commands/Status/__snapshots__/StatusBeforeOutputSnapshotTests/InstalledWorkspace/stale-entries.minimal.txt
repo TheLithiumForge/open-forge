@@ -1,0 +1,15 @@
+Open Forge is installed, but 2 files need attention.
+  Warning  .agents/loader.md  Changed since it was installed
+         changed since it was installed
+         open-forge update
+  Warning  .agents/loader.md  Entries section is stale
+         The Entries section of .agents/loader.md is stale.
+         open-forge index
+  Warning  .agents/maps/_maps.md  Changed since it was installed
+         changed since it was installed
+         open-forge update
+  Warning  .agents/maps/_maps.md  Entries section is stale
+         The Entries section of .agents/maps/_maps.md is stale.
+         open-forge index
+  Startup reads 11 of 13 routed files, about 5.4k tokens.
+Next: open-forge update

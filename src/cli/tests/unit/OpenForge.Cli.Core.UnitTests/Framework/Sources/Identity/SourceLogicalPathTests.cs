@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Identity;
 
 public sealed class SourceLogicalPathTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral logical paths accept canonical slash-separated source paths"),
         InlineData(".agents/loader.md", true),
         InlineData(".agents/project alpha/工作.md", true),
@@ -25,6 +26,7 @@ public sealed class SourceLogicalPathTests
         Assert.Equal(expected, SourceLogicalPath.IsCanonical(path));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral logical roots accept the .agents root and canonical descendants"),
         InlineData(".agents", true),
         InlineData(".agents/root", true),
@@ -40,6 +42,7 @@ public sealed class SourceLogicalPathTests
         Assert.Equal(expected, SourceLogicalPath.IsCanonicalRoot(path));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral logical paths read exact parent and file segments"),
         InlineData(".agents/root/_root.md", ".agents/root", "_root.md"),
         InlineData(".agents/root/child/grand.md", ".agents/root/child", "grand.md"),
@@ -54,6 +57,7 @@ public sealed class SourceLogicalPathTests
         Assert.Equal(expectedFileName, SourceLogicalPath.ReadFileName(logicalPath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral logical paths combine canonical segments and convert to one lexical workspace path")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void CombinationAndLexicalConversionPreserveTheCanonicalSpelling()
@@ -75,6 +79,7 @@ public sealed class SourceLogicalPathTests
             SourceLogicalPath.ToLexicalPath(workspaceRoot, ".agents"));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral logical path conversion rejects root parents and unsafe source shapes")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void ParentAndFileConversionKeepSourceOnlyPreconditions()

@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 3,
+  "command": "library list",
+  "status": "completed-with-warnings",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "1 Library registered. 1 link needs attention.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "library-list.link-changed",
+      "title": "Registered link changed",
+      "message": ".agents/directives/review.md  is no longer the link team-knowledge created",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/directives/review.md",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "libraries": 1,
+    "linksCurrent": 0,
+    "linksMissing": 0,
+    "linksChanged": 1,
+    "linksUnavailable": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "libraries": [
+      {
+        "id": "team-knowledge",
+        "sourceFolder": "shared/team",
+        "destinationFolder": ".",
+        "links": [
+          {
+            "path": ".agents/directives/review.md",
+            "state": "changed",
+            "expectedTarget": "../../shared/team/.agents/directives/review.md",
+            "observedTarget": null,
+            "sourceId": "directives/review"
+          }
+        ]
+      }
+    ],
+    "recordCoverage": {
+      "path": ".agents/open-forge.lock.json",
+      "state": "complete",
+      "libraryCount": 1
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge library inspect team-knowledge",
+    "reason": "Inspect the Library before changing it."
+  }
+}

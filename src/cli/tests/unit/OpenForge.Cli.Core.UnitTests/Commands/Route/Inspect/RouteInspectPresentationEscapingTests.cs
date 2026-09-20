@@ -1,12 +1,14 @@
-using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Route.Inspect;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Presentation.Shared.Text;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Shared.Presentation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect;
 
 public sealed class RouteInspectPresentationEscapingTests
 {
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route Inspect escaping is deterministic bounded control-safe and retains safe Unicode and option-like values")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void EscapingBoundsHostileValues()
@@ -16,15 +18,15 @@ public sealed class RouteInspectPresentationEscapingTests
             + " Ω 東京";
         const string safe = "--workspace Ω 東京";
 
-        var escaped = RouteInspectTextEscaping.Escape(hostile);
-        var repeated = RouteInspectTextEscaping.Escape(hostile);
-        var bounded = RouteInspectTextEscaping.Escape(hostile, 128);
-        var clamped = RouteInspectTextEscaping.Clamp(escaped, 32);
+        var escaped = CliText.Escape(hostile);
+        var repeated = CliText.Escape(hostile);
+        var bounded = CliText.Clamp(escaped, 128);
+        var clamped = CliText.Clamp(escaped, 32);
 
         Assert.Equal(escaped, repeated);
         Assert.Contains("--workspace", escaped, StringComparison.Ordinal);
         Assert.Contains("Ω 東京", escaped, StringComparison.Ordinal);
-        Assert.Equal(safe, RouteInspectTextEscaping.Escape(safe));
+        Assert.Equal(safe, CliText.Escape(safe));
         AssertNoC0Controls(escaped);
         AssertNoC0Controls(bounded);
         AssertNoC0Controls(clamped);
@@ -32,17 +34,19 @@ public sealed class RouteInspectPresentationEscapingTests
         Assert.InRange(clamped.Length, 1, 32);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route Inspect bounded escaping preserves complete Unicode scalar boundaries")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void BoundedEscapingDoesNotSplitSurrogatePairs()
     {
-        var bounded = RouteInspectTextEscaping.Escape("😀😀\0", 6);
+        var bounded = CliText.Clamp(CliText.Escape("😀😀\0"), 6);
 
         Assert.InRange(bounded.Length, 1, 6);
         AssertValidUtf16(bounded);
         AssertNoC0Controls(bounded);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route Inspect diagnostics bound and redact hostile fields without changing primary output or result status")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void DiagnosticsAreBoundedEscapedAndSeparateFromPrimaryRendering()
@@ -50,24 +54,18 @@ public sealed class RouteInspectPresentationEscapingTests
         var result = RouteInspectPresentationTestData.HostileResult();
         var verbosePresentation = RouteInspectPresentationTestData.Presentation(
             result,
-            CliView.Expanded,
-            CliOutputFormat.Human,
-            CliVerbosity.Verbose);
+            CliDetail.Standard,
+            CliFormat.Text, CliDetail.Debug);
         var statusBefore = result.Status;
-        const string primary = "fixed primary output";
-
         var rendered = CliRenderingStage.Render(
             verbosePresentation,
-            new CliRendererSet<OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result.RouteInspectResult>(
-                _ => primary,
-                _ => "{}"),
-            RouteInspectDiagnosticRenderer.Render);
+            RouteInspectPresentation.Rendering);
         var diagnostics = Assert.IsType<string>(rendered.DiagnosticContent);
 
-        Assert.InRange(diagnostics.Length, 1, CliRenderingStage.MaximumDiagnosticLength);
-        Assert.Contains("status=invalid", diagnostics, StringComparison.Ordinal);
+        Assert.InRange(diagnostics.Length, 1, CliPresentationDefinitions.MaximumDiagnosticLength);
+        Assert.Contains("status=invalid-input", diagnostics, StringComparison.Ordinal);
         Assert.DoesNotContain("The source value was rejected", diagnostics, StringComparison.Ordinal);
-        foreach (var line in diagnostics.Split(Environment.NewLine, StringSplitOptions.None))
+        foreach (var line in diagnostics.Split('\n', StringSplitOptions.None))
         {
             AssertNoInjectedC0Controls(line);
             foreach (var value in line.Split('=', 2).Skip(1))
@@ -77,7 +75,11 @@ public sealed class RouteInspectPresentationEscapingTests
         }
 
         Assert.Equal(result.Status, rendered.Status);
-        Assert.Equal(primary, rendered.PrimaryContent);
+        var plain = CliRenderingStage.Render(verbosePresentation with
+        {
+            Presentation = verbosePresentation.Presentation with { Detail = CliDetail.Full },
+        }, RouteInspectPresentation.Rendering);
+        Assert.Equal(plain.PrimaryContent, rendered.PrimaryContent);
         Assert.Equal(statusBefore, result.Status);
     }
 

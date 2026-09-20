@@ -1,0 +1,10 @@
+status=completed
+mode=apply
+target=documents
+scaffold=generic
+completeness=complete
+safety=safe
+effects=0
+recovery=not-required
+verification=verified
+findings=0

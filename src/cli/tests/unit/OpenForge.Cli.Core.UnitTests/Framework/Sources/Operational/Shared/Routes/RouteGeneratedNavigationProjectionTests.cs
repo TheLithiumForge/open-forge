@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Operational.Shared.Rout
 
 public sealed class RouteGeneratedNavigationProjectionTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Every named navigation unavailability reason retains its operational state"),
         InlineData("RegionSourceUnsupported", "Unavailable"),
         InlineData("SourceDocumentUnavailable", "Unavailable"),
@@ -32,6 +33,7 @@ public sealed class RouteGeneratedNavigationProjectionTests
         Assert.Equal(expectedState, state);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Undefined navigation reasons preserve caller-specific error attribution"),
         InlineData("region"),
         InlineData("reason"),

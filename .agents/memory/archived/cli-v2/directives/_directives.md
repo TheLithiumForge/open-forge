@@ -15,7 +15,5 @@ work.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Historical CLI-v2 interface instructions removed from active governance](cli/_cli.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical Bun CLI-v2 testing instructions removed from active governance](testing-bun-cli/_testing-bun-cli.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
-<!-- open-forge:generated-index:end -->

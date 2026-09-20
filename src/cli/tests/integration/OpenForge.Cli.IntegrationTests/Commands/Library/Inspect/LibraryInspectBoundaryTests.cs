@@ -7,10 +7,11 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Inspect;
 
 public sealed class LibraryInspectBoundaryTests
 {
-    [Theory(DisplayName = "Library Inspect maps invalid unavailable and unsafe boundaries without a partial success claim"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
-    [InlineData("malformed-record", (int)CliSemanticStatus.Invalid, (int)LibraryInspectFindingCode.RecordInvalid)]
-    [InlineData("duplicate-id", (int)CliSemanticStatus.Blocked, (int)LibraryInspectFindingCode.RecordBlocked)]
-    [InlineData("record-link", (int)CliSemanticStatus.Blocked, (int)LibraryInspectFindingCode.RecordBlocked)]
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Library Inspect maps invalid unavailable and unsafe boundaries while observing unavailable ownership without a gate"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
+    [InlineData("malformed-record", (int)CliSemanticStatus.Incomplete, (int)LibraryInspectFindingCode.RecordInvalid)]
+    [InlineData("duplicate-id", (int)CliSemanticStatus.Incomplete, (int)LibraryInspectFindingCode.RecordInvalid)]
+    [InlineData("record-link", (int)CliSemanticStatus.Complete, (int)LibraryInspectFindingCode.OwnershipObservation)]
     [InlineData("missing-source", (int)CliSemanticStatus.Incomplete, (int)LibraryInspectFindingCode.SourceRootUnavailable)]
     [InlineData("source-file", (int)CliSemanticStatus.Invalid, (int)LibraryInspectFindingCode.SourceRootInvalid)]
     [InlineData("source-link", (int)CliSemanticStatus.Blocked, (int)LibraryInspectFindingCode.SourceRootBlocked)]
@@ -24,11 +25,13 @@ public sealed class LibraryInspectBoundaryTests
 
         Assert.Equal((CliSemanticStatus)status, result.Status);
         Assert.Contains(result.Result.Findings, finding => finding.Code == (LibraryInspectFindingCode)code);
-        Assert.NotEqual(LibraryCoverage.Complete, result.Result.Projection.State);
+        Assert.Equal(scenario is "record-link",
+            result.Result.Projection.State == LibraryCoverage.Complete);
         Assert.Equal(before, fixture.Snapshot());
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library Inspect retains an unknown supplied ID without selecting a nearby record"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     [InlineData("absent")]
     [InlineData("strict-empty")]
@@ -48,19 +51,21 @@ public sealed class LibraryInspectBoundaryTests
         var before = fixture.Snapshot();
         var result = await fixture.InspectAsync(TestContext.Current.CancellationToken, "team-knowledge-unknown");
 
-        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        Assert.Equal(record == "absent" ? CliSemanticStatus.Complete : CliSemanticStatus.Invalid, result.Status);
         Assert.Equal("team-knowledge-unknown", result.Result.Record.Id);
         Assert.Null(result.Result.Record.SourceRoot);
         Assert.Empty(result.Result.Record.RegisteredPaths);
         Assert.Equal(LibraryInventoryViewState.NotStarted, result.Result.Source.State);
         Assert.Empty(result.Result.Source.EligiblePaths);
         Assert.Empty(result.Result.Projection.Comparisons);
-        Assert.Contains(result.Result.Findings, finding => finding.Code == LibraryInspectFindingCode.UnknownId);
+        Assert.Contains(result.Result.Findings, finding => finding.Code ==
+            (record == "absent" ? LibraryInspectFindingCode.OwnershipObservation : LibraryInspectFindingCode.UnknownId));
         Assert.Equal(before, fixture.Snapshot());
         fixture.AssertNoPersistentState();
     }
 
-    [Fact(DisplayName = "Library Inspect treats an unreadable existing record as incomplete rather than unknown ID"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Library Inspect treats an unreadable existing record as an ownership observation rather than unknown ID"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     public async Task UnavailableRecordIsNotUnknownId()
     {
         using var fixture = new LibraryReadWorkspace();
@@ -69,10 +74,10 @@ public sealed class LibraryInspectBoundaryTests
         using (var held = new FileStream(fixture.Files.Combine(LibraryReadWorkspace.RecordPath), FileMode.Open, FileAccess.ReadWrite, FileShare.None))
         {
             var result = await fixture.InspectAsync(TestContext.Current.CancellationToken);
-            Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
+            Assert.Equal(CliSemanticStatus.Complete, result.Status);
             Assert.Equal(LibraryRecordViewState.Unavailable, result.Result.Record.State);
             Assert.Equal(LibraryInventoryViewState.NotStarted, result.Result.Source.State);
-            Assert.Contains(result.Result.Findings, finding => finding.Code == LibraryInspectFindingCode.RecordUnavailable);
+            Assert.Contains(result.Result.Findings, finding => finding.Code == LibraryInspectFindingCode.OwnershipObservation);
             Assert.DoesNotContain(result.Result.Findings, finding => finding.Code == LibraryInspectFindingCode.UnknownId);
         }
 
@@ -80,6 +85,7 @@ public sealed class LibraryInspectBoundaryTests
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library Inspect interruption precedes record work and retains no inventory claim"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     public async Task CancellationAtIngress()
     {

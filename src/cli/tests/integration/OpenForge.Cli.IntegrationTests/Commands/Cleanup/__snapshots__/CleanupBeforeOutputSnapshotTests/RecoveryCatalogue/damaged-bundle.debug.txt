@@ -1,0 +1,12 @@
+<recovery-bundle-1> is damaged and was left in place.
+Workspace: <workspace>
+  Warning  <recovery-bundle-1>  Recovery bundle is damaged [cleanup.recovery-final-malformed]
+         <recovery-bundle-1> is damaged and was left in place.
+         Remove it by hand after review.
+         Review the recovery file before removing it.
+  <recovery-bundle-1>  left in place: not recognized
+    integrity check: malformed
+  No workspace lock was needed.
+  No final recovery-store check was needed.
+  Review the recovery file before removing it.
+Next: Remove it by hand after review.

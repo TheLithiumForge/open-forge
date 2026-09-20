@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 3,
+  "command": "find",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "1 source matches.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "matches": 1,
+    "sourcesInspected": 1,
+    "sourcesCandidates": 1
+  },
+  "limitations": [],
+  "data": {
+    "matches": [
+      {
+        "id": "docs/guide",
+        "path": ".agents/docs/guide.md",
+        "description": "Guide",
+        "evidence": []
+      }
+    ],
+    "query": {
+      "tags": [],
+      "headings": [],
+      "require": "all",
+      "within": [
+        "frontmatter",
+        "body"
+      ]
+    }
+  },
+  "recovery": null,
+  "next": null
+}

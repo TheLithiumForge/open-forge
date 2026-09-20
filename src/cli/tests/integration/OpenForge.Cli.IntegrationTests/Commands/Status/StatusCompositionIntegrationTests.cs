@@ -6,6 +6,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 
 public sealed class StatusCompositionIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Status preserves a typed non-directory workspace failure through binding"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
     public async Task NonDirectoryWorkspaceMapsToItsExactStatusFinding()
     {
@@ -13,17 +14,18 @@ public sealed class StatusCompositionIntegrationTests
         var file = temporary.CreateFile("workspace.txt", "not a directory");
 
         var run = await CliHostCapture.RunAsync(
-            ["status", "--workspace", file, "--json"],
+            ["status", "--workspace", file, "--format", "json"],
             temporary.Path);
 
         Assert.Equal(5, run.ExitCode);
         Assert.Equal(string.Empty, run.Error);
         using var document = JsonDocument.Parse(run.Output);
-        var finding = Assert.Single(StatusJsonAssertions.Result(document.RootElement)
+        var finding = Assert.Single(document.RootElement
             .GetProperty("findings").EnumerateArray());
-        Assert.Equal("workspace-not-directory", finding.GetProperty("code").GetString());
+        Assert.Equal("status.workspace-not-directory", finding.GetProperty("code").GetString());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Status preserves a typed unsafe workspace failure through binding"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
     public async Task UnsafeWorkspaceMapsToItsExactStatusFinding()
     {
@@ -31,17 +33,18 @@ public sealed class StatusCompositionIntegrationTests
         var cycle = temporary.CreateDirectorySymbolicLink("cycle", "cycle");
 
         var run = await CliHostCapture.RunAsync(
-            ["status", "--workspace", cycle, "--json"],
+            ["status", "--workspace", cycle, "--format", "json"],
             temporary.Path);
 
         Assert.Equal(5, run.ExitCode);
         Assert.Equal(string.Empty, run.Error);
         using var document = JsonDocument.Parse(run.Output);
-        var finding = Assert.Single(StatusJsonAssertions.Result(document.RootElement)
+        var finding = Assert.Single(document.RootElement
             .GetProperty("findings").EnumerateArray());
-        Assert.Equal("workspace-unsafe", finding.GetProperty("code").GetString());
+        Assert.Equal("status.workspace-unsafe", finding.GetProperty("code").GetString());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Root composition registers status between index and context with truthful help"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
     public async Task RootCompositionRegistersStatusBetweenIndexAndContextWithTruthfulHelp()
     {
@@ -82,6 +85,7 @@ public sealed class StatusCompositionIntegrationTests
         Assert.Equal(recoveryBefore, StatusRecoveryCatalogue.SnapshotEntries(workspace.RecoveryDirectory()));
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Source-generated status JSON invocation emits the complete frozen graph with reflection disabled"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
     public async Task SourceGeneratedStatusJsonInvocationEmitsCompleteFrozenGraphWithReflectionDisabled()
     {
@@ -91,7 +95,7 @@ public sealed class StatusCompositionIntegrationTests
         var lockBefore = workspace.SnapshotLockBytes();
         var recoveryBefore = StatusRecoveryCatalogue.SnapshotEntries(workspace.RecoveryDirectory());
         var run = await StatusIntegrationApplication.RunAsync(
-            workspace, "status", "--workspace", workspace.Path, "--json");
+            workspace, "status", "--workspace", workspace.Path, "--format", "json", "--detail", "full");
         Assert.Equal(0, run.ExitCode);
         Assert.Equal(string.Empty, run.StandardError);
         using var document = StatusIntegrationApplication.ParseJson(run);

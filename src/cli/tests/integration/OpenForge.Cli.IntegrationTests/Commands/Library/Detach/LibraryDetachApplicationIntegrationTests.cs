@@ -22,6 +22,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Detach;
 
 public sealed class LibraryDetachApplicationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData("verified"), InlineData("no-recovery"), InlineData("changed-record"), InlineData("changed-leaf"), InlineData("cancelled")]
     public static async Task HeldLeaseRevalidatesWholePlanAndRetainsRealExecutionReceipts(string scenario)
@@ -30,11 +31,11 @@ public sealed class LibraryDetachApplicationIntegrationTests
         using var locks = WorkspaceLockTestStore.Create("library-detach-application");
         workspace.Source();
         workspace.Directory(".agents/directives");
-        LibraryMutationApplicationData.Lifecycle(workspace);
+        LibraryMutationApplicationData.FrameworkFile(workspace);
         workspace.Record(LibraryMutationWorkspace.Leaf);
         workspace.Link();
         var plan = Plan(workspace);
-        var recordChange = Assert.IsType<PlannedFileChange>(plan.RecordChange);
+        var recordChange = Assert.IsType<PlannedFileChange>(plan.OwnershipChange);
         var recordBefore = Assert.IsType<FileStateSnapshot>(plan.Input.Record.Snapshot);
         var link = Assert.Single(plan.Links);
         var recovery = RecoveryBundleInput.Create(workspace.Workspace, command: "library detach",
@@ -59,7 +60,7 @@ public sealed class LibraryDetachApplicationIntegrationTests
 
             if (scenario == "changed-record")
             {
-                workspace.Replace(LibraryMutationWorkspace.RecordPath, "Changed local record occupant.");
+                File.WriteAllText(workspace.Absolute(LibraryMutationWorkspace.RecordPath), "Changed local record occupant.");
             }
             if (scenario == "changed-leaf")
             {
@@ -98,7 +99,8 @@ public sealed class LibraryDetachApplicationIntegrationTests
             Assert.Equal(LibraryRecordPublicationOrder.Last, execution.RecordPublicationOrder);
             Assert.True(Assert.IsType<LibrarySourceEffectScopeFacts>(execution.SourceEffectScope).IsComplete);
             Assert.Null(new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
-            Assert.False(File.Exists(workspace.Absolute(LibraryMutationWorkspace.RecordPath)));
+            using var lockDocument = System.Text.Json.JsonDocument.Parse(File.ReadAllBytes(workspace.Absolute(LibraryMutationWorkspace.RecordPath)));
+            Assert.Empty(lockDocument.RootElement.GetProperty("libraries").EnumerateArray());
             var retained = Assert.IsType<RecoveryBundlePreparation>(preparation);
             var read = await RecoveryBundleReader.ReadFinalAsync(workspace.Workspace, retained.BundlePath, TestContext.Current.CancellationToken);
             var candidate = RecoveryBundleCandidateSnapshot.VerifiedFinal(Assert.IsType<RecoveryBundleVerifiedRead>(read.Verified));
@@ -146,7 +148,7 @@ public sealed class LibraryDetachApplicationIntegrationTests
             Record = record,
             Mappings = LibraryMutationApplicationData.Mapping(workspace, linked: true),
             ConsumerBoundary = LibraryMutationApplicationData.Boundary(workspace),
-            Ownership = LibraryMutationApplicationData.Ownership(workspace),
+            Ownership = LibraryMutationApplicationData.WorkspaceOwnership(workspace),
             GeneratedRegionChanges = [],
         };
 
@@ -158,7 +160,7 @@ public sealed class LibraryDetachApplicationIntegrationTests
             Directories = [],
             Links = [LibraryMutationApplicationData.Link(delete: true)],
             GeneratedRegions = [],
-            RecordChange = PlannedFileChange.Delete(before.Expectation),
+            OwnershipChange = PlannedFileChange.Replace(before.Expectation, "{\"schemaVersion\":1,\"framework\":null,\"extensions\":[],\"libraries\":[]}"u8),
             IntendedRecord = null,
             Findings = [],
         };

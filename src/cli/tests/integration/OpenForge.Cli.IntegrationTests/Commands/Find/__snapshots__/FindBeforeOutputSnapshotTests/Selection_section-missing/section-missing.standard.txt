@@ -1,0 +1,8 @@
+1 source matches.
+Workspace: <workspace>
+  Warning  .agents/docs/guide.md  Section is missing
+         .agents/docs/guide.md has no section named Absent.
+
+  docs/guide  .agents/docs/guide.md  Guide
+
+=== .agents/docs/guide.md (docs/guide) ===

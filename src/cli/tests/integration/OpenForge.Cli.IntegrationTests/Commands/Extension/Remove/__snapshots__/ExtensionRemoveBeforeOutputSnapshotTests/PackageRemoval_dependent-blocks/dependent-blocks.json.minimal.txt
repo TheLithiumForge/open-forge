@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 3,
+  "command": "extension remove",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot remove base: The toolkit Extension still needs base.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-remove.dependency-blocked",
+      "title": "Dependency blocks removal",
+      "message": "The toolkit Extension still needs base.",
+      "subject": {
+        "kind": "file",
+        "path": "base",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesRemoved": 1,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesReleased": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "automatic": true,
+    "packages": [
+      {
+        "id": "base"
+      }
+    ],
+    "orphaned": [],
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": []
+  },
+  "recovery": null,
+  "next": null
+}

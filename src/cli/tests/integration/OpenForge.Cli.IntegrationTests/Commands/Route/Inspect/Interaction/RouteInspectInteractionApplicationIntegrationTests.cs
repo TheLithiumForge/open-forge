@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Interaction;
 
 public sealed class RouteInspectInteractionApplicationIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Root composition injects terminal-capable input and stderr into Route Inspect"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task RootCompositionInjectsTerminalCapableRouteInspectSession()
     {
@@ -28,7 +29,7 @@ public sealed class RouteInspectInteractionApplicationIntegrationTests
             });
 
         var completion = await application.RunAsync(
-            ["route", "inspect", CollisionId, "--workspace", workspace.Path, "--view=compact"],
+            ["route", "inspect", CollisionId, "--workspace", workspace.Path, "--detail=minimal"],
             new CliProcessEnvironment(workspace.Path),
             new CliOutputWriters(standardOutput, standardError),
             TestContext.Current.CancellationToken);
@@ -36,21 +37,19 @@ public sealed class RouteInspectInteractionApplicationIntegrationTests
         Assert.Equal(2, completion.ExitCode);
         Assert.Equal(CliSemanticStatus.Attention, completion.Status);
         Assert.Equal(ExpectedPrompt(), standardError.ToString());
-        Assert.Contains("Status: requires attention", standardOutput.ToString(), StringComparison.Ordinal);
-        Assert.Contains(
-            $"Selection: source ID; interactive selection; requested \"{CollisionId}\"",
-            standardOutput.ToString(),
-            StringComparison.Ordinal);
+        Assert.Contains($"{CollisionId}  {FirstCandidate}", standardOutput.ToString(), StringComparison.Ordinal);
+        Assert.DoesNotContain("Selection:", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Equal("remaining", await standardInput.ReadLineAsync(TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Inspect never calls an available interactive session for JSON collisions"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task JsonCollisionNeverPromptsOrConsumesInput()
     {
         using var workspace = CreateCollisionWorkspace();
 
         var run = await RouteInspectInteractionApplication.RunAsync(
-            ["route", "inspect", CollisionId, "--workspace", workspace.Path, "--json"],
+            ["route", "inspect", CollisionId, "--workspace", workspace.Path, "--format", "json", "--detail", "full"],
             workspace.Path,
             "1\nremaining",
             canPrompt: true,
@@ -64,17 +63,18 @@ public sealed class RouteInspectInteractionApplicationIntegrationTests
         Assert.Equal("blocked", document.RootElement.GetProperty("status").GetString());
         Assert.Equal(
             [FirstCandidate, SecondCandidate],
-            document.RootElement.GetProperty("result").GetProperty("selection")
-                .GetProperty("candidatePaths").EnumerateArray().Select(value => value.GetString()));
+            document.RootElement.GetProperty("findings")[0].GetProperty("candidates")
+                .EnumerateArray().Select(candidate => candidate.GetProperty("subject").GetProperty("path").GetString()));
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Inspect never calls a redirected interactive session for human collisions"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task RedirectedHumanCollisionNeverPromptsOrConsumesInput()
     {
         using var workspace = CreateCollisionWorkspace();
 
         var run = await RouteInspectInteractionApplication.RunAsync(
-            ["route", "inspect", CollisionId, "--workspace", workspace.Path, "--view=compact"],
+            ["route", "inspect", CollisionId, "--workspace", workspace.Path, "--detail=minimal"],
             workspace.Path,
             "1\nremaining",
             canPrompt: false,
@@ -83,18 +83,21 @@ public sealed class RouteInspectInteractionApplicationIntegrationTests
         Assert.Equal(5, run.Completion.ExitCode);
         Assert.Equal(CliSemanticStatus.Blocked, run.Completion.Status);
         Assert.Equal(string.Empty, run.StandardOutput);
-        Assert.DoesNotContain("matches more than one source", run.StandardError, StringComparison.Ordinal);
-        Assert.Contains("Status: blocked", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains(
+            $"Cannot inspect {CollisionId}: {CollisionId} matches more than one source. Use the exact path.",
+            run.StandardError,
+            StringComparison.Ordinal);
         Assert.Equal("1", run.RemainingInput);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Inspect writes an interactive prompt only to stderr before the selected human result"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task InteractivePromptUsesStderrAndHumanResultUsesStdout()
     {
         using var workspace = CreateCollisionWorkspace();
 
         var run = await RouteInspectInteractionApplication.RunAsync(
-            ["route", "inspect", CollisionId, "--workspace", workspace.Path, "--view=compact"],
+            ["route", "inspect", CollisionId, "--workspace", workspace.Path, "--detail=minimal"],
             workspace.Path,
             "1\nremaining",
             canPrompt: true,
@@ -103,12 +106,8 @@ public sealed class RouteInspectInteractionApplicationIntegrationTests
         Assert.Equal(2, run.Completion.ExitCode);
         Assert.Equal(CliSemanticStatus.Attention, run.Completion.Status);
         Assert.Equal(ExpectedPrompt(), run.StandardError);
-        Assert.DoesNotContain("matches more than one source", run.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Status: requires attention", run.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains(
-            $"Selection: source ID; interactive selection; requested \"{CollisionId}\"",
-            run.StandardOutput,
-            StringComparison.Ordinal);
+        Assert.Contains($"{CollisionId}  {FirstCandidate}", run.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Selection:", run.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Next: open-forge route inspect \".agents/root/collision.md\"", run.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("remaining", run.RemainingInput);
     }

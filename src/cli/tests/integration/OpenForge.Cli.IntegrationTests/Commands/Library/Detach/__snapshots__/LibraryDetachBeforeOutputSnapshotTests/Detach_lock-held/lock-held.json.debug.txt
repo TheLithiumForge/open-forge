@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 3,
+  "command": "library detach",
+  "status": "blocked",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot detach team-knowledge: another Open Forge command holds the workspace lock. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-detach.lock-unavailable",
+      "title": "Workspace lock is unavailable",
+      "message": "Another Open Forge command holds the workspace lock. Nothing was changed.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the reported Library state."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/directives/review.md",
+      "kind": "link",
+      "action": "deleted",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "detached",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "linksRemoved": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "registrationRemoved": false,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/directives/review.md",
+        "kind": "link",
+        "action": "delete",
+        "outcome": "not-started",
+        "target": "../../shared/team-knowledge/.agents/directives/review.md"
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "kind": "record",
+        "action": "replace",
+        "outcome": "not-started"
+      }
+    ],
+    "expectedStates": [
+      {
+        "path": ".agents/directives/review.md",
+        "kind": "relative-file-link",
+        "length": null,
+        "sha256": null,
+        "rawRelativeTarget": "../../shared/team-knowledge/.agents/directives/review.md"
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "kind": "ordinary-file",
+        "length": null,
+        "sha256": "<sha256>",
+        "rawRelativeTarget": null
+      }
+    ],
+    "verification": {
+      "state": "not-started",
+      "registration": "not-started"
+    },
+    "recovery": {
+      "state": "not-requested",
+      "path": null,
+      "residuals": []
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the reported Library state."
+  }
+}

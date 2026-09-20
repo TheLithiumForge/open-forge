@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class RepairSelectionModelTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair candidate cardinality preserves zero one and several bounded choices"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void CandidateCardinalityIsFiniteAndExact()
     {
@@ -26,6 +27,7 @@ public sealed class RepairSelectionModelTests
         Assert.All(several.Items, candidate => Assert.NotEmpty(candidate.Evidence));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair candidate sets require unique targets and at most one recommendation"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void CandidateSetRejectsDuplicateTargetsAndRecommendations()
     {
@@ -45,6 +47,7 @@ public sealed class RepairSelectionModelTests
             recommendedForReview: false));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair catalogue separates safe-exact and guided proposals and preserves bounded evidence"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void CatalogueSeparatesFiniteProposalLanes()
     {
@@ -79,6 +82,7 @@ public sealed class RepairSelectionModelTests
             ]));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair selected proposals preserve safe-exact resolution and reject automatic guided authority"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void SelectedProposalAuthorityIsBounded()
     {
@@ -102,8 +106,8 @@ public sealed class RepairSelectionModelTests
             new RepairProposalResolution(
                 "new.md",
                 candidates.Items[0].Target),
-            [RepairSelectionOrigin.Wizard]);
-        Assert.Equal(RepairSelectionOrigin.Wizard, Assert.Single(selectedGuided.Origins));
+            [RepairSelectionOrigin.Prompt]);
+        Assert.Equal(RepairSelectionOrigin.Prompt, Assert.Single(selectedGuided.Origins));
 
         Assert.Throws<ArgumentException>(() => new RepairSelectedProposal(
             guided,
@@ -121,6 +125,7 @@ public sealed class RepairSelectionModelTests
             [RepairSelectionOrigin.ExplicitRelink]));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair selection keeps selected and unselected proposal occurrences unique and non-overlapping"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void SelectionRejectsDuplicateAndOverlappingOccurrences()
     {
@@ -158,6 +163,7 @@ public sealed class RepairSelectionModelTests
             [overlapping], RepairLibrarySelection.Empty));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repairable reference input requires guided provenance and forbids automatic candidate selection"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void RepairableInputPreservesCatalogueSafety()
     {
@@ -177,7 +183,7 @@ public sealed class RepairSelectionModelTests
                 RepairTestData.FileState("old")),
             new RepairDestinationTransition("old", "old", "new"),
             RepairCatalogueMember.MissingTargetRelink,
-            RepairSelectionOrigin.Wizard,
+            RepairSelectionOrigin.Prompt,
             guidedTarget);
         Assert.Equal(RepairCatalogueMember.MissingTargetRelink, guided.CatalogueMember);
         Assert.NotEmpty(guided.Target.CandidateProvenance);
@@ -192,7 +198,7 @@ public sealed class RepairSelectionModelTests
             guided.OccurrenceState,
             guided.DestinationTransition,
             RepairCatalogueMember.SameTargetPath,
-            RepairSelectionOrigin.Wizard,
+            RepairSelectionOrigin.Prompt,
             guidedTarget));
     }
 

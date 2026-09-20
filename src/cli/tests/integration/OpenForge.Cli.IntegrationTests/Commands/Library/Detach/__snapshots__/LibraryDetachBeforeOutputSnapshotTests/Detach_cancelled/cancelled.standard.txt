@@ -1,0 +1,8 @@
+Library detach was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  team-knowledge  Library detach was cancelled
+         Library detach was cancelled. Nothing was changed.
+         open-forge library detach team-knowledge
+         Rerun the same Library detach request.
+  Rerun the same Library detach request.
+Next: open-forge library detach team-knowledge

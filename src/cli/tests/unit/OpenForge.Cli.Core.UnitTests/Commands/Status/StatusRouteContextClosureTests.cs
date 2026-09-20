@@ -11,6 +11,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Status;
 
 public sealed class StatusRouteContextClosureTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status route closure excludes inactive continuity without making coverage incomplete"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void InactiveContinuityIsExcludedAndComplete()
     {
@@ -41,6 +42,7 @@ public sealed class StatusRouteContextClosureTests
         Assert.True(closure.IsComplete);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status route closure includes exposed continuity and excludes inactive sibling scopes"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void ExposedContinuityDoesNotActivateSiblingScope()
     {
@@ -99,6 +101,7 @@ public sealed class StatusRouteContextClosureTests
         Assert.DoesNotContain(closure.Startup, source => source.Path.StartsWith(".agents/beta/", StringComparison.Ordinal));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status route closure keeps traversing after a duplicate entrypoint"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void DuplicateTraversalBeforeLaterUniqueEntryPointDoesNotSuppressDescendant()
     {

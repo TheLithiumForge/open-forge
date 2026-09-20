@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 3,
+  "command": "library detach",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Detached team-knowledge: removed 1 link under .. Source files in shared/team-knowledge were kept.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/directives/review.md",
+      "kind": "link",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "detached",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksRemoved": 1,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "registrationRemoved": true,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/directives/review.md",
+        "kind": "link",
+        "action": "delete",
+        "outcome": "done",
+        "target": "../../shared/team-knowledge/.agents/directives/review.md"
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "kind": "record",
+        "action": "replace",
+        "outcome": "done"
+      }
+    ]
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "removed"
+  },
+  "next": null
+}

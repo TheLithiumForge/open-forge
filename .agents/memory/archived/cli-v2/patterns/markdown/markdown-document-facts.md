@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Inspect one Markdown source into stable domain facts without exposing its scanner or a future syntax tree
+  description: "Historical CLI-v2 source: Inspect one Markdown source into stable domain facts without exposing its scanner or a future syntax tree"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

@@ -1,0 +1,3 @@
+Cannot list routes: .agents/loader.md has no usable Entries section.
+Workspace: <workspace>
+Next: open-forge doctor

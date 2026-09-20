@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "incomplete",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Context could not be read completely.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "context.invalid-encoding",
+      "title": "Source encoding is invalid",
+      "message": ".agents/docs/guide.md is not valid UTF-8, so it was not included.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sources": null,
+    "tokens": null,
+    "bytes": null,
+    "linksFollowed": 0,
+    "linksNotFollowed": 0,
+    "warnings": 1
+  },
+  "limitations": [
+    {
+      "what": "sources",
+      "why": "The selected Context source layer .agents/docs/guide.md could not be read completely.",
+      "subject": null
+    },
+    {
+      "what": "tokens",
+      "why": "The selected Context source layer .agents/docs/guide.md could not be read completely.",
+      "subject": null
+    },
+    {
+      "what": "bytes",
+      "why": "The selected Context source layer .agents/docs/guide.md could not be read completely.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "id": null,
+        "layer": "base",
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Workspace\n\nRead `.agents/loader.md`.\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/loader.md",
+        "id": "loader",
+        "layer": "base",
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Open Forge Loader\n\n## Entries\n\n- [Documents](docs/_docs.md) - #LoadNow #Docs"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/_docs.md",
+        "id": "docs",
+        "layer": "base",
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Documents\n  tags: [Docs]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Documents\n\n## Entries\n\n- [Guide](guide.md) - #Docs #Guide\n- [Reference](reference.md) - #Docs\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "layer": "base",
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "unavailable"
+          },
+          {
+            "part": "body",
+            "state": "unavailable"
+          }
+        ]
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the unavailable closure, source, link, or projection facts before relying on this Context result."
+  }
+}

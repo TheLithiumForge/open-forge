@@ -20,6 +20,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Result;
 
 public sealed class FindResultBuilderTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find every finding code retains its fixed machine code, semantic status, and ordered result finding"),
         InlineData("InvalidInput", "Invalid", "find.invalid-input", "NotStarted", false),
         InlineData("InvalidSelector", "Invalid", "find.invalid-selector", "NotStarted", false),
@@ -101,6 +102,7 @@ public sealed class FindResultBuilderTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find result counts, match positions, canonical order, and projection payload invariants are exact"),
         InlineData("ordered-payload", 2, 2, true),
         InlineData("zero-candidates", 0, 0, false)]
@@ -196,6 +198,7 @@ public sealed class FindResultBuilderTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find ambiguous section projection makes result status and projection coverage incomplete while matching coverage remains complete")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public void AmbiguousSectionProjectionPreservesCompleteMatchingCoverage()
@@ -236,6 +239,7 @@ public sealed class FindResultBuilderTests
         Assert.Equal("Intro", finding.Region?.Name);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find result construction emits an identical matching and inspection finding instance exactly once")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public void IdenticalInspectionFindingInstanceIsRetainedOnce()
@@ -259,6 +263,7 @@ public sealed class FindResultBuilderTests
         Assert.Same(finding, resultFinding);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find status precedence and every fixed next action match the Interface contract"),
         InlineData("ordinary"),
         InlineData("blocked-and-terminal")]
@@ -342,7 +347,7 @@ public sealed class FindResultBuilderTests
                     new FindTerminalEvent(
                         FindTerminalEventKind.Failed,
                         "Boundary failed while forming the Find result."),
-                    "open-forge find --verbose",
+                    "open-forge find --detail debug",
                     "Report the failure and retry the same request with bounded diagnostics."),
                 new(
                     CliSemanticStatus.Interrupted,
@@ -384,6 +389,7 @@ public sealed class FindResultBuilderTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find failed, interrupted, and incomplete results retain safe matches and bounded facts"),
         InlineData("InspectionUnavailable", "Incomplete", "Incomplete"),
         InlineData("OperationFailed", "Failed", "Complete"),
@@ -464,7 +470,7 @@ public sealed class FindResultBuilderTests
             query,
             new FindPresentationSelection(
                 null,
-                CliView.Expanded,
+                CliDetail.Standard,
                 new FindContentSelection(contentParts, contentParts)));
     }
 

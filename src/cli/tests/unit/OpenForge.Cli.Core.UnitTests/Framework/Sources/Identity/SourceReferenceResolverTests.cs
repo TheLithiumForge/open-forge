@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Identity;
 
 public sealed class SourceReferenceResolverTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Source references resolve IDs, exact base and overwrite paths, and collisions without guessing")]
     [Trait("Feature", "source-selection"), Trait("Evidence", "Unit")]
     public void ReferencesResolveLogicalIdentityAndCollisionFacts()
@@ -46,6 +47,7 @@ public sealed class SourceReferenceResolverTests
         Assert.Equal(0, physicalCalls);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Exact source paths retain invalid, unsupported, missing, and unsafe physical outcomes")]
     [Trait("Feature", "source-selection"), Trait("Evidence", "Unit")]
     public void ExactPathsRetainTypedUnresolvedOutcomes()

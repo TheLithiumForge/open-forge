@@ -1,0 +1,9 @@
+Cannot install: Extension install needs to know which packages. Pass their IDs or --all. This session cannot ask.
+Workspace: <workspace>
+  Error  selected  Selection is required
+         Extension install needs to know which packages. Pass their IDs or --all. This session cannot ask.
+         open-forge extension list
+         List the available Extensions, then rerun the request with an explicit selection.
+  Source: <extension-source> (catalogue)
+  List the available Extensions, then rerun the request with an explicit selection.
+Next: open-forge extension list

@@ -37,7 +37,5 @@ Framework uninstall or remove leaf.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
-- [Accepted technology-neutral behavior for trusted Framework update planning, force replacement, prune deletion, and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Update #Framework #Behavior #Determinism #Lifecycle #Safety #Recovery #CurrentTruth
+- [Accepted technology-neutral behavior for Framework ownership update planning, ordinary replacement, explicit prune deletion, and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Update #Framework #Behavior #Determinism #Lifecycle #Safety #Recovery #CurrentTruth
 - [Accepted non-shipping Interface for trusted managed Framework reconciliation with force and prune boundaries](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Update #Framework #Interface #Lifecycle #Safety #Recovery #CurrentTruth
-<!-- open-forge:generated-index:end -->

@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Remove;
 
 public sealed class ExtensionRemoveDependencyPlanContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove dependency plan snapshots known edges and preserves dependent-first order"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void PlanSnapshotsEdgesAndRemovalOrder()
     {
@@ -27,6 +28,7 @@ public sealed class ExtensionRemoveDependencyPlanContractTests
         Assert.Empty(plan.RetainedDependentBlockers);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove dependency plan sorts and preserves retained-dependent blockers"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void PlanPreservesRetainedDependentBlockers()
     {
@@ -49,6 +51,7 @@ public sealed class ExtensionRemoveDependencyPlanContractTests
         Assert.Equal(["alpha", "zeta"], retained.RetainedDependentIds);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove dependency plan rejects backward, self, and cyclic selected order"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void PlanRejectsInvalidSelectedOrder()
     {
@@ -75,6 +78,7 @@ public sealed class ExtensionRemoveDependencyPlanContractTests
         []));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove dependency plan rejects unknown edges and malformed selected order"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void PlanRejectsUnknownEdgesAndMalformedOrder()
     {
@@ -103,6 +107,7 @@ public sealed class ExtensionRemoveDependencyPlanContractTests
         []));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove dependency plan rejects invalid blocker facts"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void PlanRejectsInvalidBlockers()
     {
@@ -130,6 +135,7 @@ public sealed class ExtensionRemoveDependencyPlanContractTests
             []));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove dependency plan rejects invalid orphan facts and duplicate model IDs"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void PlanRejectsInvalidOrphansAndModelIds()
     {

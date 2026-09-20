@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
@@ -5,22 +7,24 @@ using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
-using OpenForge.Cli.Core.Framework.Lifecycle;
+
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Presentation.Extension.Install.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
+using OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Interaction;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 
 public sealed class ExtensionInstallTargetPolicyIntegrationTests
 {
-    [Theory(DisplayName = "Extension Install force cannot replace authored or marker-ambiguous sources through command composition"),
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Extension Install force cannot replace authored or heading-ambiguous sources through command composition"),
      Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
     [InlineData("valid-authored")]
-    [InlineData("malformed-marker")]
+    [InlineData("duplicate-entries")]
     public static async Task ComposedForceCannotReplaceProtectedSource(string scenario)
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
@@ -41,27 +45,31 @@ public sealed class ExtensionInstallTargetPolicyIntegrationTests
                 "User-authored source",
                 ["User"],
                 "# Existing user-authored source\n")
-            : "# Existing ambiguous source\n\n## Entries\n\n<!-- open-forge:generated-index:end -->\n<!-- open-forge:generated-index:start -->\n");
+            : OpenForge.Cli.TestSupport.OpenForgeDocumentSeed.Metadata(
+                "User-authored source with ambiguous Entries",
+                ["User"],
+                "# Existing ambiguous source\n\n## Entries\n\n## Entries\n"));
         var before = workspace.Snapshot();
 
         var result = await workspace.RunAsync(
         [
             "extension", "install", "toolkit",
             "--source", source.Path,
-            "--force", "--automatic", "--json",
+            "--force", "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(5, result.ExitCode);
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         using var document = System.Text.Json.JsonDocument.Parse(result.StandardOutput);
         Assert.Contains(
-            document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray(),
+            document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString()
                 == "extension-install.ownership-conflict"
-                && finding.GetProperty("target").GetString() == target);
+                && finding.GetProperty("subject").GetProperty("path").GetString() == target);
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Install force cannot replace an arbitrary unknown agents file"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
     public async Task ComposedForceRequiresPositiveInitialOccupantEligibility()
     {
@@ -79,20 +87,21 @@ public sealed class ExtensionInstallTargetPolicyIntegrationTests
         [
             "extension", "install", "toolkit",
             "--source", source.Path,
-            "--force", "--automatic", "--json",
+            "--force", "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(5, result.ExitCode);
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         using var document = System.Text.Json.JsonDocument.Parse(result.StandardOutput);
         Assert.Contains(
-            document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray(),
+            document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString()
                 == "extension-install.ownership-conflict"
-                && finding.GetProperty("target").GetString() == target);
+                && finding.GetProperty("subject").GetProperty("path").GetString() == target);
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Extension Install force cannot replace Framework or current authored targets"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
     [InlineData(".agents/loader.md", "framework")]
     [InlineData(".agents/user/_user.md", "authored")]
@@ -126,7 +135,8 @@ public sealed class ExtensionInstallTargetPolicyIntegrationTests
                 automatic: true,
                 allowInteraction: false);
             var inspector = new ExtensionInstallTargetInspector(
-                new CliInteractiveSession(TextReader.Null, TextWriter.Null, canPrompt: false),
+                ExtensionInteractionTestFactory.UnavailableInstallConfirmation,
+                static paths => new CliConfirmQuestion(ExtensionInstallWording.ReplaceExisting(paths)),
                 new FileExpectationValidator(new PhysicalPathResolver()));
             var package = Package(target);
             var payloadBytes = package.Payload[0].Bytes;
@@ -137,9 +147,15 @@ public sealed class ExtensionInstallTargetPolicyIntegrationTests
                 {
                     Request = request,
                     Packages = [package],
-                    CurrentExtensions = EmptyExtensions(),
-                    FrameworkLifecycle = Framework(
-                        protection == "framework" ? [target] : []),
+                    Ownership = WorkspaceOwnershipRead.Absent(Path.Combine(root, ".agents/open-forge.lock.json")) with
+                    {
+                        Document = WorkspaceOwnershipDocument.Empty with
+                        {
+                            Framework = new FrameworkOwnership(new OwnedSource("open-forge", "1.0.0"),
+                                protection == "framework" ? [target] : [], []),
+                        },
+                    },
+                    FrameworkOwnership = null,
                     ProtectedAuthoredPaths = protection == "authored"
                         ? new HashSet<string>([target], StringComparer.Ordinal)
                         : new HashSet<string>(StringComparer.Ordinal),
@@ -200,32 +216,4 @@ public sealed class ExtensionInstallTargetPolicyIntegrationTests
             });
     }
 
-    private static ExtensionLifecycleState EmptyExtensions()
-        => new()
-        {
-            Coverage = LifecycleSchema.CompleteCoverage,
-            Packages = [],
-            Paths = [],
-        };
-
-    private static FrameworkLifecycleState Framework(string[] targets)
-        => new()
-        {
-            Coverage = LifecycleSchema.CompleteCoverage,
-            Source = new FrameworkLifecycleSource
-            {
-                Id = "open-forge",
-                Version = null,
-                InventoryFingerprint = new string('0', 64),
-            },
-            Targets = [.. targets.Select(target => new FrameworkLifecycleTarget
-            {
-                Path = target,
-                SourceAssetPath = target,
-                Region = null,
-                BaselineFingerprint = new string('0', 64),
-                FingerprintKind = LifecycleSchema.ExactBytesFingerprintKind,
-            })],
-            GeneratedRegions = [],
-        };
 }

@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 3,
+  "command": "extension update",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Updated the toolkit Extension to 2.0.0.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/new.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": "new content in this version",
+      "owner": "toolkit",
+      "before": null,
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "packagesUpdated": 1,
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 1,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 1,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "toolkit",
+        "from": "1.0.0",
+        "to": "2.0.0"
+      }
+    ],
+    "previousContent": null,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "unchanged": [
+      ".agents/toolkit.md"
+    ],
+    "sections": [],
+    "dependencies": [
+      {
+        "id": "toolkit",
+        "requires": []
+      }
+    ],
+    "effects": [
+      {
+        "path": ".agents/new.md",
+        "before": null,
+        "after": "<sha256>",
+        "relation": {
+          "current": "missing",
+          "shipped": "new"
+        },
+        "verification": {
+          "targets": "verified",
+          "topology": "verified",
+          "extensionRecord": "verified"
+        },
+        "recovery": {
+          "state": "retained",
+          "path": "<recovery-bundle>"
+        }
+      }
+    ]
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Review previous content in the recovery bundle at <recovery-bundle>."
+  }
+}

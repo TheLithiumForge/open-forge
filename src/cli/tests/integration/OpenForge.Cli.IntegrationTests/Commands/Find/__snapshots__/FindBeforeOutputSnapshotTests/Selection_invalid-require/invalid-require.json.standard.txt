@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 3,
+  "command": "find",
+  "status": "invalid-input",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot search: --require must be all or any.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "find.invalid-input",
+      "title": "Invalid input",
+      "message": "--require must be all or any.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "find",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "matches": 0,
+    "sourcesInspected": null,
+    "sourcesCandidates": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "matches": [],
+    "query": {
+      "tags": [
+        "Guide"
+      ],
+      "headings": [],
+      "require": "all",
+      "within": [
+        "frontmatter",
+        "body"
+      ]
+    }
+  },
+  "recovery": null,
+  "next": null
+}

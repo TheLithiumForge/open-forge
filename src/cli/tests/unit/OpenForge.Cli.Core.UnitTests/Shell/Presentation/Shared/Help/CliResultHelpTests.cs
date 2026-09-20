@@ -1,102 +1,75 @@
-using OpenForge.Cli.Core.Commands.Context.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Doctor.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Extension.Create.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Extension.List.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Install.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.References.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Route.Init.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Route.Move.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Route.Update.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Status.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Update.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Context.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Doctor.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Extension.Create.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Extension.Inspect.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Extension.List.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Find.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Index.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Install.Shared.Help;
+using OpenForge.Cli.Core.Presentation.References.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Route.Init.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Route.List.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Route.Move.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Route.Remove.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Route.Update.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Status.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Update.Shared.Help;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help;
 
 public sealed class CliResultHelpTests
 {
-    [Fact(DisplayName = "Standard command help retains the complete Results and streams body"), Trait("Feature", "command-help"), Trait("Evidence", "Unit")]
-    public void MatchingCommandsRetainCompleteResultsAndStreams()
-    {
-        var expected = string.Join(Environment.NewLine,
-            "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            "  Expanded JSON writes one schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr.",
-            "  complete: exit 0 and human stdout.",
-            "  failed: exit 1 and human stderr.",
-            "  attention: exit 2 and human stdout.",
-            "  incomplete: exit 3 and human stdout.",
-            "  invalid: exit 4 and human stderr.",
-            "  blocked: exit 5 and human stderr.",
-            "  interrupted: exit 130 and human stderr.");
+    private static readonly string Expected = string.Join(Environment.NewLine,
+        "  Text completed, completed-with-warnings, and incomplete results use stdout; invalid-input, blocked, failed, and cancelled results use stderr.",
+        "  JSON writes one minified schema-version-3 envelope to stdout for every semantic status. Debug diagnostics use bounded stderr.",
+        "  completed: exit 0 and text stdout.",
+        "  failed: exit 1 and text stderr.",
+        "  completed-with-warnings: exit 2 and text stdout.",
+        "  incomplete: exit 3 and text stdout.",
+        "  invalid-input: exit 4 and text stderr.",
+        "  blocked: exit 5 and text stderr.",
+        "  cancelled: exit 130 and text stderr.");
 
-        Assert.Equal(expected, Assert.Single(InstallHelpSections.Create().Sections, section => section.Heading == "Results and streams").Body);
-        Assert.Equal(expected, Assert.Single(UpdateHelpSections.Create().Sections, section => section.Heading == "Results and streams").Body);
-        Assert.Equal(expected, Assert.Single(IndexHelpSections.Create().Sections, section => section.Heading == "Results and streams").Body);
-        Assert.Equal(expected, Assert.Single(StatusHelpSections.Create().Sections, section => section.Heading == "Results and streams").Body);
-        Assert.Equal(expected, Assert.Single(RouteInitHelpSections.Create().Sections, section => section.Heading == "Results and streams").Body);
-        var moveNotes = $"  Route Move never moves lifecycle-managed content, initializes a missing parent route, overwrites a destination, prompts, or invokes Index as a subprocess.\n{expected}";
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Every command with a Results and streams section renders the one shared body"), Trait("Feature", "command-help"), Trait("Evidence", "Unit")]
+    public void CommandsShareOneResultsAndStreamsBody()
+    {
+        (string Command, CliHelpContent Help)[] commands =
+        [
+            ("install", InstallHelpSections.Create()),
+            ("update", UpdateHelpSections.Create()),
+            ("index", IndexHelpSections.Create()),
+            ("status", StatusHelpSections.Create()),
+            ("doctor", DoctorHelpSections.Create()),
+            ("find", FindHelpSections.Create()),
+            ("context", ContextHelpSections.Create()),
+            ("references", ReferencesHelpSections.Create()),
+            ("route init", RouteInitHelpSections.Create()),
+            ("route inspect", RouteInspectHelpSections.CreateInspect()),
+            ("route list", RouteListHelpSections.CreateList()),
+            ("route remove", RouteRemoveHelpSections.Create()),
+            ("extension create", ExtensionCreateHelpSections.Create()),
+            ("extension inspect", ExtensionInspectHelpSections.Create()),
+            ("extension list", ExtensionListHelpSections.Create()),
+        ];
+
+        foreach (var (command, help) in commands)
+        {
+            var section = Assert.Single(help.Sections, value => value.Heading == "Results and streams");
+            Assert.Equal($"{command}: {Expected}", $"{command}: {section.Body}");
+        }
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Commands that close their Notes with the shared body keep it verbatim"), Trait("Feature", "command-help"), Trait("Evidence", "Unit")]
+    public void NotesSectionsAppendTheSameSharedBody()
+    {
+        var moveNotes = $"  Route Move never moves lifecycle-managed content, initializes a missing parent route, overwrites a destination, prompts, or invokes Index as a subprocess.\n{Expected}";
+        var updateNotes = $"  Global workspace, format, detail, detail-filter, help, and version options retain their shared meaning.\n{Expected}";
+
         Assert.Equal(moveNotes, Assert.Single(RouteMoveHelpSections.Create().Sections, section => section.Heading == "Notes").Body);
-        var updateNotes = $"  Global workspace, JSON, view, verbosity, help, and version options retain their shared meaning.\n{expected}";
         Assert.Equal(updateNotes, Assert.Single(RouteUpdateHelpSections.Create().Sections, section => section.Heading == "Notes").Body);
-        Assert.Equal(expected, Assert.Single(ContextHelpSections.Create().Sections, section => section.Heading == "Results and streams").Body);
-        Assert.Equal(expected, Assert.Single(ReferencesHelpSections.Create().Sections, section => section.Heading == "Results and streams").Body);
-        Assert.Equal(expected, Assert.Single(ExtensionCreateHelpSections.Create().Sections, section => section.Heading == "Results and streams").Body);
-        Assert.Equal(expected, Assert.Single(ExtensionInspectHelpSections.Create().Sections, section => section.Heading == "Results and streams").Body);
-        Assert.Equal(expected, Assert.Single(ExtensionListHelpSections.Create().Sections, section => section.Heading == "Results and streams").Body);
-    }
-
-    [Fact(DisplayName = "Find help retains its distinct complete-envelope wording and status order"), Trait("Feature", "command-help"), Trait("Evidence", "Unit")]
-    public void FindRetainsItsDistinctResultsAndStreams()
-    {
-        var expected = string.Join(Environment.NewLine,
-            "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            "  Expanded JSON writes one complete schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use stderr and remain bounded.",
-            "  complete: exit 0 and human stdout.",
-            "  attention: exit 2 and human stdout.",
-            "  incomplete: exit 3 and human stdout.",
-            "  invalid: exit 4 and human stderr.",
-            "  blocked: exit 5 and human stderr.",
-            "  failed: exit 1 and human stderr.",
-            "  interrupted: exit 130 and human stderr.");
-
-        Assert.Equal(expected, Assert.Single(FindHelpSections.Create().Sections, section => section.Heading == "Results and streams").Body);
-    }
-
-    [Fact(DisplayName = "Doctor help retains its distinct JSON sentence and status rows"), Trait("Feature", "command-help"), Trait("Evidence", "Unit")]
-    public void DoctorRetainsItsDistinctResultsAndStreams()
-    {
-        var expected = string.Join(Environment.NewLine,
-            "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            "  Expanded JSON writes one schema-version-1 envelope to stdout for every semantic status.",
-            "  complete: exit 0.",
-            "  failed: exit 1.",
-            "  attention: exit 2.",
-            "  incomplete: exit 3.",
-            "  invalid: exit 4.",
-            "  blocked: exit 5.",
-            "  interrupted: exit 130.");
-
-        Assert.Equal(expected, Assert.Single(DoctorHelpSections.Create().Sections, section => section.Heading == "Results and streams").Body);
-    }
-
-    [Fact(DisplayName = "Route Remove help retains its distinct status-row template"), Trait("Feature", "command-help"), Trait("Evidence", "Unit")]
-    public void RouteRemoveRetainsItsDistinctResultsAndStreams()
-    {
-        var results = string.Join(Environment.NewLine,
-            "  Human complete, attention, and incomplete results use stdout; invalid, blocked, failed, and interrupted results use stderr.",
-            "  Expanded JSON writes one schema-version-1 envelope to stdout for every semantic status. Verbose diagnostics use bounded stderr.",
-            "  complete: 0 (stdout)",
-            "  failed: 1 (stderr)",
-            "  attention: 2 (stdout)",
-            "  incomplete: 3 (stdout)",
-            "  invalid: 4 (stderr)",
-            "  blocked: 5 (stderr)",
-            "  interrupted: 130 (stderr)");
-
-        var expected = $"  Route Remove never removes lifecycle-managed content, follows remote links, prompts, or invokes another command as a subprocess.\n{results}";
-        Assert.Equal(expected, Assert.Single(RouteRemoveHelpSections.Create().Sections, section => section.Heading == "Notes").Body);
     }
 }

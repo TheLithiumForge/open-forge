@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Nothing to repair.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "linksRepaired": 0,
+    "problemsRemaining": 0,
+    "problemsNeedingChoice": 0,
+    "problemsNeedingHand": 0,
+    "librarySteps": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "selection": "automatic",
+    "repairs": [],
+    "remaining": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

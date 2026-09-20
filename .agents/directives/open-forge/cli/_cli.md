@@ -15,7 +15,5 @@ open-forge:
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Capture aggregated sanitized CLI dogfooding evidence that can improve Framework agents, workflows, tools, and routing](dogfooding.md) - #LoadNow #Directive #CLI #Dogfooding #Observation #Review #AgentLearning #Evidence #Privacy
 - [Implement the accepted greenfield replacement CLI below src/cli through architecture-owned foundations and closed Tasks](implementation.md) - #LoadNow #Directive #CLI #Implementation #Architecture #Task #CSharp #DotNet #NativeAOT #Filesystem #Testing
-<!-- open-forge:generated-index:end -->

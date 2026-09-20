@@ -15,7 +15,7 @@ internal static class StatusLifecycleTargetScenarios
             Assert.Equal(string.Empty, notApplicableRun.StandardError);
             using var notApplicableDocument = StatusIntegrationApplication.ParseJson(notApplicableRun);
             var notApplicableGenerated = StatusJsonAssertions.Result(notApplicableDocument.RootElement)
-                .GetProperty("structure").GetProperty("generatedNavigation").EnumerateArray();
+                .GetProperty("entriesSections").EnumerateArray();
             var notApplicableTarget = Assert.Single(
                 notApplicableGenerated,
                 item => item.GetProperty("path").GetString() == StatusIntegrationWorkspace.GeneratedTargetPath);
@@ -60,7 +60,7 @@ internal static class StatusLifecycleTargetScenarios
         Assert.Equal(string.Empty, run.StandardError);
         using var document = StatusIntegrationApplication.ParseJson(run);
         var generated = StatusJsonAssertions.Result(document.RootElement)
-            .GetProperty("structure").GetProperty("generatedNavigation").EnumerateArray();
+            .GetProperty("entriesSections").EnumerateArray();
         var target = Assert.Single(generated, item => item.GetProperty("path").GetString() == StatusIntegrationWorkspace.GeneratedTargetPath);
         var state = Assert.IsType<string>(target.GetProperty("state").GetString());
         Assert.Equal(scenario, state);
@@ -108,11 +108,10 @@ internal static class StatusLifecycleTargetScenarios
         Assert.Equal(string.Empty, run.StandardError);
         using var document = StatusIntegrationApplication.ParseJson(run);
         var targets = StatusJsonAssertions.Result(document.RootElement)
-            .GetProperty("lifecycle").GetProperty("framework").GetProperty("targets").EnumerateArray();
+            .GetProperty("frameworkFiles").EnumerateArray();
         var target = Assert.Single(
             targets,
-            item => item.GetProperty("path").GetString() == StatusIntegrationWorkspace.GeneratedTargetPath
-                && item.GetProperty("kind").GetString() == "file");
+            item => item.GetProperty("path").GetString() == StatusIntegrationWorkspace.GeneratedTargetPath);
         var state = Assert.IsType<string>(target.GetProperty("state").GetString());
         Assert.Equal(scenario, state);
         Assert.Equal(before, workspace.SnapshotHashes());
@@ -125,6 +124,9 @@ internal static class StatusLifecycleTargetScenarios
     {
         using var workspace = StatusIntegrationWorkspace.Create($"status-extension-target-{scenario}");
         using var outside = TemporaryWorkspace.Create($"status-extension-outside-{scenario}");
+        using var source = TemporaryWorkspace.Create("status-extension-current-source");
+        source.WriteText("extension.json", """{"id":"toolkit","name":"Toolkit","description":"Current payload fixture","version":"2.0.0","dependencies":[]}""");
+        source.WriteText($"content/{StatusIntegrationWorkspace.ExtensionTargetPath}", "# Extension target\n");
         var bytes = Encoding.UTF8.GetBytes("# Extension target\n");
         workspace.WriteBytes(StatusIntegrationWorkspace.ExtensionTargetPath, bytes);
         StatusLifecycleFixture.Write(
@@ -132,12 +134,8 @@ internal static class StatusLifecycleTargetScenarios
             framework: null,
             extensions: StatusLifecycleFixture.Extensions(
                 [new StatusLifecycleFixture.ExtensionSeed(
-                    "toolkit", "1.0.0", workspace.Combine("missing-extension-source"), [],
-                    [StatusIntegrationWorkspace.ExtensionTargetPath])],
-                [new StatusLifecycleFixture.PathSeed(
-                    StatusIntegrationWorkspace.ExtensionTargetPath,
-                    ["toolkit"],
-                    StatusLifecycleFixture.Hash(bytes))]));
+                    "toolkit", "1.0.0", source.Path, [],
+                    [StatusIntegrationWorkspace.ExtensionTargetPath])]));
         switch (scenario)
         {
             case "current":
@@ -167,8 +165,10 @@ internal static class StatusLifecycleTargetScenarios
         Assert.Equal(string.Empty, run.StandardError);
         using var document = StatusIntegrationApplication.ParseJson(run);
         var targets = StatusJsonAssertions.Result(document.RootElement)
-            .GetProperty("lifecycle").GetProperty("extensions").GetProperty("managedFiles").GetProperty("targets").EnumerateArray();
-        var target = Assert.Single(targets, item => item.GetProperty("path").GetString() == StatusIntegrationWorkspace.ExtensionTargetPath);
+            .GetProperty("extensions").EnumerateArray();
+        var extension = Assert.Single(targets, item => item.GetProperty("id").GetString() == "toolkit");
+        var target = Assert.Single(extension.GetProperty("files").EnumerateArray(),
+            item => item.GetProperty("path").GetString() == StatusIntegrationWorkspace.ExtensionTargetPath);
         var state = Assert.IsType<string>(target.GetProperty("state").GetString());
         Assert.Equal(scenario, state);
         Assert.Equal(before, workspace.SnapshotHashes());
@@ -188,5 +188,5 @@ internal static class StatusLifecycleTargetScenarios
             }));
 
     private static Task<StatusIntegrationRun> RunStatusAsync(StatusIntegrationWorkspace workspace)
-        => StatusIntegrationApplication.RunAsync(workspace, "status", "--workspace", workspace.Path, "--json");
+        => StatusIntegrationApplication.RunAsync(workspace, "status", "--workspace", workspace.Path, "--format", "json", "--detail", "full");
 }

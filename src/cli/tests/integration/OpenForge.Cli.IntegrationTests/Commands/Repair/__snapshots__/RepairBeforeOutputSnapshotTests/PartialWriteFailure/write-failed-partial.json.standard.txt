@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "failed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Repair stopped after 1 of 2 links were rewritten.",
+    "kind": "failed"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "repair.write-failed",
+      "title": "Write failed",
+      "message": "Writing .agents/docs/source.md failed. Stopped after 1 of 2 changes. Recovery data: <recovery-bundle>.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/docs/aaa.md:8:8",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": "./guide.md -> guide.md",
+      "owner": null
+    },
+    {
+      "path": ".agents/docs/source.md:9:8",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": "./guide.md -> guide.md",
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksRepaired": 1,
+    "problemsRemaining": 1,
+    "problemsNeedingChoice": 0,
+    "problemsNeedingHand": 1,
+    "librarySteps": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "selection": "automatic",
+    "repairs": [
+      {
+        "path": ".agents/docs/aaa.md",
+        "location": {
+          "line": 8,
+          "column": 8
+        },
+        "from": "./guide.md",
+        "to": "guide.md"
+      },
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 8
+        },
+        "from": "./guide.md",
+        "to": "guide.md"
+      }
+    ],
+    "remaining": [
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 8
+        },
+        "kind": "manual",
+        "candidates": []
+      }
+    ]
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge repair --detail debug",
+    "reason": "Inspect the bounded failure details and rerun Repair from a fresh plan."
+  }
+}

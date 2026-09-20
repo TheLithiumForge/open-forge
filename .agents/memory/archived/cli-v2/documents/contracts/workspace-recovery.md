@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Git-first mutation recovery, Gitless sibling backups, in-process reversal, hard-stop evidence, and residual-state behavior
+  description: "Historical CLI-v2 source: Git-first mutation recovery, Gitless sibling backups, in-process reversal, hard-stop evidence, and residual-state behavior"
   responsibility: Define recoverability without a persistent Open Forge transaction journal, hidden repository state, or claims stronger than the available Git and backup evidence
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

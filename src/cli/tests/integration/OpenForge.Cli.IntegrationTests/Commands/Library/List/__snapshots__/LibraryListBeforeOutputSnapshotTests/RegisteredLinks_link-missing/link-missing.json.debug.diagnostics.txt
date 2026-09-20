@@ -1,0 +1,4 @@
+status=completed-with-warnings
+libraries=1
+links=1
+The registered destination is absent.

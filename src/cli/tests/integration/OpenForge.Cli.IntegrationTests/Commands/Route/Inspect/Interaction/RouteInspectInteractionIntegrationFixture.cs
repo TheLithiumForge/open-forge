@@ -1,7 +1,10 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
+using OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Interaction;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Shared.Profile;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Interaction;
@@ -21,8 +24,18 @@ internal static class RouteInspectInteractionIntegrationFixture
     {
         using var input = new StringReader(standardInput);
         using var prompt = new StringWriter();
-        var session = new CliInteractiveSession(input, prompt, canPrompt);
-        var operation = RouteInspectOperationFactory.Create(session);
+        var terminal = new CliTerminal(
+            new CliTerminalCapabilities(canPrompt, canReadKeys: false, canRedraw: false),
+            (content, cancellationToken) =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                prompt.Write(content.Span);
+                return ValueTask.CompletedTask;
+            },
+            cancellationToken => input.ReadLineAsync(cancellationToken),
+            _ => ValueTask.FromResult<CliKeyStroke?>(null));
+        var operation = RouteInspectOperationFactory.Create(
+            RouteInspectSourceSelectionPrompt.Create(new CliPrompts(terminal)));
         var result = await operation(
             Request(workspace, sourceReference, allowInteractiveSourceSelection),
             TestContext.Current.CancellationToken);
@@ -91,13 +104,13 @@ internal static class RouteInspectInteractionIntegrationFixture
         return string.Join(
             Environment.NewLine,
             [
-                $"The source ID `{CollisionId}` matches more than one source.",
+                $"{CollisionId} matches 2 sources. Which one?",
                 string.Empty,
-                $"1. {FirstCandidate}",
-                $"2. {SecondCandidate}",
+                $"  1. {FirstCandidate}",
+                $"  2. {SecondCandidate}",
                 string.Empty,
-                "Choose a source by number or exact path: ",
-            ]);
+                "Choose a number (1-2), or press Enter to cancel:",
+            ]) + Environment.NewLine;
     }
 }
 

@@ -1,0 +1,13 @@
+Cannot update toolkit: it writes outside .agents and no grant allows that.
+Workspace: <workspace>
+  Error  toolkit  Permission is required [extension-update.permission-required]
+         Cannot update: it writes outside .agents and no grant allows that.
+         fix by hand
+         cause: The requested Extension destinations require shared permission in .agents/open-forge.json; use --allow-path <path> to record a grant.
+         read from <extension-source>
+  Source: <extension-source>
+  Dependency closure: toolkit
+  1 file unchanged
+  Grant: required workspace-note.md; missing workspace-note.md; decision required; action no action; outcome no outcome recorded
+  No verification was needed.
+  No recovery bundle was created.

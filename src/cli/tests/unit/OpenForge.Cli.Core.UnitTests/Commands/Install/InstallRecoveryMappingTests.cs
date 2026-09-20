@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Install;
 
 public sealed class InstallRecoveryMappingTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Install cleanup maps only typed deletion disposition and residual-path facts"), Trait("Feature", "install-result"), Trait("Evidence", "Unit")]
     public void CleanupMappingPreservesExactDispositionCertainty()
     {

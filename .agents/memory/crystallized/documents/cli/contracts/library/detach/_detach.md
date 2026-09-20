@@ -37,7 +37,7 @@ The shared [Global CLI Flags](../../shared/global-flags/interface.md),
 [Shared CLI Operation Contract](../../../shared-operation-contract.md) retain
 their shared meanings. The [Index Behavior Contract](../../index-candidate/behavior.md)
 remains authoritative for any existing generated `Entries` region that this
-operation is allowed to project. The replacement CLI does not ship yet;
+operation is allowed to project. The merged native CLI is the current delivery;
 the active Task records implementation and executable evidence.
 
 ## Contract Roles
@@ -60,9 +60,5 @@ the active Task records implementation and executable evidence.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
-
 - [Define the technology-neutral record checks, all-or-nothing planning, application, verification, and recovery behavior for `library detach`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Detach #Behavior #Mutation #Recovery #Safety #Determinism #CurrentTruth
 - [Define the exact public syntax, source-independent link checks, all-or-nothing effects, record, and results for `library detach`](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Detach #Interface #Mutation #Recovery #Safety #CurrentTruth
-
-<!-- open-forge:generated-index:end -->

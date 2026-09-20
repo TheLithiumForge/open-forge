@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 3,
+  "command": "route move",
+  "status": "blocked",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot move docs/guide: The ID docs/guide matches more than one file. Use the exact path.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-move.identity-collision",
+      "title": "Identity collision",
+      "message": "The ID docs/guide matches more than one file. Use the exact path.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "docs/guide",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesMoved": 0,
+    "sectionsUpdated": 0,
+    "linksRewritten": 0,
+    "filesScanned": null,
+    "errors": 1
+  },
+  "limitations": [
+    {
+      "what": "files scanned",
+      "why": "the reference scan was not completed",
+      "subject": null
+    }
+  ],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": null,
+      "path": null
+    },
+    "destination": {
+      "id": null,
+      "path": null
+    },
+    "moved": [],
+    "rewrittenLinks": [],
+    "scan": {
+      "filesScanned": 0,
+      "occurrences": 0
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

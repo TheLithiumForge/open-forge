@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveCompositionIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed root registers Route Remove as the final Route leaf"),
      Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public void ComposedRootRegistersRouteRemoveLeaf()
@@ -32,6 +33,7 @@ public sealed class RouteRemoveCompositionIntegrationTests
         Assert.NotNull(selection.Binding);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed Route Remove help is terminal and bypasses workspace effects"),
      Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task RemoveHelpIsTerminalAndWriteFree()
@@ -51,6 +53,7 @@ public sealed class RouteRemoveCompositionIntegrationTests
         Assert.Equal(string.Empty, standardError.ToString());
         Assert.Contains("open-forge route remove <source-reference>", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains("--dry-run", standardOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains("--automatic", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.DoesNotContain("--force", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.DoesNotContain("--recursive", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
@@ -5,10 +6,9 @@ using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Operational;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
-using OpenForge.Cli.Core.Framework.Lifecycle.Operational;
-using OpenForge.Cli.Core.Framework.Lifecycle.Operational.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.Models.Reading;
+using OpenForge.Cli.Core.Framework.Distribution.Operational;
+using OpenForge.Cli.Core.Framework.Distribution.Operational.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Operational;
@@ -188,7 +188,8 @@ internal sealed class DoctorOperationTestSupport
         : IFrameworkLifecycleOperationalContributor
     {
         public ValueTask<FrameworkLifecycleStatusView> ReadStatusAsync(
-            LifecycleDocumentSnapshot snapshot,
+            CliWorkspace workspace,
+            WorkspaceOwnershipRead ownership,
             CancellationToken cancellationToken)
             => throw new InvalidOperationException("Doctor evidence must not invoke Status views.");
 
@@ -197,18 +198,15 @@ internal sealed class DoctorOperationTestSupport
             CancellationToken cancellationToken)
         {
             calls.Add("framework-lifecycle");
-            var lifecycle = LifecycleStoreReadResult.DocumentMissing(
-                    workspace,
-                    LifecycleSection.Framework,
-                    FileStateSnapshot.Missing(
-                        Path.Combine(workspace.LexicalRoot, ".agents/open-forge.lifecycle.json")));
+            var ownership = WorkspaceOwnershipRead.Absent(
+                Path.Combine(workspace.LexicalRoot, ".agents/open-forge.lock.json"));
             return ValueTask.FromResult(FrameworkLifecycleDoctorView.Create(
                 FrameworkLifecycleDoctorAssessment.Create(
                     OperationalViewState.Incomplete,
                     OperationalLifecycleState.Incomplete,
                     OperationalSourceAvailability.Unavailable,
                     FrameworkManagedSetState.Empty),
-                lifecycle,
+                ownership,
                 FrameworkPayloadReadResult.Unavailable("The unit fixture has no payload."),
                 []));
         }
@@ -220,7 +218,8 @@ internal sealed class DoctorOperationTestSupport
         internal ExtensionLifecycleDoctorView View { get; set; } = CreateDefaultView();
 
         public ValueTask<ExtensionLifecycleStatusView> ReadStatusAsync(
-            LifecycleDocumentSnapshot snapshot,
+            CliWorkspace workspace,
+            WorkspaceOwnershipRead ownership,
             CancellationToken cancellationToken)
             => throw new InvalidOperationException("Doctor evidence must not invoke Status views.");
 
@@ -240,11 +239,6 @@ internal sealed class DoctorOperationTestSupport
                     ExtensionManagedSetState.Empty,
                     OperationalLifecycleState.Incomplete,
                     OperationalSourceAvailability.Unavailable),
-                new LifecycleReadResult(
-                    LifecycleReadState.Unavailable,
-                    LifecycleExtensionTrust.Incomplete,
-                    [],
-                    "The unit fixture has no lifecycle."),
                 [],
                 CreateCompleteOwnership(),
                 ExtensionLifecycleDoctorFacts.Create([], []));
@@ -256,27 +250,10 @@ internal sealed class DoctorOperationTestSupport
         return new CliWorkspace(root, root, CliWorkspaceSelectionMethod.ExplicitWorkspace);
     }
 
-    internal static LifecycleOwnershipReadResult CreateCompleteOwnership()
-    {
-        var lifecyclePath = Path.Combine(
-            Workspace().LexicalRoot,
-            ".agents/open-forge.lifecycle.json");
-        return new LifecycleOwnershipReadResult(
-            new LifecycleOwnershipSectionResult(
-                LifecycleOwnershipSection.Framework,
-                LifecycleOwnershipReadState.Trusted,
-                cause: null),
-            new LifecycleOwnershipSectionResult(
-                LifecycleOwnershipSection.Extensions,
-                LifecycleOwnershipReadState.Trusted,
-                cause: null),
-            [],
-            FileExpectation.File(
-                lifecyclePath,
-                lifecyclePath,
-                new string('0', 64)),
-            []);
-    }
+    internal static WorkspaceOwnershipRead CreateCompleteOwnership()
+        => new(WorkspaceOwnershipReadState.Complete,
+            OpenForge.Cli.Core.Framework.Ownership.Models.Document.WorkspaceOwnershipDocument.Empty,
+            Path.Combine(Workspace().LexicalRoot, ".agents/open-forge.lock.json"), null, null);
 
     internal static ExtensionSourceReadResult Source(
         ExtensionSourceReadState state,

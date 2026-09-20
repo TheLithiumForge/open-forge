@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: One typed request-construction path for explicit arguments, guided choices, defaults, confirmation, preview, and structured automation
+  description: "Historical CLI-v2 source: One typed request-construction path for explicit arguments, guided choices, defaults, confirmation, preview, and structured automation"
   responsibility: Define how parsed CLI input becomes complete operation intent without leaking raw flags, terminal state, or presentation into handlers and planners
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

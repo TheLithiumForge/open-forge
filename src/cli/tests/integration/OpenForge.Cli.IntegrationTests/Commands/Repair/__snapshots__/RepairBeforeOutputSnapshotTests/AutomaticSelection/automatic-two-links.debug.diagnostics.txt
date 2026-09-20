@@ -1,0 +1,8 @@
+status=completed
+mode=apply
+selection=automatic
+repairs=2
+remaining=0
+library-steps=0
+verification=verified
+next=none

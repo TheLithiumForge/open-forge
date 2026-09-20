@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Cleanup;
 
 public sealed class CleanupPlanningContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup catalogue retains materialized candidates in deterministic ordinal path order"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void CatalogueRetainsUniqueOrdinalCandidates()
@@ -47,6 +48,7 @@ public sealed class CleanupPlanningContractTests
             default));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup candidate facts distinguish verified finals, ordinary drafts, and preserved unsafe items"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void CandidateFactsMapRecognitionAndEligibility()
@@ -100,6 +102,7 @@ public sealed class CleanupPlanningContractTests
         Assert.Equal(CleanupArtifactFileKind.NonOrdinary, unsafeDraft.FileKind);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup candidate construction rejects impossible kind and integrity pairs"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void CandidateRejectsImpossibleKindIntegrityPairs()
@@ -115,6 +118,7 @@ public sealed class CleanupPlanningContractTests
             RecoveryBundleIntegrity.Malformed));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup candidate validation rejects unsafe eligibility, lease, and provenance combinations"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void CandidateRejectsUnsafeCombinations()
@@ -183,6 +187,7 @@ public sealed class CleanupPlanningContractTests
             selectedKey));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup plan selects every eligible candidate in exact catalogue order"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void SafePlanSelectsEveryEligibleCandidateInOrder()
@@ -222,6 +227,7 @@ public sealed class CleanupPlanningContractTests
             });
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup blocked candidate preserves every entry and removes all deletion authority"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void BlockedCandidatePreventsEveryDeletion()
@@ -254,6 +260,40 @@ public sealed class CleanupPlanningContractTests
             plan.Entries.Select(entry => entry.ResultEffect.Residual));
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "An ordinary malformed final is preserved while independent eligible entries retain deletion authority"),
+     Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
+    public void PreservedMalformedFinalAllowsIndependentDeletionEntries()
+    {
+        var workspace = CleanupTestData.Workspace("malformed-partial-plan");
+        var eligible = CleanupTestData.Candidate(
+            RecoveryBundleCandidateKind.Draft,
+            RecoveryBundleIntegrity.Incomplete,
+            selectedWorkspace: workspace,
+            path: Path.Combine(Path.GetTempPath(), "cleanup-recovery", "operation-a.draft"));
+        var malformed = CleanupTestData.Candidate(
+            RecoveryBundleCandidateKind.Final,
+            RecoveryBundleIntegrity.Malformed,
+            selectedWorkspace: workspace,
+            path: Path.Combine(Path.GetTempPath(), "cleanup-recovery", "operation-b.zip"));
+        var catalogue = CleanupTestData.Catalogue(
+            CleanupCatalogueCoverage.Complete,
+            eligible,
+            malformed);
+
+        var plan = CleanupTestData.Plan(CleanupTestData.Request(workspace), catalogue);
+
+        Assert.Equal(CleanupPlanSafety.Safe, plan.Safety);
+        Assert.Equal([eligible, malformed], plan.Entries.Select(entry => entry.Candidate));
+        var deletion = Assert.Single(plan.DeletionEntries);
+        Assert.Same(plan.Entries[0], deletion);
+        Assert.Equal(CleanupCandidateEligibility.Eligible, deletion.Eligibility);
+        Assert.Equal(CleanupPlanAction.Delete, deletion.Action);
+        Assert.Equal(CleanupCandidateEligibility.Blocked, plan.Entries[1].Eligibility);
+        Assert.Equal(CleanupPlanAction.Preserve, plan.Entries[1].Action);
+    }
+
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Cleanup incomplete or interrupted coverage has no deletion entries"),
      InlineData((int)CleanupCatalogueCoverage.Incomplete),
      InlineData((int)CleanupCatalogueCoverage.Interrupted),
@@ -279,6 +319,7 @@ public sealed class CleanupPlanningContractTests
         Assert.Empty(plan.DeletionEntries);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup complete empty catalogue forms a safe verified no-op plan"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void EmptyCompleteCatalogueIsSafeNoOp()
@@ -292,6 +333,7 @@ public sealed class CleanupPlanningContractTests
         Assert.Empty(plan.DeletionEntries);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup plan requires contiguous catalogue entry identity and exact deletion references"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void PlanRequiresContiguousEntryIdentity()

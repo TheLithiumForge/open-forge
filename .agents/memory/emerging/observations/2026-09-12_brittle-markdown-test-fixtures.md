@@ -43,7 +43,7 @@ they are not wording-dependent fixtures. The test still proves coalescing,
 exact final bytes, recovery, verification and
 repeat no-op behavior. Its dependency on machine-readable region structure is
 intentional; headings and explanatory sentences no longer define its scenario.
-The [follow-up plan](../../working/cli-development/tasks/cli-dogfood-follow-up-plan.md)
+The [follow-up plan](../../archived/cli-development/tasks/cli-dogfood-follow-up-plan.md)
 tracks the wider audit and qualification.
 
 ## User Direction And Guidance

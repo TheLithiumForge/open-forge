@@ -204,7 +204,14 @@ internal sealed class GenericRouteInitIntegrationWorkspace : IDisposable
         var attributes = File.GetAttributes(path);
         if ((attributes & FileAttributes.ReparsePoint) != 0)
         {
-            File.Delete(path);
+            if ((attributes & FileAttributes.Directory) != 0)
+            {
+                Directory.Delete(path);
+            }
+            else
+            {
+                File.Delete(path);
+            }
             return;
         }
 

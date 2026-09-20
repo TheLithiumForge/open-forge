@@ -42,7 +42,5 @@ does not claim that implementation or proof.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Current technology-neutral six-domain diagnosis, findings, coverage, and conformance for `doctor`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Doctor #Behavior #Diagnosis #Determinism #Safety #CurrentTruth
 - [Current accepted read-only interface for complete workspace diagnosis and repair next actions](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Doctor #Interface #Diagnosis #Findings #Safety #CurrentTruth
-<!-- open-forge:generated-index:end -->

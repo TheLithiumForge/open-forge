@@ -16,6 +16,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
 public sealed class InstallRecoveryIdentityIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory, InlineData(false), InlineData(true), Trait("Feature", "install"), Trait("Evidence", "Integration")]
     public async Task CleanupRequiresThePreparedAttribution(bool changed)
     {

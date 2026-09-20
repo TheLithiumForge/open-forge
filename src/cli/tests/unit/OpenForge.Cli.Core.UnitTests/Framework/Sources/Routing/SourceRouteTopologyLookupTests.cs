@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Routing;
 
 public sealed class SourceRouteTopologyLookupTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral route topology finds exact paths and computes absolute and relative depths")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void TopologyLookupsUseExactCanonicalPaths()
@@ -21,6 +22,7 @@ public sealed class SourceRouteTopologyLookupTests
         Assert.Equal(1, relativeDepth);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral route topology reports missing and unrelated exact paths without inventing ancestry")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void UnknownTopologyPathsRemainUnavailable()

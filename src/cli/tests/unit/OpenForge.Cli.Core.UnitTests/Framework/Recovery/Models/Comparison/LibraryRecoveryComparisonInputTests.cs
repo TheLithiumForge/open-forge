@@ -11,6 +11,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Recovery.Models.Comparison;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Unit")]
 public sealed class LibraryRecoveryComparisonInputTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Recovery comparison requires entry leaf and independent ordinary-content target agreement")]
     public void RejectsDisagreementAndAbsentOrdinaryReadFacts()
     {
@@ -37,6 +38,7 @@ public sealed class LibraryRecoveryComparisonInputTests
         Assert.Same(read, accepted.OrdinaryContent);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Ordinary recovery content observations require exactly one identity or failure and an absolute path")]
     public void RejectsContradictoryContentFacts()
     {
@@ -50,6 +52,7 @@ public sealed class LibraryRecoveryComparisonInputTests
         Assert.Same(failure, new RecoveryOrdinaryContentObservation(path, identity: null, failure).Failure);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral Library entry comparison does not widen Framework-only bundle comparison admission")]
     public void RetainsFrameworkProducerBoundary()
     {

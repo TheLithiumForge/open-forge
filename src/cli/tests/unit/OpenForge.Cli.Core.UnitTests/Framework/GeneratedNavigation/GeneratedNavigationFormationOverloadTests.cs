@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.GeneratedNavigation;
 
 public sealed class GeneratedNavigationFormationOverloadTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Current and explicit-current generated navigation formation are semantically equivalent")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void CurrentFormationDelegatesWithoutLosingObservedEvidence()
@@ -58,6 +59,7 @@ public sealed class GeneratedNavigationFormationOverloadTests
         Assert.Empty(explicitCurrent.IntendedTargetCollisions);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Intended source addition forms intended topology without inventing observed evidence")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void IntendedAdditionUsesTheExactNewSourceReference()
@@ -79,6 +81,7 @@ public sealed class GeneratedNavigationFormationOverloadTests
         Assert.Empty(formation.Issues);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Intended source addition retains unrelated observed orphan evidence without attaching it to the new source")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void IntendedAdditionRetainsUnrelatedObservedEvidence()
@@ -108,6 +111,7 @@ public sealed class GeneratedNavigationFormationOverloadTests
         Assert.Null(catalogue.FindCandidateByPath(added.Identity.CanonicalBasePath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Intended source removal drops membership topology and source-local observed evidence")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void IntendedRemovalDoesNotRetainStaleAliasOrIssueFacts()
@@ -139,6 +143,7 @@ public sealed class GeneratedNavigationFormationOverloadTests
         Assert.Empty(formation.Issues);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Projection ingress accepts exact intended sources and rejects clones and removed sources")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void ProjectionIngressUsesOnlyIntendedMembershipReferences()

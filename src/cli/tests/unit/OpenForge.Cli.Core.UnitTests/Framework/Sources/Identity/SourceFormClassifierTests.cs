@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Identity;
 
 public sealed class SourceFormClassifierTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral source-form classification recognizes every accepted source spelling"),
         InlineData(".agents/loader.md", nameof(SourceDocumentForm.Loader)),
         InlineData(".agents/root/_root.md", nameof(SourceDocumentForm.CanonicalEntrypoint)),
@@ -26,6 +27,7 @@ public sealed class SourceFormClassifierTests
         Assert.Equal(Enum.Parse<SourceDocumentForm>(expectedForm), form);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral source-form matching rejects wrong or noncanonical forms"),
         InlineData(".agents/root/leaf.md", nameof(SourceDocumentForm.Loader)),
         InlineData(".agents/root/leaf.overwrite.md", nameof(SourceDocumentForm.Markdown)),
@@ -42,6 +44,7 @@ public sealed class SourceFormClassifierTests
             Enum.Parse<SourceDocumentForm>(formName)));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source-form predicates distinguish canonical and compatibility entrypoints")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EntrypointPredicatesRetainBothIntrinsicCategories()
@@ -56,6 +59,7 @@ public sealed class SourceFormClassifierTests
         Assert.False(SourceFormClassifier.IsEntrypoint(SourceDocumentForm.Markdown));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral compatibility filename detection is finite and exact"),
         InlineData("index.md", true),
         InlineData("_index.md", true),

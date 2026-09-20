@@ -10,7 +10,8 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
-using OpenForge.Cli.IntegrationTests.Framework.Lifecycle;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
@@ -24,6 +25,7 @@ internal sealed class RouteRemoveIntegrationWorkspace : IDisposable
     internal const string LeafOverwritePath = ".agents/guidance/old guide.overwrite.md";
     internal const string CategoryId = "guidance/topics";
     internal const string CategoryPath = ".agents/guidance/topics/_topics.md";
+    internal const string CategorySiblingLeafPath = ".agents/guidance/topics.md";
     internal const string CategoryChildPath = ".agents/guidance/topics/child.md";
     internal const string CategoryNotesPath = ".agents/guidance/topics/notes.md";
     internal const string CategoryResourcePath = ".agents/guidance/topics/assets/settings.json";
@@ -32,7 +34,7 @@ internal sealed class RouteRemoveIntegrationWorkspace : IDisposable
     internal const string LoaderCategoryChildPath = ".agents/loader-topics/child.md";
     internal const string ParentPath = ".agents/guidance/_guidance.md";
     internal const string LoaderPath = ".agents/loader.md";
-    internal const string LifecyclePath = ".agents/open-forge.lifecycle.json";
+    internal const string OwnershipPath = ".agents/open-forge.lock.json";
 
     private readonly TemporaryWorkspace temporary;
     private readonly WorkspaceLockTestStore lockStore;
@@ -54,6 +56,8 @@ internal sealed class RouteRemoveIntegrationWorkspace : IDisposable
     internal CliWorkspace Workspace { get; }
 
     internal WorkspaceLockStoreRoot LockStoreRoot => lockStore.StoreRoot;
+
+    internal FileStream HoldLock() => lockStore.OpenExclusive(Workspace);
 
     internal string Path => temporary.Path;
 
@@ -121,31 +125,39 @@ internal sealed class RouteRemoveIntegrationWorkspace : IDisposable
     }
 
     internal void RemoveLifecycle()
-        => DeleteFile(LifecyclePath);
+        => DeleteFile(OwnershipPath);
 
     internal void SeedInvalidUtf8()
         => WriteBytes("unreadable.md", [0xff, 0xfe, 0xfd]);
 
-    internal void SeedFrameworkClaim(string path)
+    internal void SeedIdentityCollision()
+        => WriteText(
+            ".agents/guidance/old guide/_old guide.md",
+            Entrypoint("Collision", "- none - No entries - #Empty"));
+
+    internal void SeedCategoryIdentityCollision()
+        => WriteText(
+            CategorySiblingLeafPath,
+            Markdown("Topics sibling", "# Topics sibling\n\nSibling body.\n"));
+
+    internal void SeedFrameworkClaim(string path, bool region = false)
     {
-        var envelope = LifecycleStoreIntegrationDocuments.Envelope(
-            temporary,
-            LifecycleStoreIntegrationDocuments.Framework(path),
-            LifecycleStoreIntegrationDocuments.EmptyExtensions());
-        WriteBytes(
-            LifecyclePath,
-            LifecycleStoreIntegrationDocuments.Serialize(envelope));
+        var document = WorkspaceOwnershipDocument.Empty with
+        {
+            Framework = new(new("framework", null), region ? [] : [path], region ? [new(path, "entries")] : []),
+            Extensions = [],
+        };
+        WriteBytes(OwnershipPath, WorkspaceOwnershipCodec.Write(document));
     }
 
     internal void SeedExtensionClaim(string path)
     {
-        var envelope = LifecycleStoreIntegrationDocuments.Envelope(
-            temporary,
-            LifecycleStoreIntegrationDocuments.Framework(),
-            LifecycleStoreIntegrationDocuments.Extensions(path));
-        WriteBytes(
-            LifecyclePath,
-            LifecycleStoreIntegrationDocuments.Serialize(envelope));
+        var document = WorkspaceOwnershipDocument.Empty with
+        {
+            Framework = new(new("framework", null), [], []),
+            Extensions = [new("toolkit", null, null, [], [path], [])],
+        };
+        WriteBytes(OwnershipPath, WorkspaceOwnershipCodec.Write(document));
     }
 
     internal void AssertNoLockInfrastructure()
@@ -264,13 +276,10 @@ internal sealed class RouteRemoveIntegrationWorkspace : IDisposable
         WriteText(
             "notes.md",
             "[Topics](.agents/guidance/topics/_topics.md) remains.\n");
-        var envelope = LifecycleStoreIntegrationDocuments.Envelope(
-            temporary,
-            LifecycleStoreIntegrationDocuments.Framework(),
-            LifecycleStoreIntegrationDocuments.EmptyExtensions());
-        WriteBytes(
-            LifecyclePath,
-            LifecycleStoreIntegrationDocuments.Serialize(envelope));
+        WriteBytes(OwnershipPath, WorkspaceOwnershipCodec.Write(WorkspaceOwnershipDocument.Empty with
+        {
+            Framework = new(new("framework", null), [], []),
+        }));
     }
 
     private void DeleteRecoveryArtifacts()

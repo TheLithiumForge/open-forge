@@ -1,40 +1,43 @@
 ---
 open-forge:
-  description: Starting structure for an active workstream's current state, evidence, open questions, and next steps
-  tags: [Extension, Template, Memory, Planning, Working, Checkpoint, Contextual]
+  description: "Resume one active workstream from its actual state, evidence, and next action"
+  tags: [Extension, Template, Planning, Checkpoint, Memory]
 ---
 
 # {Workstream} Checkpoint
 
-{
-Template selection:
-
-- Need: Additional current context for one active workstream when durable sources alone are not enough to resume it.
-- Primary question: Where does this workstream stand, and what should happen next?
-
-Keep current state in the Task when that is sufficient. If a dedicated Checkpoint is useful, use one current Checkpoint for the workstream and link to it from the records that rely on its state. The [Work Records Pattern](../../patterns/work-records.md) defines the default relationships.
-
-Copy into the appropriate Working Checkpoints route and follow its [active-state and closeout rules](../../memory/working/checkpoints/_checkpoints.md). This is a changing resumption record. Create a Handoff only when a transfer boundary needs a stable snapshot while the Checkpoint may continue to change.
-
-Replace the Template metadata with accurate destination metadata, adapt the useful sections, and remove all braced guidance. Apply the destination's active continuity tags only while the Checkpoint is active. Recorded state and evidence do not accept their own conclusions.
-}
+<!-- TEMPLATE: Use one live Checkpoint when durable sources alone are insufficient to resume. Keep short state inside the Task when enough.
+Replace {prompts}; remove this comment and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying. -->
 
 ## Goal And Sources
 
-{Identify the active workstream and link to the source that defines its goal. Link to the Task, Plan, project rules, or external systems needed for continuation.}
+**Workstream:** {Outcome and link to its defining Task or request.}
+
+**Required context:** {Minimum sources needed for continuation; what each one defines.}
 
 ## Current State
 
-{State the current step and what is in progress. Identify the actual working location and baseline when continuation depends on them, including unfinished or unsaved work that must be preserved. Link to task status or completed history maintained elsewhere.}
+**Now:** {Current step and unfinished work.}
+
+**Working location and baseline:** {Exact revision or identifiable state when relevant.}
+
+**Preserve:** {Changed, untracked, unsaved, or externally held work that must not be lost.}
 
 ## Accepted Direction And Evidence
 
-{Link to accepted decisions and the decisive evidence needed to resume. State their scope and limits where those affect the next action. Keep candidate conclusions distinguishable from accepted direction.}
+{Link to accepted choices. Record only the evidence needed for the next action, including the actual result and the state it checked. Keep recommendations and unverified claims distinct.}
 
 ## Open Questions
 
-{Name blockers, missing inputs, and unresolved decisions. Identify what can proceed and what depends on resolving each question.}
+{Blockers, missing inputs, or unresolved decisions. State which work can still proceed and which work depends on each answer.}
 
 ## Next Steps
 
-{Give the exact next useful action and where it should begin. Link to the Plan for the remaining sequence instead of copying it.}
+**Next action:** {What to do first and where to begin.}
+
+**Then:** {Link to the Plan or short remaining sequence.}
+
+<!-- Add Active and KeepInMind only while this record supports active work.
+Refresh after meaningful state changes and context restoration. At closeout, preserve durable outcomes elsewhere, remove active loading tags, then archive or prune.
+A Handoff is a separate sealed transfer snapshot, not a routine copy of this live record. -->

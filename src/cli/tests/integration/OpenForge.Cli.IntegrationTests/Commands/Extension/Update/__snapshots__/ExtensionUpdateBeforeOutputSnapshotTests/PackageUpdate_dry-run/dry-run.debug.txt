@@ -1,0 +1,11 @@
+Would update the toolkit Extension to 1.0.0.
+Workspace: <workspace>
+  .agents/toolkit.md  replace (you had changed it and this version changes it)
+    Before SHA-256: <sha256>; After SHA-256: <sha256>; source asset: content/.agents/toolkit.md; verification: Verification: targets planned but not checked; Entries planned but not checked; Extension record planned but not checked; recovery: No recovery bundle was created.
+  Source: <extension-source>
+  Dependency closure: toolkit
+  0 files unchanged
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+  Verification: targets planned but not checked; Entries planned but not checked; Extension record planned but not checked
+  No recovery bundle was created.
+No files were changed.

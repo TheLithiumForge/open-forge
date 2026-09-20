@@ -17,9 +17,8 @@ This route contains maintainer contracts for reviewed files below `src/open-forg
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Current maintenance contract for the installable Directives Core category entrypoint](directives.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Directive
-- [Current maintenance contract for the installable Guidance Core category and its standard adaptive-collaboration entry](guidance.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Guidance
+- [Current maintenance contract for the installable Guidance Core category and its optional Collaboration Extension](guidance.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Guidance
 - [Current maintenance contract for the installable Open Forge loader and its dogfood counterpart](loader.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Framework #Loader #Routing
 - [Current maintenance contract for the installable Maps Core category entrypoint](map.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Map
 - [Current maintenance contracts for the installable Memory root and its Working, Emerging, Crystallized, and Archived `routes`](memory/_memory.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #MemoryModel
@@ -27,4 +26,3 @@ This route contains maintainer contracts for reviewed files below `src/open-forg
 - [Current maintenance contract for the installable Skills Core category entrypoint](skills.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Skill
 - [Current maintenance contract for the installable Templates Core category entrypoint](templates.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Template
 - [Current maintenance contract for the installable Workflows entrypoint and recipe shape](workflows.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Workflow
-<!-- open-forge:generated-index:end -->

@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport.Isolation;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -31,6 +32,7 @@ public sealed class RecoveryBundleContractTests
         Unsupported,
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Recovery content identity requires cohesive lowercase SHA-256 facts"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void ContentIdentityEnforcesLengthAndHash()
     {
@@ -43,6 +45,7 @@ public sealed class RecoveryBundleContractTests
         Assert.Throws<ArgumentException>(() => RecoveryContentIdentity.Create(4, identity.Sha256.ToUpperInvariant()));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Recovery input includes existing effects and excludes creates"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void InputFormsExactExistingTargetCoverage()
     {
@@ -96,6 +99,7 @@ public sealed class RecoveryBundleContractTests
         Assert.True(entries[2].Intended.OrdinaryFile?.Matches([10, 11]));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Recovery targets reject mismatched prior snapshots"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void TargetRejectsMismatchedPriorState()
     {
@@ -125,6 +129,7 @@ public sealed class RecoveryBundleContractTests
             intended: null));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Recovery identity uses exact deterministic final and draft names"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void PathIdentityIsExternalNormalizedAndDeterministic()
     {
@@ -156,6 +161,7 @@ public sealed class RecoveryBundleContractTests
             out _));
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Recovery manifest accepts harmless JSON formatting and property order"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void ManifestAcceptsSemanticJsonFormatting()
     {
@@ -176,6 +182,7 @@ public sealed class RecoveryBundleContractTests
         Assert.Single(decoded.Entries);
     }
 
+    [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Recovery manifest rejects duplicate unmapped and unsupported facts"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     [InlineData(ManifestMutation.DuplicateProperty, ExpectedManifestState.Malformed)]
     [InlineData(ManifestMutation.UnknownProperty, ExpectedManifestState.Malformed)]
@@ -214,6 +221,7 @@ public sealed class RecoveryBundleContractTests
         Assert.NotNull(decoded.Cause);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Recovery preparation cannot be synthesized from scalar read facts"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void PreparationRejectsUnauthorizedReadbackToken()
     {
@@ -236,10 +244,11 @@ public sealed class RecoveryBundleContractTests
             new object()));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Recovery preparation failures carry only honest residual paths"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void PreparationResultCarriesResidualPath()
     {
-        var path = Path.Combine(Path.GetTempPath(), $"operation-{Guid.NewGuid():N}.draft");
+        var path = TestDataHome.AbsentPath("operation", ".draft");
 
         Assert.Equal(path, RecoveryBundlePreparationResult.Cancelled(path).ResidualPath);
         Assert.Null(RecoveryBundlePreparationResult.Cancelled().ResidualPath);
@@ -248,10 +257,11 @@ public sealed class RecoveryBundleContractTests
             RecoveryBundlePreparationResult.Incomplete("storage failed", path).ResidualPath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Recovery deletion results retain every valid state and disposition shape"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void DeletionResultsPreserveValidStateAndDispositionShapes()
     {
-        var path = Path.Combine(Path.GetTempPath(), $"operation-{Guid.NewGuid():N}.zip");
+        var path = TestDataHome.AbsentPath("operation", ".zip");
         var failure = new FilesystemFailure(
             FilesystemFailureKind.InputOutput,
             "The deletion boundary failed.");
@@ -284,10 +294,11 @@ public sealed class RecoveryBundleContractTests
         Assert.Null(results[6].ResidualPath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Recovery deletion results reject impossible state and disposition shapes"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void DeletionResultsRejectImpossibleStateAndDispositionShapes()
     {
-        var path = Path.Combine(Path.GetTempPath(), $"operation-{Guid.NewGuid():N}.zip");
+        var path = TestDataHome.AbsentPath("operation", ".zip");
         (RecoveryBundleDeletionState State, RecoveryBundleDisposition Disposition)[] impossible =
         [
             (RecoveryBundleDeletionState.Deleted, RecoveryBundleDisposition.Retained),

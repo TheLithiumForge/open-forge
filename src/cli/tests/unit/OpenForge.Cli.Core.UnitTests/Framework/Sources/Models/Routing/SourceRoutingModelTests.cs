@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Routing;
 
 public sealed class SourceRoutingModelTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral route nodes retain reciprocal parent and child facts in ordinal order")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void TopologyModelsSnapshotValidatedRelationships()
@@ -22,6 +23,7 @@ public sealed class SourceRoutingModelTests
         Assert.Empty(child.ChildPaths);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral route nodes retain all ambiguous authored parent candidates without choosing by order")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void AmbiguousParentsRemainAmbiguous()
@@ -40,6 +42,7 @@ public sealed class SourceRoutingModelTests
             node.ParentPaths);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral topology models reject nonreciprocal relationships, unknown roots, and cycles")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void TopologyInvariantsRemainStrict()
@@ -83,6 +86,7 @@ public sealed class SourceRoutingModelTests
             [first.Identity.CanonicalBasePath]));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral route facts derive route metadata only for unique routed identities"),
         InlineData(nameof(SourceRouteState.Routed), true, "root"),
         InlineData(nameof(SourceRouteState.Routed), false, null),
@@ -107,6 +111,7 @@ public sealed class SourceRoutingModelTests
         Assert.Equal(isIdentityUnique, fact.IsIdentityUnique);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral route issues retain stable occurrence and bounded direct cause")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void RouteIssuesRetainTypedOrderingFacts()
@@ -126,6 +131,7 @@ public sealed class SourceRoutingModelTests
         Assert.Equal(256, issue.Cause.Length);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral route facts retain ordered facts, issues, topology, completeness, and cancellation")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void RouteFactsAreOneImmutableBoundary()

@@ -23,6 +23,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Attach;
 
 public sealed class LibraryAttachApplicationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData("verified"), InlineData("no-recovery"), InlineData("changed-record"), InlineData("changed-leaf"), InlineData("cancelled")]
     public static async Task HeldLeaseRevalidatesWholePlanAndRetainsRealExecutionReceipts(string scenario)
@@ -31,10 +32,10 @@ public sealed class LibraryAttachApplicationIntegrationTests
         using var locks = WorkspaceLockTestStore.Create("library-attach-application");
         workspace.Source();
         workspace.Directory(".agents/directives");
-        LibraryMutationApplicationData.Lifecycle(workspace);
+        LibraryMutationApplicationData.FrameworkFile(workspace);
 
         var plan = Plan(workspace);
-        var recordChange = Assert.IsType<PlannedFileChange>(plan.RecordChange);
+        var recordChange = Assert.IsType<PlannedFileChange>(plan.OwnershipChange);
         var recordBefore = Assert.IsType<FileStateSnapshot>(plan.Input.Record.Snapshot);
         var link = Assert.Single(plan.Links);
         var recovery = RecoveryBundleInput.Create(workspace.Workspace, command: "library attach",
@@ -140,11 +141,11 @@ public sealed class LibraryAttachApplicationIntegrationTests
             Source = LibraryMutationApplicationData.Inventory(workspace),
             Mappings = LibraryMutationApplicationData.Mapping(workspace, linked: false),
             ConsumerBoundary = LibraryMutationApplicationData.Boundary(workspace),
-            Ownership = LibraryMutationApplicationData.Ownership(workspace),
+            Ownership = LibraryMutationApplicationData.WorkspaceOwnership(workspace),
             GeneratedRegionChanges = [],
         };
         var intendedBytes = Encoding.UTF8.GetBytes("""
-            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/directives/review.md"]}]}
+            {"schemaVersion":1,"framework":null,"extensions":[],"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/directives/review.md"]}]}
             """);
         return new LibraryAttachPlan
         {
@@ -154,7 +155,7 @@ public sealed class LibraryAttachApplicationIntegrationTests
             Directories = [],
             Links = [LibraryMutationApplicationData.Link(delete: false)],
             GeneratedRegions = [],
-            RecordChange = PlannedFileChange.Create(before.Expectation, intendedBytes),
+            OwnershipChange = PlannedFileChange.Create(before.Expectation, intendedBytes),
             IntendedRecord = LibraryMutationApplicationData.Record(registered: true),
             Findings = [],
         };

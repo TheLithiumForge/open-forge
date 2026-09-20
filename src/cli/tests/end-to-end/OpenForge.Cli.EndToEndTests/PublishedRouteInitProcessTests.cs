@@ -10,30 +10,33 @@ public sealed class PublishedRouteInitProcessTests
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedRouteInitWorkspace.CreateGeneric();
-        string[] arguments = ["route", "init", "docs", "--description", "Project documents", "--tag=Documentation", "--json", "--workspace", workspace.Path];
+        string[] arguments = ["route", "init", "docs", "--description", "Project documents", "--tag=Documentation", "--format=json", "--detail", "full", "--workspace", workspace.Path];
         var preview = await RunWithoutWritesAsync(target, workspace, [.. arguments, "--dry-run"]);
         Assert.Equal(0, preview.ExitCode);
         Assert.Equal(string.Empty, preview.StandardError);
         using var previewDocument = JsonDocument.Parse(preview.StandardOutput);
-        Assert.Equal("dry-run", previewDocument.RootElement.GetProperty("result").GetProperty("mode").GetString());
+        Assert.Equal("dry-run", previewDocument.RootElement.GetProperty("data").GetProperty("mode").GetString());
         workspace.AssertNoLockInfrastructure();
 
         var applied = await PublishedProcessTestSupport.RunAsync(target, workspace.Path, arguments, workspace.ProcessEnvironment);
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
         using var appliedDocument = JsonDocument.Parse(applied.StandardOutput);
-        Assert.Equal("verified", appliedDocument.RootElement.GetProperty("result").GetProperty("verification").GetString());
+        Assert.Equal("verified", appliedDocument.RootElement.GetProperty("data").GetProperty("verification").GetString());
         Assert.True(File.Exists(workspace.Combine(PublishedRouteInitWorkspace.GenericTargetPath)));
         var scaffold = await workspace.ReadTextAsync(PublishedRouteInitWorkspace.GenericTargetPath, TestContext.Current.CancellationToken);
         Assert.Contains("Project documents", scaffold, StringComparison.Ordinal);
         Assert.Contains("# docs", scaffold, StringComparison.Ordinal);
         workspace.AssertPersistentExternalLock();
 
-        var noOp = await RunWithoutWritesAsync(target, workspace, ["route", "init", "docs", "--json", "--workspace", workspace.Path]);
+        var noOp = await RunWithoutWritesAsync(target, workspace, ["route", "init", "docs", "--format=json", "--workspace", workspace.Path]);
         Assert.Equal(0, noOp.ExitCode);
         Assert.Equal(string.Empty, noOp.StandardError);
         using var noOpDocument = JsonDocument.Parse(noOp.StandardOutput);
-        Assert.Empty(noOpDocument.RootElement.GetProperty("result").GetProperty("effects").EnumerateArray());
+        Assert.Empty(noOpDocument.RootElement.GetProperty("effects").EnumerateArray());
+        Assert.All(
+            noOpDocument.RootElement.GetProperty("data").GetProperty("entrypoints").EnumerateArray(),
+            entrypoint => Assert.Equal("unchanged", entrypoint.GetProperty("outcome").GetString()));
     }
 
     [Fact(DisplayName = "Published Framework Route Init reuses Install and converges one sparse scope"), Trait("Feature", "route-init"), Trait("Evidence", "EndToEnd")]
@@ -42,21 +45,21 @@ public sealed class PublishedRouteInitProcessTests
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedRouteInitWorkspace.CreateFramework();
         var installed = await PublishedProcessTestSupport.RunAsync(target, workspace.Path,
-            ["install", "--automatic", "--json", "--workspace", workspace.Path], workspace.ProcessEnvironment);
+            ["install", "--automatic", "--format=json", "--workspace", workspace.Path], workspace.ProcessEnvironment);
         Assert.Equal(0, installed.ExitCode);
         Assert.Equal(string.Empty, installed.StandardError);
-        string[] arguments = ["route", "init", "memory/Mobile App/crystallized/documents", "--framework", "--json", "--workspace", workspace.Path];
+        string[] arguments = ["route", "init", "memory/Mobile App/working", "--framework", "--format=json", "--detail", "full", "--workspace", workspace.Path];
         var preview = await RunWithoutWritesAsync(target, workspace, [.. arguments, "--dry-run"]);
-        Assert.Equal(2, preview.ExitCode);
+        Assert.Equal(0, preview.ExitCode);
         Assert.Equal(string.Empty, preview.StandardError);
         using var previewDocument = JsonDocument.Parse(preview.StandardOutput);
-        Assert.Equal("framework", previewDocument.RootElement.GetProperty("result").GetProperty("scaffold").GetString());
+        Assert.Equal("framework", previewDocument.RootElement.GetProperty("data").GetProperty("scaffold").GetString());
 
         var applied = await PublishedProcessTestSupport.RunAsync(target, workspace.Path, arguments, workspace.ProcessEnvironment);
-        Assert.Equal(2, applied.ExitCode);
+        Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
         using var appliedDocument = JsonDocument.Parse(applied.StandardOutput);
-        Assert.Equal("verified", appliedDocument.RootElement.GetProperty("result").GetProperty("verification").GetString());
+        Assert.Equal("verified", appliedDocument.RootElement.GetProperty("data").GetProperty("verification").GetString());
         Assert.True(File.Exists(workspace.Combine(PublishedRouteInitWorkspace.FrameworkFinalPath)));
         workspace.AssertPersistentExternalLock();
 
@@ -64,9 +67,10 @@ public sealed class PublishedRouteInitProcessTests
         Assert.Equal(0, noOp.ExitCode);
         Assert.Equal(string.Empty, noOp.StandardError);
         using var noOpDocument = JsonDocument.Parse(noOp.StandardOutput);
-        var result = noOpDocument.RootElement.GetProperty("result");
-        Assert.Empty(result.GetProperty("effects").EnumerateArray());
-        Assert.Equal("already-current", result.GetProperty("lifecycle").GetProperty("outcome").GetString());
+        Assert.Empty(noOpDocument.RootElement.GetProperty("effects").EnumerateArray());
+        Assert.All(
+            noOpDocument.RootElement.GetProperty("data").GetProperty("entrypoints").EnumerateArray(),
+            entrypoint => Assert.Equal("unchanged", entrypoint.GetProperty("outcome").GetString()));
     }
 
     [Fact(DisplayName = "Published Framework Route Init refuses a workspace without trusted Install"), Trait("Feature", "route-init"), Trait("Evidence", "EndToEnd")]
@@ -75,12 +79,13 @@ public sealed class PublishedRouteInitProcessTests
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedInstallWorkspace.Create();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotState,
-            ["route", "init", "memory/crystallized/documents", "--framework", "--workspace", workspace.Path], workspace.ProcessEnvironment);
+            ["route", "init", "memory/working", "--framework", "--workspace", workspace.Path, "--detail", "standard"], workspace.ProcessEnvironment);
 
         Assert.Equal(5, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardOutput);
-        Assert.Contains("Status: blocked", result.StandardError, StringComparison.Ordinal);
-        Assert.Contains("establish a trusted current Framework installation", result.StandardError, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Cannot initialize", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains("The Framework scaffold needs an installed Framework", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge install --dry-run", result.StandardError, StringComparison.Ordinal);
         workspace.AssertNoLockInfrastructure();
     }
 

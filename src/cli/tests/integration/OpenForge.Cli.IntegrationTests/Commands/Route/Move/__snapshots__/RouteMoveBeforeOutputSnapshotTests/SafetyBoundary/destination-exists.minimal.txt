@@ -1,0 +1,4 @@
+Cannot move guidance/old guide: .agents/guidance/new guide.md already exists.
+Workspace: <workspace>
+  files scanned: the reference scan was not completed
+Next: choose another destination

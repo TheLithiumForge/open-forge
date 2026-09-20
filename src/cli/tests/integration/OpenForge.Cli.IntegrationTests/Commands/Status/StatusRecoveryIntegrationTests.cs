@@ -2,6 +2,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 
 public sealed class StatusRecoveryIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Recovery catalogue reports only exact candidate path kind and integrity without lock or fallback effects"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
     public async Task RecoveryCatalogueReportsOnlyExactCandidatePathKindAndIntegrityWithoutTargetLockOrFallbackEffects()
     {
@@ -22,7 +23,7 @@ public sealed class StatusRecoveryIntegrationTests
         var recoveryBefore = StatusRecoveryCatalogue.SnapshotEntries(recovery.WorkspaceDirectory);
         var externalBefore = exclusions.SnapshotExternalBytes();
 
-        var run = await StatusIntegrationApplication.RunAsync(workspace, "status", "--workspace", workspace.Path, "--json");
+        var run = await StatusIntegrationApplication.RunAsync(workspace, "status", "--workspace", workspace.Path, "--format", "json", "--detail", "full");
 
         Assert.Equal(3, run.ExitCode);
         Assert.Equal(string.Empty, run.StandardError);
@@ -30,10 +31,9 @@ public sealed class StatusRecoveryIntegrationTests
         var root = document.RootElement;
         Assert.Equal("incomplete", root.GetProperty("status").GetString());
         var result = StatusJsonAssertions.Result(root);
-        var facts = result.GetProperty("recovery");
-        StatusJsonAssertions.AvailableValue(facts.GetProperty("verifiedFinals"), 1);
-        StatusJsonAssertions.AvailableValue(facts.GetProperty("incompleteDrafts"), 1);
-        var candidates = facts.GetProperty("candidates").EnumerateArray().ToArray();
+        StatusJsonAssertions.AvailableValue(root.GetProperty("counts").GetProperty("recoveryBundles"), 1);
+        StatusJsonAssertions.AvailableValue(root.GetProperty("counts").GetProperty("recoveryDrafts"), 1);
+        var candidates = result.GetProperty("recovery").GetProperty("candidates").EnumerateArray().ToArray();
         Assert.Equal(5, candidates.Length);
         Assert.All(candidates, item => StatusJsonAssertions.PropertyOrder(item, "path", "kind", "integrity"));
         var expected = new[]
@@ -54,14 +54,14 @@ public sealed class StatusRecoveryIntegrationTests
         Assert.DoesNotContain(candidates, item => item.GetProperty("path").GetString() == differentWorkspace);
         foreach (var code in new[]
         {
-            "recovery-candidate-verified",
-            "recovery-draft-incomplete",
-            "recovery-final-malformed",
-            "recovery-final-unsupported",
-            "recovery-final-unavailable",
+            "status.recovery-candidate-verified",
+            "status.recovery-draft-incomplete",
+            "status.recovery-final-malformed",
+            "status.recovery-final-unsupported",
+            "status.recovery-final-unavailable",
         })
         {
-            Assert.Contains(result.GetProperty("findings").EnumerateArray(), finding => finding.GetProperty("code").GetString() == code);
+            Assert.Contains(root.GetProperty("findings").EnumerateArray(), finding => finding.GetProperty("code").GetString() == code);
         }
 
         Assert.Equal(before, workspace.SnapshotHashes());

@@ -1,0 +1,2 @@
+Nothing was installed from <extension-source>: the package has no content directory.
+  Package files belong under <extension-source>/content/.agents/.

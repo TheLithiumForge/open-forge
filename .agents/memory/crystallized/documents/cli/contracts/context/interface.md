@@ -74,8 +74,8 @@ collisions, and disambiguation rather than this command creating a second source
 grammar.
 
 `context` has no child operation, alias, additional global flag, or alternate
-spelling. The six shared global flags, `--workspace`, `--json`, `--view`,
-`--verbose`, `--help`, and `--version`, apply under the shared contract.
+spelling. The six shared global flags, `--workspace`, `--format json`, `--detail`,
+`--detail debug`, `--help`, and `--version`, apply under the shared contract.
 
 ### Operands
 
@@ -96,8 +96,8 @@ behavior is defined below.
 | `--follow-links=<positive-depth\|all>` | Selection  | A positive integer depth or `all`                         | Do not follow ordinary outgoing links                                       | Zero is invalid. Repetition is invalid, including repeated values that are equal and values that conflict.                                                            |
 
 The shared global flags retain their shared defaults, repetition rules, terminal
-behavior, output behavior, and errors. In particular, `--view` changes only
-human presentation, `--json` selects one structured result, and `--verbose`
+behavior, output behavior, and errors. In particular, `--detail` changes only
+human presentation, `--format json` selects one structured result, and `--detail debug`
 adds bounded diagnostic detail under that shared contract.
 
 ## Workspace
@@ -171,7 +171,7 @@ to resolve a conflict.
 
 An unknown reference is invalid. An ambiguous or unsafe reference is blocked. A
 known source with unrelated structural findings may still return safe context
-with an `attention` or `incomplete` result, provided the command states the
+with an `completed-with-warnings` or `incomplete` result, provided the command states the
 missing boundary clearly.
 
 ## Additions Beyond Startup
@@ -194,11 +194,11 @@ result would have no selected addition.
 
 When link expansion is enabled, the command expands the startup closure alone
 and the startup-plus-route closure with the same depth. It then subtracts the
-expanded startup set. A source reachable from startup does not become a route
+standard startup set. A source reachable from startup does not become a route
 addition only because a selected route also links to it.
 
 If that fully resolved difference contains zero added sources, the command
-returns an explicit `complete` empty result. This is distinct from the invalid
+returns an explicit `completed` empty result. This is distinct from the invalid
 request that omits every explicit source while using `--additions-only`.
 
 Source blocks and findings needed to explain an added source remain in the
@@ -227,7 +227,7 @@ The resolved projection has one canonical order independent of flag order:
    requested sections.
 
 Requested sections follow document order within each physical layer, not the
-order in which their parts appeared in `--content`. The default expanded
+order in which their parts appeared in `--content`. The default standard
 metadata framing remains around each emitted layer even when `metadata` was not
 selected explicitly, except that a paths-only projection replaces those repeated
 per-source framing blocks. This framing is CLI-generated and does not alter the
@@ -261,7 +261,7 @@ is not a content part. CLI-generated source metadata uses `metadata`.
 
 ### Source Metadata
 
-In the default expanded view, each emitted layer has a labelled source metadata
+In the default standard view, each emitted layer has a labelled source metadata
 block, even when `metadata` is not selected explicitly:
 
 ```text
@@ -279,9 +279,9 @@ understandable. It is CLI-generated result metadata, not authored YAML
 frontmatter or file content. `--content=metadata` emits only these generated
 metadata blocks; the standard result summary and related findings remain.
 
-Compact view renders one token-friendly row per physical layer with sequence,
+Minimal view renders one token-friendly row per physical layer with sequence,
 ID, path, and layer. It omits optional route, scope, and inclusion explanation;
-required completeness findings and next actions remain visible. Expanded view
+required completeness findings and next actions remain visible. Standard view
 retains every inclusion reason and provenance field shown above. JSON retains the
 complete typed metadata regardless of human view.
 
@@ -297,7 +297,7 @@ or simplify source selection. Startup closure, explicit sources,
 `--additions-only`, link expansion, deduplication, base-then-overwrite order,
 findings, and completeness remain unchanged.
 
-Compact human view emits one canonical workspace-relative path per line in
+Minimal human view emits one canonical workspace-relative path per line in
 context order:
 
 ```text
@@ -306,7 +306,7 @@ context order:
 .agents/memory/working/_working.md
 ```
 
-Expanded human view adds sequence, ID, layer, inclusion category, and every
+Standard human view adds sequence, ID, layer, inclusion category, and every
 inclusion reason:
 
 ```text
@@ -344,9 +344,8 @@ returns metadata blocks without frontmatter or bodies. Illustrative excerpt:
 
 ```text
 Context
-Status: complete
+
 Workspace: D:/work/example
-Selected by: current directory
 Sources: 3; coverage complete
 Content: metadata
 Startup context included: no; additions only: yes
@@ -418,7 +417,7 @@ without returning section bodies. It uses the same structural heading nodes,
 visible text, levels, source forms, and source ranges as exact section
 projection.
 
-Compact human view emits one authored heading per line in document order with
+Minimal human view emits one authored heading per line in document order with
 enough indentation or heading markers to preserve level:
 
 ```text
@@ -426,7 +425,7 @@ enough indentation or heading markers to preserve level:
 ## Instructions
 ```
 
-Expanded human view adds the physical layer, 1-based line, heading level, source
+Standard human view adds the physical layer, 1-based line, heading level, source
 form, and canonical-authoring status:
 
 ```text
@@ -505,7 +504,7 @@ follow that layer's document order rather than the order in `--content`.
 
 When neither layer contains a requested section, the source remains present with
 a named missing-section finding. If every relevant layer was inspected
-completely, the known absence produces `attention`: selection and inspection are
+completely, the known absence produces `completed-with-warnings`: selection and inspection are
 complete, but the requested projection is not available for that source. This
 rule also applies when one of several requested sections is known absent or one
 of several selected sources lacks the section.
@@ -518,8 +517,8 @@ occurrence. An unambiguous section in the other layer may still be emitted with
 that finding. An unreadable layer or incomplete parse is also `incomplete`
 because the command cannot prove absence.
 
-Compact human output retains result and projection coverage plus each affected
-source and missing or ambiguous section name. Expanded and structured output add
+Minimal human output retains result and projection coverage plus each affected
+source and missing or ambiguous section name. Standard and structured output add
 layer, location, evidence, and every independently available section.
 
 Section projection does not change route selection, loading, or link-expansion
@@ -629,7 +628,7 @@ Path: <canonical workspace-relative path>
 ```
 
 Structured output uses a null ID and the canonical workspace-relative path. Such
-a target is link-expanded content, not a source-reference operand, route, or
+a target is link-standard content, not a source-reference operand, route, or
 managed Open Forge source.
 
 ### Link Findings
@@ -637,7 +636,7 @@ managed Open Forge source.
 A missing target, broken fragment, case mismatch, containment escape, invalid
 encoding, or ambiguous local target remains visible. The command never silently
 drops a broken edge. The status classification and precedence for these and
-other findings are defined under [Status Classification](#status-classification).
+other findings are defined under [Semantic Results](#semantic-results).
 
 Safe sources may still be returned beside unrelated broken links. The result
 preserves every independently safe source and observation allowed by the finding
@@ -671,7 +670,7 @@ ambiguous rather than an independent source.
 
 The startup-required closure follows Framework loading order. Explicit route
 closures follow operand order while preserving each route's internal parent,
-target, #LoadNow, #KeepInMind, and overwrite order. Link-expanded sources are appended in
+target, #LoadNow, #KeepInMind, and overwrite order. Link-standard sources are appended in
 stable breadth-first order by link depth, source order, and document link order.
 
 When several relationships select the same source:
@@ -685,542 +684,122 @@ Canonical path identity and physical containment prevent aliases from producing
 duplicate or unsafe nodes. The CLI Architecture defines the accepted
 cross-platform identity and containment realization.
 
-## Results And Failures
-
-### Status Classification
-
-The command classifies ordinary findings deterministically:
-
-| Condition                                                                                                                                                                            | Semantic status |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------- |
-| Unsafe or ambiguous source or local-target identity, workspace containment, or overwrite identity or boundary                                                                        | `blocked`       |
-| Missing local target, broken fragment, invalid link encoding, unreadable required layer, incomplete required parse, or ambiguous section                                             | `incomplete`    |
-| A completely inspected safe observation, such as a requested section proven absent or an exact target case mismatch                                                                  | `attention`     |
-| No unresolved condition, including a fully resolved zero-source `--additions-only` difference, an empty heading outline, external unchecked observations, cycles, or duplicate links | `complete`      |
-
-Invalid request input, including invalid repetition, remains `invalid` and stops
-before operation resolution. An unexpected failure retains `failed`, and caller
-interruption retains `interrupted`. When multiple ordinary conditions occur,
-`blocked` takes precedence over `incomplete`, `incomplete` over `attention`, and
-`attention` over `complete`. The command preserves every independently safe
-source and observation allowed by that boundary and never hides a broken edge.
-
-### Semantic Status
-
-The command returns one result status:
-
-| Status        | Meaning                                                                                                                                                                                                                                                                |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | Resolution completed and the requested context has no unresolved finding; a fully resolved empty difference or empty heading outline is an explicit complete result                                                                                                    |
-| `attention`   | Resolution and inspection completed with safe findings, including a requested section proven absent from one or more completely inspected logical sources or an exact target case mismatch                                                                             |
-| `incomplete`  | Safe content is available, but one or more requested relationships or projections could not be established completely, including missing local targets, broken fragments, invalid link encodings, unreadable required layers, incomplete parses, or ambiguous sections |
-| `invalid`     | Command input or a selected route does not follow the accepted grammar; invalid input stops before operation resolution                                                                                                                                                |
-| `blocked`     | The command could not establish a safe context boundary because source or local-target identity, containment, or overwrite identity or boundary is unsafe or ambiguous                                                                                                 |
-| `failed`      | An unexpected internal failure prevented normal completion                                                                                                                                                                                                             |
-| `interrupted` | The caller cancelled or interrupted the operation before completion                                                                                                                                                                                                    |
-
-The shared process-status mapping is defined by the [Shared Result
-Coordinates](../shared/result-coordinates/interface.md).
-
-### Required Summary
-
-Every result reports:
-
-- Selected workspace and selection method.
-- Explicit source references and their resolved IDs and paths.
-- Whether the startup-required closure was included.
-- Whether `--additions-only` was applied.
-- Requested content parts.
-- Requested link depth.
-- Ordered source count.
-- Findings and missing boundaries.
-
-Both human views begin with Context, status, workspace/selection, source count,
-coverage, content selection, startup inclusion, additions-only and link depth.
-Requested references and unresolved findings appear before content, with exact
-subjects, paths and available line/column. Unknown counts remain unknown.
-
-Compact keeps short source boundaries and selected authored content. A paths-only
-request lists the ordered paths; when bodies or other projections are also
-selected, each path appears at its source boundary rather than in a duplicate
-path list. Expanded adds existing source order, ID, route, layer and loading
-reasons. Every unresolved link remains in compact; expanded shows all observed
-links. Human framing uses line/column; JSON retains full byte coordinates.
-
-The actual Next command appears once after content when present, with its reason
-in expanded output. Generated labels are escaped without truncating paths or
-subjects. Selected authored text stays exact, including whitespace and overwrite
-boundaries, in both views. JSON remains the complete unchanged typed result.
-
-### Exact Schema-v1 Command-Local Result
-
-The [Shared Result Coordinates](../shared/result-coordinates/interface.md)
-schema-v1 envelope wraps this command-local `result` object.
-The envelope remains exactly `{ schemaVersion, command, status, workspace,
-result, next }`; its aggregate `status`, workspace, and next action are not
-duplicated below. The shared `SourceLocation` primitive is the same authority's
-exact `{ line, column, byteOffset, byteLength }` shape.
-
-The following camel-case grammar lists every command-local member in wire order.
-No member is omitted.
-
-```text
-type ContextResult = {
-  selection: Selection;
-  presentation: Presentation;
-  coverage: Coverage;
-  paths: PathProjection[];
-  links: Link[];
-  sources: Source[];
-  findings: Finding[];
-};
-
-type Selection = {
-  requestedSources: RequestedSource[];
-  startupIncluded: boolean;
-  additionsOnly: boolean;
-  linkExpansion: LinkExpansion;
-  sourceCount: nonnegative-integer | null;
-};
-
-type RequestedSource = {
-  supplied: string;
-  form: "source-id" | "source-path";
-  resolution: "resolved" | "invalid" | "unknown" | "ambiguous" | "unsupported" | "unsafe";
-  source: SourceIdentity | null;
-  routeState: RouteState | null;
-  candidates: SourceIdentity[];
-};
-
-type SourceIdentity = {
-  id: string | null;
-  path: string;
-};
-
-type LinkExpansion = {
-  mode: "none" | "bounded" | "all";
-  depth: positive-integer | null;
-};
-
-type Presentation = {
-  view: {
-    supplied: "compact" | "expanded" | null;
-    effective: "compact" | "expanded";
-  };
-  content: {
-    supplied: CanonicalPart[];
-    effective: CanonicalPart[];
-  };
-};
-
-type Coverage = {
-  state: CoverageState;
-  selection: CoverageState;
-  links: OptionalCoverageState;
-  projection: CoverageState;
-};
-
-type PathProjection = {
-  position: positive-integer;
-  sourcePosition: positive-integer;
-  id: string | null;
-  path: string;
-  layer: SourceLayer;
-  inclusionReasons: InclusionReason[];
-};
-
-type Source = {
-  position: positive-integer;
-  id: string | null;
-  path: string;
-  routeState: RouteState;
-  route: string | null;
-  scope: string | null;
-  inclusionReasons: InclusionReason[];
-  layers: Layer[];
-};
-
-type Layer = {
-  pathPosition: positive-integer;
-  kind: SourceLayer;
-  path: string;
-  inclusionReasons: InclusionReason[];
-  projections: Projection[];
-};
-
-type InclusionReason = {
-  kind: "workspace-entry" | "loader" | "load-now" | "keep-in-mind" | "ancestor-required" | "selected-source" | "scope-local" | "linked-source" | "overwrite-companion";
-  source: SourceIdentity | null;
-  reference: string | null;
-  depth: positive-integer | null;
-  location: SourceLocation | null;
-};
-
-type Projection = {
-  part: "frontmatter" | "headings" | "body" | "section";
-  name: string | null;
-  state: "available" | "missing" | "unavailable" | "ambiguous";
-  text: string | null;
-  headings: ProjectedHeading[];
-  location: SourceLocation | null;
-};
-
-type ProjectedHeading = {
-  text: string;
-  level: positive-integer;
-  form: "atx" | "setext";
-  location: SourceLocation;
-  canonical: boolean;
-};
-
-type Link = {
-  depth: positive-integer;
-  source: {
-    id: string | null;
-    path: string;
-    layer: SourceLayer;
-  };
-  location: SourceLocation;
-  destinationLocation: SourceLocation | null;
-  rawDestination: string;
-  fragment: string | null;
-  target: {
-    kind: "local" | "external" | "unsupported";
-    id: string | null;
-    path: string | null;
-    layer: SourceLayer | null;
-    resolution: "complete" | "missing" | "fragment-missing" | "case-mismatch" | "malformed" | "absolute" | "query" | "encoding-unsupported" | "outside-workspace" | "physical-escape" | "ambiguous" | "unreadable" | "unsupported" | "external-unchecked";
-    network: "network-not-attempted" | null;
-  };
-  disposition: "selected" | "already-selected" | "cycle" | "external-unchecked" | "unresolved";
-};
-
-type Finding = {
-  code: ContextFindingCode;
-  status: SharedStatus;
-  subject: string | null;
-  cause: string;
-  reference: string | null;
-  source: SourceIdentity | null;
-  layer: SourceLayer | null;
-  path: string | null;
-  part: CanonicalPart | null;
-  location: SourceLocation | null;
-  destinationLocation: SourceLocation | null;
-  candidates: SourceIdentity[];
-};
-
-type RouteState = "routed" | "unrouted" | "ambiguous" | "unavailable";
-
-type SourceLayer = "base" | "overwrite";
-
-type CoverageState =
-  "not-started" | "complete" | "incomplete" | "blocked" | "failed" | "interrupted";
-
-type OptionalCoverageState = CoverageState | "not-requested";
-
-type CanonicalPart =
-  "metadata" | "paths" | "frontmatter" | "headings" | "body" | "section:<name>";
-
-type SharedStatus =
-  "complete" | "attention" | "incomplete" | "invalid" | "blocked" | "failed" | "interrupted";
-```
-
-`requestedSources` preserves operand order. `supplied` is the exact value after
-shell parsing. `form`, `resolution`, `source`, `routeState`, and `candidates`
-retain the shared source-reference facts even when resolution cannot continue.
-`candidates` is always present and is empty unless ambiguity evidence exists.
-An operand-free request uses an empty array.
-
-`startupIncluded` states whether startup sources are emitted in the result. It
-is false for `--additions-only` and for invalid input that stops before
-resolution. `additionsOnly` retains the normalized Boolean request.
-`linkExpansion.mode` is `none` when the flag is omitted, `bounded` for a positive
-integer, and `all` for the complete reachable closure. `depth` is non-null only
-for `bounded`. `sourceCount` is the known nonnegative ordered logical-source
-count when selection is established and `null` otherwise. A complete empty
-additions difference uses zero. Physical-layer cardinality remains derivable
-from `sources[].layers`.
-
-`view.supplied` is null when omitted, and `view.effective` is always `compact` or
-`expanded`. `content.supplied` preserves parsed part order. `content.effective`
-uses the canonical order `metadata`, `paths`, `frontmatter`, `headings`, `body`,
-then requested sections in their first supplied order. Omission uses an empty
-`supplied` array and effective `frontmatter,body`. Both arrays use canonical
-`section:<name>` strings after list escaping is resolved.
-
-`coverage.state` is the complete operation coverage. `selection` covers startup,
-explicit-route, additions, ordering, and identity work. `links` is
-`not-requested` when link expansion is omitted. `projection` covers every
-requested effective content part. A known missing requested section has complete
-projection coverage and an `attention` finding. Unavailable or ambiguous content
-has incomplete projection coverage. Coverage does not repeat the aggregate
-semantic status; attention is complete coverage with a safe finding.
-
-`paths` contains the operation-level physical-layer rows only when `paths` is
-selected and is otherwise empty. Its `position` is the 1-based global physical
-layer order, and `sourcePosition` is the 1-based logical-source position in `sources`.
-The array retains complete provenance even when paths are the only selected
-content part.
-
-`sources` uses first canonical selection position. `id` is null only for the
-workspace entry or contained linked content outside `.agents`. `path` is the
-canonical workspace-relative base path. `route` is non-null only for one
-established unambiguous route. `scope` is non-null only when an applicable
-Framework component contract supplies explicit scope evidence; Context never
-infers a semantic scope name from path shape or tags. Every source and layer
-retains all independently established inclusion reasons in discovery order.
-
-An inclusion reason's `source` is the established parent, target, seed, or base
-logical identity when that relationship has one. `reference` is non-null only
-for an explicit source operand. `depth` and `location` are non-null only for a
-linked-source reason. The overwrite reason belongs to the overwrite layer; the
-logical source remains one base-first identity.
-
-Layer `pathPosition` equals the same 1-based global physical path position used
-by `paths[].position`. `projections` contains only requested authored or derived
-layer projections, in canonical part and document order. Generated metadata is
-represented by the always-present source, layer, and inclusion-reason members
-rather than a duplicate projection payload. The operation-level path projection
-is represented by `paths`.
-
-Projection `name` is non-null only for `section`. `text` is non-null only for an
-available `frontmatter`, `body`, or `section`, and an empty string is valid.
-`headings` is populated only for an available heading outline and is otherwise
-empty. `location` applies to available authored text; every projected heading
-owns its own location. Missing is a proven absence, unavailable means required
-inspection did not complete, and ambiguous means one requested section matched
-several headings in the same layer.
-
-`links` retains every inspected graph edge in stable breadth-first order,
-including edges whose targets were already selected, cycles, external unchecked
-observations, and unresolved edges. `depth` counts from the complete pre-expansion
-seed set. `disposition` explains why the edge did or did not add one source.
-External HTTP and HTTPS targets alone use `external-unchecked` together with
-`network-not-attempted` and never create a finding.
-
-Finding members are always present. `subject` and `cause` are bounded escaped
-strings; `cause` is never null. `reference`, `source`, `layer`, `path`, `part`,
-locations, and candidates retain typed evidence when applicable and are null or
-empty otherwise. A finding never exposes exception identity or unbounded source
-content.
-
-#### Finding Codes And Ordering
-
-Context has exactly the following finding vocabulary. Each code has only the
-status shown, and this table order is the primary finding order.
-
-| Machine code                     | Finding status |
-| -------------------------------- | -------------- |
-| `context.invalid-input`          | `invalid`      |
-| `context.invalid-source`         | `invalid`      |
-| `context.invalid-content`        | `invalid`      |
-| `context.invalid-link-depth`     | `invalid`      |
-| `context.workspace-unavailable`  | `blocked`      |
-| `context.workspace-unsafe`       | `blocked`      |
-| `context.source-ambiguous`       | `blocked`      |
-| `context.source-unsafe`          | `blocked`      |
-| `context.overwrite-ambiguous`    | `blocked`      |
-| `context.target-ambiguous`       | `blocked`      |
-| `context.target-unsafe`          | `blocked`      |
-| `context.closure-unavailable`    | `incomplete`   |
-| `context.layer-unavailable`      | `incomplete`   |
-| `context.invalid-encoding`       | `incomplete`   |
-| `context.markdown-unavailable`   | `incomplete`   |
-| `context.target-missing`         | `incomplete`   |
-| `context.fragment-missing`       | `incomplete`   |
-| `context.link-encoding-invalid`  | `incomplete`   |
-| `context.target-unreadable`      | `incomplete`   |
-| `context.section-ambiguous`      | `incomplete`   |
-| `context.projection-unavailable` | `incomplete`   |
-| `context.identity-collision`     | `attention`    |
-| `context.target-case-mismatch`   | `attention`    |
-| `context.frontmatter-missing`    | `attention`    |
-| `context.section-missing`        | `attention`    |
-| `context.operation-failed`       | `failed`       |
-| `context.interrupted`            | `interrupted`  |
-
-Invalid findings stop before operation resolution. Blocked findings mean the
-workspace, source, overwrite, or local-target safety boundary cannot be
-established. `closure-unavailable` covers a safe but incomplete workspace entry,
-Loader, generated-order, parent, `#LoadNow`, `#KeepInMind`, or scope-local
-relationship. `layer-unavailable` covers a missing race, access failure,
-directory-enumeration failure, or other safe physical-layer read failure.
-`markdown-unavailable` covers structural parse or range evidence that cannot be
-established after strict decoding. The more specific target, section, and
-projection codes retain their Interface meanings.
-
-An established non-unique automatic ID is attention only after exact-path or
-interactive resolution leaves the selected physical and route boundary safe.
-A missing authored frontmatter block is attention only when loading and requested
-projection coverage remain otherwise complete; unavailable loading metadata uses
-the incomplete closure or Markdown finding. An exact target case mismatch is a
-safe attention observation. A completely inspected missing section is attention,
-while an unreadable layer or duplicate match is incomplete.
-
-Within one code, request evidence precedes closure evidence, then sources use
-canonical logical order, base precedes overwrite, links use breadth-first edge
-order, content uses canonical projection and document order, and locations are
-final ordinal tie-breaks. Failure and interruption are last. Filesystem,
-enumeration, parser, or exception order never controls finding order.
-
-#### Exact Next Actions
-
-The top-level envelope's `next` member uses at most one Context action. After the
-aggregate status and ordered findings are fixed, the first applicable row wins.
-
-| Condition                                                              | `next.command`                 | `next.reason`                                                                                               |
-| ---------------------------------------------------------------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `complete` or `attention`                                              | `null`                         | `null`                                                                                                      |
-| `invalid`                                                              | `open-forge context --help`    | `Correct the named Context input, then rerun the request.`                                                  |
-| `blocked` with `context.source-ambiguous` as the first blocked finding | `open-forge context`           | `Replace every ambiguous source reference with one listed exact path, then rerun the same request.`         |
-| Other `blocked`                                                        | `open-forge doctor`            | `Inspect the blocked workspace, source, overwrite, or link-target boundary before rerunning Context.`       |
-| `incomplete`                                                           | `open-forge doctor`            | `Inspect the unavailable closure, source, link, or projection facts before relying on this Context result.` |
-| `failed`                                                               | `open-forge context --verbose` | `Report the failure and retry the same Context request with bounded diagnostics.`                           |
-| `interrupted`                                                          | `open-forge context`           | `Rerun the same Context request.`                                                                           |
-
-Human compact and expanded output use the same optional action. Renderers do not
-choose, rewrite, or multiply next actions.
-
-### Human-Readable Errors
-
-Every error names:
-
-1. The failed operation.
-2. The affected route, source, section, or link when known.
-3. The direct cause.
-4. A useful next action when one exists.
-
-`--verbose` adds diagnostic detail. Ordinary errors remain understandable
-without it.
-
-### Output Streams And Architecture Boundary
-
-Primary human `complete`, `attention`, and `incomplete` results go to stdout.
-Primary human `invalid`, `blocked`, `failed`, and `interrupted` results go to
-stderr. Each primary human result stays together on its assigned stream.
-`--json` emits one complete structured result to stdout for every semantic status.
-Separate bounded diagnostics go to stderr, and human text is not mixed into JSON
-stdout.
-
-The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
-exact structured field names, schema compatibility, and process-status mapping.
-The [CLI Architecture](../../architecture.md) defines parser and concrete
-serialization relationships, source ranges, filesystem identity and containment,
-source structure, runtime boundaries, and bounded diagnostic structure. These
-accepted technical choices do not weaken the status, stream, ordering, or
-completeness rules above.
-
-## Global Flags
-
-The shared [Global CLI Flags](../shared/global-flags/interface.md) contract defines
-`--workspace`, `--json`, `--view`, `--verbose`, `--help`, and `--version` once
-for the complete CLI. All six apply to `context` under that contract.
-
-The `context` command adds no global flag or alternate spelling.
-
-## Complete Examples
-
-### Startup Context
-
-```text
-open-forge context
-```
-
-Returns complete authored content for the startup-required closure.
-
-### Source Metadata
-
-```text
-open-forge context --content=metadata
-```
-
-Returns ordered CLI-generated source metadata without authored frontmatter or
-bodies.
-
-### Ordered Paths
-
-```text
-open-forge context --content=paths --view=compact
-```
-
-Returns only canonical paths in exact context order with the compact result
-summary and any required completeness findings.
-
-### Heading Outlines
-
-```text
-open-forge context directives --content=headings --view=expanded
-```
-
-Returns parsed heading outlines with levels, lines, source forms, layers, and
-canonical-authoring evidence without section bodies.
-
-### One Scope
-
-```text
-open-forge context memory/project-a/crystallized/documents
-```
-
-Returns the startup closure plus the selected scope closure.
-
-### Additions Beyond Startup
-
-```text
-open-forge context \
-  memory/project-a/crystallized/documents \
-  --additions-only
-```
-
-Returns only sources that the selected route adds beyond startup.
-
-### Inherited Rules
-
-```text
-open-forge context \
-  directives/open-forge/framework \
-  --content=section:Axioms,section:Instructions
-```
-
-Returns exact rule sections from the selected closure. Missing sections remain
-visible per source.
-
-### Direct Link Expansion
-
-```text
-open-forge context \
-  memory/crystallized/documents/architecture \
-  --follow-links=1
-```
-
-Returns normal selected context plus directly linked local sources.
-
-### Full Reachable Link Closure
-
-```text
-open-forge context \
-  memory/crystallized/documents/architecture \
-  --follow-links=all \
-  --content=frontmatter,section:Scope
-```
-
-Follows the complete reachable contained local-link graph and emits frontmatter
-plus each exact `Scope` section.
-
-### Structured Output From Another Workspace
-
-```text
-open-forge context \
-  memory/crystallized/documents \
-  --workspace ../another-workspace \
-  --additions-only \
-  --follow-links=2 \
-  --content=metadata,section:Axioms \
-  --json
-```
-
-Uses the exact workspace path, calculates additions from that workspace's startup
-closure, follows two link levels, and renders one structured result.
+## Human Output
+
+The command uses the shared native report. The default detail is `minimal`; `standard`, `full` and `debug` add the catalogue-defined facts. `--detail-filter <error|warning|info|all>` is repeatable and changes only the rendered detail. Use `--format text` for this text report. Primary result text for `completed`, `completed-with-warnings` and `incomplete` is on stdout; primary errors for `invalid-input`, `blocked`, `failed` and `cancelled` are on stderr. There is no `Status:` line.
+
+### Statuses and headlines
+
+
+
+### Text by level
+
+
+
+### Representative transcripts by status
+
+### Transcript — completed
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#context-completed). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Context/__snapshots__/ContextBeforeOutputSnapshotTests/Selection/paths.minimal.txt).
+
+### Transcript — completed-with-warnings
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#context-completed-with-warnings). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Context/__snapshots__/ContextBeforeOutputSnapshotTests/Selection/section-missing.minimal.txt).
+
+### Transcript — incomplete
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#context-incomplete). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Context/__snapshots__/ContextBeforeOutputSnapshotTests/Selection/unreadable-source.minimal.txt).
+
+### Transcript — invalid-input
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#context-invalid-input). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Context/__snapshots__/ContextBeforeOutputSnapshotTests/Selection/invalid-content.minimal.txt).
+
+### Transcript — blocked
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#context-blocked). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Context/__snapshots__/ContextBeforeOutputSnapshotTests/Selection/ambiguous-source.minimal.txt).
+
+### Transcript — failed
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#context-failed).
+
+### Transcript — cancelled
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#context-cancelled).
+
+## Structured Output
+
+`--format json` writes one schema-3 envelope to stdout for every report status. It contains the command, status, workspace when applicable, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
+
+### JSON data by level
+
+| Level    | `data`                                                                                                                          |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| minimal  | `{ sources: [ { path, id, layer: "base" \| "overwrite", parts: [ { part, text \| headings: [ ... ] \| paths: [ ... ] } ] } ] }` |
+| standard | + per source `includedBecause: [ ... ]`, `route`, `scope`                                                                       |
+| full     | + `order`, headings with `line`, `links: [ { from, location, destination, resolvedPath, resolution, followed } ]`               |
+
+Text values are exact; JSON escaping is the serializer's.
+
+## Semantic Results
+
+The status and exit mapping above are unchanged by detail or format. Root effects and recovery receipts retain their complete result facts at every detail level; command-owned data follows the catalogue's level rows.
+
+### Counts and limitations
+
+`sources`, `tokens`, `bytes`, `linksFollowed`, `linksNotFollowed`.
+
+### Next rules
+
+Invalid source -> `open-forge route list --depth=all`; unreadable ->
+`open-forge doctor`; case mismatch -> `open-forge repair --automatic`;
+otherwise none.
+
+## Errors And Boundaries
+
+The findings catalogue below is the command's finite error and warning vocabulary. Findings keep their code, severity, family, subject and cause; detail filtering affects display only. A blocked, failed or cancelled result prevents further effects according to the catalogue.
+
+### Findings catalogue
+
+| Code                           | Severity | Family                | Message                                                                                                                     | Next                                |
+| ------------------------------ | -------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| context.invalid-input          | error    | invalid-input         |                                                                                                                             |                                     |
+| context.invalid-source         | error    | unknown-source        | [`context.label.the-requested-source`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextText.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.invalid-source`).                                                              | `open-forge route list --depth=all` |
+| context.invalid-content        | error    | local                 | [`context.phrase.content-is-not-a-known-part-use-metadata-paths-frontmatter-headings-body-or-section-name`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.invalid-content`).               | none                                |
+| context.invalid-link-depth     | error    | local                 | [`context.message.follow-links-must-be-a-positive-number-or-all`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextText.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.invalid-link-depth`).                                                                          | none                                |
+| context.workspace-unavailable  | error    | workspace-unavailable |                                                                                                                             |                                     |
+| context.workspace-unsafe       | error    | workspace-unsafe      |                                                                                                                             |                                     |
+| context.source-ambiguous       | error    | source-ambiguous      |                                                                                                                             |                                     |
+| context.source-unsafe          | error    | source-unsafe         |                                                                                                                             |                                     |
+| context.overwrite-ambiguous    | error    | local                 | [`shared.phrase.could-belong-to-more-than-one-base-file`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.overwrite-ambiguous`).                                                              | fix by hand                         |
+| context.target-ambiguous       | error    | local                 | [`context.phrase.the-link-at-could-point-to-more-than-one-file-it-was-not-followed`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.target-ambiguous`).                                            | fix by hand                         |
+| context.target-unsafe          | error    | local                 | [`context.phrase.the-link-at-points-outside-the-workspace-it-was-not-followed`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.target-unsafe`).                                                 | none                                |
+| context.closure-unavailable    | warning  | local                 | [`context.phrase.the-startup-files-could-not-be-resolved`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.closure-unavailable`).                                                                        | `open-forge doctor`                 |
+| context.layer-unavailable      | warning  | local                 | [`context.phrase.could-not-be-read-so-it-was-not-included`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.layer-unavailable`).                                                                         | `open-forge doctor`                 |
+| context.invalid-encoding       | warning  | local                 | [`context.phrase.is-not-valid-utf-8-so-it-was-not-included`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.invalid-encoding`).                                                                        | fix the file                        |
+| context.markdown-unavailable   | warning  | local                 | [`context.phrase.could-not-be-parsed-as-markdown-so-its-was-not-produced`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.markdown-unavailable`).                                                   | `open-forge doctor`                 |
+| context.target-missing         | warning  | local                 | [`context.phrase.the-link-at-points-to-which-does-not-exist-it-was-not-followed`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.target-missing`).                                | `open-forge doctor`                 |
+| context.fragment-missing       | warning  | local                 | [`context.phrase.the-link-at-points-to-which-has-no-heading-it-was-not-followed`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.fragment-missing`).                           | `open-forge doctor`                 |
+| context.link-encoding-invalid  | warning  | local                 | [`context.phrase.the-link-at-has-an-encoding-that-cannot-be-resolved-it-was-not-followed`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.link-encoding-invalid`).                                      | fix by hand                         |
+| context.target-unreadable      | warning  | local                 | [`context.phrase.the-link-at-points-to-which-could-not-be-read-it-was-not-followed`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.target-unreadable`).                                    | none                                |
+| context.section-ambiguous      | warning  | local                 | [`context.phrase.has-more-than-one-section-named-none-was-included`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.section-ambiguous`).                                                         | fix by hand                         |
+| context.projection-unavailable | warning  | local                 | [`shared.phrase.the-of-could-not-be-produced`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.projection-unavailable`).                                                                     | `open-forge doctor`                 |
+| context.identity-collision     | warning  | identity-collision    |                                                                                                                             |                                     |
+| context.target-case-mismatch   | warning  | local                 | [`context.phrase.the-link-at-is-written-but-the-file-is-named`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.target-case-mismatch`).                                          | `open-forge repair --automatic`     |
+| context.frontmatter-missing    | warning  | local                 | `<path> has no frontmatter.` (only when `frontmatter` was requested for a routed source; never for AGENTS.md or the Loader) | none                                |
+| context.section-missing        | warning  | local                 | [`shared.phrase.has-no-section-named`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.section-missing`).                                                                                       | none                                |
+| context.operation-failed       | error    | operation-failed      |                                                                                                                             |                                     |
+| context.interrupted            | error    | cancelled             |                                                                                                                             |                                     |
+
+## Scenarios
+
+### Catalogue situations
+
+`startup`, `one-source`, `additions-only`, `paths`, `headings`, `section`,
+`frontmatter-missing-host` (AGENTS.md; no finding), `section-missing`,
+`follow-links`, `broken-followed-link`, `unknown-source` (invalid-input),
+`ambiguous-source` (blocked), `unreadable-source` (incomplete), `invalid-content`.
+
+Each status has one representative native text transcript above. JSON uses the same status and command facts under the schema-3 envelope.
 
 ## Non-Goals
 
@@ -1262,10 +841,11 @@ Gate 5 executable proof must cover:
 - A fully resolved empty additions difference, an empty heading outline,
   unchecked external URLs that are not selected or fetched, and cycles or
   duplicate links that do not change status by themselves.
-- Deterministic blocked, incomplete, attention, complete, invalid, failed, and
-  interrupted classification, safety/coverage precedence, preservation of safe
+- Deterministic blocked, incomplete, completed-with-warnings, completed,
+  invalid-input, failed, and cancelled classification, safety/coverage
+  precedence, preservation of safe
   content and observations, and visible broken edges.
-- Compact and expanded metadata, paths, headings, and authored-content framing.
+- Minimal and standard metadata, paths, headings, and authored-content framing.
 - Parsed CommonMark ATX and Setext headings; visible-text and
   case-insensitive matching; exact section boundaries; canonical-form evidence;
   missing sections; duplicate headings within one layer; and matching base and
@@ -1277,8 +857,8 @@ Gate 5 executable proof must cover:
 - Human and structured output from the same typed result.
 - Primary human status streams, one structured JSON result on stdout for every
   status, and bounded diagnostics on stderr without human text in JSON stdout.
-- Complete, attention, incomplete, invalid, blocked, failed, and interrupted
-  outcomes.
+- Completed, completed-with-warnings, incomplete, invalid-input, blocked,
+  failed, and cancelled outcomes.
 - Repeat invocations producing the same semantic result for unchanged input.
 
 Direct tests should prove graph construction, closure selection, projection,
@@ -1306,24 +886,28 @@ claiming that the suite or artifacts exist.
 - [Routing Paths And Identity](../../../framework/routing/paths.md)
 - [Overwrite Customization](../../../framework/routing/overwrites.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-The result retains selection, presentation, coverage, all paths, links, sources
-and findings in the same order. Only inclusionReasons on paths, sources and
-layers are omitted. Identity, positions, route/scope, layers and all selected
-projections remain, including exact body text. Links, their disposition and
-coverage remain complete.
+CLI help syntax: [`context.help.syntax`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextText.cs).
 
-Compact omissions are defined field membership, distinct from unavailable data,
-null values, empty collections or incomplete inspection. No collection is
-truncated and no finding is filtered. Counts describe the original operation.
-Select expanded on the original invocation when supporting evidence is needed.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef context.help.syntax -->
+<!-- @OpenForgeTextRef context.label.the-requested-source -->
+<!-- @OpenForgeTextRef context.message.follow-links-must-be-a-positive-number-or-all -->
+<!-- @OpenForgeTextRef context.phrase.content-is-not-a-known-part-use-metadata-paths-frontmatter-headings-body-or-section-name -->
+<!-- @OpenForgeTextRef context.phrase.could-not-be-parsed-as-markdown-so-its-was-not-produced -->
+<!-- @OpenForgeTextRef context.phrase.could-not-be-read-so-it-was-not-included -->
+<!-- @OpenForgeTextRef context.phrase.has-more-than-one-section-named-none-was-included -->
+<!-- @OpenForgeTextRef context.phrase.is-not-valid-utf-8-so-it-was-not-included -->
+<!-- @OpenForgeTextRef context.phrase.the-link-at-could-point-to-more-than-one-file-it-was-not-followed -->
+<!-- @OpenForgeTextRef context.phrase.the-link-at-has-an-encoding-that-cannot-be-resolved-it-was-not-followed -->
+<!-- @OpenForgeTextRef context.phrase.the-link-at-is-written-but-the-file-is-named -->
+<!-- @OpenForgeTextRef context.phrase.the-link-at-points-outside-the-workspace-it-was-not-followed -->
+<!-- @OpenForgeTextRef context.phrase.the-link-at-points-to-which-could-not-be-read-it-was-not-followed -->
+<!-- @OpenForgeTextRef context.phrase.the-link-at-points-to-which-does-not-exist-it-was-not-followed -->
+<!-- @OpenForgeTextRef context.phrase.the-link-at-points-to-which-has-no-heading-it-was-not-followed -->
+<!-- @OpenForgeTextRef context.phrase.the-startup-files-could-not-be-resolved -->
+<!-- @OpenForgeTextRef shared.phrase.could-belong-to-more-than-one-base-file -->
+<!-- @OpenForgeTextRef shared.phrase.has-no-section-named -->
+<!-- @OpenForgeTextRef shared.phrase.the-of-could-not-be-produced -->

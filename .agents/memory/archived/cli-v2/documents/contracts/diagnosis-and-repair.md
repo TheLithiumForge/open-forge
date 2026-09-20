@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Explicit domain diagnosis, typed findings, completeness, stable ordering, safe repair projection, conflict handling, and rediagnosis semantics
+  description: "Historical CLI-v2 source: Explicit domain diagnosis, typed findings, completeness, stable ordering, safe repair projection, conflict handling, and rediagnosis semantics"
   responsibility: Define one predictable doctor and repair composition without resolving behavior through diagnostic strings
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

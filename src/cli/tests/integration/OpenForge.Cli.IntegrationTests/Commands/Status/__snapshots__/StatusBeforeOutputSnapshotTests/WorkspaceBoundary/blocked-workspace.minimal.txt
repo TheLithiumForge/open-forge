@@ -1,0 +1,2 @@
+Cannot check this workspace: The selected workspace is missing.
+Next: open-forge doctor

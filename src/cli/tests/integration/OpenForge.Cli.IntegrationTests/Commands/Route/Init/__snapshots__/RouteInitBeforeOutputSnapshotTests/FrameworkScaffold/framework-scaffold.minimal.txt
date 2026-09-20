@@ -1,0 +1,2 @@
+memory/working is already initialized. Nothing to do.
+Workspace: <workspace>

@@ -1,0 +1,4 @@
+status=completed
+incoming=0
+outgoing=0
+scanned=0

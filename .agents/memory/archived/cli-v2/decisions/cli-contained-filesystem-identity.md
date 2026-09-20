@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Require portable logical identity, physical containment, byte evidence, and proven runtime capabilities for replacement CLI filesystem effects
+  description: "Historical CLI-v2 source: Require portable logical identity, physical containment, byte evidence, and proven runtime capabilities for replacement CLI filesystem effects"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

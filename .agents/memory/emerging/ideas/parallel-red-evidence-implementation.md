@@ -114,7 +114,7 @@ repair meaning that should never have left the Brilliant Implementer.
 
 - [Review Orchestration Trial Controls](review-orchestration-trial-controls.md)
 - [Continuous Targeted Review Orchestration](continuous-targeted-review-orchestration.md)
-- [Supervised Luna Preparation Trial](../../../workflows/supervised-luna-preparation-trial.md)
+- [Supervised Luna Preparation Trial](../../../skills/use-workflow/references/open-forge/supervised-luna-preparation-trial.md)
 - [Supervised Luna Preparation Trial Results](../observations/2026-09-03_supervised-luna-preparation-trial-results.md)
 - [Evidence Tiers](../../../patterns/testing/evidence-tiers.md)
 - [Testing Directive](../../../directives/open-forge/testing/_testing.md)

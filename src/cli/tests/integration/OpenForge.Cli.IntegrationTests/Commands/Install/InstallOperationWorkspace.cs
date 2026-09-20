@@ -22,28 +22,20 @@ internal sealed class InstallOperationWorkspace : IDisposable
     [
         ".agents/directives/_directives.md",
         ".agents/guidance/_guidance.md",
-        ".agents/guidance/adaptive-collaboration.md",
         ".agents/loader.md",
         ".agents/maps/_maps.md",
         ".agents/memory/_memory.md",
         ".agents/memory/archived/_archived.md",
         ".agents/memory/crystallized/_crystallized.md",
-        ".agents/memory/crystallized/decisions/_decisions.md",
-        ".agents/memory/crystallized/documents/_documents.md",
         ".agents/memory/emerging/_emerging.md",
-        ".agents/memory/emerging/analysis/_analysis.md",
-        ".agents/memory/emerging/ideas/_ideas.md",
-        ".agents/memory/emerging/observations/_observations.md",
         ".agents/memory/working/_working.md",
-        ".agents/memory/working/checkpoints/_checkpoints.md",
-        ".agents/memory/working/handoffs/_handoffs.md",
         ".agents/patterns/_patterns.md",
         ".agents/skills/_skills.md",
         ".agents/templates/_templates.md",
-        ".agents/workflows/_workflows.md",
     ];
 
     private const string LifecyclePath = ".agents/open-forge.lifecycle.json";
+    internal const string OwnershipPath = ".agents/open-forge.lock.json";
     private const string AgentsPath = "AGENTS.md";
     private const string ClaudePath = "CLAUDE.md";
 
@@ -106,6 +98,9 @@ internal sealed class InstallOperationWorkspace : IDisposable
 
     internal void WriteText(string relativePath, string contents)
         => _temporary.WriteText(relativePath, contents);
+
+    internal void CreateDirectory(string relativePath)
+        => _temporary.CreateDirectory(relativePath);
 
     internal void ReplaceInstalledText(string relativePath, string contents)
     {
@@ -183,6 +178,7 @@ internal sealed class InstallOperationWorkspace : IDisposable
     {
         foreach (var path in EmbeddedPayloadPaths
                      .Append(LifecyclePath)
+                     .Append(OwnershipPath)
                      .Append(AgentsPath)
                      .Append(ClaudePath))
         {

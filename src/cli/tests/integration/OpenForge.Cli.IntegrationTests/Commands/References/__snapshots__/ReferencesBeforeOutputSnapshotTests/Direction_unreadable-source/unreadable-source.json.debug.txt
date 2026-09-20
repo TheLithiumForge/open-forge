@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 3,
+  "command": "references",
+  "status": "incomplete",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": ".agents/docs/guide.md",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "references.invalid-encoding",
+      "title": "Source encoding is invalid",
+      "message": ".agents/docs/guide.md is not valid UTF-8, so it was not scanned.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/guide.md",
+        "id": ".agents/docs/guide.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "incoming": 0,
+    "outgoing": 0,
+    "sourcesScanned": 3,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "source": {
+      "id": "docs/guide",
+      "path": ".agents/docs/guide.md"
+    },
+    "direction": "both",
+    "incoming": [],
+    "outgoing": [],
+    "coverage": {
+      "incoming": "incomplete",
+      "outgoing": "incomplete"
+    },
+    "filters": {
+      "include": [],
+      "exclude": []
+    },
+    "scanned": [
+      {
+        "id": "docs",
+        "path": ".agents/docs/_docs.md",
+        "layer": "base"
+      },
+      {
+        "id": "docs/reference",
+        "path": ".agents/docs/reference.md",
+        "layer": "base"
+      },
+      {
+        "id": "loader",
+        "path": ".agents/loader.md",
+        "layer": "base"
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "check the workspace for broken links"
+  }
+}

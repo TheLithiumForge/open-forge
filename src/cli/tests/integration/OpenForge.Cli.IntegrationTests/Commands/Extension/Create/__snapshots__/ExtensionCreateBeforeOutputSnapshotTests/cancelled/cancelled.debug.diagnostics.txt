@@ -1,0 +1,9 @@
+status=cancelled
+mode=apply
+id=toolkit
+folder=<extension-source>
+package=none
+intended=0
+applied=0
+findings=1
+finding=extension-create.interrupted:subject=<extension-source>:cause=Extension create was cancelled. Nothing was changed.

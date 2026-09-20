@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Cleanup;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Binding;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Request;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
+using OpenForge.Cli.Core.Commands.Shared;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -11,6 +12,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Cleanup;
 
 public sealed class CleanupDefinitionsAndBindingContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup definitions expose the exact direct-root write-policy grammar"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void DefinitionsExposeExactGrammar()
@@ -28,12 +30,13 @@ public sealed class CleanupDefinitionsAndBindingContractTests
         Assert.Equal(CliOptionArity.None, CleanupDefinitions.DryRun.Arity);
         Assert.False(CleanupDefinitions.DryRun.DefaultValue);
         Assert.Empty(CleanupDefinitions.DryRun.FiniteSpellings);
-        Assert.Equal("open-forge cleanup", CleanupDefinitions.CleanupCommandLine);
+        Assert.Equal("open-forge cleanup", CommandLines.Cleanup);
         Assert.Equal("open-forge cleanup --help", CleanupDefinitions.CleanupHelpCommand);
-        Assert.Equal("open-forge cleanup --verbose", CleanupDefinitions.VerboseCleanupCommand);
-        Assert.Equal("open-forge doctor", CleanupDefinitions.DoctorCommand);
+        Assert.Equal("open-forge cleanup --detail debug", CleanupDefinitions.VerboseCleanupCommand);
+        Assert.Equal("open-forge doctor", CommandLines.Doctor);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Cleanup symbols retain one direct command and one idempotent Boolean option"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void SymbolsRetainDirectCommandAndDryRunOption()
@@ -54,6 +57,7 @@ public sealed class CleanupDefinitionsAndBindingContractTests
         Assert.NotEmpty(symbols.Command.Parse(["--unknown"]).Errors);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Cleanup binding forms one complete typed apply or repeated dry-run request"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void BindingFormsCompleteTypedRequest()
@@ -89,6 +93,7 @@ public sealed class CleanupDefinitionsAndBindingContractTests
         Assert.True(dryRunRequest.IsDryRun);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Cleanup binding rejects an invocation without the selected workspace"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void BindingRequiresSelectedWorkspace()
@@ -103,6 +108,7 @@ public sealed class CleanupDefinitionsAndBindingContractTests
             symbols));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup finding mappings preserve exact status and next-action boundaries"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void FindingMappingsPreserveExactStatusAndNextAction()
@@ -114,7 +120,7 @@ public sealed class CleanupDefinitionsAndBindingContractTests
             [CleanupFindingCode.WorkspaceNotDirectory] = CliSemanticStatus.Blocked,
             [CleanupFindingCode.WorkspaceUnsafe] = CliSemanticStatus.Blocked,
             [CleanupFindingCode.CatalogueIncomplete] = CliSemanticStatus.Incomplete,
-            [CleanupFindingCode.RecoveryFinalMalformed] = CliSemanticStatus.Blocked,
+            [CleanupFindingCode.RecoveryFinalMalformed] = CliSemanticStatus.Attention,
             [CleanupFindingCode.RecoveryFinalUnsupported] = CliSemanticStatus.Blocked,
             [CleanupFindingCode.RecoveryFinalUnavailable] = CliSemanticStatus.Blocked,
             [CleanupFindingCode.RecoveryDraftUnsafe] = CliSemanticStatus.Blocked,
@@ -139,19 +145,20 @@ public sealed class CleanupDefinitionsAndBindingContractTests
             (CleanupDefinitions.CleanupHelpCommand, "Correct the Cleanup input, then rerun the request."),
             ReadNext(CliSemanticStatus.Invalid));
         Assert.Equal(
-            (CleanupDefinitions.CleanupCommandLine, "Resolve the blocked cleanup boundary, then rerun Cleanup from a fresh catalogue."),
+            (CommandLines.Cleanup, "Resolve the blocked cleanup boundary, then rerun Cleanup from a fresh catalogue."),
             ReadNext(CliSemanticStatus.Blocked));
         Assert.Equal(
-            (CleanupDefinitions.DoctorCommand, "Inspect the unavailable workspace or recovery facts before relying on this Cleanup result."),
+            (CommandLines.Doctor, "Inspect the unavailable workspace or recovery facts before relying on this Cleanup result."),
             ReadNext(CliSemanticStatus.Incomplete));
         Assert.Equal(
             (CleanupDefinitions.VerboseCleanupCommand, "Report the failure and retry the same Cleanup request with bounded diagnostics."),
             ReadNext(CliSemanticStatus.Failed));
         Assert.Equal(
-            (CleanupDefinitions.CleanupCommandLine, "Rerun the same Cleanup request."),
+            (CommandLines.Cleanup, "Rerun the same Cleanup request."),
             ReadNext(CliSemanticStatus.Interrupted));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup finite status mapping rejects undefined values"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void UndefinedStatusMappingThrows()

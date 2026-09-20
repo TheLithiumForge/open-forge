@@ -64,7 +64,7 @@ internal sealed class PublishedRouteMoveWorkspace : IDisposable
 
     internal void AssertPersistentExternalLock() => lockStore.AssertPersistentZeroByteLock(Path);
 
-    internal void RemoveLifecycle() => File.Delete(Combine(".agents/open-forge.lifecycle.json"));
+    internal void RemoveOwnership() => File.Delete(Combine(".agents/open-forge.lock.json"));
 
     internal void SeedOccupiedDestination()
         => File.WriteAllText(Combine(DestinationPath), "occupied\n", StrictUtf8NoBom);

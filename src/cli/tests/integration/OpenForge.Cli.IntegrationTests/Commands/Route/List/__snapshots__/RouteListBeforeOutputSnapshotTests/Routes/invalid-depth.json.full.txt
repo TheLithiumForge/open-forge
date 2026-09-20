@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 3,
+  "command": "route list",
+  "status": "invalid-input",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot list routes: --depth must be a whole number or all.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-list.invalid-depth",
+      "title": "Invalid depth",
+      "message": "--depth must be a whole number or all.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "-1",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routes": 0,
+    "roots": 0,
+    "depth": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "subject": null,
+    "depth": null,
+    "rows": []
+  },
+  "recovery": null,
+  "next": null
+}

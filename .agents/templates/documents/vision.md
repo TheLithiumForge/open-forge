@@ -1,53 +1,41 @@
 ---
 open-forge:
-  description: Starting structure for a desired future, why it matters, its boundaries, and success
-  tags: [Extension, Template, Document, Vision, CurrentView]
+  description: "Explain the promise, audience, first useful value, boundaries, and observable success"
+  tags: [Extension, Template, Document, Vision]
 ---
 
 # {Subject} Vision
 
-{
-Template selection:
-
-- Need: One stable current document for a subject's desired future and identity.
-- Primary question: What should become true, why does it matter, what bounds it, and what would success mean?
-
-How to use:
-
-- Replace the frontmatter, title, and placeholders, then remove this braced guidance.
-- Keep only sections that make the vision clearer.
-- Add a short domain or category definition before Vision only when readers need it to understand the promise.
-- Keep implementation, current status, sequencing, and detailed reasoning in the sources that define them.
-  }
+<!-- TEMPLATE: Use for a stable direction worth preserving. This is not a roadmap or feature catalogue; keep proposed and accepted direction distinct.
+Replace {prompts}; remove this comment and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying. -->
 
 ## Vision
 
-{State the desired future or product promise this document defines. Make it clear enough to guide related work.}
+{State the future you intend to make possible in one clear paragraph. Make it specific enough to guide choices.}
 
-## Why
+## Why And For Whom
 
-{Explain the present problem or opportunity and why this direction is valuable. Describe limits of existing approaches when they help explain that value.}
+**Audience:** {Who has the need and in which situation.}
+
+**Problem or opportunity:** {What is difficult, missing, or newly possible; use actual evidence when available.}
+
+**Core value:** {The benefit that must exist for this direction to matter.}
 
 ## Scope
 
-{Explain what or whom the vision serves, what the effort includes, and how broadly the promise applies.}
+**First useful version:** {The smallest complete expression of that value, not an implementation sequence.}
 
-## Principles
-
-{Name only the principles needed to understand the vision's identity and what must remain as it evolves. Link to their defining source when they are maintained elsewhere.}
+**Growth direction:** {What may follow without becoming an initial commitment.}
 
 ## Success
 
-{Describe observable outcomes that would show the vision is being realized without turning this section into an implementation plan.}
+{Observable outcomes that would show the promise is being realized. Distinguish an intended signal from a measured result; do not invent targets.}
 
 ## Non-Goals
 
-{State adjacent outcomes or approaches that readers could reasonably but incorrectly infer are included.}
+{Plausible adjacent promises that are deliberately excluded. Prefer meaningful boundaries over obvious negatives.}
 
-## Related Current Views
+## Principles And Related Sources
 
-{Link to current architecture, strategy, context, principles, or other sources only when the relationship helps the reader continue.}
-
-## Decisions And Rationale
-
-{Link to accepted Decisions that preserve useful reasons behind this current vision. Omit when no separate rationale source exists.}
+{State or link only the principles needed to understand the identity. Link to current architecture, strategy, context, and accepted rationale where they add useful detail. Do not duplicate their contents.}

@@ -1,0 +1,9 @@
+Cannot synchronize unknown: The Library ID is not registered.
+Workspace: <workspace>
+unknown-id
+  Error  unknown  Library ID is unknown
+         The Library ID is not registered
+         open-forge library list
+         Choose a registered Library ID.
+  Choose a registered Library ID.
+Next: open-forge library list

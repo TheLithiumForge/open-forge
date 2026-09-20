@@ -1,0 +1,197 @@
+{
+  "audit": "current non-CLI knowledge leaves",
+  "base": "0eea5e6557473a52ba24a5e42bdd1b0dd5c9485c",
+  "scope_file": "artifacts/task28-source-framework-review/current-content-knowledge-scope.json",
+  "reviewed_count": 67,
+  "listed_count": 68,
+  "excluded": [
+    {
+      "path": ".agents/memory/crystallized/decisions/repository-root-cli-tooling.md",
+      "reason": "Explicit CLI-owned exclusion. Not read."
+    },
+    {
+      "paths": [".agents/memory/crystallized/documents/framework/markdown/compatibility.md", ".agents/memory/crystallized/documents/framework/routing/paths.md"],
+      "reason": "Reviewed only their Framework boundary portions; CLI-specific compatibility and containment sections are deferred to the CLI chat."
+    }
+  ],
+  "dispositions": {
+    "retained_current": [
+      ".agents/memory/crystallized/decisions/extensions/development-toolkit.md",
+      ".agents/memory/crystallized/decisions/extensions/extension-package-boundary.md",
+      ".agents/memory/crystallized/decisions/framework/adaptive-decision-elicitation.md",
+      ".agents/memory/crystallized/decisions/framework/authoritative-source-terminology.md",
+      ".agents/memory/crystallized/decisions/framework/canonical-markdown.md",
+      ".agents/memory/crystallized/decisions/framework/core-primitives.md",
+      ".agents/memory/crystallized/decisions/framework/loading-reliability.md",
+      ".agents/memory/crystallized/decisions/framework/map-primitive.md",
+      ".agents/memory/crystallized/decisions/framework/memory-model.md",
+      ".agents/memory/crystallized/decisions/framework/routing-model.md",
+      ".agents/memory/crystallized/decisions/framework/routing-surfaces.md",
+      ".agents/memory/crystallized/decisions/framework/scope-and-slugs.md",
+      ".agents/memory/crystallized/decisions/framework/source-and-packaging.md",
+      ".agents/memory/crystallized/decisions/framework/tags.md",
+      ".agents/memory/crystallized/decisions/framework/template-primitive.md",
+      ".agents/memory/crystallized/decisions/framework/user-facing-writing.md",
+      ".agents/memory/crystallized/decisions/framework/workflow-shape.md",
+      ".agents/memory/crystallized/decisions/product/product-direction.md",
+      ".agents/memory/crystallized/documents/architecture.md",
+      ".agents/memory/crystallized/documents/extensions/architecture.md",
+      ".agents/memory/crystallized/documents/framework/architecture.md",
+      ".agents/memory/crystallized/documents/framework/markdown/routes.md",
+      ".agents/memory/crystallized/documents/framework/markdown/syntax.md",
+      ".agents/memory/crystallized/documents/framework/memory/archived.md",
+      ".agents/memory/crystallized/documents/framework/memory/crystallized.md",
+      ".agents/memory/crystallized/documents/framework/memory/emerging.md",
+      ".agents/memory/crystallized/documents/framework/memory/model.md",
+      ".agents/memory/crystallized/documents/framework/memory/transitions.md",
+      ".agents/memory/crystallized/documents/framework/memory/working.md",
+      ".agents/memory/crystallized/documents/framework/primitives/directives.md",
+      ".agents/memory/crystallized/documents/framework/primitives/guidance.md",
+      ".agents/memory/crystallized/documents/framework/primitives/map.md",
+      ".agents/memory/crystallized/documents/framework/primitives/model.md",
+      ".agents/memory/crystallized/documents/framework/primitives/patterns.md",
+      ".agents/memory/crystallized/documents/framework/primitives/skills.md",
+      ".agents/memory/crystallized/documents/framework/primitives/templates.md",
+      ".agents/memory/crystallized/documents/framework/primitives/workflows.md",
+      ".agents/memory/crystallized/documents/framework/routing/loading.md",
+      ".agents/memory/crystallized/documents/framework/routing/model.md",
+      ".agents/memory/crystallized/documents/framework/routing/overwrites.md",
+      ".agents/memory/crystallized/documents/framework/routing/scope.md",
+      ".agents/memory/crystallized/documents/framework/truth.md",
+      ".agents/memory/crystallized/documents/maintenance/helpers/dictionary.md",
+      ".agents/memory/crystallized/documents/maintenance/helpers/knowledge-roles.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/AGENTS.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/CLAUDE.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/directives.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/guidance.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/loader.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/map.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/archived.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/crystallized/decisions.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/crystallized/documents.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/emerging/analysis.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/emerging/ideas.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/emerging/observations.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/working/checkpoints.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/working/handoffs.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/patterns.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/skills.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/templates.md",
+      ".agents/memory/crystallized/documents/maintenance/payload/agents/workflows.md",
+      ".agents/memory/crystallized/documents/maintenance/writing.md",
+      ".agents/memory/crystallized/documents/principles.md",
+      ".agents/memory/crystallized/documents/vision.md"
+    ]
+  },
+  "findings": [
+    {
+      "id": "CKA-001",
+      "severity": "fix-needed",
+      "location": ".agents/memory/crystallized/decisions/framework/map-primitive.md:39",
+      "evidence": "The decision links to ../../../maps/_maps.md, which resolves to .agents/memory/maps/_maps.md; the current Maps entrypoint is .agents/maps/_maps.md.",
+      "proposed_correction": "Change the relative link to ../../../../maps/_maps.md. Confirm the corresponding source/dogfood link before editing.",
+      "dependency": "None; Framework-only link correction."
+    },
+    {
+      "id": "CKA-002",
+      "severity": "fix-needed",
+      "locations": [
+        ".agents/memory/crystallized/documents/framework/markdown/compatibility.md:159",
+        ".agents/memory/crystallized/documents/framework/markdown/syntax.md:166",
+        ".agents/memory/crystallized/documents/framework/routing/paths.md:94"
+      ],
+      "evidence": "Each link uses ../../../archived/cli-v2/... from a framework/markdown or framework/routing directory, resolving under .agents/memory/crystallized/archived; the archive is .agents/memory/archived/cli-v2/.",
+      "proposed_correction": "Use the correct relative depth, or defer these lines to the CLI-owned documentation pass. Do not change CLI compatibility meaning in this task.",
+      "dependency": "CLI chat owns the compatibility/containment content; link-only correction may be bundled there."
+    },
+    {
+      "id": "CKA-003",
+      "severity": "fix-needed",
+      "location": ".agents/memory/crystallized/decisions/framework/loading-reliability.md:56",
+      "evidence": "The decision links to ../../documents/evaluations/_evaluations.md, which is absent from the baseline tree; no current evaluations entrypoint exists at that destination.",
+      "proposed_correction": "Replace with an existing accepted evidence source or archive/remove the stale link after verifying where the evaluation synthesis went. Do not invent a new current evidence category.",
+      "dependency": "Requires repository history/main-checkout evidence to identify the intended replacement."
+    },
+    {
+      "id": "CKA-004",
+      "severity": "false-positive",
+      "location": ".agents/memory/crystallized/documents/maintenance/payload/agents/loader.md:103",
+      "evidence": "The 87-line total includes the 8-line generated Entries body. Excluding only that marker-bounded generated body while retaining both markers leaves 79 authored non-empty lines in both baseline .agents/loader.md and src/open-forge/.agents/loader.md, which satisfies the 35 to 80 authored-line contract.",
+      "proposed_correction": "No correction. Remove this item from current stale-content conclusions.",
+      "dependency": "None."
+    },
+    {
+      "id": "CKA-005",
+      "severity": "deferred",
+      "locations": [
+        ".agents/memory/crystallized/documents/framework/markdown/compatibility.md",
+        ".agents/memory/crystallized/documents/framework/routing/paths.md",
+        ".agents/memory/crystallized/documents/maintenance/payload/agents/loader.md",
+        ".agents/memory/crystallized/decisions/extensions/extension-package-boundary.md"
+      ],
+      "evidence": "These current Framework documents include replacement CLI, frozen MVP, parser, command, containment, CLI test, or CLI-specific manager-boundary contract details.",
+      "proposed_correction": "Keep Framework boundary statements aligned here, but defer CLI-specific contract review and execution to the separately assigned CLI work. For extension-package-boundary.md, the Current Manager Boundary section is deferred; its non-CLI Decision opening remains covered by CKA-008.",
+      "dependency": "CLI chat."
+    },
+    {
+      "id": "CKA-006",
+      "severity": "fix-needed",
+      "locations": [
+        ".agents/memory/crystallized/documents/framework/memory/archived.md:5",
+        ".agents/memory/crystallized/documents/framework/memory/emerging.md:5",
+        ".agents/memory/crystallized/documents/framework/memory/working.md:5"
+      ],
+      "evidence": "These are current #CurrentTruth/#Evergreen explanatory Documents, but their frontmatter also carries #Contextual. Loader semantics define #Contextual as supporting, uncertain, exploratory, or historical context and #CurrentTruth as accepted current state. The state described by a document does not change the status of the explanatory document itself. The corresponding Crystallized, Model, Transitions, and maintenance-contract sources do not carry this mixed pair.",
+      "proposed_correction": "Remove Contextual from these three current explanatory documents. Retain state-specific words such as Archived, Emerging, Working, Historical, Candidate, or Resumability as ordinary classification/topic tags where useful. Verify source and dogfood metadata parity before editing.",
+      "dependency": "Framework/source metadata cleanup; no CLI dependency."
+    },
+    {
+      "id": "CKA-007",
+      "severity": "fix-needed",
+      "location": ".agents/memory/crystallized/decisions/framework/loading-reliability.md:20",
+      "evidence": "The Decision says ordinary routed #KeepInMind records are globally discoverable, while the loader and routing/loading contract require #KeepInMind to operate through an already loaded parent and refresh only active scopes. The phrase is ambiguous at best and contradicts scoped-parent loading if discoverable means loaded or proactively read.",
+      "proposed_correction": "Replace the sentence with wording that preserves the intended entrypoint distinction while stating the boundary directly: ordinary routed #KeepInMind records follow the same loaded-parent scope; their tag does not activate an unselected ancestor or scope. Keep any separate search/discovery meaning explicit if that is intended.",
+      "dependency": "Framework-only wording correction; preserve the decision rationale and do not edit its CLI-specific consequences."
+    },
+    {
+      "id": "CKA-008",
+      "severity": "fix-needed",
+      "locations": [".agents/memory/crystallized/decisions/extensions/extension-package-boundary.md:18-25", ".agents/memory/crystallized/documents/maintenance/writing.md:265"],
+      "evidence": "The package-boundary Decision says an Extension is a unit for complete files placed through existing routes and that installed files retain destination-route meaning. Current Extension Architecture separately distinguishes routed content from native formats and supporting files whose consumers define their meaning. The Writing Standard's positive-boundary example repeats the overbroad route-only formulation.",
+      "proposed_correction": "State that Extensions contribute complete files; routed files use ordinary Framework routes and retain destination meaning, while native and supporting files retain the meaning defined by their consumers. Preserve whole-file installation and package/runtime separation.",
+      "dependency": "Framework and writing-source correction; leave the Decision's CLI-specific manager section untouched."
+    }
+  ],
+  "category_question_evidence": {
+    "recommendation": "Keep frontmatter description for pre-load selection, keep a short category definition in the body, and use responsibility only when it adds a distinct editing boundary. Use primary questions as author/reviewer diagnostics rather than a required field or repeated Q&A block.",
+    "evidence": [
+      ".agents/memory/crystallized/documents/framework/markdown/syntax.md:104-108 states description is the selection surface, responsibility is optional, and category entrypoints normally do not need responsibility.",
+      ".agents/memory/crystallized/documents/framework/routing/model.md:35-38 says description selects before opening, responsibility bounds opened-file definition, and neither creates authority.",
+      ".agents/memory/crystallized/documents/maintenance/helpers/knowledge-roles.md:9-16 and :65-68 explicitly make primary questions diagnostic prompts, not a required frontmatter field.",
+      ".agents/memory/crystallized/documents/framework/primitives/model.md:25-33 already gives each Core category its primary question and meaning."
+    ]
+  },
+  "checks": {
+    "source_dogfood_line_count": "87 non-empty lines each at baseline",
+    "scope": "Read baseline contents with git show. Complete reads covered all listed non-CLI files except that CLI-specific sections were treated as deferred in compatibility.md, routing/paths.md, and maintenance/payload/agents/loader.md. No source/.agents edits, CLI execution, tests, or Git mutation performed.",
+    "complete_read_groups": [
+      "All listed decision files except repository-root-cli-tooling.md",
+      "architecture.md, extensions/architecture.md, framework/architecture.md, framework/markdown/routes.md, framework/markdown/syntax.md",
+      "framework/memory/{archived,crystallized,emerging,model,transitions,working}.md",
+      "framework/primitives/*.md, framework/routing/{loading,model,overwrites,scope}.md, framework/truth.md",
+      "maintenance/helpers/{dictionary,knowledge-roles}.md",
+      "maintenance/payload/AGENTS.md, CLAUDE.md, agents/{directives,guidance,map,patterns,skills,templates,workflows}.md, agents/memory/{archived,crystallized/decisions,crystallized/documents,emerging/analysis,emerging/ideas,emerging/observations,working/checkpoints,working/handoffs}.md, writing.md, principles.md, vision.md"
+    ],
+    "framework_only_groups": [
+      "framework/markdown/compatibility.md: CLI parser/compatibility sections deferred",
+      "framework/routing/paths.md: CLI identity/containment sections deferred",
+      "maintenance/payload/agents/loader.md: CLI command/test verification sections deferred"
+    ],
+    "semantic_result": "The recheck confirms CKA-006, CKA-007, and CKA-008 as current contradictions or materially ambiguous wording. CKA-004 is a false positive after excluding generated Entries. Other reviewed Framework meaning remains consistent for Memory acceptance/validation, role-typed authority, scoped loading, manual route support, archival extraction/pruning, and overwrite scope."
+  },
+  "resolution": {
+    "commit": "e91d2934545bb596d5d1929a7a04342ea4652375",
+    "receipt": "current-content-cleanup.json",
+    "note": "The baseline audit above is preserved. The receipt records applied corrections, verification, the deferred CLI-history references, and the withdrawn loader-budget finding. The subsequent category/metadata/ACE work is a separate accepted change."
+  }
+}

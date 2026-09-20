@@ -1,0 +1,8 @@
+Library sync stopped after 1 of 2 changes.
+Workspace: <workspace>
+operation-failed
+  Error  team-knowledge  Library sync failed
+         filesystem access was denied
+  Added    .agents/directives/review.md
+    Target: ../../shared/team-knowledge/.agents/directives/review.md
+  .agents/open-forge.lock.json  final state unknown

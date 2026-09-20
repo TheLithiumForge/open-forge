@@ -1,0 +1,24 @@
+Removed the route guidance/topics  (4 files)
+Workspace: <workspace>
+  Removed .agents/guidance/topics/_topics.md
+  Removed .agents/guidance/topics/assets/settings.json
+  Removed .agents/guidance/topics/child.md
+  Removed .agents/guidance/topics/notes.md
+  Entry removed from .agents/guidance/_guidance.md
+  Detached 1 link that pointed at it; the link text was kept:
+  Detached 1 link that pointed at it; the link text was kept:
+    .agents/guidance/old guide.overwrite.md:1:21
+    [topics](topics/_topics.md) -> topics
+    notes.md:1:1
+    [Topics](.agents/guidance/topics/_topics.md) -> Topics
+    Before: <sha256>
+    After: <sha256>
+    Before: <sha256>
+    After: <sha256>
+    Before: <sha256>
+    After: <sha256>
+    Before: <sha256>
+    Before: <sha256>
+    Before: <sha256>
+    Before: <sha256>
+  Scanned 11 files and found 3 links.

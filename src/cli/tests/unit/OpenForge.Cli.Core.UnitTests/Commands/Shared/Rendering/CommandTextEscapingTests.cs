@@ -1,70 +1,47 @@
-using OpenForge.Cli.Core.Commands.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Shared.Text;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Shared.Rendering;
 
 public sealed class CommandTextEscapingTests
 {
-    [Theory(DisplayName = "Command text escaping retains the exact owned Unicode and control spelling"), Trait("Feature", "command-presentation"), Trait("Evidence", "Unit")]
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Command text uses the shared visible control and Unicode spelling"), Trait("Feature", "command-presentation"), Trait("Evidence", "Unit")]
     [InlineData("", "")]
-    [InlineData("a\"\\b\n\r\t\u0085\u0000", "a\\\"\\\\b\\u000a\\u000d\\u0009\\u0085\\u0000")]
+    [InlineData("a\"\\b\n\r\t\u0085\u0000", "a\"\\b\\n\\r\\t\\u0085\\u0000")]
     [InlineData("Café漢字\u2028\u2029", "Café漢字\u2028\u2029")]
     [InlineData("a😀b", "a😀b")]
-    public void EscapesCompleteValues(string value, string expected)
+    public void EscapesCompleteValues(string value, string expected) => Assert.Equal(expected, CliText.Escape(value));
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Command text escapes isolated surrogates without consuming adjacent text"), Trait("Feature", "command-presentation"), Trait("Evidence", "Unit")]
+    public void EscapesIsolatedSurrogates()
     {
-        Assert.Equal(expected, CommandTextEscaping.Escape(value));
+        Assert.Equal("a\\uD83Db", CliText.Escape("a\ud83db"));
+        Assert.Equal("\\uDE00", CliText.Escape("\ude00"));
     }
 
-    [Fact(DisplayName = "Command text escaping escapes an isolated high surrogate without consuming adjacent text"), Trait("Feature", "command-presentation"), Trait("Evidence", "Unit")]
-    public void EscapesIsolatedHighSurrogate()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Command primary text has no diagnostic length cap"), Trait("Feature", "command-presentation"), Trait("Evidence", "Unit")]
+    public void PrimaryTextIsNotTruncated()
     {
-        const string value = "a\ud83db";
-        const string expected = "a\\ud83db";
-
-        Assert.Equal(expected, CommandTextEscaping.Escape(value));
+        var value = new string('x', 5000) + "😀 end";
+        Assert.Equal(value, CliText.Escape(value));
     }
 
-    [Fact(DisplayName = "Command text escaping escapes an isolated low surrogate"), Trait("Feature", "command-presentation"), Trait("Evidence", "Unit")]
-    public void EscapesIsolatedLowSurrogate()
-    {
-        const string value = "\ude00";
-        const string expected = "\\ude00";
-
-        Assert.Equal(expected, CommandTextEscaping.Escape(value));
-    }
-
-    [Theory(DisplayName = "Command text limits retain complete tokens and the exact bounded ellipsis"), Trait("Feature", "command-presentation"), Trait("Evidence", "Unit")]
-    [InlineData("", 1, "")]
-    [InlineData("abc", 3, "abc")]
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Command diagnostic clamping keeps complete Unicode scalars"), Trait("Feature", "command-presentation"), Trait("Evidence", "Unit")]
+    [InlineData("abcdef", 0, "")]
     [InlineData("abcdef", 1, ".")]
     [InlineData("abcdef", 2, "..")]
     [InlineData("abcdef", 3, "...")]
     [InlineData("abcdef", 4, "a...")]
-    [InlineData("\u0001value", 7, "...")]
-    [InlineData("\u0001value", 9, "\\u0001...")]
     [InlineData("😀abcd", 4, "...")]
     [InlineData("😀abcd", 5, "😀...")]
     [InlineData("a😀bcd", 5, "a...")]
-    [InlineData("\"abcd", 4, "...")]
-    [InlineData("\"abcd", 5, "\\\"...")]
-    public void LimitsOutputAtCompleteTokens(string value, int maximumLength, string expected)
-    {
-        Assert.Equal(expected, CommandTextEscaping.Escape(value, maximumLength));
-    }
+    public void DiagnosticClampKeepsScalars(string value, int maximum, string expected)
+        => Assert.Equal(expected, CliText.Clamp(value, maximum));
 
-    [Theory(DisplayName = "Command text escaping rejects nonpositive limits with its exact argument facts"), Trait("Feature", "command-presentation"), Trait("Evidence", "Unit")]
-    [InlineData(0)]
-    [InlineData(-1)]
-    public void RejectsNonpositiveLimits(int maximumLength)
-    {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => CommandTextEscaping.Escape("x", maximumLength));
-
-        Assert.Equal("maximumLength", exception.ParamName);
-        Assert.Equal(maximumLength, exception.ActualValue);
-        Assert.Equal(
-            new ArgumentOutOfRangeException(
-                paramName: "maximumLength",
-                actualValue: maximumLength,
-                message: "The text limit must be positive.").Message,
-            exception.Message);
-    }
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Command diagnostic clamping rejects negative limits"), Trait("Feature", "command-presentation"), Trait("Evidence", "Unit")]
+    public void NegativeLimitIsInvalid() => Assert.Throws<ArgumentOutOfRangeException>(() => CliText.Clamp("x", -1));
 }

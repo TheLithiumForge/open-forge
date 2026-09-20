@@ -21,6 +21,7 @@ public sealed class LibraryRecoveryManifestTests
     private const string Link = """{"kind":"relative-file-link","length":null,"sha256":null,"linkKind":"relative-file-symbolic-link","rawRelativeTarget":"../shared/.agents/a.md"}""";
     private const string Ordinary = """{"kind":"ordinary-file","length":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","linkKind":null,"rawRelativeTarget":null}""";
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Library schema-v1 recovery admits exact workspace attribution and payload-free typed link or record-create states")]
     [InlineData("attach", "ordinary-create"), InlineData("attach", "relative-file-link-create")]
     [InlineData("sync", "relative-file-link-create"), InlineData("sync", "relative-file-link-delete"), InlineData("detach", "relative-file-link-delete")]
@@ -84,6 +85,7 @@ public sealed class LibraryRecoveryManifestTests
         }
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Library recovery manifest rejects malformed provenance typed states source payloads and noncanonical identity"), MemberData(nameof(MalformedManifests))]
     public void RejectsMalformedManifest(string json)
     {
@@ -94,6 +96,7 @@ public sealed class LibraryRecoveryManifestTests
         Assert.Empty(result.Entries);
     }
 
+    [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Recovery entry kinds retain literal wire tokens and exact typed identities through serialization"), InlineData("ordinary-create"), InlineData("ordinary-replace")]
     [InlineData("ordinary-replace-generated-region"), InlineData("ordinary-delete"), InlineData("relative-file-link-create"), InlineData("relative-file-link-delete")]
     public void RoundtripsEveryEntryKindFromAdmittedTargets(string kind)
@@ -121,6 +124,7 @@ public sealed class LibraryRecoveryManifestTests
         Assert.Equal(expectedPayload, decoded.PriorPayload);
     }
 
+    [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Recovery entry kind JSON null missing unknown and wrong-case values remain malformed"), InlineData("null"), InlineData("missing")]
     [InlineData("unknown"), InlineData("wrong-case")]
     public void RejectsAlteredEntryKindJson(string mutation)

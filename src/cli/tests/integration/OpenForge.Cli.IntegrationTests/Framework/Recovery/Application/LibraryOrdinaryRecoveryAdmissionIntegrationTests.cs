@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery.Application;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryOrdinaryRecoveryAdmissionIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Ordinary recovery admission requires a held same-workspace lease exact original member and ordinary effect kind")]
     [InlineData("released"), InlineData("foreign-workspace"), InlineData("foreign-entry"), InlineData("link-kind")]
     public static async Task RejectsInvalidApplicationAuthority(string defect)

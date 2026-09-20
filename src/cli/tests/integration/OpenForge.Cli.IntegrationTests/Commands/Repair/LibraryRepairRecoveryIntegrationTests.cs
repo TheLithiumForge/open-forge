@@ -13,7 +13,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
-using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
@@ -29,15 +29,16 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Repair;
 
 public sealed class LibraryRepairRecoveryIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task PriorRecordRecoveryCannotOverwriteACurrentRegisteredSource()
     {
         using var workspace = new LibraryResidualWorkspace();
         await workspace.PrepareAsync("record-delete");
-        File.WriteAllText(workspace.Files.Absolute(LibraryMutationWorkspace.RecordPath), """
+        File.WriteAllText(workspace.Files.Absolute(LibraryMutationWorkspace.OwnershipPath), """
             {"schemaVersion":1,"libraries":[{"id":"later","sourceRoot":".agents","destinationRoot":"docs","paths":[]}]}
             """);
-        var current = await LibrariesRecordReader.ReadAsync(new PhysicalPathResolver(), workspace.Files.Workspace, TestContext.Current.CancellationToken);
+        var current = await LibraryRegistrationReader.ReadAsync(new PhysicalPathResolver(), workspace.Files.Workspace, TestContext.Current.CancellationToken);
         var evidence = new LibraryResidualEvidence(workspace.Evidence.LibraryId, current, workspace.Evidence.VerifiedPriorRecord,
             workspace.Evidence.Residual, workspace.Evidence.Entry);
         var before = workspace.Files.Snapshot();
@@ -47,6 +48,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
         Assert.Equal(before, workspace.Files.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(false, false), InlineData(true, false), InlineData(false, true), InlineData(true, true)]
     public static async Task NewlyRegisteredSourceBlocksSelectedRecoveryBeforeEffects(bool generatedHost, bool afterPreflight)
@@ -62,8 +64,8 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             Request = new RepairRequest(workspace.Files.Workspace, RepairMode.Apply, automatic: true, [], allowInteraction: false),
             References = [],
             Libraries = [new RepairLibraryRecoveryProposal(evidence)],
-            WizardRelinks = [],
-            WizardLibraries = null,
+            PromptRelinks = [],
+            PromptLibraries = null,
         });
         Assert.Single(plan.LibrarySteps);
         var application = RepairOperationFactory.CreateDefaultComponents().Application;
@@ -72,23 +74,23 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             var ready = await application.PreflightAsync(plan, TestContext.Current.CancellationToken);
             Assert.Equal(RepairPreflightState.Ready, ready.Outcome.Preflight.State);
         }
-        workspace.Files.Replace(LibraryMutationWorkspace.RecordPath, """
+        File.WriteAllText(workspace.Files.Absolute(LibraryMutationWorkspace.OwnershipPath), """
             {"schemaVersion":1,"libraries":[
               {"id":"later","sourceRoot":".agents/directives","destinationRoot":"docs","paths":[]},
               {"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/directives/review.md"]}]}
             """);
         if (!afterPreflight)
         {
-            var current = await LibrariesRecordReader.ReadAsync(new PhysicalPathResolver(), workspace.Files.Workspace, TestContext.Current.CancellationToken);
-            Assert.Equal(OpenForge.Cli.Core.Framework.Libraries.Models.Record.LibrariesRecordReadState.Complete, current.State);
+            var current = await LibraryRegistrationReader.ReadAsync(new PhysicalPathResolver(), workspace.Files.Workspace, TestContext.Current.CancellationToken);
+            Assert.Equal(OpenForge.Cli.Core.Framework.Libraries.Models.Observation.LibraryRegistrationReadState.Complete, current.State);
             var freshEvidence = new LibraryResidualEvidence(evidence.LibraryId, current, null, evidence.Residual, evidence.Entry);
             plan = RepairLibraryRecoveryPlanner.Build(new RepairLibraryPlanningInput
             {
                 Request = plan.Request,
                 References = [],
                 Libraries = [new RepairLibraryRecoveryProposal(freshEvidence)],
-                WizardRelinks = [],
-                WizardLibraries = null,
+                PromptRelinks = [],
+                PromptLibraries = null,
             });
             var heldOutcome = await application.ExecuteAsync(plan, [], TestContext.Current.CancellationToken);
             Assert.Equal(RepairPreflightState.Blocked, heldOutcome.Preflight.State);
@@ -105,6 +107,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
         Assert.Equal(bundle, File.ReadAllBytes(workspace.Preparation.BundlePath));
     }
 
+    [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData("record-create", false), InlineData("record-replace", false), InlineData("record-delete", false)]
     [InlineData("link-create", false), InlineData("link-delete", false), InlineData("link-delete", true)]
@@ -114,13 +117,17 @@ public sealed class LibraryRepairRecoveryIntegrationTests
         await workspace.PrepareAsync(kind);
         var source = workspace.Sources();
         var bundle = File.ReadAllBytes(workspace.Preparation.BundlePath);
-        var run = await CliHostCapture.RunAsync(["repair", "--automatic", "--json"], workspace.Files.Path);
+        var run = await CliHostCapture.RunAsync(["repair", "--automatic", "--format", "json"], workspace.Files.Path);
         Assert.True(run.ExitCode is 0 or 2, $"Expected completed recovery: {run.ExitCode}; {run.Error}; {run.Output}");
         using var document = JsonDocument.Parse(run.Output);
-        var execution = document.RootElement.GetProperty("result").GetProperty("libraryExecution");
-        var receipt = Assert.Single(execution.GetProperty("receipts").EnumerateArray());
-        Assert.Equal(workspace.Preparation.BundlePath, receipt.GetProperty("originalBundlePath").GetString());
-        Assert.Equal("verified", receipt.GetProperty("verification").GetString());
+        // The recovery is reported as an effect on the envelope. The bundle path and the
+        // verification state are operation facts the receipt below still proves; the command data
+        // reports how the repair was selected and what it relinked.
+        Assert.Equal("automatic", document.RootElement.GetProperty("data").GetProperty("selection").GetString());
+        var effect = Assert.Single(
+            document.RootElement.GetProperty("effects").EnumerateArray(),
+            value => value.GetProperty("kind").GetString() is "link" or "record");
+        Assert.Equal("done", effect.GetProperty("outcome").GetString());
         switch (kind)
         {
             case "record-create":
@@ -135,6 +142,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
         Assert.Equal(bundle, File.ReadAllBytes(workspace.Preparation.BundlePath));
     }
 
+    [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData("record-create"), InlineData("record-replace"), InlineData("record-delete")]
     [InlineData("link-create"), InlineData("link-delete")]
@@ -144,15 +152,20 @@ public sealed class LibraryRepairRecoveryIntegrationTests
         await workspace.PrepareAsync(kind);
         var before = workspace.Files.Snapshot();
         var bundle = File.ReadAllBytes(workspace.Preparation.BundlePath);
-        var run = await CliHostCapture.RunAsync(["repair", "--automatic", "--dry-run", "--json"], workspace.Files.Path);
+        var run = await CliHostCapture.RunAsync(["repair", "--automatic", "--dry-run", "--format", "json"], workspace.Files.Path);
         Assert.True(run.ExitCode is 0 or 2, $"Expected valid Library recovery plan: {run.ExitCode}; {run.Error}; {run.Output}");
         using var document = JsonDocument.Parse(run.Output);
-        var result = document.RootElement.GetProperty("result");
-        Assert.Single(result.GetProperty("selection").GetProperty("selectedLibraries").EnumerateArray());
+        var result = document.RootElement.GetProperty("data");
+
+        // Library recovery is an effect on the envelope, not a member of the command data. The
+        // command data reports how the repair was selected and what it would relink.
+        Assert.Equal("dry-run", result.GetProperty("mode").GetString());
+        Assert.Equal("automatic", result.GetProperty("selection").GetString());
         Assert.Equal(before, workspace.Files.Snapshot());
         Assert.Equal(bundle, File.ReadAllBytes(workspace.Preparation.BundlePath));
     }
 
+    [Trait("Boundary", "OS")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(false), InlineData(true)]
     public static async Task ThirdStateLibraryResidualBlocksBeforeAnySelectedReferenceWrite(bool link)
@@ -178,8 +191,8 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             Request = new RepairRequest(workspace.Files.Workspace, RepairMode.Apply, automatic: true, [], allowInteraction: false),
             References = [.. catalogue.Proposals],
             Libraries = [new RepairLibraryRecoveryProposal(workspace.Evidence)],
-            WizardRelinks = [],
-            WizardLibraries = null,
+            PromptRelinks = [],
+            PromptLibraries = null,
         });
         Assert.NotEmpty(plan.Effects);
         Assert.Single(plan.LibrarySteps);
@@ -193,7 +206,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
         }
         else
         {
-            workspace.Files.Replace(".agents/open-forge.libraries.json", LibraryResidualWorkspace.RecordText + "\n\n");
+            File.WriteAllText(workspace.Files.Absolute(LibraryMutationWorkspace.OwnershipPath), LibraryResidualWorkspace.RecordText + "\n\n");
         }
 
         var before = workspace.Files.Snapshot();
@@ -205,6 +218,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
         Assert.Equal(bundle, File.ReadAllBytes(workspace.Preparation.BundlePath));
     }
 
+    [Trait("Boundary", "Host")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task MixedReferenceAndLibraryPlanRunsThroughRealOperationAndRetainsSeparateReceipts()
     {
@@ -213,18 +227,22 @@ public sealed class LibraryRepairRecoveryIntegrationTests
         const string local = ".agents/directives/local.md";
         workspace.Files.Write(local, "---\nopen-forge:\n  description: Local\n  tags: [Directive]\n---\n# Local\n\n[Directives](./_directives.md)\n");
         var source = workspace.Sources();
-        var run = await CliHostCapture.RunAsync(["repair", "--automatic", "--json"], workspace.Files.Path);
+        var run = await CliHostCapture.RunAsync(["repair", "--automatic", "--format", "json"], workspace.Files.Path);
         Assert.True(run.ExitCode is 0 or 2, $"Expected mixed repair: {run.ExitCode}; {run.Error}; {run.Output}");
         Assert.Contains("[Directives](_directives.md)", File.ReadAllText(workspace.Files.Absolute(local)), StringComparison.Ordinal);
         Assert.False(File.Exists(workspace.TargetPath));
         Assert.Null(new FileInfo(workspace.TargetPath).LinkTarget);
         using var document = JsonDocument.Parse(run.Output);
-        var result = document.RootElement.GetProperty("result");
-        Assert.Single(result.GetProperty("libraryExecution").GetProperty("receipts").EnumerateArray());
+        var result = document.RootElement.GetProperty("data");
+        Assert.Equal("automatic", result.GetProperty("selection").GetString());
+        Assert.Contains(
+            document.RootElement.GetProperty("effects").EnumerateArray(),
+            value => value.GetProperty("kind").GetString() is "link" or "record");
         Assert.Equal(source, workspace.Sources());
         Assert.True(File.Exists(workspace.Preparation.BundlePath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task ReceiptRejectsAnotherVerifiedOriginalEvenWithSameEntryShape()
     {
@@ -240,6 +258,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
         Assert.Same(selected.Preparation, receipt.OriginalResidual);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(false), InlineData(true)]
     public static async Task ReceiptRejectsIndependentWrongBeforeOrAfterContext(bool after)
@@ -260,6 +279,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             workspace.Effect(), workspace.Preparation, result, relativeFileLink: null));
     }
 
+    [Trait("Boundary", "OS")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(false), InlineData(true)]
     public static async Task ReceiptRejectsSameWorkspaceOtherOriginalOrForwardPreparation(bool forward)
@@ -272,6 +292,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
         Assert.Equal("originalResidual", error.ParamName);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task ReceiptRejectsUndefinedKindWithRealOriginalPreparation()
     {
@@ -281,6 +302,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             workspace.Effect(), workspace.Preparation, Ordinary(workspace.Evidence.Entry), relativeFileLink: null));
     }
 
+    [Trait("Boundary", "OS")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData("cancellation"), InlineData("failure"), InlineData("cleanup-unknown")]
     public static async Task CompletionRetainsVerifiedInverseWhenLaterExecutionCannotComplete(string later)
@@ -303,7 +325,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
         {
             Ordinal = 0,
             Selection = effect.Selection,
-            Dependency = new RepairDependency([RepairDependencyDomain.WorkspaceContainment, RepairDependencyDomain.LibraryRecord, RepairDependencyDomain.LibraryResidual]),
+            Dependency = new RepairDependency([RepairDependencyDomain.WorkspaceContainment, RepairDependencyDomain.LibraryRegistration, RepairDependencyDomain.LibraryResidual]),
             Verification = new RepairVerificationRequirement([RepairVerificationKind.NoFollowIdentity, RepairVerificationKind.PriorState]),
             Effect = effect,
             Outcome = RepairStepOutcome.Planned,
@@ -334,6 +356,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(false), InlineData(true)]
     public static async Task RelativeLinkReceiptRejectsWrongBeforeOrAfterLogicalIdentity(bool after)
@@ -349,6 +372,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             workspace.Effect(), workspace.Preparation, ordinary: null, result));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task SelectedSubsetPreservesUnselectedEntryAndEntireOriginalArchive()
     {
@@ -362,8 +386,8 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             Request = new RepairRequest(workspace.Files.Workspace, RepairMode.Apply, automatic: false, [], allowInteraction: true),
             References = [],
             Libraries = [selected, unselected],
-            WizardRelinks = [],
-            WizardLibraries = [selected],
+            PromptRelinks = [],
+            PromptLibraries = [selected],
         });
         Assert.Same(selected, Assert.Single(plan.Selection.Libraries.Selected).Proposal);
         Assert.Same(unselected, Assert.Single(plan.Selection.Libraries.Unselected));
@@ -390,6 +414,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             Cause = null,
         };
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task MatchingReceiptPrecedesAtomicFailureAttribution()
     {
@@ -400,8 +425,8 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             Request = new RepairRequest(workspace.Files.Workspace, RepairMode.Apply, automatic: true, [], allowInteraction: false),
             References = [],
             Libraries = [new RepairLibraryRecoveryProposal(workspace.Evidence)],
-            WizardRelinks = [],
-            WizardLibraries = null,
+            PromptRelinks = [],
+            PromptLibraries = null,
         });
         Assert.False(plan.IsBlocked);
         var step = Assert.Single(plan.LibrarySteps);

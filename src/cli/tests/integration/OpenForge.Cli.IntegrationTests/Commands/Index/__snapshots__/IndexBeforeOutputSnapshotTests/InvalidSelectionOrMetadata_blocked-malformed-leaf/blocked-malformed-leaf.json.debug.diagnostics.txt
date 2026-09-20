@@ -1,0 +1,4 @@
+status=blocked
+mode=apply
+regions=1
+A direct routed child document cannot be safely decoded for authored metadata.

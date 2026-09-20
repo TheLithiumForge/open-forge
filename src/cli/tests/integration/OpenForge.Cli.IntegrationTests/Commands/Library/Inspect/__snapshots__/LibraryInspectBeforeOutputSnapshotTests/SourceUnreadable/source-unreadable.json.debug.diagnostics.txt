@@ -1,0 +1,7 @@
+status=incomplete
+library=team-knowledge
+source-files=0
+comparisons=1
+findings=2
+One or more eligible Library source paths were unavailable.
+The required Library path facts are incomplete.

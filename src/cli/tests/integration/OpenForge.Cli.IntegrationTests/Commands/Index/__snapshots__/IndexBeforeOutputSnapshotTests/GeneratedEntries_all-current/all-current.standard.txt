@@ -1,0 +1,3 @@
+Entries sections are current in all 2 files. Nothing to do.
+Workspace: <workspace>
+2 files are current.

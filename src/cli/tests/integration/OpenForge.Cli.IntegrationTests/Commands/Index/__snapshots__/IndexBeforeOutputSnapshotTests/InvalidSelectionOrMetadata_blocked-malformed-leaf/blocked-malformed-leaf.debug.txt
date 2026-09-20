@@ -1,0 +1,9 @@
+Cannot rebuild the Entries section of .agents/root/_root.md.
+Workspace: <workspace>
+  Error  .agents/root/child.md  Frontmatter is invalid [index.metadata-unsafe]
+         The frontmatter of .agents/root/child.md cannot be used: A direct routed child document cannot be safely decoded for authored metadata.
+  .agents/root/_root.md  final state unknown
+Selection: .agents/root/_root.md
+No recovery bundle was needed.
+  Inspect the reported problem before rerunning Index.
+Next: open-forge doctor

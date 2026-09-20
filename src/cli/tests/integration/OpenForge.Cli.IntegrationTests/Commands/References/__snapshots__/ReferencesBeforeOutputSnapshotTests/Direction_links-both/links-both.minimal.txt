@@ -1,0 +1,2 @@
+.agents/docs/guide.md
+  out  :10:10   reference.md#details

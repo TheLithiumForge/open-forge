@@ -5,6 +5,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Move;
 
 public sealed class RouteMoveRevalidationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Move revalidation reobserves every volatile complete-plan fact"),
         InlineData("exact", (int)RouteMovePlanRevalidationState.Exact),
         InlineData("source-bytes", (int)RouteMovePlanRevalidationState.Changed),

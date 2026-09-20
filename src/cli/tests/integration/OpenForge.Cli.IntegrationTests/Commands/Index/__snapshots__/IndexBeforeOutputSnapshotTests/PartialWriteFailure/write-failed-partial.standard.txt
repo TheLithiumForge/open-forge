@@ -1,0 +1,8 @@
+Index stopped after 1 of 2 files.
+Workspace: <workspace>
+  Error  .agents/beta/_beta.md  Write failed
+         Writing .agents/beta/_beta.md failed. Stopped after 1 of 2 changes. Recovery data: <recovery-bundle>.
+  .agents/alpha/_alpha.md  unknown -> 1 entries
+  .agents/beta/_beta.md    not started
+  Inspect the reported problem before rerunning Index.
+Next: open-forge doctor

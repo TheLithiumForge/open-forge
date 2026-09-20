@@ -12,6 +12,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Remove;
 
 public sealed class ExtensionRemoveDefinitionsTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove definitions expose the exact command grammar and defaults"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void DefinitionsExposeExactGrammar()
     {
@@ -20,17 +21,15 @@ public sealed class ExtensionRemoveDefinitionsTests
         Assert.Equal("remove", ExtensionRemoveDefinitions.RemoveCommand.Name);
         Assert.Contains("Release selected managed Extension ownership", ExtensionRemoveDefinitions.RemoveCommand.Description, StringComparison.Ordinal);
         Assert.Equal("stable-id", ExtensionRemoveDefinitions.StableId.Name);
-        Assert.Equal("--prune", ExtensionRemoveDefinitions.Prune.Name);
         Assert.Equal("--automatic", ExtensionRemoveDefinitions.Automatic.Name);
         Assert.Equal("--dry-run", ExtensionRemoveDefinitions.DryRun.Name);
-        Assert.Equal(CliOptionArity.None, ExtensionRemoveDefinitions.Prune.Arity);
         Assert.Equal(CliOptionArity.None, ExtensionRemoveDefinitions.Automatic.Arity);
         Assert.Equal(CliOptionArity.None, ExtensionRemoveDefinitions.DryRun.Arity);
-        Assert.False(ExtensionRemoveDefinitions.Prune.DefaultValue);
         Assert.False(ExtensionRemoveDefinitions.Automatic.DefaultValue);
         Assert.False(ExtensionRemoveDefinitions.DryRun.DefaultValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove definitions expose every finding wire name and semantic status"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void FindingDefinitionsMapEveryCodeAndStatus()
     {
@@ -40,13 +39,13 @@ public sealed class ExtensionRemoveDefinitionsTests
             ("extension-remove.invalid-input", CliSemanticStatus.Invalid),
             ("extension-remove.selection-required", CliSemanticStatus.Invalid),
             ("extension-remove.interaction-ended", CliSemanticStatus.Invalid),
+            ("extension-remove.confirmation-required", CliSemanticStatus.Invalid),
             ("extension-remove.framework-unavailable", CliSemanticStatus.Incomplete),
             ("extension-remove.framework-unsafe", CliSemanticStatus.Blocked),
             ("extension-remove.lifecycle-unavailable", CliSemanticStatus.Incomplete),
             ("extension-remove.lifecycle-blocked", CliSemanticStatus.Blocked),
             ("extension-remove.dependency-blocked", CliSemanticStatus.Blocked),
             ("extension-remove.ownership-conflict", CliSemanticStatus.Blocked),
-            ("extension-remove.managed-divergence", CliSemanticStatus.Attention),
             ("extension-remove.permission-required", CliSemanticStatus.Blocked),
             ("extension-remove.permission-declined", CliSemanticStatus.Blocked),
             ("extension-remove.permissions-invalid", CliSemanticStatus.Blocked),
@@ -61,6 +60,7 @@ public sealed class ExtensionRemoveDefinitionsTests
             ("extension-remove.recovery-conflict", CliSemanticStatus.Blocked),
             ("extension-remove.recovery-unavailable", CliSemanticStatus.Incomplete),
             ("extension-remove.lifecycle-observation", CliSemanticStatus.Attention),
+            ("extension-remove.ownership-observation", CliSemanticStatus.Complete),
             ("extension-remove.recovery-artifact-retained", CliSemanticStatus.Attention),
             ("extension-remove.write-failed", CliSemanticStatus.Failed),
             ("extension-remove.topology-verification-failed", CliSemanticStatus.Failed),
@@ -77,6 +77,7 @@ public sealed class ExtensionRemoveDefinitionsTests
             ExtensionRemoveDefinitions.FindingCodes.Distinct().Count());
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove definitions map every finite mode, selection, path, effect, and result value"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void FiniteValuesMapToStableWireNames()
     {
@@ -91,8 +92,7 @@ public sealed class ExtensionRemoveDefinitionsTests
         Assert.Equal(
         [
             (ExtensionRemovePathClassification.Shared, "shared"),
-            (ExtensionRemovePathClassification.UnchangedFinalOwner, "unchanged-final-owner"),
-            (ExtensionRemovePathClassification.ChangedFinalOwner, "changed-final-owner"),
+            (ExtensionRemovePathClassification.FinalOwner, "final-owner"),
             (ExtensionRemovePathClassification.Missing, "missing"),
         ],
             Enum.GetValues<ExtensionRemovePathClassification>().Select(value =>
@@ -101,7 +101,6 @@ public sealed class ExtensionRemoveDefinitionsTests
         [
             (ExtensionRemovePathAction.RetainShared, "retain-shared"),
             (ExtensionRemovePathAction.Delete, "delete"),
-            (ExtensionRemovePathAction.KeepAsUnmanaged, "keep-as-unmanaged"),
             (ExtensionRemovePathAction.ReleaseOwnership, "release-ownership"),
         ],
             Enum.GetValues<ExtensionRemovePathAction>().Select(value =>
@@ -139,13 +138,6 @@ public sealed class ExtensionRemoveDefinitionsTests
             (ExtensionRemoveEffectResidual.Unknown, "unknown"),
         ],
             Enum.GetValues<ExtensionRemoveEffectResidual>().Select(value =>
-                (value, ExtensionRemoveDefinitions.ReadMachineName(value))));
-        Assert.Equal(
-        [
-            (ExtensionRemoveChangedContentPolicy.KeepAsUnmanaged, "keep-as-unmanaged"),
-            (ExtensionRemoveChangedContentPolicy.Delete, "delete"),
-        ],
-            Enum.GetValues<ExtensionRemoveChangedContentPolicy>().Select(value =>
                 (value, ExtensionRemoveDefinitions.ReadMachineName(value))));
         Assert.Equal(
         [
@@ -216,6 +208,7 @@ public sealed class ExtensionRemoveDefinitionsTests
                 (value, ExtensionRemoveDefinitions.ReadMachineName(value))));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove next actions preserve status and recovery guidance"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void NextActionsAreBounded()
     {
@@ -223,8 +216,8 @@ public sealed class ExtensionRemoveDefinitionsTests
             ExtensionRemoveFindingCode.RecoveryArtifactRetained,
             "The recovery bundle remains.");
         var attention = new ExtensionRemoveFinding(
-            ExtensionRemoveFindingCode.ManagedDivergence,
-            "Changed content is retained.");
+            ExtensionRemoveFindingCode.LifecycleObservation,
+            "The package is not recorded as installed.");
 
         Assert.Null(ExtensionRemoveDefinitions.ReadNextAction(CliSemanticStatus.Complete, []));
         Assert.Equal(
@@ -246,6 +239,7 @@ public sealed class ExtensionRemoveDefinitionsTests
             ExtensionRemoveDefinitions.ReadNextAction((CliSemanticStatus)int.MaxValue, []));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove definitions reject undefined enum values"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void UndefinedValuesFailClosed()
     {
@@ -259,7 +253,6 @@ public sealed class ExtensionRemoveDefinitionsTests
         Assert.Throws<ArgumentOutOfRangeException>(() => ExtensionRemoveDefinitions.ReadMachineName((ExtensionRemoveEffectAction)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => ExtensionRemoveDefinitions.ReadMachineName((ExtensionRemoveEffectOutcome)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => ExtensionRemoveDefinitions.ReadMachineName((ExtensionRemoveEffectResidual)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => ExtensionRemoveDefinitions.ReadMachineName((ExtensionRemoveChangedContentPolicy)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => ExtensionRemoveDefinitions.ReadMachineName((ExtensionRemoveGeneratedRegionState)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => ExtensionRemoveDefinitions.ReadMachineName((ExtensionRemoveLifecycleTrust)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => ExtensionRemoveDefinitions.ReadMachineName((ExtensionRemoveLifecycleCoverage)int.MaxValue));

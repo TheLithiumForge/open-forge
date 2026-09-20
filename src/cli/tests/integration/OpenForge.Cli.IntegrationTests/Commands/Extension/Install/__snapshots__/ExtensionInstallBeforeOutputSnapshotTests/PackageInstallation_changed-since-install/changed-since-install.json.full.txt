@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot install toolkit: toolkit has changed since it was installed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-install.managed-divergence",
+      "title": "Managed content changed",
+      "message": "toolkit has changed since it was installed.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "toolkit",
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge extension update toolkit",
+          "reason": "Use Extension Update to reconcile the managed package."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesInstalled": 0,
+    "filesCreated": 0,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "toolkit",
+        "version": "1.0.0",
+        "selected": true,
+        "requiredBy": []
+      }
+    ],
+    "permissions": {
+      "decision": "not-evaluated",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "selection": {
+      "method": "explicit-ids"
+    },
+    "sections": [],
+    "entriesUnchanged": [],
+    "verification": {
+      "targets": "not-requested",
+      "topology": "not-requested",
+      "extensionsLifecycle": "not-requested",
+      "frameworkLifecycle": "not-requested"
+    },
+    "recovery": {
+      "state": "not-required",
+      "protectedPaths": [],
+      "residualPath": null
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension update toolkit",
+    "reason": "Use Extension Update to reconcile the managed package."
+  }
+}

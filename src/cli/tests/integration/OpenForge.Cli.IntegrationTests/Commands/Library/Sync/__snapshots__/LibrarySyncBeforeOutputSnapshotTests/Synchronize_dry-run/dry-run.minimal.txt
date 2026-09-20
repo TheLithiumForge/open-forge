@@ -1,0 +1,2 @@
+Would synchronize team-knowledge: 1 link to add.
+  Add      .agents/directives/added.md

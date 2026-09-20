@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "completed-with-warnings",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Repaired 1 link. 1 problem still needs a choice or a hand.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "repair.manual-finding-remaining",
+      "title": "Library diagnosis remains",
+      "message": "The registered Library projection is not current.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/directives/review.md",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/directives/review.md",
+      "kind": "link",
+      "action": "restored",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksRepaired": 1,
+    "problemsRemaining": 1,
+    "problemsNeedingChoice": 0,
+    "problemsNeedingHand": 1,
+    "librarySteps": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "selection": "automatic",
+    "repairs": [],
+    "remaining": [
+      {
+        "path": ".agents/directives/review.md",
+        "kind": "manual",
+        "candidates": 0
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect remaining Library problems with open-forge doctor."
+  }
+}

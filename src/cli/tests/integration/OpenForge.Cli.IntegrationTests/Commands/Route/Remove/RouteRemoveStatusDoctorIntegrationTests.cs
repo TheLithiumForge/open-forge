@@ -15,6 +15,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveStatusDoctorIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove recovery attribution is observed by the existing Status and Doctor domains"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationStatusDoctor")]
     public async Task RouteRemoveRecoveryRemainsInExistingOperationalVocabulary()
@@ -38,55 +39,47 @@ public sealed class RouteRemoveStatusDoctorIntegrationTests
         Assert.Equal(RecoveryBundleOperation.Remove, verified.Verified.Attribution.Operation);
 
         var status = await CliHostCapture.RunAsync(
-            ["status", "--workspace", workspace.Workspace.LexicalRoot, "--json"],
+            ["status", "--workspace", workspace.Workspace.LexicalRoot, "--format", "json", "--detail", "full"],
             workspace.Workspace.LexicalRoot);
         Assert.Equal(3, status.ExitCode);
         Assert.Equal(string.Empty, status.Error);
         using var statusDocument = JsonDocument.Parse(status.Output);
         var statusRoot = statusDocument.RootElement;
         Assert.Equal("status", statusRoot.GetProperty("command").GetString());
-        Assert.Equal(
-            1,
-            statusRoot.GetProperty("result")
-                .GetProperty("recovery")
-                .GetProperty("verifiedFinals")
-                .GetProperty("value")
-                .GetInt32());
+        Assert.Equal(1, statusRoot.GetProperty("counts").GetProperty("recoveryBundles").GetInt32());
         Assert.Contains(
-            statusRoot.GetProperty("result").GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("code").GetString() == "recovery-candidate-verified");
+            statusRoot.GetProperty("findings").EnumerateArray(),
+            finding => finding.GetProperty("code").GetString() == "status.recovery-candidate-verified");
 
         var doctor = await CliHostCapture.RunAsync(
-            ["doctor", "--workspace", workspace.Workspace.LexicalRoot, "--json"],
+            ["doctor", "--workspace", workspace.Workspace.LexicalRoot, "--format", "json", "--detail", "full"],
             workspace.Workspace.LexicalRoot);
         Assert.Equal(3, doctor.ExitCode);
         using var doctorDocument = JsonDocument.Parse(doctor.Output);
         var doctorRoot = doctorDocument.RootElement;
-        var domains = doctorRoot.GetProperty("result").GetProperty("domains").EnumerateArray().ToArray();
+        var categories = doctorRoot.GetProperty("data").GetProperty("categories").EnumerateArray().ToArray();
         Assert.Equal(
             [
-                "workspace-entry",
-                "recovery-residuals",
-                "routes-metadata-overwrites-generated-navigation",
-                "local-references",
-                "framework-lifecycle",
-                "extension-lifecycle",
+                "Workspace",
+                "Recovery data",
+                "Routes and Entries",
+                "Links",
+                "Framework files",
+                "Extensions",
             ],
-            domains.Select(domain => domain.GetProperty("domain").GetString()));
-        var recovery = Assert.Single(
-            domains,
-            domain => domain.GetProperty("domain").GetString() == "recovery-residuals");
+            categories.Select(category => category.GetProperty("name").GetString()));
         var finding = Assert.Single(
-            recovery.GetProperty("findings").EnumerateArray(),
-            candidate => candidate.GetProperty("kind").GetString() == "recovery.bundle-recognized");
-        Assert.Equal("recovery-item", finding.GetProperty("subject").GetProperty("kind").GetString());
+            doctorRoot.GetProperty("findings").EnumerateArray(),
+            candidate => candidate.GetProperty("code").GetString() == "recovery.bundle-recognized");
+        Assert.Equal("file", finding.GetProperty("subject").GetProperty("kind").GetString());
         Assert.Contains(
             finding.GetProperty("evidence").EnumerateArray(),
-            evidence => evidence.GetProperty("kind").GetString() == "integrity"
-                && evidence.GetProperty("state").GetString() == "verified");
+            evidence => evidence.GetProperty("label").GetString() == "integrity"
+                && evidence.GetProperty("value").GetString() == "verified");
         Assert.Equal(string.Empty, doctor.Error);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove application keeps the existing recovery attribution tuple while completing"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationStatusDoctor")]
     public async Task ApplicationCompletesWithRouteRemoveAttribution()
@@ -96,7 +89,7 @@ public sealed class RouteRemoveStatusDoctorIntegrationTests
         var error = new StringWriter();
 
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--json"],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--automatic", "--format", "json"],
             output,
             error);
 
@@ -104,11 +97,16 @@ public sealed class RouteRemoveStatusDoctorIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, completion.Status);
         Assert.Equal(string.Empty, error.ToString());
         using var document = JsonDocument.Parse(output.ToString());
-        Assert.Equal("route remove", document.RootElement.GetProperty("command").GetString());
-        Assert.Equal("removed", document.RootElement.GetProperty("result")
-            .GetProperty("recovery").GetProperty("state").GetString());
+        var root = document.RootElement;
+        Assert.Equal("route remove", root.GetProperty("command").GetString());
+        Assert.Equal("file", root.GetProperty("data").GetProperty("subject").GetString());
+        Assert.Contains(
+            root.GetProperty("data").GetProperty("removed").EnumerateArray(),
+            path => path.GetString() == RouteRemoveIntegrationWorkspace.LeafPath);
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("recovery").ValueKind);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove failure leaves the six existing Doctor domains available for diagnosis"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationStatusDoctor")]
     public async Task BlockedApplicationRetainsDoctorDomainCoverage()
@@ -118,7 +116,7 @@ public sealed class RouteRemoveStatusDoctorIntegrationTests
         var output = new StringWriter();
         var error = new StringWriter();
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--detail", "full"],
             output,
             error);
 
@@ -130,7 +128,7 @@ public sealed class RouteRemoveStatusDoctorIntegrationTests
         var doctorOutput = new StringWriter();
         var doctorError = new StringWriter();
         var doctor = await workspace.RunAsync(
-            ["doctor", "--workspace", workspace.Path, "--json"],
+            ["doctor", "--workspace", workspace.Path, "--format", "json", "--detail", "standard"],
             doctorOutput,
             doctorError);
         Assert.Equal(3, doctor.ExitCode);
@@ -139,7 +137,7 @@ public sealed class RouteRemoveStatusDoctorIntegrationTests
         using var doctorDocument = JsonDocument.Parse(doctorOutput.ToString());
         Assert.Equal(
             6,
-            doctorDocument.RootElement.GetProperty("result").GetProperty("domains").GetArrayLength());
+            doctorDocument.RootElement.GetProperty("data").GetProperty("categories").GetArrayLength());
     }
 
 }

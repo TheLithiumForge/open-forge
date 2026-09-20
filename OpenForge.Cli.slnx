@@ -1,5 +1,9 @@
 <Solution>
-  <Project Path="src/cli/core/OpenForge.Cli.Core/OpenForge.Cli.Core.csproj" />
+  <Project Path="src/cli/output-text/OpenForge.Cli.OutputText/OpenForge.Cli.OutputText.csproj" />
+  <Project Path="src/cli/framework/OpenForge.Cli.Framework/OpenForge.Cli.Framework.csproj" />
+  <Project Path="src/cli/shell/OpenForge.Cli.Shell/OpenForge.Cli.Shell.csproj" />
+  <Project Path="src/cli/operations/OpenForge.Cli.Operations/OpenForge.Cli.Operations.csproj" />
+  <Project Path="src/cli/rendering/OpenForge.Cli.Rendering/OpenForge.Cli.Rendering.csproj" />
   <Project Path="src/cli/root/OpenForge.Cli/OpenForge.Cli.csproj" />
   <Project Path="src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj" />
   <Project Path="src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj" />

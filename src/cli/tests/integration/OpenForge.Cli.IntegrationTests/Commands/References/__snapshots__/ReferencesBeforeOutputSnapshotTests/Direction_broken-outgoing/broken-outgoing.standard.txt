@@ -1,0 +1,7 @@
+.agents/docs/guide.md
+Workspace: <workspace>
+  out  :8:1   missing.md -> .agents/docs/missing.md   missing
+0 in, 1 out
+The incoming scan used every source.
+  check the workspace for broken links
+Next: open-forge doctor

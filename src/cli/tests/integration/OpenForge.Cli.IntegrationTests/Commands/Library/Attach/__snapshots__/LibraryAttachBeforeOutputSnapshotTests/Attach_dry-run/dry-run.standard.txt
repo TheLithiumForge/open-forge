@@ -1,0 +1,7 @@
+Would register the team-knowledge Library from shared/team-knowledge.
+Workspace: <workspace>
+  .agents/directives/review.md  -> ../../shared/team-knowledge/.agents/directives/review.md
+  Would create 1 link under .agents/directives
+  Source inventory: 1 eligible file, 0 excluded items
+  Would record the Library in .agents/open-forge.lock.json
+No files were changed.

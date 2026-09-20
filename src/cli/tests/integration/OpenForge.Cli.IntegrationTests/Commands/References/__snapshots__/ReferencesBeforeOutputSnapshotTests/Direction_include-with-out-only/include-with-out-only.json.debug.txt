@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 3,
+  "command": "references",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot list references: Include and exclude filters apply only when incoming work is requested.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "references.invalid-filter",
+      "title": "Filter is invalid",
+      "message": "--include and --exclude apply to incoming links. Use --direction in or both.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "references",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "incoming": null,
+    "outgoing": 0,
+    "sourcesScanned": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "direction": "out",
+    "outgoing": [],
+    "coverage": {
+      "outgoing": "blocked"
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge references --help",
+    "reason": "see the accepted options"
+  }
+}

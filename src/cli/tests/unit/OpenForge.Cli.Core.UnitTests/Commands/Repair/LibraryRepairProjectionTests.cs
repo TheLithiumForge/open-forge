@@ -1,66 +1,94 @@
-using System.Text;
-using OpenForge.Cli.Core.Commands.Repair.Models.Application;
-using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
-using OpenForge.Cli.Core.Commands.Repair.Shared.Rendering;
-using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using System.Text.Json;
+using OpenForge.Cli.Core.Commands.Repair.Models.Request;
+using OpenForge.Cli.Core.Commands.Repair.Models.Result;
+using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
+using OpenForge.Cli.Core.Presentation.Repair;
+using OpenForge.Cli.Core.Presentation.Repair.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Text;
+using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class LibraryRepairProjectionTests
 {
-    [Fact(DisplayName = "Repair Library human details retain the selected path, attribution and observed link identity"),
-        Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
-    public void HumanDetailsRetainSelectedLibraryIdentity()
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Repair native Library output retains the selected recovery identity and effect"), Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    public void NativeLibraryOutputRetainsSelectedIdentity()
     {
         var evidence = LibraryRepairData.Evidence();
         var plan = LibraryRepairData.Plan(evidence);
-        var result = RepairTestData.Result(facts: RepairTestData.CompleteFacts(
-            selection: plan.Selection, plan: plan));
-        var builder = new StringBuilder();
+        var result = RepairTestData.Result(
+            facts: RepairTestData.CompleteFacts(selection: plan.Selection, plan: plan),
+            mode: RepairMode.Apply,
+            automatic: true);
 
-        RepairLibraryPresentation.Append(builder, result);
+        var selected = Select(result, CliDetail.Standard);
+        var text = CliTextRenderer.Render(selected, CliTextStyle.Plain, RepairPresentation.Rendering.DataTextRenderer).Content;
+        using var document = JsonDocument.Parse(CliJsonRenderer.Render(selected, RepairPresentation.Rendering.DataJsonTypeInfo));
+        var data = document.RootElement.GetProperty("data");
+        var recovery = Assert.Single(data.GetProperty("libraryRecovery").EnumerateArray());
 
-        var text = builder.ToString();
-        Assert.Contains(evidence.Entry.Input.Context.LogicalPath.Replace("\\", "\\\\", StringComparison.Ordinal), text, StringComparison.Ordinal);
-        Assert.Contains("team-knowledge", text, StringComparison.Ordinal);
-        Assert.Contains(evidence.Residual.Candidate.Path.Replace("\\", "\\\\", StringComparison.Ordinal), text, StringComparison.Ordinal);
-        Assert.Contains("../../shared/team-knowledge/.agents/directives/review.md", text, StringComparison.Ordinal);
-        Assert.Contains("not followed", text, StringComparison.Ordinal);
+        Assert.Contains(evidence.Entry.Input.Context.Entry.TargetPath.ToString(), text, StringComparison.Ordinal);
+        Assert.Contains("restored from recovery", text, StringComparison.Ordinal);
+        Assert.Equal("team-knowledge", recovery.GetProperty("id").GetString());
+        Assert.Equal(evidence.Entry.Input.Context.Entry.TargetPath.ToString(), recovery.GetProperty("path").GetString());
+        Assert.True(recovery.GetProperty("selected").GetBoolean());
+        Assert.Equal(evidence.Entry.Input.Context.Entry.TargetPath.ToString(),
+            Assert.Single(document.RootElement.GetProperty("effects").EnumerateArray()).GetProperty("path").GetString());
     }
 
-    [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
-    [InlineData("OrdinaryCreate", "ordinary-create"), InlineData("OrdinaryReplace", "ordinary-replace")]
-    [InlineData("OrdinaryReplaceGeneratedRegion", "ordinary-replace-generated-region"), InlineData("OrdinaryDelete", "ordinary-delete")]
-    [InlineData("RelativeFileLinkCreate", "relative-file-link-create"), InlineData("RelativeFileLinkDelete", "relative-file-link-delete")]
-    public void ProposalRetainsExactTypedEntryAndOriginalAttribution(string kind, string wire)
+    [Fact(DisplayName = "Repair native Library output names a selected blocked residual without a choice row"), Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    public void NativeLibraryOutputRetainsSelectedBlockedResidualPath()
     {
-        var evidence = LibraryRepairData.Evidence(Enum.Parse<RecoveryEntryKind>(kind));
-        var json = RepairLibraryPresentation.Proposal(new RepairLibraryRecoveryProposal(evidence));
-        Assert.Equal("team-knowledge", json.LibraryId);
-        Assert.Equal(wire, json.EntryKind);
-        Assert.Equal("intended", json.Comparison);
-        Assert.Equal(evidence.Residual.Candidate.Path, json.BundlePath);
-        Assert.Equal(evidence.Entry.Input.Context.LogicalPath, json.LogicalPath);
-        Assert.Equal(0, json.EntryOrdinal);
-        Assert.False(json.VerifiedPriorRecord);
+        var evidence = LibraryRepairData.Evidence(comparison: RecoveryBundleTargetComparisonState.Third);
+        var plan = RepairLibraryRecoveryPlanner.Build(LibraryRepairData.Input(evidence));
+        var result = RepairTestData.Result(
+            facts: RepairTestData.CompleteFacts(selection: plan.Selection, plan: plan),
+            mode: RepairMode.Apply,
+            automatic: true);
+
+        var selected = Select(result, CliDetail.Standard);
+        var text = CliTextRenderer.Render(selected, CliTextStyle.Plain, RepairPresentation.Rendering.DataTextRenderer).Content;
+        using var document = JsonDocument.Parse(CliJsonRenderer.Render(selected, RepairPresentation.Rendering.DataJsonTypeInfo));
+        var data = document.RootElement.GetProperty("data");
+
+        Assert.Contains(evidence.Entry.Input.Context.Entry.TargetPath.ToString(), text, StringComparison.Ordinal);
+        Assert.Contains("not started", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("choice", text, StringComparison.OrdinalIgnoreCase);
+        Assert.Empty(document.RootElement.GetProperty("effects").EnumerateArray());
+        Assert.True(Assert.Single(data.GetProperty("libraryRecovery").EnumerateArray()).GetProperty("selected").GetBoolean());
     }
 
-    [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
-    [InlineData("Lease", "lease"), InlineData("Revalidation", "revalidation"), InlineData("ForwardPreparation", "forward-preparation")]
-    [InlineData("Effect", "effect"), InlineData("Verification", "verification")]
-    [InlineData("ForwardCleanup", "forward-cleanup"), InlineData("PostDiagnosis", "post-diagnosis")]
-    public void ExecutionProjectionRetainsIndependentCancellationWithoutInventingResidual(string stage, string wire)
+    [Trait("Boundary", "Processing")]
+    [Theory(DisplayName = "Repair native Library data keeps each recovery entry target"), Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    [InlineData("OrdinaryCreate", ".agents/open-forge.libraries.json")]
+    [InlineData("OrdinaryReplace", ".agents/open-forge.libraries.json")]
+    [InlineData("OrdinaryReplaceGeneratedRegion", ".agents/directives/_directives.md")]
+    [InlineData("OrdinaryDelete", ".agents/open-forge.libraries.json")]
+    [InlineData("RelativeFileLinkCreate", ".agents/directives/review.md")]
+    [InlineData("RelativeFileLinkDelete", ".agents/directives/review.md")]
+    public void NativeLibraryDataRetainsTargetPath(string kind, string expectedPath)
     {
-        var execution = LibraryRepairData.Execution() with
-        {
-            Cancellation = new RepairLibraryCancellation(Enum.Parse<RepairLibraryExecutionStage>(stage), 0),
-        };
-        var json = RepairLibraryPresentation.Execution(execution);
-        Assert.Empty(json.Receipts);
-        Assert.Null(json.ForwardBundlePath);
-        Assert.Null(json.ForwardCleanupState);
-        Assert.NotNull(json.Cancellation);
-        Assert.Equal(wire, json.Cancellation.Stage);
-        Assert.Equal(0, json.Cancellation.EffectOrdinal);
+        var plan = LibraryRepairData.Plan(LibraryRepairData.Evidence(Enum.Parse<OpenForge.Cli.Core.Framework.Recovery.Models.Entries.RecoveryEntryKind>(kind)));
+        var result = RepairTestData.Result(
+            facts: RepairTestData.CompleteFacts(selection: plan.Selection, plan: plan),
+            mode: RepairMode.Apply,
+            automatic: true);
+        var selected = Select(result, CliDetail.Standard);
+        using var document = JsonDocument.Parse(CliJsonRenderer.Render(selected, RepairPresentation.Rendering.DataJsonTypeInfo));
+
+        Assert.Equal(expectedPath, Assert.Single(document.RootElement.GetProperty("data").GetProperty("libraryRecovery").EnumerateArray()).GetProperty("path").GetString());
+    }
+
+    private static CliSelectedReport<RepairData> Select(RepairResult result, CliDetail detail)
+    {
+        var selection = new CliSelection(detail, null);
+        var rendering = RepairPresentation.Rendering;
+        return rendering.SelectText!(CliReportTrimmer.Trim(rendering.Selector(result, selection), selection, rendering.Shape));
     }
 }

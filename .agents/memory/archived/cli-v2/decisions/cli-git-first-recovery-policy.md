@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Use Git-first workspace recovery, in-process reversal, and adjacent Gitless backups without a persistent Open Forge transaction journal
+  description: "Historical CLI-v2 source: Use Git-first workspace recovery, in-process reversal, and adjacent Gitless backups without a persistent Open Forge transaction journal"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

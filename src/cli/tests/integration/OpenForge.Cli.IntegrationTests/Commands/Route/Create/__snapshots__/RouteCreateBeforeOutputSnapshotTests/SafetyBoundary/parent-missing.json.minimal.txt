@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 3,
+  "command": "route create",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot create .agents/memory/project-alpha/overview.md: .agents/memory/project-alpha has no entrypoint, so the file cannot be listed. Create the route first.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-create.parent-missing",
+      "title": "Parent route is missing",
+      "message": ".agents/memory/project-alpha has no entrypoint, so the file cannot be listed. Create the route first.",
+      "subject": {
+        "kind": "directory",
+        "path": ".agents/memory/project-alpha",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route init memory/project-alpha",
+          "reason": "Create the missing parent route, then rerun Route Create."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "memory/project-alpha/overview",
+      "path": ".agents/memory/project-alpha/overview.md"
+    },
+    "listedIn": null,
+    "template": null
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route init memory/project-alpha",
+    "reason": "Create the missing parent route, then rerun Route Create."
+  }
+}

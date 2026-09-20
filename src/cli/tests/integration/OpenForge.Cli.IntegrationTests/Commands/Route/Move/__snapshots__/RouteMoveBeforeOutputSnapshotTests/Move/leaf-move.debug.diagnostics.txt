@@ -1,0 +1,11 @@
+status=completed
+mode=apply
+source=guidance/old guide
+destination=guidance/new guide
+subject=leaf
+completeness=complete
+safety=safe
+effects=9
+recovery=removed
+verification=verified
+findings=0

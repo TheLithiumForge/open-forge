@@ -16,6 +16,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List.Shared.Filesystem;
 
 public sealed class RouteListInventoryFactsTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list inventory request defaults, validates, sorts, and snapshots logical roots")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void RequestOwnsCanonicalLogicalRootSnapshot()
@@ -37,6 +38,7 @@ public sealed class RouteListInventoryFactsTests
             default));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list inventory facts snapshot sources, findings, aliases, and catalogue projection")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void FactsSnapshotAndOrderEveryProjection()
@@ -51,7 +53,11 @@ public sealed class RouteListInventoryFactsTests
         var sources = new List<RouteListInventorySource> { second, first };
         var findings = new List<RouteListFilesystemFinding>
         {
-            RouteListFilesystemFindingPolicy.MetadataMissing(".agents/z.md"),
+            new RouteListFilesystemFinding(
+                RouteListFindingCode.ReadUnavailable,
+                CliSemanticStatus.Incomplete,
+                ".agents/z.md",
+                "The source metadata could not be read."),
             RouteListFilesystemFindingPolicy.OrphanOverwrite(".agents/a.overwrite.md"),
         };
         var aliases = new List<RouteListPhysicalAlias>
@@ -86,6 +92,7 @@ public sealed class RouteListInventoryFactsTests
         Assert.Equal(RouteListInventoryState.Incomplete, facts.State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list inventory findings use canonical subject and machine-code order with stable ties")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void FindingOrderIsDeterministicAndStableForTies()
@@ -123,6 +130,7 @@ public sealed class RouteListInventoryFactsTests
             facts.Findings.Select(finding => $"{finding.MachineCode}:{finding.Cause}"));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list inventory state applies interruption, blocked, and incomplete precedence")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void MixedFindingStateUsesAcceptedPrecedence()
@@ -142,7 +150,11 @@ public sealed class RouteListInventoryFactsTests
             emptySources,
             [
                 RouteListFilesystemFindingPolicy.OrphanOverwrite(".agents/orphan.overwrite.md"),
-                RouteListFilesystemFindingPolicy.MetadataMissing(".agents/missing.md"),
+                new RouteListFilesystemFinding(
+                    RouteListFindingCode.ReadUnavailable,
+                    CliSemanticStatus.Incomplete,
+                    ".agents/missing.md",
+                    "The source metadata could not be read."),
             ],
             []);
         var blockedNeutral = NeutralInputs(emptySources);
@@ -172,6 +184,7 @@ public sealed class RouteListInventoryFactsTests
         Assert.Equal(RouteListInventoryState.Interrupted, interrupted.State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list interruption factory retains known safe sources, findings, and aliases")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void InterruptionFactoryRetainsKnownEvidence()
@@ -208,6 +221,7 @@ public sealed class RouteListInventoryFactsTests
             known));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list repeated contained identity remains an alias fact rather than a cycle")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void FiniteRepeatedIdentityIsAnAttentionAlias()
@@ -227,6 +241,7 @@ public sealed class RouteListInventoryFactsTests
         Assert.DoesNotContain(facts.Findings, finding => finding.Code == RouteListFindingCode.PhysicalBoundary);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list inventory facts reject duplicate logical sources and aliases")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void DuplicateLogicalFactsAreRejected()
@@ -250,6 +265,7 @@ public sealed class RouteListInventoryFactsTests
             [alias, alias]));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list inventory file facts require absolute normalized physical paths")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void InventoryFileFactRejectsUnprovedPhysicalPathShapes()

@@ -1,0 +1,29 @@
+Cannot read context: docs/guide matches more than one source. Use the exact path.
+Workspace: <workspace>
+=== AGENTS.md ===
+# Workspace
+
+Read `.agents/loader.md`.
+
+=== .agents/loader.md (loader) ===
+# Open Forge Loader
+
+## Entries
+
+- [Documents](docs/_docs.md) - #LoadNow #Docs
+
+=== .agents/docs/_docs.md (docs) ===
+---
+open-forge:
+  description: Documents
+  tags: [Docs]
+---
+# Documents
+
+## Entries
+
+- [Guide](guide.md) - #Docs #Guide
+- [Reference](reference.md) - #Docs
+  sources: The selected Context sources could not be resolved completely.
+  tokens: The selected Context sources could not be resolved completely.
+  bytes: The selected Context sources could not be resolved completely.

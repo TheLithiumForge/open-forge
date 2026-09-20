@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class RepairC1PreparationCancellationTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void CancelledPreparationWithIncompleteResidualFactsFailsAndRetainsKnownPath()
     {

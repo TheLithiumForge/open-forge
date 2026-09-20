@@ -1,0 +1,32 @@
+namespace OpenForge.Cli.Core.Commands.Index.Models.Result;
+
+internal enum IndexFindingCode
+{
+    InvalidInput,
+    InvalidSource,
+    WorkspaceUnavailable,
+    WorkspaceUnsafe,
+    SourceAmbiguous,
+    SourceUnsafe,
+    TopologyAmbiguous,
+    TargetUnexposed,
+    TargetUnsafe,
+    MetadataUnsafe,
+    MetadataOptional,
+    GeneratedRegionUnsafe,
+    WorkspaceLockUnavailable,
+    TargetChanged,
+    RecoveryConflict,
+    DiscoveryIncomplete,
+    MetadataIncomplete,
+    MetadataSkipped,
+    ProjectionIncomplete,
+    RecoveryUnavailable,
+    RecoveryArtifactRetained,
+    TargetChangedDuringApply,
+    WriteFailed,
+    VerificationFailed,
+    RecoveryFailed,
+    OperationFailed,
+    Interrupted,
+}

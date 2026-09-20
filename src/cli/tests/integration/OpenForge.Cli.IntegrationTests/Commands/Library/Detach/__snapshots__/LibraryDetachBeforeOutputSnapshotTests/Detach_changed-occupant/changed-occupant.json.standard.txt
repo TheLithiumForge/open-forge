@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 3,
+  "command": "library detach",
+  "status": "completed-with-warnings",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Detached team-knowledge: removed 0 links under .. Source files in shared/team-knowledge were kept.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "library-detach.mapping-blocked",
+      "title": "Registered link changed",
+      "message": ".agents/directives/review.md is an ordinary file, so its bytes were kept.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/directives/review.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge library inspect team-knowledge",
+          "reason": "Inspect the Library before changing it."
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "detached",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksRemoved": 0,
+    "sectionsUpdated": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "registrationRemoved": true,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/open-forge.lock.json",
+        "kind": "record",
+        "action": "replace",
+        "outcome": "done"
+      }
+    ]
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "removed"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge library inspect team-knowledge",
+    "reason": "Inspect the Library before changing it."
+  }
+}

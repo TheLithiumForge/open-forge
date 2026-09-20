@@ -1,17 +1,28 @@
 ---
 open-forge:
-  description: Accepted technology-neutral behavior for trusted Framework update planning, force replacement, prune deletion, and recovery
+  description: Accepted technology-neutral behavior for Framework ownership update planning, ordinary replacement, explicit prune deletion, and recovery
   responsibility: Define update's deterministic fact flow, semantic comparison, complete plan, guarded effects, and typed result
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Update, Framework, Behavior, Determinism, Lifecycle, Safety, Recovery, CurrentTruth]
 ---
 
 # Update Behavior Contract
 
+## Ownership Receipt Formation
+
+Form whole-file and region receipts according to what the operation manages.
+The `open-forge` blocks in root `AGENTS.md` and `CLAUDE.md` produce region
+receipts even when creating a previously missing host requires a physical file
+creation. Generated Entries produce `entries` region receipts. Preserve existing
+verified ownership when a planned no-op leaves its bytes unchanged. Publish the
+ownership lock after the operation's target effects verify; a region-only edit
+never establishes whole-file ownership of its authored host. Skip an unavailable
+lock write without blocking the operation.
+
 ## Status And Boundary
 
 This is the accepted current Crystallized Behavior Contract for non-shipping root
-`open-forge update`. It defines deterministic request resolution, trusted
-Framework lifecycle facts, baseline/current/intended comparison, semantic
+`open-forge update`. It defines deterministic request resolution,
+Framework ownership receipts, current/intended comparison, semantic
 fingerprints, generated projection, normal/force/prune planning, preflight,
 dry-run, application, verification, recovery, result formation, and
 technology-neutral conformance.
@@ -20,9 +31,8 @@ The [Interface Contract](interface.md) defines public syntax, flags, statuses,
 output, errors, examples, and non-goals. `install` owns establishment and
 initial force. The [Shared Result
 Coordinates](../shared/result-coordinates/interface.md) define the shared JSON
-result schema and exit mapping. The [Lifecycle Provenance Technical
-Design](../../technical-designs/lifecycle-provenance.md) defines exact lifecycle
-serialization realization, while the [CLI Architecture](../../architecture.md)
+result schema and exit mapping. The [Ownership And Source Alignment Technical
+Design](../../technical-designs/lifecycle-provenance.md) defines ownership serialization and current source alignment, while the [CLI Architecture](../../architecture.md)
 defines cross-cutting implementation structure. This behavior does not duplicate
 those mechanics or claim their Gate 5 proof.
 
@@ -31,8 +41,8 @@ those mechanics or claim their Gate 5 proof.
 ```text
 validated command input
   -> exact workspace and embedded current Framework
-  -> trusted Framework lifecycle section
-  -> fresh baseline/current/intended facts
+  -> forgiving Framework ownership observation
+  -> fresh current/intended facts
   -> authoritative generated projection
   -> one complete ordered plan
   -> preflight
@@ -65,10 +75,10 @@ The resolver:
 After a complete plan and preflight, a prompt-capable human apply with at least
 one effect and without `--automatic` asks exactly once before lease acquisition.
 Trimmed `y` and `yes` answers are accepted case-insensitively. Refusal, end of
-input, or cancellation returns `interrupted` without a lease, recovery bundle,
-or workspace write. Verified no-op, effect-free attention, dry-run, automatic,
+ input, or cancellation returns `cancelled` without a lease, recovery bundle,
+ or workspace write. Verified no-op, effect-free `completed-with-warnings`, dry-run, automatic,
 JSON, and redirected or otherwise non-prompt-capable execution never prompt or
-consume input. A non-prompt-capable human apply that would write is `invalid`
+ consume input. A non-prompt-capable human apply that would write is `invalid-input`
 without explicit automatic mode. Automatic never supplies force or prune.
 
 Workspace validation establishes lexical and physical containment and exact
@@ -85,63 +95,36 @@ tree.
 
 ## Trusted Lifecycle Resolution
 
-The operation reads `.agents/open-forge.lifecycle.json`, schema v1, as a common
-envelope with isolated `framework` and `extensions` sections. It validates and
-preserves the unaffected section and common-envelope meaning semantically. A
-selected semantic change emits one deterministic canonical UTF-8 whole-document
-representation; lifecycle formatting, property order, and line endings are not
-preserved, while a semantic no-op writes nothing. An invalid unrelated section
-blocks the write rather than being dropped, normalized, or merged. The document
-stores no plan, runtime history, journal, recovery evidence, or session. Files
-outside this exact path are ordinary workspace content, not lifecycle input.
+Read the forgiving `.agents/open-forge.lock.json` ownership record. Missing,
+stale, unreadable or unknown schema metadata never establishes an integrity
+gate. Unknown ownership contributes no claims, and matching existing bytes do
+not establish new receipts. Uninterpretable recorded destinations produce
+`update.ownership-observation` (info, no inferred effects).
 
-The Framework section is trusted only when schema v1 and
-`open-forge-markdown-v1`, exact workspace and target identities, reciprocal
-internal facts, duplicate-free identities, and complete verifiable coverage all
-hold. A safely absent section does not satisfy update's required state. An absent
-document or section is not, by itself, proof of unmanaged state. Missing expected
-sections are not empty. Unsupported or ambiguous schema facts form `incomplete`
-when safely unavailable and `blocked` when unsafe or ambiguous.
+Only actual Framework file or region effects establish new receipts. The single
+lock publication preserves unaffected Framework receipts and Extension/Library
+sections. A skipped publication reports none/not-requested; verification never
+claims skipped ownership was published. No legacy file is read, converted,
+rewritten or deleted.
 
-Safe unavailable coverage forms `incomplete`; unsafe or ambiguous identity,
-cross-section collision, malformed marker, or ownership fact forms `blocked`.
-Force and prune never promote an untrusted section.
-
-Every Framework target record has required nullable `sourceAssetPath`. Validate
-non-null paths as normalized canonical embedded asset-relative identities even
-when a historical asset is absent from the current inventory. Require non-null
-provenance for payload files and managed root/provider blocks and `null` only for
-derived generated-region targets. Verify every newly published non-null path
-against the current inventory. User-owned inserted scope entrypoints never enter
-the Framework target set.
+The `.agents` container must be an ordinary contained directory. Reserved paths,
+portable aliases, destination admission, other owners, target identity and
+managed/generated boundaries remain safety checks. Current payload alignment
+identifies intended source at operation time; no source path, baseline hash,
+workspace binding or fingerprint policy is stored in ownership.
 
 ## Semantic Comparison
 
-For every recorded current target and bounded root/provider region, collect
-fresh current exact bytes and semantic facts and compare them with the trusted
-baseline, recorded source provenance, and embedded or derived source. The comparison records baseline, current, and
-intended semantic fingerprints, exact bytes, target identity, ownership, route
-and marker facts, and source availability.
+Compare fresh current content with intended embedded or generated content.
+No stored baseline participates. `same` means semantic agreement, `changed`
+means disagreement, `missing` means actual absence, and `format-only` means
+semantic agreement with different exact bytes. Source alignment is nullable
+for retired whole-file receipts and derived regions.
 
-Supported parseable kinds use the `open-forge-markdown-v1` conservative
-parser/AST-derived syntax-aware fingerprints. The
-canonical representation preserves Unicode, semantic text, headings, tags,
-links and destinations, marker meaning, inline content, code blocks, and
-significant whitespace. It normalizes only line endings and parser-proven
-formatting trivia. Generated `Entries` interiors are excluded from authored
-identity. Unsupported, binary, or unparseable kinds use exact-byte identity and
-fail closed on unknown equivalence.
-
-Persist only semantic baseline fingerprints for supported parseable kinds. Do not
-persist a new exact-byte baseline digest. Fresh exact bytes remain required for
-diff, expected-state checks, recovery-bundle payload, existing-target effect
-application, verification, and recovery.
-
-If current and baseline semantic identities are equal but exact bytes differ only
-by parser-proven formatting trivia, report a formatting-only observation and do
-not classify the path as divergence. If current equals baseline semantically and
-the intended source has a real semantic change, normal update may apply current
-source bytes to that baseline-unchanged target.
+Supported Markdown uses conservative parser-derived semantic identity, excluding
+generated Entries interiors from authored identity. Unsupported content uses
+exact bytes. Fresh exact bytes support expected-state checks, recovery and
+verification; no comparison hash is persisted in ownership.
 
 ## Intended State And Projection
 
@@ -164,82 +147,51 @@ authority.
 
 ## Normal Plan
 
-Normal mode admits:
+Ordinary Update replaces edited owned Framework content, restores missing owned
+current targets, creates safe absent current targets and projects affected
+navigation. Semantic equality preserves current formatting. `removedCategories`
+excludes payloads beneath each named root category from reinstatement; existing
+content and receipts outside selected effects remain.
 
-- baseline-unchanged current expected files and valid managed regions whose
-  intended current source differs;
-- genuinely new current source files or regions when absent, safe, and fully
-  covered; and
-- generated-region effects required by those authored changes.
+Whole-file receipts authorize whole-file effects. Region receipts authorize
+only the named block, preserving outside host bytes. Existing unowned content
+is never adopted merely because it matches; a conflicting unowned destination
+blocks the complete plan.
 
-Normal mode preserves:
+### Force
 
-- current expected files or regions changed from baseline;
-- current expected files or regions missing from the workspace;
-- retired managed content, whether changed or unchanged;
-- user, Extension, shared-owner, unknown, and route-colliding content; and
-- all bytes outside bounded managed and generated regions.
+`--force` remains accepted but grants no additional authority or safety bypass.
 
-Preserved finite divergence yields `attention` after safe non-divergent effects
-apply or preview. A repeat with unchanged facts produces no effect and remains
-`attention`. Planned changes alone do not create attention.
+### Prune
 
-## Force Plan
+`--prune` additionally removes retired whole-file receipts whose paths still
+exist, are admitted by shared `allowInstallPaths` (`.agents/` is implicit), and
+pass reserved-path, physical identity, other-owner and recovery checks. Edited
+retired content remains eligible. An absent retired path has no deletion effect;
+its obsolete receipt may be released. A region receipt never authorizes deleting
+its host. Without prune, present retired content is preserved with
+`completed-with-warnings` while independent safe updates may proceed.
 
-Force starts from the same facts and intended state. It admits only:
-
-- overwrite of a changed current expected Framework file or valid managed
-  region whose exact baseline identity is trusted; and
-- restoration of a missing current expected Framework target at its exact
-  current destination.
-
-Force does not admit retired deletion, unknown or unowned content, ownership or
-route collision, marker repair, containment escape, arbitrary path replacement,
-weaker verification, or weaker recovery. It never turns an absent
-or untrusted lifecycle section into trusted management.
-
-Force has no attention merely because replacement was planned. It remains
-`attention` only when trusted present retired content must be preserved because
-prune was not selected. If all effects verify and no such finite condition
-remains, force is `complete`.
-
-## Prune Plan
-
-Prune admits only a retired path when all of these facts are complete:
-
-- the trusted baseline names that exact previously managed path;
-- a payload file or managed block has a non-null `sourceAssetPath` naming the
-  exact previously embedded asset and the current inventory proves that asset is
-  retired, or a derived generated-region target has `null` and the current
-  intended topology proves that its recorded relationship no longer produces the
-  region;
-- current physical identity and semantic state are known and safe;
-- no other owner, manager, shared owner, route descendant, or host dependency
-  blocks deletion; and
-- recovery-bundle and preservation facts pass.
-
-Prune deletes no current expected path, does not restore a missing path, does not
-infer ownership, and does not clean arbitrary artifacts. Unknown, unowned,
-shared, changed-owner, route-unsafe, or ambiguous content blocks rather than
-being deleted. `--force --prune` admits both exact classes in one plan and
-performs no other effect.
+Changed owned content and missing owned content are represented by the normal
+replacement and restoration effects and their counts. The root Update findings
+catalogue has no separate finding for either condition; neither one blocks the
+ordinary reconciliation.
 
 ## Automatic And Dry-Run
 
 Automatic mode selects only safe normal effects for the fixed Framework subject.
-It preserves changed, missing, and retired content and reports the resulting
-attention facts. It never selects force or prune based on a recommendation,
-never deletes or replaces divergent content, and never bypasses safety.
+It updates owned current content and preserves retired content unless prune
+was explicitly selected. It never selects extra flags or bypasses safety.
 
 Dry-run consumes the same complete plan and preflight as application. It reports
-safe changes, force replacements/restorations, prune deletions, preserved facts,
+safe replacements/restorations, explicit prune deletions, preserved facts,
 semantic comparisons, generated projections, lifecycle changes that would be
 published after verification, recovery-bundle requirements, and diagnostics.
 It writes no payload, generated region, lifecycle section, recovery bundle, temporary
 artifact, or formatter output. It cannot claim application-time revalidation,
 verification, publication, or bundle-handling success. It forms the same pre-effect
 planning status as application but never produces an apply-time `failed` or
-`interrupted` result because it performs no effects. A planning or read failure
+`cancelled` result because it performs no effects. A planning or read failure
 and caller cancellation before effects retain their own event meaning.
 
 ## Preflight, Application, Verification, And Recovery
@@ -282,28 +234,16 @@ volatile target immediately before its effect. The `FileChangeApplier` requires
 the matching verified bundle preparation for every existing-target effect and
 performs one final effect for each target. It applies complete planned bytes or
 bounded deletion effects, verifies each effect and the complete resulting
-Framework projection, then publishes refreshed Framework facts atomically while
-preserving the unrelated lifecycle section semantically. A selected lifecycle
-semantic change is source-generated as one deterministic canonical UTF-8
-whole-document representation; formatting, ordering, and line-ending trivia may
-be normalized. A semantic no-op publishes no lifecycle write.
+Framework projection, then publishes effect-backed Framework ownership atomically, preserving
+unrelated sections in one canonical UTF-8 lock. Unchanged canonical receipts
+need no publication.
 
-After all target effects and final lifecycle verification succeed, the command
-deletes only the positively recognized bundle it created. `Deleted`/`Removed`
-permits normal completion. `Failed`/positively observed `Retained` keeps target
-effects successful and produces `attention`, the
-exact residual path, and cleanup guidance. `Failed`/`Unknown` produces `failed`
-and reports an exact expected path only when the
-deletion result provides one. When `Failed`/positively observed `Retained`
-recovery attention coexists with finite unresolved divergence, cleanup guidance
-owns the single next action; divergence facts remain visible evidence. Before post-verification deletion
-begins, a handled application, verification, or cancellation outcome stops new
-effects and reports the actual residual draft or final path; a valid final
-remains when preparation completed. A closed final ZIP may remain after abrupt
-process termination, without an executable crash or power-loss guarantee.
-The foundation never restores a target automatically or derives current target
-state from recovery provenance. Cleanup owns exact named final and draft deletion
-under its separate lease-bound contract.
+After target and ownership verification, reopen and verify the recovery bundle
+identity and retain it. Successful retention is complete with the exact bundle
+path. When an ordinary `.git` directory exists, advise `git diff`; otherwise
+point at the recovery bundle. No Git executable runs. Interruption or partial
+failure retains recovery and reports observed residual state. The foundation
+never restores automatically; explicit Cleanup owns deletion separately.
 A later request forms fresh facts and never replays a saved plan, receipt,
 journal, history, or progress record.
 
@@ -318,8 +258,8 @@ equality is an observation, not a lifecycle mutation.
 ## Result Formation
 
 One typed result records exact workspace and source, mode, trust and coverage,
-baseline/current/intended comparisons, safe and authority-selected effects,
-preserved divergence, generated projection, lifecycle publication,
+current/intended comparisons, safe and authority-selected effects,
+preserved retired content, generated projection, lifecycle publication,
 recovery-bundle facts, verification, residuals, status, and at most one next
 action.
 Human and JSON renderers consume it once.
@@ -336,50 +276,33 @@ and non-empty `cause`; their status comes from the finite Interface code map
 rather than a duplicated wire member. Finding order follows that declaration
 sequence, then null target before ordinal non-null target, then ordinal cause.
 
-Result formation uses `invalid` before operation work; then ordinary precedence
-`blocked` > `incomplete` > `attention` > `complete`. `failed` and `interrupted`
-retain event meaning. Complete includes a verified no-op and a complete dry-run;
-attention reflects preserved finite divergence, not merely planned effects,
+Result formation uses `invalid-input` before operation work; then ordinary
+precedence `blocked` > `incomplete` > `completed-with-warnings` > `completed`.
+`failed` and `cancelled` retain event meaning. Completed includes a verified
+no-op and a complete dry-run; completed-with-warnings reflects preserved retired content, not merely planned effects,
 force/prune flags, or format-only observations.
 
-Primary human complete/attention/incomplete results use stdout. Primary human
-invalid/blocked/failed/interrupted results use stderr. JSON emits one complete
-result on stdout for every status, and bounded diagnostics use stderr.
+Primary human completed/completed-with-warnings/incomplete results use stdout.
+Primary human invalid-input/blocked/failed/cancelled results use stderr. JSON
+emits one schema-3 result on stdout for every status, and bounded diagnostics use
+stderr.
 
 ## Behavioral Conformance
 
-Conformance must show:
+Evidence covers syntax and confirmation, current/intended comparison, ordinary
+replacement/restoration, explicit prune, removed categories, unowned content,
+shared destinations, region-only ownership, portable and reserved paths, stale
+and absent receipts, and unchanged bytes outside selected effects. Recovery
+checks prove preparation before deletion, exact prior bytes, retention, final
+ownership verification and fresh reruns. Snapshots cover the existing single
+publication outcome and both views; native checks verify the same behavior.
+Dry-run writes nothing. No formatter or Git executable runs.
 
-- exact parser and workspace resolution, shared global behavior, and independent
-  force, prune, automatic, and dry-run dimensions;
-- the exact one-prompt matrix, no-write refusal, end-of-input, and cancellation,
-  direct automatic rerun guidance for redirected human writes, and no prompt for
-  no-op, effect-free attention, dry-run, automatic, JSON, or redirected modes;
-- trusted-state requirement, schema-v1 section semantic preservation,
-  deterministic canonical whole-document serialization on selected change, no
-  write on semantic no-op,
-  absent/untrusted/unavailable handling, and unsupported or ambiguous schema
-  behavior;
-- required nullable per-target `sourceAssetPath`, current and historical asset
-  validation, generated-region `null`, publication against the current embedded
-  inventory, and exclusion of user-owned scope entrypoints;
-- baseline/current/intended classifications for unchanged, new, changed,
-  missing, retired, and format-only content;
-- semantic fingerprint preservation and fail-closed unsupported equivalence;
-- normal preservation, force-only current replacement/restoration, prune-only
-  retired deletion, and safe force/prune composition;
-- authored-topology generated projection and bounded marker behavior;
-- one coalesced physical effect, application receipt, and recovery entry for a
-  path containing multiple ordered logical authored and generated changes;
-- complete-plan blocking, one bundle covering each existing replacement or
-  deletion, exact-byte preservation, expected-state verification, all three
-  post-verification deletion state/disposition facts, residual reporting, interruption,
-  fresh rerun, and visible OS-lock ownership;
-- dry-run parity without persistent effects;
-- the exact ordered command-local schema-v1 result, 30 finding codes and their
-  ordering, seven status meanings, stream assignment, JSON stdout, and no more
-  than one required next action;
-- no formatter execution or persisted formatter state;
-- Gate 5 proof of source-generated serialization, fixed Markdig where used, real
-  `System.IO`, Native AOT, OS locking, isolated tests, and package journeys; and
-- no runtime, package, implementation, or shipping claim in this contract.
+Final verification may retain an informational ownership observation when lock
+publication was skipped. It still verifies an effect-free intended projection,
+the same raw ownership read state and expectation, and every applied content
+effect. When a lock write was planned, its exact intended bytes must verify.
+
+Update plans no directory creation. A missing parent required by a file creation
+or restoration stops the entire plan at target safety before writes. A missing
+retired path requires neither parent creation nor deletion.

@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Distribution.Models;
 
 public sealed class FrameworkPayloadReadResultTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Framework payload read factories preserve complete state invariants"), Trait("Feature", "framework-payload"), Trait("Evidence", "Unit")]
     public void ReadFactoriesPreserveStateInvariants()
     {
@@ -29,6 +30,7 @@ public sealed class FrameworkPayloadReadResultTests
         Assert.False(string.IsNullOrEmpty(invalid.Cause));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Framework payload read factories reject incomplete state combinations"), Trait("Feature", "framework-payload"), Trait("Evidence", "Unit")]
     public void ReadFactoriesRejectIncompleteStates()
     {

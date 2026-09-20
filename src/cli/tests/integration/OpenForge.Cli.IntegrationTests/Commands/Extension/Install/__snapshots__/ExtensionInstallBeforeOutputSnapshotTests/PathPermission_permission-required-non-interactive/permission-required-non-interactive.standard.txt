@@ -1,0 +1,12 @@
+Cannot install team: it writes outside .agents and no grant allows that.
+Workspace: <workspace>
+  Error  team  Permission is required
+         Cannot install team: it writes outside .agents and no grant allows that.
+         open-forge extension install team --allow-path .apm/agents/team.md
+         Or add ".apm/agents/team.md" to allowInstallPaths in .agents/open-forge.json.
+  .apm/agents/team.md
+  Source: <extension-source> (package)
+  Permission scope: .apm/agents/team.md
+  .agents/open-forge.lock.json  updated
+Next: open-forge extension install team --allow-path .apm/agents/team.md
+  Or add ".apm/agents/team.md" to allowInstallPaths in .agents/open-forge.json.

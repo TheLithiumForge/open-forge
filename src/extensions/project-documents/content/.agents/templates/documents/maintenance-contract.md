@@ -1,36 +1,37 @@
 ---
 open-forge:
-  description: Starting structure for what a source must keep true and how maintainers verify it
-  tags: [Extension, Template, Document, Maintenance, Governance, CurrentView]
+  description: "State what a maintained source owns, what must remain true, and how to verify it"
+  tags: [Extension, Template, Document, Maintenance, Governance]
 ---
 
 # {Surface} Maintenance Contract
 
-{
-Template selection:
-
-- Need: One current document that states what a source or repository surface must keep true and how to verify it.
-- Primary question: What must remain true when this surface changes, and how can maintainers verify that it still does?
-
-Use this Template only when a source has stable maintenance requirements that deserve their own current document. Keep continuing shape and review rules in the sources that define them. This Template provides only starting content.
-
-Link to the maintained source and any counterparts instead of copying them. Place each relationship beside the requirement or check it affects.
-
-Replace the frontmatter, title, and placeholders, then remove this braced guidance. Add an optional frontmatter responsibility when one stable sentence will help keep future maintenance concerns in this document.
-}
+<!-- TEMPLATE: Use when a source has stable maintenance obligations worth defining separately. Do not invent a governance layer for a trivial file.
+Replace {prompts}; remove this comment and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying. -->
 
 ## Source
 
-{Link to the exact source, state what it defines, and identify counterparts that must stay aligned.}
+**Maintained source:** {Exact path or link.}
+
+**Responsibility:** {The question or behavior this source owns.}
+
+**Related surfaces:** {Counterparts, generated output, installed copies, or consumers that must stay aligned; omit when none.}
 
 ## Contract
 
-{State the smallest complete set of conditions, boundaries, and change requirements that maintainers must keep true.}
+{State the smallest complete set of conditions that must remain true. Preserve required conditions, exceptions, and ownership boundaries.}
 
 ### {Distinct Concern}
 
-{Use an optional level-3 subsection only for a clearly separate concern such as installation, generation, loading, scope, integration, or an external contract.}
+{Optional: a separate installation, generation, loading, scope, compatibility, or external-contract requirement. Remove this subsection unless it earns its place.}
 
 ## Verification
 
-{Describe checks that can establish whether the contract still holds. Use the project's verification procedures and tools where they apply, and link to existing evidence. State necessary manual checks or gaps where automation is unavailable. Explain what each check proves instead of repeating the requirements.}
+| Requirement | Check | Evidence and limit |
+| --- | --- | --- |
+| {Contract condition} | {Actual project command, inspection, or other check} | {What a result proves and what remains unchecked} |
+
+**Change sequence:** {Only necessary ordering across sources and generated or installed counterparts.}
+
+**Unavailable checks:** {Name a real verification gap and the required follow-up; do not report an intended check as passed.}

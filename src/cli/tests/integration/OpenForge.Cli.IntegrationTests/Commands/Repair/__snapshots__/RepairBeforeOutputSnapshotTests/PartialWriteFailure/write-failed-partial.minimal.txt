@@ -1,0 +1,5 @@
+Repair stopped after 1 of 2 links were rewritten.
+  .agents/docs/aaa.md:8:8     rewritten
+  .agents/docs/source.md:9:8  not started
+  Recovery data: <recovery-bundle>
+Next: open-forge repair --detail debug

@@ -2,11 +2,11 @@ using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Init;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
-using OpenForge.Cli.Core.Commands.Route.Init.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Result;
+using OpenForge.Cli.Core.Presentation.Route.Init;
+using OpenForge.Cli.Core.Presentation.Route.Init.Shared.Help;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
@@ -14,201 +14,153 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Init;
 
 public sealed class RouteInitPresentationTests
 {
-    [Fact(DisplayName = "Route Init complete no-op human result retains exact completion facts without prompting"),
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Init complete no-op uses the frozen no-op headline without a status row"),
      Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
-    public void CompleteNoOpHumanResultRetainsExactCompletionFacts()
+    public void CompleteNoOpUsesFrozenNoOpHeadline()
     {
         var result = new RouteInitResultBuilder().Build(
             RouteInitRedTestData.Formation(effects: [], entrypoints: [], verification: RouteInitVerificationState.Verified));
-        var text = RouteInitHumanRenderer.Render(new CliPresentationRequest<RouteInitResult>(
-            result, new CliPresentation(CliOutputFormat.Human, CliView.Compact, CliVerbosity.Normal)));
+        var output = Render(result, CliFormat.Text, CliDetail.Minimal);
 
-        Assert.Contains("The route is initialized.", text, StringComparison.Ordinal);
-        Assert.Contains("Status: complete", text, StringComparison.Ordinal);
-        Assert.Contains("No files changed.", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("Next:", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("Apply this", text, StringComparison.Ordinal);
+        Assert.Contains("memory/project-alpha/documents is already initialized. Nothing to do.", output.PrimaryContent, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", output.PrimaryContent, StringComparison.Ordinal);
+        Assert.DoesNotContain("Next:", output.PrimaryContent, StringComparison.Ordinal);
+        Assert.Equal(CliOutputTarget.StandardOutput, output.PrimaryTarget);
     }
 
-    [Theory(DisplayName = "Route Init invalid and incomplete human results retain exact status streams and guidance"),
-     InlineData((int)RouteInitFindingCode.InvalidTarget, "invalid", "Correct the named Route Init input"),
-     InlineData((int)RouteInitFindingCode.MetadataIncomplete, "incomplete", "inspect the unavailable route, metadata, projection, lifecycle, or recovery facts"),
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Route Init invalid and incomplete results use their status streams and next guidance"),
+     InlineData((int)RouteInitFindingCode.InvalidTarget, "Cannot initialize memory/project-alpha/documents: not a route ID or an entrypoint path under .agents.", 4, (int)CliOutputTarget.StandardError),
+     InlineData((int)RouteInitFindingCode.MetadataIncomplete, "The route could not be initialized:", 3, (int)CliOutputTarget.StandardOutput),
      Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
-    public void InvalidAndIncompleteHumanResultsRetainStatusAndGuidance(
+    public void InvalidAndIncompleteResultsUseFrozenStreams(
         int findingValue,
-        string expectedStatus,
-        string expectedNext)
+        string expectedHeadline,
+        int expectedExit,
+        int expectedTarget)
     {
         var finding = RouteInitRedTestData.Finding((RouteInitFindingCode)findingValue);
         var result = new RouteInitResultBuilder().Build(RouteInitRedTestData.Formation(findings: [finding]));
-        var presentation = CliPresentationStage.Create(
-            result,
-            new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal));
-        var rendered = CliRenderingStage.Render(
-            presentation,
-            new CliRendererSet<RouteInitResult>(RouteInitHumanRenderer.Render, RouteInitJsonRenderer.Render),
-            RouteInitDiagnosticRenderer.Render);
+        var output = Render(result, CliFormat.Text, CliDetail.Standard);
 
-        Assert.Contains($"Status: {expectedStatus}", rendered.PrimaryContent, StringComparison.Ordinal);
-        Assert.Contains(expectedNext, rendered.PrimaryContent, StringComparison.OrdinalIgnoreCase);
-        Assert.Equal(
-            expectedStatus == "invalid" ? CliOutputTarget.StandardError : CliOutputTarget.StandardOutput,
-            rendered.PrimaryTarget);
-        Assert.Equal(expectedStatus == "invalid" ? 4 : 3, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
+        Assert.Contains(expectedHeadline, output.PrimaryContent, StringComparison.Ordinal);
+        Assert.Contains("Next:", output.PrimaryContent, StringComparison.Ordinal);
+        Assert.Equal((CliOutputTarget)expectedTarget, output.PrimaryTarget);
+        Assert.Equal(expectedExit, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
     }
 
-    [Fact(DisplayName = "Route Init dry-run JSON preserves ordered schema and literal preview facts"),
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Init JSON exposes the level-specific native data shape"),
      Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
-    public void DryRunJsonPreservesOrderedSchemaAndPreviewFacts()
+    public void JsonExposesNativeDataShape()
     {
-        var formation = RouteInitRedTestData.Formation(mode: RouteInitMode.DryRun,
-            recovery: new RouteInitRecovery(RouteInitRecoveryState.NotCreated, null), verification: RouteInitVerificationState.NotRequested);
-        var presentation = new CliPresentationRequest<RouteInitResult>(RouteInitRedTestData.Result(formation),
-            new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal));
-        using var document = JsonDocument.Parse(RouteInitJsonRenderer.Render(presentation));
+        var formation = RouteInitRedTestData.Formation(
+            mode: RouteInitMode.DryRun,
+            recovery: new RouteInitRecovery(RouteInitRecoveryState.NotCreated, null),
+            verification: RouteInitVerificationState.NotRequested);
+        var result = new RouteInitResultBuilder().Build(formation);
+        using var document = JsonDocument.Parse(Render(result, CliFormat.Json, CliDetail.Standard).PrimaryContent);
         var root = document.RootElement;
-        var result = root.GetProperty("result");
+        var data = root.GetProperty("data");
 
-        Assert.Equal(["schemaVersion", "command", "status", "workspace", "result", "next"], root.EnumerateObject().Select(property => property.Name));
         Assert.Equal(
-            ["mode", "scaffold", "target", "plan", "framework", "entrypoints", "effects", "unchangedPaths", "lifecycle", "recovery", "verification", "findings"],
-            result.EnumerateObject().Select(property => property.Name));
-        Assert.Equal("dry-run", result.GetProperty("mode").GetString());
-        Assert.Equal("generic", result.GetProperty("scaffold").GetString());
-        Assert.Equal("complete", result.GetProperty("plan").GetProperty("completeness").GetString());
-        Assert.Equal("safe", result.GetProperty("plan").GetProperty("safety").GetString());
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("framework").ValueKind);
-        var metadata = Assert.Single(result.GetProperty("entrypoints").EnumerateArray()).GetProperty("metadata");
-        Assert.Equal("Draft route for memory/project-alpha/documents", metadata.GetProperty("description").GetString());
-        Assert.Equal(["NeedsAuthoring"], metadata.GetProperty("tags").EnumerateArray().Select(tag => tag.GetString()));
-        var effect = Assert.Single(result.GetProperty("effects").EnumerateArray());
-        Assert.Equal("planned", effect.GetProperty("outcome").GetString());
-        Assert.Equal(JsonValueKind.Null, effect.GetProperty("change").GetProperty("before").ValueKind);
-        Assert.Equal("draft-entrypoint-bytes", effect.GetProperty("change").GetProperty("expected").GetString());
-        Assert.Equal("not-created", result.GetProperty("recovery").GetProperty("state").GetString());
-        Assert.Equal("not-requested", result.GetProperty("verification").GetString());
-        Assert.Empty(result.GetProperty("findings").EnumerateArray());
+            ["schemaVersion", "command", "status", "detail", "filter", "workspace", "summary", "findings", "effects", "counts", "limitations", "data", "recovery", "next"],
+            root.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(
+            ["mode", "target", "scaffold", "entrypoints", "listedIn", "metadata"],
+            data.EnumerateObject().Select(property => property.Name));
+        Assert.Equal("dry-run", data.GetProperty("mode").GetString());
+        Assert.Equal("generic", data.GetProperty("scaffold").GetString());
+        var entrypoint = Assert.Single(data.GetProperty("entrypoints").EnumerateArray());
+        Assert.Equal("planned", entrypoint.GetProperty("outcome").GetString());
+        Assert.True(entrypoint.GetProperty("needsAuthoring").GetBoolean());
+        Assert.Equal(JsonValueKind.Object, data.GetProperty("metadata").ValueKind);
     }
 
-    [Fact(DisplayName = "Route Init JSON projection preserves the complete typed envelope graph and nullable fields"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
-    public void JsonProjectionPreservesCompleteTypedEnvelopeGraphAndNullableFields()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Init full text preserves authored entrypoint bytes and never prints escaped bodies"),
+     Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
+    public void FullTextPreservesAuthoredBytes()
     {
-        var result = RouteInitRedTestData.Result();
-        var projected = RouteInitJsonProjection.Create(result);
+        var formation = RouteInitRedTestData.Formation(
+            effects:
+            [
+                new(
+                    ".agents/memory/project-alpha/documents/_documents.md",
+                    RouteInitEffectKind.Entrypoint,
+                    RouteInitEffectAction.Create,
+                    null,
+                    new(null, "---\nvalue: <literal>\n---\n"),
+                    RouteInitEffectOutcome.Verified,
+                    RouteInitEffectResidual.None),
+            ],
+            entrypoints:
+            [
+                new(
+                    "memory/project-alpha/documents",
+                    ".agents/memory/project-alpha/documents/_documents.md",
+                    RouteInitEntrypointForm.Canonical,
+                    RouteInitEntrypointCurrent.Missing,
+                    RouteInitEntrypointOwnership.User,
+                    new(
+                        "Description",
+                        RouteInitDescriptionSource.Explicit,
+                        null,
+                        RouteInitResponsibilitySource.DefaultOmitted,
+                        ["Docs"],
+                        RouteInitTagsSource.Explicit),
+                    null,
+                    RouteInitEntrypointOutcome.Created),
+            ]);
+        var result = new RouteInitResultBuilder().Build(formation);
+        var text = Render(result, CliFormat.Text, CliDetail.Full).PrimaryContent;
 
-        Assert.Equal(1, projected.SchemaVersion);
-        Assert.Equal("route init", projected.Command);
-        Assert.Equal("complete", projected.Status);
-        Assert.NotNull(projected.Workspace);
-        Assert.Equal("apply", projected.Result.Mode);
-        Assert.Equal("generic", projected.Result.Scaffold);
-        Assert.Equal("memory/project-alpha/documents", projected.Result.Target.Requested);
-        Assert.Equal("memory/project-alpha/documents", projected.Result.Target.Id);
-        Assert.Equal("complete", projected.Result.Plan.Completeness);
-        Assert.Equal("safe", projected.Result.Plan.Safety);
-        Assert.Null(projected.Result.Framework);
-        Assert.NotNull(projected.Result.Entrypoints);
-        Assert.NotNull(projected.Result.Effects);
-        Assert.NotNull(projected.Result.UnchangedPaths);
-        Assert.NotNull(projected.Result.Lifecycle);
-        Assert.NotNull(projected.Result.Recovery);
-        Assert.Equal("verified", projected.Result.Verification);
-        Assert.NotNull(projected.Result.Findings);
-        Assert.Null(projected.Next);
+        Assert.Contains("--- .agents/memory/project-alpha/documents/_documents.md (new file) ---", text, StringComparison.Ordinal);
+        Assert.Contains("value: <literal>", text, StringComparison.Ordinal);
+        Assert.DoesNotContain(@"\nvalue:", text, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Route Init JSON renderer emits one structured result without human text"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
-    public void JsonRendererEmitsOneStructuredResultWithoutHumanText()
-    {
-        var presentation = new CliPresentationRequest<RouteInitResult>(
-            RouteInitRedTestData.Result(),
-            new CliPresentation(
-                CliOutputFormat.Json,
-                CliView.Expanded,
-                CliVerbosity.Normal));
-        var json = RouteInitJsonRenderer.Render(presentation);
-
-        using var document = JsonDocument.Parse(json);
-        Assert.Equal("route init", document.RootElement.GetProperty("command").GetString());
-        Assert.DoesNotContain("The route", json, StringComparison.Ordinal);
-        Assert.DoesNotContain("Workspace:", json, StringComparison.Ordinal);
-    }
-
-    [Fact(DisplayName = "Route Init compact human renderer retains workspace target mode status and next guidance"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
-    public void CompactHumanRendererRetainsIdentityModeStatusAndNextGuidance()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Init needs-authoring is completed and remains an info finding with an advisory line"),
+     Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
+    public void NeedsAuthoringIsCompletedInfoWithAdvisory()
     {
         var finding = RouteInitRedTestData.Finding(RouteInitFindingCode.NeedsAuthoring);
-        var result = RouteInitRedTestData.Result(
-            RouteInitRedTestData.Formation(
-                mode: RouteInitMode.DryRun,
-                findings: [finding]),
-            [finding],
-            CliSemanticStatus.Attention,
-            new CliNextAction(
-                "open-forge route update",
-                "Author each reported NeedsAuthoring entrypoint before relying on its description or tags."));
-        var presentation = new CliPresentationRequest<RouteInitResult>(
-            result,
-            new CliPresentation(
-                CliOutputFormat.Human,
-                CliView.Compact,
-                CliVerbosity.Normal));
+        var result = new RouteInitResultBuilder().Build(
+            RouteInitRedTestData.Formation(findings: [finding]));
 
-        var text = RouteInitHumanRenderer.Render(presentation);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        var text = Render(result, CliFormat.Text, CliDetail.Minimal).PrimaryContent;
+        Assert.Contains("Its description and tags are placeholders. Edit them before relying on this route.", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("Next:", text, StringComparison.Ordinal);
 
-        Assert.Contains("Workspace:", text, StringComparison.Ordinal);
-        Assert.Contains("Target:", text, StringComparison.Ordinal);
-        Assert.Contains("dry-run", text, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("Status: requires attention", text, StringComparison.Ordinal);
-        Assert.Contains("Next: open-forge route update", text, StringComparison.Ordinal);
+        using var document = JsonDocument.Parse(Render(result, CliFormat.Json, CliDetail.Full).PrimaryContent);
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        Assert.Equal("info", document.RootElement.GetProperty("findings")[0].GetProperty("severity").GetString());
+        Assert.Equal("route-init.needs-authoring", document.RootElement.GetProperty("findings")[0].GetProperty("code").GetString());
     }
 
-    [Theory(DisplayName = "Route Init human views report observed outcomes independently of apply mode")]
-    [InlineData(false)]
-    [InlineData(true)]
-    [Trait("Feature", "route-init"), Trait("Evidence", "UnitBehavior")]
-    public void HumanViewsReportObservedOutcomes(bool compact)
-    {
-        var text = RouteInitHumanRenderer.Render(new CliPresentationRequest<RouteInitResult>(
-            RouteInitRedTestData.Result(RouteInitRedTestData.Formation(mode: RouteInitMode.Apply)),
-            new CliPresentation(CliOutputFormat.Human, compact ? CliView.Compact : CliView.Expanded, CliVerbosity.Normal)));
-
-        Assert.Contains("1 planned", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("Created 1", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("did create", text, StringComparison.Ordinal);
-        Assert.Contains("Recovery:", text, StringComparison.Ordinal);
-        Assert.Contains("Verification:", text, StringComparison.Ordinal);
-    }
-
-    [Fact(DisplayName = "Route Init diagnostic renderer stays bounded and names the direct finding"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
-    public void DiagnosticRendererStaysBoundedAndNamesDirectFinding()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Init debug publication includes bounded diagnostics without changing primary output"),
+     Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
+    public void DebugPublicationIncludesBoundedDiagnostics()
     {
         var finding = RouteInitRedTestData.Finding(
             RouteInitFindingCode.GeneratedRegionUnsafe,
             cause: "The generated Entries boundary is unsafe.");
-        var result = RouteInitRedTestData.Result(
-            RouteInitRedTestData.Formation(findings: [finding]),
-            [finding],
-            CliSemanticStatus.Blocked,
-            new CliNextAction(
-                "open-forge doctor",
-                "Inspect the blocked workspace, route, identity, lifecycle, generated-region, or recovery boundary before rerunning Route Init."));
-        var presentation = new CliPresentationRequest<RouteInitResult>(
-            result,
-            new CliPresentation(
-                CliOutputFormat.Human,
-                CliView.Expanded,
-                CliVerbosity.Verbose));
+        var result = new RouteInitResultBuilder().Build(
+            RouteInitRedTestData.Formation(findings: [finding]));
+        var output = Render(result, CliFormat.Text, CliDetail.Debug);
 
-        var diagnostic = RouteInitDiagnosticRenderer.Render(presentation);
-
-        var text = Assert.IsType<string>(diagnostic);
-        Assert.InRange(text.Length, 1, 4096);
-        Assert.Contains("generated", text, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("unsafe", text, StringComparison.OrdinalIgnoreCase);
+        Assert.NotNull(output.DiagnosticContent);
+        Assert.Contains("generated", output.DiagnosticContent, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("unsafe", output.DiagnosticContent, StringComparison.OrdinalIgnoreCase);
     }
 
-    [Fact(DisplayName = "Route Init help formation exposes only accepted target and option spellings"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Init help formation exposes only accepted target and option spellings"),
+     Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void HelpFormationExposesAcceptedTargetAndOptionSpellings()
     {
         var help = RouteInitHelpSections.Create();
@@ -227,4 +179,14 @@ public sealed class RouteInitPresentationTests
         Assert.DoesNotContain("--automatic", text, StringComparison.Ordinal);
         Assert.DoesNotContain("--scope", text, StringComparison.Ordinal);
     }
+
+    private static CliRenderedOutput Render(
+        RouteInitResult result,
+        CliFormat format,
+        CliDetail detail)
+        => CliRenderingStage.Render(
+            new CliPresentationRequest<RouteInitResult>(
+                result,
+                new CliPresentation(format, detail, null)),
+            RouteInitPresentation.Rendering);
 }

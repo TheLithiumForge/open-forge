@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot read context: --content invalid is not a known part. Use metadata, paths, frontmatter, headings, body, or section:<name>.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "context.invalid-content",
+      "title": "Invalid content",
+      "message": "--content invalid is not a known part. Use metadata, paths, frontmatter, headings, body, or section:<name>.",
+      "subject": {
+        "kind": "identifier",
+        "path": "invalid",
+        "id": "invalid",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sources": null,
+    "tokens": null,
+    "bytes": null,
+    "linksFollowed": null,
+    "linksNotFollowed": null,
+    "errors": 1
+  },
+  "limitations": [
+    {
+      "what": "sources",
+      "why": "Context counts were not established.",
+      "subject": null
+    },
+    {
+      "what": "tokens",
+      "why": "Context counts were not established.",
+      "subject": null
+    },
+    {
+      "what": "bytes",
+      "why": "Context counts were not established.",
+      "subject": null
+    },
+    {
+      "what": "links followed",
+      "why": "Context counts were not established.",
+      "subject": null
+    },
+    {
+      "what": "links not followed",
+      "why": "Context counts were not established.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "sources": [],
+    "links": []
+  },
+  "recovery": null,
+  "next": null
+}

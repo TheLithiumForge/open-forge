@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 3,
+  "command": "route create",
+  "status": "completed-with-warnings",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Would create .agents/memory/project-alpha/overview.md  (memory/project-alpha/overview)",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "route-create.optional-metadata",
+      "title": "Optional metadata is missing",
+      "message": "Would create .agents/memory/project-alpha/overview.md without optional description or tags.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/memory/project-alpha/overview.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route update memory/project-alpha/overview",
+          "reason": "Add an optional description or tag with open-forge route update when useful."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/memory/project-alpha/overview.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/memory/project-alpha/_project-alpha.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "filesCreated": 1,
+    "sectionsUpdated": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "target": {
+      "id": "memory/project-alpha/overview",
+      "path": ".agents/memory/project-alpha/overview.md"
+    },
+    "listedIn": ".agents/memory/project-alpha/_project-alpha.md",
+    "template": null,
+    "metadata": {
+      "description": null,
+      "responsibility": null,
+      "tags": [
+        "Docs"
+      ]
+    },
+    "content": "---\nopen-forge:\n  tags: [Docs]\n---\n",
+    "sections": [
+      {
+        "path": ".agents/memory/project-alpha/_project-alpha.md",
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "verification": "planned"
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route update memory/project-alpha/overview",
+    "reason": "Add an optional description or tag with open-forge route update when useful."
+  }
+}

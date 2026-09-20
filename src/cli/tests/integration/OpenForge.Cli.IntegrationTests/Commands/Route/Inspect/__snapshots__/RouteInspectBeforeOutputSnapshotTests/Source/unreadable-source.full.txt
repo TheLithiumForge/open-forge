@@ -1,0 +1,30 @@
+docs/guide  .agents/docs/guide.md
+Workspace: <workspace>
+  Warning  .agents/docs/guide.md  Source could not be read [route-inspect.unreadable-source]
+         .agents/docs/guide.md could not be read completely.
+
+Where this source belongs
+  Route chain: docs -> guide
+  Parent: docs
+
+When it is read
+  At task start or resume could not be measured: The loading facts needed for reading classification are unavailable.
+  Read automatically could not be measured: The loading facts needed for reading classification are unavailable.
+  May be read again could not be measured: The loading facts needed for reading classification are unavailable.
+
+Context size
+  This file could not be measured: The selected source body is unavailable.
+  Selecting this route adds could not be measured: The selection addition cannot be established completely.
+  Selected context could not be measured: The selected route closure is unavailable.
+  Already in startup context could not be measured: The task-start and selected closures cannot be compared completely.
+
+Axioms
+  Inherited rules from: none
+  Local rules: no
+  Why: a required route fact or measurement is unavailable
+  Selection: source ID; automatic ID; requested "docs/guide"
+
+Physical layers
+  base .agents/docs/guide.md
+  Review the unavailable route fact, then rerun route inspect.
+Next: open-forge doctor

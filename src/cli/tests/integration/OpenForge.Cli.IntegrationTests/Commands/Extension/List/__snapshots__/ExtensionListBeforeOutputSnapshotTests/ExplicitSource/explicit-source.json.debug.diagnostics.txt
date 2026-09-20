@@ -1,0 +1,4 @@
+status=completed
+installed=0
+available=1
+No Extension ownership is recorded; installed packages cannot be established.

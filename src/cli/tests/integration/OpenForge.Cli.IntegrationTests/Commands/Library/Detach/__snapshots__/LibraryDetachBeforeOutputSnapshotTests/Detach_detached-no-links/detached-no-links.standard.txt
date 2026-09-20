@@ -1,0 +1,3 @@
+Detached team-knowledge. It had no links.
+Workspace: <workspace>
+  .agents/open-forge.lock.json  registration removed

@@ -1,0 +1,13 @@
+status=completed
+mode=apply
+library=team-knowledge
+source-files=1
+links=1
+created=1
+sections=0
+grants=True
+recorded=True
+recovery=removed
+verification=verified
+findings=1
+The ownership lock is absent; no Library registrations are recorded.

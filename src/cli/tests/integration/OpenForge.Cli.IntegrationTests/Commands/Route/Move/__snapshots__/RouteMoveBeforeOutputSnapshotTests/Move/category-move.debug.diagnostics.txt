@@ -1,0 +1,11 @@
+status=completed
+mode=apply
+source=guidance/topics
+destination=archive/topics
+subject=category
+completeness=complete
+safety=safe
+effects=22
+recovery=removed
+verification=verified
+findings=0

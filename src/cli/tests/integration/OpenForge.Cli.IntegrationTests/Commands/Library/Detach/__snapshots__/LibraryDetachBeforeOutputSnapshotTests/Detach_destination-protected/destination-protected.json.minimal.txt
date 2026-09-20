@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 3,
+  "command": "library detach",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot detach team-knowledge: .agents/loader.md is protected, owned by the source, or registered to another Library. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-detach.destination-protected",
+      "title": "Library destination is protected",
+      "message": ".agents/loader.md is protected, owned by the source, or registered to another Library.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/loader.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge library list",
+          "reason": "Choose a registered Library ID."
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "library-detach.registered-link-missing",
+      "title": "Registered link is missing",
+      "message": ".agents/loader.md is already absent, so no file was removed.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/loader.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge library inspect team-knowledge",
+          "reason": "Inspect the Library before changing it."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksRemoved": 0,
+    "sectionsUpdated": 0,
+    "errors": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "registrationRemoved": false,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge library list",
+    "reason": "Choose a registered Library ID."
+  }
+}

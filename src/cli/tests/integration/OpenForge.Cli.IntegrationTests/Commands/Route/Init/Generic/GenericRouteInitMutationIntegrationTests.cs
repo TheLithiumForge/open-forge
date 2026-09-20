@@ -16,6 +16,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init.Generic;
 
 public sealed class GenericRouteInitMutationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init dry-run and apply share the complete plan while dry-run remains write-free"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task DryRunAndApplyHavePlanParityAndDistinctEffectOutcomes()
     {
@@ -57,6 +58,7 @@ public sealed class GenericRouteInitMutationIntegrationTests
         Assert.Equal(0, await workspace.RecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init converges on an explicit target and reports a verified no-op without recovery"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task RepeatedApplyIsIdempotentAndSecondRunIsNoOp()
     {
@@ -91,6 +93,7 @@ public sealed class GenericRouteInitMutationIntegrationTests
         Assert.Equal(0, await workspace.RecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init replaces only a stale generated region and deletes its verified recovery bundle"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task GeneratedRegionReplacementUsesRecoveryAndLeavesNoCandidate()
     {
@@ -101,16 +104,16 @@ public sealed class GenericRouteInitMutationIntegrationTests
                 + "Authored bytes before the generated region.\n\n"
                 + "Authored bytes after the generated region.\n\n"
                 + "## Entries\n\n"
-                + "<!-- open-forge:generated-index:start -->\n\n"
+                + "\n"
                 + "- stale - Stale entry - #Old\n\n"
-                + "<!-- open-forge:generated-index:end -->\n");
+                );
         var before = workspace.ReadText(".agents/memory/_memory.md");
 
         var result = await ExecuteAsync(
             workspace,
             workspace.Request("memory/project"));
 
-        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Contains(
             result.Effects,
             effect => effect.Kind == RouteInitEffectKind.GeneratedRegion
@@ -126,6 +129,7 @@ public sealed class GenericRouteInitMutationIntegrationTests
         Assert.NotEqual(before, after);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init blocks a saved plan when a routed sibling appears before application"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task UnderLeaseRevalidationPreservesAConcurrentRoutedSibling()
     {
@@ -164,6 +168,7 @@ public sealed class GenericRouteInitMutationIntegrationTests
             await workspace.RecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Init final verification rejects a changed exact receipt postcondition"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task FinalVerificationRejectsChangedReceiptPostcondition()
     {
@@ -198,7 +203,7 @@ public sealed class GenericRouteInitMutationIntegrationTests
             directoryCreations: [],
             fileChanges: [change],
             recoveryTargets: [],
-            intendedLifecycle: null);
+            ownership: null);
         var lockManager = new WorkspaceLockManager(workspace.LockStoreRoot);
         var lockResult = await lockManager.AcquireAsync(
             new WorkspaceLockRequest(

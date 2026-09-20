@@ -14,6 +14,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.References;
 
 public sealed class ReferencesOperationSmokeTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "References operation reports direct outgoing and incoming Markdown links"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task OperationReportsDirectOutgoingAndIncomingLinks()
     {
@@ -42,6 +43,7 @@ public sealed class ReferencesOperationSmokeTests
         Assert.Equal("other.md", result.Outgoing.Occurrences[0].Target.Path is { } outgoingPath ? System.IO.Path.GetFileName(outgoingPath) : null);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "References operation preserves base then overwrite duplicates without writing"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task OperationPreservesLayerOrderDuplicatesAndWorkspaceBytes()
     {
@@ -67,6 +69,7 @@ public sealed class ReferencesOperationSmokeTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "References incoming filters retain order and inspect only the effective universe"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task IncomingFiltersControlOnlyTheEffectiveScan()
     {
@@ -96,6 +99,7 @@ public sealed class ReferencesOperationSmokeTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "References operation classifies local fragments encodings external schemes and missing targets"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task DestinationResolutionUsesAcceptedOneHopFacts()
     {
@@ -135,6 +139,7 @@ public sealed class ReferencesOperationSmokeTests
             result.Findings.Select(finding => finding.Code));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "References operation preserves malformed local forms and strict encoding outcomes"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task MalformedLocalFormsRemainTypedOutgoingOccurrences()
     {
@@ -171,8 +176,8 @@ public sealed class ReferencesOperationSmokeTests
         Assert.Equal(".agents/invalid.md", result.Outgoing.Occurrences[6].Target.Path);
         Assert.Equal(
             [
-                ReferencesFindingCode.InvalidEncoding,
-                ReferencesFindingCode.InvalidEncoding,
+                ReferencesFindingCode.LinkEncodingInvalid,
+                ReferencesFindingCode.LinkEncodingInvalid,
                 ReferencesFindingCode.DestinationMalformed,
                 ReferencesFindingCode.DestinationMalformed,
                 ReferencesFindingCode.DestinationMalformed,
@@ -181,6 +186,7 @@ public sealed class ReferencesOperationSmokeTests
             result.Findings.Select(finding => finding.Code));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "References incoming complete-empty result records every established physical layer"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task IncomingCompleteEmptyRequiresCompleteLayerEvidence()
     {
@@ -205,6 +211,7 @@ public sealed class ReferencesOperationSmokeTests
             result.IncomingSelection!.InspectedSources.Select(source => source.Path));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "References incoming incomplete result omits unavailable layers from inspected evidence"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task IncomingUnavailableLayerCannotBecomeCompleteEmptyEvidence()
     {
@@ -221,6 +228,7 @@ public sealed class ReferencesOperationSmokeTests
         Assert.Contains(result.Findings, finding => finding.Code == ReferencesFindingCode.InvalidEncoding);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "References incoming exact paths survive automatic ID collisions"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task IncomingMatchUsesExactLogicalPathWhenIdsCollide()
     {
@@ -237,9 +245,59 @@ public sealed class ReferencesOperationSmokeTests
         Assert.Equal(".agents/collision.md", occurrence.Target.Path);
         Assert.Null(occurrence.Target.Id);
         Assert.Equal(SourceLayerKind.Base, occurrence.Target.Layer);
-        Assert.Contains(result.Findings, finding => finding.Code == ReferencesFindingCode.IdentityCollision);
+        var finding = Assert.Single(result.Findings, value => value.Code == ReferencesFindingCode.IdentityCollision);
+        Assert.Equal(CliSemanticStatus.Attention, finding.Status);
+        Assert.Equal(
+            [".agents/collision.md", ".agents/collision/_collision.md"],
+            finding.Candidates.Select(candidate => candidate.Path));
     }
 
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "References operation reports an unavailable source identity with incomplete coverage"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
+    public async Task IdentityUnavailableIsReportedAsAnIncompleteFinding()
+    {
+        using var workspace = TemporaryWorkspace.Create("references-identity-unavailable");
+        workspace.WriteText(".agents/docs.md", "# Docs\n");
+        workspace.WriteText(".agents/.md", "# Unnamed source\n");
+
+        var result = await ExecuteAsync(workspace, "docs", ReferencesDirection.In);
+
+        Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
+        Assert.Equal(ReferencesCoverage.Incomplete, result.Incoming!.Coverage);
+        var finding = Assert.Single(result.Findings, value => value.Code == ReferencesFindingCode.IdentityUnavailable);
+        Assert.Equal(CliSemanticStatus.Incomplete, finding.Status);
+        Assert.Equal(".agents/.md", finding.Path);
+        Assert.Empty(finding.Candidates);
+        Assert.Equal("open-forge doctor", result.Next!.Command);
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "References operation blocks a physical alias and retains both logical paths"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
+    public async Task PhysicalAliasIsReportedAsABlockedFinding()
+    {
+        using var workspace = TemporaryWorkspace.Create("references-physical-alias");
+        workspace.WriteText(".agents/target.md", "# Target\n");
+        if (!workspace.TryCreateFileSymbolicLink(
+                ".agents/alias.md",
+                workspace.Combine(".agents/target.md"),
+                out _))
+        {
+            return;
+        }
+
+        var result = await ExecuteAsync(workspace, "target", ReferencesDirection.Out);
+
+        Assert.Equal(CliSemanticStatus.Blocked, result.Status);
+        Assert.Equal(ReferencesCoverage.Blocked, result.Outgoing!.Coverage);
+        var finding = Assert.Single(result.Findings, value => value.Code == ReferencesFindingCode.PhysicalAlias);
+        Assert.Equal(CliSemanticStatus.Blocked, finding.Status);
+        Assert.Equal(
+            [".agents/alias.md", ".agents/target.md"],
+            finding.Candidates.Select(candidate => candidate.Path));
+        Assert.Equal("open-forge doctor", result.Next!.Command);
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "References operation blocks a physical target escape and preserves the authored occurrence"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task PhysicalTargetEscapeIsBlockedWithoutFollowingTheLink()
     {
@@ -262,6 +320,7 @@ public sealed class ReferencesOperationSmokeTests
         Assert.Equal(outsideBefore, outside.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "References operation retains interrupted status and incomplete requested coverage"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task PreCancelledOperationCannotClaimCompleteCoverage()
     {
@@ -281,6 +340,7 @@ public sealed class ReferencesOperationSmokeTests
         Assert.Single(result.Findings, finding => finding.Code == ReferencesFindingCode.Interrupted);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "References operation blocks an unresolved incoming selector without scanning"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task InvalidIncomingSelectorCannotEstablishScanCoverage()
     {
@@ -301,6 +361,7 @@ public sealed class ReferencesOperationSmokeTests
         Assert.Equal("open-forge references --help", result.Next!.Command);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "References operation retains invalid-source facts with blocked requested sections"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task InvalidSourceCannotClaimRequestedCoverage()
     {
@@ -318,6 +379,7 @@ public sealed class ReferencesOperationSmokeTests
         Assert.Contains(result.Findings, finding => finding.Code == ReferencesFindingCode.InvalidSource);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "References cancellation retains unresolved incoming selector rows"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     [InlineData(false), InlineData(true)]
     public async Task PreCancelledOperationRetainsIncomingSelectors(bool both)

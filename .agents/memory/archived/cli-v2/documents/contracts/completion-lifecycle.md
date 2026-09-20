@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Explicit per-user shell-completion targets, selection, profile ownership, safe mutation, interruption recovery, and Framework-install handoff
+  description: "Historical CLI-v2 source: Explicit per-user shell-completion targets, selection, profile ownership, safe mutation, interruption recovery, and Framework-install handoff"
   responsibility: Define how Completion install and removal resolve and mutate external shell state without making completion an automatic Framework side effect
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

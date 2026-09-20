@@ -31,7 +31,6 @@ entrypoint or a source of current authority.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Historical council evidence for additional cheap agent accelerators after the main discovery capabilities](agent-accelerator-council.md) - #Memory #Archived #Contextual #Historical #CLI #Release #Council #Analysis #Agent #Automation #Accelerator
 - [Historical preliminary disposition of additional outline, batching, provenance, capability, and automation accelerators](agent-accelerators.md) - #Memory #Archived #Contextual #Historical #CLI #Release #PreliminaryDesign #Agent #Automation #Accelerator
 - [Settled historical synthesis for the accepted read-only Doctor and exact Repair boundary](check-fix-boundary.md) - #Memory #Archived #CLI #Release #Review #Historical #Doctor #Repair #Safety #Mutation #Contextual
@@ -54,4 +53,3 @@ entrypoint or a source of current authority.
 - [Contextual history of the maintainer-accepted Queue 31 revision for route move and remove](route-move-remove.md) - #Memory #Archived #CLI #Release #Review #History #Settled #Contextual #Route #Mutation #Safety #Historical
 - [Historical council synthesis for staging shared CLI contracts without source-ID collisions or semantic loss](shared-contract-migration-council.md) - #Memory #Archived #Contextual #Historical #CLI #Release #Council #Analysis #Contract #Migration #Shared
 - [Historical council evidence for the pre-refinement Status contract migration](status-contract-migration-council.md) - #Memory #Archived #Contextual #Historical #CLI #Release #Council #Analysis #Status #Command #Contract #Migration
-<!-- open-forge:generated-index:end -->

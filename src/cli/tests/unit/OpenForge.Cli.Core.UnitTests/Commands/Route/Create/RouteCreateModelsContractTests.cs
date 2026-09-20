@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Create;
 
 public sealed class RouteCreateModelsContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Create finite mappings cover every named value and reject undefined values"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void FiniteMappingsCoverEveryNamedValueAndRejectUndefinedValues()
     {
@@ -18,7 +19,7 @@ public sealed class RouteCreateModelsContractTests
         Assert.Equal(["template"], Enum.GetValues<RouteCreateTemplateClassification>().Select(RouteCreateDefinitions.ReadMachineName));
         Assert.Equal(["not-established", "incomplete", "complete"], Enum.GetValues<RouteCreatePlanCompleteness>().Select(RouteCreateDefinitions.ReadMachineName));
         Assert.Equal(["not-established", "safe", "blocked"], Enum.GetValues<RouteCreatePlanSafety>().Select(RouteCreateDefinitions.ReadMachineName));
-        Assert.Equal(["routed-file", "generated-region"], Enum.GetValues<RouteCreateEffectKind>().Select(RouteCreateDefinitions.ReadMachineName));
+        Assert.Equal(["directory", "entrypoint", "routed-file", "generated-region"], Enum.GetValues<RouteCreateEffectKind>().Select(RouteCreateDefinitions.ReadMachineName));
         Assert.Equal(["create", "replace"], Enum.GetValues<RouteCreateEffectAction>().Select(RouteCreateDefinitions.ReadMachineName));
         Assert.Equal(["planned", "not-started", "verified", "verification-failed", "completion-unknown"], Enum.GetValues<RouteCreateEffectOutcome>().Select(RouteCreateDefinitions.ReadMachineName));
         Assert.Equal(["none", "retained", "unknown"], Enum.GetValues<RouteCreateEffectResidual>().Select(RouteCreateDefinitions.ReadMachineName));
@@ -40,6 +41,7 @@ public sealed class RouteCreateModelsContractTests
         Assert.Throws<ArgumentOutOfRangeException>(() => RouteCreateDefinitions.ReadMachineName((RouteCreateFindingCode)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Create finding statuses cover the accepted finite vocabulary"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void FindingStatusesCoverAcceptedFiniteVocabulary()
     {
@@ -72,6 +74,7 @@ public sealed class RouteCreateModelsContractTests
             CliSemanticStatus.Incomplete,
             CliSemanticStatus.Incomplete,
             CliSemanticStatus.Attention,
+            CliSemanticStatus.Attention,
             CliSemanticStatus.Failed,
             CliSemanticStatus.Failed,
             CliSemanticStatus.Failed,
@@ -83,6 +86,7 @@ public sealed class RouteCreateModelsContractTests
         Assert.Throws<ArgumentOutOfRangeException>(() => RouteCreateDefinitions.ReadStatus((RouteCreateFindingCode)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Create result builder orders compatible findings deterministically"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void ResultBuilderOrdersCompatibleFindingsDeterministically()
     {
@@ -110,6 +114,7 @@ public sealed class RouteCreateModelsContractTests
         Assert.Equal("open-forge route init", result.Next?.Command);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Create result builder applies ordinary and event status precedence"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void ResultBuilderAppliesOrdinaryAndEventStatusPrecedence()
     {
@@ -139,7 +144,7 @@ public sealed class RouteCreateModelsContractTests
                 Recovery = new RouteCreateRecovery
                 {
                     State = RouteCreateRecoveryState.Retained,
-                    ResidualPath = "/tmp/open-forge-recovery.zip",
+                    ResidualPath = RouteCreateTestData.RecoveryPath(),
                 },
                 Findings = [retained],
             });
@@ -151,6 +156,7 @@ public sealed class RouteCreateModelsContractTests
         Assert.Equal(CliSemanticStatus.Complete, RouteCreateTestData.Result().Status);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Create next guidance follows its accepted precedence"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void NextGuidanceFollowsAcceptedPrecedence()
     {
@@ -167,7 +173,7 @@ public sealed class RouteCreateModelsContractTests
             {
                 Findings = [RouteCreateTestData.Finding(RouteCreateFindingCode.WriteFailed)],
             });
-        Assert.Equal("open-forge route create --verbose", failed.Next?.Command);
+        Assert.Equal("open-forge route create --detail debug", failed.Next?.Command);
         Assert.Equal("open-forge route create", Build(RouteCreateFindingCode.Interrupted).Next?.Command);
 
         var retained = RouteCreateTestData.Finding(RouteCreateFindingCode.RecoveryArtifactRetained);
@@ -177,13 +183,30 @@ public sealed class RouteCreateModelsContractTests
                 Recovery = new RouteCreateRecovery
                 {
                     State = RouteCreateRecoveryState.Retained,
-                    ResidualPath = "/tmp/open-forge-recovery.zip",
+                    ResidualPath = RouteCreateTestData.RecoveryPath(),
                 },
                 Findings = [retained],
             });
         Assert.Equal("open-forge cleanup", attention.Next?.Command);
+
+        var optional = new RouteCreateResultBuilder().Build(
+            RouteCreateTestData.PreviewFormation() with
+            {
+                Metadata = new RouteCreateMetadata
+                {
+                    Description = null,
+                    Responsibility = null,
+                    Tags = [],
+                },
+                Findings = [RouteCreateTestData.Finding(RouteCreateFindingCode.OptionalMetadata)],
+            });
+        Assert.Equal(CliSemanticStatus.Attention, optional.Status);
+        Assert.Equal("open-forge route update", optional.Next?.Command);
+        Assert.Equal(RouteCreateRecoveryState.NotRequired, optional.Recovery.State);
+        Assert.Equal(RouteCreateVerificationState.NotRequested, optional.Verification);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Create metadata owns immutable ordered tag values"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void MetadataOwnsImmutableOrderedTagValues()
     {
@@ -197,11 +220,15 @@ public sealed class RouteCreateModelsContractTests
 
         Assert.Equal(["Docs", "Overview"], metadata.Tags);
         Assert.Null(metadata.Responsibility);
-        Assert.Throws<ArgumentException>(() => new RouteCreateMetadataInput("Description", [], null));
+        var omitted = new RouteCreateMetadataInput(null, [], null);
+        Assert.Null(omitted.Description);
+        Assert.Empty(omitted.Tags);
+        Assert.Throws<ArgumentException>(() => new RouteCreateMetadataInput("  ", [], null));
         Assert.Throws<ArgumentException>(() => new RouteCreateMetadataInput("Description", ["Docs", "Docs"], null));
         Assert.Throws<ArgumentException>(() => new RouteCreateMetadataInput("Description", ["#Docs"], null));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Create result rejects invalid effect order and attention state"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void ResultRejectsInvalidEffectOrderAndAttentionState()
     {
@@ -219,8 +246,39 @@ public sealed class RouteCreateModelsContractTests
             RouteCreateTestData.VerifiedFormation(),
             CliSemanticStatus.Attention,
             new CliNextAction("open-forge cleanup", "Cleanup is required.")));
+
+        Assert.Throws<ArgumentException>(() => builder.Build(
+            RouteCreateTestData.PreviewFormation() with
+            {
+                Metadata = new RouteCreateMetadata
+                {
+                    Description = null,
+                    Responsibility = null,
+                    Tags = [],
+                },
+                Plan = new RouteCreatePlanFacts
+                {
+                    Completeness = RouteCreatePlanCompleteness.Complete,
+                    Safety = RouteCreatePlanSafety.Blocked,
+                },
+                Findings = [RouteCreateTestData.Finding(RouteCreateFindingCode.OptionalMetadata)],
+            }));
+
+        Assert.Throws<ArgumentException>(() => builder.Build(
+            RouteCreateTestData.VerifiedFormation() with
+            {
+                Metadata = new RouteCreateMetadata
+                {
+                    Description = null,
+                    Responsibility = null,
+                    Tags = [],
+                },
+                Findings = [RouteCreateTestData.Finding(RouteCreateFindingCode.OptionalMetadata)],
+                Verification = RouteCreateVerificationState.Failed,
+            }));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Create result rejects action-incompatible change facts"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void ResultRejectsActionIncompatibleChangeFacts()
     {
@@ -258,6 +316,7 @@ public sealed class RouteCreateModelsContractTests
             }));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Create resolved results require complete destination metadata"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void ResolvedResultsRequireCompleteDestinationMetadata()
     {
@@ -310,6 +369,7 @@ public sealed class RouteCreateModelsContractTests
         "route-create.projection-incomplete",
         "route-create.recovery-unavailable",
         "route-create.recovery-artifact-retained",
+        "route-create.optional-metadata",
         "route-create.target-changed-during-apply",
         "route-create.write-failed",
         "route-create.verification-failed",

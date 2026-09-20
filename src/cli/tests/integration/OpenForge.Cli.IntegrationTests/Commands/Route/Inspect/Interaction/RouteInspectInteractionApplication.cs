@@ -1,9 +1,13 @@
 using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.Inspect;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Binding;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Interaction;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
-using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Route.Inspect;
+using OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Interaction;
+using OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Legacy.Route.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Composition;
@@ -15,6 +19,7 @@ using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Interaction;
 
@@ -30,11 +35,18 @@ internal static class RouteInspectInteractionApplication
         using var input = new StringReader(standardInput);
         using var standardOutput = new StringWriter();
         using var standardError = new StringWriter();
-        var session = new CliInteractiveSession(
-            standardInput: input,
-            promptOutput: standardError,
-            canPrompt: canPrompt);
-        var application = Create(session);
+        var terminal = new CliTerminal(
+            new CliTerminalCapabilities(canPrompt, canReadKeys: false, canRedraw: false),
+            (content, cancellationToken) =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                standardError.Write(content.Span);
+                return ValueTask.CompletedTask;
+            },
+            cancellationToken => input.ReadLineAsync(cancellationToken),
+            _ => ValueTask.FromResult<CliKeyStroke?>(null));
+        var application = Create(
+            RouteInspectSourceSelectionPrompt.Create(new CliPrompts(terminal)));
 
         var completion = await application.RunAsync(
             arguments,
@@ -51,21 +63,18 @@ internal static class RouteInspectInteractionApplication
         };
     }
 
-    private static CliCoreApplication Create(CliInteractiveSession session)
+    private static CliCoreApplication Create(
+        CliPrompt<RouteInspectSourceSelectionQuestion, string> sourceSelectionPrompt)
     {
         var route = RouteBinding.CreateGroup();
         var symbols = RouteInspectBinding.CreateSymbols(route);
-        var binding = RouteInspectBinding.Close(
+        var binding = CliReportBinding.Close(RouteInspectBinding.CreateRequestBinding(
             symbols,
             new RouteInspectBindingComponents
             {
                 Help = RouteInspectHelpSections.CreateInspect(),
-                Operation = RouteInspectOperationFactory.Create(session),
-                Renderers = new CliRendererSet<RouteInspectResult>(
-                    RouteInspectHumanRenderer.Render,
-                    RouteInspectJsonRenderer.Render),
-                DiagnosticRenderer = RouteInspectDiagnosticRenderer.Render,
-            });
+                Operation = RouteInspectOperationFactory.Create(sourceSelectionPrompt),
+            }), RouteInspectPresentation.Rendering);
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
             [new CliRootBranch(route, RouteHelpSections.CreateGroup())],

@@ -41,7 +41,5 @@ accepted CLI Architecture and is not repeated here.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Current technology-neutral Status operation, closed inspection accounting, result formation, and conformance](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Status #Behavior #Determinism #Measurement #Safety #CurrentTruth
 - [Current accepted interface for workspace status, context-size comparison, root customization, managed Extensions, and recognized recovery bundles](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Status #Interface #Context #Measurement #Extension #Recovery #CurrentTruth
-<!-- open-forge:generated-index:end -->

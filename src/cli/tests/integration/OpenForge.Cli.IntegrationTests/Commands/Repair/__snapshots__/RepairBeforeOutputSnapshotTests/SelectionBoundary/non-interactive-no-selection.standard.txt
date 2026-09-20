@@ -1,0 +1,7 @@
+Cannot repair: repair needs to know which repairs to apply, and this session cannot ask. Nothing was changed.
+Workspace: <workspace>
+  Error  repair.selection-required  Selection required
+         Repair needs to know which repairs to apply, and this session cannot ask.
+1 error.
+  Select safe-exact repairs with --automatic, provide an explicit --relink target, or use the interactive Repair prompt.
+Next: open-forge repair --automatic

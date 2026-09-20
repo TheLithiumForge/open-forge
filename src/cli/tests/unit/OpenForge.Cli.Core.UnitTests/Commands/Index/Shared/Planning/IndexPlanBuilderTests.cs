@@ -24,9 +24,10 @@ public sealed class IndexPlanBuilderTests
     private const string UpdatePath = ".agents/zeta/_zeta.md";
     private const string BeforeBody = "old entry\r\n";
     private const string ExpectedBody = "new entry\r\n";
-    private const string Prefix = "# Root\r\n<!-- open-forge:generated-index:start -->\r\n";
-    private const string Suffix = "<!-- open-forge:generated-index:end -->\r\nFooter\r\n";
+    private const string Prefix = "# Root\r\n";
+    private const string Suffix = "Footer\r\n";
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index planning maps every projected state in canonical path order")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void ProjectedStatesFormTruthfulOrderedPublicRegions()
@@ -77,6 +78,48 @@ public sealed class IndexPlanBuilderTests
         Assert.Empty(plan.RecoveryTargets);
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Index planning exposes only safe changed regions for a skipped metadata subset")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void SkippedMetadataProjectionPlansExactIndependentRecoverySubset()
+    {
+        var unavailable = UnavailableMetadata(AlphaPath);
+        var update = Available(
+            path: UpdatePath,
+            beforeBody: BeforeBody,
+            expectedBody: ExpectedBody,
+            beforeEntryCount: null);
+        var skipped = new IndexFinding(
+            IndexFindingCode.MetadataSkipped,
+            sourceOccurrence: null,
+            source: unavailable.Source,
+            cause: "Malformed authored metadata was skipped.",
+            candidates: [])
+        {
+            Details = new IndexFindingDetails
+            {
+                ParentPath = AlphaPath,
+                MetadataProblem = IndexMetadataProblem.Invalid,
+            },
+        };
+
+        var plan = new IndexPlanBuilder().Build(Input(
+            IndexMode.Apply,
+            ProjectionWithFindings([skipped], unavailable, update)));
+
+        Assert.False(plan.IsComplete);
+        Assert.True(plan.IsExecutable);
+        Assert.False(plan.IsNoOp);
+        Assert.Equal([AlphaPath, UpdatePath], plan.Regions.Select(region => region.Source.Path));
+        Assert.Equal(IndexRegionAction.NotEstablished, plan.Regions[0].Action);
+        Assert.Equal(IndexRegionAction.Update, plan.Regions[1].Action);
+        Assert.Equal(
+            [SourceLogicalPath.ToLexicalPath(Input(IndexMode.Apply, Projection(update)).Request.Workspace.LexicalRoot, UpdatePath)],
+            plan.RecoveryTargets.Select(target => target.Change.LogicalPath));
+        Assert.Single(plan.Updates);
+    }
+
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index planning derives exact existing-target updates for apply and dry-run")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void CompleteUpdatesRetainBoundedBytesIdentityAndModeOutcome()
@@ -130,6 +173,7 @@ public sealed class IndexPlanBuilderTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index planning recognizes a complete unchanged projection as a verified no-op")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void CompleteUnchangedProjectionIsNoOp()
@@ -153,6 +197,7 @@ public sealed class IndexPlanBuilderTests
         Assert.Empty(plan.RecoveryTargets);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index planning orders complete recovery targets by canonical projected path")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void CompleteRecoveryTargetsFollowCanonicalProjectionOrder()
@@ -180,6 +225,7 @@ public sealed class IndexPlanBuilderTests
         Assert.Equal(expectedPaths, plan.RecoveryTargets.Select(target => target.Change.LogicalPath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index plan invariants reject incoherent regions and recovery targets")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void PlanRejectsNullMismatchedAndPartialExecutableFacts()
@@ -271,6 +317,7 @@ public sealed class IndexPlanBuilderTests
             new IndexPlanBuilder().Build(Input(IndexMode.Apply, Projection(unknownCount))));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index planning maps every mode and rejects undefined values")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void InitialOutcomeMappingIsExact()
@@ -297,13 +344,6 @@ public sealed class IndexPlanBuilderTests
     {
         var ordered = regions.OrderBy(region => region.Source.Path, StringComparer.Ordinal).ToArray();
         var navigation = new GeneratedNavigationProjection(ordered.Select(region => region.Region));
-        var selection = new IndexSelectionResolution(
-            new IndexSelection(
-                IndexSelectionOrigin.ExplicitSources,
-                IndexSelectionScope.Rooted,
-                ordered.Select(region => region.Source)),
-            ordered.Select(region => region.Region.Source),
-            []);
         var findings = navigation.IsComplete
             ? Array.Empty<IndexFinding>()
             : [new IndexFinding(
@@ -312,6 +352,22 @@ public sealed class IndexPlanBuilderTests
                 source: ordered.First(region => region.Region.State == GeneratedNavigationRegionState.Unavailable).Source,
                 cause: "One projected region is unavailable for planning evidence.",
                 candidates: [])];
+        return ProjectionWithFindings(findings, ordered);
+    }
+
+    private static IndexProjectionFormation ProjectionWithFindings(
+        IEnumerable<IndexFinding> findings,
+        params IndexProjectedRegion[] regions)
+    {
+        var ordered = regions.OrderBy(region => region.Source.Path, StringComparer.Ordinal).ToArray();
+        var navigation = new GeneratedNavigationProjection(ordered.Select(region => region.Region));
+        var selection = new IndexSelectionResolution(
+            new IndexSelection(
+                IndexSelectionOrigin.ExplicitSources,
+                IndexSelectionScope.Rooted,
+                ordered.Select(region => region.Source)),
+            ordered.Select(region => region.Region.Source),
+            []);
         return new IndexProjectionFormation(
             selection: selection,
             projection: navigation,
@@ -356,6 +412,18 @@ public sealed class IndexPlanBuilderTests
                 source,
                 GeneratedNavigationRegionUnavailableReason.GeneratedRegionMissing,
                 "The generated region is missing."),
+            source: LogicalSource(source),
+            beforeEntryCount: null);
+    }
+
+    private static IndexProjectedRegion UnavailableMetadata(string path)
+    {
+        var source = Source(path);
+        return new IndexProjectedRegion(
+            region: GeneratedNavigationRegion.Unavailable(
+                source,
+                GeneratedNavigationRegionUnavailableReason.MetadataInvalid,
+                "The authored metadata is malformed."),
             source: LogicalSource(source),
             beforeEntryCount: null);
     }

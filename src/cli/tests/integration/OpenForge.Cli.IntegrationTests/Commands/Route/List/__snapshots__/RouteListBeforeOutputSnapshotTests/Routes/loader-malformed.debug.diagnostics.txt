@@ -1,0 +1,8 @@
+route-list diagnostics
+status=blocked
+workspace.lexical=<workspace>
+selection.kind=loader-roots
+requested-depth=1
+effective-depth=none
+rows=0
+findings=1

@@ -1,13 +1,17 @@
+using OpenForge.Cli.Core.Commands.Library.List.Shared.Serialization;
 using OpenForge.Cli.Core.Commands.Library.List.Models.Result;
-using OpenForge.Cli.Core.Commands.Library.List.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Library.List;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Observation;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Reading;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Library.List;
 
 public sealed class LibraryListObservationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library List distinguishes an absent record from a strict empty record and never starts inventory"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     [InlineData(false)]
     [InlineData(true)]
@@ -25,15 +29,23 @@ public sealed class LibraryListObservationTests
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(present ? LibraryRecordViewState.Complete : LibraryRecordViewState.Missing, result.Result.Record.State);
-        Assert.Equal(0, result.Result.Record.LibraryCount);
+        Assert.Equal(present ? 0 : (int?)null, result.Result.Record.LibraryCount);
         Assert.Empty(result.Result.Libraries);
-        Assert.Empty(result.Result.Findings);
+        if (present)
+        {
+            Assert.Empty(result.Result.Findings);
+        }
+        else
+        {
+            Assert.Equal(LibraryListFindingCode.OwnershipObservation, Assert.Single(result.Result.Findings).Code);
+        }
         Assert.Equal(LibraryListInventoryState.NotRequested, result.Result.Inventory);
         Assert.Equal(LibraryCoverage.Complete, result.Result.Coverage);
         Assert.Equal(before, fixture.Snapshot());
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library List observes only registered links and cannot infer unregistered source additions"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     public async Task BoundedFactsAndDeterminism()
     {
@@ -68,6 +80,7 @@ public sealed class LibraryListObservationTests
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library List reports safe missing or changed registered occupants as attention without adopting them"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     [InlineData("missing", (int)LibraryLinkViewState.Missing, (int)LibraryListFindingCode.LinkMissing)]
     [InlineData("ordinary", (int)LibraryLinkViewState.Changed, (int)LibraryListFindingCode.LinkChanged)]
@@ -103,6 +116,7 @@ public sealed class LibraryListObservationTests
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library List accepts an exact dangling registered link without resolving target existence"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     public async Task ExactDanglingLinkIsCurrent()
     {
@@ -121,5 +135,7 @@ public sealed class LibraryListObservationTests
     }
 
     private static string Render(LibraryListResult result)
-        => LibraryListPresentation.RenderJson(new(result, new(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal)));
+        => CliRenderingStage.Render(
+            new CliPresentationRequest<LibraryListResult>(result, new(CliFormat.Json, CliDetail.Standard, null)),
+            LibraryListPresentation.Rendering).PrimaryContent;
 }

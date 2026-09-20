@@ -1,7 +1,7 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
-using OpenForge.Cli.Core.Commands.Route.Update.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Route.Update;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
@@ -11,371 +11,171 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
 public sealed class RouteUpdatePresentationTests
 {
-    [Theory(DisplayName = "Route Update invalid blocked and incomplete human results retain exact disposition"),
-     InlineData((int)RouteUpdateFindingCode.InvalidPatch, "invalid", 4, (int)CliOutputTarget.StandardError),
-     InlineData((int)RouteUpdateFindingCode.IdentityCollision, "blocked", 5, (int)CliOutputTarget.StandardError),
-     InlineData((int)RouteUpdateFindingCode.WorkspaceUnavailable, "incomplete", 3, (int)CliOutputTarget.StandardOutput),
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Route Update native reports retain status disposition"),
+     InlineData((int)RouteUpdateFindingCode.InvalidPatch, "Cannot update memory/topic", 4, (int)CliOutputTarget.StandardError),
+     InlineData((int)RouteUpdateFindingCode.IdentityCollision, "Cannot update memory/topic", 5, (int)CliOutputTarget.StandardError),
+     InlineData((int)RouteUpdateFindingCode.WorkspaceUnavailable, "memory/topic could not be updated", 3, (int)CliOutputTarget.StandardOutput),
      Trait("Feature", "route-update"), Trait("Evidence", "Unit")]
-    public void InvalidBlockedAndIncompleteResultsRetainHumanDisposition(int findingValue, string expectedStatus, int expectedExit, int expectedTarget)
+    public void NativeReportsRetainStatusDisposition(
+        int findingValue,
+        string expectedHeadline,
+        int expectedExit,
+        int expectedTarget)
     {
         var result = RouteUpdateTestData.Result(RouteUpdateTestData.VerifiedNoOpFormation(
             findings: [RouteUpdateTestData.Finding((RouteUpdateFindingCode)findingValue)]));
         var rendered = CliRenderingStage.Render(
-            Presentation(result, CliOutputFormat.Human),
-            new CliRendererSet<RouteUpdateResult>(RouteUpdateHumanRenderer.Render, RouteUpdateJsonRenderer.Render),
-            RouteUpdateDiagnosticRenderer.Render);
+            Presentation(result, CliFormat.Text),
+            RouteUpdatePresentation.Rendering);
 
-        Assert.Contains($"Status: {expectedStatus}", rendered.PrimaryContent, StringComparison.Ordinal);
+        Assert.Contains(expectedHeadline, rendered.PrimaryContent, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", rendered.PrimaryContent, StringComparison.Ordinal);
         Assert.Equal((CliOutputTarget)expectedTarget, rendered.PrimaryTarget);
         Assert.Equal(expectedExit, CliStatusDefinitions.Read(result.Status).Disposition.ExitCode);
     }
 
-    [Fact(DisplayName = "Route Update human renderer exposes the complete no-op facts in stable order"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
-    public void HumanRendererExposesCompleteNoOpFactsInStableOrder()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Update native minimal output lists changed fields and the parent entry"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
+    public void NativeMinimalOutputListsChangedFieldsAndParentEntry()
     {
-        var text = RouteUpdateHumanRenderer.Render(
-            Presentation(RouteUpdateTestData.Result(), CliOutputFormat.Human));
-
-        AssertInOrder(
-            text,
-            "The routed source is up to date.",
-            "Status: complete",
-            $"Workspace: {RouteUpdateTestData.Workspace().LexicalRoot}",
-            "Selected by: --workspace",
-            $"ID: {RouteUpdateTestData.TargetId}",
-            $"Path: {RouteUpdateTestData.TargetPath}",
-            "Mode: apply",
-            "Plan: completeness=complete, safety=safe, body=preserved",
-            "No files changed.",
-            "Unchanged:",
-            $"  {RouteUpdateTestData.ParentPath}",
-            $"  {RouteUpdateTestData.TargetPath}",
-            "Recovery: not-required",
-            "Verification: verified");
-    }
-
-    [Fact(DisplayName = "Route Update human renderer states protected Template attention and next action"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
-    public void HumanRendererStatesProtectedTemplateAttentionAndNextAction()
-    {
-        var result = ProtectedBodyResult();
-
-        var text = RouteUpdateHumanRenderer.Render(
-            Presentation(result, CliOutputFormat.Human));
-
-        Assert.Contains(
-            "The routed source requires attention.",
-            text,
-            StringComparison.Ordinal);
-        Assert.Contains("Status: requires attention", text, StringComparison.Ordinal);
-        Assert.Contains("Template: templates/topic (.agents/templates/topic.md) / authored-body-protected", text, StringComparison.Ordinal);
-        Assert.Contains(
-            "Template body not applied: the target already has authored body content.",
-            text,
-            StringComparison.Ordinal);
-        Assert.Contains(
-            $"Next: open-forge route update{Environment.NewLine}review the authored body; the Template body was not applied.",
-            text,
-            StringComparison.Ordinal);
-    }
-
-    [Fact(DisplayName = "Route Update human renderer names changed fields and generated effect paths"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
-    public void HumanRendererNamesChangedFieldsAndEffectPaths()
-    {
-        var formation = RouteUpdateTestData.VerifiedNoOpFormation(
-            CopiedTemplate(),
-            RouteUpdateBodyState.TemplateCopied) with
+        var formation = RouteUpdateTestData.VerifiedNoOpFormation() with
         {
             Patch = ChangedPatch(),
             Effects =
             [
                 RouteUpdateTestData.Effect(),
-                RouteUpdateTestData.Effect(
-                    RouteUpdateTestData.ParentPath,
-                    RouteUpdateEffectKind.GeneratedRegion),
+                RouteUpdateTestData.Effect(RouteUpdateTestData.ParentPath, RouteUpdateEffectKind.GeneratedRegion),
             ],
             UnchangedPaths = [],
-            Recovery = new RouteUpdateRecovery
-            {
-                State = RouteUpdateRecoveryState.Removed,
-                ResidualPath = null,
-            },
+            Recovery = RouteUpdateRecovery.Removed(),
         };
 
-        var text = RouteUpdateHumanRenderer.Render(
-            Presentation(RouteUpdateTestData.Result(formation), CliOutputFormat.Human));
+        var text = Render(RouteUpdateTestData.Result(formation), CliFormat.Text, CliDetail.Minimal);
 
-        Assert.StartsWith("The routed source was updated.", text, StringComparison.Ordinal);
-        Assert.Contains("Description (changed): \"Before\" -> \"After\"", text, StringComparison.Ordinal);
-        Assert.Contains("Responsibility (changed): \"Before responsibility\" -> \"After responsibility\"", text, StringComparison.Ordinal);
-        Assert.Contains("Tags (changed): [\"Before\"] -> [\"After\"]", text, StringComparison.Ordinal);
-        Assert.Contains("Template body: selected for copying", text, StringComparison.Ordinal);
-        Assert.Contains(RouteUpdateTestData.ParentPath, text, StringComparison.Ordinal);
-
-        var compact = RouteUpdateHumanRenderer.Render(
-            Presentation(
-                RouteUpdateTestData.Result(formation),
-                CliOutputFormat.Human,
-                CliView.Compact));
-
-        Assert.Contains("Before: before-hash", compact, StringComparison.Ordinal);
-        Assert.Contains("Expected: expected-hash", compact, StringComparison.Ordinal);
-
-        var dryRun = formation with
-        {
-            Mode = RouteUpdateMode.DryRun,
-            Effects =
-            [
-                .. formation.Effects.Select(effect => effect with
-                {
-                    Outcome = RouteUpdateEffectOutcome.Planned,
-                }),
-            ],
-            Recovery = new RouteUpdateRecovery
-            {
-                State = RouteUpdateRecoveryState.NotCreated,
-                ResidualPath = null,
-            },
-            Verification = RouteUpdateVerificationState.NotRequested,
-        };
-        var dryRunText = RouteUpdateHumanRenderer.Render(
-            Presentation(RouteUpdateTestData.Result(dryRun), CliOutputFormat.Human));
-
-        Assert.StartsWith(
-            "The routed source would be updated.",
-            dryRunText,
-            StringComparison.Ordinal);
+        AssertInOrder(
+            text,
+            $"Updated {RouteUpdateTestData.TargetId}",
+            "description: \"Before\" -> \"After\"",
+            "responsibility: \"Before responsibility\" -> \"After responsibility\"",
+            "tags: #Before -> #After",
+            $"Entry updated in {RouteUpdateTestData.ParentPath}");
+        Assert.DoesNotContain(RouteUpdateTestData.TargetPath + "  frontmatter rewritten", text, StringComparison.Ordinal);
     }
 
-    [Theory(DisplayName = "Route Update human views distinguish unknown and absent selected metadata")]
-    [InlineData(false)]
-    [InlineData(true)]
-    [Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
-    public void HumanViewsDistinguishUnknownAndAbsentMetadata(bool compact)
-    {
-        var formation = RouteUpdateTestData.VerifiedNoOpFormation();
-        var patch = ChangedPatch();
-        formation = formation with
-        {
-            Patch = patch with
-            {
-                Description = patch.Description with { State = RouteUpdatePatchState.Unresolved, Before = null, Expected = "After" },
-                Responsibility = patch.Responsibility with { State = RouteUpdatePatchState.Unchanged, Operation = RouteUpdateResponsibilityOperation.Remove, Before = null, Expected = null },
-                Tags = patch.Tags with { State = RouteUpdatePatchState.Unresolved, Before = null, Expected = [] },
-            },
-        };
-        var view = compact ? CliView.Compact : CliView.Expanded;
-        var text = RouteUpdateHumanRenderer.Render(Presentation(RouteUpdateTestData.Result(formation), CliOutputFormat.Human, view));
-
-        Assert.Contains("Description (unresolved): unavailable -> \"After\"", text, StringComparison.Ordinal);
-        Assert.Contains("Responsibility (unchanged): absent -> absent", text, StringComparison.Ordinal);
-        Assert.Contains("Tags (unresolved): unavailable -> []", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("Description (changed)", text, StringComparison.Ordinal);
-    }
-
-    [Theory(DisplayName = "Route Update human views retain protected body findings once and copyable next command")]
-    [InlineData(false)]
-    [InlineData(true)]
-    [Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
-    public void HumanViewsRetainProtectedBodyOnce(bool compact)
-    {
-        var result = ProtectedBodyResult();
-        var text = RouteUpdateHumanRenderer.Render(Presentation(result, CliOutputFormat.Human, compact ? CliView.Compact : CliView.Expanded));
-
-        Assert.Equal(1, text.Split("Template body not applied:", StringSplitOptions.None).Length - 1);
-        Assert.Contains("[route-update.template-body-protected]", text, StringComparison.Ordinal);
-        Assert.Equal(1, text.Split("Next:", StringSplitOptions.None).Length - 1);
-        Assert.Contains("Next: open-forge route update", text, StringComparison.Ordinal);
-        Assert.Contains("Recovery:", text, StringComparison.Ordinal);
-        Assert.Contains("Verification:", text, StringComparison.Ordinal);
-        Assert.Equal(!compact, text.Contains("review the authored body;", StringComparison.Ordinal));
-    }
-
-    [Fact(DisplayName = "Route Update dry-run no-op human summary remains up to date"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
-    public void DryRunNoOpHumanSummaryRemainsUpToDate()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Update native standard and full output add paths, effect hashes, and frontmatter"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
+    public void NativeStandardAndFullOutputAddDetail()
     {
         var formation = RouteUpdateTestData.VerifiedNoOpFormation() with
         {
-            Mode = RouteUpdateMode.DryRun,
-            Recovery = new RouteUpdateRecovery
-            {
-                State = RouteUpdateRecoveryState.NotCreated,
-                ResidualPath = null,
-            },
-            Verification = RouteUpdateVerificationState.NotRequested,
-        };
-
-        var text = RouteUpdateHumanRenderer.Render(
-            Presentation(RouteUpdateTestData.Result(formation), CliOutputFormat.Human));
-
-        Assert.StartsWith("The routed source is up to date.", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("would be updated", text, StringComparison.Ordinal);
-    }
-
-    [Theory(DisplayName = "Route Update compact errors name command target and direct cause"),
-     InlineData((int)RouteUpdateFindingCode.InvalidInput),
-     InlineData((int)RouteUpdateFindingCode.WorkspaceUnsafe),
-     InlineData((int)RouteUpdateFindingCode.WorkspaceUnavailable),
-     InlineData((int)RouteUpdateFindingCode.WriteFailed),
-     InlineData((int)RouteUpdateFindingCode.Interrupted),
-     Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
-    public void CompactErrorsNameCommandTargetAndDirectCause(int codeValue)
-    {
-        const string cause = "The direct primary cause.";
-        var code = (RouteUpdateFindingCode)codeValue;
-        var formation = RouteUpdateTestData.VerifiedNoOpFormation(
-            findings: [RouteUpdateTestData.Finding(code, cause: cause)]) with
-        {
-            Target = RouteUpdateTestData.Target() with
-            {
-                SelectedBy = null,
-                Id = null,
-                Path = null,
-                Form = null,
-            },
-        };
-
-        var text = RouteUpdateHumanRenderer.Render(
-            Presentation(
-                RouteUpdateTestData.Result(formation),
-                CliOutputFormat.Human,
-                CliView.Compact));
-
-        Assert.Contains("Route Update", text, StringComparison.Ordinal);
-        Assert.Contains(RouteUpdateTestData.TargetId, text, StringComparison.Ordinal);
-        Assert.Contains(cause, text, StringComparison.Ordinal);
-        Assert.Contains($"Target: {RouteUpdateTestData.TargetId}", text, StringComparison.Ordinal);
-    }
-
-    [Fact(DisplayName = "Route Update JSON renderer projects exact schema-v1 facts and nulls"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
-    public void JsonRendererProjectsExactSchemaV1FactsAndNulls()
-    {
-        var json = RouteUpdateJsonRenderer.Render(
-            Presentation(RouteUpdateTestData.Result(), CliOutputFormat.Json));
-        using var document = JsonDocument.Parse(json);
-        var root = document.RootElement;
-        var result = root.GetProperty("result");
-        var target = result.GetProperty("target");
-        var patch = result.GetProperty("patch");
-
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
-        Assert.Equal("route update", root.GetProperty("command").GetString());
-        Assert.Equal("complete", root.GetProperty("status").GetString());
-        Assert.Equal(
-            RouteUpdateTestData.Workspace().LexicalRoot,
-            root.GetProperty("workspace").GetProperty("path").GetString());
-        Assert.Equal(
-            "explicit-workspace",
-            root.GetProperty("workspace").GetProperty("selectedBy").GetString());
-        Assert.Equal("apply", result.GetProperty("mode").GetString());
-        Assert.Equal(RouteUpdateTestData.TargetId, target.GetProperty("requested").GetString());
-        Assert.Equal("source-id", target.GetProperty("selectedBy").GetString());
-        Assert.Equal(RouteUpdateTestData.TargetId, target.GetProperty("id").GetString());
-        Assert.Equal(RouteUpdateTestData.TargetPath, target.GetProperty("path").GetString());
-        Assert.Equal("ordinary-markdown", target.GetProperty("form").GetString());
-        Assert.Empty(target.GetProperty("overwritePaths").EnumerateArray());
-        Assert.Equal("Before", patch.GetProperty("description").GetProperty("before").GetString());
-        Assert.Equal("Before", patch.GetProperty("description").GetProperty("expected").GetString());
-        Assert.Equal("unchanged", patch.GetProperty("description").GetProperty("state").GetString());
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("template").ValueKind);
-        Assert.Empty(result.GetProperty("effects").EnumerateArray());
-        Assert.Equal(
-            [RouteUpdateTestData.ParentPath, RouteUpdateTestData.TargetPath],
-            result.GetProperty("unchangedPaths").EnumerateArray().Select(item => item.GetString()));
-        Assert.Equal("not-required", result.GetProperty("recovery").GetProperty("state").GetString());
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("recovery").GetProperty("residualPath").ValueKind);
-        Assert.Equal("verified", result.GetProperty("verification").GetString());
-        Assert.Empty(result.GetProperty("findings").EnumerateArray());
-        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
-    }
-
-    [Fact(DisplayName = "Route Update JSON projection retains complete failed result and Next facts"),
-     Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
-    public void JsonProjectionRetainsCompleteFailedResultAndNextFacts()
-    {
-        const string residualPath = "/tmp/open-forge-route-update-recovery.zip";
-        const string cause = "The exact applied target could not be verified.";
-        var formation = RouteUpdateTestData.VerifiedNoOpFormation(
-            findings:
-            [
-                RouteUpdateTestData.Finding(
-                    RouteUpdateFindingCode.VerificationFailed,
-                    cause: cause),
-            ]) with
-        {
+            Patch = ChangedPatch(),
             Effects =
             [
                 RouteUpdateTestData.Effect() with
                 {
-                    Outcome = RouteUpdateEffectOutcome.VerificationFailed,
-                    Residual = RouteUpdateEffectResidual.Retained,
+                    Preview =
+                    [
+                        new RouteUpdatePreviewHunk
+                        {
+                            Kind = RouteUpdatePreviewKind.MetadataField,
+                            Before = "description: Before",
+                            Expected = "description: After",
+                        },
+                    ],
                 },
             ],
             UnchangedPaths = [],
-            Recovery = new RouteUpdateRecovery
-            {
-                State = RouteUpdateRecoveryState.Retained,
-                ResidualPath = residualPath,
-            },
-            Verification = RouteUpdateVerificationState.Failed,
+            Recovery = RouteUpdateRecovery.Removed(),
         };
+        var result = RouteUpdateTestData.Result(formation);
 
-        var json = RouteUpdateJsonRenderer.Render(
-            Presentation(RouteUpdateTestData.Result(formation), CliOutputFormat.Json));
+        var standard = Render(result, CliFormat.Text, CliDetail.Standard);
+        Assert.Contains($"Path: {RouteUpdateTestData.TargetPath}", standard, StringComparison.Ordinal);
+        Assert.Contains($"{RouteUpdateTestData.TargetPath}  frontmatter rewritten", standard, StringComparison.Ordinal);
+
+        var full = Render(result, CliFormat.Text, CliDetail.Full);
+        Assert.Contains("Before: before-hash", full, StringComparison.Ordinal);
+        Assert.Contains("After: expected-hash", full, StringComparison.Ordinal);
+        Assert.Contains("Frontmatter before:", full, StringComparison.Ordinal);
+        Assert.Contains("description: Before", full, StringComparison.Ordinal);
+        Assert.Contains("description: After", full, StringComparison.Ordinal);
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Update native states protected Template body without a legacy status line"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
+    public void NativeProtectedTemplateBodyUsesCatalogueWording()
+    {
+        var text = Render(ProtectedBodyResult(), CliFormat.Text, CliDetail.Minimal);
+
+        Assert.StartsWith(
+            "Updated memory/topic, but the Template body was not copied.",
+            text,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "The file already has content, which was kept. The Template templates/topic was not copied.",
+            text,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain("Next:", text, StringComparison.Ordinal);
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Update native JSON uses the report envelope and catalogue data shape"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
+    public void NativeJsonUsesCatalogueDataShape()
+    {
+        var formation = RouteUpdateTestData.VerifiedNoOpFormation() with
+        {
+            Patch = ChangedPatch(),
+            Effects =
+            [
+                RouteUpdateTestData.Effect(),
+                RouteUpdateTestData.Effect(RouteUpdateTestData.ParentPath, RouteUpdateEffectKind.GeneratedRegion),
+            ],
+            UnchangedPaths = [],
+            Recovery = RouteUpdateRecovery.Removed(),
+        };
+        var json = Render(RouteUpdateTestData.Result(formation), CliFormat.Json, CliDetail.Full);
         using var document = JsonDocument.Parse(json);
         var root = document.RootElement;
-        var result = root.GetProperty("result");
-        var effect = Assert.Single(result.GetProperty("effects").EnumerateArray());
-        var finding = Assert.Single(result.GetProperty("findings").EnumerateArray());
-        var next = root.GetProperty("next");
+        var data = root.GetProperty("data");
+        var change = Assert.Single(data.GetProperty("changes").EnumerateArray(), item =>
+            item.GetProperty("field").GetString() == "description");
 
-        Assert.Equal(
-            ["schemaVersion", "command", "status", "workspace", "result", "next"],
-            root.EnumerateObject().Select(property => property.Name));
-        Assert.Equal("failed", root.GetProperty("status").GetString());
-        Assert.Equal(
-            [
-                "mode", "target", "patch", "template", "plan", "effects",
-                "unchangedPaths", "recovery", "verification", "findings",
-            ],
-            result.EnumerateObject().Select(property => property.Name));
-        Assert.Equal("verification-failed", effect.GetProperty("outcome").GetString());
-        Assert.Equal("retained", effect.GetProperty("residual").GetString());
-        Assert.Equal("retained", result.GetProperty("recovery").GetProperty("state").GetString());
-        Assert.Equal(
-            residualPath,
-            result.GetProperty("recovery").GetProperty("residualPath").GetString());
-        Assert.Equal("failed", result.GetProperty("verification").GetString());
-        Assert.Equal("route-update.verification-failed", finding.GetProperty("code").GetString());
-        Assert.Equal("failed", finding.GetProperty("status").GetString());
-        Assert.Equal(cause, finding.GetProperty("cause").GetString());
-        Assert.Equal(
-            ["command", "reason"],
-            next.EnumerateObject().Select(property => property.Name));
-        Assert.Equal("open-forge route update --verbose", next.GetProperty("command").GetString());
-        Assert.Equal(
-            "Report the failure and retry the same Route Update request with bounded diagnostics.",
-            next.GetProperty("reason").GetString());
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal("route update", root.GetProperty("command").GetString());
+        Assert.Equal("completed", root.GetProperty("status").GetString());
+        Assert.Equal("apply", data.GetProperty("mode").GetString());
+        Assert.Equal(RouteUpdateTestData.TargetId, data.GetProperty("target").GetProperty("id").GetString());
+        Assert.Equal(RouteUpdateTestData.TargetPath, data.GetProperty("target").GetProperty("path").GetString());
+        Assert.Equal("Before", change.GetProperty("before").GetString());
+        Assert.Equal("After", change.GetProperty("after").GetString());
+        Assert.Equal(RouteUpdateTestData.ParentPath, data.GetProperty("listedIn").GetString());
+        Assert.Equal("before-hash", root.GetProperty("effects").EnumerateArray().First().GetProperty("before").GetString());
+        Assert.Equal(3, root.GetProperty("counts").GetProperty("fieldsChanged").GetInt32());
+        Assert.Equal(1, root.GetProperty("counts").GetProperty("sectionsUpdated").GetInt32());
     }
 
-    [Fact(DisplayName = "Route Update diagnostic renderer emits exact bounded direct finding facts"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
-    public void DiagnosticRendererEmitsExactBoundedDirectFindingFacts()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Update native diagnostics retain bounded facts"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
+    public void NativeDiagnosticsRetainBoundedFacts()
     {
         var result = ProtectedBodyResult();
+        var rendered = CliRenderingStage.Render(
+            Presentation(result, CliFormat.Text, CliDetail.Debug),
+            RouteUpdatePresentation.Rendering);
 
-        var diagnostic = RouteUpdateDiagnosticRenderer.Render(
-            Presentation(result, CliOutputFormat.Human));
-
-        Assert.Equal(
-            "status=attention; mode=apply; target=memory/topic; completeness=complete; safety=safe; body=authored-body-protected; "
-            + "effects=0; recovery=not-required; verification=verified; findings=1; "
-            + "finding=route-update.template-body-protected:target=.agents/memory/topic.md:cause=The authored body is protected.",
-            diagnostic);
+        Assert.NotNull(rendered.DiagnosticContent);
+        Assert.Contains("status=completed-with-warnings", rendered.DiagnosticContent!, StringComparison.Ordinal);
+        Assert.Contains("mode=apply", rendered.DiagnosticContent!, StringComparison.Ordinal);
+        Assert.Contains("body=authored-body-protected", rendered.DiagnosticContent!, StringComparison.Ordinal);
+        Assert.Contains("The authored body is protected.", rendered.DiagnosticContent!, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route Update help exposes exactly the accepted public surface"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void HelpExposesExactlyAcceptedPublicSurface()
     {
-        var help = RouteUpdateHelpSections.Create();
+        var help = RouteUpdatePresentation.CreateHelp();
 
         Assert.Equal(
         [
@@ -400,7 +200,6 @@ public sealed class RouteUpdatePresentationTests
         Assert.DoesNotContain("--force", text, StringComparison.Ordinal);
         Assert.DoesNotContain("--yes", text, StringComparison.Ordinal);
         Assert.DoesNotContain("--body", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("wizard", text, StringComparison.OrdinalIgnoreCase);
     }
 
     private static RouteUpdateResult ProtectedBodyResult()
@@ -413,15 +212,12 @@ public sealed class RouteUpdatePresentationTests
                 RouteUpdateTestData.Finding(
                     RouteUpdateFindingCode.TemplateBodyProtected,
                     cause: "The authored body is protected."),
-            ]);
+            ]) with
+        {
+            Patch = ChangedPatch(),
+        };
         return RouteUpdateTestData.Result(formation);
     }
-
-    private static RouteUpdateTemplate CopiedTemplate()
-        => RouteUpdateTestData.ProtectedTemplate() with
-        {
-            Decision = RouteUpdateTemplateDecision.Copied,
-        };
 
     private static RouteUpdatePatch ChangedPatch()
         => new()
@@ -450,20 +246,16 @@ public sealed class RouteUpdatePresentationTests
             },
         };
 
+    private static string Render(RouteUpdateResult result, CliFormat format, CliDetail detail)
+        => CliRenderingStage.Render(Presentation(result, format, detail), RouteUpdatePresentation.Rendering).PrimaryContent;
+
     private static CliPresentationRequest<RouteUpdateResult> Presentation(
         RouteUpdateResult result,
-        CliOutputFormat format,
-        CliView view = CliView.Expanded)
-        => new(
-            result,
-            new CliPresentation(
-                format,
-                view,
-                CliVerbosity.Verbose));
+        CliFormat format,
+        CliDetail detail = CliDetail.Standard)
+        => new(result, new CliPresentation(format, detail, null));
 
-    private static void AssertInOrder(
-        string text,
-        params string[] expected)
+    private static void AssertInOrder(string text, params string[] expected)
     {
         var offset = 0;
         foreach (var item in expected)

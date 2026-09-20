@@ -9,6 +9,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List.Shared.Selection;
 
 public sealed class RouteListSelectionResolutionFactoryTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list selection resolution factory forms every outcome state")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void FactoryFormsEverySelectionResolutionState()
@@ -57,6 +58,7 @@ public sealed class RouteListSelectionResolutionFactoryTests
             interruptedWithBlocked.Issues.Select(issue => issue.Status));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list selection resolution factory snapshots sources issues and candidates")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ResolutionCollectionsAreImmutableSnapshots()
@@ -88,6 +90,7 @@ public sealed class RouteListSelectionResolutionFactoryTests
         Assert.Equal([".agents/a.md", ".agents/z.md"], ambiguousIssue.CandidatePaths);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list selection resolution factory rejects inconsistent outcomes")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ResolutionRejectsInconsistentState()

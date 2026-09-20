@@ -9,6 +9,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.References;
 
 public sealed class SourceLinkDestinationPhysicalMappingTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Returned noncontained physical states retain exact source-link facts before target I/O"),
         InlineData((int)PhysicalPathState.Dangling, (int)SourceLinkTargetResolution.PhysicalEscape, (int)SourceLinkDestinationFindingCode.TargetUnsafe,
             "The local destination physical boundary is unsafe."),

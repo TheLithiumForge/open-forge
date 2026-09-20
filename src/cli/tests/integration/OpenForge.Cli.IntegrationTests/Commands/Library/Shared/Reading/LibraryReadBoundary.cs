@@ -7,7 +7,7 @@ internal static class LibraryReadBoundary
         switch (scenario)
         {
             case "malformed-record":
-                fixture.Files.WriteText(LibraryReadWorkspace.RecordPath, "{\"schemaVersion\":1,\"libraries\":[],\"unexpected\":true}");
+                fixture.Files.WriteText(LibraryReadWorkspace.RecordPath, "malformed ownership JSON");
                 return;
             case "duplicate-id":
                 fixture.Files.WriteText(LibraryReadWorkspace.RecordPath, """

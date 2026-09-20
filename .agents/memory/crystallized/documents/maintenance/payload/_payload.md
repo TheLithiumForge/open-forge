@@ -23,8 +23,6 @@ Users do not receive this Maintenance route. The [Framework distribution contrac
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
-- [Current maintenance contracts for reviewed files under the installable Open Forge .agents runtime](agents/_agents.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Framework
 - [Current maintenance contract for the canonical installed AGENTS.md entry block](AGENTS.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Entry
 - [Current maintenance contract for the Claude Code bridge to the canonical AGENTS.md entry and Open Forge loader](CLAUDE.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Bridge #ClaudeCode
-<!-- open-forge:generated-index:end -->
+- [Current maintenance contracts for reviewed files under the installable Open Forge .agents runtime](agents/_agents.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Framework

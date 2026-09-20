@@ -1,0 +1,13 @@
+toolkit 1.0.0 is installed. 2 files need attention. Version 2.0.0 is available.
+Source: bundled with this CLI
+Dependencies
+  toolkit  2.0.0  available
+
+Files
+  .agents/changed.md    changed
+  .agents/current.md    unchanged
+  .agents/retired.md    no longer part of the package
+  .agents/unchanged.md  unchanged
+2 files unchanged, 1 file changed, 1 file retired, 1 dependency, 2 warnings.
+  Review the selected package changes before applying them.
+Next: open-forge extension update toolkit --dry-run

@@ -145,7 +145,7 @@ internal sealed class RouteInspectProfileIntegrationWorkspace : IDisposable
 
         builder.AppendLine("## Entries");
         builder.AppendLine();
-        builder.AppendLine("<!-- open-forge:generated-index:start -->");
+        builder.AppendLine("");
         builder.AppendLine();
         var materializedEntries = entries.ToArray();
         if (materializedEntries.Length == 0)
@@ -161,7 +161,7 @@ internal sealed class RouteInspectProfileIntegrationWorkspace : IDisposable
         }
 
         builder.AppendLine();
-        builder.AppendLine("<!-- open-forge:generated-index:end -->");
+        builder.AppendLine("");
         return builder.ToString();
     }
 

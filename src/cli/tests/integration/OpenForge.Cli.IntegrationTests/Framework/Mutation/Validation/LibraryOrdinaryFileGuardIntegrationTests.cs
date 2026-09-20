@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Validation;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryOrdinaryFileGuardIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Ordinary file expectations reject relative absolute and dangling final links before target resolution")]
     [InlineData("relative"), InlineData("absolute"), InlineData("dangling")]
     public static async Task RejectsFinalLinks(string form)

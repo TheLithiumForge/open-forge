@@ -1,0 +1,2 @@
+  docs  Documents
+1 route to depth 0. Deeper routes: open-forge route list --depth=all

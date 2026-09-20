@@ -39,8 +39,6 @@ shared contracts rather than copying their full definitions.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted current technology-neutral operation flow, coverage mechanics, and conformance for `find`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Find #Behavior #Discovery #Determinism #Coverage #CurrentTruth
 - [Complete accepted current public surface and observable result for deterministic `find` discovery](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Find #Interface #Discovery #Tag #Heading #Filter #Projection #CurrentTruth
 - [Accepted current implementation design for deterministic `find` discovery](technical-design.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Find #TechnicalDesign #Implementation #Traceability #CurrentTruth
-<!-- open-forge:generated-index:end -->

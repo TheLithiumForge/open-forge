@@ -1,0 +1,4 @@
+Cannot search: --include or --exclude docs/guide matches more than one source. Use the exact path.
+Workspace: <workspace>
+  Error  docs/guide  Selector is ambiguous
+         --include or --exclude docs/guide matches more than one source. Use the exact path.

@@ -12,7 +12,7 @@ internal sealed class PublishedRouteRemoveWorkspace : IDisposable
         throwOnInvalidBytes: true);
 
     internal const string ParentPath = ".agents/guidance/_guidance.md";
-    internal const string LifecyclePath = ".agents/open-forge.lifecycle.json";
+    internal const string LifecyclePath = ".agents/open-forge.lock.json";
 
     private readonly TemporaryWorkspace temporary;
     private readonly PublishedWorkspaceLockStore lockStore;

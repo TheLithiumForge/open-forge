@@ -1,0 +1,100 @@
+Open Forge is installed and current.
+Workspace: <workspace>
+Startup context
+  Shipped by this CLI:   11 files, about 5.7k tokens
+  This workspace:        11 files, about 6.0k tokens
+  May load again later:  1 file, about 0.4k tokens
+Added since shipped: about 0.3k tokens
+All routed files: 50 files, about 22.4k tokens (startup is 27%)
+Routes: 7 root categories, 24 Entries sections current
+Framework files: 14 current
+Extensions: development 0.3.0 (4 files current)
+Extensions: development-toolkit 0.3.0
+Extensions: planning 0.3.0 (19 files current)
+Extensions: project-documents 0.3.0 (10 files current)
+Extensions: workflows 0.3.0 (4 files current)
+Largest may-load-again sources
+  memory/emerging  1.4 KiB
+Framework files
+  .agents/directives/_directives.md             current
+  .agents/guidance/_guidance.md                 current
+  .agents/loader.md                             current
+  .agents/maps/_maps.md                         current
+  .agents/memory/_memory.md                     current
+  .agents/memory/archived/_archived.md          current
+  .agents/memory/crystallized/_crystallized.md  current
+  .agents/memory/emerging/_emerging.md          current
+  .agents/memory/working/_working.md            current
+  .agents/patterns/_patterns.md                 current
+  .agents/skills/_skills.md                     current
+  .agents/templates/_templates.md               current
+  AGENTS.md                                     current
+  CLAUDE.md                                     current
+Entries sections
+  .agents/directives/_directives.md                                               current
+  .agents/guidance/_guidance.md                                                   current
+  .agents/loader.md                                                               current
+  .agents/maps/_maps.md                                                           current
+  .agents/memory/_memory.md                                                       current
+  .agents/memory/archived/_archived.md                                            current
+  .agents/memory/crystallized/_crystallized.md                                    current
+  .agents/memory/crystallized/decisions/_decisions.md                             current
+  .agents/memory/crystallized/documents/_documents.md                             current
+  .agents/memory/emerging/_emerging.md                                            current
+  .agents/memory/emerging/analysis/_analysis.md                                   current
+  .agents/memory/emerging/ideas/_ideas.md                                         current
+  .agents/memory/working/_working.md                                              current
+  .agents/memory/working/checkpoints/_checkpoints.md                              current
+  .agents/patterns/_patterns.md                                                   current
+  .agents/skills/_skills.md                                                       current
+  .agents/skills/use-workflow/references/_references.md                           current
+  .agents/skills/use-workflow/references/development/_development.md              current
+  .agents/skills/use-workflow/references/planning/_planning.md                    current
+  .agents/skills/use-workflow/references/project-documents/_project-documents.md  current
+  .agents/templates/_templates.md                                                 current
+  .agents/templates/documents/_documents.md                                       current
+  .agents/templates/planning/_planning.md                                         current
+  .agents/templates/workflows/_workflows.md                                       current
+Extension development files
+  .agents/skills/use-workflow/references/development/_development.md  current
+  .agents/skills/use-workflow/references/development/debugging.md     current
+  .agents/skills/use-workflow/references/development/development.md   current
+  .agents/skills/use-workflow/references/development/review.md        current
+Extension planning files
+  .agents/memory/crystallized/decisions/_decisions.md           current
+  .agents/memory/emerging/analysis/_analysis.md                 current
+  .agents/memory/emerging/ideas/_ideas.md                       current
+  .agents/memory/working/checkpoints/_checkpoints.md            current
+  .agents/patterns/work-records.md                              current
+  .agents/skills/use-workflow/references/planning/_planning.md  current
+  .agents/skills/use-workflow/references/planning/planning.md   current
+  .agents/templates/planning/_planning.md                       current
+  .agents/templates/planning/analysis.md                        current
+  .agents/templates/planning/backlog.md                         current
+  .agents/templates/planning/checkpoint.md                      current
+  .agents/templates/planning/decision.md                        current
+  .agents/templates/planning/idea.md                            current
+  .agents/templates/planning/plan.md                            current
+  .agents/templates/planning/run-record.md                      current
+  .agents/templates/planning/scenario-collection.md             current
+  .agents/templates/planning/scenario.md                        current
+  .agents/templates/planning/task.md                            current
+  .agents/templates/planning/user-flow.md                       current
+Extension project-documents files
+  .agents/memory/crystallized/documents/_documents.md                             current
+  .agents/skills/use-workflow/references/project-documents/_project-documents.md  current
+  .agents/skills/use-workflow/references/project-documents/architecture.md        current
+  .agents/skills/use-workflow/references/project-documents/vision.md              current
+  .agents/templates/documents/_documents.md                                       current
+  .agents/templates/documents/architecture.md                                     current
+  .agents/templates/documents/document.md                                         current
+  .agents/templates/documents/maintenance-contract.md                             current
+  .agents/templates/documents/principles.md                                       current
+  .agents/templates/documents/vision.md                                           current
+Extension workflows files
+  .agents/skills/use-workflow/SKILL.md                   current
+  .agents/skills/use-workflow/references/_references.md  current
+  .agents/templates/workflows/_workflows.md              current
+  .agents/templates/workflows/workflow.md                current
+Recovery data: none
+50 routed files, 11 startup files, 5980 startup tokens, 1 may-load-again files, 371 may-load-again tokens, 22448 all routed tokens, 26.639344262295081967213114754 startup share, 7 root categories, 24 current Entries sections, 14 current Framework files, 5 installed Extensions.

@@ -19,6 +19,7 @@ public sealed class RouteCreateApplicationIntegrationTests
         Parent,
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Create revalidation detects concurrent target or parent changes"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     [InlineData(RevalidationSubject.Target)]
     [InlineData(RevalidationSubject.Parent)]
@@ -37,6 +38,7 @@ public sealed class RouteCreateApplicationIntegrationTests
         Assert.Equal(RouteCreatePlanRevalidationState.Changed, result.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Create application reports ordered destination and generated-navigation effects"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     public async Task ApplicationReportsOrderedVerifiedEffects()
     {
@@ -71,6 +73,7 @@ public sealed class RouteCreateApplicationIntegrationTests
             StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Create final verification checks receipts and converged workspace facts"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     public async Task FinalVerificationChecksReceiptsAndConvergedWorkspaceFacts()
     {
@@ -93,6 +96,7 @@ public sealed class RouteCreateApplicationIntegrationTests
         Assert.Equal(RouteCreateAppliedVerificationState.Verified, result.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Create final verification rejects target bytes changed after application"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     public async Task FinalVerificationRejectsPostApplicationTargetChange()
     {
@@ -116,6 +120,7 @@ public sealed class RouteCreateApplicationIntegrationTests
         Assert.Equal(RouteCreateAppliedVerificationState.Failed, result.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Create recovery prepares one verified existing-target bundle"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     public async Task RecoveryPreparesOneVerifiedExistingTargetBundle()
     {
@@ -135,6 +140,7 @@ public sealed class RouteCreateApplicationIntegrationTests
         Assert.True(File.Exists(preparation.BundlePath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Create recovery blocks a deterministic same-operation bundle collision"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     public async Task RecoveryBlocksDeterministicSameOperationCollision()
     {
@@ -160,6 +166,7 @@ public sealed class RouteCreateApplicationIntegrationTests
         Assert.True(File.Exists(preparation.BundlePath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Create recovery deletes only the exact verified artifact under its lease"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     public async Task RecoveryDeletesOnlyExactVerifiedArtifactUnderLease()
     {
@@ -180,6 +187,7 @@ public sealed class RouteCreateApplicationIntegrationTests
         Assert.False(File.Exists(preparation.BundlePath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Create recovery retains its verified artifact when deletion is cancelled"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     public async Task CancelledRecoveryDeletionRetainsVerifiedArtifact()
     {
@@ -204,6 +212,7 @@ public sealed class RouteCreateApplicationIntegrationTests
         Assert.True(File.Exists(preparation.BundlePath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Create top-level dry-run returns one complete no-write result"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     public async Task TopLevelDryRunReturnsCompleteNoWriteResult()
     {

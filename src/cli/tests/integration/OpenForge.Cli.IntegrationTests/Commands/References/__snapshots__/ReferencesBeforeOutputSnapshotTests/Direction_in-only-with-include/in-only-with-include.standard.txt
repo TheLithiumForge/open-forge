@@ -1,0 +1,5 @@
+.agents/docs/reference.md
+Workspace: <workspace>
+  in   .agents/docs/guide.md:10:10
+1 in, 0 out
+The incoming scan used only docs/guide.

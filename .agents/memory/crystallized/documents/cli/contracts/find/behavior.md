@@ -54,9 +54,9 @@ copying the public contract.
 - Required evidence covers complete deterministic enumeration of eligible
   `.agents` Markdown and every candidate class in [Workspace And Source
   Universe](interface.md#workspace-and-source-universe).
-- Required evidence covers bare inventory in the default expanded view and
-  explicit compact ID-and-path results in [Bare Inventory](interface.md#bare-inventory)
-  and [Human Result View](interface.md#human-result-view).
+- Required evidence covers bare inventory at minimal detail and explicit
+  ID-and-path results in [Bare Inventory](interface.md#bare-inventory) and
+  [Human Output](interface.md#human-output).
 - Required evidence covers tag input boundaries, case variants, duplicate
   predicates, Unicode variants, whole-token boundaries, and invalid comma lists
   in [Tag Query Values](interface.md#tag-query-values) and [Public Tag Matching](interface.md#public-tag-matching).
@@ -80,16 +80,16 @@ copying the public contract.
   exact sections, unions, redundancy, escaping, and incompatible selections in
   [Search Regions](interface.md#search-regions) and [Section Findings And Public
   Ordering](interface.md#section-findings-and-public-ordering).
-- Required evidence covers compact, expanded, content-projected, verbose, and
-  structured output from one typed result in [Human Result View](interface.md#human-result-view),
-  [Content Projection](interface.md#content-projection), [Structured Result](interface.md#structured-result),
+- Required evidence covers minimal, standard, full, debug, content-projected,
+  and structured output from one typed result in [Human Output](interface.md#human-output),
+  [Content Projection](interface.md#content-projection), [Structured Output](interface.md#structured-output),
   and [Structured Result Fields](interface.md#structured-result-fields).
 - Required evidence covers source ID collisions, canonical ordering, layer
   ordering, evidence ordering, and stable repeat invocation in [Section Findings
   And Public Ordering](interface.md#section-findings-and-public-ordering).
-- Required evidence covers complete matches, complete zero matches, attention,
-  incomplete safe matches, invalid input, blocked boundaries, failed execution,
-  and interruption in [Semantic Results](interface.md#semantic-results).
+- Required evidence covers completed matches, completed zero matches,
+  completed-with-warnings, incomplete safe matches, invalid-input, blocked
+  boundaries, failed execution, and cancellation in [Semantic Results](interface.md#semantic-results).
 - Required evidence covers the non-goals that `find` does not use a persistent
   index, follow links, search arbitrary text, rank results, build the complete
   graph, or mutate anything in [Non-Goals](interface.md#non-goals) and [Workspace
@@ -98,7 +98,7 @@ copying the public contract.
   region selection, structural heading extraction, body-tag scanning, ordering,
   and semantic results. They should exercise the public facts in [Tag Query
   Values](interface.md#tag-query-values), [Search Regions](interface.md#search-regions),
-  [Human Result View](interface.md#human-result-view), and [Semantic Results](interface.md#semantic-results).
+  [Human Output](interface.md#human-output), and [Semantic Results](interface.md#semantic-results).
 - Focused integration tests **should** use real temporary workspaces and
   filesystem state to cross the source-boundary and inspection mechanics
   described below.
@@ -117,7 +117,7 @@ Contract and does not claim facts before their preconditions are established.
 
 - Request resolution validates the command path, operands,
   flags, shared global inputs, defaults, repetitions, and conflicts according to
-  the Interface Contract. Invalid input produces the public invalid result; this
+  the Interface Contract. Invalid input produces the public invalid-input result; this
   responsibility does not invent alternate grammar.
 - Workspace resolution establishes the exact selected
   directory and selection method. It checks the safe lexical and physical
@@ -166,7 +166,7 @@ Contract and does not claim facts before their preconditions are established.
 - Coverage evaluation combines candidate dispositions,
   boundary findings, layer findings, section findings, and inspection results.
   It may retain independently verified safe matches, but it cannot claim a
-  complete result while an unresolved fact could add a match. It selects only
+  completed result while an unresolved fact could add a match. It selects only
   among the public semantic results in [Semantic Results](interface.md#semantic-results).
 - Result ordering and deduplication run after logical-source
   aggregation and before rendering. The stage applies the single public order,
@@ -176,9 +176,9 @@ Contract and does not claim facts before their preconditions are established.
 - Projection resolution selects the requested human view and
   content parts from the already aggregated result. It records missing content
   findings without rerunning matching. A known missing section after complete
-  inspection contributes `attention`; ambiguous or incompletely inspected
+  inspection contributes `completed-with-warnings`; ambiguous or incompletely inspected
   projection coverage contributes `incomplete`. The stage preserves the public
-  view/content relationship in [Human Result View](interface.md#human-result-view) and
+  view/content relationship in [Human Output](interface.md#human-output) and
   [Content Projection](interface.md#content-projection).
 - Result construction creates one typed result with the exact
   public field meanings in [Structured Result Fields](interface.md#structured-result-fields). It includes the
@@ -186,17 +186,17 @@ Contract and does not claim facts before their preconditions are established.
   findings, coverage, and semantic result needed by both presentations.
 - Human and structured renderers consume the one typed result
   without rerunning enumeration, parsing, matching, projection, or verification.
-  They preserve the public stream, output, and status rules in [Human Result View](interface.md#human-result-view)
+  They preserve the public stream, output, and status rules in [Human Output](interface.md#human-output)
   and [Semantic Results](interface.md#semantic-results).
 - A caller interruption or unexpected internal failure stops the
   current flow and forms the corresponding public status. The implementation
-  does not convert a partial or failed inspection into a complete result and
+  does not convert a partial or failed inspection into a completed result and
   does not fabricate missing evidence.
 - The operation does not persist an index, graph, receipt,
   repair artifact, or mutation
   as a side effect, consistent with [Non-Goals](interface.md#non-goals) and
   [Workspace And Source Universe](interface.md#workspace-and-source-universe).
-- A `complete` result accounts for every candidate in the
+- A `completed` result accounts for every candidate in the
   effective source universe. An unsafe, unreadable, orphaned, or ambiguous
   candidate that prevents complete accounting produces the applicable public
   finding and result instead of being silently discarded. Sources excluded
@@ -219,7 +219,7 @@ requiring one implementation stage or one source module.
   source-reference value and does not reinterpret the flags as predicates,
   global flags, content projections, result caps, positional operands, comma
   lists, globs, arbitrary directories, or a new qualifier language. Invalid
-  flag shape produces the public `invalid` result.
+  flag shape produces the public `invalid-input` result.
 - Selector resolution runs against the exact selected
   workspace and delegates source-ID or `.agents/...` path classification,
   identity, normalization, containment, collision, and interactive
@@ -269,8 +269,8 @@ requiring one implementation stage or one source module.
   overlap, and argument order do not alter the existing automatic-ID,
   canonical-path, layer, predicate, region, or occurrence ordering rules.
 - Selector errors preserve the shared distinction between
-  invalid values and blocked ambiguity or unsafe containment. Missing, empty,
-  unknown, and unsupported selectors are invalid. An unresolved collision or
+  invalid-input values and blocked ambiguity or unsafe containment. Missing, empty,
+  unknown, and unsupported selectors are invalid-input. An unresolved collision or
   unsafe or escaping physical boundary is blocked; JSON and non-interactive
   flows do not prompt, and no failure is replaced with a guess. These outcomes
   are formed before candidate inspection.
@@ -278,7 +278,7 @@ requiring one implementation stage or one source module.
   inventory, every selector expansion class, include and exclude set algebra,
   overlap and order independence, shared resolution and safety outcomes,
   excluded-area inspection boundaries, effective coverage and counts, and
-  compact, expanded, and JSON reporting. It must also prove that `all` remains
+  minimal, standard, full, debug, and JSON reporting. It must also prove that `all` remains
   the omitted flat predicate requirement and `any` remains explicit and flat.
 - Source-universe filters do not change the read-only,
   stateless, deterministic operation. Find creates no persistent index, receipt,

@@ -1,0 +1,8 @@
+route-list diagnostics
+status=invalid-input
+workspace.lexical=<workspace>
+selection.kind=loader-roots
+requested-depth=none
+effective-depth=none
+rows=0
+findings=1

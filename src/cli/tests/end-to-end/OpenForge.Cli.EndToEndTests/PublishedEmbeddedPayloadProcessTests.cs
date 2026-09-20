@@ -13,13 +13,13 @@ public sealed class PublishedEmbeddedPayloadProcessTests
         using var relocated = RelocatedPublishedInstallLayout.Create(target);
         using var workspace = PublishedInstallWorkspace.Create();
         var before = workspace.SnapshotState();
-        var result = await relocated.RunAsync(workspace.Path, ["install", "--automatic", "--dry-run", "--json"], workspace.ProcessEnvironment);
+        var result = await relocated.RunAsync(workspace.Path, ["install", "--automatic", "--dry-run", "--detail=full", "--format=json"], workspace.ProcessEnvironment);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
-        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
-        var plan = document.RootElement.GetProperty("result");
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        var plan = document.RootElement.GetProperty("data");
         Assert.Equal("dry-run", plan.GetProperty("mode").GetString());
         Assert.Equal(PublishedInstallWorkspace.EmbeddedPayloadPaths.Count + 2, plan.GetProperty("source").GetProperty("assetCount").GetInt32());
         Assert.Contains(plan.GetProperty("effects").EnumerateArray(), effect => effect.GetProperty("path").GetString() == ".agents/loader.md");
@@ -35,13 +35,13 @@ public sealed class PublishedEmbeddedPayloadProcessTests
         using var workspace = PublishedInstallWorkspace.Create();
         var before = workspace.SnapshotState();
         var result = await relocated.RunAsync(workspace.Path,
-            ["extension", "list", "--available", "--json"], workspace.ProcessEnvironment);
+            ["extension", "list", "--available", "--format=json"], workspace.ProcessEnvironment);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
-        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
-        var catalogue = document.RootElement.GetProperty("result");
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        var catalogue = document.RootElement.GetProperty("data");
         Assert.Equal("embedded-catalogue", catalogue.GetProperty("source").GetProperty("kind").GetString());
         Assert.Equal(ExtensionCatalogueSource.PackageIds,
             catalogue.GetProperty("available").EnumerateArray()

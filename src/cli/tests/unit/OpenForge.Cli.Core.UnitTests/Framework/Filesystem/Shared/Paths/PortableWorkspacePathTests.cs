@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Filesystem.Shared.Paths;
 
 public sealed class PortableWorkspacePathTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Portable paths retain the supplied text on both sides of the owned length limit"), Trait("Feature", "workspace-paths"), Trait("Evidence", "Unit")]
     [InlineData(4096, true)]
     [InlineData(4097, false)]

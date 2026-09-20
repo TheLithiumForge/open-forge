@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 3,
+  "command": "library attach",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Would register the team-knowledge Library from shared/team-knowledge.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/directives/review.md",
+      "kind": "link",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksCreated": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "sourceFiles": 1,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "recorded": false,
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "links": [
+      {
+        "path": ".agents/directives/review.md",
+        "target": "../../shared/team-knowledge/.agents/directives/review.md"
+      }
+    ],
+    "inventory": {
+      "eligible": 1,
+      "excluded": 0
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

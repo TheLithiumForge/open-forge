@@ -1,0 +1,13 @@
+status=invalid-input
+mode=apply
+library=INVALID ID
+source-files=0
+links=0
+created=0
+sections=0
+grants=False
+recorded=False
+recovery=not run
+verification=not started
+findings=1
+Library Attach requires exactly one ID matching [a-z0-9]+(-[a-z0-9]+)* with length 1 through 128.

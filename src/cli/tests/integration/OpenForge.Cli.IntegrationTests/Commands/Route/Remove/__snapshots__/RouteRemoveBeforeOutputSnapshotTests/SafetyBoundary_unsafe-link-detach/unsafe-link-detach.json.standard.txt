@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "blocked",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot remove guidance/old guide: The link at outside.md:1:8 cannot be detached safely: An incoming Markdown reference cannot be detached without losing authored meaning.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-remove.reference-unsafe",
+      "title": "Link cannot be detached safely",
+      "message": "The link at outside.md:1:8 cannot be detached safely: An incoming Markdown reference cannot be detached without losing authored meaning.",
+      "subject": {
+        "kind": "file",
+        "path": "outside.md",
+        "id": null,
+        "location": {
+          "line": 1,
+          "column": 8
+        }
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Fix it by hand.",
+          "reason": "Fix the reported source by hand, then rerun Route Remove."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesRemoved": 0,
+    "sectionsUpdated": 0,
+    "linksDetached": 0,
+    "filesScanned": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "removed": [],
+    "detachedLinks": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "sentence",
+    "command": "Fix it by hand.",
+    "reason": "Fix the reported source by hand, then rerun Route Remove."
+  }
+}

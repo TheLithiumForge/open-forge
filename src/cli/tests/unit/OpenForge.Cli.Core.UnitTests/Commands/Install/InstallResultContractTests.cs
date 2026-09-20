@@ -12,6 +12,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Install;
 
 public sealed class InstallResultContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Install source and footprint facts preserve identity and reject invalid counts"), Trait("Feature", "install-result"), Trait("Evidence", "Unit")]
     public void SourceAndFootprintFactsAreAtomic()
     {
@@ -31,6 +32,7 @@ public sealed class InstallResultContractTests
         Assert.Throws<ArgumentOutOfRangeException>(() => new InstallFootprint(0, 0, -1));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Install effects preserve exact kind/action pairs and canonical source provenance"), Trait("Feature", "install-result"), Trait("Evidence", "Unit")]
     public void EffectFactsPreserveKindActionAndProvenance()
     {
@@ -111,6 +113,7 @@ public sealed class InstallResultContractTests
         Assert.Equal(inputs.Select(input => input.Residual), effects.Select(effect => effect.Residual));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Install effects reject undefined enums, invalid actions, and non-canonical target or source paths"), Trait("Feature", "install-result"), Trait("Evidence", "Unit")]
     public void EffectFactsRejectUnsafeValues()
     {
@@ -215,6 +218,7 @@ public sealed class InstallResultContractTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Install lifecycle, recovery, and verification facts preserve nullable state rules"), Trait("Feature", "install-result"), Trait("Evidence", "Unit")]
     public void LifecycleRecoveryAndVerificationFactsAreCoherent()
     {
@@ -264,6 +268,7 @@ public sealed class InstallResultContractTests
             (InstallResultVerificationState)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Install result facts represent invalid, dry-run, apply, exact, divergence, force, interrupted, failed, and attention summaries with every required nested fact"), Trait("Feature", "install-result"), Trait("Evidence", "Unit")]
     public void RepresentativeResultFactsAreComplete()
     {
@@ -423,6 +428,7 @@ public sealed class InstallResultContractTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Install result facts materialize an immutable complete graph without changing effect order"), Trait("Feature", "install-result"), Trait("Evidence", "Unit")]
     public void ResultFactsMaterializeAtomicGraph()
     {
@@ -485,6 +491,7 @@ public sealed class InstallResultContractTests
         }));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Install result formation exposes complete facts for invalid, dry-run, apply, exact, divergence, force, interrupted, failed, and attention outcomes"), Trait("Feature", "install-result"), Trait("Evidence", "Unit")]
     public void ResultFormationCarriesCompleteFactsForRepresentativeOutcomes()
     {

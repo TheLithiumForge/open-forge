@@ -7,25 +7,29 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Doctor;
 
 public sealed class LibraryDoctorBoundaryIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
-    public async Task MissingRecordHasNoLibraryFindingOrOwnershipInference()
+    public async Task MissingOwnershipHasOnlyAnInformationFindingWithoutOwnershipInference()
     {
         using var workspace = new LibraryMutationWorkspace();
         workspace.ConsumerRoute();
         workspace.RoutedSource();
         workspace.Link();
         var before = workspace.Snapshot();
-        var run = await CliHostCapture.RunAsync(["doctor", "--json"], workspace.Path);
+        var run = await CliHostCapture.RunAsync(["doctor", "--format", "json", "--detail", "full"], workspace.Path);
         Assert.True(run.Output.TrimStart().StartsWith('{'),
             $"Expected consumer result JSON: exit {run.ExitCode}; stderr {run.Error}; stdout {run.Output}");
         using var document = JsonDocument.Parse(run.Output);
-        var domain = WorkspaceDomain(document);
-        Assert.DoesNotContain(domain.GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("kind").GetString()?.StartsWith("library.", StringComparison.Ordinal) == true);
-        Assert.Equal("complete", domain.GetProperty("coverage").GetString());
+        var category = WorkspaceCategory(document);
+        var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray(),
+            finding => finding.GetProperty("code").GetString()?.StartsWith("library.", StringComparison.Ordinal) == true);
+        Assert.Equal("library.ownership-observation", finding.GetProperty("code").GetString());
+        Assert.Equal("info", finding.GetProperty("severity").GetString());
+        Assert.Equal("complete", category.GetProperty("coverage").GetString());
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task MissingRegisteredSourceHasIncompleteDeclaredInventoryCoverage()
     {
@@ -35,17 +39,18 @@ public sealed class LibraryDoctorBoundaryIntegrationTests
         workspace.Link();
         System.IO.Directory.Delete(workspace.Absolute(LibraryMutationWorkspace.SourceRoot), recursive: true);
         var before = workspace.Snapshot();
-        var run = await CliHostCapture.RunAsync(["doctor", "--json"], workspace.Path);
+        var run = await CliHostCapture.RunAsync(["doctor", "--format", "json", "--detail", "full"], workspace.Path);
         Assert.True(run.Output.TrimStart().StartsWith('{'),
             $"Expected consumer result JSON: exit {run.ExitCode}; stderr {run.Error}; stdout {run.Output}");
         using var document = JsonDocument.Parse(run.Output);
-        var domain = WorkspaceDomain(document);
-        Assert.Equal("incomplete", domain.GetProperty("coverage").GetString());
-        Assert.Contains(domain.GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("kind").GetString() == "library.inventory-incomplete");
+        var category = WorkspaceCategory(document);
+        Assert.Equal("incomplete", category.GetProperty("coverage").GetString());
+        Assert.Contains(document.RootElement.GetProperty("findings").EnumerateArray(),
+            finding => finding.GetProperty("code").GetString() == "library.inventory-incomplete");
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task MissingProjectionIsManualDriftWithoutRepairEffects()
     {
@@ -54,17 +59,18 @@ public sealed class LibraryDoctorBoundaryIntegrationTests
         workspace.RoutedSource();
         workspace.Record(LibraryMutationWorkspace.Leaf);
         var before = workspace.Snapshot();
-        var run = await CliHostCapture.RunAsync(["doctor", "--json"], workspace.Path);
+        var run = await CliHostCapture.RunAsync(["doctor", "--format", "json", "--detail", "full"], workspace.Path);
         Assert.True(run.Output.TrimStart().StartsWith('{'),
             $"Expected consumer result JSON: exit {run.ExitCode}; stderr {run.Error}; stdout {run.Output}");
         using var document = JsonDocument.Parse(run.Output);
-        var finding = Assert.Single(WorkspaceDomain(document).GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("kind").GetString() == "library.projection-missing");
+        var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray(),
+            finding => finding.GetProperty("code").GetString() == "library.projection-missing");
         Assert.Equal("manual-decision", finding.GetProperty("resolution").GetString());
-        Assert.Equal("library", finding.GetProperty("subject").GetProperty("kind").GetString());
+        Assert.Equal("file", finding.GetProperty("subject").GetProperty("kind").GetString());
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData("record-create"), InlineData("record-replace"), InlineData("record-delete")]
     [InlineData("link-create"), InlineData("link-delete")]
@@ -74,20 +80,21 @@ public sealed class LibraryDoctorBoundaryIntegrationTests
         await workspace.PrepareAsync(kind);
         var before = workspace.Files.Snapshot();
         var bundle = File.ReadAllBytes(workspace.Preparation.BundlePath);
-        var run = await CliHostCapture.RunAsync(["doctor", "--json"], workspace.Files.Path);
+        var run = await CliHostCapture.RunAsync(["doctor", "--format", "json", "--detail", "full"], workspace.Files.Path);
         Assert.True(run.Output.TrimStart().StartsWith('{'),
             $"Expected Doctor result JSON: exit {run.ExitCode}; stderr {run.Error}; stdout {run.Output}");
         using var document = JsonDocument.Parse(run.Output);
-        Assert.Equal(6, document.RootElement.GetProperty("result").GetProperty("domains").GetArrayLength());
-        var finding = Assert.Single(WorkspaceDomain(document).GetProperty("findings").EnumerateArray(),
-            value => value.GetProperty("kind").GetString() == "library.recovery-safe-exact");
+        Assert.Equal(6, document.RootElement.GetProperty("data").GetProperty("categories").GetArrayLength());
+        var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray(),
+            value => value.GetProperty("code").GetString() == "library.recovery-safe-exact");
         Assert.Equal("safe-exact", finding.GetProperty("resolution").GetString());
-        Assert.Equal("library-residual-recovery", finding.GetProperty("proposal").GetProperty("kind").GetString());
+        Assert.Contains(finding.GetProperty("actions").EnumerateArray(),
+            action => action.GetProperty("command").GetString() == "open-forge repair --automatic");
         Assert.Equal(before, workspace.Files.Snapshot());
         Assert.Equal(bundle, File.ReadAllBytes(workspace.Preparation.BundlePath));
     }
 
-    private static JsonElement WorkspaceDomain(JsonDocument document)
-        => Assert.Single(document.RootElement.GetProperty("result").GetProperty("domains").EnumerateArray(),
-            domain => domain.GetProperty("domain").GetString() == "workspace-entry");
+    private static JsonElement WorkspaceCategory(JsonDocument document)
+        => Assert.Single(document.RootElement.GetProperty("data").GetProperty("categories").EnumerateArray(),
+            category => category.GetProperty("name").GetString() == "Workspace");
 }

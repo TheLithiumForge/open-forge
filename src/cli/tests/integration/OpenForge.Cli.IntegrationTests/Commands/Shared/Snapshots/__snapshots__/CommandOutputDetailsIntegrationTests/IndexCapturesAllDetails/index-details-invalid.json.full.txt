@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 3,
+  "command": "index",
+  "status": "invalid-input",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot index missing: No source has the ID missing.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "index.invalid-source",
+      "title": "Invalid source",
+      "message": "No source has the ID missing.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "missing",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesChecked": 0,
+    "filesUpdated": 0,
+    "filesCurrent": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "changes": [],
+    "unchanged": [],
+    "selection": {
+      "origin": "explicit-sources",
+      "scope": "not-established",
+      "sources": []
+    },
+    "regions": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route list --depth=all",
+    "reason": "Choose a source ID or exact path."
+  }
+}

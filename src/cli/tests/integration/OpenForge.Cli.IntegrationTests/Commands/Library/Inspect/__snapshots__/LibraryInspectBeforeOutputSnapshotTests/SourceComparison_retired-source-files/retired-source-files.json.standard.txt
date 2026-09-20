@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 3,
+  "command": "library inspect",
+  "status": "completed-with-warnings",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "team-knowledge needs a sync: 1 file differs between shared/team and ..",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "library-inspect.path-retired",
+      "title": "Source file is gone",
+      "message": ".agents/directives/review.md  linked, but its source file is gone",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/directives/review.md",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sourceFiles": 0,
+    "linksCurrent": 0,
+    "filesAdded": 0,
+    "filesRetired": 1,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team",
+    "destinationFolder": ".",
+    "current": false,
+    "files": [
+      {
+        "sourcePath": ".agents/directives/review.md",
+        "destinationPath": ".agents/directives/review.md",
+        "relation": "retired"
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge library sync team-knowledge --dry-run",
+    "reason": "Preview the synchronization before changing files."
+  }
+}

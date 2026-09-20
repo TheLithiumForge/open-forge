@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 3,
+  "command": "extension create",
+  "status": "cancelled",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": null,
+  "summary": {
+    "headline": "Extension create was cancelled. Nothing was changed.",
+    "kind": "cancelled"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-create.interrupted",
+      "title": "Extension create was cancelled",
+      "message": "Extension create was cancelled. Nothing was changed.",
+      "subject": {
+        "kind": "directory",
+        "path": "<extension-source>",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "toolkit",
+    "folder": "<extension-source>",
+    "packagePath": null,
+    "manifestPath": null,
+    "contentPath": null
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension create",
+    "reason": "Inspect the retained destination state, then rerun Extension Create if appropriate."
+  }
+}

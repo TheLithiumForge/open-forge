@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 3,
+  "command": "route move",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot move missing: No source has the ID missing.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-move.source-not-found",
+      "title": "Source is unknown",
+      "message": "No source has the ID missing.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "missing",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesMoved": 0,
+    "sectionsUpdated": 0,
+    "linksRewritten": 0,
+    "filesScanned": null,
+    "errors": 1
+  },
+  "limitations": [
+    {
+      "what": "files scanned",
+      "why": "the reference scan was not completed",
+      "subject": null
+    }
+  ],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": null,
+      "path": null
+    },
+    "destination": {
+      "id": null,
+      "path": null
+    },
+    "moved": [],
+    "rewrittenLinks": [],
+    "scan": {
+      "filesScanned": 0,
+      "occurrences": 0
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

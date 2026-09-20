@@ -1,0 +1,2 @@
+Cannot create the routed file: ../outside must be a Markdown file below an existing route.
+Next: open-forge route create --help

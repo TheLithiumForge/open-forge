@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Remove;
 
 public sealed class ExtensionRemoveRequestContractTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Remove request snapshots IDs and preserves mode and policy flags"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void RequestSnapshotsIdsAndPolicies()
     {
@@ -14,7 +15,6 @@ public sealed class ExtensionRemoveRequestContractTests
             workspace,
             ExtensionRemoveMode.DryRun,
             requestedIds,
-            prune: true,
             automatic: true,
             allowInteraction: false);
 
@@ -26,19 +26,18 @@ public sealed class ExtensionRemoveRequestContractTests
         Assert.True(request.IsDryRun);
         Assert.Equal(["toolkit", "base"], request.RequestedIds);
         Assert.NotSame(requestedIds, request.RequestedIds);
-        Assert.True(request.Prune);
         Assert.True(request.Automatic);
         Assert.False(request.AllowInteraction);
     }
 
-    [Fact(DisplayName = "Extension Remove request permits an empty ID snapshot for the human wizard"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Extension Remove request permits an empty ID snapshot for the human prompt"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void RequestPermitsArgumentlessPromptSelection()
     {
         var request = new ExtensionRemoveRequest(
             Workspace(),
             ExtensionRemoveMode.Apply,
             [],
-            prune: false,
             automatic: false,
             allowInteraction: true);
 
@@ -47,6 +46,7 @@ public sealed class ExtensionRemoveRequestContractTests
         Assert.False(request.IsDryRun);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Remove request rejects null ingress, null IDs, and undefined modes"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void RequestRejectsInvalidIngress()
     {
@@ -54,32 +54,29 @@ public sealed class ExtensionRemoveRequestContractTests
             null!,
             ExtensionRemoveMode.Apply,
             ["toolkit"],
-            prune: false,
             automatic: false,
             allowInteraction: false));
         Assert.Throws<ArgumentNullException>(() => new ExtensionRemoveRequest(
             Workspace(),
             ExtensionRemoveMode.Apply,
             null!,
-            prune: false,
             automatic: false,
             allowInteraction: false));
         Assert.Throws<ArgumentException>(() => new ExtensionRemoveRequest(
             Workspace(),
             ExtensionRemoveMode.Apply,
             ["toolkit", null!],
-            prune: false,
             automatic: false,
             allowInteraction: false));
         Assert.Throws<ArgumentOutOfRangeException>(() => new ExtensionRemoveRequest(
             Workspace(),
             (ExtensionRemoveMode)int.MaxValue,
             ["toolkit"],
-            prune: false,
             automatic: false,
             allowInteraction: false));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Remove request preserves duplicate IDs for binding-level validation"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void RequestPreservesDuplicatesForTypedValidation()
     {
@@ -87,7 +84,6 @@ public sealed class ExtensionRemoveRequestContractTests
             Workspace(),
             ExtensionRemoveMode.Apply,
             ["toolkit", "toolkit"],
-            prune: false,
             automatic: false,
             allowInteraction: true);
 

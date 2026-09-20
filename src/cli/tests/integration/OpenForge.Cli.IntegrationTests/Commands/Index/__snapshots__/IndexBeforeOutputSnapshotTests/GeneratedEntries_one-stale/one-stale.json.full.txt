@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 3,
+  "command": "index",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Updated the Entries section in 2 of 2 files.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/root/_root.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "filesChecked": 2,
+    "filesUpdated": 2,
+    "filesCurrent": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "changes": [
+      {
+        "path": ".agents/loader.md",
+        "before": 1,
+        "after": 1,
+        "diff": [
+          "- - [Root](root/_root.md) - #LoadNow #Docs",
+          "+ - [Root](root/_root.md) - #Docs\n"
+        ]
+      },
+      {
+        "path": ".agents/root/_root.md",
+        "before": null,
+        "after": 1,
+        "diff": [
+          "- - stale\n",
+          "+ - [Child](child.md) - #Docs\n"
+        ]
+      }
+    ],
+    "unchanged": [],
+    "selection": {
+      "origin": "automatic-loader",
+      "scope": "rooted",
+      "sources": [
+        {
+          "id": "loader",
+          "path": ".agents/loader.md"
+        }
+      ]
+    },
+    "regions": [
+      {
+        "path": ".agents/loader.md",
+        "action": "update",
+        "outcome": "verified"
+      },
+      {
+        "path": ".agents/root/_root.md",
+        "action": "update",
+        "outcome": "verified"
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

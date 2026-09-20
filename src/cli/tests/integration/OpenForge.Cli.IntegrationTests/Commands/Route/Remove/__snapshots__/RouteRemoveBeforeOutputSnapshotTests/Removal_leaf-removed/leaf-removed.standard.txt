@@ -1,0 +1,4 @@
+Removed .agents/guidance/old guide.md
+Workspace: <workspace>
+  Removed .agents/guidance/old guide.overwrite.md
+  Entry removed from .agents/guidance/_guidance.md

@@ -1,0 +1,9 @@
+Route init stopped after 1 of 3 changes.
+Workspace: <workspace>
+  Error  documents/design  Write failed
+         Writing documents/design failed. Stopped after 1 of 3 changes. Recovery data: <recovery-bundle>.
+  Created .agents/documents/design
+  .agents/documents/_documents.md  not started
+  .agents/documents/design/_design.md  not started
+  Its description and tags are placeholders. Edit them before relying on this route.
+Next: open-forge route init --detail debug

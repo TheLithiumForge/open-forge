@@ -1,0 +1,33 @@
+namespace OpenForge.Cli.Core.Commands.References.Models.Result;
+
+internal enum ReferencesFindingCode
+{
+    InvalidInput,
+    InvalidSource,
+    InvalidDirection,
+    InvalidFilter,
+    WorkspaceUnavailable,
+    WorkspaceUnsafe,
+    SourceAmbiguous,
+    SourceUnsafe,
+    SelectorAmbiguous,
+    SelectorUnsafe,
+    IdentityCollision,
+    PhysicalAlias,
+    IdentityUnavailable,
+    CandidateUnsafe,
+    LayerUnresolved,
+    InspectionUnavailable,
+    InvalidEncoding,
+    LinkEncodingInvalid,
+    GeneratedRegionUnavailable,
+    DestinationMalformed,
+    DestinationUnsupported,
+    TargetMissing,
+    FragmentMissing,
+    TargetUnsafe,
+    TargetAmbiguous,
+    TargetUnreadable,
+    OperationFailed,
+    Interrupted,
+}

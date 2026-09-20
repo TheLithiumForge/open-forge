@@ -36,8 +36,6 @@ Interface or Behavior contracts.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Current Crystallized deterministic behavior, mutation lifecycle, safety, recovery, and conformance for `index`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Index #Behavior #CurrentTruth
 - [Current Crystallized public interface for rebuilding bounded generated `Entries` from routed topology and authored metadata](interface.md) - #Memory #Crystallized #CLI #Release #Command #Index #Interface #CurrentTruth
 - [Current accepted technical design for the non-shipping `index` command](technical-design.md) - #Memory #Crystallized #CLI #Release #Command #Index #TechnicalDesign #CurrentTruth
-<!-- open-forge:generated-index:end -->

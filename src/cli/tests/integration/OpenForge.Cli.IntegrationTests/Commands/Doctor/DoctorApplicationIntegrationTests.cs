@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Doctor;
 
 public sealed class DoctorApplicationIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Doctor diagnoses a representative workspace with six retained domains and no writes"), Trait("Feature", "doctor-command"), Trait("Evidence", "Integration")]
     public async Task RepresentativeWorkspaceRetainsSixDomainsWithoutWrites()
     {
@@ -14,16 +15,17 @@ public sealed class DoctorApplicationIntegrationTests
         var before = SnapshotState(workspace);
 
         var run = await CliHostCapture.RunAsync(
-            ["doctor", "--workspace", workspace.Path, "--json"],
+            ["doctor", "--workspace", workspace.Path, "--format", "json", "--detail", "full"],
             workspace.Path);
 
-        Assert.Equal(3, run.ExitCode);
+        Assert.Equal(2, run.ExitCode);
         Assert.Equal(string.Empty, run.Error);
         using var document = JsonDocument.Parse(run.Output);
-        AssertDoctorGraph(document.RootElement, "incomplete");
+        AssertDoctorGraph(document.RootElement, "completed-with-warnings");
         Assert.Equal(before, SnapshotState(workspace));
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Doctor retains every domain when the selected workspace is blocked"), Trait("Feature", "doctor-command"), Trait("Evidence", "Integration")]
     public async Task BlockedWorkspaceRetainsEveryDomain()
     {
@@ -32,7 +34,7 @@ public sealed class DoctorApplicationIntegrationTests
         var before = SnapshotState(workspace);
 
         var run = await CliHostCapture.RunAsync(
-            ["doctor", "--workspace", file, "--json"],
+            ["doctor", "--workspace", file, "--format", "json", "--detail", "full"],
             workspace.Path);
 
         Assert.Equal(5, run.ExitCode);
@@ -42,6 +44,7 @@ public sealed class DoctorApplicationIntegrationTests
         Assert.Equal(before, SnapshotState(workspace));
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Doctor repeats byte-for-byte and leaves workspace and recovery boundaries unchanged"), Trait("Feature", "doctor-command"), Trait("Evidence", "Integration")]
     public async Task RepeatedDiagnosisIsByteForByteAndReadOnly()
     {
@@ -49,20 +52,20 @@ public sealed class DoctorApplicationIntegrationTests
         var before = SnapshotState(workspace);
 
         var first = await CliHostCapture.RunAsync(
-            ["doctor", "--workspace", workspace.Path, "--json"],
+            ["doctor", "--workspace", workspace.Path, "--format", "json", "--detail", "full"],
             workspace.Path);
         var second = await CliHostCapture.RunAsync(
-            ["doctor", "--workspace", workspace.Path, "--json"],
+            ["doctor", "--workspace", workspace.Path, "--format", "json", "--detail", "full"],
             workspace.Path);
 
-        Assert.Equal(3, first.ExitCode);
+        Assert.Equal(2, first.ExitCode);
         Assert.Equal(string.Empty, first.Error);
         using var firstDocument = JsonDocument.Parse(first.Output);
-        AssertDoctorGraph(firstDocument.RootElement, "incomplete");
-        Assert.Equal(3, second.ExitCode);
+        AssertDoctorGraph(firstDocument.RootElement, "completed-with-warnings");
+        Assert.Equal(2, second.ExitCode);
         Assert.Equal(string.Empty, second.Error);
         using var secondDocument = JsonDocument.Parse(second.Output);
-        AssertDoctorGraph(secondDocument.RootElement, "incomplete");
+        AssertDoctorGraph(secondDocument.RootElement, "completed-with-warnings");
         Assert.Equal(first.ExitCode, second.ExitCode);
         Assert.Equal(first.Output, second.Output);
         Assert.Equal(first.Error, second.Error);
@@ -122,29 +125,35 @@ public sealed class DoctorApplicationIntegrationTests
 
     private static void AssertDoctorGraph(JsonElement root, string status)
     {
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
         Assert.Equal("doctor", root.GetProperty("command").GetString());
         Assert.Equal(status, root.GetProperty("status").GetString());
-        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
-        var result = root.GetProperty("result");
-        Assert.True(result.GetProperty("readOnly").GetBoolean());
-        Assert.False(result.GetProperty("changesMade").GetBoolean());
-        Assert.Equal(status, result.GetProperty("coverage").GetString());
+        var next = root.GetProperty("next");
+        if (status == "blocked")
+        {
+            Assert.Equal(JsonValueKind.Null, next.ValueKind);
+        }
+        else
+        {
+            Assert.Equal(JsonValueKind.Object, next.ValueKind);
+            Assert.Equal("command", next.GetProperty("kind").GetString());
+            Assert.False(string.IsNullOrWhiteSpace(next.GetProperty("command").GetString()));
+        }
+        var result = root.GetProperty("data");
+        var categories = result.GetProperty("categories").EnumerateArray().ToArray();
         Assert.Equal(
             [
-                "workspace-entry",
-                "recovery-residuals",
-                "routes-metadata-overwrites-generated-navigation",
-                "local-references",
-                "framework-lifecycle",
-                "extension-lifecycle",
+                "Workspace",
+                "Recovery data",
+                "Routes and Entries",
+                "Links",
+                "Framework files",
+                "Extensions",
             ],
-            result.GetProperty("domains")
-                .EnumerateArray()
-                .Select(domain => domain.GetProperty("domain").GetString()));
-        foreach (var finding in result.GetProperty("domains")
-                     .EnumerateArray()
-                     .SelectMany(domain => domain.GetProperty("findings").EnumerateArray()))
+            categories.Select(category => category.GetProperty("name").GetString()));
+        Assert.Equal(status == "completed-with-warnings" ? "complete" : status,
+            categories[0].GetProperty("coverage").GetString());
+        foreach (var finding in root.GetProperty("findings").EnumerateArray())
         {
             Assert.NotEmpty(finding.GetProperty("evidence").EnumerateArray());
         }

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Accepted replacement CLI command inventory, arguments, flags, interaction states, outputs, guidance, and lifecycle behavior
+  description: "Historical CLI-v2 source: Accepted replacement CLI command inventory, arguments, flags, interaction states, outputs, guidance, and lifecycle behavior"
   responsibility: Define the complete accepted public interaction contract of the replacement Open Forge CLI without claiming that it ships today
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
@@ -455,7 +455,7 @@ Every emitted source includes:
 Human output uses clear source boundaries:
 
 ```text
-Workspace: D:\Repositories\open-forge
+Workspace: <workspace>\open-forge
 Selected by: current directory
 
 Context: baseline + directives
@@ -501,7 +501,7 @@ Each match exposes:
 Human output should resemble:
 
 ```text
-Workspace: D:\Repositories\open-forge
+Workspace: <workspace>\open-forge
 Selected by: current directory
 
 Matches: 2
@@ -1232,7 +1232,7 @@ Once workspace selection succeeds, the reference remains present in successful, 
 Human presentation shows the workspace before domain-specific facts:
 
 ```text
-Workspace: D:\Repositories\open-forge
+Workspace: <workspace>\open-forge
 Selected by: current directory
 Installation: installed
 ```
@@ -1244,7 +1244,7 @@ payload rather than duplicating it here:
 ```json
 {
   "workspace": {
-    "root": "D:\\Repositories\\open-forge",
+    "root": "<workspace>\\open-forge",
     "selectedBy": "current-directory"
   }
 }

@@ -1,9 +1,10 @@
 using OpenForge.Cli.Core.Commands.Route.List;
+using OpenForge.Cli.Core.Commands.Route.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Presentation.Shared.Help;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models.Source;
 
@@ -11,6 +12,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List;
 
 public sealed class RouteListSelectionRowsAndProvenanceTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list selection keeps attempted and resolved identity distinct")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void SelectionKeepsAttemptedAndResolvedIdentityDistinct()
@@ -44,6 +46,7 @@ public sealed class RouteListSelectionRowsAndProvenanceTests
             null!));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list rows enforce hierarchy kind and authored facts")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void RowsEnforceHierarchyKindAndAuthoredFacts()
@@ -249,6 +252,7 @@ public sealed class RouteListSelectionRowsAndProvenanceTests
                 false)));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list collections are immutable snapshots")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void CollectionsAreImmutableSnapshots()

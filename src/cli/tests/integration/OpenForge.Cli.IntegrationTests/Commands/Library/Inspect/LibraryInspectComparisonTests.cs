@@ -1,5 +1,8 @@
+using OpenForge.Cli.Core.Commands.Library.Inspect.Shared.Serialization;
 using OpenForge.Cli.Core.Commands.Library.Inspect.Models.Result;
-using OpenForge.Cli.Core.Commands.Library.Inspect.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Library.Inspect;
+using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Observation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Reading;
@@ -8,6 +11,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Inspect;
 
 public sealed class LibraryInspectComparisonTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library Inspect compares the complete union with all five safe relations"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     public async Task CompleteComparisonRelations()
     {
@@ -60,6 +64,7 @@ public sealed class LibraryInspectComparisonTests
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library Inspect proves both empty and exact nonempty inventories complete"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     [InlineData(false)]
     [InlineData(true)]
@@ -95,6 +100,7 @@ public sealed class LibraryInspectComparisonTests
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library Inspect selects one ID and derives Unicode skill and resource source IDs"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     public async Task ExactSelectionAndDestinationIds()
     {
@@ -124,6 +130,7 @@ public sealed class LibraryInspectComparisonTests
         Assert.Equal(before, fixture.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library Inspect uses complete eligible source facts rather than source manager control files"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     public async Task CompleteInventoryExcludesControls()
     {
@@ -133,8 +140,8 @@ public sealed class LibraryInspectComparisonTests
         fixture.SourceFile(".agents/loader.md");
         fixture.SourceFile(".agents/directives/_directives.md");
         fixture.SourceFile(".agents/directives/review.overwrite.md");
-        fixture.SourceFile(".agents/open-forge.lifecycle.json");
-        fixture.SourceFile(".agents/open-forge.libraries.json");
+        fixture.SourceFile(".agents/open-forge.json");
+        fixture.SourceFile(".agents/open-forge.lock.json");
         fixture.Files.CreateFileSymbolicLink("shared/team/.agents/directives/excluded.md", "review.md");
         fixture.Record(LibraryReadWorkspace.ReviewPath);
         fixture.CurrentLink();
@@ -144,10 +151,13 @@ public sealed class LibraryInspectComparisonTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(LibraryReadWorkspace.ReviewPath, Assert.Single(result.Result.Source.EligiblePaths).SourcePath);
         Assert.Equal(LibraryComparisonRelation.Current, Assert.Single(result.Result.Projection.Comparisons).Relation);
+        Assert.Equal(6, result.Result.Source.ExcludedCount);
         Assert.Equal(before, fixture.Snapshot());
         fixture.AssertNoPersistentState();
     }
 
     private static string Render(LibraryInspectResult result)
-        => LibraryInspectPresentation.RenderJson(new(result, new(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal)));
+        => CliRenderingStage.Render(
+            new CliPresentationRequest<LibraryInspectResult>(result, new(CliFormat.Json, CliDetail.Standard, null)),
+            LibraryInspectPresentation.Rendering).PrimaryContent;
 }

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 3,
+  "command": "extension create",
+  "status": "incomplete",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": null,
+  "summary": {
+    "headline": "The scaffold could not be created: <extension-source>\\toolkit could not be read. Nothing was changed.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "extension-create.catalogue-unavailable",
+      "title": "Catalogue could not be read",
+      "message": "<extension-source>\\toolkit could not be read.",
+      "subject": {
+        "kind": "directory",
+        "path": "<extension-source>\\toolkit",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [
+    {
+      "path": "<extension-source>\\toolkit\\extension.json",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "<extension-source>\\toolkit\\content\\.agents\\",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "toolkit",
+    "folder": "<extension-source>",
+    "packagePath": "<extension-source>\\toolkit",
+    "manifestPath": "<extension-source>\\toolkit\\extension.json",
+    "contentPath": "<extension-source>\\toolkit\\content\\.agents\\"
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension create --detail debug",
+    "reason": "Inspect the unavailable catalogue or filesystem fact before rerunning Extension Create."
+  }
+}

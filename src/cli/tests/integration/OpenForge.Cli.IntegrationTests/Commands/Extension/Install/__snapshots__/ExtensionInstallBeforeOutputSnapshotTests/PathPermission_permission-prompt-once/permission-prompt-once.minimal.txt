@@ -1,0 +1,2 @@
+Installed the team Extension.
+  Created 1 file under .apm/agents

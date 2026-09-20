@@ -1,0 +1,11 @@
+Would move guidance/old guide to .agents/archive/new guide.md
+Workspace: <workspace>
+  Entry updated in .agents/archive/_archive.md
+  Entry updated in .agents/guidance/_guidance.md
+  Rewrote 5 links that pointed at the old path:
+  .agents/guidance/topics/child.md:8:13
+  .agents/guidance/topics/child.overwrite.md:1:35
+  README.md:3:13
+  README.md:5:23
+  notes.md:3:11
+No files were changed.

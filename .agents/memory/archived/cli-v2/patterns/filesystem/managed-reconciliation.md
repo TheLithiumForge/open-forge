@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Reconcile managed files through explicit current, missing, changed, retired, shared, delete, keep, and ownership-release states
+  description: "Historical CLI-v2 source: Reconcile managed files through explicit current, missing, changed, retired, shared, delete, keep, and ownership-release states"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

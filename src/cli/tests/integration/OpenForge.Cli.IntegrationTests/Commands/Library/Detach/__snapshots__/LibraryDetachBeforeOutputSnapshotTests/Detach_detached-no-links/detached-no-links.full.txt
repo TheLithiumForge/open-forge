@@ -1,0 +1,6 @@
+Detached team-knowledge. It had no links.
+Workspace: <workspace>
+  .agents/open-forge.lock.json  registration removed
+  Expected .agents/open-forge.lock.json: ordinary-file; length unavailable; SHA-256 <sha256>; target unavailable
+  Verification: all changed targets were verified; registration was published and verified.
+  Recovery: bundle removed; no residual effects.

@@ -12,6 +12,4 @@ open-forge:
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Historical CLI-v2 source: Apply Bun selection, parallel-runner, workspace, and snapshot-update rules to replacement CLI tests](cli-testing.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
-<!-- open-forge:generated-index:end -->

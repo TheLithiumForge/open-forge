@@ -9,6 +9,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Update;
 
 public sealed class ExtensionUpdateDefinitionsTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Update definitions expose the accepted source, selection, authority, and mode grammar"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void DefinitionsExposeAcceptedGrammar()
     {
@@ -29,6 +30,7 @@ public sealed class ExtensionUpdateDefinitionsTests
         Assert.Equal(CliOptionArity.None, ExtensionUpdateDefinitions.DryRun.Arity);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Update symbols preserve repeatable IDs and idempotent authority flags"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void SymbolsExposeRepeatableIdsAndAuthorityFlags()
     {
@@ -40,7 +42,7 @@ public sealed class ExtensionUpdateDefinitionsTests
         Assert.Equal(ArgumentArity.ZeroOrMore, symbols.StableIds.Arity);
         Assert.Equal(typeof(string[]), symbols.StableIds.ValueType);
         Assert.Equal(
-            ["--source", "--all", "--force", "--prune", "--automatic", "--dry-run"],
+            ["--source", "--all", "--force", "--prune", "--automatic", "--dry-run", "--allow-path"],
             symbols.Command.Options.Select(option => option.Name));
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.Source.Arity);
         Assert.Equal(ArgumentArity.Zero, symbols.All.Arity);
@@ -71,6 +73,7 @@ public sealed class ExtensionUpdateDefinitionsTests
         Assert.True(parse.GetValue(symbols.DryRun));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Update maps every finding to its stable machine code and semantic status"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void FindingDefinitionsMapEveryCodeAndStatus()
     {
@@ -79,6 +82,7 @@ public sealed class ExtensionUpdateDefinitionsTests
             ("extension-update.invalid-input", CliSemanticStatus.Invalid),
             ("extension-update.selection-required", CliSemanticStatus.Invalid),
             ("extension-update.interaction-ended", CliSemanticStatus.Invalid),
+            ("extension-update.confirmation-required", CliSemanticStatus.Invalid),
             ("extension-update.source-unavailable", CliSemanticStatus.Incomplete),
             ("extension-update.source-invalid", CliSemanticStatus.Invalid),
             ("extension-update.source-overlap", CliSemanticStatus.Blocked),

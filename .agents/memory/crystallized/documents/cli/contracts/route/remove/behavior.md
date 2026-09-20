@@ -10,8 +10,8 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the technology-neutral
-Behavior Contract behind `route remove`. The command does not ship yet;
-implementation and executable evidence are tracked in
+Behavior Contract behind `route remove`. The command is implemented in the
+merged native CLI; implementation and executable evidence are tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md).
 
 The [Interface Contract](interface.md) defines the complete public syntax,
@@ -74,9 +74,11 @@ The operation satisfies these invariants:
   contract, and this guard does not consult Library record authority.
 - A category is one recovery and verification boundary, never a sequence of
   independently committed leaf removals.
-- A repeated remove is `complete` as a verified no-op only when exact intended
+- A repeated remove is `completed` as a verified no-op only when exact intended
   absence and every required ownership, topology, reference, and generated
-  projection fact are independently proven. Missing evidence is not a no-op.
+  projection fact are independently proven. Such a no-op has no effects,
+  workspace writes, lock or recovery preparation, or finding. Missing evidence
+  is not a no-op.
 
 ## Request Resolution
 
@@ -151,7 +153,7 @@ For a leaf, current facts include:
 - no-follow final-leaf fact for the source, its overwrite companion, and each
   resolved effect target;
 - lexical and physical containment and exact physical identity;
-- complete trusted lifecycle-ownership inventory and the proof that neither the
+- complete interpretable lock ownership inventory and the proof that neither the
   base nor overwrite is claimed;
 - complete supported-workspace-Markdown catalogue coverage for incoming
   references;
@@ -193,20 +195,25 @@ this rule.
 
 ### Ownership inventory
 
-The resolver loads one complete trusted lifecycle-ownership inventory containing
-the Framework baseline and every applicable Extension receipt or manager claim.
-It establishes that no selected logical source or resource is claimed. Missing,
-malformed, conflicting, stale, or incomplete inventory forms the public blocked
-ownership boundary. A path, route, tag, generated line, matching bytes, missing
-receipt, or prior result cannot complete this proof.
+The command reads Framework and Extension ownership from the forgiving
+`.agents/open-forge.lock.json` reader. A complete interpretable inventory must
+establish that none of the selected logical sources or resources is claimed
+before a mutation plan can form. Both whole-file and region receipts protect
+their hosts, including portable case aliases. One claim protects the whole
+selected category; the operation never skips a claimed member.
 
-Framework-aware Route Init targets and generated regions are positive Framework
-claims and therefore block current Route Remove. A user-owned inserted scope
-entrypoint remains unmanaged, but its category is ineligible when the contained
-inventory includes any managed scoped target or region. The operation never skips
-that item or removes a subset. `sourceAssetPath` is canonical asset provenance,
-not release authority; this operation neither edits the Framework lifecycle
-section nor releases ownership.
+Missing, unreadable or uninterpretable ownership does not infer unmanaged state.
+It produces `ownership-unavailable` with complete informational status, no plan
+or effects, and ownership shown as not-established. The summary explicitly says
+that no route changed. Schema/release metadata and stale content hashes are not
+gates. Actual ownership, physical safety, route and reference conflicts remain
+blocking boundaries. The exact lock expectation is revalidated before and after
+mutation. No legacy record is read, migrated or deleted; these commands neither
+adopt current content nor release or rewrite ownership.
+
+Path names, routing tags, generated lines, matching bytes and prior command
+results cannot independently establish unmanaged status. Framework-aware Route
+Init's region receipts remain positive ownership even in a user-authored host.
 
 ### Reference coverage
 
@@ -287,9 +294,9 @@ included. The planner includes only other dependency-minimal generated regions
 whose direct-child projection changes under the removal.
 
 The projection validates every required generated boundary, direct-child
-metadata fact, destination, and route relationship. It preserves markers and
-bytes outside each bounded generated interior. Missing, duplicate, nested,
-reversed, misplaced, or otherwise ambiguous markers block the complete plan. A
+metadata fact, destination, and route relationship. It preserves the Entries
+heading and bytes outside its generated body. A missing or duplicate heading
+boundary blocks the complete plan. A
 generated planning failure occurs before any authored detachment or subject
 removal.
 
@@ -318,26 +325,30 @@ preflight, verification, recovery, and semantic status.
 
 The status selector applies the Interface meanings:
 
-- A complete safe plan in dry-run is `complete` unless a stronger condition
-  applies. Planned effects do not create `attention`.
+- A complete safe plan in dry-run is `completed` unless a stronger condition
+  applies. Planned effects do not create `completed-with-warnings`.
 - A complete and verified application with recovery `Deleted`/`Removed` is
-  `complete`.
+  `completed`.
 - Post-verification recovery deletion `Failed`/positively observed `Retained`
-  after verified effects is `attention`.
+  after verified effects is `completed-with-warnings`.
 - Safe but unfinished catalogue or reference coverage is `incomplete` and has no
   effects.
-- Invalid operands or missing source without independent absence proof are
-  `invalid`.
+- Complete safe proof that the requested target is absent is `completed` with
+  no effects, workspace writes, lock or recovery preparation, or finding.
+- An invalid or unknown missing source without complete absence proof is
+  `invalid-input`; incomplete acquisition or scan remains `incomplete`, and
+  ambiguity, unsafe paths, ownership, or other unsafe boundaries remain
+  `blocked`.
 - Unsafe or ambiguous ownership, identity, route, reference transformation,
   generated, expected-state, or recovery boundaries are `blocked`.
 - An unexpected post-effect application or verification failure, or
   post-verification recovery deletion `Failed`/`Unknown`, is `failed`.
 - Cancellation without an unexpected application or verification failure is
-  `interrupted`.
+  `cancelled`.
 
 For ordinary operation conditions, precedence is `blocked` > `incomplete` >
-`attention` > `complete`. Invalid input stops before operation work. Failed and
-interrupted retain their event meaning.
+`completed-with-warnings` > `completed`. Invalid input stops before operation work. Failed and
+cancelled retain their event meaning.
 
 ## Complete Plan And Effects
 
@@ -359,7 +370,7 @@ every effect; no safe subset is applied.
 The operation preserves authored bytes outside exact supported links and bounded
 generated interiors. It preserves unrelated workspace content and every source
 not selected for removal. It does not format files, repair metadata, change
-route meaning, or create a lifecycle record.
+route meaning, or create an ownership lock.
 
 ## Dry-Run Parity
 
@@ -393,7 +404,7 @@ pre-effect `incomplete` result. When the operation has one or more existing-targ
 effects (`Replace`, `ReplaceGeneratedRegion`, or `Delete`), it prepares exactly
 one immutable ZIP bundle outside the workspace. An operation containing only Create effects or
 no-ops creates no bundle. Its source-generated
-schema-v1 `manifest.json` and streamed ordinal payload entries record
+versioned `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
 exact prior bytes/lengths/hashes, and intended final absence or length/hash.
 `Create` and semantic/byte no-op effects have no entry. A CreateNew draft is
@@ -404,6 +415,10 @@ final name, and reopened and verified. Only the valid final ZIP forms the opaque
 `FileChangeApplier` requires the matching preparation for every existing-target effect
 and performs one final effect per target. All preparation completes before the
 first target effect; unknown, malformed, mismatched, or colliding bundles block.
+
+A proven-absence no-op takes no persistent workspace lease, does not initialize
+workspace-lock infrastructure, and does not prepare or acquire recovery storage.
+It returns after the complete absence proof with no mutation path.
 
 ## Honest Repeat And Verified Absence
 
@@ -418,11 +433,15 @@ proves the exact intended absence and checks the complete current boundaries:
    absence and contain no stale generated region exposing the subject.
 4. The complete supported-workspace-Markdown reference pass finds no residual
    incoming reference to the absent subject.
-   When every fact is complete and safe, result formation produces `complete` with
-   verified no-op evidence and no mutation path. If the source is missing but one of these
-   proofs is unavailable, invalid, incomplete, or blocked, result formation keeps
-   that applicable status. It never uses a receipt, tombstone, journal, or history
-   record to claim that a previous remove caused the absence.
+
+When every fact is complete and safe, result formation produces `completed` with
+the source-specific headline `Nothing to do for <source>.`, empty effects and
+findings, no workspace writes, no lock infrastructure, no recovery preparation,
+and no mutation path. The source value is the resolved source ID when available,
+otherwise the requested identity. If the source is missing but one of these
+proofs is unavailable, invalid, incomplete, or blocked, result formation keeps
+that applicable status. It never uses a receipt, tombstone, journal, or history
+record to claim that a previous remove caused the absence.
 
 ## Revalidation, Verification, And Recovery
 
@@ -449,12 +468,12 @@ unexpected concurrent edit is preserved and reported as residual state. After
 all effects and final verification, delete only the positively recognized bundle
 created by this operation. `Deleted`/`Removed` permits normal completion.
 `Failed`/positively observed `Retained` keeps target effects successful and
-produces `attention`, the exact residual path, and
+produces `completed-with-warnings`, the exact residual path, and
 cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
 provides one.
 
 An unexpected application or verification failure remains `failed`. Cancellation
-before effects is `interrupted` when no stronger failure remains. A closed final
+before effects is `cancelled` when no stronger failure remains. A closed final
 ZIP may remain after abrupt process termination, without an executable crash or
 power-loss guarantee. Cleanup owns exact named final and draft deletion under
 its separate lease-bound contract. A rerun forms a fresh plan from current facts and never
@@ -463,15 +482,15 @@ converge to a verified no-op only when the full absence proof succeeds.
 
 ## Presentation Relationship
 
-One typed result feeds expanded human, compact human, and JSON rendering. The
+One typed result feeds full-detail human, minimal-detail human, and JSON rendering. The
 renderers do not rerun source resolution, inventory, reference scanning,
 planning, application, verification, or retained-state reporting. Presentation cannot change
 status or hide a required safety or coverage boundary.
 
-Human `complete`, `attention`, and `incomplete` results go to stdout. Human
-`invalid`, `blocked`, `failed`, and `interrupted` results go to stderr. JSON
+Human `completed`, `completed-with-warnings`, and `incomplete` results go to stdout. Human
+`invalid-input`, `blocked`, `failed`, and `cancelled` results go to stderr. JSON
 emits one complete result on stdout for every semantic status, and bounded
-diagnostics use stderr. Compact and structured results retain at most one
+diagnostics use stderr. minimal-detail and structured results retain at most one
 required `Next:` action. Complete results have none.
 
 The result exposes every incoming detachment and every generated effect needed
@@ -489,7 +508,7 @@ A conforming implementation must additionally prove:
 - leaf base/overwrite pairing, category root selection, complete physical
   inventory, and rejection of Loader/workspace-root, native, unsupported,
   orphan, ambiguous, and lifecycle-managed subjects;
-- complete positive unmanaged proof from the Framework baseline and all
+- complete positive unmanaged proof from the Framework ownership and all
   applicable Extension claims, including every missing, malformed, conflicting,
   stale, and incomplete inventory boundary;
 - complete supported-workspace-Markdown enumeration inside and outside `.agents`,
@@ -517,8 +536,8 @@ A conforming implementation must additionally prove:
   effect, including refusal to follow, write, or delete an eligible `.agents/...`
   Library projection without consulting its record;
 - all seven semantic statuses, including `Failed`/positively observed `Retained`
-  recovery `attention` and `Failed`/`Unknown` recovery `failed`; and
-- human/JSON parity, stream assignment, compact retention, structured
+  recovery `completed-with-warnings` and `Failed`/`Unknown` recovery `failed`; and
+- human/JSON parity, stream assignment, minimal-detail retention, structured
   detachment/effect evidence, and one-result rendering without rerunning work.
 
 Direct tests should prove request and subject resolution, ownership proof,

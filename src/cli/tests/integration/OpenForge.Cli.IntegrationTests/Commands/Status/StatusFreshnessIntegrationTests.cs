@@ -4,6 +4,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 
 public sealed class StatusFreshnessIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Repeated invocations use fresh facts and each invocation remains internally consistent"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
     public async Task RepeatedInvocationsUseFreshFactsAndEachInvocationIsInternallyConsistent()
     {
@@ -14,12 +15,11 @@ public sealed class StatusFreshnessIntegrationTests
         Assert.Equal(string.Empty, firstRun.StandardError);
         using var first = StatusIntegrationApplication.ParseJson(firstRun);
         var firstResult = StatusJsonAssertions.Result(first.RootElement);
-        var firstExtensions = firstResult.GetProperty("lifecycle").GetProperty("extensions");
-        var firstTotal = firstResult.GetProperty("context").GetProperty("totalAvailable");
-        var firstBytes = StatusJsonAssertions.Available(firstTotal.GetProperty("utf8Bytes"));
+        var firstExtensions = firstResult.GetProperty("extensions");
+        var firstTotal = firstResult.GetProperty("context").GetProperty("allRouted");
+        var firstBytes = StatusJsonAssertions.Available(firstTotal.GetProperty("bytes"));
         var firstFiles = StatusJsonAssertions.Available(firstTotal.GetProperty("files"));
-        Assert.Equal("trusted", firstExtensions.GetProperty("state").GetString());
-        Assert.Empty(firstExtensions.GetProperty("installed").EnumerateArray());
+        Assert.Empty(firstExtensions.EnumerateArray());
         StatusJsonAssertions.AssertDifference(firstResult.GetProperty("context").GetProperty("startup"));
 
         workspace.WritePostInstallAgentText(
@@ -36,15 +36,8 @@ public sealed class StatusFreshnessIntegrationTests
                 "1.0.0",
                 workspace.Combine("missing-fresh-extension-source"),
                 [],
-                [StatusIntegrationWorkspace.ExtensionTargetPath])],
-            [new StatusLifecycleFixture.PathSeed(
-                StatusIntegrationWorkspace.ExtensionTargetPath,
-                ["fresh-extension"],
-                StatusLifecycleFixture.Hash(targetBytes))]);
-        StatusLifecycleFixture.WriteSections(
-            workspace,
-            lifecycle.Framework,
-            StatusLifecycleFixture.ExtensionSection(extensions));
+                [StatusIntegrationWorkspace.ExtensionTargetPath])]);
+        StatusLifecycleFixture.Write(workspace, lifecycle.Framework, extensions);
         var afterMutation = workspace.SnapshotHashes();
         var lockAfterMutation = workspace.SnapshotLockBytes();
         var recoveryAfterMutation = StatusRecoveryCatalogue.SnapshotEntries(workspace.RecoveryDirectory());
@@ -56,17 +49,15 @@ public sealed class StatusFreshnessIntegrationTests
         using var second = StatusIntegrationApplication.ParseJson(secondRun);
         Assert.Equal("incomplete", second.RootElement.GetProperty("status").GetString());
         var secondResult = StatusJsonAssertions.Result(second.RootElement);
-        var secondTotal = secondResult.GetProperty("context").GetProperty("totalAvailable");
-        Assert.True(StatusJsonAssertions.Available(secondTotal.GetProperty("utf8Bytes")) > firstBytes);
+        var secondTotal = secondResult.GetProperty("context").GetProperty("allRouted");
+        Assert.True(StatusJsonAssertions.Available(secondTotal.GetProperty("bytes")) > firstBytes);
         Assert.True(StatusJsonAssertions.Available(secondTotal.GetProperty("files")) > firstFiles);
-        var secondExtensions = secondResult.GetProperty("lifecycle").GetProperty("extensions");
-        Assert.Equal("trusted", secondExtensions.GetProperty("state").GetString());
-        var installed = Assert.Single(secondExtensions.GetProperty("installed").EnumerateArray());
+        var secondExtensions = secondResult.GetProperty("extensions");
+        var installed = Assert.Single(secondExtensions.EnumerateArray());
         Assert.Equal("fresh-extension", installed.GetProperty("id").GetString());
-        var target = Assert.Single(
-            secondExtensions.GetProperty("managedFiles").GetProperty("targets").EnumerateArray());
+        var target = Assert.Single(installed.GetProperty("files").EnumerateArray());
         Assert.Equal(StatusIntegrationWorkspace.ExtensionTargetPath, target.GetProperty("path").GetString());
-        Assert.Equal("current", target.GetProperty("state").GetString());
+        Assert.Equal("unavailable", target.GetProperty("state").GetString());
         StatusJsonAssertions.AssertDifference(secondResult.GetProperty("context").GetProperty("startup"));
         Assert.Equal(afterMutation, workspace.SnapshotHashes());
         Assert.Equal(lockAfterMutation, workspace.SnapshotLockBytes());
@@ -74,5 +65,5 @@ public sealed class StatusFreshnessIntegrationTests
     }
 
     private static Task<StatusIntegrationRun> RunStatusAsync(StatusIntegrationWorkspace workspace)
-        => StatusIntegrationApplication.RunAsync(workspace, "status", "--workspace", workspace.Path, "--json");
+        => StatusIntegrationApplication.RunAsync(workspace, "status", "--workspace", workspace.Path, "--format", "json", "--detail", "full");
 }

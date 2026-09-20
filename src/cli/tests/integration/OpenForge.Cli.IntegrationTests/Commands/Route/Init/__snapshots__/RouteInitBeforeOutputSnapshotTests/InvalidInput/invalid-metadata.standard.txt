@@ -1,0 +1,9 @@
+Cannot initialize documents: Route Init metadata is invalid.
+Workspace: <workspace>
+  Error  documents  Invalid metadata
+         Route Init metadata is invalid.
+         open-forge route init documents --description "<one sentence>" --tag <Tag>
+         Correct the named Route Init input, then rerun the request.
+  Scaffold: generic
+  Correct the named Route Init input, then rerun the request.
+Next: open-forge route init documents --description "<one sentence>" --tag <Tag>

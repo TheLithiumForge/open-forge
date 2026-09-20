@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Completion;
 
 public sealed class LibraryRecoveryPreparationStatusTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData(null, null)]
     [InlineData((int)RecoveryBundlePreparationState.NotNeeded, null)]
@@ -16,6 +17,7 @@ public sealed class LibraryRecoveryPreparationStatusTests
     public void EveryPreparationStateHasItsFiniteStatus(int? state, int? status)
         => Assert.Equal((CliSemanticStatus?)status, LibraryMutationCompletionProjection.PreparationStatus((RecoveryBundlePreparationState?)state));
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void UndefinedPreparationStateFailsExplicitly()
         => Assert.Throws<ArgumentOutOfRangeException>(() => LibraryMutationCompletionProjection.PreparationStatus((RecoveryBundlePreparationState)int.MaxValue));

@@ -10,16 +10,16 @@ public sealed class PublishedDoctorInstallationProcessTests
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedExtensionInstallWorkspace.Create();
-        await InstallAsync(target, workspace, ["install", "--automatic", "--json"]);
+        await InstallAsync(target, workspace, ["install", "--automatic", "--format=json"]);
 
         var run = await DiagnoseAsync(target, workspace);
 
         Assert.Equal(0, run.ExitCode);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
-        var domains = document.RootElement.GetProperty("result").GetProperty("domains");
-        Assert.Equal(6, domains.GetArrayLength());
-        foreach (var domain in domains.EnumerateArray())
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        var categories = document.RootElement.GetProperty("data").GetProperty("categories");
+        Assert.Equal(6, categories.GetArrayLength());
+        foreach (var domain in categories.EnumerateArray())
         {
             AssertCompleteDomain(domain);
         }
@@ -32,17 +32,15 @@ public sealed class PublishedDoctorInstallationProcessTests
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedExtensionInstallWorkspace.Create();
-        await InstallAsync(target, workspace, ["install", "--automatic", "--json"]);
-        await InstallAsync(target, workspace, ["extension", "install", id, "--automatic", "--json"]);
+        await InstallAsync(target, workspace, ["install", "--automatic", "--format=json"]);
+        await InstallAsync(target, workspace, ["extension", "install", id, "--automatic", "--format=json"]);
 
         var run = await DiagnoseAsync(target, workspace);
 
         using var document = JsonDocument.Parse(run.StandardOutput);
         var extension = Assert.Single(
-            document.RootElement.GetProperty("result").GetProperty("domains").EnumerateArray(),
-            domain => domain.GetProperty("domain").GetString() == "extension-lifecycle");
-        Assert.Equal("trusted", extension.GetProperty("lifecycle").GetString());
-        Assert.Equal("available", extension.GetProperty("sourceAvailability").GetString());
+            document.RootElement.GetProperty("data").GetProperty("categories").EnumerateArray(),
+            category => category.GetProperty("name").GetString() == "Extensions");
         AssertCompleteDomain(extension);
     }
 
@@ -62,11 +60,8 @@ public sealed class PublishedDoctorInstallationProcessTests
         PublishedExtensionInstallWorkspace workspace)
     {
         var run = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target, workspace.WorkspacePath, workspace.SnapshotWorkspace, ["doctor", "--json"], workspace.EnvironmentVariables);
+            target, workspace.WorkspacePath, workspace.SnapshotWorkspace, ["doctor", "--format=json", "--detail=full"], workspace.EnvironmentVariables);
         Assert.Equal(string.Empty, run.StandardError);
-        using var document = JsonDocument.Parse(run.StandardOutput);
-        Assert.True(document.RootElement.GetProperty("result").GetProperty("readOnly").GetBoolean());
-        Assert.False(document.RootElement.GetProperty("result").GetProperty("changesMade").GetBoolean());
         workspace.AssertPersistentLock();
         return run;
     }
@@ -75,8 +70,5 @@ public sealed class PublishedDoctorInstallationProcessTests
     {
         Assert.Equal("complete", domain.GetProperty("coverage").GetString());
         Assert.Empty(domain.GetProperty("limitations").EnumerateArray());
-        Assert.DoesNotContain(
-            domain.GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("severity").GetString() is "warning" or "error");
     }
 }

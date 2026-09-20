@@ -88,8 +88,8 @@ context needed for work without gatekeeping how people organize that work.
 
 ## Orchestration Boundary
 
-The current [Development Workflow](../../../workflows/development/_development.md)
-and [Task Lifecycle](../../../workflows/development/task-lifecycle.md) give the
+The current [Development Workflow](../../../skills/use-workflow/references/open-forge/development/_development.md)
+and [Task Lifecycle](../../../skills/use-workflow/references/open-forge/development/task-lifecycle.md) give the
 mastermind sole authority to update Task state and commit accepted phase changes.
 Preflight, Gray, Red, Green, Blue, Purple, and Whole-Task Review agents return
 evidence and do not edit the Task source or create commits.

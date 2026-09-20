@@ -5,6 +5,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Cleanup;
 
 public sealed class CleanupApplicationIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(
         DisplayName = "Cleanup lease contention blocks every deletion and preserves the complete catalogue"),
      Trait("Feature", "cleanup-command"),
@@ -26,7 +27,7 @@ public sealed class CleanupApplicationIntegrationTests
         using (var heldLease = workspace.HoldLock())
         {
             run = await workspace.RunAsync(
-                ["cleanup", "--workspace", workspace.Path, "--json"],
+                ["cleanup", "--workspace", workspace.Path, "--format", "json"],
                 TestContext.Current.CancellationToken);
         }
 
@@ -37,20 +38,16 @@ public sealed class CleanupApplicationIntegrationTests
         using var document = run.ParseJson();
         var result = CleanupJsonAssertions.Result(document);
         Assert.Equal("apply", result.GetProperty("mode").GetString());
-        Assert.Equal("complete", result.GetProperty("catalogue").GetProperty("coverage").GetString());
-        Assert.Equal("safe", result.GetProperty("plan").GetProperty("safety").GetString());
-        Assert.Equal("failed", result.GetProperty("lease").GetProperty("state").GetString());
-        Assert.Equal("not-requested", result.GetProperty("revalidation").GetProperty("state").GetString());
-        Assert.Equal("not-requested", result.GetProperty("verification").GetProperty("state").GetString());
+        Assert.Equal([final, draft], CleanupJsonAssertions.Paths(result.GetProperty("items")));
         Assert.DoesNotContain(
-            result.GetProperty("effects").EnumerateArray(),
-            effect => effect.GetProperty("outcome").GetString() == "verified");
-        Assert.DoesNotContain(
-            result.GetProperty("residuals").EnumerateArray(),
-            residual => residual.GetProperty("outcome").GetString() == "verified");
-        var finding = Assert.Single(result.GetProperty("findings").EnumerateArray());
+            result.GetProperty("items").EnumerateArray(),
+            item => item.GetProperty("outcome").GetString() == "removed");
+        var effects = document.RootElement.GetProperty("effects").EnumerateArray().ToArray();
+        Assert.Equal(2, effects.Length);
+        Assert.DoesNotContain(effects, effect => effect.GetProperty("outcome").GetString() == "done");
+        var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
         Assert.Equal("cleanup.workspace-lock-unavailable", finding.GetProperty("code").GetString());
-        Assert.Equal("blocked", finding.GetProperty("status").GetString());
+        Assert.Equal("error", finding.GetProperty("severity").GetString());
         Assert.Equal(lockBefore, workspace.SnapshotLockBytes());
         Assert.True(File.Exists(final));
         Assert.True(File.Exists(draft));
@@ -59,6 +56,7 @@ public sealed class CleanupApplicationIntegrationTests
         Assert.True(workspace.LockInfrastructureExists);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(
         DisplayName = "Cleanup verifies exact deletion while preserving authored and unknown recovery content"),
      Trait("Feature", "cleanup-command"),
@@ -80,7 +78,7 @@ public sealed class CleanupApplicationIntegrationTests
         var workspaceBefore = workspace.SnapshotWorkspace();
 
         var run = await workspace.RunAsync(
-            ["cleanup", "--workspace", workspace.Path, "--json"],
+            ["cleanup", "--workspace", workspace.Path, "--format", "json"],
             TestContext.Current.CancellationToken);
 
         Assert.Equal(0, run.ExitCode);
@@ -90,14 +88,12 @@ public sealed class CleanupApplicationIntegrationTests
         using var document = run.ParseJson();
         var result = CleanupJsonAssertions.Result(document);
         Assert.Equal("apply", result.GetProperty("mode").GetString());
-        Assert.Equal("complete", result.GetProperty("catalogue").GetProperty("coverage").GetString());
-        Assert.Equal("safe", result.GetProperty("plan").GetProperty("safety").GetString());
-        Assert.Equal("acquired", result.GetProperty("lease").GetProperty("state").GetString());
-        Assert.Equal("matched", result.GetProperty("revalidation").GetProperty("state").GetString());
-        Assert.Equal("verified", result.GetProperty("verification").GetProperty("state").GetString());
-        Assert.Empty(result.GetProperty("findings").EnumerateArray());
-        Assert.Empty(result.GetProperty("residuals").EnumerateArray());
-        var effects = result.GetProperty("effects").EnumerateArray().ToArray();
+        Assert.Equal([final, draft], CleanupJsonAssertions.Paths(result.GetProperty("items")));
+        Assert.All(
+            result.GetProperty("items").EnumerateArray(),
+            item => Assert.Equal("removed", item.GetProperty("outcome").GetString()));
+        Assert.Empty(document.RootElement.GetProperty("findings").EnumerateArray());
+        var effects = document.RootElement.GetProperty("effects").EnumerateArray().ToArray();
         Assert.Equal(2, effects.Length);
         Assert.Equal(
             [final, draft],
@@ -106,10 +102,8 @@ public sealed class CleanupApplicationIntegrationTests
             effects,
             effect =>
             {
-                Assert.Equal("delete", effect.GetProperty("action").GetString());
-                Assert.Equal("verified", effect.GetProperty("outcome").GetString());
-                Assert.Equal("none", effect.GetProperty("residual").GetString());
-                Assert.Equal("ordinary", effect.GetProperty("fileKind").GetString());
+                Assert.Equal("deleted", effect.GetProperty("action").GetString());
+                Assert.Equal("done", effect.GetProperty("outcome").GetString());
             });
         Assert.False(File.Exists(final));
         Assert.False(File.Exists(draft));

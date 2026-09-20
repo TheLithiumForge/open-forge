@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Prefer preservation-first file mutation over ordinary atomic replacement when concurrent unknown bytes could otherwise be lost
+  description: "Historical CLI-v2 source: Prefer preservation-first file mutation over ordinary atomic replacement when concurrent unknown bytes could otherwise be lost"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

@@ -1,0 +1,14 @@
+status=cancelled
+mode=apply
+library=team-knowledge
+source-files=1
+links=1
+created=1
+sections=0
+grants=False
+recorded=False
+recovery=prepared
+verification=unavailable
+findings=2
+The ownership lock is absent; no Library registrations are recorded.
+Library attach was interrupted.

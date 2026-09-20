@@ -13,6 +13,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Documents;
 
 public sealed class FindFrontmatterReaderTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find frontmatter tag sequences preserve authored order and scalar marks")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public void BlockAndFlowTagSequencesRetainSourceOrderAndMarks()
@@ -37,6 +38,7 @@ public sealed class FindFrontmatterReaderTests
             [("Second", 4, 10), ("First", 4, 18)]);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find frontmatter preserves valid quoted Unicode scalar spans")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public void QuotedEscapedUnicodeTagsPreserveScalarSpans()
@@ -63,6 +65,7 @@ public sealed class FindFrontmatterReaderTests
             result.Tags[1].Location);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find ignores Rune and reads Open Forge when both roots are present")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public void RuneIsOpaqueAndOpenForgeRemainsSoleMetadataAuthority()
@@ -84,6 +87,7 @@ public sealed class FindFrontmatterReaderTests
             [("First", 4, 10), ("Second", 4, 17)]);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find frontmatter keeps missing, empty, commented, unknown, and skill metadata complete")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public void MissingEmptyCommentsAndUnknownFieldsRemainComplete()
@@ -141,6 +145,7 @@ public sealed class FindFrontmatterReaderTests
             ".agents/skills/example/SKILL.md");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find frontmatter makes malformed or structurally unavailable tag metadata unavailable")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public void MalformedWrongDuplicateAndAliasShapesBecomeUnavailableWithoutGuessing()

@@ -25,9 +25,7 @@ accepted Architecture and the Interface and Behavior Contracts.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Start a technology-neutral command behavior definition for deterministic resolution, effects, safety, recovery, and conformance](behavior.md) - #Template #CLI #Command #Contract #Behavior
 - [Start the routed command scope that exposes one local Interface, Behavior, and optional Technical Design set](entrypoint.md) - #Template #CLI #Command #Contract #Entrypoint #Routing
 - [Start a complete public command surface with explicit inputs, composition, outputs, results, errors, and scenarios](interface.md) - #Template #CLI #Command #Contract #Interface
 - [Start an optional implementation design that traces choices to accepted command contracts and Architecture](technical-design.md) - #Template #CLI #Command #Contract #TechnicalDesign #Implementation #Traceability
-<!-- open-forge:generated-index:end -->

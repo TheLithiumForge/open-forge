@@ -66,56 +66,54 @@ Workspace resolution applies the exact public rules in
 The operation reports or blocks on the exact state it requires. No second
 workspace-resolution path is available to a command.
 
-## Structured Presentation
+## Format Presentation
 
-For `--json`, the operation runs once and forms one typed operation result. The
-structured renderer consumes that result and emits one structured document to
-stdout. It does not rerun parsing, planning, inspection, application, or
-verification, and it does not mix ordinary human text into structured stdout.
-The renderer preserves semantic status and process result. Bounded diagnostics
-use stderr only when the shared output contract allows it.
+For `--format json`, the operation runs once and forms one typed operation
+result. The JSON renderer consumes that result and emits one schema-3 envelope
+to stdout. It does not rerun parsing, planning, inspection, application, or
+verification, and it does not mix ordinary text into JSON stdout. The renderer
+preserves semantic status and process result. Bounded diagnostics use stderr.
+
+For `--format text`, the text renderer consumes the same typed operation result
+and writes the primary text stream selected by the result status. Text prompts
+and bounded diagnostics use stderr. The two formats never cause a second
+operation run.
 
 JSON resolution disables prompts. Missing semantic input forms the public
-invalid result. Missing authority or an unresolved choice for an otherwise
-complete request forms the public blocked result. The exact shared result schema
-and compatibility rules are defined by the [Shared Result
-Coordinates](../result-coordinates/interface.md), as stated in [the public JSON
-contract](interface.md#--json).
+`invalid-input` result. Missing authority or an unresolved choice for an
+otherwise complete request forms the public `blocked` result. The exact shared
+result schema and compatibility rules are defined by the [Shared Result
+Coordinates](../result-coordinates/interface.md), as stated in [the public
+format contract](interface.md#--format-textjson).
 
-## View Presentation
+## Detail Presentation
 
-Human and JSON presentation consumes the same typed operation result regardless of the
-selected view. View resolution changes only generated framing, density and the supporting JSON fields defined by the selected view. It
-does not change selection, parsing, planning, effects, verification, findings,
-semantic status, or process result.
+The selected `--detail` value applies to both formats. `minimal` is the default,
+and each level adds to the previous level:
 
-The implementation preserves authored content bytes selected by a content
-projection. Compact and expanded presentations retain the domain relationships
-required by the [public view contract](interface.md#--viewcompactexpanded),
-and expanded remains the default. A command with one meaningful human shape may
-accept `--view` without changing its result. `--verbose` is a separate
-diagnostic dimension.
+- `minimal` keeps the subject, one-line cause, and one action.
+- `standard` adds the reason for the action and per-finding actions.
+- `full` adds evidence, possible targets with why they were included, provenance,
+  SHA-256 values, and finding codes.
+- `debug` keeps the full primary result and adds bounded run diagnostics on
+  stderr.
 
-Expanded JSON uses the complete schema-v1 projection. Compact JSON uses the
-identified schema-v2 projection and normal serializer minification. Omitted
-supporting fields are defined per command, distinct from null, empty and
-unavailable values. Preserve counts, findings, requested content and all mutation
-receipts. Never rerun the operation to obtain a second view.
+The shared listing ladder lists errors and, except for diagnosis-shaped
+commands, warnings at `minimal`; lists warnings for diagnosis-shaped commands
+at `standard`; and lists info findings at `full` and `debug`. Findings hidden
+by a level remain counted. Requested rows, authored content, and mutation
+receipts are never shortened. Detail changes presentation only and does not
+change selection, parsing, planning, effects, verification, findings, status,
+or process exit.
 
-## Diagnostic Presentation
+## Detail Filter
 
-Verbose resolution adds only bounded investigation detail. It does not change
-selected input, planning, effects, verification, status, or exit behavior.
-Ordinary success and failure output remains understandable without diagnostics.
-
-Diagnostic formation may include the bounded paths, stage names, inclusion
-reasons, and failure context described by the [public verbose contract](interface.md#--verbose),
-but it must not expose secrets, complete environment state, private recovery
-bytes, or unsafe unescaped source content. In JSON mode, the structured result
-remains one valid stdout document, and separate verbose diagnostics use stderr
-under the shared output contract. Diagnostic fields and redaction remain bounded
-implementation details under the CLI Architecture and must be covered by Gate 5
-executable evidence.
+`--detail-filter` replaces the shared listing ladder with the requested
+severity set. The flag is repeatable and accepts `error`, `warning`, `info`,
+and `all`. `all` lists every severity and wins when combined with other values.
+The filter changes which findings are listed, not their per-finding detail
+depth. Counts and limitations are never affected. When the flag is absent, the
+selected detail level supplies the listing ladder.
 
 ## Terminal Informational Modes
 
@@ -132,9 +130,9 @@ wrapper mismatch behavior remains later distribution design. These behaviors
 are the public definitions in [`--help`](interface.md#--help) and
 [`--version`](interface.md#--version), not new Behavior choices.
 
-Both terminal modes write ordinary text to stdout and return exit `0`. `--json`
-is a well-formed no-op in terminal mode and does not wrap help or version in the
-operation-result envelope.
+Both terminal modes write ordinary text to stdout and return exit `0`.
+`--format`, `--detail`, and `--detail-filter` are well-formed no-ops in terminal
+mode and do not wrap help or version in the operation-result envelope.
 
 ## Composition And Terminal Modes
 
@@ -169,12 +167,14 @@ Gate 5 executable proof must cover:
 - Relative and absolute workspace values.
 - No upward or marker-based discovery.
 - Human and JSON rendering from one typed result.
-- Compact and expanded human rendering from the same typed result, with expanded
-  as the default and compact output retaining status and completeness.
+- All four detail levels in text and JSON from the same typed result, with
+  `minimal` as the default and `debug` diagnostics isolated on stderr.
+- `--detail-filter` severity unions, including `all`, without changing counts.
 - No-op handling for well-formed global flags that do not apply to the selected
   operation or terminal informational mode.
 - Structured stdout isolation.
-- Verbose behavior that does not change results.
+- `--format json` stdout isolation and `--detail debug` diagnostics that do not
+  change results.
 - Root, group, and command help.
 - Version output without workspace access.
 - Repeated and incompatible flag behavior.
@@ -189,16 +189,6 @@ Gate 5 executable proof must cover:
 - [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)
 
-## View Availability
-
-Each output format has a required expanded renderer and an optional compact
-renderer at composition. Explicit compact selection uses compact when available,
-otherwise expanded with an effective expanded view. Explicit expanded selection
-never falls back to compact. No other output format, operation retry or changed
-semantic result is selected. An exception while rendering propagates through
-ordinary failure handling; it is not a missing renderer. All delivered commands
-must implement both views; the fallback does not satisfy that requirement.
-
 ## Colour Conformance
 
 Apply the [automatic colour policy](interface.md#automatic-colour) only after
@@ -206,6 +196,6 @@ forming the command result. Select capability for its actual primary output
 stream. Style generated labels from typed statuses or severities, then restore
 the default foreground immediately. Do not recognize words in finished output.
 Removing generated accents must recover the plain result exactly. JSON must be
-byte-identical with colour capability enabled or disabled. Verify both views,
+byte-identical with colour capability enabled or disabled. Verify both formats,
 independent stream capabilities, terminal fallback and selected-content/preview
 preservation.

@@ -1,9 +1,10 @@
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Operational;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
-using OpenForge.Cli.Core.Framework.Lifecycle.Operational;
-using OpenForge.Cli.Core.Framework.Lifecycle.Operational.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.Models.Reading;
+using OpenForge.Cli.Core.Framework.Distribution.Operational;
+using OpenForge.Cli.Core.Framework.Distribution.Operational.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Operational;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
@@ -21,7 +22,8 @@ internal sealed record StatusWorkspaceInvocation(
     CancellationToken CancellationToken);
 
 internal sealed record StatusLifecycleInvocation(
-    LifecycleDocumentSnapshot Snapshot,
+    CliWorkspace Workspace,
+    WorkspaceOwnershipRead Ownership,
     CancellationToken CancellationToken);
 
 internal sealed class StatusOperationRecordings
@@ -83,10 +85,11 @@ internal sealed class StatusOperationRecordings
         internal List<StatusLifecycleInvocation> Invocations { get; } = [];
 
         protected void Record(
-            LifecycleDocumentSnapshot snapshot,
+            CliWorkspace workspace,
+            WorkspaceOwnershipRead ownership,
             CancellationToken cancellationToken)
         {
-            Invocations.Add(new StatusLifecycleInvocation(snapshot, cancellationToken));
+            Invocations.Add(new StatusLifecycleInvocation(workspace, ownership, cancellationToken));
             onObservation();
         }
     }
@@ -159,10 +162,11 @@ internal sealed class StatusOperationRecordings
         : RecordingLifecycleStatusContributor(onObservation), IFrameworkLifecycleOperationalContributor
     {
         public ValueTask<FrameworkLifecycleStatusView> ReadStatusAsync(
-            LifecycleDocumentSnapshot snapshot,
+            CliWorkspace workspace,
+            WorkspaceOwnershipRead ownership,
             CancellationToken cancellationToken)
         {
-            Record(snapshot, cancellationToken);
+            Record(workspace, ownership, cancellationToken);
             return ValueTask.FromResult(StatusOperationViewSeeds.FrameworkLifecycle());
         }
 
@@ -176,10 +180,11 @@ internal sealed class StatusOperationRecordings
         : RecordingLifecycleStatusContributor(onObservation), IExtensionLifecycleOperationalContributor
     {
         public ValueTask<ExtensionLifecycleStatusView> ReadStatusAsync(
-            LifecycleDocumentSnapshot snapshot,
+            CliWorkspace workspace,
+            WorkspaceOwnershipRead ownership,
             CancellationToken cancellationToken)
         {
-            Record(snapshot, cancellationToken);
+            Record(workspace, ownership, cancellationToken);
             return ValueTask.FromResult(StatusOperationViewSeeds.ExtensionLifecycle());
         }
 

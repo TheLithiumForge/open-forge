@@ -12,6 +12,4 @@ open-forge:
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Place support through demonstrated semantic reuse or an accepted neutral foundation at the nearest shared scope of its consumers](nearest-shared-scope.md) - #Pattern #Software #Source #Locality #Shared #Reuse #Dependency
-<!-- open-forge:generated-index:end -->

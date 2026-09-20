@@ -1,0 +1,8 @@
+Workspace: <workspace>
+  docs/reference  Reference
+                  .agents/docs/reference.md   #Docs
+  Parent: docs; .agents/docs/_docs.md
+  Depth: absolute 1; relative 0
+  Kind: file; direct children: none
+  Selected as: explicit root
+  Overwrite: none

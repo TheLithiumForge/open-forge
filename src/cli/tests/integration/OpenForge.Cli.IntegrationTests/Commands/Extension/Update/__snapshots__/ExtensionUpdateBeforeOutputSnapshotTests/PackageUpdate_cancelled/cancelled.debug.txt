@@ -1,0 +1,10 @@
+Extension update was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  the selected  Extension update was cancelled [extension-update.interrupted]
+         Extension update was cancelled. Nothing was changed.
+         cause: Extension update was cancelled. Nothing was changed.
+  Dependency closure: none
+  0 files unchanged
+  Grant: required none; missing none; decision not evaluated; action no action; outcome no outcome recorded
+  No verification was needed.
+  No recovery bundle was needed.

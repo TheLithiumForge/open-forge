@@ -330,7 +330,7 @@ capture cost exceeds its refinement value.
 ## Related Records And Sources
 
 - [Lean Agent Batching](2026-08-15_lean-agent-batching.md)
-- [Review Workflow](../../../workflows/review.md)
+- [Review Workflow](../../../skills/use-workflow/references/open-forge/review.md)
 - [Review Evidence Directive](../../../directives/review-evidence.md)
 - [CLI Dogfooding Directive](../../../directives/open-forge/cli/dogfooding.md)
 - [CLI Implementation Reset](../../archived/cli-release/implementation-reset-2026-08-21.md)

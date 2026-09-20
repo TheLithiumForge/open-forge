@@ -13,6 +13,4 @@ open-forge:
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Reusable default shape for one inspectable CLI operation](composable-operation.md) - #Pattern #CLI #Interface #Command #Flag #Composition #Result #Testing #Predictability
-<!-- open-forge:generated-index:end -->

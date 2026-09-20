@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.List;
 
 public sealed class RouteListApplicationIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed Route List JSON retains exact ordered topology and overwrite provenance across views"),
      Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task JsonViewsRetainOrderedTopologyAndExactOverwriteSelection()
@@ -26,49 +27,52 @@ public sealed class RouteListApplicationIntegrationTests
         WriteRoute(workspace, ".agents/root/nested/_nested.md", "Nested route", "Nested");
         WriteRoute(workspace, ".agents/root/nested/deep.md", "Deep route", "Deep");
         var before = workspace.SnapshotHashes();
-        var defaults = await CliHostCapture.RunAsync(["route", "list"], workspace.Path);
+        var defaults = await CliHostCapture.RunAsync(["route", "list", "--detail", "standard"], workspace.Path);
         Assert.Equal(0, defaults.ExitCode);
         Assert.Equal(string.Empty, defaults.Error);
-        Assert.Contains("Status: complete", defaults.Output, StringComparison.Ordinal);
-        Assert.Contains("Requested depth: 1", defaults.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", defaults.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Requested depth:", defaults.Output, StringComparison.Ordinal);
         Assert.Contains("workspace-defined  ", defaults.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("detached  ", defaults.Output, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
-        var detached = await CliHostCapture.RunAsync(["route", "list", "detached", "--depth=1", "--json"], workspace.Path);
+        var detached = await CliHostCapture.RunAsync(["route", "list", "detached", "--depth=1", "--detail", "full", "--format", "json"], workspace.Path);
         Assert.Equal(0, detached.ExitCode);
         Assert.Equal(string.Empty, detached.Error);
         using var detachedDocument = JsonDocument.Parse(detached.Output);
-        var detachedRows = detachedDocument.RootElement.GetProperty("result").GetProperty("rows");
+        var detachedRows = detachedDocument.RootElement.GetProperty("data").GetProperty("rows");
         Assert.Equal(["detached", "detached/leaf"], detachedRows.EnumerateArray().Select(row => row.GetProperty("id").GetString()));
         Assert.Equal(JsonValueKind.Null, detachedRows[0].GetProperty("absoluteDepth").ValueKind);
-        Assert.Equal("detached-root", detachedRows[0].GetProperty("provenance").GetProperty("selection").GetString());
+        Assert.Equal("detached-root", detachedRows[0].GetProperty("selectedAs").GetString());
         Assert.Equal(before, workspace.SnapshotHashes());
-        var compact = await CliHostCapture.RunAsync(["route", "list", "root", "--depth=all", "--view=compact", "--json"], workspace.Path);
-        var expanded = await CliHostCapture.RunAsync(["route", "list", "root", "--depth=all", "--view=expanded", "--json"], workspace.Path);
-        var overwrite = await CliHostCapture.RunAsync(["route", "list", ".agents/root/adjusted.overwrite.md", "--depth=0", "--json"], workspace.Path);
+        var compact = await CliHostCapture.RunAsync(["route", "list", "root", "--depth=all", "--detail=minimal", "--format", "json"], workspace.Path);
+        var expanded = await CliHostCapture.RunAsync(["route", "list", "root", "--depth=all", "--detail=full", "--format", "json"], workspace.Path);
+        var overwrite = await CliHostCapture.RunAsync(["route", "list", ".agents/root/adjusted.overwrite.md", "--depth=0", "--detail=full", "--format", "json"], workspace.Path);
 
         Assert.Equal(0, compact.ExitCode);
         Assert.Equal(string.Empty, compact.Error);
+        var standard = await CliHostCapture.RunAsync(["route", "list", "root", "--depth=all", "--detail=standard", "--format", "json"], workspace.Path);
         Assert.Equal(0, expanded.ExitCode);
         Assert.Equal(string.Empty, expanded.Error);
-        Assert.True(JsonViewComparison.RetainsResult(compact.Output, expanded.Output, ["rows.*.provenance"]));
+        Assert.Equal(0, standard.ExitCode);
+        Assert.Equal(string.Empty, standard.Error);
+        Assert.True(JsonDetailComparison.RetainsData(compact.Output, standard.Output));
         using var document = JsonDocument.Parse(expanded.Output);
-        var result = document.RootElement.GetProperty("result");
-        Assert.Equal("all", result.GetProperty("requestedDepth").GetString());
-        Assert.Equal("all", result.GetProperty("effectiveDepth").GetString());
+        var result = document.RootElement.GetProperty("data");
+        Assert.Equal("all", result.GetProperty("depth").GetString());
         var rows = result.GetProperty("rows");
         Assert.Equal(["root", "root/adjusted", "root/child", "root/native", "root/nested", "root/nested/deep"], rows.EnumerateArray().Select(row => row.GetProperty("id").GetString()));
-        Assert.Equal("routed-native", rows[3].GetProperty("provenance").GetProperty("source").GetString());
+        Assert.Equal("file", rows[3].GetProperty("kind").GetString());
         Assert.Equal(0, overwrite.ExitCode);
         Assert.Equal(string.Empty, overwrite.Error);
         using var overwriteDocument = JsonDocument.Parse(overwrite.Output);
-        var selected = Assert.Single(overwriteDocument.RootElement.GetProperty("result").GetProperty("rows").EnumerateArray());
+        var selected = Assert.Single(overwriteDocument.RootElement.GetProperty("data").GetProperty("rows").EnumerateArray());
         Assert.Equal(".agents/root/adjusted.md", selected.GetProperty("path").GetString());
-        Assert.True(selected.GetProperty("provenance").GetProperty("hasOverwrite").GetBoolean());
+        Assert.True(selected.GetProperty("hasOverwrite").GetBoolean());
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Composed Route List findings and next guidance precede rows with exact semantic streams"),
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed Route List findings and next guidance use exact semantic streams"),
      Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task FindingsAndNextPrecedeRowsWithExactSemanticStreams()
     {
@@ -82,26 +86,27 @@ public sealed class RouteListApplicationIntegrationTests
         incomplete.Write(".agents/root/malformed.md", "---\nopen-forge: [\n---\n\n# Malformed\n");
         var attentionBefore = attention.SnapshotHashes();
         var incompleteBefore = incomplete.SnapshotHashes();
-        var attentionResult = await CliHostCapture.RunAsync(["route", "list", "root", "--depth=all", "--view=expanded"], attention.Path);
-        var incompleteResult = await CliHostCapture.RunAsync(["route", "list", "root", "--depth=all", "--view=compact"], incomplete.Path);
+        var attentionResult = await CliHostCapture.RunAsync(["route", "list", "root", "--depth=all", "--detail=full"], attention.Path);
+        var incompleteResult = await CliHostCapture.RunAsync(["route", "list", "root", "--depth=all", "--detail=minimal"], incomplete.Path);
 
         Assert.Equal(2, attentionResult.ExitCode);
         Assert.Equal(string.Empty, attentionResult.Error);
-        Assert.Contains("Status: requires attention", attentionResult.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", attentionResult.Output, StringComparison.Ordinal);
         Assert.Contains("route-list.authored-form", attentionResult.Output, StringComparison.Ordinal);
-        Assert.DoesNotContain("Next:", attentionResult.Output, StringComparison.Ordinal);
-        Assert.Equal(3, incompleteResult.ExitCode);
+        Assert.Contains("Next:", attentionResult.Output, StringComparison.Ordinal);
+        Assert.Equal(2, incompleteResult.ExitCode);
         Assert.Equal(string.Empty, incompleteResult.Error);
-        Assert.Contains("Coverage: incomplete", incompleteResult.Output, StringComparison.Ordinal);
-        var rowIndex = incompleteResult.Output.IndexOf("root  .agents/root/_root.md", StringComparison.Ordinal);
-        var findingIndex = incompleteResult.Output.IndexOf("[route-list.", StringComparison.Ordinal);
+        Assert.Contains("routes listed with warnings.", incompleteResult.Output, StringComparison.Ordinal);
+        var rowIndex = incompleteResult.Output.IndexOf("  root", StringComparison.Ordinal);
+        var findingIndex = incompleteResult.Output.IndexOf("frontmatter of .agents/root/malformed.md could not be read", StringComparison.Ordinal);
         var nextIndex = incompleteResult.Output.IndexOf("Next:", StringComparison.Ordinal);
         Assert.InRange(findingIndex, 0, rowIndex - 1);
-        Assert.InRange(nextIndex, 0, rowIndex - 1);
+        Assert.True(nextIndex > rowIndex);
         Assert.Equal(attentionBefore, attention.SnapshotHashes());
         Assert.Equal(incompleteBefore, incomplete.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "CLI root route family and Route List help expose the composed family and list leaf"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task ComposedRouteFamilyHelpExposesListLeaf()
     {
@@ -138,9 +143,10 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Contains("The default depth is 1", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("open-forge route list memory", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("open-forge route list .agents/memory/_memory.md", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("open-forge route list --depth=2 --json", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("open-forge route list --depth=2 --format json", leaf.Output, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "CLI route-list executes one real workspace operation in human and JSON streams"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task ExecutesRealWorkspaceInHumanAndJsonStreams()
     {
@@ -151,30 +157,34 @@ public sealed class RouteListApplicationIntegrationTests
         var before = workspace.SnapshotHashes();
 
         var human = await CliHostCapture.RunAsync(
-            ["route", "list", "root", "--workspace", workspace.Path, "--depth=1", "--view=compact"],
+            ["route", "list", "root", "--workspace", workspace.Path, "--depth=1", "--detail=minimal"],
             workspace.Path);
         var json = await CliHostCapture.RunAsync(
-            ["route", "list", "root", "--workspace", workspace.Path, "--depth=0", "--json"],
+            ["route", "list", "root", "--workspace", workspace.Path, "--depth=0", "--format", "json"],
             workspace.Path);
         var verboseJson = await CliHostCapture.RunAsync(
-            ["route", "list", "root", "--workspace", workspace.Path, "--depth=0", "--json", "--verbose"],
+            ["route", "list", "root", "--workspace", workspace.Path, "--depth=0", "--format", "json", "--detail", "debug"],
             workspace.Path);
 
         Assert.Equal(0, human.ExitCode);
         Assert.Equal(string.Empty, human.Error);
-        Assert.Contains("Status: complete", human.Output, StringComparison.Ordinal);
-        Assert.Contains("root  .agents/root/_root.md", human.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", human.Output, StringComparison.Ordinal);
+        Assert.Contains("  root", human.Output, StringComparison.Ordinal);
         Assert.Contains("root/child", human.Output, StringComparison.Ordinal);
 
         Assert.Equal(0, json.ExitCode);
         Assert.Equal(string.Empty, json.Error);
         using var document = JsonDocument.Parse(json.Output);
-        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
-        Assert.Equal(0, document.RootElement.GetProperty("result").GetProperty("requestedDepth").GetInt32());
-        Assert.Single(document.RootElement.GetProperty("result").GetProperty("rows").EnumerateArray());
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        Assert.Equal(0, document.RootElement.GetProperty("data").GetProperty("depth").GetInt32());
+        Assert.Single(document.RootElement.GetProperty("data").GetProperty("rows").EnumerateArray());
 
+        var standardJson = await CliHostCapture.RunAsync(
+            ["route", "list", "root", "--workspace", workspace.Path, "--depth=0", "--format", "json", "--detail", "standard"],
+            workspace.Path);
         Assert.Equal(0, verboseJson.ExitCode);
-        Assert.Equal(json.Output, verboseJson.Output);
+        Assert.Equal(0, standardJson.ExitCode);
+        Assert.True(JsonDetailComparison.RetainsData(json.Output, standardJson.Output));
         Assert.Contains("rows=1", verboseJson.Error, StringComparison.Ordinal);
         Assert.InRange(verboseJson.Error.Length, 1, 4096);
         Assert.Contains("selection.kind=source-id", verboseJson.Error, StringComparison.Ordinal);
@@ -183,6 +193,7 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Pinned parser normalizes native scalar forms at the composed Route List boundary"), Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
     public async Task PinnedParserNormalizesNativeScalarForms()
     {
@@ -199,13 +210,13 @@ public sealed class RouteListApplicationIntegrationTests
         };
         var viewForms = new (string Name, string[] Arguments)[]
         {
-            ("view-spaced", ["--view", "expanded"]),
-            ("view-equals", ["--view=expanded"]),
-            ("view-colon", ["--view:expanded"]),
+            ("view-spaced", ["--detail", "standard"]),
+            ("view-equals", ["--detail=standard"]),
+            ("view-colon", ["--detail:standard"]),
         };
 
         var baseline = await CliHostCapture.RunAsync(
-            ["route", "list", "root", "--workspace", workspace.Path, "--depth=0", "--view=expanded"],
+            ["route", "list", "root", "--workspace", workspace.Path, "--depth=0", "--detail=standard"],
             workspace.Path);
         Assert.Equal(0, baseline.ExitCode);
         Assert.Equal(string.Empty, baseline.Error);
@@ -233,6 +244,7 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "CLI route-list accepts native depth forms and rejects a missing value without writes"),
      Trait("Feature", "route-list"), Trait("Evidence", "Integration"),
      InlineData("--depth=1", null, false),
@@ -249,8 +261,8 @@ public sealed class RouteListApplicationIntegrationTests
         WriteRoute(workspace, ".agents/root/_root.md", "Root route", "Root");
         var before = workspace.SnapshotHashes();
         string[] arguments = separateValue is null
-            ? ["route", "list", "root", "--workspace", workspace.Path, option, "--json"]
-            : ["route", "list", "root", "--workspace", workspace.Path, option, separateValue, "--json"];
+            ? ["route", "list", "root", "--workspace", workspace.Path, option, "--format", "json"]
+            : ["route", "list", "root", "--workspace", workspace.Path, option, separateValue, "--format", "json"];
 
         var result = await CliHostCapture.RunAsync(arguments, workspace.Path);
 
@@ -259,19 +271,20 @@ public sealed class RouteListApplicationIntegrationTests
         {
             Assert.Equal(string.Empty, result.Error);
             using var document = JsonDocument.Parse(result.Output);
-            Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
+            Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
         }
         else
         {
             Assert.Equal(string.Empty, result.Error);
             using var document = JsonDocument.Parse(result.Output);
-            Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
-            Assert.Equal(1, document.RootElement.GetProperty("result").GetProperty("requestedDepth").GetInt32());
+            Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+            Assert.Equal(1, document.RootElement.GetProperty("data").GetProperty("depth").GetInt32());
         }
 
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Attached-empty Route List depth preserves following --json as one typed invalid result"), Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
     public async Task AttachedEmptyScalarPreservesFollowingGlobal()
     {
@@ -281,19 +294,20 @@ public sealed class RouteListApplicationIntegrationTests
         var before = workspace.SnapshotHashes();
 
         var result = await CliHostCapture.RunAsync(
-            ["route", "list", "--workspace", workspace.Path, "--depth=", "--json"],
+            ["route", "list", "--workspace", workspace.Path, "--depth=", "--format", "json"],
             workspace.Path);
 
         Assert.Equal(4, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
         using var document = JsonDocument.Parse(result.Output);
-        Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
-        var finding = Assert.Single(document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray());
+        Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
+        var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
         Assert.Equal("route-list.invalid-depth", finding.GetProperty("code").GetString());
-        Assert.Equal("--depth", finding.GetProperty("subject").GetString());
+        Assert.Equal("--depth", finding.GetProperty("subject").GetProperty("id").GetString());
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "CLI route-list accepts omitted and boundary depth values as typed requests"),
      Trait("Feature", "route-list"), Trait("Evidence", "Integration"),
      InlineData(null, "Finite", 1),
@@ -319,14 +333,14 @@ public sealed class RouteListApplicationIntegrationTests
             arguments.Add($"--depth={spelling}");
         }
 
-        arguments.Add("--json");
+        arguments.Add("--format=json");
         var result = await CliHostCapture.RunAsync([.. arguments], workspace.Path);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
         using var document = JsonDocument.Parse(result.Output);
-        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
-        var requestedDepth = document.RootElement.GetProperty("result").GetProperty("requestedDepth");
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        var requestedDepth = document.RootElement.GetProperty("data").GetProperty("depth");
         if (expectedKind == "All")
         {
             Assert.Equal("all", requestedDepth.GetString());
@@ -339,6 +353,7 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "CLI route-list returns one typed invalid result for invalid depth values"),
      Trait("Feature", "route-list"), Trait("Evidence", "Integration"),
      InlineData("-1", "-1"),
@@ -354,19 +369,20 @@ public sealed class RouteListApplicationIntegrationTests
         var before = workspace.SnapshotHashes();
 
         var result = await CliHostCapture.RunAsync(
-            ["route", "list", "--workspace", workspace.Path, $"--depth={spelling}", "--json"],
+            ["route", "list", "--workspace", workspace.Path, $"--depth={spelling}", "--format", "json"],
             workspace.Path);
 
         Assert.Equal(4, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
         using var document = JsonDocument.Parse(result.Output);
-        Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
-        var finding = Assert.Single(document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray());
+        Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
+        var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
         Assert.Equal("route-list.invalid-depth", finding.GetProperty("code").GetString());
-        Assert.Equal(expectedSubject, finding.GetProperty("subject").GetString());
+        Assert.Equal(expectedSubject, finding.GetProperty("subject").GetProperty("id").GetString());
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "CLI route-list rejects repeated depth occurrences as one parser error"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task RejectsRepeatedDepthOccurrencesAsParserError()
     {
@@ -378,7 +394,7 @@ public sealed class RouteListApplicationIntegrationTests
         var result = await CliHostCapture.RunAsync(
             [
                 "route", "list", "root", "--workspace", workspace.Path,
-                "--depth=0", "--depth=1", "--json",
+                "--depth=0", "--depth=1", "--format", "json",
             ],
             workspace.Path);
 
@@ -388,6 +404,7 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "CLI route-list treats an option-like source after the terminator as domain input"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task TerminatorPreservesOptionLikeSourceAsDomainInput()
     {
@@ -397,19 +414,20 @@ public sealed class RouteListApplicationIntegrationTests
         var before = workspace.SnapshotHashes();
 
         var result = await CliHostCapture.RunAsync(
-            ["route", "list", "--workspace", workspace.Path, "--json", "--", "--depth="],
+            ["route", "list", "--workspace", workspace.Path, "--format", "json", "--", "--depth="],
             workspace.Path);
 
         Assert.Equal(4, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
         using var document = JsonDocument.Parse(result.Output);
-        Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
-        var finding = Assert.Single(document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray());
+        Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
+        var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
         Assert.Equal("route-list.unknown-source", finding.GetProperty("code").GetString());
-        Assert.Equal("--depth=", finding.GetProperty("subject").GetString());
+        Assert.Equal("--depth=", finding.GetProperty("subject").GetProperty("id").GetString());
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "Terminal modes reject Route List domain and local input before effects"),
      Trait("Feature", "cli-parser"), Trait("Evidence", "Integration"),
      InlineData("--help"),
@@ -436,6 +454,7 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "Terminal modes accept well-formed global no-op options"),
      Trait("Feature", "cli-parser"), Trait("Evidence", "Integration"),
      InlineData("--help"),
@@ -449,7 +468,7 @@ public sealed class RouteListApplicationIntegrationTests
         var result = await CliHostCapture.RunAsync(
             [
                 "route", "list", terminalOption, "--workspace", missingWorkspace,
-                "--json", "--verbose", "--view=compact",
+                "--format", "json", "--detail", "debug",
             ],
             workspace.Path);
 
@@ -460,6 +479,7 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "CLI route-list maps an unavailable workspace to one typed null-workspace JSON result"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task UnavailableWorkspaceUsesTypedJsonResult()
     {
@@ -467,19 +487,20 @@ public sealed class RouteListApplicationIntegrationTests
             System.IO.Path.GetTempPath(),
             $"open-forge-route-list-missing-{Guid.NewGuid():N}");
         var result = await CliHostCapture.RunAsync(
-            ["route", "list", "--workspace", missing, "--json"],
+            ["route", "list", "--workspace", missing, "--format", "json"],
             missing);
 
         Assert.Equal(4, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
         using var document = JsonDocument.Parse(result.Output);
-        Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
+        Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
         Assert.Equal(JsonValueKind.Null, document.RootElement.GetProperty("workspace").ValueKind);
         Assert.Equal(
             "route-list.invalid-workspace",
-            document.RootElement.GetProperty("result").GetProperty("findings")[0].GetProperty("code").GetString());
+            document.RootElement.GetProperty("findings")[0].GetProperty("code").GetString());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "CLI route-list presents one interrupted result after real mid-read cancellation"),
      Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task MidReadCancellationPresentsInterruptedResult()
@@ -494,7 +515,7 @@ public sealed class RouteListApplicationIntegrationTests
         using var error = new StringWriter();
 
         var pending = CliHost.RunAsync(
-            ["route", "list", "root", "--depth=all", "--json"],
+            ["route", "list", "root", "--depth=all", "--format", "json"],
             workspace.Path,
             new CliOutputWriters(output, error),
             cancellation.Token);
@@ -505,10 +526,10 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(130, exitCode);
         Assert.Equal(string.Empty, error.ToString());
         using var document = JsonDocument.Parse(output.ToString());
-        Assert.Equal("interrupted", document.RootElement.GetProperty("status").GetString());
+        Assert.Equal("cancelled", document.RootElement.GetProperty("status").GetString());
         Assert.Equal(
             "route-list.interrupted",
-            document.RootElement.GetProperty("result").GetProperty("findings")[0].GetProperty("code").GetString());
+            document.RootElement.GetProperty("findings")[0].GetProperty("code").GetString());
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

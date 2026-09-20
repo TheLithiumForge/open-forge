@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 3,
+  "command": "route create",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot create .agents/memory/project-alpha/overview.md: .agents/memory/project-alpha/overview.md already exists with different content.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-create.target-content-differs",
+      "title": "Existing target differs",
+      "message": ".agents/memory/project-alpha/overview.md already exists with different content.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/memory/project-alpha/overview.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route update memory/project-alpha/overview",
+          "reason": "Update the existing route explicitly, then rerun Route Create if needed."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "memory/project-alpha/overview",
+      "path": ".agents/memory/project-alpha/overview.md"
+    },
+    "listedIn": null,
+    "template": null
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route update memory/project-alpha/overview",
+    "reason": "Update the existing route explicitly, then rerun Route Create if needed."
+  }
+}

@@ -17,23 +17,27 @@ internal static class LibraryReadInputs
     internal static CliInvocation Invocation()
         => new(
             new CliProcessIdentity("open-forge", "0.0.0-dev"),
-            new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal),
+            new CliPresentation(CliFormat.Json, CliDetail.Standard, null),
             CliTerminalMode.None,
             new CliWorkspaceRequest(Workspace.LexicalRoot, Workspace.LexicalRoot),
             Workspace);
 
     internal static CliInvalidBindingInput ParserInvalid(CliBindingParse parse)
+        => Invalid(parse, new CliInvalidInput("cli.parser.invalid", CliInvalidInputSource.Parser,
+            parse.Result.Errors.Select(error => error.Message)));
+
+    internal static CliInvalidBindingInput Invalid(CliBindingParse parse, CliInvalidInput input)
         => new(
-            new CliInvalidInput("cli.parser.invalid", CliInvalidInputSource.Parser, parse.Result.Errors.Select(error => error.Message)),
+            input,
             new CliGlobalInput(
                 WorkspaceValue: Workspace.LexicalRoot,
                 WorkspaceOccurrences: 1,
-                OutputFormat: CliOutputFormat.Json,
-                JsonOccurrences: 1,
-                View: CliView.Expanded,
-                ViewOccurrences: 0,
-                Verbosity: CliVerbosity.Normal,
-                VerboseOccurrences: 0,
+                OutputFormat: CliFormat.Json,
+                FormatOccurrences: 1,
+                Detail: CliDetail.Standard,
+                DetailOccurrences: 0,
+                Filter: null,
+                FilterOccurrences: 0,
                 Help: false,
                 HelpOccurrences: 0,
                 Version: false,

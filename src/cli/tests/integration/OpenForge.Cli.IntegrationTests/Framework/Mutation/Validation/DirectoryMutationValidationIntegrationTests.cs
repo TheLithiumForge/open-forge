@@ -16,6 +16,7 @@ public sealed class DirectoryMutationValidationIntegrationTests : IDisposable
     private readonly WorkspaceLockTestStore lockStore = WorkspaceLockTestStore.Create(
         "directory-validation-lock-store");
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Combined preflight preserves explicit parent-first directory and file order")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CombinedPreflightAcceptsExplicitParentFirstClosure()
@@ -52,6 +53,7 @@ public sealed class DirectoryMutationValidationIntegrationTests : IDisposable
         Assert.False(File.Exists(filePath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Combined preflight blocks reversed or omitted missing directory parents")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CombinedPreflightRequiresExplicitParentFirstClosure()
@@ -90,6 +92,7 @@ public sealed class DirectoryMutationValidationIntegrationTests : IDisposable
         Assert.False(Directory.Exists(child.LogicalPath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File-only preflight preserves its prospective missing-parent behavior")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task FileOnlyPreflightBehaviorRemainsUnchanged()
@@ -110,6 +113,7 @@ public sealed class DirectoryMutationValidationIntegrationTests : IDisposable
         Assert.False(Directory.Exists(temporary.Combine("missing")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Combined preflight requires .agents as an ordinary parent-first directory effect")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CombinedPreflightRequiresExactAgentsParentClosure()
@@ -140,6 +144,7 @@ public sealed class DirectoryMutationValidationIntegrationTests : IDisposable
         Assert.False(Directory.Exists(temporary.Combine(".agents")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Combined preflight rejects cross-effect physical aliases and external aliases")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CombinedPreflightEnforcesResolvedPhysicalUniquenessAndContainment()
@@ -186,6 +191,7 @@ public sealed class DirectoryMutationValidationIntegrationTests : IDisposable
         Assert.False(Directory.Exists(Path.Combine(outside.Path, "target")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Combined revalidation requires a live matching lease and a nonempty plan")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CombinedRevalidationRequiresLiveLeaseAndNonemptyPlan()

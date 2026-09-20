@@ -8,7 +8,7 @@ open-forge:
 
 ## Which specialized capability would help with this work?
 
-Skills provide specialized capabilities through native `SKILL.md` packages. Each Skill follows the rules in its own `SKILL.md`.
+A Skill is a native capability package entered through `SKILL.md`. That file defines how to use the Skill and its supporting resources.
 
 ## Axioms
 
@@ -18,6 +18,4 @@ Skills provide specialized capabilities through native `SKILL.md` packages. Each
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - none - No entries - #Empty
-<!-- open-forge:generated-index:end -->

@@ -69,8 +69,8 @@ open-forge status [global flags]
 ```
 
 `status` has no operands or operation-specific flags. The shared [Global CLI
-Flags](../shared/global-flags/interface.md) contract defines `--workspace`, `--json`,
-`--view`, `--verbose`, `--help`, and `--version`. All six apply to `status` under
+Flags](../shared/global-flags/interface.md) contract defines `--workspace`, `--format json`,
+`--detail`, `--detail debug`, `--help`, and `--version`. All six apply to `status` under
 that contract. Their complete spelling, value grammar, defaults, repetition,
 composition, terminal behavior, and shared errors remain in that contract rather
 than being redefined here.
@@ -101,11 +101,8 @@ non-directory workspace is blocked.
 - Entrypoints, generated `Entries`, loading tags, and overwrite companions needed
   to calculate startup and continuity context.
 - The current `Loader`'s direct root categories.
-- The exact `.agents/open-forge.lifecycle.json` lifecycle document, schema v1,
-  with isolated `framework` and `extensions` sections.
-- The exact `.agents/open-forge.libraries.json` Workspace Library record, schema
-  v1, including its typed Library IDs, source-root facts, and registered path
-  mappings.
+- One shared read of `.agents/open-forge.lock.json`, with separate Framework,
+  Extension, and Library claims, including typed Library roots and mappings.
 - The current user's external recovery store at
   `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
 Environment.SpecialFolderOption.None)/OpenForge/recovery/v1`, limited to
@@ -117,49 +114,38 @@ content. It does not build the complete context graph, parse ordinary links or
 named sections, validate every route, inspect unrelated workspace files, or
 construct a mutation plan.
 
-### Unified Lifecycle Facts
+### Ownership And Current Target Facts
 
-Status reads `.agents/open-forge.lifecycle.json`, schema v1, as a common envelope
-with isolated `framework` and `extensions` sections. Co-location does not merge
-their authority. Framework source, target, and region facts remain separate from
-Extension package, dependency, ownership, and baseline facts. Status reports
-only facts it can read safely and never writes, rebaselines, repairs, or publishes
-a lifecycle section. The document stores no plan, runtime history, journal,
-recovery-bundle evidence, or session. Files outside this exact path are ordinary
-workspace content, not lifecycle input.
+Ownership is read from `.agents/open-forge.lock.json` through the shared forgiving
+reader. Framework, Extension, and Library claims remain separate. Neither the
+old lifecycle document nor the old Library record supplies ownership facts.
+An absent, unreadable, nonordinary, malformed, or uninterpretable lock supplies
+no usable claims and produces an informational ownership observation, without
+blocking the command or reconstructing ownership from files. Read-only commands
+never create or repair the lock. Actual source, target, route, and recovery
+boundaries still determine their own coverage and findings.
 
-For a trusted Framework section with available source evidence, a valid derived
-Entries target is current when the safely observed generated region matches the
-current authored topology at that exact path. A different recorded generated
-fingerprint alone is not drift after Extension installation or indexing. This
-read-only comparison preserves the recorded fingerprint and does not rebaseline
-lifecycle state or authorize mutation. Authored targets, stale or malformed
-navigation, missing targets and unavailable or blocked evidence retain their
-separate checks.
+Target comparison uses actual disk content against current intended content:
+the running embedded Framework payload, or the currently read exact Extension
+source recorded by its owner. A recorded version or stored content hash does not
+gate comparison. Missing targets remain `missing`; unavailable reads or intended
+sources remain `unavailable`; unsafe physical or Markdown boundaries remain
+`blocked`. Comparable content is `current` when equal and `changed` otherwise.
+The existing immutable `open-forge-markdown-v1` policy normalizes line endings
+and eligible generated content only; authored whitespace and final-newline
+choices remain significant. Non-Markdown Extension payloads use exact bytes.
+Comparison evidence is computed during the invocation and stores no baseline.
 
-Each section retains its finite state:
+Root managed hosts compare only their `open-forge` region. Scoped Framework
+entrypoints use the existing canonical payload alignment; ambiguous or missing
+alignment makes intended comparison unavailable. Generated Entries compare with
+the current authored route projection, without consulting stored fingerprints.
 
-| State        | Status meaning                                                                                                                                                                 |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `absent`     | Complete inspection proves that no expected managed state, managed boundary, or recovery-bundle residual exists. It does not claim that unmanaged or idless content is absent. |
-| `trusted`    | Supported document and section facts bind the exact workspace and managed identities, preserve internal consistency, and provide complete verifiable coverage.                 |
-| `untrusted`  | Some lifecycle facts are readable, but provenance, integrity, compatibility, identity, or coverage cannot establish current trust.                                             |
-| `incomplete` | Safe required lifecycle or source coverage is unavailable.                                                                                                                     |
-| `blocked`    | Malformed, ambiguous, colliding, or unsafe lifecycle identity prevents a safe classification.                                                                                  |
-
-The absence of `.agents/open-forge.lifecycle.json` alone does not establish an
-unmanaged or empty workspace. `absent` requires complete inspection of the
-expected managed footprint, managed boundaries, and exact-name recovery
-candidates. Unsupported or ambiguous schema facts are `incomplete` when safely
-unavailable and `blocked` when unsafe. The persistent external workspace-lock
-file is not lifecycle authority or recovery-bundle evidence and does not affect
-these states.
-
-An invalid or unavailable package source does not erase independently readable
-installed Extension IDs, ownership, recorded paths, or lifecycle facts. Status
-marks source-dependent comparison as unavailable or incomplete instead of
-claiming a current source, update plan, or managed no-op. A path, matching bytes,
-matching fingerprint, or familiar route never promotes an untrusted state.
+The existing lifecycle vocabulary remains a presentation of observed coverage.
+`absent` still requires independent complete footprint and recovery inspection;
+no lock or matching file alone proves absence or ownership. Readable claims may
+remain reportable while their source is unavailable. An unavailable lock yields
+an observation, not an installation error or a trusted empty inventory.
 
 Workspace Library records and registered projections remain a separate
 consumer-local authority from Framework and Extension lifecycle state. Status
@@ -192,8 +178,8 @@ The inventory follows these rules:
   them.
 - Do not count ordinary local link targets outside `.agents` merely because
   another file links to them.
-- Do not count provider bridges, the lifecycle document, recovery bundles,
-  drafts, or other operational metadata as context.
+- Do not count provider bridges, workspace settings, the ownership lock, recovery
+  bundles, drafts, or other operational metadata as context.
 - Do not count non-Markdown Skill resources or other support files as context.
 
 Malformed Markdown remains measurable when its UTF-8 bytes are readable, even
@@ -293,8 +279,8 @@ startup metrics and must not be added to the startup total.
 
 ### Largest Continuity Sources
 
-The expanded human result shows at most the three logical continuity sources
-with the largest UTF-8 contribution. Compact human output omits this section.
+The standard human result shows at most the three logical continuity sources
+with the largest UTF-8 contribution. Minimal human output omits this section.
 JSON carries every logical continuity-source contribution in deterministic order.
 A logical source with a base and overwrite companion contributes the combined
 size of both ordered layers and appears once under its automatic source ID. The
@@ -366,6 +352,26 @@ counted reliably as a shallow workspace statistic. The [routing model](../../../
 and [scope rules](../../../framework/routing/scope.md)
 define those Framework meanings.
 
+### Generated Navigation
+
+Generated `Entries` remains a structural projection fact. When a generated
+region is `unavailable` only because exact typed evidence proves that its direct
+ordinary Markdown or recognized-entrypoint metadata is readable but malformed,
+Status retains that structural `unavailable` fact and records one
+`status.generated-navigation-metadata-invalid` Warning finding for each actual
+malformed source path and observed cause. Status may make this distinction only
+when all direct dependency observations are readable, contained, and otherwise
+projectable, and a pure counterfactual re-projection that treats only those
+malformed ordinary metadata facts as missing, with the eligible automatic-ID
+fallback, confirms that no other projection blocker exists. Status never
+publishes substitute metadata or generated entries and remains read-only.
+
+Unreadable or coverage-incomplete facts remain `incomplete`; unsafe or
+ambiguous facts remain `blocked`; native Skill metadata and other native
+failures remain strict. Known installed, toolkit, context, lifecycle, and other
+independently projectable facts remain in the result. This exception is not a
+healthy or complete generated-projection claim.
+
 ### Extensions And Managed Files
 
 `Extensions` counts distinct installed Extension IDs in trusted `extensions`
@@ -383,11 +389,11 @@ Untrusted or unavailable facts are not converted to empty or trusted counts.
 
 Each lifecycle-recorded managed path contributes once to exactly one state:
 
-| State     | Meaning                                                         |
-| --------- | --------------------------------------------------------------- |
-| `current` | Current semantic identity matches the recorded baseline         |
-| `changed` | The path exists but its semantic identity differs from baseline |
-| `missing` | The recorded path does not exist                                |
+| State     | Meaning                                                           |
+| --------- | ----------------------------------------------------------------- |
+| `current` | Current semantic identity matches the current intended payload    |
+| `changed` | Comparable disk content differs from the current intended payload |
+| `missing` | The recorded path does not exist                                  |
 
 Shared owner sets do not multiply the file count. These are lifecycle facts, not
 claims about runtime meaning, user intent, safe replacement, removal authority,
@@ -401,15 +407,12 @@ workspace's current installation or of a proven runtime implementation.
 
 ### Workspace Libraries
 
-Status reads the exact consumer-owned `.agents/open-forge.libraries.json`
-record, schema v1, as a bounded projection catalogue. The record is separate
-from `.agents/open-forge.lifecycle.json` and does not grant Framework or
-Extension ownership. A readable record reports its exact `id`, `sourceRoot`, `destinationRoot`, and
-ordered `paths` entries. Status derives bounded mapping facts for each entry—
-`sourcePath`, `destinationPath`, and `expectedRelativeLink`—without changing the
-record. A missing record is an absent Library record, not an inference that
-source content or projections are absent; malformed, unavailable, or unsafe
-record identity is reported as the corresponding bounded condition.
+Status reads the `libraries` claims from the same lock snapshot supplied to the
+Framework and Extension contributors. Typed IDs, source roots, destination roots,
+and source-relative paths derive bounded mapping facts. An unavailable lock or
+uninterpretable Library claims produce `library-ownership-observation` with
+complete command status, no registrations, and no inferred ownership. Record
+state remains missing, invalid, or unavailable rather than a valid empty record.
 
 For each recorded Library, Status observes the source root only far enough to
 establish workspace-relative lexical and physical containment, an ordinary
@@ -433,7 +436,7 @@ The bounded summary exposes the record state, Library IDs, source-root and
 source-availability facts, registered-link count, and counts partitioned into
 `current`, `missing`, `changed`, `blocked`, and `unavailable`. A safely observed
 missing or changed registered link is projection drift and maps to
-`attention`; unavailable coverage maps to `incomplete`; unsafe or ambiguous
+`completed-with-warnings`; unavailable coverage maps to `incomplete`; unsafe or ambiguous
 identity maps to `blocked`. These counts do not claim complete source inventory,
 source additions, retirements, or adoption.
 
@@ -486,575 +489,251 @@ workspace lock as a recovery bundle.
 
 ## Human Output
 
-Human output starts with the observed installation outcome, status, workspace
-identity and selection method. Findings that explain a non-complete result appear
-before the summaries, grouped by exact code, status and cause. Each distinct
-subject remains visible. Generated-navigation findings may refer to Routes
-instead of repeating paths already present there as non-current observations;
-unmatched subjects remain beside their finding. The sections are Context, Routes, Framework, Extensions,
-Libraries and Recovery, followed by the supported next action.
+The command uses the shared native report. The default detail is `minimal`; `standard`, `full` and `debug` add the catalogue-defined facts. `--detail-filter <error|warning|info|all>` is repeatable and changes only the rendered detail. Use `--format text` for this text report. Primary result text for `completed`, `completed-with-warnings` and `incomplete` is on stdout; primary errors for `invalid-input`, `blocked`, `failed` and `cancelled` are on stderr. There is no `Status:` line.
 
-Expanded is the default. Compact retains startup and continuity measurements,
-root changes, lifecycle and Library state, recovery candidates and required next
-actions. Current generated-navigation paths are summarized by count in compact;
-every non-current path remains visible. Expanded adds all observed navigation
-paths, total context and the at-most-three largest continuity sources. Both views
-show navigation counts by actual state; a check that could not finish is never
-reported as current or as a successful empty result. Paths are not truncated.
+### Statuses and headlines
 
-Both views remain understandable without colour. Zero values stay visible when
-omission would make absence ambiguous. Expanded explains the same observed
-facts; it does not run extra checks.
+| Status                  | When                                                                                                           | Headline                                                                                                                  | Exit | Stream |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | installed, every check complete, nothing needs a look                                                          | `Open Forge is installed and current.`                                                                                    |    0 | stdout |
+| completed               | not installed (no `.agents/loader.md`)                                                                         | `Open Forge is not installed in <workspace path>.`                                                                        |    0 | stdout |
+| completed               | installed, only Info findings (no ownership record)                                                            | `Open Forge is installed and current.` then the Info rows at `full`                                                       |    0 | stdout |
+| completed-with-warnings | changed or missing Framework or Extension files, stale Entries, a proven readable ordinary metadata-invalid generated region, missing Library links, recovery bundle present | `Open Forge is installed, but <N> files need attention.` or `... <N> things need attention.` when a warning is not a file |    2 | stdout |
+| incomplete              | a measurement or record could not be read                                                                      | `Open Forge is installed, but some checks could not finish.`                                                              |    3 | stdout |
+| incomplete + warnings   | both                                                                                                           | `Open Forge is installed, but <N> files need attention and some checks could not finish.`                                 |    3 | stdout |
+| invalid-input           | bad flag or operand                                                                                            | family `invalid-input`: `Cannot check status: <problem>.`                                                                 |    4 | stderr |
+| blocked                 | workspace missing, not a directory, unsafe, or a boundary cannot be checked safely                             | `Cannot check this workspace: <reason>.`                                                                                  |    5 | stderr |
+| failed                  | unexpected error                                                                                               | `Status stopped because of an unexpected error: <reason>.`                                                                |    1 | stderr |
+| cancelled               | Ctrl+C                                                                                                         | `Status was cancelled.`                                                                                                   |  130 | stderr |
 
-Both views show separate verified-final and incomplete-draft counts and report
-every exact-name candidate's path and integrity condition. A malformed,
-unsupported, or unavailable final remains visible as an issue and is never folded
-into the verified-final count.
+### Text by level
 
-Primary human rendering for `complete`, `attention`, and `incomplete` goes to
-stdout. Primary human rendering for `invalid`, `blocked`, `failed`, and
-`interrupted` goes to stderr. `--json` writes one complete structured result to
-stdout for every semantic result. Separate bounded diagnostics go to stderr, and
-human text is not mixed into JSON stdout.
-
-Expanded human output retains lifecycle trust and coverage state. Compact output
-may combine that state with its Extension and managed-file summaries. Zero values
-remain visible. An absent section uses `0 recorded` Extensions, while a trusted
-empty section uses `0`; both use `none recorded` managed files.
-
-Both views retain the bounded Workspace Library record state, IDs, source-root
-availability, registered-link states, and the current/missing/changed/blocked/
-unavailable counts. They do not render a complete source inventory or turn a
-registered-link drift observation into a repair action.
-
-When the typed semantic status is `attention`, human output renders it as
-`requires attention` because the phrase is clearer on first read.
-
-Compact view uses at most one operation-level `Next:` line, and only when it is
-useful. It uses these rules:
-
-- `complete`: no `Next:` line.
-- `attention`: `Next: open-forge doctor`.
-- `incomplete`: `Next: open-forge doctor`, unless a more direct safe correction
-  is known, in which case it names that correction.
-- `invalid`: `Next: correct the named input`.
-- `blocked`: `Next: correct the named workspace or safety boundary and rerun`.
-- `failed`: `Next: report the failure and retry with bounded diagnostics`.
-- `interrupted`: `Next: rerun the same request`.
-
-Status never lists repair or lifecycle proposals in `Next:` or elsewhere in its
-summary.
-
-Illustrative excerpt from expanded output:
+`minimal`, healthy:
 
 ```text
-Open Forge is installed.
-Status: requires attention
-Workspace: /work/demo
-Selected by: current directory
-
-Context
-  Shipped startup: 2 files, 9 characters, 11 bytes, ~3 tokens
-  Startup: 4 files, 21 characters, 25 bytes, ~6 tokens
-  Difference: 2 files, 12 characters, 14 bytes, ~3 tokens
-  Continuity (may load again): 2 files, 12 characters, 15 bytes, ~3 tokens
-Startup share: 25%
-  Total available context: 7 files, 81 characters, 100 bytes, ~21 tokens
-Largest continuity sources
-  memory/alpha: 10 bytes
-  memory/beta: 10 bytes
-
-Routes
-Root categories: 3
-  Added: custom
-  Removed: patterns
-Generated navigation:
-  1 need updating
-  .agents/directives/_directives.md: need updating
+Open Forge is installed and current.
+  Startup reads 19 of 22 routed files, about 8.0k tokens.
 ```
 
-The values are illustrative. They do not claim to be a current measurement of
-this repository.
+`minimal`, healthy with Extensions and a Library:
 
-Empty lists use `none`; an empty observed navigation list uses `none observed`.
-Absent lifecycle sections use `none recorded` for managed files. An uninstalled workspace states
-that Open Forge is not installed and marks current startup, Difference, startup
-percentage, continuity, and root-category facts as not-applicable. It keeps the
-initial measurement when the embedded payload is available and keeps total
-available context numeric when that physical inventory is safely measurable. It
-never fabricates zero for an unavailable or not-applicable fact.
+```text
+Open Forge is installed and current.
+  Startup reads 19 of 22 routed files, about 8.0k tokens.
+  Extensions: development 0.1.0, planning 0.1.0
+  Libraries: team-knowledge (12 links)
+```
+
+`minimal`, warnings:
+
+```text
+Open Forge is installed, but 2 files need attention.
+  Warning  .agents/maps/_maps.md         changed since it was installed
+  Warning  .agents/patterns/_patterns.md  missing; it was installed by the Framework
+  Startup reads 19 of 22 routed files, about 8.0k tokens.
+Next: open-forge update
+```
+
+`minimal`, incomplete:
+
+```text
+Open Forge is installed, but some checks could not finish.
+  Startup context could not be measured: .agents/maps/_maps.md could not be read completely.
+Next: open-forge doctor
+```
+
+`minimal`, not installed:
+
+```text
+Open Forge is not installed in D:/work/myrepo.
+Next: open-forge install --dry-run
+```
+
+`standard` adds, in this order after the findings: `Workspace: <path>`, then
+
+```text
+Startup context
+  Shipped by this CLI:  19 files, about 8.0k tokens
+  This workspace:       19 files, about 8.0k tokens
+  May load again later:  4 files, about 1.0k tokens
+  All routed files:     22 files, about 9.9k tokens (startup is 81%)
+Routes: 8 root categories, 20 Entries sections current
+Framework files: 21 current
+Extensions: development 0.1.0 (3 files current)
+Libraries: team-knowledge, shared/team -> docs (12 links current)
+Recovery data: none
+```
+
+Lines whose count is zero are omitted (`Recovery data: none` is shown only at
+`full`). `Difference` appears only when non-zero: `Added since shipped: 2
+files, about 400 tokens`. Root categories added or removed appear as
+`added: custom` and `removed: patterns` on the Routes line.
+
+`full` adds every Framework file with its state, every Entries section with
+its state, every Extension file, every Library link with expected and
+observed targets, the three largest may-load-again sources, and the recovery
+bundle paths with their integrity.
+
+`debug` adds the operational contributor coverage on stderr.
+
+### Representative transcripts by status
+
+### Transcript — completed
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#status-completed).
+
+### Transcript — completed-with-warnings
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#status-completed-with-warnings).
+
+### Transcript — incomplete
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#status-incomplete). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Status/__snapshots__/StatusBeforeOutputSnapshotTests/InstalledWorkspace/unreadable-entry-file.minimal.txt).
+
+### Transcript — invalid-input
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#status-invalid-input). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Status/__snapshots__/StatusBeforeOutputSnapshotTests/WorkspaceBoundary/invalid-input.standard.txt).
+
+### Transcript — blocked
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#status-blocked). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Status/__snapshots__/StatusBeforeOutputSnapshotTests/WorkspaceBoundary/blocked-workspace.minimal.txt).
+
+### Transcript — failed
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#status-failed).
+
+### Transcript — cancelled
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#status-cancelled).
 
 ## Structured Output
 
-`--json` exposes the same typed facts used by human output:
+`--format json` writes one schema-3 envelope to stdout for every report status. It contains the command, status, workspace when applicable, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
 
-- Workspace and selection method
-- Framework installation state
-- Initial, current, and difference context measurements
-- Total available and continuity measurements
-- Deterministically ordered continuity-source contributions
-- Root-category count, additions, and removals
-- Extension and managed-file states
-- Framework and Extension lifecycle trust, ownership, and source-
-  availability observations
-- Bounded Workspace Library record state, IDs, source-root availability,
-  registered-link observations, destination-derived source IDs, and partitioned
-  current/missing/changed/blocked/unavailable counts
-- Separate verified-final and incomplete-draft counts, plus every exact-name
-  candidate's path, kind, and integrity condition; malformed, unsupported, and
-  unavailable finals remain issue items and are not counted as verified
-- Measurement availability and semantic result
+### JSON data by level
 
-The shared schema-v1 envelope remains exactly as defined by the [Shared Result
-Coordinates](../shared/result-coordinates/interface.md). Its non-null
-command-local `result` object uses camel-case members in exactly this order:
+| Level    | `data` members                                                                                                                                                                                                                                                                                 |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| minimal  | `installation { state, entryPath, loaderPath }`, `context { startup { shipped, current, difference, mayLoadAgain } each { files, characters, bytes, tokens }, allRouted { same }, startupShare }`, `extensions [ { id, version } ]`, `libraries [ { id, sourceRoot, destinationRoot } ]`       |
+| standard | adds `structure { rootCategories { count, added, removed } }`, per-Extension `files { current, changed, missing }`, per-Library `links { current, missing, changed }`                                                                                                                          |
+| full     | adds `frameworkFiles [ { path, state } ]`, `entriesSections [ { path, state } ]`, per-Extension `files [ { path, state } ]`, per-Library `links [ { path, state, expectedTarget, observedTarget } ]`, `context.mayLoadAgainSources [...]`, `recovery.candidates [ { path, kind, integrity } ]` |
 
-```text
-result: {
-  installation,
-  context,
-  structure,
-  lifecycle,
-  library,
-  recovery,
-  findings
-}
-```
-
-The command-local graph is:
-
-```text
-installation: {
-  state,
-  entryPath,
-  loaderPath
-}
-
-context: {
-  tokenEstimator,
-  startup: {
-    initial,
-    current,
-    difference
-  },
-  totalAvailable,
-  startupPercentage,
-  continuity,
-  continuitySources: [{
-    sourceId,
-    utf8Bytes,
-    layers: [{ path, utf8Bytes }]
-  }]
-}
-
-structure: {
-  rootCategories: {
-    count,
-    added,
-    removed
-  },
-  generatedNavigation: [{ path, state }]
-}
-
-lifecycle: {
-  framework: {
-    state,
-    sourceAvailability,
-    targets: [{
-      path,
-      kind,
-      sourceAssetPath,
-      region,
-      baselineFingerprint,
-      fingerprintKind,
-      state
-    }]
-  },
-  extensions: {
-    state,
-    sourceAvailability,
-    installed: [{
-      id,
-      version,
-      source,
-      sourceAvailability,
-      dependencies,
-      paths
-    }],
-    managedFiles: {
-      counts: {
-        current,
-        changed,
-        missing,
-        unavailable,
-        blocked
-      },
-      targets: [{
-        path,
-        owners,
-        baselineFingerprint,
-        fingerprintKind,
-        state
-      }]
-    }
-  }
-}
-
-library: {
-  state,
-  record: { path, state },
-  records: [{
-    id,
-    sourceRoot,
-    destinationRoot,
-    sourceRootState,
-    sourceAvailability,
-    registeredLinks: {
-      registered,
-      counts: { current, missing, changed, blocked, unavailable },
-      links: [{
-        sourcePath,
-        destinationPath,
-        expectedRelativeLink,
-        sourceId,
-        state
-      }]
-    }
-  }],
-  counts: { registered, current, missing, changed, blocked, unavailable }
-}
-
-recovery: {
-  verifiedFinals,
-  incompleteDrafts,
-  candidates: [{ path, kind, integrity }]
-}
-
-findings: [{
-  code,
-  status,
-  subject,
-  cause
-}]
-```
-
-Every array is present and non-null, including an empty array. Every object in
-this graph is present and non-null. Only `installation.entryPath`,
-`installation.loaderPath`, a Framework target's `sourceAssetPath` and `region`,
-an installed Extension's `version` and `source`, a finding's `subject`, and the
-`value` member of the typed numeric values below may be `null`.
-
-Each measurement uses the exact member order `files`, `characters`,
-`utf8Bytes`, and `estimatedTokens`. Each member is one integer value object:
-
-```text
-{ state: "available" | "unavailable" | "not-applicable", value: integer | null }
-```
-
-`startupPercentage` uses the same member order and availability states, with a
-finite decimal JSON number or `null` as `value`. A numeric `value` is present
-exactly when `state` is `available`; it is `null` for `unavailable` and
-`not-applicable`. Signed Difference values remain numeric and may be negative.
-All other count and byte values are nonnegative. Zero is an available numeric
-value and is never used for either unavailable state. `tokenEstimator` is the
-exact value `ceiling-characters-divided-by-four`.
-
-The remaining command-local finite values are:
-
-| Coordinate                     | Values                                                                      |
-| ------------------------------ | --------------------------------------------------------------------------- |
-| `installation.state`           | `installed`, `uninstalled`, `incomplete`, `blocked`                         |
-| lifecycle `state`              | `absent`, `trusted`, `untrusted`, `incomplete`, `blocked`                   |
-| `sourceAvailability`           | `available`, `unavailable`, `not-applicable`                                |
-| Framework target `kind`        | `file`, `managed-region`, `generated-region`                                |
-| managed target `state`         | `current`, `changed`, `missing`, `unavailable`, `blocked`                   |
-| generated-navigation `state`   | `current`, `changed`, `missing`, `unavailable`, `blocked`, `not-applicable` |
-| recovery candidate `kind`      | `final`, `draft`                                                            |
-| recovery candidate `integrity` | `verified`, `incomplete`, `malformed`, `unsupported`, `unavailable`         |
-| Library `state`                | `absent`, `trusted`, `incomplete`, `blocked`                                |
-| Library record `state`         | `missing`, `complete`, `invalid`, `unavailable`, `blocked`                  |
-| Library `sourceRootState`      | `available`, `missing`, `unavailable`, `invalid`, `blocked`                 |
-| Library `sourceAvailability`   | `available`, `unavailable`, `not-applicable`                                |
-| registered-link `state`        | `current`, `missing`, `changed`, `blocked`, `unavailable`                   |
-| finding `status`               | the seven exact shared semantic status values                               |
-
-Continuity sources follow their contracted contribution order. Their layers
-remain in base-then-overwrite order. Root `added` and `removed` arrays retain
-their contracted source order. Framework and Extension targets are ordered by
-canonical path. Installed Extensions are ordered by ID; their dependencies,
-paths, and target owners use deterministic ordinal order. Recovery candidates
-are ordered by path, then kind, then integrity. Library records are ordered by
-Library ID; registered links are ordered by canonical destination path, then
-source path. Findings are ordered by finding code, subject, and cause after
-semantic precedence is formed.
-
-The exact finite Status finding codes and their status are:
-
-| Code                               | Status        |
-| ---------------------------------- | ------------- |
-| `invalid-input`                    | `invalid`     |
-| `workspace-unavailable`            | `blocked`     |
-| `workspace-not-directory`          | `blocked`     |
-| `workspace-unsafe`                 | `blocked`     |
-| `entry-unavailable`                | `incomplete`  |
-| `embedded-framework-unavailable`   | `incomplete`  |
-| `context-inventory-incomplete`     | `incomplete`  |
-| `startup-context-unavailable`      | `incomplete`  |
-| `continuity-context-unavailable`   | `incomplete`  |
-| `root-categories-unavailable`      | `incomplete`  |
-| `generated-navigation-changed`     | `attention`   |
-| `generated-navigation-missing`     | `attention`   |
-| `generated-navigation-unavailable` | `incomplete`  |
-| `generated-navigation-blocked`     | `blocked`     |
-| `framework-lifecycle-untrusted`    | `incomplete`  |
-| `framework-lifecycle-incomplete`   | `incomplete`  |
-| `framework-lifecycle-blocked`      | `blocked`     |
-| `framework-target-changed`         | `attention`   |
-| `framework-target-missing`         | `attention`   |
-| `framework-target-unavailable`     | `incomplete`  |
-| `framework-target-blocked`         | `blocked`     |
-| `extension-lifecycle-untrusted`    | `incomplete`  |
-| `extension-lifecycle-incomplete`   | `incomplete`  |
-| `extension-lifecycle-blocked`      | `blocked`     |
-| `extension-source-unavailable`     | `incomplete`  |
-| `extension-target-changed`         | `attention`   |
-| `extension-target-missing`         | `attention`   |
-| `extension-target-unavailable`     | `incomplete`  |
-| `extension-target-blocked`         | `blocked`     |
-| `recovery-candidate-verified`      | `attention`   |
-| `recovery-draft-incomplete`        | `incomplete`  |
-| `recovery-final-malformed`         | `incomplete`  |
-| `recovery-final-unsupported`       | `incomplete`  |
-| `recovery-final-unavailable`       | `incomplete`  |
-| `recovery-catalogue-unavailable`   | `incomplete`  |
-| `library-record-malformed`         | `blocked`     |
-| `library-record-unavailable`       | `incomplete`  |
-| `library-source-root-invalid`      | `blocked`     |
-| `library-source-root-aliased`      | `blocked`     |
-| `library-source-root-unavailable`  | `incomplete`  |
-| `library-projection-missing`       | `attention`   |
-| `library-projection-changed`       | `attention`   |
-| `library-projection-unavailable`   | `incomplete`  |
-| `library-projection-blocked`       | `blocked`     |
-| `library-extension-collision`      | `blocked`     |
-| `operation-failed`                 | `failed`      |
-| `interrupted`                      | `interrupted` |
-
-The shared `command`, `status`, `workspace`, and `next` coordinates are not
-duplicated under `result`. Numeric fields remain numeric. Signed differences
-remain derived from the two measured inputs. Unavailable, zero, and
-not-applicable values remain distinct and are never substituted for one another.
-The Shared Result Coordinates continue to define shared envelope compatibility
-and exit mapping. This Interface owns compatibility for the exact Status-local
-graph, field order, presence, nullability, and finite values above.
-
-For an attention result, structured output keeps the semantic status value
-`attention`; only human presentation uses `requires attention`.
-
-`--verbose` may add bounded diagnostic evidence under the shared [Global CLI
-Flags](../shared/global-flags/interface.md) contract. Those diagnostics use
-stderr. It does not change collection, measurements, ordering, semantic result,
-or exit behavior, and it does not add Doctor diagnosis or recommendations. The
-exact Status diagnostic fields and redaction remain bounded command-local
-implementation details under the accepted CLI Architecture and Gate 5 evidence.
-
-## Architecture Boundary
-
-These implementation boundaries are routed to their exact current authorities
-and are not duplicated by this contract:
-
-- **Structured schema and compatibility.** JSON exposes the same typed facts as
-  human output and keeps numeric, zero, unavailable, and not-applicable
-  distinctions. Exact field names, schema version, compatibility rules, and JSON
-  representations follow the [Shared Result
-  Coordinates](../shared/result-coordinates/interface.md); concrete
-  source-generated serialization remains in the [CLI
-  Architecture](../../architecture.md).
-- **Numeric process exits.** Semantic result categories are accepted and
-  structured `attention` remains `attention`; human output says `requires
-attention`. Numeric process-exit mapping follows the [Shared Result
-  Coordinates](../shared/result-coordinates/interface.md).
-- **Token-estimation implementation.** The planning estimate is
-  `ceiling(characters / 4)` and is explicitly not a model tokenizer, billing
-  value, context guarantee, latency estimate, or provider count. The
-  implementation and rounding details beyond the stated display rule follow the
-  accepted Architecture.
-- **Recovery-bundle identity and cleanup boundary.** Status reports every
-  exact-name final and draft candidate in the external
-  LocalApplicationData recovery store for the selected normalized physical
-  workspace path, with verified finals and incomplete drafts counted separately
-  and invalid finals retained as issue items. It does not read live targets or
-  infer activity, does not scan target-adjacent files, and validates payload
-  lengths and hashes only by bounded streaming without extracting, disclosing,
-  retaining, or materializing payload bytes. It does not acquire the workspace
-  lease or report or infer activity. The separate [cleanup
-  contract](../cleanup/interface.md) owns lease-validated candidate deletion.
-  Exact identity, storage, and bounded-validation implementation follow the
-  [Mutation And Recovery Technical
-  Design](../../technical-designs/mutation-and-recovery.md); the shared schema
-  follows the [Shared Result Coordinates](../shared/result-coordinates/interface.md).
-- **Diagnostics and redaction.** `--verbose` may add bounded diagnostic evidence
-  without changing collection, ordering, semantic result, or exit behavior. The
-  exact Status diagnostic fields and redaction remain bounded command-local
-  implementation details under the accepted Architecture and Gate 5 evidence.
-  Their bounded diagnostic stream is stderr as stated above.
-- **.NET source boundaries.** .NET Native AOT is the accepted canonical
-  implementation direction for the CLI. Status has no command-local Technical
-  Design; its concrete module, parser, serializer, filesystem, and source
-  boundaries follow the accepted Architecture.
+Scalars are plain numbers or `null`. Every non-current file is also a finding.
+A proven readable malformed ordinary metadata region keeps its `entriesSections`
+state `unavailable`; its finding subject and cause carry the actual malformed
+source path and observed cause. No new JSON member or structural state is
+introduced for this distinction.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                       | Process completion status        |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| `complete`    | Every applicable status fact was measured and no attention condition exists                                                                                                                                                   | Shared result-coordinate mapping |
-| `attention`   | Measurement completed, but trusted managed files are changed or missing, a registered Library projection is safely missing or changed, a verified recovery final is present, or a finite lifecycle/source observation remains | Shared result-coordinate mapping |
-| `incomplete`  | Safe facts are available, but one or more applicable measurements or bounded Library facts are unavailable or incomplete, including an incomplete draft or a safely reportable invalid final                                  | Shared result-coordinate mapping |
-| `invalid`     | Command input does not follow the accepted grammar                                                                                                                                                                            | Shared result-coordinate mapping |
-| `blocked`     | The command cannot establish the selected workspace or a safe inspection boundary                                                                                                                                             | Shared result-coordinate mapping |
-| `failed`      | An unexpected internal failure prevents normal completion                                                                                                                                                                     | Shared result-coordinate mapping |
-| `interrupted` | The caller cancels or interrupts the operation before completion                                                                                                                                                              | Shared result-coordinate mapping |
+The status and exit mapping above are unchanged by detail or format. Root effects and recovery receipts retain their complete result facts at every detail level; command-owned data follows the catalogue's level rows.
 
-An uninstalled workspace is a valid completed state when its absence can be
-established safely. Differences in context size and added or removed root
-categories do not produce `attention` by themselves.
+### Counts and limitations
 
-A safely observed Library projection drift (`missing` or `changed`) produces
-`attention` only when the bounded record, source-root, and link coverage is
-complete. Unavailable Library facts produce `incomplete`; malformed, aliased,
-colliding, or otherwise unsafe Library identity produces `blocked`. Status does
-not treat the bounded record view as a complete source inventory.
+Counts (JSON `counts`, text sentence at `standard`): `routedFiles`,
+`startupFiles`, `startupTokens`, `mayLoadAgainFiles`, `mayLoadAgainTokens`,
+`allTokens`, `startupShare`, `rootCategories`, `entriesSectionsCurrent`,
+`entriesSectionsStale`, `entriesSectionsMissing`, `frameworkFilesCurrent`,
+`frameworkFilesChanged`, `frameworkFilesMissing`, `extensionsInstalled`,
+`librariesRegistered`, `libraryLinksCurrent`, `libraryLinksMissing`,
+`libraryLinksChanged`, `recoveryBundles`, `recoveryDrafts`. Unavailable
+measurements are `null` with a limitation naming why.
 
-Recovery follows the same existing result precedence: an unavailable recovery
-fact, an exact-name draft, or a safely bounded malformed or unsupported final
-selects `incomplete`; an unsafe or ambiguous recovery inspection boundary selects
-`blocked`. Invalid input, unexpected failure, and interruption retain their
-existing precedence.
+Limitations render at every level as one sentence each, under the findings.
 
-## Errors
+### Next rules
 
-Every error names the status operation, affected workspace or fact, direct cause,
-and a useful next action when one exists.
+One line, chosen in this order: any Framework file warning ->
+`open-forge update`; any Extension file warning -> `open-forge extension
+update <id>` (first id); any Library link warning -> `open-forge library sync
+<id>`; stale Entries -> `open-forge index`; recovery bundle ->
+`open-forge cleanup`; any limitation or blocked -> `open-forge doctor`; not
+installed -> `open-forge install --dry-run`; otherwise none.
 
-- Unexpected operands or operation-specific flags are invalid.
-- A missing `--workspace` value is invalid under the global flag contract.
-- A missing, unavailable, or non-directory selected workspace is blocked.
-- Unsafe containment or physical identity blocks affected inspection.
-- A malformed startup route or unreadable required context produces an
-  incomplete result when safe facts remain available.
-- A malformed, unsupported, or unavailable lifecycle section produces an
-  incomplete or blocked managed-state summary rather than guessed counts.
-- A malformed or unavailable `.agents/open-forge.libraries.json` record, source
-  root, or registered destination produces the typed Library `blocked` or
-  `incomplete` finding; a safely observed missing or changed projection is
-  reported as `attention` and never repaired or adopted by Status.
-- Installed Extension facts remain reportable as source-unavailable facts when
-  package source bytes cannot be read; they are not presented as
-  trusted current source or mutation authority.
+## Errors And Boundaries
 
-Primary human results use stdout for `complete`, `attention`, and `incomplete`;
-primary human errors use stderr for `invalid`, `blocked`, `failed`, and
-`interrupted`. `--json` writes one complete result to stdout for every semantic
-status, and separate bounded diagnostics use stderr.
+The findings catalogue below is the command's finite error and warning vocabulary. Findings keep their code, severity, family, subject and cause; detail filtering affects display only. A blocked, failed or cancelled result prevents further effects according to the catalogue.
+
+### Findings catalogue
+
+Codes gain the `status.` prefix (ledger). Subjects are paths unless stated.
+
+| Code (new)                              | Severity | Family                  | Message                                                                                                   | Next                                |
+| --------------------------------------- | -------- | ----------------------- | --------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| status.invalid-input                    | error    | invalid-input           |                                                                                                           |                                     |
+| status.workspace-unavailable            | error    | workspace-unavailable   |                                                                                                           |                                     |
+| status.workspace-not-directory          | error    | workspace-not-directory |                                                                                                           |                                     |
+| status.workspace-unsafe                 | error    | workspace-unsafe        |                                                                                                           |                                     |
+| status.entry-unavailable                | warning  | local                   | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.entry-unavailable`).                                                                            | `open-forge doctor`                 |
+| status.embedded-framework-unavailable   | warning  | payload-unavailable     |                                                                                                           |                                     |
+| status.context-inventory-incomplete     | warning  | local                   | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.context-inventory-incomplete`).                  | `open-forge doctor`                 |
+| status.startup-context-unavailable      | warning  | local                   | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.startup-context-unavailable`).                                                      | `open-forge doctor`                 |
+| status.continuity-context-unavailable   | warning  | local                   | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.continuity-context-unavailable`).                                                       | `open-forge doctor`                 |
+| status.root-categories-unavailable      | warning  | local                   | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.root-categories-unavailable`).                                           | `open-forge doctor`                 |
+| status.generated-navigation-changed     | warning  | local                   | [`status.message.rebuild-the-entries-section`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.message.the-entries-section-is-stale`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.phrase.the-entries-section-of-is-stale`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.generated-navigation-changed`).                                                                 | `open-forge index`                  |
+| status.generated-navigation-missing     | warning  | local                   | [`shared.phrase.has-no-entries-section`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedPhrases.cs), [`status.message.rebuild-the-entries-section`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.message.there-is-no-entries-section`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.generated-navigation-missing`).                                                                          | `open-forge index`                  |
+| status.generated-navigation-unavailable | warning  | local                   | [`status.message.the-entries-section-could-not-be-read`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.phrase.the-entries-section-of-could-not-be-read`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.generated-navigation-unavailable`).                                                        | `open-forge doctor`                 |
+| status.generated-navigation-metadata-invalid | warning  | local                   | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); existing generated-navigation selection with the actual malformed source path and observed cause. | `open-forge doctor`                 |
+| status.generated-navigation-blocked     | error    | generated-region-unsafe |                                                                                                           |                                     |
+| status.framework-ownership-observation  | info     | ownership-observation   | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.framework-ownership-observation`).                            |                                     |
+| status.extension-ownership-observation  | info     | ownership-observation   | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.extension-ownership-observation`).                           |                                     |
+| status.library-ownership-observation    | info     | ownership-observation   | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.library-ownership-observation`).                                      |                                     |
+| status.framework-lifecycle-untrusted    | warning  | lifecycle-unavailable   | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.framework-lifecycle-untrusted`).                              | `open-forge doctor`                 |
+| status.framework-lifecycle-incomplete   | warning  | lifecycle-unavailable   |                                                                                                           |                                     |
+| status.framework-lifecycle-blocked      | error    | lifecycle-blocked       |                                                                                                           |                                     |
+| status.framework-target-changed         | warning  | local                   | [`shared.label.changed-since-it-was-installed`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedText.cs), [`status.message.update-the-framework-files-that-need-attention`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.framework-target-changed`).                                                                  | `open-forge update`                 |
+| status.framework-target-missing         | warning  | local                   | [`status.label.missing-it-was-installed-by-the-framework`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.message.update-the-framework-files-that-need-attention`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.framework-target-missing`).                                                      | `open-forge update`                 |
+| status.framework-target-unavailable     | warning  | local                   | [`shared.label.could-not-be-read`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedText.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.framework-target-unavailable`).                                                                               | `open-forge doctor`                 |
+| status.framework-target-blocked         | error    | local                   | `<path>  could not be checked safely: <it is a link \| its location could not be verified>`               | `open-forge doctor`                 |
+| status.extension-lifecycle-untrusted    | warning  | lifecycle-unavailable   | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.extension-lifecycle-untrusted`).                                   | `open-forge doctor`                 |
+| status.extension-lifecycle-incomplete   | warning  | lifecycle-unavailable   |                                                                                                           |                                     |
+| status.extension-lifecycle-blocked      | error    | lifecycle-blocked       |                                                                                                           |                                     |
+| status.extension-source-unavailable     | warning  | local                   | `The source of the <id> Extension, <path>, cannot be read, so its files were not compared.` (subject: id) | `open-forge extension inspect <id>` |
+| status.extension-target-changed         | warning  | local                   | [`status.message.update-the-extension-file-that-needs-attention`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.phrase.changed-since-it-was-installed-by`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.extension-target-changed`).                                                          | `open-forge extension update <id>`  |
+| status.extension-target-missing         | warning  | local                   | [`shared.phrase.missing-it-was-installed-by`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedPhrases.cs), [`status.message.update-the-extension-file-that-needs-attention`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.extension-target-missing`).                                                               | `open-forge extension update <id>`  |
+| status.extension-target-unavailable     | warning  | local                   | [`shared.label.could-not-be-read`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedText.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.extension-target-unavailable`).                                                                               | `open-forge doctor`                 |
+| status.extension-target-blocked         | error    | local                   | [`status.phrase.could-not-be-checked-safely`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.extension-target-blocked`).                                                           | `open-forge doctor`                 |
+| status.recovery-candidate-verified      | warning  | local                   | [`shared.phrase.a-recovery-bundle-from-an-earlier-command-is-kept-at`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedPhrases.cs), [`status.message.a-recovery-bundle-from-an-earlier-command-is-kept`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.message.review-and-remove-the-recovery-data`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.recovery-candidate-verified`).                                            | `open-forge cleanup`                |
+| status.recovery-draft-incomplete        | warning  | local                   | [`shared.phrase.an-unfinished-recovery-draft-is-at-a-command-did-not-finish`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedPhrases.cs), [`status.message.an-unfinished-recovery-draft-is-present-a-command-did-not-finish`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.message.review-and-remove-the-recovery-data`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.recovery-draft-incomplete`).                                    | `open-forge cleanup --dry-run`      |
+| status.recovery-final-malformed         | warning  | local                   | [`status.message.review-and-remove-the-recovery-data`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.message.the-recovery-bundle-is-damaged-and-cannot-be-used`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.phrase.the-recovery-bundle-at-is-damaged-and-cannot-be-used`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.recovery-final-malformed`).                                            | `open-forge cleanup --dry-run`      |
+| status.recovery-final-unsupported       | warning  | local                   | [`status.message.review-and-remove-the-recovery-data`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.message.the-recovery-bundle-was-written-by-an-unsupported-version`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.phrase.the-recovery-bundle-at-was-written-by-an-unsupported-version`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.recovery-final-unsupported`).                                    | `open-forge cleanup --dry-run`      |
+| status.recovery-final-unavailable       | warning  | local                   | [`status.message.the-recovery-bundle-could-not-be-read`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.phrase.the-recovery-bundle-at-could-not-be-read`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.recovery-final-unavailable`).                                                        | `open-forge doctor`                 |
+| status.recovery-catalogue-unavailable   | warning  | local                   | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.recovery-catalogue-unavailable`).                                                         | `open-forge doctor`                 |
+| status.library-record-malformed         | error    | local                   | [`shared.phrase.the-library-section-of-agents-open-forge-lock-json-is-invalid`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.library-record-malformed`).                               | `open-forge doctor`                 |
+| status.library-record-unavailable       | warning  | lifecycle-unavailable   | [`status.message.the-library-section-of-agents-open-forge-lock-json-could-not-be-read`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.library-record-unavailable`).                                  | `open-forge doctor`                 |
+| status.library-source-root-invalid      | error    | local                   | `The source folder of the <id> Library, <path>, is not a folder inside the workspace.` (subject: id)      | `open-forge library inspect <id>`   |
+| status.library-source-root-aliased      | error    | local                   | [`status.message.inspect-the-library-source-and-link-boundary`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.phrase.the-source-folder-of-the-library-resolves-to-an-ambiguous-location`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.library-source-root-aliased`).                       | `open-forge library inspect <id>`   |
+| status.library-source-root-unavailable  | warning  | local                   | [`status.message.inspect-the-library-source-and-link-boundary`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.phrase.the-source-folder-of-the-library-cannot-be-read`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.library-source-root-unavailable`).                                          | `open-forge library inspect <id>`   |
+| status.library-projection-missing       | warning  | local                   | [`status.message.synchronize-the-missing-library-link`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.phrase.missing-it-is-a-link-of-the-library`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.library-projection-missing`).                                                       | `open-forge library sync <id>`      |
+| status.library-projection-changed       | warning  | local                   | [`status.message.inspect-the-library-source-and-link-boundary`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs), [`status.phrase.is-no-longer-the-link-the-library-created`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.library-projection-changed`).                                                  | `open-forge library inspect <id>`   |
+| status.library-projection-unavailable   | warning  | local                   | [`shared.label.could-not-be-checked`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedText.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.library-projection-unavailable`).                                                                            | `open-forge doctor`                 |
+| status.library-projection-blocked       | error    | local                   | [`status.phrase.could-not-be-checked-safely`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.library-projection-blocked`).                                                           | `open-forge doctor`                 |
+| status.library-extension-collision      | error    | local                   | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Status/Shared/Wording/StatusWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`status.library-extension-collision`).                                      | `open-forge doctor`                 |
+| status.operation-failed                 | error    | operation-failed        |                                                                                                           |                                     |
+| status.interrupted                      | error    | cancelled |                                                                                                           |                                     |
+
+Rows written as `<path>  <phrase>` are rendered as finding rows with the
+phrase as the message; the title is the phrase's first words capitalized
+(`Changed since it was installed`).
+For `status.generated-navigation-metadata-invalid`, the subject is the actual
+malformed source path and the cause is the observed metadata error. The finding
+is emitted from the typed observation and not from message-text parsing.
 
 ## Scenarios
 
-These scenarios cover the smallest valid invocation, exact workspace selection,
-human-density and structured presentation, valid uninstalled state, and the
-meaningful semantic boundaries without adding implementation mechanics to the
-command contract. The [Shared Result
-Coordinates](../shared/result-coordinates/interface.md) define the exact schema
-and exits; the [Mutation And Recovery Technical
-Design](../../technical-designs/mutation-and-recovery.md) defines exact recovery
-identity; and the [CLI Architecture](../../architecture.md) defines .NET
-boundaries while keeping exact Status diagnostic fields and redaction as bounded
-command-local implementation details subject to Gate 5 evidence.
+### Catalogue situations
 
-### Default current workspace
+`not-installed`, `healthy`, `healthy-with-extension`, `changed-managed-file`,
+`missing-managed-file`, `stale-entries`, `recovery-bundle-present`,
+`library-link-missing`, `no-ownership-record`, `unreadable-entry-file`,
+`blocked-workspace`, `invalid-input`. Each at `minimal`, `standard`, `full`,
+text and JSON.
 
-```text
-open-forge status
-```
+Each status has one representative native text transcript above. JSON uses the same status and command facts under the schema-3 envelope.
 
-The command uses the exact current working directory and the default expanded
-human presentation. It returns the workspace, startup comparison, total and
-continuity measurements, root changes, Framework and Extension lifecycle trust
-and managed-file summary, the bounded Workspace Library record and registered-
-link summary, separate verified-final and incomplete-draft counts, every
-exact-name recovery candidate, and the applicable semantic result.
+### Open maintainer questions
 
-### Explicit workspace
-
-```text
-open-forge status --workspace ../another-workspace
-```
-
-The command uses that exact workspace value and reports the normalized selected
-workspace and `--workspace` selection method. It does not search for another
-workspace.
-
-### Compact human presentation
-
-```text
-open-forge status --view=compact
-```
-
-The command keeps the public compact content listed under [Human Output](#human-output)
-and omits optional explanation and largest-source detail. It omits the largest
-source section and uses at most one operation-level `Next:` line under the
-accepted result-specific rules.
-
-### Structured presentation
-
-```text
-open-forge status --json
-```
-
-The command exposes one structured result containing the typed facts listed under
-[Structured Output](#structured-output). The exact schema and numeric process
-exit follow the [Shared Result
-Coordinates](../shared/result-coordinates/interface.md). `--view` selects compact
-or expanded JSON detail under the shared Global CLI Flags contract.
-
-### Uninstalled workspace
-
-```text
-open-forge status --workspace ../uninstalled-workspace
-```
-
-When the selected directory is valid but Open Forge is not installed, the command
-reports that state. If the absence is established safely, it can return
-`complete`: the initial shipped measurement remains measured when the embedded
-payload is available; current startup, Difference, startup percentage,
-continuity, and root-category facts are not-applicable; and total available
-context remains numeric when its physical inventory is safely measurable. An
-applicable fact that cannot be measured is unavailable and makes the result
-`incomplete`.
-
-### Attention and incomplete states
-
-When measurement completes but trusted managed files are changed or missing, a
-verified recovery final is present, or a finite lifecycle/source observation
-remains, the semantic result is `attention` and human output uses `requires
-attention`. An incomplete draft, unavailable recovery fact, or safely reportable
-malformed or unsupported final selects `incomplete`; an unsafe or ambiguous
-recovery boundary selects `blocked`. The command does not replace an unavailable
-fact with a partial or trusted count.
-
-A safely observed missing or changed registered Library projection is also
-`attention` when its bounded record, source-root, and link observations are
-complete. Unavailable Library coverage is `incomplete`; malformed, aliased,
-colliding, or unsafe Library identity is `blocked`. Status does not enumerate a
-complete source tree or infer unregistered mappings.
-
-### Invalid and blocked states
-
-Unexpected operands or operation-specific flags produce `invalid`. A missing,
-unavailable, or non-directory selected workspace, or an unsafe inspection
-boundary, produces `blocked` under the conditions above. The error names the
-operation, affected subject or fact, cause, and useful next action when one
-exists.
-
+The native renderer and the catalogue still disagree on four frozen wording points: the lifecycle-unavailable message, the generated-navigation-blocked message, the cancelled/interrupted message, and the recovery-catalogue-unavailable message. This contract records the current report shape without choosing which spelling is authoritative. **Maintainer decision remains open.**
 ## Non-Goals
 
 `status` does not:
@@ -1096,7 +775,7 @@ Implementation evidence must cover:
   unavailable-operand, positive-current/zero-total, and non-applicable cases.
 - Continuity as a non-additive startup subset.
 - Largest continuity-source combination, ordering, ties, and fewer-than-three
-  cases, including every ordered contribution in JSON and omission in compact
+  cases, including every ordered contribution in JSON and omission in minimal
   human output.
 - Root-category additions, removals, reordering, and neutral result behavior.
 - Absent, trusted, untrusted, incomplete, and blocked lifecycle sections,
@@ -1114,24 +793,29 @@ Implementation evidence must cover:
   no extraction, disclosure, retention, or materialization.
 - No live-target hashing, target-state classification, or activity inference
   from bundle contents or the persistent external lock file.
-- Complete, attention, incomplete, invalid, blocked, failed, and interrupted
-  outcomes.
+- Completed, completed-with-warnings, incomplete, invalid-input, blocked,
+  failed, and cancelled outcomes.
 - Human and structured output from the same typed result.
 - Human result and error stream assignment, one complete JSON result for every
-  status, bounded diagnostics on stderr, and compact one-line `Next:` behavior.
+  status, bounded diagnostics on stderr, and minimal one-line `Next:` behavior.
 - Repeat invocations producing the same semantic result for unchanged CLI and
   workspace bytes.
 - Evidence that status does not parse ordinary links, build the complete content
   graph, inspect unrelated workspace files, or mutate anything.
+- Readable ordinary malformed metadata in an otherwise projectable generated
+  region remains a warning/Attention2 result with structural `unavailable`, the
+  actual source path and cause, and retained known facts; unreadable or
+  coverage-incomplete input remains `incomplete`, unsafe or ambiguous input
+  remains `blocked`, and native failures remain strict.
 - Bounded Workspace Library record, source-root, and registered-link facts,
   including destination-derived source IDs kept separate from Library IDs,
-  complete safely observed drift as `attention`, unavailable coverage as
+  complete safely observed drift as `completed-with-warnings`, unavailable coverage as
   `incomplete`, unsafe ambiguity or Library/Extension collision as `blocked`,
   and no complete source inventory or adoption.
 
 Direct tests should prove measurement, comparison, ordering, classifications, and
 semantic results. Focused integration tests should use real temporary workspaces,
-embedded assets, the exact lifecycle document, and filesystem state. A small built Native AOT process suite
+embedded assets, the shared ownership lock, and filesystem state. A small built Native AOT process suite
 should prove parsing, output, exit behavior, and packaged payload comparison.
 
 The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
@@ -1163,23 +847,59 @@ Library registered links retain separate source-relative and mapped destination
 paths. A destination outside the existing `.agents` source-reference contract has
 `sourceId: null`; neither the management ID nor an empty string replaces it.
 
-## Compact JSON Output
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
 
-The result retains every field except context.continuitySources. Context
-measurements, coverage states, findings, lifecycle targets, Library records and
-recovery paths remain complete. Omitting the source breakdown does not alter
-its measured totals or imply that no continuity sources exist.
 
-Compact omissions are defined field membership, distinct from unavailable data,
-null values, empty collections or incomplete inspection. No collection is
-truncated and no finding is filtered. Counts describe the original operation.
-Select expanded on the original invocation when supporting evidence is needed.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+
+## Executable Wording References
+
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
+
+CLI help syntax: [`status.help.syntax`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusText.cs).
+
+<!-- @OpenForgeTextRef shared.label.changed-since-it-was-installed -->
+<!-- @OpenForgeTextRef shared.label.could-not-be-checked -->
+<!-- @OpenForgeTextRef shared.label.could-not-be-read -->
+<!-- @OpenForgeTextRef shared.phrase.a-recovery-bundle-from-an-earlier-command-is-kept-at -->
+<!-- @OpenForgeTextRef shared.phrase.an-unfinished-recovery-draft-is-at-a-command-did-not-finish -->
+<!-- @OpenForgeTextRef shared.phrase.has-no-entries-section -->
+<!-- @OpenForgeTextRef shared.phrase.missing-it-was-installed-by -->
+<!-- @OpenForgeTextRef shared.phrase.the-library-section-of-agents-open-forge-lock-json-is-invalid -->
+<!-- @OpenForgeTextRef status.help.syntax -->
+<!-- @OpenForgeTextRef status.label.missing-it-was-installed-by-the-framework -->
+<!-- @OpenForgeTextRef status.message.a-recovery-bundle-from-an-earlier-command-is-kept -->
+<!-- @OpenForgeTextRef status.message.an-unfinished-recovery-draft-is-present-a-command-did-not-finish -->
+<!-- @OpenForgeTextRef status.message.inspect-the-library-source-and-link-boundary -->
+<!-- @OpenForgeTextRef status.message.rebuild-the-entries-section -->
+<!-- @OpenForgeTextRef status.message.review-and-remove-the-recovery-data -->
+<!-- @OpenForgeTextRef status.message.synchronize-the-missing-library-link -->
+<!-- @OpenForgeTextRef status.message.the-entries-section-could-not-be-read -->
+<!-- @OpenForgeTextRef status.message.the-entries-section-is-stale -->
+<!-- @OpenForgeTextRef status.message.the-library-section-of-agents-open-forge-lock-json-could-not-be-read -->
+<!-- @OpenForgeTextRef status.message.the-recovery-bundle-could-not-be-read -->
+<!-- @OpenForgeTextRef status.message.the-recovery-bundle-is-damaged-and-cannot-be-used -->
+<!-- @OpenForgeTextRef status.message.the-recovery-bundle-was-written-by-an-unsupported-version -->
+<!-- @OpenForgeTextRef status.message.there-is-no-entries-section -->
+<!-- @OpenForgeTextRef status.message.update-the-extension-file-that-needs-attention -->
+<!-- @OpenForgeTextRef status.message.update-the-framework-files-that-need-attention -->
+<!-- @OpenForgeTextRef status.phrase.changed-since-it-was-installed-by -->
+<!-- @OpenForgeTextRef status.phrase.could-not-be-checked-safely -->
+<!-- @OpenForgeTextRef status.phrase.is-no-longer-the-link-the-library-created -->
+<!-- @OpenForgeTextRef status.phrase.missing-it-is-a-link-of-the-library -->
+<!-- @OpenForgeTextRef status.phrase.the-entries-section-of-could-not-be-read -->
+<!-- @OpenForgeTextRef status.phrase.the-entries-section-of-is-stale -->
+<!-- @OpenForgeTextRef status.phrase.the-recovery-bundle-at-could-not-be-read -->
+<!-- @OpenForgeTextRef status.phrase.the-recovery-bundle-at-is-damaged-and-cannot-be-used -->
+<!-- @OpenForgeTextRef status.phrase.the-recovery-bundle-at-was-written-by-an-unsupported-version -->
+<!-- @OpenForgeTextRef status.phrase.the-source-folder-of-the-library-cannot-be-read -->
+<!-- @OpenForgeTextRef status.phrase.the-source-folder-of-the-library-resolves-to-an-ambiguous-location -->
+
+## Approved Journey Wording References
+
+The following stable IDs link the approved journey behavior above to its typed
+human-wording factories. Independently reviewed snapshots and state assertions
+remain the output evidence.
+
+- [StatusWording.cs](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Status/StatusWording.cs)
+  <!-- @OpenForgeTextRef status.wording.generated-navigation-metadata-invalid -->
+  <!-- @OpenForgeTextRef status.title.generated-navigation-metadata-invalid -->

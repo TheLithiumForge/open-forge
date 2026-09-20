@@ -1,0 +1,3 @@
+Updated memory/project-alpha/overview
+Workspace: <workspace>
+  responsibility: "Owns the overview" -> (removed)

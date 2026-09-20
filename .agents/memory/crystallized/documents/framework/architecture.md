@@ -132,7 +132,7 @@ The seven Core primitives are:
 - Workflows
 - Map `routes`
 
-These primitives are distinct because they answer different questions. Their default `entrypoints` and current local contents are exposed by the [directives](../../../../directives/_directives.md), [guidance](../../../../guidance/_guidance.md), [patterns](../../../../patterns/_patterns.md), [skills](../../../../skills/_skills.md), [templates](../../../../templates/_templates.md), [workflows](../../../../workflows/_workflows.md), and [maps](../../../../maps/_maps.md) `routes`.
+These primitives are distinct because they answer different questions. Their default `entrypoints` and current local contents are exposed by the [directives](../../../../directives/_directives.md), [guidance](../../../../guidance/_guidance.md), [patterns](../../../../patterns/_patterns.md), [skills](../../../../skills/_skills.md), [templates](../../../../templates/_templates.md), [workflows](../../../../skills/use-workflow/references/open-forge/_open-forge.md), and [maps](../../../../maps/_maps.md) `routes`.
 
 ### Routing
 

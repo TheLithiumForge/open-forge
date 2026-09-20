@@ -1,0 +1,4 @@
+Installed the Open Forge Framework into <workspace>.
+Workspace: <workspace>
+  Created 12 files and 11 directories under .agents (listed in .agents/open-forge.lock.json).
+  Created AGENTS.md and CLAUDE.md with an Open Forge section.

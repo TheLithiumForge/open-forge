@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 3,
+  "command": "library detach",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "No ownership record exists, so team-knowledge cannot be detached. Nothing was changed.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "linksRemoved": 0,
+    "sectionsUpdated": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": null,
+    "destinationFolder": null,
+    "registrationRemoved": false,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

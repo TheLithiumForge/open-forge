@@ -13,6 +13,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.GeneratedNavigation;
 
 public sealed class GeneratedNavigationFormationBuilderTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated navigation formation rejects a cancelled catalogue")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void CancelledCatalogueIsRejected()
@@ -24,6 +25,7 @@ public sealed class GeneratedNavigationFormationBuilderTests
         Assert.Equal("catalogue", exception.ParamName);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated navigation formation retains the exact catalogue authority and present Loader")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void CompleteCatalogueAuthorityAndLoaderAreRetainedExactly()
@@ -76,6 +78,7 @@ public sealed class GeneratedNavigationFormationBuilderTests
         Assert.Same(root.Identity, formation.Topology.FindByPath(root.Identity.CanonicalBasePath)?.Identity);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated navigation formation retains root ambiguity without admitting roots when the Loader is missing")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void MissingLoaderRetainsRootAmbiguityWithoutAdmittingRoots()
@@ -96,6 +99,7 @@ public sealed class GeneratedNavigationFormationBuilderTests
             ambiguity.Candidates.Select(candidate => candidate.CanonicalPath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated navigation formation rejects multiple recognized root entrypoint forms before root admission")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void MultipleRootFormsAreAmbiguousAndNotAdmitted()
@@ -116,6 +120,7 @@ public sealed class GeneratedNavigationFormationBuilderTests
         Assert.Empty(formation.Topology.LoaderRootPaths);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated navigation formation keeps a missing-intermediate entrypoint detached")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void MissingIntermediateEntrypointStaysDetached()
@@ -132,6 +137,7 @@ public sealed class GeneratedNavigationFormationBuilderTests
         Assert.Null(formation.Topology.ReadAbsoluteDepth(detached.Identity.CanonicalBasePath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated navigation formation types ambiguous current route parents")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void AmbiguousRouteParentsAreRetainedAsTypedFacts()
@@ -151,6 +157,7 @@ public sealed class GeneratedNavigationFormationBuilderTests
             ambiguity.Candidates.Select(candidate => candidate.CanonicalPath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated navigation formation recognizes compatible same-form aliases under one physical parent")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void SameParentSameFormLeafAliasesAreCompatible()
@@ -171,6 +178,7 @@ public sealed class GeneratedNavigationFormationBuilderTests
             value.Kind == GeneratedNavigationFormationAmbiguityKind.PhysicalAlias);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated navigation formation keeps distinct rooted folder aliases incompatible")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void DistinctRootAliasesAreIncompatibleAndNotAdmitted()
@@ -190,6 +198,7 @@ public sealed class GeneratedNavigationFormationBuilderTests
             value.Kind == GeneratedNavigationFormationAmbiguityKind.PhysicalAlias);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated navigation formation keeps different recognized forms incompatible across one physical alias")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void DifferentRecognizedFormsAreIncompatible()
@@ -206,6 +215,7 @@ public sealed class GeneratedNavigationFormationBuilderTests
             Assert.Single(formation.PhysicalAliasGroups).Compatibility);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Generated navigation formation keeps aliases with different route parents or children incompatible")]
     [InlineData(false)]
     [InlineData(true)]
@@ -233,6 +243,7 @@ public sealed class GeneratedNavigationFormationBuilderTests
             Assert.Single(formation.PhysicalAliasGroups).Compatibility);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated navigation formation detects base-overwrite and orphan alias participation conflicts")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void BaseOverwriteAndOrphanParticipationAreIncompatible()
@@ -272,6 +283,7 @@ public sealed class GeneratedNavigationFormationBuilderTests
                 [".agents/root/orphan.overwrite.md", ".agents/root/paired-orphan.overwrite.md"]));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated navigation formation orders alias groups canonically and retains exact candidate references")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void AliasGroupsAreDeterministicExactCatalogueFacts()
@@ -298,6 +310,7 @@ public sealed class GeneratedNavigationFormationBuilderTests
             candidate => Assert.Same(catalogue.FindCandidateByPath(candidate.CanonicalPath), candidate));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated navigation projection ingress accepts only exact formation source references")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void ProjectionCannotAssembleASecondSourceView()

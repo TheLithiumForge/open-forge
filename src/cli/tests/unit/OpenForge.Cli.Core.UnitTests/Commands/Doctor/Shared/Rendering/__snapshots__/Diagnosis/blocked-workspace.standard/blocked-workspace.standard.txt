@@ -1,0 +1,10 @@
+Cannot check this workspace: The selected workspace is unavailable.
+Workspace
+  Error  workspace  Workspace cannot be read
+         the workspace does not exist or cannot be read.
+  Workspace checks did not finish: the workspace does not exist or cannot be read.
+  Recovery data was not checked: The selected workspace is unavailable.
+  Routes were not checked: The selected workspace is unavailable.
+  Links were not checked: The selected workspace is unavailable.
+  Framework files were not checked: The selected workspace is unavailable.
+  Extensions were not checked: The selected workspace is unavailable.

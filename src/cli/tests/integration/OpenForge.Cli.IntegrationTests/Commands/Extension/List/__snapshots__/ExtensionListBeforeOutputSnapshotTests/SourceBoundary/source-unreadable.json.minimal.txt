@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 3,
+  "command": "extension list",
+  "status": "incomplete",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Extension list could not be read completely.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "extension-list.source-unavailable",
+      "title": "Extension source is unavailable",
+      "message": "<extension-source> could not be read, so available packages are not listed.",
+      "subject": {
+        "kind": "source",
+        "path": null,
+        "id": "<extension-source>",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "installed": 0,
+    "available": null,
+    "warnings": 1,
+    "infos": 1
+  },
+  "limitations": [
+    {
+      "what": "available packages",
+      "why": "<extension-source>\\toolkit\\extension.json: the file is in use by another process.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "source": {
+      "kind": null,
+      "path": "<extension-source>"
+    },
+    "installed": [],
+    "available": []
+  },
+  "recovery": null,
+  "next": null
+}

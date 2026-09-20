@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 using OpenForge.Cli.Core.Commands.Library;
 using OpenForge.Cli.Core.Commands.Library.Inspect;
 using OpenForge.Cli.Core.Commands.Library.Inspect.Models.Request;
@@ -11,6 +13,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Inspect.Shared.Binding;
 
 public sealed class LibraryInspectBindingTests
 {
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Library Inspect binds exact lowercase ASCII IDs at both length boundaries"), Trait("Feature", "library-read"), Trait("Evidence", "Unit")]
     [InlineData("a")]
     [InlineData("0")]
@@ -31,6 +34,7 @@ public sealed class LibraryInspectBindingTests
         Assert.Empty(symbols.Command.Options);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Library Inspect rejects missing multiple malformed and source-reference subjects without inventory"), Trait("Feature", "library-read"), Trait("Evidence", "Unit")]
     [InlineData("missing")]
     [InlineData("multiple")]
@@ -71,10 +75,32 @@ public sealed class LibraryInspectBindingTests
             result = Assert.IsType<LibraryInspectResult>(bound.InvalidResult);
         }
         Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        Assert.Equal(".agents/open-forge.lock.json", result.Result.Record.Path);
         Assert.Empty(result.Result.Record.RegisteredPaths);
         Assert.Empty(result.Result.Source.EligiblePaths);
         Assert.Empty(result.Result.Projection.Comparisons);
         Assert.Equal(LibraryInventoryViewState.NotStarted, result.Result.Source.State);
         Assert.Contains(result.Result.Findings, finding => finding.Code == LibraryInspectFindingCode.InvalidId);
+    }
+
+    [Trait("Boundary", "Input")]
+    [Theory(DisplayName = "Library Inspect workspace selection failures name the ownership lock"),
+     InlineData(false), InlineData(true), Trait("Feature", "library-read"), Trait("Evidence", "Unit")]
+    public void WorkspaceSelectionFailuresNameOwnershipLock(bool blocked)
+    {
+        var symbols = LibraryInspectBinding.CreateSymbols(LibraryBinding.CreateGroup());
+        string[] arguments = ["team"];
+        var parse = new CliBindingParse(symbols.Command.Parse(arguments), arguments);
+        var input = LibraryReadInputs.Invalid(parse,
+            new CliInvalidInput("workspace.unavailable", CliInvalidInputSource.Workspace,
+                ["The workspace cannot be selected."])) with
+        {
+            WorkspaceSelectionState = blocked ? CliWorkspaceSelectionState.Unsafe : CliWorkspaceSelectionState.Missing,
+        };
+        var result = LibraryInspectRequestBinder.CreateInvalid(input);
+
+        Assert.Equal(blocked ? CliSemanticStatus.Blocked : CliSemanticStatus.Incomplete, result.Status);
+        Assert.Equal(".agents/open-forge.lock.json", result.Result.Record.Path);
+        Assert.Equal(".agents/open-forge.lock.json", Assert.Single(result.Result.Findings).Path);
     }
 }

@@ -9,12 +9,16 @@ internal static class StatusInstalledWorkspaceArtifacts
         => InstallOperationWorkspace.EmbeddedPayloadPaths.Contains(
                 relativePath,
                 StringComparer.Ordinal)
-            || relativePath is StatusIntegrationWorkspace.LifecyclePath or "AGENTS.md" or "CLAUDE.md";
+            || relativePath is StatusIntegrationWorkspace.LifecyclePath
+                or StatusIntegrationWorkspace.OwnershipPath
+                or "AGENTS.md"
+                or "CLAUDE.md";
 
     internal static void Delete(TemporaryWorkspace temporary)
     {
         foreach (var path in InstallOperationWorkspace.EmbeddedPayloadPaths
                      .Append(StatusIntegrationWorkspace.LifecyclePath)
+                     .Append(StatusIntegrationWorkspace.OwnershipPath)
                      .Append("AGENTS.md")
                      .Append("CLAUDE.md"))
         {

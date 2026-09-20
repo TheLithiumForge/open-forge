@@ -12,6 +12,4 @@ open-forge:
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Historical CLI-v2 source: Keep the Open Forge CLI explicit, orthogonal, predictable, helpful, and free of context-dependent command or flag behavior](cli-interface-consistency.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
-<!-- open-forge:generated-index:end -->

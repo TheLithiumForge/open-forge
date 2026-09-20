@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 3,
+  "command": "library inspect",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "team-knowledge is current. The source folder shared/team has no eligible files and no links are registered.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "sourceFiles": 0,
+    "linksCurrent": 0,
+    "filesAdded": 0,
+    "filesRetired": 0,
+    "linksMissing": 0,
+    "linksChanged": 0
+  },
+  "limitations": [],
+  "data": {
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team",
+    "destinationFolder": ".",
+    "current": true,
+    "files": []
+  },
+  "recovery": null,
+  "next": null
+}

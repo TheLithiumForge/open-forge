@@ -14,6 +14,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Index.Shared.Result;
 
 public sealed class IndexResultTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index result derives exact status precedence ordering and next action from typed findings"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void ResultDerivesStatusOrderingAndNextAction()
     {
@@ -44,9 +45,10 @@ public sealed class IndexResultTests
         Assert.Equal(
             [IndexFindingCode.SourceAmbiguous, IndexFindingCode.SourceAmbiguous, IndexFindingCode.OperationFailed, IndexFindingCode.Interrupted],
             result.Findings.Select(finding => finding.Code));
-        Assert.Equal("open-forge index --verbose", Assert.IsType<CliNextAction>(result.Next).Command);
+        Assert.Equal("open-forge index --detail debug", Assert.IsType<CliNextAction>(result.Next).Command);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index result derives the complete status precedence and exact next-action matrix"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void ResultDerivesCompleteStatusAndNextMatrix()
     {
@@ -94,7 +96,7 @@ public sealed class IndexResultTests
             Case(
                 IndexTestData.Result(findings: [IndexTestData.Finding(IndexFindingCode.OperationFailed), IndexTestData.Finding(IndexFindingCode.Interrupted)]),
                 CliSemanticStatus.Failed,
-                "open-forge index --verbose",
+                "open-forge index --detail debug",
                 "Report the failure and retry the same Index request with bounded diagnostics."),
             Case(
                 IndexTestData.Result(findings: [IndexTestData.Finding(IndexFindingCode.Interrupted), IndexTestData.Finding(IndexFindingCode.InvalidInput)]),
@@ -111,6 +113,67 @@ public sealed class IndexResultTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Index result preserves optional warnings and validates an independently updated subset")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void OptionalAndSkippedMetadataHaveDistinctResultContracts()
+    {
+        var optional = IndexTestData.Result(
+            findings: [IndexTestData.Finding(IndexFindingCode.MetadataOptional)]);
+
+        Assert.Equal(CliSemanticStatus.Attention, optional.Status);
+        Assert.Null(optional.Next);
+        Assert.Equal(IndexRecoveryState.NotRequired, optional.Recovery.State);
+
+        var preview = IndexTestData.Result(
+            regions: [IndexTestData.Update(IndexRegionOutcome.NotRequested)],
+            findings: [IndexTestData.Finding(IndexFindingCode.MetadataOptional)],
+            mode: IndexMode.DryRun);
+
+        Assert.Equal(CliSemanticStatus.Attention, preview.Status);
+        Assert.Equal(IndexRegionOutcome.NotRequested, Assert.Single(preview.Regions).Outcome);
+        Assert.Equal(IndexRecoveryState.NotRequired, preview.Recovery.State);
+
+        var safe = IndexTestData.Source("alpha", ".agents/alpha/_alpha.md");
+        var skipped = IndexTestData.Source("beta", ".agents/beta/_beta.md");
+        var skippedFinding = new IndexFinding(
+            IndexFindingCode.MetadataSkipped,
+            sourceOccurrence: null,
+            source: skipped,
+            cause: "Malformed authored metadata was skipped.",
+            candidates: [])
+        {
+            Details = new IndexFindingDetails
+            {
+                ParentPath = skipped.Path,
+                MetadataProblem = IndexMetadataProblem.Invalid,
+            },
+        };
+        var partial = IndexTestData.Result(
+            regions:
+            [
+                IndexRegion.Update(
+                    safe,
+                    new IndexRegionUpdate
+                    {
+                        BeforeEntryCount = 1,
+                        ExpectedEntryCount = 1,
+                        Change = new IndexChange("old\n", "new\n"),
+                        Outcome = IndexRegionOutcome.Verified,
+                    }),
+                IndexRegion.NotEstablished(skipped),
+            ],
+            findings: [skippedFinding],
+            recovery: new IndexRecovery(IndexRecoveryState.Removed, null));
+
+        Assert.Equal(CliSemanticStatus.Incomplete, partial.Status);
+        Assert.Equal(1, partial.Counts.Updates);
+        Assert.Equal(IndexRegionOutcome.Verified, partial.Regions[0].Outcome);
+        Assert.Equal(IndexRegionOutcome.NotEstablished, partial.Regions[1].Outcome);
+        Assert.Equal(IndexRecoveryState.Removed, partial.Recovery.State);
+    }
+
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index result derives exact region counts and prevents incoherent recovery facts"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void ResultCountsAndRecoveryCoherenceAreEnforced()
     {
@@ -153,6 +216,7 @@ public sealed class IndexResultTests
         Assert.Equal(1, unknownBefore.ExpectedEntryCount);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index result rejects impossible complete dry-run attention recovery and source identity combinations"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void ResultRejectsImpossibleGlobalCombinations()
     {
@@ -202,6 +266,7 @@ public sealed class IndexResultTests
         Assert.Equal(CliSemanticStatus.Attention, attention.Status);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index result rejects null finding members with an intentional argument error"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void ResultRejectsNullFindingMembersExplicitly()
     {
@@ -220,6 +285,7 @@ public sealed class IndexResultTests
         Assert.Contains("cannot contain null", exception.Message, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index value models reject undefined finite states at their invariant boundaries"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void ValueModelsRejectUndefinedFiniteStates()
     {

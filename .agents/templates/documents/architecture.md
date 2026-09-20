@@ -1,70 +1,43 @@
 ---
 open-forge:
-  description: Starting structure for a current document that explains a subject's parts, relationships, boundaries, and constraints
-  tags: [Extension, Template, Document, Architecture, CurrentView]
+  description: "Explain the system model, responsibilities, dependency direction, important flows, and limits"
+  tags: [Extension, Template, Document, Architecture]
 ---
 
 # {Subject} Architecture
 
-{
-Template selection:
+<!-- TEMPLATE: Describe a coherent current or explicitly proposed architecture. Use only views needed for this subject; narrower components may have their own sources.
+Replace {prompts}; remove this comment and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying. -->
 
-- Need: One current document that explains a subject's important structure and interactions.
-- Primary question: How is this subject structured, how do its parts relate, and which boundaries and constraints govern it?
+## Overview And Scope
 
-How to use:
+{Explain the system in a short paragraph. State the question this view owns, its reader, and the boundary between current structure and any proposal.}
 
-- Replace the frontmatter, title, and placeholders, then remove this braced guidance.
-- This is a starting structure, not a fixed schema. Merge, rename, reorder, or remove sections to fit the subject.
-- Explain the accepted structure completely enough to use. Link to Decisions for why it was chosen.
-- Keep current structure, known liabilities, and honest limits here. Put unresolved replacement architecture in Emerging Memory until it is accepted.
-- Move component internals into scoped Architecture documents when they need their own complete current explanation.
-  }
+## Drivers
 
-## Scope
-
-{Name the subject, the architectural view this document defines, its readers, and the internals defined by narrower Architecture documents.}
-
-## Architecture Drivers
-
-{Identify the qualities, constraints, and accepted direction that most strongly shape the structure. Link to the sources that define them.}
+{The few qualities, constraints, and accepted decisions that actually shape the architecture. Link to their defining sources.}
 
 ## System Model
 
-{Show the major elements and the smallest useful complete picture of the system. A table, diagram, or short model may replace prose.}
+{Show the major parts and their relationships with a short model, diagram, or table. It should orient a new reader before component detail.}
 
-## Responsibilities
+| Part | Responsibility | Boundary or dependency |
+| --- | --- | --- |
+| {Component or external system} | {What it owns} | {What it relies on; what belongs elsewhere} |
 
-{State each major element's responsibilities and what it must not be relied on to provide.}
+## Important Flows
 
-## Relationships And Dependency Direction
+{Trace the information, control, or work flows needed to understand the system. Make dependency direction and ownership changes explicit. Describe relevant failure and recovery paths, not just the success path.}
 
-{Explain how the elements depend on, communicate with, or constrain one another. Make responsibility, authority, and dependency direction explicit.}
+## Boundaries And Invariants
 
-## Boundaries
+{What must remain true across parts? Include trust, consistency, compatibility, or lifetime boundaries only where relevant. Link to rules that govern agent conduct rather than repeating them as system architecture.}
 
-{Explain what belongs inside and outside the system and where independently responsible concerns meet.}
+## Tradeoffs And Limits
 
-## Flows
+{Explain the accepted compromises, current liabilities, and scale or change triggers. Keep an unresolved replacement design visibly separate from current structure.}
 
-{Describe only the information, control, value, or work flows needed to understand the Architecture.}
+## Related Views And Rationale
 
-## Cross-Cutting Invariants
-
-{State structural constraints that must remain true across multiple elements. Link to the applicable sources for required work behavior instead of repeating it here.}
-
-## Current Tradeoffs And Limits
-
-{Describe important consequences, liabilities, and honest limits of the accepted design. Link to Decisions for detailed reasoning and alternatives.}
-
-## Architecture Views
-
-{Link to narrower Architecture documents and state what each one defines.}
-
-## Related Current Views
-
-{Link to the Vision, context, Principles, Strategy, status, external sources, or other current views that constrain or complete this Architecture.}
-
-## Decisions And Rationale
-
-{Link to accepted Decisions that explain why important current structures were chosen.}
+{Link to narrower architecture views and what they own. Link to the Vision, Principles, external contracts, and Decisions that explain this structure without reproducing their history.}

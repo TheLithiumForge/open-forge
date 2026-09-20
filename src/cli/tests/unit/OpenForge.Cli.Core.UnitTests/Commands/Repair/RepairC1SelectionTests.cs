@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
+using OpenForge.Cli.Core.Commands.Repair.Shared.Result;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
@@ -12,6 +13,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class RepairC1SelectionTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory, InlineData("stale", RepairTestData.TargetPath), InlineData("old", ".agents/docs/unadmitted.md")]
     [Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void AutomaticSelectionCannotReplaceAnInvalidExplicitTuple(string expected, string target)
@@ -25,6 +27,7 @@ public sealed class RepairC1SelectionTests
         Assert.DoesNotContain(plan.Selection.Selected, value => value.Origins.Contains(RepairSelectionOrigin.Automatic));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void MatchingAutomaticAndExplicitAuthorityShareOneEffect()
     {
@@ -40,6 +43,7 @@ public sealed class RepairC1SelectionTests
         Assert.Contains(RepairSelectionOrigin.ExplicitRelink, selected.Origins);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void ExplicitAuthorityCanChooseAnAdmittedNonrecommendedCandidate()
     {
@@ -64,6 +68,36 @@ public sealed class RepairC1SelectionTests
         Assert.Same(evidence, Assert.Single(selected.Resolution.Target.CandidateProvenance));
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Conflicting current facts map to the facts-conflicting finding"),
+     Trait("Feature", "repair"), Trait("Evidence", "Unit")]
+    public void ConflictingCurrentFactsMapToFinding()
+    {
+        var occurrenceState = new RepairOccurrenceState(
+            RepairTestData.SourcePath,
+            RepairTestData.Occurrence(),
+            RepairTestData.FileState("old"));
+        var first = new RepairProposalInput(
+            RepairTestData.SafeProposal(intendedDestination: "new"),
+            occurrenceState,
+            "old");
+        var second = new RepairProposalInput(
+            RepairTestData.SafeProposal(intendedDestination: "other"),
+            occurrenceState,
+            "other");
+
+        var plan = RepairPlanner.Build(RepairTestData.Request(), [first, second]);
+
+        Assert.True(plan.IsBlocked);
+        var conflict = Assert.Single(plan.Conflicts);
+        Assert.Equal(RepairConflictKind.TargetIdentityMismatch, conflict.Kind);
+        var finding = RepairResultBuilder.Conflict(conflict);
+        Assert.Equal(RepairFindingCode.FactsConflicting, finding.Code);
+        Assert.Equal(RepairTestData.SourcePath, finding.SourceCanonicalPath);
+        Assert.Equal(RepairTestData.Occurrence(), finding.Occurrence);
+    }
+
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void IndependentlyParsedIdenticalRelinksAreIdempotent()
     {
@@ -75,6 +109,7 @@ public sealed class RepairC1SelectionTests
         Assert.Equal("Heading", relink.SelectedTargetFragment);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, InlineData("other", ".agents/docs/new.md#Heading"), InlineData("old", ".agents/docs/new.md#Other")]
     [Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void IndependentlyParsedContradictoryRelinksRemainInvalid(string expected, string target)
@@ -85,6 +120,7 @@ public sealed class RepairC1SelectionTests
         Assert.Throws<ArgumentException>(() => RepairTestData.Request(relinks: [first, second]));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, InlineData("old", true), InlineData("other", false)]
     [Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void BinderNormalizesRepeatedTriplesAndRejectsContradictions(string secondExpected, bool valid)

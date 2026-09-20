@@ -38,7 +38,7 @@ The shared [Global CLI Flags](../../shared/global-flags/interface.md),
 [Shared CLI Operation Contract](../../../shared-operation-contract.md) retain
 their shared meanings. The [Index Behavior Contract](../../index-candidate/behavior.md)
 remains authoritative for any existing generated `Entries` region that this
-operation is allowed to project. The replacement CLI does not ship yet;
+operation is allowed to project. The merged native CLI is the current delivery;
 the active Task records implementation and executable evidence.
 
 ## Contract Roles
@@ -61,9 +61,5 @@ the active Task records implementation and executable evidence.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
-
 - [Define the technology-neutral inventory, reconciliation, planning, application, verification, and recovery behavior for `library sync`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Sync #Behavior #Mutation #Recovery #Safety #Determinism #CurrentTruth
 - [Define the exact public syntax, complete-inventory requirement, reconciliation effects, record, and results for `library sync`](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Sync #Interface #Mutation #Recovery #Safety #CurrentTruth
-
-<!-- open-forge:generated-index:end -->

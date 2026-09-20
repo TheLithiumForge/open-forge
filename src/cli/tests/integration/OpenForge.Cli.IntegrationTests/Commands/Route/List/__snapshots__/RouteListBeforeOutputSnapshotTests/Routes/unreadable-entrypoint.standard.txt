@@ -1,0 +1,6 @@
+The listing is incomplete.
+Workspace: <workspace>
+  Warning  .agents/docs/_docs.md  Route boundary is unreadable
+         .agents/docs/_docs.md could not be read, so the routes below it are not listed.
+  Inspect the route boundary with open-forge doctor.
+Next: open-forge doctor

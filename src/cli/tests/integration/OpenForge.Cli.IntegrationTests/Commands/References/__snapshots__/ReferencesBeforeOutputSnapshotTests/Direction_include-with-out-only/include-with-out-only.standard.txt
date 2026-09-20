@@ -1,0 +1,7 @@
+Cannot list references: Include and exclude filters apply only when incoming work is requested.
+Workspace: <workspace>
+  Error  references  Filter is invalid
+         --include and --exclude apply to incoming links. Use --direction in or both.
+0 in, 0 out
+  see the accepted options
+Next: open-forge references --help

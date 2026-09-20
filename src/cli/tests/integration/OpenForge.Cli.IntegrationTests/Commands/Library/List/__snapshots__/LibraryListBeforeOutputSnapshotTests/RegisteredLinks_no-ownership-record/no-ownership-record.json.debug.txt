@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 3,
+  "command": "library list",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "No ownership record exists, so Libraries cannot be listed from it.",
+    "kind": "done"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "library-list.ownership-observation",
+      "title": "Ownership record is missing",
+      "message": "No ownership record exists, so Libraries cannot be listed from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": ".agents/open-forge.lock.json",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "libraries": 0,
+    "linksCurrent": 0,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "linksUnavailable": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "libraries": [],
+    "recordCoverage": {
+      "path": ".agents/open-forge.lock.json",
+      "state": "missing",
+      "libraryCount": null
+    }
+  },
+  "recovery": null,
+  "next": null
+}

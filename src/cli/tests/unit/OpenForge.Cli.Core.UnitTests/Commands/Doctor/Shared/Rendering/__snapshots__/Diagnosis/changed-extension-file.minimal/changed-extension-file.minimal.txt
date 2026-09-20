@@ -1,0 +1,4 @@
+No errors. 1 warning was recorded.
+  Warning  .agents/toolkit/example.md  Extension file changed
+         .agents/toolkit/example.md changed since it was installed by toolkit.
+         open-forge extension update toolkit

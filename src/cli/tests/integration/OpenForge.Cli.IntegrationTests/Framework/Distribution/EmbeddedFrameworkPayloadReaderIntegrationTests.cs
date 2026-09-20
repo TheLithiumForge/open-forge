@@ -12,6 +12,7 @@ public sealed class EmbeddedFrameworkPayloadReaderIntegrationTests
     private const string ResourcePrefix = "OpenForge.Framework.Payload/";
     private const string SourceContentDirectory = "FrameworkPayloadSource";
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Embedded Framework direct reader uses complete stable Core assembly resources"), Trait("Feature", "framework-payload"), Trait("Evidence", "Integration")]
     public void DirectReaderUsesCompleteStableCoreAssemblyResources()
     {
@@ -35,6 +36,7 @@ public sealed class EmbeddedFrameworkPayloadReaderIntegrationTests
         Assert.Equal(InventoryFingerprintOracle(payload.Assets), payload.InventoryFingerprint);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Embedded Framework payload exactly matches authoritative source paths bytes and hashes"), Trait("Feature", "framework-payload"), Trait("Evidence", "Integration")]
     public void EmbeddedPayloadExactlyMatchesAuthoritativeSource()
     {

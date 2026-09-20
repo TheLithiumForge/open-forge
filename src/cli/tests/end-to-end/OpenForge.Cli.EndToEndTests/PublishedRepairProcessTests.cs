@@ -45,43 +45,57 @@ public sealed class PublishedRepairProcessTests
         var result = await RunWithoutWritesAsync(
             target,
             working,
-            ["repair", "--automatic", "--dry-run", "--json"]);
+            ["repair", "--automatic", "--dry-run", "--format=json"]);
 
         Assert.Equal(2, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
         var root = document.RootElement;
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
         Assert.Equal("repair", root.GetProperty("command").GetString());
-        Assert.Equal("attention", root.GetProperty("status").GetString());
-        var repair = root.GetProperty("result");
+        Assert.Equal("completed-with-warnings", root.GetProperty("status").GetString());
+        Assert.Equal(
+            "Would repair 1 link. 1 problem still needs a choice.",
+            root.GetProperty("summary").GetProperty("headline").GetString());
+        // The native report publishes the command's own facts: the safe-exact rewrite is a
+        // planned effect, the guided link is a remaining problem, and `data` carries only the
+        // Repair-owned projection rather than the whole internal result.
+        var repair = root.GetProperty("data");
         Assert.Equal("dry-run", repair.GetProperty("mode").GetString());
-        Assert.True(repair.GetProperty("automatic").GetBoolean());
-        var selection = repair.GetProperty("selection");
-        Assert.Single(selection.GetProperty("selected").EnumerateArray());
-        var unselected = Assert.Single(selection.GetProperty("unselected").EnumerateArray());
-        Assert.Equal("missing-target-relink", unselected.GetProperty("member").GetString());
-        Assert.Equal("missing.md", unselected.GetProperty("expectedDestination").GetString());
-        var candidates = unselected.GetProperty("candidates").GetProperty("items").EnumerateArray();
-        Assert.Contains(
-            candidates,
-            candidate => candidate.GetProperty("target").GetProperty("path").GetString()
-                == RepairWorkspace.GuidedTargetPath);
-        var plan = repair.GetProperty("plan");
-        Assert.False(plan.GetProperty("blocked").GetBoolean());
-        Assert.Single(plan.GetProperty("effects").EnumerateArray());
-        Assert.Empty(plan.GetProperty("noOps").EnumerateArray());
-        var counts = repair.GetProperty("counts");
-        Assert.Equal(1, counts.GetProperty("selectedEffects").GetInt32());
-        Assert.Equal(0, counts.GetProperty("appliedEffects").GetInt32());
-        Assert.Equal(1, counts.GetProperty("guided").GetInt32());
-        Assert.Equal("ready", repair.GetProperty("preflight").GetProperty("state").GetString());
-        Assert.Equal("not-requested", repair.GetProperty("application").GetProperty("state").GetString());
-        Assert.Equal("not-created", repair.GetProperty("recovery").GetProperty("state").GetString());
-        Assert.Equal("not-requested", repair.GetProperty("verification").GetProperty("targets").GetString());
-        Assert.Equal("not-requested", repair.GetProperty("verification").GetProperty("resultingBytes").GetString());
-        Assert.Equal("not-requested", repair.GetProperty("verification").GetProperty("postConditions").GetString());
+        Assert.Equal("automatic", repair.GetProperty("selection").GetString());
+        var repaired = Assert.Single(repair.GetProperty("repairs").EnumerateArray());
+        Assert.Equal(RepairWorkspace.SourcePath, repaired.GetProperty("path").GetString());
+        Assert.Equal("./guide.md", repaired.GetProperty("from").GetString());
+        Assert.Equal("guide.md", repaired.GetProperty("to").GetString());
+        var remaining = Assert.Single(repair.GetProperty("remaining").EnumerateArray());
+        Assert.Equal(RepairWorkspace.SourcePath, remaining.GetProperty("path").GetString());
+        Assert.Equal("guided", remaining.GetProperty("kind").GetString());
+        Assert.Equal(4, remaining.GetProperty("candidates").GetInt32());
+        // A dry run plans the effect without applying it.
+        var effect = Assert.Single(root.GetProperty("effects").EnumerateArray());
+        Assert.Equal("link", effect.GetProperty("kind").GetString());
+        Assert.Equal("rewritten", effect.GetProperty("action").GetString());
+        Assert.Equal("planned", effect.GetProperty("outcome").GetString());
+        var counts = root.GetProperty("counts");
+        Assert.Equal(1, counts.GetProperty("linksRepaired").GetInt32());
+        Assert.Equal(1, counts.GetProperty("problemsRemaining").GetInt32());
+        Assert.Equal(1, counts.GetProperty("problemsNeedingChoice").GetInt32());
+        Assert.Equal(0, counts.GetProperty("problemsNeedingHand").GetInt32());
+        var finding = Assert.Single(root.GetProperty("findings").EnumerateArray());
+        Assert.Equal("repair.guided-finding-remaining", finding.GetProperty("code").GetString());
+        // Nothing was written, so no recovery bundle was required.
+        Assert.Equal("not-required", root.GetProperty("recovery").GetProperty("disposition").GetString());
         working.AssertNoWriteInfrastructure();
+
+        var textResult = await RunWithoutWritesAsync(
+            target,
+            working,
+            ["repair", "--automatic", "--dry-run"]);
+        Assert.Equal(2, textResult.ExitCode);
+        Assert.Equal(string.Empty, textResult.StandardError);
+        Assert.Equal(
+            "Would repair 1 link. 1 problem still needs a choice.",
+            textResult.StandardOutput.Split('\n', StringSplitOptions.RemoveEmptyEntries)[0].TrimEnd('\r'));
     }
 
     [Fact(DisplayName = "Published Repair explicit relink preserves content, removes recovery, and converges "
@@ -101,7 +115,7 @@ public sealed class PublishedRepairProcessTests
             working.Path,
             [
                 "repair",
-                "--json",
+                "--format=json",
                 "--relink",
                 working.GuidedSourceLocation,
                 RepairWorkspace.GuidedExpectedDestination,
@@ -114,17 +128,22 @@ public sealed class PublishedRepairProcessTests
         using var appliedDocument = JsonDocument.Parse(applied.StandardOutput);
         var appliedRoot = appliedDocument.RootElement;
         Assert.Equal("repair", appliedRoot.GetProperty("command").GetString());
-        Assert.Equal("complete", appliedRoot.GetProperty("status").GetString());
-        var appliedResult = appliedRoot.GetProperty("result");
+        Assert.Equal("completed", appliedRoot.GetProperty("status").GetString());
+        var appliedResult = appliedRoot.GetProperty("data");
         Assert.Equal("apply", appliedResult.GetProperty("mode").GetString());
-        Assert.Equal("explicit-relinks", appliedResult.GetProperty("selectionMode").GetString());
-        Assert.Equal(1, appliedResult.GetProperty("counts").GetProperty("selectedEffects").GetInt32());
-        Assert.Equal(1, appliedResult.GetProperty("counts").GetProperty("appliedEffects").GetInt32());
-        Assert.Equal(1, appliedResult.GetProperty("counts").GetProperty("verifiedEffects").GetInt32());
-        Assert.Equal("removed", appliedResult.GetProperty("recovery").GetProperty("state").GetString());
-        Assert.Equal("complete", appliedResult.GetProperty("postDiagnosis").GetProperty("state").GetString());
-        Assert.Single(appliedResult.GetProperty("plan").GetProperty("effects").EnumerateArray());
-        Assert.Empty(appliedResult.GetProperty("plan").GetProperty("conflicts").EnumerateArray());
+        Assert.Equal("relink", appliedResult.GetProperty("selection").GetString());
+        var appliedRepair = Assert.Single(appliedResult.GetProperty("repairs").EnumerateArray());
+        Assert.Equal(RepairWorkspace.GuidedExpectedDestination, appliedRepair.GetProperty("from").GetString());
+        Assert.Equal("replacement.md", appliedRepair.GetProperty("to").GetString());
+        Assert.Empty(appliedResult.GetProperty("remaining").EnumerateArray());
+        var appliedEffect = Assert.Single(appliedRoot.GetProperty("effects").EnumerateArray());
+        Assert.Equal("rewritten", appliedEffect.GetProperty("action").GetString());
+        Assert.Equal("done", appliedEffect.GetProperty("outcome").GetString());
+        Assert.Equal(1, appliedRoot.GetProperty("counts").GetProperty("linksRepaired").GetInt32());
+        Assert.Equal(0, appliedRoot.GetProperty("counts").GetProperty("problemsRemaining").GetInt32());
+        Assert.Empty(appliedRoot.GetProperty("findings").EnumerateArray());
+        // The recovery bundle is removed once the repair verifies.
+        Assert.Equal("removed", appliedRoot.GetProperty("recovery").GetProperty("disposition").GetString());
         Assert.Equal(
             RepairWorkspace.ExpectedSourceAfterGuided,
             working.ReadText(RepairWorkspace.SourcePath));
@@ -140,24 +159,27 @@ public sealed class PublishedRepairProcessTests
         var noOp = await RunWithoutWorkspaceWritesAsync(
             target,
             working,
-            ["repair", "--automatic", "--json"]);
+            ["repair", "--automatic", "--format=json"]);
 
         Assert.Equal(0, noOp.ExitCode);
         Assert.Equal(string.Empty, noOp.StandardError);
         using var noOpDocument = JsonDocument.Parse(noOp.StandardOutput);
         var noOpRoot = noOpDocument.RootElement;
-        Assert.Equal("complete", noOpRoot.GetProperty("status").GetString());
-        var noOpResult = noOpRoot.GetProperty("result");
-        Assert.Equal(0, noOpResult.GetProperty("counts").GetProperty("noOps").GetInt32());
-        Assert.Equal("not-requested", noOpResult.GetProperty("application").GetProperty("state").GetString());
-        Assert.Equal("not-required", noOpResult.GetProperty("recovery").GetProperty("state").GetString());
-        Assert.Equal("verified", noOpResult.GetProperty("verification").GetProperty("targets").GetString());
-        Assert.Equal("verified", noOpResult.GetProperty("verification").GetProperty("resultingBytes").GetString());
-        Assert.Equal("verified", noOpResult.GetProperty("verification").GetProperty("postConditions").GetString());
-        var noOpPlan = noOpResult.GetProperty("plan");
-        Assert.True(noOpPlan.GetProperty("noOp").GetBoolean());
-        Assert.Empty(noOpPlan.GetProperty("effects").EnumerateArray());
-        Assert.Empty(noOpPlan.GetProperty("noOps").EnumerateArray());
+        Assert.Equal("completed", noOpRoot.GetProperty("status").GetString());
+        // Converged: the second automatic pass finds nothing left to repair, so it plans no
+        // effect, reports no remaining problem, and needs no recovery bundle.
+        Assert.Equal("Nothing to repair.", noOpRoot.GetProperty("summary").GetProperty("headline").GetString());
+        Assert.Equal("nothing-to-do", noOpRoot.GetProperty("summary").GetProperty("kind").GetString());
+        Assert.Empty(noOpRoot.GetProperty("effects").EnumerateArray());
+        Assert.Empty(noOpRoot.GetProperty("findings").EnumerateArray());
+        var noOpCounts = noOpRoot.GetProperty("counts");
+        Assert.Equal(0, noOpCounts.GetProperty("linksRepaired").GetInt32());
+        Assert.Equal(0, noOpCounts.GetProperty("problemsRemaining").GetInt32());
+        Assert.Equal("not-required", noOpRoot.GetProperty("recovery").GetProperty("disposition").GetString());
+        var noOpResult = noOpRoot.GetProperty("data");
+        Assert.Equal("apply", noOpResult.GetProperty("mode").GetString());
+        Assert.Empty(noOpResult.GetProperty("repairs").EnumerateArray());
+        Assert.Empty(noOpResult.GetProperty("remaining").EnumerateArray());
         Assert.Equal(beforeNoOp, working.SnapshotState());
         working.AssertPersistentExternalLock();
         working.AssertNoRecoveryArtifacts();
@@ -364,26 +386,7 @@ public sealed class PublishedRepairProcessTests
                 + UnrelatedLine;
         }
 
-        private string RecoveryDirectory()
-        {
-            var localApplicationData = EnvironmentVariables.TryGetValue(
-                "XDG_DATA_HOME",
-                out var configured)
-                ? configured
-                : Environment.GetFolderPath(
-                    Environment.SpecialFolder.LocalApplicationData,
-                    Environment.SpecialFolderOption.DoNotVerify);
-            var normalized = System.IO.Path.TrimEndingDirectorySeparator(
-                System.IO.Path.GetFullPath(Path));
-            var identity = OperatingSystem.IsWindows() ? normalized.ToUpperInvariant() : normalized;
-            var key = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(identity)));
-            return System.IO.Path.Combine(
-                localApplicationData,
-                "OpenForge",
-                "recovery",
-                "v1",
-                key);
-        }
+        private string RecoveryDirectory() => _lockStore.RecoveryWorkspaceDirectory(Path);
 
         private static string PathState(string path)
         {

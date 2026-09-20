@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Extensions.Operational.Models.R
 
 public sealed class ExtensionBridgeRegistrationContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension bridge-registration observations preserve exact ownership and four observed states"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void ObservationsPreserveExactOwnershipAndStates()
     {
@@ -58,6 +59,7 @@ public sealed class ExtensionBridgeRegistrationContractTests
         Assert.Null(inconsistent.Cause);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension bridge-registration facts retain set-valued observations and bounded coverage causes"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void FactsRetainSetValuedObservationsAndCoverageCauses()
     {
@@ -89,6 +91,7 @@ public sealed class ExtensionBridgeRegistrationContractTests
         Assert.Equal("The registration mapping is ambiguous.", blocked.Cause);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension bridge-registration observations reject state and ownership mismatches"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void ObservationsRejectStateAndOwnershipMismatches()
     {

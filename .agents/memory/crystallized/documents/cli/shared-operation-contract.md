@@ -70,7 +70,7 @@ or make a Library ID a source-reference operand.
 
 The [Command Contract Set](command-contract-set.md) records the current roles,
 placement, authority boundaries, and detailed local contract links. A group
-performs no domain operation or wizard by itself. Its bare form shows help for
+performs no domain operation or prompt by itself. Its bare form shows help for
 its child operations. Every leaf command performs one complete operation. A flag
 may select input, add compatible behavior, choose output, or set write policy,
 but it must not turn a leaf into another operation.
@@ -117,34 +117,97 @@ operations into child operations when they have distinct intent, validation,
 effects, or result meaning. Do not split one operation merely because an
 optional flag changes one compatible dimension of it.
 
-## Guided Leaves And Automatic Selection
+## Guided Leaves And Prompts
 
-A wizard-capable leaf normally exposes its wizard from its simplest useful
+A prompt-capable leaf normally exposes its prompt from its simplest useful
 interactive invocation, usually without operands or operation-specific flags.
 If its primary subject cannot be safely and finitely enumerated, the subject
-remains required instead of being invented by a wizard.
+remains required instead of being invented by a prompt.
 
-Wizard answers, positional operands, and operation-specific flags populate the
+Prompt answers, positional operands, and operation-specific flags populate the
 same typed request. Explicit inputs add to or narrow that request
 incrementally. Conflicting explicit inputs are invalid. The operation does not
 create hidden precedence, disjunctive modes, or a recommendation that is
 selected merely because it was displayed. A recommendation may be emphasized
 for review, but the user or an explicit input must supply its authority.
 
-JSON and other non-interactive modes never prompt. Missing semantic input is
-invalid. Missing authority or an unresolved choice is blocked.
+The host supplies three prompt capabilities: `CanPrompt`, `CanReadKeys`, and
+`CanRedraw`. When `CanPrompt` is false, the command reports the shared family
+message for the missing answer: `confirmation-required`, `selection-required`,
+or `permission-required`, with the flag that supplies it. `--format json` and
+`--automatic` never prompt. Missing semantic input is `invalid-input`.
+Missing authority or an unresolved choice is `blocked`.
 
-An operation-specific `--automatic` flag may suppress a wizard and select only
+The host derives those capabilities as follows:
+
+| Capability    | Condition                                                        | Effect                                                          |
+| ------------- | ---------------------------------------------------------------- | --------------------------------------------------------------- |
+| `CanPrompt`   | stdin and stderr are not redirected                              | Any prompt is allowed.                                          |
+| `CanReadKeys` | `CanPrompt`, `TERM` is not `dumb`, and the console supports keys | Arrow, space, and Escape selection is used.                     |
+| `CanRedraw`   | `CanReadKeys` and the console accepts ANSI cursor movement      | Lists redraw in place; otherwise each change reprints the list. |
+
+### Prompt primitives
+
+All prompt primitives have key and line modes with identical semantics:
+
+- Confirmation asks `Apply these changes? [y/N]`. The key answers are `y`,
+  `n`, Enter, and Escape. Line mode accepts `y`, `yes`, `n`, `no`, or empty.
+  The flag equivalent is `--automatic`.
+- Single selection shows the possible paths or IDs, supports up/down, Enter,
+  digits, and Escape, and has the line-mode question `Choose a number (1-2), or
+  press Enter to cancel:`. An exact path or ID is its flag equivalent.
+- Multi-selection shows `[x]` chosen, `[+]` required by a chosen package, and
+  `[ ]` not chosen, with a legend. Space toggles, `a` chooses all, `n` clears
+  all, up/down moves, Enter continues, and Escape cancels. Direct dependencies
+  appear in `needs:`; reverse dependencies appear in `required by` or
+  `needed by`. Its flag equivalents are package IDs or `--all`.
+- Text input is line mode only. A rejected value repeats the rule, such as
+  `'My Tools' is not a valid ID. Use lowercase letters, digits, and hyphens.`
+  The operand or option is its flag equivalent.
+- Permission selection shows `Allow always`, `Allow once`, and `Cancel`.
+  Line mode accepts `always`, `once`, or `cancel`. The flag equivalent is
+  `--allow-path <path>` and means allow always.
+
+Choosing a required dependency marks it `[+]` and a required row cannot be
+toggled off while a chosen package needs it. Trying prints
+`<dependency> is required by <package>. Unchoose that first.`. Enter with no
+package chosen prints `Choose at least one package, or press esc to cancel.`.
+Line mode reports added dependencies with `Also installing <dependency>,
+required by <package>.`, for example `Also installing memory-starters, required
+by development-toolkit.`.
+
+### Plan review
+
+Before every confirmation, the command renders its already-established
+dry-run report at `minimal` through the same report renderer to stderr, then
+asks the confirmation question. It does not rerun the operation or acquire
+additional mutation authority. This applies to each confirmation, including an
+existing-file approval or a safe-repair confirmation. After an accepted answer,
+only the apply result is rendered to stdout.
+
+For example:
+
+```text
+Would install the Open Forge Framework into D:/work/myrepo.
+  Would create 21 files and 20 directories under .agents, plus AGENTS.md and CLAUDE.md.
+  Nothing that already exists would be changed.
+
+Apply these changes? [y/N]
+```
+
+Escape, Ctrl+C, end of input, or `no` at any question produces the `cancelled`
+status with the sentence `<Command> was cancelled. Nothing was changed.` and
+exit `130` before effects. Cancellation after effects begins uses the partial
+result wording `Stopped after <n> of <m> changes.` with the recovery path.
+
+An operation-specific `--automatic` flag may suppress prompts and select only
 the documented explicit inputs plus deterministic automatic selections and
 defaults for that operation. An unresolved semantic choice remains blocked.
 `--automatic` is not global. It never accepts a recommendation, replaces
 divergent content, adds replacement or deletion authority, adopts or takes
 ownership, bypasses safety checks or conflicts, or makes a fuzzy choice.
-It may execute ordinary safe effects already authorized by the explicit
-operation and subjects, including a safe unchanged final-owner deletion when
-that operation defines it. It never selects deletion of changed content on its
-own. Repeating it is idempotent. A leaf must explicitly apply this flag;
-read-only and unrelated commands reject it.
+Repeating it is idempotent. A leaf must explicitly apply this flag; read-only
+and unrelated commands reject it.
 
 ## Modifier Roles And Stable Meanings
 
@@ -152,7 +215,7 @@ Classify each flag before adding it:
 
 | Role         | Purpose                                                                                  | Current examples                                                    |
 | ------------ | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Global       | Same meaning across the CLI                                                              | `--workspace`, `--json`, `--view`, `--verbose`                      |
+| Global       | Same meaning across the CLI                                                              | `--workspace`, `--format`, `--detail`, `--detail-filter`            |
 | Selection    | Adds or narrows explicit input or results within the same operation                      | `--tag`, `--follow-links`, `--additions-only`                       |
 | Guided input | Uses explicit input plus documented deterministic automatic selections without prompting | `--automatic`                                                       |
 | Projection   | Chooses which parts of one result are shown                                              | `--content`                                                         |
@@ -223,10 +286,10 @@ mode Preview. Do not add `--preview`, `--suggestions`, a `plan` operation, a
 saved plan, or a generic `apply` operation.
 
 Dry-run forms the same pre-effect planning status as application. Because it
-performs no effects, it never produces an apply-time `failed` or `interrupted`
+performs no effects, it never produces an apply-time `failed` or `cancelled`
 result. Planning or read failures and caller cancellation before effects retain
 their own event meaning. Dry-run and application use the same status
-conditions; planned changes alone do not create `attention`.
+conditions; planned changes alone do not create `completed-with-warnings`.
 
 ## Repetition, Results, And Streams
 
@@ -241,30 +304,41 @@ Keep repetition rules structural and explicit:
   idempotently. Repetition does not create another operation or multiply
   authority.
 
-Use the same seven semantic statuses across operations:
-`complete`, `attention`, `incomplete`, `invalid`, `blocked`, `failed`, and
-`interrupted`. A command defines whether `attention` applies and what finite
-condition forms it. For ordinary safety and coverage conditions, use
-`blocked` > `incomplete` > `attention` > `complete`. Invalid input stops before
-operation resolution. Failed and interrupted preserve their event meaning.
+Use the same seven renamed semantic statuses across operations:
+`completed`, `completed-with-warnings`, `incomplete`, `invalid-input`,
+`blocked`, `failed`, and `cancelled`. A command defines whether
+`completed-with-warnings` applies and what finite condition forms it. For
+ordinary safety and coverage conditions, use `blocked` >
+`incomplete` > `completed-with-warnings` > `completed`. Invalid input stops
+before operation resolution. Failed and cancelled preserve their event meaning.
+Text uses sentences and severity words rather than printing a status token.
 
-Primary human `complete`, `attention`, and `incomplete` results go to stdout.
-Primary human `invalid`, `blocked`, `failed`, and `interrupted` results go to
-stderr. JSON renders one complete result from the same typed result to stdout
-for every semantic status. Bounded diagnostics use stderr. Compact and
-structured results retain at most one required `Next:` action when one is
-needed. When `Failed`/positively observed `Retained` recovery attention coexists
-with another command-local attention condition, exact recovery cleanup guidance
-owns that single action; the other attention facts remain visible evidence.
+Primary human `completed`, `completed-with-warnings`, and `incomplete` results
+go to stdout. Primary human `invalid-input`, `blocked`, `failed`, and
+`cancelled` results go to stderr. JSON selected by `--format json` renders one
+complete schema-3 result from the same typed result to stdout for every
+semantic status. Bounded diagnostics and prompts use stderr. Parser failures
+before binding remain text on stderr with no envelope.
+
+When a result needs a next action, text retains at most one `Next:` line. It
+uses the exact runnable command or short sentence and its reason. The line
+normally follows the rest of the result and is last. Current output is not
+always last: Extension Install adds this catalogue-required continuation after
+its `Next:` line:
+`Or add ".apm/agents/team.md" to allowInstallPaths in .agents/open-forge.json.`
+Whether to relax the last-line rule or move that continuation before `Next:` is
+an open maintainer question. When recovery warning coexists with another
+command-local completed-with-warnings condition, exact recovery cleanup guidance owns the
+single `Next:` action; the other warning facts remain visible evidence.
 
 The [Global CLI Flags contract](contracts/shared/global-flags/interface.md)
-remains the detailed owner for JSON, `--view`, and `--verbose`. Each command
-contract remains the detailed owner for its local finite conditions and result
-facts. This shared status and stream rule does not create a second command
-schema. The [Result Coordinates Interface
+remains the detailed owner for `--format`, `--detail`, and
+`--detail-filter`. Each command contract remains the detailed owner for its
+local finite conditions and result facts. This shared status and stream rule
+does not create a second command schema. The [Result Coordinates Interface
 Contract](contracts/shared/result-coordinates/interface.md) defines the exact
-numeric exits, envelope, source-location coordinates, primary streams, and
-compatibility.
+numeric exits, schema-3 envelope, source-location coordinates, primary streams,
+and compatibility.
 
 ## Typed Operation Flow
 
@@ -367,8 +441,9 @@ final path; a valid final bundle remains when preparation completed.
 After whole-command verification succeeds, the command deletes only its
 positively recognized bundle. `Deleted` with disposition `Removed` permits
 normal completion. `Failed` with positively observed disposition `Retained`
-keeps target effects successful and produces `attention` with the exact residual
-path and cleanup guidance. `Failed` with disposition `Unknown` produces `failed`
+keeps target effects successful and produces `completed-with-warnings` with the
+exact recovery path and cleanup guidance. `Failed` with disposition `Unknown`
+produces `failed`
 and reports an exact expected path only when the deletion result provides one.
 `Blocked` and `Cancelled`, with either `Retained` or `Unknown`, remain neutral
 typed event facts for command-local mapping; disposition alone never selects a
@@ -438,8 +513,8 @@ records implementation and executable evidence.
 ## Errors And No-Ops
 
 Every error states the operation, affected subject, cause, and useful next
-action. Verbose output may add diagnostic evidence but must not be required to
-understand an ordinary failure.
+action. `debug` detail may add bounded diagnostic evidence on stderr but must
+not be required to understand an ordinary failure.
 
 An idempotent write converges on one state. Repeating it against that state
 returns a verified no-op. Do not invent an effect to represent unchanged state.
@@ -522,11 +597,11 @@ content on its own. Read-only `extension list` and `extension inspect` reject
   authority.
 - Singleton and explicitly multi-value repetition rules are explicit, and
   applicable Boolean repetition is idempotent.
-- A group performs no operation or wizard, and its bare form shows help.
-- A wizard-capable leaf exposes its simplest useful interactive invocation when
+- A group performs no operation or prompt, and its bare form shows help.
+- A prompt-capable leaf exposes its simplest useful interactive invocation when
   its primary subject can be safely and finitely enumerated; otherwise the
   subject remains explicit.
-- Wizard answers and explicit inputs populate one typed request without hidden
+- Prompt answers and explicit inputs populate one typed request without hidden
   precedence, disjunctive modes, or automatic recommendation selection.
 - JSON and other non-interactive modes never prompt.
 - Operation-specific `--automatic` is explicit, deterministic, idempotent, and
@@ -534,7 +609,7 @@ content on its own. Read-only `extension list` and `extension inspect` reject
   authority. Automatic selection never deletes or replaces content on its own.
 - `--dry-run` is the sole preview spelling and shares planning and preflight
   with application while writing nothing. It shares status conditions, and
-  planned changes alone do not create `attention`.
+  planned changes alone do not create `completed-with-warnings`.
 - Every reversible non-no-op effect in the complete operation has one matching
   verified immutable external recovery bundle prepared before the first effect.
   This includes ordinary existing-file effects, relative-file-link creates and
@@ -555,7 +630,8 @@ content on its own. Read-only `extension list` and `extension inspect` reject
 - Successful commands delete their command-owned bundle only after whole-command
   verification. `Deleted`/`Removed` permits normal completion;
   `Failed`/positively observed `Retained` preserves successful target effects
-  with `attention`, the exact residual path, and cleanup guidance; and
+  with `completed-with-warnings`, the exact recovery path, and cleanup guidance;
+  and
   `Failed`/`Unknown` produces `failed` and reports an exact path only when the
   deletion result supplies one.
   `Blocked` and `Cancelled`, with either `Retained` or `Unknown`, remain neutral
@@ -579,9 +655,10 @@ content on its own. Read-only `extension list` and `extension inspect` reject
 - Read-only and mutating authority remain separate.
 - Important stages return typed results and can be tested directly.
 - Human and structured output use one operation result. The seven statuses,
-  ordinary precedence, stream assignment, bounded diagnostics, and one-result
-  JSON rule are uniform; finite `attention` conditions remain command-local.
+  ordinary precedence, stream assignment, bounded diagnostics, and one schema-3
+  envelope rule are uniform; finite `completed-with-warnings` conditions remain
+  command-local.
 - Shared code reflects demonstrated reuse without hiding command meaning.
 - Repeating unchanged input produces the same semantic result and, when the
   local contract permits proof, a verified no-op.
-- Errors remain useful without verbose mode.
+- Errors remain useful without `debug` detail.

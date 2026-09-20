@@ -1,0 +1,3 @@
+Cannot create .agents/memory/project-alpha/overview.md: .agents/memory/project-alpha has no entrypoint, so the file cannot be listed. Create the route first.
+Workspace: <workspace>
+Next: open-forge route init memory/project-alpha

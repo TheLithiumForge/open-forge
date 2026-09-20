@@ -1,8 +1,8 @@
 ---
 open-forge:
-  description: Accepted Interface for releasing selected Extension ownership with safe final-owner removal and same-request prune
-  responsibility: Define remove's exact syntax, managed-ID authority, Keep-as-unmanaged/Delete choice, effects, results, and errors
-  tags: [Memory, Crystallized, CLI, Release, Command, Contract, Extension, Remove, Interface, Ownership, Prune, Safety, CurrentTruth]
+  description: Accepted Interface for releasing selected Extension ownership with safe final-owner deletion and retained recovery
+  responsibility: Define remove's exact syntax, managed-ID selection, final-owner deletion, effects, results, and errors
+  tags: [Memory, Crystallized, CLI, Release, Command, Contract, Extension, Remove, Interface, Ownership, Safety, CurrentTruth]
 ---
 
 # extension remove Interface Contract
@@ -12,7 +12,7 @@ open-forge:
 This is the accepted current Crystallized Interface Contract for
 `open-forge extension remove`. It owns exact syntax, managed-ID selection,
 source-independent behavior, dependency and ownership boundaries,
-Keep-as-unmanaged/Delete choice, same-request `--prune`, automatic and wizard
+final-owner deletion, retained recovery, automatic and wizard
 behavior, effects, output, statuses, errors, examples, non-goals, and public
 conformance. The new CLI does not ship yet.
 
@@ -23,9 +23,17 @@ contracts own their shared boundaries. No Technical Design exists.
 
 ## Consumer Destination Permissions
 
+The repeatable `--allow-path <path>` explicitly authors shared `allowInstallPaths`
+in `.agents/open-forge.json` after safe planning and before permission evaluation.
+It persists in non-interactive execution; `--dry-run` never writes it. A refused
+explicit write is reported and prevents content application. Eligible interactive
+approval offers always, once or cancel. Once changes no settings. Unknown or
+malformed settings withhold external grants while implicit `.agents/` admission
+remains independent; an always choice cannot overwrite malformed settings.
+
 Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
-[Behavior](../../shared/workspace-permissions/behavior.md). Require exact grants for every selected owned external path, including
-Keep-as-unmanaged paths and shared-owner retention. Derive these requirements
+[Behavior](../../shared/workspace-permissions/behavior.md). Require shared allow-list admission for every selected owned external path, including
+shared-owner retention. Derive these requirements
 from trusted ownership without reading package source.
 Existing `.agents/` targets need no grant; their prior safety and ownership
 checks remain. Revocation blocks the complete selected lifecycle operation,
@@ -34,13 +42,12 @@ installed packages do not enter this request's required set.
 
 An eligible human apply request asks once for the complete missing set after
 safe preflight. JSON, automatic, redirected and dry-run execution never ask the
-permission question or create grants. Existing selection and force/prune
-questions keep their separate rules. Force and prune never supply permission.
-Malformed or unsafe permission storage is diagnosed without overwriting it.
+permission question. An explicit non-dry-run `--allow-path` still authors a grant. Selection questions keep their separate rules. Selection never supplies permission.
+Malformed or unsafe settings are never overwritten by approval.
 
-Permission create/replace is a declared control-file effect. Revalidate the
-observed document and approved plan under the existing workspace lease. Cover
-prior permission bytes or proven absence in the one verified operation bundle,
+Interactive always approval creates a declared settings-file create/replace effect. Revalidate the
+observed settings and approved plan under the existing workspace lease. Cover
+prior settings bytes or proven absence in the one verified operation bundle,
 then persist and verify approval before content and lifecycle effects. Later
 failure retains the grant and its actual outcome. Restoration is manual; no
 new automatic Repair behavior follows.
@@ -54,26 +61,25 @@ existing general target-safety findings: `remove` uses the prefix
 `permissions-changed`, and `permission-write-failed`, in that order.
 Their statuses are respectively `blocked`, `blocked`, `blocked`, `incomplete`,
 `blocked`, and `failed`. A failed or unknown permission effect remains failed;
-caller cancellation before an effect keeps the existing interrupted outcome.
+caller cancellation before an effect keeps the existing cancelled outcome.
 Missing grants direct to rerun interactively or edit the displayed exact
 consumer entries. Invalid storage directs to inspect and correct that file.
 
 ## Purpose And Boundary
 
-`remove` releases explicit managed Extension package ownership and performs only
-bounded cleanup proven safe from the trusted `extensions` section of
-`.agents/open-forge.lifecycle.json`, schema v1. It is separate from Framework
-lifecycle because its package identities and owned paths are isolated in that
-section.
+`remove` releases selected Extension ownership recorded in
+`.agents/open-forge.lock.json`. Exact path receipts authorize eligible final-owner
+deletion. Region receipts authorize only changes to the generated region, never
+deletion of its host file. The shared allow list applies to all owners; `.agents/`
+is implicit, and existing reserved-path and physical-containment checks remain.
 
-Remove does not require current package source bytes. It never removes the
-package source. It never removes Framework, Core, Memory, unknown, unowned,
-another-manager-owned, or route-unsafe content.
+Package source bytes are not required and are never removed. Framework-owned,
+Library-owned, unowned, reserved, and route-unsafe content is protected.
 
 ## Syntax
 
 ```text
-open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [global flags]
+open-forge extension remove [<stable-id>...] [--automatic] [--dry-run] [global flags]
 ```
 
 Explicit managed stable-ID operands are required for direct, JSON, and other
@@ -81,21 +87,24 @@ non-interactive application. Argumentless human `remove` may open a finite
 wizard to select managed IDs. There is no `--source`, `--all`, `--force`, package
 path, semver selector, `--yes`, or Framework remove/uninstall command.
 
-Shared flags are `--workspace <path>`, `--json`, `--view=compact|expanded`,
-`--verbose`, `--help`, and `--version`; their full grammar and terminal behavior
+Shared flags are `--workspace <path>`, `--format json`, `--detail <minimal|standard|full|debug>`,
+`--detail debug`, `--help`, and `--version`; their full grammar and terminal behavior
 remain in [Global CLI Flags](../../shared/global-flags/interface.md).
 
 ## Required Workspace Facts And Source Independence
 
 The target is the exact current workspace or exact `--workspace` value. Remove
-does not discover another root or package source. It reads trusted Extension
-ownership, dependency, route, generated-navigation, and cross-section facts from
-the workspace lifecycle state and current files.
+does not discover another root or package source. It reads Extension ownership and dependencies from the generated lock, and
+route, generated-navigation, physical identity, and exact bytes from current files.
 
 Remove may proceed without a healthy current Framework only when those complete
 trusted Extension facts can still be established, including route-host and
-cross-section preservation facts. Otherwise it is `incomplete` or `blocked` and
-performs no managed mutation.
+cross-section preservation facts. A truly absent ownership claim (or a valid
+readable lock with no record for the selected ID) remains the existing complete
+no-op. A malformed or unavailable ownership record is not absence: it is
+`incomplete`, performs no managed mutation, and preserves the exact
+ownership-record subject and raw cause. Other missing required facts remain
+`incomplete` or `blocked` and perform no managed mutation.
 
 Before a workspace effect, the implementation must hold the actual OS lock for
 the persistent external zero-byte path under
@@ -107,10 +116,14 @@ ownership. A crash releases the OS lock, and another process holding it blocks
 mutation. The lock is concurrency safety, not lifecycle authority, history, or
 recovery evidence.
 
-Missing package source bytes do not erase readable lifecycle ownership facts. A
-missing or untrusted lifecycle document or section is not treated as an empty
-installed set and cannot prove a prior remove. The lifecycle document stores no
-plan, runtime history, journal, recovery evidence, or session.
+A proven-absent ownership source, or a valid readable ownership lock with no
+record for the selected ID, supplies no claims and authorizes no deletion. It
+is a complete no-op, not proof of an earlier successful removal. A malformed or
+unavailable ownership source/record is `incomplete` instead: do not treat it as
+empty, infer claims from payload bytes or legacy state, or perform dependency
+inference, deletion, release, recovery, or publication. The minimal finding
+retains the explicit ownership-record subject and raw cause. Earlier state files
+are not read, rewritten, migrated, or deleted.
 
 ### Recovery boundary
 
@@ -138,22 +151,22 @@ every existing-target effect. The bundle is immutable after preparation.
 Every planned existing-target effect must match one verified bundle entry. Ordinary content Create and no-op effects create no entry. Permission-file
 Create has a reversible prior-absence entry. All preparation completes before the first
 mutation. `FileChangeApplier` requires matching preparation for each
-existing-target effect and performs one final effect per target. Before
-post-verification deletion begins, a handled application, verification,
+existing-target effect and performs one final effect per target. A handled application, verification,
 publication, or cancellation outcome reports the actual residual draft or final
 path; a valid final remains when preparation completed. A closed final ZIP may remain after abrupt process
 termination, without an executable crash or power-loss guarantee. The CLI never
 restores, rolls back, compensates for an effect, derives current target state
 from recovery provenance, or stores a journal, progress receipt, or history.
 
-After final verification of whole-operation success, delete the bundle. If
-the deletion result is `Deleted`/`Removed`, normal completion continues.
-`Failed`/positively observed `Retained` keeps target effects successful and
-produces `attention`, the exact residual path, and
-cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
-provides one. When `Failed`/positively observed `Retained` recovery attention
-coexists with a finite non-blocking fact, cleanup guidance owns the single next
-action; the other fact remains visible evidence. Explicit Cleanup
+After final verification, re-read and verify the prepared bundle, retain it,
+and report recovery state `retained` with its exact `residualPath`. Successful
+retention does not by itself change the result to `completed-with-warnings` or imply a failure. The bundle contains edited
+bytes that Git may never have recorded. Existing recovery-catalogue rules block
+later mutations until the user reviews the bundle and runs Cleanup. An absent-ID
+Remove no-op requires no mutation and may still complete. Missing or invalid
+prepared recovery at final verification is a failure.
+
+Explicit Cleanup
 may delete only the exact selected-workspace final or draft candidate while
 holding the same-workspace lease and after immediate ordinary path, kind, and
 final semantic revalidation. Unknown names and unavailable, malformed, or
@@ -171,227 +184,279 @@ reflection, native dependency, or package for this boundary.
 
 ## Selection And Flags
 
-| Input            | Role                                                          | Rule                                                                                                   |
-| ---------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `<stable-id>...` | Select explicit managed package IDs                           | Repeatable subjects. Duplicate IDs are invalid.                                                        |
-| `--prune`        | Same-request deletion authority for changed final-owner paths | Boolean and idempotent. It selects Delete before planning; it cannot be added after ownership release. |
-| `--automatic`    | Interaction policy                                            | Boolean and idempotent. It never selects IDs, Delete, or ownership authority.                          |
-| `--dry-run`      | Preview policy                                                | Boolean and idempotent. It writes nothing and uses the same plan and preflight as apply.               |
+| Input            | Role                      | Rule                                              |
+| ---------------- | ------------------------- | ------------------------------------------------- |
+| `<stable-id>...` | Select managed packages   | Repeatable IDs; duplicates are invalid.           |
+| `--automatic`    | Disable prompts           | Does not choose packages or bypass safety checks. |
+| `--dry-run`      | Preview the complete plan | Performs no writes or recovery preparation.       |
 
-### Keep-as-unmanaged and Delete
+Ambiguous portable path aliases in the lock produce an ownership observation
+and no effects. Shared-owner lookup must never make another owner's aliased
+file eligible for final-owner deletion.
 
-For changed final-owner content, the operation has two bounded choices:
-
-- `Keep-as-unmanaged` releases selected ownership and preserves the current
-  changed file as visible unmanaged content.
-- `Delete` deletes the changed final-owner file only when all identity,
-  containment, route, verification, and recovery-bundle checks pass. `Delete` is
-  selected by explicit `--prune` in the same request as remove.
-
-The human wizard shows this choice before planning. Noninteractive normal mode
-and automatic mode choose `Keep-as-unmanaged` unless the same request includes
-explicit `--prune`. Automatic mode never chooses Delete by itself.
-
-For an unchanged eligible final-owner path, ordinary remove authority may delete
-the file after all complete safety and recovery checks. Shared files remain while
-another owner remains. Ownership release is visible in the plan and result.
+`--prune` is removed. The parser reports it as an unknown option, including in
+JSON and automatic requests. No public `prune` result field remains.
 
 ## Wizard, Direct, And Automatic Behavior
 
-Argumentless human remove may ask for managed IDs, retained dependents, shared
-owners, final-owner files, route-host effects, changed content, and the
-Keep-as-unmanaged/Delete choice. Wizard answers and explicit IDs/`--prune`
-populate one typed request. Recommendations do not create deletion authority.
-
-JSON and other non-interactive modes never prompt. Missing IDs are `invalid`.
-Without `--prune`, changed final-owner content uses Keep-as-unmanaged. With
-`--prune`, the same request explicitly selects Delete for eligible changed
-final-owner content. `--automatic` preserves that rule and adds no authority.
+Prompt-capable human requests may select managed package IDs. Direct and
+automatic requests require explicit IDs. Every mode plans the same final-owner
+deletion; there is no changed-content Keep/Delete question.
 
 ## Ownership, Dependencies, And Removal Effects
 
-Removal reads trusted Extension lifecycle facts and fresh current semantic and
-exact-byte facts. It validates:
+Derive owners from the lock's per-extension path lists. Validate the selected
+IDs, dependencies, complete owner sets, shared allow list, reserved paths,
+physical containment, no-follow final leaf, route-host safety, expected bytes,
+and recovery readiness before any effects.
 
-- selected IDs and complete owner sets;
-- retained dependents, dependency edges, and orphan outcomes;
-- final-owner versus shared paths;
-- current semantic fingerprint against persisted semantic baseline;
-- route-host and generated-navigation reachability;
-- Framework, user, unknown, and other-manager ownership; and
-  - exact cross-section, containment, verification, and recovery-bundle
-    boundaries.
+A retained dependent blocks removal of its dependency. An orphan remains
+installed. A route host with retained routed descendants cannot be deleted.
 
-A retained dependent blocks removal of its dependency. A dependency that becomes
-an orphan remains recorded and installed; there is no automatic orphan prune. A
-route host cannot be removed while retained routed descendants depend on it.
+- `shared` maps to `retain-shared`: release selected owners and retain the file.
+- `final-owner` maps to `delete`: delete an eligible existing ordinary file,
+  including edited content, after recovery preparation.
+- `missing` maps to `release-ownership`: release the receipt without a deletion
+  effect. Absence does not prove a prior successful operation.
 
-Remove may:
+Unknown, unowned, other-manager-owned, reserved, unsafe, or unauthorized targets
+are never deleted. `.agents/open-forge.json` and `.agents/open-forge.lock.json`,
+including their descendants, are reserved regardless of Extension claims.
+Framework and Library path ownership comes from their lock sections. Resolve
+Library source-relative `paths` beneath the recorded `destinationRoot` before
+checking portable destination identity. If a Library mapping is uninterpretable,
+report an ownership observation and perform no effects. A real
+projection link or reparse point blocks deletion independently of recorded
+ownership. No Library operation is invoked.
 
-1. release selected ownership for every eligible recorded package path;
-2. delete an unchanged eligible final-owner file;
-3. retain shared files while another owner remains;
-4. preserve a changed final-owner file as unmanaged under Keep-as-unmanaged; and
-5. delete a changed eligible final-owner file only under same-request `--prune`.
-
-Unknown, unowned, shared-unsafe, Extension-external, Framework-owned,
-route-unsafe, ambiguous, or untrusted content is never deleted. Once ownership
-is released, a later prune cannot act on the resulting unmanaged file.
-
-Generated `Entries` are derived navigation, not package-owned authored bytes.
-Remove projects affected parents from intended authored topology and metadata
-through current Index rules in the same plan. It preserves valid markers and
-outside bytes and blocks malformed boundaries. The package source remains
-unchanged.
-
-An exact destination path claim in the consumer Library record
-`.agents/open-forge.libraries.json`, or a real relative projection link at that
-destination, is separately owned by Library management. Remove never adopts,
-overwrites, updates, or removes that destination in any removal mode, including
-ordinary removal, same-request `--prune`, and Keep-as-unmanaged. The no-follow
-final-leaf guard blocks ordinary Extension `Create`, `Replace`, `Delete`, or
-`ReplaceGeneratedRegion` when the leaf is a link or reparse point,
-independently of whether the Library record is present, readable, valid, or
-claims the path. Remove does not reinterpret the Library record or invoke a
-Library operation.
+Generated Entries are projected from intended topology using current Index
+rules. Preserve valid boundaries and outside bytes; malformed boundaries block
+the complete operation. The package source remains unchanged.
 
 ## Lifecycle Trust And Semantic Identity
 
-The lifecycle document has isolated `framework` and `extensions` sections.
-Remove publishes the Extension ownership release only after complete verification
-and preserves unrelated sections and envelope meaning semantically. A selected
-semantic change emits one deterministic canonical UTF-8 whole-document
-representation; lifecycle property order, whitespace, and line endings are not
-preserved. A semantic no-op writes nothing. Exact prior bytes for every
-existing-target effect are captured in the verified operation recovery bundle.
-Unsupported or ambiguous schema facts are `incomplete` or `blocked`
-under the existing safety rules; they never grant force, prune, or remove
-authority.
+The ownership lock records receipts, not content baselines. Removal performs no
+changed-versus-unchanged classification and publishes no such distinction.
+Exact current bytes are still required for expected-state revalidation,
+verification, and recovery.
 
-For supported parseable kinds, removal and prune classification compare the
-current `open-forge-markdown-v1` conservative parser/AST semantic fingerprint
-with the persisted semantic baseline
-fingerprint. Preserve Unicode, semantic text, headings, tags, links,
-destinations, marker meaning, code blocks, and significant whitespace. Normalize
-only line endings and parser-proven formatting trivia. Unsupported, binary, and
-unparseable kinds use exact-byte identity and fail closed. Fresh exact bytes are
-still needed for diff, revalidation, deletion, verification, and recovery. No
-formatter executes or produces persisted formatter state.
+Publish Extension ownership only after target effects verify, preserving the
+Framework and Library sections. An identical receipt writes nothing. The
+existing state-file outcome reports the lock publication and its actual
+verification; no second outcome is added. Recovery lists the lock when its
+replacement is protected, and never includes an untouched earlier state file.
+A skipped ownership write never authorizes additional deletion.
 
-## Output And Results
+## Human Output
 
-Both human views lead with outcome or preview, status, exact workspace/selection,
-selected IDs and effective prune/automatic/preview choices. Retained dependents,
-findings and permission/safety conditions precede changes. Group each exact path's
-owner/keep/delete decision with its actual effects, retaining unmatched facts and
-every action, outcome and residual. Keeping a file unmanaged remains distinct
-from retaining package ownership.
+The command uses the shared native report. The default detail is `minimal`; `standard`, `full` and `debug` add the catalogue-defined facts. `--detail-filter <error|warning|info|all>` is repeatable and changes only the rendered detail. Use `--format text` for this text report. Primary result text for `completed`, `completed-with-warnings` and `incomplete` is on stdout; primary errors for `invalid-input`, `blocked`, `failed` and `cancelled` are on stderr. There is no `Status:` line.
 
-Compact keeps every affected/preserved path, retained dependency and
-blocker, source-unchanged fact and recovery state/residual path. Expanded explains
-shared/final owners and selected decisions beside their paths, then supporting
-generated-navigation, installation-record and verification facts. Planned effects
-never imply verified deletion. Both show the actual required Next command once;
-expanded may add its reason. Paths are not truncated. Removal remains source
-independent. JSON retains the complete result and original ordering for every status.
+### Statuses and headlines
 
-Compact may summarize unchanged navigation paths by count only when they have no
-planned path, comparison or effect that must remain visible. Expanded retains
-those observations. Every changed or uncertain path and every actual effect
-remains visible in both views.
+| Status                  | When                                                           | Headline                                                                                    | Exit | Stream |
+| ----------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | removed                                                        | `Removed the <id> Extension.` / `Removed <N> Extensions: <ids>.`                            |    0 | stdout |
+| completed               | proven-absent ownership or valid readable lock has no record for the ID | `No files are recorded for <id>, so there is nothing to remove.`                            |    0 | stdout |
+| completed (dry run)     | planned                                                        | `Would remove the <id> Extension.`                                                          |    0 | stdout |
+| completed-with-warnings | a dependency remains installed and is no longer needed         | `Removed the <id> Extension. <dependency> remains installed and is no longer needed by it.` |    2 | stdout |
+| incomplete              | malformed or unavailable ownership record, or route, permission or recovery unreadable | `The <id> Extension could not be removed: <limitation>. Nothing was changed.`; minimal retains the ownership-record subject and raw cause |    3 | stdout |
+| invalid-input           | bad ID, duplicate IDs, no selection possible                   | `Cannot remove: <problem>.`                                                                 |    4 | stderr |
+| blocked                 | another installed package needs it, permission, conflict, lock | `Cannot remove <id>: <reason>.`                                                             |    5 | stderr |
+| failed                  | after effects                                                  | `Extension remove stopped after <n> of <m> changes.`                                        |    1 | stderr |
+| cancelled               | prompt cancelled, Ctrl+C                                       | `Extension remove was cancelled. Nothing was changed.`                                      |  130 | stderr |
 
-| Result        | Meaning for `extension remove`                                                                                                                                                                                                                                                               |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | Selected ownership release and all permitted effects or dry-run completed with complete coverage and no unresolved finite attention. A verified no-op requires trusted proof that the selected ID and selected ownership are already absent.                                                 |
-| `attention`   | Complete safe removal preserves a finite non-blocking fact, or post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`. `Failed`/`Retained` recovery keeps target effects successful and reports the exact residual path with cleanup guidance. |
-| `incomplete`  | Safe lifecycle, source-independent ownership, route, generated, parser, or recovery-bundle coverage is unavailable. No managed mutation occurs.                                                                                                                                              |
-| `invalid`     | IDs, flags, repetition, missing semantic input, or terminal-mode input is invalid.                                                                                                                                                                                                           |
-| `blocked`     | Unsafe, ambiguous, untrusted, colliding, retained-dependent, route-unsafe, unauthorized, or recovery-bundle facts prevent one complete plan.                                                                                                                                                 |
-| `failed`      | Application, lifecycle publication, or verification fails unexpectedly after effects begin, or post-verification recovery deletion returns `Failed`/`Unknown`.                                                                                                                               |
-| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure remains.                                                                                                                                                                                       |
+### Text by level
 
-Primary human complete/attention/incomplete results go to stdout. Primary human
-invalid/blocked/failed/interrupted results go to stderr. Bounded diagnostics use
-stderr. JSON emits one result on stdout for every status.
-
-## Repeated Remove And Errors
-
-A repeated remove is a verified no-op only when a valid trusted current lifecycle
-document proves that the requested ID and all selected ownership are already
-absent. Missing document or section, malformed, unsupported, or untrusted
-lifecycle evidence is `incomplete` when coverage is safely unavailable or
-`blocked` when ambiguity is unsafe. It is never presumed to prove that an earlier
-remove succeeded.
-
-Every error names `extension remove`, selected IDs/path/owner when known, the
-cause, and at most one useful next action. A retained dependent blocks before
-any ownership release. A changed final-owner path without `--prune` is retained,
-not an error; an ineligible path under `--prune` is blocked, not deleted.
-
-## Examples
-
-Open the human selection and ownership-choice wizard:
+`minimal`:
 
 ```text
-open-forge extension remove
+Removed the toolkit Extension.
+  .agents/changed.md     deleted
+  .agents/unchanged.md   deleted
+  .agents/shared.md      kept; still owned by survivor
+  .agents/missing.md     was already gone; its ownership was released
+  Updated the Entries section of .agents/loader.md
+  The deleted files are kept in a recovery bundle at <recovery-path>.
+Next: open-forge cleanup  (after reviewing the bundle)
 ```
 
-Release one managed package and keep changed final-owner files unmanaged:
+`minimal`, unavailable ownership record (stdout):
 
 ```text
-open-forge extension remove development-toolkit --automatic
+The toolkit Extension could not be removed: The ownership record is unavailable: <raw cause>. Nothing was changed.
 ```
 
-Select Delete for eligible changed final-owner paths in the same preview:
+The finding subject remains the exact ownership-record path or record identity;
+`<raw cause>` is not replaced with “no claims” or another missing-state alias.
+
+`minimal`, dependent blocks (stderr):
 
 ```text
-open-forge extension remove development-toolkit --prune --dry-run --json
+Cannot remove planning: the orchestration Extension still needs it.
+Next: open-forge extension remove orchestration planning
 ```
 
-Remove does not require a package source:
+`standard` adds `Workspace:`, per row the owners before and after, the
+removal order, and the lock row.
 
-```text
-open-forge extension remove development-toolkit --workspace D:/work/example
-```
+`full` adds the unchanged Entries sections and the recovery and
+verification facts in words.
+
+### Prompts
+
+Multi-select of installed packages with `needed by` marks; plan review
+listing every deletion; `Delete the <N> files listed above? [y/N]`.
+
+### Representative transcripts by status
+
+### Transcript — completed
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-remove-completed). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Remove/__snapshots__/ExtensionRemoveBeforeOutputSnapshotTests/PackageRemoval_single-package/single-package.minimal.txt).
+
+### Transcript — completed-with-warnings
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-remove-completed-with-warnings). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Remove/__snapshots__/ExtensionRemoveBeforeOutputSnapshotTests/PackageRemoval_orphaned-dependency/orphaned-dependency.minimal.txt).
+
+### Transcript — incomplete
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-remove-incomplete).
+
+### Transcript — invalid-input
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-remove-invalid-input). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Remove/__snapshots__/ExtensionRemoveBeforeOutputSnapshotTests/PackageRemoval_not-installed/not-installed.minimal.txt).
+
+### Transcript — blocked
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-remove-blocked).
+
+### Transcript — failed
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-remove-failed). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Remove/__snapshots__/ExtensionRemoveBeforeOutputSnapshotTests/PackageRemoval_write-failed-partial/write-failed-partial.minimal.txt).
+
+### Transcript — cancelled
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-remove-cancelled). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Remove/__snapshots__/ExtensionRemoveBeforeOutputSnapshotTests/PackageRemoval_cancelled/cancelled.minimal.txt).
+
+## Structured Output
+
+`--format json` writes one schema-3 envelope to stdout for every report status. It contains the command, status, workspace when applicable, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
+
+### JSON data by level
+
+| Level    | `data`                                                                                                                          |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| minimal  | `{ mode, automatic, packages: [ { id } ], orphaned: [ id ], permissions { ... } }` plus every effect with `owner` and `keptFor` |
+| standard | + `removalOrder`, per effect `ownersBefore`, `ownersAfter`                                                                      |
+| full     | + `entriesUnchanged`, `verification`, `recovery` details                                                                        |
+
+## Semantic Results
+
+The status and exit mapping above are unchanged by detail or format. Root effects and recovery receipts retain their complete result facts at every detail level; command-owned data follows the catalogue's level rows.
+
+### Effects wording
+
+`<path>  deleted`, `<path>  kept; still owned by <owners>`, `<path>  was
+already gone; its ownership was released`, `Updated the Entries section of
+<path>`, lock `updated`. Dry run: `would delete`, `would keep`, `would
+release`. Partial: `deleted`, `not started`, `final state unknown`.
+
+### Counts and limitations
+
+`packagesRemoved`, `filesDeleted`, `filesKept`, `filesReleased`, `sectionsUpdated`.
+
+## Errors And Boundaries
+
+The findings catalogue below is the command's finite error and warning vocabulary. Findings keep their code, severity, family, subject and cause; detail filtering affects display only. A blocked, failed or cancelled result prevents further effects according to the catalogue.
+
+### Findings catalogue
+
+| Code                                          | Severity | Family                       | Message                                                                                        | Next                                           |
+| --------------------------------------------- | -------- | ---------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| extension-remove.invalid-input                | error    | invalid-input                | includes `<id> is listed twice.`                                                               |                                                |
+| extension-remove.selection-required           | error    | selection-required           |                                                                                                | `open-forge extension list --installed`        |
+| extension-remove.interaction-ended            | error    | interaction-ended            |                                                                                                |                                                |
+| extension-remove.ownership-observation        | info     | ownership-observation        | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Remove/Shared/Wording/ExtensionRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-remove.ownership-observation`).            | none                                           |
+| extension-remove.lifecycle-observation        | warning  | local                        | [`extension.remove.phrase.remains-installed-and-is-no-longer-needed-by`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Extension/Remove/ExtensionRemovePhrases.cs); [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Remove/Shared/Wording/ExtensionRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-remove.lifecycle-observation`).                              | `open-forge extension remove <dependency>`     |
+| extension-remove.dependency-blocked           | error    | local                        | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Remove/Shared/Wording/ExtensionRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-remove.dependency-blocked`).                                                  | `open-forge extension remove <dependent> <id>` |
+| extension-remove.framework-unavailable        | warning  | framework-unavailable        |                                                                                                |                                                |
+| extension-remove.framework-unsafe             | error    | framework-unsafe             |                                                                                                |                                                |
+| extension-remove.lifecycle-unavailable        | warning  | lifecycle-unavailable        | malformed or unavailable ownership record; retain the explicit record subject and raw cause at minimal |                                                |
+| extension-remove.lifecycle-blocked            | error    | lifecycle-blocked            |                                                                                                |                                                |
+| extension-remove.ownership-conflict           | error    | ownership-conflict           |                                                                                                |                                                |
+| extension-remove.permission-required          | error    | permission-required          |                                                                                                |                                                |
+| extension-remove.permission-declined          | error    | permission-declined          |                                                                                                |                                                |
+| extension-remove.permissions-invalid          | error    | permissions-invalid          |                                                                                                |                                                |
+| extension-remove.permissions-unavailable      | warning  | permissions-unavailable      |                                                                                                |                                                |
+| extension-remove.permissions-changed          | error    | permissions-changed          |                                                                                                |                                                |
+| extension-remove.permission-write-failed      | error    | permission-write-failed      |                                                                                                |                                                |
+| extension-remove.target-unsafe                | error    | target-unsafe                |                                                                                                |                                                |
+| extension-remove.projection-unavailable       | warning  | projection-unavailable       |                                                                                                |                                                |
+| extension-remove.generated-region-unsafe      | error    | generated-region-unsafe      |                                                                                                |                                                |
+| extension-remove.workspace-lock-unavailable   | error    | workspace-lock-unavailable   |                                                                                                |                                                |
+| extension-remove.target-changed               | error    | target-changed               |                                                                                                |                                                |
+| extension-remove.recovery-conflict            | error    | recovery-conflict            |                                                                                                |                                                |
+| extension-remove.recovery-unavailable         | warning  | recovery-unavailable         |                                                                                                |                                                |
+| extension-remove.recovery-artifact-retained   | warning  | recovery-artifact-retained   | (only when cleanup after success failed; an intentionally kept bundle is not this)             |                                                |
+| extension-remove.write-failed                 | error    | write-failed                 |                                                                                                |                                                |
+| extension-remove.topology-verification-failed | error    | local                        | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Remove/Shared/Wording/ExtensionRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-remove.topology-verification-failed`). | `open-forge doctor`                            |
+| extension-remove.lifecycle-publication-failed | error    | lifecycle-publication-failed |                                                                                                |                                                |
+| extension-remove.verification-failed          | error    | verification-failed          |                                                                                                |                                                |
+| extension-remove.recovery-failed              | error    | recovery-failed              |                                                                                                |                                                |
+| extension-remove.operation-failed             | error    | operation-failed             |                                                                                                |                                                |
+| extension-remove.interrupted                  | error    | cancelled                    |                                                                                                |                                                |
+
+The orphaned-dependency warning is the headline clause plus a warning
+finding with the dependency as subject: `<dependency> remains installed and
+is no longer needed by <id>.` with `Next: open-forge extension remove
+<dependency>`.
+
+## Scenarios
+
+### Catalogue situations
+
+`single-package`, `shared-file-kept`, `missing-file-released`,
+`orphaned-dependency` (warnings), `dependent-blocks` (blocked), `select-prompt`,
+`no-selection-non-interactive`, `not-installed` (proven-absent/no claims),
+`unknown-ownership` (incomplete, no effects), `dry-run`,
+`permission-required`, `lock-held`, `write-failed-partial`, `cancelled`.
+
+Each status has one representative native text transcript above. JSON uses the same status and command facts under the schema-3 envelope.
 
 ## Non-Goals And Public Conformance
 
-Remove does not fetch a source, remove a package source, install/update a
-package, remove Framework/Core/Memory, delete unknown or unowned files, infer
-ownership, prune orphans, choose Delete automatically, repair markers, run a
-formatter, use a later invocation to add prune authority, or create a hidden
-transaction journal.
+Remove does not fetch or modify package source, install/update packages, delete
+unowned or other-manager files, infer receipts from current payload, remove
+orphans automatically, repair malformed boundaries, run a formatter, or create
+a transaction journal.
 
-Conformance must cover exact managed-ID and wizard/direct/automatic behavior,
-source-unavailable facts, trusted/untrusted/absent states, retained dependents,
-orphan retention, shared owners, Library-record and projection collisions,
-independent no-follow final-leaf guards, semantic current-versus-baseline classification,
-unchanged final-owner deletion, changed Keep/Delete and same-request prune,
-ownership release, later-prune refusal, route/generated safety, package-source
-preservation, complete plan, recovery-bundle behavior, dry-run parity, no-op proof,
-seven statuses/streams, JSON parity, and no Framework mutation. The [Shared
-Result Coordinates](../../shared/result-coordinates/interface.md) define the exact
-JSON result schema and exit mapping. Gate 5 must
-prove source-generated serialization, fixed Markdig where used, real
-`System.IO`, Native AOT, OS locking, isolated tests, and package journeys.
+Conformance covers selection modes, source independence, proven-absent and
+stale lock state, malformed/unavailable ownership as incomplete zero-effect
+results with exact record subject/cause, dependencies, shared owners, final-owner deletion of edited bytes,
+reserved paths, allow-list rejection, no-follow guards, missing-path release,
+recovery ordering and retained exact bytes, dry-run parity, no-op behavior,
+unknown `--prune`, statuses/streams, and both JSON and human views. The [Shared
+Result Coordinates](../../shared/result-coordinates/interface.md) define the
+result schema and exit mapping. Verify source-generated serialization, real
+filesystem behavior, Native AOT, OS locking, isolated tests, and package journeys.
 
-## Compact JSON Output
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+
+## Executable Wording References
+
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
+
+CLI help syntax: [`extension.remove.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Extension/Remove/ExtensionRemoveText.cs).
+
+<!-- @OpenForgeTextRef extension.remove.help.syntax -->
+<!-- @OpenForgeTextRef extension.remove.phrase.remains-installed-and-is-no-longer-needed-by -->
+
+## Approved Journey Wording References
+
+The following stable IDs link the approved journey behavior above to its typed
+human-wording factories. Independently reviewed snapshots and state assertions
+remain the output evidence.
+
+- [ExtensionRemovePhrases.cs](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Extension/Remove/ExtensionRemovePhrases.cs)
+  <!-- @OpenForgeTextRef extension.remove.phrase.ownership-record-unavailable -->

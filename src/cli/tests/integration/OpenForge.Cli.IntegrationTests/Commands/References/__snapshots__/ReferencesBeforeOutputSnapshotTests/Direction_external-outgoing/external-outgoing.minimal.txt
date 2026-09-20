@@ -1,0 +1,2 @@
+.agents/docs/guide.md
+  out  :8:1   https://example.com/guide   not checked

@@ -1,0 +1,3 @@
+No ownership record exists, so update cannot tell which files it manages. Nothing was changed.
+Workspace: <workspace>
+Next: open-forge doctor

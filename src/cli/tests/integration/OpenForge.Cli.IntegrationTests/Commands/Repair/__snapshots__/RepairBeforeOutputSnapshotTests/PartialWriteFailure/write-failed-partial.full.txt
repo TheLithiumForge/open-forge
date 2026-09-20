@@ -1,0 +1,18 @@
+Repair stopped after 1 of 2 links were rewritten.
+Workspace: <workspace>
+  Error  .agents/docs/source.md  Write failed [repair.write-failed]
+         Writing .agents/docs/source.md failed. Stopped after 1 of 2 changes. Recovery data: <recovery-bundle>.
+  .agents/docs/aaa.md:8:8     rewritten
+  .agents/docs/source.md:9:8  not started
+  Diagnosis coverage: Workspace and path were checked; route and heading were checked; local references were checked; selected scope was checked.
+  Before: <sha256>
+  After: <sha256>
+  Before: <sha256>
+  After: <sha256>
+  Checks before writing: completed.
+  Verification: targets were planned but not checked; resulting bytes were planned but not checked; post-conditions held.
+  Recovery: The recovery bundle was retained at <recovery-bundle>.
+  Checks after writing: completed.
+1 link repaired, 1 problem remaining, 1 problem needing a hand, 1 error.
+  Inspect the bounded failure details and rerun Repair from a fresh plan.
+Next: open-forge repair --detail debug

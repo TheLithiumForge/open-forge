@@ -1,0 +1,44 @@
+{
+  "comparison_ref": "develop",
+  "comparison_commit": "2b54fdc598a48a12e44772a5cb323cf45e9e5a73",
+  "review_worktree_commit": "28cac0fc47e43671aa6458d318293594542d9bbf",
+  "command_count": 28,
+  "families": {
+    "lifecycle": ["install", "update"],
+    "recovery": ["cleanup"],
+    "extension": ["list", "inspect", "create", "install", "update", "remove"],
+    "library": ["list", "inspect", "attach", "sync", "detach"],
+    "inspection": ["status", "context", "find", "references"],
+    "route": ["inspect", "list", "init", "create", "update", "move", "remove"],
+    "maintenance": ["index", "doctor", "repair"]
+  },
+  "global_options": ["--workspace <path>", "--json", "--view <compact|expanded>", "--verbose", "--help", "--version"],
+  "status_policy": {
+    "statuses": ["complete", "failed", "attention", "incomplete", "invalid", "blocked", "interrupted"],
+    "exit_codes": { "complete": 0, "failed": 1, "attention": 2, "incomplete": 3, "invalid": 4, "blocked": 5, "interrupted": 130 },
+    "human_stdout": ["complete", "attention", "incomplete"],
+    "human_stderr": ["failed", "invalid", "blocked", "interrupted"],
+    "json_stdout": "all statuses; bounded diagnostics remain on stderr"
+  },
+  "extension_source": {
+    "catalogue_path": "src/extensions",
+    "packages_on_develop": ["development-toolkit"],
+    "package_layout": "extension.json + optional README.md + content/.agents/",
+    "manifest_fields": ["id", "name", "description", "version", "dependencies"],
+    "development_toolkit_version": "0.1.0",
+    "development_toolkit_dependencies": []
+  },
+  "pending": ["scoped-continuity-loading", "extension-catalogue-synchronization", "extension-lifecycle-documentation-alignment"],
+  "uncertainties": [
+    "No develop record is literally named Task 29.",
+    "Embedded catalogue parity with accepted source packages is not established by this packet.",
+    "Review-branch docs contain historical payload wording mixed with current content wording."
+  ],
+  "confidence": {
+    "command_grammar": "high",
+    "global_options_and_status": "high",
+    "package_shape": "high",
+    "release_availability": "medium",
+    "embedded_catalogue_parity": "medium"
+  }
+}

@@ -19,9 +19,9 @@ The exact command and help order is:
 
 1. `open-forge library list [global flags]`
 2. `open-forge library inspect <library-id> [global flags]`
-3. `open-forge library attach <library-id> <source-root> [--to <workspace-relative-directory>] [--dry-run] [global flags]`
-4. `open-forge library sync <library-id> [--dry-run] [global flags]`
-5. `open-forge library detach <library-id> [--dry-run] [global flags]`
+3. `open-forge library attach <library-id> <source-root> [--to <workspace-relative-directory>] [--dry-run] [--automatic] [global flags]`
+4. `open-forge library sync <library-id> [--dry-run] [--automatic] [global flags]`
+5. `open-forge library detach <library-id> [--dry-run] [--automatic] [global flags]`
 
 The five child contract sets are routed by this group in the order above.
 `list` and `inspect` are read-only; `attach`, `sync`, and `detach` have their
@@ -34,14 +34,12 @@ Workspace Libraries register a contained source root for one consumer workspace
 and recursively expose eligible source files below a recorded destination root
 through individual relative file links. No specially named source child is
 required. Optional Attach `--to` defaults to the workspace root (`.`). The source root and the consumer workspace retain separate identities.
-The consumer-local record is `.agents/open-forge.libraries.json`.
-
-The record is a strict schema-v1 document. Its top-level members are
-`schemaVersion` and `libraries`; each library record has only `id`, `sourceRoot`,
-`destinationRoot`, and `paths`. It is separate from `.agents/open-forge.lifecycle.json`. Library
-IDs use the lowercase ASCII stable-ID grammar and occupy a namespace separate
-from automatic source IDs. A library ID is management identity, never a
-source-reference operand.
+Library registrations come from the `libraries` claims in
+`.agents/open-forge.lock.json`, alongside separate Framework and Extension claims.
+Each Library records its ID, source root, destination root, and source-relative
+paths. The lock is an ownership receipt and never gates a command. Unavailable
+claims are reported without adopting matching links. Library IDs remain separate
+from automatic source IDs and are not source-reference operands.
 
 The [Workspace Libraries Technical Design](../../technical-designs/workspace-libraries.md)
 is the shared realization source for this group. It is linked here by its
@@ -75,12 +73,8 @@ Contract, and it does not define the mutation commands' plans or effects.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
-
 - [Route the public attach contract for registering one contained Workspace Library and projecting its complete eligible inventory](attach/_attach.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Attach #Mutation #Recovery #Safety #CurrentTruth
 - [Route the public detach contract for removing one complete registered Workspace Library projection without touching its source](detach/_detach.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Detach #Mutation #Recovery #Safety #CurrentTruth
 - [Route the accepted read-only Library inspect contracts for one exact library ID](inspect/_inspect.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Inspect #Interface #Behavior #ReadOnly #CurrentTruth
 - [Route the accepted read-only Library list contracts for bounded record and registered-link observations](list/_list.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #List #Interface #Behavior #ReadOnly #CurrentTruth
 - [Route the public sync contract for reconciling one registered Workspace Library with its complete current inventory](sync/_sync.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Sync #Mutation #Recovery #Safety #CurrentTruth
-
-<!-- open-forge:generated-index:end -->

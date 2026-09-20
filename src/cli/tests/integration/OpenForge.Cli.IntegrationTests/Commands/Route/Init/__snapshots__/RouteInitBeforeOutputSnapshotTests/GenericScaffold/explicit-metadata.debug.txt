@@ -1,0 +1,27 @@
+Created .agents/documents/_documents.md
+Workspace: <workspace>
+  Scaffold: generic
+  description: Documents
+  responsibility: Owns documents.
+  tags: Docs
+  .agents/documents/_documents.md  created
+--- .agents/documents/_documents.md (new file) ---
+---
+open-forge:
+  description: Documents
+  tags: [Docs]
+  responsibility: Owns documents.
+---
+
+# documents
+
+Documents.
+
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
+
+## Entries
+
+- none - No entries - #Empty
+  Recovery: no recovery bundle was created.

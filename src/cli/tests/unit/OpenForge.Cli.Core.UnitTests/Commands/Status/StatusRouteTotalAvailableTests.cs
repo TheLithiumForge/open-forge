@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Status;
 
 public sealed class StatusRouteTotalAvailableTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status total available is zero for an empty workspace")]
     [Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void MissingEntryAndSourceInventoryProduceAvailableZero()
@@ -24,6 +25,7 @@ public sealed class StatusRouteTotalAvailableTests
             expectedTokens: 0L);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status total available counts a readable canonical entry")]
     [Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void ReadableEntryIsMeasuredExactly()
@@ -43,6 +45,7 @@ public sealed class StatusRouteTotalAvailableTests
             expectedTokens: 1L);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Status live context measurements retain exact ceiling token boundaries"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     [InlineData("", 0L, 0L), InlineData("x", 1L, 1L), InlineData("xxxx", 4L, 1L), InlineData("xxxxx", 5L, 2L)]
     public void LiveMeasurementsUseCeilingTokenEstimate(string text, long expectedCharacters, long expectedTokens)
@@ -62,6 +65,7 @@ public sealed class StatusRouteTotalAvailableTests
             expectedTokens: expectedTokens);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status total available is unavailable when the canonical entry is unavailable")]
     [Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void UnavailableEntryProducesUnavailableMeasurement()
@@ -77,6 +81,7 @@ public sealed class StatusRouteTotalAvailableTests
         Assert.Equal(OperationalValueState.Unavailable, result.Context.TotalAvailable.EstimatedTokens.State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status route view is blocked when the canonical entry is unsafe")]
     [Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void UnsafeEntryBlocksTheRouteView()
@@ -91,6 +96,7 @@ public sealed class StatusRouteTotalAvailableTests
         StatusRouteTotalAvailableSupport.AssertUnavailable(result.Context);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status excludes a missing canonical entry from an installed inventory")]
     [Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void InstalledInventoryExcludesMissingEntryAndRemainsIncomplete()

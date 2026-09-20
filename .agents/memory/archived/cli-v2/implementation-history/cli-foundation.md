@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Accepted historical replacement CLI Foundation Task with preserved phase, commit, evidence, and acceptance history
+  description: "Historical CLI-v2 source: Accepted historical replacement CLI Foundation Task with preserved phase, commit, evidence, and acceptance history"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

@@ -14,6 +14,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery.Observation;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryRecoveryEntryObservationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Recovery observation obtains ordinary content independently and preserves raw links without reading their targets")]
     [InlineData("missing"), InlineData("ordinary"), InlineData("relative"), InlineData("dangling"), InlineData("absolute"), InlineData("directory")]
     public static async Task ObservesExactObjectAndContentBoundary(string scenario)
@@ -68,6 +69,7 @@ public sealed class LibraryRecoveryEntryObservationIntegrationTests
         Assert.False(File.Exists(temporary.Combine("missing.json")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Recovery observation never enters an external parent to read a same-named ordinary target")]
     public async Task BlocksExternalAncestryWithoutContentRead()
     {
@@ -84,6 +86,7 @@ public sealed class LibraryRecoveryEntryObservationIntegrationTests
         Assert.Equal("outside", File.ReadAllText(source));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Recovery ordinary read failure remains explicit unavailable evidence")]
     public async Task RetainsIndependentReadFailure()
     {

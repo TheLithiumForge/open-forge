@@ -18,7 +18,7 @@ recommendation. The record does not become a command authority source.
 
 - **Origin:** `.agents/memory/working/cli-release/review/route-family-contract-migration-council.md`
 - **Archived because:** Queues 25, 26, and 27 settled the `route init`, `route
-  create`, and `route update` contract refinements, so this council no longer
+create`, and `route update` contract refinements, so this council no longer
   represents an unresolved review unit.
 - **Current meaning authorities:** the [Route Inspect Interface](../../../crystallized/documents/cli/contracts/route/inspect/interface.md)
   and [Behavior](../../../crystallized/documents/cli/contracts/route/inspect/behavior.md),
@@ -393,9 +393,9 @@ maintainer direction authorized their additive preparation.
   relationships; they do not merge authority, loading, scope, responsibility,
   or lifecycle.
 - Link the current shared [Global Flags](../../../crystallized/documents/cli/contracts/shared/global-flags/_global-flags.md),
-   [Source References](../../../crystallized/documents/cli/contracts/shared/source-references/_source-references.md),
-   [Context](../../../crystallized/documents/cli/contracts/context/_context.md), [Status](../../../crystallized/documents/cli/contracts/status/_status.md),
-   and [Index](../../../crystallized/documents/cli/contracts/index/_index.md) contract sets for
+  [Source References](../../../crystallized/documents/cli/contracts/shared/source-references/_source-references.md),
+  [Context](../../../crystallized/documents/cli/contracts/context/_context.md), [Status](../../../crystallized/documents/cli/contracts/status/_status.md),
+  and [Index](../../../crystallized/documents/cli/contracts/index/_index.md) contract sets for
   shared CLI meaning. Do not copy their complete definitions into every leaf.
 - Link the Framework routing, Markdown, and Template documents for Framework
   meaning. A command Behavior may state how it consumes that meaning, but it
@@ -457,59 +457,59 @@ that the file receives no detailed definition for that heading.
 
 ### Route Inspect
 
-| Source heading or subsection | Interface destination | Behavior destination |
-| --- | --- | --- |
-| `# Route Inspect Command` | `commands/route/inspect/interface.md` → `# route inspect Interface Contract` | `commands/route/inspect/behavior.md` → `# route inspect Behavior Contract` |
-| `## Status` | `## Status And Authority` | `## Status And Authority` |
-| `## Purpose` | `## Purpose` | `## Operation Invariants` for the deterministic route-profile promise and operation boundary |
-| `## Syntax` | `## Syntax`, `## Operands`, and `## Flags`; the group-only help statement links to `commands/route/_route.md` and the shared help contract | `## Request Resolution` for input and flag resolution |
-| `## Workspace And Subject` | `## Workspace And Subject` | `## Request Resolution` and `## Current Facts And Coverage` |
-| `## Inspection Model` | `## Non-Goals` for no content, authority, or mutation side effects | `## Request Resolution`, `## Current Facts And Coverage`, and read-only `## Effects` |
-| `## Identity` | `## Identity` | `## Request Resolution` and `## Current Facts And Coverage` |
-| `## Reading Behavior` | `## Reading Behavior` | `## Current Facts And Coverage` |
-| `### Task Start Or Resume` | `## Reading Behavior` → `### Task Start Or Resume` | `## Current Facts And Coverage` → `### Task Start Or Resume` |
-| `### Automatic Reading Trigger` | `## Reading Behavior` → `### Automatic Reading Trigger` | `## Current Facts And Coverage` → `### Automatic Reading Trigger` |
-| `### Later Reads` | `## Reading Behavior` → `### Later Reads` | `## Current Facts And Coverage` → `### Later Reads` |
-| `## Context Cost` | `## Context Cost` | `## Current Facts And Coverage` and `## Selection And Result Formation` |
-| `### Own Source` | `## Context Cost` → `### Own Source` | `## Current Facts And Coverage` → `### Own Source` |
-| `### Added By Selection` | `## Context Cost` → `### Added By Selection` | `## Selection And Result Formation` → `### Added By Selection` |
-| <code>### Automatically Read Below Through `#LoadNow`</code> | `## Context Cost` → <code>### Automatically Read Below Through `#LoadNow`</code> | `## Selection And Result Formation` → <code>### Automatically Read Below Through `#LoadNow`</code> |
-| `### No Heaviness Score` | `## Context Cost` → `### No Heaviness Score` | `## Selection And Result Formation` for the no-recommendation boundary |
-| `## Route Structure` | `## Route Structure` | `## Current Facts And Coverage` |
-| `### Why There Is No Scope Count` | `## Route Structure` → `### Why There Is No Scope Count` | `## Current Facts And Coverage` → `### Why There Is No Scope Count` |
-| `## Rules And Customization` | `## Rules And Customization` | `## Current Facts And Coverage` |
-| `## Human Output` | `## Human Output` | `## Presentation Relationship` |
-| `## Structured Output` | `## Structured Output` | `## Presentation Relationship` |
-| `## Semantic Results` | `## Semantic Results` | `## Selection And Result Formation` |
-| `## Errors` | `## Errors` | `## Request Resolution` and `## Current Facts And Coverage` for the conditions that make a result invalid, blocked, or incomplete |
-| `## Non-Goals` | `## Non-Goals` | `## Operation Invariants` and `## Effects` by link only; no second non-goal list |
-| `## Verification Requirements` | `## Verification` for public inputs, outputs, statuses, and boundaries | `## Conformance Evidence` for graph, reading, measurement, topology, inheritance, presentation, and semantic-result evidence |
-| `## Related Accepted Direction` | `## Related Current Sources` | `## Related Current Sources` |
+| Source heading or subsection                                 | Interface destination                                                                                                                      | Behavior destination                                                                                                              |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `# Route Inspect Command`                                    | `commands/route/inspect/interface.md` → `# route inspect Interface Contract`                                                               | `commands/route/inspect/behavior.md` → `# route inspect Behavior Contract`                                                        |
+| `## Status`                                                  | `## Status And Authority`                                                                                                                  | `## Status And Authority`                                                                                                         |
+| `## Purpose`                                                 | `## Purpose`                                                                                                                               | `## Operation Invariants` for the deterministic route-profile promise and operation boundary                                      |
+| `## Syntax`                                                  | `## Syntax`, `## Operands`, and `## Flags`; the group-only help statement links to `commands/route/_route.md` and the shared help contract | `## Request Resolution` for input and flag resolution                                                                             |
+| `## Workspace And Subject`                                   | `## Workspace And Subject`                                                                                                                 | `## Request Resolution` and `## Current Facts And Coverage`                                                                       |
+| `## Inspection Model`                                        | `## Non-Goals` for no content, authority, or mutation side effects                                                                         | `## Request Resolution`, `## Current Facts And Coverage`, and read-only `## Effects`                                              |
+| `## Identity`                                                | `## Identity`                                                                                                                              | `## Request Resolution` and `## Current Facts And Coverage`                                                                       |
+| `## Reading Behavior`                                        | `## Reading Behavior`                                                                                                                      | `## Current Facts And Coverage`                                                                                                   |
+| `### Task Start Or Resume`                                   | `## Reading Behavior` → `### Task Start Or Resume`                                                                                         | `## Current Facts And Coverage` → `### Task Start Or Resume`                                                                      |
+| `### Automatic Reading Trigger`                              | `## Reading Behavior` → `### Automatic Reading Trigger`                                                                                    | `## Current Facts And Coverage` → `### Automatic Reading Trigger`                                                                 |
+| `### Later Reads`                                            | `## Reading Behavior` → `### Later Reads`                                                                                                  | `## Current Facts And Coverage` → `### Later Reads`                                                                               |
+| `## Context Cost`                                            | `## Context Cost`                                                                                                                          | `## Current Facts And Coverage` and `## Selection And Result Formation`                                                           |
+| `### Own Source`                                             | `## Context Cost` → `### Own Source`                                                                                                       | `## Current Facts And Coverage` → `### Own Source`                                                                                |
+| `### Added By Selection`                                     | `## Context Cost` → `### Added By Selection`                                                                                               | `## Selection And Result Formation` → `### Added By Selection`                                                                    |
+| <code>### Automatically Read Below Through `#LoadNow`</code> | `## Context Cost` → <code>### Automatically Read Below Through `#LoadNow`</code>                                                           | `## Selection And Result Formation` → <code>### Automatically Read Below Through `#LoadNow`</code>                                |
+| `### No Heaviness Score`                                     | `## Context Cost` → `### No Heaviness Score`                                                                                               | `## Selection And Result Formation` for the no-recommendation boundary                                                            |
+| `## Route Structure`                                         | `## Route Structure`                                                                                                                       | `## Current Facts And Coverage`                                                                                                   |
+| `### Why There Is No Scope Count`                            | `## Route Structure` → `### Why There Is No Scope Count`                                                                                   | `## Current Facts And Coverage` → `### Why There Is No Scope Count`                                                               |
+| `## Rules And Customization`                                 | `## Rules And Customization`                                                                                                               | `## Current Facts And Coverage`                                                                                                   |
+| `## Human Output`                                            | `## Human Output`                                                                                                                          | `## Presentation Relationship`                                                                                                    |
+| `## Structured Output`                                       | `## Structured Output`                                                                                                                     | `## Presentation Relationship`                                                                                                    |
+| `## Semantic Results`                                        | `## Semantic Results`                                                                                                                      | `## Selection And Result Formation`                                                                                               |
+| `## Errors`                                                  | `## Errors`                                                                                                                                | `## Request Resolution` and `## Current Facts And Coverage` for the conditions that make a result invalid, blocked, or incomplete |
+| `## Non-Goals`                                               | `## Non-Goals`                                                                                                                             | `## Operation Invariants` and `## Effects` by link only; no second non-goal list                                                  |
+| `## Verification Requirements`                               | `## Verification` for public inputs, outputs, statuses, and boundaries                                                                     | `## Conformance Evidence` for graph, reading, measurement, topology, inheritance, presentation, and semantic-result evidence      |
+| `## Related Accepted Direction`                              | `## Related Current Sources`                                                                                                               | `## Related Current Sources`                                                                                                      |
 
 ### Route Init
 
-| Source heading or subsection | Interface destination | Behavior destination |
-| --- | --- | --- |
-| `# Route Init Command` | `commands/route/init/interface.md` → `# route init Interface Contract` | `commands/route/init/behavior.md` → `# route init Behavior Contract` |
-| `## Status` | `## Status And Authority` | `## Status And Authority` |
-| `## Purpose` | `## Purpose` | `## Operation Invariants` for deterministic chain selection, convergence, and no-op behavior |
-| `## Syntax` | `## Syntax`, `## Operands`, and `## Flags`; the group-only help statement links to the routing-only group entrypoint and shared help contract | `## Request Resolution` |
-| `## Route Target` | `## Route Target` | `## Request Resolution` and `## Current Facts And Coverage` |
-| `## Chain Selection` | `## Chain Selection` | `## Request Resolution` and `## Current Facts And Coverage` |
-| `## Fixed Entrypoint Scaffold` | `## Fixed Entrypoint Scaffold` for the exact public scaffold and its byte-level example | `## Effects` for intended scaffold bytes and valid route representation |
-| `## Draft Metadata` | `## Draft Metadata` | `## Request Resolution` and `## Effects` |
-| `## Intended Topology And Generated Entries` | `## Intended Topology And Generated Entries` | `## Effects` and `## Safety And Recovery` |
-| `## Planning And Effects` | `## Planning And Effects` for the observable plan, dry-run, and application boundary | `## Effects` and `## Safety And Recovery` |
-| `## Dry Run And Apply` | `## Dry Run And Apply` | `## Effects` and `## Safety And Recovery` |
-| `## Human Output` | `## Human Output` | `## Presentation Relationship` |
-| `### Verified No-Op` | `## Human Output` → `### Verified No-Op` | `## Presentation Relationship` |
-| `### Successful Application` | `## Human Output` → `### Successful Application` | `## Presentation Relationship` |
-| `### Successful Dry Run` | `## Human Output` → `### Successful Dry Run` | `## Presentation Relationship` |
-| `## Structured Output` | `## Structured Output` | `## Presentation Relationship` |
-| `## Semantic Results` | `## Semantic Results` | `## Selection And Result Formation` |
-| `## Errors And Non-Goals` | `## Errors` and `## Non-Goals` | `## Request Resolution`, `## Effects`, and `## Safety And Recovery` by link only |
-| `## Verification Requirements` | `## Verification` for target grammar, metadata, help-visible results, and statuses | `## Conformance Evidence` for scaffold bytes, topology, planning, dry-run, writes, recovery, and convergence |
-| `## Related Accepted Direction` | `## Related Current Sources` | `## Related Current Sources` |
+| Source heading or subsection                 | Interface destination                                                                                                                         | Behavior destination                                                                                         |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `# Route Init Command`                       | `commands/route/init/interface.md` → `# route init Interface Contract`                                                                        | `commands/route/init/behavior.md` → `# route init Behavior Contract`                                         |
+| `## Status`                                  | `## Status And Authority`                                                                                                                     | `## Status And Authority`                                                                                    |
+| `## Purpose`                                 | `## Purpose`                                                                                                                                  | `## Operation Invariants` for deterministic chain selection, convergence, and no-op behavior                 |
+| `## Syntax`                                  | `## Syntax`, `## Operands`, and `## Flags`; the group-only help statement links to the routing-only group entrypoint and shared help contract | `## Request Resolution`                                                                                      |
+| `## Route Target`                            | `## Route Target`                                                                                                                             | `## Request Resolution` and `## Current Facts And Coverage`                                                  |
+| `## Chain Selection`                         | `## Chain Selection`                                                                                                                          | `## Request Resolution` and `## Current Facts And Coverage`                                                  |
+| `## Fixed Entrypoint Scaffold`               | `## Fixed Entrypoint Scaffold` for the exact public scaffold and its byte-level example                                                       | `## Effects` for intended scaffold bytes and valid route representation                                      |
+| `## Draft Metadata`                          | `## Draft Metadata`                                                                                                                           | `## Request Resolution` and `## Effects`                                                                     |
+| `## Intended Topology And Generated Entries` | `## Intended Topology And Generated Entries`                                                                                                  | `## Effects` and `## Safety And Recovery`                                                                    |
+| `## Planning And Effects`                    | `## Planning And Effects` for the observable plan, dry-run, and application boundary                                                          | `## Effects` and `## Safety And Recovery`                                                                    |
+| `## Dry Run And Apply`                       | `## Dry Run And Apply`                                                                                                                        | `## Effects` and `## Safety And Recovery`                                                                    |
+| `## Human Output`                            | `## Human Output`                                                                                                                             | `## Presentation Relationship`                                                                               |
+| `### Verified No-Op`                         | `## Human Output` → `### Verified No-Op`                                                                                                      | `## Presentation Relationship`                                                                               |
+| `### Successful Application`                 | `## Human Output` → `### Successful Application`                                                                                              | `## Presentation Relationship`                                                                               |
+| `### Successful Dry Run`                     | `## Human Output` → `### Successful Dry Run`                                                                                                  | `## Presentation Relationship`                                                                               |
+| `## Structured Output`                       | `## Structured Output`                                                                                                                        | `## Presentation Relationship`                                                                               |
+| `## Semantic Results`                        | `## Semantic Results`                                                                                                                         | `## Selection And Result Formation`                                                                          |
+| `## Errors And Non-Goals`                    | `## Errors` and `## Non-Goals`                                                                                                                | `## Request Resolution`, `## Effects`, and `## Safety And Recovery` by link only                             |
+| `## Verification Requirements`               | `## Verification` for target grammar, metadata, help-visible results, and statuses                                                            | `## Conformance Evidence` for scaffold bytes, topology, planning, dry-run, writes, recovery, and convergence |
+| `## Related Accepted Direction`              | `## Related Current Sources`                                                                                                                  | `## Related Current Sources`                                                                                 |
 
 The lines `# documents`, `## Axioms`, and `## Entries` inside the fenced
 scaffold example under `## Fixed Entrypoint Scaffold` are example bytes, not
@@ -521,53 +521,53 @@ separate contract sections in the migration map.
 
 ### Route Create
 
-| Source heading or subsection | Interface destination | Behavior destination |
-| --- | --- | --- |
-| `# Route Create Command` | `commands/route/create/interface.md` → `# route create Interface Contract` | `commands/route/create/behavior.md` → `# route create Behavior Contract` |
-| `## Status` | `## Status And Authority` | `## Status And Authority` |
-| `## Purpose` | `## Purpose` | `## Operation Invariants` for deterministic target selection, independent destination content, and verified no-op behavior |
-| `## Syntax` | `## Syntax`, `## Operands`, and `## Flags` | `## Request Resolution` |
-| `## File Target` | `## File Target` | `## Request Resolution` and `## Current Facts And Coverage` |
-| `## Destination Metadata` | `## Destination Metadata` | `## Request Resolution` and `## Effects` |
-| `## Template Selection` | `## Template Selection` | `## Current Facts And Coverage`, `## Selection And Result Formation`, and `## Effects`; link to the Framework Templates contract rather than a family shared contract |
-| `## Existing Target` | `## Existing Target` | `## Current Facts And Coverage`, `## Selection And Result Formation`, and `## Safety And Recovery` |
-| `## Generated Navigation` | `## Generated Navigation` | `## Effects` and `## Safety And Recovery` |
-| `## Planning And Effects` | `## Planning And Effects` | `## Effects` and `## Safety And Recovery` |
-| `## Dry Run And Apply` | `## Dry Run And Apply` | `## Effects` and `## Safety And Recovery` |
-| `## Human Output` | `## Human Output` | `## Presentation Relationship` |
-| `### Verified No-Op` | `## Human Output` → `### Verified No-Op` | `## Presentation Relationship` |
-| `### Successful Application` | `## Human Output` → `### Successful Application` | `## Presentation Relationship` |
-| `### Successful Dry Run` | `## Human Output` → `### Successful Dry Run` | `## Presentation Relationship` |
-| `## Structured Output` | `## Structured Output` | `## Presentation Relationship` |
-| `## Semantic Results` | `## Semantic Results` | `## Selection And Result Formation` |
-| `## Errors And Non-Goals` | `## Errors` and `## Non-Goals` | `## Request Resolution`, `## Effects`, and `## Safety And Recovery` by link only |
-| `## Verification Requirements` | `## Verification` for target grammar, metadata, Template selection, output, and statuses | `## Conformance Evidence` for parent projection, planning, dry-run, application, verification, recovery, and convergence |
-| `## Related Accepted Direction` | `## Related Current Sources` | `## Related Current Sources` |
+| Source heading or subsection    | Interface destination                                                                    | Behavior destination                                                                                                                                                  |
+| ------------------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `# Route Create Command`        | `commands/route/create/interface.md` → `# route create Interface Contract`               | `commands/route/create/behavior.md` → `# route create Behavior Contract`                                                                                              |
+| `## Status`                     | `## Status And Authority`                                                                | `## Status And Authority`                                                                                                                                             |
+| `## Purpose`                    | `## Purpose`                                                                             | `## Operation Invariants` for deterministic target selection, independent destination content, and verified no-op behavior                                            |
+| `## Syntax`                     | `## Syntax`, `## Operands`, and `## Flags`                                               | `## Request Resolution`                                                                                                                                               |
+| `## File Target`                | `## File Target`                                                                         | `## Request Resolution` and `## Current Facts And Coverage`                                                                                                           |
+| `## Destination Metadata`       | `## Destination Metadata`                                                                | `## Request Resolution` and `## Effects`                                                                                                                              |
+| `## Template Selection`         | `## Template Selection`                                                                  | `## Current Facts And Coverage`, `## Selection And Result Formation`, and `## Effects`; link to the Framework Templates contract rather than a family shared contract |
+| `## Existing Target`            | `## Existing Target`                                                                     | `## Current Facts And Coverage`, `## Selection And Result Formation`, and `## Safety And Recovery`                                                                    |
+| `## Generated Navigation`       | `## Generated Navigation`                                                                | `## Effects` and `## Safety And Recovery`                                                                                                                             |
+| `## Planning And Effects`       | `## Planning And Effects`                                                                | `## Effects` and `## Safety And Recovery`                                                                                                                             |
+| `## Dry Run And Apply`          | `## Dry Run And Apply`                                                                   | `## Effects` and `## Safety And Recovery`                                                                                                                             |
+| `## Human Output`               | `## Human Output`                                                                        | `## Presentation Relationship`                                                                                                                                        |
+| `### Verified No-Op`            | `## Human Output` → `### Verified No-Op`                                                 | `## Presentation Relationship`                                                                                                                                        |
+| `### Successful Application`    | `## Human Output` → `### Successful Application`                                         | `## Presentation Relationship`                                                                                                                                        |
+| `### Successful Dry Run`        | `## Human Output` → `### Successful Dry Run`                                             | `## Presentation Relationship`                                                                                                                                        |
+| `## Structured Output`          | `## Structured Output`                                                                   | `## Presentation Relationship`                                                                                                                                        |
+| `## Semantic Results`           | `## Semantic Results`                                                                    | `## Selection And Result Formation`                                                                                                                                   |
+| `## Errors And Non-Goals`       | `## Errors` and `## Non-Goals`                                                           | `## Request Resolution`, `## Effects`, and `## Safety And Recovery` by link only                                                                                      |
+| `## Verification Requirements`  | `## Verification` for target grammar, metadata, Template selection, output, and statuses | `## Conformance Evidence` for parent projection, planning, dry-run, application, verification, recovery, and convergence                                              |
+| `## Related Accepted Direction` | `## Related Current Sources`                                                             | `## Related Current Sources`                                                                                                                                          |
 
 ### Route Update
 
-| Source heading or subsection | Interface destination | Behavior destination |
-| --- | --- | --- |
-| `# Route Update Command` | `commands/route/update/interface.md` → `# route update Interface Contract` | `commands/route/update/behavior.md` → `# route update Behavior Contract` |
-| `## Status` | `## Status And Authority` | `## Status And Authority` |
-| `## Purpose` | `## Purpose` | `## Operation Invariants` for field-patch semantics, authored-body preservation, and verified no-op behavior |
-| `## Syntax` | `## Syntax`, `## Operands`, and `## Flags` | `## Request Resolution` |
-| `## Target Source` | `## Target Source` | `## Request Resolution` and `## Current Facts And Coverage` |
-| `## Metadata Patch` | `## Metadata Patch` | `## Request Resolution` and `## Effects` |
-| `## Template Body Completion` | `## Template Body Completion` | `## Current Facts And Coverage`, `## Selection And Result Formation`, and `## Effects`; keep this local rather than promoting Template overlap |
-| `## Body And Generated Preservation` | `## Body And Generated Preservation` | `## Effects` and `## Safety And Recovery` |
-| `## Existing State And No-Ops` | `## Existing State And No-Ops` | `## Selection And Result Formation` and `## Effects` |
-| `## Planning And Effects` | `## Planning And Effects` | `## Effects` and `## Safety And Recovery` |
-| `## Dry Run And Apply` | `## Dry Run And Apply` | `## Effects` and `## Safety And Recovery` |
-| `## Human Output` | `## Human Output` | `## Presentation Relationship` |
-| `### Verified No-Op` | `## Human Output` → `### Verified No-Op` | `## Presentation Relationship` |
-| `### Successful Application` | `## Human Output` → `### Successful Application` | `## Presentation Relationship` |
-| `### Successful Dry Run` | `## Human Output` → `### Successful Dry Run` | `## Presentation Relationship` |
-| `## Structured Output` | `## Structured Output` | `## Presentation Relationship` |
-| `## Semantic Results` | `## Semantic Results` | `## Selection And Result Formation` |
-| `## Errors And Non-Goals` | `## Errors` and `## Non-Goals` | `## Request Resolution`, `## Effects`, and `## Safety And Recovery` by link only |
-| `## Verification Requirements` | `## Verification` for target grammar, field states, Template decisions, output, and statuses | `## Conformance Evidence` for preservation, intended-state planning, dry-run, writes, verification, recovery, and convergence |
-| `## Related Accepted Direction` | `## Related Current Sources` | `## Related Current Sources` |
+| Source heading or subsection         | Interface destination                                                                        | Behavior destination                                                                                                                           |
+| ------------------------------------ | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `# Route Update Command`             | `commands/route/update/interface.md` → `# route update Interface Contract`                   | `commands/route/update/behavior.md` → `# route update Behavior Contract`                                                                       |
+| `## Status`                          | `## Status And Authority`                                                                    | `## Status And Authority`                                                                                                                      |
+| `## Purpose`                         | `## Purpose`                                                                                 | `## Operation Invariants` for field-patch semantics, authored-body preservation, and verified no-op behavior                                   |
+| `## Syntax`                          | `## Syntax`, `## Operands`, and `## Flags`                                                   | `## Request Resolution`                                                                                                                        |
+| `## Target Source`                   | `## Target Source`                                                                           | `## Request Resolution` and `## Current Facts And Coverage`                                                                                    |
+| `## Metadata Patch`                  | `## Metadata Patch`                                                                          | `## Request Resolution` and `## Effects`                                                                                                       |
+| `## Template Body Completion`        | `## Template Body Completion`                                                                | `## Current Facts And Coverage`, `## Selection And Result Formation`, and `## Effects`; keep this local rather than promoting Template overlap |
+| `## Body And Generated Preservation` | `## Body And Generated Preservation`                                                         | `## Effects` and `## Safety And Recovery`                                                                                                      |
+| `## Existing State And No-Ops`       | `## Existing State And No-Ops`                                                               | `## Selection And Result Formation` and `## Effects`                                                                                           |
+| `## Planning And Effects`            | `## Planning And Effects`                                                                    | `## Effects` and `## Safety And Recovery`                                                                                                      |
+| `## Dry Run And Apply`               | `## Dry Run And Apply`                                                                       | `## Effects` and `## Safety And Recovery`                                                                                                      |
+| `## Human Output`                    | `## Human Output`                                                                            | `## Presentation Relationship`                                                                                                                 |
+| `### Verified No-Op`                 | `## Human Output` → `### Verified No-Op`                                                     | `## Presentation Relationship`                                                                                                                 |
+| `### Successful Application`         | `## Human Output` → `### Successful Application`                                             | `## Presentation Relationship`                                                                                                                 |
+| `### Successful Dry Run`             | `## Human Output` → `### Successful Dry Run`                                                 | `## Presentation Relationship`                                                                                                                 |
+| `## Structured Output`               | `## Structured Output`                                                                       | `## Presentation Relationship`                                                                                                                 |
+| `## Semantic Results`                | `## Semantic Results`                                                                        | `## Selection And Result Formation`                                                                                                            |
+| `## Errors And Non-Goals`            | `## Errors` and `## Non-Goals`                                                               | `## Request Resolution`, `## Effects`, and `## Safety And Recovery` by link only                                                               |
+| `## Verification Requirements`       | `## Verification` for target grammar, field states, Template decisions, output, and statuses | `## Conformance Evidence` for preservation, intended-state planning, dry-run, writes, verification, recovery, and convergence                  |
+| `## Related Accepted Direction`      | `## Related Current Sources`                                                                 | `## Related Current Sources`                                                                                                                   |
 
 ## Grouped Help Requirements
 
@@ -672,39 +672,39 @@ The migration must carry these open details forward without choosing a value:
 ## Verification Checklist
 
 - [ ] Confirm that every authored heading and subsection in each of the four
-  mixed sources appears in the map, including all three `Human Output`
-  subsections and the fenced `route init` scaffold facts.
+      mixed sources appears in the map, including all three `Human Output`
+      subsections and the fenced `route init` scaffold facts.
 - [ ] Compare every mapped destination against the source text and preserve
-  defaults, conditions, exceptions, examples, prohibitions, and requirement
-  strength.
+      defaults, conditions, exceptions, examples, prohibitions, and requirement
+      strength.
 - [ ] Confirm that Interface files contain the complete public surface and that
-  Behavior files contain no new operand, flag, alias, output shape, status, or
-  other public meaning.
+      Behavior files contain no new operand, flag, alias, output shape, status, or
+      other public meaning.
 - [ ] Confirm that each Interface/Behavior cross-layer relationship is a link
-  or conformance reference rather than a second detailed definition.
+      or conformance reference rather than a second detailed definition.
 - [ ] Confirm that the group entrypoint and all four leaf entrypoints are
-  routing-only, that group help performs no domain operation, and that leaf help
-  comes from the corresponding Interface.
+      routing-only, that group help performs no domain operation, and that leaf help
+      comes from the corresponding Interface.
 - [ ] Confirm that the final public path is represented by `route/inspect`,
-  `route/init`, `route/create`, and `route/update`, with no staging-name
-  substitution.
+      `route/init`, `route/create`, and `route/update`, with no staging-name
+      substitution.
 - [ ] Confirm that no route-family shared contract, shared Template contract,
-  or Technical Design is introduced by the future preparation.
+      or Technical Design is introduced by the future preparation.
 - [ ] Confirm that shared global flags, source references, Index behavior, and
-  Framework meaning are linked to their authoritative sources rather than
-  copied.
+      Framework meaning are linked to their authoritative sources rather than
+      copied.
 - [ ] Confirm that the unresolved stream, repetition, schema, exit, parser,
-  filesystem, backup, concurrency, and source-boundary facts remain visibly
-  unresolved.
+      filesystem, backup, concurrency, and source-boundary facts remain visibly
+      unresolved.
 - [ ] Confirm that no permanent requirement IDs or temporary migration labels
-  occur in the future contract files.
+      occur in the future contract files.
 - [ ] Confirm that the four mixed sources remain untouched and authoritative
-  until an explicit maintainer-accepted cutover.
+      until an explicit maintainer-accepted cutover.
 - [ ] For this record, confirm that only this new file is created. Do not run an
-  index or repair action that changes another file.
+      index or repair action that changes another file.
 - [ ] During a later authorized candidate-preparation step, validate local
-  links, entrypoint structure, generated navigation, and source coverage before
-  any authority cutover. That later validation is not performed by this record.
+      links, entrypoint structure, generated navigation, and source coverage before
+      any authority cutover. That later validation is not performed by this record.
 
 ## Hard Stops
 

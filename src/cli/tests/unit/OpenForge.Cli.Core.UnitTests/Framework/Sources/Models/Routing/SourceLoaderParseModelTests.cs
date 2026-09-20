@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Routing;
 
 public sealed class SourceLoaderParseModelTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "A valid Loader destination rejects a null decoded value"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void ValidDestinationRejectsNullDecodedValue()
     {
@@ -16,6 +17,7 @@ public sealed class SourceLoaderParseModelTests
         Assert.Equal("decodedDestination", exception.ParamName);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "A valid Loader destination rejects an empty decoded value"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void ValidDestinationRejectsEmptyDecodedValue()
     {
@@ -28,6 +30,7 @@ public sealed class SourceLoaderParseModelTests
         Assert.Equal("decodedDestination", exception.ParamName);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral Loader destination results retain valid, malformed, and unsafe field shapes")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void DestinationResultFactoriesAreTyped()
@@ -57,6 +60,7 @@ public sealed class SourceLoaderParseModelTests
         Assert.Null(unsafeResult.CanonicalPath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral Loader Entries results retain authored destinations and partial malformed progress")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EntriesResultFactoriesRetainPartialProgress()

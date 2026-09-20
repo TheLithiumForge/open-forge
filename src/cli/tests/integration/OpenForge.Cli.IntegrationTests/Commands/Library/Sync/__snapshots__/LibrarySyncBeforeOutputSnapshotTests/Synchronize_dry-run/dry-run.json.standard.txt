@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 3,
+  "command": "library sync",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Would synchronize team-knowledge: 1 link to add.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/directives/added.md",
+      "kind": "link",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksAdded": 1,
+    "linksRemoved": 0,
+    "linksUnchanged": 1,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "proposedScopes": [],
+      "approvedScopes": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/directives/added.md",
+        "action": "add",
+        "outcome": "planned",
+        "target": "../../shared/team-knowledge/.agents/directives/added.md"
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "action": "update",
+        "outcome": "planned"
+      }
+    ],
+    "unchanged": [
+      ".agents/directives/review.md"
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

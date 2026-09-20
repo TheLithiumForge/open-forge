@@ -1,0 +1,8 @@
+status=completed
+mode=dry-run
+selection=automatic
+repairs=2
+remaining=0
+library-steps=0
+verification=not-requested
+next=none

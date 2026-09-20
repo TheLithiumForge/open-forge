@@ -1,0 +1,3 @@
+Cannot inspect unknown: No Extension has the ID unknown in <extension-source>.
+1 errors.
+Next: open-forge extension list

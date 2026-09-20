@@ -1,0 +1,24 @@
+Nothing could be repaired automatically. 2 problems need a choice.
+Workspace: <workspace>
+  Warning  .agents/docs/source.md:9:10  Broken link [repair.guided-finding-remaining]
+         missing.md: Broken link; 4 possible targets
+         needs a choice
+  Warning  .agents/docs/source.md:10:18  Broken link [repair.guided-finding-remaining]
+         missing.md: Broken link; 4 possible targets
+         needs a choice
+  .agents/docs/source.md:9:10   possible target: .agents/docs/guide.md (nearby route: sibling)
+  .agents/docs/source.md:9:10   possible target: .agents/docs/index.md (nearby route: parent)
+  .agents/docs/source.md:9:10   possible target: .agents/docs/replacement.md (title match: Guided; content match: Guided; nearby route: sibling)
+  .agents/docs/source.md:9:10   possible target: .agents/docs/source.md (content match: Guided; content match: Another guided)
+  .agents/docs/source.md:10:18  possible target: .agents/docs/guide.md (nearby route: sibling)
+  .agents/docs/source.md:10:18  possible target: .agents/docs/index.md (nearby route: parent)
+  .agents/docs/source.md:10:18  possible target: .agents/docs/replacement.md (title match: Guided; content match: Guided; nearby route: sibling)
+  .agents/docs/source.md:10:18  possible target: .agents/docs/source.md (content match: Guided; content match: Another guided)
+  Diagnosis coverage: Workspace and path were checked; route and heading were checked; local references were checked; selected scope was checked.
+  Checks before writing: completed.
+  No verification was needed.
+  Recovery: No recovery bundle was required.
+  Checks after writing: completed.
+2 problems remaining, 2 problems needing a choice, 2 warnings.
+  Review remaining broken links in Repair, then select a possible target in the interactive prompt or provide an explicit --relink target.
+Next: open-forge repair

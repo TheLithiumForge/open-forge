@@ -1,0 +1,16 @@
+Updated memory/project-alpha/overview, but the Template body was not copied.
+Workspace: <workspace>
+  Warning  .agents/templates/route.md  Template body was not copied [route-update.template-body-protected]
+         The file already has content, which was kept. The Template templates/route was not copied.
+  Path: .agents/memory/project-alpha/overview.md
+  Template: .agents/templates/route.md
+  description: "Before overview" -> "After overview"
+  The file already has content, which was kept. The Template templates/route was not copied.
+  Entry updated in .agents/memory/project-alpha/_project-alpha.md
+  .agents/memory/project-alpha/overview.md  frontmatter rewritten
+    Before: <sha256>
+    After: <sha256>
+  Frontmatter before:
+    description: Before overview
+  Frontmatter after:
+    description: After overview

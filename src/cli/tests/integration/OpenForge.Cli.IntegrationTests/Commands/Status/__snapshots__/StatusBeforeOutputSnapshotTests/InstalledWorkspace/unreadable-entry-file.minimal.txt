@@ -1,0 +1,38 @@
+Open Forge is installed, but 1 file needs attention and some checks could not finish.
+  Warning  .agents/loader.md  Changed since it was installed
+         changed since it was installed
+         open-forge update
+  Warning  .agents/loader.md  Entries section is unavailable
+         The Entries section of .agents/loader.md could not be read.
+  Warning  .agents/memory/_memory.md  Startup context is incomplete
+         Startup context could not be measured completely: .agents/memory/_memory.md could not be read completely.
+         open-forge doctor
+  Warning  .agents/memory/_memory.md  Managed file is unavailable
+         could not be read
+         open-forge doctor
+  Warning  .agents/memory/_memory.md  Entries section is unavailable
+         The Entries section of .agents/memory/_memory.md could not be read.
+  Warning  <workspace>  May-load-again context is unavailable
+         The may-load-again context could not be measured.
+         open-forge doctor
+  Warning  <workspace>  Framework files could not be checked completely
+         .agents/open-forge.lock.json cannot be used for Framework files: The Framework lifecycle observation is incomplete.
+         open-forge doctor
+  Warning  <workspace>  Root categories are unavailable
+         The root categories could not be read from .agents/loader.md.
+         open-forge doctor
+  Warning  <workspace>  Startup context is unavailable
+         The current startup context could not be measured.
+         open-forge doctor
+  routed files: Filesystem access was denied.
+  startup files: Filesystem access was denied.
+  startup tokens: Filesystem access was denied.
+  may-load-again files: The continuity context measurement is unavailable.
+  may-load-again tokens: The continuity context measurement is unavailable.
+  all routed tokens: Filesystem access was denied.
+  startup share: Filesystem access was denied.
+  root categories: The current root-category observation is unavailable.
+  current Entries sections: Filesystem access was denied.
+  stale Entries sections: Filesystem access was denied.
+  missing Entries sections: Filesystem access was denied.
+Next: open-forge update

@@ -1,0 +1,21 @@
+Cannot remove guidance/old guide: Another Open Forge command holds the workspace lock. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/guidance/old guide.md  Workspace lock is held [route-remove.workspace-lock-unavailable]
+         Another Open Forge command holds the workspace lock. Nothing was changed.
+         open-forge route remove
+         Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan.
+  .agents/guidance/old guide.md  not started
+  .agents/guidance/old guide.overwrite.md  not started
+  .agents/guidance/_guidance.md  not started
+  Detached 1 link that pointed at it; the link text was kept:
+    README.md:1:8
+    [Old guide](.agents/guidance/old%20guide.md#part) -> Old guide
+    Before: <sha256>
+    After: <sha256>
+    Before: <sha256>
+    After: <sha256>
+    Before: <sha256>
+    Before: <sha256>
+  Scanned 11 files and found 2 links.
+  Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan.
+Next: open-forge route remove

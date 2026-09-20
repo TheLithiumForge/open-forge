@@ -34,7 +34,5 @@ workspace or write lifecycle state.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted technology-neutral behavior for Extension catalogue scaffold planning, application, and verification](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Create #Behavior #Catalogue #Mutation #Safety #CurrentTruth
 - [Accepted Interface for creating a local Extension scaffold in a catalogue without installing it](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Create #Interface #Catalogue #Mutation #CurrentTruth
-<!-- open-forge:generated-index:end -->

@@ -31,7 +31,7 @@ The current Workflow contract already permits a complete recipe-bearing
 └── phase-6-review.md      independent Whole-Task Review
 ```
 
-The parent [Development Workflow](../../../workflows/development/_development.md)
+The parent [Development Workflow](../../../skills/use-workflow/references/open-forge/development/_development.md)
 is authoritative for orchestration. Its seven descendants define independently
 delegable Preflight, Gray, Red, Green, Blue, Purple, and Whole-Task Review
 phases. This

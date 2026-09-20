@@ -1,0 +1,3 @@
+Created .agents/memory/project-alpha/overview.md  (memory/project-alpha/overview)
+Workspace: <workspace>
+  Listed in .agents/memory/project-alpha/_project-alpha.md

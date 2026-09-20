@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Remove;
 
 public sealed class ExtensionRemoveCompositionIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(
         DisplayName = "Composed root registers Extension Remove as the final Extension leaf"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
@@ -36,6 +37,7 @@ public sealed class ExtensionRemoveCompositionIntegrationTests
         Assert.NotNull(selection.Binding);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(
         DisplayName = "Composed Extension Remove help is terminal and bypasses workspace effects"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
@@ -58,7 +60,7 @@ public sealed class ExtensionRemoveCompositionIntegrationTests
             "open-forge extension remove [<stable-id>...]",
             run.StandardOutput,
             StringComparison.Ordinal);
-        Assert.Contains("--prune", run.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("--prune", run.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("--dry-run", run.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("--source", run.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("--force", run.StandardOutput, StringComparison.Ordinal);
@@ -66,6 +68,7 @@ public sealed class ExtensionRemoveCompositionIntegrationTests
         Assert.False(workspace.LockInfrastructureExists);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(
         DisplayName = "Composed Extension Remove binds one explicit workspace without root discovery"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
@@ -86,7 +89,7 @@ public sealed class ExtensionRemoveCompositionIntegrationTests
         [
             "extension", "remove", "toolkit",
             "--workspace", workspace.Path,
-            "--automatic", "--dry-run", "--json",
+            "--automatic", "--dry-run", "--format", "json",
         ]);
 
         Assert.Equal(0, run.ExitCode);
@@ -99,8 +102,8 @@ public sealed class ExtensionRemoveCompositionIntegrationTests
             "explicit-workspace",
             root.GetProperty("workspace").GetProperty("selectedBy").GetString());
         Assert.Equal("toolkit", Assert.Single(
-            root.GetProperty("result").GetProperty("selection").GetProperty("ids")
-                .EnumerateArray()).GetString());
+            root.GetProperty("data").GetProperty("packages").EnumerateArray())
+            .GetProperty("id").GetString());
     }
 
     private static async Task InstallAsync(
@@ -111,7 +114,7 @@ public sealed class ExtensionRemoveCompositionIntegrationTests
         [
             "extension", "install", "toolkit",
             "--source", source.Path,
-            "--automatic", "--json",
+            "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(0, run.ExitCode);

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot install toolkit: 1 file already exists where the package would write.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-install.initial-force-required",
+      "title": "Target is occupied",
+      "message": ".agents/toolkit.md already exists and is not managed by Open Forge.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/toolkit.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge extension install toolkit --force --dry-run",
+          "reason": "Preview replacing the existing file before rerunning the installation."
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/toolkit.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": "toolkit"
+    }
+  ],
+  "counts": {
+    "packagesInstalled": 0,
+    "filesCreated": 0,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "toolkit",
+        "version": "1.0.0",
+        "selected": true,
+        "requiredBy": []
+      }
+    ],
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension install toolkit --force --dry-run",
+    "reason": "Preview replacing the existing file before rerunning the installation."
+  }
+}

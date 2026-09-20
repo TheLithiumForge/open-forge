@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Accepted architecture, boundaries, transition, source organization, execution flow, safety, and verification for the replacement Open Forge CLI
+  description: "Historical CLI-v2 source: Accepted architecture, boundaries, transition, source organization, execution flow, safety, and verification for the replacement Open Forge CLI"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

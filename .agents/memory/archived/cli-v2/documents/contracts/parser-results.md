@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Exact help, version, parse-failure, diagnostic, ordering, stream, and exit behavior at the replacement CLI parser boundary
+  description: "Historical CLI-v2 source: Exact help, version, parse-failure, diagnostic, ordering, stream, and exit behavior at the replacement CLI parser boundary"
   responsibility: Define parser-level operation results without turning Commander output or raw process input into the public protocol
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

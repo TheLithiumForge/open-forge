@@ -8,6 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery.Shared.Deletion;
 
 public sealed class RecoveryBundleDeletionSessionIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "A qualified catalogue and matching held lease open one session for consecutive verified deletions"),
      Trait("Feature", "recovery-deletion-session"), Trait("Evidence", "Integration")]
     public async Task QualifiedCatalogueAndHeldLeaseOpenSessionAndDeleteConsecutively()
@@ -36,6 +37,48 @@ public sealed class RecoveryBundleDeletionSessionIntegrationTests
         Assert.False(File.Exists(draft));
     }
 
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "An ordinary malformed catalogue member is retained while direct session deletion stays strict"),
+     Trait("Feature", "recovery-deletion-session"), Trait("Evidence", "Integration")]
+    public async Task OrdinaryMalformedMemberOpensSessionButCannotBeDeleted()
+    {
+        using var workspace = new RecoveryDeletionSessionWorkspace();
+        var malformed = await workspace.AddFinalAsync();
+        var draft = workspace.AddDraft();
+        var malformedBytes = "not a recovery zip"u8.ToArray();
+        File.WriteAllBytes(malformed, malformedBytes);
+        var frozen = await RecoveryBundleCatalogue.ReadAsync(
+            workspace.Workspace,
+            TestContext.Current.CancellationToken);
+        Assert.Equal(RecoveryBundleCatalogueState.Available, frozen.State);
+        Assert.Equal(2, frozen.Candidates.Length);
+        var malformedCandidate = Assert.Single(frozen.Candidates, candidate => candidate.Path == malformed);
+        Assert.Equal(RecoveryBundleIntegrity.Malformed, malformedCandidate.Integrity);
+
+        await using var lease = await workspace.AcquireAsync();
+        var opened = await RecoveryBundleDeletionGuard.OpenSessionAsync(
+            lease,
+            frozen,
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(RecoveryBundleDeletionSessionOpenState.Opened, opened.State);
+        var session = Assert.IsType<RecoveryBundleDeletionSession>(opened.Session);
+        var rejected = await session.DeleteAsync(
+            malformedCandidate,
+            TestContext.Current.CancellationToken);
+        Assert.Equal(RecoveryBundleDeletionState.Blocked, rejected.State);
+        Assert.True(File.Exists(malformed));
+        Assert.Equal(malformedBytes, File.ReadAllBytes(malformed));
+
+        var deleted = await session.DeleteAsync(
+            Assert.Single(frozen.Candidates, candidate => candidate.Path == draft),
+            TestContext.Current.CancellationToken);
+        Assert.Equal(RecoveryBundleDeletionState.Deleted, deleted.State);
+        Assert.False(File.Exists(draft));
+        Assert.True(File.Exists(malformed));
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "A new exact candidate between planning and session opening blocks every deletion"), Trait("Feature", "recovery-deletion-session"), Trait("Evidence", "Integration")]
     public async Task NewCandidateBeforeOpenBlocksAllDeletion()
     {
@@ -54,6 +97,7 @@ public sealed class RecoveryBundleDeletionSessionIntegrationTests
         Assert.True(File.Exists(added));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "A removed exact candidate between planning and session opening blocks the remaining candidate"),
      Trait("Feature", "recovery-deletion-session"), Trait("Evidence", "Integration")]
     public async Task RemovedCandidateBeforeOpenBlocksRemainingDeletion()
@@ -73,6 +117,7 @@ public sealed class RecoveryBundleDeletionSessionIntegrationTests
         Assert.True(File.Exists(remaining));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Changed valid final attribution between planning and session opening blocks deletion"), Trait("Feature", "recovery-deletion-session"), Trait("Evidence", "Integration")]
     public async Task ValidSemanticChangeBeforeOpenBlocksDeletion()
     {
@@ -89,6 +134,7 @@ public sealed class RecoveryBundleDeletionSessionIntegrationTests
         Assert.True(File.Exists(final));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Unknown names and draft byte changes stay outside session catalogue equality"), Trait("Feature", "recovery-deletion-session"), Trait("Evidence", "Integration")]
     public async Task UnknownNamesAndDraftBytesDoNotChangeRelevantFacts()
     {
@@ -111,6 +157,7 @@ public sealed class RecoveryBundleDeletionSessionIntegrationTests
         Assert.Equal(unknownBefore, File.ReadAllBytes(unknown));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Within one held session a later final semantic change preserves prior verified deletion and blocks the changed final"),
      Trait("Feature", "recovery-deletion-session"), Trait("Evidence", "Integration")]
     public async Task FinalSemanticDriftAfterVerifiedDeletionIsBlocked()
@@ -137,6 +184,7 @@ public sealed class RecoveryBundleDeletionSessionIntegrationTests
         Assert.True(lease.IsHeldFor(workspace.Workspace));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Within one held session a draft becoming a directory blocks deletion and retains the exact path"),
      Trait("Feature", "recovery-deletion-session"), Trait("Evidence", "Integration")]
     public async Task DraftKindDriftInsideSessionIsBlocked()
@@ -159,6 +207,7 @@ public sealed class RecoveryBundleDeletionSessionIntegrationTests
         Assert.True(Directory.Exists(draft));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Cancellation after one verified session deletion preserves the remaining artifact and residual facts"),
      Trait("Feature", "recovery-deletion-session"), Trait("Evidence", "Integration")]
     public async Task CancellationAfterVerifiedDeletionPreservesRemainingCandidate()
@@ -186,6 +235,7 @@ public sealed class RecoveryBundleDeletionSessionIntegrationTests
         Assert.True(lease.IsHeldFor(workspace.Workspace));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Disposing the held lease prevents a session from deleting its candidate"), Trait("Feature", "recovery-deletion-session"), Trait("Evidence", "Integration")]
     public async Task DisposedLeaseBlocksSessionDeletion()
     {
@@ -205,6 +255,7 @@ public sealed class RecoveryBundleDeletionSessionIntegrationTests
         Assert.True(File.Exists(draft));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "A session refuses an exact candidate created outside its frozen membership"), Trait("Feature", "recovery-deletion-session"), Trait("Evidence", "Integration")]
     public async Task CandidateOutsideFrozenSessionMembershipIsBlocked()
     {
@@ -225,6 +276,7 @@ public sealed class RecoveryBundleDeletionSessionIntegrationTests
         Assert.True(File.Exists(Assert.Single(frozen.Candidates).Path));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Cancellation before session opening creates no session or deletion"), Trait("Feature", "recovery-deletion-session"), Trait("Evidence", "Integration")]
     public async Task CancelledOpeningPreservesFrozenCandidates()
     {

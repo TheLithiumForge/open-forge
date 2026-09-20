@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 3,
+  "command": "references",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": ".agents/docs/guide.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "incoming": 0,
+    "outgoing": 1,
+    "sourcesScanned": 4
+  },
+  "limitations": [],
+  "data": {
+    "source": {
+      "id": "docs/guide",
+      "path": ".agents/docs/guide.md"
+    },
+    "direction": "both",
+    "incoming": [],
+    "outgoing": [
+      {
+        "location": ":8:1",
+        "destination": "https://example.com/guide",
+        "state": "external-unchecked"
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

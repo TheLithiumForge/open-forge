@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 3,
+  "command": "route move",
+  "status": "invalid-input",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot move guidance/topics: The destination is inside the folder being moved.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-move.destination-inside-source",
+      "title": "Destination is inside source",
+      "message": "The destination is inside the folder being moved.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/guidance/topics/nested/_nested.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesMoved": 0,
+    "sectionsUpdated": 0,
+    "linksRewritten": 0,
+    "filesScanned": null,
+    "errors": 1
+  },
+  "limitations": [
+    {
+      "what": "files scanned",
+      "why": "the reference scan was not completed",
+      "subject": null
+    }
+  ],
+  "data": {
+    "mode": "apply",
+    "subject": "route",
+    "source": {
+      "id": "guidance/topics",
+      "path": ".agents/guidance/topics/_topics.md"
+    },
+    "destination": {
+      "id": null,
+      "path": null
+    },
+    "moved": [],
+    "rewrittenLinks": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

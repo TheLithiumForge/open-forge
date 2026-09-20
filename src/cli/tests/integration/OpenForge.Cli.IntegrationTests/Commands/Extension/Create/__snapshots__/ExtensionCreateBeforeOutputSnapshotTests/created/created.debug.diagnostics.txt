@@ -1,0 +1,8 @@
+status=completed
+mode=apply
+id=toolkit
+folder=<extension-source>
+package=<extension-source>/toolkit
+intended=2
+applied=2
+findings=0

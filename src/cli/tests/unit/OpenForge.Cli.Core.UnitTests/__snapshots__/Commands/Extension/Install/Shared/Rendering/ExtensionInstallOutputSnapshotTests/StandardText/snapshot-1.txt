@@ -1,0 +1,6 @@
+Extension install was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  toolkit  Extension install was cancelled
+         Extension install was cancelled. Nothing was changed.
+  .agents/first.md  final state unknown
+  .agents/open-forge.lock.json  updated

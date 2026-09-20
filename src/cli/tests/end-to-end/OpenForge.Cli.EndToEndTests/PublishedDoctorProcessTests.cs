@@ -24,7 +24,7 @@ public sealed class PublishedDoctorProcessTests
         Assert.False(Directory.Exists(missingWorkspace));
     }
 
-    [Fact(DisplayName = "Published Doctor JSON retains six domains and reports a read-only result"), Trait("Feature", "doctor-command"), Trait("Evidence", "EndToEnd")]
+    [Fact(DisplayName = "Published Doctor JSON retains six categories and reports a read-only result"), Trait("Feature", "doctor-command"), Trait("Evidence", "EndToEnd")]
     public async Task JsonJourneyRetainsSixDomainsAndReadOnlyResult()
     {
         var target = PublishedExecutableTarget.Discover();
@@ -33,13 +33,13 @@ public sealed class PublishedDoctorProcessTests
         var result = await RunWithoutWritesAsync(
             target,
             working,
-            ["doctor", "--json"]);
+            ["doctor", "--format=json", "--detail=full"]);
 
-        Assert.Equal(3, result.ExitCode);
+        Assert.Equal(2, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
-        AssertDoctorGraph(document.RootElement, "incomplete");
-        AssertExtensionObservationHorizons(document.RootElement);
+        AssertDoctorGraph(document.RootElement, "completed-with-warnings");
+        AssertExtensionOwnershipObservation(document.RootElement);
     }
 
     [Fact(DisplayName = "Published Doctor keeps invalid and blocked journeys on the contracted error stream"), Trait("Feature", "doctor-command"), Trait("Evidence", "EndToEnd")]
@@ -84,44 +84,35 @@ public sealed class PublishedDoctorProcessTests
 
     private static void AssertDoctorGraph(JsonElement root, string status)
     {
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
         Assert.Equal("doctor", root.GetProperty("command").GetString());
         Assert.Equal(status, root.GetProperty("status").GetString());
-        var result = root.GetProperty("result");
-        Assert.True(result.GetProperty("readOnly").GetBoolean());
-        Assert.False(result.GetProperty("changesMade").GetBoolean());
-        Assert.Equal(status, result.GetProperty("coverage").GetString());
+        var result = root.GetProperty("data");
+        var categories = result.GetProperty("categories").EnumerateArray().ToArray();
         Assert.Equal(
             [
-                "workspace-entry",
-                "recovery-residuals",
-                "routes-metadata-overwrites-generated-navigation",
-                "local-references",
-                "framework-lifecycle",
-                "extension-lifecycle",
+                "Workspace",
+                "Recovery data",
+                "Routes and Entries",
+                "Links",
+                "Framework files",
+                "Extensions",
             ],
-            result.GetProperty("domains")
-                .EnumerateArray()
-                .Select(domain => domain.GetProperty("domain").GetString()));
+            categories.Select(category => category.GetProperty("name").GetString()));
+        Assert.Equal(status == "completed-with-warnings" ? "complete" : status,
+            categories[0].GetProperty("coverage").GetString());
     }
 
-    private static void AssertExtensionObservationHorizons(JsonElement root)
+    private static void AssertExtensionOwnershipObservation(JsonElement root)
     {
-        const string roleHorizon =
-            "Typed Extension bridge-registration role and observed-state authority is unavailable; no target role was inferred.";
         var extension = Assert.Single(
-            root.GetProperty("result")
-                .GetProperty("domains")
+            root.GetProperty("findings")
                 .EnumerateArray(),
-            domain => string.Equals(
-                domain.GetProperty("domain").GetString(),
-                "extension-lifecycle",
+            finding => string.Equals(
+                finding.GetProperty("code").GetString(),
+                "extension.ownership-observation",
                 StringComparison.Ordinal));
-        var limitations = extension.GetProperty("limitations")
-            .EnumerateArray()
-            .Select(limitation => limitation.GetProperty("message").GetString())
-            .ToArray();
-        Assert.Contains(roleHorizon, limitations);
+        Assert.Equal("info", extension.GetProperty("severity").GetString());
     }
 
     private sealed class DoctorWorkspace : IDisposable

@@ -1,0 +1,11 @@
+Cannot create the routed file: --template missing-template is not a routed Template.
+Workspace: <workspace>
+  Error  missing-template  Invalid Template [route-create.invalid-template]
+         --template missing-template is not a routed Template.
+         open-forge find --tag Template
+         Find a routed Template, then rerun Route Create.
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project
+  Find a routed Template, then rerun Route Create.
+Next: open-forge find --tag Template

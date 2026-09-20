@@ -6,13 +6,13 @@ open-forge:
 
 # Evidence-Focused Review Workflow Draft
 
-This candidate was retained at the user's request for later refinement. Parts of the idea have since informed the shipped Review Workflow. This exact draft remains proposed content and does not define the installed method. Extension refinement is deferred; [Task 28](../../../working/cli-development/tasks/source-framework-review.md) records the accepted boundary.
+This candidate was retained at the user's request for later refinement. Parts of the idea have since informed the shipped Review Workflow. This exact draft remains proposed content and does not define the installed method. Extension refinement is deferred; [Task 28](../../../archived/cli-development/tasks/source-framework-review.md) records the accepted boundary.
 
 The [evidence assessment](../../analysis/framework-review/e01-dogfood-evidence.md) preserves its motivation and limits. The [original patch](review-workflow-proposal.diff) is supporting draft text.
 
 ## Candidate File
 
-````markdown
+```markdown
 ---
 open-forge:
   description: Review a change, design, or repository state and report prioritized evidence-backed findings without modifying it by default
@@ -45,4 +45,4 @@ Produce prioritized actionable findings, or a clear no-findings result, without 
 - False positives and existing safeguards were considered.
 - The final state remained unchanged unless fixes were explicitly requested.
 - Verification gaps, uncertainty, and residual risk are stated.
-````
+```

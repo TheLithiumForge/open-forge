@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 3,
+  "command": "update",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "The Framework is up to date. Nothing to do.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 14,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": false,
+    "automatic": true,
+    "previousContent": null,
+    "lockPath": ".agents/open-forge.lock.json",
+    "unchanged": [
+      {
+        "path": ".agents/directives/_directives.md"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md"
+      },
+      {
+        "path": ".agents/loader.md"
+      },
+      {
+        "path": ".agents/maps/_maps.md"
+      },
+      {
+        "path": ".agents/memory/_memory.md"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md"
+      },
+      {
+        "path": ".agents/memory/working/_working.md"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md"
+      },
+      {
+        "path": ".agents/skills/_skills.md"
+      },
+      {
+        "path": ".agents/templates/_templates.md"
+      },
+      {
+        "path": "AGENTS.md"
+      },
+      {
+        "path": "CLAUDE.md"
+      }
+    ],
+    "entriesSections": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

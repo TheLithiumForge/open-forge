@@ -12,6 +12,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery.Application;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryOrdinaryRecoverySafetyIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Explicit ordinary recovery never adopts third ordinary objects links or directories")]
     [InlineData("create", "third"), InlineData("replace", "third"), InlineData("generated", "third"), InlineData("delete", "third")]
     [InlineData("create", "relative-link"), InlineData("replace", "relative-link"), InlineData("delete", "relative-link")]
@@ -66,6 +67,7 @@ public sealed class LibraryOrdinaryRecoverySafetyIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Ordinary recovery revalidates original final and prior payload before applying any inverse effect")]
     [InlineData("create", false), InlineData("replace", false), InlineData("delete", false)]
     [InlineData("replace", true), InlineData("delete", true)]
@@ -105,6 +107,7 @@ public sealed class LibraryOrdinaryRecoverySafetyIntegrationTests
         Assert.Equal(before, File.ReadAllBytes(fixture.Preparation.BundlePath));
         fixture.AssertUnrelatedPreserved();
     }
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Ordinary recovery blocks an external parent transition before touching a same-named intended file")]
     public static async Task RejectsExternalParentEvenWhenBytesMatch()
     {

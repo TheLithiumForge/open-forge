@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Installed the team Extension.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".apm",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".apm/agents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".apm/agents/team.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "team",
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "packagesInstalled": 1,
+    "filesCreated": 1,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": false,
+    "source": {
+      "kind": "package",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "team",
+        "version": "1.0.0",
+        "selected": true,
+        "requiredBy": []
+      }
+    ],
+    "permissions": {
+      "decision": "approved",
+      "required": [
+        ".apm/agents/team.md"
+      ],
+      "missing": [
+        ".apm/agents/team.md"
+      ],
+      "saved": true
+    },
+    "selection": {
+      "method": "explicit-ids"
+    },
+    "sections": [],
+    "entriesUnchanged": [
+      ".agents/directives/_directives.md",
+      ".agents/guidance/_guidance.md",
+      ".agents/loader.md",
+      ".agents/maps/_maps.md",
+      ".agents/memory/_memory.md",
+      ".agents/memory/archived/_archived.md",
+      ".agents/memory/crystallized/_crystallized.md",
+      ".agents/memory/emerging/_emerging.md",
+      ".agents/memory/working/_working.md",
+      ".agents/patterns/_patterns.md",
+      ".agents/skills/_skills.md",
+      ".agents/templates/_templates.md"
+    ],
+    "frameworkFingerprint": "<sha256>",
+    "verification": {
+      "targets": "verified",
+      "topology": "verified",
+      "extensionsLifecycle": "verified",
+      "frameworkLifecycle": "verified"
+    },
+    "recovery": {
+      "state": "removed",
+      "protectedPaths": [
+        ".agents/open-forge.json",
+        ".agents/open-forge.lock.json"
+      ],
+      "residualPath": null
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

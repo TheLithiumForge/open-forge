@@ -1,0 +1,2 @@
+Cannot search: --include missing/source is not a source ID or a path under .agents.
+Next: open-forge route list --depth=all

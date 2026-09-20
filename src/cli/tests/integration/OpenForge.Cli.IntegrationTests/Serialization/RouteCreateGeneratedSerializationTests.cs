@@ -2,14 +2,17 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Create;
-using OpenForge.Cli.Core.Commands.Route.Create.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
-using OpenForge.Cli.Core.Commands.Route.Create.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Route.Create;
+using OpenForge.Cli.Core.Presentation.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.IntegrationTests.Commands.Route.Create;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
+using OpenForge.Cli.IntegrationTests.Serialization.Shared.Assertions;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Serialization;
@@ -23,6 +26,7 @@ public sealed class RouteCreateGeneratedSerializationTests
         + "  responsibility: Explains the project\n"
         + "---\n";
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route Create renderer uses command-local generated metadata for its populated ordered graph"), Trait("Feature", "route-create"), Trait("Evidence", "Integration")]
     public async Task RendererUsesCommandLocalGeneratedMetadataForPopulatedGraph()
     {
@@ -37,81 +41,62 @@ public sealed class RouteCreateGeneratedSerializationTests
             .ExecuteAsync(
                 workspace.Request(RouteCreateMode.DryRun),
                 TestContext.Current.CancellationToken);
+        var metadata = RouteCreatePresentation.Rendering.DataJsonTypeInfo;
         var presentation = new CliPresentationRequest<RouteCreateResult>(
             result,
             new CliPresentation(
-                CliOutputFormat.Json,
-                CliView.Expanded,
-                CliVerbosity.Normal));
-        var context = RouteCreateJsonContext.Default;
-        var metadata = context.RouteCreateJsonDocument;
+                CliFormat.Json,
+                CliDetail.Full, null));
+        var selected = CliReportSelection.Select(
+            result,
+            new CliSelection(CliDetail.Full),
+            RouteCreatePresentation.Rendering);
 
-        Assert.Same(metadata, context.GetTypeInfo(typeof(RouteCreateJsonDocument)));
-        Assert.Equal(typeof(RouteCreateJsonDocument), metadata.Type);
         Assert.False(JsonSerializer.IsReflectionEnabledByDefault);
-        Assert.True(context.Options.WriteIndented);
-        Assert.Equal(JsonNamingPolicy.CamelCase, context.Options.PropertyNamingPolicy);
+        Assert.Equal("RouteCreateData", metadata.Type.Name);
+        Assert.Equal(JsonNamingPolicy.CamelCase, metadata.Options.PropertyNamingPolicy);
+        Assert.False(metadata.Options.WriteIndented);
 
-        var rendered = RouteCreateJsonRenderer.Render(presentation);
-        var expected = JsonSerializer.Serialize(
-            RouteCreateJsonProjection.Create(result),
-            metadata);
-
-        Assert.Equal(expected, rendered);
-        Assert.StartsWith("{\n  \"schemaVersion\": 1,", rendered, StringComparison.Ordinal);
+        var rendered = CommandOutputRenderers<RouteCreateResult>.Render(
+            presentation,
+            RouteCreatePresentation.Rendering);
+        var expectedData = JsonSerializer.Serialize(selected.Report.Data, metadata);
+        using var expectedDocument = JsonDocument.Parse(expectedData);
+        using var renderedDocument = JsonDocument.Parse(rendered);
+        var root = renderedDocument.RootElement;
+        Assert.True(JsonElement.DeepEquals(
+            expectedDocument.RootElement,
+            root.GetProperty("data")));
+        Assert.StartsWith("{\"schemaVersion\":3,", rendered, StringComparison.Ordinal);
         Assert.DoesNotContain("\"SchemaVersion\"", rendered, StringComparison.Ordinal);
-        using var parsed = JsonDocument.Parse(rendered);
-        var root = parsed.RootElement;
-        AssertPropertyOrder(root, "schemaVersion", "command", "status", "workspace", "result", "next");
+        Schema3Assertions.Envelope(root, "route create", "completed", "full");
         AssertPropertyOrder(root.GetProperty("workspace"), "path", "selectedBy");
-        var commandResult = root.GetProperty("result");
-        AssertPropertyOrder(
-            commandResult,
-            "mode",
-            "target",
-            "parent",
-            "metadata",
-            "template",
-            "plan",
-            "effects",
-            "unchangedPaths",
-            "recovery",
-            "verification",
-            "findings");
-        AssertPropertyOrder(commandResult.GetProperty("target"), "requested", "id", "path");
-        AssertPropertyOrder(commandResult.GetProperty("parent"), "id", "path", "form");
-        AssertPropertyOrder(commandResult.GetProperty("metadata"), "description", "responsibility", "tags");
-        AssertPropertyOrder(commandResult.GetProperty("plan"), "completeness", "safety");
-        AssertPropertyOrder(commandResult.GetProperty("recovery"), "state", "residualPath");
-        Assert.Equal(JsonValueKind.Null, commandResult.GetProperty("template").ValueKind);
-        Assert.Equal(
-            JsonValueKind.Null,
-            commandResult.GetProperty("recovery").GetProperty("residualPath").ValueKind);
+        var commandData = root.GetProperty("data");
+        AssertPropertyOrder(commandData, "mode", "target", "listedIn", "template", "metadata", "content", "sections");
+        AssertPropertyOrder(commandData.GetProperty("target"), "id", "path");
+        AssertPropertyOrder(commandData.GetProperty("metadata"), "description", "responsibility", "tags");
+        AssertPropertyOrder(commandData.GetProperty("sections")[0], "path", "before", "after", "verification");
+        AssertPropertyOrder(root.GetProperty("recovery"), "path", "disposition");
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("recovery").GetProperty("path").ValueKind);
         Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
 
-        var effects = commandResult.GetProperty("effects").EnumerateArray().ToArray();
+        var effects = root.GetProperty("effects").EnumerateArray().ToArray();
         Assert.Equal(2, effects.Length);
         AssertEffectOrder(effects[0]);
         Assert.Equal(RouteCreateIntegrationWorkspace.TargetPath, effects[0].GetProperty("path").GetString());
-        Assert.Equal("create", effects[0].GetProperty("action").GetString());
-        var targetChange = effects[0].GetProperty("change");
-        Assert.Equal(JsonValueKind.Null, targetChange.GetProperty("before").ValueKind);
-        Assert.Equal(Hash(ExpectedTargetDocument), targetChange.GetProperty("expected").GetString());
+        Assert.Equal("created", effects[0].GetProperty("action").GetString());
+        Assert.Equal(JsonValueKind.Null, effects[0].GetProperty("before").ValueKind);
+        Assert.Equal(Hash(ExpectedTargetDocument), effects[0].GetProperty("after").GetString());
 
         AssertEffectOrder(effects[1]);
         Assert.Equal(RouteCreateIntegrationWorkspace.ParentPath, effects[1].GetProperty("path").GetString());
-        Assert.Equal("replace", effects[1].GetProperty("action").GetString());
-        var parentChange = effects[1].GetProperty("change");
-        Assert.Equal(JsonValueKind.String, parentChange.GetProperty("before").ValueKind);
-        Assert.Equal(parentBeforeHash, parentChange.GetProperty("before").GetString());
-        Assert.Equal(parentExpectedHash, parentChange.GetProperty("expected").GetString());
+        Assert.Equal("rewritten", effects[1].GetProperty("action").GetString());
+        Assert.Equal(parentBeforeHash, effects[1].GetProperty("before").GetString());
+        Assert.Equal(parentExpectedHash, effects[1].GetProperty("after").GetString());
     }
 
     private static void AssertEffectOrder(JsonElement effect)
-    {
-        AssertPropertyOrder(effect, "path", "kind", "action", "change", "outcome", "residual");
-        AssertPropertyOrder(effect.GetProperty("change"), "before", "expected");
-    }
+        => AssertPropertyOrder(effect, "path", "kind", "action", "outcome", "reason", "owner", "before", "after");
 
     private static string ParentDocument(string entry)
         => OpenForgeDocumentSeed.Metadata(

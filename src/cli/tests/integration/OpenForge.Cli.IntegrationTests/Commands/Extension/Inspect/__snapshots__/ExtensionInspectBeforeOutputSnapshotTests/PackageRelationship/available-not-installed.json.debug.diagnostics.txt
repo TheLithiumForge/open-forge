@@ -1,0 +1,4 @@
+status=completed
+source=Available
+lifecycle=Complete
+comparison=Complete

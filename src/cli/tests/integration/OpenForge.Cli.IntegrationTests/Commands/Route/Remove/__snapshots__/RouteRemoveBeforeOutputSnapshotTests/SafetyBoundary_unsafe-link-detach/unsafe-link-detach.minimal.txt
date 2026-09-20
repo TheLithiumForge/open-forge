@@ -1,0 +1,3 @@
+Cannot remove guidance/old guide: The link at outside.md:1:8 cannot be detached safely: An incoming Markdown reference cannot be detached without losing authored meaning.
+Workspace: <workspace>
+Next: Fix it by hand.

@@ -1,0 +1,5 @@
+Cannot list references: The source ID resolves to more than one logical source.
+Workspace: <workspace>
+  Warning  .agents/docs/guide.md  Two sources share an identity
+         The ID docs/guide matches more than one file. Use the exact path.
+Next: open-forge doctor

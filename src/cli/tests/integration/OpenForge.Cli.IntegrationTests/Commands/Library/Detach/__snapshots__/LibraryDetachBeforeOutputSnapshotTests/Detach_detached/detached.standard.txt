@@ -1,0 +1,4 @@
+Detached team-knowledge: removed 1 link under .. Source files in shared/team-knowledge were kept.
+Workspace: <workspace>
+  .agents/directives/review.md  link removed
+  .agents/open-forge.lock.json  registration removed

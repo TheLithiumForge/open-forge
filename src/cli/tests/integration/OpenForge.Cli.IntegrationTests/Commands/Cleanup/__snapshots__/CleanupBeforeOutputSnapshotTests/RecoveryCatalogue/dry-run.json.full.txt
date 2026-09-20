@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 3,
+  "command": "cleanup",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would remove 2 recovery bundles and 1 unfinished draft.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "<recovery-bundle-1>",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "open-forge index",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": "<recovery-bundle-2>",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "open-forge repair",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": "<recovery-bundle-3>",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "bundlesRemoved": 2,
+    "draftsRemoved": 1,
+    "itemsLeftInPlace": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "items": [
+      {
+        "path": "<recovery-bundle-1>",
+        "kind": "bundle",
+        "outcome": "would-be-removed",
+        "origin": "open-forge index",
+        "integrity": "verified"
+      },
+      {
+        "path": "<recovery-bundle-2>",
+        "kind": "bundle",
+        "outcome": "would-be-removed",
+        "origin": "open-forge repair",
+        "integrity": "verified"
+      },
+      {
+        "path": "<recovery-bundle-3>",
+        "kind": "draft",
+        "outcome": "would-be-removed",
+        "integrity": "incomplete"
+      }
+    ],
+    "notEligible": [],
+    "lock": "No workspace lock was needed.",
+    "finalCheck": "No final recovery-store check was needed."
+  },
+  "recovery": null,
+  "next": null
+}

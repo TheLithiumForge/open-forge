@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Filesystem.Models;
 
 public sealed class FilesystemFailureClassificationTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Unauthorized access exceptions classify as access denied"), Trait("Feature", "cli-filesystem"), Trait("Evidence", "Unit")]
     public void UnauthorizedAccessClassifiesAsAccessDenied()
     {
@@ -12,6 +13,7 @@ public sealed class FilesystemFailureClassificationTests
             FilesystemFailure.ClassifyException(new UnauthorizedAccessException()));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Unsupported operation and platform exceptions classify as unsupported"), Trait("Feature", "cli-filesystem"), Trait("Evidence", "Unit")]
     public void OperationAndPlatformExceptionsClassifyAsUnsupported()
     {
@@ -23,6 +25,7 @@ public sealed class FilesystemFailureClassificationTests
             FilesystemFailure.ClassifyException(new PlatformNotSupportedException()));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Argument and path-length exceptions classify as invalid paths"), Trait("Feature", "cli-filesystem"), Trait("Evidence", "Unit")]
     public void ArgumentAndPathLengthExceptionsClassifyAsInvalidPaths()
     {
@@ -37,6 +40,7 @@ public sealed class FilesystemFailureClassificationTests
             FilesystemFailure.ClassifyException(new PathTooLongException()));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "I/O and file-not-found exceptions classify as input-output failures"), Trait("Feature", "cli-filesystem"), Trait("Evidence", "Unit")]
     public void InputOutputAndMissingFileExceptionsClassifyAsInputOutputFailures()
     {
@@ -48,6 +52,7 @@ public sealed class FilesystemFailureClassificationTests
             FilesystemFailure.ClassifyException(new FileNotFoundException()));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Invalid operation exceptions retain the unsupported classifier contract"), Trait("Feature", "cli-filesystem"), Trait("Evidence", "Unit")]
     public void InvalidOperationRetainsUnsupportedClassifierDetails()
     {
@@ -63,6 +68,7 @@ public sealed class FilesystemFailureClassificationTests
         Assert.Equal(expected.Message, failure.Message);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Invalid data exceptions retain the unsupported classifier contract"), Trait("Feature", "cli-filesystem"), Trait("Evidence", "Unit")]
     public void InvalidDataRetainsUnsupportedClassifierDetails()
     {

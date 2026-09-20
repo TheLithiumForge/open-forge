@@ -19,6 +19,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Move;
 
 public sealed class RouteMovePlanningIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move category observations retain exact inventory tuples and fresh bytes"), Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task CategoryObservationsRetainExactTuplesAndFreshSnapshots()
     {
@@ -119,6 +120,7 @@ public sealed class RouteMovePlanningIntegrationTests
         Assert.Equal(changedBefore, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move generated exposure retains lexical paths and observes unavailable parents afresh"), Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task GeneratedExposureRetainsLexicalPathsAndFreshAvailability()
     {
@@ -165,6 +167,7 @@ public sealed class RouteMovePlanningIntegrationTests
         Assert.Equal(missingBefore, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Move resolves complete subjects destinations ownership references and navigation without writes"),
         InlineData("leaf-id", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
             (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
@@ -206,7 +209,7 @@ public sealed class RouteMovePlanningIntegrationTests
         InlineData("missing-parent", RouteMoveIntegrationWorkspace.LeafId, ".agents/missing/new guide.md",
             (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationParentMissing, -1),
         InlineData("id-like-destination", RouteMoveIntegrationWorkspace.LeafId, "archive/new-guide",
-            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidDestination, -1),
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
         InlineData("invalid-leaf-extension", RouteMoveIntegrationWorkspace.LeafId, ".agents/guidance/new guide.txt",
             (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.InvalidDestination, -1),
         InlineData("invalid-category-form", RouteMoveIntegrationWorkspace.CategoryPath, ".agents/archive/topics/index.md",
@@ -214,21 +217,23 @@ public sealed class RouteMovePlanningIntegrationTests
         InlineData("occupied-destination", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
             (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationOccupied, -1),
         InlineData("self-move", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafPath,
-            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.SelfMove, -1),
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.SelfMove, -1),
         InlineData("inside-source", RouteMoveIntegrationWorkspace.CategoryPath, ".agents/guidance/topics/nested/_nested.md",
-            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationInsideSource, -1),
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Invalid, (int)RouteMoveFindingCode.DestinationInsideSource, -1),
         InlineData("overwrite-collision", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
             (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.DestinationOccupied, -1),
+        InlineData("ownership-region-claim", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipClaimed, -1),
         InlineData("ownership-claim", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
             (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipClaimed, -1),
         InlineData("ownership-malformed", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
-            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
-        InlineData("ownership-stale", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
-            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
-        InlineData("ownership-incomplete", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
-            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
+        InlineData("ownership-old-metadata", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
+        InlineData("ownership-unknown", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
         InlineData("ownership-conflicting", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
-            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipClaimed, -1),
         InlineData("unsupported-reference", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
             (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
         InlineData("unsafe-reference", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
@@ -291,6 +296,7 @@ public sealed class RouteMovePlanningIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move dry-run and apply planning are semantically identical and write-free")]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task DryRunAndApplyShareOneExactObservationAndPlan()
@@ -327,6 +333,7 @@ public sealed class RouteMovePlanningIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move category inventory retains every item kind layer and relative path")]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationBehavior")]
     public async Task CategoryInventoryIsCompleteAndPreservesRelativeLayout()
@@ -423,6 +430,7 @@ public sealed class RouteMovePlanningIntegrationTests
             deepestFirst: true);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move rewrites exact destination spans coalesces files and preserves unrelated bytes")]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationBehavior")]
     public async Task ReferencePlanningUsesExactSpansAndCompleteFileCoalescing()
@@ -476,6 +484,7 @@ public sealed class RouteMovePlanningIntegrationTests
             StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move preserves fragment-only and noncanonical relative literals that keep their intended meaning")]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationBehavior")]
     public async Task ReferencePlanningPreservesStillValidAuthoredLiterals()
@@ -510,6 +519,7 @@ public sealed class RouteMovePlanningIntegrationTests
                 && rewrite.Before is "#child" or "./notes.md");
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move composes authored and generated changes in one document")]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationBehavior")]
     public async Task OneDocumentRetainsAuthoredRewriteAndGeneratedProjection()
@@ -559,16 +569,15 @@ public sealed class RouteMovePlanningIntegrationTests
 
             ## Entries
 
-            <!-- open-forge:generated-index:start -->
             - [Old guide](new%20guide.md) - #Route
             - [Topics](topics/_topics.md) - #Route
-            <!-- open-forge:generated-index:end -->
             """.ReplaceLineEndings("\n") + "\n";
         Assert.Equal(expected, intended);
         var change = Assert.Single(plan.Projection.FileChanges, change => change.LogicalPath == guidancePath);
         Assert.Equal(Encoding.UTF8.GetBytes(expected), change.IntendedBytes.ToArray());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move ignores moved-path prose while rewriting supported links")]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationBehavior")]
     public async Task PlainProseDoesNotReduceSupportedReferenceCoverage()
@@ -595,9 +604,10 @@ public sealed class RouteMovePlanningIntegrationTests
             StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Route Move validates generated markers in a moved entrypoint")]
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route Move validates Entries headings in a moved entrypoint")]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
-    public async Task MovedEntrypointWithUnsafeGeneratedMarkersIsBlocked()
+    public async Task MovedEntrypointWithDuplicateEntriesHeadingsIsBlocked()
     {
         using var workspace = RouteMoveIntegrationWorkspace.Create("move-entrypoint-markers");
         workspace.WriteText(
@@ -605,7 +615,7 @@ public sealed class RouteMovePlanningIntegrationTests
             OpenForgeDocumentSeed.Metadata(
                 "Guidance",
                 ["Route"],
-                "# Guidance\n\n## Entries\n\n<!-- open-forge:generated-index:start -->\n"));
+                "# Guidance\n\n## Entries\n\n## Entries\n"));
 
         var build = await RouteMoveIntegrationWorkspace.CreatePlanBuilder().BuildAsync(
             workspace.Request(
@@ -621,6 +631,7 @@ public sealed class RouteMovePlanningIntegrationTests
             finding => finding.Code == RouteMoveFindingCode.GeneratedRegionUnsafe);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move generated navigation reports changed and unchanged applicable regions without hidden indexing")]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationBehavior")]
     public async Task GeneratedNavigationRetainsEveryApplicableProjection()
@@ -789,6 +800,7 @@ public sealed class RouteMovePlanningIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move retains exact Unicode CRLF reference bytes and independent byte coordinates"), Trait("Feature", "route-move"), Trait("Evidence", "IntegrationBehavior")]
     public async Task ExternalRewritesRetainUnicodeCrLfBytesAndCoordinates()
     {

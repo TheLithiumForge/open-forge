@@ -1,0 +1,8 @@
+team-knowledge could not be synchronized: some source files under shared/team-knowledge could not be listed. Nothing was changed.
+Workspace: <workspace>
+local
+  Warning  shared/team-knowledge  Source inventory is incomplete [library-sync.inventory-incomplete]
+         Some files under shared/team-knowledge could not be listed, so nothing was changed.
+  Inventory: 0 eligible files, 0 excluded items, 1 unavailable path.
+  Verification: not started; record publication: not started.
+  Recovery: no recovery data was requested.

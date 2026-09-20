@@ -1,0 +1,5 @@
+status=completed
+source=Available
+lifecycle=Incomplete
+comparison=Complete
+No Extension ownership is recorded; installed packages cannot be established.

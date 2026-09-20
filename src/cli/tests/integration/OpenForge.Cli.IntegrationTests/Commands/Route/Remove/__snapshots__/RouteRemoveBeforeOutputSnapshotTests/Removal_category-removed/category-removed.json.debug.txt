@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Removed the route guidance/topics  (4 files)",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/guidance/old guide.overwrite.md",
+      "kind": "link",
+      "action": "detached",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": "notes.md",
+      "kind": "link",
+      "action": "detached",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/guidance/topics/_topics.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/topics/assets/settings.json",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/topics/child.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/topics/notes.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/topics/assets",
+      "kind": "directory",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/topics",
+      "kind": "directory",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "filesRemoved": 4,
+    "sectionsUpdated": 1,
+    "linksDetached": 2,
+    "filesScanned": 11
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "route",
+    "source": {
+      "id": "guidance/topics",
+      "path": ".agents/guidance/topics/_topics.md"
+    },
+    "removed": [
+      ".agents/guidance/topics/_topics.md",
+      ".agents/guidance/topics/assets/settings.json",
+      ".agents/guidance/topics/child.md",
+      ".agents/guidance/topics/notes.md"
+    ],
+    "detachedLinks": [
+      {
+        "path": ".agents/guidance/old guide.overwrite.md",
+        "location": "1:21",
+        "before": "Overwrite body with [topics](topics/_topics.md).",
+        "after": "Overwrite body with topics."
+      },
+      {
+        "path": "notes.md",
+        "location": "1:1",
+        "before": "[Topics](.agents/guidance/topics/_topics.md) remains.",
+        "after": "Topics remains."
+      }
+    ],
+    "scan": {
+      "filesScanned": 11,
+      "occurrences": 3
+    }
+  },
+  "recovery": null,
+  "next": null
+}

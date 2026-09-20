@@ -1,0 +1,5 @@
+Cannot create the Extension: INVALID ID is not a valid Extension ID. Use lowercase letters, digits and hyphens.
+  Error  INVALID ID  Invalid input [extension-create.invalid-input]
+         INVALID ID is not a valid Extension ID. Use lowercase letters, digits and hyphens.
+  Correct the named Extension Create input, then rerun the request.
+Next: open-forge extension create --help

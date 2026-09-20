@@ -1,0 +1,11 @@
+status=completed
+mode=apply
+force=false
+automatic=true
+classification=trusted-exact
+effects=0
+lifecycle=preserve/already-current
+recovery=not-required
+verification=verified
+findings=0
+next=none

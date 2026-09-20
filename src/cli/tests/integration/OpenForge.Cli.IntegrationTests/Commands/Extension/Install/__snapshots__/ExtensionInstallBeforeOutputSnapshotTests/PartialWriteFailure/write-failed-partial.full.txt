@@ -1,0 +1,13 @@
+Extension install stopped after 1 of 2 changes.
+Workspace: <workspace>
+  Error  .agents/toolkit.md  Writing failed [extension-install.write-failed]
+         filesystem access was denied.
+  .agents/aaa.md      created (toolkit)
+  .agents/toolkit.md  not started
+  Source: <extension-source> (catalogue)
+  .agents/open-forge.lock.json  updated
+  Entries sections unchanged: .agents/directives/_directives.md, .agents/guidance/_guidance.md, .agents/loader.md, .agents/maps/_maps.md, .agents/memory/_memory.md, .agents/memory/archived/_archived.md, .agents/memory/crystallized/_crystallized.md, .agents/memory/emerging/_emerging.md, .agents/memory/working/_working.md, .agents/patterns/_patterns.md, .agents/skills/_skills.md, .agents/templates/_templates.md
+  Permission evaluation: decision not-required; required 0; missing 0; saved no
+  Framework fingerprint: <sha256>
+  Verification: targets unknown; Entries unknown; Extension record unknown; Framework record unknown
+  Recovery: retained at <recovery-bundle>; 2 protected paths.

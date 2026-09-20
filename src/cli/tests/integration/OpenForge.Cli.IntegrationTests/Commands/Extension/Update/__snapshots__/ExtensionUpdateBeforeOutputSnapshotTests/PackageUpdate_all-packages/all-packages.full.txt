@@ -1,0 +1,15 @@
+Updated 2 Extensions.
+Workspace: <workspace>
+  .agents/base.md     replaced (you had changed it and this version changes it)
+  .agents/toolkit.md  replaced (you had changed it and this version changes it)
+    Before SHA-256: <sha256>; After SHA-256: <sha256>; source asset: content/.agents/base.md; verification: Verification: targets verified; Entries verified; Extension record verified; recovery: The recovery bundle was retained at <recovery-bundle>.
+    Before SHA-256: <sha256>; After SHA-256: <sha256>; source asset: content/.agents/toolkit.md; verification: Verification: targets verified; Entries verified; Extension record verified; recovery: The recovery bundle was retained at <recovery-bundle>.
+  Previous content: recovery bundle at <recovery-bundle>
+  Source: <extension-source>
+  Dependency closure: base, toolkit
+  0 files unchanged
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+  Verification: targets verified; Entries verified; Extension record verified
+  The recovery bundle was retained at <recovery-bundle>.
+  Review previous content in the recovery bundle at <recovery-bundle>.
+Next: open-forge doctor

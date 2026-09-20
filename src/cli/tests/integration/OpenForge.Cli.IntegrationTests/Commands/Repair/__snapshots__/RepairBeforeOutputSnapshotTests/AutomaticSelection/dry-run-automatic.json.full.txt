@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would repair 2 links.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/docs/source.md:9:8",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": "./guide.md -> guide.md",
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/docs/source.md:10:16",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": "./guide.md -> guide.md",
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "linksRepaired": 2,
+    "problemsRemaining": 0,
+    "problemsNeedingChoice": 0,
+    "problemsNeedingHand": 0,
+    "librarySteps": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "selection": "automatic",
+    "repairs": [
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 8
+        },
+        "from": "./guide.md",
+        "to": "guide.md",
+        "before": "<sha256>",
+        "after": "<sha256>"
+      },
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 10,
+          "column": 16
+        },
+        "from": "./guide.md",
+        "to": "guide.md",
+        "before": "<sha256>",
+        "after": "<sha256>"
+      }
+    ],
+    "remaining": [],
+    "diagnosis": {
+      "workspaceAndPath": "complete",
+      "routeAndHeading": "complete",
+      "localReferences": "complete",
+      "selectedScope": "complete"
+    },
+    "verification": {
+      "targets": "not-requested",
+      "resultingBytes": "not-requested",
+      "postConditions": "not-requested"
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

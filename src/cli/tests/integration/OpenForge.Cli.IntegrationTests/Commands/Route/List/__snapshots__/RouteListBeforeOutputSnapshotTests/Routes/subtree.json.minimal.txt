@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 3,
+  "command": "route list",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "3 routes listed.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "routes": 3,
+    "roots": 1,
+    "depth": 1
+  },
+  "limitations": [],
+  "data": {
+    "subject": {
+      "id": "docs",
+      "path": ".agents/docs/_docs.md"
+    },
+    "depth": 1,
+    "rows": [
+      {
+        "id": "docs",
+        "path": ".agents/docs/_docs.md",
+        "description": "Documents",
+        "tags": [
+          "Docs"
+        ],
+        "relativeDepth": 0
+      },
+      {
+        "id": "docs/guide",
+        "path": ".agents/docs/guide.md",
+        "description": "Guide",
+        "tags": [
+          "Docs",
+          "Guide"
+        ],
+        "relativeDepth": 1
+      },
+      {
+        "id": "docs/reference",
+        "path": ".agents/docs/reference.md",
+        "description": "Reference",
+        "tags": [
+          "Docs"
+        ],
+        "relativeDepth": 1
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

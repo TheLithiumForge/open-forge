@@ -1,0 +1,14 @@
+The toolkit Extension was not updated because its ownership could not be established.
+Workspace: <workspace>
+  Warning  toolkit  Extension record was not updated [extension-update.lifecycle-observation]
+         toolkit is not recorded as installed, so it was not updated.
+         open-forge extension list --installed
+         List the installed Extensions, then rerun the request with an explicit selection.
+         cause: The selected Extension has no recorded ownership.
+         read from <extension-source>
+  Source: <extension-source>
+  Dependency closure: none
+  0 files unchanged
+  Grant: required none; missing none; decision not evaluated; action no action; outcome no outcome recorded
+  No verification was needed.
+  No recovery bundle was needed.

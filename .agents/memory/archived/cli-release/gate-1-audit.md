@@ -100,18 +100,18 @@ are accepted.
 
 ## Source And Authority Map
 
-| Source                                 | Responsibility                    | Authority                                | Independence                      | Gate 1 disposition                  |
-| -------------------------------------- | --------------------------------- | ---------------------------------------- | --------------------------------- | ----------------------------------- |
-| Current loader and Framework sources   | Runtime Framework meaning         | Current                                  | Primary                           | Keep authoritative                  |
-| `src/cli-mvp/`                         | Frozen old executable behavior    | Current implementation truth for old CLI | Primary source                    | Preserve until migration            |
-| `docs/cli.md`                          | Public MVP behavior               | Current but partially stale              | Primary documentation             | Mark legacy/reconcile later         |
-| Deleted CLI-v2 knowledge archive       | Former replacement direction      | Historical raw input                     | Primary historical rationale      | Inspect only when useful            |
-| Raw CLI analyses                       | Competing proposals and critiques | Contextual                               | Mixed                             | Preserve alternatives               |
-| v4 master review                       | Compilation of reports            | Contextual                               | Duplicate                         | Index only                          |
-| v4 change log                          | Summary                           | Contextual                               | Duplicate                         | Index only                          |
-| Native handoff                         | Concrete design/prototype package | Contextual and unverified                | Derivative implementation handoff | Raw input for Native design         |
-| Native wrappers/providers              | Packaging examples                | Speculative                              | Not evidence                      | Defer                               |
-| Rune sources                           | Separate future effort            | Outside scope                            | Not release evidence              | Ignore                              |
+| Source                               | Responsibility                    | Authority                                | Independence                      | Gate 1 disposition          |
+| ------------------------------------ | --------------------------------- | ---------------------------------------- | --------------------------------- | --------------------------- |
+| Current loader and Framework sources | Runtime Framework meaning         | Current                                  | Primary                           | Keep authoritative          |
+| `src/cli-mvp/`                       | Frozen old executable behavior    | Current implementation truth for old CLI | Primary source                    | Preserve until migration    |
+| `docs/cli.md`                        | Public MVP behavior               | Current but partially stale              | Primary documentation             | Mark legacy/reconcile later |
+| Deleted CLI-v2 knowledge archive     | Former replacement direction      | Historical raw input                     | Primary historical rationale      | Inspect only when useful    |
+| Raw CLI analyses                     | Competing proposals and critiques | Contextual                               | Mixed                             | Preserve alternatives       |
+| v4 master review                     | Compilation of reports            | Contextual                               | Duplicate                         | Index only                  |
+| v4 change log                        | Summary                           | Contextual                               | Duplicate                         | Index only                  |
+| Native handoff                       | Concrete design/prototype package | Contextual and unverified                | Derivative implementation handoff | Raw input for Native design |
+| Native wrappers/providers            | Packaging examples                | Speculative                              | Not evidence                      | Defer                       |
+| Rune sources                         | Separate future effort            | Outside scope                            | Not release evidence              | Ignore                      |
 
 ## Evidence Quality
 

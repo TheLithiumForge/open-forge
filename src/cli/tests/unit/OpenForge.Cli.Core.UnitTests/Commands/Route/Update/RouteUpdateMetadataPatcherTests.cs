@@ -8,6 +8,124 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
 public sealed class RouteUpdateMetadataPatcherTests
 {
+    [Trait("Boundary", "Processing")]
+    [Theory(DisplayName = "Route Update refuses ambiguous or attached empty metadata mappings"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
+    [InlineData("open-forge: {} # attached comment")]
+    [InlineData("open-forge: {}\nopen-forge: {}")]
+    [InlineData("open-forge: &owned {}\nother: *owned")]
+    public void RefusesUnsafeEmptyMapping(string yaml)
+    {
+        var build = Build(
+            $"---\n{yaml}\n---\n\n# Body\n",
+            RouteUpdateTestData.Patch(
+                description: new RouteUpdateDescriptionRequest { Requested = true, Value = "After" },
+                tags: new RouteUpdateTagsRequest { Requested = true, Values = ["Memory"] }));
+
+        Assert.Null(build.Patch);
+        var boundary = Assert.IsType<RouteUpdatePlanningBoundary>(build.Boundary);
+        Assert.Contains(boundary.Formation.Findings,
+            finding => finding.Code == RouteUpdateFindingCode.MetadataPreservationUnsafe);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Theory(DisplayName = "Route Update metadata patcher expands an empty Open Forge mapping byte-exactly"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
+    [InlineData("\n")]
+    [InlineData("\r\n")]
+    public void ExpandsEmptyOpenForgeMappingByteExactly(string lineEnding)
+    {
+        var source = string.Join(
+            lineEnding,
+            "---",
+            "title: \"café 🙂\" # top-level authored comment",
+            "open-forge: {}",
+            "# top-level comment remains authored",
+            "---",
+            string.Empty,
+            "# Authored body",
+            "Keep this body.",
+            string.Empty);
+        var expected = string.Join(
+            lineEnding,
+            "---",
+            "title: \"café 🙂\" # top-level authored comment",
+            "open-forge:",
+            "  description: Team operating notes",
+            "  tags: [Guidance]",
+            "# top-level comment remains authored",
+            "---",
+            string.Empty,
+            "# Authored body",
+            "Keep this body.",
+            string.Empty);
+
+        var build = Build(
+            source,
+            RouteUpdateTestData.Patch(
+                description: new RouteUpdateDescriptionRequest
+                {
+                    Requested = true,
+                    Value = "Team operating notes",
+                },
+                tags: new RouteUpdateTagsRequest
+                {
+                    Requested = true,
+                    Values = ["Guidance"],
+                }));
+        var patch = Assert.IsType<RouteUpdateMetadataPatch>(build.Patch);
+
+        Assert.Null(build.Boundary);
+        Assert.Equal(Encoding.UTF8.GetBytes(expected), patch.IntendedTargetBytes);
+        Assert.Equal(RouteUpdatePatchState.Changed, patch.Patch.Description.State);
+        Assert.Equal(RouteUpdatePatchState.Changed, patch.Patch.Tags.State);
+        var preview = Assert.Single(patch.Preview);
+        Assert.Equal("open-forge: {}", preview.Before);
+        Assert.Equal(
+            string.Join(
+                lineEnding,
+                "open-forge:",
+                "  description: Team operating notes",
+                "  tags: [Guidance]"),
+            preview.Expected);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Route Update metadata patcher expands an empty Open Forge mapping with optional responsibility"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
+    public void ExpandsEmptyOpenForgeMappingWithOptionalResponsibility()
+    {
+        const string source = "---\r\nopen-forge: {}\r\ncustom: \"opaque café 🙂\" # keep exact\r\n---\r\n\r\n# Body\r\n";
+        const string expected = "---\r\nopen-forge:\r\n  description: Team operating notes\r\n  tags: [Guidance]\r\n  responsibility: Owns decisions\r\ncustom: \"opaque café 🙂\" # keep exact\r\n---\r\n\r\n# Body\r\n";
+
+        var build = Build(
+            source,
+            RouteUpdateTestData.Patch(
+                description: new RouteUpdateDescriptionRequest
+                {
+                    Requested = true,
+                    Value = "Team operating notes",
+                },
+                responsibility: new RouteUpdateResponsibilityRequest
+                {
+                    Operation = RouteUpdateResponsibilityOperation.Set,
+                    Value = "Owns decisions",
+                },
+                tags: new RouteUpdateTagsRequest
+                {
+                    Requested = true,
+                    Values = ["Guidance"],
+                }));
+        var patch = Assert.IsType<RouteUpdateMetadataPatch>(build.Patch);
+
+        Assert.Null(build.Boundary);
+        Assert.Equal(Encoding.UTF8.GetBytes(expected), patch.IntendedTargetBytes);
+        Assert.Equal(RouteUpdatePatchState.Changed, patch.Patch.Responsibility.State);
+        var preview = Assert.Single(patch.Preview);
+        Assert.Equal("open-forge: {}", preview.Before);
+        Assert.Equal(
+            "open-forge:\r\n  description: Team operating notes\r\n  tags: [Guidance]\r\n  responsibility: Owns decisions",
+            preview.Expected);
+    }
+
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update metadata patcher replaces only the parsed description span"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void ReplacesOnlyParsedDescriptionSpan()
     {
@@ -25,6 +143,7 @@ public sealed class RouteUpdateMetadataPatcherTests
         Assert.Equal("description: After", preview.Expected);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update metadata patcher adds responsibility at the adjacent member convention"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void AddsResponsibilityAtAdjacentMemberConvention()
     {
@@ -43,6 +162,7 @@ public sealed class RouteUpdateMetadataPatcherTests
         Assert.Equal("responsibility: Owns decisions", preview.Expected);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update metadata patcher adds a missing description beside scoped metadata"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void AddsMissingDescriptionBesideScopedMetadata()
     {
@@ -60,6 +180,7 @@ public sealed class RouteUpdateMetadataPatcherTests
         Assert.Equal("description: After", preview.Expected);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update metadata patcher adds missing tags beside scoped metadata"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void AddsMissingTagsBesideScopedMetadata()
     {
@@ -79,6 +200,7 @@ public sealed class RouteUpdateMetadataPatcherTests
         Assert.Equal("tags: [Memory, Decision]", preview.Expected);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update metadata patcher removes only the responsibility member"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void RemovesOnlyResponsibilityMember()
     {
@@ -97,6 +219,7 @@ public sealed class RouteUpdateMetadataPatcherTests
         Assert.Equal(string.Empty, preview.Expected);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update metadata patcher omits unrequested fields and preserves opaque YAML"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void OmitsUnrequestedFieldsAndPreservesOpaqueYaml()
     {
@@ -120,6 +243,7 @@ public sealed class RouteUpdateMetadataPatcherTests
             StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route Update metadata patcher preserves semantic no-op spelling byte-exact"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     [InlineData("description")]
     [InlineData("tags")]
@@ -155,6 +279,7 @@ public sealed class RouteUpdateMetadataPatcherTests
         Assert.Equal(RouteUpdatePatchState.Unchanged, state);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update metadata patcher preserves duplicate and nested unknown metadata"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void PreservesDuplicateAndNestedUnknownMetadata()
     {
@@ -170,6 +295,7 @@ public sealed class RouteUpdateMetadataPatcherTests
         Assert.Single(patch.Preview);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route Update metadata patcher blocks unsafe parsed YAML preservation"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     [InlineData("open-forge: {description: Before, tags: [Memory]}")]
     [InlineData("open-forge:\n  description: Before # attached comment\n  tags: [Memory]")]
@@ -190,6 +316,7 @@ public sealed class RouteUpdateMetadataPatcherTests
             finding => finding.Code == RouteUpdateFindingCode.MetadataPreservationUnsafe);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route Update metadata patcher blocks flow-style YAML field addition and removal"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     [InlineData("open-forge: {description: Before, tags: [Memory]}", true)]
     [InlineData("open-forge: {description: Before, responsibility: Keep, tags: [Memory]}", false)]
@@ -211,6 +338,7 @@ public sealed class RouteUpdateMetadataPatcherTests
             finding => finding.Code == RouteUpdateFindingCode.MetadataPreservationUnsafe);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update metadata patcher preserves comments around responsibility removal"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void PreservesCommentsAroundResponsibilityRemoval()
     {
@@ -247,6 +375,7 @@ public sealed class RouteUpdateMetadataPatcherTests
         Assert.Equal(Encoding.UTF8.GetBytes(expected), patch.IntendedTargetBytes);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update metadata patcher blocks responsibility removal with an attached comment"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void BlocksResponsibilityRemovalWithAttachedComment()
     {

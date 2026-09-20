@@ -19,12 +19,10 @@ public behavior that belongs to those sources.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Exact lease-bound ordinary-BCL directory-create effect design](directory-creation.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Mutation #Directory #Filesystem
 - [Define automatic embedded Framework and Extension resources, source identity, hashes, and parity evidence](embedded-payload.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Framework #Distribution #EmbeddedResource
 - [Exact shared formation and projection design for Generated Navigation](generated-navigation.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #GeneratedNavigation #Routing
-- [Exact Framework lifecycle schema-v1 target provenance and identity design](lifecycle-provenance.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Framework #Lifecycle #Provenance
+- [Ownership receipts and operation-time Framework source alignment](lifecycle-provenance.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Framework #Lifecycle #Provenance
 - [Exact BCL-first locking, recovery-bundle, expected-state, atomic-file, receipt, and guarded-deletion design](mutation-and-recovery.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Mutation #Recovery #Filesystem #Lock
 - [Exact local-only Workspace Libraries record, inventory, projection, and recovery design](workspace-libraries.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Framework #Library #Workspace #Filesystem #Mutation #Recovery
-- [Define the strict permission codec and lease-bound ordinary-file publication design](workspace-permissions.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Permission #Filesystem
-<!-- open-forge:generated-index:end -->
+- [Realize shared destination admission through authored settings and existing mutation receipts](workspace-permissions.md) - #Memory #Crystallized #CLI #TechnicalDesign #Permissions #Settings #CurrentTruth

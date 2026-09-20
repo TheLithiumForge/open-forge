@@ -15,6 +15,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library;
 
 public sealed class LibraryRecoveryIdentityIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory, InlineData(false), InlineData(true), Trait("Feature", "library"), Trait("Evidence", "Integration")]
     public async Task CleanupRequiresThePreparedAttribution(bool changed)
     {

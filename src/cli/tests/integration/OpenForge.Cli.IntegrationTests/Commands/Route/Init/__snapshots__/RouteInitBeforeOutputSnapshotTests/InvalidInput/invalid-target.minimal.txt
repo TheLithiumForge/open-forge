@@ -1,0 +1,3 @@
+Cannot initialize ../outside: not a route ID or an entrypoint path under .agents.
+Workspace: <workspace>
+Next: open-forge route init --help

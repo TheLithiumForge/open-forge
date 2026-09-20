@@ -1,0 +1,5 @@
+Detached team-knowledge: removed 0 links under .. Source files in shared/team-knowledge were kept.
+  Warning  .agents/directives/review.md  Registered link is missing
+         .agents/directives/review.md is already absent, so no file was removed.
+         open-forge library inspect team-knowledge
+Next: open-forge library inspect team-knowledge

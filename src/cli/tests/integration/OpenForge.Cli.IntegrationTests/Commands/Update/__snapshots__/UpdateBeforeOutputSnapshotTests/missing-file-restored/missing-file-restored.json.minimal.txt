@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 3,
+  "command": "update",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Updated 1 Framework file.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "restored",
+      "outcome": "done",
+      "reason": "it was missing",
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesReplaced": 0,
+    "filesRestored": 1,
+    "filesCreated": 1,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 13,
+    "sectionsUpdated": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": true,
+    "prune": false,
+    "automatic": true,
+    "previousContent": null,
+    "lockPath": ".agents/open-forge.lock.json"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

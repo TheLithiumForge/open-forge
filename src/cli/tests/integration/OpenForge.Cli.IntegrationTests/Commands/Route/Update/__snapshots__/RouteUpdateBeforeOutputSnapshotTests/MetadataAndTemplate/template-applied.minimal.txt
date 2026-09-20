@@ -1,0 +1,5 @@
+Updated memory/project-alpha/overview
+Workspace: <workspace>
+  description: "Before overview" -> "After overview"
+  Body copied from the Template templates/route
+  Entry updated in .agents/memory/project-alpha/_project-alpha.md

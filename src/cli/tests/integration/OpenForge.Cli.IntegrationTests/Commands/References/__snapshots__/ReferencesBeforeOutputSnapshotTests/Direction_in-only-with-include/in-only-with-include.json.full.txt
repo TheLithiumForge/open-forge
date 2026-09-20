@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 3,
+  "command": "references",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": ".agents/docs/reference.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "incoming": 1,
+    "outgoing": null,
+    "sourcesScanned": 1
+  },
+  "limitations": [],
+  "data": {
+    "source": {
+      "id": "docs/reference",
+      "path": ".agents/docs/reference.md"
+    },
+    "direction": "in",
+    "incoming": [
+      {
+        "path": ".agents/docs/guide.md",
+        "location": ":10:10",
+        "layer": "base"
+      }
+    ],
+    "coverage": {
+      "incoming": "complete"
+    },
+    "filters": {
+      "include": [
+        "docs/guide"
+      ],
+      "exclude": []
+    },
+    "scanned": [
+      {
+        "id": "docs/guide",
+        "path": ".agents/docs/guide.md",
+        "layer": "base"
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

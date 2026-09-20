@@ -9,6 +9,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Distribution;
 
 public sealed class EmbeddedFrameworkSourceProjectorTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Embedded Framework source projection maps canonical assets to contained sources and pairs adjacent overwrites"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void ProjectMapsCanonicalAssetsToContainedSourcesAndPairsOverwrites()
     {
@@ -62,6 +63,7 @@ public sealed class EmbeddedFrameworkSourceProjectorTests
             source => source.Identity.CanonicalBasePath is "AGENTS.md" or "CLAUDE.md");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Embedded Framework source projection returns an immutable canonical projection for shuffled payload assets"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void ProjectReturnsImmutableCanonicalProjectionForShuffledAssets()
     {

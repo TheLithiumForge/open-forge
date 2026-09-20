@@ -10,6 +10,7 @@ public sealed class ExtensionManifestReaderTests
 {
     private const string ValidManifest = """{"id":"toolkit","name":"Toolkit","description":"A toolkit.","version":"1.2.3","dependencies":["alpha","base"]}""";
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Manifest reader preserves every manifest fact and explicit package contents"), Trait("Feature", "extension-manifest"), Trait("Evidence", "Unit")]
     [InlineData(false)]
     [InlineData(true)]
@@ -44,6 +45,7 @@ public sealed class ExtensionManifestReaderTests
         }
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Manifest validation rejects invalid required values and dependency ordering"), Trait("Feature", "extension-manifest"), Trait("Evidence", "Unit")]
     [InlineData("\"id\":\"toolkit\"", "\"id\":\"Invalid_ID\"")]
     [InlineData("\"name\":\"Toolkit\"", "\"name\":\" \"")]
@@ -60,6 +62,7 @@ public sealed class ExtensionManifestReaderTests
         Assert.Throws<JsonException>(() => ExtensionManifestReader.Read(bytes, "extension.json", []));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Duplicate dependency IDs retain the distinct manifest conflict classification"), Trait("Feature", "extension-manifest"), Trait("Evidence", "Unit")]
     public void ClassifiesDuplicateDependencies()
     {
@@ -70,6 +73,7 @@ public sealed class ExtensionManifestReaderTests
         Assert.Equal("Extension dependencies cannot contain duplicate stable IDs.", full.Message);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Manifest readers reject absent malformed and ambiguous package documents"), Trait("Feature", "extension-manifest"), Trait("Evidence", "Unit")]
     [InlineData("null")]
     [InlineData("{")]
@@ -83,6 +87,21 @@ public sealed class ExtensionManifestReaderTests
         Assert.ThrowsAny<JsonException>(() => ExtensionManifestReader.Read(bytes, "extension.json", []));
     }
 
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "An unaccepted manifest key names the accepted keys instead of the serializer type"), Trait("Feature", "extension-manifest"), Trait("Evidence", "Unit")]
+    public void UnacceptedKeyNamesTheAcceptedKeys()
+    {
+        var bytes = Encoding.UTF8.GetBytes(
+            ValidManifest.Replace("{", "{\"author\":\"Someone\",", StringComparison.Ordinal));
+
+        var failure = Assert.ThrowsAny<JsonException>(() => ExtensionManifestReader.Read(bytes, "extension.json", []));
+
+        Assert.Equal(
+            "The manifest key 'author' is not accepted. Accepted keys: id, name, description, version, dependencies.",
+            failure.Message);
+    }
+
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Manifest decoding rejects invalid UTF-8 before package formation"), Trait("Feature", "extension-manifest"), Trait("Evidence", "Unit")]
     public void RejectsInvalidUtf8()
     {

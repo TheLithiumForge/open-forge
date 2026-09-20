@@ -22,6 +22,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Find;
 
 public sealed class FindSourceUniverseIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Find query enumerates every eligible source form and applies physical selector expansion without writes")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Integration")]
     public async Task RealWorkspaceEnumeratesEveryEligibleFormAndAppliesPhysicalFilterExpansion()
@@ -223,6 +224,7 @@ public sealed class FindSourceUniverseIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Find query excludes unreadable physical areas before inspection while retaining unsafe and orphan findings")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Integration")]
     public async Task ExcludedUnreadableAreasRemainUnreadWhileUnsafeAndOrphanCandidatesStayVisible()
@@ -416,7 +418,7 @@ public sealed class FindSourceUniverseIntegrationTests
                 [new FindRegion(FindRegionKind.Body, null, FindDefinitions.Body)]));
         var presentation = new FindPresentationSelection(
             null,
-            CliView.Expanded,
+            CliDetail.Standard,
             new FindContentSelection([], []));
         return new FindRequest(
             workspace,

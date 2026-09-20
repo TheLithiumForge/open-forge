@@ -1,0 +1,4 @@
+Cannot attach team-knowledge: Another Open Forge command holds the workspace lock. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/open-forge.lock.json  Workspace lock is unavailable
+         Another Open Forge command holds the workspace lock. Nothing was changed.

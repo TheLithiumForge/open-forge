@@ -1,0 +1,11 @@
+Synchronized team-knowledge: 1 link added.
+Workspace: <workspace>
+local
+  Warning  .agents/directives/review.md  Registered link was restored [library-sync.registered-link-restored]
+         .agents/directives/review.md was registered but missing, so it was restored.
+  Added    .agents/directives/review.md
+    Target: ../../shared/team-knowledge/.agents/directives/review.md
+  Inventory: 1 eligible file, 0 excluded items, 0 unavailable paths.
+  Expected state: .agents/directives/review.md is missing.
+  Verification: verified; record publication: not started.
+  Recovery: removed at <recovery-bundle>.

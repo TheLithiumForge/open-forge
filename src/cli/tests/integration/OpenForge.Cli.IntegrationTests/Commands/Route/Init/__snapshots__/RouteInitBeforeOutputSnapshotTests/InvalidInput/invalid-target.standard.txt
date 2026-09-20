@@ -1,0 +1,9 @@
+Cannot initialize ../outside: not a route ID or an entrypoint path under .agents.
+Workspace: <workspace>
+  Error  ../outside  Invalid target
+         ../outside is not a route ID or an entrypoint path under .agents.
+         open-forge route init --help
+         Correct the named Route Init input, then rerun the request.
+  Scaffold: generic
+  Correct the named Route Init input, then rerun the request.
+Next: open-forge route init --help

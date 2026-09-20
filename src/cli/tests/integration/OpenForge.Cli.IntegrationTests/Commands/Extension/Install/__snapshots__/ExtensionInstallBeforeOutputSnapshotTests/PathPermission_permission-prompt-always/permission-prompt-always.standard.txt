@@ -1,0 +1,6 @@
+Installed the team Extension.
+Workspace: <workspace>
+  .apm/agents/team.md  created (team)
+  Source: <extension-source> (package)
+  Permission scope: .apm/agents/team.md
+  .agents/open-forge.lock.json  updated

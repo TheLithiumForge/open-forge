@@ -1,0 +1,322 @@
+{
+  "schemaVersion": 3,
+  "command": "route move",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Moved the route guidance/topics to .agents/archive/topics  (7 files)",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/archive/topics",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "directory"
+    },
+    {
+      "path": ".agents/archive/topics/assets",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "directory"
+    },
+    {
+      "path": ".agents/archive/topics/native",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "directory"
+    },
+    {
+      "path": ".agents/archive/topics/_topics.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/archive/topics/assets/settings.json",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/archive/topics/child.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/archive/topics/child.overwrite.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/archive/topics/image.bin",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/archive/topics/native/SKILL.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/archive/topics/notes.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/archive/_archive.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/guidance/topics/assets/settings.json",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "missing"
+    },
+    {
+      "path": ".agents/guidance/topics/native/SKILL.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "missing"
+    },
+    {
+      "path": ".agents/guidance/topics/_topics.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "missing"
+    },
+    {
+      "path": ".agents/guidance/topics/child.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "missing"
+    },
+    {
+      "path": ".agents/guidance/topics/child.overwrite.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "missing"
+    },
+    {
+      "path": ".agents/guidance/topics/image.bin",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "missing"
+    },
+    {
+      "path": ".agents/guidance/topics/notes.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "missing"
+    },
+    {
+      "path": ".agents/guidance/topics/assets",
+      "kind": "directory",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "directory",
+      "after": "missing"
+    },
+    {
+      "path": ".agents/guidance/topics/native",
+      "kind": "directory",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "directory",
+      "after": "missing"
+    },
+    {
+      "path": ".agents/guidance/topics",
+      "kind": "directory",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "directory",
+      "after": "missing"
+    }
+  ],
+  "counts": {
+    "filesMoved": 7,
+    "sectionsUpdated": 2,
+    "linksRewritten": 2,
+    "filesScanned": 12
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "route",
+    "source": {
+      "id": "guidance/topics",
+      "path": ".agents/guidance/topics/_topics.md"
+    },
+    "destination": {
+      "id": "archive/topics",
+      "path": ".agents/archive/topics/_topics.md"
+    },
+    "moved": [
+      {
+        "from": ".agents/guidance/topics/_topics.md",
+        "to": ".agents/archive/topics/_topics.md"
+      },
+      {
+        "from": ".agents/guidance/topics/assets/settings.json",
+        "to": ".agents/archive/topics/assets/settings.json"
+      },
+      {
+        "from": ".agents/guidance/topics/child.md",
+        "to": ".agents/archive/topics/child.md",
+        "overwrite": {
+          "from": ".agents/guidance/topics/child.overwrite.md",
+          "to": ".agents/archive/topics/child.overwrite.md"
+        }
+      },
+      {
+        "from": ".agents/guidance/topics/image.bin",
+        "to": ".agents/archive/topics/image.bin"
+      },
+      {
+        "from": ".agents/guidance/topics/native/SKILL.md",
+        "to": ".agents/archive/topics/native/SKILL.md"
+      },
+      {
+        "from": ".agents/guidance/topics/notes.md",
+        "to": ".agents/archive/topics/notes.md"
+      }
+    ],
+    "rewrittenLinks": [
+      {
+        "path": ".agents/archive/topics/child.md",
+        "location": ":8:13",
+        "from": {
+          "id": "guidance/old guide",
+          "path": ".agents/guidance/old guide.md"
+        },
+        "to": {
+          "id": "guidance/old guide",
+          "path": ".agents/guidance/old guide.md"
+        }
+      },
+      {
+        "path": ".agents/archive/topics/child.overwrite.md",
+        "location": ":1:35",
+        "from": {
+          "id": "guidance/old guide",
+          "path": ".agents/guidance/old guide.md"
+        },
+        "to": {
+          "id": "guidance/old guide",
+          "path": ".agents/guidance/old guide.md"
+        }
+      }
+    ],
+    "scan": {
+      "filesScanned": 12,
+      "occurrences": 9
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

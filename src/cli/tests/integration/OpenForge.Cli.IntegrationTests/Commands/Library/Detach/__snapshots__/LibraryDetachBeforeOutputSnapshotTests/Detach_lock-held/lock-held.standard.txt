@@ -1,0 +1,10 @@
+Cannot detach team-knowledge: another Open Forge command holds the workspace lock. Nothing was changed.
+Workspace: <workspace>
+  Error  team-knowledge  Workspace lock is unavailable
+         Another Open Forge command holds the workspace lock. Nothing was changed.
+         open-forge doctor
+         Inspect the reported Library state.
+  .agents/directives/review.md  not started
+  .agents/open-forge.lock.json  not started
+  Inspect the reported Library state.
+Next: open-forge doctor

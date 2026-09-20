@@ -1,0 +1,11 @@
+status=completed-with-warnings
+mode=apply
+target=memory/project-alpha/overview
+completeness=complete
+safety=safe
+body=authored-body-protected
+effects=2
+recovery=removed
+verification=verified
+findings=1
+The target contains authored body bytes; its Template body was preserved.

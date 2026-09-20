@@ -8,21 +8,18 @@ open-forge:
 
 ## What approach is recommended, and when does it fit?
 
-Guidance recommends approaches for recurring situations and explains when they fit. Its advice can be adapted to the current situation.
+Guidance recommends approaches for recurring situations and explains when they fit. It offers adaptable advice, not the binding instructions of a Directive.
 
 ## Axioms
 
 - Check `Entries` when the work involves a recurring situation or choice that may have Guidance.
 - Each Guidance file explains the situation, recommended approach, reasons, and tradeoffs.
-- Apply Guidance when it fits the current work.
-- When another approach fits better, explain why.
+- Apply Guidance when it fits the work. When another approach fits better, explain why.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
-- [Explore ideas proportionately, converge on consequential choices, and use independent perspectives only when they change the decision](adaptive-collaboration.md) - #Core #Guidance #Collaboration #Ideation #Decision #Convergence #Review #Experience #Efficiency
+- [Explore ideas, match the depth to the decision, integrate accepted outcomes, and offer useful independent review](adaptive-collaboration.md) - #Extension #Guidance #Collaboration #Ideation #Decision #Convergence #Review #Experience
 - [Deliver greenfield and brownfield work through explicit authority, profile-based rigor, compact context, persistent ownership, and proportionate review](adaptive-design-delivery.md) - #Core #Guidance #Design #Implementation #Adaptive #Greenfield #Brownfield #Context #Planning #Authority #Review #Efficiency
 - [Apply explicit top-down architecture, task decomposition, bounded implementation, and integration-review perspectives without multiplying owners](architectural-perspectives.md) - #Core #Guidance #Architecture #Planning #Task #Delegation #Review #Perspective #Efficiency
 - [Calibrate delegated reasoning, ownership continuity, review depth, and parallelism to bounded work and concrete risk](calibrated-agent-reasoning.md) - #Core #Guidance #Collaboration #Orchestration #Delegation #Reasoning #Review #Risk #Efficiency
 - [Design command-line tools with useful output, predictable interaction, and simple implementation boundaries](cli-design.md) - #Guidance #CLI #Design #UserExperience #Presentation #Development #Testing
-<!-- open-forge:generated-index:end -->

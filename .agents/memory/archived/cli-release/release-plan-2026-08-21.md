@@ -240,7 +240,7 @@ Mastermind inspects the actual result, runs required verification/review, update
 the authoritative Task in the same coherent commit, and commits each mutating
 increment before the next mutates files. A no-change pass carries its evidence
 into the next coherent or acceptance commit. The maintainer-selected
-[Experimental Development Workflow](../../../workflows/experimental-development.md)
+[Experimental Development Workflow](../../../skills/use-workflow/references/open-forge/experimental-development.md)
 now uses brilliant implementation for callable contracts and unresolved shared
 foundations, then the normal max-reasoning Luna `implementer` for closed execution
 after the Mastermind records a solid structure and complete packet. The

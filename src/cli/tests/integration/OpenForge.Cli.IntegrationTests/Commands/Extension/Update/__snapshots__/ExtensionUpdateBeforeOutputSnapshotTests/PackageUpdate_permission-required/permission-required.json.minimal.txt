@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 3,
+  "command": "extension update",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot update toolkit: it writes outside .agents and no grant allows that.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-update.permission-required",
+      "title": "Permission is required",
+      "message": "Cannot update: it writes outside .agents and no grant allows that.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "toolkit",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesUpdated": 1,
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 1,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": true,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "toolkit",
+        "from": "1.0.0",
+        "to": "1.0.0"
+      }
+    ],
+    "previousContent": null,
+    "permissions": {
+      "required": [
+        "workspace-note.md"
+      ],
+      "missing": [
+        "workspace-note.md"
+      ],
+      "decision": "required",
+      "action": "none",
+      "outcome": "not-requested"
+    }
+  },
+  "recovery": null,
+  "next": null
+}

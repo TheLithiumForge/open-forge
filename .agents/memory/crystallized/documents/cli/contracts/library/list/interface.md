@@ -1,24 +1,27 @@
 ---
 open-forge:
   description: Accepted public interface for bounded read-only Library list observations
-  responsibility: Define Library list syntax, strict record input, source-root and link states, results, and conformance
+  responsibility: Define Library list syntax, lock ownership input, source-root and link states, results, and conformance
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Library, List, Interface, ReadOnly, Workspace, CurrentTruth]
 ---
 
 # library list Interface Contract
 
+Unavailable ownership is reported as `library-list.ownership-observation`
+with `completed` status. This finding grants no ownership or mutation permission.
+
 ## Status And Authority
 
 This is the accepted current Crystallized Interface Contract for read-only
-`open-forge library list`. It owns the public syntax, strict record input,
+`open-forge library list`. It owns the public syntax, lock ownership input,
 bounded observation result, semantic statuses, output, errors, examples, and
-caller-visible conformance for this command. The command does not ship yet.
+caller-visible conformance for this command. The command is implemented in the merged CLI.
 
 The sibling [Behavior Contract](behavior.md) defines technology-neutral
 resolution and result formation. The [Library group entrypoint](../_library.md)
 defines group routing and the exact command order. The shared [Global CLI Flags](../../shared/global-flags/interface.md)
 define the six unchanged global flags. The shared [Result Coordinates](../../shared/result-coordinates/interface.md)
-define the schema-v1 envelope, status exits, and output streams. The shared [CLI
+define the schema-3 envelope, status exits, and output streams. The shared [CLI
 Source References](../../shared/source-references/interface.md) define automatic
 source IDs and canonical `.agents` paths; this command does not create another
 source-ID grammar.
@@ -30,14 +33,14 @@ defines shared realization detail without changing this public contract.
 
 `library list` answers which consumer-local Library records are readable and
 which registered destination links are currently observable. It reads one
-bounded `.agents/open-forge.libraries.json` record, checks each recorded source
+bounded `.agents/open-forge.lock.json` record, checks each recorded source
 root, and observes each registered destination entry without reading its link
 target's file bytes.
 
 The command does not perform a complete source inventory. It cannot report
 source additions or retirements that are absent from the record. A safely
 observed missing or changed registered link is projection drift and yields
-`attention`; it is not a request to repair that link. An unavailable or
+`completed-with-warnings`; it is not a request to repair that link. An unavailable or
 incomplete fact yields `incomplete`, and an unsafe identity or ambiguous record
 or link yields `blocked`.
 
@@ -55,13 +58,13 @@ open-forge library list [global flags]
 
 There are no domain operands and no operation-specific flags. The command does
 not accept a Library ID, a source ID, a source-reference path, a source-root
-operand, or a write-policy flag. The six shared global flags are unchanged:
+operand, or a write-policy flag. The six shared global flags are:
 
 ```text
 --workspace <path>
---json
---view=compact|expanded
---verbose
+--format <text|json>
+--detail <minimal|standard|full|debug>
+--detail-filter <error|warning|info|all>
 --help
 --version
 ```
@@ -73,44 +76,26 @@ no applicable behavior remains a shared no-op.
 
 ## Workspace And Record
 
-The consumer record is `.agents/open-forge.libraries.json`, separate from
-lifecycle ownership and consumer permissions. Its exact current schema is:
+Library selection reads the `libraries` claims in `.agents/open-forge.lock.json`.
+The shared ownership codec accepts understood keys without requiring an exact
+schema version or member set. It never reads the old Library or lifecycle file
+for selection. Each usable Library claim supplies `id`, `sourceRoot`,
+`destinationRoot`, and source-relative `paths`. IDs and paths are presented in
+ordinal order; typed portable identities and unambiguous mapped destinations
+remain required before using a claim. The destination root may be `.`; a source
+root may not. Link identity derives from the two roots and each source suffix.
+Permissions remain separate from ownership.
 
-```json
-{
-  "schemaVersion": 1,
-  "libraries": [
-    {
-      "id": "team-knowledge",
-      "sourceRoot": "shared/team-knowledge",
-      "destinationRoot": ".apm/agents/team",
-      "paths": ["checks/security.md", "review.md"]
-    }
-  ]
-}
-```
-
-Require exactly `schemaVersion` and `libraries` at the top level, and exactly
-`id`, `sourceRoot`, `destinationRoot` and `paths` per Library. Require integer
-`1`, existing Library-ID grammar, canonical portable roots and source-relative
-eligible paths. The destination root is `.` or a normal relative directory;
-source roots do not admit `.`. Unknown, missing, null, duplicate and wrongly
-typed members are malformed. No previous schema shape, migration or alternate
-reader is accepted.
-
-IDs and each source-relative path array use ordinal order. Paths are unique
-within a Library. Derived destinations must be unique across Libraries under
-portable identity; equal source-relative paths at different destinations are
-valid. Empty path arrays and an empty Library array are valid. The record stores
-no expected-link text, contents, hashes, timestamps, Git facts, dependencies,
-globs or per-file remapping. Link identity derives from both recorded roots and
-the source-relative path. Permission is separate from ownership and may be
-revoked independently.
-
-A missing record is a valid prior-absence fact for Attach and a complete empty
-List result. Inspect, Sync and Detach require the requested ID in a valid record.
-Malformed, unavailable and unsafe records retain their existing invalid,
-incomplete and blocked classification; none becomes an empty valid record.
+An absent, unreadable, nonordinary, malformed, or uninterpretable ownership lock
+provides no usable registrations and yields a `completed` ownership observation.
+It is never reported as a valid empty record: the record state remains `missing`,
+`unavailable`, or `invalid-input`, with unavailable counts and no selected paths.
+List returns no registrations; Inspect, Sync, and Detach select nothing and do
+not invent an unknown-ID error. Their `ownership-observation` finding explains
+why. A valid readable lock with no matching requested ID still yields `invalid-input`.
+Attach may verify new effects from its explicit source and destination inputs
+and publish ownership best-effort after verification. Read-only operations never
+reconstruct or write a lock. Matching files and old records create no claims.
 
 ## Source-Root State
 
@@ -121,9 +106,9 @@ ancestor and the selected root must be a real ordinary directory, without
 symlink, junction or reparse ancestry. No specially named child is required.
 The selected directory itself scopes the recursively discovered eligible files.
 
-An absent or non-directory source root is `invalid` for Attach. For an existing
+An absent or non-directory source root is `invalid-input` for Attach. For an existing
 registration, unavailable or missing source facts make Inspect or Sync
-`incomplete`; a readable non-directory root is `invalid`. Unsafe containment,
+`incomplete`; a readable non-directory root is `invalid-input`. Unsafe containment,
 linked ancestry or ambiguous identity is `blocked`. List reports only bounded
 root availability and does not enumerate descendants. An incomplete source is
 never an empty source inventory.
@@ -156,190 +141,201 @@ The observation is one of:
 source ID when the destination is an eligible `.agents` file. It is retained
 separately from `library.id`; the Library ID is never substituted for it.
 
-## Result Shape
+## Human Output
 
-JSON uses the shared schema-v1 envelope. The command-local `result` object has
-this complete member order:
+Every semantic result is rendered by the shared native report. --format text
+is the default. The applicable global flags are --workspace <path>, --format
+<text|json>, --detail <minimal|standard|full|debug>, repeatable
+--detail-filter <error|warning|info|all>, --help, and --version. The default
+detail is minimal; standard adds workspace and per-record state, full adds
+expected and observed targets, and debug adds bounded diagnostics on stderr.
+Detail does not change semantics, counts, ordering, or status. Filters select
+finding severities; all is the default filter.
+
+
+
+The catalogue text by detail level is:
+
+`minimal`, current:
 
 ```text
-ListResult {
-  record: RecordView,
-  libraries: LibraryView[],
-  inventory: "not-started" | "not-requested",
-  coverage: "not-started" | "complete" | "incomplete" | "blocked" | "failed" | "interrupted",
-  findings: Finding[]
-}
-
-RecordView {
-  path: `.agents/open-forge.libraries.json`,
-  state: "not-started" | "missing" | "complete" | "invalid" | "unavailable" | "blocked" | "failed" | "interrupted",
-  libraryCount: nonnegative-integer | null
-}
-
-LibraryView {
-  id: string,
-  sourceRoot: string,
-  destinationRoot: string,
-  sourceRootState: "not-started" | "available" | "missing" | "unavailable" | "invalid" | "blocked",
-  paths: RegisteredPath[]
-}
-
-RegisteredPath {
-  sourcePath: string,
-  destinationPath: string,
-  expectedRelativeLink: string | null,
-  sourceId: string | null,
-  state: "not-started" | "current" | "missing" | "changed" | "unavailable" | "blocked",
-  observedRelativeLink: string | null
-}
-
-Finding {
-  code: "library-list.invalid-record" | "library-list.record-unavailable" |
-    "library-list.record-blocked" |
-    "library-list.source-root-invalid" | "library-list.source-root-unavailable" |
-    "library-list.source-root-blocked" | "library-list.link-missing" |
-    "library-list.link-changed" | "library-list.link-unavailable" |
-    "library-list.link-blocked" | "library-list.operation-failed" |
-    "library-list.interrupted",
-  status: SharedStatus,
-  libraryId: string | null,
-  path: string | null,
-  cause: bounded-string
-}
+team-knowledge    shared/team -> docs   12 links current
 ```
 
-Every array is present. Known empty arrays have count `0`; unavailable counts
-are `null`. `inventory` is `not-requested` for a valid domain request because
-List never forms a complete source inventory. `coverage` describes only the
-bounded record, source-root, and registered-link facts requested by this
-command.
+`minimal`, attention:
 
-Libraries are ordered by `id` using ordinal comparison. Each `paths` array is
-ordered by its path string using ordinal comparison. The same order is used by
-compact human output, expanded human output, and JSON.
+```text
+1 Library registered. 1 link needs attention.
+  team-knowledge    shared/team -> docs   11 links current, 1 missing
+    Warning  docs/review.md   missing
+Next: open-forge library sync team-knowledge
+```
+
+`standard` adds `Workspace:` and every registered link with its state.
+
+`full` adds expected and observed link targets per link and the record
+coverage sentence.
+
+Completed and completed-with-warnings results use stdout; incomplete results
+also use stdout. Invalid-input, blocked, failed, and cancelled results use
+stderr. A parser failure is text on stderr without a result envelope.
+
+## Structured Output
+
+--format json emits one schema-3 envelope on stdout for each semantic result.
+The envelope has exactly these fields:
+
+~~~text
+{
+  schemaVersion: 3,
+  command,
+  status,
+  detail,
+  filter,
+  workspace,
+  summary,
+  findings,
+  effects,
+  counts,
+  limitations,
+  data,
+  recovery,
+  next
+}
+~~~
+
+The command is exactly library list; data follows the catalogue:
+
+| Level    | `data`                                                                                                         |
+| -------- | -------------------------------------------------------------------------------------------------------------- |
+| minimal  | `{ libraries: [ { id, sourceFolder, destinationFolder, links { current, missing, changed, unavailable } } ] }` |
+| standard | + per Library `links: [ { path, state } ]`                                                                     |
+| full     | + per link `expectedTarget`, `observedTarget`, `sourceId`; `recordCoverage`                                    |
+
+Human and JSON output are projections of one typed result. data is null only at
+the parser boundary before command binding. There is no alternate JSON
+projection.
 
 ## Semantic Results
 
-The command uses the shared seven statuses:
+| Status                  | When                                                                       | Text                                                                                    | Exit | Stream |
+| ----------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | none registered                                                            | `No Libraries are registered.` + `Next: open-forge library attach <id> <source-folder>` |    0 | stdout |
+| completed               | all links current                                                          | rows                                                                                    |    0 | stdout |
+| completed               | no ownership record                                                        | `No ownership record exists, so Libraries cannot be listed from it.` (Info; exit 0)     |    0 | stdout |
+| completed-with-warnings | a registered link is missing or changed, or a source folder cannot be read | `<N> Libraries registered. <K> links need attention.` then rows                         |    2 | stdout |
+| incomplete              | record or a link fact unreadable                                           | rows plus warning rows                                                                  |    3 | stdout |
+| invalid-input           | bad flag, invalid record shape                                             | `Cannot list Libraries: <problem>.`                                                     |    4 | stderr |
+| blocked                 | unsafe identity, containment or link                                       | `Cannot list Libraries: <reason>.`                                                      |    5 | stderr |
+| failed                  | unexpected error                                                           | `Library list stopped because of an unexpected error: <reason>.`                        |    1 | stderr |
+| cancelled               | Ctrl+C                                                                     | `Library list was cancelled.`                                                           |  130 | stderr |
 
-| Status        | Meaning for `library list`                                                                                                                                       |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | The record is known missing and therefore has zero libraries, or every bounded record, source-root, and registered-link fact is complete and safe with no drift. |
-| `attention`   | Bounded facts are complete and safe, and one or more registered links are missing or changed. No complete source inventory was performed.                        |
-| `incomplete`  | A required record, source-root, or registered-link fact is unavailable or incomplete. The command does not report an empty substitute.                           |
-| `invalid`     | The command input or strict record shape is invalid, including a source root that is not an ordinary directory.                                                  |
-| `blocked`     | Unsafe identity, containment, record identity, or link ambiguity prevents safe observation.                                                                      |
-| `failed`      | An unexpected operation or result-formation failure occurred.                                                                                                    |
-| `interrupted` | The caller interrupted the operation before its result was complete.                                                                                             |
 
-When several ordinary conditions apply, the shared status precedence is
-`failed`, `invalid`, `blocked`, `incomplete`, `attention`, then `complete`, with
-`interrupted` retaining its event meaning. A missing record is never combined
-with an unavailable or malformed record state.
 
-The `next` member of the shared envelope is `null` for this command. List
-reports observations; it does not select a repair or another operation.
+## Errors And Boundaries
 
-## Human And Structured Output
+The finding catalogue is:
 
-Both human views begin with the registration outcome, status, exact workspace
-and selection method, followed by the record path/state and coverage. They state
-that source inventory was not scanned. Human `requires attention` represents the
-typed `attention` status. A missing or known-empty record says that no Libraries
-are registered. An invalid, unavailable or unchecked record does not become an
-empty result merely because no rows were returned.
+| Code                                 | Severity | Family                | Message                                                                                              | Next                              |
+| ------------------------------------ | -------- | --------------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------- |
+| library-list.invalid-record          | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/List/Shared/Wording/LibraryListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-list.invalid-record`).                          | `open-forge doctor`               |
+| library-list.record-unavailable      | warning  | lifecycle-unavailable | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/List/Shared/Wording/LibraryListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-list.record-unavailable`). | `open-forge doctor`               |
+| library-list.record-blocked          | error    | lifecycle-blocked     |                                                                                                      |                                   |
+| library-list.ownership-observation   | info     | ownership-observation |                                                                                                      |                                   |
+| library-list.source-root-invalid     | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/List/Shared/Wording/LibraryListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-list.source-root-invalid`).                           | `open-forge library inspect <id>` |
+| library-list.source-root-unavailable | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/List/Shared/Wording/LibraryListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-list.source-root-unavailable`).                                                 | `open-forge library inspect <id>` |
+| library-list.source-root-blocked     | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/List/Shared/Wording/LibraryListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-list.source-root-blocked`).                                 | none                              |
+| library-list.link-missing            | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/List/Shared/Wording/LibraryListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-list.link-missing`).                                                                                    | `open-forge library sync <id>`    |
+| library-list.link-changed            | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/List/Shared/Wording/LibraryListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-list.link-changed`).                                                         | `open-forge library inspect <id>` |
+| library-list.link-unavailable        | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/List/Shared/Wording/LibraryListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-list.link-unavailable`).                                                                       | `open-forge doctor`               |
+| library-list.link-blocked            | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/List/Shared/Wording/LibraryListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-list.link-blocked`).                                                      | `open-forge doctor`               |
+| library-list.operation-failed        | error    | operation-failed      |                                                                                                      |                                   |
+| library-list.interrupted             | error    | interrupted           |                                                                                                      |                                   |
 
-Each Library retains its ID, source and destination roots, source-root state,
-registered source/destination paths, source IDs when available, and observed
-link states. Expanded is the default and adds exact expected/observed link
-targets and supporting explanations. Compact uses short mapping rows. Both
-retain every finding and safety/availability state. Paths are not truncated.
+Findings retain code, severity, family, message, subject, cause, and next
+action when available. Counts are:
 
-For example, a missing record may render:
+`libraries`, `linksCurrent`, `linksMissing`, `linksChanged`, `linksUnavailable`.
 
-```text
-No Libraries are registered.
-Status: complete
-Workspace: <selected workspace>
-Selected by: current directory
-Record: missing (.agents/open-forge.libraries.json)
-Registered Libraries: 0
-Source inventory: not scanned (library list checks registered links only)
-Checks: complete
-```
+## Scenarios
 
-The values are illustrative. `--verbose` remains a separate bounded diagnostic
-surface and does not change facts or status.
+`none-registered`, `one-current`, `link-missing`, `link-changed`,
+`no-ownership-record` (info), `source-folder-missing` (warnings),
+`record-invalid` (invalid), `record-unreadable` (incomplete), `link-blocked`
+(blocked), `invalid-input`.
 
-`--json` emits one complete structured result from the same typed result for
-every semantic status. It does not follow links, start an inventory, or prompt.
-Human `complete`, `attention`, and `incomplete` output uses stdout. Human
-`invalid`, `blocked`, `failed`, and `interrupted` output uses stderr. Bounded
-diagnostics use stderr under the shared result-coordinate rules.
+## Representative Transcripts
 
-## Errors And Non-Goals
+### completed
 
-Every human error names `library list`, the record or affected Library when
-known, the cause, and the bounded observation that could not be established. A
-malformed or unavailable record is not rendered as zero libraries. An unsafe or
-ambiguous link is not treated as a changed link. No fallback source root or
-record is inferred.
+~~~text
+Workspace: <workspace>
+  team-knowledge  shared/team -> .  1 link current
+~~~
 
-`library list` does not:
+### completed-with-warnings
 
-- Accept a Library ID or source-reference operand.
-- Enumerate source files or infer additions or retirements.
-- Read target file bytes through a registered link.
-- Create, remove, retarget, or repair a link or record.
-- Acquire a lock or create recovery, cache, index, or receipt state.
-- Change route meaning, generated navigation, or Framework loading.
+~~~text
+1 Library registered. 1 link needs attention.
+Workspace: <workspace>
+  Warning  .agents/directives/review.md  Registered link is missing
+         .agents/directives/review.md  missing
+  team-knowledge  shared/team -> .  0 links current, 1 missing
+Next: open-forge library sync team-knowledge
+~~~
 
-## Examples
+### incomplete
 
-List the bounded record from the selected workspace:
+~~~text
+Library registration could not be checked completely.
+Workspace: <workspace>
+  Warning  .agents/open-forge.lock.json  Library record is unavailable
+         The Library section of .agents/open-forge.lock.json could not be read.
+  libraries: .agents/open-forge.lock.json could not be read.
+  links current: .agents/open-forge.lock.json could not be read.
+  links missing: .agents/open-forge.lock.json could not be read.
+  links changed: .agents/open-forge.lock.json could not be read.
+  links unavailable: .agents/open-forge.lock.json could not be read.
+Next: open-forge doctor
+~~~
 
-```text
-open-forge library list
-```
+### invalid-input
 
-Request the same bounded facts as structured output:
+~~~text
+Cannot list Libraries: 'm' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+Workspace: <workspace>
+  Error  .agents/open-forge.lock.json  Library record is invalid
+         The Library section of .agents/open-forge.lock.json is invalid: 'm' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+  libraries: 'm' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+  links current: 'm' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+  links missing: 'm' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+  links changed: 'm' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+  links unavailable: 'm' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+Next: open-forge doctor
+~~~
 
-```text
-open-forge library list --json
-```
+### blocked
 
-Select one exact workspace and use compact human output:
+~~~text
+Cannot list Libraries: The Library destination parent is not a real ordinary directory.
+Workspace: <workspace>
+  Error  .agents/linked/review.md  Registered link is blocked
+         .agents/linked/review.md  could not be checked safely: The Library destination parent is not a real ordinary directory.
+  team-knowledge  shared/team -> .  0 links current, 1 unavailable
+Next: open-forge doctor
+~~~
 
-```text
-open-forge library list --workspace ../workspace --view=compact
-```
+### failed
 
-## Public EndToEnd Journeys (exactly three)
+~~~text
+Library list stopped because of an unexpected error: <reason>.
+~~~
 
-These are the only public EndToEnd journeys for `library list`:
+### cancelled
 
-1. **Empty or missing record, complete.** With the record absent or present as
-   a strict empty record at `.agents/open-forge.libraries.json`, invoke
-   `open-forge library list` and observe `complete`, zero libraries, and
-   `inventory=not-requested`.
-2. **Healthy records, deterministic complete.** With a strict record containing
-   valid source roots and current registered links, invoke List twice and
-   observe identical ordinal Library and path order, source IDs, observations,
-   and `complete` status.
-3. **Complete registered-link drift, attention without full inventory.** With a
-   strict record and a safely observable missing or changed registered link,
-   invoke List and observe `attention`, the link finding, and
-   `inventory=not-requested`; no source-inventory addition or retirement is
-   asserted.
-
-## Lower-Tier Conformance
-
-Unit and Integration evidence may cover the complete finite boundary, including
-strict schema rejection, duplicate identities, path validation, missing versus
-unavailable records, source-root states, ordinary-directory checks, no-follow
-link observations, unsafe identity, deterministic ordering, shared result
-coordinates, stream selection, and unchanged workspace bytes. Those cases do
-not add public EndToEnd journeys beyond the three above.
+~~~text
+Library list was cancelled.
+~~~
 
 ## Related Current Sources
 
@@ -351,23 +347,10 @@ not add public EndToEnd journeys beyond the three above.
 - [Shared Result Coordinates Interface Contract](../../shared/result-coordinates/interface.md)
 - [CLI Architecture](../../../architecture.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
+CLI help syntax: [`library.list.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Library/List/LibraryListText.cs).
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef library.list.help.syntax -->

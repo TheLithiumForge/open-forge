@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
 public sealed class RouteUpdateFiniteContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update request, target, patch, and Template mappings are exhaustive"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void RequestTargetPatchAndTemplateMappingsAreExhaustive()
     {
@@ -27,6 +28,7 @@ public sealed class RouteUpdateFiniteContractTests
         Assert.Throws<ArgumentOutOfRangeException>(() => RouteUpdateDefinitions.ReadMachineName((RouteUpdateTemplateDecision)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update plan, effect, recovery, and verification mappings are exhaustive"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void PlanEffectRecoveryAndVerificationMappingsAreExhaustive()
     {
@@ -53,6 +55,7 @@ public sealed class RouteUpdateFiniteContractTests
         Assert.Throws<ArgumentOutOfRangeException>(() => RouteUpdateDefinitions.ReadMachineName((RouteUpdateVerificationState)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update finding names and statuses match the complete independent oracle"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void FindingNamesAndStatusesMatchIndependentOracle()
     {

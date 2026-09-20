@@ -6,12 +6,14 @@ using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Install.Shared.Application;
 using OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Lifecycle;
+
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
-using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
+using OpenForge.Cli.Core.Framework.Settings.Models.Permissions;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
-using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.Core.Presentation.Extension.Install.Shared.Wording;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
+using OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Recovery;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
@@ -20,6 +22,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 
 public sealed class ExtensionInstallRecoveryIdentityIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory, InlineData(false), InlineData(true), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
     public async Task CleanupRequiresThePreparedAttribution(bool changed)
     {
@@ -30,9 +33,11 @@ public sealed class ExtensionInstallRecoveryIdentityIntegrationTests
         workspace.CreateOccupant(".agents/toolkit.md", "plain occupant\n");
         var resolver = new PhysicalPathResolver();
         var planBuild = await new ExtensionInstallPlanner(
-            new CliInteractiveSession(TextReader.Null, TextWriter.Null, canPrompt: false),
-            resolver,
-            new LifecycleStore(resolver)).BuildAsync(
+            ExtensionInteractionTestFactory.UnavailableSelection,
+            ExtensionInstallWording.Selection(),
+            ExtensionInteractionTestFactory.UnavailableInstallConfirmation,
+            static paths => new CliConfirmQuestion(ExtensionInstallWording.ReplaceExisting(paths)),
+            resolver).BuildAsync(
                 new ExtensionInstallRequest(
                     workspace.Workspace,
                     ExtensionInstallMode.Apply,

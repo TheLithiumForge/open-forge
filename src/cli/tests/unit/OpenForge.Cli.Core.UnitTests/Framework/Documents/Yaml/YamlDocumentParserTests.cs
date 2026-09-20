@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Yaml;
 
 public sealed class YamlDocumentParserTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Shared YAML parsing preserves ordered shapes, decoded scalars, and exact source spans")]
     [Trait("Feature", "yaml-documents"), Trait("Evidence", "Unit")]
     public void ShapesAndScalarSpansPreserveExactSourceFacts()
@@ -62,6 +63,7 @@ public sealed class YamlDocumentParserTests
         Assert.Equal("value", MappingValue(item, "key").Scalar?.Value);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Shared YAML parsing reports aliases, duplicate keys, and non-scalar mapping keys as neutral facts")]
     [Trait("Feature", "yaml-documents"), Trait("Evidence", "Unit")]
     public void AliasesAndUnsupportedMappingsRemainVisibleWithoutPolicy()
@@ -101,6 +103,7 @@ public sealed class YamlDocumentParserTests
         Assert.Equal("value", complexEntry.Value.Scalar?.Value);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Shared YAML parsing distinguishes empty documents from malformed and multiple documents")]
     [Trait("Feature", "yaml-documents"), Trait("Evidence", "Unit")]
     public void EmptyMalformedAndMultipleDocumentsHaveExactStates()
@@ -124,6 +127,7 @@ public sealed class YamlDocumentParserTests
         }
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Shared YAML facts own immutable children and reject null or out-of-source shapes")]
     [Trait("Feature", "yaml-documents"), Trait("Evidence", "Unit")]
     public void ModelSnapshotsAndSpanInvariantsAreEnforced()

@@ -9,6 +9,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
 public sealed class RouteUpdatePlanProjectorTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update projector forms a complete safe no-op with ordered unchanged paths"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void FormsCompleteSafeNoOpWithOrderedUnchangedPaths()
     {
@@ -41,6 +42,7 @@ public sealed class RouteUpdatePlanProjectorTests
         Assert.Empty(plan.Preview.Findings);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update projector creates only the routed-file effect for responsibility-only change"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void CreatesOnlyRoutedFileEffectForResponsibilityOnlyChange()
     {
@@ -79,6 +81,7 @@ public sealed class RouteUpdatePlanProjectorTests
         Assert.Equal([RouteUpdateTestData.ParentPath], plan.Preview.UnchangedPaths);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update projector exposes protected Template attention without a change"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void ExposesProtectedTemplateAttentionWithoutChange()
     {

@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Context is complete.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "sources": 4,
+    "tokens": 100,
+    "bytes": 399,
+    "linksFollowed": 0,
+    "linksNotFollowed": 0
+  },
+  "limitations": [],
+  "data": {
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "id": null,
+        "layer": "base",
+        "parts": [
+          {
+            "part": "headings",
+            "headings": [
+              {
+                "text": "Workspace",
+                "level": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": ".agents/loader.md",
+        "id": "loader",
+        "layer": "base",
+        "parts": [
+          {
+            "part": "headings",
+            "headings": [
+              {
+                "text": "Open Forge Loader",
+                "level": 1
+              },
+              {
+                "text": "Entries",
+                "level": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/_docs.md",
+        "id": "docs",
+        "layer": "base",
+        "parts": [
+          {
+            "part": "headings",
+            "headings": [
+              {
+                "text": "Documents",
+                "level": 1
+              },
+              {
+                "text": "Entries",
+                "level": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "layer": "base",
+        "parts": [
+          {
+            "part": "headings",
+            "headings": [
+              {
+                "text": "Guide",
+                "level": 1
+              },
+              {
+                "text": "Rules",
+                "level": 2
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

@@ -1,0 +1,14 @@
+Cannot synchronize team-knowledge: another Open Forge command holds the workspace lock. Nothing was changed.
+Workspace: <workspace>
+workspace-lock-unavailable
+  Error  team-knowledge  Workspace lock is unavailable [library-sync.lock-unavailable]
+         Another Open Forge command holds the workspace lock. Nothing was changed.
+  not started  .agents/directives/added.md
+    Target: ../../shared/team-knowledge/.agents/directives/added.md
+  1 link unchanged
+  .agents/open-forge.lock.json  not started
+  Inventory: 2 eligible files, 0 excluded items, 0 unavailable paths.
+  Expected state: .agents/directives/added.md is missing.
+  Expected state: .agents/open-forge.lock.json is ordinary-file.
+  Verification: not started; record publication: not started.
+  Recovery: no recovery data was requested.

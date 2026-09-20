@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted current public contract for creating one ordinary routed Markdown file with explicit metadata and optional Template body content
+  description: Accepted current public contract for creating one ordinary routed Markdown file with optional metadata and optional Template body content
   responsibility: Define what route create accepts, creates, reports, rejects, and leaves unchanged
   tags: [Memory, Crystallized, CLI, Release, Command, Interface, Route, Create, Template, Mutation, CurrentTruth]
 ---
@@ -10,9 +10,9 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the caller-visible
-Interface Contract for `route create`. The command does not ship yet. Its local
+Interface Contract for `route create`. The command is implemented in the merged CLI. Its local
 implementation and complete executable proof are squash-integrated at
-`19412d2`; replacement-CLI delivery remains pending.
+`19412d2`; the merged native CLI is the current delivery.
 
 The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
 define the accepted shared result schema and process-status mapping. The [CLI
@@ -63,9 +63,10 @@ choices:
 
 ## Purpose
 
-`route create` creates one ordinary routed Markdown file below one existing
-routable folder. It can create a metadata-only source or copy the body of one
-explicit Template into the new destination.
+`route create` creates one ordinary routed Markdown file inside an existing
+Loader-recognized route root. Its final parent may already exist or may be a
+missing intermediate folder within that root. It can create a metadata-only
+source or copy the body of one explicit Template into the new destination.
 
 The destination receives its own authored metadata and becomes independent. The
 Template's frontmatter, route identity, ownership, and future changes never
@@ -80,8 +81,8 @@ returns a verified no-op.
 
 ```text
 open-forge route create <file-target>
-  --description <text>
-  --tag=<tag>...
+  [--description <text>]
+  [--tag=<tag>]...
   [--responsibility <text>]
   [--template <template-reference>]
   [--dry-run]
@@ -89,7 +90,7 @@ open-forge route create <file-target>
 ```
 
 The shared [Global CLI Flags](../../shared/global-flags/interface.md) contract defines
-`--workspace`, `--json`, `--view`, `--verbose`, `--help`, and `--version`. All
+`--workspace <path>`, `--format <text|json>`, `--detail <minimal|standard|full|debug>`, repeatable `--detail-filter <error|warning|info|all>`, `--help`, and `--version`. All
 six apply to `route create` under that contract.
 
 `--description`, `--responsibility`, and `--tag` define destination metadata.
@@ -110,8 +111,10 @@ general external filesystem path.
 
 The command-specific flags have these public states and meanings:
 
-- `--description <text>` is required and defines destination `description`.
-- Repeated `--tag=<tag>` values define destination `tags` in argument order.
+- `--description <text>` is optional and defines destination `description` when
+  supplied. Omission is valid and is reported as optional metadata missing.
+- Repeated `--tag=<tag>` values optionally define destination `tags` in argument
+  order. Omission is valid and is reported as optional metadata missing.
 - `--responsibility <text>` is optional and defines destination
   `responsibility` when its value is non-empty.
 - `--template <template-reference>` is optional and selects starting body
@@ -122,8 +125,9 @@ The command-specific flags have these public states and meanings:
   Flags](../../shared/global-flags/interface.md) contract.
 
 `--tag` accepts `--tag Memory`, `--tag=Memory`, and `--tag:Memory` with identical
-meaning. It is a required multi-value flag. Repetition retains argument order. The
-exact empty, duplicate, and syntax rules are defined in [Destination Metadata](#destination-metadata).
+meaning. It is an optional multi-value flag. When supplied, repetition retains
+argument order. The exact empty, duplicate, and syntax rules are defined in
+[Destination Metadata](#destination-metadata).
 `--description`, `--responsibility`, and `--template` are singleton flags. Any
 repeated occurrence of one of them is invalid, even when the repeated value is
 identical; no last occurrence wins. Repeated `--dry-run` occurrences are
@@ -165,9 +169,19 @@ The shared [CLI Source References](../../shared/source-references/interface.md) 
 ID segments, exact path detection, quoting, containment, and result identity.
 `route create` adds only the deterministic ordinary-file mapping above.
 
-The final parent folder must already contain exactly one recognized entrypoint.
-The command does not initialize a missing route chain. Use `route init` first
-when an ancestor or parent entrypoint is missing.
+The final parent folder may already contain exactly one recognized entrypoint,
+or it may need a canonical entrypoint within a chain below an existing
+Loader-recognized root. Safely existing ordinary intermediate directories may
+be reused. For missing route structure, the command creates only absent directories
+and canonical entrypoints from the root toward the final parent. Each new
+entrypoint uses its automatic ID heading, inherited Axioms, and generated
+direct-child Entries. Existing recognized entrypoints retain their actual
+filenames.
+
+An unknown or unrecognized root is invalid input with process status 4 and never
+advises `route init`. A missing Framework or other required existing boundary
+retains the `route-create.parent-missing` boundary and its existing `route init`
+next action.
 
 An existing child entrypoint or another source with the same route identity
 blocks creation. Exact path input can disambiguate source selection, but it
@@ -190,19 +204,24 @@ open-forge:
 ---
 ```
 
-`--description` is required, must be non-empty, and must contain more than
-whitespace. At least one `--tag` is required. Repeated tags retain argument
-order. Each tag follows canonical tag syntax and omits the `#` prefix. Empty or
-duplicate exact tags are invalid.
+Only explicitly supplied destination fields are written. An omitted description
+or tag list is absent; the command never fabricates description, tags, or
+responsibility from a filename, parent, Template, Template body, or another
+routed source. An empty mapping is valid when no destination field is supplied.
+
+When supplied, `--description` must be non-empty and contain more than
+whitespace. Supplied tags retain argument order. Each tag follows canonical tag
+syntax and omits the `#` prefix. Empty or duplicate exact tags are invalid.
 
 `--responsibility` is optional. A non-empty value adds the field. An exact empty
 value, `--responsibility ""`, omits it. A whitespace-only value is invalid.
 There is no separate removal flag because the destination does not exist yet.
 
-The command validates syntax and presence. It does not derive a description,
-responsibility, or tag from the filename, parent, Template metadata, Template
-body, or another routed source. It does not inspect Template placeholders or
-infer authoring quality. Semantic accuracy remains authored responsibility.
+The command validates syntax and supplied values. It does not inspect Template
+placeholders or infer authoring quality. Semantic accuracy remains authored
+responsibility. Omitting description or tags produces the
+`route-create.optional-metadata` Attention2 warning after a successful create or
+dry run; the warning alone is not a file or directory effect.
 
 ## Template Selection
 
@@ -240,9 +259,9 @@ Template prompts remain in the copied body; the command does not inspect them or
 infer authoring quality from them.
 
 Template frontmatter describes and classifies the Template source. None of it
-becomes destination metadata. Explicit destination metadata is always required
-and has no precedence relationship with Template metadata because the two
-sources answer different questions.
+becomes destination metadata. Supplied destination metadata has no precedence
+relationship with Template metadata because the two sources answer different
+questions; omitted destination metadata remains absent.
 
 The copied body is starting content only. The result stores no Template
 receipt, origin field, update relationship, or hidden ownership marker. Later
@@ -278,28 +297,34 @@ states only that this creation request is already satisfied.
 
 ## Generated Navigation
 
-The parent entrypoint's generated `Entries` must expose the new routed file from
-its destination description and tags. The command plans this generated effect
-against the hypothetical post-create workspace before any persistent effect.
+The command plans generated `Entries` for the hypothetical post-create workspace
+before any persistent effect. It updates the existing exposing parent when one
+is present and creates canonical entrypoints for missing intermediate folders.
+Every new entrypoint has its automatic-ID heading, inherited Axioms, and
+generated direct-child Entries. A generated child entry reflects only the
+child's actual identity and explicitly supplied metadata; it never fabricates
+description, tags, or responsibility and never copies leaf metadata to an
+ancestor.
 
 The automatic effect uses the complete [Index Interface Contract](../../index-candidate/interface.md)
 projection, ordering, generated-boundary, verification, and recovery behavior.
 It is part of the same parent plan, dry run, application, and result. The
 command never starts a hidden `index` subprocess.
 
-Missing or ambiguous parent markers, invalid sibling metadata, unsafe
-destinations, or another projection blocker prevents creation before writes.
-The command does not create a file that its parent cannot safely index.
+Missing or ambiguous Entries headings in an existing region, invalid sibling
+metadata, unsafe destinations, an unknown root, or another projection blocker
+prevents creation before writes. The command does not create a file or route
+chain that cannot be safely represented.
 
 ## Planning And Effects
 
 The operation follows the accepted typed mutation flow:
 
 ```text
-validated target, metadata, and optional Template
+validated target, optional metadata, and optional Template
   -> parent route and Template facts
-  -> complete intended destination bytes
-  -> generated-navigation projection
+  -> missing-directory and entrypoint facts
+  -> complete intended destination and generated-entry bytes
   -> complete ordered mutation plan
   -> preflight
   -> dry-run or application
@@ -307,26 +332,29 @@ validated target, metadata, and optional Template
   -> one typed result
 ```
 
-The plan contains at most one new routed file plus the dependency-minimal
-generated-navigation changes required to expose it. One blocker prevents every
-effect. The command has no partial-application or best-effort mode.
+The plan is ordered as `Directory*` outer-to-inner, `Entrypoint*`
+outer-to-inner, the new `RoutedFile`, and then existing `GeneratedRegion*`
+replacements in deterministic path order. One blocker prevents every effect.
+The command has no partial-application or best-effort mode.
 
 The command preserves every existing user-owned source outside planned bounded
-generated interiors. It does not format siblings, adapt the Template
-semantically, create parent folders, or change overwrite companions.
+generated interiors. It does not create a missing Loader root, format siblings,
+adapt the Template semantically, change overwrite companions, or copy leaf
+metadata to ancestors.
 
 ## Dry Run And Apply
 
 `--dry-run` uses the same request, current facts, intended bytes, generated
 projection, planner, expected-state facts, preflight, and status formation as
-application. It shows the complete new file, generated-navigation effects, and
-every exact existing-file diff, then writes nothing. Safely established planned
-changes are `complete`; planned changes alone do not create `attention`.
+application. It shows every planned new directory and canonical entrypoint, the
+complete new file, generated-navigation effects, and every exact existing-file
+diff, then writes nothing. A warning for omitted optional metadata creates no
+effect; a no-op is reported only when no directory or file change is planned.
 
-Omitting `--dry-run` selects application. The explicit command, target,
-metadata, and optional Template confirm creation of the intended file and
-replacement of only planned machine-owned generated interiors. The command does
-not prompt and does not accept `--yes`.
+Omitting `--dry-run` selects application. The explicit command, target, supplied
+metadata, and optional Template confirm creation of the planned directories,
+entrypoints, destination, and replacement of only planned machine-owned
+generated interiors. The command does not prompt and does not accept `--yes`.
 
 A verified no-op has no affected mutation path and creates no bundle. An actual
 creation checks the planned new path for collision and, when the plan contains
@@ -339,7 +367,7 @@ Environment.SpecialFolderOption.Create)` and its application-owned
 `incomplete` result. It prepares exactly one immutable ZIP bundle outside
 the workspace. An operation containing only
 Create effects or no-ops creates no bundle. Its source-generated
-schema-v1 `manifest.json` and streamed ordinal payload entries record
+versioned `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change
 kinds, exact prior bytes/lengths/hashes, and intended final absence or
 length/hash. `Create` effects (including the new destination) and no-ops have
@@ -364,204 +392,211 @@ state, and no target is restored automatically. After whole-command
 verification, delete only the positively recognized bundle created by this
 operation. `Deleted`/`Removed` permits normal completion.
 `Failed`/positively observed `Retained` keeps target effects successful and
-produces `attention`, the exact residual path, and
+produces `completed-with-warnings`, the exact residual path, and
 cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
 provides one. Cleanup owns exact named final and draft deletion under its
 separate lease-bound contract.
 
 ## Human Output
 
-Both views start with the outcome, `Status`, `Workspace`, and `Selected by`,
-followed by command identity and mode. Expanded remains the default. Compact
-uses the same typed result and retains completeness, safety, every affected and
-unchanged path, every finding with its status, cause, stable code and available
-target, and verification and recovery facts. A failure heading reports the
-semantic outcome; it does not claim that no mutation occurred. Effect outcomes
-and residual state describe any partial work.
+Every semantic result is rendered by the shared native report. --format text
+is the default. The applicable global flags are --workspace <path>, --format
+<text|json>, --detail <minimal|standard|full|debug>, repeatable
+--detail-filter <error|warning|info|all>, --help, and --version. The default
+detail is minimal; standard adds workspace and command-specific context, full
+adds all bounded facts, and debug adds bounded diagnostics on stderr. Detail
+does not change semantics, counts, or status. Filters select finding severities;
+all is the default filter.
 
-Each required `Next:` line contains the actual command from the result, once.
-Expanded adds its reason on the following line; compact omits that explanation.
-Complete results have no Next action. Other statuses retain at most one direct
-correction or recovery action supplied by the operation. Rendering does not
-invent advice, change status, or select another action.
+Route create is one non-interactive mutation: it does not ask for confirmation and has no --automatic flag.
 
-Primary human `complete`, `attention`, and `incomplete` results use stdout.
-Primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
-stderr. Each result stays together on its assigned stream. Separate bounded
-diagnostics use stderr. JSON remains one complete structured result on stdout.
+The catalogue text by detail level is:
 
-Both views retain target ID/path, description, Template identity
-when supplied, and every generated-navigation effect. Dry-run output includes
-every exact planned effect and prints `No files changed (--dry-run).` Expanded
-also shows before/expected change values for application results. Compact apply
-retains effect action, kind, outcome and residual state.
-
-Success headings distinguish created content, an already-matching no-op, and a
-preview. An attention result retains the verified result and all attention
-findings. Errors identify Route Create, the target and the direct cause without
-diagnosing authoring quality or Template placeholder completion.
-
-Illustrative beginning of an application result:
+`minimal`, created:
 
 ```text
-The routed file was created.
-Status: complete
-Workspace: D:/work/example
-Selected by: current directory
-Target: memory/crystallized/decisions/cache-policy
-Path: .agents/memory/crystallized/decisions/cache-policy.md
+Created .agents/memory/emerging/ideas/pricing/tiers.md  (memory/emerging/ideas/pricing/tiers)
+  Listed in .agents/memory/emerging/ideas/pricing/_pricing.md
 ```
 
-The remaining metadata, plan, effects, recovery and verification follow that
-header. A failed verification can still have a retained created file; both views
-show that effect and its recovery details under `Route Create failed.`
+`minimal`, from a Template:
+
+```text
+Created .agents/memory/emerging/ideas/pricing/tiers.md  (memory/emerging/ideas/pricing/tiers)
+  Body copied from the Template templates/memory/idea
+  Listed in .agents/memory/emerging/ideas/pricing/_pricing.md
+```
+
+There is no pinned exact transcript for omitted optional metadata until runtime
+evidence is accepted. The renderer reports the
+`route-create.optional-metadata` warning finding and any supplied metadata; it
+does not invent metadata values.
+
+`standard` adds `Workspace:`, the supplied metadata fields, warning findings,
+and the Template path.
+
+`full` adds the new file's content verbatim under a `--- <path> (new file)
+---` header and the before and after hashes of the parent's Entries section.
+
+Results with completed, completed-with-warnings, or incomplete status use
+stdout. Invalid-input, blocked, failed, and cancelled results use stderr.
+A parser failure is text on stderr without a result envelope.
 
 ## Structured Output
 
-`--json` returns the complete typed result used by human rendering. It never
-prompts and never reruns planning, application, or verification.
-It writes one complete structured result to stdout for every semantic status,
-including `incomplete` and `attention`. Bounded
-diagnostics use stderr, and ordinary human text is never mixed into structured
-JSON stdout.
+--format json emits one schema-3 envelope on stdout for each semantic result.
+The envelope has exactly these fields:
 
-The structured result exposes:
+~~~text
+{
+  schemaVersion: 3,
+  command,
+  status,
+  detail,
+  filter,
+  workspace,
+  summary,
+  findings,
+  effects,
+  counts,
+  limitations,
+  data,
+  recovery,
+  next
+}
+~~~
 
-- Workspace and selection method.
-- Requested target and resolved target ID and canonical path.
-- Resolved parent entrypoint ID, path, and canonical or compatibility form.
-- Explicit destination metadata.
-- Optional Template ID, path, classification, and body-copy evidence.
-- Application or dry-run mode, completeness, and safety state.
-- Intended destination and generated-region effects.
-- Dry-run, recovery-bundle, application, verification, and recovery facts.
-- Changed and unchanged effects, verification facts, and typed observed or
-  unknown recovery facts. An exact residual or expected path appears only when
-  the recovery result provides one, without classifying current target state.
-- Coverage observations, availability conditions, completeness and safety state,
-  semantic status, and at most one required `Next:` action when applicable.
+The command is exactly route create; data follows the catalogue:
 
-Exact field names, schema versioning, and compatibility rules are defined by the
-[Shared Result Coordinates](../../shared/result-coordinates/interface.md).
+| Level    | `data`                                                                   |
+| -------- | ------------------------------------------------------------------------ |
+| minimal  | `{ mode, target { id, path }, listedIn, template { id, path } \| null }` |
+| standard | + `metadata { description, responsibility, tags }`; omitted description/responsibility are null, tags remain an array |
+| full     | + `content`, per section `before`, `after`, `verification`               |
+
+Human and JSON output are projections of one typed result. data is null only at
+the parser boundary before command binding. There is no alternate JSON
+projection.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                               |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | Normal creation, valid Template instantiation, a safe dry-run with planned changes, generated-navigation effects, or application and final verification completed, including a verified identical-target no-op.                       |
-| `attention`   | Post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`; target effects remain successful, and human output says `requires attention` with the exact residual path and cleanup guidance. |
-| `incomplete`  | Safe facts are available, but required inspection or planning coverage cannot complete; no mutation begins.                                                                                                                           |
-| `invalid`     | Command input, metadata, Template reference, flag use, or target shape does not follow this interface.                                                                                                                                |
-| `blocked`     | A valid request cannot establish or apply one safe complete creation plan because safety or authority is unsafe or ambiguous; no mutation begins.                                                                                     |
-| `failed`      | An unexpected application or verification failure occurs after a persistent effect begins, or recovery deletion returns `Failed`/`Unknown`; `Failed`/positively observed `Retained` recovery is the distinct `attention` case.        |
-| `interrupted` | The caller cancelled before completion; an unexpected application or verification failure remains `failed`.                                                                                                                           |
+| Status                  | When                                                   | Headline                                                              | Exit | Stream |
+| ----------------------- | ------------------------------------------------------ | --------------------------------------------------------------------- | ---: | ------ |
+| completed               | created with no optional-metadata finding              | `Created <path>  (<id>)`                                              |    0 | stdout |
+| completed               | identical file already present with no finding         | `<path> already has the requested content. Nothing to do.`            |    0 | stdout |
+| completed (dry run)     | planned with no optional-metadata finding             | `Would create <path>  (<id>)`                                         |    0 | stdout |
+| completed-with-warnings | optional metadata omitted or recovery bundle retained  | + family row                                                          |    2 | stdout |
+| incomplete              | template, parent or record unreadable                  | `The file could not be created: <limitation>. Nothing was changed.`   |    3 | stdout |
+| invalid-input           | explicitly invalid supplied metadata, unknown/bad target | `Cannot create the routed file: <problem>.` (all problems in one run) |    4 | stderr |
+| blocked                 | exists with different content, unsafe, ambiguous, lock | `Cannot create <path>: <reason>.`                                     |    5 | stderr |
+| failed                  | after effects                                          | `Route create stopped after <n> of <m> changes.`                      |    1 | stderr |
+| cancelled               | Ctrl+C                                                 | `Route create was cancelled. Nothing was changed.`                    |  130 | stderr |
 
-Planned changes do not create `attention`. Only `Failed`/positively observed
-`Retained` recovery after verified target effects creates it. The command does not inspect
-Template placeholders or infer authoring quality to manufacture another
-condition.
 
-For ordinary operation conditions, status precedence is
-`blocked` > `incomplete` > `attention` > `complete`. Invalid input stops before
-operation resolution and forms `invalid`. Failed and interrupted results retain
-their event meaning.
 
-The shared process-status mapping is defined by the [Shared Result
-Coordinates](../../shared/result-coordinates/interface.md).
+## Errors And Boundaries
+
+The finding catalogue is:
+
+| Code                                     | Severity | Family                      | Message                                                                                                                                                      | Next                                |
+| ---------------------------------------- | -------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- |
+| route-create.invalid-input               | error    | invalid-input               |                                                                                                                                                              |                                     |
+| route-create.invalid-target              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.invalid-target`). | `open-forge route create --help`    |
+| route-create.invalid-metadata            | error    | local                       | `--description is empty.` / `--tag <value> is empty.` / `--tag <value> is repeated.` / `--tag <value> is not a valid tag.` joined with `and`       | corrected command                   |
+| route-create.optional-metadata | warning | local | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Selection/RouteCreateReportSelector.cs): distinguish preview, verified creation, and already-current optional metadata. | `open-forge route update <target id>`; add an optional description or tag when useful. |
+| route-create.invalid-template            | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.invalid-template`).                                                                                                                 | `open-forge find --tag Template`    |
+| route-create.parent-missing              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.parent-missing`); retained only for a missing Framework or other required existing boundary. | `open-forge route init <parent id>` |
+| route-create.workspace-unavailable       | error    | workspace-unavailable       |                                                                                                                                                              |                                     |
+| route-create.workspace-unsafe            | error    | workspace-unsafe            |                                                                                                                                                              |                                     |
+| route-create.target-unsafe               | error    | target-unsafe               |                                                                                                                                                              |                                     |
+| route-create.target-content-differs      | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.target-content-differs`).                                                                                                              | `open-forge route update <id>`      |
+| route-create.route-ambiguous             | error    | route-ambiguous             |                                                                                                                                                              |                                     |
+| route-create.identity-collision          | error    | identity-collision          | (blocking: the new ID would collide)                                                                                                                         | choose another name                 |
+| route-create.metadata-unsafe             | error    | metadata-unsafe             |                                                                                                                                                              |                                     |
+| route-create.template-unsafe             | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.template-unsafe`).                                                                                                           | none                                |
+| route-create.generated-region-unsafe     | error    | generated-region-unsafe     |                                                                                                                                                              |                                     |
+| route-create.workspace-lock-unavailable  | error    | workspace-lock-unavailable  |                                                                                                                                                              |                                     |
+| route-create.target-changed              | error    | target-changed              |                                                                                                                                                              |                                     |
+| route-create.recovery-conflict           | error    | recovery-conflict           |                                                                                                                                                              |                                     |
+| route-create.inspection-incomplete       | warning  | inspection-incomplete       |                                                                                                                                                              |                                     |
+| route-create.metadata-incomplete         | warning  | metadata-incomplete         |                                                                                                                                                              |                                     |
+| route-create.projection-incomplete       | warning  | projection-unavailable      |                                                                                                                                                              |                                     |
+| route-create.template-unavailable        | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.template-unavailable`).                                                                                                                      | none                                |
+| route-create.recovery-unavailable        | warning  | recovery-unavailable        |                                                                                                                                                              |                                     |
+| route-create.recovery-artifact-retained  | warning  | recovery-artifact-retained  |                                                                                                                                                              |                                     |
+| route-create.target-changed-during-apply | error    | target-changed-during-apply |                                                                                                                                                              |                                     |
+| route-create.write-failed                | error    | write-failed                |                                                                                                                                                              |                                     |
+| route-create.verification-failed         | error    | verification-failed         |                                                                                                                                                              |                                     |
+| route-create.recovery-failed             | error    | recovery-failed             |                                                                                                                                                              |                                     |
+| route-create.operation-failed            | error    | operation-failed            |                                                                                                                                                              |                                     |
+| route-create.interrupted                 | error    | interrupted                 |                                                                                                                                                              |                                     |
+
+Findings retain code, severity, family, message, subject, cause, and next
+action when available. Counts are:
+
+`filesCreated`, `sectionsUpdated`.
 
 ## Scenarios
 
-The source-defined representative scenarios remain in their public sections:
+`created`, `created-from-template`, `dry-run`, `already-matching` (no-op),
+`missing-description`, `missing-tag`, `missing-both` (optional-metadata warnings),
+`invalid-target`, `parent-missing`,
+`exists-with-different-content` (blocked),
+`template-unknown`, `lock-held`, `write-failed-partial`, `cancelled`.
 
-- The ID target and metadata-only creation example is in [File Target](#file-target).
-- The explicit Template selection example is in [Template Selection](#template-selection).
-- Verified no-op, successful application, and successful dry-run results are in
-  [Human Output](#human-output).
 
-These links organize the complete examples without adding another invocation
-or result shape.
+## Representative Transcripts
 
-## Errors
+### completed
 
-The command blocks or rejects:
+~~~text
+Created .agents/memory/project-alpha/overview.md  (memory/project-alpha/overview)
+Workspace: <workspace>
+  Listed in .agents/memory/project-alpha/_project-alpha.md
+~~~
 
-- A target that is not one ordinary Markdown file below `.agents`.
-- A missing, ambiguous, or unsafe parent route.
-- A source-ID, child entrypoint, portable path, or physical identity collision.
-- An orphan overwrite at the target.
-- Missing or invalid destination description or tags.
-- A Template reference that does not resolve to one valid routed Template.
-- An existing target whose bytes differ from the intended result.
-- An invalid generated ownership boundary or sibling projection.
-- Unavailable or unsafe recovery-bundle storage is `incomplete`; an unverified
-  bundle is `blocked`.
-- A changed source or destination that invalidates the plan.
+### completed-with-warnings
 
-If safe facts are available but required inspection or planning coverage cannot
-complete, the result is `incomplete` and no write begins. An unsafe or ambiguous
-safety or authority fact is `blocked` instead. Direct errors name the required
-correction when one exists; they do not diagnose authoring quality or provide a
-recommendation.
+~~~text
+Created .agents/memory/project-alpha/overview.md  (memory/project-alpha/overview)
+  Warning  <recovery-bundle>  Recovery artifact retained
+~~~
 
-## Non-Goals
+### incomplete
 
-`route create` does not:
+~~~text
+The file could not be created: <limitation>. Nothing was changed.
+~~~
 
-- Create an entrypoint or missing route chain.
-- Create the Loader.
-- Copy Template frontmatter or retain Template ownership.
-- Infer, merge, or override destination metadata from Template content.
-- Substitute placeholders or claim the result is finished.
-- Inspect Template placeholders, infer authoring quality, diagnose content, or
-  provide recommendations.
-- Overwrite, adopt, move, or remove an existing different file.
-- Modify an overwrite companion.
-- Create a Git commit.
+### blocked
 
-Use `route init` for route chains and `route update` for existing routed
-Markdown.
+~~~text
+Cannot create .agents/memory/project-alpha/overview.md: .agents/memory/project-alpha/overview.md already exists with different content.
+Workspace: <workspace>
+Next: open-forge route update memory/project-alpha/overview
+~~~
 
-## Verification
+### failed
 
-Gate 5 executable proof must cover:
+~~~text
+Route create stopped after 1 of 2 changes.
+Workspace: <workspace>
+  Error  .agents/memory/project-alpha/_project-alpha.md  Write failed
+         Writing .agents/memory/project-alpha/_project-alpha.md failed. Stopped after 1 of 2 changes. Recovery data: <recovery-bundle>.
+  Created .agents/memory/project-alpha/overview.md
+  .agents/memory/project-alpha/_project-alpha.md  not started
+Next: open-forge route create --detail debug
+~~~
 
-- ID and exact ordinary-file targets, spaces, Unicode, unsafe segments, and
-  every excluded file kind.
-- Canonical and compatibility parent entrypoints, missing parents, and
-  ambiguous route structures.
-- Required description and tags, optional responsibility, exact empty
-  responsibility, singleton repetition rejection
-  for description, responsibility, and Template, repeated Boolean idempotence,
-  tag ordering, duplicates, empty values, and invalid values.
-- Metadata-only creation.
-- Template ID and exact-path selection, exact `Template` classification,
-  collisions, blocked overwrite companions, invalid non-Templates, and orphan
-  overwrites.
-- Proof that Template frontmatter never enters destination metadata.
-- Exact Template body copying without substitution and without a retained
-  lifecycle relationship.
-- Missing targets, identical existing targets, different existing targets,
-  unsupported targets, and orphan target overwrites.
-- Complete dry-run output and no persistent dry-run effects.
-- Dry-run and application parity for request, facts, intended bytes, generated
-  projection, plan, preflight, and status, with planned changes remaining
-  `complete`.
-- Verified no-op behavior before mutation and recovery-bundle preparation.
-- All seven semantic statuses, including safe-coverage `incomplete`, blocked
-  unsafe or ambiguous safety and authority, post-write or `Failed`/`Unknown`
-  recovery `failed`, and `Failed`/positively observed `Retained` recovery
-  `attention`.
-- Human stream allocation, one JSON result on stdout for every status, bounded
-  diagnostics on stderr, compact retention and at-most-one `Next:` behavior,
-  and no mixed human text in JSON output.
-- Human and structured results from one typed result without Template
-  placeholder inspection or authoring-quality inference.
+### cancelled
 
-The [Behavior Contract](behavior.md) records the semantic, projection, effect,
-safety, recovery, and conformance evidence for the remaining verification
-obligations, including automatic parent effects, recovery-bundle behavior,
-expected-state changes, post-verification deletion state/disposition facts, and rerun
-convergence.
+~~~text
+Route create was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  memory/project-alpha/overview  Route create was cancelled
+         Route create was cancelled. Nothing was changed.
+         open-forge route create
+~~~
 
 ## Related Current Sources
 
@@ -585,23 +620,25 @@ convergence.
 - [CLI Contract Document Templates](../../../../../../../templates/cli/documents/_documents.md)
 - [Behavior Contract](behavior.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
+CLI help syntax: [`route.create.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Create/RouteCreateText.cs).
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef route.create.help.syntax -->
+
+## Approved Journey Wording References
+
+The following stable IDs link the approved journey behavior above to its typed
+human-wording factories. Independently reviewed snapshots and state assertions
+remain the output evidence.
+
+- [RouteCreateWording.cs](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Create/RouteCreateWording.cs)
+  <!-- @OpenForgeTextRef route.create.title.optional-metadata-is-missing -->
+  <!-- @OpenForgeTextRef route.create.message.would-create-without-optional-metadata -->
+  <!-- @OpenForgeTextRef route.create.message.created-without-optional-metadata -->
+  <!-- @OpenForgeTextRef route.create.message.current-without-optional-metadata -->
+  <!-- @OpenForgeTextRef route.create.message.optional-metadata-is-missing -->
+  <!-- @OpenForgeTextRef route.create.next.add-optional-description-or-tag -->
+  <!-- @OpenForgeTextRef route.create.next.optional-metadata-inline -->

@@ -35,14 +35,14 @@ change one command into another job and does not grant unrelated authority.
 
 ## Accepted Flags
 
-| Flag                         | Value                    | Meaning                                                                         |
-| ---------------------------- | ------------------------ | ------------------------------------------------------------------------------- |
-| `--workspace <path>`         | One exact directory path | Use that directory as the workspace instead of the current directory            |
-| `--json`                     | None                     | Render one structured result from the same typed result used for human output   |
-| `--view=<compact\|expanded>` | `compact` or `expanded`  | Select token-friendly or explanatory result presentation; default to `expanded` |
-| `--verbose`                  | None                     | Add bounded diagnostic detail without changing operation behavior or status     |
-| `--help`                     | None                     | Show help for the selected command path without running the operation           |
-| `--version`                  | None                     | Show the distributed CLI version without running a domain operation             |
+| Flag                                          | Value                         | Default           | Meaning                                                               |
+| --------------------------------------------- | ----------------------------- | ----------------- | --------------------------------------------------------------------- |
+| `--workspace <path>`                          | One exact directory path      | Current directory | Use that directory as the workspace instead of the current directory  |
+| `--format <text\|json>`                       | `text` or `json`              | `text`            | Select text or structured JSON output                                 |
+| `--detail <minimal\|standard\|full\|debug>`   | One detail level              | `minimal`         | Select how much detail the text or JSON result includes               |
+| `--detail-filter <error\|warning\|info\|all>` | One or more severity values   | Not set           | Select which finding severities are listed; repeatable                |
+| `--help`                                      | None                          | —                 | Show help for the selected command path without running the operation |
+| `--version`                                   | None                          | —                 | Show the distributed CLI version without running a domain operation   |
 
 Short aliases are not accepted yet. Add one only when it is familiar, useful,
 globally unique, and keeps the complete meaning of the canonical flag.
@@ -70,83 +70,76 @@ Rules:
 Workspace selection does not prove that Open Forge is installed or healthy.
 Each operation reports or blocks on the exact state it requires.
 
-The selected workspace and selection method appear in every workspace-aware
-result:
+The selected workspace appears in text as `Workspace: <path>` at `minimal`
+when `--workspace` was supplied or the result is `blocked`, `failed`, or
+`cancelled`. It appears at `standard`, `full`, and `debug` for every
+workspace-aware result. Text does not print `Selected by:`. JSON always
+carries the workspace and its `selectedBy` value when workspace selection
+applies.
+
+## `--format <text|json>`
+
+`--format` selects the output format:
 
 ```text
-Workspace: D:/work/example
-Selected by: --workspace
+open-forge context --format json
 ```
 
-or:
-
-```text
-Workspace: D:/work/example
-Selected by: current directory
-```
-
-## `--json`
-
-`--json` selects structured presentation.
-
-```text
-open-forge context --json
-```
+`text` is the default. It writes the human-readable result to the primary
+stream selected by the result status. `json` writes one schema-3 result
+envelope to stdout for every semantic status.
 
 Rules:
 
-- Render one structured result document to stdout.
-- Derive it from the same typed operation result as human output.
+- Derive text and JSON from the same typed operation result.
 - Do not rerun parsing, planning, inspection, application, or verification.
-- Do not mix ordinary human text into structured stdout.
-- Send bounded diagnostic output to stderr only when the shared output contract
-  allows it.
-- Preserve the operation's semantic status and process result.
-- Disable prompts. Missing semantic input is invalid. Missing authority or an
-  unresolved choice for an otherwise complete request is blocked.
+- Do not mix ordinary text into JSON stdout.
+- Send prompts and bounded diagnostics to stderr under the shared output
+  contract.
+- Preserve the operation's semantic status, process exit, effects, findings,
+  counts, limitations, and next action.
+- `--format json` never prompts. Missing semantic input is `invalid-input`.
+  Missing authority or an unresolved choice for an otherwise complete request
+  is `blocked`.
 
-The exact shared result schema and compatibility rules are defined by the [Shared
-Result Coordinates](../result-coordinates/interface.md).
+The exact shared result schema and compatibility rules are defined by the
+[Shared Result Coordinates](../result-coordinates/interface.md).
 
-## `--view=<compact|expanded>`
+## `--detail <minimal|standard|full|debug>`
 
-`--view` selects human or JSON result density:
+`--detail` selects the detail level for both text and JSON:
 
 ```text
-open-forge find --view=compact
-open-forge route list memory --view=expanded
+open-forge status --detail full
 ```
 
-`expanded` is the default. It includes the explanations, evidence, provenance,
-locations, and next actions that make the result understandable without another
-call. `compact` is token-friendly and optimized for scanning or agent use. It
-keeps identities, hierarchy or order, semantic status, completeness, and
-required safety or next-action information while omitting optional explanation.
+`minimal` is the default. Each level adds to the previous level:
 
-Rules:
+- `minimal`: the subject, one-line cause, and one action.
+- `standard`: the reason for the action and per-finding actions.
+- `full`: evidence, possible targets with why they were included, provenance,
+  SHA-256 values, and finding codes.
+- `debug`: the full primary result plus bounded run diagnostics on stderr.
 
-- Change only presentation. Do not change selection, parsing, planning,
-  effects, verification, findings, semantic status, or process result.
-- Preserve authored content bytes selected by a content projection. A view may
-  change generated framing around that content but never summarize or truncate
-  the content itself.
-- Keep results structured by their domain relationships. Compact output may use
-  rows or indented levels; expanded output may add labelled evidence, source
-  locations, arrows, provenance, and explanatory trees.
-- Normal --json emits the complete expanded schema-v1 document. Explicit
-  --json --view=compact emits the identified schema-v2 compact document using
-  each command's defined core and omitted supporting fields. The serializer
-  minifies compact JSON. No collection is arbitrarily truncated or filtered.
-  Mutation receipts retain their full command result; selected authored content
-  remains exact in either view.
-- Every command provides compact and expanded presentations. A result with no
-  additional meaningful explanation may have identical output in both views.
-- When a selected compact renderer is unavailable, presentation falls back to
-  the expanded renderer of the same format. It uses expanded detail for that
-  invocation. This does not change the operation, result, status or output stream.
-  Renderer failure is not unavailability and does not trigger fallback or retry.
-- `--verbose` remains a separate diagnostic dimension and does not select the
-  expanded view.
+Requested rows, authored content, and mutation receipts are never shortened by
+the detail level. The detail level changes presentation only. It does not
+change selection, parsing, planning, effects, verification, findings, status,
+or process exit.
+
+## `--detail-filter <error|warning|info|all>`
+
+`--detail-filter` replaces the normal finding-listing ladder with the
+specified severity set:
+
+```text
+open-forge doctor --detail-filter warning --detail-filter error
+```
+
+The flag is repeatable. Without it, each detail level uses the shared listing
+ladder. The values are `error`, `warning`, `info`, and `all`; `all` lists
+every severity. The filter changes which findings are listed, not their detail
+depth. Counts and limitations are never affected. `all` wins when it is
+combined with other values.
 
 ## Automatic Colour
 
@@ -162,31 +155,6 @@ and stderr. Windows and terminals without that capability evidence use plain
 text. JSON, selected authored content, Find TSV rows, preview diffs, paths,
 identifiers and commands retain their plain rendering. Diagnostics, prompts,
 help and version remain plain. Colour never changes facts, status, stream or exit.
-
-## `--verbose`
-
-`--verbose` adds diagnostic detail to the selected presentation.
-
-```text
-open-forge context --verbose
-open-forge context --json --verbose
-```
-
-Rules:
-
-- Do not change selected input, planning, effects, verification, status, or exit
-  behavior.
-- Ordinary success and failure output remains understandable without it.
-- Add details useful for investigation, such as resolved paths, stage names,
-  inclusion reasons, and bounded failure context.
-- Do not expose secrets, complete environment state, private recovery bytes, or
-  unsafe unescaped source content.
-- In JSON mode, keep stdout as one valid structured result. Any separate verbose
-  diagnostics use stderr under the shared output contract.
-
-Diagnostic fields and redaction remain bounded implementation details under the
-CLI Architecture and must be covered by Gate 5 executable evidence without
-changing the public result contract.
 
 ## `--help`
 
@@ -204,9 +172,9 @@ Rules:
 - Show accepted operands, flags, defaults, examples, and related commands.
 - A group shows its child operations and performs no domain operation.
 - Help text uses the canonical command and flag vocabulary.
-- Write help to stdout and return exit `0`. A composed `--json` flag is a no-op
-  in this terminal mode; help remains ordinary text rather than an operation
-  result envelope.
+- Write help to stdout and return exit `0`. Composed `--format`, `--detail`,
+  and `--detail-filter` flags are no-ops in this terminal mode; help remains
+  ordinary text rather than an operation result envelope.
 
 ## `--version`
 
@@ -222,8 +190,9 @@ Rules:
 - Return the canonical executable version.
 - A thin wrapper must report or invoke the same version rather than defining its
   own Framework version.
-- Write the version to stdout and return exit `0`. A composed `--json` flag is a
-  no-op in this terminal mode; version remains ordinary text.
+- Write the version to stdout and return exit `0`. Composed `--format`,
+  `--detail`, and `--detail-filter` flags are no-ops in this terminal mode;
+  version remains ordinary text.
 
 Exact version and wrapper mismatch behavior remains part of later distribution
 design.
@@ -235,9 +204,9 @@ Global flags compose when their meanings apply together:
 ```text
 open-forge context \
   --workspace ../another-workspace \
-  --json \
-  --view=compact \
-  --verbose
+  --format json \
+  --detail full \
+  --detail-filter warning
 ```
 
 `--help` and `--version` stop before domain execution. They are terminal
@@ -271,8 +240,10 @@ Global flags do not replace operation-specific flag roles:
 - Repeating a Boolean global flag has no additional effect.
 - Repeating `--workspace` is invalid because one invocation has one exact
   workspace.
-- Repeating `--view` is invalid because one result has one selected
-  presentation density.
+- Repeating `--detail` or `--format` is invalid because one invocation has
+  one selected detail level and one output format.
+- Repeating `--detail-filter` is valid and combines the requested severity
+  values; `all` selects every severity.
 
 ## Related Sources
 

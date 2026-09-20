@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Inventory;
 
 public sealed class SourceInventoryModelTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral catalogue requests retain sorted duplicate and overlapping canonical roots")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void RequestsKeepEveryRootWithoutApplyingTraversalPolicy()
@@ -22,6 +23,7 @@ public sealed class SourceInventoryModelTests
         Assert.Same(workspace, request.Workspace);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral candidates retain recognized unsafe evidence and contained physical provenance")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void CandidatesSeparateLogicalFormFromPhysicalState()
@@ -55,6 +57,7 @@ public sealed class SourceInventoryModelTests
         Assert.Null(unrecognized.AutomaticId);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Source candidates reject undefined physical states at construction"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void CandidatesRejectUndefinedPhysicalState()
     {
@@ -73,6 +76,7 @@ public sealed class SourceInventoryModelTests
         Assert.StartsWith("The physical path state is not defined.", exception.Message, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral layers and logical sources enforce exact base and adjacent overwrite identity")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void LayersEnforcePairShape()
@@ -98,6 +102,7 @@ public sealed class SourceInventoryModelTests
             nonAdjacent));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral catalogue issues retain typed stage, scope, ordered related paths, and bounded failure")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void IssuesRemainFactsRatherThanCommandFindings()
@@ -121,6 +126,7 @@ public sealed class SourceInventoryModelTests
         Assert.Same(failure, issue.Failure);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral selection requests order unique physical include and exclude scopes")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void SelectionRequestRetainsItsEffectiveInputs()
@@ -148,6 +154,7 @@ public sealed class SourceInventoryModelTests
         Assert.Equal([".agents/a/private"], request.ExcludedScopes.Select(scope => scope.CanonicalDirectoryPath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral selection separates root issues from projected non-root issues")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void SelectionModelKeepsIssueCollectionsTyped()

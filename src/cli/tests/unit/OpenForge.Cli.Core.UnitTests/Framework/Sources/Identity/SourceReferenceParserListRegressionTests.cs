@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Identity;
 
 public sealed class SourceReferenceParserListRegressionTests
 {
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Neutral source-reference parser classifies every non-path value as an exact source ID"),
         InlineData("memory/crystallized", "memory/crystallized"),
         InlineData("src/file.md", "src/file.md"),
@@ -22,6 +23,7 @@ public sealed class SourceReferenceParserListRegressionTests
         Assert.Null(result.Cause);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Neutral source-reference parser canonicalizes both exact path prefixes without decoding"),
         InlineData(".agents/memory/_memory.md", ".agents/memory/_memory.md"),
         InlineData("./.agents/project alpha/工作%20note.md", ".agents/project alpha/工作%20note.md"),
@@ -38,6 +40,7 @@ public sealed class SourceReferenceParserListRegressionTests
         Assert.Null(result.Cause);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Neutral source-reference parser rejects malformed IDs without normalization"),
         InlineData(""),
         InlineData("/root"),
@@ -61,6 +64,7 @@ public sealed class SourceReferenceParserListRegressionTests
         Assert.False(string.IsNullOrWhiteSpace(result.Cause));
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Neutral source-reference parser rejects every unsafe exact-path segment while retaining its canonical attempt"),
         InlineData(".agents/", ".agents/"),
         InlineData("./.agents/", ".agents/"),

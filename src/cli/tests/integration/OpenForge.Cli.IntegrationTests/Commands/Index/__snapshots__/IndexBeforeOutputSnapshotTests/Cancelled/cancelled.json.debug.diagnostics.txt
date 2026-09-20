@@ -1,0 +1,4 @@
+status=cancelled
+mode=apply
+regions=0
+Source discovery was cancelled before Index projection could be established.

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: One reviewable workspace configuration and lifecycle record for whole-Framework reconciliation, deliberate route exclusions, Extension ownership, exact-id dependencies, and advisory checksums
+  description: "Historical CLI-v2 source: One reviewable workspace configuration and lifecycle record for whole-Framework reconciliation, deliberate route exclusions, Extension ownership, exact-id dependencies, and advisory checksums"
   responsibility: Define persistent Open Forge management evidence without turning it into installation presence, runtime meaning, remote provenance, or hidden authority
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

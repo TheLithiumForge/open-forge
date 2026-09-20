@@ -1,0 +1,11 @@
+Repaired 1 link.
+Workspace: <workspace>
+  .agents/docs/source.md:9:10  missing.md -> replacement.md
+  Diagnosis coverage: Workspace and path were checked; route and heading were checked; local references were checked; selected scope was checked.
+  Before: <sha256>
+  After: <sha256>
+  Checks before writing: completed.
+  Verification: targets matched; resulting bytes matched; post-conditions held.
+  Recovery: The recovery bundle was removed.
+  Checks after writing: completed.
+1 link repaired.

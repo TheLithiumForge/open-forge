@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 3,
+  "command": "find",
+  "status": "incomplete",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "The search is incomplete.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "find.invalid-encoding",
+      "title": "Source encoding is invalid",
+      "message": ".agents/docs/guide.md is not valid UTF-8 and was skipped.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "matches": 4,
+    "sourcesInspected": 3,
+    "sourcesCandidates": 4,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "matches": [
+      {
+        "id": "docs",
+        "path": ".agents/docs/_docs.md",
+        "description": "Documents",
+        "evidence": []
+      },
+      {
+        "id": "docs/guide",
+        "path": ".agents/docs/guide.md",
+        "description": null,
+        "evidence": []
+      },
+      {
+        "id": "docs/reference",
+        "path": ".agents/docs/reference.md",
+        "description": "Reference",
+        "evidence": []
+      },
+      {
+        "id": "loader",
+        "path": ".agents/loader.md",
+        "description": null,
+        "evidence": []
+      }
+    ],
+    "query": {
+      "tags": [],
+      "headings": [],
+      "require": "all",
+      "within": [
+        "frontmatter",
+        "body"
+      ]
+    },
+    "sourceSet": {
+      "mode": "default",
+      "include": [],
+      "exclude": [],
+      "inspected": 3,
+      "candidates": 4
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the unavailable source or projection facts before relying on this Find result."
+  }
+}

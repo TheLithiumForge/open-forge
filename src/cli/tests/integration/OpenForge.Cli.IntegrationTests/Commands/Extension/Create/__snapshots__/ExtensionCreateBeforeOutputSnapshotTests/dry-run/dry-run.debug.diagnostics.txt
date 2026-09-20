@@ -1,0 +1,8 @@
+status=completed
+mode=dry-run
+id=toolkit
+folder=<extension-source>
+package=<extension-source>/toolkit
+intended=2
+applied=0
+findings=0

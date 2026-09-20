@@ -24,6 +24,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Projection;
 
 public sealed class FindProjectionBuilderTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find requested parts project exact logical metadata and ordered physical-layer payloads"),
         InlineData("metadata", "metadata", 1, 0),
         InlineData("all", "metadata,frontmatter,headings,body,section:Intro", 9, 2)]
@@ -116,6 +117,7 @@ public sealed class FindProjectionBuilderTests
             metadataPayload.Layers.Select(layer => layer.Kind));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find section projections distinguish available, missing, ambiguous, and unavailable states"),
         InlineData("available", "Available", null, "Complete"),
         InlineData("missing", "Missing", "ProjectionMissing", "Complete"),
@@ -185,6 +187,7 @@ public sealed class FindProjectionBuilderTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find metadata uses only effective route facts and never infers scope or route identity"),
         InlineData("routed", "Available", "Routed", true),
         InlineData("outside-filter", "Unavailable", null, false)]
@@ -237,6 +240,7 @@ public sealed class FindProjectionBuilderTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find projection order is canonical and independent of matching evidence order"),
         InlineData("body,metadata,frontmatter", "metadata,frontmatter,body")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
@@ -304,7 +308,7 @@ public sealed class FindProjectionBuilderTests
             query,
             new FindPresentationSelection(
                 null,
-                CliView.Expanded,
+                CliDetail.Standard,
                 new FindContentSelection(contentParts, effectiveContentParts)));
         var match = new FindMatch(
             1,

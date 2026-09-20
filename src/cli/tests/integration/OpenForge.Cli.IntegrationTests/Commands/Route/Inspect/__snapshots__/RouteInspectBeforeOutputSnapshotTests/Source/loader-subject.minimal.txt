@@ -1,0 +1,2 @@
+Cannot inspect .agents/loader.md: The Loader is not a route. Inspect one of its routes instead.
+Next: open-forge route inspect --help

@@ -1,0 +1,6 @@
+Route init was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  documents  Route Init was cancelled
+         Route Init was cancelled. Nothing was changed.
+         open-forge route init
+Next: open-forge route init

@@ -1,0 +1,7 @@
+Nothing to repair.
+Workspace: <workspace>
+  Diagnosis coverage: Workspace and path were checked; route and heading were checked; local references were checked; selected scope was checked.
+  Checks before writing: completed.
+  No verification was needed.
+  Recovery: No recovery bundle was required.
+  Checks after writing: completed.

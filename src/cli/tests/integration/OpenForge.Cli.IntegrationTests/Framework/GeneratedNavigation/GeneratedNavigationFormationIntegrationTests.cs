@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.GeneratedNavigation;
 
 public sealed class GeneratedNavigationFormationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generated navigation formation derives real Loader roots without reading the Loader body or writing files")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Integration")]
     public async Task LoaderBodyIsIrrelevantAndFormationDoesNotWrite()
@@ -30,6 +31,7 @@ public sealed class GeneratedNavigationFormationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generated navigation formation keeps missing-Loader root ambiguity and missing-intermediate trees detached")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Integration")]
     public async Task MissingLoaderAndIntermediateDoNotInventTopology()
@@ -57,6 +59,7 @@ public sealed class GeneratedNavigationFormationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generated navigation formation blocks multiple real recognized entrypoints for one Loader root folder")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Integration")]
     public async Task RealRootEntrypointAmbiguityAdmitsNoLoaderRoot()
@@ -80,6 +83,7 @@ public sealed class GeneratedNavigationFormationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generated navigation formation proves compatible leaf aliases and blocks incompatible rooted aliases on the current host")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Integration")]
     public async Task RealSymbolicLinksProduceCompatibleAndIncompatibleAliasFacts()

@@ -1,0 +1,1 @@
+The selected Extension could not be installed: The source <extension-source> could not be read. Nothing was changed.

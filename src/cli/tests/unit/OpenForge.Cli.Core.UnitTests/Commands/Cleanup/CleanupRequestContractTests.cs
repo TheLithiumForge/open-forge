@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Cleanup;
 
 public sealed class CleanupRequestContractTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Cleanup request preserves the exact workspace and apply or dry-run mode"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void RequestPreservesWorkspaceAndMode()
@@ -22,6 +23,7 @@ public sealed class CleanupRequestContractTests
         Assert.True(dryRun.IsDryRun);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Cleanup request rejects null workspaces and undefined modes"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void RequestFailsClosedAtItsBoundary()
@@ -34,6 +36,7 @@ public sealed class CleanupRequestContractTests
             new CleanupRequest(workspace, (CleanupMode)int.MaxValue));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Cleanup request keeps selection to the exact supplied workspace without a selector"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void RequestKeepsExactWorkspaceSelection()

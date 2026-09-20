@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class RepairResultTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair result applies failed invalid blocked incomplete interrupted and attention precedence without parsing causes"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void ResultStatusPrecedenceIsTyped()
     {
@@ -23,7 +24,7 @@ public sealed class RepairResultTests
                 Finding(RepairFindingCode.OperationFailed),
             ]);
         Assert.Equal(CliSemanticStatus.Failed, failed.Status);
-        Assert.Equal("open-forge repair --verbose", failed.Next!.Command);
+        Assert.Equal("open-forge repair --detail debug", failed.Next!.Command);
 
         var blocked = RepairTestData.Result(
             findings:
@@ -50,6 +51,7 @@ public sealed class RepairResultTests
         Assert.Equal("open-forge repair", interrupted.Next!.Command);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair result maps every semantic finding lane to one exact next action"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void ResultNextActionsCoverEverySemanticLane()
     {
@@ -60,8 +62,10 @@ public sealed class RepairResultTests
             (Result: RepairTestData.Result([Finding(RepairFindingCode.SelectionRequired)]), Status: CliSemanticStatus.Blocked, Command: "open-forge repair --automatic"),
             (Result: RepairTestData.Result([Finding(RepairFindingCode.DiagnosisBlocked)]), Status: CliSemanticStatus.Blocked, Command: "open-forge doctor"),
             (Result: RepairTestData.Result([Finding(RepairFindingCode.DiagnosisIncomplete)]), Status: CliSemanticStatus.Incomplete, Command: "open-forge doctor"),
+            (Result: RepairTestData.Result([Finding(RepairFindingCode.ProposalUnavailable)]), Status: CliSemanticStatus.Incomplete, Command: "open-forge doctor --detail standard"),
+            (Result: RepairTestData.Result([Finding(RepairFindingCode.FactsConflicting)]), Status: CliSemanticStatus.Blocked, Command: "open-forge doctor --detail standard"),
             (Result: RepairTestData.Result([Finding(RepairFindingCode.ManualFindingRemaining)]), Status: CliSemanticStatus.Attention, Command: "open-forge repair"),
-            (Result: RepairTestData.Result([Finding(RepairFindingCode.OperationFailed)]), Status: CliSemanticStatus.Failed, Command: "open-forge repair --verbose"),
+            (Result: RepairTestData.Result([Finding(RepairFindingCode.OperationFailed)]), Status: CliSemanticStatus.Failed, Command: "open-forge repair --detail debug"),
             (Result: RepairTestData.Result([Finding(RepairFindingCode.Interrupted)]), Status: CliSemanticStatus.Interrupted, Command: "open-forge repair"),
         };
 
@@ -72,6 +76,7 @@ public sealed class RepairResultTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair retained recovery owns cleanup next action and preserves exact residual attribution"),
         Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void RetainedRecoveryProducesAttentionAndCleanup()
@@ -79,7 +84,7 @@ public sealed class RepairResultTests
         var recovery = new RepairRecovery(
             RepairRecoveryState.Retained,
             RepairResidualState.Retained,
-            Path.GetFullPath("/tmp/open-forge-repair/recovery.zip"),
+            RepairTestData.RecoveryPath,
             RepairTestData.Attribution());
         var result = RepairTestData.Result(
             facts: RepairTestData.CompleteFacts(
@@ -109,6 +114,7 @@ public sealed class RepairResultTests
         Assert.Equal(1, result.Counts.Repaired);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair application and verification lifecycle facts derive failure and incomplete states without losing typed evidence"),
         Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void TypedLifecycleFactsDeriveStatus()
@@ -121,7 +127,7 @@ public sealed class RepairResultTests
                     cause: "The target write failed.")),
             mode: RepairMode.Apply);
         Assert.Equal(CliSemanticStatus.Failed, failedApplication.Status);
-        Assert.Equal("open-forge repair --verbose", failedApplication.Next!.Command);
+        Assert.Equal("open-forge repair --detail debug", failedApplication.Next!.Command);
         Assert.Equal(1, failedApplication.Application.AppliedEffects);
 
         var selected = RepairTestData.Selected();
@@ -135,7 +141,7 @@ public sealed class RepairResultTests
         var retained = new RepairRecovery(
             RepairRecoveryState.Prepared,
             RepairResidualState.Retained,
-            Path.GetFullPath("/tmp/open-forge-repair/recovery.zip"),
+            RepairTestData.RecoveryPath,
             RepairTestData.Attribution());
         var incomplete = RepairTestData.Result(
             facts: RepairTestData.CompleteFacts(
@@ -187,6 +193,7 @@ public sealed class RepairResultTests
         Assert.Equal(CliSemanticStatus.Incomplete, interruptedIncomplete.Status);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair result orders findings and affected paths deterministically while retaining post-diagnosis evidence"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void ResultOrderingAndPostDiagnosisAreDeterministic()
     {

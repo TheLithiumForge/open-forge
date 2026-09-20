@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 3,
+  "command": "extension list",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "The result contains 5 installed packages and 0 available packages.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "installed": 5
+  },
+  "limitations": [],
+  "data": {
+    "source": {
+      "kind": "embedded-catalogue",
+      "path": "embedded catalogue"
+    },
+    "installed": [
+      {
+        "id": "development",
+        "version": "0.3.0",
+        "note": null
+      },
+      {
+        "id": "development-toolkit",
+        "version": "0.3.0",
+        "note": null
+      },
+      {
+        "id": "planning",
+        "version": "0.3.0",
+        "note": null
+      },
+      {
+        "id": "project-documents",
+        "version": "0.3.0",
+        "note": null
+      },
+      {
+        "id": "workflows",
+        "version": "0.3.0",
+        "note": null
+      }
+    ],
+    "available": []
+  },
+  "recovery": null,
+  "next": null
+}

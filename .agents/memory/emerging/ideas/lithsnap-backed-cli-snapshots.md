@@ -93,4 +93,4 @@ contract more clearly than a golden artifact.
 
 - [Test Evidence Integrity](../../../directives/open-forge/testing/evidence-integrity.md)
 - [Evidence Tiers](../../../patterns/testing/evidence-tiers.md)
-- [Audit CLI Constants And Test Architecture](../../working/cli-development/tasks/test-architecture-and-constants.md)
+- [Audit CLI Constants And Test Architecture](../../archived/cli-development/tasks/test-architecture-and-constants.md)

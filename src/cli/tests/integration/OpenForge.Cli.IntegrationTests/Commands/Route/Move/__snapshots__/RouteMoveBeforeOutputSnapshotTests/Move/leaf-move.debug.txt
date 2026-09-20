@@ -1,0 +1,21 @@
+Moved guidance/old guide to .agents/guidance/new guide.md
+Workspace: <workspace>
+  .agents/guidance/old guide.overwrite.md -> .agents/guidance/new guide.overwrite.md
+  Entry updated in .agents/guidance/_guidance.md
+  Rewrote 5 links that pointed at the old path:
+  .agents/guidance/topics/child.md:8:13  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  .agents/guidance/topics/child.overwrite.md:1:35  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  README.md:3:13  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  README.md:5:23  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  notes.md:3:11  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  Effects:
+  .agents/guidance/new guide.md: create file / missing -> file:<sha256> / verified
+  .agents/guidance/new guide.overwrite.md: create file / missing -> file:<sha256> / verified
+  .agents/guidance/_guidance.md: rewrite Entries section / file:<sha256> -> file:<sha256> / verified
+  .agents/guidance/topics/child.md: rewrite link source / file:<sha256> -> file:<sha256> / verified
+  .agents/guidance/topics/child.overwrite.md: rewrite link source / file:<sha256> -> file:<sha256> / verified
+  README.md: rewrite link source / file:<sha256> -> file:<sha256> / verified
+  notes.md: rewrite link source / file:<sha256> -> file:<sha256> / verified
+  .agents/guidance/old guide.md: delete file / file:<sha256> -> missing / verified
+  .agents/guidance/old guide.overwrite.md: delete file / file:<sha256> -> missing / verified
+  12 files scanned; 9 links found.

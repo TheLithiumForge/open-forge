@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "cancelled",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Route init was cancelled. Nothing was changed.",
+    "kind": "cancelled"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-init.interrupted",
+      "title": "Route Init was cancelled",
+      "message": "Route Init was cancelled. Nothing was changed.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "documents",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route init",
+          "reason": "Rerun the same Route Init request."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "entrypointsCreated": 0,
+    "entrypointsPresent": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": null,
+      "path": null
+    },
+    "scaffold": "generic",
+    "entrypoints": [],
+    "listedIn": [],
+    "sections": [],
+    "verification": "not-requested"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route init",
+    "reason": "Rerun the same Route Init request."
+  }
+}

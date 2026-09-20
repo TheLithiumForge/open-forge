@@ -1,0 +1,7 @@
+Synchronized team-knowledge: 1 link added, 1 removed.
+Workspace: <workspace>
+  Added    .agents/directives/added.md
+    Target: ../../shared/team-knowledge/.agents/directives/added.md
+  Removed  .agents/directives/review.md   (its source file is gone)
+    Target: ../../shared/team-knowledge/.agents/directives/review.md
+  .agents/open-forge.lock.json  updated

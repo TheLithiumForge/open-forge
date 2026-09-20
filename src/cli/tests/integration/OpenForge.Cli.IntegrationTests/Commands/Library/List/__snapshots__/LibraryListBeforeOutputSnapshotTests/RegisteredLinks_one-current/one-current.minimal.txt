@@ -1,0 +1,2 @@
+Workspace: <workspace>
+  team-knowledge  shared/team -> .  1 link current

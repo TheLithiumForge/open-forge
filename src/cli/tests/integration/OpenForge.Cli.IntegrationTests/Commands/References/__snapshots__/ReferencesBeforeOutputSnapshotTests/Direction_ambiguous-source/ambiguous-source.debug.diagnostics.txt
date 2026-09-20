@@ -1,0 +1,6 @@
+status=blocked
+incoming=0
+outgoing=0
+scanned=0
+The source ID resolves to more than one logical source.
+The source catalogue retained an unresolved boundary.

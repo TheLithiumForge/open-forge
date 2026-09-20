@@ -49,6 +49,7 @@ public sealed class RouteMoveFiniteContractTests
         { (int)RouteMoveFindingCode.Interrupted, "route-move.interrupted" },
     };
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Move result and operation finite graphs are closed and exact")]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
     public void FiniteGraphsContainOnlyAcceptedValues()
@@ -80,6 +81,7 @@ public sealed class RouteMoveFiniteContractTests
         AssertNames<RouteMoveAppliedVerificationState>("Verified", "Failed", "Interrupted");
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route Move finding machine names match the complete independent oracle"),
         MemberData(nameof(FindingNames))]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
@@ -94,6 +96,7 @@ public sealed class RouteMoveFiniteContractTests
         Assert.Equal(Enum.GetValues<RouteMoveFindingCode>().Length, FindingNames.Count);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Move request and subject machine-name mappings are exact")]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
     public void RequestAndSubjectMachineNamesAreExact()
@@ -130,6 +133,7 @@ public sealed class RouteMoveFiniteContractTests
             (RouteMoveItemKind.Resource, "resource"));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Move ownership and coverage machine-name mappings are exact")]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
     public void OwnershipAndCoverageMachineNamesAreExact()
@@ -160,6 +164,7 @@ public sealed class RouteMoveFiniteContractTests
             (RouteMoveCoverage.Interrupted, "interrupted"));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Move generated and plan machine-name mappings are exact")]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
     public void GeneratedAndPlanMachineNamesAreExact()
@@ -186,6 +191,7 @@ public sealed class RouteMoveFiniteContractTests
             (RouteMovePlanSafety.Blocked, "blocked"));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Move effect and terminal machine-name mappings are exact")]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
     public void EffectAndTerminalMachineNamesAreExact()
@@ -233,6 +239,7 @@ public sealed class RouteMoveFiniteContractTests
             (RouteMoveVerificationState.Unknown, "unknown"));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Every Route Move machine-name finite rejects one undefined value")]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
     public void MachineNameFinitesRejectUndefinedValues()
@@ -261,6 +268,7 @@ public sealed class RouteMoveFiniteContractTests
         Assert.Throws<ArgumentOutOfRangeException>(() => RouteMoveDefinitions.ReadMachineName((RouteMoveFindingCode)99));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route Move result builder maps every semantic status"),
         InlineData((int)CliSemanticStatus.Complete, (int)RouteMoveFindingCode.InvalidInput, false),
         InlineData((int)CliSemanticStatus.Attention, (int)RouteMoveFindingCode.RecoveryArtifactRetained, true),
@@ -286,6 +294,7 @@ public sealed class RouteMoveFiniteContractTests
         Assert.Equal(expectedStatus, result.Status);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route Move result builder applies exact next-action precedence"),
         InlineData((int)RouteMoveFindingCode.RecoveryArtifactRetained, (int)CliSemanticStatus.Attention, "open-forge cleanup", "Review and remove the reported recovery artifact after confirming the verified Route Move result."),
         InlineData((int)RouteMoveFindingCode.DestinationParentMissing, (int)CliSemanticStatus.Blocked, "open-forge route init", "Initialize the exact missing destination parent route, then rerun Route Move."),
@@ -293,7 +302,7 @@ public sealed class RouteMoveFiniteContractTests
         InlineData((int)RouteMoveFindingCode.WorkspaceLockUnavailable, (int)CliSemanticStatus.Blocked, "open-forge route move", "Wait for the blocking condition or inspect the changed target, then rerun Route Move from a fresh plan."),
         InlineData((int)RouteMoveFindingCode.OwnershipClaimed, (int)CliSemanticStatus.Blocked, "open-forge doctor", "Inspect the blocked workspace, route, ownership, reference, generated-region, destination, or recovery boundary before rerunning Route Move."),
         InlineData((int)RouteMoveFindingCode.ReferenceCoverageIncomplete, (int)CliSemanticStatus.Incomplete, "open-forge doctor", "Inspect the unavailable inventory, reference, projection, or recovery facts before relying on this Route Move result."),
-        InlineData((int)RouteMoveFindingCode.WriteFailed, (int)CliSemanticStatus.Failed, "open-forge route move --verbose", "Report the failure and retry the same Route Move request with bounded diagnostics."),
+        InlineData((int)RouteMoveFindingCode.WriteFailed, (int)CliSemanticStatus.Failed, "open-forge route move --detail debug", "Report the failure and retry the same Route Move request with bounded diagnostics."),
         InlineData((int)RouteMoveFindingCode.Interrupted, (int)CliSemanticStatus.Interrupted, "open-forge route move", "Rerun the same Route Move request.")]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
     public void ResultBuilderAppliesExactNextAction(
@@ -313,6 +322,7 @@ public sealed class RouteMoveFiniteContractTests
         Assert.Equal(reason, result.Next?.Reason);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Move complete result has no next action")]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
     public void CompleteResultHasNoNextAction()

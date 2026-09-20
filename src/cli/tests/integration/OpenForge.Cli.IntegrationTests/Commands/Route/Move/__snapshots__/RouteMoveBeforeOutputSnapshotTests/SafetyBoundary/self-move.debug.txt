@@ -1,0 +1,7 @@
+Cannot move guidance/old guide: The source and the destination are the same.
+Workspace: <workspace>
+  Error  .agents/guidance/old guide.md  Source and destination are the same [route-move.self-move]
+         The source and the destination are the same.
+  Effects:
+  0 files scanned; 0 links found.
+  files scanned: the reference scan was not completed

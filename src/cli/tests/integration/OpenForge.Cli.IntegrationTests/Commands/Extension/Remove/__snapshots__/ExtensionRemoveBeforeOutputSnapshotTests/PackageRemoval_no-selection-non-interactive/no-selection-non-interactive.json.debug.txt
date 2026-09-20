@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 3,
+  "command": "extension remove",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot remove: Extension Remove requires explicit stable IDs outside a prompt-capable human request.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-remove.selection-required",
+      "title": "Selection is required",
+      "message": "Extension remove needs to know which packages. Pass their IDs or --all.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "the selected",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge extension list",
+          "reason": "List the installed Extensions, then rerun the request with an explicit selection."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesRemoved": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesReleased": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "automatic": true,
+    "packages": [],
+    "orphaned": [],
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [],
+    "removalOrder": [],
+    "entriesUnchanged": [],
+    "verification": {
+      "targets": "not-requested",
+      "entries": "not-requested",
+      "extensionRecord": "not-requested"
+    },
+    "recovery": {
+      "state": "not-required",
+      "protectedPaths": [],
+      "path": null
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension remove --help",
+    "reason": "Correct the Extension Remove input, then rerun the request."
+  }
+}

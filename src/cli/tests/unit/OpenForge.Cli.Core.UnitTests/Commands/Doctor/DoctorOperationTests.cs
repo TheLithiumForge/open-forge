@@ -3,7 +3,7 @@ using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
+using OpenForge.Cli.Core.Framework.Filesystem.Models.Reading;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -11,6 +11,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Doctor;
 
 public sealed class DoctorOperationTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Doctor reads each contributor once in the frozen domain order and retains every domain"), Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public async Task ReadsEachContributorOnceInFrozenOrderAndRetainsEveryDomain()
     {
@@ -47,6 +48,7 @@ public sealed class DoctorOperationTests
         Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Doctor consumes every supplied Extension source observation without first-source fallback"), Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public async Task ConsumesEveryExtensionSourceObservationWithoutFallback()
     {
@@ -74,41 +76,15 @@ public sealed class DoctorOperationTests
 
     private static ExtensionLifecycleDoctorView CreatePluralSourceView()
     {
-        var packages = new[]
-        {
-            new LifecycleInstalledPackage
-            {
-                Id = "embedded-package",
-                Version = "1.0.0",
-                Source = null,
-                Dependencies = [],
-                Paths = [],
-            },
-            new LifecycleInstalledPackage
-            {
-                Id = "available-package",
-                Version = "1.0.0",
-                Source = "available-source",
-                Dependencies = [],
-                Paths = [],
-            },
-            new LifecycleInstalledPackage
-            {
-                Id = "missing-package",
-                Version = "1.0.0",
-                Source = "missing-source",
-                Dependencies = [],
-                Paths = [],
-            },
-            new LifecycleInstalledPackage
-            {
-                Id = "defective-package",
-                Version = "1.0.0",
-                Source = "defective-catalogue",
-                Dependencies = [],
-                Paths = [],
-            },
-        };
+        OpenForge.Cli.Core.Framework.Ownership.Models.Document.ExtensionOwnership[] packages =
+        [
+            new("embedded-package", "1.0.0", null, [], [], []),
+            new("available-package", "1.0.0", "available-source", [], [], []),
+            new("missing-package", "1.0.0", "missing-source", [], [], []),
+            new("defective-package", "1.0.0", "defective-catalogue", [], [], []),
+        ];
+        var ownership = DoctorOperationTestSupport.CreateCompleteOwnership();
+        ownership = ownership with { Document = ownership.Document with { Extensions = [.. packages] } };
         return ExtensionLifecycleDoctorView.Create(
             ExtensionLifecycleDoctorAssessment.Create(
                 OperationalViewState.Complete,
@@ -116,11 +92,6 @@ public sealed class DoctorOperationTests
                 ExtensionManagedSetState.Empty,
                 OperationalLifecycleState.Trusted,
                 OperationalSourceAvailability.Available),
-            new LifecycleReadResult(
-                LifecycleReadState.Complete,
-                LifecycleExtensionTrust.Trusted,
-                packages,
-                cause: null),
             [
                 new ExtensionSourceObservation(
                     RecordedSource: null,
@@ -153,7 +124,7 @@ public sealed class DoctorOperationTests
                         "The catalogue is invalid.",
                         ExtensionSourceFailureKind.Invalid)),
             ],
-            DoctorOperationTestSupport.CreateCompleteOwnership(),
+            ownership,
             ExtensionLifecycleDoctorFacts.Create([], []));
     }
 }

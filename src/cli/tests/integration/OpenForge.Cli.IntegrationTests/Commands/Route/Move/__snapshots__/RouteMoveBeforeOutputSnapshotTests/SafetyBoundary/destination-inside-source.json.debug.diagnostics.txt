@@ -1,0 +1,12 @@
+status=invalid-input
+mode=apply
+source=guidance/topics
+destination=.agents/guidance/topics/nested/_nested.md
+subject=category
+completeness=not-established
+safety=not-established
+effects=0
+recovery=not required
+verification=not run
+findings=1
+finding=route-move.destination-inside-source:target=.agents/guidance/topics/nested/_nested.md:cause=A category destination cannot be inside its selected source tree.

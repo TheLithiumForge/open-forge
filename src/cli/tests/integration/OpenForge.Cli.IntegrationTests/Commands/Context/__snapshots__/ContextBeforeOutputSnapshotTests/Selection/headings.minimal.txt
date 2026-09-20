@@ -1,0 +1,14 @@
+=== AGENTS.md ===
+# Workspace
+
+=== .agents/loader.md (loader) ===
+# Open Forge Loader
+## Entries
+
+=== .agents/docs/_docs.md (docs) ===
+# Documents
+## Entries
+
+=== .agents/docs/guide.md (docs/guide) ===
+# Guide
+## Rules

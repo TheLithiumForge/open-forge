@@ -1,195 +1,197 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Index.Models.Operation;
-using OpenForge.Cli.Core.Commands.Index.Models.Planning;
-using OpenForge.Cli.Core.Commands.Index.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Index.Models.Request;
-using OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Commands.Index.Models.Planning;
+using OpenForge.Cli.Core.Commands.Index.Models.Result;
+using OpenForge.Cli.Core.Presentation.Index;
+using OpenForge.Cli.Core.Presentation.Index.Models;
+using OpenForge.Cli.Core.Presentation.Index.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Text;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation.Models;
-using OpenForge.Cli.Core.UnitTests.Commands.Index.Shared;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Index.Shared.Rendering;
 
 public sealed class IndexRenderingTests
 {
-    [Theory(DisplayName = "Both Index human views keep no-op identity and full failed-effect paths"),
-        InlineData(false), InlineData(true),
-        Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
-    public void HumanViewsRetainNoOpIdentityAndPartialEffects(bool expanded)
+    [Trait("Boundary", "Output")]
+    [Theory, InlineData(false), InlineData(true), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void HumanDetailsRetainExplicitWorkspaceAndPartialEffects(bool standard)
     {
-        var view = expanded ? CliView.Expanded : CliView.Compact;
-        var noOp = IndexTestData.Result();
-        var noOpText = IndexHumanRenderer.Render(IndexTestData.Presentation(noOp, view));
-        Assert.Contains(Assert.IsType<CliWorkspace>(noOp.Workspace).LexicalRoot, noOpText, StringComparison.Ordinal);
-        Assert.Contains("Status: complete", noOpText, StringComparison.Ordinal);
-        Assert.Contains("No files changed.", noOpText, StringComparison.Ordinal);
-
+        var detail = standard ? CliDetail.Standard : CliDetail.Minimal;
+        var current = IndexTestData.Result();
+        var currentText = Text(current, detail);
+        Assert.Contains(current.Workspace!.LexicalRoot, currentText, StringComparison.Ordinal);
+        Assert.StartsWith("The Entries section is current in 1 file. Nothing to do.\n", currentText);
         var failed = IndexTestData.Result(
             regions: [IndexTestData.Update(IndexRegionOutcome.Unknown)],
             findings: [IndexTestData.Finding(IndexFindingCode.WriteFailed)],
             recovery: new IndexRecovery(IndexRecoveryState.Unknown, null));
-        var before = IndexJsonRenderer.Render(IndexTestData.Presentation(failed));
-        var failedText = IndexHumanRenderer.Render(IndexTestData.Presentation(failed, view));
-        Assert.Contains(failed.Regions[0].Source.Path, failedText, StringComparison.Ordinal);
-        Assert.Contains("unknown", failedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("were not updated", failedText, StringComparison.Ordinal);
-        Assert.Equal(before, IndexJsonRenderer.Render(IndexTestData.Presentation(failed)));
+        var before = Json(failed);
+        var text = Text(failed, detail);
+        Assert.Contains(".agents/memory/_memory.md  final state unknown", text);
+        Assert.DoesNotContain("Nothing was changed.", text);
+        Assert.DoesNotContain("Nothing was written.", text);
+        Assert.Equal(before, Json(failed));
     }
 
-    [Fact(DisplayName = "Index dry-run diff retains every LF CRLF empty and final-newline token without truncation"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
-    public void DiffRetainsExactBodyTokens()
+    [Trait("Boundary", "Output")]
+    [Theory, InlineData("new\n"), InlineData("new\r\n"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void DryRunPreservesFinalExpectedNewlineTokens(string expected)
     {
-        Assert.Equal([string.Empty], IndexDiffRenderer.Tokenize(string.Empty));
-        Assert.Equal(["one\r\n", "two\n", "tail"], IndexDiffRenderer.Tokenize("one\r\ntwo\ntail"));
-        var region = IndexTestData.Update(
-            beforeBody: "one\r\ntail",
-            expectedBody: "new\r\n");
-
-        var rendered = IndexDiffRenderer.Render(region);
-
-        Assert.Equal(
-            "@@ {\"id\":\"memory\",\"path\":\".agents/memory/_memory.md\",\"scope\":\"rooted\"} @@\n"
-            + "- one\r\n"
-            + "- tail\n"
-            + "+ new\r\n",
-            rendered);
+        var result = IndexTestData.Result(regions: [IndexTestData.Update(beforeBody: "old\r\ntail", expectedBody: expected)], mode: IndexMode.DryRun);
+        var selected = Select(result, CliDetail.Standard);
+        var document = CliTextRenderer.Render(selected, CliTextStyle.Plain, IndexPresentation.Rendering.DataTextRenderer);
+        Assert.Equal(new[] { "- old\r\n", "- tail", "+ " + expected },
+            document.Spans.Where(span => span.Authored).Select(span => span.Content));
+        Assert.Contains("No files were changed.\n", document.Content);
     }
 
-    [Fact(DisplayName = "Index human dry-run output preserves the final expected LF and CRLF body tokens"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
-    public void HumanDryRunPreservesFinalExpectedNewlineTokens()
-    {
-        foreach (var expectedBody in new[] { "new\n", "new\r\n" })
-        {
-            var region = IndexTestData.Update(
-                beforeBody: "old\r\n",
-                expectedBody: expectedBody);
-            var result = IndexTestData.Result(
-                regions: [region],
-                mode: IndexMode.DryRun);
-
-            var rendered = IndexHumanRenderer.Render(IndexTestData.Presentation(result));
-
-            var exactDiff = IndexDiffRenderer.Render(region);
-            Assert.EndsWith(expectedBody, exactDiff, StringComparison.Ordinal);
-            Assert.Contains(exactDiff + Environment.NewLine + "No files changed (--dry-run).", rendered, StringComparison.Ordinal);
-        }
-    }
-
-    [Fact(DisplayName = "Index human output never claims no effects when failed typed regions show applied or unknown outcomes"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
-    public void FailedOutputReportsObservedEffectsTruthfully()
+    [Trait("Boundary", "Output")]
+    [Fact, Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void UnparseablePriorEntriesRemainUnknown()
     {
         var result = IndexTestData.Result(
-            regions: [IndexTestData.Update(IndexRegionOutcome.Unknown)],
-            findings: [IndexTestData.Finding(IndexFindingCode.WriteFailed)],
-            recovery: new IndexRecovery(IndexRecoveryState.Unknown, null));
-
-        var rendered = IndexHumanRenderer.Render(IndexTestData.Presentation(result));
-
-        Assert.Contains("1 files may have changed", rendered, StringComparison.Ordinal);
-        Assert.DoesNotContain("No files changed.", rendered, StringComparison.Ordinal);
+            regions: [IndexTestData.Update(IndexRegionOutcome.Verified, beforeEntryCount: null)],
+            recovery: new IndexRecovery(IndexRecoveryState.Removed, null));
+        var text = Text(result);
+        Assert.Contains("unknown -> 1 entries", text);
+        Assert.DoesNotContain("0 -> 1 entries", text);
+        using var json = JsonDocument.Parse(Json(result));
+        Assert.Equal(JsonValueKind.Null, json.RootElement.GetProperty("data").GetProperty("changes")[0].GetProperty("before").ValueKind);
     }
 
-    [Fact(DisplayName = "Index human output reports an unparseable prior generated-entry count as unknown"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
-    public void UpdatedRegionWithUnparseablePriorEntriesRendersUnknownCount()
+    [Trait("Boundary", "Output")]
+    [Fact, Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void FullJsonRetainsTypedSelectionRegionsAndRecovery()
     {
-        var result = IndexTestData.Result(
-            regions: [IndexTestData.Update(
-                outcome: IndexRegionOutcome.Verified,
-                beforeEntryCount: null)],
-            recovery: new IndexRecovery(IndexRecoveryState.Removed, residualPath: null));
-
-        var rendered = IndexHumanRenderer.Render(IndexTestData.Presentation(result));
-
-        Assert.Contains("unknown -> 1 entries (verified)", rendered, StringComparison.Ordinal);
-        Assert.DoesNotContain(": 0 -> 1 entries", rendered, StringComparison.Ordinal);
+        var result = IndexTestData.Result(regions: [IndexTestData.Update()], mode: IndexMode.DryRun);
+        using var json = JsonDocument.Parse(Json(result, CliDetail.Full));
+        var root = json.RootElement;
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal("index", root.GetProperty("command").GetString());
+        Assert.Equal("completed", root.GetProperty("status").GetString());
+        var data = root.GetProperty("data");
+        Assert.Equal("dry-run", data.GetProperty("mode").GetString());
+        Assert.Equal("explicit-sources", data.GetProperty("selection").GetProperty("origin").GetString());
+        Assert.Equal("rooted", data.GetProperty("selection").GetProperty("scope").GetString());
+        Assert.Equal("update", data.GetProperty("regions")[0].GetProperty("action").GetString());
+        Assert.Equal("not-requested", data.GetProperty("regions")[0].GetProperty("outcome").GetString());
+        Assert.Equal("not-required", root.GetProperty("recovery").GetProperty("disposition").GetString());
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
+        Assert.Empty(root.GetProperty("findings").EnumerateArray());
     }
 
-    [Fact(DisplayName = "Index JSON projection preserves exact command-local shape finite values ordering and null presence"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
-    public void JsonProjectionPreservesExactTypedShape()
+    [Trait("Boundary", "Output")]
+    [Fact, Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void JsonSupportsEverySemanticStatus()
     {
-        var result = IndexTestData.Result(
-            regions: [IndexTestData.Update()],
-            mode: IndexMode.DryRun);
-
-        var document = IndexJsonProjection.Create(result);
-
-        Assert.Equal((1, "index", "complete"), (document.SchemaVersion, document.Command, document.Status));
-        Assert.Equal("dry-run", document.Result.Mode);
-        Assert.Equal("explicit-sources", document.Result.Selection.Origin);
-        Assert.Equal("rooted", document.Result.Selection.Scope);
-        var region = Assert.Single(document.Result.Regions);
-        Assert.Equal(("update", "not-requested"), (region.Action, region.Outcome));
-        var change = Assert.IsType<IndexJsonChange>(region.Change);
-        Assert.Equal(("old\n", "new\n"), (change.BeforeBody, change.ExpectedBody));
-        Assert.Equal("not-required", document.Result.Recovery.State);
-        Assert.Null(document.Result.Recovery.ResidualPath);
-        Assert.Empty(document.Result.Findings);
-        Assert.Equal((1, 1, 0, 0, 0), (
-            document.Result.Counts.Regions,
-            document.Result.Counts.Updates,
-            document.Result.Counts.Unchanged,
-            document.Result.Counts.Applied,
-            document.Result.Counts.Verified));
-        Assert.Null(document.Next);
-    }
-
-    [Fact(DisplayName = "Index JSON renderer emits one complete document for every typed semantic status"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
-    public void JsonRendererSupportsEveryTypedStatus()
-    {
-        var retainedPath = IndexTestData.RecoveryPath("retained.zip");
         var results = new[]
         {
             IndexTestData.Result(),
-            IndexTestData.Result(
-                regions: [IndexTestData.Update(IndexRegionOutcome.Verified)],
+            IndexTestData.Result(regions: [IndexTestData.Update(IndexRegionOutcome.Unknown)],
+                findings: [IndexTestData.Finding(IndexFindingCode.WriteFailed)], recovery: new IndexRecovery(IndexRecoveryState.Unknown, null)),
+            IndexTestData.Result(regions: [IndexTestData.Update(IndexRegionOutcome.Verified)],
                 findings: [IndexTestData.Finding(IndexFindingCode.RecoveryArtifactRetained)],
-                recovery: new IndexRecovery(IndexRecoveryState.Retained, retainedPath)),
+                recovery: new IndexRecovery(IndexRecoveryState.Retained, IndexTestData.RecoveryPath("retained.zip"))),
             IndexTestData.Result(findings: [IndexTestData.Finding(IndexFindingCode.DiscoveryIncomplete)]),
             IndexTestData.Result(findings: [IndexTestData.Finding(IndexFindingCode.InvalidInput)]),
             IndexTestData.Result(findings: [IndexTestData.Finding(IndexFindingCode.TargetUnsafe)]),
-            IndexTestData.Result(
-                regions: [IndexTestData.Update(IndexRegionOutcome.Unknown)],
-                findings: [IndexTestData.Finding(IndexFindingCode.WriteFailed)],
-                recovery: new IndexRecovery(IndexRecoveryState.Unknown, residualPath: null)),
             IndexTestData.Result(findings: [IndexTestData.Finding(IndexFindingCode.Interrupted)]),
         };
-
-        Assert.Equal(
-            Enum.GetValues<CliSemanticStatus>(),
-            results.Select(result => result.Status).OrderBy(status => status));
-        foreach (var result in results)
+        var expected = new[] { "completed", "failed", "completed-with-warnings", "incomplete", "invalid-input", "blocked", "cancelled" };
+        for (var index = 0; index < results.Length; index++)
         {
-            var presentation = CliPresentationStage.Create(
-                result,
-                new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal));
-
-            using var document = JsonDocument.Parse(IndexJsonRenderer.Render(presentation));
-
-            Assert.Equal(
-                CliStatusDefinitions.Read(result.Status).MachineName,
-                document.RootElement.GetProperty("status").GetString());
-            Assert.Equal("index", document.RootElement.GetProperty("command").GetString());
+            using var json = JsonDocument.Parse(Json(results[index]));
+            Assert.Equal(expected[index], json.RootElement.GetProperty("status").GetString());
+            Assert.Equal("index", json.RootElement.GetProperty("command").GetString());
         }
     }
 
-    [Fact(DisplayName = "Index help and diagnostics retain exact public spellings and bounded streams guidance"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
-    public void HelpAndDiagnosticsUseExactPublicVocabulary()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Index output distinguishes optional metadata warnings from skipped partial sources")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void OptionalAndSkippedMetadataRenderTruthfulWarnings()
+    {
+        var optionalSource = IndexTestData.Source("root/child", ".agents/root/child.md");
+        var optional = IndexTestData.Result(
+            findings:
+            [
+                new IndexFinding(
+                    IndexFindingCode.MetadataOptional,
+                    sourceOccurrence: null,
+                    source: optionalSource,
+                    cause: "Optional authored metadata is missing.",
+                    candidates: []),
+            ]);
+        var optionalText = Text(optional);
+
+        Assert.Contains("The Entries section is current", optionalText, StringComparison.Ordinal);
+        Assert.Contains("Optional metadata is missing for .agents/root/child.md; observed values were used.", optionalText, StringComparison.Ordinal);
+        Assert.DoesNotContain("open-forge cleanup", optionalText, StringComparison.Ordinal);
+
+        var safe = IndexTestData.Source("alpha", ".agents/alpha/_alpha.md");
+        var skipped = IndexTestData.Source("beta", ".agents/beta/_beta.md");
+        var partial = IndexTestData.Result(
+            regions:
+            [
+                IndexRegion.Update(
+                    safe,
+                    new IndexRegionUpdate
+                    {
+                        BeforeEntryCount = 1,
+                        ExpectedEntryCount = 1,
+                        Change = new IndexChange("old\n", "new\n"),
+                        Outcome = IndexRegionOutcome.Verified,
+                    }),
+                IndexRegion.NotEstablished(skipped),
+            ],
+            findings:
+            [
+                new IndexFinding(
+                    IndexFindingCode.MetadataSkipped,
+                    sourceOccurrence: null,
+                    source: skipped,
+                    cause: "Malformed authored metadata was skipped.",
+                    candidates: [])
+                {
+                    Details = new IndexFindingDetails
+                    {
+                        ParentPath = skipped.Path,
+                        MetadataProblem = IndexMetadataProblem.Invalid,
+                    },
+                },
+            ],
+            recovery: new IndexRecovery(IndexRecoveryState.Removed, null));
+        var partialText = Text(partial);
+
+        Assert.Contains("Updated the Entries section in 1 of 1 file; other sources were skipped.", partialText, StringComparison.Ordinal);
+        Assert.Contains("Skipped .agents/beta/_beta.md because its authored frontmatter metadata is malformed", partialText, StringComparison.Ordinal);
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact, Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void HelpUsesGlobalFlagVocabulary()
     {
         var help = IndexHelpSections.Create();
-        var diagnostics = IndexDiagnosticRenderer.Render(
-            IndexTestData.Presentation(
-                IndexTestData.Result(mode: IndexMode.DryRun),
-                verbosity: CliVerbosity.Verbose));
-
         Assert.Contains(help.Sections, section => section.Heading == "Syntax" && section.Body.Contains("open-forge index", StringComparison.Ordinal));
-        Assert.Contains("status=complete", diagnostics, StringComparison.Ordinal);
-        Assert.Contains("mode=dry-run", diagnostics, StringComparison.Ordinal);
-        Assert.Contains("recovery=not-required", diagnostics, StringComparison.Ordinal);
-        var globalOptions = Assert.Single(help.Sections, section => section.Heading == "Global options");
-        Assert.Contains("--view <compact|expanded>", globalOptions.Body, StringComparison.Ordinal);
-        Assert.DoesNotContain("--view=<compact|expanded>", globalOptions.Body, StringComparison.Ordinal);
+        var options = Assert.Single(help.Sections, section => section.Heading == "Global options").Body;
+        Assert.Contains("--detail", options);
+        Assert.Contains("--format", options);
+        Assert.DoesNotContain("--view", options);
+        Assert.DoesNotContain("--verbose", options);
     }
+
+    private static CliSelectedReport<IndexData> Select(IndexResult result, CliDetail detail)
+    {
+        var selection = new CliSelection(detail, null);
+        var rendering = IndexPresentation.Rendering;
+        return rendering.SelectText!(CliReportTrimmer.Trim(rendering.Selector(result, selection), selection, rendering.Shape));
+    }
+    private static string Text(IndexResult result, CliDetail detail = CliDetail.Standard)
+        => CliTextRenderer.Render(Select(result, detail), CliTextStyle.Plain, IndexPresentation.Rendering.DataTextRenderer).Content;
+    private static string Json(IndexResult result, CliDetail detail = CliDetail.Standard)
+        => CliJsonRenderer.Render(Select(result, detail), IndexPresentation.Rendering.DataJsonTypeInfo);
 }

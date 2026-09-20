@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Distribution.Models;
 
 public sealed class FrameworkPayloadTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Framework payload inventory is ordinal and stable for shuffled input"), Trait("Feature", "framework-payload"), Trait("Evidence", "Unit")]
     public void InventoryIsOrdinalAndStableForShuffledInput()
     {
@@ -34,6 +35,7 @@ public sealed class FrameworkPayloadTests
         Assert.Equal(InventoryFingerprintOracle(assets), forward.InventoryFingerprint);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Framework payload inventory formula uses exact UTF-8 tab fields and literal LF"), Trait("Feature", "framework-payload"), Trait("Evidence", "Unit")]
     public void InventoryFingerprintMatchesIndependentFormula()
     {
@@ -50,6 +52,7 @@ public sealed class FrameworkPayloadTests
         Assert.DoesNotContain("\r", InventoryManifestOracle(assets), StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Framework payload rejects duplicate paths and missing required anchors"), Trait("Feature", "framework-payload"), Trait("Evidence", "Unit")]
     public void PayloadRejectsDuplicatesAndMissingAnchors()
     {
@@ -63,6 +66,7 @@ public sealed class FrameworkPayloadTests
         Assert.Throws<ArgumentException>(() => FrameworkPayload.Create([agents, claude]));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Framework payload lookup is exact ordinal and returns owned assets"), Trait("Feature", "framework-payload"), Trait("Evidence", "Unit")]
     public void FindUsesExactOrdinalIdentity()
     {

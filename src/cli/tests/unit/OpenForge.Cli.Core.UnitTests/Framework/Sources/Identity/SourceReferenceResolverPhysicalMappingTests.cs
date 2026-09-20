@@ -11,6 +11,7 @@ public sealed class SourceReferenceResolverPhysicalMappingTests
 {
     private const string CanonicalPath = ".agents/subject.md";
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Returned physical states retain exact source-reference resolution and causes"),
         InlineData((int)PhysicalPathState.Contained, (int)SourceReferenceResolutionState.Unsupported, "The exact path is not an admitted logical source."),
         InlineData((int)PhysicalPathState.Missing, (int)SourceReferenceResolutionState.Unknown, "The exact source path does not exist."),
@@ -48,6 +49,7 @@ public sealed class SourceReferenceResolverPhysicalMappingTests
         Assert.Empty(result.Candidates);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Retained candidate states keep exact causes without invoking physical resolution"),
         InlineData((int)PhysicalPathState.Contained, (int)SourceReferenceResolutionState.Unsupported, "The exact path is not an admitted logical source."),
         InlineData((int)PhysicalPathState.Missing, (int)SourceReferenceResolutionState.Unknown, "The exact source path is no longer present."),

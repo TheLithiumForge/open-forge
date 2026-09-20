@@ -1,0 +1,11 @@
+Cannot create .agents/memory/project-alpha/overview.md: .agents/memory/project-alpha has no entrypoint, so the file cannot be listed. Create the route first.
+Workspace: <workspace>
+  Error  .agents/memory/project-alpha  Parent route is missing
+         .agents/memory/project-alpha has no entrypoint, so the file cannot be listed. Create the route first.
+         open-forge route init memory/project-alpha
+         Create the missing parent route, then rerun Route Create.
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project
+  Create the missing parent route, then rerun Route Create.
+Next: open-forge route init memory/project-alpha

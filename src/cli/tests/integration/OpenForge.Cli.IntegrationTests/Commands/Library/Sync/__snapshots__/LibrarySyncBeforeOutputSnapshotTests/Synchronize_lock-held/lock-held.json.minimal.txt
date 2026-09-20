@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 3,
+  "command": "library sync",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot synchronize team-knowledge: another Open Forge command holds the workspace lock. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-sync.lock-unavailable",
+      "title": "Workspace lock is unavailable",
+      "message": "Another Open Forge command holds the workspace lock. Nothing was changed.",
+      "subject": {
+        "kind": "file",
+        "path": "team-knowledge",
+        "id": null,
+        "location": null
+      },
+      "category": "workspace-lock-unavailable",
+      "actions": []
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/directives/added.md",
+      "kind": "link",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "replaced",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksAdded": 0,
+    "linksRemoved": 0,
+    "linksUnchanged": 1,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "proposedScopes": [],
+      "approvedScopes": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/directives/added.md",
+        "action": "add",
+        "outcome": "not-started"
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "action": "update",
+        "outcome": "not-started"
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

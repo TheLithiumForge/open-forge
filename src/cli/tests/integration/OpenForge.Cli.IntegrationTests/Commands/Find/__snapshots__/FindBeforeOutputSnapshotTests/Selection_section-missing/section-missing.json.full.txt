@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 3,
+  "command": "find",
+  "status": "completed-with-warnings",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "1 source matches.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "find.projection-missing",
+      "title": "Section is missing",
+      "message": ".agents/docs/guide.md has no section named Absent.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "matches": 1,
+    "sourcesInspected": 1,
+    "sourcesCandidates": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "matches": [
+      {
+        "id": "docs/guide",
+        "path": ".agents/docs/guide.md",
+        "description": "Guide",
+        "evidence": [],
+        "parts": [
+          {
+            "part": "section:Absent",
+            "name": "Absent",
+            "layer": "base",
+            "path": ".agents/docs/guide.md",
+            "state": "missing",
+            "text": null
+          }
+        ]
+      }
+    ],
+    "query": {
+      "tags": [],
+      "headings": [],
+      "require": "all",
+      "within": [
+        "frontmatter",
+        "body"
+      ]
+    },
+    "sourceSet": {
+      "mode": "filtered",
+      "include": [
+        "docs/guide"
+      ],
+      "exclude": [],
+      "inspected": 1,
+      "candidates": 1
+    }
+  },
+  "recovery": null,
+  "next": null
+}

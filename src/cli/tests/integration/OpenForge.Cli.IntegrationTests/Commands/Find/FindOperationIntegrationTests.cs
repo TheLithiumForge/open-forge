@@ -19,6 +19,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Find;
 
 public sealed class FindOperationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Direct Find operation covers inventory, matching, projections, empty results, and attention without writes")]
     [InlineData("bare-inventory")]
     [InlineData("predicate-match")]
@@ -40,6 +41,7 @@ public sealed class FindOperationIntegrationTests
         Assert.Equal(before, workspace.SnapshotBytes());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Repeated and pre-cancelled Find operation calls stay deterministic, fresh, and read-only")]
     [InlineData("repeated")]
     [InlineData("pre-cancelled")]
@@ -341,7 +343,7 @@ public sealed class FindOperationIntegrationTests
             string.Join(",", result.Query.Within.Heading.Select(RegionFingerprint)));
         var presentation = string.Join(
             ";",
-            result.Presentation.SuppliedView?.ToString() ?? "null",
+            result.Presentation.SuppliedDetail?.ToString() ?? "null",
             result.Presentation.EffectiveView,
             string.Join(",", result.Presentation.Content.Supplied.Select(ContentFingerprint)),
             string.Join(",", result.Presentation.Content.Effective.Select(ContentFingerprint)));
@@ -570,10 +572,7 @@ public sealed class FindOperationIntegrationTests
             # Open Forge Loader
 
             ## Entries
-
-            <!-- open-forge:generated-index:start -->
             - [Docs](docs/_docs.md) - #LoadNow
-            <!-- open-forge:generated-index:end -->
             """;
 
         private readonly TemporaryWorkspace _temporary;
@@ -671,8 +670,8 @@ public sealed class FindOperationIntegrationTests
                     FindRequirement.All,
                     NaturalRegions()),
                 new FindPresentationSelection(
-                    suppliedView: null,
-                    effectiveView: CliView.Expanded,
+                    suppliedDetail: null,
+                    effectiveView: CliDetail.Standard,
                     new FindContentSelection(content.Item1, content.Item2)));
         }
 

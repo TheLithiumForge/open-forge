@@ -1,0 +1,8 @@
+Extension install stopped after 1 of 2 changes.
+Workspace: <workspace>
+  Error  .agents/toolkit.md  Writing failed
+         filesystem access was denied.
+  .agents/aaa.md      created (toolkit)
+  .agents/toolkit.md  not started
+  Source: <extension-source> (catalogue)
+  .agents/open-forge.lock.json  updated

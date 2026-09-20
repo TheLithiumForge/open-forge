@@ -1,0 +1,4 @@
+Updated the toolkit Extension to 2.0.0.
+  .agents/new.md  created (new in this version)
+  Previous content: recovery bundle at <recovery-bundle>
+Next: open-forge doctor

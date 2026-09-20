@@ -11,7 +11,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Index;
 
 internal sealed class IndexOperationWorkspace : IDisposable
 {
-    private const string StaleEntries = "stale";
+    private const string StaleEntries = "- stale";
 
     internal const string RootPath = ".agents/root/_root.md";
     internal const string ChildPath = ".agents/root/child.md";
@@ -135,6 +135,13 @@ internal sealed class IndexOperationWorkspace : IDisposable
 
     internal void ReplaceRootText(string text)
         => _temporary.ReplaceText(RootPath, text);
+
+    internal void ReplaceChildBytes(byte[] bytes)
+        => _temporary.ReplaceBytes(ChildPath, bytes);
+
+    internal void SeedLoader()
+        => _temporary.WriteText(".agents/loader.md", GeneratedLoaderDocumentBuilder.Build(
+            "- [Root](root/_root.md) - #LoadNow #Docs"));
 
     internal FileStream HoldLock()
         => _lockStore.OpenExclusive(Workspace);

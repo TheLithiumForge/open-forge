@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 3,
+  "command": "extension remove",
+  "status": "failed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Extension remove stopped after 1 of 2 changes.",
+    "kind": "failed"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-remove.write-failed",
+      "title": "Writing failed",
+      "message": "the filesystem operation failed.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/toolkit.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesRemoved": 1,
+    "filesDeleted": 2,
+    "filesKept": 0,
+    "filesReleased": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "automatic": true,
+    "packages": [
+      {
+        "id": "toolkit"
+      }
+    ],
+    "orphaned": [],
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/aaa.md",
+        "action": "delete",
+        "outcome": "verified",
+        "owner": "toolkit",
+        "keptFor": [],
+        "ownersBefore": [
+          "toolkit"
+        ],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/toolkit.md",
+        "action": "delete",
+        "outcome": "not-started",
+        "owner": "toolkit",
+        "keptFor": [],
+        "ownersBefore": [
+          "toolkit"
+        ],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/directives/_directives.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/loader.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      }
+    ],
+    "removalOrder": [
+      "toolkit"
+    ]
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge cleanup",
+    "reason": "after reviewing the bundle"
+  }
+}

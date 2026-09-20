@@ -1,0 +1,4 @@
+Would update 1 Framework file.
+Workspace: <workspace>
+  .agents/loader.md  replace (you have changed it; a recovery bundle is written first)
+No files were changed.

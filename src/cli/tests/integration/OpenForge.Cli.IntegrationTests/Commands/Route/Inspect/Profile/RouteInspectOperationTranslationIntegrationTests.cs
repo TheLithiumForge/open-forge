@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Profile;
 
 public sealed class RouteInspectOperationTranslationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect translates a Loader subject to a typed invalid result without forming a profile")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task LoaderSubjectIsInvalidWithoutProfile()
@@ -36,6 +37,7 @@ public sealed class RouteInspectOperationTranslationIntegrationTests
         RouteInspectProfileIntegrationAssertions.AssertNoWriteOrInspectionState(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect translates an unresolved ambiguous identity to a typed blocked result without a profile")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task AmbiguousIdentityIsBlockedWithoutProfile()

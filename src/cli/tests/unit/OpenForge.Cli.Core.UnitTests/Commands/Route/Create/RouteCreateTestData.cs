@@ -24,6 +24,9 @@ internal static class RouteCreateTestData
     internal const string TargetId = "memory/project-alpha/overview";
     internal const string TargetPath = ".agents/memory/project-alpha/overview.md";
 
+    internal static string RecoveryPath(string fileName = "open-forge-recovery.zip")
+        => Path.GetFullPath(Path.Combine(Path.GetTempPath(), fileName));
+
     internal static CliWorkspace Workspace()
     {
         var root = Path.GetFullPath(
@@ -36,12 +39,12 @@ internal static class RouteCreateTestData
 
     internal static CliInvocation Invocation(
         CliWorkspace? workspace = null,
-        CliOutputFormat format = CliOutputFormat.Json)
+        CliFormat format = CliFormat.Json)
     {
         var selectedWorkspace = workspace ?? Workspace();
         return new CliInvocation(
             Process: new CliProcessIdentity("open-forge", "test"),
-            Presentation: new CliPresentation(format, CliView.Expanded, CliVerbosity.Normal),
+            Presentation: new CliPresentation(format, CliDetail.Standard, null),
             TerminalMode: CliTerminalMode.None,
             WorkspaceRequest: new CliWorkspaceRequest(
                 selectedWorkspace.LexicalRoot,
@@ -177,8 +180,10 @@ internal static class RouteCreateTestData
             TargetSnapshot = FileStateSnapshot.Missing(target.Base.PhysicalPath),
             TargetSource = target,
             ParentSource = parent,
+            NavigationChanges = [],
             TemplateSource = null,
             IntendedTargetBytes = ImmutableArray.CreateRange(intendedBytes),
+            DirectoryCreations = [],
             FileChanges = [change],
             RecoveryTargets = [],
         };
@@ -194,6 +199,8 @@ internal static class RouteCreateTestData
             change.IntendedBytes.AsSpan());
         return new RouteCreateApplicationProgress
         {
+            DirectoryReceipts = [],
+            UncertainDirectoryAttempt = null,
             Receipts =
             [
                 FileChangeReceipt.Verified(

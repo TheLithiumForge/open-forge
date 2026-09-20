@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Update;
 
 public sealed class ExtensionUpdateSelectionContractTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Update selection snapshots explicit roots and preserves the selected kind"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void SelectionSnapshotsExplicitRoots()
     {
@@ -19,6 +20,7 @@ public sealed class ExtensionUpdateSelectionContractTests
         Assert.NotSame(rootIds, selection.RootIds);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Update all-package selections require an empty root set"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void AllPackageSelectionsRequireEmptyRoots()
     {
@@ -39,6 +41,7 @@ public sealed class ExtensionUpdateSelectionContractTests
             ["toolkit"]));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Update selection rejects undefined kinds null IDs duplicate IDs and blank IDs"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void SelectionRejectsInvalidKindsAndIds()
     {

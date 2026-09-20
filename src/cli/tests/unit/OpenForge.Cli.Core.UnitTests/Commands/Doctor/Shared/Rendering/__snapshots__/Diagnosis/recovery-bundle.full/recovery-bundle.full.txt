@@ -1,0 +1,9 @@
+No problems found. 1 info finding was recorded.
+Recovery data
+  Info  recovery/operation.ofr  Recovery bundle is kept [recovery.bundle-recognized]
+         A recovery bundle from an earlier command is kept at recovery/operation.ofr.
+         open-forge cleanup
+         Review and remove the kept recovery bundle.
+         state: present
+         read from recovery/operation.ofr
+  21 links and 20 routes checked.

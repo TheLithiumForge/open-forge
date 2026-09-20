@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Compose doctor and repair through visible typed domain calls instead of resolving behavior through diagnostic strings
+  description: "Historical CLI-v2 source: Compose doctor and repair through visible typed domain calls instead of resolving behavior through diagnostic strings"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

@@ -1,0 +1,12 @@
+Cannot update: Extension update needs to know which packages. Pass their IDs or --all.
+Workspace: <workspace>
+  Error  the selected  Selection is required
+         Extension update needs to know which packages. Pass their IDs or --all.
+         open-forge extension list --installed
+         List the installed Extensions, then rerun the request with an explicit selection.
+  Source: <extension-source>
+  Dependency closure: none
+  0 files unchanged
+  Grant: required none; missing none; decision not evaluated; action no action; outcome no outcome recorded
+  List the installed Extensions, then rerun the request with an explicit selection.
+Next: open-forge extension list --installed

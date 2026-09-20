@@ -113,7 +113,7 @@ generated Entries is neither atomic nor authoritative.
 The disagreement concerned filters. Some perspectives supported exact own-tag
 or literal metadata filters. Others kept tag discovery in `find` and limited the
 route catalogue to exact subtree and depth. No perspective supported fuzzy,
-  semantic, inherited-tag, or invented scope filtering.
+semantic, inherited-tag, or invented scope filtering.
 
 ## Discovery Categories Council
 

@@ -1,0 +1,12 @@
+Updated memory/project-alpha/overview
+Workspace: <workspace>
+  Path: .agents/memory/project-alpha/overview.md
+  tags: #Before #Memory -> #Docs #Guide
+  Entry updated in .agents/memory/project-alpha/_project-alpha.md
+  .agents/memory/project-alpha/overview.md  frontmatter rewritten
+    Before: <sha256>
+    After: <sha256>
+  Frontmatter before:
+    tags: [Before, Memory]
+  Frontmatter after:
+    tags: [Docs, Guide]

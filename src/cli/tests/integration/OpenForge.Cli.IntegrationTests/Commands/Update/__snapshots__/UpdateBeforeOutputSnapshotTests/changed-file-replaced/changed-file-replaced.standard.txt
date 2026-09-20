@@ -1,0 +1,6 @@
+Updated 1 Framework file.
+Workspace: <workspace>
+  .agents/loader.md  replaced (you had changed it and this release changes it)
+  13 files unchanged
+  Review previous content in the recovery bundle at <recovery-bundle>.
+Next: open-forge doctor

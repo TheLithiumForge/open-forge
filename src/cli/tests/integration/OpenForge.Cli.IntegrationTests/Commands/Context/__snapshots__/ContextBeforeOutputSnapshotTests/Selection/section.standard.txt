@@ -1,0 +1,23 @@
+Workspace: <workspace>
+  Warning  .agents/docs/_docs.md  Section is missing
+         .agents/docs/_docs.md has no section named Rules.
+  Warning  .agents/loader.md  Section is missing
+         .agents/loader.md has no section named Rules.
+  Warning  AGENTS.md  Section is missing
+         AGENTS.md has no section named Rules.
+4 sources, about 0.1k tokens.
+=== AGENTS.md ===
+included because workspace entry
+
+=== .agents/loader.md (loader) ===
+included because Loader
+
+=== .agents/docs/_docs.md (docs) ===
+included because #LoadNow from .agents/loader.md
+included because ancestor required from .agents/docs/guide.md for docs/guide
+
+=== .agents/docs/guide.md (docs/guide) ===
+included because selected source for docs/guide
+## Rules
+
+Read the [Reference](reference.md#details).

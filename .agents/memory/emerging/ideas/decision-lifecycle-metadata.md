@@ -40,4 +40,4 @@ Prefer the smallest representation that answers the recurring problem. Do not re
 - [Decisions entrypoint](../../crystallized/decisions/_decisions.md)
 - [Accepted state and synchronization](../../crystallized/documents/framework/truth.md)
 - [Memory transitions](../../crystallized/documents/framework/memory/transitions.md)
-- [Decision Template](../../../templates/memory/decision.md)
+- [Decision Template](../../../templates/planning/decision.md)

@@ -1,16 +1,11 @@
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using System.CommandLine;
 using OpenForge.Cli.Core.Commands.References;
 using OpenForge.Cli.Core.Commands.References.Models.Binding;
 using OpenForge.Cli.Core.Commands.References.Models.Request;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
-using OpenForge.Cli.Core.Commands.References.Shared.Documents.Parsing;
-using OpenForge.Cli.Core.Commands.References.Shared.Inspection;
 using OpenForge.Cli.Core.Commands.References.Shared.Resolution;
-using OpenForge.Cli.Core.Commands.References.Shared.Result;
-using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Selection;
-using OpenForge.Cli.Core.Framework.Sources.Selection;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
@@ -19,7 +14,6 @@ using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 using OpenForge.Cli.Core.Shell.Parsing.Models.Results;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Core.UnitTests.Commands.References.Shared.Presentation;
 
@@ -27,7 +21,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.References;
 
 public sealed class ReferencesBindingTests
 {
-    [Fact(DisplayName = "References symbols expose one direct source operand and the exact direction and filter options"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "References symbols expose one direct source operand and the exact direction and filter options"), Trait("Feature", "references"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
     public void SymbolsExposeExactDirectGrammar()
     {
         var symbols = ReferencesBinding.CreateSymbols();
@@ -51,7 +45,7 @@ public sealed class ReferencesBindingTests
         AssertRepeatable(symbols.Exclude);
     }
 
-    [Theory(DisplayName = "References binding applies omission and exact direction values without aliases"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "References binding applies omission and exact direction values without aliases"), Trait("Feature", "references"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
     [InlineData("omitted", (int)ReferencesDirection.Both)]
     [InlineData("in", (int)ReferencesDirection.In)]
     [InlineData("out", (int)ReferencesDirection.Out)]
@@ -77,7 +71,7 @@ public sealed class ReferencesBindingTests
         Assert.Empty(request.SelectorOccurrences);
     }
 
-    [Fact(DisplayName = "References binding preserves repeated include and exclude occurrences in global command-line order across native value forms"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "References binding preserves repeated include and exclude occurrences in global command-line order across native value forms"), Trait("Feature", "references"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
     public void BinderPreservesOrderedDuplicateFilterOccurrences()
     {
         var symbols = ReferencesBinding.CreateSymbols();
@@ -102,7 +96,7 @@ public sealed class ReferencesBindingTests
             request.SelectorOccurrences.Select(value => (value.Role, value.Value, value.Position)));
     }
 
-    [Theory(DisplayName = "References binder returns typed invalid results before workspace or domain work for semantic input errors"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "References binder returns typed invalid results before workspace or domain work for semantic input errors"), Trait("Feature", "references"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
     [InlineData("missing-source", "references.invalid-source", (int)ReferencesDirection.Both, true, true)]
     [InlineData("invalid-direction", "references.invalid-direction", null, false, false)]
     [InlineData("repeated-direction", "references.invalid-direction", null, false, false)]
@@ -134,7 +128,7 @@ public sealed class ReferencesBindingTests
         Assert.Equal(expectsIncoming, result.IncomingSelection is not null);
     }
 
-    [Fact(DisplayName = "References binder gives semantic invalid filter precedence over an unavailable workspace"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "References binder gives semantic invalid filter precedence over an unavailable workspace"), Trait("Feature", "references"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
     public void BinderPreservesInvalidFilterPrecedenceOverUnavailableWorkspace()
     {
         var symbols = ReferencesBinding.CreateSymbols();
@@ -175,76 +169,6 @@ public sealed class ReferencesBindingTests
         Assert.Contains(unavailable.Findings, finding => finding.Code == ReferencesFindingCode.WorkspaceUnavailable);
     }
 
-    [Fact(DisplayName = "Closed References binding invokes the operation once and selects exactly one renderer with optional bounded diagnostics"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
-    public async Task ClosedBindingInvokesOperationOnceAndSelectsOneRenderer()
-    {
-        var symbols = ReferencesBinding.CreateSymbols();
-        var operationCalls = 0;
-        var humanCalls = 0;
-        var jsonCalls = 0;
-        var diagnosticCalls = 0;
-        SourcePhysicalPathResolver physicalPathResolver = (_, _) => throw new InvalidOperationException(
-            "The failed operation boundary must stop before path resolution.");
-        ReferencesMarkdownParser markdownParser = _ => throw new InvalidOperationException("markdown parse must not run");
-        var operation = new ReferencesOperation(
-            new ReferencesSourceResolver(
-                (_, _) =>
-                {
-                    operationCalls++;
-                    throw new IOException("expected boundary failure");
-                },
-                new SourceReferenceResolver(physicalPathResolver),
-                new SourceUniverseFilterResolver(
-                    new SourceReferenceResolver(physicalPathResolver))),
-            new ReferencesLayerInspector(
-                (_, _, _) => throw new InvalidOperationException("layer read must not run"),
-                markdownParser),
-            new ReferencesDestinationResolver(
-                (_, _) => throw new InvalidOperationException("path resolve must not run"),
-                (_, _, _) => throw new InvalidOperationException("utf8 read must not run"),
-                markdownParser),
-            new ReferencesResultBuilder());
-        var binding = ReferencesBinding.Close(
-            symbols,
-            new ReferencesBindingComponents
-            {
-                Help = CliHelpContent.Empty,
-                Operation = operation,
-                Renderers = new CliRendererSet<ReferencesResult>(
-                    _ =>
-                    {
-                        humanCalls++;
-                        return "human";
-                    },
-                    _ =>
-                    {
-                        jsonCalls++;
-                        return "json";
-                    }),
-                DiagnosticRenderer = _ =>
-                {
-                    diagnosticCalls++;
-                    return "bounded diagnostic";
-                },
-            });
-
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-        string[] arguments = ["references", "docs"];
-        var completion = await binding.InvokeAsync(
-            new CliBindingParse(symbols.ReferencesCommand.Parse(arguments), arguments),
-            Invocation(CliOutputFormat.Json, CliVerbosity.Verbose),
-            new CliOutputWriters(output, error),
-            CancellationToken.None);
-
-        Assert.Equal(1, operationCalls);
-        Assert.Equal(0, humanCalls);
-        Assert.Equal(1, jsonCalls);
-        Assert.Equal(1, diagnosticCalls);
-        Assert.Equal(1, completion.ExitCode);
-        Assert.Equal("json" + Environment.NewLine, output.ToString());
-        Assert.Equal("bounded diagnostic" + Environment.NewLine, error.ToString());
-    }
 
     private static void AssertRepeatable(Option<string[]> option)
     {
@@ -273,13 +197,13 @@ public sealed class ReferencesBindingTests
         };
 
     private static CliInvocation Invocation(
-        CliOutputFormat format = CliOutputFormat.Json,
-        CliVerbosity verbosity = CliVerbosity.Normal)
+        CliFormat format = CliFormat.Json,
+        CliDetail? diagnosticDetail = null)
     {
         var workspace = ReferencesPresentationTestData.Workspace();
         return new CliInvocation(
             new CliProcessIdentity("open-forge", "test"),
-            new CliPresentation(format, CliView.Expanded, verbosity),
+            new CliPresentation(format, diagnosticDetail ?? CliDetail.Standard, null),
             CliTerminalMode.None,
             new CliWorkspaceRequest(workspace.LexicalRoot, workspace.LexicalRoot),
             workspace);
@@ -289,11 +213,10 @@ public sealed class ReferencesBindingTests
         => new(
             null,
             0,
-            CliOutputFormat.Json,
+            CliFormat.Json,
             0,
-            CliView.Expanded,
-            0,
-            CliVerbosity.Normal,
+            CliDetail.Standard,
+            0, null,
             0,
             false,
             0,

@@ -1,0 +1,20 @@
+Cannot inspect unknown: No Extension has the ID unknown in <extension-source>.
+Workspace: <workspace>
+  Error  unknown  Extension package is unavailable [extension-inspect.package-unavailable]
+         No Extension has the ID unknown in <extension-source>.
+         Cause: The requested package is not available from the selected source.
+         Package: unknown
+Source: <extension-source>
+Dependencies
+  none
+
+Files
+  none
+Manifest: unavailable
+Resolution order: none
+Registered in
+  none
+Record coverage: complete
+1 errors.
+  List available Extensions.
+Next: open-forge extension list

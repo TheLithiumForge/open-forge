@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Commander validates command input while other untrusted boundaries use focused runtime validation without a mandatory schema library
+  description: "Historical CLI-v2 source: Commander validates command input while other untrusted boundaries use focused runtime validation without a mandatory schema library"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

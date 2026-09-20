@@ -19,7 +19,7 @@ public sealed class PublishedRouteCreateProcessTests
             "--tag=Overview",
             "--responsibility", PublishedRouteCreateWorkspace.Responsibility,
             "--dry-run",
-            "--json",
+            "--format=json",
         ];
         var preview = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             target,
@@ -30,12 +30,16 @@ public sealed class PublishedRouteCreateProcessTests
         Assert.Equal(0, preview.ExitCode);
         Assert.Equal(string.Empty, preview.StandardError);
         using var document = JsonDocument.Parse(preview.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
-        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
+        var result = document.RootElement.GetProperty("data");
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
         Assert.Equal("dry-run", result.GetProperty("mode").GetString());
         Assert.Equal(PublishedRouteCreateWorkspace.TargetPath, result.GetProperty("target").GetProperty("path").GetString());
+
+        // The command data names the created file and the entrypoint that lists it. The complete
+        // effect receipts stay on the envelope, not inside the command data.
+        Assert.Equal(PublishedRouteCreateWorkspace.ParentPath, result.GetProperty("listedIn").GetString());
         Assert.Equal([PublishedRouteCreateWorkspace.TargetPath, PublishedRouteCreateWorkspace.ParentPath],
-            result.GetProperty("effects").EnumerateArray().Select(effect => effect.GetProperty("path").GetString()));
+            document.RootElement.GetProperty("effects").EnumerateArray().Select(effect => effect.GetProperty("path").GetString()));
         workspace.AssertNoLockInfrastructure();
     }
 
@@ -63,10 +67,11 @@ public sealed class PublishedRouteCreateProcessTests
 
         Assert.Equal(0, application.ExitCode);
         Assert.Equal(string.Empty, application.StandardError);
-        Assert.Contains("The routed file was created.", application.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Status: complete", application.StandardOutput, StringComparison.Ordinal);
+        // The headline states what was created and there is no `Status:` line.
+        Assert.StartsWith($"Created {PublishedRouteCreateWorkspace.TargetPath}", application.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", application.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
-            $"{PublishedRouteCreateWorkspace.TargetPath}: create routed-file / verified",
+            $"Listed in {PublishedRouteCreateWorkspace.ParentPath}",
             application.StandardOutput,
             StringComparison.Ordinal);
         workspace.AssertOrdinaryTargetFile();
@@ -90,12 +95,13 @@ public sealed class PublishedRouteCreateProcessTests
 
         Assert.Equal(0, noOp.ExitCode);
         Assert.Equal(string.Empty, noOp.StandardError);
-        Assert.Contains(
-            "The routed file already matches the requested content.",
+        // A no-op says so in the headline. A read-only result never prints "No files changed."
+        Assert.StartsWith(
+            $"{PublishedRouteCreateWorkspace.TargetPath} already has the requested content. Nothing to do.",
             noOp.StandardOutput,
             StringComparison.Ordinal);
-        Assert.Contains("Status: complete", noOp.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("No files changed.", noOp.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", noOp.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("No files changed.", noOp.StandardOutput, StringComparison.Ordinal);
         workspace.AssertPersistentExternalLock();
     }
 
@@ -110,19 +116,19 @@ public sealed class PublishedRouteCreateProcessTests
             workspace.SnapshotState,
             [
                 "route", "create", PublishedRouteCreateWorkspace.TargetId,
+                "--description=",
                 "--tag=Docs",
             ],
             workspace.ProcessEnvironment);
 
         Assert.Equal(4, invalid.ExitCode);
         Assert.Equal(string.Empty, invalid.StandardOutput);
-        Assert.Contains("Route Create could not start because the input is invalid.", invalid.StandardError, StringComparison.Ordinal);
-        Assert.Contains("Status: invalid", invalid.StandardError, StringComparison.Ordinal);
-        Assert.Contains(
-            "requires one nonblank --description value",
-            invalid.StandardError,
-            StringComparison.Ordinal);
-        Assert.Contains("Next: open-forge route create --help", invalid.StandardError, StringComparison.Ordinal);
+        // The invalid-input family names the exact problem, and `Next` is the corrected command
+        // rather than `--help`.
+        Assert.StartsWith("Cannot create the routed file: ", invalid.StandardError, StringComparison.Ordinal);
+        Assert.Contains("--description is missing.", invalid.StandardError, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", invalid.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge route create ", invalid.StandardError, StringComparison.Ordinal);
         workspace.AssertNoLockInfrastructure();
     }
 

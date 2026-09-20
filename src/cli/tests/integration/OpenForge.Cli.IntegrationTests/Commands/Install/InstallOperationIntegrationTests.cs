@@ -1,13 +1,20 @@
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Install;
+using OpenForge.Cli.Core.Commands.Install.Models.Operation;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
-using OpenForge.Cli.Core.Commands.Install.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Distribution;
+using OpenForge.Cli.Core.Framework.Mutation.Locking;
+using OpenForge.Cli.Core.Presentation.Install;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
+using OpenForge.Cli.IntegrationTests.Serialization.Shared.Assertions;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
@@ -15,6 +22,7 @@ public sealed class InstallOperationIntegrationTests
 {
     private const string GeneratedTargetPath = ".agents/memory/_memory.md";
     private const string LifecyclePath = ".agents/open-forge.lifecycle.json";
+    private const string OwnershipPath = InstallOperationWorkspace.OwnershipPath;
     private const string CurrentGeneratedEntry =
         "- [Accepted knowledge that should remain current](crystallized/_crystallized.md)";
     private const string StaleGeneratedEntry = "- [Stale generated entry](stale.md)";
@@ -25,72 +33,67 @@ public sealed class InstallOperationIntegrationTests
             .Append("CLAUDE.md")
             .ToArray();
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install projects a fully populated typed result into the exact JSON envelope and nested values"), Trait("Feature", "install-presentation"), Trait("Evidence", "Integration")]
     public async Task CompleteTypedResultProjectsEveryNestedValue()
     {
         using var workspace = InstallOperationWorkspace.Create("install-json-projection");
-        using var standardInput = new StringReader(string.Empty);
-        using var promptOutput = new StringWriter();
         var result = await InstallOperationFactory.Create(
-                new CliInteractiveSession(
-                    standardInput,
-                    promptOutput,
-                    canPrompt: false),
+                InstallInteractionTestSupport.Confirmation(),
                 workspace.LockStoreRoot)
             .ExecuteAsync(
                 workspace.Request(automatic: true),
                 TestContext.Current.CancellationToken);
 
-        var document = OpenForge.Cli.Core.Commands.Install.Shared.Rendering.InstallJsonProjection.Create(result);
+        var rendered = RenderJson(result, CliDetail.Full);
+        using var document = JsonDocument.Parse(rendered);
+        var root = document.RootElement;
 
-        Assert.Equal(1, document.SchemaVersion);
-        Assert.Equal("install", document.Command);
-        Assert.Equal("complete", document.Status);
-        Assert.NotNull(document.Workspace);
-        Assert.Equal(workspace.PhysicalPath, document.Workspace!.Path);
-        Assert.Equal("explicit-workspace", document.Workspace.SelectedBy);
-        Assert.Equal("apply", document.Result.Mode);
-        Assert.False(document.Result.Force);
-        Assert.True(document.Result.Automatic);
-        Assert.NotNull(document.Result.Source);
-        Assert.False(string.IsNullOrWhiteSpace(document.Result.Source!.InventoryFingerprint));
-        Assert.Equal(CompleteEmbeddedSourceAssetPaths.Count, document.Result.Source.AssetCount);
-        Assert.Equal("safe-absence", document.Result.Classification);
-        Assert.NotNull(document.Result.Footprint);
-        Assert.NotEmpty(document.Result.Effects);
-        Assert.Contains(document.Result.Effects, effect =>
-            effect.Kind == "directory"
-            && effect.Action == "create"
-            && effect.SourceAssetPath is null
-            && effect.Outcome == "verified"
-            && effect.Residual == "none");
-        Assert.Contains(document.Result.Effects, effect =>
-            effect.Kind == "file"
-            && effect.Action == "create"
-            && effect.SourceAssetPath is not null
-            && effect.Outcome == "verified"
-            && effect.Residual == "none");
-        Assert.True(document.Result.Footprint!.GeneratedRegions > 0);
-        Assert.Equal("publish", document.Result.Lifecycle.Action);
-        Assert.Equal("verified", document.Result.Lifecycle.Outcome);
-        Assert.Equal("not-required", document.Result.Recovery.State);
-        Assert.Null(document.Result.Recovery.ResidualPath);
-        Assert.Equal("verified", document.Result.Verification);
-        Assert.Empty(document.Result.Findings);
-        Assert.Null(document.Next);
+        Schema3Assertions.Envelope(root, "install", "completed", "full");
+        Assert.Equal(workspace.PhysicalPath, root.GetProperty("workspace").GetProperty("path").GetString());
+        var data = root.GetProperty("data");
+        Assert.Equal("apply", data.GetProperty("mode").GetString());
+        Assert.False(data.GetProperty("force").GetBoolean());
+        Assert.True(data.GetProperty("automatic").GetBoolean());
+        Assert.False(string.IsNullOrWhiteSpace(data.GetProperty("source").GetProperty("inventoryFingerprint").GetString()));
+        Assert.Equal(CompleteEmbeddedSourceAssetPaths.Count, data.GetProperty("source").GetProperty("assetCount").GetInt32());
+        Assert.Equal("safe-absence", data.GetProperty("classification").GetString());
+        var effects = root.GetProperty("effects");
+        Assert.NotEmpty(effects.EnumerateArray());
+        Assert.Contains(effects.EnumerateArray(), effect =>
+            effect.GetProperty("kind").GetString() == "directory"
+            && effect.GetProperty("action").GetString() == "created"
+            && effect.GetProperty("outcome").GetString() == "done");
+        Assert.Contains(effects.EnumerateArray(), effect =>
+            effect.GetProperty("kind").GetString() == "file"
+            && effect.GetProperty("action").GetString() == "created"
+            && effect.GetProperty("outcome").GetString() == "done");
+        var dataEffects = data.GetProperty("effects");
+        Assert.NotEmpty(dataEffects.EnumerateArray());
+        Assert.All(dataEffects.EnumerateArray(), effect =>
+            Assert.All(effect.EnumerateObject(), property =>
+                Assert.Contains(property.Name, new[] { "path", "sourceAssetPath" })));
+        Assert.Contains(dataEffects.EnumerateArray(), effect =>
+            effect.TryGetProperty("sourceAssetPath", out var sourceAssetPath)
+            && sourceAssetPath.ValueKind == JsonValueKind.String
+            && sourceAssetPath.GetString() is not null);
+        Assert.True(data.GetProperty("footprint").GetProperty("sections").GetInt32() > 0);
+        Assert.Equal("publish", data.GetProperty("lifecycle").GetProperty("action").GetString());
+        Assert.Equal("verified", data.GetProperty("lifecycle").GetProperty("outcome").GetString());
+        Assert.Equal("verified", data.GetProperty("verification").GetString());
+        Assert.Empty(root.GetProperty("findings").EnumerateArray());
+        Assert.Equal("not-required", root.GetProperty("recovery").GetProperty("disposition").GetString());
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install establishes the embedded Framework payload, bounded root blocks, provenance, and an exact no-op rerun"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task SafeAbsentAutomaticApplyIsExactAndIdempotent()
     {
         using var workspace = InstallOperationWorkspace.Create("install-safe-absent");
-        using var standardInput = new StringReader(string.Empty);
-        using var promptOutput = new StringWriter();
-        var session = new CliInteractiveSession(
-            standardInput,
-            promptOutput,
-            canPrompt: false);
-        var operation = InstallOperationFactory.Create(session, workspace.LockStoreRoot);
+        var operation = InstallOperationFactory.Create(
+            InstallInteractionTestSupport.Confirmation(),
+            workspace.LockStoreRoot);
 
         var first = await operation.ExecuteAsync(
             workspace.Request(automatic: true),
@@ -110,7 +113,6 @@ public sealed class InstallOperationIntegrationTests
                 Verification = InstallResultVerificationState.Verified,
                 RequireEffects = true,
             });
-        Assert.Equal(string.Empty, promptOutput.ToString());
         Assert.True(workspace.AgentsDirectoryExists());
         Assert.Equal(
             InstallOperationWorkspace.EmbeddedPayloadPaths,
@@ -145,52 +147,28 @@ public sealed class InstallOperationIntegrationTests
         var memory = await workspace.ReadTextAsync(
             ".agents/memory/_memory.md",
             TestContext.Current.CancellationToken);
-        Assert.Equal(1, Count(memory, "<!-- open-forge:generated-index:start -->"));
-        Assert.Equal(1, Count(memory, "<!-- open-forge:generated-index:end -->"));
+        Assert.Equal(1, Count(memory, "## Entries"));
+        Assert.DoesNotContain("generated-index", memory, StringComparison.Ordinal);
         Assert.Contains(
             "- [Accepted knowledge that should remain current](crystallized/_crystallized.md)",
             memory,
             StringComparison.Ordinal);
 
-        using (var lifecycle = JsonDocument.Parse(await workspace.ReadTextAsync(
-                   LifecyclePath,
-                   TestContext.Current.CancellationToken)))
+        Assert.False(workspace.Exists(LifecyclePath));
+        Assert.False(workspace.Exists(".agents/open-forge.libraries.json"));
+        using (var ownership = JsonDocument.Parse(await workspace.ReadTextAsync(
+                   OwnershipPath, TestContext.Current.CancellationToken)))
         {
-            var framework = lifecycle.RootElement.GetProperty("framework");
-            Assert.Equal("complete", framework.GetProperty("coverage").GetString());
-            Assert.Equal(
-                "embedded-framework",
-                framework.GetProperty("source").GetProperty("id").GetString());
-
-            var generatedRegionFound = false;
-            var sourceBackedTargetCount = 0;
-            foreach (var target in framework.GetProperty("targets").EnumerateArray())
-            {
-                var region = target.GetProperty("region");
-                var sourceAssetPath = target.GetProperty("sourceAssetPath");
-                if (region.ValueKind == JsonValueKind.Null)
-                {
-                    sourceBackedTargetCount++;
-                    Assert.Equal(JsonValueKind.String, sourceAssetPath.ValueKind);
-                    var sourcePath = sourceAssetPath.GetString()
-                        ?? throw new InvalidOperationException(
-                            "A source-backed Install target requires source provenance.");
-                    Assert.False(string.IsNullOrWhiteSpace(sourcePath));
-                    Assert.Contains(
-                        sourcePath,
-                        InstallOperationWorkspace.EmbeddedPayloadPaths
-                            .Append("AGENTS.md")
-                            .Append("CLAUDE.md"));
-                }
-                else
-                {
-                    generatedRegionFound = true;
-                    Assert.Equal(JsonValueKind.Null, sourceAssetPath.ValueKind);
-                }
-            }
-
-            Assert.True(generatedRegionFound);
-            Assert.True(sourceBackedTargetCount >= 2);
+            var framework = ownership.RootElement.GetProperty("framework");
+            Assert.Equal("embedded-framework", framework.GetProperty("source").GetProperty("id").GetString());
+            Assert.Equal(InstallOperationWorkspace.EmbeddedPayloadPaths,
+                framework.GetProperty("paths").EnumerateArray().Select(path => path.GetString()));
+            var regions = framework.GetProperty("regions").EnumerateArray().ToArray();
+            Assert.Contains(regions, region => region.GetProperty("path").GetString() == "AGENTS.md"
+                && region.GetProperty("region").GetString() == "open-forge");
+            Assert.Contains(regions, region => region.GetProperty("path").GetString() == "CLAUDE.md"
+                && region.GetProperty("region").GetString() == "open-forge");
+            Assert.Contains(regions, region => region.GetProperty("region").GetString() == "entries");
         }
 
         Assert.Equal(0, await workspace.ReadRecoveryCandidateCountAsync(
@@ -219,23 +197,57 @@ public sealed class InstallOperationIntegrationTests
         Assert.Equal(afterFirst, workspace.SnapshotHashes());
         Assert.Equal(0, await workspace.ReadRecoveryCandidateCountAsync(
             TestContext.Current.CancellationToken));
-        Assert.Equal(string.Empty, promptOutput.ToString());
     }
 
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Install records verified file receipts in the ownership lock"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
+    public async Task FreshInstallRecordsVerifiedFileReceiptsInOwnershipLock()
+    {
+        using var workspace = InstallOperationWorkspace.Create("install-ownership-receipts");
+        var result = await InstallOperationFactory.Create(
+                InstallInteractionTestSupport.Confirmation(),
+                workspace.LockStoreRoot)
+            .ExecuteAsync(
+                workspace.Request(automatic: true),
+                TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Empty(result.Findings);
+        Assert.False(workspace.Exists(LifecyclePath));
+        Assert.True(workspace.Exists(OwnershipPath));
+
+        var verifiedFileReceipts = result.Facts.Effects
+            .Where(effect => effect.Kind == InstallEffectKind.File)
+            .Where(effect => effect.Outcome == InstallEffectOutcome.Verified)
+            .Where(effect => effect.Path != OwnershipPath)
+            .Where(effect => effect.Path is not ("AGENTS.md" or "CLAUDE.md"))
+            .Select(effect => effect.Path)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+
+        using var ownership = JsonDocument.Parse(await workspace.ReadTextAsync(
+            OwnershipPath,
+            TestContext.Current.CancellationToken));
+        var root = ownership.RootElement;
+        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
+        var framework = root.GetProperty("framework");
+        var ownedPaths = framework
+            .GetProperty("paths")
+            .EnumerateArray()
+            .Select(path => path.GetString())
+            .ToArray();
+
+        Assert.Equal(verifiedFileReceipts, ownedPaths);
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install dry-run forms the safe-absent result without workspace, lock, or recovery effects"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task DryRunIsFullyReadOnlyFromSafeAbsence()
     {
         using var workspace = InstallOperationWorkspace.Create("install-dry-run");
         var before = workspace.SnapshotHashes();
-        using var standardInput = new StringReader(string.Empty);
-        using var promptOutput = new StringWriter();
-        var session = new CliInteractiveSession(
-            standardInput,
-            promptOutput,
-            canPrompt: false);
-
         var result = await InstallOperationFactory.Create(
-                session,
+                InstallInteractionTestSupport.Confirmation(),
                 workspace.LockStoreRoot)
             .ExecuteAsync(
             workspace.Request(
@@ -264,9 +276,9 @@ public sealed class InstallOperationIntegrationTests
         Assert.Equal(0, await workspace.ReadRecoveryCandidateCountAsync(
             TestContext.Current.CancellationToken));
         Assert.False(workspace.RecoveryDirectoryExists());
-        Assert.Equal(string.Empty, promptOutput.ToString());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install force dry-run reports an existing safe generated target as one bounded replacement"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task EligibleForceReportsBoundedGeneratedRegionReplacement()
     {
@@ -283,14 +295,8 @@ public sealed class InstallOperationIntegrationTests
                 CurrentGeneratedEntry,
                 StaleGeneratedEntry,
                 StringComparison.Ordinal));
-        using var standardInput = new StringReader(string.Empty);
-        using var promptOutput = new StringWriter();
-
         var result = await InstallOperationFactory.Create(
-                new CliInteractiveSession(
-                    standardInput,
-                    promptOutput,
-                    canPrompt: false),
+                InstallInteractionTestSupport.Confirmation(),
                 workspace.LockStoreRoot)
             .ExecuteAsync(
                 workspace.Request(
@@ -313,28 +319,64 @@ public sealed class InstallOperationIntegrationTests
         Assert.Equal(InstallEffectResidual.None, effect.Residual);
         Assert.Equal(InstallResultRecoveryState.NotCreated, result.Facts.Recovery.State);
         Assert.Null(result.Facts.Recovery.ResidualPath);
-        var document = OpenForge.Cli.Core.Commands.Install.Shared.Rendering.InstallJsonProjection.Create(result);
-        var json = JsonSerializer.Serialize(
-            document,
-            InstallJsonContext.Default.InstallJsonDocument);
+        var json = RenderJson(result, CliDetail.Full);
         using var parsed = JsonDocument.Parse(json);
-        var recovery = parsed.RootElement.GetProperty("result").GetProperty("recovery");
-        Assert.Equal("not-created", recovery.GetProperty("state").GetString());
-        Assert.Equal(JsonValueKind.Null, recovery.GetProperty("residualPath").ValueKind);
-        Assert.Equal(string.Empty, promptOutput.ToString());
+        Assert.Equal("completed", parsed.RootElement.GetProperty("status").GetString());
+        Assert.Equal("dry-run", parsed.RootElement.GetProperty("data").GetProperty("mode").GetString());
+        Assert.Equal("not-required", parsed.RootElement.GetProperty("recovery").GetProperty("disposition").GetString());
+        Assert.Equal(JsonValueKind.Null, parsed.RootElement.GetProperty("next").ValueKind);
     }
 
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Install presents a pure dry-run projection and distinct replacement count before confirmation"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
+    public async Task ConfirmationUsesPureDryRunProjectionAndTargetReplacementCount()
+    {
+        using var workspace = InstallOperationWorkspace.Create("install-confirmation-preview");
+        var payload = EmbeddedFrameworkPayloadReader.Read().Payload
+            ?? throw new InvalidOperationException("The embedded Framework payload is unavailable.");
+        var asset = payload.Find(GeneratedTargetPath)
+            ?? throw new InvalidOperationException("The embedded generated target is unavailable.");
+        var original = Encoding.UTF8.GetString(asset.Bytes.AsSpan());
+        workspace.WriteText(
+            GeneratedTargetPath,
+            original.Replace(CurrentGeneratedEntry, StaleGeneratedEntry, StringComparison.Ordinal));
+        var before = workspace.SnapshotHashes();
+        InstallResult? preview = null;
+        InstallConfirmationFacts? facts = null;
+        var result = await InstallOperationFactory.Create(
+                InstallInteractionTestSupport.Confirmation(
+                    accepted: false,
+                    observe: (candidate, question) =>
+                    {
+                        preview = candidate;
+                        facts = question;
+                    }),
+                workspace.LockStoreRoot)
+            .ExecuteAsync(
+                workspace.Request(
+                    force: true,
+                    automatic: false,
+                    allowsInteractiveConfirmation: true),
+                TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
+        var previewResult = Assert.IsType<InstallResult>(preview);
+        Assert.Equal(InstallMode.DryRun, previewResult.Mode);
+        Assert.True(previewResult.Force);
+        Assert.False(previewResult.Automatic);
+        var confirmationFacts = Assert.IsType<InstallConfirmationFacts>(facts);
+        Assert.Equal(1, confirmationFacts.ReplacementCount);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        Assert.False(Directory.Exists(WorkspaceLockPathIdentity.StoreDirectory(workspace.LockStoreRoot)));
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install force does not reconcile trusted managed divergence and preserves all bytes for update"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task ForceApplyRemainsBlockedAfterManagedPayloadDivergence()
     {
         using var workspace = InstallOperationWorkspace.Create("install-managed-divergence");
-        using var standardInput = new StringReader(string.Empty);
-        using var promptOutput = new StringWriter();
         var operation = InstallOperationFactory.Create(
-            new CliInteractiveSession(
-                standardInput,
-                promptOutput,
-                canPrompt: false),
+            InstallInteractionTestSupport.Confirmation(),
             workspace.LockStoreRoot);
 
         var first = await operation.ExecuteAsync(
@@ -374,21 +416,16 @@ public sealed class InstallOperationIntegrationTests
         Assert.Equal(beforeBlockedRun, workspace.SnapshotHashes());
         Assert.Equal(0, await workspace.ReadRecoveryCandidateCountAsync(
             TestContext.Current.CancellationToken));
-        Assert.Equal(string.Empty, promptOutput.ToString());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install non-prompt human writes are invalid and prompt refusal is interrupted without writes"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task InteractionPolicyPreservesNoWriteBoundaries()
     {
         using var nonPromptWorkspace = InstallOperationWorkspace.Create("install-nonprompt-human");
         var nonPromptBefore = nonPromptWorkspace.SnapshotHashes();
-        using var nonPromptInput = new StringReader("unused\n");
-        using var nonPromptOutput = new StringWriter();
         var nonPromptResult = await InstallOperationFactory.Create(
-                new CliInteractiveSession(
-                    nonPromptInput,
-                    nonPromptOutput,
-                    canPrompt: false),
+                InstallInteractionTestSupport.Confirmation(),
                 nonPromptWorkspace.LockStoreRoot)
             .ExecuteAsync(
                 nonPromptWorkspace.Request(
@@ -416,19 +453,11 @@ public sealed class InstallOperationIntegrationTests
         Assert.Equal("open-forge install --automatic", nonPromptNext.Command);
         Assert.Equal(nonPromptBefore, nonPromptWorkspace.SnapshotHashes());
         Assert.False(nonPromptWorkspace.AgentsDirectoryExists());
-        Assert.Equal("unused", await nonPromptInput.ReadLineAsync(
-            TestContext.Current.CancellationToken));
-        Assert.Equal(string.Empty, nonPromptOutput.ToString());
 
         using var refusalWorkspace = InstallOperationWorkspace.Create("install-prompt-refusal");
         var refusalBefore = refusalWorkspace.SnapshotHashes();
-        using var refusalInput = new StringReader("n\nremaining\n");
-        using var refusalOutput = new StringWriter();
         var refusalResult = await InstallOperationFactory.Create(
-                new CliInteractiveSession(
-                    refusalInput,
-                    refusalOutput,
-                    canPrompt: true),
+                InstallInteractionTestSupport.Confirmation(accepted: false),
                 refusalWorkspace.LockStoreRoot)
             .ExecuteAsync(
                 refusalWorkspace.Request(
@@ -454,9 +483,6 @@ public sealed class InstallOperationIntegrationTests
             });
         Assert.Equal(refusalBefore, refusalWorkspace.SnapshotHashes());
         Assert.False(refusalWorkspace.AgentsDirectoryExists());
-        Assert.NotEmpty(refusalOutput.ToString());
-        Assert.Equal("remaining", await refusalInput.ReadLineAsync(
-            TestContext.Current.CancellationToken));
     }
 
     private static IReadOnlyList<string> InstalledPayloadPaths(
@@ -467,13 +493,20 @@ public sealed class InstallOperationIntegrationTests
                 "*",
                 SearchOption.AllDirectories)
             .Select(path => Path.GetRelativePath(workspace.PhysicalPath, path).Replace('\\', '/'))
-            .Where(path => path is not LifecyclePath)
+            .Where(path => path is not (LifecyclePath or OwnershipPath))
             .Order(StringComparer.Ordinal)
             .ToArray();
 
     private static int Count(string value, string fragment)
         => (value.Length - value.Replace(fragment, string.Empty, StringComparison.Ordinal).Length)
             / fragment.Length;
+
+    private static string RenderJson(InstallResult result, CliDetail detail)
+        => CommandOutputRenderers<InstallResult>.Render(
+            new CliPresentationRequest<InstallResult>(
+                result,
+                new(CliFormat.Json, detail, null)),
+            InstallPresentation.Rendering);
 
     private static void AssertInstallFacts(
         InstallResult result,
@@ -508,10 +541,10 @@ public sealed class InstallOperationIntegrationTests
                 effect => Assert.Null(effect.SourceAssetPath));
             Assert.All(
                 facts.Effects.Where(effect => effect.Kind == InstallEffectKind.File
-                    && effect.Path != LifecyclePath),
+                    && effect.Path != OwnershipPath),
                 effect => Assert.False(string.IsNullOrWhiteSpace(effect.SourceAssetPath)));
             Assert.All(
-                facts.Effects.Where(effect => effect.Path == LifecyclePath),
+                facts.Effects.Where(effect => effect.Path == OwnershipPath),
                 effect => Assert.Null(effect.SourceAssetPath));
         }
 

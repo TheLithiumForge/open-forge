@@ -8,6 +8,7 @@
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <PublishAot>true</PublishAot>
     <IsAotCompatible>true</IsAotCompatible>
+    <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
     <RuntimeIdentifiers>$(OpenForgeAotRuntimeIdentifiers)</RuntimeIdentifiers>
     <OpenForgeDevelopmentPublishDirectory>$(ArtifactsPath)/publish/open-forge-dev/$(Configuration)/</OpenForgeDevelopmentPublishDirectory>
     <OpenForgeDevelopmentExecutableSuffix Condition="'$(OS)' == 'Windows_NT'">.exe</OpenForgeDevelopmentExecutableSuffix>
@@ -15,7 +16,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../core/OpenForge.Cli.Core/OpenForge.Cli.Core.csproj" />
+    <ProjectReference Include="../../output-text/OpenForge.Cli.OutputText/OpenForge.Cli.OutputText.csproj" />
+    <ProjectReference Include="../../framework/OpenForge.Cli.Framework/OpenForge.Cli.Framework.csproj" />
+    <ProjectReference Include="../../shell/OpenForge.Cli.Shell/OpenForge.Cli.Shell.csproj" />
+    <ProjectReference Include="../../operations/OpenForge.Cli.Operations/OpenForge.Cli.Operations.csproj" />
+    <ProjectReference Include="../../rendering/OpenForge.Cli.Rendering/OpenForge.Cli.Rendering.csproj" />
   </ItemGroup>
 
   <ItemGroup>

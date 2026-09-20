@@ -1,0 +1,5 @@
+Updated memory/project-alpha/overview, but the Template body was not copied.
+Workspace: <workspace>
+  description: "Before overview" -> "After overview"
+  The file already has content, which was kept. The Template templates/route was not copied.
+  Entry updated in .agents/memory/project-alpha/_project-alpha.md

@@ -50,7 +50,5 @@ shared filter meaning.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Technology-neutral resolution, expansion, set formation, safety, determinism, and conformance for shared source-universe filters](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #Source #Universe #Filter #Behavior #Determinism #CurrentTruth
 - [Shared caller-visible contract for operation-specific source-universe selection](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #Source #Universe #Filter #Interface #CurrentTruth
-<!-- open-forge:generated-index:end -->

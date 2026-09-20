@@ -1,0 +1,6 @@
+Open Forge is installed, but 1 thing needs attention.
+  Warning  <recovery-bundle>  Recovery bundle is kept
+         A recovery bundle from an earlier command is kept at <recovery-bundle>.
+         open-forge cleanup
+  Startup reads 11 of 13 routed files, about 5.7k tokens.
+Next: open-forge cleanup

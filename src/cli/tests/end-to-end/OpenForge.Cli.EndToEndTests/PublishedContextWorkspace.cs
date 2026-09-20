@@ -59,19 +59,17 @@ internal sealed class PublishedContextWorkspace : IDisposable
             workspace.WriteText(
                 ".agents/loader.md",
                 "# Loader\n\n## Entries\n\n"
-                + "<!-- open-forge:generated-index:start -->\n"
-                + "- [Startup](startup/_startup.md) - #LoadNow #Core\n"
+                    + "- [Startup](startup/_startup.md) - #LoadNow #Core\n"
                 + "- [Projects](projects/_projects.md) - #Project\n"
-                + "<!-- open-forge:generated-index:end -->\n");
+                );
             workspace.WriteText(
                 ".agents/startup/_startup.md",
                 Document(
                     "Startup",
                     "LoadNow, Core",
                     "# Startup\n\n## Entries\n\n"
-                    + "<!-- open-forge:generated-index:start -->\n"
-                    + "- [Topic](topic.md) - #KeepInMind #Core\n"
-                    + "<!-- open-forge:generated-index:end -->\n"));
+                            + "- [Topic](topic.md) - #KeepInMind #Core\n"
+                    + ""));
             workspace.WriteText(
                 ".agents/startup/topic.md",
                 Document("Topic", "KeepInMind, Core", "# Topic\n\nStartup topic.\n"));
@@ -81,11 +79,10 @@ internal sealed class PublishedContextWorkspace : IDisposable
                     "Projects",
                     "Project",
                     "# Projects\n\n## Entries\n\n"
-                    + "<!-- open-forge:generated-index:start -->\n"
-                    + "- [Guide](guide.md) - #KeepInMind #Guide\n"
+                            + "- [Guide](guide.md) - #KeepInMind #Guide\n"
                     + "- [Linked](linked.md) - #Guide\n"
                     + "- [Broken](broken.md) - #Guide\n"
-                    + "<!-- open-forge:generated-index:end -->\n"));
+                    + ""));
             workspace.WriteText(
                 ".agents/projects/guide.md",
                 Document(

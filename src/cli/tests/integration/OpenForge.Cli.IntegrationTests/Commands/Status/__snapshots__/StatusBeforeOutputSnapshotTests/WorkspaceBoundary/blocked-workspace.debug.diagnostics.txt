@@ -1,0 +1,3 @@
+status=blocked
+findings=1
+The selected workspace is missing.

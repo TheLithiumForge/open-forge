@@ -1,0 +1,18 @@
+Would create .agents/memory/project-alpha/overview.md  (memory/project-alpha/overview)
+Workspace: <workspace>
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project
+  Would list it in .agents/memory/project-alpha/_project-alpha.md
+--- .agents/memory/project-alpha/overview.md (new file) ---
+---
+open-forge:
+  description: Project overview
+  tags: [Docs, Overview]
+  responsibility: Explains the project
+---
+  Entries section: .agents/memory/project-alpha/_project-alpha.md
+    Before: <sha256>
+    After: <sha256>
+    Verification: planned
+No files were changed.

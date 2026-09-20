@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 3,
+  "command": "extension update",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot update: Extension update needs to know which packages. Pass their IDs or --all.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-update.selection-required",
+      "title": "Selection is required",
+      "message": "Extension update needs to know which packages. Pass their IDs or --all.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "the selected",
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge extension list --installed",
+          "reason": "List the installed Extensions, then rerun the request with an explicit selection."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "A multi-package Extension source requires explicit Extension IDs or --all."
+        }
+      ],
+      "provenance": {
+        "source": "<extension-source>",
+        "path": "<extension-source>",
+        "location": null
+      }
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesUpdated": 0,
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [],
+    "previousContent": null,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "unchanged": [],
+    "sections": [],
+    "dependencies": [],
+    "effects": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension list --installed",
+    "reason": "List the installed Extensions, then rerun the request with an explicit selection."
+  }
+}

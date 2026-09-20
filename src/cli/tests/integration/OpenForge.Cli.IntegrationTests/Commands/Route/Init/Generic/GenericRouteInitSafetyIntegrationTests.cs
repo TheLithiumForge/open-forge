@@ -8,6 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init.Generic;
 
 public sealed class GenericRouteInitSafetyIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Generic Route Init rejects unsafe target forms before filesystem effects"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     [InlineData("loader")]
     [InlineData(".agents/memory")]
@@ -30,6 +31,7 @@ public sealed class GenericRouteInitSafetyIntegrationTests
         Assert.Equal(RouteInitRecoveryState.NotRequired, result.Recovery.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init rejects a missing exact compatibility entrypoint without canonicalizing it"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task MissingExactCompatibilityEntrypointIsReadOnly()
     {
@@ -49,6 +51,7 @@ public sealed class GenericRouteInitSafetyIntegrationTests
         Assert.Equal(RouteInitRecoveryState.NotRequired, result.Recovery.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Generic Route Init rejects malformed explicit metadata before creating a target"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     [InlineData(" ", false, "Ready", "Docs", "description")]
     [InlineData("Ready", true, " ", "Docs", "responsibility")]
@@ -80,6 +83,7 @@ public sealed class GenericRouteInitSafetyIntegrationTests
         Assert.False(workspace.Exists(".agents"));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init blocks an ordinary-file route collision before creating descendants"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task OrdinaryFileCollisionIsBlockedWithoutWrites()
     {
@@ -97,6 +101,7 @@ public sealed class GenericRouteInitSafetyIntegrationTests
         Assert.False(workspace.Exists(".agents/memory/project"));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init blocks a physical directory alias that escapes the workspace"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task ExternalDirectoryAliasIsBlockedWithoutWrites()
     {
@@ -119,13 +124,14 @@ public sealed class GenericRouteInitSafetyIntegrationTests
         Assert.False(workspace.Exists(".agents/memory/project/_project.md"));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init blocks a malformed Loader generated boundary before any route write"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task MalformedLoaderBoundaryIsReadOnly()
     {
         using var workspace = GenericRouteInitIntegrationWorkspace.Create("route-init-generic-malformed-loader");
         workspace.WriteText(
             ".agents/loader.md",
-            "# Loader\n\n<!-- open-forge:generated-index:start -->\n\n- malformed without end marker\n");
+            "# Loader\n\n## Entries\n\n## Entries\n");
         var before = workspace.SnapshotHashes();
 
         var result = await ExecuteAsync(
@@ -138,6 +144,7 @@ public sealed class GenericRouteInitSafetyIntegrationTests
         Assert.False(workspace.Exists(".agents/memory"));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init blocks a malformed existing generated region before creating a child"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task MalformedExistingGeneratedRegionIsReadOnly()
     {
@@ -146,10 +153,8 @@ public sealed class GenericRouteInitSafetyIntegrationTests
             ".agents/memory/_memory.md",
             "---\nopen-forge:\n  description: Memory\n  tags: [Memory]\n---\n\n# memory\n\n"
                 + "## Entries\n\n"
-                + "<!-- open-forge:generated-index:start -->\n"
-                + "<!-- open-forge:generated-index:start -->\n"
-                + "\n- malformed duplicate start marker\n"
-                + "<!-- open-forge:generated-index:end -->\n");
+                        + "## Entries\n\n- duplicate heading\n"
+                );
         var before = workspace.SnapshotHashes();
 
         var result = await ExecuteAsync(
@@ -162,6 +167,7 @@ public sealed class GenericRouteInitSafetyIntegrationTests
         Assert.False(workspace.Exists(".agents/memory/project/_project.md"));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init reports a held real workspace lock without creating a directory or recovery artifact"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task HeldWorkspaceLockIsReadOnly()
     {
@@ -183,6 +189,7 @@ public sealed class GenericRouteInitSafetyIntegrationTests
         Assert.Equal(0, await workspace.RecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init cancellation before lease acquisition leaves the workspace untouched"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task PreCancelledRequestIsReadOnly()
     {

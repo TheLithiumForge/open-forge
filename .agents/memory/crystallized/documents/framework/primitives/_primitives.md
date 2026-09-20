@@ -17,7 +17,6 @@ Core primitives are distinct reusable content roles. A primitive's kind determin
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Current Directive role, routed activation, binding scope, authority composition, conflict handling, and relationship with Framework Axioms](directives.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Core #Directive #Authority #Loading #Scope
 - [Current Guidance role, advisory authority, contextual adaptation, scope, and relationships with binding and structural Core primitives](guidance.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Core #Guidance #Judgment #Scope
 - [Current Map role, coarse destination mapping, destination authority, scalable organization, scope, and relationship with Framework routing](map.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Core #Map #Navigation #Scope
@@ -26,4 +25,3 @@ Core primitives are distinct reusable content roles. A primitive's kind determin
 - [Current Skill role, native runtime boundary, routed discovery, resource ownership, scope, and composition with other Core primitives](skills.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Core #Skill #Capability #Interoperability
 - [Current Template role, instantiation, ownership transfer, specialization, update boundary, and relationship with continuing Core contracts](templates.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Core #Template #Ownership #Instantiation
 - [Current Workflow role, minimal recipe contract, explicit relationships, composition, and `route` boundaries](workflows.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Core #Workflow #Goal #Composition
-<!-- open-forge:generated-index:end -->

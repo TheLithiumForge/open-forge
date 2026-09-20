@@ -19,6 +19,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Query;
 
 public sealed class FindQueryParserTests
 {
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Find tags use the accepted scalar grammar and equivalent predicates keep their first occurrence")]
     [InlineData("tag-unicode")]
     [InlineData("heading-unicode")]
@@ -162,6 +163,7 @@ public sealed class FindQueryParserTests
         }
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Find requirement remains flat for all and any and enforces predicate dependencies")]
     [InlineData("valid-modes")]
     [InlineData("invalid-dependencies")]
@@ -228,6 +230,7 @@ public sealed class FindQueryParserTests
         throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "The Find requirement scenario is not defined.");
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Find escaped region and content lists preserve supplied input and canonical effective order")]
     [InlineData("escaped-order")]
     [InlineData("escaped-unicode")]
@@ -368,6 +371,7 @@ public sealed class FindQueryParserTests
         throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "The Find escaped-list scenario is not defined.");
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Find region compatibility and document or body subsumption remain exact")]
     [InlineData("valid-subsumption")]
     [InlineData("invalid-incompatibility")]
@@ -455,7 +459,7 @@ public sealed class FindQueryParserTests
             withinValue,
             contentValue,
             null,
-            CliView.Expanded);
+            CliDetail.Standard);
     }
 
     private static FindRequest BindContent(string withinValue, string contentValue)
@@ -498,7 +502,7 @@ public sealed class FindQueryParserTests
     {
         return new CliInvocation(
             new CliProcessIdentity("open-forge", "test"),
-            new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal),
+            new CliPresentation(CliFormat.Json, CliDetail.Standard, null),
             CliTerminalMode.None,
             new CliWorkspaceRequest(workspace.LexicalRoot, workspace.LexicalRoot),
             workspace);

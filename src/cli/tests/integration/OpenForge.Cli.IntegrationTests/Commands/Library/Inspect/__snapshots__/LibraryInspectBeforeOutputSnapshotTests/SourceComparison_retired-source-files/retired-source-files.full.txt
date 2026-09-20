@@ -1,0 +1,10 @@
+team-knowledge needs a sync: 1 file differs between shared/team and ..
+Workspace: <workspace>
+  Warning  .agents/directives/review.md  Source file is gone [library-inspect.path-retired]
+         .agents/directives/review.md  linked, but its source file is gone
+  .agents/directives/review.md  source file gone
+      Expected target: ../../shared/team/.agents/directives/review.md
+      Observed target: ../../shared/team/.agents/directives/review.md
+Source inventory: 0 eligible files, 0 excluded items.
+  Preview the synchronization before changing files.
+Next: open-forge library sync team-knowledge --dry-run

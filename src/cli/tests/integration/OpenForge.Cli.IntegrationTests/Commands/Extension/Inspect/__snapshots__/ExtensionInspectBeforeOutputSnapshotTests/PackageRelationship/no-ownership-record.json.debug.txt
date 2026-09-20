@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 3,
+  "command": "extension inspect",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "toolkit 1.0.0 is available. No ownership record exists, so installation cannot be checked.",
+    "kind": "done"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "extension-inspect.ownership-observation",
+      "title": "Ownership record is unavailable",
+      "message": "No ownership record exists, so installation cannot be checked.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": ".agents/open-forge.lock.json",
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "Cause",
+          "value": "No Extension ownership is recorded; installed packages cannot be established."
+        }
+      ],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesUnchanged": 0,
+    "filesChanged": 0,
+    "filesMissing": 0,
+    "filesNew": 0,
+    "filesRetired": 0,
+    "dependencies": 1,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "toolkit",
+    "installed": null,
+    "available": {
+      "version": "1.0.0"
+    },
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "matches": false,
+    "files": [
+      {
+        "path": ".agents/toolkit.md",
+        "relation": "not-applicable",
+        "installedSha256": null,
+        "packageSha256": "<sha256>"
+      }
+    ],
+    "dependencies": [
+      {
+        "id": "toolkit",
+        "version": "1.0.0",
+        "state": "available"
+      }
+    ],
+    "name": "toolkit",
+    "description": "Extension package toolkit.",
+    "manifestPath": "toolkit/extension.json",
+    "resolutionOrder": [
+      "toolkit"
+    ],
+    "registeredIn": [],
+    "recordCoverage": "incomplete"
+  },
+  "recovery": null,
+  "next": null
+}

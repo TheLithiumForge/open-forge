@@ -13,10 +13,9 @@ public sealed class PublishedLibrarySyncProcessTests
         workspace.Link();
         workspace.Record(PublishedLibraryWorkspace.ReviewPath);
         using var document = PublishedLibraryWorkspace.Result(
-            await workspace.ReadOnlyAsync(PublishedExecutableTarget.Discover(), "library", "sync", "team-knowledge", "--json"), "complete");
-        var result = document.RootElement.GetProperty("result");
-        Assert.Empty(result.GetProperty("plan").GetProperty("links").EnumerateArray());
-        Assert.Equal("none", result.GetProperty("plan").GetProperty("recordEffect").GetString());
+            await workspace.ReadOnlyAsync(PublishedExecutableTarget.Discover(), "library", "sync", "team-knowledge", "--format=json"), "completed");
+        var result = document.RootElement.GetProperty("data");
+        Assert.Empty(result.GetProperty("effects").EnumerateArray());
         workspace.AssertSource();
         workspace.AssertNoInfrastructure();
     }
@@ -31,14 +30,13 @@ public sealed class PublishedLibrarySyncProcessTests
         workspace.GrantDocs();
         var target = PublishedExecutableTarget.Discover();
         using var preview = PublishedLibraryWorkspace.Result(
-            await workspace.ReadOnlyAsync(target, "library", "sync", "team-knowledge", "--dry-run", "--json"), "complete");
+            await workspace.ReadOnlyAsync(target, "library", "sync", "team-knowledge", "--dry-run", "--format=json"), "completed");
         workspace.AssertNoInfrastructure();
         try
         {
             using var applied = PublishedLibraryWorkspace.Result(
-                await workspace.RunAsync(target, "library", "sync", "team-knowledge", "--json"), "complete");
-            Assert.Equal(preview.RootElement.GetProperty("result").GetProperty("plan").GetRawText(),
-                applied.RootElement.GetProperty("result").GetProperty("plan").GetRawText());
+                await workspace.RunAsync(target, "library", "sync", "team-knowledge", "--automatic", "--format=json"), "completed");
+            Assert.Equal(EffectShapes(preview.RootElement), EffectShapes(applied.RootElement));
             Assert.Null(new FileInfo(workspace.Combine("docs/old.md")).LinkTarget);
             Assert.Equal("../../shared/team-knowledge/future/new.md", new FileInfo(workspace.Combine("docs/future/new.md")).LinkTarget);
             using var record = JsonDocument.Parse(File.ReadAllText(workspace.Combine(PublishedLibraryWorkspace.RecordPath)));
@@ -62,7 +60,7 @@ public sealed class PublishedLibrarySyncProcessTests
     }
 
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "EndToEnd")]
-    public async Task ChangedOccupantBlocksWholeSync()
+    public async Task ChangedOccupantWithIndependentWorkStillRequiresConfirmation()
     {
         using var workspace = new PublishedLibraryWorkspace();
         workspace.Source();
@@ -70,9 +68,20 @@ public sealed class PublishedLibrarySyncProcessTests
         workspace.Record(PublishedLibraryWorkspace.ReviewPath);
         workspace.Write(PublishedLibraryWorkspace.ReviewPath, "Changed consumer occupant.");
         using var document = PublishedLibraryWorkspace.Result(
-            await workspace.ReadOnlyAsync(PublishedExecutableTarget.Discover(), "library", "sync", "team-knowledge", "--json"), "blocked", 5);
+            await workspace.ReadOnlyAsync(PublishedExecutableTarget.Discover(), "library", "sync", "team-knowledge", "--format=json"), "invalid-input", 4);
+        Assert.Contains(document.RootElement.GetProperty("findings").EnumerateArray(),
+            finding => finding.GetProperty("code").GetString() == "library-sync.confirmation-required");
         Assert.False(File.Exists(workspace.Combine(".agents/directives/new.md")));
         workspace.AssertSource();
         workspace.AssertNoInfrastructure();
     }
+
+    private static string[] EffectShapes(JsonElement document)
+        => document.GetProperty("data").GetProperty("effects").EnumerateArray()
+            .Select(effect => string.Join(
+                "|",
+                effect.GetProperty("path").GetString(),
+                effect.GetProperty("action").GetString(),
+                effect.TryGetProperty("target", out var target) ? target.GetString() : null))
+            .ToArray();
 }

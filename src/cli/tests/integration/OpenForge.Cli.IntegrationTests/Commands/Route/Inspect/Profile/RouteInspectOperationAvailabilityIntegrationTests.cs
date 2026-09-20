@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Profile;
 
 public sealed class RouteInspectOperationAvailabilityIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect keeps own bytes and local Axioms when a visible LoadNow body is unreadable")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task UnreadableDescendantDoesNotCollapseIndependentFacts()
@@ -53,6 +54,7 @@ public sealed class RouteInspectOperationAvailabilityIntegrationTests
         RouteInspectProfileIntegrationAssertions.AssertNoWriteOrInspectionState(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect keeps local Axioms and topology when source metadata is unavailable instead of treating the source as on demand")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task MissingMetadataLeavesLoadingFactsUnavailable()
@@ -103,16 +105,32 @@ public sealed class RouteInspectOperationAvailabilityIntegrationTests
         RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Reading.TaskStart);
         RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Reading.Automatic);
         RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Reading.Later);
-        RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Measurements.SelectedClosure);
-        RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Measurements.TaskStartOverlap);
-        RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Measurements.SelectionAddition);
-        RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Measurements.LoadNowDescendants);
+        RouteInspectProfileIntegrationAssertions.AssertMeasurement(
+            profile.Measurements.SelectedClosure,
+            workspace,
+            ".agents/root/_root.md",
+            ".agents/root/selected/_selected.md",
+            ".agents/root/selected/load.md");
+        RouteInspectProfileIntegrationAssertions.AssertMeasurement(
+            profile.Measurements.TaskStartOverlap,
+            workspace,
+            ".agents/root/_root.md");
+        RouteInspectProfileIntegrationAssertions.AssertMeasurement(
+            profile.Measurements.SelectionAddition,
+            workspace,
+            ".agents/root/selected/_selected.md",
+            ".agents/root/selected/load.md");
+        RouteInspectProfileIntegrationAssertions.AssertMeasurement(
+            profile.Measurements.LoadNowDescendants,
+            workspace,
+            ".agents/root/selected/load.md");
         RouteInspectProfileIntegrationAssertions.AssertSemanticConditionAndNext(
             result,
             RouteInspectConditionCode.UnavailableFact);
         RouteInspectProfileIntegrationAssertions.AssertNoWriteOrInspectionState(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect keeps own bytes, local Axioms, and topology when generated Entries are unavailable")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task MissingEntriesLeaveLoadingMeasurementsUnavailable()

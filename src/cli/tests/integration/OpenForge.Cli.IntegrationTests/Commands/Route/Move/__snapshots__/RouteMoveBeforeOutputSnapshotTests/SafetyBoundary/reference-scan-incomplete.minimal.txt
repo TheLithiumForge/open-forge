@@ -1,0 +1,4 @@
+guidance/old guide could not be moved: Some files could not be scanned for links to invalid.md, so the move was not planned. Nothing was changed.
+Workspace: <workspace>
+  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+Next: open-forge doctor

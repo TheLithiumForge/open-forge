@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 3,
+  "command": "library inspect",
+  "status": "completed-with-warnings",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "team-knowledge needs a sync: 1 file differs between shared/team and ..",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "library-inspect.path-added",
+      "title": "Source file is not linked",
+      "message": ".agents/directives/added.md  not linked yet; new in the source folder",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/directives/added.md",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sourceFiles": 2,
+    "linksCurrent": 1,
+    "filesAdded": 1,
+    "filesRetired": 0,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team",
+    "destinationFolder": ".",
+    "current": false,
+    "files": [
+      {
+        "sourcePath": ".agents/directives/added.md",
+        "destinationPath": ".agents/directives/added.md",
+        "relation": "added",
+        "expectedTarget": null,
+        "observedTarget": null
+      },
+      {
+        "sourcePath": ".agents/directives/review.md",
+        "destinationPath": ".agents/directives/review.md",
+        "relation": "current",
+        "expectedTarget": "../../shared/team/.agents/directives/review.md",
+        "observedTarget": "../../shared/team/.agents/directives/review.md"
+      }
+    ],
+    "inventory": {
+      "eligible": 2,
+      "excluded": 0
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge library sync team-knowledge --dry-run",
+    "reason": "Preview the synchronization before changing files."
+  }
+}

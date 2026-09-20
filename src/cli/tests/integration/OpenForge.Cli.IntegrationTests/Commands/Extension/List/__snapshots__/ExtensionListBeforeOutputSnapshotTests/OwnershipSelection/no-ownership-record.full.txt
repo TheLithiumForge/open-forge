@@ -1,0 +1,22 @@
+Workspace: <workspace>
+  Info  .agents/open-forge.lock.json  Ownership record is unavailable [extension-list.ownership-observation]
+         No ownership record exists, so installed packages cannot be listed from it.
+         Cause: No Extension ownership is recorded; installed packages cannot be established.
+Source: embedded catalogue
+Installed  (no ownership record, so installed packages cannot be listed)
+
+Available (bundled with this CLI)
+  collaboration        0.3.0  Explore choices and match collaboration depth to the decision
+  development          0.3.0  Implement changes, investigate defects, and review results with the workspace's existing tools                       (2 packages)
+    needs: workflows
+  development-toolkit  0.3.0  Project knowledge, planning, and development methods in one optional selection                                       (5 packages)
+    needs: development, planning, project-documents
+  orchestration        0.3.0  Coordinate related tasks, capture useful execution learning, and transfer work safely                                (4 packages)
+    needs: development, planning
+  planning             0.3.0  Explore possibilities, preserve accepted choices, and organize work with optional records and a planning method      (2 packages)
+    needs: workflows
+  project-documents    0.3.0  Maintain current project knowledge with a Documents convention, five templates, and Vision and Architecture methods  (2 packages)
+    needs: workflows
+  workflows            0.3.0  Select and follow scoped methods through one native use-workflow Skill
+  Install one of the available Extensions.
+Next: open-forge extension install <id>

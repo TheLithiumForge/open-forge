@@ -1,0 +1,1 @@
+Cannot synchronize team-knowledge: The selected Library destinations require shared permission in .agents/open-forge.json; use --allow-path <path> to record a grant. Nothing was changed.

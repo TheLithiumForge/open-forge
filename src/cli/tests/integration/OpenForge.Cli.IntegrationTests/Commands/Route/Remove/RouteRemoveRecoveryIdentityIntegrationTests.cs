@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveRecoveryIdentityIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory, InlineData(false), InlineData(true), Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task CleanupRequiresThePreparedAttribution(bool changed)
     {

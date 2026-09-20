@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 3,
+  "command": "extension list",
+  "status": "blocked",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot list Extensions: The explicit Extension source overlaps the selected workspace.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-list.source-blocked",
+      "title": "Extension source is blocked",
+      "message": "<workspace> cannot be used as a source: it is inside the workspace.",
+      "subject": {
+        "kind": "source",
+        "path": null,
+        "id": "<workspace>",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "installed": 0,
+    "available": null,
+    "errors": 1,
+    "infos": 1
+  },
+  "limitations": [
+    {
+      "what": "available packages",
+      "why": "The explicit Extension source overlaps the selected workspace.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "source": {
+      "kind": null,
+      "path": "<workspace>"
+    },
+    "installed": [],
+    "available": []
+  },
+  "recovery": null,
+  "next": null
+}

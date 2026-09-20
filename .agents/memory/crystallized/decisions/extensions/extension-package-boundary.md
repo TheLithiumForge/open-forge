@@ -40,7 +40,7 @@ and recoverability.
 This decision applies across two distinct CLI surfaces. The frozen TypeScript
 `open-forge-old` executable uses `open-forge.extensions.json` as its Extension
 receipt. The accepted non-shipping replacement uses the `extensions` section of
-`.agents/open-forge.lifecycle.json`. It does not read, recognize, migrate, alias,
+`.agents/open-forge.lock.json`. It does not read, recognize, migrate, alias,
 or fall back to the frozen receipt. The replacement leaves the old receipt
 untouched; it remains ordinary workspace content outside replacement authority.
 `open-forge-old` retains its existing receipt behavior. Both CLI surfaces remain

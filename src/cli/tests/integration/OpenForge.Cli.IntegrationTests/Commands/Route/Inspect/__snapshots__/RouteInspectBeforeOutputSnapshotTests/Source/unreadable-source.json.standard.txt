@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "incomplete",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "docs/guide  .agents/docs/guide.md",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "route-inspect.unreadable-source",
+      "title": "Source could not be read",
+      "message": ".agents/docs/guide.md could not be read completely.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/guide.md",
+        "id": ".agents/docs/guide.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "ownBytes": null,
+    "ownTokens": null,
+    "addedFiles": null,
+    "addedBytes": null,
+    "addedTokens": null,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "docs/guide",
+    "path": ".agents/docs/guide.md",
+    "kind": "markdown",
+    "entrypointForm": "markdown",
+    "overwritePath": null,
+    "belongs": {
+      "routeChain": [
+        "docs",
+        "guide"
+      ],
+      "parent": "docs",
+      "directChildren": {
+        "files": 0,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 0,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": null,
+      "automaticallyWhen": null,
+      "mayReadAgain": null
+    },
+    "size": {
+      "own": null,
+      "adds": null,
+      "loadNow": null
+    },
+    "axioms": {
+      "inheritedFrom": [],
+      "local": "not applicable"
+    },
+    "tags": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Review the unavailable route fact, then rerun route inspect."
+  }
+}

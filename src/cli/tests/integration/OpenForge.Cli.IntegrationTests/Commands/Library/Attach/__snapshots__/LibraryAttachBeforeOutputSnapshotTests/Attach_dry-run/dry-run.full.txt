@@ -1,0 +1,14 @@
+Would register the team-knowledge Library from shared/team-knowledge.
+Workspace: <workspace>
+  Info  .  Ownership record is missing [library-attach.ownership-observation]
+         No ownership record exists, so the team-knowledge Library cannot be read from it.
+  .agents/directives/review.md  -> ../../shared/team-knowledge/.agents/directives/review.md
+  Would create 1 link under .agents/directives
+  Source inventory: 1 eligible file, 0 excluded items
+  Would record the Library in .agents/open-forge.lock.json
+  Permission evaluation: no outside permission was needed. Required paths: none. Missing paths: none. No grant was saved.
+  Expected state: .agents/directives/review.md (will be absent)
+  Expected state: .agents/open-forge.lock.json (will be absent)
+  Verification: verification has not started; 0 of 1 links created; the Library was not recorded
+  No recovery data was requested.
+No files were changed.

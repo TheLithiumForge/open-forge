@@ -1,0 +1,12 @@
+status=invalid-input
+mode=apply
+source=missing
+destination=.agents/guidance/new guide.md
+subject=none
+completeness=not-established
+safety=not-established
+effects=0
+recovery=not required
+verification=not run
+findings=1
+finding=route-move.source-not-found:target=missing:cause=The source ID does not identify a retained logical source.

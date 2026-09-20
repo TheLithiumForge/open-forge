@@ -15,8 +15,9 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Update;
 
 public sealed class UpdateRecoveryIdentityIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory, InlineData(false), InlineData(true), Trait("Feature", "update"), Trait("Evidence", "Integration")]
-    public async Task CleanupRequiresThePreparedCommand(bool changed)
+    public async Task RetainedVerificationRequiresThePreparedCommand(bool changed)
     {
         using var temporary = TemporaryWorkspace.Create("update-recovery-identity");
         var workspace = new CliWorkspace(
@@ -57,7 +58,7 @@ public sealed class UpdateRecoveryIdentityIntegrationTests
                 preparation.Attribution);
             string[] protectedPaths = ["target.md"];
 
-            var result = await UpdateRecoveryOperation.CleanupAsync(lease, preparation, protectedPaths, TestContext.Current.CancellationToken);
+            var result = await UpdateRecoveryOperation.VerifyRetainedAsync(lease, preparation, protectedPaths, TestContext.Current.CancellationToken);
 
             await observed.AssertTargetsUnchangedAsync();
             Assert.Equal(protectedPaths, result.Recovery.ProtectedPaths);
@@ -72,10 +73,10 @@ public sealed class UpdateRecoveryIdentityIntegrationTests
             }
             else
             {
-                Assert.False(File.Exists(preparation.BundlePath));
-                Assert.Equal(UpdateRecoveryState.Removed, result.Recovery.State);
+                Assert.True(File.Exists(preparation.BundlePath));
+                Assert.Equal(UpdateRecoveryState.Retained, result.Recovery.State);
                 Assert.Null(result.Finding?.Code);
-                Assert.Null(result.Recovery.ResidualPath);
+                Assert.Equal(preparation.BundlePath, result.Recovery.ResidualPath);
             }
         }
         finally

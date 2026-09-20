@@ -1,0 +1,5 @@
+documents is already initialized. Nothing to do.
+Workspace: <workspace>
+  Scaffold: generic
+  .agents/documents/_documents.md  already present
+  Recovery: no recovery bundle was needed.

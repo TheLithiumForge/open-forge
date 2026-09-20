@@ -1,0 +1,12 @@
+status=failed
+mode=apply
+source=guidance/old guide
+destination=guidance/new guide
+subject=leaf
+completeness=complete
+safety=safe
+effects=9
+recovery=retained
+verification=unknown
+findings=1
+finding=route-move.write-failed:target=.agents/guidance/new guide.md:cause=UnauthorizedAccessException (0x80070005): Filesystem access was denied.

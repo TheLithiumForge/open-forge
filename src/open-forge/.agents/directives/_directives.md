@@ -8,20 +8,18 @@ open-forge:
 
 ## What behavior is required in this scope?
 
-Directives state the instructions that must be followed within their scope.
+Directives define required agent behavior within a scope.
 
 ## Axioms
 
-- Every sibling Directive listed under an entrypoint's `Entries` carries #LoadNow.
-- Each sibling Directive has one non-empty `## Instructions` section.
-- Sibling Directives listed by this root entrypoint apply throughout the workspace.
-- A selected child entrypoint sets the narrower scope before its sibling Directives load.
-- Those Instructions apply only within the child route's scope.
+- Each Directive file in the same folder as an entrypoint must be listed in its `Entries` with #LoadNow.
+- Each of these files has one non-empty `## Instructions` section.
+- Directive files in this root entrypoint's folder apply throughout the workspace.
+- Select a child entrypoint before loading its Directive files. Their Instructions apply only within that narrower scope.
+- Child entrypoints remain on demand unless explicitly given a loading tag.
 - Child Directives add to active parent Directives. A narrower scope does not create higher authority.
 - Report any conflict or instruction that cannot be followed, and explain why.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - none - No entries - #Empty
-<!-- open-forge:generated-index:end -->

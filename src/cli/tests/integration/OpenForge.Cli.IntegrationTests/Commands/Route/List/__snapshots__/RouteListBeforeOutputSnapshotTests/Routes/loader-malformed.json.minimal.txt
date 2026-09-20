@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 3,
+  "command": "route list",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot list routes: .agents/loader.md has no usable Entries section.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-list.loader-malformed",
+      "title": "Loader is malformed",
+      "message": ".agents/loader.md has no usable Entries section.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/loader.md",
+        "id": ".agents/loader.md",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routes": 0,
+    "roots": 0,
+    "depth": 1,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "subject": null,
+    "depth": 1,
+    "rows": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the route boundary with open-forge doctor."
+  }
+}

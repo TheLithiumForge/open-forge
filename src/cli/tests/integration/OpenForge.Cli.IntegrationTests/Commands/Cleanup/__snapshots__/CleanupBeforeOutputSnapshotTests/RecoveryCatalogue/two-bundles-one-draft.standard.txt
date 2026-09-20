@@ -1,0 +1,5 @@
+Removed 2 recovery bundles and 1 unfinished draft.
+Workspace: <workspace>
+  <recovery-bundle-1>    removed (bundle from index, verified)
+  <recovery-bundle-2>    removed (bundle from repair, verified)
+  <recovery-bundle-3>  removed (unfinished draft, incomplete)

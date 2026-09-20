@@ -1,0 +1,7 @@
+Would update memory/project-alpha/overview
+Workspace: <workspace>
+  Path: .agents/memory/project-alpha/overview.md
+  description: "Before overview" -> "After overview"
+  Entry updated in .agents/memory/project-alpha/_project-alpha.md
+  .agents/memory/project-alpha/overview.md  frontmatter rewritten
+No files were changed.

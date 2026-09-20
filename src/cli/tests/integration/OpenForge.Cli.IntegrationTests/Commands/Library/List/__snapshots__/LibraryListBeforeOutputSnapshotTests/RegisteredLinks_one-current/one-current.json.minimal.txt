@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 3,
+  "command": "library list",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "1 Library registered.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "libraries": 1,
+    "linksCurrent": 1,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "linksUnavailable": 0
+  },
+  "limitations": [],
+  "data": {
+    "libraries": [
+      {
+        "id": "team-knowledge",
+        "sourceFolder": "shared/team",
+        "destinationFolder": ".",
+        "links": {
+          "current": 1,
+          "missing": 0,
+          "changed": 0,
+          "unavailable": 0
+        }
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

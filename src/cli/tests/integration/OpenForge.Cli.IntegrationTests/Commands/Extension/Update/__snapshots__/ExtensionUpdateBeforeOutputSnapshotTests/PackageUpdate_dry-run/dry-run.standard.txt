@@ -1,0 +1,8 @@
+Would update the toolkit Extension to 1.0.0.
+Workspace: <workspace>
+  .agents/toolkit.md  replace (you had changed it and this version changes it)
+  Source: <extension-source>
+  Dependency closure: toolkit
+  0 files unchanged
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+No files were changed.

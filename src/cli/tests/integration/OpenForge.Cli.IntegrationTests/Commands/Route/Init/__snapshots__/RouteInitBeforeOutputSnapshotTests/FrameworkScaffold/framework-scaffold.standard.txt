@@ -1,0 +1,6 @@
+memory/working is already initialized. Nothing to do.
+Workspace: <workspace>
+  Scaffold: framework
+  .agents/open-forge.lock.json  updated
+  .agents/memory/_memory.md  already present
+  .agents/memory/working/_working.md  already present

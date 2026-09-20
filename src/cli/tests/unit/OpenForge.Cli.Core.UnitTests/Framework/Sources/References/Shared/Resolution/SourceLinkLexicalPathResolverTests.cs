@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.References.Shared.Resol
 
 public sealed class SourceLinkLexicalPathResolverTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "A contained lexical destination retains both exact coordinates"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void ContainedDestinationRetainsBothCoordinates()
     {
@@ -20,6 +21,7 @@ public sealed class SourceLinkLexicalPathResolverTests
         Assert.Equal(".agents/target.md", result.CanonicalPath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "A synthetic volume-root source has no containing directory or result coordinates"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void SyntheticVolumeRootSourceHasNoContainingDirectory()
     {
@@ -37,6 +39,7 @@ public sealed class SourceLinkLexicalPathResolverTests
         Assert.Null(result.CanonicalPath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "A decoded NUL destination retains the filtered malformed outcome without coordinates"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void DecodedNullCharacterIsMalformedWithoutCoordinates()
     {
@@ -52,6 +55,7 @@ public sealed class SourceLinkLexicalPathResolverTests
         Assert.Null(result.CanonicalPath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Traversal outside the lexical workspace yields no result coordinates"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void OutsideTraversalHasNoCoordinates()
     {

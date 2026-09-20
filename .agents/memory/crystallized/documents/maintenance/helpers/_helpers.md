@@ -16,7 +16,5 @@ These helpers support repository authoring, review, and maintenance through cons
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Plain-language dictionary for consistent Open Forge terms](dictionary.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Helper #Internal #Dictionary #Terminology
 - [Repository-only maintainer helper mapping Open Forge knowledge roles to the primary questions they answer](knowledge-roles.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Helper #Internal #KnowledgeRole
-<!-- open-forge:generated-index:end -->

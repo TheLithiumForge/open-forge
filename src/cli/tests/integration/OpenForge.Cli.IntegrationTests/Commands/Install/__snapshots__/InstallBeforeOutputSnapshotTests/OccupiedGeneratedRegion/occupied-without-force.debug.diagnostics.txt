@@ -1,0 +1,11 @@
+status=blocked
+mode=apply
+force=false
+automatic=true
+classification=eligible-initial-occupant
+effects=0
+lifecycle=none/not-requested
+recovery=not-required
+verification=not-requested
+findings=1
+next=present

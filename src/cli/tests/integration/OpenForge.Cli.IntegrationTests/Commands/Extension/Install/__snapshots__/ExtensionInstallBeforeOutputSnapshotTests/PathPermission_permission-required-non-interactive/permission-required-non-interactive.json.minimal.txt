@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot install team: it writes outside .agents and no grant allows that.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-install.permission-required",
+      "title": "Permission is required",
+      "message": "Cannot install team: it writes outside .agents and no grant allows that.",
+      "subject": {
+        "kind": "file",
+        "path": "team",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge extension install team --allow-path .apm/agents/team.md",
+          "reason": "Or add \".apm/agents/team.md\" to allowInstallPaths in .agents/open-forge.json."
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "path": ".apm",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".apm/agents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".apm/agents/team.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": "team"
+    }
+  ],
+  "counts": {
+    "packagesInstalled": 0,
+    "filesCreated": 0,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "source": {
+      "kind": "package",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "team",
+        "version": "1.0.0",
+        "selected": true,
+        "requiredBy": []
+      }
+    ],
+    "permissions": {
+      "decision": "required",
+      "required": [
+        ".apm/agents/team.md"
+      ],
+      "missing": [
+        ".apm/agents/team.md"
+      ],
+      "saved": false
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension install team --allow-path .apm/agents/team.md",
+    "reason": "Or add \".apm/agents/team.md\" to allowInstallPaths in .agents/open-forge.json."
+  }
+}

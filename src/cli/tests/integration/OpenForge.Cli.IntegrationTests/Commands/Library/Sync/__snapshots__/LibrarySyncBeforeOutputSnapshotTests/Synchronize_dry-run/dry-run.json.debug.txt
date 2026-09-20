@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 3,
+  "command": "library sync",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Would synchronize team-knowledge: 1 link to add.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/directives/added.md",
+      "kind": "link",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "linksAdded": 1,
+    "linksRemoved": 0,
+    "linksUnchanged": 1,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "proposedScopes": [],
+      "approvedScopes": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/directives/added.md",
+        "action": "add",
+        "outcome": "planned",
+        "target": "../../shared/team-knowledge/.agents/directives/added.md"
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "action": "update",
+        "outcome": "planned"
+      }
+    ],
+    "unchanged": [
+      ".agents/directives/review.md"
+    ],
+    "inventory": {
+      "rootState": "available",
+      "inventoryState": "complete",
+      "eligiblePaths": [
+        {
+          "sourcePath": ".agents/directives/added.md",
+          "destinationPath": ".agents/directives/added.md",
+          "sourceId": "directives/added"
+        },
+        {
+          "sourcePath": ".agents/directives/review.md",
+          "destinationPath": ".agents/directives/review.md",
+          "sourceId": "directives/review"
+        }
+      ],
+      "excludedPaths": [],
+      "unavailablePaths": [],
+      "lexicalRoot": "<workspace>\\shared\\team-knowledge",
+      "physicalRoot": "<workspace>\\shared\\team-knowledge",
+      "lexicallyContained": true,
+      "physicallyContained": true
+    },
+    "expectedStates": [
+      {
+        "path": ".agents/directives/added.md",
+        "kind": "missing",
+        "length": null,
+        "sha256": null,
+        "target": null
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "kind": "ordinary-file",
+        "length": null,
+        "sha256": "<sha256>",
+        "target": null
+      }
+    ],
+    "verification": {
+      "state": "not-started",
+      "recordPublication": "not-started",
+      "publishedLast": null
+    },
+    "recovery": {
+      "state": "not-requested",
+      "path": null,
+      "residuals": []
+    }
+  },
+  "recovery": null,
+  "next": null
+}

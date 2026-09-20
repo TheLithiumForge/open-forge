@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 3,
+  "command": "update",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Updated 1 Framework file.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/loader.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": "you had changed it and this release changes it",
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesReplaced": 1,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 13,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": true,
+    "prune": false,
+    "automatic": true,
+    "previousContent": null,
+    "lockPath": ".agents/open-forge.lock.json"
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Review previous content in the recovery bundle at <recovery-bundle>."
+  }
+}

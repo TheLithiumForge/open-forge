@@ -1,0 +1,6 @@
+Cannot list routes: .agents/loader.md has no usable Entries section.
+Workspace: <workspace>
+  Error  .agents/loader.md  Loader is malformed [route-list.loader-malformed]
+         .agents/loader.md has no usable Entries section.
+  Inspect the route boundary with open-forge doctor.
+Next: open-forge doctor

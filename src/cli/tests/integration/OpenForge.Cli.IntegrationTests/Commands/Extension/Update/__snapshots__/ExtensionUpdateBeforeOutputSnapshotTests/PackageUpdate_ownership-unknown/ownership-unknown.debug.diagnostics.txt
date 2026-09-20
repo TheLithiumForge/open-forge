@@ -1,0 +1,5 @@
+status=completed-with-warnings
+packages=0
+effects=0
+findings=1
+The selected Extension has no recorded ownership.

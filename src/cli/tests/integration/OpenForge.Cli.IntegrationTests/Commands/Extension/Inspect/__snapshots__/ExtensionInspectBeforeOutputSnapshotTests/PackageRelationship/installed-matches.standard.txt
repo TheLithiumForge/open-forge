@@ -1,0 +1,9 @@
+toolkit 1.0.0 is installed and matches the package.
+Workspace: <workspace>
+Source: <extension-source>
+Dependencies
+  toolkit  1.0.0  available
+
+Files
+  .agents/toolkit.md  unchanged
+1 file unchanged, 1 dependency.

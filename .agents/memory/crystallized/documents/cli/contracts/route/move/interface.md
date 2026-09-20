@@ -10,9 +10,9 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the caller-visible
-Interface Contract for `route move`. The command does not ship yet. Its
-implementation and complete executable proof are squash-integrated by the
-commit containing this record; replacement-CLI delivery remains pending. It is
+Interface Contract for `route move`. The command is implemented in the merged
+CLI. Its implementation and complete executable proof are squash-integrated by
+the commit containing this record. It is
 one explicit mutation operation, not a generic batch or apply surface.
 
 The sibling [Behavior Contract](behavior.md) defines the deterministic,
@@ -66,7 +66,7 @@ The command is stateless and deterministic for unchanged workspace bytes and
 explicit input. A successful move changes the old source identity into a new
 destination identity. Repeating the same move with the consumed old source is
 not a verified no-op: it produces the non-mutating exact source-not-found
-`invalid` result. The operation creates no receipt, tombstone, journal, saved plan, or
+`invalid-input` result. The operation creates no receipt, tombstone, journal, saved plan, or
 history used to manufacture provenance.
 
 ## Syntax
@@ -79,11 +79,13 @@ open-forge route move <source-reference> <destination-target>
 
 The command path selects the move operation. It requires exactly one source
 reference and exactly one destination target. The shared [Global CLI Flags](../../shared/global-flags/interface.md)
-contract defines `--workspace`, `--json`, `--view`, `--verbose`, `--help`, and
-`--version`; all six apply under that contract.
+contract defines `--workspace <path>`, `--format <text|json>`,
+`--detail <minimal|standard|full|debug>`, repeatable
+`--detail-filter <error|warning|info|all>`, `--help`, and `--version`; all six
+apply under that contract.
 
 Omitting the source or destination still selects `route move` and produces its
-typed `invalid` result without workspace mutation. Supplying a third positional
+typed `invalid-input` result without workspace mutation. Supplying a third positional
 operand is different: the shared shell parser rejects that unmatched input as
 `cli.parser.invalid` before Route Move binding, workspace selection, or domain
 execution. That shell-owned
@@ -106,7 +108,7 @@ therefore use the same explicit two-operand request and never prompt.
 | Operand                | Role                                                                        | Accepted value                                                                                       | Omission and repetition                   |
 | ---------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | `<source-reference>`   | Select one existing eligible logical leaf or recognized category entrypoint | One shared automatic source ID or exact `.agents/...` path, narrowed by this command's subject rules | Required; exactly one source subject      |
-| `<destination-target>` | Select one exact new leaf target or category entrypoint target              | One command-specific exact workspace-contained ordinary routed file target or entrypoint path        | Required; exactly one destination subject |
+| `<destination-target>` | Select one exact new leaf target or category entrypoint target              | One exact filesystem target or accepted logical leaf ID for a leaf, or an exact category entrypoint path | Required; exactly one destination subject |
 
 The source operand follows the shared source-reference classification: `.agents/`
 and `./.agents/` prefixes request exact paths, and every other value is an
@@ -114,11 +116,18 @@ automatic source ID. The CLI does not guess between the two forms. An ID that
 does not resolve to exactly one eligible subject is not repaired by ranking,
 basename matching, or route proximity.
 
-The destination target is not a source reference. It is an exact workspace-
-relative target under `.agents`, with the file or entrypoint shape required by
-the selected subject kind. It does not use a directory operand, a fuzzy target,
-an automatic destination inferred from a name, or a target outside the selected
-workspace. The parser and physical-identity realization follow the accepted [CLI
+The destination target is not a source reference. A leaf destination may be an
+exact workspace-relative filesystem path under `.agents`, preserving the
+explicit path grammar, or an accepted logical leaf ID resolved by the canonical
+route rules. For example, `guidance/team/moved-note` maps to
+`.agents/guidance/team/moved-note.md`. A logical leaf ID has no `.agents/`
+prefix or `.md` suffix, uses slash-separated route segments, and contains no
+`.` or `..` segment. Category destinations remain exact filesystem
+entrypoint paths; the logical leaf form never invents a category or route.
+The parent route must already exist after canonicalization. The destination
+does not use a directory operand, a fuzzy target, an automatic destination
+inferred from a name, or a target outside the selected workspace. The parser
+and physical-identity realization follow the accepted [CLI
 Architecture](../../../architecture.md); the exact subject and destination
 meaning remain this contract's public boundary.
 
@@ -210,36 +219,36 @@ physical identity cannot remain contained are outside this boundary.
 
 ## Positive Unmanaged Proof
 
-Before a leaf or category can enter a mutation plan, the command must successfully
-load a complete trusted lifecycle-ownership inventory for the selected workspace.
-The inventory includes the Framework baseline and every applicable Extension
-receipt or manager claim. It must establish that no trusted lifecycle source
-claims any selected logical source or resource.
+The command reads Framework and Extension ownership from the forgiving
+`.agents/open-forge.lock.json` reader. A complete interpretable inventory must
+establish that none of the selected logical sources or resources is claimed
+before a mutation plan can form. Both whole-file and region receipts protect
+their hosts, including portable case aliases. One claim protects the whole
+selected category; the operation never skips a claimed member.
 
-For a category, this proof covers every selected item, not only the root
-entrypoint. A single claim, ownership conflict, stale claim, or unresolved item
-blocks the complete category plan.
+Missing, unreadable or uninterpretable ownership does not infer unmanaged state.
+It produces `ownership-unavailable` with complete informational status, no plan
+or effects, and ownership shown as not-established. The summary explicitly says
+that no route changed. Schema/release metadata and stale content hashes are not
+gates. Actual ownership, physical safety, route and reference conflicts remain
+blocking boundaries. The exact lock expectation is revalidated before and after
+mutation. No legacy record is read, migrated or deleted; these commands neither
+adopt current content nor release or rewrite ownership.
 
-The following do not prove unmanaged status by themselves:
-
-- failing to find one receipt or looking in one lifecycle source;
-- a path, route placement, tag, generated entry, or familiar folder name;
-- matching bytes, matching fingerprints, or an apparently initial file; or
-- a previous command result, recommendation, or absence of a marker.
-
-Missing, malformed, conflicting, stale, or incomplete lifecycle-ownership
-inventory is a blocking authority condition. The command does not adopt content,
-release ownership, repair lifecycle records, migrate receipts, or continue on a
-partial inventory.
+Path names, routing tags, generated lines, matching bytes and prior command
+results cannot independently establish unmanaged status. Framework-aware Route
+Init's region receipts remain positive ownership even in a user-authored host.
 
 ## Destination Target
 
 The destination kind must match the selected subject:
 
 - A leaf destination is one exact ordinary routed Markdown file target below an
-  existing valid parent route. Its base path must be unoccupied, and an existing
-  file, directory, entrypoint, native source, overwrite companion, alias, or
-  unsupported resource at that target blocks the move.
+  existing valid parent route, expressed either as an explicit filesystem path
+  or as an accepted logical leaf ID that canonicalizes to that path. Its base
+  path must be unoccupied, and an existing file, directory, entrypoint, native
+  source, overwrite companion, alias, or unsupported resource at that target
+  blocks the move.
 - A category destination is one exact destination entrypoint path inside a new
   category folder whose parent is an existing valid route. For example, with
   existing parent route `.agents/archive/_archive.md`, destination
@@ -250,10 +259,11 @@ The destination kind must match the selected subject:
   plan.
 
 The existing parent route must already be valid and have exactly one recognized
-entrypoint. The command does not initialize an implicit parent chain, create a
-missing parent route, or infer a destination from a familiar slug. A category
-root folder may be created as the direct move effect, but no missing ancestor
-route is initialized as a side effect.
+entrypoint. The command canonicalizes an accepted logical leaf ID before these
+parent, occupancy, and safety checks. It does not initialize an implicit parent
+chain, create a missing parent route, or infer a destination from a familiar
+slug. A category root folder may be created as the direct move effect, but no
+missing ancestor route is initialized as a side effect.
 
 The command rejects:
 
@@ -282,7 +292,7 @@ unsafe for ordinary Route Move mutation. The command keeps its existing
 `blocked` target-safety result, identifies the affected path, and performs no
 effect.
 
-This boundary does not consult `.agents/open-forge.libraries.json`. A missing,
+This physical-leaf boundary does not depend on Library registration state. A missing,
 malformed, stale, or otherwise unreadable Library record neither makes the
 final leaf ordinary nor grants Route Move mutation authority. Route Move never
 resolves a final filesystem leaf and then deletes or moves its physical source
@@ -341,8 +351,8 @@ generated region is included only when its direct-child projection changes under
 the moved topology.
 
 The projection uses current authored topology and metadata, not current generated
-lines, to derive entries. It preserves each valid marker pair and every byte
-outside the bounded generated interior. It never starts a hidden `index`
+lines, to derive entries. It preserves the Entries heading and every byte
+outside the heading-owned generated body. It never starts a hidden `index`
 subprocess. A generated boundary or required sibling projection that cannot be
 established safely prevents the complete plan.
 
@@ -385,7 +395,7 @@ complete category inventory, reference catalogue, intended rewrites, generated
 projection, plan, expected-state checks, and preflight as application. It shows
 every moved, created, removed, rewritten, detached, and generated effect needed
 to review the complete operation, then writes nothing. Planned changes alone do
-not create `attention`.
+not create `completed-with-warnings`.
 
 When the final-leaf safety boundary fails, dry-run and application retain the
 same existing `blocked` target-safety result and produce no effect.
@@ -398,7 +408,7 @@ does not accept `--yes`.
 The explicit consent covers only the selected leaf or complete category, its
 exact destination, supported reference rewrites, and generated projections in
 the complete plan. It does not grant ownership, lifecycle, collision,
-containment, marker-repair, or recovery bypass authority.
+containment, heading-repair, or recovery bypass authority.
 
 For an actual application, the complete plan checks every existing path it may
 change or remove through ordinary workspace facts. It does not inspect or report
@@ -413,7 +423,7 @@ Environment.SpecialFolderOption.Create)` and its application-owned
 `HOME`, or custom-platform fallback; unavailable storage is a
 pre-effect `incomplete` result. The complete move operation prepares exactly
 one immutable ZIP bundle outside the workspace. Its
-source-generated schema-v1 `manifest.json` and streamed ordinal payload
+source-generated versioned `manifest.json` and streamed ordinal payload
 entries record command/operation/workspace identity, ordered relative targets,
 change kinds, exact prior bytes/lengths/hashes, and intended final absence or
 length/hash. `Create` effects and semantic/byte no-ops have no entry. A CreateNew
@@ -429,7 +439,7 @@ mismatched, or colliding bundles block.
 After all effects and final verification succeed, delete only the positively
 recognized bundle created by this operation. `Deleted`/`Removed` permits normal
 completion. `Failed`/positively observed `Retained` keeps target effects
-successful and produces `attention`, the exact
+successful and produces `completed-with-warnings`, the exact
 residual path, and cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion
 result provides one. Before post-verification deletion begins, a handled
 application, verification, or cancellation outcome stops new effects and reports
@@ -441,237 +451,266 @@ separate lease-bound contract.
 
 ## Human Output
 
-Both views start with the outcome, `Status`, `Workspace`, and `Selected by`,
-followed by command identity and mode. Expanded remains the default. Compact
-uses the same typed result and retains completeness, safety, every affected and
-unchanged path, every finding with its status, cause, stable code and available
-target, and verification and recovery facts. A failure heading reports the
-semantic outcome; it does not claim that no mutation occurred. Effect outcomes
-and residual state describe any partial work.
+Every semantic result is rendered by the shared native report. --format text
+is the default. The applicable global flags are --workspace <path>, --format
+<text|json>, --detail <minimal|standard|full|debug>, repeatable
+--detail-filter <error|warning|info|all>, --help, and --version. The default
+detail is minimal; standard adds workspace and command context, full adds all
+bounded facts, and debug adds bounded diagnostics on stderr. Detail does not
+change semantics, effects, counts, or status. Filters select finding severities;
+all is the default filter.
 
-Each required `Next:` line contains the actual command from the result, once.
-Expanded adds its reason on the following line; compact omits that explanation.
-Complete results have no Next action. Other statuses retain at most one direct
-correction or recovery action supplied by the operation. Rendering does not
-invent advice, change status, or select another action.
+Route move does not ask for confirmation and has no --automatic flag. The complete reference pass is planned before any effect.
 
-Primary human `complete`, `attention`, and `incomplete` results use stdout.
-Primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
-stderr. Each result stays together on its assigned stream. Separate bounded
-diagnostics use stderr. JSON remains one complete structured result on stdout.
+The catalogue text by detail level is:
 
-Both views retain source and destination IDs and paths, leaf/category identity,
-every subject layer and category member, ownership state and coverage, every
-reference rewrite, generated-navigation coverage and effect, and every
-protected recovery path. Expanded also includes the underlying ownership claims.
+`minimal`, leaf with rewritten links:
 
-Reference rows show source path with line and column, destination source path,
-exact before/expected literals and old/expected target identity. Byte coordinates
-remain structured detail. Every effect retains its action, kind, before/expected
-path state and fingerprints, outcome and residual state in both views. Dry-run
-output retains every exact planned effect and ends with
-`No files changed (--dry-run).`
+```text
+Moved memory/emerging/ideas/pricing/tiers to .agents/memory/emerging/ideas/pricing/tier-options.md
+  Entry updated in .agents/memory/emerging/ideas/pricing/_pricing.md
+  Rewrote 2 links that pointed at the old path:
+    .agents/maps/_maps.md:12:3
+    .agents/guidance/team.md:40:5
+```
 
-Success headings use `The routed file was moved.` or
-`The routed category was moved.`; previews use `would be moved`. Attention keeps
-the verified result and its findings. Failed or interrupted results retain all
-partial effects, protected paths and recovery details without claiming that
-nothing moved. They report `Route Move failed.` or `Route Move was interrupted.`
-respectively, with any operation-supplied recovery command.
+`minimal`, category:
+
+```text
+Moved the route memory/projects/alpha to .agents/memory/archived/alpha  (6 files)
+  .agents/memory/projects/alpha/_alpha.md        -> .agents/memory/archived/alpha/_alpha.md
+  .agents/memory/projects/alpha/plan.md          -> .agents/memory/archived/alpha/plan.md
+  ...
+  Entry removed from .agents/memory/projects/_projects.md
+  Entry added to .agents/memory/archived/_archived.md
+  Rewrote 1 link that pointed at the old paths: .agents/maps/_maps.md:20:3
+```
+
+`standard` adds `Workspace:` and per rewritten link `<old destination> ->
+<new destination>`, plus the overwrite file rows when a pair moved.
+
+`full` adds hashes per effect and the reference scan summary (`28 files
+scanned`).
+
+Results with completed, completed-with-warnings, or incomplete status use
+stdout. Invalid-input, blocked, failed, and cancelled results use stderr.
+A parser failure is text on stderr without a result envelope.
 
 ## Structured Output
 
-`--json` emits one complete structured result to stdout for every semantic status
-from the same typed result used by human output. It never prompts and never
-reruns resolution, planning, application, verification, or retained-state
-reporting. Human text
-is not mixed into JSON stdout; bounded diagnostics use stderr.
+--format json emits one schema-3 envelope on stdout for each semantic result.
+The envelope has exactly these fields:
 
-The structured result exposes the concrete command result under the exact shared
-schema defined by the [Shared Result
-Coordinates](../../shared/result-coordinates/interface.md):
+~~~text
+{
+  schemaVersion: 3,
+  command,
+  status,
+  detail,
+  filter,
+  workspace,
+  summary,
+  findings,
+  effects,
+  counts,
+  limitations,
+  data,
+  recovery,
+  next
+}
+~~~
 
-- workspace and selection method;
-- requested and resolved source and destination identities and canonical paths;
-- selected subject kind, logical layers, and complete category item inventory;
-- trusted Framework and Extension ownership-evidence state;
-- reference catalogue coverage, every rewritten occurrence, and its old and new
-  target meaning;
-- generated-region selection, projection, and bounded effect evidence;
-- dry-run or application mode, completeness, safety, recovery-bundle facts;
-- expected-state, changed, unchanged, and verified effect facts, plus any actual
-  residual draft or final recovery path, without classifying current target state;
-- application, verification, bundle provenance, and retained partial-state facts; and
-- semantic status and at most one required `Next:` action.
+The command is exactly route move; data follows the catalogue:
 
-The structured result keeps the exact source and destination subjects visible. It
-does not hide a category behind a count or omit a reference effect merely because
-the human compact view is selected.
+| Level    | `data`                                                                                                                                                 |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| minimal  | `{ mode, subject: "file" \| "route", source { id, path }, destination { id, path }, moved: [ { from, to } ], rewrittenLinks: [ { path, location } ] }` |
+| standard | + per link `from`, `to` destinations, `overwrite { from, to }`                                                                                         |
+| full     | + per effect `before`, `after`, `scan { filesScanned, occurrences }`                                                                                   |
+
+Human and JSON output are projections of one typed result. data is null only at
+the parser boundary before command binding. There is no alternate JSON
+projection.
+
+For a logical leaf request, `destination.id` retains the accepted logical ID
+and `destination.path` reports its canonical physical Markdown path. Human
+output likewise reports the canonical destination path. An explicit filesystem
+request still goes through the same canonical route and safety checks.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                                                                                                         |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | A complete safe dry-run plan was established, or application and final verification completed, for a leaf or category move. This includes a valid logical base/overwrite move and every complete reference and generated effect.                                                                                |
-| `attention`   | Post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`; target effects remain successful with the exact residual path and cleanup guidance. Planned changes and reference rewrites do not create it.                                                              |
-| `incomplete`  | Safe identity and facts exist, but the complete supported-Markdown catalogue, reference pass, category inventory, or another required coverage boundary cannot be enumerated or inspected. No write begins.                                                                                                     |
-| `invalid`     | A shell-accepted Route Move invocation omits its required source or destination, or its source kind, destination shape, flag use, or exact source reference does not follow this interface. A repeated move using the consumed old source is the exact source-not-found `invalid` result, not a verified no-op. |
-| `blocked`     | A valid request cannot establish one safe complete move because ownership, lifecycle, route, identity, containment, collision, destination, generated boundary, expected state, or recovery is unsafe or ambiguous. No write begins.                                                                            |
-| `failed`      | An unexpected application or verification failure occurs after a persistent effect begins, or recovery deletion returns `Failed`/`Unknown`; `Failed`/positively observed `Retained` recovery is the distinct `attention` case.                                                                                  |
-| `interrupted` | The caller cancels before completion; an unexpected application or verification failure remains `failed`.                                                                                                                                                                                                       |
+| Status                  | When                                                                             | Headline                                                      | Exit | Stream |
+| ----------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------- | ---: | ------ |
+| completed               | leaf moved                                                                       | `Moved <id> to <new path>`                                    |    0 | stdout |
+| completed               | category moved                                                                   | `Moved the route <id> to <new folder>  (<N> files)`           |    0 | stdout |
+| completed (dry run)     | planned                                                                          | `Would move <id> to <new path>`                               |    0 | stdout |
+| completed-with-warnings | recovery bundle retained                                                         | + family row                                                  |    2 | stdout |
+| incomplete              | catalogue, reference scan or record unreadable                                   | `<id> could not be moved: <limitation>. Nothing was changed.` |    3 | stdout |
+| invalid-input           | bad source or destination, self move, destination inside source, consumed source | `Cannot move <ref>: <problem>.`                               |    4 | stderr |
+| blocked                 | destination exists, managed source, unsafe, lock                                 | `Cannot move <id>: <reason>.`                                 |    5 | stderr |
+| failed                  | after effects                                                                    | `Route move stopped after <n> of <m> changes.`                |    1 | stderr |
+| cancelled               | prompt cancelled, Ctrl+C                                                         | `Route move was cancelled. Nothing was changed.`              |  130 | stderr |
 
-For ordinary conditions, status precedence is `blocked` > `incomplete` >
-`attention` > `complete`. Invalid input stops before operation resolution.
-Failed and interrupted preserve their event meanings. The shared numeric
-process-status mapping is defined by the [Shared Result
-Coordinates](../../shared/result-coordinates/interface.md).
+### Current merged behavior and open questions
+
+The catalogue assigns self-move and destination-inside-source to invalid-input
+(exit 4). The merged operation returns blocked (exit 5) for both. Maintainer
+decisions remain open.
+
+This command's identity-collision finding is error in the command catalogue but
+warning in the shared finding table. The existing error severity was preserved.
+Maintainer decision remains open.
+
+The reference-unsafe catalogue requires file:line:column, but the result carries
+no coordinates and renders only the path. Maintainer decision remains open.
+The reference-scan-incomplete next action also includes internal wording in the
+native result although the catalogue gives open-forge doctor alone. Maintainer
+decision remains open.
+
+The native path emits the ordinary move or would-move headline plus a warning
+row for ownership-unavailable; the retired renderer had a dedicated no-op
+headline. Maintainer decision remains open.
+
+At the parser boundary, a missing operand can publish data: null even though
+formed command data is an object. Maintainer decision remains open.
 
 ## Errors And Boundaries
 
-The command rejects or blocks:
+The finding catalogue is:
 
-- a missing source or destination, which produces the typed Route Move
-  `invalid` result;
-- a third positional operand, which the shared shell rejects as
-  `cli.parser.invalid` before Route Move result formation;
-- an unknown, missing, ambiguous, Loader, root, entrypoint, native, resource,
-  orphan, or otherwise ineligible leaf subject;
-- a category reference that is not exactly one recognized entrypoint or whose
-  physically contained inventory is incomplete or unsafe;
-- missing, malformed, stale, conflicting, or incomplete trusted ownership and
-  lifecycle evidence;
-- a destination that is not the exact matching leaf or category target, whose
-  parent route is missing or invalid, or whose path is occupied or aliased;
-- a self-move, destination-inside-source request, overwrite conflict, route
-  collision, unsafe containment, or implicit parent initialization;
-- incomplete supported-Markdown enumeration or inspection;
-- an unsupported or ambiguous potentially applicable move reference;
-- an invalid or ambiguous generated boundary or required Index projection;
-- a filesystem link or reparse point at any planned final file leaf, including
-  an exact Workspace Library projection with or without a valid Library record;
-  this is the existing `blocked` target-safety result and prevents every effect;
-- unavailable or unsafe recovery-bundle storage (`incomplete`), an unverified
-  bundle, or a bundle collision (`blocked`); or
-- a changed expected source, destination, reference, generated region, ownership
-  fact, or category item before application.
+| Code                                     | Severity | Family                      | Message                                                                                                | Next                                |
+| ---------------------------------------- | -------- | --------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------- |
+| route-move.invalid-input                 | error    | invalid-input               |                                                                                                        |                                     |
+| route-move.invalid-source                | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.invalid-source`).                                                    | `open-forge route list --depth=all` |
+| route-move.source-not-found              | error    | unknown-source              | (also the repeated-move case)                                                                          |                                     |
+| route-move.invalid-subject               | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.invalid-subject`).         | none                                |
+| route-move.invalid-destination           | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.invalid-destination`). | `open-forge route move --help`      |
+| route-move.self-move                     | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.self-move`).                                                         | none                                |
+| route-move.destination-inside-source     | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.destination-inside-source`).                                                    | none                                |
+| route-move.workspace-unavailable         | error    | workspace-unavailable       |                                                                                                        |                                     |
+| route-move.workspace-unsafe              | error    | workspace-unsafe            |                                                                                                        |                                     |
+| route-move.source-unsafe                 | error    | source-unsafe               |                                                                                                        |                                     |
+| route-move.destination-unsafe            | error    | target-unsafe               |                                                                                                        |                                     |
+| route-move.destination-occupied          | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.destination-occupied`).                                                                               | choose another destination          |
+| route-move.destination-parent-missing    | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.destination-parent-missing`).                 | `open-forge route init <id>`        |
+| route-move.category-unsafe               | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.category-unsafe`).                             | none                                |
+| route-move.route-ambiguous               | error    | route-ambiguous             |                                                                                                        |                                     |
+| route-move.identity-collision            | error    | identity-collision          | (blocking when the new ID would collide; the prompt resolves source ambiguity)                         |                                     |
+| route-move.overwrite-ambiguous           | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.overwrite-ambiguous`).                                         | fix by hand                         |
+| route-move.ownership-claimed             | error    | ownership-claimed           |                                                                                                        | `open-forge update` / the Extension |
+| route-move.reference-unsafe              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.reference-unsafe`).                                         | fix by hand                         |
+| route-move.generated-region-unsafe       | error    | generated-region-unsafe     |                                                                                                        |                                     |
+| route-move.workspace-lock-unavailable    | error    | workspace-lock-unavailable  |                                                                                                        |                                     |
+| route-move.target-changed                | error    | target-changed              |                                                                                                        |                                     |
+| route-move.recovery-conflict             | error    | recovery-conflict           |                                                                                                        |                                     |
+| route-move.ownership-unavailable         | warning  | lifecycle-unavailable       |                                                                                                        |                                     |
+| route-move.inspection-incomplete         | warning  | inspection-incomplete       |                                                                                                        |                                     |
+| route-move.category-inventory-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.category-inventory-incomplete`).                          | `open-forge doctor`                 |
+| route-move.reference-coverage-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.reference-coverage-incomplete`).                    | `open-forge doctor`                 |
+| route-move.projection-incomplete         | warning  | projection-unavailable      |                                                                                                        |                                     |
+| route-move.recovery-unavailable          | warning  | recovery-unavailable        |                                                                                                        |                                     |
+| route-move.recovery-artifact-retained    | warning  | recovery-artifact-retained  |                                                                                                        |                                     |
+| route-move.target-changed-during-apply   | error    | target-changed-during-apply |                                                                                                        |                                     |
+| route-move.write-failed                  | error    | write-failed                |                                                                                                        |                                     |
+| route-move.verification-failed           | error    | verification-failed         |                                                                                                        |                                     |
+| route-move.recovery-failed               | error    | recovery-failed             |                                                                                                        |                                     |
+| route-move.operation-failed              | error    | operation-failed            |                                                                                                        |                                     |
+| route-move.interrupted                   | error    | interrupted                 |                                                                                                        |                                     |
 
-Every ordinary error names `route move`, the affected subject or path, the direct
-cause, and one useful next action when one exists. The command does not diagnose
-authoring quality, infer semantic intent, or propose a different destination.
-Shell parser diagnostics are outside that Route Move result rule and do not
-carry Route Move status, finding, or next-action meaning.
+Findings retain code, severity, family, message, subject, cause, and next
+action when available. Counts are:
+
+`filesMoved`, `sectionsUpdated`, `linksRewritten`, `filesScanned`.
 
 ## Scenarios
 
-Move one ordinary leaf to an exact target under an existing route:
+`leaf-move`, `leaf-move-with-rewritten-links`, `category-move`, `dry-run`,
+`destination-exists` (blocked), `destination-inside-source` (invalid),
+`self-move` (invalid), `managed-source` (blocked), `source-not-found`,
+`ambiguous-source-prompt`, `reference-scan-incomplete` (incomplete),
+`lock-held`, `write-failed-partial`, `cancelled`.
 
-```text
-open-forge route move \
-  ".agents/docs/old-guide.md" \
-  ".agents/docs/new-guide.md"
-```
+Prompt rules from the catalogue:
 
-Move one recognized category while retaining its descendant layout:
+Select when the source ID matches several files.
 
-```text
-open-forge route move \
-  ".agents/guides/_guides.md" \
-  ".agents/archive/guides/_guides.md"
-```
+## Representative Transcripts
 
-Preview a leaf move and inspect all effects as structured output:
+### completed
 
-```text
-open-forge route move \
-  docs/old-guide \
-  ".agents/docs/new-guide.md" \
-  --dry-run \
-  --json
-```
+~~~text
+Moved guidance/old guide to .agents/archive/new guide.md
+Workspace: <workspace>
+  Entry updated in .agents/archive/_archive.md
+  Entry updated in .agents/guidance/_guidance.md
+  Rewrote 5 links that pointed at the old path:
+  .agents/guidance/topics/child.md:8:13
+  .agents/guidance/topics/child.overwrite.md:1:35
+  README.md:3:13
+  README.md:5:23
+  notes.md:3:11
+~~~
 
-The first operand in the last example is an automatic source ID. It is valid
-only when it resolves to one eligible logical leaf. An exact path is required
-when the ID is colliding or the category/leaf shape is otherwise ambiguous.
+### completed-with-warnings
 
-## Non-Goals
+~~~text
+Moved guidance/old guide to .agents/guidance/new guide.md
+  Warning  <recovery-bundle>  Recovery artifact retained
+~~~
 
-`route move` does not:
+### incomplete
 
-- move or remove the Loader or `.agents` workspace root;
-- accept a generic directory operand, batch operands, repeated mutation
-  requests, or independently committed descendant moves;
-- move a lifecycle-managed, generated-only, native-only, unsupported, or
-  ambiguous subject;
-- initialize missing parent routes or invent route, metadata, ownership, or
-  lifecycle meaning;
-- adopt, release, migrate, or repair Framework or Extension lifecycle state;
-- overwrite, merge, or silently delete a destination or overwrite companion;
-- rewrite external URLs, unsupported or ambiguous reference forms, or unrelated
-  authored prose;
-- resolve a final filesystem link or reparse point and then delete or move its
-  physical source target, write through a Workspace Library projection, or adopt
-  or manage a Library record;
-- treat generated `Entries` as authored authority or run a hidden `index` command;
-- create a receipt, tombstone, journal, saved plan, session, or automatic
-  recovery history;
-- create a Git commit; or
-- redefine the shared libraries, parser boundary, physical identity, lock,
-  concurrency, test, Native AOT, or C# source-layout choices accepted by the [CLI
-  Architecture](../../../architecture.md), or the exact recovery-bundle mechanics
-  accepted by the [Mutation And Recovery Technical
-  Design](../../../technical-designs/mutation-and-recovery.md).
+~~~text
+guidance/old guide could not be moved: Some files could not be scanned for links to invalid.md, so the move was not planned. Nothing was changed.
+Workspace: <workspace>
+  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+Next: open-forge doctor
+~~~
 
-Use `route update` for an authored field patch, `index` for standalone generated
-navigation, `references` for read-only direct reference facts, and `doctor` for
-diagnosis. This move contract owns only the exact structural move described here.
+### invalid-input
 
-## Verification Requirements
+~~~text
+Cannot move missing: No source has the ID missing.
+Workspace: <workspace>
+  files scanned: the reference scan was not completed
+~~~
 
-Gate 5 executable proof must cover:
+### blocked
 
-- exact source-ID and exact-path resolution, quoting, spaces, Unicode, collision,
-  containment, and base/overwrite identity;
-- one eligible ordinary leaf, one eligible recognized category, and rejection of
-  Loader, workspace-root, entrypoint-as-leaf, native, unsupported, orphan, and
-  ambiguous subjects;
-- complete category physical inventory, relative-layout preservation, descendant
-  classification, and all-or-nothing planning;
-- Final filesystem link and reparse-point leaves, including exact Workspace
-  Library projections with and without a valid Library record, are reported as
-  unsafe and block before effects; Route Move never resolves then deletes or
-  moves their physical source targets.
-- complete trusted Framework and Extension lifecycle-ownership proof, including
-  missing, malformed, conflicting, stale, incomplete, and source-claim cases;
-- exact leaf and category destination shapes, existing-parent requirement,
-  self-move, destination-inside-source, alias, collision, overwrite, and
-  implicit-initialization rejection;
-- complete supported Markdown catalogue coverage inside and outside `.agents`,
-  base/overwrite layers, exact resolvable rewrites, internal-link preservation,
-  label/fragment/encoding/byte preservation, and external URL preservation;
-- incomplete unsupported or ambiguous potentially applicable move references and
-  blocked unsafe identity or containment boundaries;
-- old and new parent generated projections, Loader projection when applicable,
-  generated-boundary preservation, and no hidden `index` invocation;
-- one complete plan, no partial category application, exact dry-run parity, no
-  persistent dry-run effects, and explicit-subject consent in every mode;
-- recovery-bundle storage/readiness and collision handling, expected-state
-  revalidation, all-effects verification, retained partial state without
-  restoration, residual preservation, and fresh-plan rerun;
-- `complete`, reserved `attention`, `incomplete`, `invalid`, `blocked`, `failed`,
-  and `interrupted` results, including consumed-source `invalid` repetition;
-- missing source and destination as typed Route Move `invalid` results, plus a
-  third positional operand as a write-free `cli.parser.invalid` shell failure
-  with exit `4`, empty stdout, nonempty stderr, and no Route Move result
-  envelope;
-- human stream allocation, compact retention, every planned dry-run effect,
-  structured JSON parity, and no mixed human text in JSON stdout; and
-- one typed result consumed by both human and structured renderers without
-  rerunning the operation.
+~~~text
+Cannot move guidance/old guide: The source and the destination are the same.
+Workspace: <workspace>
+  files scanned: the reference scan was not completed
+~~~
 
-The proof must exercise the accepted CLI Architecture boundaries rather than
-relying on source-level or managed-build claims. It must include the real
-filesystem, workspace lock, recovery, Native AOT, and package/process evidence
-required by that Architecture.
+### failed
+
+~~~text
+Route move stopped after 5 of 9 changes.
+Workspace: <workspace>
+  Error  .agents/guidance/new guide.md  Write failed
+         Writing .agents/guidance/new guide.md failed. Stopped after 5 of 9 changes. Recovery data: <recovery-bundle>.
+  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  Entry updated in .agents/guidance/_guidance.md
+  Rewrote 5 links that pointed at the old path:
+  .agents/guidance/topics/child.md:8:13
+  .agents/guidance/topics/child.overwrite.md:1:35
+  README.md:3:13
+  README.md:5:23
+  notes.md:3:11
+Next: open-forge route move --detail debug
+~~~
+
+### cancelled
+
+~~~text
+Route move was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  guidance/old guide  Route move was cancelled
+         Route move was cancelled. Nothing was changed.
+  files scanned: the reference scan was not completed
+Next: open-forge route move
+~~~
 
 ## Related Current Sources
 
@@ -699,23 +738,10 @@ required by that Architecture.
 - [Routed Markdown Representation](../../../../framework/markdown/routes.md)
 - [Markdown Compatibility Boundary](../../../../framework/markdown/compatibility.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
+CLI help syntax: [`route.move.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Move/RouteMoveText.cs).
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef route.move.help.syntax -->

@@ -1,0 +1,8 @@
+status=completed
+mode=apply
+library=team-knowledge
+effects=3
+links-added=1
+links-removed=1
+links-unchanged=0
+findings=0

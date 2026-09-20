@@ -18,17 +18,17 @@ public sealed class PublishedShellBoundaryProcessTests
         var result = await RunAsync(
             target,
             working.Path,
-            ["route", "list", "--workspace", working.Path, "--json", "--", "--depth"]);
+            ["route", "list", "--workspace", working.Path, "--format=json", "--", "--depth"]);
 
         Assert.Equal(4, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var invalidDocument = JsonDocument.Parse(result.StandardOutput);
         Assert.Equal("route list", invalidDocument.RootElement.GetProperty("command").GetString());
-        Assert.Equal("invalid", invalidDocument.RootElement.GetProperty("status").GetString());
-        var findings = invalidDocument.RootElement.GetProperty("result").GetProperty("findings");
+        Assert.Equal("invalid-input", invalidDocument.RootElement.GetProperty("status").GetString());
+        var findings = invalidDocument.RootElement.GetProperty("findings");
         var finding = Assert.Single(findings.EnumerateArray());
         Assert.Equal("route-list.unknown-source", finding.GetProperty("code").GetString());
-        Assert.Equal("--depth", finding.GetProperty("subject").GetString());
+        Assert.Equal("--depth", finding.GetProperty("subject").GetProperty("id").GetString());
         Assert.Equal(before, working.SnapshotHashes());
     }
 
@@ -60,7 +60,7 @@ public sealed class PublishedShellBoundaryProcessTests
             arguments.Add(separateValue);
         }
 
-        arguments.Add("--json");
+        arguments.Add("--format=json");
         var result = await RunAsync(target, working.Path, arguments);
 
         Assert.Equal(rejected ? 4 : 0, result.ExitCode);
@@ -68,16 +68,16 @@ public sealed class PublishedShellBoundaryProcessTests
         {
             Assert.Equal(string.Empty, result.StandardError);
             using var document = JsonDocument.Parse(result.StandardOutput);
-            Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
-            var finding = Assert.Single(document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray());
+            Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
+            var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
             Assert.Equal("route-list.invalid-depth", finding.GetProperty("code").GetString());
         }
         else
         {
             Assert.Equal(string.Empty, result.StandardError);
             using var document = JsonDocument.Parse(result.StandardOutput);
-            Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
-            Assert.Equal(1, document.RootElement.GetProperty("result").GetProperty("requestedDepth").GetInt32());
+            Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+            Assert.Equal(1, document.RootElement.GetProperty("data").GetProperty("depth").GetInt32());
         }
 
         Assert.Equal(before, working.SnapshotHashes());
@@ -93,15 +93,15 @@ public sealed class PublishedShellBoundaryProcessTests
         var result = await RunAsync(
             target,
             working.Path,
-            ["route", "list", "--workspace", working.Path, "--depth=", "--json"]);
+            ["route", "list", "--workspace", working.Path, "--depth=", "--format=json"]);
 
         Assert.Equal(4, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
-        Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
-        var finding = Assert.Single(document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray());
+        Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
+        var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
         Assert.Equal("route-list.invalid-depth", finding.GetProperty("code").GetString());
-        Assert.Equal("--depth", finding.GetProperty("subject").GetString());
+        Assert.Equal("--depth", finding.GetProperty("subject").GetProperty("id").GetString());
         Assert.Equal(before, working.SnapshotHashes());
     }
 
@@ -117,7 +117,7 @@ public sealed class PublishedShellBoundaryProcessTests
             working.Path,
             [
                 "route", "list", "root", "--workspace", working.Path,
-                "--depth=0", "--depth=1", "--json",
+                "--depth=0", "--depth=1", "--format=json",
             ]);
 
         Assert.Equal(4, result.ExitCode);
@@ -170,7 +170,7 @@ public sealed class PublishedShellBoundaryProcessTests
             working.Path,
             [
                 "route", "list", terminalOption, "--workspace", missingWorkspace,
-                "--json", "--verbose", "--view=compact",
+                "--format=json", "--detail=debug", "--detail-filter=warning",
             ]);
 
         Assert.Equal(0, result.ExitCode);
@@ -195,9 +195,9 @@ public sealed class PublishedShellBoundaryProcessTests
                 "inspect",
                 "--workspace",
                 missingWorkspace,
-                "--json",
-                "--view=compact",
-                "--verbose",
+                "--format=json",
+                "--detail=debug",
+                "--detail-filter=warning",
                 "--version",
             ]);
 
@@ -216,16 +216,17 @@ public sealed class PublishedShellBoundaryProcessTests
             target,
             working.Path,
             working.SnapshotHashes,
-            ["route", "inspect", "--workspace", working.Path, "--json", "--", "--view"]);
+            ["route", "inspect", "--workspace", working.Path, "--format=json", "--", "--view"]);
 
         Assert.Equal(4, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
-        Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
-        Assert.Equal(
-            "--view",
-            document.RootElement.GetProperty("result").GetProperty("selection")
-                .GetProperty("requestedReference").GetString());
+        Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
+        // The operand reached the domain as a source reference rather than being parsed as an
+        // option: the report names it as the unknown source it looked for.
+        var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
+        Assert.Equal("route-inspect.unknown-source", finding.GetProperty("code").GetString());
+        Assert.Equal("--view", finding.GetProperty("subject").GetProperty("id").GetString());
     }
 
     [Theory(DisplayName = "Published Route Inspect terminal modes reject source input before workspace and operation"),
@@ -247,9 +248,9 @@ public sealed class PublishedShellBoundaryProcessTests
             "inspect",
             "--workspace",
             missingWorkspace,
-            "--json",
-            "--view=compact",
-            "--verbose",
+            "--format=json",
+            "--detail=debug",
+            "--detail-filter=warning",
             terminalMode,
         };
         switch (sourceKind)
@@ -329,15 +330,64 @@ public sealed class PublishedShellBoundaryProcessTests
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedRouteWorkspace.CreateComplete();
-        var arguments = new List<string> { "route", "list", "root", "--depth=0", "--json" };
+        var arguments = new List<string> { "route", "list", "root", "--depth=0" };
         AddScalar(arguments, "--workspace", workspace.Path, form);
-        AddScalar(arguments, "--view", "compact", form);
+        AddScalar(arguments, "--format", "json", form);
+        AddScalar(arguments, "--detail", "minimal", form);
+        AddScalar(arguments, "--detail-filter", "warning", form);
+        AddScalar(arguments, "--detail-filter", "error", form);
         var result = await RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotHashes, arguments);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
-        Assert.Equal("root", Assert.Single(document.RootElement.GetProperty("result").GetProperty("rows").EnumerateArray()).GetProperty("id").GetString());
+        Assert.Equal(3, document.RootElement.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal("minimal", document.RootElement.GetProperty("detail").GetString());
+        Assert.Equal(["error", "warning"], document.RootElement.GetProperty("filter").EnumerateArray().Select(value => value.GetString()));
+        Assert.Equal("root", Assert.Single(document.RootElement.GetProperty("data").GetProperty("rows").EnumerateArray()).GetProperty("id").GetString());
+    }
+
+    [Theory(DisplayName = "Published commands reject retired presentation flags without effects"),
+     InlineData("--view=compact"), InlineData("--json"), InlineData("--verbose"),
+     Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
+    public static async Task RetiredPresentationFlagsAreRejected(string flag)
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var workspace = PublishedRouteWorkspace.CreateComplete();
+        var result = await RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotHashes, ["route", "list", flag]);
+
+        Assert.Equal(4, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardOutput);
+        Assert.StartsWith("Cannot list routes: ", result.StandardError, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", result.StandardError, StringComparison.Ordinal);
+        Assert.DoesNotContain("\"schemaVersion\"", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains(flag, result.StandardError, StringComparison.Ordinal);
+    }
+
+    [Fact(DisplayName = "Published debug adds only stderr diagnostics to the full-detail result"), Trait("Feature", "cli-presentation"), Trait("Evidence", "EndToEnd")]
+    public async Task DebugAddsOnlyDiagnosticsToFullDetail()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var workspace = PublishedRouteWorkspace.CreateComplete();
+        var full = await RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotHashes,
+            ["route", "list", "root", "--depth=0", "--format=json", "--detail=full"]);
+        var debug = await RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotHashes,
+            ["route", "list", "root", "--depth=0", "--format=json", "--detail=debug"]);
+
+        Assert.Equal(0, full.ExitCode);
+        Assert.Equal(0, debug.ExitCode);
+        Assert.Equal(string.Empty, full.StandardError);
+        Assert.Contains("route-list diagnostics", debug.StandardError, StringComparison.Ordinal);
+        Assert.InRange(debug.StandardError.Length, 1, 4096);
+        Assert.DoesNotContain('\n', full.StandardOutput.TrimEnd('\r', '\n'));
+        Assert.DoesNotContain('\n', debug.StandardOutput.TrimEnd('\r', '\n'));
+        using var fullDocument = JsonDocument.Parse(full.StandardOutput);
+        using var debugDocument = JsonDocument.Parse(debug.StandardOutput);
+        Assert.Equal("full", fullDocument.RootElement.GetProperty("detail").GetString());
+        Assert.Equal("debug", debugDocument.RootElement.GetProperty("detail").GetString());
+        Assert.Equal(
+            fullDocument.RootElement.EnumerateObject().Where(property => property.Name != "detail").Select(property => (property.Name, Value: property.Value.GetRawText())),
+            debugDocument.RootElement.EnumerateObject().Where(property => property.Name != "detail").Select(property => (property.Name, Value: property.Value.GetRawText())));
     }
 
     private static void AddScalar(

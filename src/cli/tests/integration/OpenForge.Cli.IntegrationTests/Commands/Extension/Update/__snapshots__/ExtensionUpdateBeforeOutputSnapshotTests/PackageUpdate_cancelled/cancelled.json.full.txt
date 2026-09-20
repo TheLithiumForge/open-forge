@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 3,
+  "command": "extension update",
+  "status": "cancelled",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Extension update was cancelled. Nothing was changed.",
+    "kind": "cancelled"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-update.interrupted",
+      "title": "Extension update was cancelled",
+      "message": "Extension update was cancelled. Nothing was changed.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "the selected",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "Extension update was cancelled. Nothing was changed."
+        }
+      ],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesUpdated": 0,
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": false,
+    "automatic": true,
+    "source": null,
+    "packages": [],
+    "previousContent": null,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "unchanged": [],
+    "sections": [],
+    "dependencies": [],
+    "effects": []
+  },
+  "recovery": null,
+  "next": null
+}

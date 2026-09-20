@@ -1,0 +1,2 @@
+Library sync stopped after 1 of 2 changes.
+  Added    .agents/directives/review.md

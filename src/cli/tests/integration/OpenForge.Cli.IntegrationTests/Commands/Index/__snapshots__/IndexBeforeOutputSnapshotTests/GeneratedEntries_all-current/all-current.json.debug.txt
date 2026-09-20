@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 3,
+  "command": "index",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Entries sections are current in all 2 files. Nothing to do.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "filesChecked": 2,
+    "filesUpdated": 0,
+    "filesCurrent": 2
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "changes": [],
+    "unchanged": [
+      {
+        "path": ".agents/loader.md"
+      },
+      {
+        "path": ".agents/root/_root.md"
+      }
+    ],
+    "selection": {
+      "origin": "automatic-loader",
+      "scope": "rooted",
+      "sources": [
+        {
+          "id": "loader",
+          "path": ".agents/loader.md"
+        }
+      ]
+    },
+    "regions": [
+      {
+        "path": ".agents/loader.md",
+        "action": "unchanged",
+        "outcome": "already-current"
+      },
+      {
+        "path": ".agents/root/_root.md",
+        "action": "unchanged",
+        "outcome": "already-current"
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

@@ -1,0 +1,19 @@
+Would create .agents/memory/project-alpha/overview.md  (memory/project-alpha/overview)
+Workspace: <workspace>
+  Warning  .agents/memory/project-alpha/overview.md  Optional metadata is missing [route-create.optional-metadata]
+         Would create .agents/memory/project-alpha/overview.md without optional description or tags.
+         open-forge route update memory/project-alpha/overview
+         Add an optional description or tag with open-forge route update when useful.
+  description: Project overview
+  Would list it in .agents/memory/project-alpha/_project-alpha.md
+--- .agents/memory/project-alpha/overview.md (new file) ---
+---
+open-forge:
+  description: Project overview
+---
+  Entries section: .agents/memory/project-alpha/_project-alpha.md
+    Before: <sha256>
+    After: <sha256>
+    Verification: planned
+No files were changed.
+Next: open-forge route update memory/project-alpha/overview (add an optional description or tag when useful).

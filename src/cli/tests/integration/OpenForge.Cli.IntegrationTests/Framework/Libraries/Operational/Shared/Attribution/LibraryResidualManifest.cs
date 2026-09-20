@@ -30,7 +30,7 @@ internal static class LibraryResidualManifest
             writer.WriteStartObject();
             writer.WriteNumber("ordinal", entry.Ordinal);
             writer.WriteString("logicalPath", entry.TargetPath);
-            writer.WriteString("kind", entry.Kind == RecoveryEntryKind.OrdinaryDelete ? "ordinary-delete" : "relative-file-link-delete");
+            writer.WriteString("kind", entry.Kind switch { RecoveryEntryKind.OrdinaryDelete => "ordinary-delete", RecoveryEntryKind.OrdinaryReplace => "ordinary-replace", _ => "relative-file-link-delete" });
             writer.WriteStartObject("prior");
             if (entry.Prior.OrdinaryFile is { } identity)
             {
@@ -51,9 +51,18 @@ internal static class LibraryResidualManifest
             }
             writer.WriteEndObject();
             writer.WriteStartObject("intended");
-            writer.WriteString("kind", "missing");
-            writer.WriteNull("length");
-            writer.WriteNull("sha256");
+            if (entry.Intended.OrdinaryFile is { } intended)
+            {
+                writer.WriteString("kind", "ordinary-file");
+                writer.WriteNumber("length", intended.Length);
+                writer.WriteString("sha256", intended.Sha256);
+            }
+            else
+            {
+                writer.WriteString("kind", "missing");
+                writer.WriteNull("length");
+                writer.WriteNull("sha256");
+            }
             writer.WriteNull("linkKind");
             writer.WriteNull("rawRelativeTarget");
             writer.WriteEndObject();

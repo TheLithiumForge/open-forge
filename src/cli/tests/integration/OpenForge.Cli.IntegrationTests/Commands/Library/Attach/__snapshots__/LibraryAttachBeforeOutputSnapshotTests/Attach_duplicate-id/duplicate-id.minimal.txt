@@ -1,0 +1,3 @@
+Cannot attach team-knowledge: A Library with the ID team-knowledge is already registered.
+Workspace: <workspace>
+Next: open-forge library inspect team-knowledge

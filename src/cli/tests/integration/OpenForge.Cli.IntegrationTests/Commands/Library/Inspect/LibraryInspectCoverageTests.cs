@@ -7,12 +7,14 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Inspect;
 
 public sealed class LibraryInspectCoverageTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library Inspect cannot infer retirement or attention from an inaccessible inventory suffix"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     public async Task IncompleteInventoryPreventsRetirementClaims()
     {
         if (!OperatingSystem.IsLinux())
         {
-            throw new PlatformNotSupportedException("Required permission evidence targets Linux.");
+            Assert.Skip("Required permission evidence targets Linux.");
+            return;
         }
 
         using var fixture = new LibraryReadWorkspace();
@@ -44,6 +46,7 @@ public sealed class LibraryInspectCoverageTests
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library Inspect unavailable source or destination facts prevent safe drift from becoming attention"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     [InlineData("source")]
     [InlineData("destination")]
@@ -51,7 +54,8 @@ public sealed class LibraryInspectCoverageTests
     {
         if (!OperatingSystem.IsLinux())
         {
-            throw new PlatformNotSupportedException("Required permission evidence targets Linux.");
+            Assert.Skip("Required permission evidence targets Linux.");
+            return;
         }
 
         using var fixture = new LibraryReadWorkspace();
@@ -90,6 +94,7 @@ public sealed class LibraryInspectCoverageTests
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library Inspect blocked destination identity dominates safe missing-link drift"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     public async Task BlockedDestinationDominatesDrift()
     {

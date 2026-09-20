@@ -1,0 +1,10 @@
+Cannot create the routed file: ../outside must be a Markdown file below an existing route.
+Workspace: <workspace>
+  Error  ../outside  Invalid target
+         ../outside must be a Markdown file below an existing route.
+         open-forge route create --help
+         Correct the Route Create input, then rerun the request.
+  description: Project overview
+  tags: Docs
+  Correct the Route Create input, then rerun the request.
+Next: open-forge route create --help

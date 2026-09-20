@@ -1,0 +1,6 @@
+Cannot inspect .agents/orphan.overwrite.md: orphan.overwrite.md has no orphan.md beside it.
+Workspace: <workspace>
+  Error  .agents/orphan.overwrite.md  Overwrite is orphaned
+         orphan.overwrite.md has no orphan.md beside it.
+  Review the blocked source boundary, then rerun route inspect.
+Next: open-forge doctor

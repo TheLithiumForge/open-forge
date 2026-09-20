@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Profile;
 
 public sealed class RouteInspectProfileModelTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect automatic reasons retain base order and place overwrite after the base")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void AutomaticReasonsRetainCanonicalOrder()
@@ -48,6 +49,7 @@ public sealed class RouteInspectProfileModelTests
             routedFileReasons.Reasons.Select(reason => reason.Kind));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect automatic reasons retain dual LoadNow and KeepInMind triggers")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void AutomaticReasonsRetainDualLoadNowAndKeepInMind()
@@ -67,6 +69,7 @@ public sealed class RouteInspectProfileModelTests
         Assert.Equal(RouteInspectAutomaticReadingKind.RoutedFileKeepInMind, reasons.Reasons[1].Kind);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect automatic reasons allow OnDemand only without another base trigger")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void OnDemandDoesNotAccompanyAnotherBaseTrigger()
@@ -95,6 +98,7 @@ public sealed class RouteInspectProfileModelTests
         ]));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect axioms profile keeps inherited and local fact availability independent")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void AxiomsFactsAreIndependent()
@@ -117,6 +121,7 @@ public sealed class RouteInspectProfileModelTests
         Assert.Equal(RouteInspectAxiomsLocalState.Substantive, substantive.Local.Value);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect reading profile keeps refined automatic availability separate from task-start and later facts")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void ReadingFactsRetainIndependentAvailability()
@@ -134,6 +139,7 @@ public sealed class RouteInspectProfileModelTests
         Assert.Null(reading.Later.Value);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect axioms sources snapshot ordered identity provenance")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void AxiomsSourcesAreImmutableSnapshots()

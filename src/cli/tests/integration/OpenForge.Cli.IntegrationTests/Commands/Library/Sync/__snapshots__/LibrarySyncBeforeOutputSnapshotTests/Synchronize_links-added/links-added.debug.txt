@@ -1,0 +1,10 @@
+Synchronized team-knowledge: 1 link added.
+Workspace: <workspace>
+  Added    .agents/directives/review.md
+    Target: ../../shared/team-knowledge/.agents/directives/review.md
+  .agents/open-forge.lock.json  updated
+  Inventory: 1 eligible file, 0 excluded items, 0 unavailable paths.
+  Expected state: .agents/directives/review.md is missing.
+  Expected state: .agents/open-forge.lock.json is ordinary-file.
+  Verification: verified; record publication: verified.
+  Recovery: removed at <recovery-bundle>.

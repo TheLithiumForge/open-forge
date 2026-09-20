@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Completion;
 
 public sealed class LibraryMutationCompletionProjectionTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void AttachObservationProjectsEligibleUnregisteredPath()
     {
@@ -20,6 +21,7 @@ public sealed class LibraryMutationCompletionProjectionTests
         Assert.Equal("directives/review", mapping.SourceId);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void SyncObservationDistinguishesCurrentAndRetiredPaths()
     {
@@ -31,6 +33,7 @@ public sealed class LibraryMutationCompletionProjectionTests
         Assert.Equal([LibraryComparisonRelation.Retired, LibraryComparisonRelation.Current], result.Mappings.Select(mapping => mapping.Relation));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void DetachObservationHasNoSourceAndRetiresTheRegisteredLink()
     {
@@ -45,6 +48,7 @@ public sealed class LibraryMutationCompletionProjectionTests
         Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md", mapping.ObservedRelativeLink);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void AbsentObservationDoesNotInventMappingsOrOwnership()
     {

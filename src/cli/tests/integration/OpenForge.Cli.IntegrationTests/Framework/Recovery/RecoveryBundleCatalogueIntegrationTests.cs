@@ -20,6 +20,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
 
 public sealed class RecoveryBundleCatalogueIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Recovery catalogue reports every exact final and draft candidate without target observation")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CatalogueClassifiesExactCandidatesAndIgnoresUnknownNames()
@@ -102,6 +103,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Recovery catalogue reports an ordinary-file workspace bucket as unavailable")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CatalogueDoesNotTreatExistingFileBucketAsAbsent()
@@ -132,6 +134,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Recovery deletion requires a held lease and verifies immediate absence")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task DeletionGuardDeletesExactFinalAndDraftUnderHeldLease()
@@ -191,6 +194,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Recovery deletion blocks contention disposed lease and changed snapshot")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task DeletionGuardBlocksWithoutStableHeldLeaseSnapshot()

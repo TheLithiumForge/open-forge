@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Init;
 
 public sealed class RouteInitModelsTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init request validates required workspace target mode and scaffold boundaries"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void RequestValidatesRequiredWorkspaceTargetAndFiniteModes()
     {
@@ -37,6 +38,7 @@ public sealed class RouteInitModelsTests
         Assert.Equal(RouteInitMode.DryRun, dryRun.Mode);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init metadata snapshots ordered tags and rejects null members"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void MetadataSnapshotsOrderedTagsAndRejectsNullMembers()
     {
@@ -58,6 +60,7 @@ public sealed class RouteInitModelsTests
             new RouteInitMetadataInput(null, false, null, new[] { "valid", (string)null! }));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init formation snapshots immutable ordered collections and keeps nullable coordinates"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void FormationSnapshotsImmutableCollectionsAndNullableCoordinates()
     {
@@ -130,6 +133,7 @@ public sealed class RouteInitModelsTests
         Assert.Equal(RouteInitPlanCompleteness.Incomplete, formation.Plan.Completeness);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init plan copies effects and directories and exposes only a true no-op as no-op"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void PlanCopiesEffectsAndDirectoriesAndExposesOnlyTrueNoOp()
     {
@@ -153,7 +157,7 @@ public sealed class RouteInitModelsTests
             directories,
             changes,
             recovery,
-            intendedLifecycle: null);
+            ownership: null);
         directories.Clear();
         changes.Clear();
 
@@ -170,10 +174,11 @@ public sealed class RouteInitModelsTests
             [],
             [],
             [],
-            intendedLifecycle: null);
+            ownership: null);
         Assert.True(noOp.IsNoOp);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init finding bounds causes while retaining code status and target"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void FindingBoundsCauseAndRetainsIdentity()
     {
@@ -195,6 +200,7 @@ public sealed class RouteInitModelsTests
             new RouteInitFinding((RouteInitFindingCode)int.MaxValue, "cause", null));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init result builder derives one ordered status and next action from the typed formation"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void ResultBuilderDerivesOrderedStatusAndNextActionFromFormation()
     {
@@ -211,9 +217,10 @@ public sealed class RouteInitModelsTests
         Assert.Equal(
             [RouteInitFindingCode.NeedsAuthoring, RouteInitFindingCode.WriteFailed],
             result.Findings.Select(finding => finding.Code));
-        Assert.Equal("open-forge route init --verbose", result.Next?.Command);
+        Assert.Equal("open-forge route init --detail debug", result.Next?.Command);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init result builder retains bounded lifecycle recovery and change facts"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void ResultBuilderRetainsBoundedLifecycleRecoveryAndChangeFacts()
     {

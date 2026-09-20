@@ -1,0 +1,8 @@
+status=completed
+mode=apply
+id=team-knowledge
+effects=2
+links=1
+sections=0
+registration-removed=True
+findings=0

@@ -1,0 +1,13 @@
+1 source matches --tag Docs --tag Guide --require all.
+Workspace: <workspace>
+  docs/guide  .agents/docs/guide.md  Guide
+  matched tag Docs in frontmatter
+  matched tag Guide in frontmatter
+
+Search details:
+  Filters: --tag Docs, --tag Guide
+  Require: all
+  Regions searched: frontmatter, body
+  Source set: default
+  4 of 4 sources inspected
+1 matches, 4 sources inspected, 4 source candidates.

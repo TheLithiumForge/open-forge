@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 3,
+  "command": "library attach",
+  "status": "blocked",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot attach team-knowledge: .agents/directives/review.md already exists and is not a link this Library would create.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-attach.destination-collision",
+      "title": "Destination collision",
+      "message": ".agents/directives/review.md already exists and is not a link this Library would create.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/directives/review.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "guided-choice",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "choose another --to folder",
+          "reason": "Choose another --to folder."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksCreated": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "sourceFiles": 1,
+    "errors": 1,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "recorded": false,
+    "permissions": {
+      "decision": "not-evaluated",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "links": [],
+    "inventory": {
+      "eligible": 1,
+      "excluded": 0
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "sentence",
+    "command": "choose another --to folder",
+    "reason": "Choose another --to folder."
+  }
+}

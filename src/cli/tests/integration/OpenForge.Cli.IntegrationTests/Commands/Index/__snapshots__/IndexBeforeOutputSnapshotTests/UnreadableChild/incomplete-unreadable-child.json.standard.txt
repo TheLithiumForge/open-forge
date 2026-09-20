@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 3,
+  "command": "index",
+  "status": "incomplete",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "The Entries sections could not be rebuilt completely. Nothing was changed.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "index.metadata-incomplete",
+      "title": "Frontmatter could not be read",
+      "message": "The frontmatter of .agents/root/child.md could not be read completely.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/root/child.md",
+        "id": "root/child",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesChecked": 0,
+    "filesUpdated": 0,
+    "filesCurrent": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "changes": [],
+    "unchanged": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the reported problem before rerunning Index."
+  }
+}

@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Markdown;
 
 public sealed class MarkdownDocumentParserTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown pipeline is cached and combines precise locations with GitHub identifiers")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void PipelineIsCachedPreciseAndUsesGitHubIdentifiers()
@@ -24,6 +25,7 @@ public sealed class MarkdownDocumentParserTests
         Assert.IsType<AutoIdentifierExtension>(Assert.Single(first.Extensions));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown frontmatter boundaries preserve line endings and unavailable input")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void FrontmatterBoundariesPreserveLfCrLfMissingAndUnterminatedInput()
@@ -77,6 +79,7 @@ public sealed class MarkdownDocumentParserTests
         Assert.Equal(bodySpan, facts.BodySpan);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown leaf inline facts retain visible, opaque-code, and link boundaries")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void LeafInlineFactsRetainVisibleOpaqueCodeAndLinkBoundaries()
@@ -91,6 +94,7 @@ public sealed class MarkdownDocumentParserTests
         Assert.Equal(SpanOf(source, "[label](target.md)"), Assert.Single(facts.Links).Span);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown headings retain levels, source forms, complete spans, and canonicality")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void AtxAndSetextHeadingsPreserveLevelFormAndCanonicality()
@@ -149,6 +153,7 @@ public sealed class MarkdownDocumentParserTests
             facts.Headings[7].Span);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown heading text keeps reader-visible inline content only")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void VisibleHeadingTextUsesOnlyReaderVisibleInlineContent()
@@ -166,6 +171,7 @@ public sealed class MarkdownDocumentParserTests
         Assert.DoesNotContain("br", heading.VisibleText, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown GitHub heading identifiers preserve Unicode and deterministic duplicate suffixes")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void GitHubHeadingIdentifiersPreserveUnicodeAndDuplicateSuffixes()
@@ -185,6 +191,7 @@ public sealed class MarkdownDocumentParserTests
         Assert.Null(facts.Headings[3].FragmentIdentifier);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown link facts preserve inline, reference-definition, and explicit-autolink spans")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void LinksPreservePinnedMarkdigFormsDestinationsAndSpans()
@@ -219,6 +226,7 @@ public sealed class MarkdownDocumentParserTests
         Assert.Null(facts.Links[2].DestinationSpan);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown inline link labels project literal content")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void InlineLinkLabelProjectsLiteralContent()
@@ -229,6 +237,7 @@ public sealed class MarkdownDocumentParserTests
         AssertSupportedLabel(link, "literal label");
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown inline link labels decode HTML entities")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void InlineLinkLabelDecodesEntities()
@@ -238,6 +247,7 @@ public sealed class MarkdownDocumentParserTests
         AssertSupportedLabel(link, "entity & text");
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown inline link labels project code content")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void InlineLinkLabelProjectsCodeContent()
@@ -247,6 +257,7 @@ public sealed class MarkdownDocumentParserTests
         AssertSupportedLabel(link, "code value");
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown inline link labels recurse through nested supported formatting")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void InlineLinkLabelProjectsNestedFormattingContainers()
@@ -256,6 +267,7 @@ public sealed class MarkdownDocumentParserTests
         AssertSupportedLabel(link, "strong nested emphasis");
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown inline link labels collapse soft line breaks to one space")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void InlineLinkLabelCollapsesSoftLineBreak()
@@ -265,6 +277,7 @@ public sealed class MarkdownDocumentParserTests
         AssertSupportedLabel(link, "soft break");
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown inline link labels collapse hard line breaks to one space")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void InlineLinkLabelCollapsesHardLineBreak()
@@ -274,6 +287,7 @@ public sealed class MarkdownDocumentParserTests
         AssertSupportedLabel(link, "hard break");
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown reference link labels project their child AST")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void ReferenceLinkLabelProjectsChildAst()
@@ -284,6 +298,7 @@ public sealed class MarkdownDocumentParserTests
         AssertSupportedLabel(link, "reference label");
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown URL autolinks expose their URL as visible label text")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void UrlAutolinkLabelUsesUrl()
@@ -294,6 +309,7 @@ public sealed class MarkdownDocumentParserTests
         AssertSupportedLabel(link, "https://example.invalid/path");
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown email autolinks expose their address as visible label text")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void EmailAutolinkLabelUsesEmailAddress()
@@ -304,6 +320,7 @@ public sealed class MarkdownDocumentParserTests
         AssertSupportedLabel(link, "person@example.invalid");
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown unresolved emphasis delimiters remain literal label content")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void UnresolvedDelimiterRemainsLiteralLabelContent()
@@ -317,6 +334,7 @@ public sealed class MarkdownDocumentParserTests
     // does not expose an unknown or nested ordinary LinkInline child from source text.
     // No synthetic AST fixture is added for those unreachable states.
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Markdown link labels fail closed for absent and whitespace-only child content"),
         InlineData("[](empty.md)", "empty.md"),
         InlineData("[   ](spaces.md)", "spaces.md"),
@@ -327,6 +345,7 @@ public sealed class MarkdownDocumentParserTests
         AssertUnsupportedLabel(ReadSingleLink(source, destination));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown link labels fail closed when raw HTML is present")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void RawHtmlLinkLabelRemainsUnsupported()
@@ -334,6 +353,7 @@ public sealed class MarkdownDocumentParserTests
         AssertUnsupportedLabel(ReadSingleLink("[before <span>raw</span> after](raw.md)"));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown link labels fail closed when formatted content contains raw HTML")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void FormattedRawHtmlLinkLabelRemainsUnsupported()
@@ -341,6 +361,7 @@ public sealed class MarkdownDocumentParserTests
         AssertUnsupportedLabel(ReadSingleLink("[**before <span>raw</span> after**](formatted-raw.md)"));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown link labels fail closed when an image is nested in the child AST")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void ImageChildMakesOuterLinkLabelUnsupported()
@@ -349,6 +370,7 @@ public sealed class MarkdownDocumentParserTests
             ReadSingleLink("[before ![alt](image.md) after](outer.md)", "outer.md"));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Standalone Markdown images remain excluded from link facts")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void StandaloneImagesRemainExcludedFromLinks()
@@ -378,154 +400,76 @@ public sealed class MarkdownDocumentParserTests
         Assert.False(string.IsNullOrWhiteSpace(link.Label.Text));
     }
 
-    [Fact(DisplayName = "Markdown generated-region facts require one final Entries section and ordered marker pair")]
+    [Trait("Boundary", "Input")]
+    [Theory(DisplayName = "Entries uses one top-level semantic ATX heading with exact source spans")]
+    [InlineData("## Entries", "")]
+    [InlineData("## Entries\n", "\n")]
+    [InlineData("## Entries\n\n- entry\n", "\n\n- entry\n")]
+    [InlineData("\uFEFF## Entries\n\n- entry\n", "\n\n- entry\n")]
+    [InlineData("## Entries\r\n\r\n- entry\r\n", "\r\n\r\n- entry\r\n")]
+    [InlineData("## Entries  \n\n- entry\n", "\n\n- entry\n")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
-    public void GeneratedRegionRequiresStrictFinalEntriesBoundary()
+    public void HeadingOwnedEntries(string source, string content)
     {
-        const string generatedLink = "- [Generated](generated.md)";
-        const string source =
-            "# Document\n\n"
-            + "## Entries\n\n"
-            + "<!-- open-forge:generated-index:start -->\n"
-            + generatedLink + "\n"
-            + "<!-- open-forge:generated-index:end -->\n";
-
         var facts = new MarkdownDocumentParser().Parse(source);
-
         Assert.Equal(MarkdownGeneratedRegionState.Complete, facts.GeneratedRegion.State);
-        var contentSpan = Assert.IsType<MarkdownTextSpan>(facts.GeneratedRegion.ContentSpan);
-        Assert.Contains(generatedLink, source[contentSpan.Start..contentSpan.End], StringComparison.Ordinal);
-        var omissionSpan = Assert.IsType<MarkdownTextSpan>(facts.GeneratedRegion.OmissionSpan);
-        Assert.Equal(
-            generatedLink + "\n",
-            source[omissionSpan.Start..omissionSpan.End]);
-        var regionSpan = Assert.IsType<MarkdownTextSpan>(facts.GeneratedRegion.RegionSpan);
-        Assert.StartsWith("<!-- open-forge:generated-index:start -->", source[regionSpan.Start..regionSpan.End], StringComparison.Ordinal);
-        Assert.EndsWith("<!-- open-forge:generated-index:end -->", source[regionSpan.Start..regionSpan.End], StringComparison.Ordinal);
-
-        var absent = new MarkdownDocumentParser().Parse("# Document\n");
-        Assert.Equal(MarkdownGeneratedRegionState.Absent, absent.GeneratedRegion.State);
-
-        var malformed = new[]
-        {
-            source + "## Later\n",
-            source.Replace(
-                "<!-- open-forge:generated-index:end -->",
-                "<!-- open-forge:generated-index:start -->\n<!-- open-forge:generated-index:end -->",
-                StringComparison.Ordinal),
-            source.Replace(
-                "<!-- open-forge:generated-index:end -->\n",
-                "<!-- open-forge:generated-index:end -->\nauthored prose\n",
-                StringComparison.Ordinal),
-        };
-        Assert.All(
-            malformed,
-            value => Assert.Equal(
-                MarkdownGeneratedRegionState.Invalid,
-                new MarkdownDocumentParser().Parse(value).GeneratedRegion.State));
+        var span = Assert.IsType<MarkdownTextSpan>(facts.GeneratedRegion.ContentSpan);
+        Assert.Equal(content, source[span.Start..span.End]);
+        var block = Assert.IsType<MarkdownEntriesBlock>(facts.GeneratedRegion.EntriesBlock);
+        var expectedBlock = content.TrimStart('\r', '\n');
+        Assert.Equal(expectedBlock, source[block.Span.Start..block.Span.End]);
+        Assert.Equal(block.Span, facts.GeneratedRegion.OmissionSpan);
     }
 
-    [Fact(DisplayName = "Markdown generated-region grammar distinguishes absent markers from unavailable candidates")]
+    [Trait("Boundary", "Input")]
+    [Theory(DisplayName = "Entries ignores missing wrong-level nested fenced and noncanonical headings")]
+    [InlineData("# Document\n")]
+    [InlineData("# Entries\n")]
+    [InlineData("### Entries\n")]
+    [InlineData("## entries\n")]
+    [InlineData("Entries\n-------\n")]
+    [InlineData("```md\n## Entries\n```\n")]
+    [InlineData("    ## Entries\n")]
+    [InlineData("> ## Entries\n")]
+    [InlineData("- ## Entries\n")]
+    [InlineData("## **Entries**\n")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
-    public void GeneratedRegionCandidateStatesRemainDistinct()
+    public void NonSemanticEntriesAreAbsent(string source)
     {
-        const string start = "<!-- open-forge:generated-index:start -->";
-        const string end = "<!-- open-forge:generated-index:end -->";
-
-        Assert.Equal(
-            MarkdownGeneratedRegionState.Absent,
-            new MarkdownDocumentParser().Parse("## Entries\n").GeneratedRegion.State);
-        Assert.Equal(
-            MarkdownGeneratedRegionState.Invalid,
-            new MarkdownDocumentParser().Parse("<!-- open-forge:generated-index:bogus -->\n").GeneratedRegion.State);
-        foreach (var sourceWithMarkerPrefix in new[]
-        {
-            "---\nopen-forge: \"open-forge:generated-index:bogus\"\n---\n# Document\n",
-            "[unused][ref]\n\n[ref]: <open-forge:generated-index:bogus>\n",
-            "![image](open-forge:generated-index:bogus)\n",
-        })
-        {
-            Assert.Equal(
-                MarkdownGeneratedRegionState.Invalid,
-                new MarkdownDocumentParser().Parse(sourceWithMarkerPrefix).GeneratedRegion.State);
-        }
-        Assert.Equal(
-            MarkdownGeneratedRegionState.Invalid,
-            new MarkdownDocumentParser().Parse($"## Entries   \n{start}\nbody\n{end}\n").GeneratedRegion.State);
-
-        foreach (var markerPair in new[]
-        {
-            $"  {start}\nbody\n{end}",
-            $"{start} trailing\nbody\n{end}",
-            $"{start}\nbody\n{end} trailing",
-        })
-        {
-            Assert.Equal(
-                MarkdownGeneratedRegionState.Invalid,
-                new MarkdownDocumentParser().Parse($"## Entries\n{markerPair}\n").GeneratedRegion.State);
-        }
-
-        Assert.Equal(
-            MarkdownGeneratedRegionState.Absent,
-            new MarkdownDocumentParser().Parse($"`{start}`\n```\n{end}\n```\n").GeneratedRegion.State);
-
-        foreach (var lineEnding in new[] { "\n", "\r\n", "\r" })
-        {
-            var source = string.Join(
-                lineEnding,
-                "## Entries",
-                "",
-                start,
-                "body",
-                end,
-                "");
-            Assert.Equal(
-                MarkdownGeneratedRegionState.Complete,
-                new MarkdownDocumentParser().Parse(source).GeneratedRegion.State);
-        }
+        Assert.Equal(MarkdownGeneratedRegionState.Absent, new MarkdownDocumentParser().Parse(source).GeneratedRegion.State);
     }
 
-    [Fact(DisplayName = "Markdown generated-region facts classify malformed marker syntax as invalid")]
+    [Trait("Boundary", "Input")]
+    [Theory(DisplayName = "Entries ends at the next top-level same or higher heading and preserves outside bytes")]
+    [InlineData("## Following\nAuthored.\n")]
+    [InlineData("# Following\nAuthored.\n")]
+    [InlineData("Following\n=========\nAuthored.\n")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
-    public void MalformedGeneratedRegionIsInvalid()
+    public void EntriesEndsAtFollowingSection(string following)
     {
-        var facts = new MarkdownDocumentParser().Parse(
-            "## Entries\n<!-- open-forge:generated-index:bogus -->\n");
-
-        Assert.Equal(MarkdownGeneratedRegionState.Invalid, facts.GeneratedRegion.State);
-    }
-
-    [Fact(DisplayName = "Markdown generated-region facts retain authored content before the generated marker")]
-    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
-    public void GeneratedRegionAllowsAuthoredContentBeforeMarker()
-    {
-        const string start = "<!-- open-forge:generated-index:start -->";
-        const string end = "<!-- open-forge:generated-index:end -->";
-        const string authored = "Authored route notes remain part of the document.\n";
-        var source = $"## Entries\n{authored}{start}\n- generated\n{end}\n";
-
+        const string prefix = "# Title\n\nAuthored prefix.\n\n## Entries";
+        const string content = "\n\n- route\n\n### Child\nStill generated.\n\n> ## Quoted\n\n```md\n## Fenced\n```\n\n";
+        var source = prefix + content + following;
         var facts = new MarkdownDocumentParser().Parse(source);
-
-        Assert.Equal(MarkdownGeneratedRegionState.Complete, facts.GeneratedRegion.State);
+        var span = Assert.IsType<MarkdownTextSpan>(facts.GeneratedRegion.ContentSpan);
+        Assert.Equal(prefix, source[..span.Start]);
+        Assert.Equal(content, source[span.Start..span.End]);
+        Assert.Equal(following, source[span.End..]);
     }
 
-    [Theory(DisplayName = "Markdown generated-region facts reject horizontal whitespace after the end marker")]
-    [InlineData(" ")]
-    [InlineData("\t")]
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Duplicate Entries headings produce a diagnostic without selecting an arbitrary region")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
-    public void GeneratedRegionRejectsHorizontalWhitespaceAfterEndMarker(string trailing)
+    public void DuplicateEntriesAreDiagnosed()
     {
-        const string sourcePrefix =
-            "## Entries\n"
-            + "<!-- open-forge:generated-index:start -->\n"
-            + "body\n"
-            + "<!-- open-forge:generated-index:end -->\n";
-
-        var facts = new MarkdownDocumentParser().Parse(sourcePrefix + trailing);
-
+        var facts = new MarkdownDocumentParser().Parse("## Entries\n\n- one\n\n## Entries\n\n- two\n");
         Assert.Equal(MarkdownGeneratedRegionState.Invalid, facts.GeneratedRegion.State);
+        Assert.Equal(MarkdownGeneratedRegionInvalidKind.Duplicate, facts.GeneratedRegion.InvalidKind);
+        Assert.NotNull(facts.GeneratedRegion.Cause);
+        Assert.Null(facts.GeneratedRegion.ContentSpan);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown generated-region facts keep an unparseable body boundary unavailable")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void GeneratedRegionRemainsUnavailableWhenFrontmatterIsUnterminated()
@@ -537,6 +481,7 @@ public sealed class MarkdownDocumentParserTests
         Assert.Equal(MarkdownGeneratedRegionState.Unavailable, facts.GeneratedRegion.State);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Markdown sections and visible literal spans stay within exact document boundaries")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void SectionsAndVisibleLiteralSpansPreserveDocumentBoundaries()

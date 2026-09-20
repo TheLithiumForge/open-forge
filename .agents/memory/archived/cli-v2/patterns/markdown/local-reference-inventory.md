@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Build one bounded local-reference inventory and project it into context, inspection, diagnosis, and safe repair
+  description: "Historical CLI-v2 source: Build one bounded local-reference inventory and project it into context, inspection, diagnosis, and safe repair"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

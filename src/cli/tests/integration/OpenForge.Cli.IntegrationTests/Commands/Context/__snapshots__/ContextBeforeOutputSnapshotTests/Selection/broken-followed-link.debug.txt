@@ -1,0 +1,62 @@
+Workspace: <workspace>
+  Warning  .agents/docs/guide.md:8:1  Link target is missing [context.target-missing]
+         The link at .agents/docs/guide.md:8:1 points to missing.md, which does not exist. It was not followed.
+=== AGENTS.md ===
+included because workspace entry
+order: 1
+layer: base
+# Workspace
+
+Read `.agents/loader.md`.
+
+=== .agents/loader.md (loader) ===
+included because Loader
+order: 2
+layer: base
+# Open Forge Loader
+
+## Entries
+
+- [Documents](docs/_docs.md) - #LoadNow #Docs
+
+=== .agents/docs/_docs.md (docs) ===
+included because #LoadNow from .agents/loader.md
+included because ancestor required from .agents/docs/guide.md for docs/guide
+route: docs
+order: 3
+layer: base
+---
+open-forge:
+  description: Documents
+  tags: [Docs]
+---
+# Documents
+
+## Entries
+
+- [Guide](guide.md) - #Docs #Guide
+- [Reference](reference.md) - #Docs
+
+=== .agents/docs/guide.md (docs/guide) ===
+included because selected source for docs/guide
+route: docs/guide
+order: 4
+layer: base
+---
+open-forge:
+  description: Guide
+  tags: [Docs, Guide]
+---
+# Guide
+
+[Missing](missing.md).
+
+Links:
+  .agents/docs/guide.md:8:1 -> missing.md; missing; not followed
+  sources: The followed Context links could not be resolved completely.
+  tokens: The followed Context links could not be resolved completely.
+  bytes: The followed Context links could not be resolved completely.
+  links followed: The followed Context links could not be resolved completely.
+  links not followed: The followed Context links could not be resolved completely.
+  Inspect the unavailable closure, source, link, or projection facts before relying on this Context result.
+Next: open-forge doctor

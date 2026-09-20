@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 3,
+  "command": "library list",
+  "status": "completed-with-warnings",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "1 Library registered. 1 link needs attention.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "library-list.link-missing",
+      "title": "Registered link is missing",
+      "message": ".agents/directives/review.md  missing",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/directives/review.md",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "libraries": 1,
+    "linksCurrent": 0,
+    "linksMissing": 1,
+    "linksChanged": 0,
+    "linksUnavailable": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "libraries": [
+      {
+        "id": "team-knowledge",
+        "sourceFolder": "shared/team",
+        "destinationFolder": ".",
+        "links": {
+          "current": 0,
+          "missing": 1,
+          "changed": 0,
+          "unavailable": 0
+        }
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge library sync team-knowledge",
+    "reason": "Repair the missing registered link."
+  }
+}

@@ -1,0 +1,11 @@
+Would update 1 Framework file.
+Workspace: <workspace>
+  .agents/loader.md  replace (you have changed it; a recovery bundle is written first)
+  .agents/loader.md  unchanged (line endings differ)
+  13 files unchanged
+  .agents/loader.md current SHA-256: <sha256>
+  .agents/loader.md shipped SHA-256: <sha256>
+  .agents/loader.md source asset: .agents/loader.md
+  .agents/loader.md bundled Framework: id=framework; version=unavailable; fingerprint=<sha256>
+  Verification was not requested.
+No files were changed.

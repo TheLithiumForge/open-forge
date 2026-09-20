@@ -1,0 +1,191 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v1/open-forge.lock.schema.json",
+  "schemaVersion": 1,
+  "framework": {
+    "source": {
+      "id": "embedded-framework"
+    },
+    "paths": [
+      ".agents/directives/_directives.md",
+      ".agents/guidance/_guidance.md",
+      ".agents/guidance/adaptive-collaboration.md",
+      ".agents/loader.md",
+      ".agents/maps/_maps.md",
+      ".agents/memory/_memory.md",
+      ".agents/memory/archived/_archived.md",
+      ".agents/memory/crystallized/_crystallized.md",
+      ".agents/memory/emerging/_emerging.md",
+      ".agents/memory/working/_working.md",
+      ".agents/patterns/_patterns.md",
+      ".agents/skills/_skills.md",
+      ".agents/templates/_templates.md"
+    ],
+    "regions": [
+      {
+        "path": ".agents/directives/_directives.md",
+        "region": "entries"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "region": "entries"
+      },
+      {
+        "path": ".agents/loader.md",
+        "region": "entries"
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "region": "entries"
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "region": "entries"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "region": "entries"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "region": "entries"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "region": "entries"
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "region": "entries"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "region": "entries"
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "region": "entries"
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "region": "entries"
+      },
+      {
+        "path": "AGENTS.md",
+        "region": "open-forge"
+      },
+      {
+        "path": "CLAUDE.md",
+        "region": "open-forge"
+      }
+    ]
+  },
+  "extensions": [
+    {
+      "id": "development",
+      "version": "0.3.0",
+      "source": "embedded catalogue",
+      "dependencies": [
+        "workflows"
+      ],
+      "paths": [
+        ".agents/skills/use-workflow/references/development/_development.md",
+        ".agents/skills/use-workflow/references/development/debugging.md",
+        ".agents/skills/use-workflow/references/development/development.md",
+        ".agents/skills/use-workflow/references/development/review.md"
+      ],
+      "regions": []
+    },
+    {
+      "id": "development-toolkit",
+      "version": "0.3.0",
+      "source": "embedded catalogue",
+      "dependencies": [
+        "development",
+        "planning",
+        "project-documents"
+      ],
+      "paths": [],
+      "regions": []
+    },
+    {
+      "id": "orchestration",
+      "version": "0.3.0",
+      "source": "embedded catalogue",
+      "dependencies": [
+        "development",
+        "planning"
+      ],
+      "paths": [
+        ".agents/memory/emerging/observations/_observations.md",
+        ".agents/memory/working/handoffs/_handoffs.md",
+        ".agents/skills/use-workflow/references/orchestration/_orchestration.md",
+        ".agents/skills/use-workflow/references/orchestration/managed-delivery.md",
+        ".agents/templates/orchestration/_orchestration.md",
+        ".agents/templates/orchestration/handoff.md",
+        ".agents/templates/orchestration/observation.md"
+      ],
+      "regions": []
+    },
+    {
+      "id": "planning",
+      "version": "0.3.0",
+      "source": "embedded catalogue",
+      "dependencies": [
+        "workflows"
+      ],
+      "paths": [
+        ".agents/memory/crystallized/decisions/_decisions.md",
+        ".agents/memory/emerging/analysis/_analysis.md",
+        ".agents/memory/emerging/ideas/_ideas.md",
+        ".agents/memory/working/checkpoints/_checkpoints.md",
+        ".agents/patterns/work-records.md",
+        ".agents/skills/use-workflow/references/planning/_planning.md",
+        ".agents/skills/use-workflow/references/planning/planning.md",
+        ".agents/templates/planning/_planning.md",
+        ".agents/templates/planning/analysis.md",
+        ".agents/templates/planning/backlog.md",
+        ".agents/templates/planning/checkpoint.md",
+        ".agents/templates/planning/decision.md",
+        ".agents/templates/planning/idea.md",
+        ".agents/templates/planning/plan.md",
+        ".agents/templates/planning/task.md"
+      ],
+      "regions": []
+    },
+    {
+      "id": "project-documents",
+      "version": "0.3.0",
+      "source": "embedded catalogue",
+      "dependencies": [
+        "workflows"
+      ],
+      "paths": [
+        ".agents/memory/crystallized/documents/_documents.md",
+        ".agents/skills/use-workflow/references/project-documents/_project-documents.md",
+        ".agents/skills/use-workflow/references/project-documents/architecture.md",
+        ".agents/skills/use-workflow/references/project-documents/vision.md",
+        ".agents/templates/documents/_documents.md",
+        ".agents/templates/documents/architecture.md",
+        ".agents/templates/documents/document.md",
+        ".agents/templates/documents/maintenance-contract.md",
+        ".agents/templates/documents/principles.md",
+        ".agents/templates/documents/vision.md"
+      ],
+      "regions": []
+    },
+    {
+      "id": "workflows",
+      "version": "0.3.0",
+      "source": "embedded catalogue",
+      "dependencies": [],
+      "paths": [
+        ".agents/skills/use-workflow/SKILL.md",
+        ".agents/skills/use-workflow/references/_references.md",
+        ".agents/templates/workflows/_workflows.md",
+        ".agents/templates/workflows/workflow.md"
+      ],
+      "regions": []
+    }
+  ],
+  "libraries": []
+}

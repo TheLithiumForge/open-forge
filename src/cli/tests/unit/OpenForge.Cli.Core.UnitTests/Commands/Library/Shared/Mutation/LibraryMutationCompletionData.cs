@@ -80,7 +80,7 @@ internal static class LibraryMutationCompletionData
             Directories = [],
             Links = [link],
             GeneratedRegions = [],
-            RecordChange = record,
+            OwnershipChange = record,
             IntendedRecord = LibraryMutationPlanningData.Record(LibraryMutationPlanningData.Leaf).Record,
             Findings = [],
         };
@@ -107,7 +107,7 @@ internal static class LibraryMutationCompletionData
             Directories = [],
             Links = [link],
             GeneratedRegions = [],
-            RecordChange = record,
+            OwnershipChange = record,
             IntendedRecord = LibraryMutationPlanningData.Record(LibraryMutationPlanningData.Leaf).Record,
             Findings = [],
         };
@@ -124,7 +124,7 @@ internal static class LibraryMutationCompletionData
     {
         var observations = LibraryMutationPlanningData.Detach(LibraryMutationPlanningData.Leaf);
         var before = Assert.IsType<FileStateSnapshot>(LibraryMutationPlanningData.Record(LibraryMutationPlanningData.Leaf).Snapshot);
-        var record = PlannedFileChange.Delete(before.Expectation);
+        var record = PlannedFileChange.Replace(before.Expectation, System.Text.Encoding.UTF8.GetBytes("{\"schemaVersion\":1,\"framework\":null,\"extensions\":[],\"libraries\":[]}"));
         var link = Link(delete: true);
         var plan = new LibraryDetachPlan
         {
@@ -134,7 +134,7 @@ internal static class LibraryMutationCompletionData
             Directories = [],
             Links = [link],
             GeneratedRegions = [],
-            RecordChange = record,
+            OwnershipChange = record,
             IntendedRecord = null,
             Findings = [],
         };

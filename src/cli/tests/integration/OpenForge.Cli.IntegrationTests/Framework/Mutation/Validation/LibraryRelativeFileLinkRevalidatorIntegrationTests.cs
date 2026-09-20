@@ -14,6 +14,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Validation;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryRelativeFileLinkRevalidatorIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Relative link validation independently checks ordinary parents and leaves initially or under lease")]
     [InlineData("ordinary", false), InlineData("linked-parent", false), InlineData("linked-root", false), InlineData("occupied", false)]
     [InlineData("ordinary", true), InlineData("linked-parent", true), InlineData("linked-root", true), InlineData("occupied", true)]
@@ -66,6 +67,7 @@ public sealed class LibraryRelativeFileLinkRevalidatorIntegrationTests
         Assert.Empty(Directory.EnumerateFileSystemEntries(temporary.Combine("actual")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Under-lease link revalidation detects a new leaf after an independently observed missing state")]
     public static async Task DetectsLeafRace()
     {

@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "incomplete",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "The selected Extension could not be installed: The source <extension-source> could not be read. Nothing was changed.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "extension-install.source-unavailable",
+      "title": "Source is unavailable",
+      "message": "The source <extension-source> could not be read.",
+      "subject": {
+        "kind": "source",
+        "path": "<extension-source>",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesInstalled": 0,
+    "filesCreated": 0,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "packages": [],
+    "permissions": {
+      "decision": "not-evaluated",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "sections": [],
+    "entriesUnchanged": [],
+    "verification": {
+      "targets": "not-requested",
+      "topology": "not-requested",
+      "extensionsLifecycle": "not-requested",
+      "frameworkLifecycle": "not-requested"
+    },
+    "recovery": {
+      "state": "not-required",
+      "protectedPaths": [],
+      "residualPath": null
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

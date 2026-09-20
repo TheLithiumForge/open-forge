@@ -1,0 +1,7 @@
+No ownership record exists, so update cannot tell which files it manages. Nothing was changed.
+Workspace: <workspace>
+  Info  .agents/open-forge.lock.json  Ownership record observed [update.ownership-observation]
+         The ownership record names files that cannot be interpreted, so nothing was changed.
+  Verification was not requested.
+  Inspect the blocked, unavailable, or incomplete Update facts before rerunning.
+Next: open-forge doctor

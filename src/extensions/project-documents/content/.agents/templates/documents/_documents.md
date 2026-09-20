@@ -1,37 +1,24 @@
 ---
 open-forge:
-  description: Copy-ready starting structures for clear current documents
-  tags: [Extension, Template, Document, CurrentView]
+  description: "Start one current explanation, Vision, Architecture, Principles, or Maintenance Contract"
+  tags: [Extension, Template, Document]
 ---
 
 # Document Templates
 
-## What starting structure fits this document?
-
-Document Templates provide starting structures for clear current documents. They do not impose a fixed document set or schema.
-
 ## Axioms
 
-### Selection And Use
-
-- Create a current document only when one stable question deserves a complete current answer.
-- Choose a Template by the question the document must answer, not by a familiar filename or expected section list.
-- Treat each Template as a checklist and starting structure, not a required set of headings.
-- Remove prompts and sections that do not help. Rename headings for the subject. Split a section when it develops its own independent responsibility.
-- Replace the Template metadata with the destination's description, useful tags, and an optional responsibility when one stable boundary should guide future edits.
-
-### Authority And Content
-
-- Make the result complete enough to use without the Template or supporting Decisions.
-- Keep candidates, active work, and history in their own records instead of mixing several states in one current document.
-- State accepted current meaning in the document. Link to Decisions for useful reasoning instead of copying their history.
-- Link to sources that already define related detail instead of creating a duplicate or dumping ground.
+- Use the general Document starter for a current explanation. Choose Vision for purpose, Architecture for structure, Principles for enduring tradeoffs, or Maintenance Contract for a maintained source's responsibilities.
+- Choose only the documents whose questions need separate answers. A small project may keep several answers together.
+- Keep existing project documentation where it belongs. These Templates do not require moving it into Memory or creating a second current source.
+- Put unsettled drafts in an appropriate candidate scope. Establish acceptance before treating them as current knowledge; a Template name or tag is not acceptance.
+- Replace source metadata and prompts, rebase links, and remove instructions and sections that add no value. The finished document must work without its Template.
+- Keep each current answer in one source. Link to related specifications and rationale instead of copying them.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
-- [Starting structure for a current document that explains a subject's parts, relationships, boundaries, and constraints](architecture.md) - #Extension #Template #Document #Architecture #CurrentView
-- [Starting structure for what a source must keep true and how maintainers verify it](maintenance-contract.md) - #Extension #Template #Document #Maintenance #Governance #CurrentView
-- [Starting structure for stable principles that guide recurring unfamiliar choices](principles.md) - #Extension #Template #Document #Principle #CurrentView
-- [Starting structure for a desired future, why it matters, its boundaries, and success](vision.md) - #Extension #Template #Document #Vision #CurrentView
-<!-- open-forge:generated-index:end -->
+- [Explain the system model, responsibilities, dependency direction, important flows, and limits](architecture.md) - #Extension #Template #Document #Architecture
+- [Write one coherent current explanation without duplicating another source's detail](document.md) - #Extension #Template #Memory #Document
+- [State what a maintained source owns, what must remain true, and how to verify it](maintenance-contract.md) - #Extension #Template #Document #Maintenance #Governance
+- [Define the principles that guide unfamiliar choices and resolve tensions between them](principles.md) - #Extension #Template #Document #Principle
+- [Explain the promise, audience, first useful value, boundaries, and observable success](vision.md) - #Extension #Template #Document #Vision

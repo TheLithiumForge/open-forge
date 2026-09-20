@@ -14,7 +14,7 @@ Astra/high review found two ordinary release defects: a pre-existing version tag
 could name another commit, and a numeric prerelease identifier was unsuitable
 as its npm channel. One grouped correction at `737444e0` and the bounded cleanup
 delta review at `b4983d53` closed both findings. The
-[Task receipt](../../working/cli-development/tasks/delivery/02-native-ci.md#delivery-simplification-continuation)
+[Task receipt](../../archived/cli-development/tasks/delivery/02-native-ci.md#delivery-simplification-continuation)
 owns exact scope, commits, assertion mapping and execution limits.
 
 The user then requested root-script placement, old CLI retirement and a real
@@ -265,8 +265,8 @@ foundation evidence (`7a601cc`), foundation acceptance (`e7716ce`), route-list
 contracts (`f3529ee`), selection (`9a62995`), and filesystem inventory
 (`fa03662`). The current [CLI Architecture](../../crystallized/documents/cli/architecture.md),
 [Plan](../../working/cli-development/plan.md), [Task index](../../working/cli-development/tasks/_tasks.md),
-[Route Discovery](../../working/cli-development/tasks/route-discovery/_route-discovery.md),
-[route-list acceptance Task](../../working/cli-development/tasks/route-discovery/done/route-list-acceptance.md),
+[Route Discovery](../../archived/cli-development/tasks/route-discovery/_route-discovery.md),
+[route-list acceptance Task](../../archived/cli-development/tasks/route-discovery/done/route-list-acceptance.md),
 and [Checkpoint](../../working/checkpoints/cli-development.md) carry the active
 structure and evidence. The current topology and presentation acceptance work is
 also recorded there as verified. The maintainer authorized route-list closeout
@@ -294,13 +294,13 @@ The current flow is materially better in these dimensions:
   context observation.
 - **Task slicing:** Current Route Discovery separates contracts, selection,
   filesystem, topology, presentation, and acceptance in
-  [Route Discovery](../../working/cli-development/tasks/route-discovery/_route-discovery.md).
+  [Route Discovery](../../archived/cli-development/tasks/route-discovery/_route-discovery.md).
   The earlier WIP increment changed 24 files with 1,224 insertions and 254
   deletions, including a 446-line physical-containment class. The current slices
   make those boundaries inspectable before integration.
 - **Test-tier sequencing:** The current Architecture and route-list acceptance
   distinguish Unit, Integration, EndToEnd, managed process, and published Native
-  AOT evidence. The [route-list acceptance record](../../working/cli-development/tasks/route-discovery/done/route-list-acceptance.md)
+  AOT evidence. The [route-list acceptance record](../../archived/cli-development/tasks/route-discovery/done/route-list-acceptance.md)
   names the 259 Unit, 84 Integration, and 7 EndToEnd cases and the published
   `win-x64` executions. The reset record explicitly rejects test counts as a
   substitute for architecture, contract, or Native AOT proof.
@@ -310,16 +310,16 @@ The current flow is materially better in these dimensions:
   reasoning needed for later comparison.
 - **Edge-case handling:** Current route-list evidence names aliases, cycles,
   external-then-reentry, cancellation retention, raw-token interaction, output
-  ordering, and no-write checks. The new [replacement-CLI edge-case ledger](../../working/cli-development/edge-cases.md)
+  ordering, and no-write checks. The new [replacement-CLI edge-case ledger](../../archived/cli-development/edge-cases.md)
   keeps unresolved breadth visible with stable IDs and closure conditions. The
   earlier flow discovered the physical escape only after passing local gates.
 - **Honest acceptance status:** The current [Plan](../../working/cli-development/plan.md),
   [Checkpoint](../../working/checkpoints/cli-development.md), and [route-list
-  acceptance Task](../../working/cli-development/tasks/route-discovery/done/route-list-acceptance.md)
+  acceptance Task](../../archived/cli-development/tasks/route-discovery/done/route-list-acceptance.md)
   distinguish green local evidence from Git integration. The maintainer
   authorized route-list closeout after the local evidence, and the two
   legacy-router errors are recorded in [CLI-EDGE-001 — Legacy routing-tool
-  duplicate-entrypoint reports](../../working/cli-development/edge-cases.md#cli-edge-001--legacy-routing-tool-duplicate-entrypoint-reports)
+  duplicate-entrypoint reports](../../archived/cli-development/edge-cases.md#cli-edge-001--legacy-routing-tool-duplicate-entrypoint-reports)
   rather than treated as route-list blockers. No squash integration is claimed
   before Git executes it. This does not claim route-list acceptance from test
   counts alone.
@@ -389,7 +389,7 @@ this observation supports a reusable workflow or agent-package change.
 
 ## Guidance To Retain For Route Inspect
 
-The [route-inspect Task](../../working/cli-development/tasks/route-discovery/route-inspect.md)
+The [route-inspect Task](../../archived/cli-development/tasks/route-discovery/route-inspect.md)
 should retain these boundaries:
 
 - Split Tasks before code begins.
@@ -437,8 +437,8 @@ implementation, and review; GPT-5.6 Luna/max for bounded exploration, literal
 mechanical work, and exact verification. This is a current experiment, not a
 change to the installed Framework or proof of general model superiority.
 
-The [restart handoff](../../working/handoffs/2026-09-07_cli-astra-restart.md)
-and [inventory](../../working/handoffs/2026-09-07_cli-astra-restart-inventory.md)
+The [restart handoff](../../archived/cli-development/handoffs/2026-09-07_cli-astra-restart.md)
+and [inventory](../../archived/cli-development/handoffs/2026-09-07_cli-astra-restart-inventory.md)
 preserve the inherited baseline. Repair had an uncompiled operation draft;
 Library recovery had 19 passing Unit cases and one failure, followed by an
 unverified null suppression. These were known defects at transfer, so fixing

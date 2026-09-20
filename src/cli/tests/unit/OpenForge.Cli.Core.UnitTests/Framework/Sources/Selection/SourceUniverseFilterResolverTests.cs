@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Selection;
 
 public sealed class SourceUniverseFilterResolverTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Ordered source-universe selectors retain occurrences while exclusion wins the deduplicated set")]
     [Trait("Feature", "source-selection"), Trait("Evidence", "Unit")]
     public void OrderedSelectorsRetainReportingFactsAndExclusionPrecedence()
@@ -58,6 +59,7 @@ public sealed class SourceUniverseFilterResolverTests
             source => source.Identity.CanonicalBasePath == guide.Identity.CanonicalBasePath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Folder selectors expand physically while ordinary and overwrite paths retain one logical source")]
     [Trait("Feature", "source-selection"), Trait("Evidence", "Unit")]
     public void ExpansionUsesPhysicalKindAndLogicalSourceIdentity()
@@ -91,6 +93,7 @@ public sealed class SourceUniverseFilterResolverTests
         Assert.Same(ordinary, Assert.Single(overwrite.Selection.Sources));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "One unresolved selector preserves its ordered fact and admits no effective sources")]
     [Trait("Feature", "source-selection"), Trait("Evidence", "Unit")]
     public void UnresolvedSelectorStopsEffectiveSetFormationWithoutErasingEvidence()

@@ -17,13 +17,13 @@ Extensions add routed content and supporting files. Routed content uses ordinary
 
 This document defines the Extension concept, package composition, and the boundary between installed content and lifecycle tools. Related sources define their own detail:
 
-| Source | Question it answers |
-| --- | --- |
-| [Top Architecture](../architecture.md#framework-composition) | How do Core, Memory, and Extensions compose? |
-| [Framework Architecture](../framework/architecture.md) | How are installed routes, roles, scope, loading, authority, and Memory interpreted? |
-| [Extension command contracts](../cli/contracts/extension/_extension.md), including [package layout](../cli/contracts/extension/_extension.md#package-layout) | What package representation and managed operations do the current CLI contracts define? |
-| [Consumer permission contracts](../cli/contracts/shared/workspace-permissions/_workspace-permissions.md) | Which permission grants are required for files consumed by other tools? |
-| [First-party catalogue](../../../../../src/extensions/README.md) | Which packages exist, what do they contain, and how are their source files arranged and installed? |
+| Source                                                                                                                                                       | Question it answers                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| [Top Architecture](../architecture.md#framework-composition)                                                                                                 | How do Core, Memory, and Extensions compose?                                                       |
+| [Framework Architecture](../framework/architecture.md)                                                                                                       | How are installed routes, roles, scope, loading, authority, and Memory interpreted?                |
+| [Extension command contracts](../cli/contracts/extension/_extension.md), including [package layout](../cli/contracts/extension/_extension.md#package-layout) | What package representation and managed operations do the current CLI contracts define?            |
+| [Consumer permission contracts](../cli/contracts/shared/workspace-permissions/_workspace-permissions.md)                                                     | Which permission grants are required for files consumed by other tools?                            |
+| [First-party catalogue](../../../../../src/extensions/README.md)                                                                                             | Which packages exist, what do they contain, and how are their source files arranged and installed? |
 
 The current command contracts define implementation-specific manifest rules, dependency resolution, lifecycle records, update and removal behavior, and operational safety requirements. They do not define the runtime meaning of installed Framework content.
 

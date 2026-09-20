@@ -10,7 +10,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
@@ -20,9 +20,10 @@ internal sealed class RouteInitFrameworkIntegrationWorkspace : IDisposable
 {
     private const string OwnershipMarkerName = ".open-forge-test-workspace-owner";
     internal const string LifecyclePath = ".agents/open-forge.lifecycle.json";
+    internal const string OwnershipPath = ".agents/open-forge.lock.json";
     internal const string LoaderPath = ".agents/loader.md";
     internal const string FrameworkRoot = "memory";
-    internal const string FrameworkRoute = "memory/crystallized/documents";
+    internal const string FrameworkRoute = "memory/working";
 
     private static readonly UTF8Encoding StrictUtf8NoBom = new(
         encoderShouldEmitUTF8Identifier: false,
@@ -74,10 +75,8 @@ internal sealed class RouteInitFrameworkIntegrationWorkspace : IDisposable
         var workspace = CreateEmpty(purpose);
         try
         {
-            using var input = new StringReader(string.Empty);
-            using var output = new StringWriter();
             var result = await InstallOperationFactory.Create(
-                    new CliInteractiveSession(input, output, canPrompt: false),
+                    InstallInteractionTestSupport.Unavailable(),
                     workspace.LockStoreRoot)
                 .ExecuteAsync(
                     workspace.InstallRequest(),
@@ -89,12 +88,6 @@ internal sealed class RouteInitFrameworkIntegrationWorkspace : IDisposable
                     + string.Join(
                         " | ",
                         result.Findings.Select(finding => $"{finding.Code}: {finding.Cause}")));
-            }
-
-            if (output.ToString().Length != 0)
-            {
-                throw new InvalidOperationException(
-                    "The automatic trusted Install fixture unexpectedly produced prompt output.");
             }
 
             return workspace;
@@ -168,6 +161,14 @@ internal sealed class RouteInitFrameworkIntegrationWorkspace : IDisposable
 
     internal IReadOnlyDictionary<string, string> SnapshotHashes()
         => _temporary.SnapshotHashes();
+
+    internal IReadOnlyDictionary<string, string> SnapshotHashesWithoutOwnership()
+        => SnapshotHashes()
+            .Where(entry => !string.Equals(
+                entry.Key.Replace('\\', '/'),
+                OwnershipPath,
+                StringComparison.OrdinalIgnoreCase))
+            .ToDictionary(entry => entry.Key, entry => entry.Value);
 
     internal FileStream HoldExternalLock()
         => _lockStore.OpenExclusive(Workspace);

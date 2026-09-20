@@ -1,0 +1,5 @@
+Cannot remove docs/guide: The ID docs/guide matches more than one file. Use the exact path.
+Workspace: <workspace>
+  Error  docs/guide  Identity collision [route-remove.identity-collision]
+         The ID docs/guide matches more than one file. Use the exact path.
+  Scanned 0 files and found 0 links.

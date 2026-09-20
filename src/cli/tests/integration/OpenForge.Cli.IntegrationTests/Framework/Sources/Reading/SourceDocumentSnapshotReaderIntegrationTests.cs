@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Reading;
 
 public sealed class SourceDocumentSnapshotReaderIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Source document snapshot reader uses exact current bytes instead of a cached source body"), Trait("Feature", "source-document-snapshot"), Trait("Evidence", "Integration")]
     public async Task ExactSourceSnapshotFeedsExpectationAndContentFromOneRead()
     {
@@ -43,6 +44,7 @@ public sealed class SourceDocumentSnapshotReaderIntegrationTests
             snapshot.ContentHash);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Source document snapshot reader rejects invalid UTF-8 without using the cached body"), Trait("Feature", "source-document-snapshot"), Trait("Evidence", "Integration")]
     public async Task ExactSourceSnapshotRejectsInvalidUtf8()
     {

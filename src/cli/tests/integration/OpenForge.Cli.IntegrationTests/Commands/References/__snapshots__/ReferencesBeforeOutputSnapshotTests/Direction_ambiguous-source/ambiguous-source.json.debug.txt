@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 3,
+  "command": "references",
+  "status": "blocked",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot list references: The source ID resolves to more than one logical source.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "references.source-ambiguous",
+      "title": "Source is ambiguous",
+      "message": "Cannot list references: The source ID resolves to more than one logical source.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "docs/guide",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "references.identity-collision",
+      "title": "Two sources share an identity",
+      "message": "The ID docs/guide matches more than one file. Use the exact path.",
+      "subject": {
+        "kind": "identifier",
+        "path": ".agents/docs/guide.md",
+        "id": ".agents/docs/guide.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [
+        {
+          "subject": {
+            "kind": "source",
+            "path": ".agents/docs/guide.md",
+            "id": "docs/guide",
+            "location": null
+          },
+          "reasons": [
+            "matches the same automatic ID"
+          ]
+        },
+        {
+          "subject": {
+            "kind": "source",
+            "path": ".agents/docs/guide/_guide.md",
+            "id": "docs/guide",
+            "location": null
+          },
+          "reasons": [
+            "matches the same automatic ID"
+          ]
+        }
+      ],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "incoming": 0,
+    "outgoing": 0,
+    "sourcesScanned": 0,
+    "errors": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "direction": "both",
+    "incoming": [],
+    "outgoing": [],
+    "coverage": {
+      "incoming": "blocked",
+      "outgoing": "blocked"
+    },
+    "filters": {
+      "include": [],
+      "exclude": []
+    },
+    "scanned": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "check the workspace for broken links"
+  }
+}

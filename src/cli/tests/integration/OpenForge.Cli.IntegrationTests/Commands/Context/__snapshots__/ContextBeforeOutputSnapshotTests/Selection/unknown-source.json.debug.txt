@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot read context: No source has the ID missing/source.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "context.invalid-source",
+      "title": "Invalid source",
+      "message": "No source has the ID missing/source.",
+      "subject": {
+        "kind": "identifier",
+        "path": "missing/source",
+        "id": "missing/source",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sources": null,
+    "tokens": null,
+    "bytes": null,
+    "linksFollowed": 0,
+    "linksNotFollowed": 0,
+    "errors": 1
+  },
+  "limitations": [
+    {
+      "what": "sources",
+      "why": "The Context source closure could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "tokens",
+      "why": "The Context source closure could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "bytes",
+      "why": "The Context source closure could not be resolved completely.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "sources": [],
+    "links": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route list --depth=all",
+    "reason": "List source IDs and exact paths, then rerun Context."
+  }
+}

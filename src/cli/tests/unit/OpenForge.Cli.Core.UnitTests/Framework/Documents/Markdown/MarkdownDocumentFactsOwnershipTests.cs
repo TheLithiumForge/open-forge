@@ -8,6 +8,7 @@ public sealed class MarkdownDocumentFactsOwnershipTests
 {
     private const string Source = "# H\ntext `c` [L](x) ![I](y)\n";
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Markdown document facts isolate all six collections from input and intermediate aliases"), Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void DocumentFactsOwnTheirCollections()
     {
@@ -60,6 +61,7 @@ public sealed class MarkdownDocumentFactsOwnershipTests
         Assert.True(facts.Images[0].IsImage);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Markdown collection inputs are consumed at ingress once and in declared order"), Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void InputEnumerationRemainsAtIngress()
     {
@@ -84,6 +86,7 @@ public sealed class MarkdownDocumentFactsOwnershipTests
         Assert.Equal(["headings", "sections", "visible", "opaque", "links", "images"], trace);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Markdown collection argument validation precedes input enumeration"), Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void MissingLaterCollectionDoesNotConsumeEarlierInput()
     {
@@ -103,6 +106,7 @@ public sealed class MarkdownDocumentFactsOwnershipTests
         Assert.Empty(trace);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Markdown structure stops consuming inputs when the first collection throws"), Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void StructureEnumerationFailureStopsLaterInput()
     {
@@ -117,6 +121,7 @@ public sealed class MarkdownDocumentFactsOwnershipTests
         Assert.Equal(["headings"], trace);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Markdown inline inputs retain earlier consumption and stop after a throwing collection"), Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void InlineEnumerationFailureStopsLaterInput()
     {
@@ -133,6 +138,7 @@ public sealed class MarkdownDocumentFactsOwnershipTests
         Assert.Equal(["visible", "opaque", "links"], trace);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Markdown null members are rejected at final construction before resource or span failures"),
         InlineData("headings"), InlineData("sections"), InlineData("visible"),
         InlineData("opaque"), InlineData("links"), InlineData("images")]
@@ -157,6 +163,7 @@ public sealed class MarkdownDocumentFactsOwnershipTests
             parameterName: null);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Markdown resource kinds are checked before document structure"), InlineData(true), InlineData(false)]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void ResourceKindPrecedesStructureValidation(bool invalidLinks)
@@ -174,6 +181,7 @@ public sealed class MarkdownDocumentFactsOwnershipTests
             "inlineFacts");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Markdown structure span failures precede inline span failures"), Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void StructureValidationPrecedesInlineValidation()
     {
@@ -186,6 +194,7 @@ public sealed class MarkdownDocumentFactsOwnershipTests
             "structure");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Markdown heading order is checked before section count"), Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void HeadingOrderPrecedesSectionValidation()
     {
@@ -197,6 +206,7 @@ public sealed class MarkdownDocumentFactsOwnershipTests
             "headings");
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Markdown sections retain their heading and exact end boundary"), InlineData(true), InlineData(false)]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void SectionIdentityAndBoundaryRemainValidated(bool mismatchedHeading)
@@ -215,6 +225,7 @@ public sealed class MarkdownDocumentFactsOwnershipTests
             "sections");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Markdown inline validation retains its facts parameter after structural admission"), Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void InlineSpanFailureRetainsItsParameter()
     {
@@ -226,6 +237,7 @@ public sealed class MarkdownDocumentFactsOwnershipTests
             "facts");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Markdown inline facts retain source order after valid span admission"), Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void InlineOrderRemainsValidated()
     {

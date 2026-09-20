@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 3,
+  "command": "extension remove",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Removed the toolkit Extension.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "packagesRemoved": 1,
+    "filesDeleted": 1,
+    "filesKept": 0,
+    "filesReleased": 0,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "automatic": true,
+    "packages": [
+      {
+        "id": "toolkit"
+      }
+    ],
+    "orphaned": [],
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/toolkit.md",
+        "action": "delete",
+        "outcome": "verified",
+        "owner": "toolkit",
+        "keptFor": [],
+        "ownersBefore": [
+          "toolkit"
+        ],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/directives/_directives.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/loader.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      }
+    ],
+    "removalOrder": [
+      "toolkit"
+    ],
+    "entriesUnchanged": [
+      ".agents/directives/_directives.md",
+      ".agents/guidance/_guidance.md",
+      ".agents/loader.md",
+      ".agents/maps/_maps.md",
+      ".agents/memory/_memory.md",
+      ".agents/memory/archived/_archived.md",
+      ".agents/memory/crystallized/_crystallized.md",
+      ".agents/memory/emerging/_emerging.md",
+      ".agents/memory/working/_working.md",
+      ".agents/patterns/_patterns.md",
+      ".agents/skills/_skills.md",
+      ".agents/templates/_templates.md"
+    ],
+    "verification": {
+      "targets": "verified",
+      "entries": "verified",
+      "extensionRecord": "verified"
+    },
+    "recovery": {
+      "state": "retained",
+      "protectedPaths": [
+        ".agents/toolkit.md",
+        ".agents/open-forge.lock.json"
+      ],
+      "path": "<recovery-bundle>"
+    }
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge cleanup",
+    "reason": "after reviewing the bundle"
+  }
+}

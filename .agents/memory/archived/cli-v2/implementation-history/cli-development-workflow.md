@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Accepted historical Task for the optional Purple Development phase, calibrated agent reasoning, and repository TypeScript import boundaries
+  description: "Historical CLI-v2 source: Accepted historical Task for the optional Purple Development phase, calibrated agent reasoning, and repository TypeScript import boundaries"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

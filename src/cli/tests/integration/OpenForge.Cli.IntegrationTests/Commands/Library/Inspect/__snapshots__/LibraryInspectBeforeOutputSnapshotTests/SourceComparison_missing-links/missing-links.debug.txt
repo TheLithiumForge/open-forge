@@ -1,0 +1,10 @@
+team-knowledge needs a sync: 1 file differs between shared/team and ..
+Workspace: <workspace>
+  Warning  .agents/directives/review.md  Registered link is missing [library-inspect.link-missing]
+         .agents/directives/review.md  missing
+  .agents/directives/review.md  missing
+      Expected target: ../../shared/team/.agents/directives/review.md
+      Observed target: unavailable
+Source inventory: 1 eligible file, 0 excluded items.
+  Preview the synchronization before changing files.
+Next: open-forge library sync team-knowledge --dry-run

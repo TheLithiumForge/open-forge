@@ -20,6 +20,4 @@ The route does not predefine implementation-language or code Template scopes.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Copy-ready document files for a command-local CLI contract set under contracts/{command-path}](documents/_documents.md) - #Template #CLI #Document #Command #Contract #Interface #Behavior #TechnicalDesign
-<!-- open-forge:generated-index:end -->

@@ -1,0 +1,6 @@
+Entries sections are current in all 2 files. Nothing to do.
+Workspace: <workspace>
+  .agents/loader.md      current
+  .agents/root/_root.md  current
+Selection: loader roots
+No recovery bundle was needed.

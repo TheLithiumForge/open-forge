@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 3,
+  "command": "route update",
+  "status": "failed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Route update stopped after 1 of 2 changes.",
+    "kind": "failed"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-update.write-failed",
+      "title": "Write failed",
+      "message": "Writing .agents/memory/project-alpha/overview.md failed. Stopped after 1 of 2 changes. Recovery data: <recovery-bundle>.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/memory/project-alpha/overview.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/memory/project-alpha/overview.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/memory/project-alpha/_project-alpha.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "fieldsChanged": 1,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "memory/project-alpha/overview",
+      "path": ".agents/memory/project-alpha/overview.md"
+    },
+    "changes": [
+      {
+        "field": "description",
+        "before": "Before overview",
+        "after": "After overview"
+      }
+    ],
+    "template": null,
+    "listedIn": ".agents/memory/project-alpha/_project-alpha.md",
+    "frontmatterBefore": "description: Before overview",
+    "frontmatterAfter": "description: After overview"
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route update --detail debug",
+    "reason": "Report the failure and retry the same Route Update request with bounded diagnostics."
+  }
+}

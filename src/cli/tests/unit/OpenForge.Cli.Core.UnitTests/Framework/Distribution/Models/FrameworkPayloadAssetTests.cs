@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Distribution.Models;
 
 public sealed class FrameworkPayloadAssetTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Framework payload assets own exact bytes and lowercase SHA-256"), Trait("Feature", "framework-payload"), Trait("Evidence", "Unit")]
     public void AssetsOwnExactBytesAndHash()
     {
@@ -22,6 +23,7 @@ public sealed class FrameworkPayloadAssetTests
         Assert.Equal(asset.ByteLength, asset.Bytes.Length);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Framework payload assets reject noncanonical paths"), Trait("Feature", "framework-payload"), Trait("Evidence", "Unit")]
     [InlineData("")]
     [InlineData(".")]
@@ -42,6 +44,7 @@ public sealed class FrameworkPayloadAssetTests
         Assert.Throws<ArgumentException>(() => FrameworkPayloadAsset.Create(path, "bytes"u8));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Framework payload assets admit only exact roots and canonical agent descendants"), Trait("Feature", "framework-payload"), Trait("Evidence", "Unit")]
     [InlineData("AGENTS.md")]
     [InlineData("CLAUDE.md")]

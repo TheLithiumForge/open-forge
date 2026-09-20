@@ -21,10 +21,41 @@ relationships, parser and filesystem boundaries, and cross-cutting implementatio
 structure. This behavior does not duplicate those mechanics or
 claim their Gate 5 proof.
 
+## Ownership Source
+
+The generated `.agents/open-forge.lock.json` is the only ownership input and
+state-file output. It records package IDs, descriptive versions and sources,
+dependencies, whole-file paths, and regions. Read it forgivingly: missing or
+unreadable ownership supplies no claims, without falling back to earlier files.
+Duplicate recorded IDs or uninterpretable Library mappings produce an informational
+observation and no inferred file effects. The Library boundary cannot turn a
+missing or unreadable lock into an installation gate. Leftover records are not read, migrated, rewritten or deleted.
+
+Compare current selected target content with intended source content in this
+invocation. Recorded release metadata supplies no integrity baseline. A change
+to selected dependency or path membership still requires Extension Update.
+Preserve unselected receipts, existing regions and other ownership sections.
+Revalidate the observed lock even when publication is unchanged.
+
+Publication follows verified target and topology effects. The existing public
+state-file outcome refers to the lock; no second outcome is added. An identical
+receipt is preserved. A skipped write uses action `none`, outcome
+`not-requested`, and does not block target effects. Its unavailable record
+verification is `not-requested`, without claiming a verified publication.
+A planned or preserved readable receipt is checked again after target effects.
+Computed hashes remain operation-time facts; no baseline or policy is stored.
+
 ## Consumer Destination Permissions
 
+Explicit non-dry-run `--allow-path` edits the shared authored settings after safe
+planning and before admission; failure is reported and stops content application.
+It is a separate authored edit and remains if later content fails. Interactive
+always approval declares a settings effect covered by the operation's recovery
+bundle. Once approves only this operation and writes no settings; cancel applies
+nothing. The shared contract owns the exact reader, authoring and receipt rules.
+
 Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
-[Behavior](../../shared/workspace-permissions/behavior.md). Require an exact grant per package for every external target in the complete
+[Behavior](../../shared/workspace-permissions/behavior.md). Require shared destination admission for every external target in the complete
 selected dependency closure.
 Existing `.agents/` targets need no grant; their prior safety and ownership
 checks remain. Revocation blocks the complete selected lifecycle operation,
@@ -33,13 +64,13 @@ installed packages do not enter this request's required set.
 
 An eligible human apply request asks once for the complete missing set after
 safe preflight. JSON, automatic, redirected and dry-run execution never ask the
-permission question or create grants. Existing selection and force/prune
+permission question. An explicit non-dry-run `--allow-path` still authors a grant. Existing selection and force/prune
 questions keep their separate rules. Force and prune never supply permission.
-Malformed or unsafe permission storage is diagnosed without overwriting it.
+Malformed or unsafe settings are never overwritten by approval.
 
-Permission create/replace is a declared control-file effect. Revalidate the
-observed document and approved plan under the existing workspace lease. Cover
-prior permission bytes or proven absence in the one verified operation bundle,
+Interactive always approval creates a declared settings-file create/replace effect. Revalidate the
+observed settings and approved plan under the existing workspace lease. Cover
+prior settings bytes or proven absence in the one verified operation bundle,
 then persist and verify approval before content and lifecycle effects. Later
 failure retains the grant and its actual outcome. Restoration is manual; no
 new automatic Repair behavior follows.
@@ -49,7 +80,7 @@ new automatic Repair behavior follows.
 ```text
 validated command and package selection
   -> exact workspace and one source universe
-  -> Framework anchor and route-host facts
+  -> Framework anchor, route-host facts, and bounded projection coverage
   -> manifests, stable IDs, dependency closure, and package paths
   -> current lifecycle, ownership, and semantic facts
   -> intended authored topology and generated projection
@@ -66,9 +97,14 @@ validated command and package selection
 ```
 
 No effect begins until all selected roots, dependencies, ownership sets, route
-hosts, generated boundaries, lifecycle sections, recovery-bundle, verification,
-and preservation facts pass. The operation does not apply a safe subset around a blocked
-dependency or path.
+hosts, generated boundaries, recovery-bundle, verification, and preservation
+facts pass. An unrelated readable malformed ordinary-metadata host outside
+the selected package's affected ancestor closure may be recorded as an
+unavailable projection host; it does not remove any other available topology
+projection or effect and does not authorize a selected-only topology rewrite.
+The operation never applies a safe subset around a blocked dependency or path,
+and never skips an unreadable, unsafe, selected/affected, native Skill, or
+required malformed boundary.
 
 ## Typed Callable Boundary
 
@@ -99,7 +135,7 @@ bool AllowInteraction
 `ExtensionInstallMode` has only `Apply` and `DryRun`. `RequestedIds` is a
 non-null immutable ordered snapshot. Empty requested IDs and `All = false`
 preserve an unresolved selection for the operation to resolve through
-single-package inference, the bounded prompt, or an `invalid` result. The
+single-package inference, the bounded prompt, or an `invalid-input` result. The
 request carries no parser object, writer, stream, service collection, registry,
 or context bag.
 
@@ -168,11 +204,18 @@ requests.
 A prompt-capable human multi-package request displays the finite inventory and
 accepts only exact stable package IDs or exact `all`. Invalid answers retry
 locally. Selected dependencies are displayed as the complete mandatory closure
-and are not optional answers. End-of-input produces a no-write `invalid` result
-and cancellation produces a no-write `interrupted` result. JSON, automatic, and
+and are not optional answers. End-of-input produces a no-write `invalid-input` result
+and cancellation produces a no-write `cancelled` result. JSON, automatic, and
 other non-interactive multi-package requests without explicit selection are
-`invalid`. Automatic mode never chooses among packages or broadens selection to
+`invalid-input`. Automatic mode never chooses among packages or broadens selection to
 all.
+
+When a selected package has no content directory, the operation emits
+`extension-install.package-content-missing` as a warning and returns
+`completed-with-warnings`. Its human primary output starts `Nothing was
+installed from <extension-source>: the package has no content directory.` and
+includes `Package files belong under <extension-source>/content/.agents/.`;
+no content files are written.
 
 The CLI distribution embeds Framework and first-party Extension assets with
 deterministic inventory and hash proof. That proof identifies distributed source
@@ -181,19 +224,24 @@ a proven runtime implementation.
 
 ## Framework Anchor And Route Hosts
 
-Before forming a managed mutation plan, establish a trustworthy installed
-Framework anchor for the exact workspace. Establish complete facts for every
-affected authored host, generated `Entries` boundary, ownership relationship,
-route relationship, and cross-section preservation boundary. List and create do
-not need this anchor; install and update do. If a required safe fact is
-unavailable, return `incomplete`; if it is unsafe or ambiguous, return
-`blocked` and write nothing. The installed anchor includes the existing
-`.agents` Framework container. A safely absent container is therefore an
-unavailable anchor and produces `incomplete` before planning; an unsafe or
-ambiguous container remains `blocked`. Extension Install never plans creation of
-`.agents` itself. The shared directory-creation capability remains unchanged;
-after the anchor is established, this command may consume it for explicitly
-planned missing ordinary parents of admitted workspace-relative targets.
+Before forming a mutation plan, establish the actual contained ordinary
+`.agents` Framework container for the exact workspace. No persisted Framework
+source version or target hash participates in this admission check. Establish
+complete facts for every affected authored host, generated `Entries` boundary,
+ownership relationship, route relationship, and cross-section preservation
+boundary. List and create do not need this anchor; install and update do. If a
+required selected/affected fact is unavailable, return `incomplete`; if it is
+unsafe or ambiguous, return `blocked` and write nothing. A readable malformed
+ordinary-metadata host is skippable only when it is outside the selected
+package's affected ancestor closure and an independent safe projection remains;
+retain its exact source, reason, and cause as a visible Attention2 finding.
+The installed anchor includes the existing `.agents` Framework container. A
+safely absent container is therefore an unavailable anchor and produces
+`incomplete` before planning; an unsafe or ambiguous container remains
+`blocked`. Extension Install never plans creation of `.agents` itself. The
+shared directory-creation capability remains unchanged; after the anchor is
+established, this command may consume it for explicitly planned missing ordinary
+parents of admitted workspace-relative targets.
 
 ## Manifest And Dependency Closure
 
@@ -216,45 +264,22 @@ dependents. Keep selected roots, dependency edges, and order facts in the one
 operation result. A descriptive version never selects a different source or
 grants compatibility authority.
 
-## Lifecycle Trust And Ownership
+## Ownership And Publication
 
-Read `.agents/open-forge.lifecycle.json`, schema v1, as isolated `framework` and
-`extensions` sections. Validate and preserve the unrelated section and common
-envelope meaning semantically. Publish a selected Extension semantic change only
-after dependency-first target and generated effects and intended-topology
-verification. Verify it as the last workspace file effect, then reread targets,
-Extension lifecycle, and unchanged Framework meaning before success or recovery
-cleanup. Publication emits one deterministic canonical UTF-8 whole-document
-representation, so lifecycle property order, whitespace, and line endings may
-be normalized. A semantic no-op writes nothing. Prior bytes for every
-existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`) remain
-only in the verified external recovery bundle described below; the CLI does not
-inspect or report repository state or claim history evidence. The document
-stores no plan, runtime history, journal, recovery evidence, or session. Files
-outside this exact path are ordinary workspace content, not lifecycle input.
+Use the ownership source and publication rules above. Publish the selected
+Extension receipt only after dependency-first target and generated effects and
+intended-topology verification. The planned lock is the final workspace file
+effect; verify its exact intended bytes, including preserved Framework and
+Library sections. Capture exact prior bytes for the same recovery bundle before
+any replacement. An unchanged receipt writes nothing and its observed identity
+is rechecked after application. A skipped unreadable lock write remains skipped.
+Manual copying, idless packages, overlays, and external native Skills remain
+unmanaged. Path, route, byte or semantic coincidence never adopts them.
 
-The `extensions` section is trusted only with exact workspace binding, stable IDs,
-dependency reciprocity, target-relative paths, shared owner sets, semantic
-baseline fingerprints, supported versions and policy, no duplicate/conflicting
-identities, and complete verifiable coverage. A safely absent section is valid
-only after complete absence and recovery inspection. An absent document or
-section is not, by itself, proof of unmanaged state. Missing expected, malformed,
-unsupported, unverifiable, or inconsistent evidence is never treated as empty
-or trusted; safe unavailable coverage is `incomplete` and unsafe ambiguity is
-`blocked`.
-
-Manual copying, idless packages, direct overlays, and external native Skills
-remain unmanaged. Path, route, byte, or semantic coincidence never adopts them.
-
-An exact destination path claim in the consumer Library record
-`.agents/open-forge.libraries.json`, or a real relative projection link at that
-destination, is separately owned by Library management. Install never adopts,
-overwrites, updates, or removes that destination, including when `--force` is
-supplied. The neutral no-follow final-leaf guard blocks ordinary Extension
-`Create`, `Replace`, `Delete`, or `ReplaceGeneratedRegion` when the leaf is a
-link or reparse point, independently of whether the Library record is present,
-readable, valid, or claims the path. Install does not reinterpret the Library
-record or invoke a Library operation.
+Library ownership maps source-relative paths into declared destinations before
+collision checks. Real projection links also block ordinary Extension writes
+through the existing no-follow final-leaf guard. Force does not bypass either
+boundary, and Install never invokes a Library operation.
 
 ## Semantic Fingerprints And Shared Owners
 
@@ -267,7 +292,7 @@ Exclude derived generated `Entries` interiors from authored package identity.
 Unsupported, binary, and unparseable kinds use exact-byte identity and fail
 closed.
 
-Persist semantic baseline fingerprints, not exact-byte baseline digests. Capture
+Persist no comparison fingerprints. Capture
 current exact bytes freshly for plan, diff, expected-state, write, verification,
 recovery-bundle payload, and recovery. Formatting-only equal semantic identity is not divergence. No
 formatter executes or produces persisted formatter state.
@@ -284,14 +309,18 @@ Form one hypothetical post-install workspace from current authored content plus
 selected package/dependency payload effects, preserving user content, overwrite
 companions, Framework regions, and unrelated lifecycle facts. Project every
 affected generated region from that intended authored topology and metadata using
-the Index contract. Generated interiors are derived and not package-owned.
+the Index contract. If an unrelated readable malformed ordinary-metadata host
+outside the selected package's affected ancestor closure is independently
+isolated, retain that host as unavailable and omit only its projection; preserve
+all otherwise available topology projections and effects. Generated interiors
+are derived and not package-owned.
 
-Reject package paths targeting the lifecycle document, repository metadata,
-recovery or temporary artifacts, workspace-owned overwrite companions, Framework
+Reject package paths targeting `.agents/open-forge.json`,
+`.agents/open-forge.lock.json`, `.agents/open-forge.lock`, any descendant of
+those reserved paths, repository metadata, recovery or temporary artifacts, workspace-owned overwrite companions, Framework
 root/provider blocks, another manager's path, or any location that fails the
-consumer destination-admission rules. Missing, duplicate, reversed,
-nested, misplaced, or ambiguous generated boundaries block; force never repairs
-them. Include generated effects in the same parent plan and never invoke a hidden
+consumer destination-admission rules. A missing or duplicate top-level
+`## Entries` section blocks; force never repairs it. Include generated effects in the same parent plan and never invoke a hidden
 index subprocess.
 
 ## Normal And Initial Force Planning
@@ -320,8 +349,8 @@ After exact inspection proves an eligible initial occupant, a prompt-capable
 human request without `--force` may ask only whether to grant force for the
 exact eligible initial occupants displayed for that request. Invalid answers
 retry locally. Declining leaves the occupants unchanged and returns `blocked`.
-End-of-input is no-write `invalid`, and caller cancellation is no-write
-`interrupted`. Automatic and non-interactive requests never ask and remain
+End-of-input is no-write `invalid-input`, and caller cancellation is no-write
+`cancelled`. Automatic and non-interactive requests never ask and remain
 `blocked` without explicit `--force`. No later generic apply confirmation
 exists.
 
@@ -329,8 +358,9 @@ exists.
 
 The complete plan contains package/dependency order, exact source and target
 identity, current bytes and semantic facts, intended bytes, shared owners,
-generated-region effects, Extension-section publication, expected-state guards,
-recovery-bundle readiness, verification, and preservation. Before the first
+generated-region effects, any exact skipped projection observation,
+Extension-section publication, expected-state guards, recovery-bundle
+readiness, verification, and preservation. Before the first
 existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`), use only
 `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
 Environment.SpecialFolderOption.Create)` and its application-owned
@@ -363,13 +393,18 @@ conflicting facts, generated projections, and lifecycle publication that would
 follow verified apply, then writes nothing, including no lifecycle section,
 recovery bundle, or temporary artifact.
 
-Dry-run forms the same pre-effect planning status as application. Because it
-performs no effects, it never produces an apply-time `failed` or `interrupted`
-result. A planning or read failure and caller cancellation before effects retain
-their own event meaning.
+Dry-run forms the same pre-effect planning status as application and carries any
+accepted projection-unavailable finding through preview, application, and
+verified no-op result formation. Because it performs no effects, it never
+produces an apply-time `failed` or `cancelled` result. A planning or read failure
+and caller cancellation before effects retain their own event meaning.
 
 Application revalidates every selected source, target, owner, route, marker,
-containment, expected-state, and recovery fact under the lease before effects.
+containment, expected-state, recovery fact, and accepted skipped projection
+observation under the lease before effects. The skipped source/host, reason and
+raw cause must match exactly; a new skipped source, read failure, unsafe
+boundary, or changed selected identity/body fails verification. All available
+topology projections and selected package boundaries remain exact.
 It then applies package target and generated-region effects in the exact
 dependency-first plan order and verifies each effect. After those effects, it
 verifies the complete intended target topology.
@@ -385,10 +420,10 @@ verification members are `verified`.
 After that final reread, delete only the positively recognized bundle created by
 this operation. `Deleted`/`Removed` permits normal completion.
 `Failed`/positively observed `Retained` keeps target effects successful and
-produces `attention`, the exact residual path, and cleanup guidance.
+produces `completed-with-warnings`, the exact residual path, and cleanup guidance.
 `Failed`/`Unknown` produces `failed` and reports an exact expected path only when
 the deletion result provides one.
-When `Failed`/positively observed `Retained` recovery attention coexists with a
+When `Failed`/positively observed `Retained` recovery warning coexists with a
 finite lifecycle observation, cleanup guidance owns the single next action; the
 lifecycle facts remain visible evidence.
 
@@ -405,8 +440,9 @@ A later invocation makes a fresh plan and never replays a saved plan or journal.
 ## Result Formation And Conformance
 
 Form one typed result containing selection origin, source universe, roots and
-closure, Framework-anchor and route-host coverage, baseline/current/intended
-facts, owners, effects, generated navigation, lifecycle publication,
+closure, Framework-anchor and route-host coverage, current/intended
+facts, owners, effects, generated navigation, exact skipped projection findings,
+lifecycle publication,
 preservation, verification, recovery, status, and one next action. Human and
 JSON renderers consume it once. Use the seven statuses and streams from the
 Interface.

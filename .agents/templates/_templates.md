@@ -16,9 +16,9 @@ Templates are reusable starting files. Copy and adapt a Template, then maintain 
 
 - Check `Entries` when copy-ready starting content would help with a new artifact.
 - Choose the most relevant Template. Copy and adapt only what the destination needs.
-- Replace the metadata and placeholders so they describe the destination's ownership, scope, state, authority, and relationships.
-- The new artifact is independent of the Template. Later changes to the Template do not update it.
-- If the new artifact needs continuing guidance or requirements, link a matching #Core route. The Template provides only starting content.
+- Replace metadata and placeholders so they describe the destination's ownership, scope, state, authority, and relationships. Remove Template and package-provenance tags from independently maintained copies. Rebase relative links for the destination.
+- Later Template changes do not update existing copies.
+- If the new artifact needs continuing guidance or requirements, link the source that defines them. The Template provides only starting content.
 
 ### Catalog Maintenance
 
@@ -28,9 +28,11 @@ Templates are reusable starting files. Copy and adapt a Template, then maintain 
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
+- [Explore a choice before committing to a direction](collaboration/_collaboration.md) - #Extension #Template #Collaboration
+
 - [Copy-ready starting files for CLI documents, including command-local contract sets](cli/_cli.md) - #Template #CLI #Command #Contract #Interface #Behavior #TechnicalDesign
-- [Copy-ready starting structures for clear current documents](documents/_documents.md) - #Extension #Template #Document #CurrentView
-- [Copy-ready starting structures for useful Memory records](memory/_memory.md) - #Extension #Template #Memory
-- [Copy-ready starting structures for task outcomes, plans, backlogs, and current work](planning/_planning.md) - #Extension #Template #Planning #Memory
-<!-- open-forge:generated-index:end -->
+- [Start one current explanation, Vision, Architecture, Principles, or Maintenance Contract](documents/_documents.md) - #Extension #Template #Document
+- [Workspace-owned starting structures for this project's Memory records](memory/_memory.md) - #Template #Memory
+- [Preserve useful execution evidence or prepare a fixed snapshot for an actual transfer](orchestration/_orchestration.md) - #Extension #Template #Orchestration #Memory
+- [Choose a starter for a possibility, investigation, accepted choice, or active work](planning/_planning.md) - #Extension #Template #Planning #Memory
+- [Create a method for the Use Workflow Skill without defining a new harness capability](workflows/_workflows.md) - #Extension #Template #Workflow

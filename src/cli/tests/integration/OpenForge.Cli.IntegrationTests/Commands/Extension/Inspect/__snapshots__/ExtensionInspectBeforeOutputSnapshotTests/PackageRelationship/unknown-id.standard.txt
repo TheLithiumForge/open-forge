@@ -1,0 +1,13 @@
+Cannot inspect unknown: No Extension has the ID unknown in <extension-source>.
+Workspace: <workspace>
+  Error  unknown  Extension package is unavailable
+         No Extension has the ID unknown in <extension-source>.
+Source: <extension-source>
+Dependencies
+  none
+
+Files
+  none
+1 errors.
+  List available Extensions.
+Next: open-forge extension list

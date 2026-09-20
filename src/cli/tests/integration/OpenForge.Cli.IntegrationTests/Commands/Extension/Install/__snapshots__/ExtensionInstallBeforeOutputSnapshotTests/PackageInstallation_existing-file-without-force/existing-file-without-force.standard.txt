@@ -1,0 +1,10 @@
+Cannot install toolkit: 1 file already exists where the package would write.
+Workspace: <workspace>
+  Error  .agents/toolkit.md  Target is occupied
+         .agents/toolkit.md already exists and is not managed by Open Forge.
+         open-forge extension install toolkit --force --dry-run
+         Preview replacing the existing file before rerunning the installation.
+  .agents/toolkit.md  not started
+  Source: <extension-source> (catalogue)
+  .agents/open-forge.lock.json  updated
+Next: open-forge extension install toolkit --force --dry-run  (preview replacing it)

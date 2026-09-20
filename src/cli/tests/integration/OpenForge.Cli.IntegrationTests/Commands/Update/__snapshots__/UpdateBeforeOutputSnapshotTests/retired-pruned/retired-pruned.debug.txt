@@ -1,0 +1,11 @@
+Updated 1 Framework file.
+Workspace: <workspace>
+  .agents/guidance/retired-framework.md  deleted (no longer part of this release)
+  .agents/open-forge.lock.json           updated
+  14 files unchanged
+  .agents/guidance/retired-framework.md current SHA-256: <sha256>
+  .agents/guidance/retired-framework.md bundled Framework: id=framework; version=unavailable; fingerprint=<sha256>
+  All written targets were verified.
+  Recovery data: <recovery-bundle>
+  Review previous content in the recovery bundle at <recovery-bundle>.
+Next: open-forge doctor

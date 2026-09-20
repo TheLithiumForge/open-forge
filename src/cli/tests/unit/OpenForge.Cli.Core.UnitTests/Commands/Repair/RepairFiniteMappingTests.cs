@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class RepairFiniteMappingTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair finite values map to the exact machine vocabulary and preserve enum coverage"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void FiniteValuesMapExactly()
     {
@@ -18,7 +19,7 @@ public sealed class RepairFiniteMappingTests
             Enum.GetValues<RepairMode>().Select(RepairDefinitions.ReadMachineName));
         Assert.Equal(
             [
-                "interactive-wizard",
+                "interactive-prompt",
                 "automatic",
                 "explicit-relinks",
                 "automatic-and-explicit",
@@ -35,7 +36,7 @@ public sealed class RepairFiniteMappingTests
             ],
             Enum.GetValues<RepairCatalogueMember>().Select(RepairDefinitions.ReadMachineName));
         Assert.Equal(
-            ["automatic", "wizard", "explicit-relink"],
+            ["automatic", "prompt", "explicit-relink"],
             Enum.GetValues<RepairSelectionOrigin>().Select(RepairDefinitions.ReadMachineName));
         Assert.Equal(
             ["filename", "title", "literal-content", "route-neighborhood"],
@@ -61,10 +62,20 @@ public sealed class RepairFiniteMappingTests
                 "expected-state-mismatch",
                 "target-identity-mismatch",
                 "unsafe-boundary",
-                "missing-authority",
+                "selection-unmatched",
                 "incomplete-facts",
             ],
             Enum.GetValues<RepairConflictKind>().Select(RepairDefinitions.ReadMachineName));
+        Assert.Equal(
+            [
+                RepairFindingCode.PlanConflict,
+                RepairFindingCode.TargetChanged,
+                RepairFindingCode.FactsConflicting,
+                RepairFindingCode.TargetUnsafe,
+                RepairFindingCode.ProposalUnavailable,
+                RepairFindingCode.DiagnosisIncomplete,
+            ],
+            Enum.GetValues<RepairConflictKind>().Select(RepairDefinitions.ReadConflictFindingCode));
         Assert.Equal(
             ["not-requested", "complete", "incomplete", "blocked"],
             Enum.GetValues<RepairCoverageState>().Select(RepairDefinitions.ReadMachineName));
@@ -103,18 +114,21 @@ public sealed class RepairFiniteMappingTests
             Enum.GetValues<PlannedFileChangeKind>().Select(RepairDefinitions.ReadMachineName));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair finding definitions map every accepted code to its exact status and machine name"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void FindingDefinitionsAreComplete()
     {
         var expected = new (RepairFindingCode Code, string Name, CliSemanticStatus Status)[]
         {
             (RepairFindingCode.InvalidInput, "repair.invalid-input", CliSemanticStatus.Invalid),
+            (RepairFindingCode.ConfirmationRequired, "repair.confirmation-required", CliSemanticStatus.Invalid),
             (RepairFindingCode.RelinkInvalid, "repair.relink-invalid", CliSemanticStatus.Invalid),
             (RepairFindingCode.ContradictoryRelink, "repair.contradictory-relink", CliSemanticStatus.Invalid),
             (RepairFindingCode.SelectionRequired, "repair.selection-required", CliSemanticStatus.Blocked),
             (RepairFindingCode.DiagnosisIncomplete, "repair.diagnosis-incomplete", CliSemanticStatus.Incomplete),
             (RepairFindingCode.DiagnosisBlocked, "repair.diagnosis-blocked", CliSemanticStatus.Blocked),
             (RepairFindingCode.ProposalUnavailable, "repair.proposal-unavailable", CliSemanticStatus.Incomplete),
+            (RepairFindingCode.FactsConflicting, "repair.facts-conflicting", CliSemanticStatus.Blocked),
             (RepairFindingCode.ProposalUnsupported, "repair.proposal-unsupported", CliSemanticStatus.Blocked),
             (RepairFindingCode.MissingAuthority, "repair.missing-authority", CliSemanticStatus.Blocked),
             (RepairFindingCode.TargetChanged, "repair.target-changed", CliSemanticStatus.Blocked),
@@ -143,6 +157,7 @@ public sealed class RepairFiniteMappingTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair finite mappings reject unnamed runtime enum values"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void UndefinedFiniteValuesFailClosed()
     {
@@ -157,6 +172,7 @@ public sealed class RepairFiniteMappingTests
         Assert.Throws<ArgumentOutOfRangeException>(() => RepairDefinitions.ReadMachineName((RepairRecoveryRequirementKind)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => RepairDefinitions.ReadMachineName((RepairStepOutcome)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => RepairDefinitions.ReadMachineName((RepairConflictKind)int.MaxValue));
+        Assert.Throws<ArgumentOutOfRangeException>(() => RepairDefinitions.ReadConflictFindingCode((RepairConflictKind)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => RepairDefinitions.ReadMachineName((RepairCoverageState)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => RepairDefinitions.ReadMachineName((RepairPreflightState)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => RepairDefinitions.ReadMachineName((RepairApplicationState)int.MaxValue));

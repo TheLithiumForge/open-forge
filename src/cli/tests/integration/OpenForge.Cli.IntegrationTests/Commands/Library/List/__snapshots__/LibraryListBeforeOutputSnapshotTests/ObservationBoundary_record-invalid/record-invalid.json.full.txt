@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 3,
+  "command": "library list",
+  "status": "incomplete",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Library registration could not be checked completely.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "library-list.invalid-record",
+      "title": "Library record is invalid",
+      "message": "The Library section of .agents/open-forge.lock.json is invalid: the content is not valid JSON.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": ".agents/open-forge.lock.json",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "libraries": null,
+    "linksCurrent": null,
+    "linksMissing": null,
+    "linksChanged": null,
+    "linksUnavailable": null,
+    "warnings": 1
+  },
+  "limitations": [
+    {
+      "what": "libraries",
+      "why": "the content is not valid JSON.",
+      "subject": null
+    },
+    {
+      "what": "links current",
+      "why": "the content is not valid JSON.",
+      "subject": null
+    },
+    {
+      "what": "links missing",
+      "why": "the content is not valid JSON.",
+      "subject": null
+    },
+    {
+      "what": "links changed",
+      "why": "the content is not valid JSON.",
+      "subject": null
+    },
+    {
+      "what": "links unavailable",
+      "why": "the content is not valid JSON.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "libraries": [],
+    "recordCoverage": {
+      "path": ".agents/open-forge.lock.json",
+      "state": "invalid",
+      "libraryCount": null
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the reported Library state."
+  }
+}

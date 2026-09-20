@@ -7,22 +7,25 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Update;
 
 public sealed class UpdatePlanningPolicyTests
 {
-    [Fact(DisplayName = "Update planning returns no-op for baseline-equivalent unchanged target"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
-    public void PlanReturnsNoOpForBaselineEquivalentUnchangedTarget()
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Update planning returns no-op for semantically unchanged target"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
+    public void PlanReturnsNoOpForUnchangedTarget()
     {
         var plan = Plan([Unchanged()], force: false, prune: false);
 
         Assert.Equal(UpdatePlanningDisposition.NoOp, Assert.Single(plan.Decisions).Disposition);
     }
 
-    [Fact(DisplayName = "Update planning replaces baseline-equivalent current content when source changed"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
-    public void PlanReplacesBaselineEquivalentCurrentWhenIntendedSourceChanged()
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Update planning replaces owned current content when intended content differs"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
+    public void PlanReplacesCurrentWhenIntendedDiffers()
     {
         var plan = Plan([SourceChanged()], force: false, prune: false);
 
         Assert.Equal(UpdatePlanningDisposition.Replace, Assert.Single(plan.Decisions).Disposition);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update planning creates a genuinely new current-source target"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void PlanCreatesGenuinelyNewCurrentSourceTarget()
     {
@@ -31,22 +34,25 @@ public sealed class UpdatePlanningPolicyTests
         Assert.Equal(UpdatePlanningDisposition.Create, Assert.Single(plan.Decisions).Disposition);
     }
 
-    [Fact(DisplayName = "Update planning preserves changed current content without force"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
-    public void PlanPreservesChangedCurrentTargetWithoutForce()
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Update planning replaces changed current content without force"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
+    public void PlanReplacesChangedCurrentTargetWithoutForce()
     {
         var plan = Plan([Changed()], force: false, prune: false);
 
-        Assert.Equal(UpdatePlanningDisposition.Preserve, Assert.Single(plan.Decisions).Disposition);
+        Assert.Equal(UpdatePlanningDisposition.Replace, Assert.Single(plan.Decisions).Disposition);
     }
 
-    [Fact(DisplayName = "Update planning preserves a missing current target without force"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
-    public void PlanPreservesMissingCurrentTargetWithoutForce()
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Update planning restores a missing current target without force"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
+    public void PlanRestoresMissingCurrentTargetWithoutForce()
     {
         var plan = Plan([Missing()], force: false, prune: false);
 
-        Assert.Equal(UpdatePlanningDisposition.Preserve, Assert.Single(plan.Decisions).Disposition);
+        Assert.Equal(UpdatePlanningDisposition.Restore, Assert.Single(plan.Decisions).Disposition);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update planning preserves retired content without prune"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void PlanPreservesRetiredTargetWithoutPrune()
     {
@@ -55,6 +61,7 @@ public sealed class UpdatePlanningPolicyTests
         Assert.Equal(UpdatePlanningDisposition.Preserve, Assert.Single(plan.Decisions).Disposition);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update force replaces changed current content only"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void PlanForceReplacesChangedCurrentTargetOnly()
     {
@@ -63,6 +70,7 @@ public sealed class UpdatePlanningPolicyTests
         Assert.Equal(UpdatePlanningDisposition.Replace, Assert.Single(plan.Decisions).Disposition);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update force restores missing current content only"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void PlanForceRestoresMissingCurrentTargetOnly()
     {
@@ -71,6 +79,7 @@ public sealed class UpdatePlanningPolicyTests
         Assert.Equal(UpdatePlanningDisposition.Restore, Assert.Single(plan.Decisions).Disposition);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update force does not delete retired content"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void PlanForceDoesNotDeleteRetiredTarget()
     {
@@ -79,6 +88,7 @@ public sealed class UpdatePlanningPolicyTests
         Assert.Equal(UpdatePlanningDisposition.Preserve, Assert.Single(plan.Decisions).Disposition);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update prune deletes eligible retired content only"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void PlanPruneDeletesEligibleRetiredTargetOnly()
     {
@@ -87,6 +97,7 @@ public sealed class UpdatePlanningPolicyTests
         Assert.Equal(UpdatePlanningDisposition.Delete, Assert.Single(plan.Decisions).Disposition);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update prune blocks ineligible retired content"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void PlanPruneBlocksIneligibleRetiredTarget()
     {
@@ -95,6 +106,7 @@ public sealed class UpdatePlanningPolicyTests
         Assert.Equal(UpdatePlanningDisposition.Blocked, Assert.Single(plan.Decisions).Disposition);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update force and prune compose their two independent exact effects"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void PlanForceAndPruneComposeIndependentExactEffects()
     {
@@ -105,6 +117,7 @@ public sealed class UpdatePlanningPolicyTests
             plan.Decisions.Select(decision => decision.Disposition));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update planning treats format-only semantic equality as no-op"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void PlanTreatsFormatOnlySemanticEqualityAsNoOp()
     {
@@ -113,15 +126,17 @@ public sealed class UpdatePlanningPolicyTests
         Assert.Equal(UpdatePlanningDisposition.NoOp, Assert.Single(plan.Decisions).Disposition);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update planning marks preserve and no-op combinations effect-free"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void PlanMarksPreserveAndNoOpCombinationEffectFree()
     {
-        var plan = Plan([Unchanged(), Changed()], force: false, prune: false);
+        var plan = Plan([Unchanged(), Retired()], force: false, prune: false);
 
         Assert.True(plan.IsEffectFree);
         Assert.False(plan.IsNoOp);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update planning keeps force and prune authority independent"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void PlanKeepsForceAndPruneAuthorityIndependent()
     {
@@ -132,7 +147,7 @@ public sealed class UpdatePlanningPolicyTests
             [UpdatePlanningDisposition.Replace, UpdatePlanningDisposition.Preserve],
             forceOnly.Decisions.Select(decision => decision.Disposition));
         Assert.Equal(
-            [UpdatePlanningDisposition.Preserve, UpdatePlanningDisposition.Delete],
+            [UpdatePlanningDisposition.Replace, UpdatePlanningDisposition.Delete],
             pruneOnly.Decisions.Select(decision => decision.Disposition));
     }
 
@@ -146,10 +161,9 @@ public sealed class UpdatePlanningPolicyTests
 
     private static UpdateComparison Unchanged()
         => Comparison(
-            baseline: HashA,
             current: HashA,
             intended: HashA,
-            currentState: UpdateComparisonCurrentState.BaselineEquivalent,
+            currentState: UpdateComparisonCurrentState.Same,
             intendedState: UpdateComparisonIntendedState.Same,
             retirementEligibility: UpdateRetirementEligibility.NotApplicable,
             currentBytes: BytesA,
@@ -157,10 +171,9 @@ public sealed class UpdatePlanningPolicyTests
 
     private static UpdateComparison SourceChanged()
         => Comparison(
-            baseline: HashA,
             current: HashA,
             intended: HashB,
-            currentState: UpdateComparisonCurrentState.BaselineEquivalent,
+            currentState: UpdateComparisonCurrentState.Changed,
             intendedState: UpdateComparisonIntendedState.Changed,
             retirementEligibility: UpdateRetirementEligibility.NotApplicable,
             currentBytes: BytesA,
@@ -168,7 +181,6 @@ public sealed class UpdatePlanningPolicyTests
 
     private static UpdateComparison NewTarget()
         => Comparison(
-            baseline: null,
             current: null,
             intended: HashB,
             currentState: UpdateComparisonCurrentState.Missing,
@@ -179,7 +191,6 @@ public sealed class UpdatePlanningPolicyTests
 
     private static UpdateComparison Changed()
         => Comparison(
-            baseline: HashA,
             current: HashB,
             intended: HashC,
             currentState: UpdateComparisonCurrentState.Changed,
@@ -190,7 +201,6 @@ public sealed class UpdatePlanningPolicyTests
 
     private static UpdateComparison Missing()
         => Comparison(
-            baseline: HashA,
             current: null,
             intended: HashC,
             currentState: UpdateComparisonCurrentState.Missing,
@@ -201,10 +211,9 @@ public sealed class UpdatePlanningPolicyTests
 
     private static UpdateComparison Retired(bool eligible = true)
         => Comparison(
-            baseline: HashA,
             current: HashA,
             intended: null,
-            currentState: UpdateComparisonCurrentState.BaselineEquivalent,
+            currentState: UpdateComparisonCurrentState.Changed,
             intendedState: UpdateComparisonIntendedState.Retired,
             retirementEligibility: eligible
                 ? UpdateRetirementEligibility.Eligible
@@ -215,7 +224,6 @@ public sealed class UpdatePlanningPolicyTests
 
     private static UpdateComparison FormatOnly()
         => Comparison(
-            baseline: HashA,
             current: HashA,
             intended: HashA,
             currentState: UpdateComparisonCurrentState.FormatOnly,
@@ -225,7 +233,6 @@ public sealed class UpdatePlanningPolicyTests
             intendedBytes: BytesA);
 
     private static UpdateComparison Comparison(
-        string? baseline,
         string? current,
         string? intended,
         UpdateComparisonCurrentState currentState,
@@ -242,7 +249,6 @@ public sealed class UpdatePlanningPolicyTests
             SourceAssetPath = "framework/docs/framework.md",
             SourceAssetPresentInCurrentInventory = sourcePresent,
             FingerprintKind = UpdateComparisonFingerprintKind.OpenForgeMarkdownV1,
-            BaselineFingerprint = baseline,
             CurrentFingerprint = current,
             IntendedFingerprint = intended,
             CurrentState = currentState,

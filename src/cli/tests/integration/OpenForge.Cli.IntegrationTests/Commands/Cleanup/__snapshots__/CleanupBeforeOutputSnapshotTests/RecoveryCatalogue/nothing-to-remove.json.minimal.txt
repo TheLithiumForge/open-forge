@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 3,
+  "command": "cleanup",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "No recovery data to remove.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "bundlesRemoved": 0,
+    "draftsRemoved": 0,
+    "itemsLeftInPlace": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "items": []
+  },
+  "recovery": null,
+  "next": null
+}

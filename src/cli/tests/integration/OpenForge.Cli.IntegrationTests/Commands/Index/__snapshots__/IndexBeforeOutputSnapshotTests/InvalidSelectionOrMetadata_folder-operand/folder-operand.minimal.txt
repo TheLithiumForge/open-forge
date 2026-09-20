@@ -1,0 +1,3 @@
+Cannot index .agents/root: it is a folder, not a source.
+Workspace: <workspace>
+Next: open-forge index root

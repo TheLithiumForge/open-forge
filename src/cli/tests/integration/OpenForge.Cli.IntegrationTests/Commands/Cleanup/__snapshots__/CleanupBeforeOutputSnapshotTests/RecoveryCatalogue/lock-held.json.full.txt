@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 3,
+  "command": "cleanup",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "cleanup.workspace-lock-unavailable",
+      "title": "Workspace lock is unavailable",
+      "message": "Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.",
+      "subject": {
+        "kind": "identifier",
+        "path": "cleanup",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge cleanup",
+          "reason": "Rerun Cleanup from a fresh catalogue."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": "<recovery-bundle-1>",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "unknown",
+      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "owner": "open-forge index",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": "<recovery-bundle-2>",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "unknown",
+      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "owner": "open-forge repair",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": "<recovery-bundle-3>",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "unknown",
+      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "bundlesRemoved": 0,
+    "draftsRemoved": 0,
+    "itemsLeftInPlace": 3,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "items": [
+      {
+        "path": "<recovery-bundle-1>",
+        "kind": "bundle",
+        "outcome": "not-started",
+        "origin": "open-forge index",
+        "integrity": "verified"
+      },
+      {
+        "path": "<recovery-bundle-2>",
+        "kind": "bundle",
+        "outcome": "not-started",
+        "origin": "open-forge repair",
+        "integrity": "verified"
+      },
+      {
+        "path": "<recovery-bundle-3>",
+        "kind": "draft",
+        "outcome": "not-started",
+        "integrity": "incomplete"
+      }
+    ],
+    "notEligible": [],
+    "lock": "The workspace lock could not be acquired, so nothing was removed.",
+    "finalCheck": "No final recovery-store check was needed."
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge cleanup",
+    "reason": "Rerun Cleanup from a fresh catalogue."
+  }
+}

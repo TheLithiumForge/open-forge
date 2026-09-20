@@ -1,0 +1,6 @@
+Cannot list routes: docs matches more than one source. Use the exact path.
+Workspace: <workspace>
+  Error  docs  Source is ambiguous [route-list.ambiguous-source]
+         docs matches more than one source. Use the exact path.
+         .agents/docs/_docs.md: matches the requested source reference
+         .agents/docs/index.md: matches the requested source reference

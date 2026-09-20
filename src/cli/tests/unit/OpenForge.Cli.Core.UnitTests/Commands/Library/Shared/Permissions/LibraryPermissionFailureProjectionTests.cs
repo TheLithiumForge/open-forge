@@ -7,9 +7,10 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Permissions;
 [Trait("Feature", "library-permissions"), Trait("Evidence", "Unit")]
 public sealed class LibraryPermissionFailureProjectionTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory]
     [InlineData((int)LibraryPermissionFailure.Required, (int)CliSemanticStatus.Blocked)]
-    [InlineData((int)LibraryPermissionFailure.Declined, (int)CliSemanticStatus.Blocked)]
+    [InlineData((int)LibraryPermissionFailure.Declined, (int)CliSemanticStatus.Interrupted)]
     [InlineData((int)LibraryPermissionFailure.Invalid, (int)CliSemanticStatus.Blocked)]
     [InlineData((int)LibraryPermissionFailure.Unavailable, (int)CliSemanticStatus.Blocked)]
     [InlineData((int)LibraryPermissionFailure.Changed, (int)CliSemanticStatus.Blocked)]
@@ -23,6 +24,7 @@ public sealed class LibraryPermissionFailureProjectionTests
         Assert.NotEmpty(result.Cause);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact]
     public void UndefinedFailureCannotBecomeAUserFacingDecision()
         => Assert.Throws<ArgumentOutOfRangeException>(() => LibraryPermissionFailureProjection.Read((LibraryPermissionFailure)int.MaxValue));

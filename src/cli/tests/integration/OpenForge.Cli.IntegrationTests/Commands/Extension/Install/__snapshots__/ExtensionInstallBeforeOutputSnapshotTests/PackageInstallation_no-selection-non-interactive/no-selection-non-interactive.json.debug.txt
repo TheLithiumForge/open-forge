@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot install: Extension install needs to know which packages. Pass their IDs or --all. This session cannot ask.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-install.selection-required",
+      "title": "Selection is required",
+      "message": "Extension install needs to know which packages. Pass their IDs or --all. This session cannot ask.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "selected",
+        "location": null
+      },
+      "category": null,
+      "resolution": "guided-choice",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge extension list",
+          "reason": "List the available Extensions, then rerun the request with an explicit selection."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesInstalled": 0,
+    "filesCreated": 0,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [],
+    "permissions": {
+      "decision": "not-evaluated",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "sections": [],
+    "entriesUnchanged": [],
+    "verification": {
+      "targets": "not-requested",
+      "topology": "not-requested",
+      "extensionsLifecycle": "not-requested",
+      "frameworkLifecycle": "not-requested"
+    },
+    "recovery": {
+      "state": "not-required",
+      "protectedPaths": [],
+      "residualPath": null
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension list",
+    "reason": "List the available Extensions, then rerun the request with an explicit selection."
+  }
+}

@@ -13,6 +13,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Resolution;
 
 public sealed class RouteInspectSourceProjectionBuilderIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Inspect projection builder uses a real OS reader for exact adjacent layers"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task RealExactLayersRemainExplicit()
     {
@@ -37,6 +38,7 @@ public sealed class RouteInspectSourceProjectionBuilderIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Inspect preserves real catalogue pairing separately from ID collisions and orphan overwrites"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task RealCataloguePairSurvivesCollisionWhileOrphanRemainsExplicit()
     {

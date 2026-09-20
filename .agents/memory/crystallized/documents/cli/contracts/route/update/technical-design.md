@@ -17,7 +17,7 @@ behavior. This design adds no spelling, result, diagnostic, or domain fact.
 
 The generic parser and typed-request boundaries remain in the [CLI
 Architecture](../../../architecture.md). The active [edge-case
-ledger](../../../../../../working/cli-development/edge-cases.md) records this
+ledger](../../../../../../archived/cli-development/edge-cases.md) records this
 exception as `CLI-EDGE-016`. Option delimiters use the parser defaults.
 
 ## CLI-EDGE-016 Recognizer

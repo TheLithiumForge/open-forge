@@ -1,0 +1,5 @@
+status=blocked
+source=Blocked
+lifecycle=Complete
+comparison=Complete
+The Extension source contains duplicate stable IDs.

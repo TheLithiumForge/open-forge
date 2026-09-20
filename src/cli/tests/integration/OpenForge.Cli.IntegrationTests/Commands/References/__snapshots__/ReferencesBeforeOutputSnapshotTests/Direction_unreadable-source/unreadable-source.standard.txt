@@ -1,0 +1,8 @@
+.agents/docs/guide.md
+Workspace: <workspace>
+  Warning  .agents/docs/guide.md  Source encoding is invalid
+         .agents/docs/guide.md is not valid UTF-8, so it was not scanned.
+0 in, 0 out
+The incoming scan used every source.
+  check the workspace for broken links
+Next: open-forge doctor

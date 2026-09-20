@@ -1,0 +1,418 @@
+{
+  "schemaVersion": 3,
+  "command": "install",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Installed the Open Forge Framework into <workspace>.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/directives",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/guidance",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/maps",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/patterns",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/archived",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/crystallized",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/emerging",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/working",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/directives/_directives.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/loader.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/maps/_maps.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/_memory.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/archived/_archived.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/crystallized/_crystallized.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/emerging/_emerging.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/working/_working.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/patterns/_patterns.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/_skills.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/_templates.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": "AGENTS.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": "CLAUDE.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "filesCreated": 12,
+    "directoriesCreated": 11,
+    "sectionsAdded": 0,
+    "filesReplaced": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "classification": "safe-absence",
+    "footprint": {
+      "files": 12,
+      "directories": 11,
+      "sections": 2
+    },
+    "lockPath": ".agents/open-forge.lock.json",
+    "effects": [
+      {
+        "path": ".agents"
+      },
+      {
+        "path": ".agents/directives"
+      },
+      {
+        "path": ".agents/guidance"
+      },
+      {
+        "path": ".agents/maps"
+      },
+      {
+        "path": ".agents/memory"
+      },
+      {
+        "path": ".agents/patterns"
+      },
+      {
+        "path": ".agents/skills"
+      },
+      {
+        "path": ".agents/templates"
+      },
+      {
+        "path": ".agents/memory/archived"
+      },
+      {
+        "path": ".agents/memory/crystallized"
+      },
+      {
+        "path": ".agents/memory/emerging"
+      },
+      {
+        "path": ".agents/memory/working"
+      },
+      {
+        "path": ".agents/directives/_directives.md",
+        "sourceAssetPath": ".agents/directives/_directives.md"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "sourceAssetPath": ".agents/guidance/_guidance.md"
+      },
+      {
+        "path": ".agents/loader.md",
+        "sourceAssetPath": ".agents/loader.md"
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "sourceAssetPath": ".agents/maps/_maps.md"
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "sourceAssetPath": ".agents/memory/_memory.md"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "sourceAssetPath": ".agents/memory/archived/_archived.md"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "sourceAssetPath": ".agents/memory/crystallized/_crystallized.md"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "sourceAssetPath": ".agents/memory/emerging/_emerging.md"
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "sourceAssetPath": ".agents/memory/working/_working.md"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "sourceAssetPath": ".agents/patterns/_patterns.md"
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "sourceAssetPath": ".agents/skills/_skills.md"
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "sourceAssetPath": ".agents/templates/_templates.md"
+      },
+      {
+        "path": "AGENTS.md",
+        "sourceAssetPath": "AGENTS.md"
+      },
+      {
+        "path": "CLAUDE.md",
+        "sourceAssetPath": "CLAUDE.md"
+      },
+      {
+        "path": ".agents/open-forge.lock.json"
+      }
+    ],
+    "source": {
+      "inventoryFingerprint": "<sha256>",
+      "assetCount": 14
+    },
+    "lifecycle": {
+      "action": "publish",
+      "outcome": "verified"
+    },
+    "verification": "verified"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

@@ -1,0 +1,22 @@
+Workspace: <workspace>
+  docs              Documents
+                    .agents/docs/_docs.md   #Docs
+    docs/guide      Guide
+                    .agents/docs/guide.md   #Docs #Guide
+    docs/reference  Reference
+                    .agents/docs/reference.md   #Docs
+  Parent: none
+  Depth: absolute 0; relative 0
+  Kind: entrypoint; direct children: 2
+  Selected as: loader root
+  Overwrite: none
+    Parent: docs; .agents/docs/_docs.md
+    Depth: absolute 1; relative 1
+    Kind: file; direct children: none
+    Selected as: descendant
+    Overwrite: none
+    Parent: docs; .agents/docs/_docs.md
+    Depth: absolute 1; relative 1
+    Kind: file; direct children: none
+    Selected as: descendant
+    Overwrite: none

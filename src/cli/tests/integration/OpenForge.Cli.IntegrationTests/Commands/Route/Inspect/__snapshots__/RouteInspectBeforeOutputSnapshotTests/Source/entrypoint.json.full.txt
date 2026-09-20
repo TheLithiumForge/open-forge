@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "docs  .agents/docs/_docs.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "ownBytes": 156,
+    "ownTokens": 39,
+    "addedFiles": 0,
+    "addedBytes": 0,
+    "addedTokens": 0,
+    "loadNowFiles": 0,
+    "loadNowBytes": 0,
+    "loadNowTokens": 0,
+    "directChildren": 2,
+    "descendants": 2
+  },
+  "limitations": [],
+  "data": {
+    "id": "docs",
+    "path": ".agents/docs/_docs.md",
+    "kind": "entrypoint",
+    "entrypointForm": "canonical",
+    "overwritePath": null,
+    "belongs": {
+      "routeChain": [
+        "docs"
+      ],
+      "parent": null,
+      "directChildren": {
+        "files": 2,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 2,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": true,
+      "automaticallyWhen": [
+        "the Loader is read"
+      ],
+      "mayReadAgain": false
+    },
+    "size": {
+      "own": {
+        "files": 1,
+        "bytes": 156,
+        "tokens": 39
+      },
+      "adds": {
+        "files": 0,
+        "bytes": 0,
+        "tokens": 0
+      },
+      "loadNow": {
+        "files": 0,
+        "bytes": 0,
+        "tokens": 0
+      }
+    },
+    "axioms": {
+      "inheritedFrom": [],
+      "local": "no local Axioms section"
+    },
+    "tags": [
+      "Docs"
+    ],
+    "selected": {
+      "closure": {
+        "files": 1,
+        "bytes": 156,
+        "tokens": 39
+      },
+      "startupOverlap": {
+        "files": 1,
+        "bytes": 156,
+        "tokens": 39
+      }
+    },
+    "selection": {
+      "kind": "source-id",
+      "method": "automatic-id",
+      "requested": "docs"
+    },
+    "layers": [
+      {
+        "path": ".agents/docs/_docs.md",
+        "kind": "base"
+      }
+    ],
+    "statusReason": "all applicable route facts are available"
+  },
+  "recovery": null,
+  "next": null
+}

@@ -12,6 +12,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Filesystem;
 
 public sealed class RouteListSourceProjectionBuilderIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route List projection builder uses one real OS selection for paired overwrite and body reads")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task PairedRealLayersAreProjectedOnce()
@@ -41,6 +42,7 @@ public sealed class RouteListSourceProjectionBuilderIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route List projection builder retains real orphan and collision evidence without Inspect-only ambiguity")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task RealOrphanAndCollisionFactsRemainListEvidence()

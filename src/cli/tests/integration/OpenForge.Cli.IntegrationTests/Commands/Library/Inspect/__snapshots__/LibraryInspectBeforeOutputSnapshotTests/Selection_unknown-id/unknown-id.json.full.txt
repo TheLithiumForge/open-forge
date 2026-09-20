@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 3,
+  "command": "library inspect",
+  "status": "invalid-input",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot inspect unknown: No Library has the ID unknown.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-inspect.unknown-id",
+      "title": "Library ID is unknown",
+      "message": "No Library has the ID unknown.",
+      "subject": {
+        "kind": "identifier",
+        "path": ".agents/open-forge.lock.json",
+        "id": "unknown",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sourceFiles": 0,
+    "linksCurrent": 0,
+    "filesAdded": 0,
+    "filesRetired": 0,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "unknown",
+    "sourceFolder": null,
+    "destinationFolder": null,
+    "current": false,
+    "files": [],
+    "inventory": {
+      "eligible": 0,
+      "excluded": 0
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge library list",
+    "reason": "Choose a registered Library ID."
+  }
+}

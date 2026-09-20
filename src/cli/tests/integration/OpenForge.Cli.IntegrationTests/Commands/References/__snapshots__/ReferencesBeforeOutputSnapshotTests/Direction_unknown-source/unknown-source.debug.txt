@@ -1,0 +1,9 @@
+Cannot list references: The source ID does not identify a retained logical source.
+Workspace: <workspace>
+  Error  missing/source  Source is unknown [references.invalid-source]
+         No source has the ID missing/source.
+0 in, 0 out
+The incoming scan used every source.
+Scanned 0 sources for incoming links.
+  list the sources that exist
+Next: open-forge route list --depth=all

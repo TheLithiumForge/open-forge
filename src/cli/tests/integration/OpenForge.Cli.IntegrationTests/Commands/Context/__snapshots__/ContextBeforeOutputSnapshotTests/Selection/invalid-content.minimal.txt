@@ -1,0 +1,6 @@
+Cannot read context: --content invalid is not a known part. Use metadata, paths, frontmatter, headings, body, or section:<name>.
+  sources: Context counts were not established.
+  tokens: Context counts were not established.
+  bytes: Context counts were not established.
+  links followed: Context counts were not established.
+  links not followed: Context counts were not established.

@@ -1,0 +1,333 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "incomplete",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Open Forge is installed, but 1 file needs attention and some checks could not finish.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "status.framework-target-changed",
+      "title": "Changed since it was installed",
+      "message": "changed since it was installed",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/loader.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge update",
+          "reason": "Update the Framework files that need attention."
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-unavailable",
+      "title": "Entries section is unavailable",
+      "message": "The Entries section of .agents/loader.md could not be read.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/loader.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    },
+    {
+      "severity": "warning",
+      "code": "status.context-inventory-incomplete",
+      "title": "Startup context is incomplete",
+      "message": "Startup context could not be measured completely: .agents/memory/_memory.md could not be read completely.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/memory/_memory.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the reported operational facts before rerunning Status."
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "status.framework-target-unavailable",
+      "title": "Managed file is unavailable",
+      "message": "could not be read",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/memory/_memory.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the reported operational facts before rerunning Status."
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-unavailable",
+      "title": "Entries section is unavailable",
+      "message": "The Entries section of .agents/memory/_memory.md could not be read.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/memory/_memory.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    },
+    {
+      "severity": "warning",
+      "code": "status.continuity-context-unavailable",
+      "title": "May-load-again context is unavailable",
+      "message": "The may-load-again context could not be measured.",
+      "subject": {
+        "kind": "file",
+        "path": "<workspace>",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the reported operational facts before rerunning Status."
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "status.framework-lifecycle-incomplete",
+      "title": "Framework files could not be checked completely",
+      "message": ".agents/open-forge.lock.json cannot be used for Framework files: The Framework lifecycle observation is incomplete.",
+      "subject": {
+        "kind": "file",
+        "path": "<workspace>",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the reported operational facts before rerunning Status."
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "status.root-categories-unavailable",
+      "title": "Root categories are unavailable",
+      "message": "The root categories could not be read from .agents/loader.md.",
+      "subject": {
+        "kind": "file",
+        "path": "<workspace>",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the reported operational facts before rerunning Status."
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "status.startup-context-unavailable",
+      "title": "Startup context is unavailable",
+      "message": "The current startup context could not be measured.",
+      "subject": {
+        "kind": "file",
+        "path": "<workspace>",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the reported operational facts before rerunning Status."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routedFiles": null,
+    "startupFiles": null,
+    "startupTokens": null,
+    "mayLoadAgainFiles": null,
+    "mayLoadAgainTokens": null,
+    "allTokens": null,
+    "startupShare": null,
+    "rootCategories": null,
+    "entriesSectionsCurrent": null,
+    "entriesSectionsStale": null,
+    "entriesSectionsMissing": null,
+    "frameworkFilesCurrent": 13,
+    "frameworkFilesChanged": 0,
+    "frameworkFilesMissing": 0,
+    "extensionsInstalled": 0,
+    "librariesRegistered": 0,
+    "libraryLinksCurrent": 0,
+    "libraryLinksMissing": 0,
+    "libraryLinksChanged": 0,
+    "recoveryBundles": 0,
+    "recoveryDrafts": 0,
+    "warnings": 9
+  },
+  "limitations": [
+    {
+      "what": "routed files",
+      "why": "Filesystem access was denied.",
+      "subject": null
+    },
+    {
+      "what": "startup files",
+      "why": "Filesystem access was denied.",
+      "subject": null
+    },
+    {
+      "what": "startup tokens",
+      "why": "Filesystem access was denied.",
+      "subject": null
+    },
+    {
+      "what": "may-load-again files",
+      "why": "The continuity context measurement is unavailable.",
+      "subject": null
+    },
+    {
+      "what": "may-load-again tokens",
+      "why": "The continuity context measurement is unavailable.",
+      "subject": null
+    },
+    {
+      "what": "all routed tokens",
+      "why": "Filesystem access was denied.",
+      "subject": null
+    },
+    {
+      "what": "startup share",
+      "why": "Filesystem access was denied.",
+      "subject": null
+    },
+    {
+      "what": "root categories",
+      "why": "The current root-category observation is unavailable.",
+      "subject": null
+    },
+    {
+      "what": "current Entries sections",
+      "why": "Filesystem access was denied.",
+      "subject": null
+    },
+    {
+      "what": "stale Entries sections",
+      "why": "Filesystem access was denied.",
+      "subject": null
+    },
+    {
+      "what": "missing Entries sections",
+      "why": "Filesystem access was denied.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "installation": {
+      "state": "installed",
+      "entryPath": "AGENTS.md",
+      "loaderPath": ".agents/loader.md"
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": 11,
+          "characters": 22704,
+          "bytes": 22704,
+          "tokens": 5676
+        },
+        "current": {
+          "files": null,
+          "characters": null,
+          "bytes": null,
+          "tokens": null
+        },
+        "difference": {
+          "files": null,
+          "characters": null,
+          "bytes": null,
+          "tokens": null
+        },
+        "mayLoadAgain": {
+          "files": null,
+          "characters": null,
+          "bytes": null,
+          "tokens": null
+        }
+      },
+      "allRouted": {
+        "files": null,
+        "characters": null,
+        "bytes": null,
+        "tokens": null
+      },
+      "startupShare": null
+    },
+    "structure": {
+      "rootCategories": {
+        "count": null,
+        "added": [],
+        "removed": []
+      }
+    },
+    "extensions": [],
+    "libraries": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge update",
+    "reason": "Update the Framework files that need attention."
+  }
+}

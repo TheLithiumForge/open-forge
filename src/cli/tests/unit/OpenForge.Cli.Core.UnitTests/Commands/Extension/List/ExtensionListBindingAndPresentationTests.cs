@@ -1,25 +1,27 @@
-using System.Globalization;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using System.Text.Json;
-using OpenForge.Cli.Core.Commands.Extension.List.Models.Request;
-using OpenForge.Cli.Core.Commands.Extension.List.Models.Result;
-using OpenForge.Cli.Core.Commands.Extension.List.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Extension.List.Models;
 using OpenForge.Cli.Core.Commands.Extension.List.Shared.Result;
 using OpenForge.Cli.Core.Commands.Extension.List;
 using OpenForge.Cli.Core.Commands.Extension;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Presentation.Extension.List;
+using OpenForge.Cli.Core.Presentation.Extension.List.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Text;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
-using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
-using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.List;
 
 public sealed class ExtensionListBindingAndPresentationTests
 {
-    [Fact(DisplayName = "Extension List symbols compose one group leaf and exact local options"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit")]
+    private static string WorkspaceRoot { get; } = Path.GetFullPath(
+        Path.Combine(Path.GetTempPath(), "open-forge-extension-list-workspace"));
+
+    [Fact(DisplayName = "Extension List symbols compose one group leaf and exact local options"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
     public void SymbolsComposeExactGrammar()
     {
         var group = ExtensionBinding.CreateGroup();
@@ -34,98 +36,83 @@ public sealed class ExtensionListBindingAndPresentationTests
         Assert.Equal(3, symbols.ListCommand.Options.Count);
     }
 
-    [Fact(DisplayName = "Extension List JSON preserves the schema envelope and complete command graph"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Extension List JSON preserves the schema envelope and complete command graph"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
     public void JsonPreservesSchemaEnvelopeAndGraph()
     {
         var result = CreateResult();
-        var json = ExtensionListJsonRenderer.Render(
-            new CliPresentationRequest<ExtensionListResult>(
-                result,
-                new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal)));
+        var selected = CliReportSelection.Select(
+            result,
+            new CliSelection(CliDetail.Standard),
+            ExtensionListPresentation.Rendering);
+        var json = CliJsonRenderer.Render(selected, ExtensionListPresentation.Rendering.DataJsonTypeInfo);
 
         using var document = JsonDocument.Parse(json);
         var root = document.RootElement;
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
         Assert.Equal("extension list", root.GetProperty("command").GetString());
-        Assert.Equal("complete", root.GetProperty("status").GetString());
-        var commandResult = root.GetProperty("result");
+        Assert.Equal("completed", root.GetProperty("status").GetString());
+        var commandResult = root.GetProperty("data");
         Assert.Single(commandResult.GetProperty("installed").EnumerateArray());
         Assert.Single(commandResult.GetProperty("available").EnumerateArray());
-        Assert.Equal("trusted", commandResult.GetProperty("coverage").GetProperty("lifecycleTrust").GetString());
-        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
+        Assert.Equal("embedded-catalogue", commandResult.GetProperty("source").GetProperty("kind").GetString());
+        Assert.False(Assert.Single(commandResult.GetProperty("available").EnumerateArray()).TryGetProperty("installed", out _));
+        Assert.Equal("open-forge extension install <id>", root.GetProperty("next").GetProperty("command").GetString());
     }
 
-    [Fact(DisplayName = "Extension List human views retain section identity status and safe rows"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Extension List JSON retains nullable full installed fields at their selected detail"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void JsonDataPresenceFollowsDetail()
+    {
+        var result = CreateResult();
+
+        using var minimalDocument = JsonDocument.Parse(RenderJson(result, CliDetail.Minimal));
+        var minimalRow = Assert.Single(minimalDocument.RootElement.GetProperty("data").GetProperty("installed").EnumerateArray());
+        Assert.Equal(JsonValueKind.Null, minimalRow.GetProperty("note").ValueKind);
+        Assert.False(minimalRow.TryGetProperty("files", out _));
+        Assert.False(minimalRow.TryGetProperty("recordedSource", out _));
+        Assert.False(minimalRow.TryGetProperty("coverage", out _));
+
+        using var fullDocument = JsonDocument.Parse(RenderJson(result, CliDetail.Full));
+        var fullRow = Assert.Single(fullDocument.RootElement.GetProperty("data").GetProperty("installed").EnumerateArray());
+        Assert.Equal(JsonValueKind.Null, fullRow.GetProperty("note").ValueKind);
+        Assert.Equal(JsonValueKind.Null, fullRow.GetProperty("recordedSource").ValueKind);
+        Assert.Equal(2, fullRow.GetProperty("files").GetInt32());
+        Assert.Equal("complete", fullRow.GetProperty("coverage").GetString());
+    }
+
+    [Fact(DisplayName = "Extension List human views retain section identity status and safe rows"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
     public void HumanViewsRetainSectionsAndStatus()
     {
         var result = CreateResult();
-        var compact = ExtensionListHumanRenderer.Render(
-            new CliPresentationRequest<ExtensionListResult>(
-                result,
-                new CliPresentation(CliOutputFormat.Human, CliView.Compact, CliVerbosity.Normal)));
-        var expanded = ExtensionListHumanRenderer.Render(
-            new CliPresentationRequest<ExtensionListResult>(
-                result,
-                new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal)));
+        var compact = RenderText(result, CliDetail.Minimal);
+        var expanded = RenderText(result, CliDetail.Standard);
 
-        Assert.Equal(
-            $"""
-            Extension list
-            Status: complete
-            Workspace: {result.Workspace?.LexicalRoot}
-            Selected by: --workspace
-            Source: embedded catalogue; available
-            Installed: coverage complete; record trusted
-              toolkit; version 1.0.0; trusted; source available
-            Available: coverage complete
-              toolkit; version 1.0.0
-            """.ReplaceLineEndings("\n"),
-            compact.ReplaceLineEndings("\n"));
-        Assert.Equal(
-            $"""
-            Extension list
-            Status: complete
-            Workspace: {result.Workspace?.LexicalRoot}
-            Selected by: --workspace
-            Source: embedded catalogue; available
-              Source kind: embedded-catalogue
-            Installed: coverage complete; record trusted
-              toolkit; version 1.0.0; trusted; source available
-                Managed paths: 2
-            Available: coverage complete
-              toolkit; version 1.0.0
-                Name: Toolkit
-                Description: A toolkit.
-                Packages: 1; dependencies: 0
-            """.ReplaceLineEndings("\n"),
-            expanded.ReplaceLineEndings("\n"));
+        Assert.Contains("Installed", compact, StringComparison.Ordinal);
+        Assert.Contains("toolkit", compact, StringComparison.Ordinal);
+        Assert.Contains("A toolkit.", compact, StringComparison.Ordinal);
+        Assert.Contains("Source: embedded catalogue", expanded, StringComparison.Ordinal);
+        Assert.DoesNotContain("embedded-catalogue", expanded, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge extension install <id>", expanded, StringComparison.Ordinal);
     }
 
-    [Theory(DisplayName = "Extension List maps every cancelled discovery state to interrupted"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit")]
-    [InlineData("source")]
-    [InlineData("lifecycle")]
-    public void CancelledDiscoveryStateIsInterrupted(string stage)
+    [Fact(DisplayName = "Extension List maps cancelled source discovery to interrupted"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
+    public void CancelledDiscoveryStateIsInterrupted()
     {
         var request = new ExtensionListRequest
         {
             Workspace = new CliWorkspace(
-                lexicalRoot: "/tmp/workspace",
-                physicalRoot: "/tmp/workspace",
+                lexicalRoot: WorkspaceRoot,
+                physicalRoot: WorkspaceRoot,
                 selectedBy: CliWorkspaceSelectionMethod.ExplicitWorkspace),
             Selection = ExtensionListSelection.Create(installedFlag: true, availableFlag: true),
             ExplicitSource = null,
         };
         var source = new ExtensionSourceReadResult(
-            state: stage == "source" ? ExtensionSourceReadState.Cancelled : ExtensionSourceReadState.Complete,
+            state: ExtensionSourceReadState.Cancelled,
             kind: ExtensionSourceKind.EmbeddedCatalogue,
             identity: "embedded catalogue",
             packages: [],
-            cause: stage == "source" ? "Source interrupted." : null);
-        var lifecycle = new LifecycleReadResult(
-            state: stage == "lifecycle" ? LifecycleReadState.Cancelled : LifecycleReadState.Complete,
-            trust: stage == "lifecycle" ? LifecycleExtensionTrust.Incomplete : LifecycleExtensionTrust.Absent,
-            packages: [],
-            cause: stage == "lifecycle" ? "Lifecycle interrupted." : null);
+            cause: "Source interrupted.");
+        var lifecycle = WorkspaceOwnershipRead.Absent(Path.Combine(WorkspaceRoot, ".agents", "open-forge.lock.json"));
 
         var result = ExtensionListResultBuilder.Build(request, source, lifecycle);
 
@@ -133,82 +120,9 @@ public sealed class ExtensionListBindingAndPresentationTests
         Assert.Contains(result.Findings, finding => finding.Code == ExtensionListFindingCode.Interrupted);
     }
 
-    [Theory(DisplayName = "Extension List human presentation executes every status stream and exit policy"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit")]
-    [InlineData((int)CliSemanticStatus.Complete, "complete", 0, (int)CliOutputTarget.StandardOutput)]
-    [InlineData((int)CliSemanticStatus.Failed, "failed", 1, (int)CliOutputTarget.StandardError)]
-    [InlineData((int)CliSemanticStatus.Attention, "requires attention", 2, (int)CliOutputTarget.StandardOutput)]
-    [InlineData((int)CliSemanticStatus.Incomplete, "incomplete", 3, (int)CliOutputTarget.StandardOutput)]
-    [InlineData((int)CliSemanticStatus.Invalid, "invalid", 4, (int)CliOutputTarget.StandardError)]
-    [InlineData((int)CliSemanticStatus.Blocked, "blocked", 5, (int)CliOutputTarget.StandardError)]
-    [InlineData((int)CliSemanticStatus.Interrupted, "interrupted", 130, (int)CliOutputTarget.StandardError)]
-    public async Task HumanPresentationExecutesCompleteStatusMatrix(
-        int statusValue,
-        string humanStatus,
-        int expectedExitCode,
-        int targetValue)
-    {
-        var status = (CliSemanticStatus)statusValue;
-        var target = (CliOutputTarget)targetValue;
-        var result = status == CliSemanticStatus.Complete
-            ? CreateResult()
-            : ExtensionListResultBuilder.Event(
-                CreateRequest(),
-                status,
-                ReadFindingCode(status),
-                $"The {humanStatus} presentation path was selected.");
-        using var standardOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var standardError = new StringWriter(CultureInfo.InvariantCulture);
-        var pipeline = new CliCommandPipeline<ExtensionListRequest, ExtensionListResult>(
-            (_, _) => ValueTask.FromResult(result),
-            new CliRendererSet<ExtensionListResult>(
-                ExtensionListHumanRenderer.Render,
-                ExtensionListJsonRenderer.Render));
-        var presentation = new CliPresentation(
-            CliOutputFormat.Human,
-            CliView.Expanded,
-            CliVerbosity.Normal);
-
-        var completion = await pipeline.ExecuteAsync(
-            CreateRequest(),
-            presentation,
-            new CliOutputWriters(standardOutput, standardError),
-            TestContext.Current.CancellationToken);
-
-        var rendered = $"{ExtensionListHumanRenderer.Render(new CliPresentationRequest<ExtensionListResult>(result, presentation))}{Environment.NewLine}";
-        Assert.Equal(status, completion.Status);
-        Assert.Equal(expectedExitCode, completion.ExitCode);
-        Assert.Equal(target, completion.PrimaryOutputTarget);
-        Assert.Equal(target == CliOutputTarget.StandardOutput ? rendered : string.Empty, standardOutput.ToString());
-        Assert.Equal(target == CliOutputTarget.StandardError ? rendered : string.Empty, standardError.ToString());
-        Assert.Contains($"Status: {humanStatus}", rendered, StringComparison.Ordinal);
-    }
-
-    private static ExtensionListFindingCode ReadFindingCode(CliSemanticStatus status)
-        => status switch
-        {
-            CliSemanticStatus.Failed => ExtensionListFindingCode.OperationFailed,
-            CliSemanticStatus.Attention => ExtensionListFindingCode.SourceUnavailable,
-            CliSemanticStatus.Incomplete => ExtensionListFindingCode.LifecycleUnavailable,
-            CliSemanticStatus.Invalid => ExtensionListFindingCode.InvalidInput,
-            CliSemanticStatus.Blocked => ExtensionListFindingCode.SourceBlocked,
-            CliSemanticStatus.Interrupted => ExtensionListFindingCode.Interrupted,
-            _ => throw new ArgumentOutOfRangeException(nameof(status), status, "The event finding status is not defined."),
-        };
-
-    private static ExtensionListRequest CreateRequest()
-        => new()
-        {
-            Workspace = new CliWorkspace(
-                lexicalRoot: "/tmp/workspace",
-                physicalRoot: "/tmp/workspace",
-                selectedBy: CliWorkspaceSelectionMethod.ExplicitWorkspace),
-            Selection = ExtensionListSelection.Create(installedFlag: true, availableFlag: true),
-            ExplicitSource = null,
-        };
-
-    [Theory(DisplayName = "Extension List distinguishes a known empty installation from unavailable inventory"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit")]
-    [InlineData(ExtensionListCoverage.Complete, "No packages.")]
-    [InlineData(ExtensionListCoverage.Incomplete, "No packages could be established from the available facts.")]
+    [Theory(DisplayName = "Extension List distinguishes a known empty installation from unavailable inventory"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    [InlineData(ExtensionListCoverage.Complete, "none")]
+    [InlineData(ExtensionListCoverage.Incomplete, "unavailable")]
     public void EmptyCoverageIsHonest(object coverageValue, string expected)
     {
         var coverage = (ExtensionListCoverage)coverageValue;
@@ -217,18 +131,18 @@ public sealed class ExtensionListBindingAndPresentationTests
             workspace: null,
             selection: ExtensionListSelection.Create(installedFlag: true, availableFlag: false),
             source: null,
-            lifecycleTrust: coverage == ExtensionListCoverage.Complete ? LifecycleExtensionTrust.Trusted : LifecycleExtensionTrust.Incomplete,
+            lifecycleTrust: coverage == ExtensionListCoverage.Complete ? ExtensionListOwnershipTrust.Trusted : ExtensionListOwnershipTrust.Incomplete,
             installedCoverage: coverage,
             availableCoverage: ExtensionListCoverage.NotRequested,
             installed: [], available: [], findings: [], next: null);
-        foreach (var view in new[] { CliView.Compact, CliView.Expanded })
+        foreach (var view in new[] { CliDetail.Minimal, CliDetail.Standard })
         {
-            var text = ExtensionListHumanRenderer.Render(new(result, new(CliOutputFormat.Human, view, CliVerbosity.Normal)));
+            var text = RenderText(result, view);
             Assert.Contains(expected, text, StringComparison.Ordinal);
-            Assert.DoesNotContain("Available: coverage", text, StringComparison.Ordinal);
+            Assert.DoesNotContain("Available", text, StringComparison.Ordinal);
             if (coverage == ExtensionListCoverage.Incomplete)
             {
-                Assert.DoesNotContain("No packages.", text, StringComparison.Ordinal);
+                Assert.DoesNotContain("none", text, StringComparison.Ordinal);
             }
         }
     }
@@ -237,17 +151,17 @@ public sealed class ExtensionListBindingAndPresentationTests
         => new(
             status: CliSemanticStatus.Complete,
             workspace: new CliWorkspace(
-                lexicalRoot: "/tmp/workspace",
-                physicalRoot: "/tmp/workspace",
+                lexicalRoot: WorkspaceRoot,
+                physicalRoot: WorkspaceRoot,
                 selectedBy: CliWorkspaceSelectionMethod.ExplicitWorkspace),
             selection: ExtensionListSelection.Create(installedFlag: true, availableFlag: true),
             source: new ExtensionListSource
             {
                 Identity = "embedded catalogue",
-                Kind = ExtensionSourceKind.EmbeddedCatalogue,
-                State = ExtensionSourceReadState.Complete,
+                Kind = ExtensionListSourceKind.EmbeddedCatalogue,
+                State = ExtensionListSourceState.Complete,
             },
-            lifecycleTrust: LifecycleExtensionTrust.Trusted,
+            lifecycleTrust: ExtensionListOwnershipTrust.Trusted,
             installedCoverage: ExtensionListCoverage.Complete,
             availableCoverage: ExtensionListCoverage.Complete,
             installed:
@@ -256,7 +170,7 @@ public sealed class ExtensionListBindingAndPresentationTests
                 {
                     Id = "toolkit",
                     Version = "1.0.0",
-                    Trust = LifecycleExtensionTrust.Trusted,
+                    Trust = ExtensionListOwnershipTrust.Trusted,
                     ManagedPathCount = 2,
                     SourceAvailable = true,
                 },
@@ -271,8 +185,21 @@ public sealed class ExtensionListBindingAndPresentationTests
                     Version = "1.0.0",
                     PackageCount = 1,
                     DependencyCount = 0,
+                    InstalledVersion = "1.0.0",
                 },
             ],
             findings: [],
             next: null);
+
+    private static string RenderText(ExtensionListResult result, CliDetail detail)
+    {
+        var selected = CliReportSelection.Select(result, new CliSelection(detail), ExtensionListPresentation.Rendering);
+        return CliTextRenderer.Render(selected, CliTextStyle.Plain, ExtensionListPresentation.Rendering.DataTextRenderer).Content.TrimEnd();
+    }
+
+    private static string RenderJson(ExtensionListResult result, CliDetail detail)
+    {
+        var selected = CliReportSelection.Select(result, new CliSelection(detail), ExtensionListPresentation.Rendering);
+        return CliJsonRenderer.Render(selected, ExtensionListPresentation.Rendering.DataJsonTypeInfo);
+    }
 }

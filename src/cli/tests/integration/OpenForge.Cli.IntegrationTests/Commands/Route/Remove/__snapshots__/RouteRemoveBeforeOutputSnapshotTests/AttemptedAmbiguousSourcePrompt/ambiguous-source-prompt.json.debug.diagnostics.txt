@@ -1,0 +1,9 @@
+status=blocked
+mode=apply
+source=docs/guide
+subject=file
+effects=0
+removed=0
+detached=0
+findings=1
+The source ID resolves to more than one logical source.

@@ -1,6 +1,5 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
-using OpenForge.Cli.Core.Commands.Doctor.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 
@@ -8,57 +7,19 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Doctor;
 
 public sealed class DoctorFiniteMappingTests
 {
-    [Fact(DisplayName = "Doctor finite finding coordinates map exhaustively and reject undefined values")]
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Doctor coverage vocabulary rejects undefined values")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
-    public void FindingCoordinatesMapExhaustivelyAndFailClosed()
+    public void CoverageVocabularyRejectsUndefinedValues()
     {
-        AssertMappings(
-            [
-                (DoctorFindingSeverity.Information, "information"),
-                (DoctorFindingSeverity.Warning, "warning"),
-                (DoctorFindingSeverity.Error, "error"),
-            ],
-            DoctorFindingWireVocabulary.Severity);
-        AssertMappings(
-            [
-                (DoctorCandidateCardinality.None, "none"),
-                (DoctorCandidateCardinality.One, "one"),
-                (DoctorCandidateCardinality.Several, "several"),
-            ],
-            DoctorFindingWireVocabulary.Cardinality);
-        AssertMappings(
-            [
-                (DoctorProposalKind.ReferenceCanonicalization, "reference-canonicalization"),
-                (DoctorProposalKind.LibraryResidualRecovery, "library-residual-recovery"),
-            ],
-            DoctorFindingWireVocabulary.Proposal);
-        AssertMappings(
-            [
-                (DoctorProposalVerificationKind.SameTargetIdentity, "same-target-identity"),
-                (DoctorProposalVerificationKind.ResultingBytes, "resulting-bytes"),
-                (DoctorProposalVerificationKind.NoFollowPriorState, "no-follow-prior-state"),
-            ],
-            DoctorFindingWireVocabulary.Verification);
-        AssertMappings(
-            [
-                (DoctorProposalRecoveryKind.NoPersistentState, "no-persistent-state"),
-                (DoctorProposalRecoveryKind.RepairReceiptRequired, "repair-receipt-required"),
-                (DoctorProposalRecoveryKind.VerifiedLibraryResidual, "verified-library-residual"),
-            ],
-            DoctorFindingWireVocabulary.Recovery);
-
+        Assert.Equal(
+            Enum.GetValues<DoctorCoverageState>(),
+            [DoctorCoverageState.Complete, DoctorCoverageState.Incomplete, DoctorCoverageState.Blocked]);
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            DoctorFindingWireVocabulary.Severity((DoctorFindingSeverity)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            DoctorFindingWireVocabulary.Cardinality((DoctorCandidateCardinality)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            DoctorFindingWireVocabulary.Proposal((DoctorProposalKind)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            DoctorFindingWireVocabulary.Verification((DoctorProposalVerificationKind)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            DoctorFindingWireVocabulary.Recovery((DoctorProposalRecoveryKind)int.MaxValue));
+            DoctorDomainSupport.Combine((DoctorCoverageState)int.MaxValue, DoctorCoverageState.Complete));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Doctor coverage merge is exhaustive for both operands and rejects undefined values")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public void CoverageMergeIsExhaustiveAndFailsClosed()
@@ -86,6 +47,7 @@ public sealed class DoctorFiniteMappingTests
             DoctorDomainSupport.Combine(DoctorCoverageState.Complete, (DoctorCoverageState)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Doctor assessment rejects every undefined finite coordinate")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public void ExtensionAssessmentRejectsUndefinedFiniteCoordinates()
@@ -100,18 +62,6 @@ public sealed class DoctorFiniteMappingTests
             lifecycle: (OperationalLifecycleState)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => CreateAssessment(
             sourceAvailability: (OperationalSourceAvailability)int.MaxValue));
-    }
-
-    private static void AssertMappings<T>(
-        IReadOnlyList<(T Value, string Name)> expected,
-        Func<T, string> read)
-        where T : struct, Enum
-    {
-        Assert.Equal(Enum.GetValues<T>(), expected.Select(item => item.Value));
-        foreach (var (value, name) in expected)
-        {
-            Assert.Equal(name, read(value));
-        }
     }
 
     private static ExtensionLifecycleDoctorAssessment CreateAssessment(

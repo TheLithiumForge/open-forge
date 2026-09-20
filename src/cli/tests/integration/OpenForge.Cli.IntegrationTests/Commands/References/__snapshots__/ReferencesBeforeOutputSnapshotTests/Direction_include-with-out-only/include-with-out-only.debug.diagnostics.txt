@@ -1,0 +1,5 @@
+status=invalid-input
+incoming=0
+outgoing=0
+scanned=0
+Include and exclude filters apply only when incoming work is requested.

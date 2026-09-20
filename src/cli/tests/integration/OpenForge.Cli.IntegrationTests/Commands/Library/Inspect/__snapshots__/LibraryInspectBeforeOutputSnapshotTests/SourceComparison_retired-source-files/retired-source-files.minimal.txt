@@ -1,0 +1,5 @@
+team-knowledge needs a sync: 1 file differs between shared/team and ..
+Workspace: <workspace>
+  Warning  .agents/directives/review.md  Source file is gone
+         .agents/directives/review.md  linked, but its source file is gone
+Next: open-forge library sync team-knowledge --dry-run

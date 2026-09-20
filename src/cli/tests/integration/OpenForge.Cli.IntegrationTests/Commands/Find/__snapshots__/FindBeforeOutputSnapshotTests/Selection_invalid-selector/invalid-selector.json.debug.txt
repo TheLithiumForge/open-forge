@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 3,
+  "command": "find",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot search: --include missing/source is not a source ID or a path under .agents.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "find.invalid-selector",
+      "title": "Invalid selector",
+      "message": "--include missing/source is not a source ID or a path under .agents.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "missing/source",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "matches": 0,
+    "sourcesInspected": null,
+    "sourcesCandidates": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "matches": [],
+    "query": {
+      "tags": [],
+      "headings": [],
+      "require": "all",
+      "within": [
+        "frontmatter",
+        "body"
+      ]
+    },
+    "sourceSet": {
+      "mode": "filtered",
+      "include": [
+        "missing/source"
+      ],
+      "exclude": [],
+      "inspected": null,
+      "candidates": null
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route list --depth=all",
+    "reason": "List source IDs and exact paths, then rerun Find."
+  }
+}

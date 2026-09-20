@@ -10,6 +10,7 @@ public sealed class ExtensionManifestFileReaderIntegrationTests
 {
     private const string ValidManifest = """{"id":"toolkit","name":"Toolkit","description":"A toolkit.","version":"1.2.3","dependencies":["base"]}""";
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File manifest reader preserves package facts without changing source bytes"), Trait("Feature", "extension-manifest"), Trait("Evidence", "Integration")]
     public async Task ReadsPackageFacts()
     {
@@ -32,6 +33,7 @@ public sealed class ExtensionManifestFileReaderIntegrationTests
         Assert.Equal(before, source.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "File manifest reader retains malformed package and dependency conflict outcomes"), Trait("Feature", "extension-manifest"), Trait("Evidence", "Integration")]
     [InlineData("syntax")]
     [InlineData("encoding")]
@@ -80,6 +82,7 @@ public sealed class ExtensionManifestFileReaderIntegrationTests
         Assert.Equal(before, source.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "File manifest reader classifies missing inaccessible and cancelled file observations"), Trait("Feature", "extension-manifest"), Trait("Evidence", "Integration")]
     [InlineData("missing")]
     [InlineData("directory")]
@@ -118,6 +121,7 @@ public sealed class ExtensionManifestFileReaderIntegrationTests
         Assert.Equal(before, source.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Full file reads validate manifest coordinates before file observation"), Trait("Feature", "extension-manifest"), Trait("Evidence", "Integration")]
     [InlineData("")]
     [InlineData(" ")]

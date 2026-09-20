@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot install toolkit: Another Open Forge command holds the workspace lock. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-install.workspace-lock-unavailable",
+      "title": "Workspace lock is unavailable",
+      "message": "Another Open Forge command holds the workspace lock. Nothing was changed.",
+      "subject": {
+        "kind": "file",
+        "path": "toolkit",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/toolkit.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": "toolkit",
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "packagesInstalled": 0,
+    "filesCreated": 0,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "toolkit",
+        "version": "1.0.0",
+        "selected": true,
+        "requiredBy": []
+      }
+    ],
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "selection": {
+      "method": "explicit-ids"
+    },
+    "sections": [],
+    "entriesUnchanged": [
+      ".agents/directives/_directives.md",
+      ".agents/guidance/_guidance.md",
+      ".agents/loader.md",
+      ".agents/maps/_maps.md",
+      ".agents/memory/_memory.md",
+      ".agents/memory/archived/_archived.md",
+      ".agents/memory/crystallized/_crystallized.md",
+      ".agents/memory/emerging/_emerging.md",
+      ".agents/memory/working/_working.md",
+      ".agents/patterns/_patterns.md",
+      ".agents/skills/_skills.md",
+      ".agents/templates/_templates.md"
+    ],
+    "frameworkFingerprint": "<sha256>",
+    "verification": {
+      "targets": "unknown",
+      "topology": "unknown",
+      "extensionsLifecycle": "unknown",
+      "frameworkLifecycle": "unknown"
+    },
+    "recovery": {
+      "state": "not-created",
+      "protectedPaths": [],
+      "residualPath": null
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

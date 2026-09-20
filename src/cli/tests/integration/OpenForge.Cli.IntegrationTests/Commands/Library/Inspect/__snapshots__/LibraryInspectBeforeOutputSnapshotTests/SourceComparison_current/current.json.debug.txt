@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 3,
+  "command": "library inspect",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "team-knowledge is current: 1 file from shared/team is linked under ..",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "sourceFiles": 1,
+    "linksCurrent": 1,
+    "filesAdded": 0,
+    "filesRetired": 0,
+    "linksMissing": 0,
+    "linksChanged": 0
+  },
+  "limitations": [],
+  "data": {
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team",
+    "destinationFolder": ".",
+    "current": true,
+    "files": [
+      {
+        "sourcePath": ".agents/directives/review.md",
+        "destinationPath": ".agents/directives/review.md",
+        "relation": "current",
+        "expectedTarget": "../../shared/team/.agents/directives/review.md",
+        "observedTarget": "../../shared/team/.agents/directives/review.md"
+      }
+    ],
+    "inventory": {
+      "eligible": 1,
+      "excluded": 0
+    }
+  },
+  "recovery": null,
+  "next": null
+}

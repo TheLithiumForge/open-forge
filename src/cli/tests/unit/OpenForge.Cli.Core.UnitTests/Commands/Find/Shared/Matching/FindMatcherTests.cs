@@ -175,6 +175,7 @@ public sealed class FindMatcherTests
             ]),
     };
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find all and any requirements aggregate evidence across ordered physical layers"),
         MemberData(nameof(AggregationScenarios), DisableDiscoveryEnumeration = true)]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
@@ -224,6 +225,7 @@ public sealed class FindMatcherTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find natural and explicit regions select exact authored tag, body, document, and section evidence"),
         MemberData(nameof(RegionScenarios), DisableDiscoveryEnumeration = true)]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
@@ -260,6 +262,7 @@ public sealed class FindMatcherTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find missing and ambiguous sections retain only independently safe evidence"),
         MemberData(nameof(SectionScenarios), DisableDiscoveryEnumeration = true)]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
@@ -313,6 +316,7 @@ public sealed class FindMatcherTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find matching uses ordinal-ignore-case comparison without culture-sensitive or Unicode-normalizing matches")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public void OrdinalIgnoreCaseMatchingIsCultureIndependentWithoutUnicodeNormalization()
@@ -345,6 +349,7 @@ public sealed class FindMatcherTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find bare inventory keeps only safe predicate matches while retaining independently known sources")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public void BareAndPredicateSearchesRetainOnlyIndependentlySafeMatches()
@@ -491,7 +496,7 @@ public sealed class FindMatcherTests
             new FindQuery(predicates, predicates, requirement, regions),
             new FindPresentationSelection(
                 null,
-                CliView.Expanded,
+                CliDetail.Standard,
                 new FindContentSelection([], [])));
     }
 

@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "completed-with-warnings",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Nothing could be repaired automatically. 2 problems need a choice.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "repair.guided-finding-remaining",
+      "title": "Broken link",
+      "message": "missing.md: Broken link; 4 possible targets",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": {
+          "line": 9,
+          "column": 10
+        }
+      },
+      "category": null,
+      "actions": []
+    },
+    {
+      "severity": "warning",
+      "code": "repair.guided-finding-remaining",
+      "title": "Broken link",
+      "message": "missing.md: Broken link; 4 possible targets",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": {
+          "line": 10,
+          "column": 18
+        }
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksRepaired": 0,
+    "problemsRemaining": 2,
+    "problemsNeedingChoice": 2,
+    "problemsNeedingHand": 0,
+    "librarySteps": 0,
+    "warnings": 2
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "selection": "automatic",
+    "repairs": [],
+    "remaining": [
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 10
+        },
+        "kind": "guided",
+        "candidates": 4
+      },
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 10,
+          "column": 18
+        },
+        "kind": "guided",
+        "candidates": 4
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge repair",
+    "reason": "Review remaining broken links in Repair, then select a possible target in the interactive prompt or provide an explicit --relink target."
+  }
+}

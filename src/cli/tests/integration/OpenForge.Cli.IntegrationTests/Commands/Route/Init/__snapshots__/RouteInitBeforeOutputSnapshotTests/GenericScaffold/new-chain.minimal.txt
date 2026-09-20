@@ -1,0 +1,5 @@
+Created 2 entrypoints for documents/design.
+Workspace: <workspace>
+  .agents/documents/_documents.md
+  .agents/documents/design/_design.md
+  Its description and tags are placeholders. Edit them before relying on this route.

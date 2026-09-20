@@ -1,0 +1,5 @@
+.agents/memory/project-alpha/overview.md already has the requested content. Nothing to do.
+Workspace: <workspace>
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project

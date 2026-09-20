@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 3,
+  "command": "index",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Entries sections are current in all 2 files. Nothing to do.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "filesChecked": 2,
+    "filesUpdated": 0,
+    "filesCurrent": 2
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "changes": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

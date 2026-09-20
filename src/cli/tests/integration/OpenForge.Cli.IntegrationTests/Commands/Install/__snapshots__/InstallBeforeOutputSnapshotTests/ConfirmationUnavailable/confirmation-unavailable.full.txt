@@ -1,0 +1,13 @@
+Install needs confirmation, and this session cannot ask.
+Workspace: <workspace>
+  Error  <workspace>  Confirmation is required [install.confirmation-required]
+         Install needs confirmation, and this session cannot ask.
+         use open-forge install --automatic
+         open-forge install --automatic
+         Rerun the same Install request with explicit automatic mode.
+  Bundled Framework fingerprint: <sha256> (14 assets).
+  Ownership record publication did not start.
+  No recovery bundle was required.
+  Verification was not requested.
+  Rerun the same Install request with explicit automatic mode.
+Next: open-forge install --automatic

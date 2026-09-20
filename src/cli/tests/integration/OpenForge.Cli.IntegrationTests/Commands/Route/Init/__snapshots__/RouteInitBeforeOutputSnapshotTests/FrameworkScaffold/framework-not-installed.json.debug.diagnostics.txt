@@ -1,0 +1,11 @@
+status=blocked
+mode=apply
+target=memory/working
+scaffold=framework
+completeness=complete
+safety=blocked
+effects=0
+recovery=not-required
+verification=not-requested
+findings=1
+The source catalogue boundary '.agents' is not safe and complete.

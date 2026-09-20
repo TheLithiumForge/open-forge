@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init.Generic;
 
 public sealed class GenericRouteInitResidualIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init retains parent-first directories after cancellation during later effects"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task LaterCancellationLeavesVerifiedDirectoryResiduals()
     {

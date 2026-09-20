@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot repair: another Open Forge command holds the workspace lock. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "repair.workspace-lock-unavailable",
+      "title": "Workspace lock is held",
+      "message": "Another Open Forge command holds the workspace lock. Nothing was changed.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "repair.workspace-lock-unavailable",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    },
+    {
+      "severity": "warning",
+      "code": "repair.guided-finding-remaining",
+      "title": "Broken link",
+      "message": "missing.md: Broken link; 4 possible targets",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": {
+          "line": 10,
+          "column": 10
+        }
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/docs/source.md:9:8",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": "./guide.md -> guide.md",
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksRepaired": 0,
+    "problemsRemaining": 2,
+    "problemsNeedingChoice": 1,
+    "problemsNeedingHand": 1,
+    "librarySteps": 0,
+    "errors": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "selection": "automatic",
+    "repairs": [
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 8
+        },
+        "from": "./guide.md",
+        "to": "guide.md"
+      }
+    ],
+    "remaining": [
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 8
+        },
+        "kind": "manual",
+        "candidates": 0
+      },
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 10,
+          "column": 10
+        },
+        "kind": "guided",
+        "candidates": 4
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the blocked diagnosis, selection, target, plan, or recovery boundary before retrying Repair."
+  }
+}

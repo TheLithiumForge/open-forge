@@ -1,0 +1,9 @@
+status=blocked
+coverage=blocked
+matching=blocked
+projection=not run
+matches=0
+sourcesInspected=null
+sourcesCandidates=null
+findings=1
+finding=find.selector-ambiguous

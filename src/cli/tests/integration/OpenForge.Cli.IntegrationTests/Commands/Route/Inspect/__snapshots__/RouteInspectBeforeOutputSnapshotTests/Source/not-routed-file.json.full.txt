@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "unlisted  .agents/unlisted.md",
+    "kind": "done"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "route-inspect.not-routed",
+      "title": "Source is not routed",
+      "message": ".agents/unlisted.md is not reachable from any route, so agents never load it automatically.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/unlisted.md",
+        "id": ".agents/unlisted.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "ownBytes": 70,
+    "ownTokens": 18,
+    "addedFiles": null,
+    "addedBytes": null,
+    "addedTokens": null,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "unlisted",
+    "path": ".agents/unlisted.md",
+    "kind": "markdown",
+    "entrypointForm": "markdown",
+    "overwritePath": null,
+    "belongs": {
+      "routeChain": null,
+      "parent": null,
+      "directChildren": null,
+      "descendants": null
+    },
+    "read": {
+      "atStart": null,
+      "automaticallyWhen": null,
+      "mayReadAgain": null
+    },
+    "size": {
+      "own": {
+        "files": 1,
+        "bytes": 70,
+        "tokens": 18
+      },
+      "adds": null,
+      "loadNow": null
+    },
+    "axioms": {
+      "inheritedFrom": null,
+      "local": null
+    },
+    "tags": [
+      "Docs"
+    ],
+    "selected": {
+      "closure": null,
+      "startupOverlap": null
+    },
+    "selection": {
+      "kind": "source-path",
+      "method": "exact-path",
+      "requested": ".agents/unlisted.md"
+    },
+    "layers": [
+      {
+        "path": ".agents/unlisted.md",
+        "kind": "base"
+      }
+    ],
+    "statusReason": "all applicable route facts are available"
+  },
+  "recovery": null,
+  "next": null
+}

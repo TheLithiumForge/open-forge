@@ -1,0 +1,15 @@
+Would repair 2 links.
+Workspace: <workspace>
+  .agents/docs/source.md:9:8    ./guide.md -> guide.md
+  .agents/docs/source.md:10:16  ./guide.md -> guide.md
+  Diagnosis coverage: Workspace and path were checked; route and heading were checked; local references were checked; selected scope was checked.
+  Before: <sha256>
+  After: <sha256>
+  Before: <sha256>
+  After: <sha256>
+  Checks before writing: completed.
+  Verification: targets were not checked; resulting bytes were not checked; post-conditions were not checked.
+  Recovery: No recovery bundle was created.
+  Checks after writing: not run.
+No files were changed.
+2 links repaired.

@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "incomplete",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Context could not be read completely.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "context.target-missing",
+      "title": "Link target is missing",
+      "message": "The link at .agents/docs/guide.md:8:1 points to missing.md, which does not exist. It was not followed.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "location": {
+          "line": 8,
+          "column": 1
+        }
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sources": null,
+    "tokens": null,
+    "bytes": null,
+    "linksFollowed": null,
+    "linksNotFollowed": null,
+    "warnings": 1
+  },
+  "limitations": [
+    {
+      "what": "sources",
+      "why": "The followed Context links could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "tokens",
+      "why": "The followed Context links could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "bytes",
+      "why": "The followed Context links could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "links followed",
+      "why": "The followed Context links could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "links not followed",
+      "why": "The followed Context links could not be resolved completely.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "workspace entry"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 1,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Workspace\n\nRead `.agents/loader.md`.\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/loader.md",
+        "id": "loader",
+        "layer": "base",
+        "includedBecause": [
+          "Loader"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 2,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Open Forge Loader\n\n## Entries\n\n- [Documents](docs/_docs.md) - #LoadNow #Docs"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/_docs.md",
+        "id": "docs",
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from .agents/loader.md",
+          "ancestor required from .agents/docs/guide.md for docs/guide"
+        ],
+        "route": "docs",
+        "scope": null,
+        "order": 3,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Documents\n  tags: [Docs]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Documents\n\n## Entries\n\n- [Guide](guide.md) - #Docs #Guide\n- [Reference](reference.md) - #Docs\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "layer": "base",
+        "includedBecause": [
+          "selected source for docs/guide"
+        ],
+        "route": "docs/guide",
+        "scope": null,
+        "order": 4,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Guide\n  tags: [Docs, Guide]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Guide\n\n[Missing](missing.md).\n"
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "from": ".agents/docs/guide.md",
+        "location": {
+          "line": 8,
+          "column": 1
+        },
+        "destination": "missing.md",
+        "resolvedPath": ".agents/docs/missing.md",
+        "resolution": "missing",
+        "followed": false
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the unavailable closure, source, link, or projection facts before relying on this Context result."
+  }
+}

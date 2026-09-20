@@ -1,0 +1,8 @@
+Cannot check this workspace: The selected workspace is missing.
+  Error  <workspace>/missing-workspace  Workspace is unavailable
+         does not exist or cannot be read.
+         open-forge doctor
+         Inspect the reported operational facts before rerunning Status.
+1 errors.
+  Inspect the reported operational facts before rerunning Status.
+Next: open-forge doctor

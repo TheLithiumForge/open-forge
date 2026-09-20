@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 3,
+  "command": "route update",
+  "status": "invalid-input",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot update missing: missing is not a routed source that can be updated.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-update.invalid-target",
+      "title": "Source cannot be updated",
+      "message": "missing is not a routed source that can be updated.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "missing",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route list --depth=all",
+          "reason": "Choose a routed source, then rerun Route Update."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "fieldsChanged": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": null,
+      "path": null
+    },
+    "changes": [],
+    "template": null,
+    "listedIn": null
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route list --depth=all",
+    "reason": "Choose a routed source, then rerun Route Update."
+  }
+}

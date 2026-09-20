@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "incomplete",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "guidance/old guide could not be removed: Some files could not be scanned for links to .agents/guidance/old guide.md, so the removal was not planned. Nothing was changed.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "route-remove.reference-coverage-incomplete",
+      "title": "Reference scan is incomplete",
+      "message": "Some files could not be scanned for links to .agents/guidance/old guide.md, so the removal was not planned.",
+      "subject": {
+        "kind": "file",
+        "path": "unreadable.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the reported Route Remove boundary before relying on this result."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesRemoved": 0,
+    "sectionsUpdated": 0,
+    "linksDetached": 0,
+    "filesScanned": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "removed": [],
+    "detachedLinks": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the reported Route Remove boundary before relying on this result."
+  }
+}

@@ -18,17 +18,18 @@ public sealed class PublishedRouteUpdateProcessTests
             "--tag=After",
             "--tag=Memory",
             "--dry-run",
-            "--json",
+            "--format=json",
         ];
         var preview = await RunWithoutWritesAsync(target, workspace, arguments);
         Assert.Equal(0, preview.ExitCode);
         Assert.Equal(string.Empty, preview.StandardError);
         using var document = JsonDocument.Parse(preview.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
-        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
+        var result = document.RootElement.GetProperty("data");
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
         Assert.Equal("dry-run", result.GetProperty("mode").GetString());
         Assert.Equal(PublishedRouteUpdateWorkspace.TargetPath, result.GetProperty("target").GetProperty("path").GetString());
-        Assert.NotEmpty(result.GetProperty("effects").EnumerateArray());
+        Assert.NotEmpty(result.GetProperty("changes").EnumerateArray());
+        Assert.NotEmpty(document.RootElement.GetProperty("effects").EnumerateArray());
         workspace.AssertNoLockInfrastructure();
     }
 
@@ -56,7 +57,7 @@ public sealed class PublishedRouteUpdateProcessTests
 
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
-        Assert.Contains("Status: complete", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains($"Updated {PublishedRouteUpdateWorkspace.TargetId}", applied.StandardOutput, StringComparison.Ordinal);
         var targetAfter = await workspace.ReadTargetAsync(TestContext.Current.CancellationToken);
         var parentAfter = await workspace.ReadParentAsync(TestContext.Current.CancellationToken);
         Assert.Equal(
@@ -76,7 +77,7 @@ public sealed class PublishedRouteUpdateProcessTests
 
         Assert.Equal(0, noOp.ExitCode);
         Assert.Equal(string.Empty, noOp.StandardError);
-        Assert.Contains("No files changed.", noOp.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains($"{PublishedRouteUpdateWorkspace.TargetId} already has these values. Nothing to do.", noOp.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(after, workspace.SnapshotState());
     }
 
@@ -91,7 +92,7 @@ public sealed class PublishedRouteUpdateProcessTests
 
         Assert.Equal(5, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardOutput);
-        Assert.Contains("Status: blocked", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains($"Cannot update {PublishedRouteUpdateWorkspace.TargetId}:", result.StandardError, StringComparison.Ordinal);
         workspace.AssertNoLockInfrastructure();
     }
 

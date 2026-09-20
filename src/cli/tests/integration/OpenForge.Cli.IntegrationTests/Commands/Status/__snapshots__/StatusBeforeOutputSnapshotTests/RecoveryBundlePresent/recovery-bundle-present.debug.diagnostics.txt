@@ -1,0 +1,3 @@
+status=completed-with-warnings
+findings=1
+The exact-name recovery candidate requires attention.

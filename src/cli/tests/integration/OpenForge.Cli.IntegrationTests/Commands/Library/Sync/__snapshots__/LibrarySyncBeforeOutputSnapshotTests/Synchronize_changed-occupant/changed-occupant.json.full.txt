@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 3,
+  "command": "library sync",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot synchronize team-knowledge: .agents/directives/review.md is no longer the link the Library created. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-sync.destination-collision",
+      "title": "Destination is occupied",
+      "message": ".agents/directives/review.md is no longer the link the Library created.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/directives/review.md",
+        "id": null,
+        "location": null
+      },
+      "category": "local",
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge library inspect team-knowledge",
+          "reason": "Inspect the destination link before synchronizing it."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksAdded": 0,
+    "linksRemoved": 0,
+    "linksUnchanged": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "proposedScopes": [],
+      "approvedScopes": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [],
+    "unchanged": [],
+    "inventory": {
+      "rootState": "available",
+      "inventoryState": "complete",
+      "eligiblePaths": [
+        {
+          "sourcePath": ".agents/directives/review.md",
+          "destinationPath": ".agents/directives/review.md",
+          "sourceId": "directives/review"
+        }
+      ],
+      "excludedPaths": [],
+      "unavailablePaths": [],
+      "lexicalRoot": "<workspace>\\shared\\team-knowledge",
+      "physicalRoot": "<workspace>\\shared\\team-knowledge",
+      "lexicallyContained": true,
+      "physicallyContained": true
+    },
+    "expectedStates": [],
+    "verification": {
+      "state": "not-started",
+      "recordPublication": "not-started",
+      "publishedLast": null
+    },
+    "recovery": {
+      "state": "not-requested",
+      "path": null,
+      "residuals": []
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge library inspect team-knowledge",
+    "reason": "Inspect the destination link before synchronizing it."
+  }
+}

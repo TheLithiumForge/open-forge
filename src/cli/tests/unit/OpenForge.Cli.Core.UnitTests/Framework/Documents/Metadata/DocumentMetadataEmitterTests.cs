@@ -6,6 +6,54 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Metadata;
 
 public sealed class DocumentMetadataEmitterTests
 {
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Optional metadata omits missing fields while retaining safe authored values")]
+    [InlineData(null, false)]
+    [InlineData("true: # 路由", false)]
+    [InlineData(null, true)]
+    [Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
+    public void OptionalFieldsRemainMissing(string? description, bool hasTags)
+    {
+        string[] tags = hasTags ? ["Évidence2", "工作-2"] : [];
+        var yaml = new FrameworkDocumentMetadataEmitter().EmitOptional(
+            new FrameworkDocumentMetadataEmission(description, tags, null));
+        var document = new MarkdownDocumentParser().Parse($"---\n{yaml}---\n# Body\n");
+        var facts = new FrameworkDocumentMetadataParser().Parse(document);
+
+        Assert.Equal(FrameworkDocumentMetadataState.Missing, facts.State);
+        Assert.Equal(description, facts.ObservedDescription);
+        Assert.Equal(tags, facts.ObservedTags);
+        Assert.Contains("open-forge:", yaml, StringComparison.Ordinal);
+        Assert.DoesNotContain("responsibility:", yaml, StringComparison.Ordinal);
+        Assert.DoesNotContain("\r", yaml, StringComparison.Ordinal);
+        if (description is null)
+        {
+            Assert.DoesNotContain("description:", yaml, StringComparison.Ordinal);
+        }
+        if (!hasTags)
+        {
+            Assert.DoesNotContain("tags:", yaml, StringComparison.Ordinal);
+        }
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Optional emission rejects malformed present fields and owns ordered tags")]
+    [Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
+    public void OptionalModelRetainsValidationAndImmutableValues()
+    {
+        Assert.Throws<ArgumentException>(() => new FrameworkDocumentMetadataEmission(" ", [], null));
+        Assert.Throws<ArgumentException>(() => new FrameworkDocumentMetadataEmission(null, ["bad tag"], null));
+        Assert.Throws<ArgumentException>(() => new FrameworkDocumentMetadataEmission(null, ["Good", "Good"], null));
+        Assert.Throws<ArgumentException>(() => new FrameworkDocumentMetadataEmission(null, [null!], null));
+        Assert.Throws<ArgumentNullException>(() => new FrameworkDocumentMetadataEmission(null, null!, null));
+        Assert.Throws<ArgumentException>(() => new FrameworkDocumentMetadataEmission(null, [], ""));
+        var tags = new[] { "Second", "First" };
+        var metadata = new FrameworkDocumentMetadataEmission(null, tags, null);
+        tags[0] = "Changed";
+        Assert.Equal(["Second", "First"], metadata.Tags);
+    }
+
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Framework metadata emits one ordered Open Forge root without absent values")]
     [Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
     public void EmitsCanonicalOpenForgeDocumentWithoutResponsibility()
@@ -23,6 +71,7 @@ public sealed class DocumentMetadataEmitterTests
         Assert.DoesNotContain("\r", yaml, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Framework metadata emits responsibility after ordered tags")]
     [Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
     public void EmitsCanonicalOpenForgeDocumentWithResponsibility()
@@ -41,6 +90,7 @@ public sealed class DocumentMetadataEmitterTests
             yaml);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Framework metadata round trips Unicode and YAML-sensitive scalars")]
     [Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
     public void EmittedYamlRoundTripsThroughCanonicalParser()

@@ -1,0 +1,9 @@
+Updated 1 Framework file.
+Workspace: <workspace>
+  .agents/loader.md  restored (it was missing)
+  .agents/loader.md  Entries section updated
+  13 files unchanged
+  .agents/loader.md shipped SHA-256: <sha256>
+  .agents/loader.md source asset: .agents/loader.md
+  .agents/loader.md bundled Framework: id=framework; version=unavailable; fingerprint=<sha256>
+  All written targets were verified.

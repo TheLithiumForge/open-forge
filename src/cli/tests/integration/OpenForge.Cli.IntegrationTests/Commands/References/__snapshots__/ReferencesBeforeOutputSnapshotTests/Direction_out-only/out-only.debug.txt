@@ -1,0 +1,4 @@
+.agents/docs/guide.md
+Workspace: <workspace>
+  out  :10:10   reference.md#details -> .agents/docs/reference.md   base
+0 in, 1 out

@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 3,
+  "command": "route move",
+  "status": "incomplete",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "guidance/old guide could not be moved: Some files could not be scanned for links to invalid.md, so the move was not planned. Nothing was changed.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "route-move.reference-coverage-incomplete",
+      "title": "Reference scan is incomplete",
+      "message": "Some files could not be scanned for links to invalid.md, so the move was not planned.",
+      "subject": {
+        "kind": "file",
+        "path": "invalid.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesMoved": 0,
+    "sectionsUpdated": 0,
+    "linksRewritten": 0,
+    "filesScanned": 12,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "destination": {
+      "id": "guidance/new guide",
+      "path": ".agents/guidance/new guide.md"
+    },
+    "moved": [
+      {
+        "from": ".agents/guidance/old guide.md",
+        "to": ".agents/guidance/new guide.md",
+        "overwrite": {
+          "from": ".agents/guidance/old guide.overwrite.md",
+          "to": ".agents/guidance/new guide.overwrite.md"
+        }
+      }
+    ],
+    "rewrittenLinks": [],
+    "scan": {
+      "filesScanned": 12,
+      "occurrences": 0
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the unavailable inventory, reference, projection, or recovery facts before relying on this Route Move result."
+  }
+}

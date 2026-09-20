@@ -1,30 +1,26 @@
 ---
 open-forge:
-  description: Starting structure for work awaiting selection, its priority, and links to existing task sources
-  tags: [Extension, Template, Memory, Planning, Working, Contextual]
+  description: "Keep a small selection view of candidate work without duplicating task status"
+  tags: [Extension, Template, Planning, Backlog, Memory]
 ---
 
 # {Scope} Backlog
 
-{
-Template selection:
-
-- Need: A maintained view of work awaiting consideration or selection when no existing source already provides it.
-- Primary question: What work remains to consider or select, and what is its current priority?
-
-Use an existing issue tracker, backlog, or project view when it already defines these answers. A local backlog should add useful selection context without copying another system's task status. The [Work Records Pattern](../../patterns/work-records.md) defines the default relationship.
-
-Listing an idea does not accept it as work. Once an item has a task source, link to it rather than copying its outcome, plan, or progress.
-
-Replace the Template metadata with accurate destination metadata, use the project's priority convention, and remove all braced guidance. Adapt or omit columns that do not help selection.
-}
+<!-- TEMPLATE: Use only when an existing board or task system does not already provide the needed selection view. Listed work is not automatically accepted.
+Replace {prompts}; remove this comment and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying. -->
 
 ## Scope
 
-{State which work this backlog covers and what guides selection. Link to the sources that define priorities, constraints, or accepted commitments when those answers are maintained elsewhere.}
+{Which work belongs here, who selects it, and what guides priority? Link to existing commitments and constraints.}
+
+**Selection rule:** {The project's existing priority convention, or a simple stated ordering.}
 
 ## Items
 
-| Work Or Source | Priority | Selection Context |
+| Work or source | Priority | Why now / what is missing |
 | --- | --- | --- |
-| {Candidate work or link to its existing source} | {Priority, or link to the source that defines it} | {Why it matters and what remains to learn or decide before selecting it} |
+| {Candidate outcome or link to its task} | {Project priority or relative order} | {Expected value; evidence, dependency, or decision needed before selection} |
+
+<!-- Keep only columns that help selection. Once an item has a Task, link to it rather than copying its plan or current state.
+Use the existing board's priority and status when it owns those facts. A local backlog may add context, not a competing truth. -->

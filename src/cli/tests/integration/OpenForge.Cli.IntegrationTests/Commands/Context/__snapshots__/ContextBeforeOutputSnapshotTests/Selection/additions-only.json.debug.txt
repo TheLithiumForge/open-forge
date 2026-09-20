@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Context is complete.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "sources": 1,
+    "tokens": 32,
+    "bytes": 126,
+    "linksFollowed": 0,
+    "linksNotFollowed": 0
+  },
+  "limitations": [],
+  "data": {
+    "sources": [
+      {
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "layer": "base",
+        "includedBecause": [
+          "selected source for docs/guide"
+        ],
+        "route": "docs/guide",
+        "scope": null,
+        "order": 1,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Guide\n  tags: [Docs, Guide]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Guide\n\n## Rules\n\nRead the [Reference](reference.md#details).\n"
+          }
+        ]
+      }
+    ],
+    "links": []
+  },
+  "recovery": null,
+  "next": null
+}

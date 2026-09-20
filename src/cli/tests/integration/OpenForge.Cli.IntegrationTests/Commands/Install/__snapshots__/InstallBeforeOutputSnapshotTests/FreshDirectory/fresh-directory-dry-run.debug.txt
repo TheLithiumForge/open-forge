@@ -1,0 +1,36 @@
+Would install the Open Forge Framework into <workspace>.
+Workspace: <workspace>
+  .agents                                       would be created
+  .agents/directives                            would be created
+  .agents/guidance                              would be created
+  .agents/maps                                  would be created
+  .agents/memory                                would be created
+  .agents/patterns                              would be created
+  .agents/skills                                would be created
+  .agents/templates                             would be created
+  .agents/memory/archived                       would be created
+  .agents/memory/crystallized                   would be created
+  .agents/memory/emerging                       would be created
+  .agents/memory/working                        would be created
+  .agents/directives/_directives.md             would be created; source: .agents/directives/_directives.md
+  .agents/guidance/_guidance.md                 would be created; source: .agents/guidance/_guidance.md
+  .agents/loader.md                             would be created; source: .agents/loader.md
+  .agents/maps/_maps.md                         would be created; source: .agents/maps/_maps.md
+  .agents/memory/_memory.md                     would be created; source: .agents/memory/_memory.md
+  .agents/memory/archived/_archived.md          would be created; source: .agents/memory/archived/_archived.md
+  .agents/memory/crystallized/_crystallized.md  would be created; source: .agents/memory/crystallized/_crystallized.md
+  .agents/memory/emerging/_emerging.md          would be created; source: .agents/memory/emerging/_emerging.md
+  .agents/memory/working/_working.md            would be created; source: .agents/memory/working/_working.md
+  .agents/patterns/_patterns.md                 would be created; source: .agents/patterns/_patterns.md
+  .agents/skills/_skills.md                     would be created; source: .agents/skills/_skills.md
+  .agents/templates/_templates.md               would be created; source: .agents/templates/_templates.md
+  AGENTS.md                                     would be created with an Open Forge section; source: AGENTS.md
+  CLAUDE.md                                     would be created with an Open Forge section; source: CLAUDE.md
+  .agents/open-forge.lock.json                  would be created
+  Would create 12 files and 11 directories under .agents, plus AGENTS.md and CLAUDE.md.
+  Nothing that already exists would be changed.
+  Bundled Framework fingerprint: <sha256> (14 assets).
+  The ownership record is planned for publication.
+  No recovery bundle was required.
+  Verification was not requested.
+No files were changed.

@@ -41,6 +41,22 @@ contract. The parser supplies section boundaries; the CLI does not guess
 headings from malformed text that the parser does not represent as a heading
 node.
 
+## Generated Guard Migration Input
+
+One top-level canonical ATX `## Entries` heading owns the body from the end of
+its heading span to the next top-level heading of level 1 or 2, or EOF. Fenced,
+indented-code, quoted, nested-list, Setext, differently cased and differently
+leveled lookalikes do not establish this semantic section. Trailing horizontal
+heading whitespace and an initial BOM are accepted. Duplicate `## Entries`
+headings are diagnosed; no arbitrary first section is selected.
+
+Exact historical generated-index start/end comment lines remain readable inside
+the heading-owned Entries body. Index replaces that body with canonical entries,
+removing these guards on the first rewrite and remaining byte-stable thereafter.
+A lone or reordered guard does not change the heading boundary. Comments outside
+the body and quoted examples remain ordinary source bytes. This exception is
+input-only; it does not restore the retired marker grammar.
+
 ## Accepted New CLI Entrypoint Filenames
 
 The new CLI recognizes these existing entrypoint filenames as

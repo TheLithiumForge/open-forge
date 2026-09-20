@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Extension.Install;
-using OpenForge.Cli.Core.Commands.Extension.Models.Permissions;
+using OpenForge.Cli.Core.Commands.Extension.Models;
 using OpenForge.Cli.Core.Commands.Extension.Remove;
 using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Update;
@@ -9,20 +9,21 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Shared.Permissions;
 [Trait("Feature", "workspace-permissions"), Trait("Evidence", "Unit")]
 public sealed class ExtensionPermissionPolicyTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory]
     [InlineData(".agents/guide.md", true)]
     [InlineData(".apm/agents/guide.md", true)]
     [InlineData("README.md", true)]
     [InlineData(".agents", false)]
     [InlineData(".AGENTS/guide.md", false)]
-    [InlineData(".agents/open-forge.PERMISSIONS.json", false)]
-    [InlineData(".agents/open-forge.LIFECYCLE.json", false)]
-    [InlineData(".agents/open-forge.LIBRARIES.json", false)]
+    [InlineData(".agents/open-forge.JSON", false)]
+    [InlineData(".agents/open-forge.LIFECYCLE.json", true)]
+    [InlineData(".agents/open-forge.LIBRARIES.json", true)]
     [InlineData(".agents/open-forge.LOCK", false)]
     [InlineData("nested/.GIT/config", false)]
-    [InlineData(".agents/open-forge.PERMISSIONS.json/note.txt", false)]
-    [InlineData(".agents/open-forge.LIFECYCLE.json/note.txt", false)]
-    [InlineData(".agents/open-forge.LIBRARIES.json/note.txt", false)]
+    [InlineData(".agents/open-forge.JSON/note.txt", false)]
+    [InlineData(".agents/open-forge.LIFECYCLE.json/note.txt", true)]
+    [InlineData(".agents/open-forge.LIBRARIES.json/note.txt", true)]
     [InlineData(".agents/open-forge.LOCK/note.txt", false)]
     [InlineData(".apm/guide.overwrite.md", false)]
     [InlineData("../outside", false)]
@@ -30,6 +31,7 @@ public sealed class ExtensionPermissionPolicyTests
     public static void AdmissionKeepsProtectedPortablePathsClosed(string path, bool allowed)
         => Assert.Equal(allowed, ExtensionDestinationPolicy.IsAllowed(path));
 
+    [Trait("Boundary", "Processing")]
     [Theory]
     [InlineData((int)ExtensionPermissionFailure.Required, "permission-required")]
     [InlineData((int)ExtensionPermissionFailure.Declined, "permission-declined")]
@@ -46,6 +48,7 @@ public sealed class ExtensionPermissionPolicyTests
         Assert.Equal($"extension-remove.{suffix}", ExtensionRemoveDefinitions.ReadMachineName(ExtensionRemoveDefinitions.ReadPermissionFinding(failure)));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact]
     public static void UndefinedPermissionFailuresAreRejected()
     {
@@ -55,15 +58,4 @@ public sealed class ExtensionPermissionPolicyTests
         Assert.Throws<ArgumentOutOfRangeException>(() => ExtensionRemoveDefinitions.ReadPermissionFinding(undefined));
     }
 
-    [Theory]
-    [InlineData((int)ExtensionPermissionEffect.Copy, "copy")]
-    [InlineData((int)ExtensionPermissionEffect.Delete, "delete")]
-    [InlineData((int)ExtensionPermissionEffect.ReleaseOwnership, "release ownership")]
-    [InlineData((int)ExtensionPermissionEffect.Preserve, "preserve content")]
-    public static void PromptDescribesTheActualPlannedEffect(int value, string expected)
-        => Assert.Equal(expected, ExtensionPermissionOperation.ReadEffectName((ExtensionPermissionEffect)value));
-
-    [Fact]
-    public static void UndefinedPromptEffectsAreRejected()
-        => Assert.Throws<ArgumentOutOfRangeException>(() => ExtensionPermissionOperation.ReadEffectName((ExtensionPermissionEffect)int.MaxValue));
 }

@@ -1,0 +1,5 @@
+status=completed-with-warnings
+libraries=1
+links=1
+The Library source root is missing, non-directory, or unsafe.
+The registered destination is absent.

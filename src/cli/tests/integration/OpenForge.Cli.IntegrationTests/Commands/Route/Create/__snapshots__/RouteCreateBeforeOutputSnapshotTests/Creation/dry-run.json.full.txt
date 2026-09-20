@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 3,
+  "command": "route create",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would create .agents/memory/project-alpha/overview.md  (memory/project-alpha/overview)",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/memory/project-alpha/overview.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/memory/project-alpha/_project-alpha.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "filesCreated": 1,
+    "sectionsUpdated": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "target": {
+      "id": "memory/project-alpha/overview",
+      "path": ".agents/memory/project-alpha/overview.md"
+    },
+    "listedIn": ".agents/memory/project-alpha/_project-alpha.md",
+    "template": null,
+    "metadata": {
+      "description": "Project overview",
+      "responsibility": "Explains the project",
+      "tags": [
+        "Docs",
+        "Overview"
+      ]
+    },
+    "content": "---\nopen-forge:\n  description: Project overview\n  tags: [Docs, Overview]\n  responsibility: Explains the project\n---\n",
+    "sections": [
+      {
+        "path": ".agents/memory/project-alpha/_project-alpha.md",
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "verification": "planned"
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

@@ -20,6 +20,7 @@ public sealed class LibraryRelativeFileLinkApplierIntegrationTests
     private const string Destination = ".agents/a.md";
     private const string RawTarget = "../shared/team/.agents/a.md";
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Typed link application creates and deletes exact real links including dangling links without source effects")]
     [InlineData("create"), InlineData("delete"), InlineData("dangling-delete")]
     public static async Task AppliesExactLinkObject(string scenario)
@@ -77,6 +78,7 @@ public sealed class LibraryRelativeFileLinkApplierIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Typed link application rejects changed leaves missing recovery and cancellation before any effect")]
     [InlineData("file"), InlineData("different-link"), InlineData("exact-existing-link"), InlineData("absolute-link"), InlineData("no-recovery"), InlineData("cancelled")]
     public static async Task RejectsUnsafeCreate(string scenario)

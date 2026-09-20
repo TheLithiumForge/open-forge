@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 3,
+  "command": "route create",
+  "status": "failed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Route create stopped after 1 of 2 changes.",
+    "kind": "failed"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-create.write-failed",
+      "title": "Write failed",
+      "message": "Writing .agents/memory/project-alpha/_project-alpha.md failed. Stopped after 1 of 2 changes. Recovery data: <recovery-bundle>.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/memory/project-alpha/_project-alpha.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/memory/project-alpha/overview.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/project-alpha/_project-alpha.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesCreated": 1,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "memory/project-alpha/overview",
+      "path": ".agents/memory/project-alpha/overview.md"
+    },
+    "listedIn": ".agents/memory/project-alpha/_project-alpha.md",
+    "template": null
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route create --detail debug",
+    "reason": "Report the failure and retry the same Route Create request with bounded diagnostics."
+  }
+}

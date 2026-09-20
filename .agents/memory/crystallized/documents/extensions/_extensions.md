@@ -14,6 +14,4 @@ This scope explains current Extension package meaning and composition. The linke
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Current Extension concept, package composition, installed interpretation, and boundary with lifecycle tools](architecture.md) - #Memory #Document #CurrentTruth #Evergreen #Architecture #Extension #Composition #ACE
-<!-- open-forge:generated-index:end -->

@@ -22,6 +22,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Repair;
 
 public sealed class RepairC1LifecycleIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory, InlineData(false), InlineData(true), Trait("Feature", "repair"), Trait("Evidence", "Integration")]
     public static async Task CancellationBeforeLeaseProducesAnInterruptedCompleteResult(bool atLock)
     {
@@ -56,6 +57,7 @@ public sealed class RepairC1LifecycleIntegrationTests
         Assert.DoesNotContain(Assert.IsType<RepairPlan>(result.Plan).Steps, step => step.Outcome == RepairStepOutcome.Verified);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory, InlineData(0), InlineData(1), Trait("Feature", "repair"), Trait("Evidence", "Integration")]
     public static async Task PreparedCancellationCountsOnlyActuallyAppliedAndVerifiedEffects(int appliedCount)
     {
@@ -109,6 +111,7 @@ public sealed class RepairC1LifecycleIntegrationTests
         Assert.DoesNotContain(steps.Skip(appliedCount), step => step.Outcome is RepairStepOutcome.Applied or RepairStepOutcome.Verified);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory, InlineData(false), InlineData(true), Trait("Feature", "repair"), Trait("Evidence", "Integration")]
     public static async Task CoalescedStepOutcomesDescribePreviewOrCompletedApplication(bool apply)
     {

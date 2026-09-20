@@ -6,6 +6,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Sync;
 
 public sealed class LibrarySyncInputIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData("", null)]
     [InlineData("team-knowledge extra extra", "Unrecognized command or argument 'extra'.")]
@@ -28,7 +29,10 @@ public sealed class LibrarySyncInputIntegrationTests
         Assert.Equal(string.Empty, result.Output);
         if (nativeDiagnostic is null)
         {
-            Assert.Contains("invalid", result.Error, StringComparison.Ordinal);
+            var expected = string.IsNullOrEmpty(operands)
+                ? "Cannot synchronize the supplied ID: The supplied value is not a valid Library ID."
+                : $"Cannot synchronize {operands}: {operands} is not a valid Library ID.";
+            Assert.Contains(expected, result.Error, StringComparison.Ordinal);
         }
         else
         {
@@ -37,6 +41,7 @@ public sealed class LibrarySyncInputIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task HelpStopsBeforeMissingWorkspaceResolution()
     {
@@ -49,9 +54,10 @@ public sealed class LibrarySyncInputIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(true), InlineData(false)]
-    public static async Task UnknownIdAndMissingRecordUseInvalidExitAndStandardError(bool completeRecord)
+    public static async Task UnknownIdIsInvalidAndMissingOwnershipIsAnObservation(bool completeRecord)
     {
         using var workspace = new LibraryMutationWorkspace();
         if (completeRecord)
@@ -64,13 +70,27 @@ public sealed class LibrarySyncInputIntegrationTests
 
         var result = await CliHostCapture.RunAsync(["library", "sync", libraryId], workspace.Path);
 
-        Assert.Equal(4, result.ExitCode);
-        Assert.Equal(string.Empty, result.Output);
-        Assert.Contains("Status: invalid", result.Error, StringComparison.Ordinal);
-        Assert.Contains("library-sync.unknown-id", result.Error, StringComparison.Ordinal);
+        Assert.Equal(completeRecord ? 4 : 0, result.ExitCode);
+        if (completeRecord)
+        {
+            Assert.Equal(string.Empty, result.Output);
+            Assert.Contains(
+                "Cannot synchronize other-library: The Library ID is not registered.",
+                result.Error,
+                StringComparison.Ordinal);
+        }
+        else
+        {
+            Assert.Equal(string.Empty, result.Error);
+            Assert.Contains(
+                "No ownership record exists, so team-knowledge cannot be synchronized. Nothing was changed.",
+                result.Output,
+                StringComparison.Ordinal);
+        }
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(true, true), InlineData(true, false), InlineData(false, true), InlineData(false, false)]
     public static async Task WorkspaceFailureRetainsParsedLibrarySubject(bool globalsFirst, bool ordinaryFile)
@@ -84,8 +104,8 @@ public sealed class LibrarySyncInputIntegrationTests
         var badPath = workspace.Absolute("bad-workspace");
         var before = workspace.Snapshot();
         string[] arguments = globalsFirst
-            ? ["--workspace", badPath, "--json", "library", "sync", "team-knowledge"]
-            : ["library", "sync", "team-knowledge", "--workspace", badPath, "--json"];
+            ? ["--workspace", badPath, "--format", "json", "library", "sync", "team-knowledge"]
+            : ["library", "sync", "team-knowledge", "--workspace", badPath, "--format", "json"];
 
         var capture = await CliHostCapture.RunAsync(arguments, workspace.Path);
 
@@ -93,30 +113,17 @@ public sealed class LibrarySyncInputIntegrationTests
         Assert.Empty(capture.Error);
         using var document = JsonDocument.Parse(capture.Output);
         var envelope = document.RootElement;
-        var payload = envelope.GetProperty("result");
         Assert.Equal("library sync", envelope.GetProperty("command").GetString());
         Assert.Equal(ordinaryFile ? "blocked" : "incomplete", envelope.GetProperty("status").GetString());
         Assert.Equal(JsonValueKind.Null, envelope.GetProperty("workspace").ValueKind);
-        var finding = Assert.Single(payload.GetProperty("findings").EnumerateArray());
+        var finding = Assert.Single(envelope.GetProperty("findings").EnumerateArray());
         Assert.Equal(ordinaryFile ? "library-sync.record-blocked" : "library-sync.record-unavailable", finding.GetProperty("code").GetString());
-        Assert.Equal(ordinaryFile ? "The selected workspace root is not a directory." : "The selected workspace is missing.", finding.GetProperty("cause").GetString());
-        var plan = payload.GetProperty("plan");
-        Assert.Equal("not-started", plan.GetProperty("state").GetString());
-        Assert.Empty(plan.GetProperty("directories").EnumerateArray());
-        Assert.Empty(plan.GetProperty("links").EnumerateArray());
-        Assert.Empty(plan.GetProperty("generatedRegions").EnumerateArray());
-        Assert.Equal("none", plan.GetProperty("recordEffect").GetString());
-        var application = payload.GetProperty("application");
-        Assert.Equal("not-started", application.GetProperty("state").GetString());
-        Assert.Equal("not-started", application.GetProperty("verification").GetString());
-        Assert.Empty(application.GetProperty("residuals").EnumerateArray());
-        Assert.Equal("not-started", application.GetProperty("recordPublication").GetProperty("state").GetString());
-        Assert.Equal(JsonValueKind.Null, application.GetProperty("recordPublication").GetProperty("publishedLast").ValueKind);
-        var identity = payload.GetProperty("identity");
-        Assert.Equal("apply", identity.GetProperty("mode").GetString());
-        Assert.Equal(JsonValueKind.Null, identity.GetProperty("destinationRoot").ValueKind);
+        Assert.Equal(ordinaryFile ? "The selected workspace root is not a directory" : "The selected workspace is missing", finding.GetProperty("message").GetString());
+        var data = envelope.GetProperty("data");
+        Assert.Equal("apply", data.GetProperty("mode").GetString());
+        Assert.Equal("team-knowledge", data.GetProperty("id").GetString());
+        Assert.Equal(JsonValueKind.Null, data.GetProperty("destinationFolder").ValueKind);
+        Assert.Empty(data.GetProperty("effects").EnumerateArray());
         Assert.Equal(before, workspace.Snapshot());
-        Assert.Equal("team-knowledge", identity.GetProperty("libraryId").GetString());
-        Assert.Equal("team-knowledge", finding.GetProperty("libraryId").GetString());
     }
 }

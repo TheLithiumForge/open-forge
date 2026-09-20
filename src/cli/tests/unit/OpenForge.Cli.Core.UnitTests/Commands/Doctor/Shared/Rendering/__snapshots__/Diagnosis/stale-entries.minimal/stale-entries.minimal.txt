@@ -1,0 +1,4 @@
+No errors. 1 warning was recorded.
+  Warning  .agents/directives/_directives.md  Entries section is stale
+         The Entries section of .agents/directives/_directives.md does not match its routed files.
+         open-forge index

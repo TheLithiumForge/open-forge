@@ -165,6 +165,16 @@ internal sealed class RepairIntegrationWorkspace : IDisposable
     internal byte[] ReadBytes(string relativePath)
         => File.ReadAllBytes(_temporary.Combine(relativePath));
 
+    internal void AddSecondSafeLink()
+        => _temporary.ReplaceText(SourcePath, ReadText(SourcePath).Replace(SafeLink, SafeLink + "\n[Another safe](./guide.md)", StringComparison.Ordinal));
+
+    internal void AddEarlierSafeSource()
+        => _temporary.WriteText(".agents/docs/aaa.md", OpenForgeDocumentSeed.Metadata(
+            description: "Earlier source", tags: ["Docs"], body: "# Earlier source\n\n[Safe](./guide.md)\n"));
+
+    internal void AddSecondGuidedLink()
+        => _temporary.ReplaceText(SourcePath, ReadText(SourcePath).Replace(GuidedLink, GuidedLink + "\n[Another guided](missing.md)", StringComparison.Ordinal));
+
     internal IReadOnlyDictionary<string, string> SnapshotState()
     {
         var state = new SortedDictionary<string, string>(StringComparer.Ordinal);

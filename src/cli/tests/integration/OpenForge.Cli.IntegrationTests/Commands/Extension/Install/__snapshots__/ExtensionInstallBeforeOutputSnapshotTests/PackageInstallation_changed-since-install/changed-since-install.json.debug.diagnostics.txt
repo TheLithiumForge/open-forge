@@ -1,0 +1,5 @@
+status=blocked
+packages=1
+effects=0
+findings=1
+The installed Extension target differs from the selected source; use extension update.

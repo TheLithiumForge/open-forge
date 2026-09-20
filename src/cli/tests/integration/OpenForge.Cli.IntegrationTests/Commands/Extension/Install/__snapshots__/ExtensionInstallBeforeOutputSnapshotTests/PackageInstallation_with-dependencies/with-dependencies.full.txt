@@ -1,0 +1,12 @@
+Installed the toolkit Extension and 1 packages it requires: base.
+Workspace: <workspace>
+  .agents/base.md     created (base)
+  .agents/toolkit.md  created (toolkit)
+  Source: <extension-source> (catalogue)
+  Dependency order: base, toolkit
+  .agents/open-forge.lock.json  updated
+  Entries sections unchanged: .agents/directives/_directives.md, .agents/guidance/_guidance.md, .agents/loader.md, .agents/maps/_maps.md, .agents/memory/_memory.md, .agents/memory/archived/_archived.md, .agents/memory/crystallized/_crystallized.md, .agents/memory/emerging/_emerging.md, .agents/memory/working/_working.md, .agents/patterns/_patterns.md, .agents/skills/_skills.md, .agents/templates/_templates.md
+  Permission evaluation: decision not-required; required 0; missing 0; saved no
+  Framework fingerprint: <sha256>
+  Verification: targets verified; Entries verified; Extension record verified; Framework record verified
+  Recovery: removed.

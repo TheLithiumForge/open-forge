@@ -1,0 +1,7 @@
+Repair was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  repair.interrupted  Repair was cancelled
+         Repair was cancelled. Nothing was changed.
+2 problems remaining, 1 problem needing a choice, 1 problem needing a hand, 1 error.
+  Rerun the same Repair request from a fresh diagnosis.
+Next: open-forge repair

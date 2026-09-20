@@ -1,0 +1,7 @@
+{
+  "id": "workflows",
+  "name": "Workflow Support",
+  "description": "Select and follow scoped methods through one native use-workflow Skill",
+  "version": "0.3.0",
+  "dependencies": []
+}

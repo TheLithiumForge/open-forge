@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "docs/guide  .agents/docs/guide.md",
+    "kind": "done"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "route-inspect.valid-overwrite",
+      "title": "Overwrite is valid",
+      "message": ".agents/docs/guide.overwrite.md is read together with .agents/docs/guide.md.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/guide.md",
+        "id": ".agents/docs/guide.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "ownBytes": 202,
+    "ownTokens": 51,
+    "addedFiles": 2,
+    "addedBytes": 202,
+    "addedTokens": 51,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "docs/guide",
+    "path": ".agents/docs/guide.md",
+    "kind": "markdown",
+    "entrypointForm": "markdown",
+    "overwritePath": ".agents/docs/guide.overwrite.md",
+    "belongs": {
+      "routeChain": [
+        "docs",
+        "guide"
+      ],
+      "parent": "docs",
+      "directChildren": {
+        "files": 0,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 0,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": false,
+      "automaticallyWhen": [
+        "this route is selected",
+        "the base source is read"
+      ],
+      "mayReadAgain": false
+    },
+    "size": {
+      "own": {
+        "files": 2,
+        "bytes": 202,
+        "tokens": 51
+      },
+      "adds": {
+        "files": 2,
+        "bytes": 202,
+        "tokens": 51
+      },
+      "loadNow": null
+    },
+    "axioms": {
+      "inheritedFrom": [],
+      "local": "not applicable"
+    },
+    "tags": [
+      "Docs",
+      "Guide"
+    ],
+    "selected": {
+      "closure": {
+        "files": 3,
+        "bytes": 358,
+        "tokens": 90
+      },
+      "startupOverlap": {
+        "files": 1,
+        "bytes": 156,
+        "tokens": 39
+      }
+    },
+    "selection": {
+      "kind": "source-id",
+      "method": "automatic-id",
+      "requested": "docs/guide"
+    },
+    "layers": [
+      {
+        "path": ".agents/docs/guide.md",
+        "kind": "base"
+      },
+      {
+        "path": ".agents/docs/guide.overwrite.md",
+        "kind": "overwrite"
+      }
+    ],
+    "statusReason": "all applicable route facts are available"
+  },
+  "recovery": null,
+  "next": null
+}

@@ -1,0 +1,10 @@
+Cannot initialize .agents/memory/working/_working.md: The Framework scaffold needs an installed Framework.
+Workspace: <workspace>
+  Error  memory/working  Framework installation is required [route-init.framework-install-required]
+         The Framework scaffold needs an installed Framework.
+         open-forge install --dry-run
+         Establish a trusted current Framework installation before rerunning Route Init in Framework mode.
+  Scaffold: framework
+  Recovery: no recovery bundle was needed.
+  Establish a trusted current Framework installation before rerunning Route Init in Framework mode.
+Next: open-forge install --dry-run

@@ -1,0 +1,2 @@
+Cannot list references: Direction 'invalid' is not one of in, out, or both.
+Next: open-forge references --help

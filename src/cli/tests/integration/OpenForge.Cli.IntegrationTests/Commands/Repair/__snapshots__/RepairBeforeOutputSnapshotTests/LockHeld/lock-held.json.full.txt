@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot repair: another Open Forge command holds the workspace lock. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "repair.workspace-lock-unavailable",
+      "title": "Workspace lock is held",
+      "message": "Another Open Forge command holds the workspace lock. Nothing was changed.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "repair.workspace-lock-unavailable",
+        "location": null
+      },
+      "category": null,
+      "resolution": "blocked-repair",
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "repair.guided-finding-remaining",
+      "title": "Broken link",
+      "message": "missing.md: Broken link; 4 possible targets",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": {
+          "line": 10,
+          "column": 10
+        }
+      },
+      "category": null,
+      "resolution": "guided-choice",
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/docs/source.md:9:8",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": "./guide.md -> guide.md",
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "linksRepaired": 0,
+    "problemsRemaining": 2,
+    "problemsNeedingChoice": 1,
+    "problemsNeedingHand": 1,
+    "librarySteps": 0,
+    "errors": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "selection": "automatic",
+    "repairs": [
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 8
+        },
+        "from": "./guide.md",
+        "to": "guide.md",
+        "before": "<sha256>",
+        "after": "<sha256>"
+      }
+    ],
+    "remaining": [
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 8
+        },
+        "kind": "manual",
+        "candidates": []
+      },
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 10,
+          "column": 10
+        },
+        "kind": "guided",
+        "candidates": [
+          {
+            "path": ".agents/docs/guide.md",
+            "reasons": [
+              "nearby route: sibling"
+            ]
+          },
+          {
+            "path": ".agents/docs/index.md",
+            "reasons": [
+              "nearby route: parent"
+            ]
+          },
+          {
+            "path": ".agents/docs/replacement.md",
+            "reasons": [
+              "title match: Guided",
+              "content match: Guided",
+              "nearby route: sibling"
+            ]
+          },
+          {
+            "path": ".agents/docs/source.md",
+            "reasons": [
+              "content match: Guided"
+            ]
+          }
+        ]
+      }
+    ],
+    "diagnosis": {
+      "workspaceAndPath": "complete",
+      "routeAndHeading": "complete",
+      "localReferences": "complete",
+      "selectedScope": "complete"
+    },
+    "verification": {
+      "targets": "not-requested",
+      "resultingBytes": "not-requested",
+      "postConditions": "not-requested"
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the blocked diagnosis, selection, target, plan, or recovery boundary before retrying Repair."
+  }
+}

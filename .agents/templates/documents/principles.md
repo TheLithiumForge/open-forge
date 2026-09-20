@@ -1,44 +1,41 @@
 ---
 open-forge:
-  description: Starting structure for stable principles that guide recurring unfamiliar choices
-  tags: [Extension, Template, Document, Principle, CurrentView]
+  description: "Define the principles that guide unfamiliar choices and resolve tensions between them"
+  tags: [Extension, Template, Document, Principle]
 ---
 
 # {Subject} Principles
 
-{
-Template selection:
-
-- Need: One compact current document for stable principles used across several unfamiliar decisions.
-- Primary question: Which principles should guide choices, and how should tensions between them be resolved?
-
-Use a separate Principles document only when several decisions depend on the same stable reasoning.
-Principles explain how to judge unfamiliar choices. Required behavior, structure, and context remain in the sources that define them.
-Replace the frontmatter, title, and placeholders, then remove this braced guidance.
-}
+<!-- TEMPLATE: Use when several decisions share stable reasoning. Principles guide judgment; they do not replace scoped rules or specifications.
+Replace {prompts}; remove this comment and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying. -->
 
 ## Scope
 
-{State which decisions these Principles inform and which sources still define required behavior or structure.}
+{Which choices do these principles guide, and which defining sources retain authority over requirements?}
 
 ## Principles
 
 ### {Principle Name}
 
-{State the Principle directly, explain why it matters, and identify the tension it resolves. Link to related sources when useful.}
+**Principle:** {A direct statement that helps make a real choice.}
+
+**Why:** {The outcome or failure it protects.}
+
+**In practice:** {One concrete application and, when useful, a counterexample.}
+
+**Tradeoff:** {What may be sacrificed or when another principle takes precedence.}
+
+<!-- Repeat the block only for principles with a distinct job. Avoid slogans that fit every possible decision. -->
 
 ## Tensions And Ordering
 
-{Explain how Principles interact when they pull in different directions. Avoid pretending every Principle can be maximized simultaneously.}
+{Explain how to decide when principles conflict. Use an explicit priority only when it is accepted; otherwise name the judgment needed.}
 
 ## Change Boundary
 
-{Explain what changing, removing, or adding a Principle would redefine and which current sources must be reconsidered with it.}
+{What would changing a principle redefine? Identify the affected decisions, requirements, or current views that would need reconsideration.}
 
-## Related Current Views
+## Related Sources
 
-{Link to the current sources that apply these Principles.}
-
-## Decisions And Rationale
-
-{Link to Decisions that established or significantly changed these Principles.}
+{Link to sources that apply these principles and to useful rationale.}

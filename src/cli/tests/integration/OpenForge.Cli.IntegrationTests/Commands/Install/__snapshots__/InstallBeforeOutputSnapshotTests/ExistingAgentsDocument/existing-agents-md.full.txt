@@ -1,0 +1,35 @@
+Installed the Open Forge Framework into <workspace>.
+Workspace: <workspace>
+  .agents                                       created
+  .agents/directives                            created
+  .agents/guidance                              created
+  .agents/maps                                  created
+  .agents/memory                                created
+  .agents/patterns                              created
+  .agents/skills                                created
+  .agents/templates                             created
+  .agents/memory/archived                       created
+  .agents/memory/crystallized                   created
+  .agents/memory/emerging                       created
+  .agents/memory/working                        created
+  .agents/directives/_directives.md             created; source: .agents/directives/_directives.md
+  .agents/guidance/_guidance.md                 created; source: .agents/guidance/_guidance.md
+  .agents/loader.md                             created; source: .agents/loader.md
+  .agents/maps/_maps.md                         created; source: .agents/maps/_maps.md
+  .agents/memory/_memory.md                     created; source: .agents/memory/_memory.md
+  .agents/memory/archived/_archived.md          created; source: .agents/memory/archived/_archived.md
+  .agents/memory/crystallized/_crystallized.md  created; source: .agents/memory/crystallized/_crystallized.md
+  .agents/memory/emerging/_emerging.md          created; source: .agents/memory/emerging/_emerging.md
+  .agents/memory/working/_working.md            created; source: .agents/memory/working/_working.md
+  .agents/patterns/_patterns.md                 created; source: .agents/patterns/_patterns.md
+  .agents/skills/_skills.md                     created; source: .agents/skills/_skills.md
+  .agents/templates/_templates.md               created; source: .agents/templates/_templates.md
+  AGENTS.md                                     Open Forge section added; your content was kept; source: AGENTS.md
+  CLAUDE.md                                     created with an Open Forge section; source: CLAUDE.md
+  .agents/open-forge.lock.json                  created; records the files above
+  Created 12 files and 11 directories under .agents (listed in .agents/open-forge.lock.json).
+  Added 1 section.
+  Bundled Framework fingerprint: <sha256> (14 assets).
+  The ownership record was published and verified.
+  The recovery bundle was removed.
+  All written targets were verified.

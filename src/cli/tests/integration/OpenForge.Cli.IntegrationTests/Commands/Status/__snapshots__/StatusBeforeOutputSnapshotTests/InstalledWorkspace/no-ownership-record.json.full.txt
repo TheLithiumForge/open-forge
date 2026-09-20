@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Open Forge is installed and current.",
+    "kind": "done"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "status.extension-ownership-observation",
+      "title": "Extension ownership is unavailable",
+      "message": "No ownership record exists, so installed Extensions cannot be listed from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The ownership lock is absent; no Extension ownership claims are recorded."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "status.framework-ownership-observation",
+      "title": "Framework ownership is unavailable",
+      "message": "No ownership record exists, so Framework files cannot be checked against it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The ownership lock is absent; no Framework ownership claims are available."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "status.library-ownership-observation",
+      "title": "Library ownership is unavailable",
+      "message": "No ownership record exists, so Libraries cannot be listed from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The ownership lock is absent; no Library registrations are recorded."
+        }
+      ],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routedFiles": 13,
+    "startupFiles": 11,
+    "startupTokens": 5676,
+    "mayLoadAgainFiles": 1,
+    "mayLoadAgainTokens": 289,
+    "allTokens": 6337,
+    "startupShare": 89.57626449932928272705752387,
+    "rootCategories": 7,
+    "entriesSectionsCurrent": 12,
+    "entriesSectionsStale": 0,
+    "entriesSectionsMissing": 0,
+    "frameworkFilesCurrent": null,
+    "frameworkFilesChanged": null,
+    "frameworkFilesMissing": null,
+    "extensionsInstalled": null,
+    "librariesRegistered": 0,
+    "libraryLinksCurrent": 0,
+    "libraryLinksMissing": 0,
+    "libraryLinksChanged": 0,
+    "recoveryBundles": 0,
+    "recoveryDrafts": 0,
+    "infos": 3
+  },
+  "limitations": [],
+  "data": {
+    "installation": {
+      "state": "installed",
+      "entryPath": "AGENTS.md",
+      "loaderPath": ".agents/loader.md"
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": 11,
+          "characters": 22704,
+          "bytes": 22704,
+          "tokens": 5676
+        },
+        "current": {
+          "files": 11,
+          "characters": 22704,
+          "bytes": 22704,
+          "tokens": 5676
+        },
+        "difference": {
+          "files": 0,
+          "characters": 0,
+          "bytes": 0,
+          "tokens": 0
+        },
+        "mayLoadAgain": {
+          "files": 1,
+          "characters": 1153,
+          "bytes": 1153,
+          "tokens": 289
+        }
+      },
+      "allRouted": {
+        "files": 13,
+        "characters": 25346,
+        "bytes": 25346,
+        "tokens": 6337
+      },
+      "startupShare": 89.57626449932928272705752387,
+      "mayLoadAgainSources": [
+        {
+          "sourceId": "memory/emerging",
+          "bytes": 1153,
+          "layers": [
+            {
+              "path": ".agents/memory/emerging/_emerging.md",
+              "bytes": 1153
+            }
+          ]
+        }
+      ]
+    },
+    "structure": {
+      "rootCategories": {
+        "count": 7,
+        "added": [],
+        "removed": []
+      }
+    },
+    "frameworkFiles": [],
+    "entriesSections": [
+      {
+        "path": ".agents/directives/_directives.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/loader.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "state": "current"
+      }
+    ],
+    "extensions": [],
+    "libraries": [],
+    "recovery": {
+      "candidates": []
+    }
+  },
+  "recovery": null,
+  "next": null
+}

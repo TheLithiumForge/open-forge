@@ -1,0 +1,10 @@
+Would create .agents/memory/project-alpha/overview.md  (memory/project-alpha/overview)
+Workspace: <workspace>
+  Warning  .agents/memory/project-alpha/overview.md  Optional metadata is missing
+         Would create .agents/memory/project-alpha/overview.md without optional description or tags.
+         open-forge route update memory/project-alpha/overview
+         Add an optional description or tag with open-forge route update when useful.
+  tags: Docs
+  Would list it in .agents/memory/project-alpha/_project-alpha.md
+No files were changed.
+Next: open-forge route update memory/project-alpha/overview (add an optional description or tag when useful).

@@ -15,18 +15,18 @@ public sealed class PublishedRouteMoveProcessTests
         [
             "route", "move", PublishedRouteWorkspaceSeed.SourceId,
             PublishedRouteMoveWorkspace.DestinationPath,
-            "--dry-run", "--json",
+            "--dry-run", "--format=json",
         ];
         var preview = await RunWithoutWritesAsync(target, workspace, arguments);
         Assert.Equal(0, preview.ExitCode);
         Assert.Equal(string.Empty, preview.StandardError);
         using var document = JsonDocument.Parse(preview.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
-        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
+        var result = document.RootElement.GetProperty("data");
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
         Assert.Equal("dry-run", result.GetProperty("mode").GetString());
         Assert.Equal(PublishedRouteWorkspaceSeed.SourcePath, result.GetProperty("source").GetProperty("path").GetString());
         Assert.Equal(PublishedRouteMoveWorkspace.DestinationPath, result.GetProperty("destination").GetProperty("path").GetString());
-        Assert.NotEmpty(result.GetProperty("effects").EnumerateArray());
+        Assert.NotEmpty(result.GetProperty("moved").EnumerateArray());
         workspace.AssertNoLockInfrastructure();
     }
 
@@ -35,7 +35,7 @@ public sealed class PublishedRouteMoveProcessTests
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = await PublishedRouteMoveWorkspace.CreateAsync(target);
-        var lifecycleBefore = workspace.ReadBytes(".agents/open-forge.lifecycle.json");
+        var lifecycleBefore = workspace.ReadBytes(".agents/open-forge.lock.json");
         string[] arguments =
         [
             "route", "move", PublishedRouteWorkspaceSeed.SourceId,
@@ -50,7 +50,8 @@ public sealed class PublishedRouteMoveProcessTests
 
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
-        Assert.Contains("Status: complete", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Moved ", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains(PublishedRouteMoveWorkspace.DestinationPath, applied.StandardOutput, StringComparison.Ordinal);
         Assert.False(File.Exists(workspace.Combine(PublishedRouteWorkspaceSeed.SourcePath)));
         Assert.False(File.Exists(workspace.Combine(PublishedRouteWorkspaceSeed.SourceOverwritePath)));
         Assert.Equal(
@@ -63,7 +64,7 @@ public sealed class PublishedRouteMoveProcessTests
             ".agents/archive/new%20guide.md#section",
             workspace.ReadText("README.md"),
             StringComparison.Ordinal);
-        Assert.Equal(lifecycleBefore, workspace.ReadBytes(".agents/open-forge.lifecycle.json"));
+        Assert.Equal(lifecycleBefore, workspace.ReadBytes(".agents/open-forge.lock.json"));
         workspace.AssertPersistentExternalLock();
 
         var repeated = await PublishedProcessTestSupport.RunWithoutWritesAsync(
@@ -75,8 +76,8 @@ public sealed class PublishedRouteMoveProcessTests
 
         Assert.Equal(4, repeated.ExitCode);
         Assert.Equal(string.Empty, repeated.StandardOutput);
-        Assert.Contains("route-move.source-not-found", repeated.StandardError, StringComparison.Ordinal);
-        Assert.Contains("Status: invalid", repeated.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Cannot move ", repeated.StandardError, StringComparison.Ordinal);
+        Assert.Contains("No source has the ID", repeated.StandardError, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Published Route Move refuses an occupied destination without writes"), Trait("Feature", "route-move"), Trait("Evidence", "EndToEnd")]
@@ -90,8 +91,8 @@ public sealed class PublishedRouteMoveProcessTests
 
         Assert.Equal(5, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardOutput);
-        Assert.Contains("Status: blocked", result.StandardError, StringComparison.Ordinal);
-        Assert.Contains("route-move.destination-occupied", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Cannot move ", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains("already exists.", result.StandardError, StringComparison.Ordinal);
         workspace.AssertNoLockInfrastructure();
     }
 

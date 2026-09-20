@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery.Observation;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryRecoveryEntrySetObserverIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Real recovery entry-set observation retains complete ordered ordinary and missing-link facts including third or unavailable entries")]
     [InlineData("intended"), InlineData("third"), InlineData("unavailable")]
     public static async Task ObservesEveryVerifiedEntry(string firstState)

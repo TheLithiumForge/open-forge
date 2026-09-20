@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 3,
+  "command": "extension inspect",
+  "status": "invalid-input",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot inspect unknown: No Extension has the ID unknown in <extension-source>.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-inspect.package-unavailable",
+      "title": "Extension package is unavailable",
+      "message": "No Extension has the ID unknown in <extension-source>.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "unknown",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesUnchanged": null,
+    "filesChanged": null,
+    "filesMissing": null,
+    "filesNew": null,
+    "filesRetired": null,
+    "dependencies": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "unknown",
+    "installed": null,
+    "available": null,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "matches": false,
+    "files": [],
+    "dependencies": [],
+    "name": null,
+    "description": null
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension list",
+    "reason": "List available Extensions."
+  }
+}

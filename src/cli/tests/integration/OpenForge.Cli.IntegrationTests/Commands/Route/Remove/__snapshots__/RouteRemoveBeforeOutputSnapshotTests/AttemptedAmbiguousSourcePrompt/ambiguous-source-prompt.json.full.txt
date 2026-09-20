@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot remove docs/guide: The ID docs/guide matches more than one file. Use the exact path.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-remove.identity-collision",
+      "title": "Identity collision",
+      "message": "The ID docs/guide matches more than one file. Use the exact path.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "docs/guide",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesRemoved": 0,
+    "sectionsUpdated": 0,
+    "linksDetached": 0,
+    "filesScanned": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": null,
+      "path": null
+    },
+    "removed": [],
+    "detachedLinks": [],
+    "scan": {
+      "filesScanned": 0,
+      "occurrences": 0
+    }
+  },
+  "recovery": null,
+  "next": null
+}

@@ -1,10 +1,11 @@
 using OpenForge.Cli.Core.Commands.Status.Models.Operation;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Libraries;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Identity;
-using OpenForge.Cli.Core.Framework.Lifecycle.Operational.Models;
+using OpenForge.Cli.Core.Framework.Distribution.Models.Content;
+using OpenForge.Cli.Core.Framework.Distribution.Operational.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
@@ -96,10 +97,9 @@ internal static class StatusAggregationObservationSeed
                         Kind = FrameworkManagedTargetKind.File,
                         SourceAssetPath = "zeta.md",
                         Region = null,
-                        BaselineFingerprint = "sha256:zeta",
-                        FingerprintKind = "bytes-v1",
-                        Source = new FrameworkLifecycleTargetSourceValidation(
-                            FrameworkLifecycleTargetSourceState.Valid,
+                        IntendedFingerprint = "sha256:zeta",
+                        Source = new FrameworkTargetSourceValidation(
+                            FrameworkTargetSourceState.Valid,
                             cause: null),
                         State = OperationalTargetState.Current,
                     },
@@ -109,10 +109,9 @@ internal static class StatusAggregationObservationSeed
                         Kind = FrameworkManagedTargetKind.GeneratedRegion,
                         SourceAssetPath = null,
                         Region = "entries",
-                        BaselineFingerprint = "sha256:alpha",
-                        FingerprintKind = "open-forge-markdown-v1",
-                        Source = new FrameworkLifecycleTargetSourceValidation(
-                            FrameworkLifecycleTargetSourceState.Valid,
+                        IntendedFingerprint = "sha256:alpha",
+                        Source = new FrameworkTargetSourceValidation(
+                            FrameworkTargetSourceState.Valid,
                             cause: null),
                         State = OperationalTargetState.Missing,
                     },
@@ -151,24 +150,21 @@ internal static class StatusAggregationObservationSeed
                     {
                         Path = ".agents/shared.md",
                         Owners = ["zeta"],
-                        BaselineFingerprint = "sha256:shared",
-                        FingerprintKind = "open-forge-markdown-v1",
+                        IntendedFingerprint = "sha256:shared",
                         State = OperationalTargetState.Changed,
                     },
                     new ExtensionManagedTargetObservation
                     {
                         Path = ".agents/alpha.md",
                         Owners = ["alpha"],
-                        BaselineFingerprint = "sha256:alpha",
-                        FingerprintKind = "open-forge-markdown-v1",
+                        IntendedFingerprint = "sha256:alpha",
                         State = OperationalTargetState.Current,
                     },
                     new ExtensionManagedTargetObservation
                     {
                         Path = ".agents/shared.md",
                         Owners = ["alpha"],
-                        BaselineFingerprint = "sha256:shared",
-                        FingerprintKind = "open-forge-markdown-v1",
+                        IntendedFingerprint = "sha256:shared",
                         State = OperationalTargetState.Changed,
                     },
                 ],
@@ -178,11 +174,11 @@ internal static class StatusAggregationObservationSeed
                 State = OperationalViewState.Complete,
                 Ownership = null,
                 LinkCapability = null,
-                Record = new LibrariesRecordRead
+                Record = new LibraryRegistrationRead
                 {
-                    State = LibrariesRecordReadState.Missing,
+                    State = LibraryRegistrationReadState.Missing,
                     Record = null,
-                    Snapshot = FileStateSnapshot.Missing(LibraryPathIdentity.RecordPath(StatusObservationSeeds.Workspace().LexicalRoot)),
+                    Snapshot = FileStateSnapshot.Missing(Path.GetFullPath(Path.Combine(StatusObservationSeeds.Workspace().LexicalRoot, ".agents/open-forge.lock.json"))),
                     Cause = null,
                 },
                 Sources = [],

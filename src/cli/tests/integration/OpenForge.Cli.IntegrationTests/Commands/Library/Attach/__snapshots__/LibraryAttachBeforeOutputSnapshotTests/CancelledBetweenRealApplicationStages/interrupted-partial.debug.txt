@@ -1,0 +1,18 @@
+Library attach was cancelled. Stopped after 1 of 1 links were created.
+Workspace: <workspace>
+  Error  .  Library attach was cancelled [library-attach.interrupted]
+         Library attach was cancelled. Stopped after 1 of 1 links were created.
+         use open-forge doctor
+         open-forge doctor
+         Inspect the reported Library attach state.
+  Info  .  Ownership record is missing [library-attach.ownership-observation]
+         No ownership record exists, so the team-knowledge Library cannot be read from it.
+  .agents/directives/review.md  created
+  The Library was not recorded. Recovery data: <recovery-bundle>
+  Permission evaluation: no outside permission was needed. Required paths: none. Missing paths: none. No grant was saved.
+  Expected state: .agents/directives/review.md (will be absent)
+  Expected state: .agents/open-forge.lock.json (will be absent)
+  Verification: verification could not be completed; 1 of 1 links created; the Library was not recorded
+  Recovery data was prepared at <recovery-bundle>; 1 item remains.
+  Inspect the reported Library attach state.
+Next: open-forge doctor

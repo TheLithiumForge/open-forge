@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 3,
+  "command": "library attach",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Registered the team-knowledge Library from shared/team-knowledge.",
+    "kind": "done"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "library-attach.ownership-observation",
+      "title": "Ownership record is missing",
+      "message": "No ownership record exists, so the team-knowledge Library cannot be read from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": "docs/review.md",
+      "kind": "link",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "linksCreated": 1,
+    "sectionsUpdated": 0,
+    "grantsSaved": 1,
+    "sourceFiles": 1,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "recorded": true,
+    "permissions": {
+      "decision": "granted",
+      "required": [
+        "docs/review.md"
+      ],
+      "missing": [],
+      "saved": true
+    },
+    "links": [
+      {
+        "path": "docs/review.md",
+        "target": "../shared/team-knowledge/docs/review.md"
+      }
+    ],
+    "inventory": {
+      "eligible": 1,
+      "excluded": 0
+    },
+    "expectedStates": [
+      {
+        "path": "docs/review.md",
+        "kind": "missing",
+        "length": null,
+        "sha256": null,
+        "target": null
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "kind": "missing",
+        "length": null,
+        "sha256": null,
+        "target": null
+      }
+    ],
+    "verification": {
+      "state": "verified",
+      "linksCreated": 1,
+      "linksExpected": 1,
+      "recorded": true
+    },
+    "recovery": {
+      "state": "removed",
+      "path": "<recovery-bundle>",
+      "remaining": []
+    }
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "removed"
+  },
+  "next": null
+}

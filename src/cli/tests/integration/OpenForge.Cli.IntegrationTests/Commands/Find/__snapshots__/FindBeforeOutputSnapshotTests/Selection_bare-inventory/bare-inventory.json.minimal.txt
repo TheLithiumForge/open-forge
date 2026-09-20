@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 3,
+  "command": "find",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "4 sources match.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "matches": 4,
+    "sourcesInspected": 4,
+    "sourcesCandidates": 4
+  },
+  "limitations": [],
+  "data": {
+    "matches": [
+      {
+        "id": "docs",
+        "path": ".agents/docs/_docs.md",
+        "description": "Documents"
+      },
+      {
+        "id": "docs/guide",
+        "path": ".agents/docs/guide.md",
+        "description": "Guide"
+      },
+      {
+        "id": "docs/reference",
+        "path": ".agents/docs/reference.md",
+        "description": "Reference"
+      },
+      {
+        "id": "loader",
+        "path": ".agents/loader.md",
+        "description": null
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

@@ -12,25 +12,26 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveApplicationIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove applies a leaf pair with label-preserving external detachment"),
      Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task LeafApplicationDetachesIncomingLinkAndPreservesLifecycle()
     {
         using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-leaf-apply");
-        var lifecycleBefore = workspace.ReadBytes(RouteRemoveIntegrationWorkspace.LifecyclePath);
+        var lifecycleBefore = workspace.ReadBytes(RouteRemoveIntegrationWorkspace.OwnershipPath);
         var outsideBefore = workspace.ReadText("notes.md");
         var output = new StringWriter();
         var error = new StringWriter();
 
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--automatic"],
             output,
             error);
 
         Assert.Equal(0, completion.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, completion.Status);
         Assert.Equal(string.Empty, error.ToString());
-        Assert.Contains("Status: complete", output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Removed .agents/guidance/old guide.md", output.ToString(), StringComparison.Ordinal);
         Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.LeafPath)));
         Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.LeafOverwritePath)));
         Assert.Equal(
@@ -41,9 +42,10 @@ public sealed class RouteRemoveApplicationIntegrationTests
             "Old guide",
             workspace.ReadText(RouteRemoveIntegrationWorkspace.ParentPath),
             StringComparison.Ordinal);
-        Assert.Equal(lifecycleBefore, workspace.ReadBytes(RouteRemoveIntegrationWorkspace.LifecyclePath));
+        Assert.Equal(lifecycleBefore, workspace.ReadBytes(RouteRemoveIntegrationWorkspace.OwnershipPath));
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove applies one complete category with ordered nonrecursive deletion"),
      Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task CategoryApplicationRemovesEveryContainedItem()
@@ -54,14 +56,14 @@ public sealed class RouteRemoveApplicationIntegrationTests
         var error = new StringWriter();
 
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.CategoryId],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.CategoryId, "--automatic"],
             output,
             error);
 
         Assert.Equal(0, completion.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, completion.Status);
         Assert.Equal(string.Empty, error.ToString());
-        Assert.Contains("Status: complete", output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Removed the route guidance/topics  (4 files)", output.ToString(), StringComparison.Ordinal);
         Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.CategoryPath)));
         Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.CategoryChildPath)));
         Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.CategoryNotesPath)));
@@ -74,6 +76,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         Assert.Equal(4, resourceBefore.Length);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove composes authored detachment and generated projection in one parent file"),
      Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task OneParentDocumentRetainsAuthoredDetachmentAndGeneratedProjection()
@@ -106,7 +109,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         var output = new StringWriter();
         var error = new StringWriter();
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--automatic"],
             output,
             error);
 
@@ -120,29 +123,31 @@ public sealed class RouteRemoveApplicationIntegrationTests
         Assert.Contains("- [Topics](topics/_topics.md) - #Route", applied, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove never releases lifecycle ownership while applying an unmanaged subject"),
      Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task ApplicationDoesNotRewriteLifecycleOwnership()
     {
         using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-lifecycle-identity");
-        var lifecycleBefore = workspace.ReadBytes(RouteRemoveIntegrationWorkspace.LifecyclePath);
+        var lifecycleBefore = workspace.ReadBytes(RouteRemoveIntegrationWorkspace.OwnershipPath);
         var output = new StringWriter();
         var error = new StringWriter();
 
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--automatic"],
             output,
             error);
 
         Assert.Equal(0, completion.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, completion.Status);
         Assert.Equal(string.Empty, error.ToString());
-        Assert.Contains("Status: complete", output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Removed .agents/guidance/old guide.md", output.ToString(), StringComparison.Ordinal);
         Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.LeafPath)));
         Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.LeafOverwritePath)));
-        Assert.Equal(lifecycleBefore, workspace.ReadBytes(RouteRemoveIntegrationWorkspace.LifecyclePath));
+        Assert.Equal(lifecycleBefore, workspace.ReadBytes(RouteRemoveIntegrationWorkspace.OwnershipPath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove applies generated, reference, file, and directory effects in one ordered plan"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task ApplicationPreservesExactEffectPhaseOrder()
@@ -204,6 +209,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         Assert.All(progress.Receipts, AssertVerifiedReceipt);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove retains prior receipts and recovery after a real later-target expected-state race"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task LaterTargetRaceStopsNewEffectsAndRetainsRecovery()
@@ -255,6 +261,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         Assert.True(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.CategoryPath)));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove retains recovery when a late source restores an incoming reference"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task FinalVerificationRejectsLateIncomingReferenceAndRetainsRecovery()
@@ -316,6 +323,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         Assert.Equal(lateReference, workspace.ReadText("late.md"));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove retains recovery when late topology invalidates a generated projection"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task FinalVerificationRejectsLateSiblingProjectionAndRetainsRecovery()
@@ -376,6 +384,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         Assert.Equal(siblingText, workspace.ReadText(siblingPath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove retains recovery when a late unrelated reference changes complete facts"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task FinalVerificationRejectsLateUnrelatedReferenceCountDriftAndRetainsRecovery()

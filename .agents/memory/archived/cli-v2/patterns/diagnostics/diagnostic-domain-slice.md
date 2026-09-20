@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Keep one domain's facts, deterministic findings, safe repair proposals, planner, and tests together behind explicit doctor composition
+  description: "Historical CLI-v2 source: Keep one domain's facts, deterministic findings, safe repair proposals, planner, and tests together behind explicit doctor composition"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

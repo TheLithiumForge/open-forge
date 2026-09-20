@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 3,
+  "command": "route list",
+  "status": "invalid-input",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot list routes: No source has the ID missing/source.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-list.unknown-source",
+      "title": "Source was not found",
+      "message": "No source has the ID missing/source.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "missing/source",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routes": 0,
+    "roots": 0,
+    "depth": 1,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "subject": null,
+    "depth": 1,
+    "rows": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route list --depth=all",
+    "reason": "Use open-forge route list --depth=all to continue the route listing."
+  }
+}

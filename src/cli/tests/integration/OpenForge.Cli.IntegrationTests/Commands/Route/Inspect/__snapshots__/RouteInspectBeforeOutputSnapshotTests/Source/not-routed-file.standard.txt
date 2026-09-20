@@ -1,0 +1,12 @@
+unlisted  .agents/unlisted.md
+Workspace: <workspace>
+
+Where this source belongs
+  Tags: Docs
+
+When it is read
+
+Context size
+  This file: 70 B, about 18 tokens
+
+Axioms

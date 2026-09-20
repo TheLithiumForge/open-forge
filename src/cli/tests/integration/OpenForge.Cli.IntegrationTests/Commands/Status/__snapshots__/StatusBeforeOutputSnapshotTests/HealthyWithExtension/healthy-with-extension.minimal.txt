@@ -1,0 +1,3 @@
+Open Forge is installed and current.
+  Startup reads 11 of 50 routed files, about 6.0k tokens.
+  Extensions: development 0.3.0, development-toolkit 0.3.0, planning 0.3.0, project-documents 0.3.0, workflows 0.3.0

@@ -10,7 +10,7 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the caller-visible
-Interface Contract for `route remove`. The command does not ship yet;
+Interface Contract for `route remove`. The command is implemented in the merged CLI;
 implementation and executable evidence are tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md). It is one explicit
 mutation operation, not a generic batch or apply surface.
@@ -68,7 +68,9 @@ absence is independently established with complete trusted ownership, topology,
 reference, and generated-projection evidence, with no orphan companion, residual
 incoming reference, or stale generated region. Otherwise a missing, invalid,
 incomplete, or blocked result is returned as applicable; absence alone does not
-prove that an earlier remove succeeded. The operation creates no receipt,
+prove that an earlier remove succeeded. A proven absent target completes with no
+effects, workspace writes, lock or recovery preparation, or finding, and uses
+the source-specific headline `Nothing to do for <source>.`. The operation creates no receipt,
 tombstone, journal, saved plan, or history used to manufacture provenance.
 
 ## Syntax
@@ -76,23 +78,24 @@ tombstone, journal, saved plan, or history used to manufacture provenance.
 ```text
 open-forge route remove <source-reference>
   [--dry-run]
+  [--automatic]
   [global flags]
 ```
 
 The command path selects the remove operation. It requires exactly one source
 reference. The shared [Global CLI Flags](../../shared/global-flags/interface.md)
-contract defines `--workspace`, `--json`, `--view`, `--verbose`, `--help`, and
-`--version`; all six apply under that contract.
+contract defines `--workspace <path>`, `--format <text|json>`, `--detail <minimal|standard|full|debug>`, repeatable `--detail-filter <error|warning|info|all>`, `--help`, and `--version`; all six apply under that contract.
 
 `--dry-run` is the only preview spelling. The command does not inspect or report
 repository state. It does not select a subject, add authority,
 or change the operation.
 
-The command has no `--force`, `--automatic`, `--yes`, `--apply`, `--all`,
+The command has no `--force`, `--yes`, `--apply`, `--all`,
 `--batch`, `--recursive`, root remove mode, alias, saved plan, receipt, or
 generic mutation dispatcher. It has no operand-free wizard because the primary
 subject cannot be safely selected by enumeration. JSON and other
-non-interactive use therefore use the same explicit request and never prompt.
+non-interactive use therefore use the same explicit request; a final confirmation
+is still required unless `--automatic` is supplied.
 
 ## Operand And Repetition
 
@@ -197,7 +200,7 @@ unsafe for ordinary Route Remove mutation. The command keeps its existing
 `blocked` target-safety result, identifies the affected path, and performs no
 effect.
 
-This boundary does not consult `.agents/open-forge.libraries.json`. A missing,
+This physical-leaf boundary does not depend on Library registration state. A missing,
 malformed, stale, or otherwise unreadable Library record neither makes the
 final leaf ordinary nor grants Route Remove mutation authority. Route Remove
 never resolves a final filesystem leaf and then deletes its physical source
@@ -206,39 +209,25 @@ ordinary directory-ancestry rules remain defined by the filesystem contract.
 
 ## Positive Unmanaged Proof
 
-Before a leaf or category can enter a mutation plan, the command must successfully
-load a complete trusted lifecycle-ownership inventory for the selected workspace.
-The inventory includes the Framework baseline and every applicable Extension
-receipt or manager claim. It must establish that no trusted lifecycle source
-claims any selected logical source or resource.
+The command reads Framework and Extension ownership from the forgiving
+`.agents/open-forge.lock.json` reader. A complete interpretable inventory must
+establish that none of the selected logical sources or resources is claimed
+before a mutation plan can form. Both whole-file and region receipts protect
+their hosts, including portable case aliases. One claim protects the whole
+selected category; the operation never skips a claimed member.
 
-For a category, this proof covers every selected item, not only the root
-entrypoint. A single claim, ownership conflict, stale claim, or unresolved item
-blocks the complete category plan.
+Missing, unreadable or uninterpretable ownership does not infer unmanaged state.
+It produces `ownership-unavailable` with complete informational status, no plan
+or effects, and ownership shown as not-established. The summary explicitly says
+that no route changed. Schema/release metadata and stale content hashes are not
+gates. Actual ownership, physical safety, route and reference conflicts remain
+blocking boundaries. The exact lock expectation is revalidated before and after
+mutation. No legacy record is read, migrated or deleted; these commands neither
+adopt current content nor release or rewrite ownership.
 
-The following do not prove unmanaged status by themselves:
-
-- failing to find one receipt or looking in one lifecycle source;
-- a path, route placement, tag, generated entry, or familiar folder name;
-- matching bytes, matching fingerprints, or an apparently initial file; or
-- a previous command result, recommendation, or absence of a marker.
-
-Missing, malformed, conflicting, stale, or incomplete lifecycle-ownership
-inventory is a blocking authority condition. The command does not adopt content,
-release ownership, repair lifecycle records, migrate receipts, or continue on a
-partial inventory.
-
-A target or generated region recorded by Framework-aware Route Init is a trusted
-Framework lifecycle claim and remains ineligible for the current Route Remove
-contract. An inserted scope entrypoint is user-owned, but selecting its complete
-category still blocks when any contained scoped Framework target or generated
-region is managed. Remove does not skip the claimed item or remove an unmanaged
-subset.
-
-The lifecycle target's `sourceAssetPath` records which canonical embedded asset
-produced one concrete managed target. It is provenance only: it does not prove
-permission, select a release unit, or weaken positive-unmanaged proof. Current
-Remove never edits the Framework lifecycle section or releases ownership.
+Path names, routing tags, generated lines, matching bytes and prior command
+results cannot independently establish unmanaged status. Framework-aware Route
+Init's region receipts remain positive ownership even in a user-authored host.
 
 ## Complete Reference Pass And Detachment
 
@@ -282,8 +271,8 @@ generated region is included only when its direct-child projection changes under
 the removed topology.
 
 The projection uses current authored topology and metadata, not current generated
-lines, to derive entries. It preserves each valid marker pair and every byte
-outside the bounded generated interior. It never starts a hidden `index`
+lines, to derive entries. It preserves the Entries heading and every byte
+outside the heading-owned generated body. It never starts a hidden `index`
 subprocess. A generated boundary or required sibling projection that cannot be
 established safely prevents the complete plan.
 
@@ -325,19 +314,21 @@ independently committed leaf application.
 complete category inventory, reference catalogue, intended detachments, generated
 projection, plan, expected-state checks, and preflight as application. It shows
 every removed, detached, and generated effect needed to review the complete
-operation, then writes nothing. Planned changes alone do not create `attention`.
+operation, then writes nothing. Planned changes alone do not create `completed-with-warnings`.
 
 When the final-leaf safety boundary fails, dry-run and application retain the
 same existing `blocked` target-safety result and produce no effect.
 
 Omitting `--dry-run` selects application. The command path and the exact source
-subject are sufficient consent in human, JSON, and other non-interactive use.
-The command does not prompt for a second confirmation and does not accept
-`--yes`.
+subject select the operation, but a prompt-capable terminal receives a plan
+review followed by `Delete the <N> files listed above? [y/N]` unless
+`--automatic` is supplied. JSON, redirected, and other non-interactive requests
+without `--automatic` form the command-specific confirmation-required
+invalid-input result before effects. The command does not accept `--yes`.
 
 The explicit consent covers only the selected leaf or complete category, its
 incoming-link detachments, and generated projections in the complete plan. It
-does not grant ownership, lifecycle, collision, containment, marker-repair, or
+does not grant ownership, lifecycle, collision, containment, heading-repair, or
 recovery bypass authority.
 
 For an actual application, the complete plan checks every existing path it may
@@ -353,7 +344,7 @@ pre-effect `incomplete` result. When the operation has one or more existing-targ
 effects (`Replace`, `ReplaceGeneratedRegion`, or `Delete`), it prepares exactly
 one immutable ZIP bundle outside the workspace. An operation containing only Create effects or
 no-ops creates no bundle. Its source-generated
-schema-v1 `manifest.json` and streamed ordinal payload entries record
+versioned `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
 exact prior bytes/lengths/hashes, and intended final absence or length/hash.
 `Create` and semantic/byte no-op effects have no entry. A CreateNew draft is
@@ -368,7 +359,7 @@ first target effect; unknown, malformed, mismatched, or colliding bundles block.
 After final verification, delete only the positively recognized bundle created
 by this operation. `Deleted`/`Removed` permits normal completion.
 `Failed`/positively observed `Retained` keeps target effects successful and
-produces `attention`, the exact residual path, and
+produces `completed-with-warnings`, the exact residual path, and
 cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
 provides one. Before post-verification deletion begins, a handled application,
 verification, or cancellation outcome reports the actual residual draft or
@@ -380,249 +371,243 @@ its separate lease-bound contract.
 
 ## Human Output
 
-Both views start with the outcome, `Status`, `Workspace`, and `Selected by`,
-followed by command identity and mode. Expanded remains the default. Compact
-uses the same typed result and retains completeness, safety, every affected and
-unchanged path, every finding with its status, cause, stable code and available
-target, and verification and recovery facts. A failure heading reports the
-semantic outcome; it does not claim that no mutation occurred. Effect outcomes
-and residual state describe any partial work.
+Every semantic result is rendered by the shared native report. --format text
+is the default. The applicable global flags are --workspace <path>, --format
+<text|json>, --detail <minimal|standard|full|debug>, repeatable
+--detail-filter <error|warning|info|all>, --help, and --version. The default
+detail is minimal; standard adds workspace and command context, full adds all
+bounded facts, and debug adds bounded diagnostics on stderr. Detail does not
+change semantics, effects, counts, or status. Filters select finding severities;
+all is the default filter.
 
-Each required `Next:` line contains the actual command from the result, once.
-Expanded adds its reason on the following line; compact omits that explanation.
-Complete results have no Next action. Other statuses retain at most one direct
-correction or recovery action supplied by the operation. Rendering does not
-invent advice, change status, or select another action.
+Route remove shows a plan review before final confirmation. --automatic bypasses the final confirmation only; without it the exact prompt is Delete the <N> files listed above? [y/N].
 
-Primary human `complete`, `attention`, and `incomplete` results use stdout.
-Primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
-stderr. Each result stays together on its assigned stream. Separate bounded
-diagnostics use stderr. JSON remains one complete structured result on stdout.
+The catalogue text by detail level is:
 
-Both views retain source ID/path, leaf/category identity, every subject layer
-and category member, ownership state and coverage, every reference detachment,
-generated-navigation coverage and effect, and every protected recovery path.
-Expanded also includes the underlying ownership claims.
+`minimal`:
 
-Each detachment row shows its source path with line and column, exact
-before/expected text, original destination and visible label. Byte coordinates
-remain structured detail. Every effect retains its action, kind, before/expected
-path state and fingerprints, outcome and residual state in both views. Dry-run
-output retains every exact planned effect and ends with
-`No files changed (--dry-run).`
+```text
+Removed .agents/memory/emerging/ideas/pricing/tiers.md
+  Entry removed from .agents/memory/emerging/ideas/pricing/_pricing.md
+  Detached 1 link that pointed at it; the link text was kept:
+    .agents/maps/_maps.md:12:3
+  The deleted file is kept in a recovery bundle at <recovery-path>.
+Next: open-forge cleanup  (after reviewing the bundle)
+```
 
-Success headings use `The routed file was removed.` or
-`The routed category was removed.`; previews use `would be removed`. Attention
-keeps the verified result and its findings. Failed or interrupted results retain
-all partial effects, protected paths and recovery details without claiming that
-nothing was removed. They report `Route Remove failed.` or
-`Route Remove was interrupted.` respectively, with any operation-supplied
-recovery command.
+`minimal`, category:
+
+```text
+Removed the route memory/projects/alpha  (6 files)
+  .agents/memory/projects/alpha/_alpha.md
+  .agents/memory/projects/alpha/plan.md
+  ...
+  Entry removed from .agents/memory/projects/_projects.md
+  The deleted files are kept in a recovery bundle at <recovery-path>.
+Next: open-forge cleanup  (after reviewing the bundle)
+```
+
+When the bundle was removed after verification (the ordinary case for route
+remove), the bundle sentence and `Next` are omitted. Record in the ledger
+which case applies; the contract says the bundle is deleted after
+verification.
+
+`standard` adds `Workspace:` and per detached link the text that remained
+(`[Tiers](tiers.md) -> Tiers`).
+
+`full` adds hashes and the scan summary.
+
+Results with completed, completed-with-warnings, or incomplete status use
+stdout. Invalid-input, blocked, failed, and cancelled results use stderr.
+A parser failure is text on stderr without a result envelope.
 
 ## Structured Output
 
-`--json` emits one complete structured result to stdout for every semantic status
-from the same typed result used by human output. It never prompts and never
-reruns resolution, planning, application, verification, or retained-state
-reporting. Human text
-is not mixed into JSON stdout; bounded diagnostics use stderr.
+--format json emits one schema-3 envelope on stdout for each semantic result.
+The envelope has exactly these fields:
 
-The structured result exposes the concrete command result under the exact shared
-schema defined by the [Shared Result
-Coordinates](../../shared/result-coordinates/interface.md):
+~~~text
+{
+  schemaVersion: 3,
+  command,
+  status,
+  detail,
+  filter,
+  workspace,
+  summary,
+  findings,
+  effects,
+  counts,
+  limitations,
+  data,
+  recovery,
+  next
+}
+~~~
 
-- workspace and selection method;
-- requested and resolved source identity and canonical path;
-- selected subject kind, logical layers, and complete category item inventory;
-- trusted Framework and Extension ownership-evidence state;
-- reference catalogue coverage and every incoming detachment, including source
-  location, original destination, visible label, and intended plain-text result;
-- generated-region selection, projection, and bounded effect evidence;
-- dry-run or application mode, completeness, safety, recovery-bundle facts;
-- expected-state, changed, unchanged, and verified effect facts, plus any actual
-  residual draft or final recovery path, without classifying current target state;
-- application, verification, bundle provenance, and retained partial-state facts; and
-- semantic status and at most one required `Next:` action.
+The command is exactly route remove; data follows the catalogue:
 
-The structured result retains every detachment even when a compact human view is
-selected. It does not turn a category into an unexplained count or hide the
-reference effect that makes surrounding prose safe.
+| Level    | `data`                                                                                                                |
+| -------- | --------------------------------------------------------------------------------------------------------------------- |
+| minimal  | `{ mode, subject: "file" \| "route", source { id, path }, removed: [ path ], detachedLinks: [ { path, location } ] }` |
+| standard | + per link `before`, `after` text                                                                                     |
+| full     | + per effect `before`, `after`, `scan { filesScanned, occurrences }`                                                  |
+
+Human and JSON output are projections of one typed result. data is null only at
+the parser boundary before command binding. There is no alternate JSON
+projection.
+
+The schema is unchanged for a proven absence. Its `removed`,
+`detachedLinks`, `effects`, `findings`, and `recovery` values are empty or
+none as defined by the shared result schema, and the result records no
+workspace write or recovery bundle.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                                                                                                                               |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | A complete safe dry-run plan was established, or application and final verification completed, for a leaf or category removal. This includes every complete incoming-link detachment and generated effect. It also includes a verified no-op only when exact intended absence is independently proven with complete trusted evidence. |
-| `attention`   | Post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`; target effects remain successful with the exact residual path and cleanup guidance. Planned deletions and link detachments do not create it.                                                                                    |
-| `incomplete`  | Safe identity and facts exist, but the complete supported-Markdown catalogue, reference pass, category inventory, or another required coverage boundary cannot be enumerated or inspected. No write begins.                                                                                                                           |
-| `invalid`     | Command input, operand cardinality, source kind, flag use, or exact source reference does not follow this interface. A missing source without independent absence proof is not a verified no-op.                                                                                                                                      |
-| `blocked`     | A valid request cannot establish one safe complete removal because ownership, lifecycle, route, identity, containment, collision, reference transformation, generated boundary, expected state, or recovery is unsafe or ambiguous. No write begins.                                                                                  |
-| `failed`      | An unexpected application or verification failure occurs after a persistent effect begins, or recovery deletion returns `Failed`/`Unknown`; `Failed`/positively observed `Retained` recovery is the distinct `attention` case.                                                                                                        |
-| `interrupted` | The caller cancels before completion; an unexpected application or verification failure remains `failed`.                                                                                                                                                                                                                             |
+| Status                  | When                                                                     | Headline                                                           | Exit | Stream |
+| ----------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------ | ---: | ------ |
+| completed               | target known absent under complete safe coverage                         | `Nothing to do for <source>.`                                    |    0 | stdout |
+| completed               | leaf removed                                                             | `Removed <path>`                                                   |    0 | stdout |
+| completed               | category removed                                                         | `Removed the route <id>  (<N> files)`                              |    0 | stdout |
+| completed (dry run)     | planned                                                                  | `Would remove <path>` / `Would remove the route <id>  (<N> files)` |    0 | stdout |
+| completed-with-warnings | recovery bundle retained after success                                   | + family row                                                       |    2 | stdout |
+| incomplete              | catalogue, scan or record unreadable                                     | `<id> could not be removed: <limitation>. Nothing was changed.`    |    3 | stdout |
+| invalid-input           | bad source, the Loader, an overwrite file, or missing source without complete absence proof | `Cannot remove <ref>: <problem>.`                 |    4 | stderr |
+| blocked                 | managed source, a link that cannot be detached safely, unsafe path, lock | `Cannot remove <id>: <reason>.`                                    |    5 | stderr |
+| failed                  | after effects                                                            | `Route remove stopped after <n> of <m> changes.`                   |    1 | stderr |
+| cancelled               | prompt cancelled, Ctrl+C                                                 | `Route remove was cancelled. Nothing was changed.`                 |  130 | stderr |
 
-For ordinary conditions, status precedence is `blocked` > `incomplete` >
-`attention` > `complete`. Invalid input stops before operation resolution.
-Failed and interrupted preserve their event meanings. The shared numeric
-process-status mapping is defined by the [Shared Result
-Coordinates](../../shared/result-coordinates/interface.md).
+### Known absent target
 
-## Verified No-Op And Honest Repeats
-
-A repeated remove may be a verified no-op only when the operation independently
-establishes all of the following for the exact requested subject:
-
-- the intended subject is absent at its exact source identity and no replacement
-  source has been adopted at that identity;
-- the complete trusted ownership inventory establishes no selected ownership
-  claim or orphan companion;
-- current topology and affected generated projections establish the intended
-  absence and contain no stale generated region;
-- the complete supported-workspace-Markdown reference pass establishes no
-  residual incoming reference to the absent subject.
-
-The result is `complete` with verified no-op evidence only after all of those
-facts are complete. A missing or invalid source reference without this evidence
-is `invalid`; an orphan, ambiguous identity, or unsafe ownership fact is
-`blocked`; and unavailable required coverage is `incomplete`. The command never
-uses a receipt, tombstone, journal, or history record to claim that a previous
-remove caused the absence.
+When complete safe coverage proves that the requested target is absent, Route
+Remove returns `completed` at exit 0 with the source-specific headline
+`Nothing to do for <source>.`. It has no effects, workspace writes, lock
+infrastructure, recovery bundle, or finding. The source is the requested
+identity, or its resolved source ID when one is available. An unknown or
+incompletely acquired target, ambiguous or unsafe path, ownership boundary, or
+other unproven absence retains the applicable invalid-input, incomplete, or
+blocked result; it is never converted into absence or success.
 
 ## Errors And Boundaries
 
-The command rejects or blocks:
+The finding catalogue is:
 
-- zero or several source operands;
-- an unknown, missing, ambiguous, Loader, root, entrypoint, native, resource,
-  orphan, or otherwise ineligible leaf subject;
-- a category reference that is not exactly one recognized entrypoint or whose
-  physically contained inventory is incomplete or unsafe;
-- missing, malformed, stale, conflicting, or incomplete trusted ownership and
-  lifecycle evidence;
-- an incoming supported reference that cannot be safely detached, has an
-  unsupported or ambiguous form, or would lose surrounding prose;
-- incomplete supported-Markdown enumeration or inspection;
-- an invalid or ambiguous generated boundary or required Index projection;
-- a filesystem link or reparse point at any planned final file leaf, including
-  an exact Workspace Library projection with or without a valid Library record;
-  this is the existing `blocked` target-safety result and prevents every effect;
-- unavailable recovery-bundle storage (`incomplete`); an unverified, malformed,
-  mismatched, or colliding bundle (`blocked`); or
-- a changed expected source, reference, generated region, ownership fact, or
-  category item before application.
+| Code                                       | Severity | Family                      | Message                                                                                            | Next                                                     |
+| ------------------------------------------ | -------- | --------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| route-remove.invalid-input                 | error    | invalid-input               |                                                                                                    |                                                          |
+| route-remove.invalid-source                | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.invalid-source`).                                                | `open-forge route list --depth=all`                      |
+| route-remove.source-not-found              | error    | unknown-source              | retained for unknown or unproven absence; a proven no-op emits no finding    |                                                          |
+| route-remove.invalid-subject               | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.invalid-subject`). | none                                                     |
+| route-remove.workspace-unavailable         | error    | workspace-unavailable       |                                                                                                    |                                                          |
+| route-remove.workspace-unsafe              | error    | workspace-unsafe            |                                                                                                    |                                                          |
+| route-remove.source-unsafe                 | error    | source-unsafe               |                                                                                                    |                                                          |
+| route-remove.category-unsafe               | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.category-unsafe`).                       | none                                                     |
+| route-remove.route-ambiguous               | error    | route-ambiguous             |                                                                                                    |                                                          |
+| route-remove.identity-collision            | error    | identity-collision          | (the prompt resolves it in a terminal)                                                             |                                                          |
+| route-remove.overwrite-ambiguous           | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.overwrite-ambiguous`).                                     | fix by hand                                              |
+| route-remove.ownership-claimed             | error    | ownership-claimed           |                                                                                                    | `open-forge update` / `open-forge extension remove <id>` |
+| route-remove.reference-unsafe              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.reference-unsafe`).                                      | fix by hand                                              |
+| route-remove.generated-region-unsafe       | error    | generated-region-unsafe     |                                                                                                    |                                                          |
+| route-remove.workspace-lock-unavailable    | error    | workspace-lock-unavailable  |                                                                                                    |                                                          |
+| route-remove.target-changed                | error    | target-changed              |                                                                                                    |                                                          |
+| route-remove.recovery-conflict             | error    | recovery-conflict           |                                                                                                    |                                                          |
+| route-remove.ownership-unavailable         | warning  | lifecycle-unavailable       |                                                                                                    |                                                          |
+| route-remove.inspection-incomplete         | warning  | inspection-incomplete       |                                                                                                    |                                                          |
+| route-remove.category-inventory-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.category-inventory-incomplete`).                   | `open-forge doctor`                                      |
+| route-remove.reference-coverage-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.reference-coverage-incomplete`).             | `open-forge doctor`                                      |
+| route-remove.projection-incomplete         | warning  | projection-unavailable      |                                                                                                    |                                                          |
+| route-remove.recovery-unavailable          | warning  | recovery-unavailable        |                                                                                                    |                                                          |
+| route-remove.recovery-artifact-retained    | warning  | recovery-artifact-retained  |                                                                                                    |                                                          |
+| route-remove.target-changed-during-apply   | error    | target-changed-during-apply |                                                                                                    |                                                          |
+| route-remove.write-failed                  | error    | write-failed                |                                                                                                    |                                                          |
+| route-remove.verification-failed           | error    | verification-failed         |                                                                                                    |                                                          |
+| route-remove.recovery-failed               | error    | recovery-failed             |                                                                                                    |                                                          |
+| route-remove.operation-failed              | error    | operation-failed            |                                                                                                    |                                                          |
+| route-remove.interrupted                   | error    | interrupted                 |                                                                                                    |                                                          |
 
-Every ordinary error names `route remove`, the affected subject or occurrence,
-the direct cause, and one useful next action when one exists. The command does
-not diagnose authoring quality, infer semantic intent, or silently leave a
-supported broken link.
+Findings retain code, severity, family, message, subject, cause, and next
+action when available. Counts are:
+
+`filesRemoved`, `sectionsUpdated`, `linksDetached`, `filesScanned`.
 
 ## Scenarios
 
-Remove one ordinary leaf and detach exact incoming links:
+`leaf-removed`, `leaf-with-detached-links`, `category-removed`, `dry-run`,
+`source-not-found` (proven absence -> completed no-op; otherwise refusal),
+`managed-source` (blocked), `unsafe-link-detach`
+(blocked), `ambiguous-source-prompt`, `reference-scan-incomplete`, `lock-held`,
+`write-failed-partial`, `cancelled`.
 
-```text
-open-forge route remove \
-  ".agents/docs/old-guide.md"
-```
+Prompt rules from the catalogue:
 
-Remove one recognized category as one complete physical operation:
+Select when the source ID matches several files; plan review listing every
+deletion, then `Delete the <N> files listed above? [y/N]` in a terminal
+without `--automatic` (04 adds `--automatic` to this command).
 
-```text
-open-forge route remove \
-  ".agents/guides/_guides.md"
-```
+## Representative Transcripts
 
-Preview all removal and detachment effects as structured output:
+### completed
 
-```text
-open-forge route remove \
-  guides \
-  --dry-run \
-  --json
-```
+~~~text
+Removed .agents/guidance/old guide.md
+  Removed .agents/guidance/old guide.overwrite.md
+  Entry removed from .agents/guidance/_guidance.md
+  Detached 1 link that pointed at it; the link text was kept:
+    README.md:1:8
+~~~
 
-The source operand in the last example must resolve to one eligible leaf or one
-recognized category entrypoint. If the automatic ID is colliding, use the exact
-recognized entrypoint path for the category or the exact source path for the
-leaf.
+The proven missing-source no-op is also completed:
+`Nothing to do for guidance/old guide.`
 
-## Non-Goals
+### completed-with-warnings
 
-`route remove` does not:
+~~~text
+Removed .agents/guidance/old guide.md
+  Warning  <recovery-bundle>  Recovery artifact retained
+~~~
 
-- remove or mutate the Loader or `.agents` workspace root;
-- accept a generic directory operand, batch operands, repeated mutation
-  requests, or independently committed descendant removals;
-- remove a lifecycle-managed, generated-only, native-only, unsupported, or
-  ambiguous subject;
-- initialize or repair route parents, metadata, ownership, or lifecycle state;
-- adopt, release, migrate, or repair Framework or Extension lifecycle state;
-- rewrite references originating inside the removed subject, external URLs,
-  unsupported or ambiguous link forms, or unrelated authored prose;
-- delete an incoming link's surrounding prose or silently leave a supported
-  incoming link broken;
-- resolve a final filesystem link or reparse point and then delete its physical
-  source target, write through a Workspace Library projection, or adopt or manage
-  a Library record;
-- treat generated `Entries` as authored authority or run a hidden `index` command;
-- create a receipt, tombstone, journal, saved plan, session, or automatic
-  recovery history;
-- create a Git commit; or
-- redefine the shared libraries, parser boundary, physical identity, lock,
-  concurrency, test, Native AOT, or C# source-layout choices accepted by the [CLI
-  Architecture](../../../architecture.md), or the exact recovery-bundle mechanics
-  accepted by the [Mutation And Recovery Technical
-  Design](../../../technical-designs/mutation-and-recovery.md).
+### incomplete
 
-Use `index` for standalone generated navigation, `references` for read-only
-direct reference facts, `doctor` for diagnosis, and the accepted lifecycle
-operations for managed content. This remove contract owns only the exact
-structural removal described here.
+~~~text
+guidance/old guide could not be removed: Some files could not be scanned for links to .agents/guidance/old guide.md, so the removal was not planned. Nothing was changed.
+Next: open-forge doctor
+~~~
 
-## Verification Requirements
+### invalid-input
 
-Gate 5 executable proof must cover:
+~~~text
+Cannot remove guidance/old guide: The source is not a source ID or a path under .agents.
+~~~
 
-- exact source-ID and exact-path resolution, quoting, spaces, Unicode, collision,
-  containment, and base/overwrite identity;
-- one eligible ordinary leaf, one eligible recognized category, and rejection of
-  Loader, workspace-root, entrypoint-as-leaf, native, unsupported, orphan, and
-  ambiguous subjects;
-- complete category physical inventory, descendant classification, and
-  all-or-nothing planning;
-- Final filesystem link and reparse-point leaves, including exact Workspace
-  Library projections with and without a valid Library record, are reported as
-  unsafe and block before effects; Route Remove never resolves then deletes
-  their physical source targets.
-- complete positive unmanaged proof from the Framework baseline and all
-  applicable Extension claims, including every missing, malformed, conflicting,
-  stale, incomplete, and source-claim case;
-- complete supported Markdown catalogue coverage inside and outside `.agents`,
-  base/overwrite layers, exact incoming-link resolution, visible-label
-  detachment, surrounding-prose preservation, and external URL preservation;
-- unsupported or ambiguous potentially applicable links, prose-loss
-  transformations, unsafe identity, incomplete catalogue coverage, and their
-  no-write results;
-- old parent generated projection and Loader projection when applicable,
-  generated-boundary preservation, and no hidden `index` invocation;
-- one complete category plan and recovery boundary rather than independently
-  committed leaf effects;
-- exact dry-run/application parity, explicit-subject consent, no persistent
-  dry-run effect, every detachment in human and JSON results, and complete
-  effect visibility;
-- recovery-bundle storage/readiness and collision handling, expected-state
-  revalidation, all-effects verification, retained partial state without
-  restoration, residual preservation, and fresh-plan rerun;
-- complete verified no-op proof for exact intended absence and invalid,
-  incomplete, or blocked results when that proof is unavailable;
-- `complete`, reserved `attention`, `incomplete`, `invalid`, `blocked`, `failed`,
-  and `interrupted` results; and
-- human stream allocation, compact retention, every planned dry-run detachment,
-  structured JSON parity, and no mixed human text in JSON stdout.
+### blocked
 
-The proof must exercise the accepted CLI Architecture boundaries rather than
-relying on source-level or managed-build claims. It must include the real
-filesystem, workspace lock, recovery, Native AOT, and package/process evidence
-required by that Architecture.
+~~~text
+Cannot remove guidance/old guide: .agents/guidance/old guide.md is managed by the Framework, so Route Remove cannot remove it.
+Workspace: <workspace>
+Next: open-forge update
+~~~
+
+### failed
+
+~~~text
+Route remove stopped after 2 of 4 changes.
+Workspace: <workspace>
+  .agents/guidance/old guide.md  not started
+  .agents/guidance/old guide.overwrite.md  not started
+  Entry removed from .agents/guidance/_guidance.md
+  Detached 1 link that pointed at it; the link text was kept:
+    README.md:1:8
+  The deleted files are kept in a recovery bundle at <recovery-bundle>.
+Next: open-forge cleanup  (after reviewing the bundle)
+~~~
+
+### cancelled
+
+~~~text
+Route remove was cancelled. Nothing was changed.
+Workspace: <workspace>
+Next: open-forge route remove
+~~~
 
 ## Related Current Sources
 
@@ -647,23 +632,19 @@ required by that Architecture.
 - [Routed Markdown Representation](../../../../framework/markdown/routes.md)
 - [Markdown Compatibility Boundary](../../../../framework/markdown/compatibility.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
+CLI help syntax: [`route.remove.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Remove/RouteRemoveText.cs).
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef route.remove.help.syntax -->
+
+## Approved Journey Wording References
+
+The following stable IDs link the approved journey behavior above to its typed
+human-wording factories. Independently reviewed snapshots and state assertions
+remain the output evidence.
+
+- [RouteRemoveText.cs](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Remove/RouteRemoveText.cs)
+  <!-- @OpenForgeTextRef route.remove.message.nothing-to-do-for-source -->

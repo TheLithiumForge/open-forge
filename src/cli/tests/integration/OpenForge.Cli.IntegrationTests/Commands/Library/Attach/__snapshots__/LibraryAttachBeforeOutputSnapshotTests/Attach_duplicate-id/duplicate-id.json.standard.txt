@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 3,
+  "command": "library attach",
+  "status": "blocked",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot attach team-knowledge: A Library with the ID team-knowledge is already registered.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-attach.duplicate-id",
+      "title": "Library ID is already registered",
+      "message": "A Library with the ID team-knowledge is already registered.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge library inspect team-knowledge",
+          "reason": "Inspect the registered Library before choosing another ID."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksCreated": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "sourceFiles": 1,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "recorded": false,
+    "permissions": {
+      "decision": "not-evaluated",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "links": [],
+    "inventory": {
+      "eligible": 1,
+      "excluded": 0
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge library inspect team-knowledge",
+    "reason": "Inspect the registered Library before choosing another ID."
+  }
+}

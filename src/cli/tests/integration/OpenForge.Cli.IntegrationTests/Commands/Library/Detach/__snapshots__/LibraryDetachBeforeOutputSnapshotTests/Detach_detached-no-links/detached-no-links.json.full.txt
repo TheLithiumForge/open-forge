@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 3,
+  "command": "library detach",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Detached team-knowledge. It had no links.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "detached",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "linksRemoved": 0,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "registrationRemoved": true,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/open-forge.lock.json",
+        "kind": "record",
+        "action": "replace",
+        "outcome": "done"
+      }
+    ],
+    "expectedStates": [
+      {
+        "path": ".agents/open-forge.lock.json",
+        "kind": "ordinary-file",
+        "length": null,
+        "sha256": "<sha256>",
+        "rawRelativeTarget": null
+      }
+    ],
+    "verification": {
+      "state": "verified",
+      "registration": "verified"
+    },
+    "recovery": {
+      "state": "removed",
+      "path": "<recovery-bundle>",
+      "residuals": []
+    }
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "removed"
+  },
+  "next": null
+}

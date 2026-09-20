@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "invalid-input",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot initialize documents: Route Init metadata is invalid.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-init.invalid-metadata",
+      "title": "Invalid metadata",
+      "message": "Route Init metadata is invalid.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "documents",
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route init documents --description \"<one sentence>\" --tag <Tag>",
+          "reason": "Correct the named Route Init input, then rerun the request."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "entrypointsCreated": 0,
+    "entrypointsPresent": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "documents",
+      "path": ".agents/documents/_documents.md"
+    },
+    "scaffold": "generic",
+    "entrypoints": [],
+    "listedIn": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route init documents --description \"<one sentence>\" --tag <Tag>",
+    "reason": "Correct the named Route Init input, then rerun the request."
+  }
+}

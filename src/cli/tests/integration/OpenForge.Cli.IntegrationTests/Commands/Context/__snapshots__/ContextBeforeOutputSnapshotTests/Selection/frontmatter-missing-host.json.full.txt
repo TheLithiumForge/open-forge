@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Context is complete.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "sources": 3,
+    "tokens": 69,
+    "bytes": 273,
+    "linksFollowed": 0,
+    "linksNotFollowed": 0
+  },
+  "limitations": [],
+  "data": {
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "workspace entry"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 1,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          }
+        ]
+      },
+      {
+        "path": ".agents/loader.md",
+        "id": "loader",
+        "layer": "base",
+        "includedBecause": [
+          "Loader"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 2,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/_docs.md",
+        "id": "docs",
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from .agents/loader.md"
+        ],
+        "route": "docs",
+        "scope": null,
+        "order": 3,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Documents\n  tags: [Docs]\n---"
+          }
+        ]
+      }
+    ],
+    "links": []
+  },
+  "recovery": null,
+  "next": null
+}

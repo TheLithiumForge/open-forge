@@ -71,7 +71,7 @@ contract. They stop before the Status domain operation resolves a workspace or
 performs inspection. Other well-formed shared flags retain their shared
 applicability and no-op behavior where that contract says they do.
 
-Unexpected operands or operation-specific flags form the public `invalid` result.
+Unexpected operands or operation-specific flags form the public `invalid-input` result.
 A missing value for `--workspace` is invalid under the shared contract. The
 resolver does not reinterpret a path-like value as another operation or infer a
 workspace from route, file, Git, `AGENTS.md`, or `.agents` structure.
@@ -92,7 +92,7 @@ target forms the public `blocked` result described by [Interface Errors](interfa
 
 The resolver does not require an installed Framework to recognize a directory as
 a valid Status subject. It records an uninstalled state. If that absence can be
-established safely, that uninstalled state may be `complete`: the embedded payload's
+established safely, that uninstalled state may be `completed`: the embedded payload's
 Initial measurement remains measured when available, current startup, Difference,
 startup percentage, continuity, and root-category facts are not-applicable, and
 the total physical context inventory remains numeric when safely measurable. An
@@ -107,9 +107,8 @@ universe is exactly the one in [Interface Inspection Boundary](interface.md#insp
 and [Context Inventory](interface.md#context-inventory): the canonical workspace
 entry and supported `.agents` Markdown, the embedded Framework payload, the
 route and loading facts needed for startup and continuity, direct Loader root
-categories, the exact `.agents/open-forge.lifecycle.json` document, schema v1,
-the exact `.agents/open-forge.libraries.json` Workspace Library record, schema
-v1, and the current user's external recovery store containing exact-name final
+categories, one shared per-invocation `.agents/open-forge.lock.json` snapshot
+for Framework, Extension, and Library ownership, and the current user's external recovery store containing exact-name final
 and draft candidates for the selected normalized physical workspace path.
 
 Enumeration is closed. The ledger records each canonical workspace-relative path,
@@ -139,54 +138,56 @@ available context; its presence prevents a complete inventory. Any unsafe
 containment or physical-identity condition blocks the affected inspection rather
 than allowing an out-of-bound fact into the result.
 
+For generated navigation, a readable malformed ordinary Markdown or
+recognized-entrypoint metadata region is a known `MetadataInvalid` observation
+rather than unreadable coverage only when exact typed evidence shows that all
+direct dependencies are readable and contained, the region is otherwise
+projectable, and a pure counterfactual re-projection treating only those
+malformed ordinary facts as `Missing`, with the eligible automatic-ID fallback,
+succeeds without another blocker. The generated structural observation remains
+`unavailable`; Status emits the finite
+`status.generated-navigation-metadata-invalid` Warning with the actual source
+path and observed cause, retains known installed, toolkit, and context facts,
+and never substitutes metadata or generated entries. Unreadable or
+coverage-incomplete inputs stay `incomplete`, unsafe or ambiguous inputs stay
+`blocked`, and native Skill failures remain strict.
+
 Safe facts may remain available beside an incomplete boundary. The result cannot
 claim complete coverage while an unresolved applicable fact could change a
 measurement, comparison, ordering, status, or required summary field.
 
-## Unified Lifecycle Fact Resolution
+## Ownership And Target Fact Resolution
 
-The lifecycle stage reads `.agents/open-forge.lifecycle.json`, schema v1, as a
-common envelope with isolated `framework` and `extensions` sections. It never
-combines their authority or uses one section to reconstruct the other. It
-preserves independently readable facts from an unaffected section when the other
-section is malformed, while retaining the malformed section's coverage state.
-The document stores no plan, runtime history, journal, recovery-bundle evidence,
-or session. Files outside this exact path are ordinary workspace content, not
-lifecycle input.
+Ownership is read from `.agents/open-forge.lock.json` through the shared forgiving
+reader. Framework, Extension, and Library claims remain separate. Neither the
+old lifecycle document nor the old Library record supplies ownership facts.
+An absent, unreadable, nonordinary, malformed, or uninterpretable lock supplies
+no usable claims and produces an informational ownership observation, without
+blocking the command or reconstructing ownership from files. Read-only commands
+never create or repair the lock. Actual source, target, route, and recovery
+boundaries still determine their own coverage and findings.
 
-The stage classifies each section as:
+Target comparison uses actual disk content against current intended content:
+the running embedded Framework payload, or the currently read exact Extension
+source recorded by its owner. A recorded version or stored content hash does not
+gate comparison. Missing targets remain `missing`; unavailable reads or intended
+sources remain `unavailable`; unsafe physical or Markdown boundaries remain
+`blocked`. Comparable content is `current` when equal and `changed` otherwise.
+The existing immutable `open-forge-markdown-v1` policy normalizes line endings
+and eligible generated content only; authored whitespace and final-newline
+choices remain significant. Non-Markdown Extension payloads use exact bytes.
+Comparison evidence is computed during the invocation and stores no baseline.
 
-- `absent` only after complete inspection proves that no expected managed state,
-  managed boundary, or recovery residual exists;
-- `trusted` only when schema v1 and `open-forge-markdown-v1`, exact workspace
-  and managed identities, internal consistency, reciprocal package/path/owner/
-  dependency facts, and complete verifiable coverage hold;
-- `untrusted` when safe facts exist but provenance, integrity, compatibility,
-  identity, or coverage cannot establish current trust;
-- `incomplete` when safe required lifecycle or source coverage is unavailable;
-  or
-- `blocked` when malformed, ambiguous, colliding, or unsafe identity prevents a
-  safe classification.
+Root managed hosts compare only their `open-forge` region. Scoped Framework
+entrypoints use the existing canonical payload alignment; ambiguous or missing
+alignment makes intended comparison unavailable. Generated Entries compare with
+the current authored route projection, without consulting stored fingerprints.
 
-The stage never treats a missing expected section as empty and never promotes a
-state because a path, byte sequence, fingerprint, source, or force flag matches.
-An absent document or section is not, by itself, proof of unmanaged state. An
-unavailable Extension package source leaves readable installed ID, ownership,
-and baseline observations visible, but source-dependent comparison remains
-unavailable and cannot become update or no-op authority. Unsupported or
-ambiguous schema facts are `incomplete` when safely unavailable and `blocked`
-when unsafe.
-
-### Generated Framework Navigation
-
-For a trusted Framework section with available source evidence, a valid derived
-Entries target is current when the safely observed generated region matches the
-current authored topology at that exact path. A different recorded generated
-fingerprint alone is not drift after Extension installation or indexing. This
-read-only comparison preserves the recorded fingerprint and does not rebaseline
-lifecycle state or authorize mutation. Authored targets, stale or malformed
-navigation, missing targets and unavailable or blocked evidence retain their
-separate checks.
+The existing lifecycle vocabulary remains a presentation of observed coverage.
+`absent` still requires independent complete footprint and recovery inspection;
+no lock or matching file alone proves absence or ownership. Readable claims may
+remain reportable while their source is unavailable. An unavailable lock yields
+an observation, not an installation error or a trusted empty inventory.
 
 ## Context Inventory Accounting
 
@@ -241,7 +242,7 @@ Initial for each metric and retains the signed value.
 
 No previous invocation participates in the comparison. Updating the CLI may
 change the embedded Initial payload. Added, removed, larger, smaller, or changed
-context remains a neutral customization fact and does not become an attention
+context remains a neutral customization fact and does not become a completed-with-warnings
 condition merely because the arithmetic differs.
 
 For each metric, numeric-numeric operands produce the signed numeric
@@ -275,10 +276,10 @@ combined UTF-8 size of those layers, and the source appears once under the
 automatic source ID defined by [CLI Source References](../shared/source-references/behavior.md).
 It orders contributions by descending UTF-8 size and then canonical source ID.
 
-Expanded human presentation consumes the public at-most-three result and shows
-fewer when fewer exist. Compact human presentation omits the largest-source
-section. Structured output retains every ordered continuity-source contribution;
-it does not inherit the expanded human limit.
+Standard and higher human detail consumes the public at-most-three result and
+shows fewer when fewer exist. Minimal human presentation omits the
+largest-source section. Structured output retains every ordered continuity-source
+contribution; it does not inherit the minimal human limit.
 
 ## Measurement Availability And Arithmetic
 
@@ -337,27 +338,23 @@ producing a trusted empty count.
 
 For trusted facts, deduplicate distinct installed Extension IDs and assign each
 recorded managed path to one state from fresh current evidence: `current`,
-`changed`, or `missing`. The `open-forge-markdown-v1` policy supplies semantic
+`changed`, `missing`, `unavailable`, or `blocked`. The `open-forge-markdown-v1` policy supplies current-against-intended semantic
 fingerprints for supported parseable kinds. Shared owner sets do not multiply the path count,
 and unmanaged files do not enter the result. These are lifecycle observations,
 not runtime, replacement, removal, repair, or ownership authority.
 
-Expanded human and structured results retain lifecycle trust and coverage state.
-Compact human output may combine that state with Extension and managed-file
+Standard and higher human detail and structured results retain lifecycle trust
+and coverage state. Minimal human output may combine that state with Extension and managed-file
 summaries. If package source bytes are unavailable, installed facts remain
 reportable and source-dependent comparisons are unavailable or incomplete.
 
 ### Workspace Library Accounting
 
-The Library stage reads the exact consumer-owned
-`.agents/open-forge.libraries.json` record, schema v1, and keeps its authority
-separate from the lifecycle document. It validates the typed `schemaVersion`,
-Library IDs, `sourceRoot`, required `destinationRoot`, and ordered source-relative `paths` entries without manufacturing a
-record from destination occupants. It derives bounded source and destination
-mapping facts for each entry without changing the record. A missing record is an
-absent bounded record; an unreadable record is unavailable; malformed or unsafe
-identity is blocked. Neither a matching path nor a matching link promotes an
-absent or untrusted record.
+The Library stage consumes the same lock snapshot as the Framework and Extension
+stages. It validates typed Library IDs, roots, paths, and unambiguous mappings.
+Unavailable or uninterpretable claims yield a complete ownership observation,
+no registrations, and no inferred links. The raw record state still distinguishes
+missing, invalid, and unavailable from a readable empty lock.
 
 For each readable record, the stage checks each source root for canonical
 workspace-relative spelling, lexical and physical containment, an ordinary
@@ -379,7 +376,7 @@ adopts a link or source target.
 
 The stage forms registered and partitioned current/missing/changed/blocked/
 unavailable counts from those bounded observations. Complete safe drift maps to
-the Status `attention` finding; unavailable coverage maps to `incomplete`; an
+the Status `completed-with-warnings` result; unavailable coverage maps to `incomplete`; an
 unsafe or ambiguous fact maps to `blocked`. Library/Extension collision remains
 a blocked ownership fact and never invokes either lifecycle command.
 
@@ -437,7 +434,7 @@ Extension lifecycle trust and managed-file states, source-availability
 observations, bounded Workspace Library record/source-root/registered-link
 states and partitioned counts, separate verified-final and incomplete-draft counts, every
 exact-name recovery candidate's path, kind, and integrity condition, measurement
-availability, observations or attention conditions, and the public semantic
+availability, observations or completed-with-warnings conditions, and the public semantic
 result. The field meanings are
 owned by [Interface Structured Output](interface.md#structured-output);
 this stage does not create a second schema.
@@ -488,6 +485,10 @@ array never turns that state into an available zero.
 Generated-navigation observations use only `current`, `changed`, `missing`,
 `unavailable`, `blocked`, and `not-applicable`. Framework and Extension managed
 targets use only `current`, `changed`, `missing`, `unavailable`, and `blocked`.
+A `MetadataInvalid` evidence item is attached to an `unavailable` generated
+structural observation; it is not another structural state. It is present only
+for the exact typed proof above and retains the actual malformed source path and
+observed cause. The observation never publishes a substitute projection.
 Library record, source-root, and registered-link observations use only the
 finite values in [Interface Structured Output](interface.md#structured-output);
 they retain bounded no-follow facts and do not turn a missing or changed link
@@ -503,24 +504,32 @@ message text.
 The result selector uses only the seven public semantic states in
 [Interface Semantic Results](interface.md#semantic-results):
 
-- Invalid request input selects `invalid`.
+- Invalid request input selects `invalid-input`.
 - Failure to establish the selected workspace or a safe inspection boundary
   selects `blocked`.
 - Safe facts with one or more unavailable or incomplete applicable measurements,
-  including an exact-name draft or safely bounded malformed or unsupported final,
-  select `incomplete` rather than claiming complete coverage.
+  other than a generated structural `unavailable` fact admitted by the readable
+  ordinary metadata proof below, including an exact-name draft or safely bounded
+  malformed or unsupported final, select `incomplete` rather than claiming
+  complete coverage.
+- A proven readable ordinary metadata-invalid generated region selects the
+  existing `completed-with-warnings` result (Attention2 / exit 2) while keeping
+  its structural fact `unavailable` and retaining all known facts; it does not
+  select healthy `completed`. Unreadable or coverage-incomplete metadata remains
+  `incomplete`, unsafe or ambiguous metadata remains `blocked`, and native
+  failures remain strict.
 - An unsafe or ambiguous recovery inspection boundary selects `blocked` under
   the existing inspection-boundary precedence.
 - An unexpected internal failure selects `failed`.
-- Cancellation or interruption before completion selects `interrupted`.
+- Cancellation or interruption before completion selects `cancelled`.
 - Complete measurement with changed or missing trusted managed files, a verified
   recovery final, a safely observed missing or changed Library projection, or a
-  finite lifecycle/source observation selects `attention`.
-- Complete applicable measurement without an attention condition selects
-  `complete`, including a safely established uninstalled workspace.
+  finite lifecycle/source observation selects `completed-with-warnings`.
+- Complete applicable measurement without a completed-with-warnings condition selects
+  `completed`, including a safely established uninstalled workspace.
 
 Context-size differences and root-category additions or removals do not select
-`attention` by themselves. An absent or trusted-empty lifecycle section does not
+`completed-with-warnings` by themselves. An absent or trusted-empty lifecycle section does not
 change status alone. Untrusted or unavailable lifecycle coverage selects
 `incomplete` when safe and `blocked` when unsafe. Source-unavailable installed
 facts remain visible and do not become trusted current source. Numeric exits and
@@ -528,7 +537,7 @@ the exact JSON schema follow the [Shared Result
 Coordinates](../shared/result-coordinates/interface.md).
 
 For Library facts, complete safe bounded observation with projection drift maps
-to `attention`; unavailable record, source-root, or registered-link coverage
+to `completed-with-warnings`; unavailable record, source-root, or registered-link coverage
 maps to `incomplete`; malformed, aliased, colliding, or otherwise unsafe
 identity maps to `blocked`. The bounded Library view never stands in for a
 complete source inventory or authorizes adoption or mutation.
@@ -536,33 +545,33 @@ complete source inventory or authorizes adoption or mutation.
 ### Human Rendering
 
 The human renderer uses the stable sections, exact labels, zero visibility, list
-empty-list wording, and compact-versus-expanded relationship in [Interface Human Output](interface.md#human-output).
-It renders the typed `attention` value as `requires attention` and does not
+empty-list wording, and detail-level relationship in [Interface Human Output](interface.md#human-output).
+It renders the typed `completed-with-warnings` value using the catalogue's warning headline and does not
 reinterpret any measurement or ranking.
 
-Compact summarizes current generated-navigation paths by count and retains every
-non-current path. Expanded keeps every observed navigation path. Presentation
+Minimal summarizes current generated-navigation paths by count and retains every
+non-current path. Standard and higher detail keeps every observed navigation path. Presentation
 does not alter the ordered observations or perform additional checks.
 
-Compact rendering retains the public status, workspace identity, startup and
+Minimal rendering retains the public status, workspace identity, startup and
 continuity totals, root changes, Extension and managed summaries, separate
 verified-final and incomplete-draft counts, recovery issue visibility, and
 required next-action information. It emits at most one operation-level
 `Next:` line, only under the rules in [Interface Human Output](interface.md#human-output):
-complete has none; attention uses `open-forge doctor`; incomplete uses Doctor
-unless a more direct safe correction is known; invalid uses `Next: correct the
+completed has none; completed-with-warnings uses `open-forge doctor`; incomplete uses Doctor
+unless a more direct safe correction is known; invalid-input uses `Next: correct the
 named input`; blocked uses `Next: correct the named workspace or safety boundary
 and rerun`; failed uses `Next: report the failure and retry with bounded
-diagnostics`; and interrupted uses `Next: rerun the same request`. It never lists
+diagnostics`; and cancelled uses `Next: rerun the same request`. It never lists
 repair or lifecycle proposals.
 
 It also retains the bounded Library record, source-root, and registered-link
 states and partitioned counts. It does not render a complete source inventory or
 turn a Library drift finding into a repair action.
 
-Primary human rendering for `complete`, `attention`, and `incomplete` goes to
-stdout. Primary human rendering for `invalid`, `blocked`, `failed`, and
-`interrupted` goes to stderr. `--json` writes one complete structured result to
+Primary human rendering for `completed`, `completed-with-warnings`, and `incomplete` goes to
+stdout. Primary human rendering for `invalid-input`, `blocked`, `failed`, and
+`cancelled` goes to stderr. `--format json` writes one complete structured result to
 stdout for every semantic status, and separate bounded diagnostics go to stderr.
 Human text is not mixed into JSON stdout.
 
@@ -577,8 +586,8 @@ Framework/Extension lifecycle trust, ownership, and source-availability state.
 Exact JSON representations and schema details follow the [Shared Result
 Coordinates](../shared/result-coordinates/interface.md).
 
-`--json` does not rerun collection or allow `--view` to change the structured
-result. `--verbose` may add bounded diagnostics without changing collection,
+`--format json` does not rerun collection or allow `--detail` to change the structured
+result. `--detail debug` may add bounded diagnostics without changing collection,
 measurements, ordering, semantic result, or exit behavior. Those diagnostics use
 stderr. Exact diagnostic fields and redaction follow the accepted CLI
 Architecture.
@@ -589,6 +598,10 @@ Error formation preserves the public error boundary in [Interface Errors](interf
 Every error identifies the Status operation, affected workspace or fact, direct
 cause, and useful next action when one exists. A malformed startup route or
 unreadable required context becomes an incomplete result when safe facts remain;
+a typed readable ordinary metadata-invalid generated region instead keeps its
+structural observation unavailable and reports its actual source path and cause
+through the finite warning finding; no heuristic, message-text parse, or blanket
+demotion changes that result.
 a malformed or unavailable lifecycle section becomes an incomplete or blocked
 managed-state summary rather than a guessed count. The behavior never uses a
 guessed value to avoid reporting an error or incomplete boundary.
@@ -625,7 +638,7 @@ the source's modality.
 
 Direct tests should prove measurement, comparison, ordering, classifications, and
 semantic results. Focused integration tests should use real temporary workspaces,
-embedded or supplied assets, the exact lifecycle document, and filesystem state.
+embedded or supplied assets, the exact ownership lock, and filesystem state.
 A small built Native AOT process suite should prove parsing, output, exit
 behavior, and packaged payload comparison. The [Shared Result
 Coordinates](../shared/result-coordinates/interface.md) define the exact result
@@ -643,9 +656,13 @@ build the complete context graph, inspect unrelated workspace files, or mutate
 anything, and that unsafe or incomplete facts are never silently discarded. It
 must prove bounded empty, binary, and large payload validation without extraction
 or materialization, and that Status neither inspects nor infers recovery activity.
+It must also prove the typed readable-malformed ordinary metadata distinction,
+including retained structural `unavailable`, actual source path/cause,
+Attention2 result formation, retained known facts, and strict unreadable,
+coverage-incomplete, unsafe, ambiguous, and native-failure behavior.
 It must also prove bounded Library record/source-root/registered-link facts,
 destination-derived source IDs kept separate from Library IDs, complete safe
-drift as `attention`, unavailable coverage as `incomplete`, unsafe ambiguity or
+drift as `completed-with-warnings`, unavailable coverage as `incomplete`, unsafe ambiguity or
 Library/Extension collision as `blocked`, and no source inventory, adoption, or
 mutation.
 

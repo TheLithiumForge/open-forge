@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 3,
+  "command": "install",
+  "status": "blocked",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot install: 1 Framework file has changed since they were installed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "install.managed-divergence",
+      "title": "Framework files have changed",
+      "message": "<workspace> has changed since it was installed. Install does not replace changed files.",
+      "subject": {
+        "kind": "workspace",
+        "path": null,
+        "id": "<workspace>",
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge update",
+          "reason": "Update the existing managed Framework state from a fresh plan."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0,
+    "sectionsAdded": 0,
+    "filesReplaced": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": true,
+    "automatic": true,
+    "classification": "managed-divergence",
+    "footprint": {
+      "files": 12,
+      "directories": null,
+      "sections": 2
+    },
+    "lockPath": ".agents/open-forge.lock.json"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge update",
+    "reason": "Update the existing managed Framework state from a fresh plan."
+  }
+}

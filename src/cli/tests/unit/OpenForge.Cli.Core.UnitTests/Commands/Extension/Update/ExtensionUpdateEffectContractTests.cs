@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Update;
 
 public sealed class ExtensionUpdateEffectContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Update logical changes preserve package provenance and generated-region identity"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void LogicalChangesPreservePackageAndGeneratedIdentity()
     {
@@ -37,6 +38,7 @@ public sealed class ExtensionUpdateEffectContractTests
             "toolkit/content/.agents/toolkit.md"));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Update effects snapshot ordered logical changes and reject unsafe shape"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void EffectsSnapshotChangesAndRejectUnsafeShape()
     {

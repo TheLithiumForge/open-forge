@@ -1,0 +1,17 @@
+Cannot update: Extension update needs to know which packages. Pass their IDs or --all.
+Workspace: <workspace>
+  Error  the selected  Selection is required [extension-update.selection-required]
+         Extension update needs to know which packages. Pass their IDs or --all.
+         use open-forge extension list --installed
+         open-forge extension list --installed
+         List the installed Extensions, then rerun the request with an explicit selection.
+         cause: A multi-package Extension source requires explicit Extension IDs or --all.
+         read from <extension-source>
+  Source: <extension-source>
+  Dependency closure: none
+  0 files unchanged
+  Grant: required none; missing none; decision not evaluated; action no action; outcome no outcome recorded
+  No verification was needed.
+  No recovery bundle was needed.
+  List the installed Extensions, then rerun the request with an explicit selection.
+Next: open-forge extension list --installed

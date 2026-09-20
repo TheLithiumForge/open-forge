@@ -1,19 +1,22 @@
 ---
 open-forge:
   description: Accepted public interface for complete Library inventory and exact projection comparison
-  responsibility: Define Library inspect syntax, strict record subject, inventory, comparisons, results, errors, and conformance
+  responsibility: Define Library inspect syntax, lock ownership subject, inventory, comparisons, results, errors, and conformance
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Library, Inspect, Interface, ReadOnly, Workspace, CurrentTruth]
 ---
 
 # library inspect Interface Contract
 
+Unavailable ownership is reported as `library-inspect.ownership-observation`
+with `completed` status. This finding grants no ownership or mutation permission.
+
 ## Status And Authority
 
 This is the accepted current Crystallized Interface Contract for read-only
 `open-forge library inspect`. It owns the public syntax, Library-ID subject,
-strict record shape, complete source inventory, registered/observed comparison,
+ownership claim shape, complete source inventory, registered/observed comparison,
 semantic statuses, output, errors, examples, and caller-visible conformance.
-The command does not ship yet.
+The command is implemented in the merged CLI.
 
 The sibling [Behavior Contract](behavior.md) defines technology-neutral
 resolution and result formation. The [Library group entrypoint](../_library.md)
@@ -21,7 +24,7 @@ defines group routing and exact help order. The [Library list Interface](../list
 defines the shared record shape and bounded list observation. The shared [Global
 CLI Flags](../../shared/global-flags/interface.md) define the six unchanged
 global flags. The shared [Result Coordinates](../../shared/result-coordinates/interface.md)
-define the schema-v1 envelope, status exits, and output streams. The shared [CLI
+define the schema-3 envelope, status exits, and output streams. The shared [CLI
 Source References](../../shared/source-references/interface.md) define automatic
 source-ID derivation; a Library ID remains outside that source-reference grammar.
 
@@ -38,10 +41,10 @@ expected relative file link.
 
 Inspect distinguishes a healthy exact projection from safely observed additions,
 retirements, missing links, and changed links. A complete safe comparison with
-any such drift yields `attention`. An unavailable or incomplete record, source
+any such drift yields `completed-with-warnings`. An unavailable or incomplete record, source
 root, inventory, or projection fact yields `incomplete`. Unsafe identity or
 record or link ambiguity yields `blocked`. A missing or unknown inspect ID is
-`invalid`.
+`invalid-input`.
 
 The operation is read-only, deterministic, and stateless. It does not acquire a
 lock, create recovery state, write any file, follow a destination link to read
@@ -63,20 +66,20 @@ Exactly one Library ID is required in domain mode. It matches:
 
 The complete ID length is 1–128 characters. Matching is exact, case-sensitive,
 and limited to the `id` members of the selected workspace record. A malformed,
-missing, or unknown ID is `invalid`; duplicate or unsafe identity is `blocked`.
+missing, or unknown ID is `invalid-input`; duplicate or unsafe identity is `blocked`.
 
 The operand is a Library management identity, not an automatic source ID and
 not a source-reference operand. `.agents/...` path values, source IDs, and a
 source-root path are not alternate forms for this subject. There is no `--all`,
 source selector, inventory filter, link selector, or mutation flag.
 
-The shared flags are unchanged:
+The shared flags are:
 
 ```text
 --workspace <path>
---json
---view=compact|expanded
---verbose
+--format <text|json>
+--detail <minimal|standard|full|debug>
+--detail-filter <error|warning|info|all>
 --help
 --version
 ```
@@ -84,46 +87,28 @@ The shared flags are unchanged:
 Their grammar, defaults, repetition, composition, terminal behavior, and no-op
 rules remain in [Global CLI Flags](../../shared/global-flags/interface.md).
 
-## Workspace And Strict Record
+## Workspace And Ownership Record
 
-The consumer record is `.agents/open-forge.libraries.json`, separate from
-lifecycle ownership and consumer permissions. Its exact current schema is:
+Library selection reads the `libraries` claims in `.agents/open-forge.lock.json`.
+The shared ownership codec accepts understood keys without requiring an exact
+schema version or member set. It never reads the old Library or lifecycle file
+for selection. Each usable Library claim supplies `id`, `sourceRoot`,
+`destinationRoot`, and source-relative `paths`. IDs and paths are presented in
+ordinal order; typed portable identities and unambiguous mapped destinations
+remain required before using a claim. The destination root may be `.`; a source
+root may not. Link identity derives from the two roots and each source suffix.
+Permissions remain separate from ownership.
 
-```json
-{
-  "schemaVersion": 1,
-  "libraries": [
-    {
-      "id": "team-knowledge",
-      "sourceRoot": "shared/team-knowledge",
-      "destinationRoot": ".apm/agents/team",
-      "paths": ["checks/security.md", "review.md"]
-    }
-  ]
-}
-```
-
-Require exactly `schemaVersion` and `libraries` at the top level, and exactly
-`id`, `sourceRoot`, `destinationRoot` and `paths` per Library. Require integer
-`1`, existing Library-ID grammar, canonical portable roots and source-relative
-eligible paths. The destination root is `.` or a normal relative directory;
-source roots do not admit `.`. Unknown, missing, null, duplicate and wrongly
-typed members are malformed. No previous schema shape, migration or alternate
-reader is accepted.
-
-IDs and each source-relative path array use ordinal order. Paths are unique
-within a Library. Derived destinations must be unique across Libraries under
-portable identity; equal source-relative paths at different destinations are
-valid. Empty path arrays and an empty Library array are valid. The record stores
-no expected-link text, contents, hashes, timestamps, Git facts, dependencies,
-globs or per-file remapping. Link identity derives from both recorded roots and
-the source-relative path. Permission is separate from ownership and may be
-revoked independently.
-
-A missing record is a valid prior-absence fact for Attach and a complete empty
-List result. Inspect, Sync and Detach require the requested ID in a valid record.
-Malformed, unavailable and unsafe records retain their existing invalid,
-incomplete and blocked classification; none becomes an empty valid record.
+An absent, unreadable, nonordinary, malformed, or uninterpretable ownership lock
+provides no usable registrations and yields a `completed` ownership observation.
+It is never reported as a valid empty record: the record state remains `missing`,
+`unavailable`, or `invalid-input`, with unavailable counts and no selected paths.
+List returns no registrations; Inspect, Sync, and Detach select nothing and do
+not invent an unknown-ID error. Their `ownership-observation` finding explains
+why. A valid readable lock with no matching requested ID still yields `invalid-input`.
+Attach may verify new effects from its explicit source and destination inputs
+and publish ownership best-effort after verification. Read-only operations never
+reconstruct or write a lock. Matching files and old records create no claims.
 
 ## Source-Root Preconditions
 
@@ -134,9 +119,9 @@ ancestor and the selected root must be a real ordinary directory, without
 symlink, junction or reparse ancestry. No specially named child is required.
 The selected directory itself scopes the recursively discovered eligible files.
 
-An absent or non-directory source root is `invalid` for Attach. For an existing
+An absent or non-directory source root is `invalid-input` for Attach. For an existing
 registration, unavailable or missing source facts make Inspect or Sync
-`incomplete`; a readable non-directory root is `invalid`. Unsafe containment,
+`incomplete`; a readable non-directory root is `invalid-input`. Unsafe containment,
 linked ancestry or ambiguous identity is `blocked`. List reports only bounded
 root availability and does not enumerate descendants. An incomplete source is
 never an empty source inventory.
@@ -192,201 +177,197 @@ plus exact expected-link text and observed relative-link identity. A complete
 comparison has no `added`, `retired`, `missing`, or `changed` relation. It does
 not rely on an order supplied by directory enumeration.
 
-## Result Shape
+## Human Output
 
-JSON uses the shared schema-v1 envelope. The command-local `result` object has
-this complete member order:
+Every semantic result is rendered by the shared native report. --format text
+is the default. The applicable global flags are --workspace <path>, --format
+<text|json>, --detail <minimal|standard|full|debug>, repeatable
+--detail-filter <error|warning|info|all>, --help, and --version. The default
+detail is minimal; standard adds workspace and per-record state, full adds
+expected and observed targets, and debug adds bounded diagnostics on stderr.
+Detail does not change semantics, counts, ordering, or status. Filters select
+finding severities; all is the default filter.
+
+
+
+The catalogue text by detail level is:
+
+`minimal`, attention:
 
 ```text
-InspectResult {
-  record: InspectRecord,
-  source: SourceInventory,
-  projection: ProjectionComparison,
-  findings: Finding[]
-}
-
-InspectRecord {
-  path: `.agents/open-forge.libraries.json`,
-  state: "not-started" | "complete" | "missing" | "invalid" | "unavailable" | "blocked" | "failed" | "interrupted",
-  id: string | null,
-  sourceRoot: string | null,
-  destinationRoot: string | null,
-  registeredPaths: RegisteredPath[]
-}
-
-RegisteredPath {
-  sourcePath: string,
-  destinationPath: string,
-  expectedRelativeLink: string | null,
-  sourceId: string | null
-}
-
-SourceInventory {
-  rootState: "not-started" | "available" | "missing" | "invalid" | "unavailable" | "blocked",
-  state: "not-started" | "complete" | "incomplete" | "invalid" | "blocked" | "failed" | "interrupted",
-  eligiblePaths: EligiblePath[]
-}
-
-EligiblePath {
-  sourcePath: string,
-  destinationPath: string,
-  sourceId: string | null
-}
-
-ProjectionComparison {
-  state: "not-started" | "complete" | "incomplete" | "blocked" | "failed" | "interrupted",
-  comparisons: PathComparison[]
-}
-
-PathComparison {
-  sourcePath: string,
-  destinationPath: string,
-  sourceId: string | null,
-  relation: "not-started" | "current" | "added" | "retired" | "missing" | "changed" | "unavailable" | "blocked",
-  registered: RegisteredPath | null,
-  observedRelativeLink: string | null
-}
-
-Finding {
-  code: "library-inspect.invalid-id" | "library-inspect.unknown-id" |
-    "library-inspect.record-invalid" | "library-inspect.record-unavailable" |
-    "library-inspect.record-blocked" |
-    "library-inspect.source-root-invalid" | "library-inspect.source-root-unavailable" |
-    "library-inspect.source-root-blocked" | "library-inspect.inventory-incomplete" |
-    "library-inspect.path-added" | "library-inspect.path-retired" |
-    "library-inspect.link-missing" | "library-inspect.link-changed" |
-    "library-inspect.link-blocked" | "library-inspect.operation-failed" |
-    "library-inspect.interrupted",
-  status: SharedStatus,
-  libraryId: string | null,
-  path: string | null,
-  cause: bounded-string
-}
+team-knowledge needs a sync: 3 files differ between shared/team and docs.
+  Warning  docs/new-a.md      not linked yet; new in the source folder
+  Warning  docs/old.md        linked, but its source file is gone
+  Warning  docs/review.md     missing
+Next: open-forge library sync team-knowledge --dry-run
 ```
 
-Every array is present. A known empty eligible inventory is an empty array with
-complete inventory state. An unavailable inventory remains an empty array with
-an incomplete state and finding; it is not a known empty source. `sourceId` is
-null only when the destination-derived identity is not applicable or cannot be
-established safely.
+`standard` adds `Workspace:` and every file with its relation (`current`,
+`new in the source folder`, `source file gone`, `missing`, `changed`).
 
-Comparisons are ordered by canonical `destinationPath`, then `sourcePath`, with
-ordinal comparison. Registered and observed facts remain separate in each
-comparison. The inspected Library ID is not copied into `sourceId`.
+`full` adds expected and observed link targets and the inventory count.
+
+Completed and completed-with-warnings results use stdout; incomplete results
+also use stdout. Invalid-input, blocked, failed, and cancelled results use
+stderr. A parser failure is text on stderr without a result envelope.
+
+## Structured Output
+
+--format json emits one schema-3 envelope on stdout for each semantic result.
+The envelope has exactly these fields:
+
+~~~text
+{
+  schemaVersion: 3,
+  command,
+  status,
+  detail,
+  filter,
+  workspace,
+  summary,
+  findings,
+  effects,
+  counts,
+  limitations,
+  data,
+  recovery,
+  next
+}
+~~~
+
+The command is exactly library inspect; data follows the catalogue:
+
+| Level    | `data`                                                                                                                                                              |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| minimal  | `{ id, sourceFolder, destinationFolder, current: bool, files: [ { sourcePath, destinationPath, relation } ] }` (only non-current files at minimal; all at standard) |
+| standard | all files                                                                                                                                                           |
+| full     | + per file `expectedTarget`, `observedTarget`, `inventory { eligible, excluded }`                                                                                   |
+
+Human and JSON output are projections of one typed result. data is null only at
+the parser boundary before command binding. There is no alternate JSON
+projection.
 
 ## Semantic Results
 
-The command uses the shared seven statuses:
+| Status                  | When                                             | Headline                                                                                         | Exit | Stream |
+| ----------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ---: | ------ |
+| completed               | inventory equals the links                       | `<id> is current: <N> files from <source> are linked under <destination>.`                       |    0 | stdout |
+| completed               | empty source and no links                        | `<id> is current. The source folder <source> has no eligible files and no links are registered.` |    0 | stdout |
+| completed               | no ownership record                              | `No ownership record exists, so <id> cannot be inspected.`                                       |    0 | stdout |
+| completed-with-warnings | additions, retirements, missing or changed links | `<id> needs a sync: <K> files differ between <source> and <destination>.`                        |    2 | stdout |
+| incomplete              | source or record could not be scanned completely | `<id> could not be inspected completely: <limitation>.`                                          |    3 | stdout |
+| invalid-input           | bad or unknown ID                                | `Cannot inspect <ref>: <problem>.`                                                               |    4 | stderr |
+| blocked                 | unsafe mapping, containment or link              | `Cannot inspect <id>: <reason>.`                                                                 |    5 | stderr |
+| failed                  | unexpected error                                 | `Library inspect stopped because of an unexpected error: <reason>.`                              |    1 | stderr |
+| cancelled               | Ctrl+C                                           | `Library inspect was cancelled.`                                                                 |  130 | stderr |
 
-| Status        | Meaning for `library inspect`                                                                                                                       |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | The exact requested record, valid source root, complete eligible inventory, and exact registered/observed comparison are established with no drift. |
-| `attention`   | The source inventory and projection comparison are complete and safe, with additions, retirements, missing links, or changed links.                 |
-| `incomplete`  | A record, source-root, inventory, or projection fact is unavailable or incomplete. The command does not claim an empty or exact projection.         |
-| `invalid`     | The Library ID is malformed, missing, or unknown, or the strict record or source-root structure is invalid.                                         |
-| `blocked`     | Unsafe identity, containment, record, mapping, or link ambiguity prevents a safe comparison.                                                        |
-| `failed`      | An unexpected operation or result-formation failure occurred.                                                                                       |
-| `interrupted` | The caller interrupted the operation before its result was complete.                                                                                |
+### Current merged behavior and open questions
 
-When several ordinary conditions apply, status precedence is `failed`,
-`invalid`, `blocked`, `incomplete`, `attention`, then `complete`, with
-`interrupted` retaining its event meaning. A missing inspect ID is always
-`invalid`; it is never an empty successful inspection.
+For a Library whose destination is the workspace root, the merged minimal
+headline is team-knowledge is current: 1 file from shared/team is linked under ..
+The catalogue examples use a named destination folder such as docs and do not
+specify root-destination wording. Maintainer decision remains open.
 
-The `next` member of the shared envelope is `null` for this command. Inspect
-reports the exact comparison and does not select a repair or another operation.
+The shared native renderer emits a title line and a message line for findings;
+the catalogue examples show short-form finding lines. The shared renderer is the
+current behavior and this contract does not choose alternate wording.
 
-## Human And Structured Output
+An unreadable source currently produces two inventory-incomplete findings. The
+catalogue does not decide whether those observations should be collapsed.
+Maintainer decision remains open.
 
-Both human views begin with the inspection outcome, status, exact workspace
-and selection method, then Library identity, record state, source/destination
-roots, source-root state and inventory/comparison coverage. Human
-`requires attention` represents typed `attention`; it does not turn an incomplete
-inventory into a complete drift report.
+## Errors And Boundaries
 
-Comparison rows group source/destination identity, source ID, actual registration
-and eligibility membership, and the exact comparison relation. Registered or
-eligible paths absent from the comparison remain explicitly visible as not
-compared. No rendering step rescans files or infers membership from a relation.
-Every finding and safety/availability condition remains visible.
+The finding catalogue is:
 
-Expanded is the default and adds expected/observed relative link targets and
-supporting observations. Compact uses shorter rows while retaining all required
-identities, relations and findings. Paths are not truncated. `--verbose` remains
-a separate bounded diagnostic surface and never changes the typed result.
+| Code                                    | Severity | Family                | Message                                                                              | Next                                     |
+| --------------------------------------- | -------- | --------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------- |
+| library-inspect.invalid-id              | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.invalid-id`).      | `open-forge library list`                |
+| library-inspect.unknown-id              | error    | unknown-id            |                                                                                      | `open-forge library list`                |
+| library-inspect.record-invalid          | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.record-invalid`).          | `open-forge doctor`                      |
+| library-inspect.record-unavailable      | warning  | lifecycle-unavailable |                                                                                      |                                          |
+| library-inspect.record-blocked          | error    | lifecycle-blocked     |                                                                                      |                                          |
+| library-inspect.ownership-observation   | info     | ownership-observation |                                                                                      |                                          |
+| library-inspect.source-root-invalid     | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.source-root-invalid`).                     | none                                     |
+| library-inspect.source-root-unavailable | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.source-root-unavailable`).       | none                                     |
+| library-inspect.source-root-blocked     | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.source-root-blocked`).                           | none                                     |
+| library-inspect.inventory-incomplete    | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.inventory-incomplete`). | none                                     |
+| library-inspect.path-added              | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.path-added`).                       | `open-forge library sync <id> --dry-run` |
+| library-inspect.path-retired            | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.path-retired`).                            | `open-forge library sync <id> --dry-run` |
+| library-inspect.link-missing            | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.link-missing`).                                                        | `open-forge library sync <id> --dry-run` |
+| library-inspect.link-changed            | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.link-changed`).                             | fix by hand                              |
+| library-inspect.link-blocked            | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.link-blocked`).                          | `open-forge doctor`                      |
+| library-inspect.operation-failed        | error    | operation-failed      |                                                                                      |                                          |
+| library-inspect.interrupted             | error    | interrupted           |                                                                                      |                                          |
 
-`--json` emits one complete structured result from the same typed result for
-every semantic status and never prompts. Human `complete`, `attention`, and
-`incomplete` output uses stdout. Human `invalid`, `blocked`, `failed`, and
-`interrupted` output uses stderr. Bounded diagnostics use stderr under the
-shared result-coordinate rules.
+Findings retain code, severity, family, message, subject, cause, and next
+action when available. Counts are:
 
-## Errors And Non-Goals
+`sourceFiles`, `linksCurrent`, `filesAdded`, `filesRetired`, `linksMissing`, `linksChanged`.
 
-Every human error names `library inspect`, the supplied Library ID, the record or
-path when known, the cause, and the bounded next fact needed to understand the
-failure. A missing record or unknown ID does not select a nearby ID. An
-unavailable inventory does not become a zero-length inventory. An unsafe or
-ambiguous link does not become a changed link.
+## Scenarios
 
-`library inspect` does not:
+`current`, `added-source-files`, `retired-source-files`, `missing-links`,
+`changed-links`, `empty-source`, `source-unreadable` (incomplete),
+`unknown-id` (invalid), `no-ownership-record` (info), `invalid-id`, `blocked-mapping`.
 
-- Accept an automatic source ID, exact `.agents` source path, or source-root
-  operand in place of the Library ID.
-- Limit the inventory to a named path or report a partial inventory as exact.
-- Follow destination links to read source bytes or inspect unregistered files.
-- Create, remove, retarget, or repair links or the Library record.
-- Acquire a lock or create recovery, cache, index, or receipt state.
-- Change route meaning, generated navigation, or Framework loading.
+## Representative Transcripts
 
-## Examples
+### completed
 
-Inspect one exact Library ID:
+~~~text
+team-knowledge is current: 1 file from shared/team is linked under ..
+Workspace: <workspace>
+~~~
 
-```text
-open-forge library inspect team-knowledge
-```
+### completed-with-warnings
 
-Request the complete comparison as structured output:
+~~~text
+team-knowledge needs a sync: 1 file differs between shared/team and ..
+Workspace: <workspace>
+  Warning  .agents/directives/review.md  Registered link is missing
+         .agents/directives/review.md  missing
+Next: open-forge library sync team-knowledge --dry-run
+~~~
 
-```text
-open-forge library inspect team-knowledge --json
-```
+### incomplete
 
-Select one exact workspace and compact human output:
+~~~text
+team-knowledge could not be inspected completely: Some files under shared/team could not be listed, so the comparison could not finish.
+Workspace: <workspace>
+  Warning  .agents/directives/review.md  Source inventory is incomplete
+         Some files under shared/team could not be listed, so the comparison could not finish.
+  Warning  shared/team  Source inventory is incomplete
+         Some files under shared/team could not be listed, so the comparison could not finish.
+~~~
 
-```text
-open-forge library inspect team-knowledge --workspace ../workspace --view=compact
-```
+### invalid-input
 
-## Public EndToEnd Journeys (exactly three)
+~~~text
+Cannot inspect unknown: No Library has the ID unknown.
+Next: open-forge library list
+~~~
 
-These are the only public EndToEnd journeys for `library inspect`:
+### blocked
 
-1. **Healthy exact record plus complete inventory.** With one exact strict
-   record, a real ordinary source root, a complete eligible inventory, and
-   matching registered links, invoke `open-forge library inspect <library-id>`
-   and observe deterministic `complete` facts and destination-derived source
-   IDs.
-2. **Missing ID, invalid.** With a readable strict record, invoke
-   `open-forge library inspect` without the required ID and observe `invalid`
-   with no source inventory or projection claim.
-3. **Complete inventory additions, retirements, and link drift, attention.** With
-   a strict record and a safely complete inventory whose set and registered
-   links contain an addition, a retirement, and a missing or changed link,
-   invoke Inspect and observe `attention` with each exact comparison relation.
-   Incomplete and unsafe boundaries remain lower-tier evidence, not additional
-   public journeys.
+~~~text
+Cannot inspect team-knowledge: .agents/linked/review.md  could not be checked safely: The Library destination parent is not a real ordinary directory.
+Workspace: <workspace>
+  Error  .agents/linked/review.md  Registered link is blocked
+         .agents/linked/review.md  could not be checked safely: The Library destination parent is not a real ordinary directory.
+~~~
 
-## Lower-Tier Conformance
+### failed
 
-Unit and Integration evidence may cover malformed and unavailable records,
-duplicate IDs and mappings, source-root containment and ordinary-directory
-checks, complete eligibility filtering, unreadable or unsafe inventory
-boundaries, exact path-set comparison, all safe drift relations, source-ID
-derivation, deterministic ordering, shared result coordinates, stream
-selection, and unchanged workspace bytes. Those cases do not add public
-EndToEnd journeys beyond the three above.
+~~~text
+Library inspect stopped because of an unexpected error: <reason>.
+~~~
+
+### cancelled
+
+~~~text
+Library inspect was cancelled.
+~~~
 
 ## Related Current Sources
 
@@ -399,23 +380,10 @@ EndToEnd journeys beyond the three above.
 - [Shared Result Coordinates Interface Contract](../../shared/result-coordinates/interface.md)
 - [CLI Architecture](../../../architecture.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
+CLI help syntax: [`library.inspect.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Library/Inspect/LibraryInspectText.cs).
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef library.inspect.help.syntax -->

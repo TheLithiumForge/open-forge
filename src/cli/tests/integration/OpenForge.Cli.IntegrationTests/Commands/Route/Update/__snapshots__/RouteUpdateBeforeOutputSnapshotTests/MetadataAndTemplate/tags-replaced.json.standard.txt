@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 3,
+  "command": "route update",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Updated memory/project-alpha/overview",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/memory/project-alpha/overview.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/project-alpha/_project-alpha.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "fieldsChanged": 1,
+    "sectionsUpdated": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "memory/project-alpha/overview",
+      "path": ".agents/memory/project-alpha/overview.md"
+    },
+    "changes": [
+      {
+        "field": "tags",
+        "before": "#Before #Memory",
+        "after": "#Docs #Guide"
+      }
+    ],
+    "template": null,
+    "listedIn": ".agents/memory/project-alpha/_project-alpha.md"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

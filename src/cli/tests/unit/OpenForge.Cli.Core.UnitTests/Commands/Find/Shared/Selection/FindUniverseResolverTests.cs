@@ -296,6 +296,7 @@ public sealed class FindUniverseResolverTests
             ]),
     };
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find selectors retain source-reference form, expansion kind, and typed unresolved outcomes")]
     [MemberData(nameof(SelectorScenarios), DisableDiscoveryEnumeration = true)]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
@@ -352,6 +353,7 @@ public sealed class FindUniverseResolverTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find include and exclude algebra deduplicates logical sources, is order independent, and gives exclusion priority")]
     [MemberData(nameof(AlgebraScenarios), DisableDiscoveryEnumeration = true)]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
@@ -380,6 +382,7 @@ public sealed class FindUniverseResolverTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find effective selection projects only in-scope candidates and catalogue issues")]
     [MemberData(nameof(ScopeScenarios), DisableDiscoveryEnumeration = true)]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
@@ -403,6 +406,7 @@ public sealed class FindUniverseResolverTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find catalogue issues map to exact findings and candidate-count knowledge")]
     [MemberData(nameof(CatalogueIssueScenarios), DisableDiscoveryEnumeration = true)]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
@@ -442,7 +446,7 @@ public sealed class FindUniverseResolverTests
                 [new FindRegion(FindRegionKind.Body, null, "body")]));
         var presentation = new FindPresentationSelection(
             null,
-            CliView.Expanded,
+            CliDetail.Standard,
             new FindContentSelection([], []));
         var request = new FindRequest(
             fixture.Workspace,

@@ -1,0 +1,8 @@
+status=failed
+mode=apply
+selection=automatic
+repairs=2
+remaining=1
+library-steps=0
+verification=planned
+next=present

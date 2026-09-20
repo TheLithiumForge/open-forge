@@ -12,7 +12,6 @@ open-forge:
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Open Forge turns incomplete natural intent into decision-ready context through recommendations, consequential questions, visible assumptions, and proportionate durable extraction](adaptive-decision-elicitation.md) - #Memory #Decision #CurrentTruth #Product #Framework #Conversation #Elicitation #UserExperience
 - [Open Forge states role and authority relationships directly, names semantic authority by source type, and reserves ownership for possession or managed lifecycle](authoritative-source-terminology.md) - #Memory #Decision #CurrentTruth #Terminology #Authority #Documentation
 - [Open Forge uses one canonical authoring form wherever Markdown carries Framework meaning while treating compatibility syntax as input-only](canonical-markdown.md) - #Memory #Decision #CurrentTruth #Framework #Markdown #Authoring #Syntax #Compatibility
@@ -28,4 +27,4 @@ open-forge:
 - [Templates are a distinct Core primitive for copy-ready source artifacts whose ownership transfers to independently maintained results](template-primitive.md) - #Memory #Decision #CurrentTruth #Core #Template #Primitive
 - [Open Forge writing is clear on first read, technically precise, consistent, predictable, and concise](user-facing-writing.md) - #Memory #Decision #CurrentTruth #Formatting #Documentation #Routing
 - [Workflows use a minimal goal, steps, and completion recipe while relationships remain explicit in ordinary links and steps](workflow-shape.md) - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration
-<!-- open-forge:generated-index:end -->
+- [A workspace keeps one authored settings file and one generated lock file, and the lock records ownership rather than policing integrity](workspace-state-files.md) - #Memory #Decision #CurrentTruth #CLI #Lifecycle #Configuration #Permissions #State

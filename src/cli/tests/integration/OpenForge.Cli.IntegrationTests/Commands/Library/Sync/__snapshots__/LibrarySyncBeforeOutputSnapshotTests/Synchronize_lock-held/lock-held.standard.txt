@@ -1,0 +1,9 @@
+Cannot synchronize team-knowledge: another Open Forge command holds the workspace lock. Nothing was changed.
+Workspace: <workspace>
+workspace-lock-unavailable
+  Error  team-knowledge  Workspace lock is unavailable
+         Another Open Forge command holds the workspace lock. Nothing was changed.
+  not started  .agents/directives/added.md
+    Target: ../../shared/team-knowledge/.agents/directives/added.md
+  1 link unchanged
+  .agents/open-forge.lock.json  not started

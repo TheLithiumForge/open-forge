@@ -1,0 +1,6 @@
+status=completed-with-warnings
+library=team-knowledge
+source-files=1
+comparisons=1
+findings=1
+The eligible registered destination differs from its expected relative link.

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 3,
+  "command": "route list",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "1 route listed.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "routes": 1,
+    "roots": 1,
+    "depth": 1
+  },
+  "limitations": [],
+  "data": {
+    "subject": {
+      "id": "docs/reference",
+      "path": ".agents/docs/reference.md"
+    },
+    "depth": 1,
+    "rows": [
+      {
+        "id": "docs/reference",
+        "path": ".agents/docs/reference.md",
+        "description": "Reference",
+        "tags": [
+          "Docs"
+        ],
+        "relativeDepth": 0
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Models;
 
 public sealed class SourceModelContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source model enums retain their exact cross-topic vocabulary")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void CrossTopicEnumsRemainFiniteAndOrdered()
@@ -19,6 +20,7 @@ public sealed class SourceModelContractTests
         Assert.Equal(["Routed", "Unrouted", "Ambiguous", "Unavailable"], Enum.GetNames<SourceRouteState>());
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source model issue vocabularies do not carry command status or rendering policy")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void IssueVocabulariesRemainTypedFacts()

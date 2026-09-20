@@ -11,6 +11,7 @@ namespace OpenForge.Cli.IntegrationTests.Serialization;
 
 public sealed class GeneratedSerializationTests
 {
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Source-generated JSON serializes registered concrete shape")]
     [Trait("Feature", "cli-serialization"), Trait("Evidence", "Integration")]
     public void SourceGeneratedJsonSerializesRegisteredConcreteShape()
@@ -27,6 +28,7 @@ public sealed class GeneratedSerializationTests
         Assert.False(JsonSerializer.IsReflectionEnabledByDefault);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Static YAML context parses every registered metadata shape")]
     [Trait("Feature", "cli-serialization"), Trait("Evidence", "Integration")]
     public void StaticYamlContextParsesEveryRegisteredMetadataShape()
@@ -49,6 +51,7 @@ public sealed class GeneratedSerializationTests
             deserializer.Deserialize<FrameworkAuthoredMetadataYamlDocument>("open-forge: [\n"));
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Static YAML context returns null for an empty document")]
     [Trait("Feature", "cli-serialization"), Trait("Evidence", "Integration")]
     public void StaticYamlContextReturnsNullForEmptyDocument()
@@ -60,6 +63,7 @@ public sealed class GeneratedSerializationTests
         Assert.Null(metadata);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Static YAML context serializes canonical Framework metadata")]
     [Trait("Feature", "cli-serialization"), Trait("Evidence", "Integration")]
     public void StaticYamlContextSerializesCanonicalFrameworkMetadata()

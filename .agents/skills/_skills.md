@@ -8,7 +8,7 @@ open-forge:
 
 ## Which specialized capability would help with this work?
 
-Skills provide specialized capabilities through native `SKILL.md` packages. Each Skill follows the rules in its own `SKILL.md`.
+A Skill is a native capability package entered through `SKILL.md`. That file defines how to use the Skill and its supporting resources.
 
 ## Axioms
 
@@ -18,5 +18,4 @@ Skills provide specialized capabilities through native `SKILL.md` packages. Each
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
-<!-- open-forge:generated-index:end -->
+- [Select and follow an installed workflow for project vision, architecture, planning, implementation, debugging, review, or coordinated delivery. Use when the user requests a workflow or an installed recipe would materially improve the task. Recipes can combine the workspace's configured skills, tools, and agents; this skill does not supply their runtime.](use-workflow/SKILL.md) - #Skill

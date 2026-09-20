@@ -10,79 +10,28 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Remove;
 
 public sealed class ExtensionRemovePlanContractTests
 {
-    [Theory(DisplayName = "Extension Remove planning binds changed-owner action to same-request prune"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
-    [InlineData(false, false, false, (int)ExtensionRemovePathAction.KeepAsUnmanaged)]
-    [InlineData(true, true, false, (int)ExtensionRemovePathAction.Delete)]
-    [InlineData(false, false, true, (int)ExtensionRemovePathAction.KeepAsUnmanaged)]
-    public void PlanningBindsChangedOwnerActionToPrune(
-        bool prune,
-        bool automatic,
-        bool allowInteraction,
-        int expectedActionValue)
+    [Trait("Boundary", "Processing")]
+    [Theory(DisplayName = "Extension Remove deletes final-owner content in every interaction mode"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(false, false)]
+    public void PlanningDeletesFinalOwnerContent(bool automatic, bool allowInteraction)
     {
-        var expectedAction = (ExtensionRemovePathAction)expectedActionValue;
-        var request = Request(prune, automatic, allowInteraction);
-        var path = PathPlan(
-            ".agents/changed.md",
-            ExtensionRemovePathClassification.ChangedFinalOwner,
-            ["toolkit"],
-            [],
-            expectedAction);
-
         var plan = CreatePlan(
-            request,
+            Request(automatic, allowInteraction),
             new ExtensionRemoveSelection(ExtensionRemoveSelectionKind.ExplicitIds, ["toolkit"]),
             Dependencies(),
-            [path]);
-
-        Assert.Equal(expectedAction, Assert.Single(plan.Planning.Decisions).Path.Action);
-    }
-
-    [Fact(DisplayName = "Extension Remove prompt-capable planning honors the wizard delete choice"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
-    public void PromptPlanningHonorsDeleteChoice()
-    {
-        var request = Request(prune: false, automatic: false, allowInteraction: true);
-        var path = PathPlan(
-            ".agents/changed.md",
-            ExtensionRemovePathClassification.ChangedFinalOwner,
-            ["toolkit"],
-            [],
-            ExtensionRemovePathAction.Delete);
-
-        var plan = CreatePlan(
-            request,
-            new ExtensionRemoveSelection(ExtensionRemoveSelectionKind.InteractiveIds, ["toolkit"]),
-            Dependencies(),
-            [path],
-            ExtensionRemoveChangedContentPolicy.Delete);
+            [PathPlan(".agents/changed.md", ExtensionRemovePathClassification.FinalOwner,
+                ["toolkit"], [], ExtensionRemovePathAction.Delete)]);
 
         Assert.Equal(ExtensionRemovePathAction.Delete, Assert.Single(plan.Planning.Decisions).Path.Action);
-        Assert.Equal(ExtensionRemoveSelectionKind.InteractiveIds, plan.Selection.SelectedBy);
     }
 
-    [Fact(DisplayName = "Extension Remove noninteractive planning cannot select delete without prune"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
-    public void NoninteractivePlanningRejectsUnrequestedDelete()
-    {
-        var request = Request(prune: false, automatic: true, allowInteraction: false);
-        var path = PathPlan(
-            ".agents/changed.md",
-            ExtensionRemovePathClassification.ChangedFinalOwner,
-            ["toolkit"],
-            [],
-            ExtensionRemovePathAction.Delete);
-
-        Assert.Throws<ArgumentException>(() => CreatePlan(
-            request,
-            new ExtensionRemoveSelection(ExtensionRemoveSelectionKind.ExplicitIds, ["toolkit"]),
-            Dependencies(),
-            [path],
-            ExtensionRemoveChangedContentPolicy.Delete));
-    }
-
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove plan snapshots request selection, paths, topology, and effects"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void PlanPreservesCohesiveFacts()
     {
-        var request = Request(prune: false, automatic: true, allowInteraction: false);
+        var request = Request(automatic: true, allowInteraction: false);
         var selection = new ExtensionRemoveSelection(
             ExtensionRemoveSelectionKind.ExplicitIds,
             ["toolkit"]);
@@ -91,7 +40,7 @@ public sealed class ExtensionRemovePlanContractTests
         {
             PathPlan(
                 "z-path",
-                ExtensionRemovePathClassification.UnchangedFinalOwner,
+                ExtensionRemovePathClassification.FinalOwner,
                 ["toolkit"],
                 [],
                 ExtensionRemovePathAction.Delete),
@@ -115,6 +64,7 @@ public sealed class ExtensionRemovePlanContractTests
         Assert.True(plan.IsNoOp);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove plan records an effect as non-no-op and retains its result identity"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void PlanRetainsPlannedEffects()
     {
@@ -133,12 +83,12 @@ public sealed class ExtensionRemovePlanContractTests
         };
 
         var plan = CreatePlan(
-            Request(prune: false, automatic: true, allowInteraction: false),
+            Request(automatic: true, allowInteraction: false),
             new ExtensionRemoveSelection(ExtensionRemoveSelectionKind.ExplicitIds, ["toolkit"]),
             Dependencies(),
             [PathPlan(
                 ".agents/toolkit.md",
-                ExtensionRemovePathClassification.UnchangedFinalOwner,
+                ExtensionRemovePathClassification.FinalOwner,
                 ["toolkit"],
                 [],
                 ExtensionRemovePathAction.Delete)],
@@ -148,20 +98,21 @@ public sealed class ExtensionRemovePlanContractTests
         Assert.Same(effect, Assert.Single(plan.Effects).Result);
     }
 
-    [Fact(DisplayName = "Extension Remove plan rejects mismatched selections owners duplicate paths and prune actions"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Extension Remove plan rejects mismatched selections owners duplicate paths"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void PlanRejectsMismatchedAndDuplicateFacts()
     {
-        var request = Request(prune: false, automatic: true, allowInteraction: false);
+        var request = Request(automatic: true, allowInteraction: false);
         var selection = new ExtensionRemoveSelection(
             ExtensionRemoveSelectionKind.ExplicitIds,
             ["toolkit"]);
         var dependencies = Dependencies();
         var path = PathPlan(
             ".agents/changed.md",
-            ExtensionRemovePathClassification.ChangedFinalOwner,
+            ExtensionRemovePathClassification.FinalOwner,
             ["toolkit"],
             [],
-            ExtensionRemovePathAction.KeepAsUnmanaged);
+            ExtensionRemovePathAction.Delete);
 
         Assert.Throws<ArgumentException>(() => CreatePlan(
             request,
@@ -178,7 +129,7 @@ public sealed class ExtensionRemovePlanContractTests
             dependencies,
             [PathPlan(
                 ".agents/other.md",
-                ExtensionRemovePathClassification.UnchangedFinalOwner,
+                ExtensionRemovePathClassification.FinalOwner,
                 ["other"],
                 [],
                 ExtensionRemovePathAction.Delete)]));
@@ -187,30 +138,15 @@ public sealed class ExtensionRemovePlanContractTests
             selection,
             dependencies,
             [path, path]));
-        Assert.Throws<ArgumentException>(() => CreatePlan(
-            Request(prune: true, automatic: true, allowInteraction: false),
-            selection,
-            dependencies,
-            [path]));
-        Assert.Throws<ArgumentException>(() => CreatePlan(
-            request,
-            selection,
-            dependencies,
-            [PathPlan(
-                ".agents/changed.md",
-                ExtensionRemovePathClassification.ChangedFinalOwner,
-                ["toolkit"],
-                [],
-                ExtensionRemovePathAction.Delete)]));
+
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove planning facts expose no-op and blocked decisions"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void PlanningFactsExposeNoOpAndBlockedStates()
     {
         var retained = new ExtensionRemovePlanningPlan
         {
-            Authority = new ExtensionRemovePlanningAuthority(
-                ExtensionRemoveChangedContentPolicy.KeepAsUnmanaged),
             Decisions =
             [
                 new ExtensionRemovePlanningDecision
@@ -227,8 +163,6 @@ public sealed class ExtensionRemovePlanContractTests
         };
         var blocked = new ExtensionRemovePlanningPlan
         {
-            Authority = new ExtensionRemovePlanningAuthority(
-                ExtensionRemoveChangedContentPolicy.KeepAsUnmanaged),
             Decisions =
             [
                 new ExtensionRemovePlanningDecision
@@ -255,7 +189,6 @@ public sealed class ExtensionRemovePlanContractTests
         ExtensionRemoveSelection selection,
         ExtensionRemoveDependencyPlan dependencies,
         IEnumerable<ExtensionRemovePathPlan> paths,
-        ExtensionRemoveChangedContentPolicy policy = ExtensionRemoveChangedContentPolicy.KeepAsUnmanaged,
         IEnumerable<ExtensionRemovePlannedEffect>? effects = null)
     {
         var decisions = paths.Select(path => new ExtensionRemovePlanningDecision
@@ -264,7 +197,6 @@ public sealed class ExtensionRemovePlanContractTests
             Disposition = path.Action switch
             {
                 ExtensionRemovePathAction.RetainShared => ExtensionRemovePlanningDisposition.Retain,
-                ExtensionRemovePathAction.KeepAsUnmanaged => ExtensionRemovePlanningDisposition.Retain,
                 ExtensionRemovePathAction.Delete => ExtensionRemovePlanningDisposition.Delete,
                 ExtensionRemovePathAction.ReleaseOwnership => ExtensionRemovePlanningDisposition.ReleaseOwnership,
                 _ => throw new ArgumentOutOfRangeException(nameof(path), path.Action, "The test path action is not defined."),
@@ -277,7 +209,6 @@ public sealed class ExtensionRemovePlanContractTests
             Dependencies = dependencies,
             Planning = new ExtensionRemovePlanningPlan
             {
-                Authority = new ExtensionRemovePlanningAuthority(policy),
                 Decisions = decisions,
             },
             Topology = new ExtensionRemoveTopology
@@ -287,21 +218,17 @@ public sealed class ExtensionRemovePlanContractTests
                 ProtectedPaths = new HashSet<string>(StringComparer.Ordinal),
             },
             Effects = (effects ?? []).ToArray(),
-            LifecycleChange = null,
-            LifecycleRecoveryTarget = null,
         };
         return ExtensionRemovePlan.Create(input);
     }
 
     private static ExtensionRemoveRequest Request(
-        bool prune,
         bool automatic,
         bool allowInteraction)
         => new(
             Workspace(),
             ExtensionRemoveMode.Apply,
             ["toolkit"],
-            prune,
             automatic,
             allowInteraction);
 

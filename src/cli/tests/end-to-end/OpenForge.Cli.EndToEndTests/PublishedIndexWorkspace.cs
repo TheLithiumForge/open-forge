@@ -5,7 +5,7 @@ namespace OpenForge.Cli.EndToEndTests;
 
 internal sealed class PublishedIndexWorkspace : IDisposable
 {
-    private const string StaleEntries = "stale";
+    private const string StaleEntries = "- stale";
 
     internal const string RootPath = ".agents/root/_root.md";
     internal const string ExpectedEntry = "- [Child](child.md) - #Docs";

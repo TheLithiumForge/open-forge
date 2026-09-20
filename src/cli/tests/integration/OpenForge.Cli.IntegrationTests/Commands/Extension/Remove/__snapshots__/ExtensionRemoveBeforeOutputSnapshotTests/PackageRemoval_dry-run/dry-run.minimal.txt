@@ -1,0 +1,2 @@
+Would remove the toolkit Extension.
+  .agents/toolkit.md  would delete

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 3,
+  "command": "route list",
+  "status": "incomplete",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "The listing is incomplete.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "route-list.read-unavailable",
+      "title": "Route boundary is unreadable",
+      "message": ".agents/docs/_docs.md could not be read, so the routes below it are not listed.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/_docs.md",
+        "id": ".agents/docs/_docs.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routes": 0,
+    "roots": 1,
+    "depth": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "subject": null,
+    "depth": 1,
+    "rows": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the route boundary with open-forge doctor."
+  }
+}

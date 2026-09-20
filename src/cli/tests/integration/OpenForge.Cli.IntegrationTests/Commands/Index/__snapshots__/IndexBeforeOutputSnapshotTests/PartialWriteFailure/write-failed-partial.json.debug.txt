@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 3,
+  "command": "index",
+  "status": "failed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Index stopped after 1 of 2 files.",
+    "kind": "failed"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "index.write-failed",
+      "title": "Write failed",
+      "message": "Writing .agents/beta/_beta.md failed. Stopped after 1 of 2 changes. Recovery data: <recovery-bundle>.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/beta/_beta.md",
+        "id": "beta",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/alpha/_alpha.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/beta/_beta.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "filesChecked": 1,
+    "filesUpdated": 1,
+    "filesCurrent": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "changes": [
+      {
+        "path": ".agents/alpha/_alpha.md",
+        "before": null,
+        "after": 1,
+        "diff": [
+          "- - stale\n",
+          "+ - [Alpha Child](child.md) - #Alpha\n"
+        ]
+      },
+      {
+        "path": ".agents/beta/_beta.md",
+        "before": null,
+        "after": 1,
+        "diff": [
+          "- - stale\n",
+          "+ - [Beta Child](child.md) - #Beta\n"
+        ]
+      }
+    ],
+    "unchanged": [],
+    "selection": {
+      "origin": "explicit-sources",
+      "scope": "detached",
+      "sources": [
+        {
+          "id": "alpha",
+          "path": ".agents/alpha/_alpha.md"
+        },
+        {
+          "id": "beta",
+          "path": ".agents/beta/_beta.md"
+        }
+      ]
+    },
+    "regions": [
+      {
+        "path": ".agents/alpha/_alpha.md",
+        "action": "update",
+        "outcome": "verified"
+      },
+      {
+        "path": ".agents/beta/_beta.md",
+        "action": "update",
+        "outcome": "not-started"
+      }
+    ]
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the reported problem before rerunning Index."
+  }
+}

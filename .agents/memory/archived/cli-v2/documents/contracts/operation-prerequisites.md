@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Direct typed prerequisites, result behavior, and exact capability gates for every replacement CLI operation
+  description: "Historical CLI-v2 source: Direct typed prerequisites, result behavior, and exact capability gates for every replacement CLI operation"
   responsibility: Define what each command must prove before useful inspection or mutation without turning Framework presence into a universal permission switch
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

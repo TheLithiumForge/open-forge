@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 3,
+  "command": "library inspect",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "No ownership record exists, so team-knowledge cannot be inspected.",
+    "kind": "done"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "library-inspect.ownership-observation",
+      "title": "Ownership record is missing",
+      "message": "No ownership record exists, so team-knowledge cannot be inspected.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sourceFiles": 0,
+    "linksCurrent": 0,
+    "filesAdded": 0,
+    "filesRetired": 0,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "team-knowledge",
+    "sourceFolder": null,
+    "destinationFolder": null,
+    "current": false,
+    "files": [],
+    "inventory": {
+      "eligible": 0,
+      "excluded": 0
+    }
+  },
+  "recovery": null,
+  "next": null
+}

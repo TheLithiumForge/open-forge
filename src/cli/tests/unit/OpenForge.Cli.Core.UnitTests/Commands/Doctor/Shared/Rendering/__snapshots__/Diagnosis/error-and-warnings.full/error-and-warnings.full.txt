@@ -1,0 +1,43 @@
+No errors. 3 warnings and 3 info findings were recorded.
+Workspace
+  Warning  .agents/directives/broken.md  Frontmatter is invalid [workspace.frontmatter-malformed]
+         The frontmatter block is not closed.
+         fix by hand
+         Fix it by hand.
+         Fix it by hand.
+         state: blocked
+         read from .agents/directives/broken.md
+Links
+  Warning  .agents/directives/review.md:12:4  Broken link [reference.target-missing]
+         The linked file was not found: ../guidance/testing.md.
+         needs a choice
+         open-forge repair
+         Choose one of the bounded candidates.
+         .agents/guidance/testing.md: filename match
+         state: missing
+         read from .agents/directives/review.md
+  Warning  .agents/directives/second.md:12:4  Broken link [reference.target-missing]
+         The linked file was not found: missing.md. No possible target was found.
+         needs a choice
+         Fix the link by hand.
+         Fix the link by hand.
+         state: missing
+         read from .agents/directives/second.md
+  Info  .agents/directives/review.md  Link target type is unsupported [reference.target-unsupported]
+         guide.png is a kind of file Open Forge does not check.
+         state: unavailable
+         read from .agents/directives/review.md
+Framework files
+  Info  .agents/open-forge.lock.json  No ownership record [framework.ownership-observation]
+         No ownership record exists, so Framework files cannot be read from it.
+         state: unavailable
+         read from .agents/open-forge.lock.json
+Routes and Entries
+  Info  .agents/routes.md  Route Axioms are invalid [route.axioms-invalid]
+         .agents/routes.md has no Axioms section, or its Axioms section is malformed.
+         state: unavailable
+         read from .agents/routes.md
+  21 links and 20 routes checked.
+  2 need a choice, 1 must be fixed by hand.
+  Review the findings and choose a repair.
+Next: open-forge repair

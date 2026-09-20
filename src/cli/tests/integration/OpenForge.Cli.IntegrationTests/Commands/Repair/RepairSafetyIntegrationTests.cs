@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Repair;
 
 public sealed class RepairSafetyIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Repair automatic dry-run previews one safe-exact effect and leaves workspace, lock, "
         + "recovery, and temporary state unchanged"),
      Trait("Feature", "repair"), Trait("Evidence", "Integration")]
@@ -43,6 +44,7 @@ public sealed class RepairSafetyIntegrationTests
         workspace.AssertNoWriteInfrastructure();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Repair without automatic, explicit, or interactive authority blocks before any "
         + "workspace effect"),
      Trait("Feature", "repair"), Trait("Evidence", "Integration")]
@@ -72,6 +74,7 @@ public sealed class RepairSafetyIntegrationTests
         workspace.AssertNoWriteInfrastructure();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Repair stale explicit destination blocks the complete plan before recovery or writes"),
      Trait("Feature", "repair"), Trait("Evidence", "Integration")]
     public async Task StaleExplicitDestinationBlocksBeforeWrites()
@@ -89,13 +92,14 @@ public sealed class RepairSafetyIntegrationTests
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Contains(
             result.Findings,
-            finding => finding.Status == CliSemanticStatus.Blocked);
+            finding => finding.Code == RepairFindingCode.ProposalUnavailable);
         Assert.Equal(RepairApplicationState.NotRequested, result.Application.State);
         Assert.Equal(RepairRecoveryState.NotRequired, result.Recovery.State);
         Assert.Equal(before, workspace.SnapshotState());
         workspace.AssertNoWriteInfrastructure();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Repair disappearing explicit target blocks without selecting a fallback or "
         + "partially applying"),
      Trait("Feature", "repair"), Trait("Evidence", "Integration")]
@@ -115,7 +119,7 @@ public sealed class RepairSafetyIntegrationTests
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Contains(
             result.Findings,
-            finding => finding.Status == CliSemanticStatus.Blocked);
+            finding => finding.Code == RepairFindingCode.ProposalUnavailable);
         Assert.Equal(RepairApplicationState.NotRequested, result.Application.State);
         Assert.Equal(RepairRecoveryState.NotRequired, result.Recovery.State);
         Assert.Equal(before, workspace.SnapshotState());

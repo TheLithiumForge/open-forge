@@ -1,0 +1,91 @@
+{
+  "base": "2b31f4e41d7c445f416408d6b192478e3b2d0eb4",
+  "status": "committed private cleanup",
+  "paths": [
+    {
+      "path": ".agents/directives/csharp/_csharp.md",
+      "sha256": "8726137acba1c4fd93e049bb9f97d83745f6d04feb1a4551bf3361b828c69d2b"
+    },
+    {
+      "path": ".agents/directives/open-forge/testing/_testing.md",
+      "sha256": "76ee14553114fc43358f461a594edaf1124076ad4ebe39458254e8f665d3de7a"
+    },
+    {
+      "path": ".agents/directives/open-forge/testing/bun/_bun.md",
+      "sha256": "6bbe724f7f0fefafb2016faf290bd67311e991bce3c9c283d7c4b56f6341698c"
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/extensions/_extensions.md",
+      "sha256": "0aa72f64f2fe308d4d5e8ab8dd3e61fc40065d810f9422d8dd45e5e3187da1f5"
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/extensions/extension-package-boundary.md",
+      "sha256": "6f5bcb899ec3516fdc02f422ea089cd6317ad467625cecee5f9bc1567eb7a352"
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/framework/_framework.md",
+      "sha256": "972df098ce45ccef2b60564dbe6a9c56c0158ca35917c60106426f44e1da0c5a"
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/framework/loading-reliability.md",
+      "sha256": "3a6bc1067ecb8ee2075218057e698b9cec04deec3aba57ea9deea321eed4d79c"
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/framework/map-primitive.md",
+      "sha256": "91d5905433c36e084d04ea00d1882667d8cd56c8ccbd06dd064c04a00903cc69"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/memory/_memory.md",
+      "sha256": "bfb348ce4b40fa5644950b4422762a3fb478bd8a63bc65b9d6f990d0803e25d0"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/memory/archived.md",
+      "sha256": "e3469c6894175542113f217505cd7a16b17828bfd4408c8bb6566b4d828f13ba"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/memory/emerging.md",
+      "sha256": "5b39a6cc7bfd70368b0b10802e5b0f52d662baf09f4f20be5316aa9d104e356d"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/framework/memory/working.md",
+      "sha256": "bd80915a9f2a58c6bd9ae0be26b0a636eba6fea2f454cc023114e12c1201f739"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/helpers/_helpers.md",
+      "sha256": "1a32e9fb306abb4cf75ea8fcbb9b4a89766c71b62c9f0cbe52ba1f8e20290385"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/_memory.md",
+      "sha256": "bc21e50bfa9d1ce8f2e2e6f7e76b723ac9786de6fb78c62e576de111affc609c"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/payload/agents/memory/working/_working.md",
+      "sha256": "fb4d7a054711ab99471bfb4bfb50bf57a71850cf2b5166f1c0d2957d55df2798"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/maintenance/writing.md",
+      "sha256": "27222c733cc6e2c44fcc36f1d71fbc7052366851b7d9a08ed4fd8888a58cc7f6"
+    },
+    {
+      "path": ".agents/memory/working/cli-development/tasks/extension-lifecycle-documentation.md",
+      "sha256": "659772ee6dd71a9027fd3d1f6e391f1b258c16a823c3625b84e0685faee7abb6"
+    },
+    {
+      "path": ".agents/memory/working/cli-development/tasks/source-framework-review.md",
+      "sha256": "9e3d370c0d1ed4bded3d66b52ec0a6cc032f7595ad65f64022e4126177494584"
+    }
+  ],
+  "checks": {
+    "updated_entries_match_source_metadata": 8,
+    "added_local_links_exist": 16,
+    "contradictory_csharp_sentinel_removed": true,
+    "changed_current_document_tags_consistent": true,
+    "cli_manager_section_unchanged": true,
+    "historical_evidence_identity_exists": true,
+    "src_readme_docs_unchanged": true,
+    "git_diff_check": "pass"
+  },
+  "deferred": ["CKA-002: Three CLI-history link depths remain for the CLI documentation task."],
+  "false_positives": ["CKA-004: 79 authored loader lines are within the existing budget."],
+  "commit": "e91d2934545bb596d5d1929a7a04342ea4652375"
+}

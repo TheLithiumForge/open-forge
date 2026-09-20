@@ -9,16 +9,17 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init.Framework;
 
 public sealed class RouteInitFrameworkAlignmentIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Framework Route Init aligns zero, one, many, and consecutive scopes at each supported position"), Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration")]
-    [InlineData("memory/crystallized/documents", ".agents/memory/crystallized/_crystallized.md", ".agents/memory/crystallized/documents/_documents.md", (int)CliSemanticStatus.Complete, 0)]
-    [InlineData("memory/release-notes/crystallized/documents", ".agents/memory/release-notes/crystallized/_crystallized.md", ".agents/memory/release-notes/crystallized/documents/_documents.md", (int)CliSemanticStatus.Attention, 1)]
-    [InlineData("memory/release-notes/august/crystallized/documents", ".agents/memory/release-notes/august/crystallized/_crystallized.md", ".agents/memory/release-notes/august/crystallized/documents/_documents.md", (int)CliSemanticStatus.Attention, 2)]
-    [InlineData("memory/crystallized/release-notes/documents", ".agents/memory/crystallized/_crystallized.md", ".agents/memory/crystallized/release-notes/documents/_documents.md", (int)CliSemanticStatus.Attention, 1)]
-    [InlineData("memory/crystallized/release-notes/august/documents", ".agents/memory/crystallized/_crystallized.md", ".agents/memory/crystallized/release-notes/august/documents/_documents.md", (int)CliSemanticStatus.Attention, 2)]
+    // The reduced Core ships one managed segment below each root, so scopes can only
+    // precede it. Cases that placed a scope between two managed segments are covered
+    // again when Framework scaffolding reaches Extension-created routes (Task 48).
+    [InlineData("memory/working", ".agents/memory/working/_working.md", (int)CliSemanticStatus.Complete, 0)]
+    [InlineData("memory/release-notes/working", ".agents/memory/release-notes/working/_working.md", (int)CliSemanticStatus.Complete, 1)]
+    [InlineData("memory/release-notes/august/working", ".agents/memory/release-notes/august/working/_working.md", (int)CliSemanticStatus.Complete, 2)]
     public async Task AlignsScopesAndPreservesCanonicalChainOrder(
         string target,
-        string expectedCrystallizedPath,
-        string expectedDocumentsPath,
+        string expectedManagedPath,
         int expectedStatusValue,
         int expectedScopeCount)
     {
@@ -35,8 +36,7 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
         Assert.Equal(
             [
                 ".agents/memory/_memory.md",
-                expectedCrystallizedPath,
-                expectedDocumentsPath,
+                expectedManagedPath,
             ],
             result.Framework!.Segments
                 .Where(segment => segment.Role != RouteInitFrameworkSegmentRole.Scope)
@@ -44,8 +44,7 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
         Assert.Equal(
             [
                 ".agents/memory/_memory.md",
-                ".agents/memory/crystallized/_crystallized.md",
-                ".agents/memory/crystallized/documents/_documents.md",
+                ".agents/memory/working/_working.md",
             ],
             result.Framework.Segments
                 .Where(segment => segment.Role != RouteInitFrameworkSegmentRole.Scope)
@@ -84,9 +83,10 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Framework ID-form scopes use invariant rune slugging and retain digits"), Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration")]
-    [InlineData("memory/Überblick 2026/crystallized/documents", "überblick-2026")]
-    [InlineData("memory/Release__Notes/crystallized/documents", "release-notes")]
+    [InlineData("memory/Überblick 2026/working", "überblick-2026")]
+    [InlineData("memory/Release__Notes/working", "release-notes")]
     public async Task IdFormScopeLabelsUseRuneAwareSlugs(
         string target,
         string expectedSlug)
@@ -97,7 +97,7 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
 
         var result = await ExecuteAsync(workspace, target);
 
-        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
         var scope = Assert.Single(
             result.Framework!.Segments,
             segment => segment.Role == RouteInitFrameworkSegmentRole.Scope);
@@ -109,17 +109,18 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
         Assert.Null(entrypoint.SourceAssetPath);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Framework exact path input preserves a concrete scope label without slugging"), Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration")]
     public async Task ExactPathScopeIsNotSlugged()
     {
-        const string target = ".agents/memory/Release Notes/crystallized/documents/_documents.md";
+        const string target = ".agents/memory/Release Notes/working/_working.md";
         using var workspace = await RouteInitFrameworkIntegrationWorkspace.CreateTrustedAsync(
             "route-init-framework-exact-path",
             TestContext.Current.CancellationToken);
 
         var result = await ExecuteAsync(workspace, target);
 
-        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(target, result.Target.Path);
         var scope = Assert.Single(
             result.Framework!.Segments,
@@ -131,10 +132,11 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
                 && entrypoint.Ownership == RouteInitEntrypointOwnership.User);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Framework Route Init rejects a missing exact compatibility entrypoint without canonicalizing it"), Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration")]
     public async Task MissingExactCompatibilityEntrypointIsReadOnly()
     {
-        const string target = ".agents/memory/crystallized/documents/index.md";
+        const string target = ".agents/memory/working/index.md";
         using var workspace = await RouteInitFrameworkIntegrationWorkspace.CreateTrustedAsync(
             "route-init-framework-missing-exact-compatibility",
             TestContext.Current.CancellationToken);
@@ -147,17 +149,17 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
         Assert.Empty(result.Effects);
         Assert.Equal(target, result.Target.Path);
         Assert.False(workspace.Exists(target));
-        Assert.True(workspace.Exists(".agents/memory/crystallized/documents/_documents.md"));
+        Assert.True(workspace.Exists(".agents/memory/working/_working.md"));
         Assert.Equal(before, workspace.SnapshotHashes());
         Assert.Equal(RouteInitRecoveryState.NotRequired, result.Recovery.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Framework alignment refuses ambiguous, reordered, nested-root, and trailing-scope targets without writes"),
      Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration")]
-    [InlineData("memory/crystallized/crystallized/documents")]
-    [InlineData("memory/documents/crystallized")]
-    [InlineData("memory/directives/crystallized/documents")]
-    [InlineData("memory/crystallized/documents/notes")]
+    [InlineData("memory/working/working")]
+    [InlineData("memory/directives/working")]
+    [InlineData("memory/working/notes")]
     public async Task UnsafeAlignmentsAreBlockedBeforeEffects(string target)
     {
         using var workspace = await RouteInitFrameworkIntegrationWorkspace.CreateTrustedAsync(
@@ -181,6 +183,7 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
                 TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Framework creation publishes only managed and generated facts while preserving the complete empty Extensions section"),
      Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration")]
     public async Task SparseScopePublicationPreservesLifecycleEnvelopeAndOwnership()
@@ -188,7 +191,7 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
         using var workspace = await RouteInitFrameworkIntegrationWorkspace.CreateTrustedAsync(
             "route-init-framework-lifecycle-publication",
             TestContext.Current.CancellationToken);
-        var beforeLifecycle = workspace.ReadText(RouteInitFrameworkIntegrationWorkspace.LifecyclePath);
+        var beforeLifecycle = workspace.ReadText(RouteInitFrameworkIntegrationWorkspace.OwnershipPath);
         using var beforeDocument = JsonDocument.Parse(beforeLifecycle);
         var beforeExtensions = beforeDocument.RootElement
             .GetProperty("extensions")
@@ -196,9 +199,9 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
 
         var result = await ExecuteAsync(
             workspace,
-            "memory/release-notes/crystallized/documents");
+            "memory/release-notes/working");
 
-        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(RouteInitLifecycleAction.Publish, result.Lifecycle.Action);
         Assert.Equal(RouteInitLifecycleOutcome.Verified, result.Lifecycle.Outcome);
         Assert.Contains(
@@ -212,20 +215,18 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
                 && effect.SourceAssetPath is null);
 
         using var afterDocument = JsonDocument.Parse(
-            workspace.ReadText(RouteInitFrameworkIntegrationWorkspace.LifecyclePath));
+            workspace.ReadText(RouteInitFrameworkIntegrationWorkspace.OwnershipPath));
         Assert.Equal(
-            ["schemaVersion", "fingerprintPolicy", "workspacePath", "framework", "extensions"],
+            ["$schema", "schemaVersion", "framework", "extensions", "libraries"],
             afterDocument.RootElement.EnumerateObject().Select(property => property.Name));
         var extensions = afterDocument.RootElement.GetProperty("extensions");
-        Assert.Equal("complete", extensions.GetProperty("coverage").GetString());
-        Assert.Empty(extensions.GetProperty("packages").EnumerateArray());
-        Assert.Empty(extensions.GetProperty("paths").EnumerateArray());
+        Assert.Empty(extensions.EnumerateArray());
         Assert.Equal(beforeExtensions, extensions.GetRawText());
         Assert.DoesNotContain(
             afterDocument.RootElement.GetProperty("framework")
-                .GetProperty("targets")
+                .GetProperty("paths")
                 .EnumerateArray(),
-            target => target.GetProperty("path").GetString()
+            target => target.GetString()
                 == ".agents/memory/release-notes/_release-notes.md");
         Assert.Equal(
             0,
@@ -233,6 +234,7 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
                 TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Framework segment and effect provenance distinguish embedded managed assets from user-owned scopes"),
      Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration")]
     public async Task ManagedAndScopeProvenanceRemainDistinct()
@@ -242,7 +244,7 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
             TestContext.Current.CancellationToken);
         var result = await ExecuteAsync(
             workspace,
-            "memory/release-notes/crystallized/documents");
+            "memory/release-notes/working");
 
         Assert.NotNull(result.Framework);
         var scope = Assert.Single(
@@ -260,18 +262,18 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
 
         var payload = EmbeddedFrameworkPayloadReader.Read().Payload
             ?? throw new InvalidOperationException("The embedded Framework payload is unavailable.");
-        var managedAsset = payload.Find(".agents/memory/crystallized/documents/_documents.md")
-            ?? throw new InvalidOperationException("The canonical documents asset is unavailable.");
+        var managedAsset = payload.Find(".agents/memory/working/_working.md")
+            ?? throw new InvalidOperationException("The canonical Working asset is unavailable.");
         Assert.Equal(
             managedAsset.Bytes.ToArray(),
             await File.ReadAllBytesAsync(
-                workspace.Combine(".agents/memory/crystallized/documents/_documents.md"),
+                workspace.Combine(".agents/memory/working/_working.md"),
                 TestContext.Current.CancellationToken));
         Assert.Contains(
             result.Entrypoints,
-            entrypoint => entrypoint.Path == ".agents/memory/release-notes/crystallized/documents/_documents.md"
+            entrypoint => entrypoint.Path == ".agents/memory/release-notes/working/_working.md"
                 && entrypoint.Ownership == RouteInitEntrypointOwnership.Framework
-                && entrypoint.SourceAssetPath == ".agents/memory/crystallized/documents/_documents.md");
+                && entrypoint.SourceAssetPath == ".agents/memory/working/_working.md");
     }
 
     private static ValueTask<RouteInitResult> ExecuteAsync(

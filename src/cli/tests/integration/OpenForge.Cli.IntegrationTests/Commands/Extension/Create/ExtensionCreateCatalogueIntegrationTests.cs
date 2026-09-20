@@ -1,14 +1,17 @@
 using OpenForge.Cli.Core.Commands.Extension.Create;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Interaction;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Interaction;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Create;
 
 public sealed class ExtensionCreateCatalogueIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create accepts empty and populated marker-free catalogue parents while ignoring unrelated siblings"),
      Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task EmptyAndPopulatedParentsAreEligibleAndSiblingsArePreserved()
@@ -42,6 +45,7 @@ public sealed class ExtensionCreateCatalogueIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Extension Create rejects a missing or file-valued catalogue parent without writing"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     [InlineData("missing")]
     [InlineData("file")]
@@ -63,6 +67,7 @@ public sealed class ExtensionCreateCatalogueIntegrationTests
         Assert.False(Directory.Exists(Path.Combine(path, "development-toolkit")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create accepts a catalogue root alias and reports its resolved destination identity"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task CatalogueRootAliasIsAccepted()
     {
@@ -89,6 +94,7 @@ public sealed class ExtensionCreateCatalogueIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create inspects only the exact destination and does not adopt a colliding sibling"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task ExactDestinationBoundaryIgnoresSiblingOccupants()
     {
@@ -121,9 +127,11 @@ public sealed class ExtensionCreateCatalogueIntegrationTests
         string input = "",
         CancellationToken cancellationToken = default)
     {
-        using var reader = new StringReader(input);
-        using var prompts = new StringWriter();
-        var session = new CliInteractiveSession(reader, prompts, canPrompt: allowInteraction);
+        var lines = string.IsNullOrEmpty(input)
+            ? Array.Empty<string?>()
+            : input.Split(["\r\n", "\n", "\r"], StringSplitOptions.None);
+        var scripted = ScriptedCliTerminal.Lines(lines, canPrompt: allowInteraction);
+        var prompts = new CliPrompts(scripted.Terminal);
         var request = new ExtensionCreateRequest
         {
             StableId = stableId,
@@ -132,10 +140,12 @@ public sealed class ExtensionCreateCatalogueIntegrationTests
             Description = null,
             PackageVersion = null,
             Dependencies = [],
+            Automatic = mode == ExtensionCreateMode.Apply && !allowInteraction,
             AllowInteraction = allowInteraction,
             Mode = mode,
         };
-        return await ExtensionCreateOperationFactory.Create(session).ExecuteAsync(request, cancellationToken);
+        return await ExtensionCreateOperationFactory.Create(
+            ExtensionInteractionTestFactory.ForCreate(prompts)).ExecuteAsync(request, cancellationToken);
     }
 
     private static void DeleteDestination(string destination)

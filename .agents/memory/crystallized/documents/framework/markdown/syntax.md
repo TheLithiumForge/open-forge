@@ -54,13 +54,12 @@ tokens:
 ```text
 <!-- open-forge:start -->
 <!-- open-forge:end -->
-<!-- open-forge:generated-index:start -->
-<!-- open-forge:generated-index:end -->
 ```
 
-They must be paired and position-valid under the owning workspace-block or
-generated-index contract. The markers contain no instruction body; Markdown
+They must be paired and position-valid under the owning workspace-block contract. The markers contain no instruction body; Markdown
 between them remains visible.
+
+Generated Entries use heading boundaries, with no comment tokens.
 
 Templates keep removable source guidance in visible multiline `{...}`
 placeholders. Ordinary prose uses visible Markdown rather than another comment

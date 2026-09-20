@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "invalid-input",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot repair: Two --relink values name the link at .agents/docs/source.md:9:10 with different targets.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "repair.contradictory-relink",
+      "title": "Contradictory --relink",
+      "message": "Two --relink values name the link at .agents/docs/source.md:9:10 with different targets.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksRepaired": 0,
+    "problemsRemaining": 0,
+    "problemsNeedingChoice": 0,
+    "problemsNeedingHand": 0,
+    "librarySteps": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "selection": "prompt",
+    "repairs": [],
+    "remaining": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

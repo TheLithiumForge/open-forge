@@ -3,6 +3,7 @@ using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Models.Binding;
+using OpenForge.Cli.Core.Commands.Route.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Composition.Models;
@@ -19,6 +20,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List;
 
 public sealed class RouteListDefinitionsSyntaxAndBindingTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list definitions own canonical syntax and finding codes")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void DefinitionsOwnCanonicalSyntaxAndFindingCodes()
@@ -41,6 +43,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
             RouteListDefinitions.ReadFindingCode((RouteListFindingCode)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list depth represents finite default and all states")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void DepthRepresentsFiniteDefaultAndAllStates()
@@ -54,6 +57,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.Throws<ArgumentOutOfRangeException>(() => RouteListDepth.Finite(-1));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route list request requires workspace depth and a non-empty optional subject")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void RequestRequiresWorkspaceDepthAndNonEmptyOptionalSubject()
@@ -72,19 +76,19 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.Throws<ArgumentNullException>(() => new RouteListRequest(workspace, null, null!));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route list binding closes command-local request and result types")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void BindingClosesCommandLocalRequestAndResultTypes()
     {
         var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
         var fallback = InvalidResult();
-        var binding = RouteListBinding.Close(
+        var binding = RouteListBinding.CreateRequestBinding(
             symbols,
             new RouteListBindingComponents
             {
                 Help = CliHelpContent.Empty,
                 Operation = (request, cancellationToken) => ValueTask.FromResult(fallback),
-                Renderers = new CliRendererSet<RouteListResult>(presentation => "human", presentation => "{}"),
             });
 
         Assert.Equal("route", symbols.RouteGroup.Name);
@@ -103,6 +107,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.Equal("2", symbols.RouteGroup.Parse(["list", "--depth", "2"]).GetValue(symbols.Depth));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "CLI option result facts expose explicit occurrence and value counts")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
     public void CliOptionResultFactsExposeExplicitOccurrenceAndValueCounts()
@@ -121,15 +126,15 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.Equal(1, explicitValueFacts.IdentifierCount);
         Assert.Equal(1, explicitValueFacts.ValueCount);
 
-        var explicitNoValue = tree.Parse(["route", "list", "--depth=", "--json"]);
+        var explicitNoValue = tree.Parse(["route", "list", "--depth=", "--format=json"]);
         var explicitNoValueFacts = CliOptionResultFactsReader.Read(explicitNoValue.Result, symbols.Depth);
-        var jsonFacts = CliOptionResultFactsReader.Read(explicitNoValue.Result, tree.Options.Json);
+        var jsonFacts = CliOptionResultFactsReader.Read(explicitNoValue.Result, tree.Options.Format);
         Assert.True(explicitNoValueFacts.IsExplicit);
         Assert.Equal(1, explicitNoValueFacts.IdentifierCount);
         Assert.Equal(0, explicitNoValueFacts.ValueCount);
         Assert.True(jsonFacts.IsExplicit);
         Assert.Equal(1, jsonFacts.IdentifierCount);
-        Assert.Equal(0, jsonFacts.ValueCount);
+        Assert.Equal(1, jsonFacts.ValueCount);
 
         var repeated = tree.Parse(["route", "list", "--depth=1", "--depth=2"]);
         Assert.NotEmpty(repeated.Result.Errors);
@@ -139,6 +144,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.Equal(2, repeatedFacts.ValueCount);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Route List depth accepts native delimiters and rejects a missing value")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     [InlineData("--depth=1", null, false)]
@@ -165,6 +171,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         }
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Route List binding maps omitted and boundary depth values to typed requests")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     [InlineData(null, "Finite", 1)]
@@ -195,6 +202,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
             request.RequestedDepth.Value);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route List binding derives depth from typed parser facts")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
     public void BindingUsesTypedDepthFromParserFacts()
@@ -210,6 +218,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.Equal(RouteListDepth.Finite(2), request.RequestedDepth);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Route List binding rejects invalid typed depth values")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     [InlineData("-1")]
@@ -231,6 +240,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.Equal(RouteListFindingCode.InvalidDepth, Assert.Single(result.Findings).Code);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route List repeated depth occurrences remain one parser-owned scalar error")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void RepeatedDepthOccurrencesRemainParserOwnedScalarError()
@@ -245,6 +255,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.Equal(2, optionResult.Tokens.Count(token => token.Type == TokenType.Argument));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route List binding preserves an option-like source after the terminator")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void BindingPreservesOptionLikeSourceAfterTerminator()
@@ -264,6 +275,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.Equal(RouteListDepth.Default, request.RequestedDepth);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Terminal modes reject Route List domain and local input before effects")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
     public void TerminalModesRejectDomainAndLocalInput()
@@ -286,7 +298,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
 
         var validGlobals = tree.Parse(
             [
-                "route", "list", "--help", "--json", "--verbose", "--view=compact",
+                "route", "list", "--help", "--format=json", "--detail-filter=all", "--detail=minimal",
                 "--workspace", Path.GetTempPath(),
             ]);
         var validResolution = CliTerminalValidator.Validate(validGlobals);
@@ -307,7 +319,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
     {
         return new CliInvocation(
             new CliProcessIdentity("open-forge", "test"),
-            new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal),
+            new CliPresentation(CliFormat.Json, CliDetail.Standard, null),
             CliTerminalMode.None,
             new CliWorkspaceRequest(null, workspace.LexicalRoot),
             workspace);

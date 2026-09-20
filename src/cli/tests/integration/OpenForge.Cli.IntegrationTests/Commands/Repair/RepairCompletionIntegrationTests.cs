@@ -13,22 +13,24 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Interaction;
+
+using OpenForge.Cli.IntegrationTests.Commands.Repair.Shared.Interaction;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Repair;
 
 public sealed class RepairCompletionIntegrationTests
 {
-    [Fact(DisplayName = "Repair wizard default No leaves the workspace and write infrastructure unchanged"),
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Repair safe-repair decline leaves the workspace and write infrastructure unchanged"),
         Trait("Feature", "repair"), Trait("Evidence", "Integration")]
-    public async Task WizardDefaultNoHasNoEffects()
+    public async Task SafeRepairDeclineHasNoEffects()
     {
-        using var workspace = RepairIntegrationWorkspace.Create("repair-wizard-no", includeGuided: false);
+        using var workspace = RepairIntegrationWorkspace.Create("repair-prompt-no", includeGuided: false);
         var before = workspace.SnapshotState();
         using var output = new StringWriter();
         var components = RepairOperationFactory.CreateDefaultComponents() with
         {
-            InteractiveSession = new CliInteractiveSession(new StringReader("\n\n"), output, canPrompt: true),
+            Interaction = RepairInteractionTestFactory.Create(new StringReader("n\n"), output),
         };
         var result = await new RepairOperation(components).ExecuteAsync(
             workspace.Request(allowInteraction: true), TestContext.Current.CancellationToken);
@@ -37,6 +39,7 @@ public sealed class RepairCompletionIntegrationTests
         workspace.AssertNoWriteInfrastructure();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Repair post-verification requires the addressed occurrence rather than an equivalent other link"),
         Trait("Feature", "repair"), Trait("Evidence", "Integration")]
     public async Task AnotherOccurrenceDoesNotVerifyTheSelectedOccurrence()
@@ -51,6 +54,7 @@ public sealed class RepairCompletionIntegrationTests
         Assert.Equal(RepairVerificationState.Failed, verified.Verification.Targets);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Repair post-verification rejects a now-missing required Markdown fragment"),
         Trait("Feature", "repair"), Trait("Evidence", "Integration")]
     public async Task MissingRequiredFragmentFailsVerification()
@@ -68,6 +72,7 @@ public sealed class RepairCompletionIntegrationTests
         Assert.Equal(RepairVerificationState.Failed, verified.Verification.Targets);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Repair revalidates source and target facts changed during final confirmation"),
         InlineData(false), InlineData(true), Trait("Feature", "repair"), Trait("Evidence", "Integration")]
     public static async Task ConfirmationDoesNotAuthorizeChangedFacts(bool changeTarget)
@@ -90,7 +95,7 @@ public sealed class RepairCompletionIntegrationTests
         });
         var components = RepairOperationFactory.CreateDefaultComponents() with
         {
-            InteractiveSession = new CliInteractiveSession(input, output, canPrompt: true),
+            Interaction = RepairInteractionTestFactory.Create(input, output),
         };
         try
         {
@@ -110,7 +115,7 @@ public sealed class RepairCompletionIntegrationTests
         }
     }
 
-    private sealed class ConfirmationEditReader(Action edit) : StringReader("select\nyes\n")
+    private sealed class ConfirmationEditReader(Action edit) : StringReader("y\ny\n")
     {
         private int _reads;
 
@@ -125,6 +130,7 @@ public sealed class RepairCompletionIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Repair cancellation at post-diagnosis preserves applied bytes and its verified recovery final"),
         Trait("Feature", "repair"), Trait("Evidence", "Integration")]
     public async Task PostDiagnosisCancellationRetainsPreparedRecovery()

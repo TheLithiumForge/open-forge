@@ -1,14 +1,18 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Library.Inspect;
 using OpenForge.Cli.Core.Commands.Library.Inspect.Models.Result;
-using OpenForge.Cli.Core.Commands.Library.Inspect.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Library.Inspect;
+using OpenForge.Cli.Core.Presentation.Library.Inspect.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Inspect.Shared.Rendering;
 
 public sealed class LibraryInspectFindingTests
 {
-    [Theory(DisplayName = "Library Inspect serializes every accepted finding code independently"), Trait("Feature", "library-read"), Trait("Evidence", "Unit")]
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Library Inspect serializes every accepted finding code independently")]
     [InlineData((int)LibraryInspectFindingCode.InvalidId, "library-inspect.invalid-id")]
     [InlineData((int)LibraryInspectFindingCode.UnknownId, "library-inspect.unknown-id")]
     [InlineData((int)LibraryInspectFindingCode.RecordInvalid, "library-inspect.record-invalid")]
@@ -25,21 +29,30 @@ public sealed class LibraryInspectFindingTests
     [InlineData((int)LibraryInspectFindingCode.LinkBlocked, "library-inspect.link-blocked")]
     [InlineData((int)LibraryInspectFindingCode.OperationFailed, "library-inspect.operation-failed")]
     [InlineData((int)LibraryInspectFindingCode.Interrupted, "library-inspect.interrupted")]
+    [InlineData((int)LibraryInspectFindingCode.OwnershipObservation, "library-inspect.ownership-observation")]
     public void FindingVocabulary(int value, string expected)
     {
         var seed = LibraryInspectResultFixture.Create();
         var finding = seed.Result.Findings[0] with { Code = (LibraryInspectFindingCode)value };
         var result = seed with { Result = seed.Result with { Findings = [finding] } };
-        var json = LibraryInspectPresentation.RenderJson(new(result, new(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal)));
-        using var document = JsonDocument.Parse(json);
-        Assert.Equal(expected, Assert.Single(document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray()).GetProperty("code").GetString());
+        using var document = JsonDocument.Parse(RenderJson(result));
+        Assert.Equal(expected, Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray())
+            .GetProperty("code").GetString());
         Assert.Equal(expected, LibraryInspectDefinitions.ReadFindingCode((LibraryInspectFindingCode)value));
+        Assert.Equal(expected, LibraryInspectWording.MachineCode((LibraryInspectFindingCode)value));
     }
 
-    [Fact(DisplayName = "Library Inspect finding inventory is closed and rejects undefined runtime values"), Trait("Feature", "library-read"), Trait("Evidence", "Unit")]
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Library Inspect finding inventory is closed and rejects undefined runtime values")]
     public void FindingInventoryIsClosed()
     {
-        Assert.Equal(16, Enum.GetValues<LibraryInspectFindingCode>().Length);
+        Assert.Equal(17, Enum.GetValues<LibraryInspectFindingCode>().Length);
         Assert.Throws<ArgumentOutOfRangeException>(() => LibraryInspectDefinitions.ReadFindingCode((LibraryInspectFindingCode)int.MaxValue));
+        Assert.Throws<ArgumentOutOfRangeException>(() => LibraryInspectWording.MachineCode((LibraryInspectFindingCode)int.MaxValue));
     }
+
+    private static string RenderJson(LibraryInspectResult result)
+        => CliRenderingStage.Render(
+            new CliPresentationRequest<LibraryInspectResult>(result, new(CliFormat.Json, CliDetail.Standard, null)),
+            LibraryInspectPresentation.Rendering).PrimaryContent;
 }

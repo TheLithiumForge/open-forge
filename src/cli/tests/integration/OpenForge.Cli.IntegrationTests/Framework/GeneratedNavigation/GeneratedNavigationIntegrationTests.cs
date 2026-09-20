@@ -17,6 +17,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.GeneratedNavigation;
 
 public sealed class GeneratedNavigationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generated navigation reads a real rooted tree and projects Loader and entrypoint regions without writes")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Integration")]
     public async Task RootedTreeProjectsLoaderAndEntrypointRegionsWithoutWrites()
@@ -26,7 +27,7 @@ public sealed class GeneratedNavigationIntegrationTests
             SourceLogicalPath.LoaderPath,
             OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
             {
-                Entries = "stale",
+                Entries = "- stale",
                 Prefix = "# Loader",
             }));
         workspace.Write(
@@ -34,7 +35,7 @@ public sealed class GeneratedNavigationIntegrationTests
             OpenForgeDocumentSeed.Metadata(
                 description: "Root",
                 tags: ["Root"],
-                body: OpenForgeDocumentSeed.GeneratedEntries(entries: "stale")));
+                body: OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale")));
         workspace.Write(
             ".agents/root/child.md",
             OpenForgeDocumentSeed.Metadata(
@@ -75,15 +76,16 @@ public sealed class GeneratedNavigationIntegrationTests
             [SourceLogicalPath.LoaderPath, ".agents/root/_root.md"],
             projection.Regions.Select(region => region.CanonicalPath));
         Assert.Equal(
-            "\n- [Root](root/_root.md) - #Root\n",
+            "- [Root](root/_root.md) - #Root\n",
             projection.Regions[0].ExpectedBody);
         Assert.Equal(
-            "\n- [Child](child.md) - #Docs\n- [Native tool](tool/SKILL.md) - #Skill\n",
+            "- [Child](child.md) - #Docs\n- [Native tool](tool/SKILL.md) - #Skill\n",
             projection.Regions[1].ExpectedBody);
         Assert.Equal(["Skill"], projection.Regions[1].Entries[1].Tags);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generated navigation maintains a detached CRLF entrypoint with aliases and an attached overwrite")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Integration")]
     public async Task DetachedTreePreservesCrLfAndPhysicalIdentity()
@@ -147,7 +149,7 @@ public sealed class GeneratedNavigationIntegrationTests
             ["a.md", "b.md"],
             region.Entries.Select(entry => entry.Destination));
         Assert.Equal(
-            "\r\n- [Alias](a.md) - #Alias\r\n- [Other](b.md) - #Other\r\n",
+            "- [Alias](a.md) - #Alias\r\n- [Other](b.md) - #Other\r\n",
             region.ExpectedBody);
         var change = Assert.IsType<GeneratedNavigationBoundedChange>(region.Change);
         Assert.True(change.IsUnchanged);
@@ -155,18 +157,17 @@ public sealed class GeneratedNavigationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Generated navigation keeps malformed markers and strict invalid UTF-8 as unavailable real-file facts")]
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Generated navigation keeps duplicate headings and strict invalid UTF-8 as unavailable real-file facts")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Integration")]
     public async Task MalformedAndInvalidFilesNeverFormChanges()
     {
         using var workspace = SourceIntegrationWorkspace.Create("generated-navigation-failures");
         workspace.Write(
             ".agents/malformed/_malformed.md",
-            "# Malformed\n\n## Entries\n\n"
-            + "<!-- open-forge:generated-index:start -->\n"
+            "# Malformed\n\n## Entries\n\n## Entries\n"
             + "stale\n"
-            + "<!-- open-forge:generated-index:end -->\n"
-            + "<!-- open-forge:generated-index:end -->\n");
+            );
         workspace.Write(".agents/invalid/_invalid.md", [0xC3, 0x28]);
         var formation = await ReadFormationAsync(workspace);
         var malformed = RequireSource(formation, ".agents/malformed/_malformed.md");

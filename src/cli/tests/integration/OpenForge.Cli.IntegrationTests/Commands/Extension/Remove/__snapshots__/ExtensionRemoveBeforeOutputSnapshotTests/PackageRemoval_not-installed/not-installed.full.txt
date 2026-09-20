@@ -1,0 +1,7 @@
+No files are recorded for toolkit, so there is nothing to remove.
+Workspace: <workspace>
+  Removal order: toolkit
+  .agents/open-forge.lock.json  updated
+  Entries sections unchanged: none
+  Verification: targets verified; Entries verified; Extension record verified
+  Recovery: not-required.

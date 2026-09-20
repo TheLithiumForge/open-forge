@@ -1,32 +1,43 @@
 ---
 open-forge:
-  description: Starting structure for one task's outcome, proportionate plan, and current state without requiring separate records
-  tags: [Extension, Template, Memory, Planning, Task, Working, Contextual]
+  description: "Keep one task's outcome, short plan, and current state together"
+  tags: [Extension, Template, Planning, Task, Memory]
 ---
 
-# {Task}
+# {Task Outcome}
 
-{
-Template selection:
-
-- Need: One task record when the work warrants durable state and no existing task source already serves that need.
-- Primary question: What outcome is required, within what scope, how will completion be established, and what happens next?
-
-Use the project's existing task system and record conventions when they apply. The [Work Records Pattern](../../patterns/work-records.md) supplies the default shape. The current conversation may be sufficient for small work.
-
-Keep the outcome, short plan, and current state together. If a separate Plan or Checkpoint defines one of those answers, link to it from the matching section instead of maintaining another copy.
-
-Choose the destination from the record's current role and scope. Replace the Template metadata with accurate destination metadata, fill or adapt the useful sections, and remove all braced guidance. Recording an outcome does not establish its acceptance.
-}
+<!-- TEMPLATE: Use when the task needs a durable record and no existing task source already serves it. A plan does not grant permission.
+Replace {prompts}; remove this comment and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying. -->
 
 ## Outcome
 
-{State the accepted result, scope, non-goals, constraints, and completion evidence. Identify the direction or source that establishes acceptance, and keep unresolved choices visible. Link to requirements maintained elsewhere.}
+{State the result to deliver, not merely the activity to perform.}
+
+**Direction:** {Accepted request or source; distinguish any proposal still awaiting a decision.}
+
+**In scope:** {Allowed work and surfaces.}
+
+**Preserve / out of scope:** {Existing behavior, unrelated work, and withheld effects.}
+
+**Done when:**
+
+- [ ] {Observable result and how it will be checked.}
 
 ## Plan
 
-{List the smallest coherent steps with their dependencies, observable results, and verification. Use the project's methods and checks. Keep this short, or link to the separate Plan that defines the sequence.}
+1. {A coherent action, its result, and verification. Name a prerequisite when it matters.}
+
+<!-- Keep the short plan here. If an independent Plan owns the sequence, replace this section's contents with its link. -->
 
 ## Current State
 
-{Record the current step, completed work and decisive evidence, blockers, unresolved decisions, and the next action. Keep only what continuation needs. If a separate current-state source serves this task, link to it here.}
+**Now:** {Current step and identifiable work state.}
+
+**Evidence:** {Checks actually completed, result, and state checked; say not run when appropriate.}
+
+**Blocked / open:** {Consequential missing input or decision, or none.}
+
+**Next:** {The exact next useful action.}
+
+<!-- If a Checkpoint or external task system owns current state, link to it instead of maintaining a second copy. -->

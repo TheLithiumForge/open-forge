@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
 public sealed class RouteUpdateBodyPlannerTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update body planner copies exact Template bytes into Unicode-whitespace body"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void CopiesExactTemplateBytesIntoUnicodeWhitespaceBody()
     {
@@ -40,6 +41,7 @@ public sealed class RouteUpdateBodyPlannerTests
         Assert.Equal(templateBody, preview.Expected);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update body planner protects every authored body byte"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void ProtectsEveryAuthoredBodyByte()
     {
@@ -65,6 +67,7 @@ public sealed class RouteUpdateBodyPlannerTests
         Assert.Empty(body.Preview);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update body planner preserves exact body when Template is omitted"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void PreservesExactBodyWhenTemplateIsOmitted()
     {
@@ -82,6 +85,7 @@ public sealed class RouteUpdateBodyPlannerTests
         Assert.Empty(body.Preview);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route Update adapts every Template stop class to accepted planning facts"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     [InlineData(
         (int)RouteTemplateResolutionState.Invalid,
@@ -149,6 +153,7 @@ public sealed class RouteUpdateBodyPlannerTests
             Assert.Single(boundary.Formation.Findings).Code);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update Template adapter rejects resolved and undefined stop values"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void TemplateAdapterRejectsResolvedAndUndefinedStopValues()
     {

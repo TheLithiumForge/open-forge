@@ -21,7 +21,8 @@ internal static class ContextPresentationTestData
     internal static ContextResult Create(
         ContextContentSelection content,
         ContextLinkExpansion? linkExpansion = null,
-        IReadOnlyList<ContextFinding>? findings = null)
+        IReadOnlyList<ContextFinding>? findings = null,
+        ContextCounts? counts = null)
     {
         ArgumentNullException.ThrowIfNull(content);
         var effectiveLinkExpansion = linkExpansion ?? ContextLinkExpansion.None;
@@ -133,8 +134,8 @@ internal static class ContextPresentationTestData
                 linkExpansion: effectiveLinkExpansion,
                 sourceCount: sources.Length),
             presentation: new ContextPresentation(
-                suppliedView: null,
-                effectiveView: CliView.Expanded,
+                suppliedDetail: null,
+                effectiveView: CliDetail.Standard,
                 content: content),
             coverage: new ContextCoverage(
                 state: selectionCoverage,
@@ -150,7 +151,8 @@ internal static class ContextPresentationTestData
             status: effectiveFindings.Count == 0
                 ? CliSemanticStatus.Complete
                 : CliSemanticStatus.Incomplete,
-            next: null);
+            next: null,
+            counts: counts);
     }
 
     internal static ContextContentSelection Content(params ContextContentPartKind[] kinds)

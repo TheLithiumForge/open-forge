@@ -1,0 +1,2 @@
+team-knowledge is current: 1 file from shared/team is linked under ..
+Workspace: <workspace>

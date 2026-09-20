@@ -15,6 +15,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery.Shared.Deletion;
 
 public sealed class RecoveryDeletionStorageBoundaryIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Cleanup preserves an ordinary external draft exposed by a qualified static bucket link"),
      Trait("Feature", "cleanup-c1-storage"), Trait("Evidence", "Integration")]
     public async Task StaticBucketLinkCannotAuthorizeExternalDraftDeletion()
@@ -38,6 +39,7 @@ public sealed class RecoveryDeletionStorageBoundaryIntegrationTests
         Assert.Equal(workspace.ExternalDirectory, new DirectoryInfo(workspace.Bucket).LinkTarget);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Cleanup dry-run excludes external candidates exposed by a static bucket link before enumeration"),
      Trait("Feature", "cleanup-c1-storage"), Trait("Evidence", "Integration")]
     public async Task StaticBucketLinkCannotBecomeDryRunCatalogue()
@@ -58,6 +60,7 @@ public sealed class RecoveryDeletionStorageBoundaryIntegrationTests
         Assert.False(workspace.Locks.InfrastructureExists);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "A held deletion session rejects a static bucket link before observing its external catalogue"),
      Trait("Feature", "cleanup-c1-storage"), Trait("Evidence", "Integration")]
     public async Task StaticBucketLinkCannotOpenDeletionSession()
@@ -79,6 +82,7 @@ public sealed class RecoveryDeletionStorageBoundaryIntegrationTests
         Assert.True(lease.IsHeldFor(workspace.Source.Workspace));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "A bucket becoming a link after ordinary planning blocks session opening without external enumeration"),
      Trait("Feature", "cleanup-c1-storage"), Trait("Evidence", "Integration")]
     public async Task BucketLinkAfterPlanningBlocksSessionOpening()
@@ -99,6 +103,7 @@ public sealed class RecoveryDeletionStorageBoundaryIntegrationTests
         Assert.True(lease.IsHeldFor(workspace.Source.Workspace));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "A bucket link introduced within a held session preserves prior deletion and the external remaining draft"),
      Trait("Feature", "cleanup-c1-storage"), Trait("Evidence", "Integration")]
     public async Task BucketLinkWithinSessionStopsExternalDeletion()
@@ -129,6 +134,7 @@ public sealed class RecoveryDeletionStorageBoundaryIntegrationTests
         Assert.True(lease.IsHeldFor(workspace.Source.Workspace));
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "The deletion storage boundary rejects isolated ancestor links that expose ordinary exact-name drafts"),
      InlineData("store/recovery", "v1/bucket"), InlineData("store/recovery/v1", "bucket"),
      Trait("Feature", "cleanup-c1-storage"), Trait("Evidence", "Integration")]

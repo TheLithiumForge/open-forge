@@ -7,30 +7,32 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 [Trait("Feature", "workspace-permissions"), Trait("Evidence", "Integration")]
 public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory]
     [InlineData(".git/config")]
-    [InlineData(".agents/open-forge.permissions.json")]
-    [InlineData(".agents/open-forge.libraries.json")]
+    [InlineData(".agents/open-forge.json")]
+    [InlineData(".agents/open-forge.lock.json")]
     public static async Task PermissionAndForceCannotAuthorizeProtectedDestinations(string target)
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-protected");
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage(target);
         workspace.CreateOccupant(PermissionFixture.PermissionPath,
-            """{"schemaVersion":1,"extensions":[{"id":"team","paths":[".git/config"]}],"libraries":[]}""");
+            """{"allowInstallPaths":[".git/config"]}""");
         var before = workspace.Snapshot();
 
-        var run = await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--force", "--automatic", "--json"]);
+        var run = await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--force", "--automatic", "--format", "json"]);
 
         Assert.Equal(5, run.ExitCode);
         using var json = JsonDocument.Parse(run.StandardOutput);
-        Assert.Contains("extension-install.target-unsafe", json.RootElement.GetProperty("result").GetProperty("findings")
+        Assert.Contains("extension-install.target-unsafe", json.RootElement.GetProperty("findings")
             .EnumerateArray().Select(value => value.GetProperty("code").GetString()));
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact]
-    public async Task MalformedConsumerPermissionIsPreservedWithoutAQuestion()
+    public async Task AlwaysApprovalCannotReplaceMalformedSettings()
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-invalid-consumer");
         await workspace.SeedFrameworkAsync();
@@ -40,11 +42,11 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
         try
         {
             var run = await workspace.RunAsync(["extension", "install", "team", "--source", source.Path],
-                "yes\n", standardInputRedirected: false, promptOutputRedirected: false);
+                "always\n", standardInputRedirected: false, promptOutputRedirected: false);
 
             Assert.Equal(5, run.ExitCode);
-            Assert.Equal("yes", run.RemainingInput);
-            Assert.DoesNotContain("[y/N]", run.StandardError, StringComparison.Ordinal);
+            Assert.Null(run.RemainingInput);
+            Assert.Contains("always, once, cancel:", run.StandardError, StringComparison.Ordinal);
             Assert.Equal(before, workspace.Snapshot());
         }
         finally
@@ -53,6 +55,7 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact]
     public async Task CancellationDuringApprovalDoesNotGrantOrCopy()
     {
@@ -76,6 +79,7 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Theory]
     [InlineData(false), InlineData(true)]
     public static async Task ChangedReviewedFactsDoNotInheritApproval(bool changeSource)
@@ -83,10 +87,14 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-stale-approval");
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage();
-        var lifecycleBefore = workspace.ReadText(ExtensionInstallIntegrationWorkspace.LifecyclePath);
+        var lifecycleBefore = workspace.ReadText(ExtensionInstallIntegrationWorkspace.OwnershipPath);
         var answered = false;
         using var input = new ChangingInput(() =>
         {
+            if (answered)
+            {
+                return;
+            }
             answered = true;
             if (changeSource)
             {
@@ -105,7 +113,7 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
             Assert.True(answered, "The exact permission question was not reached.");
             Assert.Equal(5, run.ExitCode);
             Assert.False(File.Exists(workspace.Combine(PermissionFixture.ExternalPath)));
-            Assert.Equal(lifecycleBefore, workspace.ReadText(ExtensionInstallIntegrationWorkspace.LifecyclePath));
+            Assert.Equal(lifecycleBefore, workspace.ReadText(ExtensionInstallIntegrationWorkspace.OwnershipPath));
             if (changeSource)
             {
                 Assert.False(File.Exists(workspace.Combine(PermissionFixture.PermissionPath)));
@@ -121,6 +129,7 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Theory]
     [InlineData(false), InlineData(true)]
     public static async Task FailedCopyRetainsApprovedPermissionAndExactRecovery(bool existingPermission)
@@ -140,7 +149,7 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
         }
         var parent = Directory.CreateDirectory(workspace.Combine(".apm/agents")).FullName;
         var originalMode = File.GetUnixFileMode(parent);
-        var lifecycleBefore = workspace.ReadText(ExtensionInstallIntegrationWorkspace.LifecyclePath);
+        var lifecycleBefore = workspace.ReadText(ExtensionInstallIntegrationWorkspace.OwnershipPath);
         using var input = new ChangingInput(() =>
         {
             if (!OperatingSystem.IsWindows())
@@ -157,8 +166,8 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
             Assert.False(File.Exists(workspace.Combine(PermissionFixture.ExternalPath)));
             Assert.True(File.Exists(workspace.Combine(PermissionFixture.PermissionPath)), "Explicit approval must remain after copy failure.");
             using var permission = JsonDocument.Parse(workspace.ReadText(PermissionFixture.PermissionPath));
-            Assert.Contains(permission.RootElement.GetProperty("extensions").EnumerateArray(), value => value.GetProperty("id").GetString() == "team");
-            Assert.Equal(lifecycleBefore, workspace.ReadText(ExtensionInstallIntegrationWorkspace.LifecyclePath));
+            Assert.Contains(permission.RootElement.GetProperty("allowInstallPaths").EnumerateArray(), value => value.GetString() == PermissionFixture.ExternalPath);
+            Assert.Equal(lifecycleBefore, workspace.ReadText(ExtensionInstallIntegrationWorkspace.OwnershipPath));
             const string prefix = "recovery-candidate:";
             var candidate = Assert.Single(workspace.Snapshot().Keys, value => value.StartsWith(prefix, StringComparison.Ordinal));
             using var archive = ZipFile.OpenRead(candidate[prefix.Length..]);
@@ -186,7 +195,7 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
         }
     }
 
-    private sealed class ChangingInput(Action change) : StringReader("yes\n")
+    private sealed class ChangingInput(Action change) : StringReader("always\nyes\n")
     {
         public override ValueTask<string?> ReadLineAsync(CancellationToken cancellationToken)
         {

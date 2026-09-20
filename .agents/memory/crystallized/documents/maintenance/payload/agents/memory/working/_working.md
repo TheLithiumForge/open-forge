@@ -30,7 +30,5 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Current maintenance contract for the installable Checkpoints Memory entrypoint](checkpoints.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Checkpoint #Resumability
 - [Current maintenance contract for the installable Handoffs Memory entrypoint](handoffs.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Handoff #AgentCommunication
-<!-- open-forge:generated-index:end -->

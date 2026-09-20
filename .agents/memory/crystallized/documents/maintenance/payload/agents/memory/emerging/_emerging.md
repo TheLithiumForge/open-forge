@@ -30,8 +30,6 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Current maintenance contract for the installable Analysis Memory entrypoint](analysis.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Analysis #Reasoning #Candidate
 - [Current maintenance contract for the installable Ideas Memory entrypoint](ideas.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Idea #Exploration #Candidate
 - [Current maintenance contract for the installable Observations Memory entrypoint](observations.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Observation #AgentLearning #Candidate
-<!-- open-forge:generated-index:end -->

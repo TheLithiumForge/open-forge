@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 3,
+  "command": "extension update",
+  "status": "incomplete",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "The toolkit Extension could not be updated: The source <extension-source> could not be read. Nothing was changed.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "extension-update.source-unavailable",
+      "title": "Source is unavailable",
+      "message": "The source <extension-source> could not be read.",
+      "subject": {
+        "kind": "source",
+        "path": "<extension-source>",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesUpdated": 1,
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 0,
+    "sectionsUpdated": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [],
+    "previousContent": null,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "unchanged": [],
+    "sections": [],
+    "dependencies": []
+  },
+  "recovery": null,
+  "next": null
+}

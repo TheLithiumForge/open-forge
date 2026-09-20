@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Mutation.Locking;
 
 public sealed class WorkspaceLockContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Workspace lock requests retain one cohesive workspace command and operation identity"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void WorkspaceLockRequestRetainsCohesiveIdentity()
     {
@@ -24,6 +25,7 @@ public sealed class WorkspaceLockContractTests
         Assert.Equal(operationId, request.OperationId);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Workspace lock requests reject invalid command and operation state"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void WorkspaceLockRequestRejectsInvalidState()
     {
@@ -33,6 +35,7 @@ public sealed class WorkspaceLockContractTests
         Assert.Throws<ArgumentException>(() => new WorkspaceLockRequest(workspace, "index", Guid.Empty));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Workspace lock results keep failure and cancellation distinct from ownership"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void WorkspaceLockResultsKeepNonOwnershipStatesDistinct()
     {
@@ -48,6 +51,7 @@ public sealed class WorkspaceLockContractTests
         Assert.Null(cancelled.Failure);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Workspace lock filenames combine a bounded display prefix with the full authoritative key"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     [InlineData("open-forge", "open-forge")]
     [InlineData("Open Forge!", "open-forge")]
@@ -77,6 +81,7 @@ public sealed class WorkspaceLockContractTests
         Assert.DoesNotContain(physicalRoot, Path.GetFileName(lockPath), StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Workspace lock friendly names are bounded"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void WorkspaceLockFriendlyNameIsBounded()
     {
@@ -89,6 +94,7 @@ public sealed class WorkspaceLockContractTests
         Assert.All(friendlyName, character => Assert.Equal('a', character));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Workspace identity normalizes trailing separators before hashing"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void WorkspaceIdentityNormalizesBeforeHashing()
     {

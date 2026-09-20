@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Status;
 
 public sealed class StatusInitialTopologyTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status Initial uses canonical rooted topology"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void CanonicalTopologyProjectsRootedSources()
     {
@@ -24,6 +25,7 @@ public sealed class StatusInitialTopologyTests
             source => Assert.Equal(SourceRouteState.Routed, source.RouteState));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status Initial keeps detached canonical topology unrouted"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void DetachedTopologyIsNotPromotedToRouted()
     {
@@ -41,6 +43,7 @@ public sealed class StatusInitialTopologyTests
         Assert.Equal(SourceRouteState.Unrouted, leaf.RouteState);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status Initial preserves ambiguous canonical topology as incomplete"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void AmbiguousTopologyRemainsAmbiguousAndIncomplete()
     {

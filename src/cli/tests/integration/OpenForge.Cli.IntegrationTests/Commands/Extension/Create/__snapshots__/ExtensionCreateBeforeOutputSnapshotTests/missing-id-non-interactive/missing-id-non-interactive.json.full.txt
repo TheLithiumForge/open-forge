@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 3,
+  "command": "extension create",
+  "status": "invalid-input",
+  "detail": "full",
+  "filter": null,
+  "workspace": null,
+  "summary": {
+    "headline": "Cannot create the Extension: no ID was given, and this session cannot ask.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-create.invalid-input",
+      "title": "Invalid input",
+      "message": "no ID was given, and this session cannot ask.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "<extension-source>",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": null,
+    "folder": "<extension-source>",
+    "packagePath": null,
+    "manifestPath": null,
+    "contentPath": null
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension create <id> --path <folder>",
+    "reason": "Supply the Extension ID and package folder, then rerun the request."
+  }
+}

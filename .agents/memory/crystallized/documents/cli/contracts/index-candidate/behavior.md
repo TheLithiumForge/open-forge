@@ -28,10 +28,10 @@ The operation follows one complete typed flow:
 ```text
 validated input
   -> one complete SourceCatalogue
-  -> neutral generated-navigation formation
+  -> neutral generated-navigation formation and metadata coverage
   -> normalized logical selection and target closure
-  -> complete expected generated bodies
-  -> complete ordered mutation plan
+  -> expected generated bodies for every executable region
+  -> ordered mutation plan retaining any not-established skipped region
   -> preflight
   -> dry-run or application
   -> verification and retained-recovery reporting
@@ -167,9 +167,22 @@ Metadata acquisition follows source contracts and contributes only admitted
 facts. Behavior does not define another metadata source.
 
 Projection carries authored metadata through without semantic rewriting and
-rejects invented fallback meaning. Required-metadata validation applies before
-a complete projection can enter a mutation plan. Semantic usefulness remains
-outside the operation.
+rejects invented fallback meaning. Eligible ordinary Missing optional metadata
+uses the accepted automatic-ID fallback and observed valid tags, remains
+Missing, and contributes an optional warning without making the projection
+incomplete. Native Skill, Loader, and overwrite-companion forms do not use that
+fallback. Supplied malformed values remain malformed and are never treated as
+Missing.
+
+Required-metadata validation applies before a complete projection can enter a
+mutation plan. If a selected closure has a readable malformed ordinary or native Skill
+metadata region, the complete topology and identities are otherwise available,
+and an independent available region has a change, projection may retain the
+malformed region as `MetadataSkipped` and form an executable safe subset. The
+skipped region has no effect or recovery entry. Unreadable or unsafe boundaries,
+missing native Skill metadata, and malformed-only selections remain
+non-executable; no generic continue-on-error rule applies. Semantic usefulness
+remains outside the operation.
 
 ### Generated body
 
@@ -194,31 +207,32 @@ and must produce the exact public generated shapes.
 
 ## Generated Boundary
 
-Mutation planning admits a target only when the valid marker ownership
-precondition in the [Generated Boundary And Bounded Effects](interface.md#generated-boundary-and-bounded-effects)
-section is established. The implementation does not define another boundary.
+Mutation planning admits a target only when the unique heading ownership boundary
+in [Generated Boundary And Bounded Effects](interface.md#generated-boundary-and-bounded-effects)
+is established by the shared Markdown parser.
 
-Boundary validation checks the single-final-section condition, the complete
-ordered marker pair, the non-nested and non-overlapping condition, and the
-final-inline-region condition before an effect is planned.
+One top-level canonical ATX `## Entries` heading owns the body from the end of
+its heading span to the next top-level heading of level 1 or 2, or EOF. Fenced,
+indented-code, quoted, nested-list, Setext, differently cased and differently
+leveled lookalikes do not establish this semantic section. Trailing horizontal
+heading whitespace and an initial BOM are accepted. Duplicate `## Entries`
+headings are diagnosed; no arbitrary first section is selected.
 
-Once the valid boundary and replacement preconditions are established, the
-planner may treat malformed interior content as replaceable expected-content
-input. Otherwise no replacement is planned.
-
-When a boundary precondition fails, the planner refuses effects rather than
-creating or repairing markers.
-
-Replacement writes only the generated interior and preserves outside bytes and
-marker tokens. No whole-file formatting or normalization is introduced.
+Once the boundary and replacement preconditions are established, malformed body
+content is replaceable. Exact retired guard comments remain readable as migration
+input and disappear when Index rewrites the body. The second run is a verified
+no-op. Outside bytes remain exact; no whole-file formatting is introduced.
 
 ## Complete Planning
 
-The operation resolves the complete selected target set and preflights the
-complete plan before the first write. It repeats the no-follow final-leaf
-observation for every planned target during initial preflight. One blocked
-target blocks every planned update. There is no best-effort or
-partial-application mode.
+The operation resolves the complete selected target set and records every
+region's status before the first write. It repeats the no-follow final-leaf
+observation for every planned target during initial preflight. A blocked target
+safety or other unsafe/unreadable boundary blocks every planned update. The
+narrow `MetadataSkipped` case above may instead retain the readable malformed
+region as `not-established` and apply only the independent safe changed region
+or regions; malformed-only remains `blocked` with no effects. This is bounded
+independent execution, not generic best-effort or silent skipping.
 
 Planning classifies each selected region as `update` when its current bounded
 body differs from the expected body, or `unchanged` when the bytes already
@@ -250,11 +264,14 @@ prefix/suffix, whole-file bytes, heuristic, elision, limit, or truncation. The
 result states that no files changed. Neither presentation exposes unrelated
 authored bytes or private recovery material.
 
-A dry run with changes is `complete` when the complete plan and application
+A dry run with changes is `completed` when the complete plan and application
 preconditions were established safely. It reports that regions would be updated
 and that no files changed, and does not claim on-disk verification of bytes that
-were not written. Dry run cannot retain a recovery artifact, so no current dry-
-run condition produces `attention`.
+were not written. A dry run with eligible optional Missing metadata retains its
+visible warning and `completed-with-warnings`/Attention2 status without a
+recovery artifact. A dry run with an independent safe region and a skipped
+readable malformed region remains `incomplete`, names the exact skipped source
+and cause, and performs no effects.
 
 ## Application Authority And Recovery
 
@@ -264,7 +281,7 @@ generated boundary. Application does not prompt again and does not accept
 `--yes`.
 
 Application authority remains bounded to changed generated interiors. It does
-not permit marker repair, authored-content replacement, whole-file formatting,
+not permit heading repair, authored-content replacement, whole-file formatting,
 overwrite mutation, path escape, metadata invention, or another repair
 operation.
 
@@ -301,9 +318,9 @@ the final bundle, and stops new effects.
 
 After every target effect and the complete projection verify, delete only the
 positively recognized bundle created by this command. `Deleted`/`Removed`
-produces recovery `removed` and, absent another finding, `complete`.
+produces recovery `removed` and, absent another finding, `completed`.
 `Failed`/`Retained` follows only positive remaining presence and produces
-`attention`, `index.recovery-artifact-retained`, the exact residual path, and
+`completed-with-warnings`, `index.recovery-artifact-retained`, the exact residual path, and
 cleanup guidance. `Failed`/`Unknown` produces `failed`,
 `index.recovery-failed`, and recovery `unknown`, with an exact expected path only
 when M1 returns one. `Blocked` and `Cancelled` retain their neutral M1 facts for
@@ -346,12 +363,18 @@ falls back to a weaker write after an atomicity or identity check fails.
 The target bytes are verified after each replacement.
 
 After all effects complete, the operation rebuilds the selected authoritative
-projection and verifies that every selected generated body matches it.
+projection and verifies every available selected generated body against the
+original expected bytes and canonical, automatic, and physical identities.
+An original skipped metadata region may remain unavailable only for the same
+source, parent, metadata problem, and exact cause. A new skipped source, a
+read or unsafe failure, a changed identity, or a body mismatch fails fresh
+validation; the operation never ignores all fresh findings or skips every
+unavailable region.
 
 An application or verification failure stops new effects. The prepared recovery
 bundle remains available and the result identifies every residual target and bundle.
 A failed operation remains `failed` because the requested index operation did
-not complete. An interruption remains `interrupted` when no stronger failure
+not complete. An interruption remains `cancelled` when no stronger failure
 remains. A hard process stop after closed/readback verification may leave
 complete old or new versions of individual target files and recognized bundle
 evidence; this does not promise power-loss, directory-entry, or storage
@@ -435,11 +458,11 @@ automatic projection remains a verified no-op without creating an effect.
 ## Typed Result And Ordering
 
 The operation forms one typed result after dry-run preflight, application
-verification, recovery, or an earlier invalid or blocked boundary. Human and
+verification, recovery, or an earlier invalid-input or blocked boundary. Human and
 structured renderers consume that result; they do not rerun the operation or
-reinterpret its semantic status. The human renderer sends primary `complete`,
-`attention`, and `incomplete` results to stdout and primary `invalid`, `blocked`,
-`failed`, and `interrupted` errors to stderr. It keeps each typed result together
+reinterpret its semantic status. The human renderer sends primary `completed`,
+`completed-with-warnings`, and `incomplete` results to stdout and primary
+`invalid-input`, `blocked`, `failed`, and `cancelled` errors to stderr. It keeps each typed result together
 on its assigned stream, including incomplete facts and findings. The structured
 renderer sends one complete result document to stdout for every semantic status.
 Separate bounded diagnostics use stderr, and ordinary human text is not mixed
@@ -452,10 +475,11 @@ and recovery, changed and unchanged targets, residual state, findings, semantic
 status, and next actions. The shared exact field names and schema version come
 from the accepted [Shared Result Coordinates](../shared/result-coordinates/interface.md).
 
-The semantic conditions for `complete`, `attention`, `incomplete`, `invalid`,
-`blocked`, `failed`, and `interrupted` are exactly the conditions in the
+The semantic conditions for `completed`, `completed-with-warnings` (including
+eligible optional-metadata warnings), `incomplete`, `invalid-input`, `blocked`,
+`failed`, and `cancelled` are exactly the conditions in the
 [Interface Contract](interface.md#semantic-results). Changes and verified
-no-ops are ordinary `complete` results.
+no-ops are ordinary `completed` results.
 
 Target regions and generated entries use canonical ordinal ordering. Duplicate
 and overlapping selections do not create duplicate result entries or effects.
@@ -484,15 +508,16 @@ unprovable disposition is `unknown`. Counts are exactly `regions`, `updates`,
 `verified`, verified counts `already-current` and `verified`, and
 `updates + unchanged <= regions`.
 
-Every user-condition finding uses the exact 25-code order and fixed code/status
+Every user-condition finding uses the exact 27-code order and fixed code/status
 mapping in the Interface Contract. Equal-code ordering delegates to the exact
 Interface rule: `sourceOccurrence` is `null` first and then positive integers in
 numeric ascending order, followed by `source.path`, `source.id`, and `cause`
 using ordinal comparison. Result
-status precedence is `failed` > `interrupted` > `invalid` > `blocked` >
-`incomplete` > `attention` > `complete`. Every finding status matches its code;
-`complete` has no findings; and the only current `attention` producer is a
-retained recovery artifact. `next` is formed from the exact status/first-finding
+status precedence is `failed` > `cancelled` > `invalid-input` > `blocked` >
+`incomplete` > `completed-with-warnings` > `completed`. Every finding status matches its code;
+`completed` has no findings; and `completed-with-warnings` is produced by an
+eligible optional-metadata warning or a retained recovery artifact. `next` is
+formed from the exact status/first-finding
 matrix and literal commands and reasons in the Interface Contract and never
 interpolates operands.
 
@@ -506,16 +531,17 @@ concerns. Conforming implementation evidence must cover:
   policy, duplicate, overlapping, compatible-alias collapse, incompatible-alias
   blocking, and deferred portable-equivalence behavior.
 - Filesystem-derived direct children independent of current generated lines.
-- Required metadata, native source metadata, missing values, malformed values,
-  and the absence of invented fallback meaning.
+- Required metadata, native source metadata, eligible ordinary Missing optional
+  values with automatic-ID fallback, supplied malformed values, and the absence
+  of invented fallback meaning.
 - Canonical linked and empty entry lines, destination containment, ordinal
   ordering, and stable output bytes.
-- Valid stale bodies, malformed bodies inside valid markers, and every invalid
-  heading or marker boundary.
+- Valid stale bodies, malformed bodies inside a valid heading body, and every invalid
+  heading boundary.
 - Byte preservation outside generated interiors.
-- Complete planning, exact dry-run diffs, no persistent dry-run effects, dry-run
-  preflight blockers, and proof that dry run cannot form the current retained-
-  artifact `attention` condition.
+- Complete planning, exact dry-run diffs, independent safe-region execution,
+  exact skipped metadata identity/cause, no persistent dry-run effects, and
+  dry-run proof that optional warnings do not create recovery artifacts.
 - Verified no-op behavior before bundle preparation.
 - Existing-target bundle preparation and readback verification, unknown and
   colliding bundle protection, all-before-first-effect readiness, success-only
@@ -534,11 +560,11 @@ concerns. Conforming implementation evidence must cover:
   command invocation, while preserving the owning command's one typed result and
   keeping Index orchestration and Generated Navigation facts in their accepted
   boundaries.
-- Exact 25 finding-code/status mappings and order, status precedence, next-action
+- Exact 27 finding-code/status mappings and order, status precedence, next-action
   matrix, reduced JSON order, region/recovery finite-state coherence, counts, and
   non-truncating generated-interior diff identity.
 
-Direct tests should prove the relevant selection, projection, ordering, marker,
+Direct tests should prove the relevant selection, projection, ordering, heading,
 effect-planning, status, and no-op concerns. Focused integration tests should
 use real temporary rooted and detached source trees, external recovery bundles
 and drafts, filesystem failures, concurrency changes, and parent mutations. A

@@ -9,6 +9,7 @@ public sealed class RouteMoveRecoveryAndPartialResultTests
 {
     private const string RecoveryPath = "/recovery/route-move-final.zip";
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route Move preserves exact ordered partial effects and recovery outcomes"),
         InlineData("partial-verification-failure", (int)CliSemanticStatus.Failed),
         InlineData("retained-after-verification", (int)CliSemanticStatus.Attention),

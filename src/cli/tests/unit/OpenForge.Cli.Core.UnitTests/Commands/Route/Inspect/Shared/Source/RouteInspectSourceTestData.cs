@@ -6,8 +6,8 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Shared.Source;
 
 internal static class RouteInspectSourceTestData
 {
-    private const string GeneratedIndexStart = "<!-- open-forge:generated-index:start -->";
-    private const string GeneratedIndexEnd = "<!-- open-forge:generated-index:end -->";
+    private const string GeneratedIndexStart = "";
+    private const string GeneratedIndexEnd = "";
     private const string EmptyEntriesSentinel = "- none - No entries - #Empty";
 
     internal static RouteSource Source(string path, RouteSourceKind kind, string body = "body")

@@ -1,0 +1,22 @@
+Cannot inspect toolkit: The ownership record names toolkit in a way that cannot be matched to one package.
+Workspace: <workspace>
+  Error  toolkit  Extension identity is ambiguous [extension-inspect.identity-ambiguous]
+         The ownership record names toolkit in a way that cannot be matched to one package.
+         fix by hand
+         Cause: The Extension source contains duplicate stable IDs.
+Source: <extension-source>
+Dependencies
+  toolkit  1.0.0  available
+
+Files
+  .agents/toolkit.md  could not be compared
+    Installed SHA-256: <sha256>
+    Package SHA-256: unavailable
+Manifest: unavailable
+Resolution order: toolkit
+Registered in
+  none
+Record coverage: complete
+1 dependency, 1 errors.
+  Inspect the recorded workspace facts.
+Next: open-forge doctor

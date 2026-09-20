@@ -1,0 +1,5 @@
+status=completed
+findings=3
+The ownership lock is absent; no Extension ownership claims are recorded.
+The ownership lock is absent; no Framework ownership claims are available.
+The ownership lock is absent; no Library registrations are recorded.

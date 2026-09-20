@@ -1,0 +1,19 @@
+toolkit is installed, but the comparison could not finish: The explicit Extension source does not exist.
+Workspace: <workspace>
+  Warning  <extension-source>/missing-source  Extension source is unavailable [extension-inspect.source-unavailable]
+         The source <extension-source>/missing-source could not be read, so the comparison could not finish.
+         Cause: The explicit Extension source does not exist.
+Source: <extension-source>/missing-source
+Dependencies
+  toolkit  1.0.0  available
+
+Files
+  .agents/toolkit.md  could not be compared
+    Installed SHA-256: <sha256>
+    Package SHA-256: unavailable
+Manifest: unavailable
+Resolution order: toolkit
+Registered in
+  none
+Record coverage: complete
+1 dependency, 1 warnings.

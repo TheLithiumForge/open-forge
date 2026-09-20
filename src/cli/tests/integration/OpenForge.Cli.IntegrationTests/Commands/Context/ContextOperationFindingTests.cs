@@ -2,7 +2,6 @@ using OpenForge.Cli.Core.Commands.Context;
 using OpenForge.Cli.Core.Commands.Context.Models.Request;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Commands.Context.Models.Selection;
-using OpenForge.Cli.Core.Commands.Context.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
@@ -11,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Context;
 
 public sealed class ContextOperationFindingTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Context direct operation maps failure and interruption to exact terminal results"), Trait("Feature", "context"), Trait("Evidence", "Integration"),
      InlineData(false, (int)CliSemanticStatus.Failed, (int)ContextFindingCode.OperationFailed, (int)ContextCoverageState.Failed),
      InlineData(true, (int)CliSemanticStatus.Interrupted, (int)ContextFindingCode.Interrupted, (int)ContextCoverageState.Interrupted)]
@@ -44,6 +44,7 @@ public sealed class ContextOperationFindingTests
         Assert.Empty(result.Links);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context invalid source selection stops before startup resolution"),
      Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task InvalidSourceStopsBeforeResolution()
@@ -56,9 +57,29 @@ public sealed class ContextOperationFindingTests
         Assert.Null(result.Selection.SourceCount);
         Assert.Equal(ContextCoverageState.NotStarted, result.Coverage.State);
         Assert.Empty(result.Sources);
-        Assert.Contains(result.Findings, finding => finding.Code == ContextFindingCode.InvalidSource);
+        var unknownId = Assert.Single(result.Findings, finding => finding.Code == ContextFindingCode.InvalidSource);
+        Assert.Equal(ContextInvalidSourceKind.UnknownId, unknownId.InvalidSourceKind);
+
+        var missingPath = await ExecuteAsync(
+            workspace,
+            [".agents/missing-source.md"],
+            Content("metadata"));
+        var unresolvedPath = Assert.Single(
+            missingPath.Findings,
+            finding => finding.Code == ContextFindingCode.InvalidSource);
+        Assert.Equal(ContextInvalidSourceKind.Other, unresolvedPath.InvalidSourceKind);
+        var rendered = CliRenderingStage.Render(
+            CliPresentationStage.Create(
+                missingPath,
+                new CliPresentation(CliFormat.Text, CliDetail.Minimal, null)),
+            OpenForge.Cli.Core.Presentation.Context.ContextPresentation.Rendering).PrimaryContent;
+        Assert.Contains(
+            "Cannot read context: The exact source path does not exist.",
+            rendered,
+            StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Context ignores inactive malformed continuity but reports it when its scope is selected"), Trait("Feature", "context"), Trait("Evidence", "Integration"),
      InlineData(false),
      InlineData(true)]
@@ -92,6 +113,7 @@ public sealed class ContextOperationFindingTests
         Assert.NotNull(selected.Next);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context ignores unavailable metadata on a definitively unrouted non-continuity source"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task UnroutedUnavailableMetadataDoesNotInvalidateContinuityCoverage()
     {
@@ -108,6 +130,7 @@ public sealed class ContextOperationFindingTests
         Assert.DoesNotContain(result.Sources, source => source.Path == ".agents/unrouted.md");
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Context ignores valid and malformed native Skill metadata in an inactive scope"),
      Trait("Feature", "context"), Trait("Evidence", "Integration"),
      InlineData(false),
@@ -131,13 +154,16 @@ public sealed class ContextOperationFindingTests
         Assert.Equal(ContextCoverageState.Complete, result.Coverage.Selection);
         Assert.DoesNotContain(result.Findings, finding => finding.Path == skillPath);
         Assert.DoesNotContain(result.Sources, source => source.Path == skillPath);
-        var rendered = ContextHumanRenderer.Render(CliPresentationStage.Create(
-            result,
-            new CliPresentation(CliOutputFormat.Human, CliView.Compact, CliVerbosity.Normal)));
-        Assert.StartsWith($"Context{Environment.NewLine}Status: complete", rendered, StringComparison.Ordinal);
+        var rendered = CliRenderingStage.Render(
+            CliPresentationStage.Create(
+                result,
+                new CliPresentation(CliFormat.Text, CliDetail.Minimal, null)),
+            OpenForge.Cli.Core.Presentation.Context.ContextPresentation.Rendering).PrimaryContent;
+        Assert.Contains("=== ", rendered, StringComparison.Ordinal);
         Assert.DoesNotContain(skillPath, rendered, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context ignores a broken continuity route in an inactive branch"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task BrokenInactiveContinuityRouteDoesNotAffectStartup()
     {
@@ -161,6 +187,7 @@ public sealed class ContextOperationFindingTests
         Assert.DoesNotContain(result.Sources, source => source.Path == ".agents/projects/ambiguous/continuity.md");
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context retains same-code link findings in breadth-first authored edge order"),
      Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task SameCodeLinkFindingsRetainAuthoredOrder()
@@ -182,8 +209,22 @@ public sealed class ContextOperationFindingTests
             result.Findings
                 .Where(finding => finding.Code == ContextFindingCode.TargetMissing)
                 .Select(finding => finding.Subject));
+        var rendered = CliRenderingStage.Render(
+            CliPresentationStage.Create(
+                result,
+                new CliPresentation(CliFormat.Text, CliDetail.Standard, null)),
+            OpenForge.Cli.Core.Presentation.Context.ContextPresentation.Rendering).PrimaryContent;
+        Assert.Contains(
+            rendered.Split('\n'),
+            line => line.Contains("The link at .agents/projects/guide.md:", StringComparison.Ordinal)
+                && line.Contains("points to z-missing.md", StringComparison.Ordinal));
+        Assert.Contains(
+            rendered.Split('\n'),
+            line => line.Contains("The link at .agents/projects/guide.md:", StringComparison.Ordinal)
+                && line.Contains("points to a-missing.md", StringComparison.Ordinal));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context treats an exact orphan overwrite reference as a blocked overwrite boundary"),
      Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task OrphanOverwriteReferenceIsBlocked()
@@ -202,6 +243,7 @@ public sealed class ContextOperationFindingTests
         Assert.DoesNotContain(result.Findings, finding => finding.Code == ContextFindingCode.InvalidSource);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context exact-path selection retains a safe automatic-ID collision as attention"),
      Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task ExactPathIdentityCollisionIsAttention()
@@ -224,14 +266,13 @@ public sealed class ContextOperationFindingTests
             finding.Candidates.Select(candidate => candidate.Path));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context resolves an exact local target case mismatch as safe attention"),
      Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task ExactTargetCaseMismatchIsAttention()
     {
-        using var workspace = ContextOperationWorkspace.Create();
-        workspace.MoveFile(
-            ".agents/projects/linked.md",
-            ".agents/projects/Linked.md");
+        using var workspace = ContextOperationWorkspace.Create(
+            linkedTargetPath: ".agents/projects/Linked.md");
         var result = await ExecuteAsync(
             workspace,
             ["projects/guide"],
@@ -247,6 +288,7 @@ public sealed class ContextOperationFindingTests
         Assert.Contains(result.Findings, finding => finding.Code == ContextFindingCode.TargetCaseMismatch);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context unavailable authored frontmatter forms an incomplete projection finding"),
      Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task UnavailableFrontmatterIsIncomplete()
@@ -289,8 +331,8 @@ public sealed class ContextOperationFindingTests
             additionsOnly: additionsOnly,
             content: content ?? Content("metadata"),
             linkExpansion: linkExpansion ?? ContextLinkExpansion.None,
-            suppliedView: null,
-            effectiveView: CliView.Expanded);
+            suppliedDetail: null,
+            effectiveView: CliDetail.Standard);
 
     private static ContextContentSelection Content(string value)
     {

@@ -10,10 +10,9 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the technology-neutral
-Behavior Contract behind `route move`. The command does not ship yet. Its
-implementation and complete managed and Native AOT executable proof are
-squash-integrated by the commit containing this record; replacement-CLI delivery
-remains pending.
+Behavior Contract behind `route move`. The command is implemented in the
+merged native CLI. Its implementation and complete managed and Native AOT
+executable proof are squash-integrated by the commit containing this record.
 
 The [Interface Contract](interface.md) defines the complete public syntax,
 subject boundary, destination meaning, observable output, semantic results,
@@ -76,7 +75,7 @@ The operation satisfies these invariants:
 - A category is one recovery and verification boundary, never a sequence of
   independently committed leaf operations.
 - A repeated move using the consumed old source forms exact source-not-found
-  `invalid` evidence. It does not manufacture a verified no-op from the absence.
+  `invalid-input` evidence. It does not manufacture a verified no-op from the absence.
 
 ## Request Resolution
 
@@ -93,7 +92,7 @@ is not a Route Move contract.
 For a shell-accepted selected command, binding reads the source reference,
 destination target, Boolean write-policy flags, and shared global flags against
 the [Interface Contract](interface.md#syntax). A missing source or destination
-forms the typed Route Move `invalid` result before workspace or domain work. A
+forms the typed Route Move `invalid-input` result before workspace or domain work. A
 valid request contains exactly one source reference and one destination target.
 
 The selected workspace is the exact current working directory or the exact
@@ -166,7 +165,7 @@ For a leaf, current facts include:
 - lexical and physical containment and exact physical identity;
 - destination target kind, parent entrypoint, occupancy, alias, collision, and
   containment facts;
-- complete trusted lifecycle-ownership inventory and the proof that neither the
+- complete interpretable lock ownership inventory and the proof that neither the
   base nor overwrite is claimed;
 - supported-workspace-Markdown catalogue coverage for the complete reference
   pass;
@@ -207,12 +206,25 @@ this rule.
 
 ### Ownership inventory
 
-The resolver loads one complete trusted lifecycle-ownership inventory containing
-the Framework baseline and every applicable Extension receipt or manager claim.
-It establishes that no selected logical source or resource is claimed. Missing,
-malformed, conflicting, stale, or incomplete inventory forms the public blocked
-ownership boundary. A path, route, tag, generated line, matching bytes, missing
-receipt, or prior result cannot complete this proof.
+The command reads Framework and Extension ownership from the forgiving
+`.agents/open-forge.lock.json` reader. A complete interpretable inventory must
+establish that none of the selected logical sources or resources is claimed
+before a mutation plan can form. Both whole-file and region receipts protect
+their hosts, including portable case aliases. One claim protects the whole
+selected category; the operation never skips a claimed member.
+
+Missing, unreadable or uninterpretable ownership does not infer unmanaged state.
+It produces `ownership-unavailable` with complete informational status, no plan
+or effects, and ownership shown as not-established. The summary explicitly says
+that no route changed. Schema/release metadata and stale content hashes are not
+gates. Actual ownership, physical safety, route and reference conflicts remain
+blocking boundaries. The exact lock expectation is revalidated before and after
+mutation. No legacy record is read, migrated or deleted; these commands neither
+adopt current content nor release or rewrite ownership.
+
+Path names, routing tags, generated lines, matching bytes and prior command
+results cannot independently establish unmanaged status. Framework-aware Route
+Init's region receipts remain positive ownership even in a user-authored host.
 
 ### Reference coverage
 
@@ -257,18 +269,27 @@ source and target move together without a relative-layout change.
 The destination resolver applies the command-specific target meaning from the
 [Interface Contract](interface.md#destination-target):
 
-- A leaf destination is one exact ordinary routed Markdown path under one
-  existing valid parent route.
+- A leaf destination is either one exact ordinary routed Markdown filesystem
+  path under one existing valid parent route, or one accepted logical leaf ID.
+  For the logical form, canonical route resolution maps the slash-separated
+  ID without an `.agents/` prefix or `.md` suffix to the physical Markdown
+  path; for example, `guidance/team/moved-note` maps to
+  `.agents/guidance/team/moved-note.md`. The resolver then applies the same
+  parent, occupancy, identity, and safety checks to that canonical path.
+  The final segment maps to the Markdown leaf, while each intermediate segment
+  must map through an existing valid route parent.
 - A category destination is one exact recognized entrypoint path inside a new
   category folder whose parent is one existing valid route. That path names the
   new category root and its entrypoint; the rest of the category layout is
   derived from the source-relative paths.
 
-The resolver rejects a missing parent route, implicit parent initialization,
-occupied path, orphan companion, overwrite conflict, route-identity collision,
-self-move, destination-inside-source, lexical escape, physical alias, or
-unsafe identity. It never chooses a destination by basename, slug similarity,
-generated order, or likely intent.
+Logical leaf IDs use slash-separated route segments and reject `.`, `..`,
+empty or otherwise unsafe segments. The resolver rejects a missing parent route,
+implicit parent initialization, occupied path, orphan companion, overwrite
+conflict, route-identity collision, self-move, destination-inside-source,
+lexical escape, physical alias, or unsafe identity. It never chooses a
+destination by basename, slug similarity, generated order, or likely intent,
+and it never invents a category or route.
 
 Destination and reference/generated effect targets receive the same no-follow
 final-leaf observation before ordinary physical resolution. A present link,
@@ -330,9 +351,9 @@ projection or its containing-file-relative destination; the planner includes
 only such dependency-minimal regions.
 
 The projection validates every required generated boundary, direct-child
-metadata fact, destination, and route relationship. It preserves markers and
-bytes outside each bounded generated interior. Missing, duplicate, nested,
-reversed, misplaced, or otherwise ambiguous markers block the complete plan. A
+metadata fact, destination, and route relationship. It preserves the Entries
+heading and bytes outside its generated body. A missing or duplicate heading
+boundary blocks the complete plan. A
 generated planning failure occurs before any authored move or reference rewrite.
 
 The operation never invokes a hidden `index` subprocess or schedules a second
@@ -359,16 +380,16 @@ preflight, verification, recovery, and semantic status.
 
 The status selector applies the Interface meanings:
 
-- A complete safe plan in dry-run is `complete` unless a stronger condition
-  applies. Planned effects do not create `attention`.
+- A complete safe plan in dry-run is `completed` unless a stronger condition
+  applies. Planned effects do not create `completed-with-warnings`.
 - A complete and verified application with recovery `Deleted`/`Removed` is
-  `complete`.
+  `completed`.
 - Post-verification recovery deletion `Failed`/positively observed `Retained`
-  after verified effects is `attention`.
+  after verified effects is `completed-with-warnings`.
 - Safe but unfinished catalogue or reference coverage is `incomplete` and has no
   effects.
 - Missing required source or destination and consumed-source exact
-  source-not-found are Route Move `invalid` results. A third positional operand
+  source-not-found are Route Move `invalid-input` results. A third positional operand
   has already stopped as `cli.parser.invalid` at the shell parser and never
   reaches this selector.
 - Unsafe or ambiguous ownership, identity, route, destination, generated,
@@ -376,11 +397,11 @@ The status selector applies the Interface meanings:
 - An unexpected post-effect application or verification failure, or
   post-verification recovery deletion `Failed`/`Unknown`, is `failed`.
 - Cancellation without an unexpected application or verification failure is
-  `interrupted`.
+  `cancelled`.
 
 For ordinary operation conditions, precedence is `blocked` > `incomplete` >
-`attention` > `complete`. Invalid input stops before operation work. Failed and
-interrupted retain their event meaning.
+`completed-with-warnings` > `completed`. Invalid input stops before operation work. Failed and
+cancelled retain their event meaning.
 
 ## Complete Plan And Effects
 
@@ -406,7 +427,7 @@ The operation preserves authored bytes outside exact reference literals and
 bounded generated interiors. It preserves the category's relative layout,
 base/overwrite adjacency, source layering, native and ordinary resource bytes,
 and unrelated workspace content. It does not format files, repair metadata,
-change route meaning, or create a lifecycle record.
+change route meaning, or create an ownership lock.
 
 ## Dry-Run Parity
 
@@ -442,7 +463,7 @@ pre-effect `incomplete` result. When the operation has one or more existing-targ
 effects (`Replace`, `ReplaceGeneratedRegion`, or `Delete`), it prepares exactly
 one immutable ZIP bundle outside the workspace. An operation containing only Create effects or
 no-ops creates no bundle. Its source-generated
-schema-v1 `manifest.json` and streamed ordinal payload entries record
+versioned `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
 exact prior bytes/lengths/hashes, and intended final absence or length/hash.
 `Create` and semantic/byte no-op effects have no entry. A CreateNew draft is
@@ -456,7 +477,7 @@ first target effect; unknown, malformed, mismatched, or colliding bundles block.
 
 A verified no-op is not available for an ordinary move whose old source is
 missing. The operation must resolve the requested source to form a move; the
-consumed-source repeat is exact source-not-found `invalid` rather than a
+consumed-source repeat is exact source-not-found `invalid-input` rather than a
 provenance claim.
 
 ## Revalidation, Verification, And Recovery
@@ -486,11 +507,11 @@ unexpected concurrent edit is preserved and reported as residual state. After
 all effects and final verification, delete only the positively recognized bundle
 created by this operation. `Deleted`/`Removed` permits normal completion.
 `Failed`/positively observed `Retained` keeps target effects successful and
-produces `attention`, the exact residual path, and
+produces `completed-with-warnings`, the exact residual path, and
 cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
 provides one.
 
-Cancellation is `interrupted` when no stronger failure remains. A closed final
+Cancellation is `cancelled` when no stronger failure remains. A closed final
 ZIP may remain after abrupt process termination, without an executable crash or
 power-loss guarantee. Cleanup owns exact named final and draft deletion under
 its separate lease-bound contract. A rerun forms a fresh plan from current
@@ -501,7 +522,7 @@ operation.
 
 ## Presentation Relationship
 
-One typed result feeds expanded human, compact human, and JSON rendering. The
+One typed result feeds full-detail human, minimal-detail human, and JSON rendering. The
 renderers do not rerun source resolution, inventory, reference scanning,
 planning, application, verification, or retained-state reporting. Presentation cannot change
 status or hide a required safety or coverage boundary.
@@ -510,10 +531,10 @@ This presentation relationship applies only after Route Move result formation.
 A shell parser failure writes its terminal diagnostic directly under shared
 shell policy and never enters Route Move human or JSON rendering.
 
-Human `complete`, `attention`, and `incomplete` results go to stdout. Human
-`invalid`, `blocked`, `failed`, and `interrupted` results go to stderr. JSON
+Human `completed`, `completed-with-warnings`, and `incomplete` results go to stdout. Human
+`invalid-input`, `blocked`, `failed`, and `cancelled` results go to stderr. JSON
 emits one complete result on stdout for every semantic status, and bounded
-diagnostics use stderr. Compact and structured results retain at most one
+diagnostics use stderr. minimal-detail and structured results retain at most one
 required `Next:` action. Complete results have none.
 
 The result exposes all reference rewrites and generated effects needed to
@@ -531,11 +552,11 @@ A conforming implementation must additionally prove:
 - shell-owned `cli.parser.invalid` rejection of a third positional operand with
   exit `4`, empty stdout, nonempty stderr, no workspace/domain/lock effect, and no Route Move
   result envelope, while missing required operands remain typed Route Move
-  `invalid` results;
+  `invalid-input` results;
 - leaf base/overwrite pairing, category root selection, complete physical
   inventory, preserved relative layout, and rejection of Loader/workspace-root,
   native, unsupported, orphan, ambiguous, and lifecycle-managed subjects;
-- complete positive unmanaged proof from the Framework baseline and all
+- complete positive unmanaged proof from the Framework ownership and all
   applicable Extension claims, including every missing, malformed, conflicting,
   stale, and incomplete inventory boundary;
 - exact destination parent requirements, occupied-target and complete-category
@@ -563,9 +584,9 @@ A conforming implementation must additionally prove:
   retained partial state without restoration, residual preservation, and
   fresh-plan rerun;
 - all seven semantic statuses, including `Failed`/positively observed `Retained`
-  recovery `attention`, `Failed`/`Unknown` recovery `failed`, and consumed-source
-  exact source-not-found `invalid`; and
-- human/JSON parity, stream assignment, compact retention, structured
+  recovery `completed-with-warnings`, `Failed`/`Unknown` recovery `failed`, and consumed-source
+  exact source-not-found `invalid-input`; and
+- human/JSON parity, stream assignment, minimal-detail retention, structured
   detachment/effect evidence, and one-result rendering without rerunning work.
 
 Direct tests should prove request and subject resolution, ownership proof,

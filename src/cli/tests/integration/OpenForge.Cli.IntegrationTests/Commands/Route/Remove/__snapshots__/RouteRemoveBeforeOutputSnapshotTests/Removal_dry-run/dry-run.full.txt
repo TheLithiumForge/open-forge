@@ -1,0 +1,15 @@
+Would remove .agents/guidance/old guide.md
+Workspace: <workspace>
+  Would remove .agents/guidance/old guide.overwrite.md
+  Would remove entry from .agents/guidance/_guidance.md
+  Would detach 1 link that pointed at it; the link text would be kept:
+    README.md:1:8
+    [Old guide](.agents/guidance/old%20guide.md#part) -> Old guide
+    Before: <sha256>
+    After: <sha256>
+    Before: <sha256>
+    After: <sha256>
+    Before: <sha256>
+    Before: <sha256>
+  Scanned 11 files and found 2 links.
+No files were changed.

@@ -1,0 +1,6 @@
+status=failed
+mode=apply
+items=3
+findings=1
+lock=acquired
+final-check=matched

@@ -1,6 +1,11 @@
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 
@@ -8,6 +13,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 
 public sealed class LibraryStatusContributorIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(true), InlineData(false)]
     public static async Task BoundedViewObservesRegisteredLinksWithoutAddingUnregisteredInventory(bool linked)
@@ -22,8 +28,9 @@ public sealed class LibraryStatusContributorIntegrationTests
         }
 
         var before = workspace.Snapshot();
-        var view = await new LibraryOperationalContributor().ReadStatusAsync(workspace.Workspace, TestContext.Current.CancellationToken);
-        Assert.Equal(LibrariesRecordReadState.Complete, view.Record.State);
+        var view = await new LibraryOperationalContributor().ReadStatusAsync(workspace.Workspace,
+            await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace, CancellationToken.None), TestContext.Current.CancellationToken);
+        Assert.Equal(LibraryRegistrationReadState.Complete, view.Record.State);
         Assert.Single(view.Sources);
         var mapping = Assert.Single(view.Mappings);
         Assert.Equal(LibraryMutationWorkspace.Leaf, mapping.Mapping.DestinationPath.Value);
@@ -31,6 +38,7 @@ public sealed class LibraryStatusContributorIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task MissingRecordNeverAdoptsAnExactLookingLink()
     {
@@ -38,14 +46,16 @@ public sealed class LibraryStatusContributorIntegrationTests
         workspace.Source();
         workspace.Link();
         var before = workspace.Snapshot();
-        var view = await new LibraryOperationalContributor().ReadStatusAsync(workspace.Workspace, TestContext.Current.CancellationToken);
+        var view = await new LibraryOperationalContributor().ReadStatusAsync(workspace.Workspace,
+            await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace, CancellationToken.None), TestContext.Current.CancellationToken);
         Assert.Equal(OperationalViewState.Complete, view.State);
-        Assert.Equal(LibrariesRecordReadState.Missing, view.Record.State);
+        Assert.Equal(LibraryRegistrationReadState.Missing, view.Record.State);
         Assert.Empty(view.Sources);
         Assert.Empty(view.Mappings);
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task ContributorLocalCancellationRemainsInterrupted()
     {
@@ -54,10 +64,11 @@ public sealed class LibraryStatusContributorIntegrationTests
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
 
-        var view = await new LibraryOperationalContributor().ReadStatusAsync(workspace.Workspace, cancellation.Token);
+        var view = await new LibraryOperationalContributor().ReadStatusAsync(workspace.Workspace,
+            await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace, CancellationToken.None), cancellation.Token);
 
         Assert.Equal(OperationalViewState.Interrupted, view.State);
-        Assert.Equal(LibrariesRecordReadState.Unavailable, view.Record.State);
+        Assert.Equal(LibraryRegistrationReadState.Unavailable, view.Record.State);
         Assert.Equal(before, workspace.Snapshot());
     }
 }

@@ -44,7 +44,21 @@ internal static class PublishedProcessTestSupport
             workingDirectory,
             arguments,
             environmentVariables);
-        Assert.Equal(before, snapshot());
+        var after = snapshot();
+        var missing = before
+            .Where(pair => !after.TryGetValue(pair.Key, out var value)
+                || !string.Equals(pair.Value, value, StringComparison.Ordinal))
+            .Select(pair => pair.Key)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+        var added = after
+            .Where(pair => !before.ContainsKey(pair.Key))
+            .Select(pair => pair.Key)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+        Assert.True(
+            missing.Length == 0 && added.Length == 0,
+            $"The process changed its read-only snapshot. Missing or changed: {string.Join(", ", missing)}; added: {string.Join(", ", added)}. Exit: {result.ExitCode}; stdout: {result.StandardOutput}; stderr: {result.StandardError}.");
         return result;
     }
 }

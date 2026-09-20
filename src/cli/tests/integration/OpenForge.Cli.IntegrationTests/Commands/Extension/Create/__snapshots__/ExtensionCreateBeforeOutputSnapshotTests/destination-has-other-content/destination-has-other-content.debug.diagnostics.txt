@@ -1,0 +1,9 @@
+status=blocked
+mode=apply
+id=toolkit
+folder=<extension-source>
+package=<extension-source>/toolkit
+intended=2
+applied=0
+findings=1
+finding=extension-create.destination-collision:subject=<extension-source>/toolkit:cause=The destination is not the exact scaffold.

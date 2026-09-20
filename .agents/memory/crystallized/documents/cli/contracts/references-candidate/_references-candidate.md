@@ -41,7 +41,5 @@ the incoming source-universe filters, shared global flags, and examples.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Technology-neutral behavior and conformance for direct incoming and outgoing reference inspection](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #References #Behavior #Links #CurrentTruth
 - [Current public interface and observable result for direct incoming and outgoing reference facts](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #References #Interface #Links #CurrentTruth
-<!-- open-forge:generated-index:end -->

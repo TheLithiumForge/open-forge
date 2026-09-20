@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 3,
+  "command": "library inspect",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot inspect INVALID ID: INVALID ID is not a valid Library ID. Use lowercase letters, digits and hyphens.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-inspect.invalid-id",
+      "title": "Invalid Library ID",
+      "message": "INVALID ID is not a valid Library ID. Use lowercase letters, digits and hyphens.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "INVALID ID",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sourceFiles": 0,
+    "linksCurrent": 0,
+    "filesAdded": 0,
+    "filesRetired": 0,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "INVALID ID",
+    "sourceFolder": null,
+    "destinationFolder": null,
+    "current": false,
+    "files": [],
+    "inventory": {
+      "eligible": 0,
+      "excluded": 0
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge library list",
+    "reason": "Choose a registered Library ID."
+  }
+}

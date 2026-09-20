@@ -1,17 +1,17 @@
-using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Commands.Update;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 using OpenForge.Cli.Core.Commands.Update.Models.Effects;
-using OpenForge.Cli.Core.Commands.Update.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
-using OpenForge.Cli.Core.Framework.Lifecycle;
+
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Update;
 
 public sealed class UpdateResultContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update result requires ordered properties and initialized arrays"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void RequiresOrderedCompleteResultPropertiesAndNonNullArrays()
     {
@@ -40,39 +40,18 @@ public sealed class UpdateResultContractTests
                 State = UpdateRecoveryState.Retained,
                 ProtectedPaths =
                 [
-                    LifecycleSchema.RelativePath,
+                    WorkspaceOwnershipDefinitions.RelativePath,
                     "docs/z.md",
                     "docs/a.md",
                 ],
                 ResidualPath = "recovery.zip",
             },
         });
-        var names = typeof(UpdateJsonResult)
-            .GetProperties()
-            .Select(property => property.Name)
-            .ToArray();
-
-        Assert.Equal(
-            [
-                nameof(UpdateJsonResult.Mode),
-                nameof(UpdateJsonResult.Force),
-                nameof(UpdateJsonResult.Prune),
-                nameof(UpdateJsonResult.Automatic),
-                nameof(UpdateJsonResult.Source),
-                nameof(UpdateJsonResult.Comparisons),
-                nameof(UpdateJsonResult.GeneratedNavigation),
-                nameof(UpdateJsonResult.Effects),
-                nameof(UpdateJsonResult.Lifecycle),
-                nameof(UpdateJsonResult.Recovery),
-                nameof(UpdateJsonResult.Verification),
-                nameof(UpdateJsonResult.Findings),
-            ],
-            names);
         Assert.Empty(result.Comparisons);
         Assert.Equal(["docs/a.md", "docs/z.md"], result.Effects.Select(effect => effect.Path));
         Assert.Equal(["docs/a.md", "docs/z.md"], result.GeneratedNavigation?.Regions.Select(region => region.Path));
         Assert.Equal(
-            ["docs/a.md", "docs/z.md", LifecycleSchema.RelativePath],
+            ["docs/a.md", "docs/z.md", WorkspaceOwnershipDefinitions.RelativePath],
             result.Recovery.ProtectedPaths);
         Assert.Empty(result.Findings);
         Assert.NotNull(result.Lifecycle);
@@ -83,6 +62,40 @@ public sealed class UpdateResultContractTests
         }));
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Update plan review projects Apply results to DryRun without changing authority or planned facts"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
+    public void PlanReviewProjectionPreservesPlannedFactsAndAuthority()
+    {
+        var applied = new UpdateResult(CompleteFormation() with
+        {
+            Mode = UpdateMode.Apply,
+            Force = true,
+            Prune = true,
+            Automatic = false,
+        });
+
+        var review = applied.ForPlanReview();
+
+        Assert.Equal(UpdateMode.DryRun, review.Mode);
+        Assert.Equal(applied.Force, review.Force);
+        Assert.Equal(applied.Prune, review.Prune);
+        Assert.Equal(applied.Automatic, review.Automatic);
+        Assert.Equal(applied.Source, review.Source);
+        Assert.Equal(applied.Comparisons, review.Comparisons);
+        Assert.Equal(applied.GeneratedNavigation, review.GeneratedNavigation);
+        Assert.Equal(applied.Effects, review.Effects);
+        Assert.Equal(applied.Lifecycle, review.Lifecycle);
+        Assert.Equal(applied.Recovery.State, review.Recovery.State);
+        Assert.Equal(
+            applied.Recovery.ProtectedPaths,
+            review.Recovery.ProtectedPaths,
+            StringComparer.Ordinal);
+        Assert.Equal(applied.Recovery.ResidualPath, review.Recovery.ResidualPath);
+        Assert.Equal(applied.Verification, review.Verification);
+        Assert.Equal(applied.Findings, review.Findings);
+    }
+
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update coalesces authored and generated logical changes into one physical effect"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void CoalescesAuthoredAndGeneratedLogicalChangesIntoOnePhysicalEffect()
     {
@@ -134,26 +147,19 @@ public sealed class UpdateResultContractTests
             UpdatePhysicalEffectResidual.None));
     }
 
-    [Fact(DisplayName = "Update exposes exactly thirty findings with the three-member shape"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
-    public void ExposesExactlyThirtyFindingCodesAndThreeMemberFindingShape()
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Update exposes the finite finding codes"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
+    public void ExposesFiniteFindingCodes()
     {
-        Assert.Equal(30, UpdateDefinitions.FindingCodes.Count);
-        var finding = new UpdateFinding(UpdateFindingCode.ManagedDivergence, "docs/index.md", "managed bytes differ");
-        var names = typeof(UpdateJsonFinding)
-            .GetProperties()
-            .Select(property => property.Name)
-            .ToArray();
-
-        Assert.Equal(
-            [nameof(UpdateJsonFinding.Code), nameof(UpdateJsonFinding.Target), nameof(UpdateJsonFinding.Cause)],
-            names);
-        Assert.Equal(UpdateFindingCode.ManagedDivergence, finding.Code);
+        Assert.Equal(29, UpdateDefinitions.FindingCodes.Count);
+        var finding = new UpdateFinding(UpdateFindingCode.RetiredContentPreserved, "docs/index.md", "managed bytes differ");
         Assert.Equal("docs/index.md", finding.Target);
         var longCause = new string('x', 300);
-        var exactFinding = new UpdateFinding(UpdateFindingCode.ManagedDivergence, "docs/index.md", longCause);
+        var exactFinding = new UpdateFinding(UpdateFindingCode.RetiredContentPreserved, "docs/index.md", longCause);
         Assert.Equal(longCause, exactFinding.Cause);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update maps every status to its exact next command and reason"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void MapsEveryStatusToTheExactNextCommandAndReason()
     {
@@ -172,7 +178,7 @@ public sealed class UpdateResultContractTests
             CompleteFormation());
         var attention = UpdateDefinitions.ReadNextAction(
             CliSemanticStatus.Attention,
-            [new UpdateFinding(UpdateFindingCode.ManagedDivergence, "docs/index.md", "changed")],
+            [new UpdateFinding(UpdateFindingCode.RetiredContentPreserved, "docs/index.md", "changed")],
             CompleteFormation());
         var failed = UpdateDefinitions.ReadNextAction(
             CliSemanticStatus.Failed,
@@ -187,8 +193,8 @@ public sealed class UpdateResultContractTests
         Assert.Equal("open-forge update --help", invalid?.Command);
         Assert.Equal("open-forge doctor", blocked?.Command);
         Assert.Equal("open-forge doctor", incomplete?.Command);
-        Assert.Equal("open-forge update --force", attention?.Command);
-        Assert.Equal("open-forge update --verbose", failed?.Command);
+        Assert.Equal("open-forge update --prune --dry-run", attention?.Command);
+        Assert.Equal("open-forge update --detail debug", failed?.Command);
         Assert.Equal("open-forge update", interrupted?.Command);
         Assert.Equal("Correct the named Update input, then rerun the request.", invalid?.Reason);
         Assert.Equal(
@@ -198,12 +204,13 @@ public sealed class UpdateResultContractTests
             "Inspect the unavailable workspace, source, lifecycle, projection, or recovery facts before relying on Update.",
             incomplete?.Reason);
         Assert.Equal(
-            "Review the preserved Update divergence, then rerun with the named explicit authority.",
+            "Preview deleting the retained files before applying the prune.",
             attention?.Reason);
         Assert.Equal("Report the failure and retry the same Update request with bounded diagnostics.", failed?.Reason);
         Assert.Equal("Rerun the same Update request.", interrupted?.Reason);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update confirmation requests automatic apply while preserving force and prune"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void ConfirmationRequestsAutomaticApplyAndPreservesAuthority()
     {
@@ -229,52 +236,7 @@ public sealed class UpdateResultContractTests
         Assert.Equal("Rerun the same Update request with explicit automatic mode.", action?.Reason);
     }
 
-    [Fact(DisplayName = "Update missing-target attention adds force while preserving prune and dry-run"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
-    public void MissingTargetAttentionAddsForceAndPreservesSelectedOptions()
-    {
-        var formation = CompleteFormation() with
-        {
-            Mode = UpdateMode.DryRun,
-            Force = false,
-            Prune = true,
-            Automatic = false,
-            Findings = [new UpdateFinding(UpdateFindingCode.ManagedTargetMissing, "docs/missing.md", "Managed target is absent.")],
-        };
-
-        var action = UpdateDefinitions.ReadNextAction(
-            CliSemanticStatus.Attention,
-            formation.Findings,
-            formation);
-
-        Assert.Equal("open-forge update --force --prune --dry-run", action?.Command);
-        Assert.Equal(
-            "Review the preserved Update divergence, then rerun with the named explicit authority.",
-            action?.Reason);
-    }
-
-    [Fact(DisplayName = "Update divergence attention adds force while preserving automatic mode"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
-    public void DivergenceAttentionAddsForceAndPreservesAutomaticMode()
-    {
-        var formation = CompleteFormation() with
-        {
-            Mode = UpdateMode.Apply,
-            Force = false,
-            Prune = false,
-            Automatic = true,
-            Findings = [new UpdateFinding(UpdateFindingCode.ManagedDivergence, "docs/changed.md", "Managed bytes differ.")],
-        };
-
-        var action = UpdateDefinitions.ReadNextAction(
-            CliSemanticStatus.Attention,
-            formation.Findings,
-            formation);
-
-        Assert.Equal("open-forge update --force --automatic", action?.Command);
-        Assert.Equal(
-            "Review the preserved Update divergence, then rerun with the named explicit authority.",
-            action?.Reason);
-    }
-
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update retired attention adds prune without granting force"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void RetiredAttentionAddsPruneWithoutForce()
     {
@@ -292,39 +254,13 @@ public sealed class UpdateResultContractTests
             formation.Findings,
             formation);
 
-        Assert.Equal("open-forge update --prune --automatic --dry-run", action?.Command);
+        Assert.Equal("open-forge update --prune --dry-run", action?.Command);
         Assert.Equal(
-            "Review the preserved Update divergence, then rerun with the named explicit authority.",
+            "Preview deleting the retained files before applying the prune.",
             action?.Reason);
     }
 
-    [Fact(DisplayName = "Update mixed missing and retired attention requires both independent authorities"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
-    public void MixedPreservationRequiresBothAuthorities()
-    {
-        var formation = CompleteFormation() with
-        {
-            Mode = UpdateMode.Apply,
-            Force = false,
-            Prune = false,
-            Automatic = false,
-            Findings =
-            [
-                new UpdateFinding(UpdateFindingCode.RetiredContentPreserved, "docs/retired.md", "Retired content remains."),
-                new UpdateFinding(UpdateFindingCode.ManagedTargetMissing, "docs/missing.md", "Managed target is absent."),
-            ],
-        };
-
-        var action = UpdateDefinitions.ReadNextAction(
-            CliSemanticStatus.Attention,
-            formation.Findings,
-            formation);
-
-        Assert.Equal("open-forge update --force --prune", action?.Command);
-        Assert.Equal(
-            "Review the preserved Update divergence, then rerun with the named explicit authority.",
-            action?.Reason);
-    }
-
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update retained-artifact attention prefers cleanup over mixed preservation findings"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void RetainedArtifactAttentionPrefersCleanupOverPreservation()
     {
@@ -336,7 +272,7 @@ public sealed class UpdateResultContractTests
             Automatic = true,
             Findings =
             [
-                new UpdateFinding(UpdateFindingCode.ManagedDivergence, "docs/changed.md", "Managed bytes differ."),
+                new UpdateFinding(UpdateFindingCode.RetiredContentPreserved, "docs/changed.md", "Managed bytes differ."),
                 new UpdateFinding(UpdateFindingCode.RetiredContentPreserved, "docs/retired.md", "Retired content remains."),
                 new UpdateFinding(UpdateFindingCode.RecoveryArtifactRetained, "recovery.zip", "The verified artifact remains."),
             ],
@@ -353,6 +289,7 @@ public sealed class UpdateResultContractTests
             action?.Reason);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Failed Update preserves every request flag before verbose despite a retained artifact"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void FailedRequestPreservesOptionsBeforeVerboseDespiteRetainedArtifact()
     {
@@ -374,12 +311,13 @@ public sealed class UpdateResultContractTests
             formation.Findings,
             formation);
 
-        Assert.Equal("open-forge update --force --prune --automatic --dry-run --verbose", action?.Command);
+        Assert.Equal("open-forge update --force --prune --automatic --dry-run --detail debug", action?.Command);
         Assert.Equal(
             "Report the failure and retry the same Update request with bounded diagnostics.",
             action?.Reason);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Interrupted Update preserves the selected prune automatic and dry-run options"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void InterruptedRequestPreservesSelectedOptions()
     {
@@ -401,33 +339,7 @@ public sealed class UpdateResultContractTests
         Assert.Equal("Rerun the same Update request.", action?.Reason);
     }
 
-    [Fact(DisplayName = "Update serializes schema-v1 envelope and command result in exact order"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
-    public void SerializesSchemaV1EnvelopeAndCommandResultWithExactOrder()
-    {
-        var document = new UpdateJsonDocument
-        {
-            SchemaVersion = 1,
-            Command = "update",
-            Status = "complete",
-            Workspace = null,
-            Result = JsonResult(),
-            Next = null,
-        };
-
-        using var parsed = JsonDocument.Parse(
-            JsonSerializer.Serialize(document, UpdateJsonContext.Default.UpdateJsonDocument));
-        var root = parsed.RootElement;
-        var result = root.GetProperty("result");
-
-        AssertPropertyOrder(root, "schemaVersion", "command", "status", "workspace", "result", "next");
-        AssertPropertyOrder(result, "mode", "force", "prune", "automatic", "source", "comparisons", "generatedNavigation", "effects", "lifecycle", "recovery", "verification", "findings");
-        Assert.Equal(JsonValueKind.Null, root.GetProperty("workspace").ValueKind);
-        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
-        Assert.Empty(result.GetProperty("comparisons").EnumerateArray());
-        Assert.Empty(result.GetProperty("effects").EnumerateArray());
-        Assert.Empty(result.GetProperty("findings").EnumerateArray());
-    }
-
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update result coordinates preserve admitted syntax without normalization"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void PreservesLogicalPhysicalRecoveryAndNavigationCoordinateSyntax()
     {
@@ -473,6 +385,7 @@ public sealed class UpdateResultContractTests
         Assert.Equal("é:x", Assert.Single(navigation.Regions).Path);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update source validates identity then lowercase inventory hash then count"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void PreservesSourceIdentityFingerprintAndCountValidationOrder()
     {
@@ -515,6 +428,7 @@ public sealed class UpdateResultContractTests
         Assert.Equal(-1, count.ActualValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update logical changes preserve caller whitespace and coordinate precedence"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void KeepsLogicalCoordinateWhitespaceAdmissionAndPrecedence()
     {
@@ -548,6 +462,7 @@ public sealed class UpdateResultContractTests
             file.Message);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update physical effects reject whitespace paths before empty changes"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void KeepsPhysicalPathAdmissionBeforeLogicalChangeValidation()
     {
@@ -564,6 +479,7 @@ public sealed class UpdateResultContractTests
             exception.Message);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update result validates recovery whitespace before generated navigation"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void KeepsRecoveryAndNavigationWhitespaceAdmissionOrder()
     {
@@ -643,34 +559,4 @@ public sealed class UpdateResultContractTests
             UpdatePhysicalEffectOutcome.Planned,
             UpdatePhysicalEffectResidual.None);
 
-    private static UpdateJsonResult JsonResult()
-        => new()
-        {
-            Mode = "apply",
-            Force = false,
-            Prune = false,
-            Automatic = false,
-            Source = null,
-            Comparisons = [],
-            GeneratedNavigation = null,
-            Effects = [],
-            Lifecycle = new UpdateJsonLifecycle
-            {
-                Trust = "not-requested",
-                Coverage = "not-requested",
-                Action = "none",
-                Outcome = "not-requested",
-            },
-            Recovery = new UpdateJsonRecovery
-            {
-                State = "not-required",
-                ProtectedPaths = [],
-                ResidualPath = null,
-            },
-            Verification = "not-requested",
-            Findings = [],
-        };
-
-    private static void AssertPropertyOrder(JsonElement element, params string[] expected)
-        => Assert.Equal(expected, element.EnumerateObject().Select(property => property.Name));
 }

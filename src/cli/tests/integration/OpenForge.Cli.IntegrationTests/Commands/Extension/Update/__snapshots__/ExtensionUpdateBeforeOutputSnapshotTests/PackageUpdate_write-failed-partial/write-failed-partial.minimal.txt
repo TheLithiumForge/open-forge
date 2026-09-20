@@ -1,0 +1,5 @@
+Extension update stopped after 1 of 2 changes.
+  .agents/aaa.md      replaced (you had changed it and this version changes it)
+  .agents/toolkit.md  not started
+  Previous content: recovery bundle at <recovery-bundle>
+Next: open-forge doctor

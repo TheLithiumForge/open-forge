@@ -1,0 +1,5 @@
+status=blocked
+packages=1
+effects=0
+findings=1
+Retained Extension 'toolkit' depends on selected package 'base'.

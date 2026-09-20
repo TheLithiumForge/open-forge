@@ -15,6 +15,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Context;
 
 public sealed class ContextBindingContractTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Context symbols expose the exact direct-root operand and three operation options"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
     public void SymbolsExposeExactDirectGrammar()
     {
@@ -39,6 +40,7 @@ public sealed class ContextBindingContractTests
         Assert.Equal("positive-depth|all", symbols.FollowLinks.HelpName);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Context binding preserves operand order, idempotent additions, canonical content, link depth, and supplied view"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
     public void BindingPreservesNormalizedRequest()
     {
@@ -53,7 +55,7 @@ public sealed class ContextBindingContractTests
         var parse = symbols.ContextCommand.Parse(arguments);
         var bound = new ContextRequestBinder(symbols).Bind(
             new CliBindingParse(parse, arguments),
-            Invocation(CliView.Compact));
+            Invocation(CliDetail.Minimal));
 
         var request = Assert.IsType<ContextRequest>(bound.Request);
         Assert.Null(bound.InvalidResult);
@@ -67,10 +69,11 @@ public sealed class ContextBindingContractTests
             request.Content.Effective.Select(value => value.CanonicalValue));
         Assert.Equal(ContextLinkExpansionMode.Bounded, request.LinkExpansion.Mode);
         Assert.Equal(2, request.LinkExpansion.Depth);
-        Assert.Null(request.SuppliedView);
-        Assert.Equal(CliView.Compact, request.EffectiveView);
+        Assert.Null(request.SuppliedDetail);
+        Assert.Equal(CliDetail.Minimal, request.EffectiveView);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Context binding consumes typed parser values across native option forms"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
     [InlineData("equals")]
     [InlineData("colon")]
@@ -88,16 +91,17 @@ public sealed class ContextBindingContractTests
 
         var bound = new ContextRequestBinder(symbols).Bind(
             new CliBindingParse(symbols.ContextCommand.Parse(arguments), arguments),
-            Invocation(CliView.Compact, suppliedView: true));
+            Invocation(CliDetail.Minimal, suppliedDetail: true));
 
         var request = Assert.IsType<ContextRequest>(bound.Request);
         Assert.Equal(["body"], request.Content.Supplied.Select(value => value.CanonicalValue));
         Assert.Equal(ContextLinkExpansionMode.Bounded, request.LinkExpansion.Mode);
         Assert.Equal(2, request.LinkExpansion.Depth);
-        Assert.Equal(CliView.Compact, request.SuppliedView);
-        Assert.Equal(CliView.Compact, request.EffectiveView);
+        Assert.Equal(CliDetail.Minimal, request.SuppliedDetail);
+        Assert.Equal(CliDetail.Minimal, request.EffectiveView);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Context binding returns typed invalid results for exact semantic input errors"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
     [InlineData("additions-without-source", "context.invalid-input")]
     [InlineData("repeated-content", "context.invalid-content")]
@@ -112,16 +116,23 @@ public sealed class ContextBindingContractTests
         var parse = symbols.ContextCommand.Parse(arguments);
         var bound = new ContextRequestBinder(symbols).Bind(
             new CliBindingParse(parse, arguments),
-            Invocation(CliView.Expanded));
+            Invocation(CliDetail.Standard));
 
         var result = Assert.IsType<ContextResult>(bound.InvalidResult);
         Assert.Null(bound.Request);
         Assert.Equal(CliSemanticStatus.Invalid, result.Status);
         Assert.Equal(ContextCoverageState.NotStarted, result.Coverage.State);
-        Assert.Contains(result.Findings, finding => ContextDefinitions.Read(finding.Code).Code == expectedCode);
+        var finding = Assert.Single(
+            result.Findings,
+            value => ContextDefinitions.Read(value.Code).Code == expectedCode);
+        if (scenario == "invalid-source")
+        {
+            Assert.Equal(ContextInvalidSourceKind.Other, finding.InvalidSourceKind);
+        }
         Assert.Equal("open-forge context --help", Assert.IsType<CliNextAction>(result.Next).Command);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Context definitions expose only the accepted ordered finding vocabulary and fixed statuses"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
     public void DefinitionsExposeExactFindingVocabulary()
     {
@@ -160,18 +171,18 @@ public sealed class ContextBindingContractTests
                 .Select(value => (value.Code, value.Status)));
     }
 
-    private static CliInvocation Invocation(CliView view, bool suppliedView = false)
+    private static CliInvocation Invocation(CliDetail view, bool suppliedDetail = false)
     {
         var root = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "context-binding-contract"));
         var workspace = new CliWorkspace(root, root, CliWorkspaceSelectionMethod.CurrentDirectory);
         return new CliInvocation(
             new CliProcessIdentity("open-forge", "1.0.0"),
-            new CliPresentation(CliOutputFormat.Human, view, CliVerbosity.Normal),
+            new CliPresentation(CliFormat.Text, view, null),
             CliTerminalMode.None,
             new CliWorkspaceRequest(null, root),
             workspace)
         {
-            SuppliedView = suppliedView ? view : null,
+            SuppliedDetail = suppliedDetail ? view : null,
         };
     }
 

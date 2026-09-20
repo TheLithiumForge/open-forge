@@ -30,9 +30,9 @@ internal sealed class StatusRecoveryFixture : IDisposable
     internal static StatusRecoveryFixture Create(StatusIntegrationWorkspace workspace)
         => new(workspace);
 
-    internal async Task<string> AddVerifiedFinalAsync()
+    internal async Task<string> AddVerifiedFinalAsync(Guid? fixedOperationId = null)
     {
-        var operationId = Guid.NewGuid();
+        var operationId = fixedOperationId ?? Guid.NewGuid();
         var relativePath = $"status-recovery-target-{operationId:N}.bin";
         var priorBytes = "prior recovery bytes\n"u8.ToArray();
         var targetPath = _workspace.Combine(relativePath);

@@ -1,0 +1,13 @@
+Extension create stopped after 1 of 2 files.
+  Error  <extension-source>/toolkit/content/.agents/  Writing failed [extension-create.application-failed]
+         Extension create stopped after 1 of 2 files. Created files were left in place.
+  <extension-source>/toolkit/extension.json    created
+  <extension-source>/toolkit/content/.agents/  not started
+  name: Toolkit
+  description: Open Forge Extension package toolkit.
+  version: 0.1.0
+  dependencies: none
+  manifest content:
+  {"id":"toolkit","name":"Toolkit","description":"Open Forge Extension package toolkit.","version":"0.1.0","dependencies":[]}
+  Inspect the retained destination state before retrying Extension Create.
+Next: open-forge extension create --detail debug

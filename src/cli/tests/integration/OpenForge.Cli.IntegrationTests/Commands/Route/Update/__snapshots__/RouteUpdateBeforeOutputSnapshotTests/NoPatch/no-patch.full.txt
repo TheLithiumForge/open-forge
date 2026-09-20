@@ -1,0 +1,8 @@
+Cannot update memory/project-alpha/overview: Nothing to update: pass --description, --responsibility, --tag or --template.
+Workspace: <workspace>
+  Error  memory/project-alpha/overview  Invalid input [route-update.invalid-input]
+         Nothing to update: pass --description, --responsibility, --tag or --template.
+         open-forge route update memory/project-alpha/overview --description "<one sentence>"
+         Correct the named Route Update input, then rerun the request.
+  Correct the named Route Update input, then rerun the request.
+Next: open-forge route update memory/project-alpha/overview --description "<one sentence>"

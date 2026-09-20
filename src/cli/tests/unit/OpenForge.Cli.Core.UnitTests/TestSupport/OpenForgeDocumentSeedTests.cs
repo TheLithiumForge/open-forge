@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.TestSupport;
 
 public sealed class OpenForgeDocumentSeedTests
 {
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Routed Skill entrypoint seed orders names and emits canonical Skill entries")]
     [Trait("Feature", "test-support"), Trait("Evidence", "Unit")]
     public void SkillEntrypointOrdersNamesAndUsesCanonicalEntries()
@@ -23,15 +24,14 @@ public sealed class OpenForgeDocumentSeedTests
 
             ## Entries
 
-            <!-- open-forge:generated-index:start -->
             - [accessibility](accessibility/SKILL.md) - #Skill
             - [experience-design](experience-design/SKILL.md) - #Skill
-            <!-- open-forge:generated-index:end -->
 
             """,
             document);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Routed Skill entrypoint seed rejects empty duplicate or blank names")]
     [Trait("Feature", "test-support"), Trait("Evidence", "Unit")]
     [InlineData("empty")]

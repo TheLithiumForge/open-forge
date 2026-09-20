@@ -1,0 +1,6 @@
+Cannot inspect toolkit: toolkit requires helper, which requires toolkit.
+Workspace: <workspace>
+  Error  toolkit  Dependency cycle
+         toolkit requires helper, which requires toolkit.
+  Warning  .agents/helper.md  new in the package; not installed yet
+1 file unchanged, 1 file new, 1 errors, 1 warnings.

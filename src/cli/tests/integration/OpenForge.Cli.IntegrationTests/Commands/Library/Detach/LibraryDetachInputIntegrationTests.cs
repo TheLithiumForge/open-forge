@@ -6,6 +6,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Detach;
 
 public sealed class LibraryDetachInputIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData("", null)]
     [InlineData("team-knowledge extra extra", "Unrecognized command or argument 'extra'.")]
@@ -28,7 +29,7 @@ public sealed class LibraryDetachInputIntegrationTests
         Assert.Equal(string.Empty, result.Output);
         if (nativeDiagnostic is null)
         {
-            Assert.Contains("invalid", result.Error, StringComparison.Ordinal);
+            Assert.Contains("Cannot detach", result.Error, StringComparison.Ordinal);
         }
         else
         {
@@ -37,6 +38,7 @@ public sealed class LibraryDetachInputIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task HelpStopsBeforeMissingWorkspaceResolution()
     {
@@ -49,9 +51,10 @@ public sealed class LibraryDetachInputIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(true), InlineData(false)]
-    public static async Task UnknownIdAndMissingRecordUseInvalidExitAndStandardError(bool completeRecord)
+    public static async Task UnknownIdIsInvalidAndMissingOwnershipIsAnObservation(bool completeRecord)
     {
         using var workspace = new LibraryMutationWorkspace();
         if (completeRecord)
@@ -64,13 +67,27 @@ public sealed class LibraryDetachInputIntegrationTests
 
         var result = await CliHostCapture.RunAsync(["library", "detach", libraryId], workspace.Path);
 
-        Assert.Equal(4, result.ExitCode);
-        Assert.Equal(string.Empty, result.Output);
-        Assert.Contains("Status: invalid", result.Error, StringComparison.Ordinal);
-        Assert.Contains("library-detach.unknown-id", result.Error, StringComparison.Ordinal);
+        Assert.Equal(completeRecord ? 4 : 0, result.ExitCode);
+        if (completeRecord)
+        {
+            Assert.Equal(string.Empty, result.Output);
+            Assert.Contains(
+                "Cannot detach other-library: No Library has the ID other-library.",
+                result.Error,
+                StringComparison.Ordinal);
+        }
+        else
+        {
+            Assert.Equal(string.Empty, result.Error);
+            Assert.Contains(
+                "No ownership record exists, so team-knowledge cannot be detached. Nothing was changed.",
+                result.Output,
+                StringComparison.Ordinal);
+        }
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task RepeatedDetachIsInvalidAndHasNoFurtherEffect()
     {
@@ -79,7 +96,7 @@ public sealed class LibraryDetachInputIntegrationTests
         workspace.Link();
         workspace.Record(LibraryMutationWorkspace.Leaf);
 
-        var applied = await CliHostCapture.RunAsync(["library", "detach", "team-knowledge"], workspace.Path);
+        var applied = await CliHostCapture.RunAsync(["library", "detach", "team-knowledge", "--automatic"], workspace.Path);
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.Error);
         var beforeRepeat = workspace.Snapshot();
@@ -88,11 +105,14 @@ public sealed class LibraryDetachInputIntegrationTests
 
         Assert.Equal(4, repeated.ExitCode);
         Assert.Equal(string.Empty, repeated.Output);
-        Assert.Contains("Status: invalid", repeated.Error, StringComparison.Ordinal);
-        Assert.Contains("library-detach.unknown-id", repeated.Error, StringComparison.Ordinal);
+        Assert.Contains(
+            "Cannot detach team-knowledge: No Library has the ID team-knowledge.",
+            repeated.Error,
+            StringComparison.Ordinal);
         Assert.Equal(beforeRepeat, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(true, true), InlineData(true, false), InlineData(false, true), InlineData(false, false)]
     public static async Task WorkspaceFailureRetainsParsedLibrarySubject(bool globalsFirst, bool ordinaryFile)
@@ -106,8 +126,8 @@ public sealed class LibraryDetachInputIntegrationTests
         var badPath = workspace.Absolute("bad-workspace");
         var before = workspace.Snapshot();
         string[] arguments = globalsFirst
-            ? ["--workspace", badPath, "--json", "library", "detach", "team-knowledge"]
-            : ["library", "detach", "team-knowledge", "--workspace", badPath, "--json"];
+            ? ["--workspace", badPath, "--format", "json", "library", "detach", "team-knowledge"]
+            : ["library", "detach", "team-knowledge", "--workspace", badPath, "--format", "json"];
 
         var capture = await CliHostCapture.RunAsync(arguments, workspace.Path);
 
@@ -115,30 +135,23 @@ public sealed class LibraryDetachInputIntegrationTests
         Assert.Empty(capture.Error);
         using var document = JsonDocument.Parse(capture.Output);
         var envelope = document.RootElement;
-        var payload = envelope.GetProperty("result");
+        var payload = envelope.GetProperty("data");
         Assert.Equal("library detach", envelope.GetProperty("command").GetString());
         Assert.Equal(ordinaryFile ? "blocked" : "incomplete", envelope.GetProperty("status").GetString());
         Assert.Equal(JsonValueKind.Null, envelope.GetProperty("workspace").ValueKind);
-        var finding = Assert.Single(payload.GetProperty("findings").EnumerateArray());
+        var finding = Assert.Single(envelope.GetProperty("findings").EnumerateArray());
         Assert.Equal(ordinaryFile ? "library-detach.record-blocked" : "library-detach.record-unavailable", finding.GetProperty("code").GetString());
-        Assert.Equal(ordinaryFile ? "The selected workspace root is not a directory." : "The selected workspace is missing.", finding.GetProperty("cause").GetString());
-        var plan = payload.GetProperty("plan");
-        Assert.Equal("not-started", plan.GetProperty("state").GetString());
-        Assert.Empty(plan.GetProperty("directories").EnumerateArray());
-        Assert.Empty(plan.GetProperty("links").EnumerateArray());
-        Assert.Empty(plan.GetProperty("generatedRegions").EnumerateArray());
-        Assert.Equal("none", plan.GetProperty("recordEffect").GetString());
-        var application = payload.GetProperty("application");
-        Assert.Equal("not-started", application.GetProperty("state").GetString());
-        Assert.Equal("not-started", application.GetProperty("verification").GetString());
-        Assert.Empty(application.GetProperty("residuals").EnumerateArray());
-        Assert.Equal("not-started", application.GetProperty("recordPublication").GetProperty("state").GetString());
-        Assert.Equal(JsonValueKind.Null, application.GetProperty("recordPublication").GetProperty("publishedLast").ValueKind);
-        var identity = payload.GetProperty("identity");
-        Assert.Equal("apply", identity.GetProperty("mode").GetString());
-        Assert.Equal(JsonValueKind.Null, identity.GetProperty("destinationRoot").ValueKind);
+        Assert.Equal("team-knowledge", finding.GetProperty("subject").GetProperty("id").GetString());
+        Assert.Contains(
+            ordinaryFile ? "is invalid" : "could not be read completely",
+            finding.GetProperty("message").GetString(),
+            StringComparison.Ordinal);
+        Assert.Equal("apply", payload.GetProperty("mode").GetString());
+        Assert.Equal("team-knowledge", payload.GetProperty("id").GetString());
+        Assert.Equal(JsonValueKind.Null, payload.GetProperty("sourceFolder").ValueKind);
+        Assert.Equal(JsonValueKind.Null, payload.GetProperty("destinationFolder").ValueKind);
+        Assert.False(payload.GetProperty("registrationRemoved").GetBoolean());
+        Assert.Empty(payload.GetProperty("effects").EnumerateArray());
         Assert.Equal(before, workspace.Snapshot());
-        Assert.Equal("team-knowledge", identity.GetProperty("libraryId").GetString());
-        Assert.Equal("team-knowledge", finding.GetProperty("libraryId").GetString());
     }
 }

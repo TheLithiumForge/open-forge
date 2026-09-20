@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 3,
+  "command": "extension inspect",
+  "status": "incomplete",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "toolkit is installed, but the comparison could not finish: The explicit Extension source does not exist.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "extension-inspect.source-unavailable",
+      "title": "Extension source is unavailable",
+      "message": "The source <extension-source>\\missing-source could not be read, so the comparison could not finish.",
+      "subject": {
+        "kind": "source",
+        "path": "<extension-source>\\missing-source",
+        "id": "toolkit",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesUnchanged": 0,
+    "filesChanged": 0,
+    "filesMissing": 0,
+    "filesNew": 0,
+    "filesRetired": 0,
+    "dependencies": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "toolkit",
+    "installed": {
+      "version": "1.0.0"
+    },
+    "available": null,
+    "source": {
+      "kind": null,
+      "path": "<extension-source>\\missing-source"
+    },
+    "matches": false,
+    "files": [
+      {
+        "path": ".agents/toolkit.md",
+        "relation": "unknown"
+      }
+    ],
+    "dependencies": [
+      {
+        "id": "toolkit",
+        "version": "1.0.0",
+        "state": "available"
+      }
+    ],
+    "name": null,
+    "description": null
+  },
+  "recovery": null,
+  "next": null
+}

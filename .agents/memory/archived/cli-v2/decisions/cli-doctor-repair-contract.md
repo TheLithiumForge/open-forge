@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Doctor diagnoses workspace health without writing, while an explicit repair mode fixes every mechanically safe finding through one plan and reports the rest
+  description: "Historical CLI-v2 source: Doctor diagnoses workspace health without writing, while an explicit repair mode fixes every mechanically safe finding through one plan and reports the rest"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

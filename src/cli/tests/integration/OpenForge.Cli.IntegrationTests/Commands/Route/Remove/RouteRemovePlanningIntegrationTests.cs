@@ -20,6 +20,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Remove;
 
 public sealed class RouteRemovePlanningIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove category observations retain exact inventory tuples and fresh bytes"), Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task CategoryObservationsRetainExactTuplesAndFreshSnapshots()
     {
@@ -120,6 +121,7 @@ public sealed class RouteRemovePlanningIntegrationTests
         Assert.Equal(changedBefore, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove generated exposure retains lexical paths and observes unavailable parents afresh"), Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task GeneratedExposureRetainsLexicalPathsAndFreshAvailability()
     {
@@ -166,6 +168,7 @@ public sealed class RouteRemovePlanningIntegrationTests
         Assert.Equal(missingBefore, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove dry-run plans a leaf pair and performs no persistent effect"),
      Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task DryRunPlansLeafPairWithoutWrites()
@@ -176,7 +179,7 @@ public sealed class RouteRemovePlanningIntegrationTests
         var error = new StringWriter();
 
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--dry-run", "--json"],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--dry-run", "--format", "json"],
             output,
             error);
 
@@ -186,27 +189,25 @@ public sealed class RouteRemovePlanningIntegrationTests
         using var document = JsonDocument.Parse(output.ToString());
         var root = document.RootElement;
         Assert.Equal("route remove", root.GetProperty("command").GetString());
-        Assert.Equal("complete", root.GetProperty("status").GetString());
-        var result = root.GetProperty("result");
+        Assert.Equal("completed", root.GetProperty("status").GetString());
+        var result = root.GetProperty("data");
         Assert.Equal("dry-run", result.GetProperty("mode").GetString());
-        Assert.Equal("leaf", result.GetProperty("subject").GetProperty("kind").GetString());
+        Assert.Equal("file", result.GetProperty("subject").GetString());
         Assert.Contains(
-            result.GetProperty("subject").GetProperty("layers").EnumerateArray(),
-            layer => layer.GetProperty("sourcePath").GetString() == RouteRemoveIntegrationWorkspace.LeafPath);
+            result.GetProperty("removed").EnumerateArray(),
+            path => path.GetString() == RouteRemoveIntegrationWorkspace.LeafPath);
         Assert.Contains(
-            result.GetProperty("subject").GetProperty("layers").EnumerateArray(),
-            layer => layer.GetProperty("sourcePath").GetString() == RouteRemoveIntegrationWorkspace.LeafOverwritePath);
+            result.GetProperty("detachedLinks").EnumerateArray(),
+            detachment => detachment.GetProperty("path").GetString() == "README.md");
         Assert.Contains(
-            result.GetProperty("references").GetProperty("detachments").EnumerateArray(),
-            detachment => detachment.GetProperty("visibleLabel").GetString() == "Old guide");
-        Assert.Contains(
-            result.GetProperty("effects").EnumerateArray(),
+            root.GetProperty("effects").EnumerateArray(),
             effect => effect.GetProperty("path").GetString() == RouteRemoveIntegrationWorkspace.LeafPath);
-        Assert.Equal("not-created", result.GetProperty("recovery").GetProperty("state").GetString());
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("recovery").ValueKind);
         Assert.Equal(before, workspace.SnapshotHashes());
         workspace.AssertNoLockInfrastructure();
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove category dry-run inventories every contained regular item and generated consequence"),
      Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task DryRunInventoriesCompleteCategoryAndProjection()
@@ -217,7 +218,7 @@ public sealed class RouteRemovePlanningIntegrationTests
         var error = new StringWriter();
 
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.CategoryId, "--dry-run", "--json"],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.CategoryId, "--dry-run", "--format", "json"],
             output,
             error);
 
@@ -225,20 +226,22 @@ public sealed class RouteRemovePlanningIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, completion.Status);
         Assert.Equal(string.Empty, error.ToString());
         using var document = JsonDocument.Parse(output.ToString());
-        var result = document.RootElement.GetProperty("result");
-        Assert.Equal("category", result.GetProperty("subject").GetProperty("kind").GetString());
-        var items = result.GetProperty("subject").GetProperty("items").EnumerateArray().ToArray();
-        Assert.Contains(items, item => item.GetProperty("sourcePath").GetString() == RouteRemoveIntegrationWorkspace.CategoryPath);
-        Assert.Contains(items, item => item.GetProperty("sourcePath").GetString() == RouteRemoveIntegrationWorkspace.CategoryChildPath);
-        Assert.Contains(items, item => item.GetProperty("sourcePath").GetString() == RouteRemoveIntegrationWorkspace.CategoryNotesPath);
-        Assert.Contains(items, item => item.GetProperty("sourcePath").GetString() == RouteRemoveIntegrationWorkspace.CategoryResourcePath);
+        var result = document.RootElement.GetProperty("data");
+        Assert.Equal("route", result.GetProperty("subject").GetString());
+        var removed = result.GetProperty("removed").EnumerateArray().ToArray();
+        Assert.Contains(removed, path => path.GetString() == RouteRemoveIntegrationWorkspace.CategoryPath);
+        Assert.Contains(removed, path => path.GetString() == RouteRemoveIntegrationWorkspace.CategoryChildPath);
+        Assert.Contains(removed, path => path.GetString() == RouteRemoveIntegrationWorkspace.CategoryNotesPath);
+        Assert.Contains(removed, path => path.GetString() == RouteRemoveIntegrationWorkspace.CategoryResourcePath);
         Assert.Contains(
-            result.GetProperty("generatedNavigation").GetProperty("regions").EnumerateArray(),
-            region => region.GetProperty("reasons").EnumerateArray().Any(reason => reason.GetString() == "old-parent"));
+            document.RootElement.GetProperty("effects").EnumerateArray(),
+            effect => effect.GetProperty("path").GetString() == RouteRemoveIntegrationWorkspace.ParentPath
+                && effect.GetProperty("action").GetString() == "rewritten");
         Assert.Equal(before, workspace.SnapshotHashes());
         workspace.AssertNoLockInfrastructure();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove projects a Loader-exposed category through the Loader region with exact bounded bytes"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationNavigation")]
     public async Task LoaderProjectionRetainsExactBeforeAndExpectedRegionBytes()
@@ -262,9 +265,9 @@ public sealed class RouteRemovePlanningIntegrationTests
             plan.Projection.Navigation.DocumentEdits,
             value => value.LogicalPath == workspace.Combine(RouteRemoveIntegrationWorkspace.LoaderPath));
         var beforeBytes = Encoding.UTF8.GetBytes(
-            "\n- [Guidance](guidance/_guidance.md) - #Route\n- [Loader topics](loader-topics/_loader-topics.md) - #Route\n");
+            "- [Guidance](guidance/_guidance.md) - #Route\n- [Loader topics](loader-topics/_loader-topics.md) - #Route\n");
         var expectedBytes = Encoding.UTF8.GetBytes(
-            "\n- [Guidance](guidance/_guidance.md) - #Route\n");
+            "- [Guidance](guidance/_guidance.md) - #Route\n");
         Assert.Equal(beforeBytes, edit.BeforeBytes);
         Assert.Equal(expectedBytes, edit.ExpectedBytes);
         Assert.Equal(FileExpectation.Hash(beforeBytes), FileExpectation.Hash(edit.BeforeBytes.AsSpan()));
@@ -274,8 +277,10 @@ public sealed class RouteRemovePlanningIntegrationTests
             FileExpectation.Hash(edit.Snapshot.Bytes.AsSpan()));
     }
 
-    [Theory(DisplayName = "Route Remove refuses missing or claimed ownership before effects"),
-     InlineData("missing", "blocked", "route-remove.ownership-unavailable"),
+    [Trait("Boundary", "Host")]
+    [Theory(DisplayName = "Route Remove reports unknown ownership and refuses claimed content before effects"),
+     InlineData("missing", "complete", "route-remove.ownership-unavailable"),
+     InlineData("framework-region-claim", "blocked", "route-remove.ownership-claimed"),
      InlineData("framework-claim", "blocked", "route-remove.ownership-claimed")]
     [Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task OwnershipBoundariesAreWriteFree(
@@ -290,26 +295,30 @@ public sealed class RouteRemovePlanningIntegrationTests
         }
         else
         {
-            workspace.SeedFrameworkClaim(RouteRemoveIntegrationWorkspace.LeafPath);
+            workspace.SeedFrameworkClaim(RouteRemoveIntegrationWorkspace.LeafPath.ToUpperInvariant(), region: scenario == "framework-region-claim");
         }
 
         var before = workspace.SnapshotHashes();
         var output = new StringWriter();
         var error = new StringWriter();
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--format", "json", "--detail", "full"],
             output,
             error);
 
-        var primary = expectedStatus == "incomplete" ? output.ToString() : error.ToString();
-        Assert.Equal(expectedStatus == "incomplete" ? 3 : 5, completion.ExitCode);
+        var primary = output.ToString();
+        Assert.Equal(expectedStatus switch { "complete" => 0, "incomplete" => 3, _ => 5 }, completion.ExitCode);
         Assert.Equal(expectedStatus, completion.Status switch
         {
             CliSemanticStatus.Incomplete => "incomplete",
             CliSemanticStatus.Blocked => "blocked",
             _ => completion.Status.ToString().ToLowerInvariant(),
         });
-        Assert.Contains(expectedCode, primary, StringComparison.Ordinal);
+        using var document = JsonDocument.Parse(primary);
+        Assert.Contains(
+            document.RootElement.GetProperty("findings").EnumerateArray(),
+            finding => finding.GetProperty("code").GetString() == expectedCode);
+        Assert.Equal(string.Empty, error.ToString());
         Assert.Equal(before, workspace.SnapshotHashes());
         workspace.AssertNoLockInfrastructure();
     }

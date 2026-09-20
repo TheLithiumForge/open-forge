@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Filesystem;
 
 public sealed class WorkspaceSelectorTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Workspace selector normalizes current and explicit roots")]
     [Trait("Feature", "cli-workspace"), Trait("Evidence", "Integration")]
     public void SelectorNormalizesCurrentAndExplicitRoots()
@@ -28,6 +29,35 @@ public sealed class WorkspaceSelectorTests
         Assert.Equal(Path.GetFullPath(workspace), explicitSelection.Workspace?.PhysicalRoot);
     }
 
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Workspace selector keeps implicit current directory below an installed ancestor")]
+    [Trait("Feature", "cli-workspace"), Trait("Evidence", "Integration")]
+    public void SelectorKeepsImplicitCurrentDirectoryBelowInstalledAncestor()
+    {
+        using var temporary = TemporaryWorkspace.Create("workspace-current-child");
+        var parent = temporary.CreateDirectory("parent");
+        temporary.CreateDirectory("parent/.agents");
+        var child = temporary.CreateDirectory("parent/child");
+        Assert.True(Directory.Exists(Path.Combine(parent, ".agents")));
+        Assert.False(Directory.Exists(Path.Combine(child, ".agents")));
+        var before = temporary.SnapshotHashes();
+        var selector = new CliWorkspaceSelector(new PhysicalPathResolver());
+
+        var current = selector.Select(new CliWorkspaceRequest(null, child));
+        var explicitParent = selector.Select(new CliWorkspaceRequest(parent, temporary.Path));
+
+        Assert.Equal(CliWorkspaceSelectionState.Selected, current.State);
+        Assert.Equal(CliWorkspaceSelectionMethod.CurrentDirectory, current.Workspace?.SelectedBy);
+        Assert.Equal(Path.GetFullPath(child), current.Workspace?.LexicalRoot);
+        Assert.Equal(Path.GetFullPath(child), current.Workspace?.PhysicalRoot);
+        Assert.Equal(CliWorkspaceSelectionState.Selected, explicitParent.State);
+        Assert.Equal(CliWorkspaceSelectionMethod.ExplicitWorkspace, explicitParent.Workspace?.SelectedBy);
+        Assert.Equal(Path.GetFullPath(parent), explicitParent.Workspace?.LexicalRoot);
+        Assert.Equal(Path.GetFullPath(parent), explicitParent.Workspace?.PhysicalRoot);
+        Assert.Equal(before, temporary.SnapshotHashes());
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Workspace selector preserves lexical root and resolves root aliases")]
     [Trait("Feature", "cli-workspace"), Trait("Evidence", "Integration")]
     public void SelectorPreservesLexicalRootAndResolvesAlias()
@@ -44,6 +74,7 @@ public sealed class WorkspaceSelectorTests
         Assert.Equal(Path.GetFullPath(workspace), result.Workspace?.PhysicalRoot);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Workspace selector returns typed missing state without creating paths")]
     [Trait("Feature", "cli-workspace"), Trait("Evidence", "Integration")]
     public void SelectorReturnsTypedMissingStateWithoutWrites()
@@ -61,6 +92,7 @@ public sealed class WorkspaceSelectorTests
         Assert.Equal(before, temporary.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Workspace selector classifies an existing file as not a directory")]
     [Trait("Feature", "cli-workspace"), Trait("Evidence", "Integration")]
     public void SelectorClassifiesExistingFileAsNotDirectory()

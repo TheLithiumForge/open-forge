@@ -13,6 +13,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Planning;
 
 public sealed class InstallIntendedStateBuilderIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install planning retains unselected invalid UTF-8 overwrite observations"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task RetainsExactOverwriteExpectationWithoutDecodingUnselectedBytes()
     {

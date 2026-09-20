@@ -1,0 +1,10 @@
+Updated the toolkit Extension to 1.0.0.
+Workspace: <workspace>
+  .agents/toolkit.md  deleted (no longer part of the package)
+  Previous content: recovery bundle at <recovery-bundle>
+  Source: <extension-source>
+  Dependency closure: toolkit
+  0 files unchanged
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+  Review previous content in the recovery bundle at <recovery-bundle>.
+Next: open-forge doctor

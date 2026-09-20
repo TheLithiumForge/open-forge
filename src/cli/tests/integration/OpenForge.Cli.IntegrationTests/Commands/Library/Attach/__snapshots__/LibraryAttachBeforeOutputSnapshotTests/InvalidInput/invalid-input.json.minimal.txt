@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 3,
+  "command": "library attach",
+  "status": "invalid-input",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot attach INVALID ID: INVALID ID is not a valid Library ID. Use lowercase letters, digits and hyphens.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-attach.invalid-id",
+      "title": "Invalid Library ID",
+      "message": "INVALID ID is not a valid Library ID. Use lowercase letters, digits and hyphens.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "INVALID ID",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksCreated": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "sourceFiles": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "INVALID ID",
+    "sourceFolder": null,
+    "destinationFolder": null,
+    "recorded": false,
+    "permissions": {
+      "decision": "not-evaluated",
+      "required": [],
+      "missing": [],
+      "saved": false
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

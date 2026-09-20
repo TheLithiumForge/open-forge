@@ -1,0 +1,2 @@
+Registered the team-knowledge Library from shared/team-knowledge.
+  Created 1 link under .agents/directives

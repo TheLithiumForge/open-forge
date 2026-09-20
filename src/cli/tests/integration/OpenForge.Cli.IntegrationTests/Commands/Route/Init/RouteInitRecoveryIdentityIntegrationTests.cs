@@ -15,6 +15,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init;
 
 public sealed class RouteInitRecoveryIdentityIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory, InlineData(false), InlineData(true), Trait("Feature", "route-init"), Trait("Evidence", "Integration")]
     public async Task CleanupRequiresThePreparedAttribution(bool changed)
     {

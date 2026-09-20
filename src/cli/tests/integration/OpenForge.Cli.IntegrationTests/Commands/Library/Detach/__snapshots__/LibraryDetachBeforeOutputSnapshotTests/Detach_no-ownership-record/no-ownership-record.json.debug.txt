@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 3,
+  "command": "library detach",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "No ownership record exists, so team-knowledge cannot be detached. Nothing was changed.",
+    "kind": "done"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "library-detach.ownership-observation",
+      "title": "Ownership record is missing",
+      "message": "No ownership record exists, so team-knowledge cannot be detached.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksRemoved": 0,
+    "sectionsUpdated": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": null,
+    "destinationFolder": null,
+    "registrationRemoved": false,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [],
+    "expectedStates": [],
+    "verification": {
+      "state": "not-started",
+      "registration": "not-started"
+    },
+    "recovery": {
+      "state": "not-requested",
+      "path": null,
+      "residuals": []
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

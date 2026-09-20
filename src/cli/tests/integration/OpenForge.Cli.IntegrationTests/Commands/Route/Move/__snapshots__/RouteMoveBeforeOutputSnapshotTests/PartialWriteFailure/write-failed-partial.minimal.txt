@@ -1,0 +1,13 @@
+Route move stopped after 5 of 9 changes.
+Workspace: <workspace>
+  Error  .agents/guidance/new guide.md  Write failed
+         Writing .agents/guidance/new guide.md failed. Stopped after 5 of 9 changes. Recovery data: <recovery-bundle>.
+  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  Entry updated in .agents/guidance/_guidance.md
+  Rewrote 5 links that pointed at the old path:
+  .agents/guidance/topics/child.md:8:13
+  .agents/guidance/topics/child.overwrite.md:1:35
+  README.md:3:13
+  README.md:5:23
+  notes.md:3:11
+Next: open-forge route move --detail debug

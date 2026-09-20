@@ -1,0 +1,13 @@
+Route remove stopped after 2 of 4 changes.
+Workspace: <workspace>
+  Error  .agents/guidance/old guide.md  Write failed
+         Writing .agents/guidance/old guide.md failed. Stopped after 2 of 4 changes. Recovery data: <recovery-bundle>.
+  .agents/guidance/old guide.md  not started
+  .agents/guidance/old guide.overwrite.md  not started
+  Entry removed from .agents/guidance/_guidance.md
+  Detached 1 link that pointed at it; the link text was kept:
+    README.md:1:8
+    [Old guide](.agents/guidance/old%20guide.md#part) -> Old guide
+  The deleted files are kept in a recovery bundle at <recovery-bundle>.
+  after reviewing the bundle
+Next: open-forge cleanup

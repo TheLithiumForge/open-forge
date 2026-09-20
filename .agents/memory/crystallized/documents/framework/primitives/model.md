@@ -99,7 +99,7 @@ The standard `routes` are useful defaults, not an untouchable taxonomy. Users ma
 - [Patterns](../../../../../patterns/_patterns.md)
 - [Skills](../../../../../skills/_skills.md)
 - [Templates](../../../../../templates/_templates.md)
-- [Workflows](../../../../../workflows/_workflows.md)
+- [Workflows](../../../../../skills/use-workflow/references/open-forge/_open-forge.md)
 - [Maps](../../../../../maps/_maps.md)
 
 ## Decisions And Rationale

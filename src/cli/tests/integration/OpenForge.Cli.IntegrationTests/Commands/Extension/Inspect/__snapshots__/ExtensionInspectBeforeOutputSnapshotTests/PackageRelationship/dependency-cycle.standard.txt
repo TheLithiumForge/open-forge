@@ -1,0 +1,13 @@
+Cannot inspect toolkit: toolkit requires helper, which requires toolkit.
+Workspace: <workspace>
+  Error  toolkit  Dependency cycle
+         toolkit requires helper, which requires toolkit.
+Source: <extension-source>
+Dependencies
+  helper   1.0.0  available
+  toolkit  1.0.0  available
+
+Files
+  .agents/helper.md   new in the package
+  .agents/toolkit.md  unchanged
+1 file unchanged, 1 file new, 1 errors, 1 warnings.

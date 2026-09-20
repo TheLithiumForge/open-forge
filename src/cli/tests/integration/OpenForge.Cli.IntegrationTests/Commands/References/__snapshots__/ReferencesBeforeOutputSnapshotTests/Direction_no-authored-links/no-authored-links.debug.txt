@@ -1,0 +1,3 @@
+.agents/docs/reference.md has no authored links out. Entries links are not counted.
+Workspace: <workspace>
+0 in, 0 out

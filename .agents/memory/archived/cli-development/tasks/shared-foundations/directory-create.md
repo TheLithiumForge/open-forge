@@ -1,0 +1,72 @@
+---
+open-forge:
+  description: Add one lease-bound ordinary-BCL directory-create mutation effect
+  tags: [Memory, Archived, Contextual, Historical, CLI, Task, Foundation, Mutation, Directory]
+---
+
+# Add The Shared Directory-Create Effect
+
+## Task State
+
+- State: Complete at integrated commit `33913df` after the focused mutation
+  review and combined managed/Native AOT acceptance gate.
+- Parent: [Next-Wave Shared Foundations](_shared-foundations.md).
+- Consumers: root Install and Route Init.
+
+## Outcome
+
+Mutation support creates one explicitly planned missing directory while holding
+the workspace lease, immediately revalidates its missing state and exact physical
+parent, applies ordinary `Directory.CreateDirectory`, and verifies the resulting
+contained ordinary directory. Directory effects remain separate from file
+effects. Install plans missing `.agents` as its first ordinary lease-bound
+directory effect.
+
+## Architecture And Ownership
+
+- Production: the smallest focused `Framework/Mutation/**` directory capability
+  and nearest models; do not add a directory kind to `PlannedFileChangeKind`.
+- Plans name every missing directory and order parents before children. Commands
+  retain selection, ordering among other effects, findings, and result policy.
+- When `.agents` itself is missing, the command plan reports it as the first
+  ordinary directory-create effect. The command acquires the external persistent
+  workspace lease before passing `.agents` and its ordered descendants through
+  the same shared applier.
+- A verified created directory remains as reported residual state after a later
+  failure or interruption. There is no deletion, rollback, compensation, or
+  recovery-bundle entry for directory creation.
+- Install and Route Init reuse the identical native capability only where these
+  mechanics have the same meaning.
+
+## Evidence
+
+Cover missing creation, exact physical-parent revalidation, target/parent race,
+unsafe alias, non-directory parent or target, lease requirement, cancellation,
+ordinary access and I/O failures, post-verification, parent-before-child chains,
+retained residuals, and proof that file changes and recovery payloads remain
+unchanged. Cover missing `.agents` as the first ordinary plan effect,
+cancellation and lock contention before any workspace effect, its lease-bound
+revalidation, and retained residual after a later failure. Run directly affected
+managed and published `linux-x64` Native AOT evidence.
+
+The directory mutation foundation was reviewed and integrated at `33913df`.
+The combined post-foundation gate passes Release with `0` warnings and `0`
+errors, managed Unit `1284/1284`, Integration `500/500`, and EndToEnd
+`125/125`, Native AOT Integration `500/500` and EndToEnd `125/125`, with zero
+skips. The later accepted lock-location correction makes `.agents` an ordinary
+lease-bound directory effect and removes bootstrap state from
+`WorkspaceLockResult`.
+
+Decisive focused evidence is original mutation Unit `58/58` and Integration
+`62/62`, plus integrated-baseline mutation conflict filters Unit `70/70` and
+Integration `64/64`; accepted R1-R4/bootstrap closure and an independent
+recheck pass are recorded in the completion packet.
+
+## Stop Conditions
+
+Stop before broadening file effects, deleting a directory, rollback,
+compensation, recovery data, P/Invoke, a native package, or a creator-identity
+guarantee against a hostile same-user process. Stop if Install and Route Init
+require different descendant mechanics; keep divergent policy command-local.
+Do not move or duplicate the shared external workspace-lock identity or add a
+second command-local locking mechanism.

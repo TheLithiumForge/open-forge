@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Profile;
 
 public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect rooted entrypoint topology reports ordered chain depth direct children and descendants")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void RootEntrypointTopologyReportsCounts()
@@ -73,6 +74,7 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
         Assert.Equal(2, counts.DescendantEntrypointCount);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect routed leaf topology reports its parent chain and not-applicable child counts")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void RoutedLeafTopologyReportsParentAndNoChildCounts()
@@ -114,6 +116,7 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
         Assert.Null(topology.Counts.Value);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect detached entrypoint retains local topology without Loader-rooted reading facts")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void DetachedEntrypointKeepsLocalTopology()
@@ -165,6 +168,7 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
         Assert.Equal(RouteInspectFactState.NotApplicable, profile.Measurements.SelectionAddition.State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect known unrouted source preserves own measurement and marks route facts not-applicable")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void UnroutedSourceMarksRouteDependentFactsNotApplicable()
@@ -208,6 +212,7 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
         Assert.Equal(RouteInspectFactState.NotApplicable, axioms.Local.State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect incomplete Loader-root facts remain unavailable rather than becoming unrouted or zero")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void IncompleteLoaderFactsRemainUnavailable()
@@ -258,6 +263,7 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
         Assert.Equal(RouteInspectFactState.Unavailable, profile.Reading.Later.State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route inspect local Axioms state distinguishes substantive sentinel empty and missing sections")]
     [InlineData("substantive", (int)RouteInspectAxiomsLocalState.Substantive)]
     [InlineData("sentinel", (int)RouteInspectAxiomsLocalState.InheritedSentinel)]
@@ -298,6 +304,7 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
         Assert.Equal((RouteInspectAxiomsLocalState)expectedState, axioms.Local.Value);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect local Axioms remains substantive when inherited provenance is unavailable")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void InheritedAndLocalAxiomsAvailabilityIsIndependent()
@@ -351,6 +358,7 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
         Assert.Equal(RouteInspectAxiomsLocalState.Substantive, axioms.Local.Value);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect ordinary leaf Axioms heading remains inactive while ancestor provenance remains visible")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void LeafAxiomsHeadingIsNotActivated()
@@ -382,6 +390,7 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
         Assert.Equal(RouteInspectAxiomsLocalState.NotApplicable, axioms.Local.Value);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect detached entrypoint local Axioms remains available without Loader inheritance")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void DetachedAxiomsKeepLocalFactWithoutLoaderInheritance()
@@ -416,6 +425,29 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
         var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
         Assert.Equal(RouteInspectFactState.NotApplicable, axioms.Inherited.State);
         Assert.Equal(RouteInspectAxiomsLocalState.Substantive, axioms.Local.Value);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Theory(DisplayName = "Route inspect Axioms parser uses shared semantic heading boundaries")]
+    [InlineData("## Axioms\n\n- Rule.\n", (int)RouteInspectAxiomsLocalState.Substantive)]
+    [InlineData("## Axioms\r\n\r\n- Rule.\r\n", (int)RouteInspectAxiomsLocalState.Substantive)]
+    [InlineData("```md\n## Axioms\n- Example.\n```\n", (int)RouteInspectAxiomsLocalState.Missing)]
+    [InlineData("\uFEFF## Axioms\n- Rule.\n", (int)RouteInspectAxiomsLocalState.Substantive)]
+    [InlineData("## Axioms  \n- Rule.\n", (int)RouteInspectAxiomsLocalState.Substantive)]
+    [InlineData("## Axioms\n\n# Following\nAuthored.\n", (int)RouteInspectAxiomsLocalState.Empty)]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
+    public void AxiomsHeadingSyntax(string body, int expectedState)
+    {
+        var source = RouteInspectSourceTestData.Source(new RouteInspectSourceSpec
+        {
+            Path = ".agents/root/_root.md",
+            Kind = RouteSourceKind.Entrypoint,
+            Body = body,
+        });
+        var graph = RouteInspectResolutionTestData.Graph([source], []);
+        var profile = Build(graph, source.CanonicalPath, RouteInspectRouteState.Detached);
+        var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
+        Assert.Equal((RouteInspectAxiomsLocalState)expectedState, axioms.Local.Value);
     }
 
     private static RouteInspectProfile Build(

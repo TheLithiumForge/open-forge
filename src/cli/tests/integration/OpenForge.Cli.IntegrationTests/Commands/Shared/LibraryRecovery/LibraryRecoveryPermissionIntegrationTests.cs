@@ -2,10 +2,10 @@ using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.Permissions;
-using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.Framework.Recovery;
@@ -21,6 +21,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Shared.LibraryRecovery;
 [Trait("Feature", "library-permissions"), Trait("Evidence", "Integration")]
 public sealed class LibraryRecoveryPermissionIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory]
     [InlineData(false, false, false), InlineData(true, false, false), InlineData(false, true, false), InlineData(true, true, false)]
     [InlineData(true, false, true), InlineData(true, true, true)]
@@ -53,20 +54,20 @@ public sealed class LibraryRecoveryPermissionIntegrationTests
                 Observed = entry.Intended,
                 Cause = null,
             };
-            var record = await LibrariesRecordReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace, TestContext.Current.CancellationToken);
-            Assert.Equal(LibrariesRecordReadState.Complete, record.State);
+            var record = await LibraryRegistrationReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace, TestContext.Current.CancellationToken);
+            Assert.Equal(LibraryRegistrationReadState.Complete, record.State);
             var evidence = new LibraryResidualEvidence(LibraryId.Create("team-knowledge"), record, verifiedPriorRecord: null,
                 residual: new(workspace.Workspace, RecoveryBundleCandidateSnapshot.VerifiedFinal(verified), [comparison]), entry: comparison);
             if (granted)
             {
-                workspace.Write(".agents/open-forge.permissions.json", """
-                    {"schemaVersion":1,"extensions":[],"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":[],"directories":["docs"]}]}
+                workspace.Write(".agents/open-forge.json", """
+                    {"allowInstallPaths":["docs"]}
                     """);
             }
             if (newlyRegisteredSource)
             {
                 var paths = registered ? "\"gone.md\"" : string.Empty;
-                workspace.Replace(LibraryMutationWorkspace.RecordPath, $$"""
+                File.WriteAllText(workspace.Absolute(LibraryMutationWorkspace.OwnershipPath), $$"""
                     {"schemaVersion":1,"libraries":[
                       {"id":"later","sourceRoot":"docs","destinationRoot":"elsewhere","paths":[]},
                       {"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":"docs","paths":[{{paths}}]}]}
@@ -81,7 +82,7 @@ public sealed class LibraryRecoveryPermissionIntegrationTests
 
             Assert.Equal(granted && !newlyRegisteredSource, observed.IsAdmitted);
             Assert.Equal(granted && !newlyRegisteredSource, admitted.IsAdmitted);
-            Assert.Equal("docs/gone.md", Assert.Single(admitted.Evaluation.Required).Path);
+            Assert.Equal("docs/gone.md", Assert.Single(admitted.Evaluation.Required));
             Assert.Equal(before, workspace.Snapshot());
             Assert.Null(new FileInfo(absolute).LinkTarget);
             Assert.True(File.Exists(preparation.BundlePath));

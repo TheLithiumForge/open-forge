@@ -1,0 +1,11 @@
+Updated memory/project-alpha/overview
+Workspace: <workspace>
+  Path: .agents/memory/project-alpha/overview.md
+  responsibility: "Owns the overview" -> (removed)
+  .agents/memory/project-alpha/overview.md  frontmatter rewritten
+    Before: <sha256>
+    After: <sha256>
+  Frontmatter before:
+    responsibility: Owns the overview
+  Frontmatter after:
+    

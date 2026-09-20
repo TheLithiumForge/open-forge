@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Locking;
 
 public sealed class WorkspaceLockManagerIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Workspace lock owns one external exclusive OS handle and persists its zero-byte file")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task AcquireOwnsExternalHandleAndPersistsReusableFile()
@@ -62,6 +63,7 @@ public sealed class WorkspaceLockManagerIntegrationTests
         Assert.False(Directory.Exists(temporary.Combine(".agents")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Workspace lock cancellation before acquisition creates no external lock infrastructure")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task AcquireCancelledBeforeStoreCreationCreatesNothing()
@@ -84,6 +86,7 @@ public sealed class WorkspaceLockManagerIntegrationTests
         Assert.False(Directory.Exists(temporary.Combine(".agents")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Workspace lock rejects and preserves nonzero persistent content")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task AcquireRejectsAndPreservesNonzeroFile()
@@ -110,6 +113,7 @@ public sealed class WorkspaceLockManagerIntegrationTests
             await File.ReadAllTextAsync(lockPath, TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Workspace lock rejects directory and symbolic-link targets without following them")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task AcquireRejectsNonordinaryExternalTargets()

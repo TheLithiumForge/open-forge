@@ -1,0 +1,6 @@
+The Entries sections could not be rebuilt completely. Nothing was changed.
+Workspace: <workspace>
+  Warning  .agents/root/child.md  Frontmatter could not be read
+         The frontmatter of .agents/root/child.md could not be read completely.
+  Inspect the reported problem before rerunning Index.
+Next: open-forge doctor

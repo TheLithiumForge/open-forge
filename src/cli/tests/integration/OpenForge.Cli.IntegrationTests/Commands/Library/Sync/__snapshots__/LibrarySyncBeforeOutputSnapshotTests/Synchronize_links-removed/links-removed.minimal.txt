@@ -1,0 +1,2 @@
+Synchronized team-knowledge: 1 removed.
+  Removed  .agents/directives/review.md   (its source file is gone)

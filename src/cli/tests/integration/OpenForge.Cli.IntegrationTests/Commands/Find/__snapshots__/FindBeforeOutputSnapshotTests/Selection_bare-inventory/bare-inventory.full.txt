@@ -1,0 +1,14 @@
+4 sources match.
+Workspace: <workspace>
+  docs            .agents/docs/_docs.md      Documents
+  docs/guide      .agents/docs/guide.md      Guide
+  docs/reference  .agents/docs/reference.md  Reference
+  loader          .agents/loader.md          
+
+Search details:
+  Filters: none
+  Require: all
+  Regions searched: frontmatter, body
+  Source set: default
+  4 of 4 sources inspected
+4 matches, 4 sources inspected, 4 source candidates.

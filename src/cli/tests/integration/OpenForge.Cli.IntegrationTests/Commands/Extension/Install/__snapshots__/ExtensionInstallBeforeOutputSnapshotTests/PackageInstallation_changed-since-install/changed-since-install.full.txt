@@ -1,0 +1,13 @@
+Cannot install toolkit: toolkit has changed since it was installed.
+Workspace: <workspace>
+  Error  toolkit  Managed content changed [extension-install.managed-divergence]
+         toolkit has changed since it was installed.
+         use open-forge extension update toolkit
+         open-forge extension update toolkit
+         Use Extension Update to reconcile the managed package.
+  Source: <extension-source> (catalogue)
+  Entries sections unchanged: none
+  Verification: targets not checked; Entries not checked; Extension record not checked; Framework record not checked
+  Recovery: not-required.
+  Use Extension Update to reconcile the managed package.
+Next: open-forge extension update toolkit

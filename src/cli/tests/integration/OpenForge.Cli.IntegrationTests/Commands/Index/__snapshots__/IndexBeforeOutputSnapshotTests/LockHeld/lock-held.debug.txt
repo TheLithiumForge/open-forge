@@ -1,0 +1,9 @@
+Cannot rebuild the Entries section of <workspace>.
+Workspace: <workspace>
+  Error  <workspace>  Workspace lock is held [index.workspace-lock-unavailable]
+         Another Open Forge command holds the workspace lock. Nothing was changed.
+  .agents/root/_root.md  not started
+Selection: .agents/root/_root.md
+No recovery bundle was created.
+  Retry when the other command finishes.
+Next: open-forge index

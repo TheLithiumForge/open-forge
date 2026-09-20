@@ -1,0 +1,9 @@
+Cannot remove guidance/old guide: .agents/guidance/old guide.md is managed by the Framework, so Route Remove cannot remove it.
+Workspace: <workspace>
+  Error  .agents/guidance/old guide.md  Source is managed [route-remove.ownership-claimed]
+         .agents/guidance/old guide.md is managed by the Framework, so Route Remove cannot remove it.
+         open-forge update
+         Update the owning route explicitly, then rerun Route Remove if needed.
+  Scanned 0 files and found 0 links.
+  Update the owning route explicitly, then rerun Route Remove if needed.
+Next: open-forge update

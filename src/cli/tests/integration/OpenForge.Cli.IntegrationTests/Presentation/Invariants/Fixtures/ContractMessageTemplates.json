@@ -1,0 +1,1613 @@
+{
+  "provenance": "Independently reviewed contract message forms, relocated from pre-S3 interfaces; approved S6 deltas are bound to root receipts in Task45.",
+  "rows": [
+    {
+      "code": "cleanup.workspace-lock-unavailable",
+      "forms": [
+        "... Nothing was removed."
+      ]
+    },
+    {
+      "code": "cleanup.catalogue-incomplete",
+      "forms": [
+        "The recovery store at <path> could not be read completely."
+      ]
+    },
+    {
+      "code": "cleanup.recovery-final-malformed",
+      "forms": [
+        "<path> is damaged and was left in place."
+      ]
+    },
+    {
+      "code": "cleanup.recovery-final-unsupported",
+      "forms": [
+        "<path> was written by an unsupported version and was left in place."
+      ]
+    },
+    {
+      "code": "cleanup.recovery-final-unavailable",
+      "forms": [
+        "<path> could not be read and was left in place."
+      ]
+    },
+    {
+      "code": "cleanup.recovery-draft-unsafe",
+      "forms": [
+        "<path> is not an ordinary file and was left in place."
+      ]
+    },
+    {
+      "code": "cleanup.catalogue-changed-during-apply",
+      "forms": [
+        "The recovery store changed while cleanup was running. Nothing was removed."
+      ]
+    },
+    {
+      "code": "cleanup.candidate-changed-during-apply",
+      "forms": [
+        "<path> changed while cleanup was running and was left in place."
+      ]
+    },
+    {
+      "code": "cleanup.deletion-failed",
+      "forms": [
+        "<path>  could not be removed: <reason>"
+      ]
+    },
+    {
+      "code": "cleanup.verification-failed",
+      "forms": [
+        "<path>  still exists after removal"
+      ]
+    },
+    {
+      "code": "context.invalid-source",
+      "forms": [
+        "No source has the ID <ref>.",
+        "<path> is not under .agents."
+      ]
+    },
+    {
+      "code": "context.invalid-content",
+      "forms": [
+        "--content <value> is not a known part. Use metadata, paths, frontmatter, headings, body, or section:<name>."
+      ]
+    },
+    {
+      "code": "context.invalid-link-depth",
+      "forms": [
+        "--follow-links must be a positive number or all."
+      ]
+    },
+    {
+      "code": "context.overwrite-ambiguous",
+      "forms": [
+        "<name>.overwrite.md could belong to more than one base file."
+      ]
+    },
+    {
+      "code": "context.target-ambiguous",
+      "forms": [
+        "The link at <path>:l:c could point to more than one file. It was not followed."
+      ]
+    },
+    {
+      "code": "context.target-unsafe",
+      "forms": [
+        "The link at <path>:l:c points outside the workspace. It was not followed."
+      ]
+    },
+    {
+      "code": "context.closure-unavailable",
+      "forms": [
+        "The startup files could not be resolved: <reason>."
+      ]
+    },
+    {
+      "code": "context.layer-unavailable",
+      "forms": [
+        "<path> could not be read, so it was not included."
+      ]
+    },
+    {
+      "code": "context.invalid-encoding",
+      "forms": [
+        "<path> is not valid UTF-8, so it was not included."
+      ]
+    },
+    {
+      "code": "context.markdown-unavailable",
+      "forms": [
+        "<path> could not be parsed as Markdown, so its <part> was not produced."
+      ]
+    },
+    {
+      "code": "context.target-missing",
+      "forms": [
+        "The link at <path>:l:c points to <destination>, which does not exist. It was not followed."
+      ]
+    },
+    {
+      "code": "context.fragment-missing",
+      "forms": [
+        "The link at <path>:l:c points to <file>, which has no heading <#fragment>. It was not followed."
+      ]
+    },
+    {
+      "code": "context.link-encoding-invalid",
+      "forms": [
+        "The link at <path>:l:c has an encoding that cannot be resolved. It was not followed."
+      ]
+    },
+    {
+      "code": "context.target-unreadable",
+      "forms": [
+        "The link at <path>:l:c points to <file>, which could not be read. It was not followed."
+      ]
+    },
+    {
+      "code": "context.section-ambiguous",
+      "forms": [
+        "<path> has more than one section named <name>. None was included."
+      ]
+    },
+    {
+      "code": "context.projection-unavailable",
+      "forms": [
+        "The <part> of <path> could not be produced: <reason>."
+      ]
+    },
+    {
+      "code": "context.target-case-mismatch",
+      "forms": [
+        "The link at <path>:l:c is written <destination>, but the file is named <actual>."
+      ]
+    },
+    {
+      "code": "context.section-missing",
+      "forms": [
+        "<path> has no section named <name>."
+      ]
+    },
+    {
+      "code": "extension-create.invalid-input",
+      "forms": [
+        "<value> is not a valid Extension ID. Use lowercase letters, digits and hyphens.",
+        "--package-version <value> is not a valid version.",
+        "no ID was given, and this session cannot ask.",
+        "no --path was given, and this session cannot ask.",
+        "--dependency <value> is not a valid ID."
+      ]
+    },
+    {
+      "code": "extension-create.catalogue-unavailable",
+      "forms": [
+        "<folder> could not be read."
+      ]
+    },
+    {
+      "code": "extension-create.destination-collision",
+      "forms": [
+        "<folder>/<id> already exists with different content."
+      ]
+    },
+    {
+      "code": "extension-inspect.invalid-stable-id",
+      "forms": [
+        "<value> is not a valid Extension ID. Use lowercase letters, digits and hyphens."
+      ]
+    },
+    {
+      "code": "extension-inspect.package-unavailable",
+      "forms": [
+        "No Extension has the ID <id> in <source>."
+      ]
+    },
+    {
+      "code": "extension-inspect.package-invalid",
+      "forms": [
+        "The package <id> at <path> is invalid: <reason>."
+      ]
+    },
+    {
+      "code": "extension-inspect.source-invalid",
+      "forms": [
+        "<path> is not an Extension package or package folder: <reason>."
+      ]
+    },
+    {
+      "code": "extension-inspect.source-unavailable",
+      "forms": [
+        "The source <path> could not be read, so the comparison could not finish."
+      ]
+    },
+    {
+      "code": "extension-inspect.source-ambiguous",
+      "forms": [
+        "<id> is found more than once in <source>."
+      ]
+    },
+    {
+      "code": "extension-inspect.source-overlap",
+      "forms": [
+        "<path> is inside the workspace and cannot be used as a source."
+      ]
+    },
+    {
+      "code": "extension-inspect.identity-ambiguous",
+      "forms": [
+        "The ownership record names <id> in a way that cannot be matched to one package."
+      ]
+    },
+    {
+      "code": "extension-inspect.path-changed",
+      "forms": [
+        "<path>  changed since it was installed"
+      ]
+    },
+    {
+      "code": "extension-inspect.path-missing",
+      "forms": [
+        "<path>  missing; it was installed by <id>"
+      ]
+    },
+    {
+      "code": "extension-inspect.path-new",
+      "forms": [
+        "<path>  new in the package; not installed yet"
+      ]
+    },
+    {
+      "code": "extension-inspect.path-retired",
+      "forms": [
+        "<path>  no longer part of the package"
+      ]
+    },
+    {
+      "code": "extension-inspect.path-invalid",
+      "forms": [
+        "<path> in the package is not a valid workspace path."
+      ]
+    },
+    {
+      "code": "extension-inspect.path-unavailable",
+      "forms": [
+        "<path>  could not be read"
+      ]
+    },
+    {
+      "code": "extension-inspect.fingerprint-unavailable",
+      "forms": [
+        "<path> could not be compared."
+      ]
+    },
+    {
+      "code": "extension-inspect.fingerprint-fallback",
+      "forms": [
+        "<path> was compared byte for byte because it is not Markdown."
+      ]
+    },
+    {
+      "code": "extension-inspect.dependency-changed",
+      "forms": [
+        "<id> now requires <dependency>, which the installed version did not."
+      ]
+    },
+    {
+      "code": "extension-inspect.dependency-conflict",
+      "forms": [
+        "<id> requires <dependency> <range>, but <version> is installed."
+      ]
+    },
+    {
+      "code": "extension-inspect.dependency-cycle",
+      "forms": [
+        "<a> requires <b>, which requires <a>."
+      ]
+    },
+    {
+      "code": "extension-inspect.dependency-incomplete",
+      "forms": [
+        "The dependency <dependency> of <id> could not be resolved: <reason>. It was not compared."
+      ]
+    },
+    {
+      "code": "extension-install.source-unavailable",
+      "forms": [
+        "The source <path> could not be read."
+      ]
+    },
+    {
+      "code": "extension-install.source-invalid",
+      "forms": [
+        "<path> is not a valid package or package folder: <reason>."
+      ]
+    },
+    {
+      "code": "extension-install.package-content-missing",
+      "forms": [
+        "The package has no content directory. Package files belong under <path>/content/.agents/."
+      ]
+    },
+    {
+      "code": "extension-install.package-contents-changed",
+      "forms": [
+        "The files or dependencies recorded for <id> do not match the selected source."
+      ]
+    },
+    {
+      "code": "extension-install.topology-verification-failed",
+      "forms": [
+        "The Entries sections did not match the installed files after writing. Recovery data: <path>."
+      ]
+    },
+    {
+      "code": "extension-list.source-invalid",
+      "forms": [
+        "<path> is not an Extension package or package folder: <reason>. Expected extension.json with id, name, description, version, dependencies."
+      ]
+    },
+    {
+      "code": "extension-list.source-unavailable",
+      "forms": [
+        "<path> could not be read, so available packages are not listed."
+      ]
+    },
+    {
+      "code": "extension-remove.ownership-observation",
+      "forms": [
+        "No ownership record exists, so nothing is recorded for <id>. Nothing was removed."
+      ]
+    },
+    {
+      "code": "extension-remove.lifecycle-observation",
+      "forms": [
+        "<dependency> remains installed and is no longer needed by <id>."
+      ]
+    },
+    {
+      "code": "extension-remove.dependency-blocked",
+      "forms": [
+        "The <dependent> Extension still needs <id>."
+      ]
+    },
+    {
+      "code": "extension-remove.topology-verification-failed",
+      "forms": [
+        "The Entries sections did not match the remaining files after writing. Recovery data: <path>."
+      ]
+    },
+    {
+      "code": "extension-update.source-unavailable",
+      "forms": [
+        "The source <path> could not be read."
+      ]
+    },
+    {
+      "code": "extension-update.source-invalid",
+      "forms": [
+        "<path> is not a valid package or package folder: <reason>."
+      ]
+    },
+    {
+      "code": "extension-update.source-overlap",
+      "forms": [
+        "<path> is inside the workspace and cannot be used as a source."
+      ]
+    },
+    {
+      "code": "extension-update.source-identity-conflict",
+      "forms": [
+        "The source at <path> does not contain <id>, which is what is installed."
+      ]
+    },
+    {
+      "code": "extension-update.lifecycle-observation",
+      "forms": [
+        "<id> is not recorded as installed, so it was not updated."
+      ]
+    },
+    {
+      "code": "extension-update.managed-divergence",
+      "forms": [
+        "A retired managed file was kept because --prune was not supplied."
+      ]
+    },
+    {
+      "code": "extension-update.topology-verification-failed",
+      "forms": [
+        "The Entries sections did not match the installed files after writing. Recovery data: <path>."
+      ]
+    },
+    {
+      "code": "find.invalid-selector",
+      "forms": [
+        "--include <value> is not a source ID or a path under .agents."
+      ]
+    },
+    {
+      "code": "find.candidate-unsafe",
+      "forms": [
+        "<path> could not be checked safely and was skipped."
+      ]
+    },
+    {
+      "code": "find.layer-unresolved",
+      "forms": [
+        "<name>.overwrite.md has no base file and was skipped."
+      ]
+    },
+    {
+      "code": "find.inspection-unavailable",
+      "forms": [
+        "<path> could not be read and was skipped."
+      ]
+    },
+    {
+      "code": "find.invalid-encoding",
+      "forms": [
+        "<path> is not valid UTF-8 and was skipped."
+      ]
+    },
+    {
+      "code": "find.frontmatter-unavailable",
+      "forms": [
+        "The frontmatter of <path> could not be read, so its tags were not matched."
+      ]
+    },
+    {
+      "code": "find.section-ambiguous",
+      "forms": [
+        "<path> has more than one section named <name>. None was returned."
+      ]
+    },
+    {
+      "code": "find.projection-missing",
+      "forms": [
+        "<path> has no section named <name>."
+      ]
+    },
+    {
+      "code": "find.projection-unavailable",
+      "forms": [
+        "The <part> of <path> could not be produced: <reason>."
+      ]
+    },
+    {
+      "code": "index.invalid-source",
+      "forms": [
+        "<operand> is a folder, not a source.",
+        "No source has the ID <operand>.",
+        "<path> is not under .agents."
+      ]
+    },
+    {
+      "code": "index.topology-ambiguous",
+      "forms": [
+        "The routes under <source> could not be resolved to one structure: <reason>."
+      ]
+    },
+    {
+      "code": "index.target-unexposed",
+      "forms": [
+        "<path> is routed but no parent lists it, so its entry has nowhere to go."
+      ]
+    },
+    {
+      "code": "index.discovery-incomplete",
+      "forms": [
+        "<path> could not be read, so the routes below it are unknown."
+      ]
+    },
+    {
+      "code": "install.managed-divergence",
+      "forms": [
+        "<path> has changed since it was installed. Install does not replace changed files."
+      ]
+    },
+    {
+      "code": "install.interrupted",
+      "forms": [
+        "Install was cancelled. Nothing was changed.",
+        "... Stopped after <n> of <m> changes."
+      ]
+    },
+    {
+      "code": "library-attach.confirmation-required",
+      "forms": [
+        "Library attach needs confirmation, and this session cannot ask."
+      ]
+    },
+    {
+      "code": "library-attach.invalid-id",
+      "forms": [
+        "<value> is not a valid Library ID. Use lowercase letters, digits and hyphens."
+      ]
+    },
+    {
+      "code": "library-attach.duplicate-id",
+      "forms": [
+        "A Library with the ID <id> is already registered."
+      ]
+    },
+    {
+      "code": "library-attach.source-root-invalid",
+      "forms": [
+        "<source> is not a folder inside the workspace."
+      ]
+    },
+    {
+      "code": "library-attach.source-root-unavailable",
+      "forms": [
+        "<source> cannot be read."
+      ]
+    },
+    {
+      "code": "library-attach.source-root-blocked",
+      "forms": [
+        "<source> resolves to an unsafe location."
+      ]
+    },
+    {
+      "code": "library-attach.destination-root-invalid",
+      "forms": [
+        "--to <value> must be a folder inside the workspace."
+      ]
+    },
+    {
+      "code": "library-attach.destination-collision",
+      "forms": [
+        "<path> already exists and is not a link this Library would create."
+      ]
+    },
+    {
+      "code": "library-attach.inventory-incomplete",
+      "forms": [
+        "Some files under <source> could not be listed."
+      ]
+    },
+    {
+      "code": "library-attach.mapping-unavailable",
+      "forms": [
+        "The link plan for <source> could not be completed: <reason>."
+      ]
+    },
+    {
+      "code": "library-attach.mapping-blocked",
+      "forms": [
+        "<source path> cannot be linked: <reason>."
+      ]
+    },
+    {
+      "code": "library-attach.link-capability-unavailable",
+      "forms": [
+        "This system cannot create the file links Libraries need."
+      ]
+    },
+    {
+      "code": "library-attach.consumer-blocked",
+      "forms": [
+        "<path> is managed by Open Forge and cannot receive Library links."
+      ]
+    },
+    {
+      "code": "library-attach.record-invalid",
+      "forms": [
+        "The Library section of .agents/open-forge.lock.json is invalid: <reason>."
+      ]
+    },
+    {
+      "code": "library-attach.application-failed",
+      "forms": [
+        "Creating the link <path> failed. Stopped after <n> of <m> links."
+      ]
+    },
+    {
+      "code": "library-detach.confirmation-required",
+      "forms": [
+        "Library detach needs confirmation, and this session cannot ask."
+      ]
+    },
+    {
+      "code": "library-detach.invalid-id",
+      "forms": [
+        "<value> is not a valid Library ID."
+      ]
+    },
+    {
+      "code": "library-detach.record-invalid",
+      "forms": [
+        "The Library section of .agents/open-forge.lock.json is invalid: <reason>."
+      ]
+    },
+    {
+      "code": "library-detach.registered-link-missing",
+      "forms": [
+        "<path> is already absent, so no file was removed."
+      ]
+    },
+    {
+      "code": "library-detach.mapping-unavailable",
+      "forms": [
+        "<path> could not be checked, so nothing was changed."
+      ]
+    },
+    {
+      "code": "library-detach.link-capability-unavailable",
+      "forms": [
+        "This system cannot handle the file links Libraries use."
+      ]
+    },
+    {
+      "code": "library-detach.consumer-blocked",
+      "forms": [
+        "<path> is managed by Open Forge and cannot be changed by detach."
+      ]
+    },
+    {
+      "code": "library-inspect.invalid-id",
+      "forms": [
+        "<value> is not a valid Library ID. Use lowercase letters, digits and hyphens."
+      ]
+    },
+    {
+      "code": "library-inspect.record-invalid",
+      "forms": [
+        "The Library section of .agents/open-forge.lock.json is invalid: <reason>."
+      ]
+    },
+    {
+      "code": "library-inspect.source-root-invalid",
+      "forms": [
+        "The source folder <path> is not a folder inside the workspace."
+      ]
+    },
+    {
+      "code": "library-inspect.source-root-unavailable",
+      "forms": [
+        "The source folder <path> cannot be read, so the comparison could not finish."
+      ]
+    },
+    {
+      "code": "library-inspect.source-root-blocked",
+      "forms": [
+        "The source folder <path> resolves to an unsafe location."
+      ]
+    },
+    {
+      "code": "library-inspect.inventory-incomplete",
+      "forms": [
+        "Some files under <source> could not be listed, so the comparison could not finish."
+      ]
+    },
+    {
+      "code": "library-inspect.path-added",
+      "forms": [
+        "<destination path>  not linked yet; new in the source folder"
+      ]
+    },
+    {
+      "code": "library-inspect.path-retired",
+      "forms": [
+        "<destination path>  linked, but its source file is gone"
+      ]
+    },
+    {
+      "code": "library-inspect.link-missing",
+      "forms": [
+        "<destination path>  missing"
+      ]
+    },
+    {
+      "code": "library-inspect.link-changed",
+      "forms": [
+        "<destination path>  is no longer the link <id> created"
+      ]
+    },
+    {
+      "code": "library-inspect.link-blocked",
+      "forms": [
+        "<destination path>  could not be checked safely: <reason>"
+      ]
+    },
+    {
+      "code": "library-list.invalid-record",
+      "forms": [
+        "The Library section of .agents/open-forge.lock.json is invalid: <reason>."
+      ]
+    },
+    {
+      "code": "library-list.record-unavailable",
+      "forms": [
+        "The Library section of .agents/open-forge.lock.json could not be read, so no Libraries are listed."
+      ]
+    },
+    {
+      "code": "library-list.source-root-invalid",
+      "forms": [
+        "The source folder of <id>, <path>, is not a folder inside the workspace."
+      ]
+    },
+    {
+      "code": "library-list.source-root-unavailable",
+      "forms": [
+        "The source folder of <id>, <path>, cannot be read."
+      ]
+    },
+    {
+      "code": "library-list.source-root-blocked",
+      "forms": [
+        "The source folder of <id>, <path>, resolves to an unsafe location."
+      ]
+    },
+    {
+      "code": "library-list.link-missing",
+      "forms": [
+        "<path>  missing"
+      ]
+    },
+    {
+      "code": "library-list.link-changed",
+      "forms": [
+        "<path>  is no longer the link <id> created"
+      ]
+    },
+    {
+      "code": "library-list.link-unavailable",
+      "forms": [
+        "<path>  could not be checked"
+      ]
+    },
+    {
+      "code": "library-list.link-blocked",
+      "forms": [
+        "<path>  could not be checked safely: <reason>"
+      ]
+    },
+    {
+      "code": "library-sync.confirmation-required",
+      "forms": [
+        "Library sync needs confirmation, and this session cannot ask."
+      ]
+    },
+    {
+      "code": "library-sync.invalid-id",
+      "forms": [
+        "<value> is not a valid Library ID."
+      ]
+    },
+    {
+      "code": "library-sync.record-invalid",
+      "forms": [
+        "The Library section of .agents/open-forge.lock.json is invalid: <reason>."
+      ]
+    },
+    {
+      "code": "library-sync.source-root-invalid",
+      "forms": [
+        "The source folder <path> is not a folder inside the workspace."
+      ]
+    },
+    {
+      "code": "library-sync.source-root-unavailable",
+      "forms": [
+        "The source folder <path> cannot be read, so nothing was changed."
+      ]
+    },
+    {
+      "code": "library-sync.source-root-blocked",
+      "forms": [
+        "The source folder <path> resolves to an unsafe location."
+      ]
+    },
+    {
+      "code": "library-sync.inventory-incomplete",
+      "forms": [
+        "Some files under <source> could not be listed, so nothing was changed."
+      ]
+    },
+    {
+      "code": "library-sync.mapping-unavailable",
+      "forms": [
+        "The link plan could not be completed: <reason>."
+      ]
+    },
+    {
+      "code": "library-sync.destination-collision",
+      "forms": [
+        "<destination path> already exists and is not a link this Library would create.",
+        "<destination path> is no longer the link the Library created."
+      ]
+    },
+    {
+      "code": "library-sync.retired-link-missing",
+      "forms": [
+        "<destination path> is registered but no longer exists, so its removal cannot be confirmed."
+      ]
+    },
+    {
+      "code": "library-sync.link-capability-unavailable",
+      "forms": [
+        "This system cannot create the file links Libraries need."
+      ]
+    },
+    {
+      "code": "library-sync.consumer-blocked",
+      "forms": [
+        "<path> is managed by Open Forge and cannot receive Library links."
+      ]
+    },
+    {
+      "code": "references.invalid-source",
+      "forms": [
+        "No source has the ID <ref>.",
+        "<path> is not under .agents."
+      ]
+    },
+    {
+      "code": "references.invalid-direction",
+      "forms": [
+        "--direction must be in, out, or both."
+      ]
+    },
+    {
+      "code": "references.invalid-filter",
+      "forms": [
+        "--include and --exclude apply to incoming links. Use --direction in or both.",
+        "<value> is not a source ID or a path under .agents."
+      ]
+    },
+    {
+      "code": "references.candidate-unsafe",
+      "forms": [
+        "<path> could not be scanned safely for incoming links, so none of its links were counted."
+      ]
+    },
+    {
+      "code": "references.layer-unresolved",
+      "forms": [
+        "<name>.overwrite.md has no base file and was not scanned."
+      ]
+    },
+    {
+      "code": "references.inspection-unavailable",
+      "forms": [
+        "<path> could not be read and was not scanned."
+      ]
+    },
+    {
+      "code": "references.invalid-encoding",
+      "forms": [
+        "<path> is not valid UTF-8, so it was not scanned."
+      ]
+    },
+    {
+      "code": "references.link-encoding-invalid",
+      "forms": [
+        "The link at <path>:l:c has an encoding that cannot be resolved, so it was not counted."
+      ]
+    },
+    {
+      "code": "references.generated-region-unavailable",
+      "forms": [
+        "The Entries section of <path> could not be identified, so its links could not be told apart from authored links."
+      ]
+    },
+    {
+      "code": "references.target-unsafe",
+      "forms": [
+        "The link at <path>:l:c points outside the workspace."
+      ]
+    },
+    {
+      "code": "references.target-ambiguous",
+      "forms": [
+        "The link at <path>:l:c could point to more than one file."
+      ]
+    },
+    {
+      "code": "repair.relink-invalid",
+      "forms": [
+        "--relink <value> is not valid. Use: <path>:line:column, the link as written, the new target."
+      ]
+    },
+    {
+      "code": "repair.contradictory-relink",
+      "forms": [
+        "Two --relink values name the link at <path>:l:c with different targets."
+      ]
+    },
+    {
+      "code": "repair.selection-required",
+      "forms": [
+        "Repair needs to know which repairs to apply, and this session cannot ask."
+      ]
+    },
+    {
+      "code": "repair.missing-authority",
+      "forms": [
+        "The Library recovery step for <id> writes outside .agents, and no grant allows that."
+      ]
+    },
+    {
+      "code": "repair.diagnosis-blocked",
+      "forms": [
+        "The workspace could not be checked: <reason>."
+      ]
+    },
+    {
+      "code": "repair.diagnosis-incomplete",
+      "forms": [
+        "<path> could not be checked, so its links were not repaired."
+      ]
+    },
+    {
+      "code": "repair.proposal-unavailable",
+      "forms": [
+        "The link at <path>:l:c is not one doctor reports as repairable."
+      ]
+    },
+    {
+      "code": "repair.proposal-unsupported",
+      "forms": [
+        "The repair for <path>:l:c cannot be applied: <reason>."
+      ]
+    },
+    {
+      "code": "repair.plan-conflict",
+      "forms": [
+        "Two repairs change the same text at <path>:l:c."
+      ]
+    },
+    {
+      "code": "repair.guided-finding-remaining",
+      "forms": [
+        "<path>:l:c  Broken link; <N> possible targets",
+        "<destination>: Broken link; <N> possible targets"
+      ]
+    },
+    {
+      "code": "repair.manual-finding-remaining",
+      "forms": [
+        "<path>:l:c  <title>; fix by hand",
+        "The registered Library projection is not current."
+      ]
+    },
+    {
+      "code": "route-create.invalid-target",
+      "forms": [
+        "<target> must be a Markdown file below an existing route.",
+        "<target> is an entrypoint, a folder or an overwrite file; route create makes ordinary files."
+      ]
+    },
+    {
+      "code": "route-create.invalid-template",
+      "forms": [
+        "--template <ref> is not a routed Template."
+      ]
+    },
+    {
+      "code": "route-create.parent-missing",
+      "forms": [
+        "<folder> has no entrypoint, so the file cannot be listed. Create the route first."
+      ]
+    },
+    {
+      "code": "route-create.target-content-differs",
+      "forms": [
+        "<path> already exists with different content."
+      ]
+    },
+    {
+      "code": "route-create.template-unsafe",
+      "forms": [
+        "The Template <ref> could not be verified safely."
+      ]
+    },
+    {
+      "code": "route-create.template-unavailable",
+      "forms": [
+        "The Template <ref> could not be read."
+      ]
+    },
+    {
+      "code": "route-init.invalid-target",
+      "forms": [
+        "<target> is not a route ID or an entrypoint path under .agents.",
+        "The Loader cannot be initialized."
+      ]
+    },
+    {
+      "code": "route-init.invalid-metadata",
+      "forms": [
+        "--description must not be blank.",
+        "Route Init metadata is invalid."
+      ]
+    },
+    {
+      "code": "route-init.loader-unsafe",
+      "forms": [
+        ".agents/loader.md could not be verified safely."
+      ]
+    },
+    {
+      "code": "route-init.framework-install-required",
+      "forms": [
+        "The Framework scaffold needs an installed Framework."
+      ]
+    },
+    {
+      "code": "route-init.framework-update-required",
+      "forms": [
+        "The installed Framework is older than the one this CLI ships."
+      ]
+    },
+    {
+      "code": "route-init.framework-alignment-blocked",
+      "forms": [
+        "The installed Framework does not match the version this CLI ships, so the Framework scaffold cannot be used."
+      ]
+    },
+    {
+      "code": "route-inspect.invalid-source-reference",
+      "forms": [
+        "<operand> is not a source ID or a path under .agents."
+      ]
+    },
+    {
+      "code": "route-inspect.missing-source-file",
+      "forms": [
+        "<path> does not exist."
+      ]
+    },
+    {
+      "code": "route-inspect.multiple-sources",
+      "forms": [
+        "Route inspect takes one source."
+      ]
+    },
+    {
+      "code": "route-inspect.loader-subject",
+      "forms": [
+        "The Loader is not a route. Inspect one of its routes instead."
+      ]
+    },
+    {
+      "code": "route-inspect.ambiguous-overwrite",
+      "forms": [
+        "<name>.overwrite.md could belong to more than one base file."
+      ]
+    },
+    {
+      "code": "route-inspect.unsupported-source",
+      "forms": [
+        "<path> is not a Markdown source Open Forge routes."
+      ]
+    },
+    {
+      "code": "route-inspect.orphan-overwrite",
+      "forms": [
+        "<name>.overwrite.md has no <name>.md beside it."
+      ]
+    },
+    {
+      "code": "route-inspect.incomplete-route",
+      "forms": [
+        "The route chain above <path> could not be established completely: <reason>."
+      ]
+    },
+    {
+      "code": "route-inspect.automatic-id-not-unique",
+      "forms": [
+        "The ID <id> also matches <other path>. Use the exact path to be sure."
+      ]
+    },
+    {
+      "code": "route-inspect.not-routed",
+      "forms": [
+        "<path> is not reachable from any route, so agents never load it automatically."
+      ]
+    },
+    {
+      "code": "route-inspect.detached-source",
+      "forms": [
+        "<path> belongs to a route that no Loader entry reaches."
+      ]
+    },
+    {
+      "code": "route-inspect.compatibility-entrypoint",
+      "forms": [
+        "<path> uses the compatibility name <name>; the canonical name is _<folder>.md."
+      ]
+    },
+    {
+      "code": "route-inspect.valid-overwrite",
+      "forms": [
+        "<path> is read together with <base path>."
+      ]
+    },
+    {
+      "code": "route-list.invalid-source-reference",
+      "forms": [
+        "<operand> is not a source ID or a path under .agents."
+      ]
+    },
+    {
+      "code": "route-list.invalid-depth",
+      "forms": [
+        "--depth must be a whole number or all."
+      ]
+    },
+    {
+      "code": "route-list.loader-subject",
+      "forms": [
+        "The Loader is the root of every route. Run route list without an operand."
+      ]
+    },
+    {
+      "code": "route-list.physical-boundary",
+      "forms": [
+        "<path> resolves outside the workspace and was not listed."
+      ]
+    },
+    {
+      "code": "route-list.loader-unavailable",
+      "forms": [
+        ".agents/loader.md could not be read."
+      ]
+    },
+    {
+      "code": "route-list.loader-malformed",
+      "forms": [
+        ".agents/loader.md has no usable Entries section."
+      ]
+    },
+    {
+      "code": "route-list.unsupported-source",
+      "forms": [
+        "<path> is not a routed Markdown source."
+      ]
+    },
+    {
+      "code": "route-list.read-unavailable",
+      "forms": [
+        "<path> could not be read, so the routes below it are not listed."
+      ]
+    },
+    {
+      "code": "route-list.metadata-malformed",
+      "forms": [
+        "The frontmatter of <path> could not be read: <reason>."
+      ]
+    },
+    {
+      "code": "route-list.authored-form",
+      "forms": [
+        "<path> uses the compatibility entrypoint name <name>."
+      ]
+    },
+    {
+      "code": "route-move.invalid-source",
+      "forms": [
+        "<ref> is not a source ID or a path under .agents."
+      ]
+    },
+    {
+      "code": "route-move.invalid-subject",
+      "forms": [
+        "<ref> is the Loader and cannot be moved.",
+        "<ref> is an overwrite file; move its base file."
+      ]
+    },
+    {
+      "code": "route-move.invalid-destination",
+      "forms": [
+        "<target> must be a Markdown file path under .agents.",
+        "... an entrypoint path when moving a route."
+      ]
+    },
+    {
+      "code": "route-move.self-move",
+      "forms": [
+        "The source and the destination are the same."
+      ]
+    },
+    {
+      "code": "route-move.destination-inside-source",
+      "forms": [
+        "The destination is inside the folder being moved."
+      ]
+    },
+    {
+      "code": "route-move.destination-occupied",
+      "forms": [
+        "<path> already exists."
+      ]
+    },
+    {
+      "code": "route-move.destination-parent-missing",
+      "forms": [
+        "<folder> does not exist or has no entrypoint, so the moved file could not be listed."
+      ]
+    },
+    {
+      "code": "route-move.category-unsafe",
+      "forms": [
+        "<folder> contains a file that cannot be moved safely: <path> (<reason>)."
+      ]
+    },
+    {
+      "code": "route-move.overwrite-ambiguous",
+      "forms": [
+        "<name>.overwrite.md could belong to more than one base file."
+      ]
+    },
+    {
+      "code": "route-move.reference-unsafe",
+      "forms": [
+        "The link at <file>:l:c cannot be rewritten safely: <reason>."
+      ]
+    },
+    {
+      "code": "route-move.category-inventory-incomplete",
+      "forms": [
+        "Some files under <folder> could not be listed, so the move was not planned."
+      ]
+    },
+    {
+      "code": "route-move.reference-coverage-incomplete",
+      "forms": [
+        "Some files could not be scanned for links to <path>, so the move was not planned."
+      ]
+    },
+    {
+      "code": "route-remove.invalid-source",
+      "forms": [
+        "<ref> is not a source ID or a path under .agents."
+      ]
+    },
+    {
+      "code": "route-remove.invalid-subject",
+      "forms": [
+        "<ref> is the Loader and cannot be removed.",
+        "<ref> is an overwrite file; remove its base file."
+      ]
+    },
+    {
+      "code": "route-remove.category-unsafe",
+      "forms": [
+        "<folder> contains a file that cannot be removed safely: <path> (<reason>)."
+      ]
+    },
+    {
+      "code": "route-remove.overwrite-ambiguous",
+      "forms": [
+        "<name>.overwrite.md could belong to more than one base file."
+      ]
+    },
+    {
+      "code": "route-remove.reference-unsafe",
+      "forms": [
+        "The link at <file>:l:c cannot be detached safely: <reason>."
+      ]
+    },
+    {
+      "code": "route-remove.category-inventory-incomplete",
+      "forms": [
+        "Some files under <folder> could not be listed, so the removal was not planned."
+      ]
+    },
+    {
+      "code": "route-remove.reference-coverage-incomplete",
+      "forms": [
+        "Some files could not be scanned for links to <path>, so the removal was not planned."
+      ]
+    },
+    {
+      "code": "route-update.invalid-patch",
+      "forms": [
+        "Nothing to update: pass --description, --responsibility, --tag or --template.",
+        "--tag <value> is repeated.",
+        "--description must not be blank."
+      ]
+    },
+    {
+      "code": "route-update.invalid-template",
+      "forms": [
+        "--template <ref> is not a routed Template."
+      ]
+    },
+    {
+      "code": "route-update.frontmatter-unsafe",
+      "forms": [
+        "The frontmatter of <path> cannot be rewritten safely: <reason>."
+      ]
+    },
+    {
+      "code": "route-update.metadata-preservation-unsafe",
+      "forms": [
+        "Other frontmatter keys in <path> could not be preserved, so nothing was changed."
+      ]
+    },
+    {
+      "code": "route-update.template-unsafe",
+      "forms": [
+        "The Template <ref> could not be verified safely."
+      ]
+    },
+    {
+      "code": "route-update.template-body-protected",
+      "forms": [
+        "The file already has content, which was kept. The Template <ref> was not copied."
+      ]
+    },
+    {
+      "code": "route-update.template-unavailable",
+      "forms": [
+        "The Template <ref> could not be read."
+      ]
+    },
+    {
+      "code": "status.entry-unavailable",
+      "forms": [
+        "AGENTS.md could not be read."
+      ]
+    },
+    {
+      "code": "status.context-inventory-incomplete",
+      "forms": [
+        "Startup context could not be measured completely: <path> could not be read completely."
+      ]
+    },
+    {
+      "code": "status.startup-context-unavailable",
+      "forms": [
+        "The current startup context could not be measured."
+      ]
+    },
+    {
+      "code": "status.continuity-context-unavailable",
+      "forms": [
+        "The may-load-again context could not be measured."
+      ]
+    },
+    {
+      "code": "status.root-categories-unavailable",
+      "forms": [
+        "The root categories could not be read from .agents/loader.md."
+      ]
+    },
+    {
+      "code": "status.generated-navigation-changed",
+      "forms": [
+        "The Entries section of <path> is stale."
+      ]
+    },
+    {
+      "code": "status.generated-navigation-missing",
+      "forms": [
+        "<path> has no Entries section."
+      ]
+    },
+    {
+      "code": "status.generated-navigation-unavailable",
+      "forms": [
+        "The Entries section of <path> could not be read."
+      ]
+    },
+    {
+      "code": "status.framework-ownership-observation",
+      "forms": [
+        "No ownership record exists, so Framework files cannot be checked against it."
+      ]
+    },
+    {
+      "code": "status.extension-ownership-observation",
+      "forms": [
+        "No ownership record exists, so installed Extensions cannot be listed from it."
+      ]
+    },
+    {
+      "code": "status.library-ownership-observation",
+      "forms": [
+        "No ownership record exists, so Libraries cannot be listed from it."
+      ]
+    },
+    {
+      "code": "status.framework-lifecycle-untrusted",
+      "forms": [
+        ".agents/open-forge.lock.json cannot be used for Framework files: <reason>."
+      ]
+    },
+    {
+      "code": "status.framework-target-changed",
+      "forms": [
+        "<path>  changed since it was installed"
+      ]
+    },
+    {
+      "code": "status.framework-target-missing",
+      "forms": [
+        "<path>  missing; it was installed by the Framework"
+      ]
+    },
+    {
+      "code": "status.framework-target-unavailable",
+      "forms": [
+        "<path>  could not be read"
+      ]
+    },
+    {
+      "code": "status.extension-lifecycle-untrusted",
+      "forms": [
+        ".agents/open-forge.lock.json cannot be used for Extensions: <reason>."
+      ]
+    },
+    {
+      "code": "status.extension-target-changed",
+      "forms": [
+        "<path>  changed since it was installed by <id>"
+      ]
+    },
+    {
+      "code": "status.extension-target-missing",
+      "forms": [
+        "<path>  missing; it was installed by <id>"
+      ]
+    },
+    {
+      "code": "status.extension-target-unavailable",
+      "forms": [
+        "<path>  could not be read"
+      ]
+    },
+    {
+      "code": "status.extension-target-blocked",
+      "forms": [
+        "<path>  could not be checked safely: <reason>"
+      ]
+    },
+    {
+      "code": "status.recovery-candidate-verified",
+      "forms": [
+        "A recovery bundle from an earlier command is kept at <path>."
+      ]
+    },
+    {
+      "code": "status.recovery-draft-incomplete",
+      "forms": [
+        "An unfinished recovery draft is at <path>. A command did not finish."
+      ]
+    },
+    {
+      "code": "status.recovery-final-malformed",
+      "forms": [
+        "The recovery bundle at <path> is damaged and cannot be used."
+      ]
+    },
+    {
+      "code": "status.recovery-final-unsupported",
+      "forms": [
+        "The recovery bundle at <path> was written by an unsupported version."
+      ]
+    },
+    {
+      "code": "status.recovery-final-unavailable",
+      "forms": [
+        "The recovery bundle at <path> could not be read."
+      ]
+    },
+    {
+      "code": "status.recovery-catalogue-unavailable",
+      "forms": [
+        "The recovery store at <path> could not be read."
+      ]
+    },
+    {
+      "code": "status.library-record-malformed",
+      "forms": [
+        "The Library section of .agents/open-forge.lock.json is invalid: <reason>."
+      ]
+    },
+    {
+      "code": "status.library-record-unavailable",
+      "forms": [
+        "The Library section of .agents/open-forge.lock.json could not be read."
+      ]
+    },
+    {
+      "code": "status.library-source-root-aliased",
+      "forms": [
+        "The source folder of the <id> Library, <path>, resolves to an ambiguous location."
+      ]
+    },
+    {
+      "code": "status.library-source-root-unavailable",
+      "forms": [
+        "The source folder of the <id> Library, <path>, cannot be read."
+      ]
+    },
+    {
+      "code": "status.library-projection-missing",
+      "forms": [
+        "<path>  missing; it is a link of the <id> Library"
+      ]
+    },
+    {
+      "code": "status.library-projection-changed",
+      "forms": [
+        "<path>  is no longer the link the <id> Library created"
+      ]
+    },
+    {
+      "code": "status.library-projection-unavailable",
+      "forms": [
+        "<path>  could not be checked"
+      ]
+    },
+    {
+      "code": "status.library-projection-blocked",
+      "forms": [
+        "<path>  could not be checked safely: <reason>"
+      ]
+    },
+    {
+      "code": "status.library-extension-collision",
+      "forms": [
+        "<path> is claimed by both the <id> Library and the <id> Extension."
+      ]
+    },
+    {
+      "code": "update.lifecycle-missing",
+      "forms": [
+        "No ownership record exists (.agents/open-forge.lock.json is missing), so update cannot tell which files it manages."
+      ]
+    },
+    {
+      "code": "update.ownership-observation",
+      "forms": [
+        "The ownership record names files that cannot be interpreted, so nothing was changed."
+      ]
+    },
+    {
+      "code": "update.target-unavailable",
+      "forms": [
+        "<path> could not be read, so it was not updated."
+      ]
+    },
+    {
+      "code": "update.source-provenance-invalid",
+      "forms": [
+        "The ownership record names an unknown source for <path>."
+      ]
+    },
+    {
+      "code": "update.fingerprint-unsupported",
+      "forms": [
+        "<path> could not be compared with the version this CLI ships."
+      ]
+    },
+    {
+      "code": "update.retirement-ineligible",
+      "forms": [
+        "<path> is no longer part of this release but cannot be deleted safely: <reason>."
+      ]
+    },
+    {
+      "code": "update.plan-blocked",
+      "forms": [
+        "<path> prevents the update: <reason>."
+      ]
+    },
+    {
+      "code": "route-create.optional-metadata",
+      "forms": [
+        "Would create <path> without optional description or tags.",
+        "Created <path> without optional description or tags.",
+        "<path> has no optional description or tags.",
+        "Optional metadata is missing for <path>."
+      ]
+    }
+  ]
+}

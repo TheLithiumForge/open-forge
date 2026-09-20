@@ -9,9 +9,9 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/workflows/_workflows.md`](../../../../../../../src/open-forge/.agents/workflows/_workflows.md) is the canonical installed Workflows `entrypoint`. The repository [Workflows `entrypoint`](../../../../../../workflows/_workflows.md) dogfoods the same authored contract and may add local generated `entries`.
+[`src/open-forge/.agents/workflows/_workflows.md`](../../../../../../../src/open-forge/.agents/workflows/_workflows.md) is the canonical installed Workflows `entrypoint`. The repository [Workflows `entrypoint`](../../../../../../skills/use-workflow/references/open-forge/_open-forge.md) dogfoods the same authored contract and may add local generated `entries`.
 
-An adjacent [workspace overwrite](../../../../../../workflows/_workflows.overwrite.md) adds the accepted local condition: change a Workflow only when evidence shows that its risk profile no longer fits.
+An adjacent [workspace overwrite](../../../../../../skills/use-workflow/references/open-forge/_open-forge.md) adds the accepted local condition: change a Workflow only when evidence shows that its risk profile no longer fits.
 
 The [current Workflow contract](../../../framework/primitives/workflows.md) defines recipe structure, selection, composition, and relationships with other Core primitives.
 

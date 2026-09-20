@@ -1,0 +1,8 @@
+1 Library registered. 1 link needs attention.
+Workspace: <workspace>
+  Warning  .agents/directives/review.md  Registered link is missing
+         .agents/directives/review.md  missing
+  team-knowledge  shared/team -> .  0 links current, 1 missing
+    .agents/directives/review.md  missing
+  Repair the missing registered link.
+Next: open-forge library sync team-knowledge

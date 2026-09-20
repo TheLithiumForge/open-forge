@@ -11,7 +11,7 @@ public sealed class PublishedExtensionInspectProcessTests
     {
         var target = PublishedExecutableTarget.Discover();
         using var working = PublishedExtensionInspectWorkspace.Create(
-            fingerprintKind: "semantic",
+            currentContent: "alpha\n",
             intendedContent: "alpha\n");
         var missingWorkspace = working.Combine("missing-workspace");
         var beforeSource = working.SnapshotSource();
@@ -23,7 +23,7 @@ public sealed class PublishedExtensionInspectProcessTests
             [
                 "extension", "inspect", "--help",
                 "--workspace", missingWorkspace,
-                "--json", "--view=expanded", "--verbose",
+                "--format=json", "--detail=debug", "--detail-filter=warning",
             ]);
         Assert.Equal(0, help.ExitCode);
         Assert.Equal(string.Empty, help.StandardError);
@@ -34,11 +34,11 @@ public sealed class PublishedExtensionInspectProcessTests
         Assert.Equal(beforeSource, working.SnapshotSource());
     }
 
-    [Theory(DisplayName = "Published Extension Inspect applies only semantic baselines to three-way comparison"), Trait("Feature", "extension-inspect"), Trait("Evidence", "EndToEnd")]
-    [InlineData("semantic", "attention", 2, "changed", "open-forge extension update toolkit")]
-    [InlineData("exact-bytes", "complete", 0, "unknown", "")]
-    public static async Task PublishedComparisonHonoursLifecycleFingerprintKind(
-        string fingerprintKind,
+    [Theory(DisplayName = "Published Extension Inspect compares current content with the selected package and ignores leftover state"), Trait("Feature", "extension-inspect"), Trait("Evidence", "EndToEnd")]
+    [InlineData("alpha\n", "completed-with-warnings", 2, "changed", "open-forge extension update toolkit --dry-run")]
+    [InlineData("beta\n", "completed", 0, "unchanged", "")]
+    public static async Task PublishedComparisonUsesCurrentAndIntendedContent(
+        string currentContent,
         string expectedStatus,
         int expectedExitCode,
         string expectedRelation,
@@ -46,7 +46,7 @@ public sealed class PublishedExtensionInspectProcessTests
     {
         var target = PublishedExecutableTarget.Discover();
         using var working = PublishedExtensionInspectWorkspace.Create(
-            fingerprintKind,
+            currentContent,
             intendedContent: "beta\n");
         var beforeWorkspace = working.SnapshotState();
         var beforeSource = working.SnapshotSource();
@@ -59,7 +59,7 @@ public sealed class PublishedExtensionInspectProcessTests
                 "extension", "inspect", "toolkit",
                 "--workspace", working.Path,
                 "--source", working.SourcePath,
-                "--json",
+                "--format=json",
             ]);
 
         Assert.Equal(expectedExitCode, result.ExitCode);
@@ -68,17 +68,17 @@ public sealed class PublishedExtensionInspectProcessTests
         var root = document.RootElement;
         Assert.Equal("extension inspect", root.GetProperty("command").GetString());
         Assert.Equal(expectedStatus, root.GetProperty("status").GetString());
-        var commandResult = root.GetProperty("result");
-        Assert.Equal("toolkit", commandResult.GetProperty("subject").GetProperty("id").GetString());
+        var commandResult = root.GetProperty("data");
+        Assert.Equal("toolkit", commandResult.GetProperty("id").GetString());
         Assert.Equal("package", commandResult.GetProperty("source").GetProperty("kind").GetString());
-        Assert.Equal(working.SourcePath, commandResult.GetProperty("source").GetProperty("identity").GetString());
-        Assert.Equal("trusted", commandResult.GetProperty("lifecycle").GetProperty("trust").GetString());
-        Assert.Equal("three-way", commandResult.GetProperty("comparison").GetProperty("mode").GetString());
-        var comparisonPath = Assert.Single(commandResult.GetProperty("comparison").GetProperty("paths").EnumerateArray());
+        Assert.Equal(working.SourcePath, commandResult.GetProperty("source").GetProperty("path").GetString());
+        var comparisonPath = Assert.Single(commandResult.GetProperty("files").EnumerateArray());
+        Assert.DoesNotContain("baseline", result.StandardOutput, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("current-diverged", result.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("workspaceBinding", result.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(expectedRelation, comparisonPath.GetProperty("relation").GetString());
-        Assert.Equal(fingerprintKind, comparisonPath.GetProperty("baseline").GetProperty("kind").GetString());
-        Assert.Equal("semantic", comparisonPath.GetProperty("current").GetProperty("kind").GetString());
-        Assert.Equal("semantic", comparisonPath.GetProperty("intended").GetProperty("kind").GetString());
+        Assert.False(comparisonPath.TryGetProperty("installedSha256", out _));
+        Assert.False(comparisonPath.TryGetProperty("packageSha256", out _));
         if (expectedNext.Length == 0)
         {
             Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
@@ -119,17 +119,20 @@ internal sealed class PublishedExtensionInspectWorkspace : IDisposable
     internal IReadOnlyDictionary<string, string> SnapshotSource() => _source.SnapshotHashes();
 
     internal static PublishedExtensionInspectWorkspace Create(
-        string fingerprintKind,
+        string currentContent,
         string intendedContent)
     {
         var workspace = TemporaryWorkspace.Create("e2e-extension-inspect-workspace");
         var source = TemporaryWorkspace.Create("e2e-extension-inspect-source");
         try
         {
-            workspace.WriteText(".agents/toolkit.md", "alpha\n");
+            workspace.WriteText(".agents/toolkit.md", currentContent);
             workspace.WriteText(
-                ".agents/open-forge.lifecycle.json",
-                Lifecycle(workspace.Path, fingerprintKind));
+                ".agents/open-forge.lock.json",
+                """
+                {"schemaVersion":1,"extensions":[{"id":"toolkit","version":"1.0.0","source":"embedded catalogue","dependencies":[],"paths":[".agents/toolkit.md"],"regions":[]}]}
+                """);
+            workspace.WriteText(".agents/open-forge.lifecycle.json", "{ obsolete and malformed }");
             source.WriteText(
                 "extension.json",
                 """
@@ -158,29 +161,4 @@ internal sealed class PublishedExtensionInspectWorkspace : IDisposable
         _workspace.Dispose();
     }
 
-    private static string Lifecycle(string workspacePath, string fingerprintKind)
-        => $$"""
-            {
-              "schemaVersion": 1,
-              "fingerprintPolicy": "open-forge-markdown-v1",
-              "workspacePath": "{{JsonEncodedText.Encode(System.IO.Path.GetFullPath(workspacePath))}}",
-              "framework": null,
-              "extensions": {
-                "coverage": "complete",
-                "packages": [{
-                  "id": "toolkit",
-                  "version": "1.0.0",
-                  "source": "embedded catalogue",
-                  "dependencies": [],
-                  "paths": [".agents/toolkit.md"]
-                }],
-                "paths": [{
-                  "path": ".agents/toolkit.md",
-                  "owners": ["toolkit"],
-                  "baselineFingerprint": "b6a98d9ce9a2d9149288fa3df42d377c3e42737afdcdaf714e33c0a100b51060",
-                  "fingerprintKind": "{{fingerprintKind}}"
-                }]
-              }
-            }
-            """;
 }

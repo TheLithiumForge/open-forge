@@ -9,6 +9,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Mutation.Validation;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Unit")]
 public sealed class LibraryRelativeFileLinkValidatorTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Relative link validation matches only exact missing create and exact raw-target delete states")]
     [InlineData(false), InlineData(true)]
     public void MatchesExactState(bool delete)
@@ -26,6 +27,7 @@ public sealed class LibraryRelativeFileLinkValidatorTests
         Assert.Equal(expected, result.Actual);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Relative link create rejects every occupied ordinary or linked leaf without adoption")]
     [InlineData("file"), InlineData("directory"), InlineData("relative"), InlineData("absolute"), InlineData("reparse"), InlineData("special")]
     public void RejectsOccupiedCreate(string occupant)
@@ -41,6 +43,7 @@ public sealed class LibraryRelativeFileLinkValidatorTests
         Assert.Equal(actual, result.Actual);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Relative link delete rejects missing changed ordinary generic and special leaves")]
     [InlineData("missing"), InlineData("file"), InlineData("directory"), InlineData("relative"), InlineData("absolute"), InlineData("reparse"), InlineData("special")]
     public void RejectsChangedDelete(string occupant)
@@ -56,6 +59,7 @@ public sealed class LibraryRelativeFileLinkValidatorTests
         Assert.Equal(actual, result.Actual);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Relative link identity compares raw text even when normalized destinations would agree")]
     public void RejectsEquivalentButDifferentRawTarget()
     {

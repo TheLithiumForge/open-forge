@@ -12,6 +12,4 @@ open-forge:
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Keep Open Forge contract changes deliberate, current, dogfooded, reviewable, and evidence-backed](deliberate-framework-change.md) - #LoadNow #Directive #Framework #Change #Dogfood #Review #Evidence
-<!-- open-forge:generated-index:end -->

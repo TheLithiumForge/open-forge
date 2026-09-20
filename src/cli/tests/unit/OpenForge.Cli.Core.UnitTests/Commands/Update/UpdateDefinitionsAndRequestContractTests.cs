@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Update;
 
 public sealed class UpdateDefinitionsAndRequestContractTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Update accepts the direct root command without operands"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void AcceptsDirectRootUpdateWithoutOperands()
     {
@@ -19,6 +20,7 @@ public sealed class UpdateDefinitionsAndRequestContractTests
         Assert.Equal(4, symbols.UpdateCommand.Options.Count);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Update binds four Boolean options and collapses repeated occurrences"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void BindsFourBooleanOptionsAndCollapsesRepeatedOccurrences()
     {
@@ -40,6 +42,7 @@ public sealed class UpdateDefinitionsAndRequestContractTests
         Assert.True(parse.GetValue(symbols.DryRun));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Update rejects operands, unknown options, and extra tokens"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void RejectsOperandsUnknownOptionsAndExtraTokens()
     {
@@ -57,6 +60,7 @@ public sealed class UpdateDefinitionsAndRequestContractTests
         }
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Update validates mode and prompt-capability combinations"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void ValidatesModeAndPromptCapabilityMatrix()
     {
@@ -85,6 +89,7 @@ public sealed class UpdateDefinitionsAndRequestContractTests
             true));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Update preserves independent force, prune, automatic, and immutable request facts"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void PreservesForcePruneAutomaticAndRequestImmutability()
     {

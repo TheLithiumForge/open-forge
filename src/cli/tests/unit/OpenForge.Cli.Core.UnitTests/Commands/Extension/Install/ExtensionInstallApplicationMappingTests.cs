@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Install;
 
 public sealed class ExtensionInstallApplicationMappingTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Install leaves a target-changed directory effect unstarted"), Trait("Feature", "extension-install"), Trait("Evidence", "Unit")]
     public void TargetChangedDirectoryReceiptRemainsNotStarted()
     {

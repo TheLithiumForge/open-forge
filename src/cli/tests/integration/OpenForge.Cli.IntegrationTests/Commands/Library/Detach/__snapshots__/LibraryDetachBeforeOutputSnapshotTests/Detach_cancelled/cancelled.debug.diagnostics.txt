@@ -1,0 +1,8 @@
+status=cancelled
+mode=apply
+id=team-knowledge
+effects=0
+links=0
+sections=0
+registration-removed=False
+findings=1

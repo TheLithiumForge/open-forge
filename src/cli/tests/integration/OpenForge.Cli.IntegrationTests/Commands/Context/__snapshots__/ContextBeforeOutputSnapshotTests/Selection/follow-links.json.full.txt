@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Context is complete.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "sources": 5,
+    "tokens": 125,
+    "bytes": 499,
+    "linksFollowed": 1,
+    "linksNotFollowed": 0
+  },
+  "limitations": [],
+  "data": {
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "workspace entry"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 1,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Workspace\n\nRead `.agents/loader.md`.\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/loader.md",
+        "id": "loader",
+        "layer": "base",
+        "includedBecause": [
+          "Loader"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 2,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Open Forge Loader\n\n## Entries\n\n- [Documents](docs/_docs.md) - #LoadNow #Docs"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/_docs.md",
+        "id": "docs",
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from .agents/loader.md",
+          "ancestor required from .agents/docs/guide.md for docs/guide"
+        ],
+        "route": "docs",
+        "scope": null,
+        "order": 3,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Documents\n  tags: [Docs]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Documents\n\n## Entries\n\n- [Guide](guide.md) - #Docs #Guide\n- [Reference](reference.md) - #Docs\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "layer": "base",
+        "includedBecause": [
+          "selected source for docs/guide"
+        ],
+        "route": "docs/guide",
+        "scope": null,
+        "order": 4,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Guide\n  tags: [Docs, Guide]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Guide\n\n## Rules\n\nRead the [Reference](reference.md#details).\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/reference.md",
+        "id": "docs/reference",
+        "layer": "base",
+        "includedBecause": [
+          "linked source from .agents/docs/guide.md at depth 1"
+        ],
+        "route": "docs/reference",
+        "scope": null,
+        "order": 5,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Reference\n  tags: [Docs]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Reference\n\n## Details\n\nUse the guide.\n"
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "from": ".agents/docs/guide.md",
+        "location": {
+          "line": 10,
+          "column": 10
+        },
+        "destination": "reference.md#details",
+        "resolvedPath": ".agents/docs/reference.md",
+        "resolution": "complete",
+        "followed": true
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

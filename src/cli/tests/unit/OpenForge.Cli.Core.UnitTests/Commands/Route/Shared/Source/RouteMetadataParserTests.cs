@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Source;
 
 public sealed class RouteMetadataParserTests
 {
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Open Forge metadata parsing classifies missing and malformed frontmatter"),
         InlineData("# body\n", nameof(RouteSourceMetadataState.Missing)),
         InlineData("---\nopen-forge:\n  description: Value\n  tags: [Tag]\n", nameof(RouteSourceMetadataState.Malformed)),
@@ -32,6 +33,7 @@ public sealed class RouteMetadataParserTests
         Assert.Empty(metadata.Tags);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Open Forge metadata parsing preserves Unicode descriptions, tags, and source flags")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void CompleteOpenForgeMetadataPreservesAuthoredValues()
@@ -49,6 +51,7 @@ public sealed class RouteMetadataParserTests
         Assert.True(metadata.IsOverwritePresent);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Skill metadata parsing distinguishes complete, missing, and malformed native metadata"),
         InlineData("skill body", nameof(RouteSourceMetadataState.Missing)),
         InlineData("---\nname: skill\ndescription: Description\n", nameof(RouteSourceMetadataState.Malformed)),
@@ -71,6 +74,7 @@ public sealed class RouteMetadataParserTests
         Assert.Empty(metadata.Tags);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Skill metadata parsing preserves Unicode native name and description")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void CompleteSkillMetadataPreservesUnicodeValues()

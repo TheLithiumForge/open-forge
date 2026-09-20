@@ -13,6 +13,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Init;
 
 public sealed class RouteInitEnumMappingTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init catalogue issue mapping names every value and rejects undefined values"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void CatalogueIssueMappingNamesEveryValueAndRejectsUndefined()
     {
@@ -46,6 +47,7 @@ public sealed class RouteInitEnumMappingTests
             "The source catalogue issue code is not defined.");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init Framework trust mapping names every value and rejects undefined values"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void FrameworkTrustMappingNamesEveryValueAndRejectsUndefined()
     {
@@ -74,6 +76,7 @@ public sealed class RouteInitEnumMappingTests
             "The Route Init Framework trust state is not defined.");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init application validation mapping names every value and rejects undefined values"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void ApplicationValidationMappingNamesEveryValueAndRejectsUndefined()
     {
@@ -107,6 +110,7 @@ public sealed class RouteInitEnumMappingTests
             "The mutation validation state is not defined.");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init recovery preparation finding mapping names every value and rejects undefined values"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void RecoveryPreparationFindingMappingNamesEveryValueAndRejectsUndefined()
     {
@@ -133,6 +137,7 @@ public sealed class RouteInitEnumMappingTests
             "The Route Init recovery preparation state is not defined.");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init receipt finding mapping names every tuple component and rejects undefined values"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void ReceiptFindingMappingNamesEveryTupleComponentAndRejectsUndefined()
     {
@@ -178,6 +183,7 @@ public sealed class RouteInitEnumMappingTests
             "The filesystem not-started reason is not defined.");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init preflight mapping names every value and rejects undefined values"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void PreflightMappingNamesEveryValueAndRejectsUndefined()
     {
@@ -205,6 +211,7 @@ public sealed class RouteInitEnumMappingTests
             "The mutation validation state is not defined.");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init directory residual mapping names every value and rejects undefined values"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void DirectoryResidualMappingNamesEveryValueAndRejectsUndefined()
     {
@@ -230,6 +237,7 @@ public sealed class RouteInitEnumMappingTests
                 verification));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init file residual mapping names every value and rejects undefined values"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void FileResidualMappingNamesEveryValueAndRejectsUndefined()
     {
@@ -255,6 +263,7 @@ public sealed class RouteInitEnumMappingTests
                 verification));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init applied expectation mapping names every value and rejects undefined values"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void AppliedExpectationMappingNamesEveryValueAndRejectsUndefined()
     {
@@ -297,6 +306,7 @@ public sealed class RouteInitEnumMappingTests
             "The file expectation validation state is not defined.");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init recovery bundle preparation mapping names every value and rejects undefined values"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void RecoveryBundlePreparationMappingNamesEveryValueAndRejectsUndefined()
     {
@@ -339,6 +349,7 @@ public sealed class RouteInitEnumMappingTests
             "The recovery bundle preparation state is not defined.");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init recovery deletion mapping names every tuple component and rejects undefined values"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void RecoveryDeletionMappingNamesEveryTupleComponentAndRejectsUndefined()
     {

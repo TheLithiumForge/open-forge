@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 3,
+  "command": "extension create",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": null,
+  "summary": {
+    "headline": "Cannot create toolkit at <extension-source>\\toolkit: <extension-source>\\toolkit already exists with different content.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-create.destination-collision",
+      "title": "Destination has other content",
+      "message": "<extension-source>\\toolkit already exists with different content.",
+      "subject": {
+        "kind": "directory",
+        "path": "<extension-source>\\toolkit",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [
+    {
+      "path": "<extension-source>\\toolkit\\extension.json",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "<extension-source>\\toolkit\\content\\.agents\\",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "toolkit",
+    "folder": "<extension-source>",
+    "packagePath": "<extension-source>\\toolkit",
+    "manifestPath": "<extension-source>\\toolkit\\extension.json",
+    "contentPath": "<extension-source>\\toolkit\\content\\.agents\\"
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension create --dry-run",
+    "reason": "Resolve the named catalogue identity or destination collision before rerunning Extension Create."
+  }
+}

@@ -14,6 +14,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class RepairBindingAndRequestTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair symbols expose the exact operand-free command and operation-specific options"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void SymbolsExposeExactRepairGrammar()
     {
@@ -38,6 +39,7 @@ public sealed class RepairBindingAndRequestTests
         Assert.Equal(ArgumentArity.Zero, symbols.DryRun.Arity);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair binder preserves typed mode, Boolean selection, and relink tuple order")]
     [Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void BinderPreservesTypedRequestFacts()
@@ -74,11 +76,12 @@ public sealed class RepairBindingAndRequestTests
         Assert.Equal("New", relink.SelectedTargetFragment);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Repair request derives each finite selection mode from authority and interaction")]
     [InlineData(true, false, false, (int)RepairSelectionMode.Automatic, true)]
     [InlineData(false, true, false, (int)RepairSelectionMode.ExplicitRelinks, true)]
     [InlineData(true, true, false, (int)RepairSelectionMode.AutomaticAndExplicit, true)]
-    [InlineData(false, false, true, (int)RepairSelectionMode.InteractiveWizard, true)]
+    [InlineData(false, false, true, (int)RepairSelectionMode.InteractivePrompt, true)]
     [InlineData(false, false, false, (int)RepairSelectionMode.NonInteractiveBlocked, false)]
     [Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void RequestSelectionModesAreExplicit(
@@ -100,6 +103,7 @@ public sealed class RepairBindingAndRequestTests
         Assert.Equal(RepairMode.Apply, request.Mode);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair request deduplicates identical relinks and rejects contradictory occurrence intent"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void RelinkRepetitionIsIdempotentAndContradictionsFailClosed()
     {
@@ -131,6 +135,7 @@ public sealed class RepairBindingAndRequestTests
         Assert.Equal("relinks", exception.ParamName);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair source locations parse the terminal positive suffix while preserving an earlier at-sign"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void SourceLocationGrammarIsTerminalAndOneBased()
     {
@@ -142,6 +147,7 @@ public sealed class RepairBindingAndRequestTests
         Assert.Equal(".agents/docs/guide@draft.md@12:8", parsed.ToString());
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Repair source locations reject malformed and non-positive coordinates")]
     [InlineData("")]
     [InlineData(".agents/docs/guide.md")]
@@ -156,6 +162,7 @@ public sealed class RepairBindingAndRequestTests
         Assert.ThrowsAny<ArgumentException>(() => RepairSourceLocation.Parse(value));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Repair target grammar preserves contained path and one optional non-empty fragment")]
     [InlineData(".agents/docs/new.md", ".agents/docs/new.md", null)]
     [InlineData(".agents/docs/new.md#New-guide", ".agents/docs/new.md", "New-guide")]
@@ -173,6 +180,7 @@ public sealed class RepairBindingAndRequestTests
         Assert.Empty(target.CandidateProvenance);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Repair target grammar rejects queries empty or repeated fragments and non-canonical delimiters")]
     [InlineData(".agents/docs/new.md?")]
     [InlineData(".agents/docs/new.md?query#Heading")]

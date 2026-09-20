@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 3,
+  "command": "library inspect",
+  "status": "blocked",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot inspect team-knowledge: .agents/linked/review.md  could not be checked safely: The Library destination parent is not a real ordinary directory.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-inspect.link-blocked",
+      "title": "Registered link is blocked",
+      "message": ".agents/linked/review.md  could not be checked safely: The Library destination parent is not a real ordinary directory.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/linked/review.md",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sourceFiles": 1,
+    "linksCurrent": 0,
+    "filesAdded": 0,
+    "filesRetired": 0,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team",
+    "destinationFolder": ".",
+    "current": false,
+    "files": [
+      {
+        "sourcePath": ".agents/linked/review.md",
+        "destinationPath": ".agents/linked/review.md",
+        "relation": "blocked"
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

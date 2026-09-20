@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models.Source;
 
 public sealed class RouteSourceCatalogueModelTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route projection sets order projections, identity collisions, and projected paths deterministically")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void ProjectionSetUsesOrdinalCanonicalOrdering()
@@ -41,6 +42,7 @@ public sealed class RouteSourceCatalogueModelTests
             collision.Paths);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route projection sets retain paired overwrite facts and projected source reference identity")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void PairedOverwriteFactMatchesItsExactNeutralLayer()
@@ -62,6 +64,7 @@ public sealed class RouteSourceCatalogueModelTests
         Assert.Equal(RouteOverwriteState.Paired, projectionSet.OverwriteFacts[0].State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route projection sets retain paired orphan and ambiguous overwrite facts for command-local mapping")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void OverwriteFactsRemainProjectionEvidence()
@@ -98,6 +101,7 @@ public sealed class RouteSourceCatalogueModelTests
             projectionSet.OverwriteFacts.Single(fact => fact.State == RouteOverwriteState.Ambiguous).CandidateBasePaths);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route projection set lookup preserves the existing ID and exact path meanings")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void ProjectionLookupsResolveBasesPairedOverwritesAndIDs()
@@ -122,6 +126,7 @@ public sealed class RouteSourceCatalogueModelTests
             projectionSet.FindOverwriteByPath(".agents/guidance/style.overwrite.md"));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route projection build results associate every orphan or ambiguous read with one source-less overwrite fact")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void ProjectionResultRetainsTypedSourceLessReads()

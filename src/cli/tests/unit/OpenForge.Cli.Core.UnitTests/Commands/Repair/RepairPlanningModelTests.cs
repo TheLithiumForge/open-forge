@@ -12,6 +12,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class RepairPlanningModelTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair changes retain exact destination transition, target, catalogue member, and distinct origins"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void ChangeRetainsExactSelectionFacts()
     {
@@ -51,6 +52,7 @@ public sealed class RepairPlanningModelTests
             []));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair effects project sorted non-overlapping UTF-8 destination replacements into one complete file state"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void EffectProjectsCompleteUtf8State()
     {
@@ -62,7 +64,7 @@ public sealed class RepairPlanningModelTests
             "E",
             RepairCatalogueMember.SameTargetCase,
             RepairTestData.Target(),
-            [RepairSelectionOrigin.Wizard]);
+            [RepairSelectionOrigin.Prompt]);
         var earlier = new RepairChange(
             new SourceLocation(1, 1, 0, 1),
             "a",
@@ -84,6 +86,7 @@ public sealed class RepairPlanningModelTests
         Assert.Equal(intended.Bytes, effect.FileChange.IntendedBytes);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair effects use UTF-8 byte spans and support unequal replacement byte lengths"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void EffectUsesUtf8ByteCoordinates()
     {
@@ -109,6 +112,7 @@ public sealed class RepairPlanningModelTests
         Assert.Equal(intended.Bytes, effect.IntendedState.Bytes);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair effects reject empty, invalid, overlapping, mismatched, unchanged, and non-UTF-8 transitions"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void EffectRejectsUnsafeTransitions()
     {
@@ -162,6 +166,7 @@ public sealed class RepairPlanningModelTests
             RepairTestData.Attribution()));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair steps keep effect, no-op, recovery, verification, and lifecycle outcomes coherent"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void StepCoherenceIsExplicit()
     {
@@ -219,6 +224,7 @@ public sealed class RepairPlanningModelTests
             RepairStepOutcome.Applied));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair plans bind exactly one step to each selected proposal and expose conflicts and no-ops"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void PlanBindsSelectedStepsAndConflictState()
     {
@@ -274,11 +280,12 @@ public sealed class RepairPlanningModelTests
         Assert.True(emptyPlan.IsNoOp);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair recovery states preserve residual path and attribution lifecycle semantics"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void RecoveryStateAndResidualCoherenceIsEnforced()
     {
         var attribution = RepairTestData.Attribution();
-        var residualPath = Path.GetFullPath("/tmp/open-forge-repair/recovery.zip");
+        var residualPath = RepairTestData.RecoveryPath;
         var prepared = new RepairRecovery(
             RepairRecoveryState.Prepared,
             RepairResidualState.Retained,

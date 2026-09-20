@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Doctor;
 
 public sealed class DoctorOperationEventTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Doctor contributor failures retain six failed domains without actions")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public async Task ContributorFailureRetainsSixFailedDomainsWithoutActions()
@@ -23,6 +24,7 @@ public sealed class DoctorOperationEventTests
         AssertEventResult(result, CliSemanticStatus.Failed);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Doctor pre-cancellation retains six interrupted domains without reading contributors")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public async Task PreCancellationRetainsSixInterruptedDomainsWithoutActions()

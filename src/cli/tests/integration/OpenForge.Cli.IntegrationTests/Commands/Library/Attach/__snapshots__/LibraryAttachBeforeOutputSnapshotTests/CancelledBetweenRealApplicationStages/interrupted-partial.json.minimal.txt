@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 3,
+  "command": "library attach",
+  "status": "cancelled",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Library attach was cancelled. Stopped after 1 of 1 links were created.",
+    "kind": "cancelled"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-attach.interrupted",
+      "title": "Library attach was cancelled",
+      "message": "Library attach was cancelled. Stopped after 1 of 1 links were created.",
+      "subject": {
+        "kind": "file",
+        "path": ".",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the reported Library attach state."
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/directives/review.md",
+      "kind": "link",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksCreated": 1,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "sourceFiles": 1,
+    "errors": 1,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "recorded": false,
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    }
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the reported Library attach state."
+  }
+}

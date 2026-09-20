@@ -1,0 +1,4 @@
+Extension create was cancelled. Nothing was changed.
+  Error  <extension-source>  Extension create was cancelled
+         Extension create was cancelled. Nothing was changed.
+Next: open-forge extension create

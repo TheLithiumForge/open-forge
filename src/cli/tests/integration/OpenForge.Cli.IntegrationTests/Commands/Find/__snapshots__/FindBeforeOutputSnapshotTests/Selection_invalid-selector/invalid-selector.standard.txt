@@ -1,0 +1,6 @@
+Cannot search: --include missing/source is not a source ID or a path under .agents.
+Workspace: <workspace>
+  Error  missing/source  Invalid selector
+         --include missing/source is not a source ID or a path under .agents.
+  List source IDs and exact paths, then rerun Find.
+Next: open-forge route list --depth=all

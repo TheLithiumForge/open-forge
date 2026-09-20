@@ -1,0 +1,8 @@
+Cannot detach unknown: No Library has the ID unknown.
+Workspace: <workspace>
+  Error  unknown  Library ID is unknown
+         No Library has the ID unknown.
+         open-forge library list
+         Choose a registered Library ID.
+  Choose a registered Library ID.
+Next: open-forge library list

@@ -1,0 +1,3 @@
+No Libraries are registered.
+Workspace: <workspace>
+Next: open-forge library attach <id> <source-folder>

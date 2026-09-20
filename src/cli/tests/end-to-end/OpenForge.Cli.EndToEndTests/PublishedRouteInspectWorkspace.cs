@@ -140,10 +140,7 @@ internal sealed class PublishedRouteInspectWorkspace : IDisposable
             # {description}
 
             ## Entries
-
-            <!-- open-forge:generated-index:start -->
             {body}
-            <!-- open-forge:generated-index:end -->
             """);
     }
 

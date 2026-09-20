@@ -2,8 +2,11 @@ using OpenForge.Cli.Core.Commands.Route.Inspect;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
+using OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Interaction;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Shared.Profile;
 using static OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Interaction.RouteInspectInteractionIntegrationFixture;
@@ -12,6 +15,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Interaction;
 
 public sealed class RouteInspectInteractiveCollisionIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Inspect selects an ambiguous source from one one-based interactive answer"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task OneBasedAnswerSelectsDisplayedSourceOnce()
     {
@@ -31,15 +35,16 @@ public sealed class RouteInspectInteractiveCollisionIntegrationTests
         RouteInspectProfileIntegrationAssertions.AssertNoWriteOrInspectionState(before, workspace.Snapshot());
     }
 
-    [Fact(DisplayName = "Route Inspect selects an ambiguous source from one exact displayed path answer"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
-    public async Task ExactDisplayedPathAnswerSelectsThatSourceOnce()
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route Inspect selects an ambiguous source from one numbered answer"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    public async Task SecondNumberAnswerSelectsDisplayedSourceOnce()
     {
         using var workspace = CreateCollisionWorkspace();
 
         var run = await RunOperationAsync(
             workspace,
             CollisionId,
-            $"{SecondCandidate}\nremaining",
+            "2\nremaining",
             allowInteractiveSourceSelection: true,
             canPrompt: true);
 
@@ -48,12 +53,13 @@ public sealed class RouteInspectInteractiveCollisionIntegrationTests
         Assert.Equal("remaining", run.RemainingInput);
     }
 
-    [Theory(DisplayName = "Route Inspect retains a blocked collision after one unusable interactive answer"),
-        InlineData("invalid\nremaining", "remaining"),
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Route Inspect cancels after an unusable interactive answer"),
+        InlineData("invalid\n", null),
         InlineData("", null),
         Trait("Feature", "route-inspect"),
         Trait("Evidence", "Integration")]
-    public async Task InvalidAnswerOrEndOfInputRetainsBlockedCollision(
+    public async Task InvalidAnswerOrEndOfInputCancels(
         string standardInput,
         string? expectedRemainingInput)
     {
@@ -66,11 +72,17 @@ public sealed class RouteInspectInteractiveCollisionIntegrationTests
             allowInteractiveSourceSelection: true,
             canPrompt: true);
 
-        AssertBlockedCollision(run.Result);
-        Assert.Equal(ExpectedPrompt(), run.Prompt);
+        Assert.Equal(CliSemanticStatus.Interrupted, run.Result.Status);
+        Assert.Equal(RouteInspectSelectionMethod.Unresolved, run.Result.Selection.SelectionMethod);
+        Assert.Equal([FirstCandidate, SecondCandidate], run.Result.Selection.CandidatePaths);
+        var expectedPrompt = standardInput.StartsWith("invalid", StringComparison.Ordinal)
+            ? ExpectedPrompt() + ExpectedPrompt()
+            : ExpectedPrompt();
+        Assert.Equal(expectedPrompt, run.Prompt);
         Assert.Equal(expectedRemainingInput, run.RemainingInput);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Inspect retains known collision facts when interactive input is cancelled"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task CancellationWhileReadingInteractiveAnswerIsInterrupted()
     {
@@ -78,8 +90,18 @@ public sealed class RouteInspectInteractiveCollisionIntegrationTests
         using var cancellation = new CancellationTokenSource();
         using var input = new CancellingTextReader(cancellation);
         using var prompt = new StringWriter();
-        var session = new CliInteractiveSession(input, prompt, canPrompt: true);
-        var operation = RouteInspectOperationFactory.Create(session);
+        var terminal = new CliTerminal(
+            new CliTerminalCapabilities(canPrompt: true, canReadKeys: false, canRedraw: false),
+            (content, cancellationToken) =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                prompt.Write(content.Span);
+                return ValueTask.CompletedTask;
+            },
+            cancellationToken => input.ReadLineAsync(cancellationToken),
+            _ => ValueTask.FromResult<CliKeyStroke?>(null));
+        var operation = RouteInspectOperationFactory.Create(
+            RouteInspectSourceSelectionPrompt.Create(new CliPrompts(terminal)));
 
         var result = await operation(
             Request(workspace, CollisionId, allowInteractiveSourceSelection: true),
@@ -93,6 +115,7 @@ public sealed class RouteInspectInteractiveCollisionIntegrationTests
         Assert.Equal(1, input.ReadCount);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Inspect interactive source selection does not repair an ambiguous route"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task InteractiveSourceChoiceRetainsAmbiguousRouteBlock()
     {
@@ -115,6 +138,7 @@ public sealed class RouteInspectInteractiveCollisionIntegrationTests
         Assert.Equal("remaining", run.RemainingInput);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Inspect never calls an available interactive session for an unambiguous source"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task UniqueSourceNeverPromptsOrConsumesInput()
     {

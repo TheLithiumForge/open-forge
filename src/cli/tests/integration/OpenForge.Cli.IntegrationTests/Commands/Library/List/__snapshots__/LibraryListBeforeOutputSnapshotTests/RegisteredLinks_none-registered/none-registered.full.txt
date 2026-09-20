@@ -1,0 +1,5 @@
+No Libraries are registered.
+Workspace: <workspace>
+The Library registration was read completely.
+  Register a Library before listing it.
+Next: open-forge library attach <id> <source-folder>

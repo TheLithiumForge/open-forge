@@ -1,0 +1,7 @@
+No problems found. 1 info finding was recorded.
+Framework files
+  Info  .agents/open-forge.lock.json  No ownership record [framework.ownership-observation]
+         No ownership record exists, so Framework files cannot be read from it.
+         state: unavailable
+         read from .agents/open-forge.lock.json
+  21 links and 20 routes checked.

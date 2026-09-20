@@ -1,0 +1,4 @@
+No problems found. 1 info finding was recorded. 1 check could not finish.
+  21 links and 20 routes checked.
+  Extensions were not checked: the package source ./packages/toolkit cannot be read.
+  To list the info findings: open-forge doctor --detail full

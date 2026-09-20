@@ -1,0 +1,9 @@
+status=invalid-input
+mode=apply
+id=INVALID ID
+folder=<extension-source>
+package=none
+intended=0
+applied=0
+findings=1
+finding=extension-create.invalid-input:subject=INVALID ID:cause=The stable ID is invalid.

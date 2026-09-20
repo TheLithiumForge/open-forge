@@ -1,0 +1,8 @@
+Cannot inspect .agents/loader.md: The Loader is not a route. Inspect one of its routes instead.
+Workspace: <workspace>
+  Error  .agents/loader.md  Loader is not a route [route-inspect.loader-subject]
+         The Loader is not a route. Inspect one of its routes instead.
+  Why: the source reference was not accepted
+  Selection: source path; unresolved; requested ".agents/loader.md"
+  Correct the named source or input, then rerun route inspect.
+Next: open-forge route inspect --help

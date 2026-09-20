@@ -1,11 +1,10 @@
 {
   "id": "development-toolkit",
   "name": "Development Toolkit",
-  "description": "An optional bundle of project documents, Memory starters, planning, and development packages",
-  "version": "0.1.0",
+  "description": "Project knowledge, planning, and development methods in one optional selection",
+  "version": "0.3.0",
   "dependencies": [
     "development",
-    "memory-starters",
     "planning",
     "project-documents"
   ]

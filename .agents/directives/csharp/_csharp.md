@@ -13,7 +13,5 @@ open-forge:
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Design cohesive C# call surfaces with truthful nullability, readable construction, and no speculative frameworks](design.md) - #LoadNow #Directive #CSharp #Design #Nullability #Initialization #Parameters #Records #Strategy #Efficiency #Readability
 - [Apply readable, formatted C# style to source and tests across the workspace](style.md) - #LoadNow #Directive #CSharp #Style #Formatting #Readability #Testing
-<!-- open-forge:generated-index:end -->

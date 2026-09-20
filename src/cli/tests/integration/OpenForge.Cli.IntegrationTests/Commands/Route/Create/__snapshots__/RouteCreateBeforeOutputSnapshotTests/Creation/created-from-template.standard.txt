@@ -1,0 +1,8 @@
+Created .agents/memory/project-alpha/overview.md  (memory/project-alpha/overview)
+Workspace: <workspace>
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project
+  Template: .agents/templates/route.md
+  Body copied from the Template templates/route
+  Listed in .agents/memory/project-alpha/_project-alpha.md

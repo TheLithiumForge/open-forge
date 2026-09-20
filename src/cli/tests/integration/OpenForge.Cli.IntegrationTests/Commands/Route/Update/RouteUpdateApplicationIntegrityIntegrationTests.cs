@@ -12,6 +12,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 
 public sealed class RouteUpdateApplicationIntegrityIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update preserves a verified receipt and rejects a changed later target")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task LaterTargetRaceRetainsExactReceiptAndResidualFacts()
@@ -47,7 +48,7 @@ public sealed class RouteUpdateApplicationIntegrityIntegrationTests
             var progress = await new RouteUpdateEffectApplication(
                 new FileChangeApplier(
                     mutationRevalidator,
-                    expectationValidator)).ApplyAsync(
+                    expectationValidator).ApplyAsync).ApplyAsync(
                 new RouteUpdateEffectApplicationInput
                 {
                     Plan = plan,
@@ -89,6 +90,7 @@ public sealed class RouteUpdateApplicationIntegrityIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update semantic verification detects target or overwrite bytes changed after application")]
     [InlineData(false)]
     [InlineData(true)]
@@ -129,7 +131,7 @@ public sealed class RouteUpdateApplicationIntegrityIntegrationTests
         var progress = await new RouteUpdateEffectApplication(
             new FileChangeApplier(
                 mutationRevalidator,
-                expectationValidator)).ApplyAsync(
+                expectationValidator).ApplyAsync).ApplyAsync(
             new RouteUpdateEffectApplicationInput
             {
                 Plan = plan,

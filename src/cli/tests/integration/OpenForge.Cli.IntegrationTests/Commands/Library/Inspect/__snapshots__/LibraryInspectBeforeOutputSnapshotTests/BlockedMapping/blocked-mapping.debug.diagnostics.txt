@@ -1,0 +1,6 @@
+status=blocked
+library=team-knowledge
+source-files=1
+comparisons=1
+findings=1
+The Library destination parent is not a real ordinary directory.

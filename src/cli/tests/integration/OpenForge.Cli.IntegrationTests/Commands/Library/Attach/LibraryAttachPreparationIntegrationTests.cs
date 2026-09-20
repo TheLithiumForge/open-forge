@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Attach;
 
 public sealed class LibraryAttachPreparationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library Attach retains incomplete preparation when its owned recovery bucket is a file"), Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task RecoveryBucketFileRetainsIncompleteWithoutTargetEffects()
     {

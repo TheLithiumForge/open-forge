@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "failed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Route init stopped after 1 of 3 changes.",
+    "kind": "failed"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-init.write-failed",
+      "title": "Write failed",
+      "message": "Writing documents/design failed. Stopped after 1 of 3 changes. Recovery data: <recovery-bundle>.",
+      "subject": {
+        "kind": "file",
+        "path": "documents/design",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/documents/design",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/documents/_documents.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/documents/design/_design.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "entrypointsCreated": 0,
+    "entrypointsPresent": 1,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "documents/design",
+      "path": ".agents/documents/design/_design.md"
+    },
+    "scaffold": "generic",
+    "entrypoints": [
+      {
+        "path": ".agents/documents/_documents.md",
+        "outcome": "unchanged",
+        "needsAuthoring": false
+      },
+      {
+        "path": ".agents/documents/design/_design.md",
+        "outcome": "not-started",
+        "needsAuthoring": true
+      }
+    ],
+    "listedIn": [
+      ".agents/documents/_documents.md"
+    ]
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route init --detail debug",
+    "reason": "Report the failure and retry the same Route Init request with bounded diagnostics."
+  }
+}

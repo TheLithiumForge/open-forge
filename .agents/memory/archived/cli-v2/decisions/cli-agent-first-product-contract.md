@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: The Open Forge CLI primarily serves any capable agent while preserving human authority, provider neutrality, and trustworthy workspace management
+  description: "Historical CLI-v2 source: The Open Forge CLI primarily serves any capable agent while preserving human authority, provider neutrality, and trustworthy workspace management"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

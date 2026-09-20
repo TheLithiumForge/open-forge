@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot repair: repair needs to know which repairs to apply, and this session cannot ask. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "repair.selection-required",
+      "title": "Selection required",
+      "message": "Repair needs to know which repairs to apply, and this session cannot ask.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "repair.selection-required",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksRepaired": 0,
+    "problemsRemaining": 0,
+    "problemsNeedingChoice": 0,
+    "problemsNeedingHand": 0,
+    "librarySteps": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "selection": "prompt",
+    "repairs": [],
+    "remaining": [],
+    "diagnosis": {
+      "workspaceAndPath": "not-requested",
+      "routeAndHeading": "not-requested",
+      "localReferences": "not-requested",
+      "selectedScope": "not-requested"
+    },
+    "verification": {
+      "targets": "not-requested",
+      "resultingBytes": "not-requested",
+      "postConditions": "not-requested"
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge repair --automatic",
+    "reason": "Select safe-exact repairs with --automatic, provide an explicit --relink target, or use the interactive Repair prompt."
+  }
+}

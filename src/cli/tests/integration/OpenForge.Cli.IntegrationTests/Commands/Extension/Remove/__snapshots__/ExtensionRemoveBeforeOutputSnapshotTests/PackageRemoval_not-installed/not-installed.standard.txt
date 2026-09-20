@@ -1,0 +1,4 @@
+No files are recorded for toolkit, so there is nothing to remove.
+Workspace: <workspace>
+  Removal order: toolkit
+  .agents/open-forge.lock.json  updated

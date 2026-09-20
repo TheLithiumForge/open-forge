@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "unlisted  .agents/unlisted.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "ownBytes": 70,
+    "ownTokens": 18,
+    "addedFiles": null,
+    "addedBytes": null,
+    "addedTokens": null,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "unlisted",
+    "path": ".agents/unlisted.md",
+    "kind": "markdown",
+    "entrypointForm": "markdown",
+    "overwritePath": null,
+    "belongs": {
+      "routeChain": null,
+      "parent": null,
+      "directChildren": null,
+      "descendants": null
+    },
+    "read": {
+      "atStart": null,
+      "automaticallyWhen": null,
+      "mayReadAgain": null
+    },
+    "size": {
+      "own": {
+        "files": 1,
+        "bytes": 70,
+        "tokens": 18
+      },
+      "adds": null,
+      "loadNow": null
+    },
+    "axioms": {
+      "inheritedFrom": null,
+      "local": null
+    },
+    "tags": [
+      "Docs"
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

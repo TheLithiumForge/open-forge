@@ -1,0 +1,13 @@
+Extension list could not be read completely.
+Workspace: <workspace>
+  Warning  <extension-source>  Extension source is unavailable [extension-list.source-unavailable]
+         <extension-source> could not be read, so available packages are not listed.
+         Cause: The process cannot access the file '<extension-source>/toolkit/extension.json' because it is being used by another process.
+  Info  .agents/open-forge.lock.json  Ownership record is unavailable [extension-list.ownership-observation]
+         No ownership record exists, so installed packages cannot be listed from it.
+         Cause: No Extension ownership is recorded; installed packages cannot be established.
+Source: <extension-source>
+Installed  (no ownership record, so installed packages cannot be listed)
+
+Available (from <extension-source>)  unavailable
+  available packages: <extension-source>/toolkit/extension.json: the file is in use by another process.

@@ -1,0 +1,3 @@
+.agents/docs/guide.md
+  out  :8:1   missing.md   missing
+Next: open-forge doctor

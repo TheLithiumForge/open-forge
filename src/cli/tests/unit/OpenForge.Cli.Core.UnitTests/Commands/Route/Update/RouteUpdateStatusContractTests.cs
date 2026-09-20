@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
 public sealed class RouteUpdateStatusContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update result builder maps every accepted status"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void ResultBuilderMapsEveryAcceptedStatus()
     {
@@ -32,6 +33,7 @@ public sealed class RouteUpdateStatusContractTests
         Assert.Equal(CliSemanticStatus.Failed, precedence.Status);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update next guidance follows the accepted precedence"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void NextGuidanceFollowsAcceptedPrecedence()
     {
@@ -57,7 +59,7 @@ public sealed class RouteUpdateStatusContractTests
             "review the authored body; the Template body was not applied.");
         AssertNext(
             RouteUpdateFindingCode.WriteFailed,
-            "open-forge route update --verbose",
+            "open-forge route update --detail debug",
             "Report the failure and retry the same Route Update request with bounded diagnostics.");
         AssertNext(
             RouteUpdateFindingCode.Interrupted,
@@ -79,7 +81,7 @@ public sealed class RouteUpdateStatusContractTests
             Recovery = new RouteUpdateRecovery
             {
                 State = RouteUpdateRecoveryState.Retained,
-                ResidualPath = "/tmp/open-forge-recovery.zip",
+                ResidualPath = RouteUpdateTestData.RecoveryPath(),
             },
         };
         var cleanup = RouteUpdateTestData.Result(retained).Next;
@@ -90,6 +92,7 @@ public sealed class RouteUpdateStatusContractTests
             cleanup?.Reason);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route Update status guidance outranks protected body review outside attention")]
     [InlineData(
         (int)CliSemanticStatus.Blocked,
@@ -104,7 +107,7 @@ public sealed class RouteUpdateStatusContractTests
     [InlineData(
         (int)CliSemanticStatus.Failed,
         (int)RouteUpdateFindingCode.WriteFailed,
-        "open-forge route update --verbose",
+        "open-forge route update --detail debug",
         "Report the failure and retry the same Route Update request with bounded diagnostics.")]
     [InlineData(
         (int)CliSemanticStatus.Interrupted,

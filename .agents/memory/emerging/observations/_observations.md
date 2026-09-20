@@ -1,31 +1,30 @@
 ---
 open-forge:
   description: Concrete occurrences or patterns noticed in evidence that may become reusable learning
-  tags: [KeepInMind, Memory, Observation, AgentLearning, OrganicGrowth, Contextual, Candidate]
+  tags: [Extension, Memory, Observation, AgentLearning, OrganicGrowth, Contextual, Candidate]
 ---
 
 # Observations
 
 ## What was observed, and why might it matter later?
 
-Observations preserve concrete occurrences or patterns noticed in evidence that may matter after the current work.
+An Observation records a concrete occurrence or pattern in evidence that may matter beyond the current work. Examples include a surprising result, a recurring failure, or a detail that would be costly to rediscover.
 
 ## Axioms
 
 ### Capture
 
-- Record an Observation before handoff or closeout when a concrete occurrence or pattern may matter later. If a required write is blocked, report it.
+- Before handoff or closeout, record an Observation when a concrete occurrence or pattern may matter later. Report a required write that is blocked.
 - One occurrence is enough when it may be reusable, surprising, or costly to rediscover.
-- Keep the concrete evidence and occurrence details clear enough to verify and reuse.
+- Keep concrete evidence and occurrence details clear enough to verify and reuse.
 
 ### Recurrence And Use
 
-- Add later matching occurrences to the same Observation when their scope and meaning align.
-- Recurrence strengthens the case for consolidation or promotion. It does not validate or accept the Observation by itself.
+- Add matching later occurrences to the same Observation when their scope and meaning align.
+- Recurrence strengthens the case for consolidation or promotion. It does not by itself validate the Observation or establish acceptance.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Raw-report reconciliation found provenance, isolation, collision, replication, and synthesis-consistency gaps in the benchmark corpus](2026-07-12_benchmark-validity-gaps.md) - #Memory #Observation #AgentLearning #Contextual #Candidate #Benchmark #Evaluation #Evidence #Reproducibility
 - [Active maintainer shortlist compares CRD and GRAD with the ACE, TRACE, and GRACE context-engineering family](2026-07-13_product-name-collision.md) - #Memory #Observation #AgentLearning #Contextual #Candidate #Product #Naming #Brand #Risk
 - [Gate 2 CLI work is testing whether bounded evidence packets, file packs, and one end review reduce agent cost without reducing quality](2026-08-15_lean-agent-batching.md) - #Memory #Observation #AgentLearning #Contextual #Candidate #CLI #Review #Delegation #Efficiency #Evidence
@@ -38,4 +37,3 @@ Observations preserve concrete occurrences or patterns noticed in evidence that 
 - [Audit of agent, orchestration, workflow, delegation, progress, and generated-runtime changes from 2026-08-28 through the Route Update baseline](2026-09-02_agent-and-workflow-change-audit.md) - #Memory #Observation #AgentLearning #Contextual #Candidate #Orchestration #Workflow #Review #Delegation #Progress #CSharp #CLI #Generated
 - [Record the first three supervised Luna preparation samples and their delegation and latency circuit breakers](2026-09-03_supervised-luna-preparation-trial-results.md) - #Memory #Emerging #Observation #Workflow #Experimental #Luna #Preparation #Efficiency #Orchestration
 - [Markdown wording changes broke an Update fixture because its scenario depended on replacing incidental live prose](2026-09-12_brittle-markdown-test-fixtures.md) - #Memory #Observation #AgentLearning #Contextual #Candidate #CLI #Testing #Snapshot #Markdown #Dogfood
-<!-- open-forge:generated-index:end -->

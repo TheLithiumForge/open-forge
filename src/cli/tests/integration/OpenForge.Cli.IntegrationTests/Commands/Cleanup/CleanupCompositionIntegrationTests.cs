@@ -4,6 +4,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Cleanup;
 
 public sealed class CleanupCompositionIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(
         DisplayName = "Root composition exposes one direct Cleanup leaf and truthful terminal help"),
      Trait("Feature", "cleanup-command"),
@@ -54,6 +55,7 @@ public sealed class CleanupCompositionIntegrationTests
         Assert.False(workspace.LockInfrastructureExists);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(
         DisplayName = "Cleanup rejects operands before workspace or recovery enumeration"),
      Trait("Feature", "cleanup-command"),

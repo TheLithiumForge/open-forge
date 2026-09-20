@@ -1,142 +1,90 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Commands.Cleanup.Models.Presentation;
+using OpenForge.Cli.Core.Presentation.Cleanup;
+using OpenForge.Cli.Core.Presentation.Cleanup.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Cleanup;
 
 public sealed class CleanupJsonSchemaContractTests
 {
-    [Fact(DisplayName = "Cleanup JSON preserves the schema-v1 envelope and complete nested graph order"),
-     Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
-    public void JsonPreservesEnvelopeAndNestedGraphOrder()
+    [Trait("Boundary", "Output")]
+    [Fact(
+        DisplayName = "Cleanup JSON preserves native data order and minimal nullable boundaries"),
+     Trait("Feature", "cleanup-presentation"),
+     Trait("Evidence", "UnitContract")]
+    public void JsonPreservesNativeDataOrder()
     {
-        using var document = JsonDocument.Parse(JsonSerializer.Serialize(
-            CleanupTestData.JsonSample(),
-            CleanupJsonContext.Default.CleanupJsonDocument));
+        var data = new CleanupData
+        {
+            Mode = "dry-run",
+            Items =
+            [
+                new CleanupDataItem
+                {
+                    Path = "recovery.bundle",
+                    Kind = "bundle",
+                    Outcome = "would-be-removed",
+                },
+            ],
+        };
+
+        using var document = JsonDocument.Parse(
+            JsonSerializer.Serialize(data, CleanupPresentation.Rendering.DataJsonTypeInfo));
         var root = document.RootElement;
-        var result = root.GetProperty("result");
-        var catalogue = result.GetProperty("catalogue");
-        var candidate = catalogue.GetProperty("candidates").EnumerateArray().Single();
-        var plan = result.GetProperty("plan");
-        var planEntry = plan.GetProperty("entries").EnumerateArray().Single();
-        var effect = result.GetProperty("effects").EnumerateArray().Single();
-        var residual = result.GetProperty("residuals").EnumerateArray().Single();
 
-        AssertOrder(root, "schemaVersion", "command", "status", "workspace", "result", "next");
-        AssertOrder(
-            result,
-            "mode", "catalogue", "plan", "preflight", "lease", "revalidation", "effects",
-            "residuals", "verification", "findings");
-        AssertOrder(catalogue, "coverage", "candidates");
-        AssertOrder(
-            candidate,
-            "path", "kind", "integrity", "fileKind", "workspaceAssociation", "leaseBoundary",
-            "provenance", "verification", "eligibility", "action", "cause");
-        AssertOrder(
-            plan,
-            "safety", "entries");
-        AssertOrder(
-            planEntry,
-            "ordinal", "path", "kind", "integrity", "fileKind", "workspaceAssociation",
-            "leaseBoundary", "provenance", "verification", "eligibility", "action",
-            "resultEffect", "cause");
-        AssertOrder(
-            result.GetProperty("preflight"),
-            "state", "cause");
-        AssertOrder(
-            result.GetProperty("lease"),
-            "state", "cause");
-        AssertOrder(
-            result.GetProperty("revalidation"),
-            "state", "planned", "observed", "cause");
-        AssertOrder(
-            effect,
-            "path", "kind", "integrity", "fileKind", "workspaceAssociation", "leaseBoundary",
-            "provenance", "verification", "action", "outcome", "residual", "cause");
-        AssertOrder(
-            residual,
-            "path", "kind", "integrity", "fileKind", "workspaceAssociation", "leaseBoundary",
-            "provenance", "verification", "action", "outcome", "residual", "cause");
-        AssertOrder(
-            result.GetProperty("verification"),
-            "state", "cause");
-        AssertOrder(
-            result.GetProperty("findings").EnumerateArray().Single(),
-            "code", "status", "subject", "cause");
-        AssertOrder(
-            candidate.GetProperty("workspaceAssociation"),
-            "state", "selectedPhysicalPath", "candidatePhysicalPath", "selectedWorkspaceKey",
-            "candidateWorkspaceKey", "cause");
-        AssertOrder(
-            candidate.GetProperty("leaseBoundary"),
-            "state", "workspaceKey", "command", "operationId", "cause");
-        AssertOrder(
-            candidate.GetProperty("provenance"),
-            "producer", "operation", "subject", "command", "workspacePhysicalPath", "workspaceKey",
-            "operationId");
-        AssertOrder(candidate.GetProperty("provenance").GetProperty("subject"), "kind", "identity");
-        AssertOrder(
-            candidate.GetProperty("verification"),
-            "state", "expectedPath", "expectedFileKind", "expectedIntegrity", "cause");
-        AssertOrder(planEntry.GetProperty("resultEffect"), "outcome", "residual");
-        AssertOrder(root.GetProperty("workspace"), "path", "selectedBy");
-        AssertOrder(root.GetProperty("next"), "command", "reason");
-
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
-        Assert.Equal("cleanup", root.GetProperty("command").GetString());
-        Assert.Equal("invalid", root.GetProperty("status").GetString());
-        Assert.Equal("dry-run", result.GetProperty("mode").GetString());
-        Assert.Equal("complete", catalogue.GetProperty("coverage").GetString());
-        Assert.Equal("eligible", candidate.GetProperty("eligibility").GetString());
-        Assert.Equal("planned", effect.GetProperty("outcome").GetString());
-        Assert.Equal("open-forge cleanup", root.GetProperty("next").GetProperty("command").GetString());
+        Assert.Equal(
+            ["mode", "items"],
+            root.EnumerateObject().Select(property => property.Name));
+        Assert.Equal("dry-run", root.GetProperty("mode").GetString());
+        var item = Assert.Single(root.GetProperty("items").EnumerateArray());
+        Assert.Equal(["path", "kind", "outcome"], item.EnumerateObject().Select(property => property.Name));
+        Assert.False(item.TryGetProperty("origin", out _));
+        Assert.False(item.TryGetProperty("integrity", out _));
     }
 
-    [Fact(DisplayName = "Cleanup JSON keeps required nullable coordinates present as null"),
-     Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
-    public void JsonKeepsRequiredNullableCoordinates()
+    [Trait("Boundary", "Output")]
+    [Fact(
+        DisplayName = "Cleanup JSON adds standard and full data without the retired nested graph"),
+     Trait("Feature", "cleanup-presentation"),
+     Trait("Evidence", "UnitContract")]
+    public void JsonAddsStandardAndFullData()
     {
-        using var document = JsonDocument.Parse(JsonSerializer.Serialize(
-            CleanupTestData.JsonSample(
-                includeNext: false,
-                includeWorkspace: false,
-                includeProvenance: false),
-            CleanupJsonContext.Default.CleanupJsonDocument));
+        var data = new CleanupData
+        {
+            Mode = "apply",
+            Items =
+            [
+                new CleanupDataItem
+                {
+                    Path = "recovery.bundle",
+                    Kind = "bundle",
+                    Outcome = "removed",
+                    Origin = "index",
+                    Integrity = "verified",
+                },
+            ],
+            NotEligible =
+            [
+                new CleanupDataNotEligible
+                {
+                    Path = "damaged.bundle",
+                    Reason = "not recognized",
+                },
+            ],
+            Lock = "The workspace lock was acquired before removal.",
+            FinalCheck = "The recovery store matched the planned items under the workspace lock.",
+        };
+
+        using var document = JsonDocument.Parse(
+            JsonSerializer.Serialize(data, CleanupPresentation.Rendering.DataJsonTypeInfo));
         var root = document.RootElement;
-        var result = root.GetProperty("result");
-        var candidate = result
-            .GetProperty("catalogue")
-            .GetProperty("candidates")
-            .EnumerateArray()
-            .Single();
-        var planEntry = result
-            .GetProperty("plan")
-            .GetProperty("entries")
-            .EnumerateArray()
-            .Single();
-        var effect = result.GetProperty("effects").EnumerateArray().Single();
-        var residual = result.GetProperty("residuals").EnumerateArray().Single();
-
-        Assert.Equal(JsonValueKind.Null, root.GetProperty("workspace").ValueKind);
-        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
-        Assert.Equal(JsonValueKind.Null, candidate.GetProperty("provenance").ValueKind);
-        Assert.Equal(JsonValueKind.Null, planEntry.GetProperty("provenance").ValueKind);
-        Assert.Equal(JsonValueKind.Null, effect.GetProperty("provenance").ValueKind);
-        Assert.Equal(JsonValueKind.Null, residual.GetProperty("provenance").ValueKind);
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("revalidation").GetProperty("planned").ValueKind);
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("revalidation").GetProperty("observed").ValueKind);
-        Assert.Equal(JsonValueKind.Null, candidate.GetProperty("cause").ValueKind);
-        Assert.Equal(JsonValueKind.Null, candidate.GetProperty("workspaceAssociation").GetProperty("cause").ValueKind);
-        Assert.Equal(JsonValueKind.Null, candidate.GetProperty("leaseBoundary").GetProperty("cause").ValueKind);
-        Assert.Equal(JsonValueKind.Null, candidate.GetProperty("verification").GetProperty("cause").ValueKind);
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("preflight").GetProperty("cause").ValueKind);
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("lease").GetProperty("cause").ValueKind);
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("revalidation").GetProperty("cause").ValueKind);
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("verification").GetProperty("cause").ValueKind);
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("findings").EnumerateArray().Single().GetProperty("subject").ValueKind);
+        Assert.Equal(
+            ["mode", "items", "notEligible", "lock", "finalCheck"],
+            root.EnumerateObject().Select(property => property.Name));
+        Assert.Equal("index", root.GetProperty("items")[0].GetProperty("origin").GetString());
+        Assert.Equal("verified", root.GetProperty("items")[0].GetProperty("integrity").GetString());
+        Assert.Equal("not recognized", root.GetProperty("notEligible")[0].GetProperty("reason").GetString());
+        Assert.False(root.GetProperty("items")[0].TryGetProperty("catalogue", out _));
+        Assert.False(root.TryGetProperty("preflight", out _));
+        Assert.False(root.TryGetProperty("verification", out _));
     }
-
-    private static void AssertOrder(JsonElement element, params string[] expected)
-        => Assert.Equal(
-            expected,
-            element.EnumerateObject().Select(property => property.Name));
 }

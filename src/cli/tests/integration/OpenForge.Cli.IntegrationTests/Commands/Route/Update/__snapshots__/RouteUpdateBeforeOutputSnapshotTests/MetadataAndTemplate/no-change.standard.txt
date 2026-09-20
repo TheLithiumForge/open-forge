@@ -1,0 +1,3 @@
+memory/project-alpha/overview already has these values. Nothing to do.
+Workspace: <workspace>
+  Path: .agents/memory/project-alpha/overview.md

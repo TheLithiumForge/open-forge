@@ -1,0 +1,11 @@
+Workspace: <workspace>
+  Info  .agents/open-forge.lock.json  Ownership record is unavailable [extension-list.ownership-observation]
+         No ownership record exists, so installed packages cannot be listed from it.
+         Cause: No Extension ownership is recorded; installed packages cannot be established.
+Source: <extension-source>
+Installed  (no ownership record, so installed packages cannot be listed)
+
+Available (from <extension-source>)
+  toolkit  1.0.0  Extension package toolkit.
+  Install one of the available Extensions.
+Next: open-forge extension install <id>

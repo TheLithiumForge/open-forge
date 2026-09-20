@@ -1,0 +1,5 @@
+status=invalid-input
+incoming=0
+outgoing=0
+scanned=0
+Direction 'invalid' is not one of in, out, or both.

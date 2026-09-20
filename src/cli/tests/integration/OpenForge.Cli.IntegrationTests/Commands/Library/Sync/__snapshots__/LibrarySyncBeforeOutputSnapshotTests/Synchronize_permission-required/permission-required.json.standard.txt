@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 3,
+  "command": "library sync",
+  "status": "blocked",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot synchronize team-knowledge: The selected Library destinations require shared permission in .agents/open-forge.json; use --allow-path <path> to record a grant. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-sync.permission-required",
+      "title": "Permission is required",
+      "message": "The selected Library destinations require shared permission in .agents/open-forge.json; use --allow-path <path> to record a grant",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.json",
+        "id": null,
+        "location": null
+      },
+      "category": "permission-required",
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksAdded": 0,
+    "linksRemoved": 0,
+    "linksUnchanged": 1,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "permissions": {
+      "required": [
+        "docs/review.md"
+      ],
+      "missing": [
+        "docs/review.md"
+      ],
+      "proposedScopes": [
+        {
+          "kind": "directory",
+          "path": "docs"
+        }
+      ],
+      "approvedScopes": [],
+      "decision": "required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [],
+    "unchanged": [
+      "docs/review.md"
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

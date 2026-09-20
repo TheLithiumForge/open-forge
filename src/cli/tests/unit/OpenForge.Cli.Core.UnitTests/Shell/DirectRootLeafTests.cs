@@ -12,6 +12,7 @@ namespace OpenForge.Cli.Core.UnitTests.Shell;
 
 public sealed class DirectRootLeafTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "A direct root leaf preserves its command identity"), Trait("Feature", "shell-root-leaf"), Trait("Evidence", "Unit")]
     public void RootLeafDefinitionPreservesItsShape()
     {
@@ -21,6 +22,7 @@ public sealed class DirectRootLeafTests
         Assert.Same(command, rootLeaf.Command);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "A direct root leaf is classified as a leaf and selects its exact binding"), Trait("Feature", "shell-root-leaf"), Trait("Evidence", "Unit")]
     public void DirectRootLeafIsNotAGroupAndSelectsItsBinding()
     {
@@ -43,6 +45,7 @@ public sealed class DirectRootLeafTests
         Assert.Same(binding, selection.Binding);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "A direct root leaf requires one exact binding"), Trait("Feature", "shell-root-leaf"), Trait("Evidence", "Unit")]
     public void RootLeafWithoutBindingIsRejected()
     {
@@ -57,6 +60,7 @@ public sealed class DirectRootLeafTests
         Assert.Contains("binding", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "A null direct root leaf is rejected before root composition"), Trait("Feature", "shell-root-leaf"), Trait("Evidence", "Unit")]
     public void NullRootLeafIsRejected()
     {
@@ -69,6 +73,7 @@ public sealed class DirectRootLeafTests
         Assert.Contains("root leaf", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "A direct root leaf requires a reference-equal binding command"), Trait("Feature", "shell-root-leaf"), Trait("Evidence", "Unit")]
     public void RootLeafRequiresReferenceEqualBindingCommand()
     {
@@ -85,6 +90,7 @@ public sealed class DirectRootLeafTests
         Assert.Contains("same", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Duplicate direct root leaves are rejected deterministically"), Trait("Feature", "shell-root-leaf"), Trait("Evidence", "Unit")]
     public void DuplicateRootLeavesAreRejected()
     {
@@ -100,6 +106,7 @@ public sealed class DirectRootLeafTests
         Assert.Contains("once", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "A direct root leaf cannot also be a root branch"), Trait("Feature", "shell-root-leaf"), Trait("Evidence", "Unit")]
     public void RootLeafBranchCollisionIsRejected()
     {
@@ -115,6 +122,7 @@ public sealed class DirectRootLeafTests
         Assert.Contains("branch", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "A same-name direct root leaf cannot coexist with a distinct root branch command"), Trait("Feature", "shell-root-leaf"), Trait("Evidence", "Unit")]
     public void SameNameRootLeafAndBranchCollisionIsRejected()
     {
@@ -131,6 +139,7 @@ public sealed class DirectRootLeafTests
         Assert.Contains("collision", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "A direct root leaf keeps binding-owned help authoritative over additional root help"), Trait("Feature", "shell-root-leaf"), Trait("Evidence", "Unit")]
     public void BindingOwnedHelpWinsForRootLeaf()
     {
@@ -155,6 +164,7 @@ public sealed class DirectRootLeafTests
         Assert.Same(bindingHelp, tree.ReadHelp(command));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Existing Route group commands remain groups while their leaves still select exact bindings"), Trait("Feature", "shell-root-leaf"), Trait("Evidence", "Unit")]
     public void ExistingRouteGroupCompositionRemainsUnchanged()
     {

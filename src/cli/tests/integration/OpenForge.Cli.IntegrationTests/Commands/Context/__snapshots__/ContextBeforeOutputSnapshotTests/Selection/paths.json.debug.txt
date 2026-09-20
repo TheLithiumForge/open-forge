@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Context is complete.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "sources": 4,
+    "tokens": 100,
+    "bytes": 399,
+    "linksFollowed": 0,
+    "linksNotFollowed": 0
+  },
+  "limitations": [],
+  "data": {
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "workspace entry"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 1,
+        "parts": [
+          {
+            "part": "paths",
+            "paths": [
+              "AGENTS.md"
+            ]
+          }
+        ]
+      },
+      {
+        "path": ".agents/loader.md",
+        "id": "loader",
+        "layer": "base",
+        "includedBecause": [
+          "Loader"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 2,
+        "parts": [
+          {
+            "part": "paths",
+            "paths": [
+              ".agents/loader.md"
+            ]
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/_docs.md",
+        "id": "docs",
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from .agents/loader.md",
+          "ancestor required from .agents/docs/guide.md for docs/guide"
+        ],
+        "route": "docs",
+        "scope": null,
+        "order": 3,
+        "parts": [
+          {
+            "part": "paths",
+            "paths": [
+              ".agents/docs/_docs.md"
+            ]
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "layer": "base",
+        "includedBecause": [
+          "selected source for docs/guide"
+        ],
+        "route": "docs/guide",
+        "scope": null,
+        "order": 4,
+        "parts": [
+          {
+            "part": "paths",
+            "paths": [
+              ".agents/docs/guide.md"
+            ]
+          }
+        ]
+      }
+    ],
+    "links": []
+  },
+  "recovery": null,
+  "next": null
+}

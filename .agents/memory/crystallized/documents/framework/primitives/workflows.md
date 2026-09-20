@@ -71,7 +71,7 @@ Evaluate a Workflow by how its method helps achieve its stated goal. Any collabo
 
 ## Runtime And Validation
 
-The installed [Workflows entrypoint](../../../../../workflows/_workflows.md) contains the compact runtime and manual authoring contract. The [Maintenance contract](../../maintenance/payload/agents/workflows.md) owns source alignment and deterministic verification. Validation preserves the authored recipe contract without becoming authoritative for its meaning.
+The installed [Workflows entrypoint](../../../../../skills/use-workflow/references/open-forge/_open-forge.md) contains the compact runtime and manual authoring contract. The [Maintenance contract](../../maintenance/payload/agents/workflows.md) owns source alignment and deterministic verification. Validation preserves the authored recipe contract without becoming authoritative for its meaning.
 
 ## Related Current Sources
 

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 3,
+  "command": "find",
+  "status": "blocked",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot search: --include or --exclude docs/guide matches more than one source. Use the exact path.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "find.selector-ambiguous",
+      "title": "Selector is ambiguous",
+      "message": "--include or --exclude docs/guide matches more than one source. Use the exact path.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "docs/guide",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "matches": 0,
+    "sourcesInspected": null,
+    "sourcesCandidates": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "matches": [],
+    "query": {
+      "tags": [],
+      "headings": [],
+      "require": "all",
+      "within": [
+        "frontmatter",
+        "body"
+      ]
+    }
+  },
+  "recovery": null,
+  "next": null
+}

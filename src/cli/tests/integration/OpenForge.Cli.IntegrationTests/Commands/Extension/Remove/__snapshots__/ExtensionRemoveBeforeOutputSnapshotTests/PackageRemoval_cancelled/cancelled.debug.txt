@@ -1,0 +1,8 @@
+Extension remove was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  the selected  Extension remove was cancelled [extension-remove.interrupted]
+         Extension remove was cancelled. Nothing was changed.
+  .agents/open-forge.lock.json  updated
+  Entries sections unchanged: none
+  Verification: targets not checked; Entries not checked; Extension record not checked
+  Recovery: not-required.

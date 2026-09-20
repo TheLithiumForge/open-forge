@@ -468,6 +468,6 @@ operation; existing single-candidate callers retain their guard policy.
 - [CLI Architecture](../architecture.md)
 - [Shared CLI Operation Contract](../shared-operation-contract.md)
 - [Directory Creation Technical Design](directory-creation.md)
-- [Lifecycle Provenance Technical Design](lifecycle-provenance.md)
+- [Ownership And Source Alignment Technical Design](lifecycle-provenance.md)
 - [Workspace Libraries Technical Design](workspace-libraries.md)
 - [Cleanup Contract](../contracts/cleanup/_cleanup.md)

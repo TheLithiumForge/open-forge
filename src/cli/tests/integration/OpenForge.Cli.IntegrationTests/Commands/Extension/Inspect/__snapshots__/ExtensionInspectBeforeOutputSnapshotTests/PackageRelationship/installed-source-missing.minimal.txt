@@ -1,0 +1,4 @@
+toolkit is installed, but the comparison could not finish: The explicit Extension source does not exist.
+  Warning  <extension-source>/missing-source  Extension source is unavailable
+         The source <extension-source>/missing-source could not be read, so the comparison could not finish.
+1 dependency, 1 warnings.

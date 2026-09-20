@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 3,
+  "command": "extension inspect",
+  "status": "completed-with-warnings",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "toolkit 1.0.0 is installed. 2 files need attention.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "extension-inspect.path-retired",
+      "title": "File is retired",
+      "message": ".agents/retired.md  no longer part of the package",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/retired.md",
+        "id": "toolkit",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "Cause",
+          "value": "The intended source no longer contains a previously managed path."
+        },
+        {
+          "label": "Path",
+          "value": ".agents/retired.md"
+        }
+      ],
+      "provenance": {
+        "source": "extension inspect",
+        "path": ".agents/retired.md",
+        "location": null
+      }
+    },
+    {
+      "severity": "warning",
+      "code": "extension-inspect.path-changed",
+      "title": "File changed",
+      "message": ".agents/toolkit.md  changed since it was installed",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/toolkit.md",
+        "id": "toolkit",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "Cause",
+          "value": "The current workspace differs from the selected package."
+        },
+        {
+          "label": "Path",
+          "value": ".agents/toolkit.md"
+        }
+      ],
+      "provenance": {
+        "source": "extension inspect",
+        "path": ".agents/toolkit.md",
+        "location": null
+      }
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesUnchanged": 0,
+    "filesChanged": 1,
+    "filesMissing": 0,
+    "filesNew": 0,
+    "filesRetired": 1,
+    "dependencies": 1,
+    "warnings": 2
+  },
+  "limitations": [],
+  "data": {
+    "id": "toolkit",
+    "installed": {
+      "version": "1.0.0"
+    },
+    "available": {
+      "version": "1.0.0"
+    },
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "matches": false,
+    "files": [
+      {
+        "path": ".agents/retired.md",
+        "relation": "retired",
+        "installedSha256": "<sha256>",
+        "packageSha256": null
+      },
+      {
+        "path": ".agents/toolkit.md",
+        "relation": "changed",
+        "installedSha256": "<sha256>",
+        "packageSha256": "<sha256>"
+      }
+    ],
+    "dependencies": [
+      {
+        "id": "toolkit",
+        "version": "1.0.0",
+        "state": "available"
+      }
+    ],
+    "name": "toolkit",
+    "description": "Extension package toolkit.",
+    "manifestPath": "toolkit/extension.json",
+    "resolutionOrder": [
+      "toolkit"
+    ],
+    "registeredIn": [],
+    "recordCoverage": "complete"
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension update toolkit --dry-run",
+    "reason": "Review the selected package changes before applying them."
+  }
+}

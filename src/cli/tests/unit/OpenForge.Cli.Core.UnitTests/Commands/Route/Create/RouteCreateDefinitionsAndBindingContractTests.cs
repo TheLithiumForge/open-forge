@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Create;
 
 public sealed class RouteCreateDefinitionsAndBindingContractTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Create definitions expose the accepted grammar"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void DefinitionsExposeAcceptedGrammar()
     {
@@ -29,6 +30,7 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
         Assert.Equal(CliOptionArity.None, RouteCreateDefinitions.DryRun.Arity);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Create symbols preserve exact arities and repeated tag syntax"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void SymbolsPreserveExactAritiesAndRepeatedTagSyntax()
     {
@@ -46,6 +48,7 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
         Assert.Equal(ArgumentArity.Zero, symbols.DryRun.Arity);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Create binding forms one typed dry-run request"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void BindingFormsTypedDryRunRequest()
     {
@@ -79,15 +82,38 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
         Assert.Equal(RouteCreateMode.DryRun, request.Mode);
     }
 
-    [Fact(DisplayName = "Route Create binding rejects missing required values and invalid metadata"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
-    public void BindingRejectsMissingRequiredValuesAndInvalidMetadata()
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Route Create binding accepts omitted optional metadata and rejects invalid metadata"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
+    public void BindingAcceptsOmittedOptionalMetadataAndRejectsInvalidMetadata()
     {
+        (string[] Arguments, string? Description, string[] Tags)[] partialCases =
+        [
+            (["create", RouteCreateTestData.TargetId], null, []),
+            (["create", RouteCreateTestData.TargetId, "--description=Overview"], "Overview", []),
+            (["create", RouteCreateTestData.TargetId, "--tag=Docs"], null, ["Docs"]),
+        ];
+
+        foreach (var (arguments, expectedDescription, expectedTags) in partialCases)
+        {
+            var route = RouteBinding.CreateGroup();
+            var symbols = RouteCreateBinding.CreateSymbols(route);
+            var bound = RouteCreateRequestBinder.Bind(
+                route.Parse(arguments),
+                RouteCreateTestData.Invocation(),
+                symbols);
+            var request = Assert.IsType<RouteCreateRequest>(bound.Request);
+
+            Assert.Null(bound.InvalidResult);
+            Assert.Equal(expectedDescription, request.Metadata.Description);
+            Assert.Equal(expectedTags, request.Metadata.Tags);
+        }
+
         (string[] Arguments, RouteCreateFindingCode Code)[] invalidCases =
         [
             (Arguments: ["create", "--description=Overview", "--tag=Docs"], Code: RouteCreateFindingCode.InvalidTarget),
-            (Arguments: ["create", RouteCreateTestData.TargetId, "--tag=Docs"], Code: RouteCreateFindingCode.InvalidMetadata),
-            (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview"], Code: RouteCreateFindingCode.InvalidMetadata),
             (Arguments: ["create", RouteCreateTestData.TargetId, "--description=", "--tag=Docs"], Code: RouteCreateFindingCode.InvalidMetadata),
+            (Arguments: ["create", RouteCreateTestData.TargetId, "--description", "--tag=Docs"], Code: RouteCreateFindingCode.InvalidMetadata),
+            (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag"], Code: RouteCreateFindingCode.InvalidMetadata),
             (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=#Docs"], Code: RouteCreateFindingCode.InvalidMetadata),
             (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--tag=Docs"], Code: RouteCreateFindingCode.InvalidMetadata),
             (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--responsibility=   "], Code: RouteCreateFindingCode.InvalidMetadata),
@@ -112,6 +138,7 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
         }
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Create binding normalizes an explicit empty responsibility to omission"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void BindingNormalizesExplicitEmptyResponsibilityToOmission()
     {
@@ -137,6 +164,7 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
         Assert.Equal(RouteCreateMode.Apply, request.Mode);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Create binding rejects responsibility without an explicit value"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void BindingRejectsResponsibilityWithoutExplicitValue()
     {
@@ -160,6 +188,7 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
         Assert.Equal(CliSemanticStatus.Invalid, bound.InvalidResult?.Status);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Create singleton options reject repeated values"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void SingletonOptionsRejectRepeatedValues()
     {

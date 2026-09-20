@@ -9,6 +9,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Mutation.Validation;
 
 public sealed class DirectoryMutationPreflightTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Combined mutation preflight accepts an empty directory and file plan")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public async Task CombinedPreflightAcceptsEmptyPlans()
@@ -23,6 +24,7 @@ public sealed class DirectoryMutationPreflightTests
         Assert.Empty(result.Checks);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Combined mutation preflight blocks duplicate directory logical targets")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public async Task CombinedPreflightBlocksDuplicateDirectoryTargets()
@@ -41,6 +43,7 @@ public sealed class DirectoryMutationPreflightTests
         Assert.Empty(result.Checks);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Combined mutation preflight blocks a logical target shared by directory and file effects")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public async Task CombinedPreflightBlocksCrossEffectLogicalTargets()
@@ -64,6 +67,7 @@ public sealed class DirectoryMutationPreflightTests
         Assert.Empty(result.Checks);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Combined mutation preflight reserves the workspace root")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public async Task CombinedPreflightBlocksReservedDirectoryEffects()
@@ -80,6 +84,7 @@ public sealed class DirectoryMutationPreflightTests
         Assert.Empty(rootResult.Checks);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Combined mutation preflight observes cancellation before any target")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public async Task CombinedPreflightReturnsCancelledBeforeObservation()

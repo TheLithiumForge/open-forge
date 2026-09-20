@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Shared request, planning, preflight, effect, application, verification, recovery, and evidence semantics for every replacement CLI mutation
+  description: "Historical CLI-v2 source: Shared request, planning, preflight, effect, application, verification, recovery, and evidence semantics for every replacement CLI mutation"
   responsibility: Define the stable semantic mutation contract while leaving exact TypeScript declarations to production source
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

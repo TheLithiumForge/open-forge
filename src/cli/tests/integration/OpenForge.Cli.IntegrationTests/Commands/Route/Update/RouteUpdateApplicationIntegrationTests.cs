@@ -1,14 +1,17 @@
 using System.Text;
+using OpenForge.Cli.Core.Commands.Route.Update;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
-using OpenForge.Cli.Core.Commands.Route.Update.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Route.Update;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -21,6 +24,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 
 public sealed class RouteUpdateApplicationIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed Route Update help retains exact shared exit and stream policy"),
      Trait("Feature", "route-update"), Trait("Evidence", "Integration")]
     public async Task HelpRetainsExactSharedExitAndStreamPolicy()
@@ -38,17 +42,18 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.DoesNotContain("--force", result.Output, StringComparison.Ordinal);
         Assert.Contains("--template <template-reference>", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--yes", result.Output, StringComparison.Ordinal);
-        Assert.Contains("complete: exit 0 and human stdout.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("attention: exit 2 and human stdout.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("incomplete: exit 3 and human stdout.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("invalid: exit 4 and human stderr.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("blocked: exit 5 and human stderr.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("failed: exit 1 and human stderr.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("interrupted: exit 130 and human stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("completed: exit 0 and text stdout.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("completed-with-warnings: exit 2 and text stdout.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("incomplete: exit 3 and text stdout.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("invalid-input: exit 4 and text stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("blocked: exit 5 and text stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("failed: exit 1 and text stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("cancelled: exit 130 and text stderr.", result.Output, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missing));
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed Route Update JSON dry-run keeps bounded diagnostics separate"),
      Trait("Feature", "route-update"), Trait("Evidence", "Integration")]
     public async Task JsonDryRunPreservesPrimaryDocumentWithVerboseDiagnostics()
@@ -58,25 +63,45 @@ public sealed class RouteUpdateApplicationIntegrationTests
         string[] arguments =
         [
             "route", "update", RouteUpdateIntegrationWorkspace.TargetId,
-            "--description", "After overview", "--dry-run", "--json",
+            "--description", "After overview", "--dry-run", "--format", "json",
         ];
 
         var plain = await CliHostCapture.RunAsync(arguments, workspace.Workspace.LexicalRoot);
-        var verbose = await CliHostCapture.RunAsync([.. arguments, "--verbose"], workspace.Workspace.LexicalRoot);
+        var verbose = await CliHostCapture.RunAsync([.. arguments, "--detail", "debug"], workspace.Workspace.LexicalRoot);
 
         Assert.Equal(0, plain.ExitCode);
         Assert.Equal(string.Empty, plain.Error);
         Assert.Equal(plain.ExitCode, verbose.ExitCode);
-        Assert.Equal(plain.Output, verbose.Output);
-        var diagnostic = Assert.Single(verbose.Error.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
-        Assert.InRange(diagnostic.Length, 1, 4095);
-        Assert.DoesNotContain('\r', diagnostic);
-        Assert.DoesNotContain('\n', diagnostic);
+        var diagnostics = verbose.Error.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+        Assert.Equal(10, diagnostics.Length);
+        Assert.InRange(verbose.Error.Length, 1, 4096);
+        Assert.All(diagnostics, diagnostic =>
+        {
+            Assert.InRange(diagnostic.Length, 1, 240);
+            Assert.DoesNotContain('\r', diagnostic);
+            Assert.DoesNotContain('\n', diagnostic);
+        });
         Assert.EndsWith(Environment.NewLine, verbose.Error, StringComparison.Ordinal);
-        Assert.Contains("status=complete; mode=dry-run", diagnostic, StringComparison.Ordinal);
+        Assert.Equal("status=completed", diagnostics[0]);
+        Assert.Equal("mode=dry-run", diagnostics[1]);
+        using var plainDocument = System.Text.Json.JsonDocument.Parse(plain.Output);
+        using var verboseDocument = System.Text.Json.JsonDocument.Parse(verbose.Output);
+        var plainData = plainDocument.RootElement.GetProperty("data");
+        var verboseData = verboseDocument.RootElement.GetProperty("data");
+        Assert.Equal("minimal", plainDocument.RootElement.GetProperty("detail").GetString());
+        Assert.Equal("debug", verboseDocument.RootElement.GetProperty("detail").GetString());
+        Assert.Equal(plainData.GetProperty("mode").GetString(), verboseData.GetProperty("mode").GetString());
+        Assert.Equal(
+            plainData.GetProperty("target").GetProperty("id").GetString(),
+            verboseData.GetProperty("target").GetProperty("id").GetString());
+        Assert.False(plainData.TryGetProperty("frontmatterBefore", out _));
+        Assert.False(plainData.TryGetProperty("frontmatterAfter", out _));
+        Assert.True(verboseData.TryGetProperty("frontmatterBefore", out _));
+        Assert.True(verboseData.TryGetProperty("frontmatterAfter", out _));
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update ID base overwrite and normalized paths apply the base then converge"),
      InlineData(RouteUpdateIntegrationWorkspace.TargetId, (int)RouteUpdateTargetSelection.SourceId),
      InlineData(RouteUpdateIntegrationWorkspace.TargetPath, (int)RouteUpdateTargetSelection.BasePath),
@@ -122,6 +147,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(after, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update applies canonical and compatibility entrypoints without identity drift"),
      InlineData(".agents/memory/project-alpha/overview/_overview.md", (int)RouteUpdateTargetForm.CanonicalEntrypoint),
      InlineData(".agents/memory/project-alpha/overview/index.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint),
@@ -151,6 +177,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
             ReadDescription(workspace.ReadText(path)));
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update Template-only application validates and completes entrypoint navigation"),
      InlineData(".agents/memory/project-alpha/overview/_overview.md"),
      InlineData(".agents/memory/project-alpha/overview/index.md"),
@@ -195,6 +222,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
             StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update blocks a Template-only entrypoint whose intended body has no generated region"),
      Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task TemplateOnlyEntrypointRequiresValidIntendedRepresentation()
@@ -221,6 +249,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update real application preserves opaque YAML Unicode comments and mixed line endings byte-exact"),
      Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task ApplicationPreservesOpaqueTargetBytes()
@@ -252,6 +281,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
             workspace.ReadBytes(RouteUpdateIntegrationWorkspace.TargetPath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update applies an eligible Template body and verifies the protected no-op transition"),
      Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
     public async Task EligibleTemplateBodyAppliesAndVerifies()
@@ -291,6 +321,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
             workspace.ReadText(RouteUpdateIntegrationWorkspace.OverwritePath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update dry-run returns the complete plan with zero workspace writes"),
      Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task DryRunDoesNotAcquireOrWrite()
@@ -312,6 +343,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update lock contention is blocked before revalidation recovery or writes"),
      Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task ExistingWorkspaceLeaseBlocksApplication()
@@ -333,6 +365,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update revalidation rejects target overwrite Template and parent races before writes"),
      InlineData("target"),
      InlineData("overwrite"),
@@ -361,6 +394,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(afterRace, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update cancellation is returned as interrupted without mutation"),
      Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task CallerCancellationIsTypedAndWriteFree()
@@ -385,6 +419,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Update top-level verification failure retains exact applied effects and recovery"),
      Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task TopLevelPostWriteFailureReturnsCompleteResidualFacts()
@@ -417,7 +452,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
         var validation = Assert.IsType<OpenForge.Cli.Core.Framework.Mutation.Validation.Models.MutationValidationResult>(
             preparation.Validation);
         var application = await new RouteUpdateEffectApplication(
-            new FileChangeApplier(revalidator, validator)).ApplyAsync(
+            new FileChangeApplier(revalidator, validator).ApplyAsync).ApplyAsync(
                 new RouteUpdateEffectApplicationInput
                 {
                     Plan = plan,
@@ -468,7 +503,7 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Contains(
             result.Findings,
             finding => finding.Code == RouteUpdateFindingCode.VerificationFailed);
-        Assert.Equal("open-forge route update --verbose", result.Next?.Command);
+        Assert.Equal("open-forge route update --detail debug", result.Next?.Command);
         Assert.Equal(recoveryPreparation.BundlePath, result.Recovery.ResidualPath);
         Assert.True(File.Exists(recoveryPreparation.BundlePath));
         var bundleDirectory = Assert.IsType<string>(Path.GetDirectoryName(recoveryPreparation.BundlePath));
@@ -476,11 +511,10 @@ public sealed class RouteUpdateApplicationIntegrationTests
 
         var presentation = CliPresentationStage.Create(
             result,
-            new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal));
+            new CliPresentation(CliFormat.Text, CliDetail.Full, null));
         var rendered = CliRenderingStage.Render(
             presentation,
-            new CliRendererSet<RouteUpdateResult>(RouteUpdateHumanRenderer.Render, RouteUpdateJsonRenderer.Render),
-            RouteUpdateDiagnosticRenderer.Render);
+            RouteUpdatePresentation.Rendering);
         using var stdout = new StringWriter();
         using var stderr = new StringWriter();
         var receipt = await CliOutputStage.WriteAsync(
@@ -492,52 +526,83 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(1, completion.ExitCode);
         Assert.Equal(string.Empty, stdout.ToString());
         var human = stderr.ToString();
-        Assert.Contains("Route Update failed.", human, StringComparison.Ordinal);
+        Assert.Contains("Route update stopped after", human, StringComparison.Ordinal);
         Assert.Contains(Assert.IsType<string>(plan.Preview.Target.Id), human, StringComparison.Ordinal);
-        Assert.Contains("Status: failed", human, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", human, StringComparison.Ordinal);
         Assert.Contains("Before:", human, StringComparison.Ordinal);
-        Assert.Contains("Expected:", human, StringComparison.Ordinal);
-        Assert.Contains("Recovery: retained", human, StringComparison.Ordinal);
+        Assert.Contains("After:", human, StringComparison.Ordinal);
+        Assert.Contains("Recovery data", human, StringComparison.Ordinal);
         Assert.Contains(recoveryPreparation.BundlePath, human, StringComparison.Ordinal);
-        Assert.Contains("Verification: failed", human, StringComparison.Ordinal);
-        Assert.Contains("Next: open-forge route update --verbose", human, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge route update --detail debug", human, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update cancellation after the first effect retains its receipt and stops later effects"),
      Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task MidApplicationCancellationRetainsExactProgress()
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             "route-update-mid-application-cancellation");
-        workspace.SeedVerificationWindow();
+        var expectedTarget = Encoding.UTF8.GetBytes(
+            workspace.ReadText(RouteUpdateIntegrationWorkspace.TargetPath).Replace(
+                "description: Before overview",
+                "description: After overview",
+                StringComparison.Ordinal));
+        var parentBefore = workspace.ReadBytes(RouteUpdateIntegrationWorkspace.ParentPath);
         using var cancellation = new CancellationTokenSource();
-        using var monitorStop = new CancellationTokenSource();
-        using var monitorReady = new ManualResetEventSlim();
-        var monitor = MonitorAppliedFileAsync(
-            workspace,
-            RouteUpdateIntegrationWorkspace.TargetPath,
-            cancellation.Cancel,
-            monitorReady,
-            monitorStop.Token);
-        Assert.True(
-            monitorReady.Wait(
-                TimeSpan.FromSeconds(5),
-                TestContext.Current.CancellationToken),
-            "The cancellation monitor must be polling before application starts.");
-        RouteUpdateResult? result = null;
-        try
+        var validator = new FileExpectationValidator(new PhysicalPathResolver());
+        var revalidator = new MutationRevalidator(validator);
+        var fileApplier = new FileChangeApplier(revalidator, validator);
+        var receipts = new List<FileChangeReceipt>();
+        RouteUpdateFileApplication applyFile = async (lease, change, check, preparation, token) =>
         {
-            result = await workspace.ExecuteAsync(
-                workspace.Request(),
-                cancellation.Token);
-        }
-        finally
-        {
-            monitorStop.Cancel();
-        }
+            var receipt = await fileApplier.ApplyAsync(lease, change, check, preparation, token);
+            receipts.Add(receipt);
+            if (receipts.Count == 1
+                && receipt.EffectState == FilesystemEffectState.Applied
+                && receipt.VerificationState == FilesystemVerificationState.Verified)
+            {
+                cancellation.Cancel();
+            }
 
-        Assert.True(await monitor, "The cancellation monitor must observe the first effect.");
-        Assert.NotNull(result);
+            return receipt;
+        };
+        var planBuilder = RouteUpdateIntegrationWorkspace.CreatePlanBuilder();
+        var resultBuilder = new RouteUpdateResultBuilder();
+        var operation = new RouteUpdateOperation(
+            planBuilder,
+            new RouteUpdateApplicationOperation(
+                new RouteUpdateApplicationPipeline(
+                    new RouteUpdateApplicationPreparer(
+                        new RouteUpdatePlanRevalidator(planBuilder, new RouteUpdatePlanEquivalence()),
+                        revalidator),
+                    new RouteUpdateEffectApplication(applyFile),
+                    new RouteUpdateAppliedVerifier(planBuilder, validator)),
+                resultBuilder,
+                workspace.LockStoreRoot),
+            resultBuilder);
+
+        var result = await operation.ExecuteAsync(workspace.Request(), cancellation.Token);
+
+        Assert.True(cancellation.IsCancellationRequested);
+        Assert.Collection(
+            receipts,
+            first =>
+            {
+                Assert.Equal(FilesystemEffectState.Applied, first.EffectState);
+                Assert.Equal(FilesystemVerificationState.Verified, first.VerificationState);
+            },
+            second =>
+            {
+                Assert.Equal(FilesystemEffectState.NotStarted, second.EffectState);
+                Assert.Equal(FilesystemVerificationState.NotStarted, second.VerificationState);
+                Assert.Equal(FilesystemNotStartedReason.Cancelled, second.NotStartedReason);
+            });
+        Assert.Equal(expectedTarget, workspace.ReadBytes(RouteUpdateIntegrationWorkspace.TargetPath));
+        Assert.Equal(parentBefore, workspace.ReadBytes(RouteUpdateIntegrationWorkspace.ParentPath));
+        Assert.Equal(2, result.Effects.Length);
+        Assert.Equal(RouteUpdateIntegrationWorkspace.TargetPath, result.Effects[0].Path);
+        Assert.Equal(RouteUpdateIntegrationWorkspace.ParentPath, result.Effects[1].Path);
         Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
         Assert.Equal(RouteUpdateRecoveryState.Retained, result.Recovery.State);
         Assert.False(string.IsNullOrWhiteSpace(result.Recovery.ResidualPath));
@@ -584,38 +649,4 @@ public sealed class RouteUpdateApplicationIntegrationTests
         return document.Split('\n', StringSplitOptions.None)
             .Single(line => line.StartsWith(prefix, StringComparison.Ordinal))[prefix.Length..];
     }
-
-    private static Task<bool> MonitorAppliedFileAsync(
-        RouteUpdateIntegrationWorkspace workspace,
-        string path,
-        Action observed,
-        ManualResetEventSlim ready,
-        CancellationToken cancellationToken)
-        => Task.Factory.StartNew(
-            () =>
-            {
-                ready.Set();
-                while (!cancellationToken.IsCancellationRequested)
-                {
-                    try
-                    {
-                        if (workspace.ReadPrefix(path)
-                            .Contains("After overview", StringComparison.Ordinal))
-                        {
-                            observed();
-                            return true;
-                        }
-                    }
-                    catch (IOException)
-                    {
-                    }
-
-                    Thread.Yield();
-                }
-
-                return false;
-            },
-            CancellationToken.None,
-            TaskCreationOptions.LongRunning,
-            TaskScheduler.Default);
 }

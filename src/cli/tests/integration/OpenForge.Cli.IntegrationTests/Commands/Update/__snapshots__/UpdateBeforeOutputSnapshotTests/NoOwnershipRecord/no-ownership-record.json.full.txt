@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 3,
+  "command": "update",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "No ownership record exists, so update cannot tell which files it manages. Nothing was changed.",
+    "kind": "done"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "update.ownership-observation",
+      "title": "Ownership record observed",
+      "message": "The ownership record names files that cannot be interpreted, so nothing was changed.",
+      "subject": {
+        "kind": "workspace",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 0,
+    "sectionsUpdated": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": false,
+    "automatic": true,
+    "previousContent": null,
+    "lockPath": ".agents/open-forge.lock.json",
+    "unchanged": [],
+    "entriesSections": [],
+    "effects": [],
+    "verification": "not-requested"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the blocked, unavailable, or incomplete Update facts before rerunning."
+  }
+}

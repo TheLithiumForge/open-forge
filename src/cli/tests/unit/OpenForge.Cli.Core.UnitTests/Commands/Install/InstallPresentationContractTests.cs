@@ -1,13 +1,21 @@
 using System.Reflection;
+using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Binding;
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
-using OpenForge.Cli.Core.Commands.Install.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
-using OpenForge.Cli.Core.Commands.Install.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Presentation.Install;
+using OpenForge.Cli.Core.Presentation.Install.Models;
+using OpenForge.Cli.Core.Presentation.Install.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Text;
+using OpenForge.Cli.Core.Presentation.Shared.Text.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
@@ -15,154 +23,281 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Install;
 
 public sealed class InstallPresentationContractTests
 {
-    [Fact(DisplayName = "Install JSON DTOs preserve the exact envelope, result, nested member order, and nullable facts"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
-    public void JsonDtosPreserveExactShape()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Install native data preserves the frozen property order and nullable boundaries"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
+    public void NativeDataPreservesPropertyOrderAndNullableBoundaries()
     {
-        AssertProperties<InstallJsonDocument>(
-            "SchemaVersion", "Command", "Status", "Workspace", "Result", "Next");
-        AssertProperties<InstallJsonWorkspace>("Path", "SelectedBy");
-        AssertProperties<InstallJsonResult>(
-            "Mode", "Force", "Automatic", "Source", "Classification", "Footprint", "Effects", "Lifecycle", "Recovery", "Verification", "Findings");
-        AssertProperties<InstallJsonSource>("InventoryFingerprint", "AssetCount");
-        AssertProperties<InstallJsonFootprint>("PayloadFiles", "ManagedRegions", "GeneratedRegions");
-        AssertProperties<InstallJsonEffect>("Path", "Kind", "Action", "SourceAssetPath", "Outcome", "Residual");
-        AssertProperties<InstallJsonLifecycle>("Action", "Outcome");
-        AssertProperties<InstallJsonRecovery>("State", "ResidualPath");
-        AssertProperties<InstallJsonFinding>("Code", "Target", "Cause");
-        AssertProperties<InstallJsonNext>("Command", "Reason");
+        AssertProperties<InstallData>(
+            "Mode", "Force", "Automatic", "Classification", "Footprint", "LockPath", "Effects", "Source", "Lifecycle", "Verification");
+        AssertProperties<InstallDataFootprint>("Files", "Directories", "Sections");
+        AssertProperties<InstallDataSource>("InventoryFingerprint", "AssetCount");
+        AssertProperties<InstallDataEffect>("Path", "Kind", "Action", "SourceAssetPath", "Outcome", "Residual");
+        AssertProperties<InstallDataLifecycle>("Action", "Outcome");
 
-        AssertNullable<InstallJsonDocument>(nameof(InstallJsonDocument.Workspace));
-        AssertNotNullable<InstallJsonDocument>(nameof(InstallJsonDocument.Result));
-        AssertNullable<InstallJsonDocument>(nameof(InstallJsonDocument.Next));
-        AssertNullable<InstallJsonResult>(nameof(InstallJsonResult.Source));
-        AssertNullable<InstallJsonResult>(nameof(InstallJsonResult.Classification));
-        AssertNullable<InstallJsonResult>(nameof(InstallJsonResult.Footprint));
-        AssertNotNullable<InstallJsonResult>(nameof(InstallJsonResult.Effects));
-        AssertNotNullable<InstallJsonResult>(nameof(InstallJsonResult.Lifecycle));
-        AssertNotNullable<InstallJsonResult>(nameof(InstallJsonResult.Recovery));
-        AssertNotNullable<InstallJsonResult>(nameof(InstallJsonResult.Verification));
-        AssertNotNullable<InstallJsonResult>(nameof(InstallJsonResult.Findings));
-        AssertNullable<InstallJsonEffect>(nameof(InstallJsonEffect.SourceAssetPath));
-        AssertNullable<InstallJsonRecovery>(nameof(InstallJsonRecovery.ResidualPath));
-        AssertNullable<InstallJsonFinding>(nameof(InstallJsonFinding.Target));
+        AssertNotNullable<InstallData>(nameof(InstallData.Mode));
+        AssertNotNullable<InstallData>(nameof(InstallData.Force));
+        AssertNotNullable<InstallData>(nameof(InstallData.Automatic));
+        AssertNullable<InstallData>(nameof(InstallData.Classification));
+        AssertNullable<InstallData>(nameof(InstallData.Footprint));
+        AssertNotNullable<InstallData>(nameof(InstallData.LockPath));
+        AssertNullable<InstallData>(nameof(InstallData.Effects));
+        AssertNullable<InstallData>(nameof(InstallData.Source));
+        AssertNullable<InstallData>(nameof(InstallData.Lifecycle));
+        AssertNullable<InstallData>(nameof(InstallData.Verification));
+        AssertNullable<InstallDataFootprint>(nameof(InstallDataFootprint.Directories));
+        AssertNullable<InstallDataEffect>(nameof(InstallDataEffect.SourceAssetPath));
 
-        var effects = Property<InstallJsonResult>(nameof(InstallJsonResult.Effects));
-        var findings = Property<InstallJsonResult>(nameof(InstallJsonResult.Findings));
-        Assert.Equal(typeof(InstallJsonEffect[]), effects.PropertyType);
-        Assert.Equal(typeof(InstallJsonFinding[]), findings.PropertyType);
+        var effects = Property<InstallData>(nameof(InstallData.Effects));
+        Assert.Equal(typeof(IReadOnlyList<InstallDataEffect>), effects.PropertyType);
     }
 
-    [Fact(DisplayName = "Install projection must map the complete typed result to the frozen DTO packet"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
-    public void JsonProjectionMapsTheFrozenPacket()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Install native rendering keeps JSON generated and text output sourced from one typed report"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
+    public void NativeRenderingUsesOneTypedReportForJsonAndText()
     {
-        var document = InstallJsonProjection.Create(InvalidResult());
+        var result = Result(
+            InstallMode.DryRun,
+            force: true,
+            automatic: false,
+            effects:
+            [
+                Effect(".agents/loader.md", InstallEffectKind.File, InstallEffectAction.Replace, InstallEffectOutcome.Planned, "framework/loader.md"),
+                Effect(InstallDefinitions.OwnershipRecordPath, InstallEffectKind.File, InstallEffectAction.Create, InstallEffectOutcome.Planned, null),
+            ],
+            classification: InstallManagementClassification.EligibleInitialOccupant,
+            lifecycle: new InstallLifecycle(InstallLifecycleAction.Publish, InstallLifecycleOutcome.Planned),
+            verification: InstallResultVerificationState.NotRequested,
+            footprint: new InstallFootprint(payloadFiles: 1, managedRegions: 0, generatedRegions: 0));
 
-        Assert.Equal(1, document.SchemaVersion);
-        Assert.Equal("install", document.Command);
-        Assert.Equal("invalid", document.Status);
-        Assert.NotNull(document.Result);
-        Assert.NotNull(document.Result.Effects);
-        Assert.NotNull(document.Result.Findings);
+        var minimal = Select(result, CliDetail.Minimal);
+        var text = CliTextRenderer.Render(minimal, CliTextStyle.Plain, InstallPresentation.Rendering.DataTextRenderer).Content;
+        Assert.StartsWith("Would install the Open Forge Framework into ", text, StringComparison.Ordinal);
+        Assert.Contains("replacing 1 existing file", text, StringComparison.Ordinal);
+        Assert.Contains("No files were changed.", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("framework/loader.md", text, StringComparison.Ordinal);
+
+        using var json = JsonDocument.Parse(CliJsonRenderer.Render(minimal, InstallPresentation.Rendering.DataJsonTypeInfo));
+        var root = json.RootElement;
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal("install", root.GetProperty("command").GetString());
+        Assert.Equal("completed", root.GetProperty("status").GetString());
+        Assert.Equal("dry-run", root.GetProperty("data").GetProperty("mode").GetString());
+        Assert.True(root.GetProperty("data").GetProperty("force").GetBoolean());
+        Assert.Equal(1, root.GetProperty("counts").GetProperty("filesReplaced").GetInt32());
+        Assert.Equal(2, root.GetProperty("effects").GetArrayLength());
+        Assert.False(root.GetProperty("data").TryGetProperty("effects", out _));
     }
 
-    [Theory(DisplayName = "Install compact and expanded human output leads with operation identity and retains one bounded next action"),
-        Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
-    [InlineData((int)CliView.Compact)]
-    [InlineData((int)CliView.Expanded)]
-    public void HumanViewsLeadWithInstallIdentityAndBoundedNext(int viewValue)
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Install preview keeps the ownership record visible without claiming an applied write"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
+    public void PreviewMinimalRowsKeepOwnershipRecordWithoutCompletedWriteClaim()
     {
-        var view = (CliView)viewValue;
-        var output = InstallHumanRenderer.Render(
-            new CliPresentationRequest<InstallResult>(
-                InvalidResult(),
-                new CliPresentation(CliOutputFormat.Human, view, CliVerbosity.Normal)));
+        var result = Result(
+            InstallMode.DryRun,
+            force: false,
+            automatic: true,
+            effects:
+            [
+                Effect(InstallDefinitions.OwnershipRecordPath, InstallEffectKind.File, InstallEffectAction.Create, InstallEffectOutcome.Planned, null),
+            ],
+            classification: InstallManagementClassification.SafeAbsence,
+            lifecycle: new InstallLifecycle(InstallLifecycleAction.Publish, InstallLifecycleOutcome.Planned),
+            verification: InstallResultVerificationState.NotRequested,
+            footprint: new InstallFootprint(payloadFiles: 0, managedRegions: 0, generatedRegions: 0));
 
-        Assert.StartsWith("Open Forge install", output, StringComparison.Ordinal);
-        Assert.Contains("Workspace:", output, StringComparison.Ordinal);
-        Assert.Contains("Mode:", output, StringComparison.Ordinal);
-        Assert.Contains("Installation state:", output, StringComparison.Ordinal);
-        Assert.Contains("Footprint:", output, StringComparison.Ordinal);
-        Assert.Contains("Effects:", output, StringComparison.Ordinal);
-        Assert.Contains("Findings:", output, StringComparison.Ordinal);
-        Assert.Contains("Lifecycle:", output, StringComparison.Ordinal);
-        Assert.Contains("Recovery:", output, StringComparison.Ordinal);
-        Assert.Contains("Verification:", output, StringComparison.Ordinal);
-        Assert.Contains("Status:", output, StringComparison.Ordinal);
-        Assert.True(
-            output.Split("Next:", StringSplitOptions.None).Length <= 2,
-            "Install human output must contain at most one Next action.");
+        var selected = Select(result, CliDetail.Minimal);
+        var row = Assert.Single(selected.Report.Data.TextRows);
+        Assert.Equal(InstallDefinitions.OwnershipRecordPath, row.Path);
+        Assert.Equal("would be created", row.Wording);
+
+        var text = CliTextRenderer.Render(selected, CliTextStyle.Plain, InstallPresentation.Rendering.DataTextRenderer).Content;
+
+        Assert.Contains(InstallDefinitions.OwnershipRecordPath, text, StringComparison.Ordinal);
+        Assert.DoesNotContain("created; records the files above", text, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Install human attention status uses the accepted requires-attention phrase"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
-    public void HumanAttentionUsesAcceptedStatusPhrase()
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Install presentation excludes the agents root from directory counts while retaining its effect"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
+    [InlineData((int)InstallMode.Apply, (int)InstallEffectOutcome.Verified, (int)InstallLifecycleOutcome.Verified, "Created 1 file and 2 directories under .agents.")]
+    [InlineData((int)InstallMode.DryRun, (int)InstallEffectOutcome.Planned, (int)InstallLifecycleOutcome.Planned, "Would create 1 file and 2 directories under .agents.")]
+    public void DirectoryCountsExcludeAgentsRootButDetailedEffectsRetainIt(
+        int modeValue,
+        int outcomeValue,
+        int lifecycleOutcomeValue,
+        string expectedSummary)
+    {
+        var mode = (InstallMode)modeValue;
+        var outcome = (InstallEffectOutcome)outcomeValue;
+        var lifecycleOutcome = (InstallLifecycleOutcome)lifecycleOutcomeValue;
+        var result = Result(
+            mode,
+            force: false,
+            automatic: true,
+            effects:
+            [
+                Effect(".agents", InstallEffectKind.Directory, InstallEffectAction.Create, outcome, null),
+                Effect(".agents/directives", InstallEffectKind.Directory, InstallEffectAction.Create, outcome, null),
+                Effect(".agents/memory", InstallEffectKind.Directory, InstallEffectAction.Create, outcome, null),
+                Effect(".agents/loader.md", InstallEffectKind.File, InstallEffectAction.Create, outcome, "framework/loader.md"),
+            ],
+            classification: InstallManagementClassification.SafeAbsence,
+            lifecycle: new InstallLifecycle(InstallLifecycleAction.Publish, lifecycleOutcome),
+            verification: mode == InstallMode.Apply
+                ? InstallResultVerificationState.Verified
+                : InstallResultVerificationState.NotRequested,
+            footprint: new InstallFootprint(payloadFiles: 1, managedRegions: 0, generatedRegions: 0));
+
+        var selected = Select(result, CliDetail.Full);
+        var text = CliTextRenderer.Render(selected, CliTextStyle.Plain, InstallPresentation.Rendering.DataTextRenderer).Content;
+        Assert.Contains(expectedSummary, text, StringComparison.Ordinal);
+
+        using var json = JsonDocument.Parse(CliJsonRenderer.Render(selected, InstallPresentation.Rendering.DataJsonTypeInfo));
+        var root = json.RootElement;
+        Assert.Equal(2, root.GetProperty("counts").GetProperty("directoriesCreated").GetInt32());
+        Assert.Equal(2, root.GetProperty("data").GetProperty("footprint").GetProperty("directories").GetInt32());
+
+        var effects = root.GetProperty("effects");
+        Assert.Equal(4, effects.GetArrayLength());
+        Assert.Equal(".agents", effects[0].GetProperty("path").GetString());
+        Assert.Equal("directory", effects[0].GetProperty("kind").GetString());
+
+        var detailedEffects = root.GetProperty("data").GetProperty("effects");
+        Assert.Equal(4, detailedEffects.GetArrayLength());
+        Assert.Equal(".agents", detailedEffects[0].GetProperty("path").GetString());
+    }
+
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Install native confirmation boundary does not render the checked plan"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
+    [InlineData(0, "Apply these changes? [y/N]")]
+    [InlineData(1, "Replace the 1 existing file listed above? [y/N]")]
+    [InlineData(2, "Replace the 2 existing files listed above? [y/N]")]
+    public void ConfirmationWordingPreservesExactCountGrammar(int replacements, string expected)
+        => Assert.Equal(expected, InstallWordingForTest(replacements));
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Install native invalid confirmation output keeps the refusal bounded"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
+    public void ConfirmationUnavailableIsBounded()
     {
         var result = InstallResult.Invalid(
-            new InstallBindingInput(false, true, InstallMode.Apply),
+            new InstallBindingInput(Force: false, Automatic: false, Mode: InstallMode.Apply),
             Workspace(),
             [new InstallFinding(
-                InstallFindingCode.RecoveryArtifactRetained,
-                "The representative recovery artifact remains available.")]);
-
-        var output = InstallHumanRenderer.Render(
-            new CliPresentationRequest<InstallResult>(
-                result,
-                new CliPresentation(
-                    CliOutputFormat.Human,
-                    CliView.Compact,
-                    CliVerbosity.Normal)));
-
-        Assert.Contains("Status: requires attention", output, StringComparison.Ordinal);
-        Assert.DoesNotContain("Status: attention", output, StringComparison.Ordinal);
+                InstallFindingCode.ConfirmationRequired,
+                "Interactive confirmation is unavailable.")]);
+        var text = Text(result, CliDetail.Minimal);
+        Assert.Contains("Install needs confirmation, and this session cannot ask.", text, StringComparison.Ordinal);
+        Assert.DoesNotContain(".agents/", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("create", text, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Next: open-forge install --automatic", text, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Install help and diagnostics retain exact public policy and bounded vocabulary"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
-    public void HelpAndDiagnosticsUseExactPublicPolicy()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Install native minimal blocked rows preserve unrelated findings"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
+    public void MinimalBlockedRowsPreserveUnrelatedFindings()
+    {
+        var result = InstallResult.Invalid(
+            new InstallBindingInput(Force: false, Automatic: false, Mode: InstallMode.Apply),
+            Workspace(),
+            [
+                new InstallFinding(
+                    InstallFindingCode.TargetOccupied,
+                    "A target already exists.",
+                    ".agents/loader.md"),
+                new InstallFinding(
+                    InstallFindingCode.TargetUnsafe,
+                    "The filesystem access is denied.",
+                    ".agents/other.md"),
+            ]);
+
+        var text = Text(result, CliDetail.Minimal);
+
+        Assert.Contains(".agents/loader.md", text, StringComparison.Ordinal);
+        Assert.Contains(
+            ".agents/other.md cannot be written safely: The filesystem access is denied.",
+            text,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain("A target already exists.", text, StringComparison.Ordinal);
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Install native help and debug diagnostics keep the accepted public vocabulary"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
+    public void HelpAndDiagnosticsUseNativePresentation()
     {
         var help = InstallHelpSections.Create();
-        var diagnostics = InstallDiagnosticRenderer.Render(
-            new CliPresentationRequest<InstallResult>(
-                InvalidResult(),
-                new CliPresentation(
-                    CliOutputFormat.Human,
-                    CliView.Expanded,
-                    CliVerbosity.Verbose)));
-
         var syntax = Assert.Single(help.Sections, section => section.Heading == "Syntax");
-        Assert.Contains(
-            "open-forge install [--force] [--automatic] [--dry-run] [global options]",
-            syntax.Body,
-            StringComparison.Ordinal);
-        var writePolicy = Assert.Single(
-            help.Sections,
-            section => section.Heading == "Write policy");
-        Assert.Contains("never updates or adopts", writePolicy.Body, StringComparison.Ordinal);
-        var confirmation = Assert.Single(
-            help.Sections,
-            section => section.Heading == "Confirmation");
-        Assert.Contains("Redirected text requests that would write require --automatic", confirmation.Body, StringComparison.Ordinal);
-        var globalOptions = Assert.Single(
-            help.Sections,
-            section => section.Heading == "Global options");
-        Assert.Contains("--view <compact|expanded>", globalOptions.Body, StringComparison.Ordinal);
-        Assert.Contains("status=invalid", diagnostics, StringComparison.Ordinal);
-        Assert.Contains("mode=apply", diagnostics, StringComparison.Ordinal);
-        Assert.Contains("classification=none", diagnostics, StringComparison.Ordinal);
-        Assert.Contains("recovery=not-required", diagnostics, StringComparison.Ordinal);
-        Assert.Contains("finding=install.invalid-input", diagnostics, StringComparison.Ordinal);
+        Assert.Contains("open-forge install [--force] [--automatic] [--dry-run] [global options]", syntax.Body, StringComparison.Ordinal);
+        Assert.Contains("Redirected text requests that would write require --automatic", Assert.Single(help.Sections, section => section.Heading == "Confirmation").Body, StringComparison.Ordinal);
+
+        var result = InstallResult.Invalid(
+            new InstallBindingInput(Force: false, Automatic: false, Mode: InstallMode.Apply),
+            Workspace(),
+            [new InstallFinding(InstallFindingCode.InvalidInput, "The representative Install input was invalid.")]);
+        var selected = Select(result, CliDetail.Debug);
+        Assert.Contains("status=invalid-input", selected.Report.Diagnostics);
+        Assert.Contains("mode=apply", selected.Report.Diagnostics);
+        Assert.Contains("classification=none", selected.Report.Diagnostics);
+        Assert.Contains("recovery=not-required", selected.Report.Diagnostics);
+        Assert.Contains("next=present", selected.Report.Diagnostics);
     }
 
-    private static InstallResult InvalidResult()
-        => InstallResult.Invalid(
-            new InstallBindingInput(false, false, InstallMode.Apply),
+    private static string InstallWordingForTest(int replacements)
+        => OpenForge.Cli.Core.Presentation.Install.Shared.Wording.InstallWording.Confirmation(new InstallConfirmationFacts(replacements));
+
+    private static CliSelectedReport<InstallData> Select(InstallResult result, CliDetail detail)
+    {
+        var selection = new CliSelection(detail, null);
+        var rendering = InstallPresentation.Rendering;
+        var selected = CliReportTrimmer.Trim(rendering.Selector(result, selection), selection, rendering.Shape);
+        return rendering.SelectText!(selected);
+    }
+
+    private static string Text(InstallResult result, CliDetail detail)
+        => CliTextRenderer.Render(Select(result, detail), CliTextStyle.Plain, InstallPresentation.Rendering.DataTextRenderer).Content;
+
+    private static InstallResult Result(
+        InstallMode mode,
+        bool force,
+        bool automatic,
+        IReadOnlyList<InstallEffect> effects,
+        InstallManagementClassification classification,
+        InstallLifecycle lifecycle,
+        InstallResultVerificationState verification,
+        InstallFootprint footprint)
+        => new(
             Workspace(),
-            [new InstallFinding(
-                InstallFindingCode.InvalidInput,
-                "The representative Install input was invalid.")]);
+            new InstallBindingInput(force, automatic, mode),
+            [],
+            facts: new InstallResultFacts(new InstallResultFactsInput
+            {
+                Source = new InstallSource(new string('a', 64), 1),
+                Classification = classification,
+                Footprint = footprint,
+                Effects = effects,
+                Lifecycle = lifecycle,
+                Recovery = new InstallRecovery(InstallResultRecoveryState.NotRequired, null),
+                Verification = new InstallVerification(verification),
+            }));
+
+    private static InstallEffect Effect(
+        string path,
+        InstallEffectKind kind,
+        InstallEffectAction action,
+        InstallEffectOutcome outcome,
+        string? sourceAssetPath)
+        => new(new InstallEffectInput
+        {
+            Path = path,
+            Kind = kind,
+            Action = action,
+            SourceAssetPath = sourceAssetPath,
+            Outcome = outcome,
+            Residual = InstallEffectResidual.None,
+        });
 
     private static CliWorkspace Workspace()
     {
-        var root = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "install-presentation-contract"));
-        return new CliWorkspace(root, root, CliWorkspaceSelectionMethod.ExplicitWorkspace);
+        var root = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "install-native-presentation-contract"));
+        return new CliWorkspace(root, root, CliWorkspaceSelectionMethod.CurrentDirectory);
     }
 
     private static PropertyInfo Property<T>(string name)

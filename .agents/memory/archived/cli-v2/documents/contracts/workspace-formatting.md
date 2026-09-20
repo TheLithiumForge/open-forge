@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Workspace-aligned formatter discovery, trust classification, exact-file post-processing, checksum refresh, and manual follow-up
+  description: "Historical CLI-v2 source: Workspace-aligned formatter discovery, trust classification, exact-file post-processing, checksum refresh, and manual follow-up"
   responsibility: Define how Open Forge formats affected files without installing tools, guessing among competing formatters, formatting unrelated workspace content, or trusting a tool name more than its resolved execution behavior
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

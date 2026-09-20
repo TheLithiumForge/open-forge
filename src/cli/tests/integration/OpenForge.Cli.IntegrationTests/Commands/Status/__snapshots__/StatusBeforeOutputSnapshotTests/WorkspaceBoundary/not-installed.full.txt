@@ -1,0 +1,14 @@
+Open Forge is not installed in <workspace>.
+Workspace: <workspace>
+  Info  .agents/open-forge.lock.json  Extension ownership is unavailable [status.extension-ownership-observation]
+         No ownership record exists, so installed Extensions cannot be listed from it.
+         cause: The ownership lock is absent; no Extension ownership claims are recorded.
+  Info  .agents/open-forge.lock.json  Framework ownership is unavailable [status.framework-ownership-observation]
+         No ownership record exists, so Framework files cannot be checked against it.
+         cause: The ownership lock is absent; no Framework ownership claims are available.
+  Info  .agents/open-forge.lock.json  Library ownership is unavailable [status.library-ownership-observation]
+         No ownership record exists, so Libraries cannot be listed from it.
+         cause: The ownership lock is absent; no Library registrations are recorded.
+1 routed files, 3 all routed tokens, 3 infos.
+  Preview the installation for this workspace.
+Next: open-forge install --dry-run

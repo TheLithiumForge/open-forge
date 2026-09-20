@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Update;
 
 public sealed class UpdatePlanningSafetyTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update planning keeps safe source replacement independent of force and prune"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void KeepsSafeSourceReplacementIndependentOfForceAndPrune()
     {
@@ -18,6 +19,7 @@ public sealed class UpdatePlanningSafetyTests
         Assert.Equal(UpdatePlanningDisposition.Replace, Assert.Single(widened.Decisions).Disposition);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update planning keeps genuine creation independent of force and prune"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void KeepsGenuineCreationIndependentOfForceAndPrune()
     {
@@ -28,6 +30,7 @@ public sealed class UpdatePlanningSafetyTests
         Assert.Equal(UpdatePlanningDisposition.Create, Assert.Single(widened.Decisions).Disposition);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update prune leaves an already absent retired target effect-free"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void PruneLeavesAlreadyAbsentRetiredTargetEffectFree()
     {
@@ -37,6 +40,7 @@ public sealed class UpdatePlanningSafetyTests
         Assert.True(plan.IsEffectFree);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update one ineligible retirement blocks the complete force-prune plan"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void OneIneligibleRetirementBlocksCompleteForcePrunePlan()
     {
@@ -61,7 +65,7 @@ public sealed class UpdatePlanningSafetyTests
             baseline: FingerprintA,
             current: FingerprintA,
             intended: FingerprintB,
-            currentState: UpdateComparisonCurrentState.BaselineEquivalent,
+            currentState: UpdateComparisonCurrentState.Same,
             intendedState: UpdateComparisonIntendedState.Changed,
             retirementEligibility: UpdateRetirementEligibility.NotApplicable,
             currentBytes: Bytes(1),
@@ -106,7 +110,7 @@ public sealed class UpdatePlanningSafetyTests
             baseline: FingerprintA,
             current: FingerprintA,
             intended: null,
-            currentState: UpdateComparisonCurrentState.BaselineEquivalent,
+            currentState: UpdateComparisonCurrentState.Same,
             intendedState: UpdateComparisonIntendedState.Retired,
             retirementEligibility: eligible
                 ? UpdateRetirementEligibility.Eligible
@@ -133,7 +137,6 @@ public sealed class UpdatePlanningSafetyTests
             SourceAssetPath = "framework/docs/framework.md",
             SourceAssetPresentInCurrentInventory = sourcePresent,
             FingerprintKind = UpdateComparisonFingerprintKind.OpenForgeMarkdownV1,
-            BaselineFingerprint = baseline,
             CurrentFingerprint = current,
             IntendedFingerprint = intended,
             CurrentState = currentState,

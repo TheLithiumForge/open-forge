@@ -1,0 +1,4 @@
+Cannot attach INVALID ID: INVALID ID is not a valid Library ID. Use lowercase letters, digits and hyphens.
+Workspace: <workspace>
+  Error  INVALID ID  Invalid Library ID
+         INVALID ID is not a valid Library ID. Use lowercase letters, digits and hyphens.

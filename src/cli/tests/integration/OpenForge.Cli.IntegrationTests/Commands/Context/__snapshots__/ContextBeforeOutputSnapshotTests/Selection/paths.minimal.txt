@@ -1,0 +1,4 @@
+AGENTS.md
+.agents/loader.md
+.agents/docs/_docs.md
+.agents/docs/guide.md

@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
 public sealed class RouteUpdateDefinitionsAndBindingContractTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Update definitions expose only the accepted grammar"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void DefinitionsExposeAcceptedGrammar()
     {
@@ -29,6 +30,7 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         Assert.Equal(CliOptionArity.None, RouteUpdateDefinitions.DryRun.Arity);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Update symbols preserve singleton and tag-list arity"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void SymbolsPreserveSingletonAndTagListArity()
     {
@@ -46,6 +48,7 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         Assert.Equal(ArgumentArity.Zero, symbols.DryRun.Arity);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Update binding forms one complete typed dry-run request"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void BindingFormsCompleteTypedDryRunRequest()
     {
@@ -82,6 +85,7 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         Assert.Equal(RouteUpdateMode.DryRun, request.Mode);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Route Update exact attached-empty responsibility forms removal"),
      InlineData("--responsibility="),
      InlineData("--responsibility:"),
@@ -99,6 +103,7 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         Assert.Null(request.Patch.Responsibility.Value);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Update binding rejects missing operations and invalid patch values"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void BindingRejectsMissingOperationsAndInvalidPatchValues()
     {
@@ -128,6 +133,7 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         }
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Update bare responsibility preserves the exact invalid-patch cause"),
      Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void BareResponsibilityRetainsExactInvalidCause()
@@ -142,6 +148,7 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         Assert.Equal("--responsibility accepts exactly one value.", finding.Cause);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Update singleton options reject every repeated value"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void SingletonOptionsRejectEveryRepeatedValue()
     {
@@ -165,6 +172,7 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         }
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Update requires exactly one source operand"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void RequiresExactlyOneSourceOperand()
     {

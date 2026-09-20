@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 3,
+  "command": "route create",
+  "status": "invalid-input",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot create the routed file: --template missing-template is not a routed Template.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-create.invalid-template",
+      "title": "Invalid Template",
+      "message": "--template missing-template is not a routed Template.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "missing-template",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge find --tag Template",
+          "reason": "Find a routed Template, then rerun Route Create."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "memory/project-alpha/overview",
+      "path": ".agents/memory/project-alpha/overview.md"
+    },
+    "listedIn": null,
+    "template": null,
+    "metadata": {
+      "description": "Project overview",
+      "responsibility": "Explains the project",
+      "tags": [
+        "Docs",
+        "Overview"
+      ]
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge find --tag Template",
+    "reason": "Find a routed Template, then rerun Route Create."
+  }
+}

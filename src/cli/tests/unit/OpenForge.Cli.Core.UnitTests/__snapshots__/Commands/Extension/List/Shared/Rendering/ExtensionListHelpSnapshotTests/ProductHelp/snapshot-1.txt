@@ -1,0 +1,46 @@
+Description:
+
+Usage:
+  list
+
+Syntax:
+  open-forge extension list [--installed] [--available] [--source <package-or-catalogue-path>]
+  [global options]
+
+Sections:
+  With neither filter, show Installed then Available. --installed or --available alone selects one
+  section; together they select both. Repeating a section flag has no additional effect.
+
+Source and workspace:
+  Installed facts use .agents/open-forge.lock.json ownership in the exact selected workspace.
+  Unavailable ownership is reported as unknown coverage. Available facts use the embedded catalogue
+  or one exact disjoint local package/catalogue supplied by --source. No network, registry, cache,
+  or fallback is used.
+
+Global options:
+  --workspace <path>, --format <text|json>, --detail <minimal|standard|full|debug>, --detail-filter
+  <error|warning|info|all>, --help, and --version apply to this command. --detail selects detail in
+  text and JSON.
+
+Examples:
+  open-forge extension list
+  open-forge extension list --installed --format json
+  open-forge extension list --available --source D:/packages/open-forge
+
+Results and streams:
+  Text completed, completed-with-warnings, and incomplete results use stdout; invalid-input,
+  blocked, failed, and cancelled results use stderr.
+  JSON writes one minified schema-version-3 envelope to stdout for every semantic status. Debug
+  diagnostics use bounded stderr.
+  completed: exit 0 and text stdout.
+  failed: exit 1 and text stderr.
+  completed-with-warnings: exit 2 and text stdout.
+  incomplete: exit 3 and text stdout.
+  invalid-input: exit 4 and text stderr.
+  blocked: exit 5 and text stderr.
+  cancelled: exit 130 and text stderr.
+
+Notes:
+  Extension List is deterministic and read-only. An available package is not necessarily installed.
+  Installed packages are still listed when their source is unavailable. The command writes no
+  payload, lifecycle, generated navigation, backup, cache, temporary file, or diagnostic artifact.

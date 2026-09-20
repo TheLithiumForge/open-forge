@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Open Forge is installed and current.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "routedFiles": 50,
+    "startupFiles": 11,
+    "startupTokens": 5980,
+    "mayLoadAgainFiles": 1,
+    "mayLoadAgainTokens": 371,
+    "allTokens": 22448,
+    "startupShare": 26.639344262295081967213114754,
+    "rootCategories": 7,
+    "entriesSectionsCurrent": 24,
+    "entriesSectionsStale": 0,
+    "entriesSectionsMissing": 0,
+    "frameworkFilesCurrent": 14,
+    "frameworkFilesChanged": 0,
+    "frameworkFilesMissing": 0,
+    "extensionsInstalled": 5,
+    "librariesRegistered": 0,
+    "libraryLinksCurrent": 0,
+    "libraryLinksMissing": 0,
+    "libraryLinksChanged": 0,
+    "recoveryBundles": 0,
+    "recoveryDrafts": 0
+  },
+  "limitations": [],
+  "data": {
+    "installation": {
+      "state": "installed",
+      "entryPath": "AGENTS.md",
+      "loaderPath": ".agents/loader.md"
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": 11,
+          "characters": 22704,
+          "bytes": 22704,
+          "tokens": 5676
+        },
+        "current": {
+          "files": 11,
+          "characters": 23920,
+          "bytes": 23920,
+          "tokens": 5980
+        },
+        "difference": {
+          "files": 0,
+          "characters": 1216,
+          "bytes": 1216,
+          "tokens": 304
+        },
+        "mayLoadAgain": {
+          "files": 1,
+          "characters": 1484,
+          "bytes": 1484,
+          "tokens": 371
+        }
+      },
+      "allRouted": {
+        "files": 50,
+        "characters": 89792,
+        "bytes": 89792,
+        "tokens": 22448
+      },
+      "startupShare": 26.639344262295081967213114754
+    },
+    "structure": {
+      "rootCategories": {
+        "count": 7,
+        "added": [],
+        "removed": []
+      }
+    },
+    "extensions": [
+      {
+        "id": "development",
+        "version": "0.3.0",
+        "files": {
+          "current": 4,
+          "changed": 0,
+          "missing": 0
+        }
+      },
+      {
+        "id": "development-toolkit",
+        "version": "0.3.0",
+        "files": {
+          "current": 0,
+          "changed": 0,
+          "missing": 0
+        }
+      },
+      {
+        "id": "planning",
+        "version": "0.3.0",
+        "files": {
+          "current": 19,
+          "changed": 0,
+          "missing": 0
+        }
+      },
+      {
+        "id": "project-documents",
+        "version": "0.3.0",
+        "files": {
+          "current": 10,
+          "changed": 0,
+          "missing": 0
+        }
+      },
+      {
+        "id": "workflows",
+        "version": "0.3.0",
+        "files": {
+          "current": 4,
+          "changed": 0,
+          "missing": 0
+        }
+      }
+    ],
+    "libraries": []
+  },
+  "recovery": null,
+  "next": null
+}

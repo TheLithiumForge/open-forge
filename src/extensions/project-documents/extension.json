@@ -1,7 +1,9 @@
 {
   "id": "project-documents",
   "name": "Project Documents",
-  "description": "Optional Vision and Architecture Workflows with document Templates for a project's direction and structure",
-  "version": "0.1.0",
-  "dependencies": []
+  "description": "Maintain current project knowledge with a Documents convention, five templates, and Vision and Architecture methods",
+  "version": "0.3.0",
+  "dependencies": [
+    "workflows"
+  ]
 }

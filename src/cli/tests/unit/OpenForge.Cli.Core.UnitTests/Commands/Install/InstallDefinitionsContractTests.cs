@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Install;
 
 public sealed class InstallDefinitionsContractTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Install definitions map every finding to its exact machine code and semantic status"), Trait("Feature", "install-command"), Trait("Evidence", "Unit")]
     public void FindingMappingsAreExact()
     {
@@ -45,6 +46,7 @@ public sealed class InstallDefinitionsContractTests
                     InstallDefinitions.ReadStatus(code))));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Install definitions expose every exact finite machine spelling"), Trait("Feature", "install-command"), Trait("Evidence", "Unit")]
     public void FiniteMappingsAreExact()
     {
@@ -80,6 +82,7 @@ public sealed class InstallDefinitionsContractTests
             Enum.GetValues<InstallResultVerificationState>().Select(InstallDefinitions.ReadMachineName));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Install definitions reject every undefined enum value"), Trait("Feature", "install-command"), Trait("Evidence", "Unit")]
     public void UndefinedMappingsThrow()
     {
@@ -114,6 +117,7 @@ public sealed class InstallDefinitionsContractTests
                 new InstallBindingInput(false, false, InstallMode.Apply)));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Install next actions preserve the exact status and finding matrix"), Trait("Feature", "install-command"), Trait("Evidence", "Unit")]
     public void NextActionMatrixIsExact()
     {
@@ -143,7 +147,7 @@ public sealed class InstallDefinitionsContractTests
             ("open-forge cleanup", "Review and remove the reported recovery artifact after confirming the verified Install result."),
             ReadNext(CliSemanticStatus.Attention, [Finding(InstallFindingCode.RecoveryArtifactRetained)], input));
         Assert.Equal(
-            ("open-forge install --verbose", "Report the failure and retry the same Install request with bounded diagnostics."),
+            ("open-forge install --detail debug", "Report the failure and retry the same Install request with bounded diagnostics."),
             ReadNext(CliSemanticStatus.Failed, [Finding(InstallFindingCode.OperationFailed)], input));
         Assert.Equal(
             ("open-forge install", "Rerun the same Install request."),

@@ -1,0 +1,7 @@
+Cannot list Extensions: the content is not valid JSON.
+  Error  <extension-source>  Extension source is invalid
+         <extension-source> is not an Extension package or package folder: the content is not valid JSON. Expected extension.json with id, name, description, version, dependencies.
+Installed  (no ownership record, so installed packages cannot be listed)
+
+Available (from <extension-source>)  unavailable
+  available packages: the content is not valid JSON.

@@ -16,6 +16,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Attach.Shared.Completion
 public sealed class LibraryAttachCompletionTests
 {
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData((int)RecoveryBundlePreparationState.Incomplete, false, (int)CliSemanticStatus.Incomplete)]
     [InlineData((int)RecoveryBundlePreparationState.Incomplete, true, (int)CliSemanticStatus.Incomplete)]
@@ -66,6 +67,7 @@ public sealed class LibraryAttachCompletionTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("removed", (int)CliSemanticStatus.Complete, (int)LibraryRecoveryState.Removed)]
     [InlineData("retained", (int)CliSemanticStatus.Attention, (int)LibraryRecoveryState.Retained)]
@@ -95,6 +97,7 @@ public sealed class LibraryAttachCompletionTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData(false, (int)CliSemanticStatus.Interrupted)]
     [InlineData(true, (int)CliSemanticStatus.Failed)]
@@ -117,6 +120,7 @@ public sealed class LibraryAttachCompletionTests
         Assert.Equal(LibraryRecoveryState.Retained, result.Result.Application.Recovery.State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void CancellationBeforeEffectsDoesNotInventRecoveryOrPublication()
     {
@@ -134,6 +138,7 @@ public sealed class LibraryAttachCompletionTests
         Assert.Empty(result.Result.Application.Residuals);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void UnknownRecordCompletionRetainsEarlierVerifiedLinkAndUnknownRecordTruth()
     {
@@ -157,6 +162,7 @@ public sealed class LibraryAttachCompletionTests
         Assert.Contains(result.Result.Application.Residuals, residual => residual.Kind == LibraryResidualKind.Link && residual.State == LibraryResidualState.Retained);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("not-last"), InlineData("scope-incomplete"), InlineData("source-target")]
     public void VerifiedBytesAloneCannotEstablishACompleteSafeApplication(string missingProof)
@@ -185,6 +191,7 @@ public sealed class LibraryAttachCompletionTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData(false, (int)CliSemanticStatus.Incomplete)]
     [InlineData(true, (int)CliSemanticStatus.Blocked)]
@@ -197,7 +204,7 @@ public sealed class LibraryAttachCompletionTests
             Code = LibraryAttachFindingCode.RecordUnavailable,
             Status = CliSemanticStatus.Incomplete,
             LibraryId = "team-knowledge",
-            Path = ".agents/open-forge.libraries.json",
+            Path = ".agents/open-forge.lock.json",
             Cause = "Required record read unavailable.",
         };
         var unsafeTarget = new LibraryAttachFinding
@@ -224,6 +231,7 @@ public sealed class LibraryAttachCompletionTests
         Assert.Empty(result.Result.Application.Residuals);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void CompleteDryRunPlanDoesNotInventAttentionOrAppliedEffects()
     {

@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Reading;
 
 public sealed class SourceReadingModelTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral layer verification retains the exact finite verification states")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void VerificationStatesAreStable()
@@ -24,6 +25,7 @@ public sealed class SourceReadingModelTests
             Enum.GetNames<SourceLayerVerificationState>());
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral verified document reads retain the requested layer and logical path")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void VerifiedReadRetainsTheLayerAssociation()
@@ -45,6 +47,7 @@ public sealed class SourceReadingModelTests
         Assert.Equal("body", completeRead.Value);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral missing unavailable and cancelled document reads carry no body while retaining typed state")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void MissingUnavailableAndCancelledReadsHaveDistinctNoBodyShapes()
@@ -86,6 +89,7 @@ public sealed class SourceReadingModelTests
         Assert.Null(cancelled.Read);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral document read model rejects a body for unsafe verification and a mismatched logical layer")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void ReadStateAndLayerInvariantsAreStrict()

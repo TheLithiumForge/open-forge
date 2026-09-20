@@ -2,14 +2,19 @@ using System.Globalization;
 using OpenForge.Cli.Core.Commands.Extension.Create;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
+using OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Interaction;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Interaction;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Create;
 
 public sealed class ExtensionCreateOperationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create dry-run forms deterministic defaults in an exact workspace-free scaffold plan"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task DryRunFormsDefaultManifestAndScaffoldPlan()
     {
@@ -34,6 +39,7 @@ public sealed class ExtensionCreateOperationIntegrationTests
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create preserves nonblank metadata overrides, ordinally orders dependencies, and performs no source lookup"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task OverridesPreserveTextAndOrderDependencies()
     {
@@ -60,6 +66,7 @@ public sealed class ExtensionCreateOperationIntegrationTests
         Assert.Empty(catalogue.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Extension Create rejects blank optional metadata without prompting or writing"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     [InlineData("name")]
     [InlineData("description")]
@@ -89,19 +96,20 @@ public sealed class ExtensionCreateOperationIntegrationTests
         Assert.Empty(catalogue.SnapshotHashes());
     }
 
-    [Theory(DisplayName = "Extension Create wizard asks only for currently missing required facts"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Extension Create prompts only for currently missing required facts"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     [InlineData("none", null, null, "development-toolkit\n{catalogue}\n", 2)]
     [InlineData("stable-id", null, "{catalogue}", "development-toolkit\n", 1)]
     [InlineData("catalogue", "development-toolkit", null, "{catalogue}\n", 1)]
     [InlineData("all", "development-toolkit", "{catalogue}", "", 0)]
-    public async Task WizardPromptsOnlyForMissingFacts(
+    public async Task PromptsOnlyForMissingFacts(
         string missingFacts,
         string? stableId,
         string? cataloguePath,
         string input,
         int expectedPromptCount)
     {
-        using var catalogue = TemporaryWorkspace.Create("extension-create-wizard");
+        using var catalogue = TemporaryWorkspace.Create("extension-create-prompt");
         using var prompts = new StringWriter(CultureInfo.InvariantCulture);
         input = input.Replace("{catalogue}", catalogue.Path, StringComparison.Ordinal);
         var result = await ExecuteAsync(
@@ -123,6 +131,7 @@ public sealed class ExtensionCreateOperationIntegrationTests
         _ = missingFacts;
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Extension Create derives names from stable IDs and rejects invalid dependency sets without source lookup"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     [InlineData("alpha-beta-gamma", "Alpha Beta Gamma", "valid-name")]
     [InlineData("a1-2beta", "A1 2beta", "valid-name")]
@@ -163,8 +172,9 @@ public sealed class ExtensionCreateOperationIntegrationTests
         Assert.Empty(catalogue.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Extension Create wizard corrects blank and invalid required answers without an attempt limit"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
-    public async Task WizardCorrectsInvalidAnswersLocally()
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Extension Create prompts correct blank and invalid required answers without an attempt limit"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
+    public async Task PromptsCorrectInvalidAnswersLocally()
     {
         using var catalogue = TemporaryWorkspace.Create("extension-create-correction");
         using var prompts = new StringWriter(CultureInfo.InvariantCulture);
@@ -182,10 +192,11 @@ public sealed class ExtensionCreateOperationIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal("development-toolkit", result.Manifest!.Id);
         Assert.True(CountPromptLines(prompts.ToString()) >= 4);
-        Assert.Contains("That stable ID is invalid", prompts.ToString(), StringComparison.Ordinal);
-        Assert.Contains("not an existing ordinary directory", prompts.ToString(), StringComparison.Ordinal);
+        Assert.Contains("'BAD ID' is not a valid ID. Use lowercase letters, digits and hyphens.", prompts.ToString(), StringComparison.Ordinal);
+        Assert.Contains("ordinary directory", prompts.ToString(), StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create end of input is invalid and leaves the catalogue unchanged"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task EndOfInputIsInvalidWithoutWrites()
     {
@@ -203,11 +214,12 @@ public sealed class ExtensionCreateOperationIntegrationTests
             canPrompt: true,
             cancellationToken: TestContext.Current.CancellationToken);
 
-        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
-        Assert.Contains(result.Findings, finding => finding.Code == ExtensionCreateFindingCode.InvalidInput);
+        Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
+        Assert.Contains(result.Findings, finding => finding.Code == ExtensionCreateFindingCode.Interrupted);
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create retains a prompted stable ID when catalogue input ends"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task CatalogueEndOfInputRetainsPromptedStableId()
     {
@@ -225,27 +237,38 @@ public sealed class ExtensionCreateOperationIntegrationTests
             canPrompt: true,
             cancellationToken: TestContext.Current.CancellationToken);
 
-        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
         Assert.Equal("development-toolkit", result.StableId);
-        Assert.Contains(result.Findings, finding => finding.Code == ExtensionCreateFindingCode.InvalidInput);
-        Assert.Equal(2, CountPromptLines(prompts.ToString()));
+        Assert.Contains(result.Findings, finding => finding.Code == ExtensionCreateFindingCode.Interrupted);
+        Assert.Equal(4, CountPromptLines(prompts.ToString()));
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create retains a prompted stable ID when catalogue input is cancelled"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task CatalogueCancellationRetainsPromptedStableId()
     {
         using var catalogue = TemporaryWorkspace.Create("extension-create-partial-cancellation");
         using var cancellation = new CancellationTokenSource();
-        using var reader = new CancelAfterFirstAnswerReader(
-            $"development-toolkit{Environment.NewLine}",
-            cancellation);
-        using var prompts = new StringWriter(CultureInfo.InvariantCulture);
+        var lineReads = 0;
+        var terminal = new CliTerminal(
+            new CliTerminalCapabilities(true, false, false),
+            (_, token) => ValueTask.CompletedTask,
+            token =>
+            {
+                if (++lineReads == 1)
+                {
+                    cancellation.Cancel();
+                }
+
+                return ValueTask.FromResult<string?>("development-toolkit");
+            },
+            _ => ValueTask.FromResult<CliKeyStroke?>(null));
+        var prompts = new CliPrompts(terminal);
         var before = catalogue.SnapshotHashes();
-        var session = new CliInteractiveSession(reader, prompts, canPrompt: true);
 
         var result = await ExtensionCreateOperationFactory
-            .Create(session)
+            .Create(ExtensionInteractionTestFactory.ForCreate(prompts))
             .ExecuteAsync(
                 Request(
                     stableId: null,
@@ -260,6 +283,7 @@ public sealed class ExtensionCreateOperationIntegrationTests
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create cancellation is interrupted before effects and leaves the catalogue unchanged"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task CancellationIsInterruptedWithoutWrites()
     {
@@ -282,6 +306,7 @@ public sealed class ExtensionCreateOperationIntegrationTests
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create disabled interaction never prompts and reports missing required input without writes"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task DisabledInteractionNeverPrompts()
     {
@@ -303,6 +328,7 @@ public sealed class ExtensionCreateOperationIntegrationTests
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create dry-run resolves the same plan while making no catalogue change"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task DryRunHasNoEffects()
     {
@@ -329,12 +355,16 @@ public sealed class ExtensionCreateOperationIntegrationTests
         bool canPrompt = false,
         CancellationToken cancellationToken = default)
     {
-        using var reader = new StringReader(input);
-        using var ownedPrompts = prompts is null ? new StringWriter(CultureInfo.InvariantCulture) : null;
-        var session = new CliInteractiveSession(reader, prompts ?? ownedPrompts!, canPrompt);
-        return await ExtensionCreateOperationFactory
-            .Create(session)
+        var lines = string.IsNullOrEmpty(input)
+            ? Array.Empty<string?>()
+            : input.Split(["\r\n", "\n", "\r"], StringSplitOptions.None);
+        var scripted = ScriptedCliTerminal.Lines(lines, canPrompt);
+        var terminalPrompts = new CliPrompts(scripted.Terminal);
+        var result = await ExtensionCreateOperationFactory
+            .Create(ExtensionInteractionTestFactory.ForCreate(terminalPrompts))
             .ExecuteAsync(request, cancellationToken);
+        prompts?.Write(scripted.Output.ToString());
+        return result;
     }
 
     private static int CountPromptLines(string prompts)
@@ -354,25 +384,9 @@ public sealed class ExtensionCreateOperationIntegrationTests
             Description = null,
             PackageVersion = null,
             Dependencies = dependencies ?? [],
+            Automatic = mode == ExtensionCreateMode.Apply && !allowInteraction,
             AllowInteraction = allowInteraction,
             Mode = mode,
         };
 
-    private sealed class CancelAfterFirstAnswerReader(
-        string input,
-        CancellationTokenSource cancellation) : StringReader(input)
-    {
-        private int _readCount;
-
-        public override ValueTask<string?> ReadLineAsync(CancellationToken cancellationToken)
-        {
-            var answer = base.ReadLineAsync(cancellationToken);
-            if (++_readCount == 1)
-            {
-                cancellation.Cancel();
-            }
-
-            return answer;
-        }
-    }
 }

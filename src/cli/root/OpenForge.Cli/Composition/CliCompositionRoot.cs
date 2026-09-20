@@ -5,9 +5,8 @@ using OpenForge.Cli.Core.Framework.Extensions.Operational;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Libraries.Operational;
-using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Operational;
-using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
+
+using OpenForge.Cli.Core.Framework.Distribution.Operational;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
@@ -21,6 +20,8 @@ using OpenForge.Cli.Core.Framework.Workspace.Operational;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
@@ -44,7 +45,7 @@ internal static class CliCompositionRoot
         CliProcessIdentity process,
         CliCompositionInputs inputs)
     {
-        var interactiveSession = CreateInteractiveSession(inputs);
+        var interaction = CreateInteraction(inputs);
         var physicalPathResolver = new PhysicalPathResolver();
         var sourceSessionReader = new SourceReadSessionReader(physicalPathResolver);
         var routeSourceInspector = new RouteSourceInspector(
@@ -72,24 +73,23 @@ internal static class CliCompositionRoot
                     new MarkdownDocumentParser().Parse),
                 new LocalReferenceCandidateReader()),
             new FrameworkLifecycleOperationalContributor(
-                new LifecycleStore(physicalPathResolver),
+                physicalPathResolver,
                 new FrameworkLifecycleTargetReader(physicalPathResolver)),
             new ExtensionLifecycleOperationalContributor(
-                new LifecycleDocumentReader(physicalPathResolver),
+                physicalPathResolver,
                 new ExtensionSourceReader(physicalPathResolver),
-                new ExtensionLifecycleTargetReader(physicalPathResolver),
-                new LifecycleOwnershipReader(physicalPathResolver)),
+                new ExtensionLifecycleTargetReader(physicalPathResolver)),
             new LibraryOperationalContributor());
-        var route = CliRouteComposer.Compose(interactiveSession, inputs.LockStoreRoot);
+        var route = CliRouteComposer.Compose(interaction, inputs.LockStoreRoot);
         var standalone = CliStandaloneComposer.Compose(
-            interactiveSession,
+            interaction,
             inputs.LockStoreRoot,
             operationalContributors,
-            new LifecycleDocumentSnapshotReader(physicalPathResolver));
+            physicalPathResolver);
         var extension = CliExtensionComposer.Compose(
-            interactiveSession,
+            interaction,
             inputs.LockStoreRoot);
-        var library = CliLibraryComposer.Compose(interactiveSession);
+        var library = CliLibraryComposer.Compose(interaction);
         var tree = CliCommandTree.Create(
             CreateRootHelp(),
             [route.Branch, extension.Branch, library.Branch],
@@ -130,32 +130,30 @@ internal static class CliCompositionRoot
             new CliWorkspaceSelector(physicalPathResolver));
     }
 
-    private static CliInteractiveSession CreateInteractiveSession(CliCompositionInputs inputs)
-        => new(
-            standardInput: inputs.StandardInput,
-            promptOutput: inputs.PromptOutput,
-            canPrompt: !inputs.StandardInputRedirected && !inputs.PromptOutputRedirected);
+    internal static CliInteractionComposition CreateInteraction(CliCompositionInputs inputs)
+    {
+        var canPrompt = !inputs.StandardInputRedirected && !inputs.PromptOutputRedirected;
+        var terminal = inputs.Terminal ?? new CliTerminal(new CliTerminalCapabilities(canPrompt, false, false),
+            async (content, token) =>
+            {
+                await inputs.PromptOutput.WriteAsync(content, token).ConfigureAwait(false);
+                await inputs.PromptOutput.FlushAsync(token).ConfigureAwait(false);
+            }, token => inputs.StandardInput.ReadLineAsync(token),
+            _ => throw new InvalidOperationException("No key reader was supplied."));
+        return new(terminal, new CliPrompts(terminal, inputs.StandardErrorColor));
+    }
 
     private static CliHelpContent CreateRootHelp()
         => new(
         [
             new CliHelpSection(
-                "Getting started",
-                """
-                  open-forge install --dry-run
-                  open-forge context
-                  open-forge route list
-                  open-forge doctor
-                """),
+                global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingGettingStarted(),
+                ("  " + global::OpenForge.Cli.OutputText.Shared.SharedText.HelpGettingStartedExamples())),
             new CliHelpSection(
-                "Command help",
-                """
-                  Use open-forge <command> --help for options and examples.
-                  Use open-forge route --help, open-forge extension --help, or
-                  open-forge library --help to list their subcommands.
-                """),
+                global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingCommandHelp(),
+                ("  " + global::OpenForge.Cli.OutputText.Shared.SharedText.HelpCommandHelpDescription())),
             new CliHelpSection(
-                "Managed content",
-                "  Install establishes or verifies Framework management. Update reconciles managed files; --force and --prune permit only their documented changes."),
+                global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingManagedContent(),
+                ("  " + global::OpenForge.Cli.OutputText.Shared.SharedText.HelpManagedContentDescription())),
         ]);
 }

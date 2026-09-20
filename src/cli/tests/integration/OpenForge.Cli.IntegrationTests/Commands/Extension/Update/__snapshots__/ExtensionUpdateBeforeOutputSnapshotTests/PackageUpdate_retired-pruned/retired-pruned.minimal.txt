@@ -1,0 +1,4 @@
+Updated the toolkit Extension to 1.0.0.
+  .agents/toolkit.md  deleted (no longer part of the package)
+  Previous content: recovery bundle at <recovery-bundle>
+Next: open-forge doctor

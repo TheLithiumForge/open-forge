@@ -24,7 +24,7 @@ The Experience Design Skill and its three references are removed from the shippe
 
 ## Delivery Boundary
 
-The source reorganization is part of Task 28's review branch. It does not authorize merging or release. The [catalogue synchronization task](../../../working/cli-development/tasks/extension-catalogue-synchronization.md) assigns embedded catalogue refresh and executable qualification to the separate CLI implementer.
+The source reorganization is part of Task 28's review branch. It does not authorize merging or release. The [catalogue synchronization task](../../../archived/cli-development/tasks/extension-catalogue-synchronization.md) assigns embedded catalogue refresh and executable qualification to the separate CLI implementer.
 
 Moving a file's package source does not itself transfer managed ownership in an existing installation. Old Toolkit receipts, workspace edits, removed defaults, and retired Skill files need explicit transition checks. Matching bytes alone do not authorize adopting an existing file.
 

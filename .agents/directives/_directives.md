@@ -8,21 +8,20 @@ open-forge:
 
 ## What behavior is required in this scope?
 
-Directives state the instructions that must be followed within their scope.
+Directives define required agent behavior within a scope.
 
 ## Axioms
 
-- Every sibling Directive listed under an entrypoint's `Entries` carries #LoadNow.
-- Each sibling Directive has one non-empty `## Instructions` section.
-- Sibling Directives listed by this root entrypoint apply throughout the workspace.
-- A selected child entrypoint sets the narrower scope before its sibling Directives load.
-- Those Instructions apply only within the child route's scope.
+- Each Directive file in the same folder as an entrypoint must be listed in its `Entries` with #LoadNow.
+- Each of these files has one non-empty `## Instructions` section.
+- Directive files in this root entrypoint's folder apply throughout the workspace.
+- Select a child entrypoint before loading its Directive files. Their Instructions apply only within that narrower scope.
+- Child entrypoints remain on demand unless explicitly given a loading tag.
 - Child Directives add to active parent Directives. A narrower scope does not create higher authority.
 - Report any conflict or instruction that cannot be followed, and explain why.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Binding C# design and style rules for source and tests authored or reviewed across the workspace](csharp/_csharp.md) - #Directive #CSharp #Source #Testing #Design #Style #Readability
 - [Keep consequential decisions with the maintainer while allowing routine reversible execution within accepted direction](decision-authority.md) - #LoadNow #Core #Directive #Decision #Collaboration #Authority
 - [Keep workspace work local and reversible by default, and require exact authorization for external or destructive effects](execution-safety.md) - #LoadNow #Core #Directive #Safety #Permission #ExternalEffect #Git #Destructive
@@ -33,4 +32,3 @@ Directives state the instructions that must be followed within their scope.
 - [Write clear, consistent user communication and Open Forge source prose with proportionate authoring and review](public-facing-writing.md) - #LoadNow #Core #Directive #Writing #Terminology
 - [Preserve material review findings with stable identity while avoiding duplicate rationale, repeated review, and observation noise](review-evidence.md) - #LoadNow #Core #Directive #Review #Evidence #Reasoning #Tradeoff #Observation #Dogfooding
 - [Keep behavior and its directly related source, contracts, tests, fixtures, and support together at the narrowest useful scope](source-locality.md) - #LoadNow #Core #Directive #Source #Locality #Contract #Testing #Structure
-<!-- open-forge:generated-index:end -->

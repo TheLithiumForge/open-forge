@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Removed .agents/guidance/old guide.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/guidance/old guide.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/old guide.overwrite.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": null
+    }
+  ],
+  "counts": {
+    "filesRemoved": 2,
+    "sectionsUpdated": 1,
+    "linksDetached": 0,
+    "filesScanned": 11
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "removed": [
+      ".agents/guidance/old guide.md",
+      ".agents/guidance/old guide.overwrite.md"
+    ],
+    "detachedLinks": [],
+    "scan": {
+      "filesScanned": 11,
+      "occurrences": 1
+    }
+  },
+  "recovery": null,
+  "next": null
+}

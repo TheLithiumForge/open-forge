@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Use Bun for replacement development while strict TypeScript, ESLint, and built-artifact tests preserve quality and runtime portability
+  description: "Historical CLI-v2 source: Use Bun for replacement development while strict TypeScript, ESLint, and built-artifact tests preserve quality and runtime portability"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

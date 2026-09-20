@@ -8,8 +8,6 @@ namespace OpenForge.Cli.TestSupport;
 public static class OpenForgeDocumentSeed
 {
     private const string EntriesHeading = "## Entries";
-    private const string GeneratedRegionStart = "<!-- open-forge:generated-index:start -->";
-    private const string GeneratedRegionEnd = "<!-- open-forge:generated-index:end -->";
     private const string DefaultSkillBody = "# Skill\n\n";
     private const string SkillEntrypointTitle = "Skills";
     private const string SkillTag = "Skill";
@@ -44,7 +42,7 @@ public static class OpenForgeDocumentSeed
 
     /// <summary>
     /// Builds a Markdown document whose final Entries section contains one exact
-    /// generated-region marker pair.
+    /// heading-owned generated body.
     /// </summary>
     public static string GeneratedEntries(string entries)
     {
@@ -56,7 +54,7 @@ public static class OpenForgeDocumentSeed
 
     /// <summary>
     /// Builds a configured Markdown document whose final Entries section contains
-    /// one exact generated-region marker pair.
+    /// one exact heading-owned generated body.
     /// </summary>
     public static string GeneratedEntries(GeneratedEntriesSeed seed)
     {
@@ -68,9 +66,7 @@ public static class OpenForgeDocumentSeed
         var finalLineEnding = seed.IncludeFinalLineEnding ? seed.LineEnding : string.Empty;
         return $"{seed.Prefix}{seed.LineEnding}{seed.LineEnding}"
             + $"{EntriesHeading}{seed.LineEnding}{seed.LineEnding}"
-            + $"{GeneratedRegionStart}{seed.LineEnding}"
-            + $"{seed.Entries}{seed.LineEnding}"
-            + $"{GeneratedRegionEnd}{finalLineEnding}";
+            + $"{seed.Entries}{finalLineEnding}";
     }
 
     /// <summary>
@@ -140,7 +136,7 @@ public static class OpenForgeDocumentSeed
 public sealed record GeneratedEntriesSeed
 {
     /// <summary>
-    /// Gets the exact content between the generated-region markers.
+    /// Gets the exact content in the generated Entries body.
     /// </summary>
     public required string Entries { get; init; }
 

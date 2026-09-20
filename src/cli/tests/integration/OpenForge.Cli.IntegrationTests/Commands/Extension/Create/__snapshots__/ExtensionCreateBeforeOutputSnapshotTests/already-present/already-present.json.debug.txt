@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 3,
+  "command": "extension create",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": null,
+  "summary": {
+    "headline": "The toolkit scaffold at <extension-source>\\toolkit already matches. Nothing to do.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "<extension-source>\\toolkit\\extension.json",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": "<extension-source>\\toolkit\\content\\.agents\\",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "toolkit",
+    "folder": "<extension-source>",
+    "packagePath": "<extension-source>\\toolkit",
+    "manifestPath": "<extension-source>\\toolkit\\extension.json",
+    "contentPath": "<extension-source>\\toolkit\\content\\.agents\\",
+    "manifest": {
+      "name": "Toolkit",
+      "description": "Open Forge Extension package toolkit.",
+      "version": "0.1.0",
+      "dependencies": []
+    },
+    "manifestContent": "{\"id\":\"toolkit\",\"name\":\"Toolkit\",\"description\":\"Open Forge Extension package toolkit.\",\"version\":\"0.1.0\",\"dependencies\":[]}"
+  },
+  "recovery": null,
+  "next": null
+}

@@ -7,11 +7,12 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.List;
 
 public sealed class LibraryListBoundaryTests
 {
-    [Theory(DisplayName = "Library List maps strict record source and unsafe observation boundaries without empty substitution"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
-    [InlineData("malformed-record", (int)CliSemanticStatus.Invalid, (int)LibraryListFindingCode.InvalidRecord)]
-    [InlineData("duplicate-id", (int)CliSemanticStatus.Blocked, (int)LibraryListFindingCode.RecordBlocked)]
-    [InlineData("record-link", (int)CliSemanticStatus.Blocked, (int)LibraryListFindingCode.RecordBlocked)]
-    [InlineData("missing-source", (int)CliSemanticStatus.Incomplete, (int)LibraryListFindingCode.SourceRootUnavailable)]
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Library List preserves source and target boundaries while observing unavailable ownership"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
+    [InlineData("malformed-record", (int)CliSemanticStatus.Incomplete, (int)LibraryListFindingCode.InvalidRecord)]
+    [InlineData("duplicate-id", (int)CliSemanticStatus.Incomplete, (int)LibraryListFindingCode.InvalidRecord)]
+    [InlineData("record-link", (int)CliSemanticStatus.Incomplete, (int)LibraryListFindingCode.RecordUnavailable)]
+    [InlineData("missing-source", (int)CliSemanticStatus.Attention, (int)LibraryListFindingCode.SourceRootUnavailable)]
     [InlineData("source-file", (int)CliSemanticStatus.Invalid, (int)LibraryListFindingCode.SourceRootInvalid)]
     [InlineData("source-link", (int)CliSemanticStatus.Blocked, (int)LibraryListFindingCode.SourceRootBlocked)]
     [InlineData("destination-parent-link", (int)CliSemanticStatus.Blocked, (int)LibraryListFindingCode.LinkBlocked)]
@@ -35,6 +36,7 @@ public sealed class LibraryListBoundaryTests
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library List preserves unavailable record coverage when an existing record cannot be read"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     public async Task UnavailableRecordIsNotMissing()
     {
@@ -55,6 +57,7 @@ public sealed class LibraryListBoundaryTests
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library List caller interruption precedes malformed record work and preserves all state"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     public async Task CancellationAtIngress()
     {
@@ -73,12 +76,14 @@ public sealed class LibraryListBoundaryTests
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library List never traverses an inaccessible unregistered source subtree"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     public async Task SourceInventoryIsNeverRequested()
     {
         if (!OperatingSystem.IsLinux())
         {
-            throw new PlatformNotSupportedException("Required permission evidence targets Linux.");
+            Assert.Skip("Required permission evidence targets Linux.");
+            return;
         }
         using var fixture = new LibraryReadWorkspace();
         fixture.Source();

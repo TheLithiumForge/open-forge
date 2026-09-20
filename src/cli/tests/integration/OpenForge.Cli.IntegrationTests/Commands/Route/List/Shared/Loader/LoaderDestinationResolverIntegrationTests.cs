@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Loader;
 
 public sealed class LoaderDestinationResolverIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route-list Loader resolves an empty exact Entries region without inventing roots"),
         InlineData(""),
         InlineData("- none - No entries - #Empty")]
@@ -26,6 +27,7 @@ public sealed class LoaderDestinationResolverIntegrationTests
         Assert.Empty(result.Issues);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list Loader resolves literal, encoded, Unicode, and encoded-percent root destinations")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task CanonicalAndEncodedRootsResolveWithOneDecode()
@@ -60,25 +62,27 @@ public sealed class LoaderDestinationResolverIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Route-list Loader reports malformed percent encoding as incomplete Loader input")]
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route-list Loader blocks malformed percent encoding")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
-    public async Task MalformedPercentIsIncomplete()
+    public async Task MalformedPercentIsBlocked()
     {
         using var workspace = RouteListSelectionIntegrationWorkspace.Create();
         workspace.WriteLoader("- [Root](root%2/_root.md) - #Root");
 
         var result = await ResolveLoaderAsync(workspace);
 
-        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
+        AssertLoaderState(RouteListSelectionResolutionState.Blocked, result);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.LoaderMalformed, issue.Code);
         Assert.Equal("root%2/_root.md", issue.Subject);
         Assert.Empty(result.SelectedSources);
     }
 
-    [Fact(DisplayName = "Route-list Loader retains safe roots before a later malformed declaration")]
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route-list Loader blocks after a later malformed declaration")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
-    public async Task LaterMalformedDeclarationRetainsEarlierSafeRoots()
+    public async Task LaterMalformedDeclarationRetainsEarlierSafeRootsAsBlocked()
     {
         using var workspace = RouteListSelectionIntegrationWorkspace.Create();
         workspace.WriteLoader(
@@ -92,16 +96,17 @@ public sealed class LoaderDestinationResolverIntegrationTests
 
         var result = await ResolveLoaderAsync(workspace);
 
-        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
+        AssertLoaderState(RouteListSelectionResolutionState.Blocked, result);
         AssertSelectedSource(result, source.Id, source.CanonicalPath);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.LoaderMalformed, issue.Code);
         Assert.Equal("broken%2/_broken.md", issue.Subject);
     }
 
-    [Fact(DisplayName = "Route-list Loader retains safe roots before a malformed mixed empty sentinel")]
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route-list Loader blocks after a malformed mixed empty sentinel")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
-    public async Task MixedEmptySentinelRetainsEarlierSafeRoots()
+    public async Task MixedEmptySentinelRetainsEarlierSafeRootsAsBlocked()
     {
         using var workspace = RouteListSelectionIntegrationWorkspace.Create();
         workspace.WriteLoader(
@@ -115,11 +120,12 @@ public sealed class LoaderDestinationResolverIntegrationTests
 
         var result = await ResolveLoaderAsync(workspace);
 
-        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
+        AssertLoaderState(RouteListSelectionResolutionState.Blocked, result);
         AssertSelectedSource(result, source.Id, source.CanonicalPath);
         Assert.Equal(RouteListFindingCode.LoaderMalformed, Assert.Single(result.Issues).Code);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list Loader returns blocked with a retained malformed declaration finding")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task UnsafeThenMalformedDestinationsReturnOneTypedBlockedOutcome()
@@ -133,13 +139,14 @@ public sealed class LoaderDestinationResolverIntegrationTests
 
         AssertLoaderState(RouteListSelectionResolutionState.Blocked, result);
         Assert.Equal(
-            [CliSemanticStatus.Blocked, CliSemanticStatus.Incomplete],
+            [CliSemanticStatus.Blocked, CliSemanticStatus.Blocked],
             result.Issues.Select(issue => issue.Status));
         Assert.Equal(
             [RouteListFindingCode.PhysicalBoundary, RouteListFindingCode.LoaderMalformed],
             result.Issues.Select(issue => issue.Code));
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route-list Loader blocks unsafe decoded destinations at the physical boundary"),
         InlineData("root%2F%2F_root.md"),
         InlineData("root/%2E/_root.md"),
@@ -163,6 +170,7 @@ public sealed class LoaderDestinationResolverIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list Loader reports a missing declared root as unavailable incomplete coverage")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task MissingRootIsIncomplete()
@@ -180,6 +188,7 @@ public sealed class LoaderDestinationResolverIntegrationTests
         Assert.Empty(result.SelectedSources);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list Loader reports an existing but unrecognized root as unavailable")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task UnrecognizedRootIsIncomplete()
@@ -198,9 +207,10 @@ public sealed class LoaderDestinationResolverIntegrationTests
         Assert.Empty(result.SelectedSources);
     }
 
-    [Fact(DisplayName = "Route-list Loader reports a declared leaf as malformed root input")]
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route-list Loader blocks a declared leaf as malformed root input")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
-    public async Task NonEntrypointRootIsIncomplete()
+    public async Task NonEntrypointRootIsBlocked()
     {
         using var workspace = RouteListSelectionIntegrationWorkspace.Create();
         const string destination = "root/leaf.md";
@@ -208,16 +218,17 @@ public sealed class LoaderDestinationResolverIntegrationTests
         workspace.Write(".agents/root/leaf.md", "leaf");
         var result = await ResolveLoaderAsync(workspace);
 
-        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
+        AssertLoaderState(RouteListSelectionResolutionState.Blocked, result);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.LoaderMalformed, issue.Code);
         Assert.Equal(destination, issue.Subject);
         Assert.Empty(result.SelectedSources);
     }
 
-    [Fact(DisplayName = "Route-list Loader rejects an overwrite companion as a root declaration")]
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route-list Loader blocks an overwrite companion as a root declaration")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
-    public async Task OverwriteRootIsIncomplete()
+    public async Task OverwriteRootIsBlocked()
     {
         using var workspace = RouteListSelectionIntegrationWorkspace.Create();
         const string destination = "root/_root.overwrite.md";
@@ -226,18 +237,19 @@ public sealed class LoaderDestinationResolverIntegrationTests
         workspace.Write(".agents/root/_root.overwrite.md", "overwrite");
         var result = await ResolveLoaderAsync(workspace);
 
-        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
+        AssertLoaderState(RouteListSelectionResolutionState.Blocked, result);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.LoaderMalformed, issue.Code);
         Assert.Equal(destination, issue.Subject);
         Assert.Empty(result.SelectedSources);
     }
 
-    [Theory(DisplayName = "Route-list Loader rejects orphan overwrite and malformed nested-label root declarations"),
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Route-list Loader blocks orphan overwrite and malformed nested-label root declarations"),
         InlineData("- [Orphan](root/_root.overwrite.md) - #Root", ".agents/root/_root.overwrite.md", "orphan"),
         InlineData("- [forged [Root](root/_root.md) - #Root", ".agents/root/_root.md", "root")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
-    public async Task StructurallyInvalidRootDeclarationsAreIncomplete(
+    public async Task StructurallyInvalidRootDeclarationsAreBlocked(
         string declaration,
         string physicalPath,
         string contents)
@@ -248,11 +260,12 @@ public sealed class LoaderDestinationResolverIntegrationTests
 
         var result = await ResolveLoaderAsync(workspace);
 
-        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
+        AssertLoaderState(RouteListSelectionResolutionState.Blocked, result);
         Assert.Equal(RouteListFindingCode.LoaderMalformed, Assert.Single(result.Issues).Code);
         Assert.Empty(result.SelectedSources);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list Loader blocks a root whose route identity is ambiguous")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task AmbiguousRootIsBlocked()
@@ -272,6 +285,7 @@ public sealed class LoaderDestinationResolverIntegrationTests
         Assert.Empty(result.SelectedSources);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list Loader accepts a contained physical root alias and keeps its logical path")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task ContainedRootAliasResolves()
@@ -301,6 +315,7 @@ public sealed class LoaderDestinationResolverIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list Loader blocks an external root alias without inspecting outside")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task ExternalRootAliasIsBlocked()
@@ -330,6 +345,7 @@ public sealed class LoaderDestinationResolverIntegrationTests
         Assert.Equal(outsideBefore, outside.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list Loader blocks the first external transition before a reentry target")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task ExternalThenReentryRootIsBlockedBeforeReentry()
@@ -368,6 +384,7 @@ public sealed class LoaderDestinationResolverIntegrationTests
         Assert.Equal(outsideBefore, outside.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list Loader maps pre-cancellation to interrupted selection without workspace writes")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task PreCancellationIsInterruptedWithoutWrites()

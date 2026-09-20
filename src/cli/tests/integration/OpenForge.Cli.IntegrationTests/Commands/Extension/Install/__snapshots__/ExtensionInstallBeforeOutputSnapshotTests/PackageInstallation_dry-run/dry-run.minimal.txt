@@ -1,0 +1,2 @@
+Would install the toolkit Extension.
+  Would create 1 file under .agents

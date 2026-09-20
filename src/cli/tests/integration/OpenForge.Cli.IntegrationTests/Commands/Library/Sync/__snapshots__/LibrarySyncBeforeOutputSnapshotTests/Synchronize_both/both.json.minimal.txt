@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 3,
+  "command": "library sync",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Synchronized team-knowledge: 1 link added, 1 removed.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/directives/added.md",
+      "kind": "link",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/directives/review.md",
+      "kind": "link",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": "its source file is gone",
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksAdded": 1,
+    "linksRemoved": 1,
+    "linksUnchanged": 0,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "proposedScopes": [],
+      "approvedScopes": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/directives/added.md",
+        "action": "add",
+        "outcome": "done"
+      },
+      {
+        "path": ".agents/directives/review.md",
+        "action": "remove",
+        "outcome": "done"
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "action": "update",
+        "outcome": "done"
+      }
+    ]
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "removed"
+  },
+  "next": null
+}

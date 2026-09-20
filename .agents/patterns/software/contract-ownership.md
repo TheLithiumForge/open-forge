@@ -10,13 +10,13 @@ open-forge:
 
 Give each contract fact one authoritative owner:
 
-| Concern | Owner |
-| --- | --- |
-| Meaning, safety invariant, and compatibility promise | Current-truth contract document |
-| Exact field, value, schema, signature, or importable interface | Production source or declared external contract |
-| Executable behavior and cross-boundary compatibility | Conformance test and stable fixture |
-| Reader reference requiring exact source structure | Generated output from the authoritative implementation definition |
-| Reusable implementation organization | Pattern |
+| Concern                                                        | Owner                                                             |
+| -------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Meaning, safety invariant, and compatibility promise           | Current-truth contract document                                   |
+| Exact field, value, schema, signature, or importable interface | Production source or declared external contract                   |
+| Executable behavior and cross-boundary compatibility           | Conformance test and stable fixture                               |
+| Reader reference requiring exact source structure              | Generated output from the authoritative implementation definition |
+| Reusable implementation organization                           | Pattern                                                           |
 
 During design, a document or Pattern may show a clearly labelled schematic contract. Once an exact implementation definition exists, remove copied declarations or replace them with generated reference. Do not manually synchronize exact source contracts into explanatory Markdown.
 

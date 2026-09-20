@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": null,
+  "summary": {
+    "headline": "Cannot check this workspace: The selected workspace is missing.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "status.workspace-unavailable",
+      "title": "Workspace is unavailable",
+      "message": "does not exist or cannot be read.",
+      "subject": {
+        "kind": "file",
+        "path": "<workspace>\\missing-workspace",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the reported operational facts before rerunning Status."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The selected workspace is missing."
+        }
+      ],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routedFiles": null,
+    "startupFiles": null,
+    "startupTokens": null,
+    "mayLoadAgainFiles": null,
+    "mayLoadAgainTokens": null,
+    "allTokens": null,
+    "startupShare": null,
+    "rootCategories": null,
+    "entriesSectionsCurrent": null,
+    "entriesSectionsStale": null,
+    "entriesSectionsMissing": null,
+    "frameworkFilesCurrent": null,
+    "frameworkFilesChanged": null,
+    "frameworkFilesMissing": null,
+    "extensionsInstalled": null,
+    "librariesRegistered": null,
+    "libraryLinksCurrent": null,
+    "libraryLinksMissing": null,
+    "libraryLinksChanged": null,
+    "recoveryBundles": null,
+    "recoveryDrafts": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "installation": {
+      "state": "blocked",
+      "entryPath": null,
+      "loaderPath": null
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": null,
+          "characters": null,
+          "bytes": null,
+          "tokens": null
+        },
+        "current": {
+          "files": null,
+          "characters": null,
+          "bytes": null,
+          "tokens": null
+        },
+        "difference": {
+          "files": null,
+          "characters": null,
+          "bytes": null,
+          "tokens": null
+        },
+        "mayLoadAgain": {
+          "files": null,
+          "characters": null,
+          "bytes": null,
+          "tokens": null
+        }
+      },
+      "allRouted": {
+        "files": null,
+        "characters": null,
+        "bytes": null,
+        "tokens": null
+      },
+      "startupShare": null,
+      "mayLoadAgainSources": []
+    },
+    "structure": {
+      "rootCategories": {
+        "count": null,
+        "added": [],
+        "removed": []
+      }
+    },
+    "frameworkFiles": [],
+    "entriesSections": [],
+    "extensions": [],
+    "libraries": [],
+    "recovery": {
+      "candidates": []
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the reported operational facts before rerunning Status."
+  }
+}

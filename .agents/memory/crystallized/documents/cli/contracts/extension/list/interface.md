@@ -42,9 +42,9 @@ open-forge extension list [--installed] [--available] [--source <package-or-cata
 
 ```text
 --workspace <path>
---json
---view=compact|expanded
---verbose
+--format <text|json>
+--detail <minimal|standard|full|debug>
+--detail debug
 --help
 --version
 ```
@@ -57,7 +57,7 @@ well-formed global flag with no applicable behavior is a shared no-op.
 
 The workspace is the exact current directory unless `--workspace` selects one
 exact directory. Installed facts come from the selected workspace's recognized
-lifecycle state in `.agents/open-forge.lifecycle.json`, schema v1. The operation
+ownership receipts in `.agents/open-forge.lock.json`. The operation
 does not discover another root. A missing document or section is not, by itself,
 proof of an empty installed set; complete inspection is required before
 reporting safe absence.
@@ -90,108 +90,161 @@ With neither section flag, both sections are rendered. `--installed` alone
 renders Installed. `--available` alone renders Available. Both flags together
 render both. There is no last-wins rule.
 
-## Lifecycle Trust States
+## Ownership Observation
 
-Installed rows retain the state of the recognized lifecycle evidence:
+The existing `coverage.lifecycleTrust` field reports the lock observation:
 
-- `trusted` means a valid current Extension section establishes exact workspace,
-  package, dependency, path, owner, fingerprint, and coverage facts.
-- `untrusted` or `incomplete` means facts are readable in part but cannot support
-  current trust. Safe partial facts remain visible.
-- `blocked` means ambiguity, collision, malformed identity, or unsafe ownership
-  prevents a safe classification.
-- `absent` means complete inspection found no expected managed claim. It does not
-  claim that idless, manually copied, or direct-overlay content is absent.
+- `trusted`: a complete, unambiguous Extension ownership observation;
+- `incomplete`: missing, malformed, unreadable or ambiguous ownership; and
+- `absent`: a complete observation contains no recorded Extension packages.
 
-An unavailable package source does not erase an installed row. It
-prevents comparison fields that require current source bytes and produces the
-applicable availability condition.
+Only established receipts produce Installed rows. An unavailable lock retains
+incomplete installed coverage and empty rows, with the informational
+`extension-list.ownership-observation` finding (`severity: info`). Its subject
+is `.agents/open-forge.lock.json`; its cause explains the unavailable claims.
+The finding does not raise aggregate status or select a recovery action. Empty
+rows do not establish that manually copied packages are absent. Counts count
+emitted rows; coverage remains independent.
 
-## Output
+The lock is the only state input. Old state files are unrelated user content,
+and List neither reads nor changes them. No persisted hashes, workspace binding,
+or payload-derived adoption participate in the observation. An unavailable
+package source never erases an installed row and keeps its existing finding.
 
-Both human views begin with outcome, status, exact workspace and selection
-method, then the selected source and separate requested Installed and Available
-sections. Each section keeps its own coverage. Installed rows retain stable IDs,
-known versions, record trust and source availability; Available rows retain IDs
-and versions. Empty observed rows under incomplete or unavailable coverage do not
-mean that no packages are installed or available.
+## Human Output
 
-Expanded adds authored package names/descriptions, dependency/package counts and
-managed-path counts. Compact uses short rows. Findings retain their own status,
-code, exact subject and cause in both views, followed by the actual Next command
-when supplied; expanded may add its reason. Paths and IDs are not truncated.
-JSON emits one complete typed result for every status; `--view` does not alter JSON.
+The command uses the shared native report. The default detail is `minimal`; `standard`, `full` and `debug` add the catalogue-defined facts. `--detail-filter <error|warning|info|all>` is repeatable and changes only the rendered detail. Use `--format text` for this text report. Primary result text for `completed`, `completed-with-warnings` and `incomplete` is on stdout; primary errors for `invalid-input`, `blocked`, `failed` and `cancelled` are on stderr. There is no `Status:` line.
 
-An expanded excerpt for one available package is:
+### Statuses and headlines
+
+| Status                  | When                                                                          | Text                                                                                                                                       | Exit | Stream |
+| ----------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---: | ------ |
+| completed               | sections listed                                                               | the two blocks below                                                                                                                       |    0 | stdout |
+| completed               | no ownership record                                                           | blocks; the Installed block reads `Installed  (no ownership record, so installed packages cannot be listed)` and an Info finding at `full` |    0 | stdout |
+| completed-with-warnings | an installed package's source is missing, or its files changed or are missing | rows with a note, warning rows                                                                                                             |    2 | stdout |
+| incomplete              | the source or a manifest could not be read                                    | the safe rows plus warning rows                                                                                                            |    3 | stdout |
+| invalid-input           | bad flag, invalid `--source` package                                          | `Cannot list Extensions: <problem>.`                                                                                                       |    4 | stderr |
+| blocked                 | source overlaps the workspace, unsafe path                                    | `Cannot list Extensions: <reason>.`                                                                                                        |    5 | stderr |
+| failed                  | unexpected error                                                              | `Extension list stopped because of an unexpected error: <reason>.`                                                                         |    1 | stderr |
+| cancelled               | Ctrl+C                                                                        | `Extension list was cancelled.`                                                                                                            |  130 | stderr |
+
+### Text by level
+
+`minimal`:
 
 ```text
-Extension list
-Status: complete
-Workspace: /work/example
-Selected by: current directory
-Source: embedded catalogue; available
-  Source kind: embedded-catalogue
-Available: coverage complete
-  planning; version 0.1.0
-    Name: Planning
-    Description: <authored package description>
-    Packages: 1; dependencies: 0
+Installed
+  development 0.1.0
+
+Available (bundled with this CLI)
+  development-toolkit 0.1.0   An optional bundle of project documents, Memory starters, planning, and development packages   (5 packages)
+  memory-starters 0.1.0       Copy-ready Memory Templates for decisions, ideas, analyses, observations, and handoffs
+  orchestration 0.1.0         Coordinate dependent tasks through one optional managed-delivery workflow   (3 packages)
+  planning 0.1.0              An optional planning Workflow, Work Records Pattern, and Templates for tasks, plans, backlogs, and checkpoints
+  project-documents 0.1.0     Optional Vision and Architecture Workflows with document Templates for a project's direction and structure
+Next: open-forge extension install <id>
 ```
 
-Values are illustrative. Other selected rows remain visible in actual output.
+`Installed  none` when nothing is installed. The `Available` heading names
+the source: `(bundled with this CLI)` or `(from <path>)`. An installed
+package already in the available list is shown once in each block; the
+Available row adds `installed` when versions match or `installed: 0.1.0`
+when they differ. A package with `(N packages)` bundles that many.
 
-Primary human `complete`, `attention`, and `incomplete` results go to stdout.
-Primary human `invalid`, `blocked`, `failed`, and `interrupted` results go to
-stderr. Bounded diagnostics go to stderr. Human output may say `requires
-attention`; JSON retains `attention`.
+`standard` adds `Workspace:`, the source path, and per Available row its
+dependencies (`needs: planning, project-documents`).
+
+`full` adds per Installed row the file count and the recorded source, and
+the lock coverage sentence.
+
+### Representative transcripts by status
+
+### Transcript — completed
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-list-completed).
+
+### Transcript — completed-with-warnings
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-list-completed-with-warnings).
+
+### Transcript — incomplete
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-list-incomplete).
+
+### Transcript — invalid-input
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-list-invalid-input). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/List/__snapshots__/ExtensionListBeforeOutputSnapshotTests/InvalidBoundary/invalid-input.minimal.txt).
+
+### Transcript — blocked
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-list-blocked). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/List/__snapshots__/ExtensionListBeforeOutputSnapshotTests/InvalidBoundary/source-blocked.minimal.txt).
+
+### Transcript — failed
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-list-failed).
+
+### Transcript — cancelled
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-list-cancelled).
+
+## Structured Output
+
+`--format json` writes one schema-3 envelope to stdout for every report status. It contains the command, status, workspace when applicable, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
+
+### JSON data by level
+
+| Level    | `data`                                                                                                                         |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| minimal  | `{ source { kind, path }, installed: [ { id, version, note } ], available: [ { id, version, name, description, packages } ] }` |
+| standard | + per available `dependencies: [...]`                                                                                          |
+| full     | + per installed `files`, `recordedSource`, `coverage`                                                                          |
 
 ## Semantic Results
 
-| Result        | Meaning for `list`                                                                                                         |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | Requested Installed and/or Available sections have complete safe coverage.                                                 |
-| `attention`   | Facts are complete but a finite source-unavailable, changed, missing, or equivalent lifecycle observation remains visible. |
-| `incomplete`  | Safe installed or available facts remain, but required lifecycle, source, parser, or coverage facts are unavailable.       |
-| `invalid`     | Syntax, operand, flag value, singleton repetition, or terminal-mode input is invalid.                                      |
-| `blocked`     | Workspace, source disjointness, identity, containment, or ownership ambiguity prevents safe inspection.                    |
-| `failed`      | An unexpected inspection or result-formation failure occurs.                                                               |
-| `interrupted` | The caller interrupts before the read-only result completes.                                                               |
+The status and exit mapping above are unchanged by detail or format. Root effects and recovery receipts retain their complete result facts at every detail level; command-owned data follows the catalogue's level rows.
 
-Source unavailability may be `incomplete` when requested available or comparison
-facts cannot be formed. Installed facts that remain independently trustworthy
-are still reported. Planned changes never exist because list is read-only.
+### Counts and limitations
 
-## Errors And Next Actions
+`installed`, `available`.
 
-Every error names `extension list`, the workspace, source, section, or ID when
-known, the cause, and at most one useful next action. Multiple source locations,
-source overlap, malformed package/catalogue structure, unsafe physical identity,
-and unsupported source classification are invalid or blocked as applicable; no
-fallback is inferred. A missing source is not silently replaced by the embedded
-catalogue when `--source` was explicit.
+## Errors And Boundaries
 
-## Examples
+The findings catalogue below is the command's finite error and warning vocabulary. Findings keep their code, severity, family, subject and cause; detail filtering affects display only. A blocked, failed or cancelled result prevents further effects according to the catalogue.
 
-Show both sections from the embedded catalogue:
+### Findings catalogue
 
-```text
-open-forge extension list
-```
+| Code                                 | Severity | Family                | Message                                                                                                                                      | Next |
+| ------------------------------------ | -------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
+| extension-list.invalid-input         | error    | invalid-input         |                                                                                                                                              |      |
+| extension-list.workspace-unavailable | error    | workspace-unavailable |                                                                                                                                              |      |
+| extension-list.source-invalid        | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/List/Shared/Wording/ExtensionListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-list.source-invalid`). | none |
+| extension-list.source-blocked        | error    | local                 | `<path> cannot be used as a source: <it is inside the workspace \| it resolves to an unsafe location>.`                                      | none |
+| extension-list.source-unavailable    | warning  | local                 | [`extension.list.label.source-unavailable`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Extension/List/ExtensionListText.cs); [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/List/Shared/Wording/ExtensionListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-list.source-unavailable`).                                                                            | none |
+| extension-list.ownership-observation | info     | ownership-observation |                                                                                                                                              |      |
+| extension-list.operation-failed      | error    | operation-failed      |                                                                                                                                              |      |
+| extension-list.interrupted           | error    | cancelled |                                                                                                                                              |      |
 
-Show installed facts even when the package source is unavailable:
+Row notes for installed packages come from the lock and target checks:
+`source missing` (the recorded source cannot be read), `files changed`,
+`files missing`. Each also produces a warning finding with the package as
+subject: `The <id> Extension's source <path> cannot be read.`, `<N> files
+installed by <id> have changed since installation.`, `<N> files installed by
+<id> are missing.` with `Next: open-forge extension inspect <id>`.
 
-```text
-open-forge extension list --installed --json
-```
+## Scenarios
 
-Show available packages from one exact external catalogue:
+### Catalogue situations
 
-```text
-open-forge extension list --available --source D:/packages/open-forge
-```
+`none-installed`, `one-installed`, `installed-only`, `available-only`,
+`explicit-source`, `no-ownership-record` (info), `source-unreadable`
+(incomplete), `installed-source-missing` (warnings), `source-invalid`,
+`source-blocked`, `invalid-input`.
 
-`list` never prompts, installs, updates, removes, creates, adopts, or rewrites
-an Extension or lifecycle document.
+Each status has one representative native text transcript above. JSON uses the same status and command facts under the schema-3 envelope.
+
+### Open maintainer questions
+
+The native command emits `extension-list.installed-source-missing` for an installed package whose recorded source is missing, but the catalogue has no row for that code. The contract records the current warning and does not decide whether to add the row or change the code. **Maintainer decision remains open.**
 
 ## Non-Goals And Public Conformance
 
@@ -202,31 +255,23 @@ execute an index operation.
 
 Conformance must cover exact workspace and source selection, embedded versus
 explicit source, package/catalogue distinction, source disjointness, both
-section filters and their composition, trusted/untrusted/incomplete/blocked/
-absent states, source-unavailable installed facts, deterministic ordering, all
+section filters and their composition, trusted/incomplete/absent states, source-unavailable installed facts, deterministic ordering, all
 seven statuses, human/JSON parity and streams, no prompts, and no persistent
 effect. The [Shared Result
 Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
 result schema and exit mapping. Gate 5 must prove source-generated serialization, fixed Markdig where
 used, real `System.IO`, Native AOT, isolated tests, and package journeys.
 
-## Compact JSON Output
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+
+
+## Executable Wording References
+
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
+
+CLI help syntax: [`extension.list.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Extension/List/ExtensionListText.cs).
+
+<!-- @OpenForgeTextRef extension.list.help.syntax -->
+<!-- @OpenForgeTextRef extension.list.label.source-unavailable -->

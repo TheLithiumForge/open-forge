@@ -1,0 +1,7 @@
+Cannot move guidance/topics: The destination is inside the folder being moved.
+Workspace: <workspace>
+  Error  .agents/guidance/topics/nested/_nested.md  Destination is inside source [route-move.destination-inside-source]
+         The destination is inside the folder being moved.
+  Effects:
+  0 files scanned; 0 links found.
+  files scanned: the reference scan was not completed

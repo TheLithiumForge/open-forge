@@ -12,6 +12,4 @@ open-forge:
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - none - No entries - #Empty
-<!-- open-forge:generated-index:end -->

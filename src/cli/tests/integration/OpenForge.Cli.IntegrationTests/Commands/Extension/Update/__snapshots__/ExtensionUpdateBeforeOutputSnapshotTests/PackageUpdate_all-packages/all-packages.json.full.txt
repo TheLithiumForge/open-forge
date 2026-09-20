@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 3,
+  "command": "extension update",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Updated 2 Extensions.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/base.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": "you had changed it and this version changes it",
+      "owner": "base",
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/toolkit.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": "you had changed it and this version changes it",
+      "owner": "toolkit",
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "packagesUpdated": 2,
+    "filesReplaced": 2,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 0,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "base",
+        "from": "1.0.0",
+        "to": "1.0.0"
+      },
+      {
+        "id": "toolkit",
+        "from": "1.0.0",
+        "to": "1.0.0"
+      }
+    ],
+    "previousContent": null,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "unchanged": [],
+    "sections": [],
+    "dependencies": [
+      {
+        "id": "base",
+        "requires": []
+      },
+      {
+        "id": "toolkit",
+        "requires": []
+      }
+    ],
+    "effects": [
+      {
+        "path": ".agents/base.md",
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "relation": {
+          "current": "changed",
+          "shipped": "changed"
+        },
+        "verification": {
+          "targets": "verified",
+          "topology": "verified",
+          "extensionRecord": "verified"
+        },
+        "recovery": {
+          "state": "retained",
+          "path": "<recovery-bundle>"
+        }
+      },
+      {
+        "path": ".agents/toolkit.md",
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "relation": {
+          "current": "changed",
+          "shipped": "changed"
+        },
+        "verification": {
+          "targets": "verified",
+          "topology": "verified",
+          "extensionRecord": "verified"
+        },
+        "recovery": {
+          "state": "retained",
+          "path": "<recovery-bundle>"
+        }
+      }
+    ]
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Review previous content in the recovery bundle at <recovery-bundle>."
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "id": "collaboration",
+  "name": "Collaboration",
+  "description": "Explore choices and match collaboration depth to the decision",
+  "version": "0.3.0",
+  "dependencies": []
+}

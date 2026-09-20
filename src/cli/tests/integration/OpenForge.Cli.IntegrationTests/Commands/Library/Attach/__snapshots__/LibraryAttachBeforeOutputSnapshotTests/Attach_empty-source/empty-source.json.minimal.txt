@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 3,
+  "command": "library attach",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Registered the team-knowledge Library from shared/team-knowledge. It has no eligible files yet.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksCreated": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "sourceFiles": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "recorded": true,
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    }
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "removed"
+  },
+  "next": null
+}

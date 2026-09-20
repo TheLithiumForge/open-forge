@@ -1,0 +1,5 @@
+Installed  (no ownership record, so installed packages cannot be listed)
+
+Available (from <extension-source>)
+  toolkit  1.0.0  Extension package toolkit.
+Next: open-forge extension install <id>

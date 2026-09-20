@@ -15,6 +15,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Recovery.Models.Comparison;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Unit")]
 public sealed class LibraryRecoveryEntrySetObservationTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Recovery entry sets preserve every finite comparison state without reducing incomplete facts to a safe subset")]
     [InlineData("Prior"), InlineData("Intended"), InlineData("Third"), InlineData("Unavailable"), InlineData("Blocked")]
     public static void RetainsCompleteOrderedFacts(string state)
@@ -39,6 +40,7 @@ public sealed class LibraryRecoveryEntrySetObservationTests
         Assert.Equal(classification, result.Entries[1].State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Recovery entry sets reject incomplete reordered duplicate and foreign entry or workspace facts")]
     [InlineData("default"), InlineData("empty"), InlineData("missing"), InlineData("reordered"), InlineData("duplicate"), InlineData("extra")]
     [InlineData("changed-entry"), InlineData("foreign-context")]
@@ -71,6 +73,7 @@ public sealed class LibraryRecoveryEntrySetObservationTests
         Assert.Throws<ArgumentException>(() => new RecoveryEntrySetObservation(workspace, candidate, invalid));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Recovery entry sets require exact verified final and physical workspace identity")]
     [InlineData("draft"), InlineData("malformed"), InlineData("unsupported"), InlineData("unavailable")]
     [InlineData("workspace-key"), InlineData("workspace-path")]
@@ -95,6 +98,7 @@ public sealed class LibraryRecoveryEntrySetObservationTests
         Assert.Throws<ArgumentException>(() => new RecoveryEntrySetObservation(workspace, invalid, entries));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Library residual domain observations require the exact neutral set and never acquire Framework comparison authority")]
     public static void BindsLibraryResidualToItsExactCandidate()
     {
@@ -112,6 +116,7 @@ public sealed class LibraryRecoveryEntrySetObservationTests
         Assert.Equal(RecoveryBundleProducer.Library, result.Attribution?.Producer);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Recovery entry-set agreement uses immutable workspace and entry value identity")]
     public static void AcceptsEquivalentImmutableIdentities()
     {

@@ -11,16 +11,16 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Context.Shared.Links;
 
 public sealed class ContextLinkCaseMismatchResolverTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Context detects exact target case mismatch after complete or missing neutral resolution"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     [InlineData((int)SourceLinkTargetResolution.Complete)]
     [InlineData((int)SourceLinkTargetResolution.Missing)]
     public async Task DetectsCaseMismatchAcrossNeutralResolutionStates(int initialResolutionValue)
     {
         var initialResolution = (SourceLinkTargetResolution)initialResolutionValue;
-        using var workspace = ContextOperationWorkspace.Create();
-        var actualPath = workspace.MoveFile(
-            ".agents/projects/linked.md",
-            ".agents/projects/Linked.md");
+        using var workspace = ContextOperationWorkspace.Create(
+            linkedTargetPath: ".agents/projects/Linked.md");
+        var actualPath = workspace.Absolute(".agents/projects/Linked.md");
         var catalogue = new SourceCatalogue(
             workspace: workspace.Workspace,
             candidates: [],

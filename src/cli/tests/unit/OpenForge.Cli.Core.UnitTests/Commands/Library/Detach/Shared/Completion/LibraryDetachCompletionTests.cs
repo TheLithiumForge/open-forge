@@ -16,6 +16,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Detach.Shared.Completion
 public sealed class LibraryDetachCompletionTests
 {
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData((int)RecoveryBundlePreparationState.Incomplete, false, (int)CliSemanticStatus.Incomplete)]
     [InlineData((int)RecoveryBundlePreparationState.Incomplete, true, (int)CliSemanticStatus.Incomplete)]
@@ -66,6 +67,7 @@ public sealed class LibraryDetachCompletionTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("removed", (int)CliSemanticStatus.Complete, (int)LibraryRecoveryState.Removed)]
     [InlineData("retained", (int)CliSemanticStatus.Attention, (int)LibraryRecoveryState.Retained)]
@@ -95,6 +97,7 @@ public sealed class LibraryDetachCompletionTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData(false, (int)CliSemanticStatus.Interrupted)]
     [InlineData(true, (int)CliSemanticStatus.Failed)]
@@ -117,6 +120,7 @@ public sealed class LibraryDetachCompletionTests
         Assert.Equal(LibraryRecoveryState.Retained, result.Result.Application.Recovery.State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void CancellationBeforeEffectsDoesNotInventRecoveryOrPublication()
     {
@@ -134,6 +138,7 @@ public sealed class LibraryDetachCompletionTests
         Assert.Empty(result.Result.Application.Residuals);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void UnknownRecordCompletionRetainsEarlierVerifiedLinkAndUnknownRecordTruth()
     {
@@ -157,6 +162,7 @@ public sealed class LibraryDetachCompletionTests
         Assert.Contains(result.Result.Application.Residuals, residual => residual.Kind == LibraryResidualKind.Link && residual.State == LibraryResidualState.Retained);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("not-last"), InlineData("scope-incomplete"), InlineData("source-target")]
     public void VerifiedBytesAloneCannotEstablishACompleteSafeApplication(string missingProof)
@@ -185,6 +191,7 @@ public sealed class LibraryDetachCompletionTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData(false, (int)CliSemanticStatus.Incomplete)]
     [InlineData(true, (int)CliSemanticStatus.Blocked)]
@@ -197,8 +204,9 @@ public sealed class LibraryDetachCompletionTests
             Code = LibraryDetachFindingCode.RecordUnavailable,
             Status = CliSemanticStatus.Incomplete,
             LibraryId = "team-knowledge",
-            Path = ".agents/open-forge.libraries.json",
+            Path = ".agents/open-forge.lock.json",
             Cause = "Required record read unavailable.",
+            OccupantKind = null,
         };
         var unsafeTarget = new LibraryDetachFinding
         {
@@ -207,6 +215,7 @@ public sealed class LibraryDetachCompletionTests
             LibraryId = "team-knowledge",
             Path = ".agents/directives/review.md",
             Cause = "Unsafe observed destination.",
+            OccupantKind = null,
         };
         input = input with
         {
@@ -224,6 +233,7 @@ public sealed class LibraryDetachCompletionTests
         Assert.Empty(result.Result.Application.Residuals);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void CompleteDryRunPlanDoesNotInventAttentionOrAppliedEffects()
     {
@@ -242,6 +252,66 @@ public sealed class LibraryDetachCompletionTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(LibraryApplicationState.NotStarted, result.Result.Application.State);
         Assert.Equal(LibraryRecoveryState.NotRequested, result.Result.Application.Recovery.State);
+        Assert.Null(result.Result.Application.RecordPublication.PublishedLast);
+        Assert.Empty(result.Result.Application.Residuals);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    public void DryRunAttentionFindingReturnsWarningWithoutApplicationEffects()
+    {
+        var result = LibraryDetachCompletion.Complete(
+            DryRunInput(CliSemanticStatus.Attention));
+
+        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        AssertNoApplicationEffects(result);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    [InlineData((int)CliSemanticStatus.Blocked)]
+    [InlineData((int)CliSemanticStatus.Incomplete)]
+    [InlineData((int)CliSemanticStatus.Interrupted)]
+    [InlineData((int)CliSemanticStatus.Failed)]
+    public void DryRunAttentionDoesNotOverrideStrongerStatus(int strongerStatusValue)
+    {
+        var result = LibraryDetachCompletion.Complete(
+            DryRunInput(CliSemanticStatus.Attention, (CliSemanticStatus)strongerStatusValue));
+
+        Assert.Equal((CliSemanticStatus)strongerStatusValue, result.Status);
+        AssertNoApplicationEffects(result);
+    }
+
+    private static LibraryDetachCompletionInput DryRunInput(params CliSemanticStatus[] statuses)
+    {
+        var input = LibraryMutationCompletionData.Detach();
+        var observations = Assert.IsType<LibraryDetachPlanningInput>(input.Observations);
+        var request = input.Request with { Mode = LibraryMode.DryRun };
+        observations = observations with { Request = request };
+        var findings = statuses.Select(status => new LibraryDetachFinding
+        {
+            Code = LibraryDetachFindingCode.MappingBlocked,
+            Status = status,
+            LibraryId = "team-knowledge",
+            Path = ".agents/directives/review.md",
+            Cause = "A test finding.",
+            OccupantKind = LibraryDetachOccupantKind.OrdinaryFile,
+        }).ToArray();
+        return input with
+        {
+            Request = request,
+            Observations = observations,
+            Plan = Assert.IsType<LibraryDetachPlan>(input.Plan) with { Input = observations, Findings = [.. findings] },
+            Execution = LibraryMutationCompletionData.Empty(),
+        };
+    }
+
+    private static void AssertNoApplicationEffects(LibraryDetachResult result)
+    {
+        Assert.Equal(LibraryApplicationState.NotStarted, result.Result.Application.State);
+        Assert.Equal(LibraryVerificationState.NotStarted, result.Result.Application.Verification);
+        Assert.Equal(LibraryRecoveryState.NotRequested, result.Result.Application.Recovery.State);
+        Assert.Equal(LibraryRecordPublicationState.NotStarted, result.Result.Application.RecordPublication.State);
         Assert.Null(result.Result.Application.RecordPublication.PublishedLast);
         Assert.Empty(result.Result.Application.Residuals);
     }

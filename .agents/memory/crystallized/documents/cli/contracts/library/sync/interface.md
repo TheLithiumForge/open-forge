@@ -7,6 +7,9 @@ open-forge:
 
 # library sync Interface Contract
 
+Unavailable ownership is reported as `library-sync.ownership-observation`
+with `completed` status. This finding grants no ownership or mutation permission.
+
 ## Status And Authority
 
 This is the current Crystallized Interface Contract for
@@ -28,6 +31,15 @@ define accepted shared realization boundaries. The [Index Behavior Contract](../
 defines existing generated-navigation projection. This Interface Contract adds
 no callable or implementation choice. The active Task records implementation and executable evidence.
 
+The sole generated state publication is `.agents/open-forge.lock.json`.
+The existing public record-effect and publication fields describe that lock
+write. Its Libraries section contains validated registration identities and
+source-relative paths; other ownership sections are preserved. No retired
+record is read, written, converted, or deleted. An unavailable lock write is
+skipped without blocking otherwise safe effects, and reports no publication.
+Recovery protects the exact prior lock bytes before any effects; the planned
+lock publication remains last after verified link and generated-region effects.
+
 ## Purpose And Operation Boundary
 
 `library sync` reconciles one registered consumer-local library with the
@@ -40,8 +52,14 @@ generated `Entries` regions, and publishes the sorted consumer record last.
 Sync is one complete mutation for one library. It must establish the complete
 source inventory before planning any retirement. A source that is unavailable
 or incompletely enumerable prevents every addition, retirement, generated
-change, and record effect. A changed or unsafe destination occupant blocks the
-whole request; Sync does not apply unaffected mappings as a safe subset.
+change, and record effect and returns `incomplete` with no effects; it says the
+source is unavailable rather than treating the observation as an empty source.
+A changed ordinary destination is eligible for retention only when it is the
+current destination of a registered mapping. If independent safe mapping
+effects exist, Sync applies exactly those effects and returns `incomplete`,
+naming the retained destination. If no independent safe effect exists, the
+changed mapping remains the prior `blocked` refusal. Other unsafe or unavailable
+mapping facts do not acquire a continuation bypass.
 
 Sync changes projection links and the consumer record only. It never copies,
 moves, deletes, or writes through source bytes. Changes to the bytes of an
@@ -51,30 +69,32 @@ copy or a source mutation.
 ## Syntax
 
 ```text
-open-forge library sync <library-id> [--dry-run] [global flags]
+open-forge library sync <library-id> [--dry-run] [--automatic] [global flags]
 ```
 
 The command path selects the sync operation. The shared [Global CLI Flags](../../shared/global-flags/interface.md)
-contract defines `--workspace`, `--json`, `--view`, `--verbose`, `--help`, and
-`--version`; all six retain their shared spelling, composition, repetition,
+contract defines `--workspace <path>`, `--format <text|json>`,
+`--detail <minimal|standard|full|debug>`, repeatable
+`--detail-filter <error|warning|info|all>`, `--help`, and `--version`; all six retain their shared spelling, composition, repetition,
 terminal behavior, and output meaning.
 
 `--dry-run` is the only preview spelling. `--help` and `--version` are terminal
 forms and stop before workspace, record, source, or projection work.
 
 Sync has no source-root operand, aliases, extra positional operands, `--force`,
-`--automatic`, `--yes`, `--apply`, `--prune`, collection selector, remapping
+`--yes`, `--apply`, `--prune`, collection selector, remapping
 flag, glob, copy mode, saved plan, partial-detach selector, or generic mutation
 dispatcher. The recorded `sourceRoot` is the only source selection for the
 requested library.
 
 ## Operand And Repetition
 
-| Operand or flag     | Role                                      | Accepted value                                  | Omission and repetition                                                          |
-| ------------------- | ----------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------- |
-| `<library-id>`      | Select one registered management identity | One value matching the library-ID grammar below | Required and singleton. An unknown ID is invalid; a malformed record is blocked. |
-| `--dry-run`         | Write policy                              | Boolean flag with no value                      | Application is selected when omitted. Repetition is accepted and idempotent.     |
-| Shared global flags | Workspace and presentation                | Defined by the shared global contract           | Shared defaults and repetition rules apply.                                      |
+| Operand or flag     | Role                                      | Accepted value                                  | Omission and repetition                                                                                         |
+| ------------------- | ----------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `<library-id>`      | Select one registered management identity | One value matching the library-ID grammar below | Required and singleton. An unknown ID in readable ownership is invalid; unavailable ownership is informational. |
+| `--dry-run`         | Write policy                              | Boolean flag with no value                      | Application is selected when omitted. Repetition is accepted and idempotent.                                    |
+| `--automatic`      | Confirmation policy                       | Boolean flag with no value                      | Final confirmation is required when omitted; this flag bypasses that confirmation only. Repetition is accepted and idempotent. |
+| Shared global flags | Workspace and presentation                | Defined by the shared global contract           | Shared defaults and repetition rules apply.                                                                     |
 
 No flag adds retirement authority, bypasses expected-link proof, chooses a
 source root, or changes record ownership. Sync never treats a recommendation
@@ -95,43 +115,18 @@ characters are invalid. The ID is a management identity in the consumer
 library-record namespace. It is not derived from the source root and is not an
 automatic source ID or source-reference operand.
 
-Sync reads the separate consumer-owned record:
+Selection reads `libraries` claims in `.agents/open-forge.lock.json`. A usable
+claim supplies `id`, `sourceRoot`, `destinationRoot`, and source-relative `paths`.
+The shared codec reads understood fields without requiring exact member sets,
+member order, or a matching schema version. Typed portable roots, eligible source
+suffixes, and unambiguous destinations remain required before using a claim.
 
-```text
-.agents/open-forge.libraries.json
-```
-
-The record must have exactly schema-v1 shape:
-
-```json
-{
-  "schemaVersion": 1,
-  "libraries": [
-    {
-      "id": "team-knowledge",
-      "sourceRoot": "shared/team-knowledge",
-      "destinationRoot": ".",
-      "paths": [".agents/directives/review.md"]
-    }
-  ]
-}
-```
-
-The only properties are `schemaVersion`, `libraries`, `id`, `sourceRoot`, `destinationRoot`, and
-`paths` at their declared levels. `schemaVersion` is exactly numeric `1`.
-Library records are sorted by ID, and each `paths` array is sorted by portable
-path spelling. `paths` contains unique eligible source-relative
-path strings mapped below the recorded `destinationRoot`. The record
-stores no expected link target; Sync derives the expected relative target from
-`sourceRoot`, `destinationRoot` and each source-relative suffix, measured from
-the actual destination parent to the source leaf. Extra fields, duplicates, malformed
-values, absolute paths, and unsafe paths block the operation. The record is not
-part of `.agents/open-forge.lifecycle.json`.
-
-An unknown ID has no accepted no-op interpretation and returns `invalid`.
-Sync does not select an ID by prefix, source-root similarity, destination
-basename, or route position. A record's source-root spelling is the only source
-selection and is validated again before mutation.
+An absent, unreadable, nonordinary, malformed, or uninterpretable lock produces
+an informational ownership observation with `completed` status, no selected
+Library, and no effects. It never falls back to the old record or infers ownership
+from matching links. An unknown ID in a readable lock remains `invalid-input`.
+Exact relative-link targets derive from both recorded roots and each suffix.
+The lock stores no target bytes or comparison hashes.
 
 ## Source Availability And Complete Inventory
 
@@ -142,9 +137,9 @@ ancestor and the selected root must be a real ordinary directory, without
 symlink, junction or reparse ancestry. No specially named child is required.
 The selected directory itself scopes the recursively discovered eligible files.
 
-An absent or non-directory source root is `invalid` for Attach. For an existing
+An absent or non-directory source root is `invalid-input` for Attach. For an existing
 registration, unavailable or missing source facts make Inspect or Sync
-`incomplete`; a readable non-directory root is `invalid`. Unsafe containment,
+`incomplete`; a readable non-directory root is `invalid-input`. Unsafe containment,
 linked ancestry or ambiguous identity is `blocked`. List reports only bounded
 root availability and does not enumerate descendants. An incomplete source is
 never an empty source inventory.
@@ -172,7 +167,9 @@ Existing source classification and protected-control rules remain applicable.
 An inaccessible directory, enumeration failure, unavailable eligible ordinary
 file or unsafe required boundary prevents complete inventory. Retain known safe
 facts as partial evidence, never as permission to delete retired links. Source
-bytes are never copied, rewritten or deleted. Only eligible leaf membership and
+bytes are never copied, rewritten or deleted. The result is `incomplete` (exit
+3) with no effects and says the source is unavailable; it never presents the
+incomplete observation as an empty source. Only eligible leaf membership and
 physical path facts feed projection planning.
 
 ## Reconciliation Effects
@@ -184,8 +181,9 @@ strings. Both sets use the recorded destination root; Sync cannot change it.
 | Relationship | Destination fact                                                                                                                   | Sync effect                                                                       |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | `P ∩ R`      | Exact registered relative file symlink remains at the mapped destination and its raw target is the derived target                  | Preserve the link and record path.                                                |
-| `P ∩ R`      | Destination leaf is missing and its parent path is safe                                                                            | Create the exact relative file symlink.                                           |
-| `P ∩ R`      | Destination is an ordinary file, directory, different link, special entry, unsafe path, unknown state, or separately owned path    | Block the whole Sync.                                                             |
+| `P ∩ R`      | Destination leaf is missing and its parent path is safe                                                                            | Create the exact relative file symlink and retain a `registered-link-restored` Attention finding. The warning also applies to a dry run, which writes nothing. |
+| `P ∩ R`      | Destination is an ordinary file for the current registered mapping                                                                  | Preserve the ordinary bytes and retain the mapping. Continue only independent safe mapping effects; with such effects the result is `incomplete` and names the retained destination, otherwise block the whole Sync. |
+| `P ∩ R`      | Destination is a directory, different link, special entry, unsafe path, unknown state, or separately owned path                   | Block the whole Sync.                                                             |
 | `P \ R`      | Destination leaf is exactly missing and its parent path is safe                                                                    | Create a new exact relative file symlink and add the path to the record.          |
 | `P \ R`      | Any destination occupant exists or is unsafe, including an unregistered matching link                                              | Block the whole Sync.                                                             |
 | `R \ P`      | Destination is the exact registered relative symlink with the derived raw target, whether its source target is present or dangling | Delete only that exact link and remove the path from the record.                  |
@@ -195,10 +193,13 @@ strings. Both sets use the recorded destination root; Sync cannot change it.
 The source inventory must be complete before the `R \ P` set is formed. A
 source file becoming excluded is absent from `P` and follows the same exact
 retirement proof. A missing current link in `P ∩ R` is safe drift that Sync may
-repair after complete preflight; a missing retired link in `R \ P` is
-unverifiable and blocks. A changed occupant is unsafe mutation drift and
-blocks. Read-only observation may expose complete safe drift as `attention`,
-but Sync never uses that status to bypass a mutation precondition.
+repair after complete preflight, with an Attention2 warning; a missing retired
+link in `R \ P` is unverifiable and blocks. A changed ordinary occupant is
+retained only for a current registered mapping and only alongside independent
+safe effects; otherwise it remains blocked. Every other changed, unsafe, or
+unavailable mapping remains a blocker or incomplete no-effect result according
+to its fact. Sync never uses a warning to bypass an unsafe mutation
+precondition.
 
 Sync does not sweep unregistered consumer files or adopt a matching symlink.
 Local sibling files remain untouched. Source file byte changes do not create a
@@ -226,34 +227,40 @@ effects verify.
 
 ## Consumer Permission
 
+The repeatable `--allow-path <path>` explicitly authors shared `allowInstallPaths`
+in `.agents/open-forge.json` after safe planning and before permission evaluation.
+It persists in non-interactive execution; `--dry-run` never writes it. A refused
+explicit write is reported and prevents content application. Eligible interactive
+approval offers always, once or cancel. Once changes no settings. Unknown or
+malformed settings withhold external grants while implicit `.agents/` admission
+remains independent; an always choice cannot overwrite malformed settings.
+
 This command selects [Workspace Permissions](../../shared/workspace-permissions/interface.md)
 for the union of complete current mapped inventory and registered destinations, including unchanged links and retirements. `.agents/**` leaves remain implicit.
-Requirements bind the selected Library ID and source root. Permission remains
+Requirements are destination paths shared by every Extension and Library; they carry no Library ID or source binding. Permission remains
 necessary even for existing owned links; recorded identity makes removal
 source-independent, without exempting it from revocation.
 
 Live uncovered leaves propose their immediate parent folder; root and retirement-only leaves use exact grants.
 Directory proposals explicitly include future descendants and never cover the
-workspace root. A conflicting saved source binding requires disclosed old/new
-source replacement approval under the shared contract. Protected paths,
+workspace root. Changing a Library source does not change destination permission. Protected paths,
 source trees, ancestry, ownership and collision checks still apply per leaf.
 
-Only human prompt-capable application can approve the displayed scopes. JSON,
+Human prompt-capable application can approve the displayed scopes once or always; explicit `--allow-path` can persist shared grants without a prompt. JSON,
 redirected execution and dry-run never prompt; missing or declined approval is
-`blocked` and cancellation is `interrupted`, without effects. Malformed or unsafe
-permission observations are `blocked`; unavailable observations are `incomplete`.
+`blocked` and cancellation is `cancelled`, without effects. Invalid or unsafe settings supply no external grants. A refused always approval reports its existing permission finding; implicit paths require no grant.
 
 `result.permissions` appears after `plan` and before `application`. It uses the
-shared Library leaf, scope, rebinding and receipt coordinates exactly. Required
+shared destination-string, scope and receipt coordinates exactly. Required
 and missing arrays are concrete destinations; proposed/approved scopes expose
-remembered authority. A proposed rebind is not an applied one. Only a verified
+the requested scope using only `{kind,path}`. No rebinding field exists. Only a verified
 outcome says permission was saved; later content failure retains that outcome.
 
 Permission findings use the `library-sync.` prefix and suffixes
 `permission-required`, `permission-declined`, `permission-invalid`,
 `permission-unavailable`, `permission-changed` and `permission-write-failed`.
 Changed lease-bound permission facts block; failed permission publication is
-`failed` with its actual receipt; cancellation uses the existing `interrupted`
+`failed` with its actual receipt; cancellation uses the existing `cancelled`
 finding. No content effect proceeds after an unverified permission write.
 
 ## Dry Run And Application
@@ -279,263 +286,263 @@ registered raw-target links. It never resolves a link to delete its target and
 never copies or writes source bytes. For an effectful application, typed
 recovery is prepared and verified before the first effect; an effect-free plan
 has no recovery bundle. Effects are monotonic and are not rolled back or
-compensated after verification. Link and generated effects verify before the
-record is published last.
+compensated after verification. A retained changed ordinary destination is not
+an effect target and its bytes are never replaced or adopted. Independent safe
+link and generated effects verify before the record is published last. A
+noninteractive or redirected invocation that reaches final confirmation without
+`--automatic` returns `invalid-input` (Invalid4) with
+`library-sync.confirmation-required` and performs no effect; it never silently
+applies the plan.
 
 ## Human Output
 
-Human output comes from one typed result. Expanded output includes the selected
-workspace, library ID, recorded source root, inventory completeness, current
-and registered path sets, created and retired paths, exact raw-target proof,
-preserved local occupants, generated-region effects, record effect, dry-run or
-application mode, verification, recovery disposition, residual paths, and
-semantic status.
+Every semantic result is rendered by the shared native report. --format text
+is the default. The applicable global flags are --workspace <path>, --format
+<text|json>, --detail <minimal|standard|full|debug>, repeatable
+--detail-filter <error|warning|info|all>, --help, and --version. The default
+detail is minimal; standard adds workspace and command context, full adds all
+bounded facts, and debug adds bounded diagnostics on stderr. Detail does not
+change semantics, effects, counts, or status. Filters select finding severities;
+all is the default filter.
 
-Compact output retains the library ID, source and destination roots, mode, status, completeness,
-safety, every created or retired path, every blocker, and at most one required
-`Next:` action. The primary human result for `complete`, `attention`, and
-`incomplete` goes to stdout. The primary human result for `invalid`, `blocked`,
-`failed`, and `interrupted` goes to stderr. Bounded diagnostics use stderr.
+Library sync shows a plan review before final confirmation. --automatic bypasses the final confirmation only; without it the confirmation is Apply these changes? [y/N]. Permission prompts for new links remain separate.
 
-Both views lead with the operation outcome or preview, status, exact workspace
-and selection method, then Library identity and the recorded roots. Human
-`requires attention` represents the typed `attention` status. Findings and
-blockers remain prominent before a plan can be mistaken for completed work.
+When the final confirmation is required but the invocation is noninteractive or
+redirected, Sync returns `invalid-input` (Invalid4), reports
+`library-sync.confirmation-required`, and writes nothing. `--automatic` does not
+bypass destination permission, ownership, collision, source-inventory, or
+safety checks.
 
-The observed record and links are labelled as before-change facts. Comparison
-labels describe membership in the intended Library and never imply a source scan
-for Detach. Mappings and effects are grouped beside their exact paths. Both views retain
-all affected or preserved paths, permission decisions, application and
-verification state, recovery disposition and residual paths. Expanded adds
-supporting source, ownership, expected-state and hash details. Plan rows remain
-labelled as planned when application is incomplete, failed or interrupted;
-rendering does not infer that an individual planned effect was applied. A
-source file and the relative link exposing it remain distinct identities.
-No path is truncated. At most one required Next action comes from the result.
+The catalogue text by detail level is:
 
-### No-op and reconciliation excerpts
-
-A successful no-op includes:
+`minimal`:
 
 ```text
-Library sync completed.
-Status: complete
+Synchronized team-knowledge: 2 links added, 1 removed, 10 unchanged.
+  Added    docs/new-a.md
+  Added    docs/new-b.md
+  Removed  docs/old.md   (its source file is gone)
+  Updated the Entries section of docs/_docs.md
 ```
 
-Its application line says `no changes needed`. A reconciliation preview lists
-actual new and retired link effects under its plan:
+`minimal`, changed destination (stderr):
 
 ```text
-Plan: complete
-  Create link: docs/new.md -> ../shared/team-knowledge/new.md
-  Remove link: docs/old.md -> ../shared/team-knowledge/old.md
-  Record: replace (.agents/open-forge.libraries.json)
+Cannot synchronize team-knowledge: docs/review.md is no longer the link the Library created. Nothing was changed.
+  It is now an ordinary file. Move it away or restore the link, then rerun.
+Next: open-forge library inspect team-knowledge
 ```
 
-The preview also prints `No files changed (--dry-run).` A blocker appears with
-its status, code, cause and path before the plan. Next is shown only when the
-result supplies a required action.
+At minimal detail, an incomplete result with independent safe effects names
+the retained destination and shows those effects. Its headline is
+`<id> could not be fully synchronized: <limitation>.`; it does not claim that
+nothing changed. A restored registered link retains its warning alongside the
+normal synchronization headline. Preview reports planned effects without claiming
+application.
+
+`standard` adds `Workspace:`, the unchanged links as one count line, targets
+per changed link, and the lock row.
+
+`full` adds the inventory, expected states, verification and recovery facts.
+
+Results with completed, completed-with-warnings, or incomplete status use
+stdout. Invalid-input, blocked, failed, and cancelled results use stderr.
+A parser failure is text on stderr without a result envelope.
 
 ## Structured Output
 
-`--json` emits one complete structured result to stdout for every semantic
-status from the same typed result used by human output. It never prompts and
-never reruns resolution, inventory, planning, application, verification, or
-residual reporting. Human text is not mixed into JSON stdout; bounded
-diagnostics use stderr.
+--format json emits one schema-3 envelope on stdout for each semantic result.
+The envelope has exactly these fields:
 
-The result exposes the concrete sync facts under the exact shared result
-envelope, including:
+~~~text
+{
+  schemaVersion: 3,
+  command,
+  status,
+  detail,
+  filter,
+  workspace,
+  summary,
+  findings,
+  effects,
+  counts,
+  limitations,
+  data,
+  recovery,
+  next
+}
+~~~
 
-- selected workspace, library ID, record source root, and record validity;
-- complete inventory coverage and excluded or unavailable source facts;
-- registered, current, added, preserved, missing, retired, and blocked path
-  facts;
-- exact derived source/destination paths and derived raw-link identity,
-  without storing an expected-link field in the record;
-- generated-region effects, consumer ownership and collision facts, and the
-  sorted intended record;
-- dry-run or application mode, expected-state, verification, recovery, and
-  residual facts without source bytes; and
-- semantic status and at most one required `Next:` action.
+The command is exactly library sync; data follows the catalogue:
+
+| Level    | `data`                                                                                |
+| -------- | ------------------------------------------------------------------------------------- |
+| minimal  | `{ mode, id, sourceFolder, destinationFolder, permissions { ... } }` plus the effects |
+| standard | + `unchanged: [ path ]`, per effect `target`                                          |
+| full     | + `inventory`, `expectedStates`, `verification`, `recovery` details                   |
+
+Human and JSON output are projections of one typed result. data is null only at
+the parser boundary before command binding. There is no alternate JSON
+projection.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                                                                                                                   |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | A complete safe no-op or dry-run reconciliation was established, or all planned additions, exact retirements, generated-region changes, and final record publication verified.                                                                                                                                            |
-| `attention`   | Target effects verified, but post-verification recovery cleanup has a positively observed retained residual under the shared recovery boundary. Planned additions or retirements do not create `attention`.                                                                                                               |
-| `incomplete`  | The selected record or source has a required coverage or application fact that cannot be completely inspected or prepared, most importantly an unavailable or incomplete source inventory. No effect begins.                                                                                                              |
-| `invalid`     | Command input, operand cardinality, library-ID grammar, unknown ID, source selection through an operand, or terminal-mode use is outside this interface.                                                                                                                                                                  |
-| `blocked`     | The request is syntactically valid but malformed record data, unsafe containment or aliasing, a changed occupant, an unproven expected raw target, a collision, an unsafe generated region, unavailable real-link capability, or another mutation precondition prevents a safe complete reconciliation. No effect begins. |
-| `failed`      | An unexpected application, verification, or unknown recovery-disposition failure occurs after a persistent effect begins.                                                                                                                                                                                                 |
-| `interrupted` | The caller cancels before completion. Effects already verified remain residual truth; an unexpected post-effect failure remains `failed`.                                                                                                                                                                                 |
+| Status                  | When                                                                      | Headline                                                                            | Exit | Stream |
+| ----------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | nothing to change                                                         | `The <id> Library is up to date. Nothing to do.`                                    |    0 | stdout |
+| completed               | changes other than a repaired current registered link                     | `Synchronized <id>: <A> links added, <R> removed, <U> unchanged.` (omit zero parts) |    0 | stdout |
+| completed (dry run)     | planned without a warning                                                 | `Would synchronize <id>: <A> links to add, <R> to remove.`                          |    0 | stdout |
+| completed               | no ownership record                                                       | `No ownership record exists, so <id> cannot be synchronized. Nothing was changed.`  |    0 | stdout |
+| completed-with-warnings | a current registered link was missing and was restored; dry run retains the same warning without writes | `Synchronized <id>: <A> links added, <R> removed, <U> unchanged.` plus the retained warning row |    2 | stdout |
+| completed-with-warnings | recovery bundle retained                                                  | + family row                                                                        |    2 | stdout |
+| incomplete              | changed ordinary current registered destination retained while independent safe effects applied | `<id> could not be fully synchronized: <limitation>.` plus effect rows |    3 | stdout |
+| incomplete              | source unavailable or inventory/fact unreadable                           | `<id> could not be synchronized: <source unavailable or limitation>. Nothing was changed.` |    3 | stdout |
+| invalid-input           | bad or unknown ID, extra operand, or required final confirmation unavailable without `--automatic` | `Cannot synchronize <ref>: <problem>.`                              |    4 | stderr |
+| blocked                 | changed destination with no independent safe effect, retired link missing, collision, permission, lock, or other unsafe mapping | `Cannot synchronize <id>: <reason>. Nothing was changed.`                           |    5 | stderr |
+| failed                  | after effects                                                             | `Library sync stopped after <n> of <m> changes.`                                    |    1 | stderr |
+| cancelled               | prompt cancelled, Ctrl+C                                                  | `Library sync was cancelled. Nothing was changed.`                                  |  130 | stderr |
 
-For ordinary conditions, status precedence is `blocked` > `incomplete` >
-`attention` > `complete`. Invalid input stops before operation resolution. The
-shared [Result Coordinates](../../shared/result-coordinates/interface.md)
-define numeric exits, stream coordinates, and the structured envelope.
+### Current merged behavior and open questions
+
+The accepted meaning treats a missing current registered link as safe repair:
+the link may be recreated after complete preflight and the result is
+completed-with-warnings (Attention2), including a dry-run warning with no
+writes. A missing retired link remains blocked because its deletion cannot be
+proven. The implementation qualification remains deferred.
+
+The catalogue assigns lock-held to blocked with exit 5. The merged operation
+returns failed with exit 1, operation-failed, and an IOException. This
+implementation discrepancy remains deferred; it does not change the accepted
+contract above.
 
 ## Errors And Boundaries
 
-Sync rejects or blocks:
+The finding catalogue is:
 
-- zero or several positional operands;
-- an ID outside the exact grammar, an unknown ID, or an attempted source-root
-  operand;
-- a missing, malformed, extra-field, duplicate, unsorted, or unsafe
-  `.agents/open-forge.libraries.json` record;
-- a missing, absolute, backslash, dot-traversing, escaping, aliased, outside,
-  or physically overlapping recorded source root;
-- a non-ordinary source root, link or reparse ancestry, or
-  actual leaf overlap with selected or registered source trees;
-- a missing or non-ordinary consumer `.agents` root or linked/reparse consumer
-  ancestry;
-- an unavailable or incomplete source inventory, inaccessible subtree, or
-  incomplete exclusion pass;
-- a missing retired destination where exact registered raw-target proof is
-  required;
-- any ordinary, directory, different-link, special, unsafe, unknown, or
-  separately owned destination occupant where an exact missing destination or
-  exact registered raw target is required;
-- an unregistered matching link, Extension or lifecycle-owned path, library
-  control, two-library destination collision, or unsafe parent directory;
-- a missing, ambiguous, or changed existing generated region when the route
-  projection is required; or
-- missing real-link capability or unavailable required application recovery
-  preparation.
+| Code                                         | Severity | Family                     | Message                                                                                                             | Next                              |
+| -------------------------------------------- | -------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| library-sync.invalid-input                   | error    | invalid-input              |                                                                                                                     |                                   |
+| library-sync.confirmation-required           | error    | confirmation-required      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.confirmation-required`).                                                     | `open-forge library sync --automatic` |
+| library-sync.invalid-id                      | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.invalid-id`).                                                                                | `open-forge library list`         |
+| library-sync.unknown-id                      | error    | unknown-id                 |                                                                                                                     | `open-forge library list`         |
+| library-sync.ownership-observation           | info     | ownership-observation      |                                                                                                                     |                                   |
+| library-sync.record-invalid                  | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.record-invalid`).                                         | `open-forge doctor`               |
+| library-sync.record-unavailable              | warning  | lifecycle-unavailable      |                                                                                                                     |                                   |
+| library-sync.record-blocked                  | error    | lifecycle-blocked          |                                                                                                                     |                                   |
+| library-sync.source-root-invalid             | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.source-root-invalid`).                                                    | none                              |
+| library-sync.source-root-unavailable         | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.source-root-unavailable`).                                                  | none                              |
+| library-sync.source-root-blocked             | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.source-root-blocked`).                                                          | none                              |
+| library-sync.inventory-incomplete            | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.inventory-incomplete`).                                            | none                              |
+| library-sync.mapping-unavailable             | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.mapping-unavailable`).                                                                   | `open-forge doctor`               |
+| library-sync.mapping-blocked                 | error    | local                      | `<destination path> is <an ordinary file \| a folder \| a different link> and is not the link the Library created.` | `open-forge library inspect <id>` |
+| library-sync.destination-collision           | error   | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.destination-collision`). | none                              |
+| library-sync.retired-link-missing            | error   | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.retired-link-missing`).                                                       | `open-forge library inspect <id>` |
+| library-sync.registered-link-restored       | warning | local                      |                                                                                                                     |                                   |
+| library-sync.link-capability-unavailable     | error   | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.link-capability-unavailable`).                                                                                         | none                              |
+| library-sync.consumer-blocked                | error   | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.consumer-blocked`).                                                                                | none                              |
+| library-sync.ownership-conflict              | error   | ownership-conflict         |                                                                                                                                                    |                                   |
+| library-sync.permission-required             | error   | permission-required        |                                                                                                                                                    |                                   |
+| library-sync.permission-declined             | error   | permission-declined        |                                                                                                                                                    |                                   |
+| library-sync.permission-invalid              | error   | permissions-invalid        |                                                                                                                                                    |                                   |
+| library-sync.permission-unavailable          | warning | permissions-unavailable    |                                                                                                                                                    |                                   |
+| library-sync.permission-changed              | error   | permissions-changed        |                                                                                                                                                    |                                   |
+| library-sync.permission-write-failed         | error   | permission-write-failed    |                                                                                                                                                    |                                   |
+| library-sync.generated-navigation-blocked    | error   | generated-region-unsafe    |                                                                                                                                                    |                                   |
+| library-sync.generated-navigation-incomplete | warning | projection-unavailable     |                                                                                                                                                    |                                   |
+| library-sync.lock-unavailable                | error   | workspace-lock-unavailable |                                                                                                                                                    |                                   |
+| library-sync.recovery-unavailable            | warning | recovery-unavailable       |                                                                                                                                                    |                                   |
+| library-sync.recovery-retained               | warning | recovery-artifact-retained |                                                                                                                                                    |                                   |
+| library-sync.application-failed              | error   | write-failed               |                                                                                                                                                    |                                   |
+| library-sync.verification-failed             | error   | verification-failed        |                                                                                                                                                    |                                   |
+| library-sync.operation-failed                | error   | operation-failed           |                                                                                                                                                    |                                   |
+| library-sync.interrupted                     | error   | interrupted                |                                                                                                                                                    |                                   |
 
-Every error names `library sync`, the library ID or affected path, the cause,
-and one useful next action when one is known. Sync does not inspect Git,
-perform Git operations or diagnostics, mutate remote or public state, create a
-route, rewrite the Loader, or change any source file.
+Findings retain code, severity, family, message, subject, cause, and next
+action when available. Counts are:
+
+`linksAdded`, `linksRemoved`, `linksUnchanged`, `sectionsUpdated`.
 
 ## Scenarios
 
-Verify an unchanged library without creating effects:
+`up-to-date`, `links-added`, `links-removed`, `both`, `dry-run`,
+`unknown-id` (invalid), `changed-occupant` (blocked when no independent safe
+effect; incomplete when a current registered mapping is retained alongside
+safe effects), `registered-link-gone` (completed-with-warnings),
+`source-unreadable` (incomplete with no effects), `permission-required`,
+`no-ownership-record` (info), `lock-held`, `write-failed-partial`, `cancelled`.
 
-```text
-open-forge library sync team-knowledge
-```
+Prompt rules from the catalogue:
 
-Preview source additions and retirements with structured output:
+Permission for new links outside `.agents`; plan review; `Apply these
+changes? [y/N]` unless `--automatic` (added by 04).
 
-```text
-open-forge library sync team-knowledge --dry-run --json
-```
+## Representative Transcripts
 
-The source root always comes from the selected record. The command does not
-accept a second path to override it.
+### completed
 
-## Non-Goals
+~~~text
+The team-knowledge Library is up to date. Nothing to do.
+~~~
 
-`library sync` does not:
+### completed-with-warnings
 
-- attach a new ID, choose a source root, detach a library, list or inspect
-  records, or perform a selector-based partial detach;
-- infer a source inventory from a partial read, remove a retired link before
-  complete inventory, or apply an unaffected subset after any changed
-  occupant;
-- sweep or adopt unregistered files or matching links;
-- select a collection, per-file subset, glob, per-file remapping or dependency;
-- traverse, copy, write, move, delete, or follow source bytes;
-- overwrite, adopt, rename, or release a consumer occupant or lifecycle claim;
-- create route parents, materialize entrypoints, rewrite authored entrypoints,
-  rewrite the Loader, or invent Framework roots;
-- change the lifecycle record or add library data to that schema;
-- perform Git fetch, pull, checkout, switch, stage, commit, or diagnostics;
-- write through a projected file or make Route Update, Index, Route Move, or
-  Route Remove follow or delete a library source target; their link-aware guard
-  and real-filesystem regression are prerequisites to library dogfood;
-- add compatibility, migration, remote publication, deployment, JavaScript,
-  dependency injection, a runtime registry, a generic mutation dispatcher, or
-  another callable design; or
-- create a receipt, saved plan, journal, or automatic rollback history.
+~~~text
+Synchronized team-knowledge: 1 link added.
+  Warning  <recovery-bundle>  Recovery artifact retained
+~~~
 
-## EndToEnd Journeys
+### incomplete
 
-1. **Unchanged complete no-op.** Run
-   `open-forge library sync team-knowledge` for a valid complete source
-   inventory whose registered paths and exact relative links already match. The
-   result is `complete`, reports no link or record effect, and leaves consumer
-   and source bytes unchanged.
-2. **Source addition and retirement reconcile exactly.** Add one eligible
-   ordinary source path and retire one previously eligible source path, then run
-   `open-forge library sync team-knowledge --dry-run` followed by the same apply
-   request. Dry-run lists the exact create and raw-target delete plus any
-   permitted generated-region and record changes without effects; application
-   creates and retires only those links, publishes the sorted record last, and
-   leaves source bytes unchanged.
-3. **Incomplete source or changed occupant blocks all effects.** Run Sync when
-   the source inventory is incomplete or when an intended destination has a
-   changed or unsafe occupant. The result is `incomplete` or `blocked` as
-   applicable, and it creates no link, deletes no link, changes no generated
-   region, and publishes no record.
+~~~text
+team-knowledge could not be synchronized: some files under shared/team-knowledge could not be listed. Nothing was changed.
+~~~
 
-## Verification Requirements
+### invalid-input
 
-Lower-tier and public proof must cover the following without adding another
-public EndToEnd journey:
+~~~text
+Cannot synchronize unknown: The Library ID is not registered.
+Next: open-forge library list
+~~~
 
-- exact command and flag parsing, singleton ID, shared global flags, terminal
-  modes, JSON parity, stream assignment, and all seven statuses;
-- library-ID length, ASCII grammar, unknown-ID invalidity, namespace
-  separation, exact schema-v1 record properties, sorting, duplicates, and
-  malformed-record preservation;
-- recorded source-root normalization, strict lexical and physical containment,
-  ordinary source and destination directories, link/reparse ancestry, aliases,
-  per-leaf source-tree protection, source availability, and complete inventory before
-  retirement;
-- complete inventory coverage, inaccessible-subtree `incomplete`, every
-  exclusion, link non-traversal, ordinary-file coverage, and source-byte
-  preservation;
-- `P ∩ R`, `P \\ R`, and `R \\ P` reconciliation, missing-link recreation,
-  exact raw-target deletion including dangling targets, missing-retired-link
-  blocking, changed-occupant whole-request blocking, local-sibling
-  preservation, and no adoption;
-- relative-link identity, real parent directories, no copy fallback,
-  Extension/lifecycle/library ownership, two-library collisions, and no
-  destinations outside the selected workspace;
-- existing generated-region projection, authored-byte preservation, no route
-  creation, no Loader rewrite, and pre-dogfood link-aware guards for Route
-  Update, Index, Route Move, and Route Remove;
-- immutable dry-run/application plan parity, no dry-run lease or recovery
-  capability probe, complete preflight, one lease, under-lock revalidation,
-  immediate no-follow checks, record publication last, typed recovery,
-  monotonic effects, verification, residual truth, and no automatic rollback;
-- typed recovery for prior-missing ordinary record creation and relative-link
-  creation/deletion, exact created-link removal, exact deleted or
-  dangling-link recreation, and no source-byte storage or following; and
-- complete no-op, `attention`, `incomplete`, `invalid`, `blocked`, `failed`,
-  and `interrupted` result mapping with human/JSON parity.
+### blocked
 
-The three public EndToEnd journeys are defined only by the [Interface
-Contract](interface.md#endtoend-journeys). Lower-tier evidence may exercise
-additional inventory, retirement, collision, failure, and residual branches
-without creating additional public journeys.
+~~~text
+Cannot synchronize team-knowledge: .agents/directives/review.md is no longer the link the Library created. Nothing was changed.
+  It is now an ordinary file. Move it away or restore the link, then rerun.
+Next: open-forge library inspect team-knowledge
+~~~
+
+### failed
+
+~~~text
+Library sync stopped after 1 of 2 changes.
+  Added    .agents/directives/review.md
+~~~
+
+### cancelled
+
+~~~text
+Library sync was cancelled. Nothing was changed.
+~~~
 
 ## Related Current Sources
 
 - [library sync Contract Set](_sync.md)
 - [library sync Interface Contract](interface.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
+CLI help syntax: [`library.sync.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Library/Sync/LibrarySyncText.cs).
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef library.sync.help.syntax -->
+
+## Approved Journey Wording References
+
+The following stable IDs link the approved journey behavior above to its typed
+human-wording factories. Independently reviewed snapshots and state assertions
+remain the output evidence.
+
+- [LibrarySyncPhrases.cs](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Library/Sync/LibrarySyncPhrases.cs)
+  <!-- @OpenForgeTextRef library.sync.phrase.could-not-be-fully-synchronized -->

@@ -30,12 +30,12 @@ A dependency-only pack could omit `payload/`. Local sources could use the comple
 
 The manifest could declare:
 
-| Field | Recorded meaning |
-| --- | --- |
-| `id` | Stable lowercase managed identity |
-| `name` | Display name |
-| `description` | Catalogue selection text |
-| `version` | Descriptive package version |
+| Field          | Recorded meaning                      |
+| -------------- | ------------------------------------- |
+| `id`           | Stable lowercase managed identity     |
+| `name`         | Display name                          |
+| `description`  | Catalogue selection text              |
+| `version`      | Descriptive package version           |
 | `dependencies` | Required bundled Extension identities |
 
 Every bundled first-party package declared an identity. A local source could declare one to opt into managed lifecycle; a source without an identity remained unmanaged. Unknown manifest fields were rejected.
@@ -109,29 +109,29 @@ The CLI provided Git review checkpoints and rollback after handled failures. Its
 
 The former document reported these kinds of verification:
 
-| Evidence | Recorded coverage |
-| --- | --- |
-| Pure tests | Dependency selection, manifest validation, path identity, ownership receipts, and collision rules |
-| Lifecycle scenarios | Real subprocesses, filesystems, and Git repositories for installation, update, removal, rollback, and review checkpoints |
-| MVP catalogue tests | The then-single first-party package |
-| Packaged-layout tests | Discovery from built and npm-style package layouts |
-| Framework validation | Assembled routes and links after installation |
+| Evidence              | Recorded coverage                                                                                                        |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Pure tests            | Dependency selection, manifest validation, path identity, ownership receipts, and collision rules                        |
+| Lifecycle scenarios   | Real subprocesses, filesystems, and Git repositories for installation, update, removal, rollback, and review checkpoints |
+| MVP catalogue tests   | The then-single first-party package                                                                                      |
+| Packaged-layout tests | Discovery from built and npm-style package layouts                                                                       |
+| Framework validation  | Assembled routes and links after installation                                                                            |
 
 These summaries describe the recorded checks and their scope. They are not fresh results for the current catalogue or CLI. Deterministic packaging and lifecycle checks also did not prove that every package improved agent outcomes.
 
 ## Recorded Limitations
 
-| Area | Frozen MVP limitation |
-| --- | --- |
-| Implementation separation | Manifest parsing, catalogue discovery, dependencies, ownership, and lifecycle behavior lived in the CLI monolith without an independently expressed Extension domain implementation. |
-| Sources and distribution | Bundled packages and local sources had no source-provider boundary, registry protocol, remote trust model, provenance verification, or reproducible third-party fetch contract. |
-| Compatibility | Descriptive versions did not negotiate compatibility among packages, the Framework, the CLI, or agent runtimes. |
-| Migration | Packages could not declare migrations, compatibility transitions, or required user decisions. The account identified this as insufficient for long-lived third-party packages. |
-| Ownership across workspaces | One root receipt assumed one Open Forge lifecycle authority. Multiple repositories, nested scopes, submodules, and several managers lacked a complete ownership model. |
-| Dependency expressiveness | Exact bundled identities did not express compatible alternatives, provided capabilities, optional dependencies, conflicts, or external satisfaction. |
-| Catalogue governance | There was no accepted stability, deprecation, support, or quality policy. Continued distribution still needed evidence of reusable value. |
-| Scoped installation | Payloads could target deep routes, but scope selection, missing scope `entrypoints`, and ownership across repositories or submodules lacked a complete user-facing design. |
-| Recovery | Handled failures rolled back. Abrupt process or machine failure relied on Git; there was no persistent recovery journal or workspace mutation lock. |
+| Area                        | Frozen MVP limitation                                                                                                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Implementation separation   | Manifest parsing, catalogue discovery, dependencies, ownership, and lifecycle behavior lived in the CLI monolith without an independently expressed Extension domain implementation. |
+| Sources and distribution    | Bundled packages and local sources had no source-provider boundary, registry protocol, remote trust model, provenance verification, or reproducible third-party fetch contract.      |
+| Compatibility               | Descriptive versions did not negotiate compatibility among packages, the Framework, the CLI, or agent runtimes.                                                                      |
+| Migration                   | Packages could not declare migrations, compatibility transitions, or required user decisions. The account identified this as insufficient for long-lived third-party packages.       |
+| Ownership across workspaces | One root receipt assumed one Open Forge lifecycle authority. Multiple repositories, nested scopes, submodules, and several managers lacked a complete ownership model.               |
+| Dependency expressiveness   | Exact bundled identities did not express compatible alternatives, provided capabilities, optional dependencies, conflicts, or external satisfaction.                                 |
+| Catalogue governance        | There was no accepted stability, deprecation, support, or quality policy. Continued distribution still needed evidence of reusable value.                                            |
+| Scoped installation         | Payloads could target deep routes, but scope selection, missing scope `entrypoints`, and ownership across repositories or submodules lacked a complete user-facing design.           |
+| Recovery                    | Handled failures rolled back. Abrupt process or machine failure relied on Git; there was no persistent recovery journal or workspace mutation lock.                                  |
 
 These were limitations of the recorded implementation, not claims about current behavior or requirements to build a larger package manager. The [Extensions Evolution candidate](../emerging/ideas/extensions-overhaul.md) keeps possible future responses open for evaluation.
 

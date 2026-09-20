@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 3,
+  "command": "route create",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot create the routed file: ../outside must be a Markdown file below an existing route.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-create.invalid-target",
+      "title": "Invalid target",
+      "message": "../outside must be a Markdown file below an existing route.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "../outside",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route create --help",
+          "reason": "Correct the Route Create input, then rerun the request."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": null,
+      "path": null
+    },
+    "listedIn": null,
+    "template": null,
+    "metadata": {
+      "description": "Project overview",
+      "responsibility": null,
+      "tags": [
+        "Docs"
+      ]
+    },
+    "sections": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route create --help",
+    "reason": "Correct the Route Create input, then rerun the request."
+  }
+}

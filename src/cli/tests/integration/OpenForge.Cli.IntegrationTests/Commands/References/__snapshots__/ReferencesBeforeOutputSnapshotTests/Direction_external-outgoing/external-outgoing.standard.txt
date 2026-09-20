@@ -1,0 +1,5 @@
+.agents/docs/guide.md
+Workspace: <workspace>
+  out  :8:1   https://example.com/guide   not checked
+0 in, 1 out
+The incoming scan used every source.

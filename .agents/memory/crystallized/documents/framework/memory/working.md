@@ -31,7 +31,7 @@ Expected expiration does not require premature deletion. It requires the `route`
 
 The standard [Checkpoints](../../../../working/checkpoints/_checkpoints.md) `route` keeps the current state, current step, and next steps of one active workstream in a form any future reader can use. An active Checkpoint carries #Active and #KeepInMind only while active, and is refreshed after material state changes and restoration.
 
-The standard [Handoffs](../../../../working/handoffs/_handoffs.md) `route` provides sealed snapshots for actual transfers and explicitly planned resumptions after context boundaries. Create one only when the boundary state must remain stable while the active Checkpoint may continue to change. The snapshot records its boundary status directly and remains unchanged while serving as a Handoff. Later state belongs in the Checkpoint or a new Handoff. When the material changes category, its destination's rules apply. Routine pauses and ordinary closeout do not require one.
+The standard [Handoffs](../../../../archived/cli-development/handoffs/_handoffs.md) `route` provides sealed snapshots for actual transfers and explicitly planned resumptions after context boundaries. Create one only when the boundary state must remain stable while the active Checkpoint may continue to change. The snapshot records its boundary status directly and remains unchanged while serving as a Handoff. Later state belongs in the Checkpoint or a new Handoff. When the material changes category, its destination's rules apply. Routine pauses and ordinary closeout do not require one.
 
 Projects may add plans, backlogs, history, or other Working scopes when those `routes` earn their cost. These are customizable working roles, not additional Memory states.
 

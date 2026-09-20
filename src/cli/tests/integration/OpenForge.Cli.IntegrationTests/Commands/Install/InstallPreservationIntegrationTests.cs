@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Install;
@@ -6,10 +9,6 @@ using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
-using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
@@ -17,15 +16,17 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.TestSupport;
+
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
 public sealed class InstallPreservationIntegrationTests
 {
-    [Fact(DisplayName = "Install preserves a trusted scoped Framework target and blocks when it is missing"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
-    public async Task TrustedScopedTargetIsPreservedAndMissingTargetBlocksWithoutRootEffects()
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Install preserves unselected scoped ownership without gating on its missing content"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
+    public async Task UnselectedScopedOwnershipIsPreservedWithoutRootEffects()
     {
         using var workspace = InstallOperationWorkspace.Create("install-scoped-preservation");
         var operation = CreateAutomaticOperation(workspace);
@@ -43,62 +44,18 @@ public sealed class InstallPreservationIntegrationTests
             description: "Scoped agent instructions",
             tags: ["Scoped"],
             body: scopedBlock);
-        var scopedBytes = Encoding.UTF8.GetBytes(scopedBlock);
         var scopedPhysicalPath = workspace.Combine(scopedPath);
         File.WriteAllBytes(scopedPhysicalPath, Encoding.UTF8.GetBytes(scopedContents));
         try
         {
-            var fingerprint = new MarkdownFingerprintReader().Read(scopedBytes);
-            Assert.True(fingerprint.IsSemantic, fingerprint.Cause);
-            var baselineFingerprint = Assert.IsType<string>(fingerprint.Sha256);
-
-            var lifecycleStore = new LifecycleStore(new PhysicalPathResolver());
-            var currentRead = await lifecycleStore.ReadAsync(
-                workspace.Workspace,
-                LifecycleSection.Framework,
-                TestContext.Current.CancellationToken);
-            Assert.Equal(LifecycleStoreReadState.Available, currentRead.State);
-            var current = Assert.IsType<FrameworkLifecycleState>(currentRead.Framework);
-            var scopedTarget = new FrameworkLifecycleTarget
-            {
-                Path = scopedPath,
-                SourceAssetPath = scopedPath,
-                Region = "open-forge",
-                BaselineFingerprint = baselineFingerprint,
-                FingerprintKind = LifecycleSchema.SemanticFingerprintKind,
-            };
-            var extended = new FrameworkLifecycleState
-            {
-                Coverage = current.Coverage,
-                Source = current.Source,
-                Targets =
-                [
-                    .. current.Targets
-                        .Append(scopedTarget)
-                        .OrderBy(target => target.Path, StringComparer.Ordinal)
-                        .ThenBy(target => target.Region, StringComparer.Ordinal),
-                ],
-                GeneratedRegions = current.GeneratedRegions,
-            };
-
-            var lifecyclePlan = lifecycleStore.PlanFrameworkUpdate(currentRead, extended);
-            Assert.Equal(LifecycleWritePlanState.Planned, lifecyclePlan.State);
-            var lifecycleChange = Assert.IsType<PlannedFileChange>(lifecyclePlan.Change);
-            await File.WriteAllBytesAsync(
-                workspace.Combine(LifecycleSchema.RelativePath),
-                [.. lifecycleChange.IntendedBytes],
-                TestContext.Current.CancellationToken);
-
-            var persistedRead = await lifecycleStore.ReadAsync(
-                workspace.Workspace,
-                LifecycleSection.Framework,
-                TestContext.Current.CancellationToken);
-            var persistedTarget = Assert.Single(
-                Assert.IsType<FrameworkLifecycleState>(persistedRead.Framework).Targets,
-                target => target.Path == scopedPath);
-            Assert.Equal(scopedPath, persistedTarget.SourceAssetPath);
-            Assert.Equal(baselineFingerprint, persistedTarget.BaselineFingerprint);
-            Assert.Equal(LifecycleSchema.SemanticFingerprintKind, persistedTarget.FingerprintKind);
+            var reader = await WorkspaceOwnershipReader.ReadAsync(
+                new PhysicalPathResolver(), workspace.Workspace, TestContext.Current.CancellationToken);
+            var current = Assert.IsType<FrameworkOwnership>(reader.Document.Framework);
+            var plan = new WorkspaceOwnershipStore().PlanFrameworkOwnership(reader,
+                current with { Regions = [.. current.Regions, new OwnedRegion(scopedPath, "open-forge")] });
+            var change = Assert.IsType<PlannedFileChange>(plan.Change);
+            await File.WriteAllBytesAsync(workspace.Combine(WorkspaceOwnershipDefinitions.RelativePath),
+                [.. change.IntendedBytes], TestContext.Current.CancellationToken);
 
             var beforeNoOp = workspace.SnapshotHashes();
             var noOp = await operation.ExecuteAsync(
@@ -120,17 +77,11 @@ public sealed class InstallPreservationIntegrationTests
                 workspace.Request(automatic: true),
                 TestContext.Current.CancellationToken);
 
-            Assert.Equal(CliSemanticStatus.Blocked, blocked.Status);
-            var preservationFinding = Assert.Single(
-                blocked.Findings,
-                finding => finding.Code == InstallFindingCode.LifecycleBlocked);
-            Assert.Equal(scopedPath, preservationFinding.Subject);
+            Assert.Equal(CliSemanticStatus.Complete, blocked.Status);
+            Assert.Empty(blocked.Findings);
+            Assert.Empty(blocked.Facts.Effects);
             Assert.Equal(beforeBlocked, WithoutPath(workspace.SnapshotHashes(), scopedPath));
             Assert.False(workspace.Exists(scopedPath));
-            Assert.DoesNotContain(
-                blocked.Findings,
-                finding => finding.Code is InstallFindingCode.TargetOccupied
-                    or InstallFindingCode.ManagedDivergence);
         }
         finally
         {
@@ -141,6 +92,7 @@ public sealed class InstallPreservationIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install blocks a recognized Framework recovery bundle and preserves it"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task AutomaticInstallBlocksRecognizedFrameworkRecoveryCandidate()
     {
@@ -188,13 +140,8 @@ public sealed class InstallPreservationIntegrationTests
         Assert.Equal(1, await workspace.ReadRecoveryCandidateCountAsync(
             TestContext.Current.CancellationToken));
 
-        using var standardInput = new StringReader(string.Empty);
-        using var promptOutput = new StringWriter();
         var result = await InstallOperationFactory.Create(
-                new CliInteractiveSession(
-                    standardInput,
-                    promptOutput,
-                    canPrompt: false),
+                InstallInteractionTestSupport.Confirmation(),
                 workspace.LockStoreRoot)
             .ExecuteAsync(
                 workspace.Request(automatic: true),
@@ -223,9 +170,9 @@ public sealed class InstallPreservationIntegrationTests
         Assert.Equal(RecoveryBundleReadState.Valid, candidateAfter.State);
         Assert.Equal(IndexDefinitions.CommandIdentity, candidateAfter.Verified?.Command);
         Assert.False(workspace.AgentsDirectoryExists());
-        Assert.Equal(string.Empty, promptOutput.ToString());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install preserves and ignores an unrelated recovery-store lookalike outside the recognized candidate set"),
      Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task AutomaticInstallPreservesUnrecognizedRecoveryLookalike()
@@ -262,13 +209,103 @@ public sealed class InstallPreservationIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
+    [Theory, InlineData("missing"), InlineData("invalid"), InlineData("directory"),
+     Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
+    public async Task FreshInstallIgnoresLeftoverFilesAndUnavailableOwnership(string state)
+    {
+        using var workspace = InstallOperationWorkspace.Create("install-leftover-state");
+        const string oldLifecycle = ".agents/open-forge.lifecycle.json";
+        const string oldLibraries = ".agents/open-forge.libraries.json";
+        workspace.WriteText(oldLifecycle, "malformed legacy content must remain untouched");
+        workspace.WriteText(oldLibraries, "{different legacy library content}");
+        if (state == "invalid")
+        {
+            workspace.WriteText(WorkspaceOwnershipDefinitions.RelativePath, "invalid receipt");
+        }
+        else if (state == "directory")
+        {
+            workspace.CreateDirectory(WorkspaceOwnershipDefinitions.RelativePath);
+        }
+
+        var before = workspace.SnapshotHashes();
+        var result = await CreateAutomaticOperation(workspace).ExecuteAsync(
+            workspace.Request(automatic: true), TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Empty(result.Findings);
+        var after = workspace.SnapshotHashes();
+        Assert.Equal(before[oldLifecycle], after[oldLifecycle]);
+        Assert.Equal(before[oldLibraries], after[oldLibraries]);
+        Assert.DoesNotContain(result.Facts.Effects, effect => effect.Path == oldLifecycle || effect.Path == oldLibraries);
+        Assert.True(workspace.Exists(".agents/loader.md"));
+        if (state == "directory")
+        {
+            Assert.True(Directory.Exists(workspace.Combine(WorkspaceOwnershipDefinitions.RelativePath)));
+            Assert.Equal(InstallLifecycleOutcome.NotRequested, result.Facts.Lifecycle.Outcome);
+        }
+        else
+        {
+            var receipt = await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(),
+                workspace.Workspace, TestContext.Current.CancellationToken);
+            Assert.NotNull(receipt.Document.Framework);
+            Assert.Single(result.Facts.Effects, effect => effect.Path == WorkspaceOwnershipDefinitions.RelativePath);
+            Assert.Equal(InstallLifecycleOutcome.Verified, result.Facts.Lifecycle.Outcome);
+        }
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact, Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
+    public async Task CurrentPayloadNoOpIgnoresReceiptReleaseMetadataAndOldFiles()
+    {
+        using var workspace = InstallOperationWorkspace.Create("install-current-payload");
+        workspace.WriteText(".agents/open-forge.lifecycle.json", "{invalid}");
+        workspace.WriteText(".agents/open-forge.libraries.json", "{invalid}");
+        var operation = CreateAutomaticOperation(workspace);
+        Assert.Equal(CliSemanticStatus.Complete, (await operation.ExecuteAsync(
+            workspace.Request(automatic: true), TestContext.Current.CancellationToken)).Status);
+        var read = await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(),
+            workspace.Workspace, TestContext.Current.CancellationToken);
+        var framework = Assert.IsType<FrameworkOwnership>(read.Document.Framework);
+        var plan = new WorkspaceOwnershipStore().PlanFrameworkOwnership(read,
+            framework with { Source = new OwnedSource("older-release", "old-version") });
+        var change = Assert.IsType<PlannedFileChange>(plan.Change);
+        await File.WriteAllBytesAsync(workspace.Combine(WorkspaceOwnershipDefinitions.RelativePath),
+            [.. change.IntendedBytes], TestContext.Current.CancellationToken);
+        var before = workspace.SnapshotHashes();
+
+        var result = await operation.ExecuteAsync(workspace.Request(automatic: true),
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Empty(result.Facts.Effects);
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Trait("Boundary", "OS")]
+    [Theory, InlineData(".agents/loader.md"), InlineData(".agents/LOADER.md"),
+     Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
+    public async Task ForcePreservesExtensionOwnershipAtASelectedDestination(string path)
+    {
+        using var workspace = InstallOperationWorkspace.Create("install-extension-conflict");
+        workspace.WriteText(WorkspaceOwnershipDefinitions.RelativePath,
+            "{\"schemaVersion\":1,\"extensions\":[{\"id\":\"toolkit\",\"paths\":[\"" + path + "\"]}]}");
+        workspace.WriteText(".agents/loader.md", "preserve another owner's content");
+        var before = workspace.SnapshotHashes();
+
+        var result = await CreateAutomaticOperation(workspace).ExecuteAsync(
+            workspace.Request(force: true, automatic: true), TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Blocked, result.Status);
+        Assert.Contains(result.Findings, finding => finding.Code == InstallFindingCode.OwnershipConflict);
+        Assert.Empty(result.Facts.Effects);
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
     private static InstallOperation CreateAutomaticOperation(
         InstallOperationWorkspace workspace)
         => InstallOperationFactory.Create(
-            new CliInteractiveSession(
-                new StringReader(string.Empty),
-                new StringWriter(),
-                canPrompt: false),
+            InstallInteractionTestSupport.Confirmation(),
             workspace.LockStoreRoot);
 
     private static Dictionary<string, string> WithoutPath(

@@ -1,0 +1,9 @@
+status=completed
+referenceKind=source-id
+selectionMethod=automatic-id
+requested=docs
+identity=present
+profile=present
+observations=0
+conditions=0
+next=none

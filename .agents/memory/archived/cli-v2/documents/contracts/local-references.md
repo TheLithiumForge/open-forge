@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Shared inventory, parsing, containment, traversal, fragment, diagnosis, and repair semantics for local Markdown references
+  description: "Historical CLI-v2 source: Shared inventory, parsing, containment, traversal, fragment, diagnosis, and repair semantics for local Markdown references"
   responsibility: Define how read-only CLI consumers inspect local references once without changing Framework loading meaning
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

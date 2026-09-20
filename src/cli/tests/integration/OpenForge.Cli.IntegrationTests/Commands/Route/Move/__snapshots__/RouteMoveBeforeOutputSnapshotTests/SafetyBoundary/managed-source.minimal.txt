@@ -1,0 +1,4 @@
+Cannot move guidance/old guide: .agents/guidance/old guide.md is managed by the toolkit Extension, so Route Move cannot move it.
+Workspace: <workspace>
+  files scanned: the reference scan was not completed
+Next: open-forge extension update toolkit

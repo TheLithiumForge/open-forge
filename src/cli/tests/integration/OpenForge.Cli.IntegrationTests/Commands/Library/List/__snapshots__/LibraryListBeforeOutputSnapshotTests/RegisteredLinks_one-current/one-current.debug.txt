@@ -1,0 +1,7 @@
+Workspace: <workspace>
+  team-knowledge  shared/team -> .  1 link current
+    .agents/directives/review.md  current
+      Expected target: ../../shared/team/.agents/directives/review.md
+      Observed target: ../../shared/team/.agents/directives/review.md
+      Source ID: directives/review
+The Library registration was read completely.

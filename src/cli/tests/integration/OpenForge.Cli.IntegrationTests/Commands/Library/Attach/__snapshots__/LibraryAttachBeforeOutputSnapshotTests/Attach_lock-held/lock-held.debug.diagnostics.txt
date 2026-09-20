@@ -1,0 +1,14 @@
+status=blocked
+mode=apply
+library=team-knowledge
+source-files=1
+links=1
+created=0
+sections=0
+grants=False
+recorded=False
+recovery=not run
+verification=not started
+findings=2
+The ownership lock is absent; no Library registrations are recorded.
+IOException (0x80070020): The filesystem operation failed.

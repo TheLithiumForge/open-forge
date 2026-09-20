@@ -1,0 +1,4 @@
+Extension install was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  selected  Extension install was cancelled
+         Extension install was cancelled. Nothing was changed.

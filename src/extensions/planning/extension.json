@@ -1,7 +1,9 @@
 {
   "id": "planning",
   "name": "Planning",
-  "description": "An optional planning Workflow, Work Records Pattern, and Templates for tasks, plans, backlogs, and checkpoints",
-  "version": "0.1.0",
-  "dependencies": []
+  "description": "Explore possibilities, preserve accepted choices, and organize work with optional records and a planning method",
+  "version": "0.3.0",
+  "dependencies": [
+    "workflows"
+  ]
 }

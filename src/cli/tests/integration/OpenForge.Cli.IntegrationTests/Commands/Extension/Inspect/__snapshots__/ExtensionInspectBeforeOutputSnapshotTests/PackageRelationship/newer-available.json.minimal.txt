@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 3,
+  "command": "extension inspect",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "toolkit 0.9.0 is installed and matches the package.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "filesUnchanged": 1,
+    "filesChanged": 0,
+    "filesMissing": 0,
+    "filesNew": 0,
+    "filesRetired": 0,
+    "dependencies": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "toolkit",
+    "installed": {
+      "version": "0.9.0"
+    },
+    "available": {
+      "version": "1.0.0"
+    },
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "matches": true,
+    "files": [
+      {
+        "path": ".agents/toolkit.md",
+        "relation": "unchanged"
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

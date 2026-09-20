@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Keep a helpful CLI wizard and deterministic automation path over one request, plan, application, and result contract
+  description: "Historical CLI-v2 source: Keep a helpful CLI wizard and deterministic automation path over one request, plan, application, and result contract"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

@@ -20,8 +20,7 @@ reconciliation are different operations.
 - [`interface.md`](interface.md) defines exact source and ID selection, `--all`,
   force/prune/automatic modes, effects, results, errors, examples, and public
   conformance.
-- [`behavior.md`](behavior.md) defines trusted lifecycle and Framework-anchor
-  gating, dependency closure, baseline/current/intended planning, ownership,
+- [`behavior.md`](behavior.md) defines ownership receipts and physical Framework admission, dependency closure, current/intended planning, ownership,
   fingerprints, generated navigation, recovery, and conformance.
 - No Technical Design file exists. The accepted CLI Architecture defines the
   shared implementation boundary. Gate 5 must prove source-generated YamlDotNet
@@ -35,7 +34,5 @@ reconciliation are different operations.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted technology-neutral Extension update behavior for trusted source reconciliation, force, prune, shared owners, and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Update #Behavior #Dependency #Ownership #Safety #Recovery #CurrentTruth
 - [Accepted Interface for reconciling trusted Extension IDs from one exact source with force and prune boundaries](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Update #Interface #Lifecycle #Ownership #Dependency #Safety #CurrentTruth
-<!-- open-forge:generated-index:end -->

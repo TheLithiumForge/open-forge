@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed-with-warnings",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "docs/guide  .agents/docs/guide.md",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "route-inspect.automatic-id-not-unique",
+      "title": "ID is not unique",
+      "message": "The ID docs/guide also matches .agents/docs/guide/_guide.md. Use the exact path to be sure.",
+      "subject": {
+        "kind": "source",
+        "path": "docs/guide",
+        "id": "docs/guide",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [
+        {
+          "subject": {
+            "kind": "source",
+            "path": ".agents/docs/guide/_guide.md",
+            "id": ".agents/docs/guide/_guide.md",
+            "location": null
+          },
+          "reasons": [
+            "matches the requested source reference"
+          ]
+        }
+      ],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "ownBytes": 126,
+    "ownTokens": 32,
+    "addedFiles": 1,
+    "addedBytes": 126,
+    "addedTokens": 32,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "docs/guide",
+    "path": ".agents/docs/guide.md",
+    "kind": "markdown",
+    "entrypointForm": "markdown",
+    "overwritePath": null,
+    "belongs": {
+      "routeChain": [
+        "docs",
+        "guide"
+      ],
+      "parent": "docs",
+      "directChildren": {
+        "files": 0,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 0,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": false,
+      "automaticallyWhen": [
+        "this route is selected"
+      ],
+      "mayReadAgain": false
+    },
+    "size": {
+      "own": {
+        "files": 1,
+        "bytes": 126,
+        "tokens": 32
+      },
+      "adds": {
+        "files": 1,
+        "bytes": 126,
+        "tokens": 32
+      },
+      "loadNow": null
+    },
+    "axioms": {
+      "inheritedFrom": [],
+      "local": "not applicable"
+    },
+    "tags": [
+      "Docs",
+      "Guide"
+    ],
+    "selected": {
+      "closure": {
+        "files": 2,
+        "bytes": 282,
+        "tokens": 71
+      },
+      "startupOverlap": {
+        "files": 1,
+        "bytes": 156,
+        "tokens": 39
+      }
+    },
+    "selection": {
+      "kind": "source-path",
+      "method": "exact-path",
+      "requested": ".agents/docs/guide.md"
+    },
+    "layers": [
+      {
+        "path": ".agents/docs/guide.md",
+        "kind": "base"
+      }
+    ],
+    "statusReason": "the source is safe and complete but its automatic ID is not unique"
+  },
+  "recovery": null,
+  "next": null
+}

@@ -1,0 +1,10 @@
+Cannot repair: Two --relink values name the link at .agents/docs/source.md:9:10 with different targets.
+Workspace: <workspace>
+  Error  .agents/docs/source.md  Contradictory --relink [repair.contradictory-relink]
+         Two --relink values name the link at .agents/docs/source.md:9:10 with different targets.
+  Diagnosis coverage: Workspace and path were not checked; route and heading were not checked; local references were not checked; selected scope was not checked.
+  Checks before writing: not run.
+  No verification was needed.
+  Recovery: No recovery bundle was required.
+  Checks after writing: not run.
+1 error.

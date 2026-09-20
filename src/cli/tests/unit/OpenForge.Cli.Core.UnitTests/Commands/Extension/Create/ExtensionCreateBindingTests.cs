@@ -13,6 +13,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Create;
 
 public sealed class ExtensionCreateBindingTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Create symbols expose one stable ID, singleton metadata, repeated dependencies, and idempotent flags"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     public void SymbolsExposeExactGrammar()
     {
@@ -39,6 +40,7 @@ public sealed class ExtensionCreateBindingTests
         Assert.Equal(ArgumentArity.Zero, symbols.DryRun.Arity);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Extension Create parser accepts every native value delimiter for singleton and repeated options"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     [InlineData("separate")]
     [InlineData("equals")]
@@ -63,6 +65,7 @@ public sealed class ExtensionCreateBindingTests
         Assert.Equal(["alpha", "beta"], parse.GetValue(symbols.Dependency) ?? []);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Create binding preserves a complete immutable raw request and derives human interaction policy"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     public void BindingPreservesCompleteRequestAndInteractionPolicy()
     {
@@ -82,7 +85,7 @@ public sealed class ExtensionCreateBindingTests
 
         var bound = new ExtensionCreateRequestBinder(symbols).Bind(
             new CliBindingParse(parse, arguments),
-            Invocation(CliOutputFormat.Human, CliVerbosity.Normal));
+            Invocation(CliFormat.Text, null));
 
         var request = Assert.IsType<ExtensionCreateRequest>(bound.Request);
         Assert.Null(bound.InvalidResult);
@@ -96,6 +99,7 @@ public sealed class ExtensionCreateBindingTests
         Assert.Equal(ExtensionCreateMode.DryRun, request.Mode);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Extension Create binding disables prompting for JSON and automatic requests while retaining explicit input"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     [InlineData("json", false)]
     [InlineData("automatic", false)]
@@ -107,11 +111,11 @@ public sealed class ExtensionCreateBindingTests
             ? ["development-toolkit", "--path", "/catalogue", "--automatic"]
             : ["development-toolkit", "--path", "/catalogue"];
         var parse = symbols.CreateCommand.Parse(arguments);
-        var format = presentation == "json" ? CliOutputFormat.Json : CliOutputFormat.Human;
+        var format = presentation == "json" ? CliFormat.Json : CliFormat.Text;
 
         var bound = new ExtensionCreateRequestBinder(symbols).Bind(
             new CliBindingParse(parse, arguments),
-            Invocation(format, CliVerbosity.Normal));
+            Invocation(format, null));
 
         var request = Assert.IsType<ExtensionCreateRequest>(bound.Request);
         Assert.Equal(expectedInteraction, request.AllowInteraction);
@@ -119,6 +123,7 @@ public sealed class ExtensionCreateBindingTests
         Assert.Equal("/catalogue", request.CataloguePath);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Extension Create binding rejects repeated singleton values, repeated operands, and unsupported symbols"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     [InlineData("repeated-id")]
     [InlineData("repeated-path")]
@@ -140,7 +145,7 @@ public sealed class ExtensionCreateBindingTests
 
         var bound = new ExtensionCreateRequestBinder(symbols).Bind(
             new CliBindingParse(parse, arguments),
-            Invocation(CliOutputFormat.Human, CliVerbosity.Normal));
+            Invocation(CliFormat.Text, null));
 
         var result = Assert.IsType<ExtensionCreateResult>(bound.InvalidResult);
         Assert.Null(bound.Request);
@@ -148,6 +153,7 @@ public sealed class ExtensionCreateBindingTests
         Assert.Contains(result.Findings, finding => finding.Code == ExtensionCreateFindingCode.InvalidInput);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Create binding accepts repeated automatic and dry-run flags as one idempotent mode"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     public void BindingCollapsesIdempotentFlags()
     {
@@ -161,7 +167,7 @@ public sealed class ExtensionCreateBindingTests
 
         var bound = new ExtensionCreateRequestBinder(symbols).Bind(
             new CliBindingParse(parse, arguments),
-            Invocation(CliOutputFormat.Human, CliVerbosity.Normal));
+            Invocation(CliFormat.Text, null));
 
         var request = Assert.IsType<ExtensionCreateRequest>(bound.Request);
         Assert.Equal(ExtensionCreateMode.DryRun, request.Mode);
@@ -186,12 +192,12 @@ public sealed class ExtensionCreateBindingTests
             _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "The invalid Extension Create grammar case is not defined."),
         };
 
-    private static CliInvocation Invocation(CliOutputFormat format, CliVerbosity verbosity)
+    private static CliInvocation Invocation(CliFormat format, CliDetail? diagnosticDetail)
     {
         var path = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "extension-create-binding"));
         return new CliInvocation(
             new CliProcessIdentity("open-forge", "0.0.0-dev"),
-            new CliPresentation(format, CliView.Expanded, verbosity),
+            new CliPresentation(format, diagnosticDetail ?? CliDetail.Standard, null),
             CliTerminalMode.None,
             new CliWorkspaceRequest(null, path),
             null);

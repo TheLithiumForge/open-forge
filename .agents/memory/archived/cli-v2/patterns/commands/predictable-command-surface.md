@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Shape CLI commands so operation, subject, flags, help, and failure behavior remain visible and predictable
+  description: "Historical CLI-v2 source: Shape CLI commands so operation, subject, flags, help, and failure behavior remain visible and predictable"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

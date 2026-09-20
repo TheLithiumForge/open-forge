@@ -1,11 +1,12 @@
 using System.CommandLine;
-using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Presentation.Shared.Help;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help;
 
 public sealed class CliHelpRendererTests
 {
+    [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Help wraps product sections to the supplied width without losing text"), Trait("Feature", "command-help"), Trait("Evidence", "Unit")]
     [InlineData(40)]
     [InlineData(60)]
@@ -29,6 +30,7 @@ public sealed class CliHelpRendererTests
         Assert.Equal(paragraph, string.Join(" ", lines.Select(line => line.Trim())));
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Help preserves separate examples and indivisible source references"), Trait("Feature", "command-help"), Trait("Evidence", "Unit")]
     public void ExamplesAndLongReferencesRemainIntact()
     {

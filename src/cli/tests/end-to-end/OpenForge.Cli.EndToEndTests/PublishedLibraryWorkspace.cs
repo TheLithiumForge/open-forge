@@ -8,7 +8,8 @@ internal sealed class PublishedLibraryWorkspace : IDisposable
 {
     internal const string Id = "team-knowledge";
     internal const string SourceRoot = "shared/team-knowledge";
-    internal const string RecordPath = ".agents/open-forge.libraries.json";
+    internal const string RecordPath = OwnershipPath;
+    internal const string OwnershipPath = ".agents/open-forge.lock.json";
     internal const string ReviewPath = ".agents/directives/review.md";
     internal const string RawReviewTarget = "../../shared/team-knowledge/.agents/directives/review.md";
     internal const string SourceBody = "---\nopen-forge:\n  description: Review\n  tags: [Directive]\n---\n# Review\n\nSource-owned bytes.\n";
@@ -41,9 +42,7 @@ internal sealed class PublishedLibraryWorkspace : IDisposable
         Write(".agents/loader.md", """
             # Loader
             ## Entries
-            <!-- open-forge:generated-index:start -->
             - [Directives](directives/_directives.md) - #Directive
-            <!-- open-forge:generated-index:end -->
             """);
         Write(".agents/directives/_directives.md", """
             ---
@@ -53,8 +52,6 @@ internal sealed class PublishedLibraryWorkspace : IDisposable
             ---
             # Authored prefix
             ## Entries
-            <!-- open-forge:generated-index:start -->
-            <!-- open-forge:generated-index:end -->
             """);
     }
 
@@ -63,15 +60,36 @@ internal sealed class PublishedLibraryWorkspace : IDisposable
 
     internal void RecordAt(string destinationRoot, params string[] paths)
     {
-        var pathArray = string.Join(",", paths.Order(StringComparer.Ordinal).Select(path => $"\"{path}\""));
-        Write(RecordPath, $$"""
-            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":"{{destinationRoot}}","paths":[{{pathArray}}]}]}
-            """);
+        OwnershipAt(destinationRoot, paths);
+    }
+
+    private void OwnershipAt(string destinationRoot, params string[] paths)
+    {
+        var orderedPaths = paths.Order(StringComparer.Ordinal).ToArray();
+        var pathLines = string.Join(Environment.NewLine,
+            orderedPaths.Select((path, index) => $"        \"{path}\"{(index == orderedPaths.Length - 1 ? string.Empty : ",")}"));
+        Write(OwnershipPath, string.Join(Environment.NewLine,
+        [
+            "{",
+            "  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v1/open-forge.lock.schema.json\",",
+            "  \"schemaVersion\": 1,",
+            "  \"extensions\": [],",
+            "  \"libraries\": [",
+            "    {",
+            "      \"id\": \"team-knowledge\",",
+            "      \"sourceRoot\": \"shared/team-knowledge\",",
+            $"      \"destinationRoot\": \"{destinationRoot}\",",
+            "      \"paths\": [",
+            pathLines,
+            "      ]",
+            "    }",
+            "  ]",
+            "}"]));
     }
 
     internal void GrantDocs()
-        => Write(".agents/open-forge.permissions.json", """
-            {"schemaVersion":1,"extensions":[],"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":[],"directories":["docs"]}]}
+        => Write(".agents/open-forge.json", """
+            {"allowInstallPaths":["docs"]}
             """);
 
     internal void MappedLink(string path, string target) => _workspace.CreateFileSymbolicLink(path, target);
@@ -123,7 +141,7 @@ internal sealed class PublishedLibraryWorkspace : IDisposable
         Assert.Equal(string.Empty, result.StandardError);
         var document = JsonDocument.Parse(result.StandardOutput);
         Assert.Equal(status, document.RootElement.GetProperty("status").GetString());
-        Assert.Equal(1, document.RootElement.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(3, document.RootElement.GetProperty("schemaVersion").GetInt32());
         return document;
     }
 
@@ -136,10 +154,15 @@ internal sealed class PublishedLibraryWorkspace : IDisposable
             File.Delete(projection.FullName);
         }
 
-        var record = new FileInfo(Combine(RecordPath));
-        if (record.Exists && (record.Attributes & (FileAttributes.ReparsePoint | FileAttributes.Directory)) == 0)
+        var ownership = new FileInfo(Combine(OwnershipPath));
+        if (ownership.Exists)
         {
-            File.Delete(record.FullName);
+            if ((ownership.Attributes & (FileAttributes.Directory | FileAttributes.ReparsePoint | FileAttributes.Device)) != 0)
+            {
+                throw new InvalidOperationException("The published Library ownership cleanup target is not an ordinary file.");
+            }
+
+            File.Delete(ownership.FullName);
         }
 
         var parent = Combine(".agents/directives");

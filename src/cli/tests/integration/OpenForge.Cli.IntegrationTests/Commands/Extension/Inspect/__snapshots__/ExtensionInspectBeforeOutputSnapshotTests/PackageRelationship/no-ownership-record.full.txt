@@ -1,0 +1,19 @@
+toolkit 1.0.0 is available. No ownership record exists, so installation cannot be checked.
+Workspace: <workspace>
+  Info  .agents/open-forge.lock.json  Ownership record is unavailable [extension-inspect.ownership-observation]
+         No ownership record exists, so installation cannot be checked.
+         Cause: No Extension ownership is recorded; installed packages cannot be established.
+Source: <extension-source>
+Dependencies
+  toolkit  1.0.0  available
+
+Files
+  .agents/toolkit.md  not applicable
+    Installed SHA-256: unavailable
+    Package SHA-256: <sha256>
+Manifest: toolkit/extension.json
+Resolution order: toolkit
+Registered in
+  none
+Record coverage: incomplete
+1 dependency, 1 infos.

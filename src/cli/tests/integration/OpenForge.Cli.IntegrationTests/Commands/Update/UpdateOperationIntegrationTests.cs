@@ -1,13 +1,17 @@
 using System.Text.Json.Nodes;
 using OpenForge.Cli.Core.Commands.Update;
+using OpenForge.Cli.Core.Commands.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
+
+using OpenForge.Cli.IntegrationTests.Commands.Update.Shared.Interaction;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Update;
 
 public sealed class UpdateOperationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update creates a genuinely new source target while protecting existing lifecycle bytes"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task CreatesNewSourceTargetAlongsideProtectedLifecyclePublication()
     {
@@ -24,12 +28,12 @@ public sealed class UpdateOperationIntegrationTests
         Assert.Equal(UpdateLifecycleAction.Publish, result.Lifecycle.Action);
         Assert.Equal(UpdateLifecycleOutcome.Verified, result.Lifecycle.Outcome);
         Assert.Equal(UpdateVerificationState.Verified, result.Verification);
-        Assert.Equal(UpdateRecoveryState.Removed, result.Recovery.State);
-        Assert.Equal([UpdateIntegrationWorkspace.LifecyclePath], result.Recovery.ProtectedPaths);
+        Assert.Equal(UpdateRecoveryState.Retained, result.Recovery.State);
+        Assert.Equal([UpdateIntegrationWorkspace.OwnershipPath], result.Recovery.ProtectedPaths);
         var after = workspace.SnapshotHashes();
         foreach (var (path, hash) in before)
         {
-            if (path != UpdateIntegrationWorkspace.LifecyclePath)
+            if (path != UpdateIntegrationWorkspace.OwnershipPath)
             {
                 Assert.Equal(hash, after[path]);
             }
@@ -43,6 +47,7 @@ public sealed class UpdateOperationIntegrationTests
         Assert.Equal(after, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update restores a missing target with force alongside a protected safe replacement"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task ForcedMissingRestorationCoexistsWithProtectedReplacement()
     {
@@ -59,16 +64,16 @@ public sealed class UpdateOperationIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(restored, workspace.ReadBytes(UpdateIntegrationWorkspace.ManagedPath));
         Assert.Equal(replaced, workspace.ReadBytes(UpdateIntegrationWorkspace.RetiredCandidatePath));
-        Assert.Equal(UpdateLifecycleOutcome.Verified, result.Lifecycle.Outcome);
+        Assert.Equal(UpdateLifecycleOutcome.AlreadyCurrent, result.Lifecycle.Outcome);
         Assert.Equal(UpdateVerificationState.Verified, result.Verification);
-        Assert.Equal(UpdateRecoveryState.Removed, result.Recovery.State);
+        Assert.Equal(UpdateRecoveryState.Retained, result.Recovery.State);
         Assert.Equal(
-            [UpdateIntegrationWorkspace.RetiredCandidatePath, UpdateIntegrationWorkspace.LifecyclePath],
+            [UpdateIntegrationWorkspace.RetiredCandidatePath],
             result.Recovery.ProtectedPaths);
         var after = workspace.SnapshotHashes();
         foreach (var (path, hash) in before)
         {
-            if (path != UpdateIntegrationWorkspace.LifecyclePath && path != UpdateIntegrationWorkspace.RetiredCandidatePath)
+            if (path != UpdateIntegrationWorkspace.OwnershipPath && path != UpdateIntegrationWorkspace.RetiredCandidatePath)
             {
                 Assert.Equal(hash, after[path]);
             }
@@ -82,8 +87,9 @@ public sealed class UpdateOperationIntegrationTests
         Assert.Equal(after, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Update real workspace automatic mode preserves divergence without force or prune"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
-    public async Task AutomaticPreservesDivergenceWithoutForceOrPrune()
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Update real workspace automatic mode updates owned content without force or prune"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
+    public async Task AutomaticUpdatesOwnedContentWithoutForceOrPrune()
     {
         using var workspace = UpdateIntegrationWorkspace.Create("update-operation-automatic-divergence");
         await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
@@ -92,11 +98,13 @@ public sealed class UpdateOperationIntegrationTests
 
         var result = await workspace.ExecuteAsync(workspace.Request(automatic: true));
 
-        Assert.Equal(CliSemanticStatus.Attention, result.Status);
-        Assert.Empty(result.Effects);
-        Assert.Equal(before, workspace.SnapshotHashes());
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.NotEmpty(result.Effects);
+        Assert.NotEqual(before, workspace.SnapshotHashes());
+        Assert.Equal(UpdateRecoveryState.Retained, result.Recovery.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace dry-run matches application planning without persistent effects"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task DryRunMatchesApplicationPlanWithoutPersistentEffects()
     {
@@ -117,6 +125,47 @@ public sealed class UpdateOperationIntegrationTests
         Assert.Equal(UpdateRecoveryState.NotCreated, result.Recovery.State);
     }
 
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Update presents a pure dry-run projection and actual planned deletion count before confirmation"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
+    public async Task ConfirmationUsesPureDryRunProjectionAndDeletionCount()
+    {
+        using var workspace = UpdateIntegrationWorkspace.Create("update-confirmation-preview");
+        await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
+        workspace.SeedHistoricalRetiredTarget();
+        var before = workspace.SnapshotHashes();
+        UpdateResult? preview = null;
+        UpdateConfirmationFacts? facts = null;
+
+        var result = await UpdateOperationFactory.Create(
+                UpdateInteractionTestSupport.Confirmation(
+                    accepted: false,
+                    observe: (candidate, question) =>
+                    {
+                        preview = candidate;
+                        facts = question;
+                    }),
+                workspace.LockStoreRoot)
+            .ExecuteAsync(
+                workspace.Request(
+                    prune: true,
+                    automatic: false,
+                    allowsInteractiveConfirmation: true),
+                TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
+        var previewResult = Assert.IsType<UpdateResult>(preview);
+        Assert.Equal(UpdateMode.DryRun, previewResult.Mode);
+        Assert.False(previewResult.Force);
+        Assert.True(previewResult.Prune);
+        Assert.False(previewResult.Automatic);
+        var confirmationFacts = Assert.IsType<UpdateConfirmationFacts>(facts);
+        Assert.Equal(1, confirmationFacts.DeletionCount);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        Assert.True(workspace.Exists(UpdateIntegrationWorkspace.HistoricalTargetPath));
+        Assert.False(workspace.RecoveryDirectoryExists());
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace redirected human write requires automatic without a prompt"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task RedirectedHumanWriteRequiresAutomaticWithoutPrompt()
     {
@@ -138,6 +187,7 @@ public sealed class UpdateOperationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace human refusal interrupts before lease and recovery"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task HumanRefusalInterruptsBeforeLeaseAndRecovery()
     {
@@ -160,6 +210,7 @@ public sealed class UpdateOperationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace held lock blocks before every effect"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task HeldWorkspaceLockBlocksBeforeAnyEffect()
     {
@@ -176,6 +227,7 @@ public sealed class UpdateOperationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace prompt-time change blocks complete-plan revalidation before recovery"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task PromptTimeChangeBlocksCompletePlanRevalidationBeforeRecovery()
     {
@@ -202,6 +254,7 @@ public sealed class UpdateOperationIntegrationTests
         Assert.Equal(lateContents, workspace.ReadText(UpdateIntegrationWorkspace.ManagedPath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace prepares one recovery bundle for all existing target effects"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task PreparesOneBundleForAllExistingTargetEffects()
     {
@@ -215,84 +268,48 @@ public sealed class UpdateOperationIntegrationTests
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.NotEmpty(result.Effects);
-        Assert.Equal(UpdateRecoveryState.Removed, result.Recovery.State);
+        Assert.Equal(UpdateRecoveryState.Retained, result.Recovery.State);
         Assert.Equal(
             [
                 UpdateIntegrationWorkspace.HistoricalTargetPath,
                 UpdateIntegrationWorkspace.ManagedPath,
-                UpdateIntegrationWorkspace.LifecyclePath,
+                UpdateIntegrationWorkspace.OwnershipPath,
             ],
             result.Recovery.ProtectedPaths);
         Assert.False(workspace.Exists(UpdateIntegrationWorkspace.HistoricalTargetPath));
     }
 
-    [Fact(DisplayName = "Update real workspace publishes Framework lifecycle canonically while preserving extensions"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
-    public async Task PublishesFrameworkLifecycleCanonicallyAndPreservesExtensions()
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Update preserves ownership receipts and ignores descriptive release metadata"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
+    public async Task PreservesReceiptsAndIgnoresReleaseMetadata()
     {
-        using var workspace = UpdateIntegrationWorkspace.Create("update-operation-lifecycle");
+        using var workspace = UpdateIntegrationWorkspace.Create("update-operation-ownership");
         await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
         workspace.MutateManagedContent();
         workspace.SeedPreviousInventoryIdentity();
-        var before = workspace.ReadText(UpdateIntegrationWorkspace.LifecyclePath);
-        var extensionsBefore = ReadRequiredSection(before, "extensions");
-
-        var result = await workspace.ExecuteAsync(workspace.Request(force: true));
-
+        var before = workspace.ReadText(UpdateIntegrationWorkspace.OwnershipPath);
+        var result = await workspace.ExecuteAsync(workspace.Request());
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
-        var after = workspace.ReadText(UpdateIntegrationWorkspace.LifecyclePath);
-        Assert.NotEqual(before, after);
-        Assert.True(JsonNode.DeepEquals(extensionsBefore, ReadRequiredSection(after, "extensions")));
-        Assert.Equal(UpdateLifecycleAction.Publish, result.Lifecycle.Action);
-        Assert.Equal(UpdateLifecycleOutcome.Verified, result.Lifecycle.Outcome);
+        Assert.Equal(before, workspace.ReadText(UpdateIntegrationWorkspace.OwnershipPath));
+        Assert.Equal(UpdateLifecycleAction.Preserve, result.Lifecycle.Action);
+        Assert.Equal(UpdateLifecycleOutcome.AlreadyCurrent, result.Lifecycle.Outcome);
+        Assert.Equal(UpdateRecoveryState.Retained, result.Recovery.State);
 
-        using var lifecycleOnly = UpdateIntegrationWorkspace.Create("update-operation-lifecycle-only");
-        await lifecycleOnly.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
-        var installedSnapshot = lifecycleOnly.SnapshotHashes();
-        var installedSource = lifecycleOnly.ReadLifecycleSourceIdentity();
-        lifecycleOnly.SeedPreviousInventoryIdentity();
-        var priorSnapshot = lifecycleOnly.SnapshotHashes();
-        var priorSource = lifecycleOnly.ReadLifecycleSourceIdentity();
-
-        Assert.Equal(installedSnapshot.Count, priorSnapshot.Count);
-        foreach (var (path, hash) in installedSnapshot)
-        {
-            if (!string.Equals(path, UpdateIntegrationWorkspace.LifecyclePath, StringComparison.Ordinal))
-            {
-                Assert.Equal(hash, priorSnapshot[path]);
-            }
-        }
-
-        Assert.Equal(installedSource.Id, priorSource.Id);
-        Assert.Equal(installedSource.Version, priorSource.Version);
-        Assert.NotEqual(installedSource.InventoryFingerprint, priorSource.InventoryFingerprint);
-
-        var lifecycleOnlyResult = await lifecycleOnly.ExecuteAsync(lifecycleOnly.Request());
-
-        Assert.Equal(CliSemanticStatus.Complete, lifecycleOnlyResult.Status);
-        Assert.Empty(lifecycleOnlyResult.Effects);
-        Assert.Equal(UpdateLifecycleAction.Publish, lifecycleOnlyResult.Lifecycle.Action);
-        Assert.Equal(UpdateLifecycleOutcome.Verified, lifecycleOnlyResult.Lifecycle.Outcome);
-        Assert.Equal(UpdateVerificationState.Verified, lifecycleOnlyResult.Verification);
-        Assert.Equal(UpdateRecoveryState.Removed, lifecycleOnlyResult.Recovery.State);
-        Assert.Equal(
-            [UpdateIntegrationWorkspace.LifecyclePath],
-            lifecycleOnlyResult.Recovery.ProtectedPaths);
-        var publishedSource = lifecycleOnly.ReadLifecycleSourceIdentity();
-        Assert.Equal(priorSource.Id, publishedSource.Id);
-        Assert.Equal(priorSource.Version, publishedSource.Version);
-        Assert.NotEqual(priorSource.InventoryFingerprint, publishedSource.InventoryFingerprint);
-        var publishedSnapshot = lifecycleOnly.SnapshotHashes();
-
-        var repeat = await lifecycleOnly.ExecuteAsync(lifecycleOnly.Request());
-
-        Assert.Equal(CliSemanticStatus.Complete, repeat.Status);
-        Assert.Empty(repeat.Effects);
-        Assert.Equal(UpdateLifecycleOutcome.AlreadyCurrent, repeat.Lifecycle.Outcome);
-        Assert.Equal(UpdateVerificationState.Verified, repeat.Verification);
-        Assert.Equal(UpdateRecoveryState.NotRequired, repeat.Recovery.State);
-        Assert.Equal(publishedSnapshot, lifecycleOnly.SnapshotHashes());
+        using var metadataOnly = UpdateIntegrationWorkspace.Create("update-operation-metadata-only");
+        await metadataOnly.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
+        metadataOnly.SeedPreviousInventoryIdentity();
+        var prior = metadataOnly.SnapshotHashes();
+        var noOp = await metadataOnly.ExecuteAsync(metadataOnly.Request());
+        Assert.Equal(CliSemanticStatus.Complete, noOp.Status);
+        Assert.Empty(noOp.Effects);
+        Assert.Equal(UpdateLifecycleAction.Preserve, noOp.Lifecycle.Action);
+        Assert.Equal(UpdateLifecycleOutcome.AlreadyCurrent, noOp.Lifecycle.Outcome);
+        Assert.Equal(UpdateVerificationState.Verified, noOp.Verification);
+        Assert.Equal(UpdateRecoveryState.NotRequired, noOp.Recovery.State);
+        Assert.Equal(prior, metadataOnly.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace semantic no-op and repeat write nothing"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task SemanticNoOpAndRepeatWriteNothing()
     {
@@ -310,6 +327,7 @@ public sealed class UpdateOperationIntegrationTests
         Assert.Equal(afterFirst, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace malformed generated boundary blocks without repair"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task MalformedGeneratedBoundaryBlocksWithoutRepair()
     {
@@ -359,6 +377,7 @@ public sealed class UpdateOperationIntegrationTests
         Assert.Equal(invalidUtf8Before, invalidUtf8.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace untrusted lifecycle and invalid provenance remain write-free"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task UntrustedLifecycleAndInvalidProvenanceRemainWriteFree()
     {
@@ -370,7 +389,9 @@ public sealed class UpdateOperationIntegrationTests
         var malformedResult = await malformed.ExecuteAsync(
             malformed.Request(force: true, prune: true));
 
-        AssertBlockedWriteFree(malformedResult, malformedBefore, malformed);
+        Assert.Equal(CliSemanticStatus.Complete, malformedResult.Status);
+        Assert.Empty(malformedResult.Effects);
+        Assert.Equal(malformedBefore, malformed.SnapshotHashes());
 
         using var invalidProvenance = UpdateIntegrationWorkspace.Create("update-operation-invalid-provenance");
         await invalidProvenance.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
@@ -380,12 +401,15 @@ public sealed class UpdateOperationIntegrationTests
         var provenanceResult = await invalidProvenance.ExecuteAsync(
             invalidProvenance.Request(force: true, prune: true));
 
-        AssertBlockedWriteFree(provenanceResult, provenanceBefore, invalidProvenance);
+        Assert.Equal(CliSemanticStatus.Complete, provenanceResult.Status);
+        Assert.Empty(provenanceResult.Effects);
+        Assert.Equal(provenanceBefore, invalidProvenance.SnapshotHashes());
         Assert.Equal(
-            [UpdateFindingCode.SourceProvenanceInvalid],
+            [UpdateFindingCode.OwnershipObservation],
             provenanceResult.Findings.Select(finding => finding.Code));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace end of input interrupts before lease and recovery"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task EndOfInputInterruptsBeforeLeaseAndRecovery()
     {

@@ -1,0 +1,9 @@
+Cannot remove base: The toolkit Extension still needs base.
+Workspace: <workspace>
+  Error  base  Dependency blocks removal [extension-remove.dependency-blocked]
+         The toolkit Extension still needs base.
+  Removal order: base
+  .agents/open-forge.lock.json  updated
+  Entries sections unchanged: none
+  Verification: targets not checked; Entries not checked; Extension record not checked
+  Recovery: not-required.

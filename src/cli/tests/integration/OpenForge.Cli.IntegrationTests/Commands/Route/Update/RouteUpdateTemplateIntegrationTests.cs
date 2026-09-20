@@ -11,6 +11,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 
 public sealed class RouteUpdateTemplateIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update Template resolution accepts exact ID and path and copies only body bytes")]
     [InlineData(RouteUpdateIntegrationWorkspace.TemplateId)]
     [InlineData(RouteUpdateIntegrationWorkspace.TemplatePath)]
@@ -31,6 +32,7 @@ public sealed class RouteUpdateTemplateIntegrationTests
             Encoding.UTF8.GetString(resolution.BodyBytes.AsSpan()));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update Template resolution preserves the Route Create shared selection and body facts"), Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
     public async Task SharedTemplateFactsMatchRouteCreate()
     {
@@ -72,6 +74,7 @@ public sealed class RouteUpdateTemplateIntegrationTests
             create.Source.Identity.CanonicalBasePath);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Create and Update reject unknown Template IDs and missing exact paths")]
     [InlineData("templates/missing")]
     [InlineData(".agents/templates/missing.md")]
@@ -98,6 +101,7 @@ public sealed class RouteUpdateTemplateIntegrationTests
         Assert.Empty(create.BodyBytes);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Create and Update keep post-catalogue missing or unreadable Templates unavailable")]
     [InlineData(false)]
     [InlineData(true)]
@@ -136,6 +140,7 @@ public sealed class RouteUpdateTemplateIntegrationTests
         Assert.Empty(create.BodyBytes);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update Template resolution rejects collisions and non-Template classification")]
     [InlineData(true, false, false, (int)RouteTemplateResolutionState.Blocked, (int)RouteTemplateResolutionIssue.OverwriteUnsafe)]
     [InlineData(false, true, false, (int)RouteTemplateResolutionState.Invalid, (int)RouteTemplateResolutionIssue.MissingClassification)]

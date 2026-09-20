@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 3,
+  "command": "library attach",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot attach team-knowledge: docs is outside .agents and no grant allows writing there.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-attach.permission-required",
+      "title": "Permission is required",
+      "message": "docs is outside .agents and no grant allows writing there.",
+      "subject": {
+        "kind": "directory",
+        "path": "docs",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge library attach team-knowledge shared/team-knowledge --to . --allow-path docs",
+          "reason": "Allow the destination folder, then rerun the same request."
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "path": "docs/review.md",
+      "kind": "link",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksCreated": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "sourceFiles": 1,
+    "errors": 1,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "recorded": false,
+    "permissions": {
+      "decision": "required",
+      "required": [
+        "docs/review.md"
+      ],
+      "missing": [
+        "docs/review.md"
+      ],
+      "saved": false
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge library attach team-knowledge shared/team-knowledge --to . --allow-path docs",
+    "reason": "Allow the destination folder, then rerun the same request."
+  }
+}

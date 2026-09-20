@@ -1,0 +1,12 @@
+Cannot remove: Extension Remove requires explicit stable IDs outside a prompt-capable human request.
+Workspace: <workspace>
+  Error  the selected  Selection is required [extension-remove.selection-required]
+         Extension remove needs to know which packages. Pass their IDs or --all.
+         open-forge extension list
+         List the installed Extensions, then rerun the request with an explicit selection.
+  .agents/open-forge.lock.json  updated
+  Entries sections unchanged: none
+  Verification: targets not checked; Entries not checked; Extension record not checked
+  Recovery: not-required.
+  Correct the Extension Remove input, then rerun the request.
+Next: open-forge extension remove --help

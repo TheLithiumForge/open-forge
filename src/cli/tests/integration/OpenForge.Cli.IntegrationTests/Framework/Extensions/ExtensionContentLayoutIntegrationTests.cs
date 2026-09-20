@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Extensions;
 [Trait("Feature", "extension-content"), Trait("Evidence", "Integration")]
 public sealed class ExtensionContentLayoutIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact]
     public async Task ReadsContentFilesWithExactSourceAndDestinationCoordinates()
     {
@@ -35,6 +36,7 @@ public sealed class ExtensionContentLayoutIntegrationTests
         Assert.Equal(before, source.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact]
     public async Task UnavailableCatalogueClassificationCannotFallThroughToPackageSuccess()
     {

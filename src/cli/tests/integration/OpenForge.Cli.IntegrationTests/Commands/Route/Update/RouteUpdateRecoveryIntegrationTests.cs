@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 
 public sealed class RouteUpdateRecoveryIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update recovery prepares one external bundle and rejects deterministic collision")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task RecoveryCollisionStopsBeforeApplication()
@@ -38,6 +39,7 @@ public sealed class RouteUpdateRecoveryIntegrationTests
         Assert.Equal(preparation.BundlePath, collision.Recovery.ResidualPath);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update completion retains a known recovery artifact when interrupted")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task InterruptedCleanupReportsRetainedArtifact()
@@ -76,6 +78,7 @@ public sealed class RouteUpdateRecoveryIntegrationTests
         Assert.True(File.Exists(preparation.BundlePath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update completion reports unknown recovery disposition when identity changes")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task ChangedRecoveryIdentityIsUnknown()

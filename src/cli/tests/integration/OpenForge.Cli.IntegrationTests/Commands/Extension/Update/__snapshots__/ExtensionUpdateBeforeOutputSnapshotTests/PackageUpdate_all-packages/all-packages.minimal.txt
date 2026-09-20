@@ -1,0 +1,5 @@
+Updated 2 Extensions.
+  .agents/base.md     replaced (you had changed it and this version changes it)
+  .agents/toolkit.md  replaced (you had changed it and this version changes it)
+  Previous content: recovery bundle at <recovery-bundle>
+Next: open-forge doctor

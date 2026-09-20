@@ -1,0 +1,20 @@
+Installed the Open Forge Framework into <workspace>, replacing 1 existing file.
+Workspace: <workspace>
+  .agents/directives/_directives.md             created
+  .agents/guidance/_guidance.md                 created
+  .agents/loader.md                             created
+  .agents/maps/_maps.md                         created
+  .agents/memory/_memory.md                     replaced
+  .agents/memory/archived/_archived.md          created
+  .agents/memory/crystallized/_crystallized.md  created
+  .agents/memory/emerging/_emerging.md          created
+  .agents/memory/working/_working.md            created
+  .agents/patterns/_patterns.md                 created
+  .agents/skills/_skills.md                     created
+  .agents/templates/_templates.md               created
+  AGENTS.md                                     created with an Open Forge section
+  CLAUDE.md                                     created with an Open Forge section
+  .agents/open-forge.lock.json                  created; records the files above
+  Created 11 files and 10 directories under .agents (listed in .agents/open-forge.lock.json).
+  Created AGENTS.md and CLAUDE.md with an Open Forge section.
+  Created 10 directories.

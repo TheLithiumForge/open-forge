@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Resolve a mutable filesystem target through canonical logical identity, exact ancestor enumeration, physical identity, and explicit revalidation
+  description: "Historical CLI-v2 source: Resolve a mutable filesystem target through canonical logical identity, exact ancestor enumeration, physical identity, and explicit revalidation"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

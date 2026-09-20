@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "docs/guide  .agents/docs/guide.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "ownBytes": 202,
+    "ownTokens": 51,
+    "addedFiles": 2,
+    "addedBytes": 202,
+    "addedTokens": 51,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "docs/guide",
+    "path": ".agents/docs/guide.md",
+    "kind": "markdown",
+    "entrypointForm": "markdown",
+    "overwritePath": ".agents/docs/guide.overwrite.md",
+    "belongs": {
+      "routeChain": [
+        "docs",
+        "guide"
+      ],
+      "parent": "docs",
+      "directChildren": {
+        "files": 0,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 0,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": false,
+      "automaticallyWhen": [
+        "this route is selected",
+        "the base source is read"
+      ],
+      "mayReadAgain": false
+    },
+    "size": {
+      "own": {
+        "files": 2,
+        "bytes": 202,
+        "tokens": 51
+      },
+      "adds": {
+        "files": 2,
+        "bytes": 202,
+        "tokens": 51
+      },
+      "loadNow": null
+    },
+    "axioms": {
+      "inheritedFrom": [],
+      "local": "not applicable"
+    },
+    "tags": [
+      "Docs",
+      "Guide"
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

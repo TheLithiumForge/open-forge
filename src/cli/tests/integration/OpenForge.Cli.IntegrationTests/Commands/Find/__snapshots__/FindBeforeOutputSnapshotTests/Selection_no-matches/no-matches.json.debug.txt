@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 3,
+  "command": "find",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "No sources match --tag AbsentTag.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "matches": 0,
+    "sourcesInspected": 4,
+    "sourcesCandidates": 4
+  },
+  "limitations": [],
+  "data": {
+    "matches": [],
+    "query": {
+      "tags": [
+        "AbsentTag"
+      ],
+      "headings": [],
+      "require": "all",
+      "within": [
+        "frontmatter",
+        "body"
+      ]
+    },
+    "sourceSet": {
+      "mode": "default",
+      "include": [],
+      "exclude": [],
+      "inspected": 4,
+      "candidates": 4
+    }
+  },
+  "recovery": null,
+  "next": null
+}

@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "blocked",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot install toolkit: 1 file already exists where the package would write.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-install.initial-force-required",
+      "title": "Target is occupied",
+      "message": ".agents/toolkit.md already exists and is not managed by Open Forge.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/toolkit.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "guided-choice",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge extension install toolkit --force --dry-run",
+          "reason": "Preview replacing the existing file before rerunning the installation."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/toolkit.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": "toolkit",
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "packagesInstalled": 0,
+    "filesCreated": 0,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "toolkit",
+        "version": "1.0.0",
+        "selected": true,
+        "requiredBy": []
+      }
+    ],
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "selection": {
+      "method": "explicit-ids"
+    },
+    "sections": [],
+    "entriesUnchanged": [
+      ".agents/directives/_directives.md",
+      ".agents/guidance/_guidance.md",
+      ".agents/loader.md",
+      ".agents/maps/_maps.md",
+      ".agents/memory/_memory.md",
+      ".agents/memory/archived/_archived.md",
+      ".agents/memory/crystallized/_crystallized.md",
+      ".agents/memory/emerging/_emerging.md",
+      ".agents/memory/working/_working.md",
+      ".agents/patterns/_patterns.md",
+      ".agents/skills/_skills.md",
+      ".agents/templates/_templates.md"
+    ],
+    "frameworkFingerprint": "<sha256>",
+    "verification": {
+      "targets": "unknown",
+      "topology": "unknown",
+      "extensionsLifecycle": "unknown",
+      "frameworkLifecycle": "unknown"
+    },
+    "recovery": {
+      "state": "not-created",
+      "protectedPaths": [],
+      "residualPath": null
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension install toolkit --force --dry-run",
+    "reason": "Preview replacing the existing file before rerunning the installation."
+  }
+}

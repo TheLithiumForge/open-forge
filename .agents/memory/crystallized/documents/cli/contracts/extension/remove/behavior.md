@@ -1,8 +1,8 @@
 ---
 open-forge:
-  description: Accepted technology-neutral Extension removal behavior for ownership release, shared owners, same-request prune, and recovery
+  description: Accepted technology-neutral Extension removal behavior for ownership release, shared owners, final-owner deletion, and recovery
   responsibility: Define remove's deterministic trusted-fact flow, complete deletion and release plan, verification, recovery, and result
-  tags: [Memory, Crystallized, CLI, Release, Command, Contract, Extension, Remove, Behavior, Ownership, Prune, Safety, Recovery, CurrentTruth]
+  tags: [Memory, Crystallized, CLI, Release, Command, Contract, Extension, Remove, Behavior, Ownership, Safety, Recovery, CurrentTruth]
 ---
 
 # extension remove Behavior Contract
@@ -12,7 +12,7 @@ open-forge:
 This is the accepted current Crystallized Behavior Contract for non-shipping
 `open-forge extension remove`. It defines exact ID and workspace resolution,
 trusted ownership and route facts, dependency and shared-owner checks,
-semantic removal classification, Keep-as-unmanaged/Delete intent, generated
+final-owner removal classification and intent, generated
 projection, complete planning, dry-run/application, verification, lifecycle
 publication, recovery, result formation, and conformance. It does not choose
 package source, schema, parser, storage, or implementation technology. The
@@ -24,9 +24,16 @@ mechanics or claim their Gate 5 proof.
 
 ## Consumer Destination Permissions
 
+Explicit non-dry-run `--allow-path` edits the shared authored settings after safe
+planning and before admission; failure is reported and stops content application.
+It is a separate authored edit and remains if later content fails. Interactive
+always approval declares a settings effect covered by the operation's recovery
+bundle. Once approves only this operation and writes no settings; cancel applies
+nothing. The shared contract owns the exact reader, authoring and receipt rules.
+
 Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
-[Behavior](../../shared/workspace-permissions/behavior.md). Require exact grants for every selected owned external path, including
-Keep-as-unmanaged paths and shared-owner retention. Derive these requirements
+[Behavior](../../shared/workspace-permissions/behavior.md). Require shared allow-list admission for every selected owned external path, including
+shared-owner retention. Derive these requirements
 from trusted ownership without reading package source.
 Existing `.agents/` targets need no grant; their prior safety and ownership
 checks remain. Revocation blocks the complete selected lifecycle operation,
@@ -35,13 +42,12 @@ installed packages do not enter this request's required set.
 
 An eligible human apply request asks once for the complete missing set after
 safe preflight. JSON, automatic, redirected and dry-run execution never ask the
-permission question or create grants. Existing selection and force/prune
-questions keep their separate rules. Force and prune never supply permission.
-Malformed or unsafe permission storage is diagnosed without overwriting it.
+permission question. An explicit non-dry-run `--allow-path` still authors a grant. Selection questions keep their separate rules. Selection never supplies permission.
+Malformed or unsafe settings are never overwritten by approval.
 
-Permission create/replace is a declared control-file effect. Revalidate the
-observed document and approved plan under the existing workspace lease. Cover
-prior permission bytes or proven absence in the one verified operation bundle,
+Interactive always approval creates a declared settings-file create/replace effect. Revalidate the
+observed settings and approved plan under the existing workspace lease. Cover
+prior settings bytes or proven absence in the one verified operation bundle,
 then persist and verify approval before content and lifecycle effects. Later
 failure retains the grant and its actual outcome. Restoration is manual; no
 new automatic Repair behavior follows.
@@ -49,10 +55,10 @@ new automatic Repair behavior follows.
 ## Complete Typed Flow
 
 ```text
-validated managed IDs and same-request prune intent
-  -> exact workspace and lifecycle trust
+validated managed IDs
+  -> exact workspace and ownership-record state
   -> fresh ownership, dependency, route, generated, and current-byte facts
-  -> Keep-as-unmanaged/Delete intended state
+  -> shared retention, final-owner deletion, and missing-path release
   -> one complete ownership-release/removal plan
   -> preflight
   -> dry-run or application
@@ -63,90 +69,61 @@ validated managed IDs and same-request prune intent
 ```
 
 Remove never applies a safe subset around a retained dependent, unsafe route,
-untrusted section, ambiguous owner, or unavailable recovery coverage. Unavailable
-storage is `incomplete`; malformed, mismatched, or colliding bundle facts are
-`blocked`.
+ambiguous owner, unknown ownership, or unavailable recovery coverage.
+Unavailable storage is `incomplete`; malformed, mismatched, or colliding bundle
+facts are `blocked`.
 
 ## Request And Workspace Resolution
 
-1. Resolve terminal help/version before lifecycle reads.
-2. Parse one or more exact stable-ID operands, reject duplicates and unknown
-   selectors, and reject source, `--all`, force, package path, and other flags.
-3. Resolve `--prune`, `--automatic`, and `--dry-run` as independent idempotent
-   Booleans. Any unknown option is invalid.
-4. Select exactly CWD or exact `--workspace` with no discovery.
-5. In prompt-capable human mode, allow the finite managed-ID and
-   Keep-as-unmanaged/Delete wizard. In JSON/noninteractive mode, missing IDs are
-   invalid and no prompt occurs.
-
-Without `--prune`, noninteractive and automatic requests choose
-Keep-as-unmanaged for changed final-owner files. With `--prune` in the same
-request, they choose Delete for eligible changed final-owner files. Automatic
-mode never adds that flag or selects Delete.
+Resolve terminal help/version before workspace inspection. Parse exact stable
+IDs; reject duplicate IDs, missing noninteractive selection, and unknown options.
+`--prune` is an unknown option. `--automatic` disables prompts; `--dry-run`
+previews without writes. Select the exact workspace under the shared workspace
+contract. Prompt-capable human mode may ask for package IDs. There is no
+changed-content policy question.
 
 ## Trust And Source-Independent Facts
 
-Read the `extensions` section of `.agents/open-forge.lifecycle.json`, schema v1,
-and preserve the `framework` section and common-envelope meaning semantically.
-A selected semantic change emits one deterministic canonical UTF-8 whole-document
-representation, so lifecycle property order, whitespace, and line endings may be
-normalized. A semantic no-op writes nothing. Exact prior bytes for every
-existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`) are
-captured in the verified operation recovery bundle. Require trusted exact
-workspace binding, selected ID records, dependency
-reciprocity, path/owner sets, semantic baseline fingerprints, route and generated
-coverage, and safe cross-section preservation. The document stores no plan,
-runtime history, journal, recovery evidence, or session. Files outside this exact
-path are ordinary workspace content, not lifecycle input.
+Read Extension identities, dependencies, paths, and regions from
+`.agents/open-forge.lock.json`. A proven-absent ownership source, or a valid
+readable lock with no selected record, is known-empty and may form the existing
+complete no-op. A malformed or unavailable ownership source/record is unknown:
+return `incomplete` before dependency or path planning, with the explicit
+ownership-record subject and raw cause, and perform no effects, writes, recovery,
+or publication. Never fall back to legacy claims or treat unknown as empty.
+Current payload and matching bytes never establish ownership. Package source may
+be gone.
 
-An absent document or section cannot prove a repeated remove no-op or grant
-removal/prune authority. Missing, malformed, unsupported, unverifiable, or
-inconsistent facts retain safe read-only facts where possible; return `incomplete`
-for safe unavailable coverage and `blocked` for unsafe ambiguity.
-
-No package source bytes are required. Current ownership and exact bytes come from
-the selected workspace. A missing source therefore does not erase readable
-lifecycle or baseline facts, but it also does not create trust where trust is
-missing.
+Derive shared owners from the per-extension path lists. If differently spelled
+receipts alias the same portable path, report the uninterpretable ownership and
+perform no effects; exact string lookup must not turn another owner's file into
+final-owner content. Framework and Library
+path receipts remain separate. A Library path is source-relative: map it under
+its `destinationRoot` using the existing Library mapping rules before comparing
+workspace destinations. An uninterpretable mapping yields an ownership
+observation and no effects. Preserve unrelated lock sections when publishing
+Extension release after verified target effects. The lock is the only state
+publication. Its exact prior bytes enter the same verified recovery bundle
+before deletion. Earlier state files remain untouched.
 
 ## Current Identity And Removal Classification
 
-For every recorded package path, capture current exact bytes and semantic facts
-freshly. Compare the current `open-forge-markdown-v1` conservative semantic
-fingerprint with the persisted baseline
-semantic fingerprint. Unsupported, binary, or unparseable content uses exact-byte
-identity and fails closed. Formatting-only byte differences with equal semantic
-identity are not divergence. Exact bytes remain necessary for plan, diff,
-expected-state, deletion/write verification, and recovery.
+Capture fresh exact bytes and physical identity for eligible existing paths.
+No persisted fingerprint or changed-content distinction participates.
 
-Classify each path as:
+- `shared`: release selected owners; retain the file for remaining owners.
+- `final-owner`: delete the existing ordinary file after all checks and verified
+  recovery preparation, including when its bytes were edited.
+- `missing`: release the claim without a deletion effect.
 
-- **shared:** another trusted owner remains. Release only the selected owner and
-  retain the physical file.
-- **unchanged final owner:** selected ownership is the final trusted owner and
-  current semantic identity matches baseline. It may be deleted under ordinary
-  remove authority after all checks.
-- **changed final owner:** selected ownership is final but current semantic
-  identity differs from baseline. Keep it as unmanaged by default; delete only
-  when same-request `--prune` supplies Delete authority.
-- **missing or already absent:** release recorded ownership only when lifecycle
-  facts prove the selected ownership. Do not infer prior success from absence.
-- **unknown, unowned, other-manager, Framework-owned, route-unsafe, or
-  ambiguous:** do not claim or delete; block the complete plan.
+The shared allow list applies to all owners, with implicit `.agents/` admission.
+Reserved paths and ordinary-ancestor/physical-containment checks remain. Never
+delete `.agents/open-forge.json`, `.agents/open-forge.lock.json`, or descendants
+of either, even when a stale receipt claims them. Never delete a Framework or
+Library path, a region-only host, or an unowned target.
 
-An exact current path or matching fingerprint without a trusted recorded owner
-never becomes managed during removal.
-
-An exact destination path claim in the consumer Library record
-`.agents/open-forge.libraries.json`, or a real relative projection link at that
-destination, is separately owned by Library management. Remove never adopts,
-overwrites, updates, or removes that destination in any removal mode, including
-ordinary removal, same-request `--prune`, and Keep-as-unmanaged. The neutral
-no-follow final-leaf guard blocks ordinary Extension `Create`, `Replace`,
-`Delete`, or `ReplaceGeneratedRegion` when the leaf is a link or reparse point,
-independently of whether the Library record is present, readable, valid, or
-claims the path. Remove does not reinterpret the Library record or invoke a
-Library operation.
+A no-follow observation rejects links and reparse points independently of lock
+readability. An unsafe or unauthorized target blocks the complete plan.
 
 ## Dependencies, Routes, And Intended Topology
 
@@ -156,8 +133,7 @@ formed. Reject removal when a route host cannot be safely removed while retained
 routed descendants depend on it.
 
 Form one hypothetical post-remove workspace with selected ownership releases,
-permitted unchanged final-owner deletions, selected changed final-owner Delete
-effects, and preserved shared/unmanaged/user/Framework content. Project affected
+eligible final-owner deletions and preserved shared/user/Framework content. Project affected
 generated `Entries` from the intended authored topology and metadata through the
 Index contract. Generated interiors are derived navigation, not package-owned
 authored bytes. Preserve valid markers and outside bytes; malformed boundaries
@@ -166,24 +142,18 @@ block and are never repaired.
 The package source is never in the plan. Neither the Framework section nor
 Framework-owned paths are Extension removal targets.
 
-## Complete Plan And Same-Request Prune
+## Complete Plan
 
-The plan contains selected IDs, retained dependents, dependency edges, exact
-owner sets, path classifications, semantic/current bytes, Keep/Delete intent,
-ownership-release effects, file deletion effects, generated projection,
-lifecycle publication, expected-state guards, recovery-bundle readiness,
-verification, and final cleanup handling.
-
-`--prune` is resolved before planning and applies only to changed final-owner
-content that independently passes every identity, ownership, route,
-containment, verification, and recovery-bundle gate. It cannot be added
-by a later invocation after ownership is released. Once a path is released as
-unmanaged, later prune has no authority to act on it.
+Form one complete immutable plan containing selected ownership release,
+dependencies, path classifications and actions, generated topology, target
+changes, state publication, expected-state guards, recovery targets, and final
+verification. A final-owner path always maps to Delete; no prune authority or
+Keep-as-unmanaged action remains.
 
 ## Preflight, Dry-Run, Application, And Recovery
 
-Preflight validates lifecycle trust, IDs, dependencies, owner sets, current exact
-and semantic facts, route and generated boundaries, cross-section preservation,
+Preflight validates IDs, dependencies, owner sets, current exact
+facts, route and generated boundaries, cross-section preservation,
 expected state, deletion safety, verification, and recovery-bundle readiness.
 One failed condition blocks all effects. Before the first workspace effect,
 obtain the actual OS lock for the persistent external zero-byte path under
@@ -194,13 +164,12 @@ Hold a `FileShare.None` handle; existence is not lock ownership, and another
 process holding the handle blocks mutation. A crash releases the OS lock. The
 lock is not lifecycle authority, history, or recovery evidence.
 
-Dry-run uses the same request, Keep/Delete intent, facts, plan, and preflight as
-application. It shows selected ownership release, shared retention, unchanged
-deletion, changed preservation or prune deletion, generated effects, lifecycle
+Dry-run uses the same request, deletion intent, facts, plan, and preflight as
+application. It shows selected ownership release, shared retention, final-owner deletion, generated effects, lifecycle
 publication, and recovery-bundle requirements. It writes no file, lifecycle
 section, recovery bundle, temporary artifact, or package source and cannot claim application
 verification. It forms the same pre-effect planning status as application but
-never produces an apply-time `failed` or `interrupted` result because it performs
+never produces an apply-time `failed` or `cancelled` result because it performs
 no effects. A planning or read failure and caller cancellation before effects
 retain their own event meaning.
 
@@ -236,22 +205,18 @@ deterministic canonical UTF-8 whole-document representation; formatting,
 ordering, and line-ending trivia may be normalized. A semantic no-op publishes
 no lifecycle write.
 
-Before post-verification deletion begins, a handled application, verification,
+A handled application, verification,
 publication, or cancellation outcome stops new effects and reports the actual
 residual draft or final path; a valid final remains when preparation completed.
 A closed final ZIP may remain after abrupt process termination, without an
 executable crash or power-loss guarantee. Never restore, roll back, compensate
 for an effect, derive current target state from recovery provenance, or create a
-journal, progress receipt, or persisted plan. After final verification of
-whole-operation success, delete the bundle. `Deleted`/`Removed` permits normal
-completion. `Failed`/positively observed `Retained` keeps target effects
-successful and produces `attention`, the exact residual path, and cleanup
-guidance.
-`Failed`/`Unknown` produces `failed` and reports
-an exact expected path only when the deletion result provides one.
-When `Failed`/positively observed `Retained` recovery attention coexists with a
-finite non-blocking fact, cleanup guidance owns the single next action; the
-other fact remains visible evidence.
+journal, progress receipt, or persisted plan. After whole-operation success, re-read and verify the prepared bundle and retain
+it. Return `retained` with the exact bundle path and no failure finding. Its
+payload is the protection for edited bytes. A missing or invalid prepared bundle
+fails final recovery verification. Existing recovery-catalogue conflict checks
+remain for later mutations; users review the bundle before explicit Cleanup.
+An absent-ID Remove no-op may complete without mutation despite a retained bundle.
 
 Explicit Cleanup owns exact named final and draft deletion under its separate
 lease-bound contract. Unknown or differently named artifacts remain untouched.
@@ -264,29 +229,26 @@ archive parser.
 
 ## Repeated Remove And Result Formation
 
-A repeated remove is `complete` as a verified no-op only when a valid trusted
-current lifecycle section proves the selected ID and all selected ownership are
-absent. A missing document or section, malformed, unsupported, or untrusted
-evidence is `incomplete` or `blocked`, never presumed success.
+No selected claims in a proven-absent source or valid readable lock means a
+complete no-op with no deletion. Malformed or unavailable ownership is instead
+`incomplete` with zero effects and writes; preserve the ownership-record subject
+and raw cause at minimal. Missing is never an alias for unavailable. Do not
+consult legacy claims to fill the gap.
 
-Form one typed result with exact workspace, IDs, trust/coverage, retained
-dependents, owner/path classifications, Keep/Delete choice, releases, deletions,
-shared retention, preserved unmanaged paths, generated effects, lifecycle
-publication, verification, recovery-bundle status, and one next action. Human and
-JSON renderers consume it once. Use the Interface status and stream rules.
+Form one typed result with workspace, selection, dependencies, classifications,
+shared retention, final-owner deletion, missing-path release, generated effects,
+state publication, recovery path, verification, and findings. The Interface
+owns presentation, statuses, streams, and JSON ordering. The `prune` field is
+absent from both JSON views and human output.
 
 ## Behavioral Conformance
 
-Conformance must cover exact ID/workspace resolution, wizard/direct/automatic
-choice, source independence, trusted/untrusted/absent lifecycle, no-op proof,
-dependency and route-host blocking, shared-owner release, unchanged final-owner
-deletion, changed Keep-as-unmanaged, same-request prune Delete, Library-record
-and projection collisions, independent no-follow final-leaf guards, later-prune
-refusal, unknown/unowned/Framework preservation, semantic fingerprints,
-generated projection, complete plan, recovery-bundle behavior, revalidation,
-verification, dry-run no-effects, statuses/streams/JSON, and
-package-source preservation. The [Shared Result
-Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
-result schema and exit mapping. Gate 5 must prove source-generated
-serialization, fixed Markdig where used, real `System.IO`, Native AOT, OS
-locking, isolated tests, and package journeys.
+Prove source-independent lock selection, proven-absent no-op, malformed/
+unavailable ownership incomplete zero-effect refusal with exact subject/cause,
+retained-dependent blocking, shared ownership, missing-path release without a deletion effect, and complete refusal
+of stale claims outside the shared destination boundary. Prove deletion rejects
+missing verified preparation, all prior bytes exist in the finalized recovery
+bundle before any deletion, and edited bytes remain recoverable after successful
+application. Cover unsafe final leaves, reserved state files, no legacy fallback,
+dry-run parity, absent-ID no-ops, and unknown-option rejection for `--prune`.
+Run the supported managed and Native AOT verification gates.

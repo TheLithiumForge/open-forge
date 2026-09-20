@@ -167,7 +167,7 @@ internal static class ReferencesPresentationTestData
             CliSemanticStatus.Failed,
             ReferencesFindingCode.OperationFailed,
             "The References operation failed at its bounded operating boundary.",
-            "open-forge references --verbose",
+            "open-forge references --detail debug",
             "Report the failure and retry the same References request with bounded diagnostics.");
 
     internal static ReferencesResult InterruptedResult()
@@ -222,10 +222,10 @@ internal static class ReferencesPresentationTestData
 
     internal static CliPresentationRequest<ReferencesResult> Presentation(
         ReferencesResult result,
-        CliOutputFormat format = CliOutputFormat.Human,
-        CliView view = CliView.Expanded,
-        CliVerbosity verbosity = CliVerbosity.Normal)
-        => CliPresentationStage.Create(result, new CliPresentation(format, view, verbosity));
+        CliFormat format = CliFormat.Text,
+        CliDetail view = CliDetail.Standard,
+        CliDetail? diagnosticDetail = null)
+        => CliPresentationStage.Create(result, new CliPresentation(format, diagnosticDetail ?? view, null));
 
     internal static ReferencesSource Source(bool withOverwrite = true)
         => new(

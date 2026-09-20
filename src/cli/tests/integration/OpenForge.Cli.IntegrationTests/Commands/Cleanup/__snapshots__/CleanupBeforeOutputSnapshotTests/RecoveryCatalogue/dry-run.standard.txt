@@ -1,0 +1,6 @@
+Would remove 2 recovery bundles and 1 unfinished draft.
+Workspace: <workspace>
+  <recovery-bundle-1>    would be removed (bundle from index, verified)
+  <recovery-bundle-2>    would be removed (bundle from repair, verified)
+  <recovery-bundle-3>  would be removed (unfinished draft, incomplete)
+No files were changed.

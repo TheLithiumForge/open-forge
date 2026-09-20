@@ -10,8 +10,8 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the technology-neutral
-Behavior Contract for `route inspect`. The command does not ship yet;
-implementation and executable evidence are tracked in
+Behavior Contract for `route inspect`. The command is implemented in the
+merged native CLI; implementation and executable evidence are tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md).
 
 The [Interface Contract](interface.md) defines the complete public grammar,
@@ -76,7 +76,7 @@ An unknown or unsupported reference forms the public invalid boundary. An
 unresolved ambiguous source ID forms `blocked`. Exact-path or interactive
 disambiguation may resolve only source identity. If the resulting physical
 source and route are safe and complete while the automatic ID remains
-non-unique, resolution records the identity observation for `attention`.
+non-unique, resolution records the identity observation for `completed-with-warnings`.
 Exact-path resolution does not repair a structurally ambiguous route. A Loader
 reference is rejected as a workspace root rather than treated as the inspected
 route subject. These resolution outcomes use the public [Errors](interface.md#errors)
@@ -94,7 +94,7 @@ candidate number or one exact displayed path. A valid answer selects that exact
 physical source and records interactive selection. There is no default, retry,
 or inferred choice. An invalid answer or end of input retains the existing
 blocked collision and exact-path guidance; caller cancellation forms
-`interrupted`. Each retains the known collision facts. JSON and redirected
+`cancelled`. Each retains the known collision facts. JSON and redirected
 requests never call the session, and no prompt text is written to stdout.
 
 ### One route and loading graph
@@ -152,14 +152,14 @@ applicable fact's availability. A routed entrypoint, routed leaf, routed native
 source, accepted compatibility entrypoint, valid overwrite pair, detached
 entrypoint, or known supported unrouted source can therefore be complete when
 its applicable facts are complete. A safe non-unique automatic ID becomes
-`attention` only after exact-path or interactive resolution has selected source
+`completed-with-warnings` only after exact-path or interactive resolution has selected source
 identity without leaving route meaning ambiguous.
 
 Unreadable required sources, incomplete route chains, and unmeasurable
 applicable facts remain `incomplete`. Orphan or ambiguous overwrite pairs,
 ambiguous routes, unsafe identity, and containment failures remain `blocked`.
 Zero or several operands, the Loader, and unknown, missing, or unsupported
-sources remain `invalid`. The classifier does not reinterpret a compatibility
+sources remain `invalid-input`. The classifier does not reinterpret a compatibility
 filename, detached route, unrouted source, overwrite customization, route
 depth, added context, or size as a health condition.
 
@@ -243,7 +243,7 @@ human renderer uses the exact no-addition meaning in
 [Added By Selection](interface.md#added-by-selection). No historical invocation
 or caller-retained context is consulted.
 
-The empty difference is a measured zero and selects `complete` when all other
+The empty difference is a measured zero and selects `completed` when all other
 applicable facts are complete. A detached entrypoint has no Loader-rooted
 startup comparison, so that comparison is `not-applicable`; a known supported
 unrouted source has route-based selection addition `not-applicable`. Own-source
@@ -267,13 +267,15 @@ records `not-applicable`.
 
 #### Availability
 
+Readable generated `Entries` in an ordinary entrypoint remain measurable when optional description or tags are absent. This includes intermediate entrypoints created by nested Route Create. Missing optional metadata alone does not make those Entries unavailable. Malformed metadata, unreadable bodies, unavailable Entries and required native metadata retain their existing strict boundaries. Independently unavailable selected-source reading facts remain unavailable.
+
 The operation carries zero, unavailable, and not-applicable measurements as
 different states. A readable zero is measured as zero. A safely identified but
 unreadable required layer makes the affected measurement unavailable and selects
 `incomplete` rather than producing a partial trusted count. An unsafe identity or
 containment boundary selects `blocked`; it is never downgraded to a measurement
 availability condition. An applicable unmeasurable safe fact remains visibly
-unavailable and selects `incomplete`. Human compact output keeps zero and
+unavailable and selects `incomplete`. Human minimal-detail output keeps zero and
 not-applicable distinct, and structured output retains all three states.
 
 ### Route topology
@@ -343,21 +345,21 @@ ordering rule.
 The result selector uses only the public conditions in
 [Semantic Results](interface.md#semantic-results). A routed source, accepted
 compatibility entrypoint, valid overwrite pair, safely detached entrypoint, or
-known supported unrouted source is `complete` when every applicable fact is
+known supported unrouted source is `completed` when every applicable fact is
 available. A safe, complete source and route with a non-unique automatic ID is
-`attention` only when exact-path or interactive resolution selected source
+`completed-with-warnings` only when exact-path or interactive resolution selected source
 identity. An unreadable required source, incomplete route chain, or unmeasurable
 applicable fact is `incomplete`. An orphan or ambiguous overwrite, ambiguous
 route, unsafe identity, or containment failure is `blocked`. Zero or several
 operands, the Loader, and unknown, missing, or unsupported sources are
-`invalid`. Unexpected failure is `failed`, and cancellation before completion
-is `interrupted`.
+`invalid-input`. Unexpected failure is `failed`, and cancellation before completion
+is `cancelled`.
 
 For ordinary conditions, the selector applies `blocked`, `incomplete`,
-`attention`, then `complete` precedence. Invalid input stops before operation
+`completed-with-warnings`, then `completed` precedence. Invalid input stops before operation
 work, while failure and interruption retain their event meanings. Size,
 customization, compatibility filenames, detached routes, known unrouted
-sources, added context, route depth, and context size do not create `attention`
+sources, added context, route depth, and context size do not create `completed-with-warnings`
 or a recommendation.
 
 The operation does not compare generated navigation, create diagnosis or
@@ -401,30 +403,30 @@ remain in [Errors](interface.md#errors) and [Semantic Results](interface.md#sema
 
 ## Presentation Relationship
 
-Human output and `--json` consume one typed result. Renderers do not rerun graph
+Human output and `--format json` consume one typed result. Renderers do not rerun graph
 construction, source resolution, classification, measurement, topology, or
 verification, and they do not reinterpret the semantic result.
 
-The renderer applies the shared `--view` and `--verbose` presentation rules
+The renderer applies the shared `--detail` and `--detail debug` presentation rules
 after inspection. Both views put status and meaningful observations/conditions
-before the profile, with full subject/path identities. Expanded adds the distinct
+before the profile, with full subject/path identities. full-detail adds the distinct
 explanations, Axioms and measurements described by the
 [Human Output](interface.md#human-output) contract, without repeating the same
 measurement or reading explanation. Human Next displays the action already formed
-by the operation; expanded adds its reason. Both human views retain workspace identity, selection method, source
-ID, and canonical path. Compact output also retains source and route state,
+by the operation; full-detail adds its reason. Both human views retain workspace identity, selection method, source
+ID, and canonical path. minimal-detail output also retains source and route state,
 route chain, applicable topology, reading behavior, own-source,
 selection-addition, and `#LoadNow` descendant measurements, overwrite state,
 status, completeness, safety, and at most one required `Next:` line. It omits
 inherited-`Axioms` detail and optional explanation while keeping measured zero,
 `unavailable`, and `not-applicable` distinct. JSON retains the complete typed
 facts regardless of human view, including collision candidate paths,
-observations, and availability conditions. `--json` does not prompt or rerun
+observations, and availability conditions. `--format json` does not prompt or rerun
 work.
 
-Primary human `complete`, `attention`, and `incomplete` results go to stdout.
-Primary human `invalid`, `blocked`, `failed`, and `interrupted` results go to
-stderr. `--json` writes one complete structured result to stdout for every
+Primary human `completed`, `completed-with-warnings`, and `incomplete` results go to stdout.
+Primary human `invalid-input`, `blocked`, `failed`, and `cancelled` results go to
+stderr. `--format json` writes one complete structured result to stdout for every
 semantic status. Separate bounded diagnostics go to stderr, and human text is
 never mixed into JSON stdout. The renderer emits a next operation only when the
 Interface rules require one. It never emits route mutation proposals, health or
@@ -455,7 +457,7 @@ Implementation evidence must cover:
   exact-path observation.
 - Host-supplied prompt capability, ordinal candidate presentation on stderr,
   one-based candidate-number and exact displayed-path responses, blocked invalid
-  response/end of input, interrupted cancellation, and proof that JSON and
+  response/end of input, cancellation, and proof that JSON and
   redirected requests never call the interactive session or write prompt text to
   stdout.
 - Unresolved non-interactive ID collisions that retain every candidate path and
@@ -485,7 +487,7 @@ Implementation evidence must cover:
 - Measured zero, unavailable, and not-applicable distinctions for empty
   selection additions, empty `#LoadNow` descendant sets, ordinary leaves,
   detached entrypoints, and known unrouted sources.
-- Compact retention of the required identity, route, reading, measurement,
+- minimal-detail retention of the required identity, route, reading, measurement,
   topology, overwrite, status, completeness, safety, and `Next:` facts, with
   inherited-Axiom detail omitted.
 - Structured and human rendering from one typed result.
@@ -493,11 +495,12 @@ Implementation evidence must cover:
   collection or recommendations.
 - Primary human stdout/stderr assignment, one complete JSON result on stdout for
   every status, bounded diagnostics on stderr, and no human text in JSON stdout.
-- Complete, attention, incomplete, invalid, blocked, failed, and interrupted
+- Completed, completed-with-warnings, incomplete, invalid-input, blocked, failed,
+  and cancelled
   outcomes.
 - Evidence that compatibility, detached and unrouted state, valid overwrite
-  customization, route depth, added context, and size do not create attention
-  or recommendations.
+  customization, route depth, added context, and size do not create
+  `completed-with-warnings` results or recommendations.
 - One graph construction, no content rendering, no link following, and no
   persistent inspection state.
 

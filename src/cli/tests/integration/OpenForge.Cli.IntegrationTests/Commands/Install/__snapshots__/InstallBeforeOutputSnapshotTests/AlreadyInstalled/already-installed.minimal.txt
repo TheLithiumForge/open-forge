@@ -1,0 +1,2 @@
+Open Forge is already installed and current. Nothing to do.
+Workspace: <workspace>

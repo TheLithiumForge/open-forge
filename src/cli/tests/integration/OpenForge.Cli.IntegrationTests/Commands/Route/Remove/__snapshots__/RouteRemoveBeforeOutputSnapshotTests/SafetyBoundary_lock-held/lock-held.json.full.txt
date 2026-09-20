@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot remove guidance/old guide: Another Open Forge command holds the workspace lock. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-remove.workspace-lock-unavailable",
+      "title": "Workspace lock is held",
+      "message": "Another Open Forge command holds the workspace lock. Nothing was changed.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/guidance/old guide.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route remove",
+          "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": "README.md",
+      "kind": "link",
+      "action": "detached",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/guidance/old guide.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/old guide.overwrite.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": null
+    }
+  ],
+  "counts": {
+    "filesRemoved": 0,
+    "sectionsUpdated": 0,
+    "linksDetached": 1,
+    "filesScanned": 11,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "removed": [
+      ".agents/guidance/old guide.md",
+      ".agents/guidance/old guide.overwrite.md"
+    ],
+    "detachedLinks": [
+      {
+        "path": "README.md",
+        "location": "1:8",
+        "before": "Prefix [Old guide](.agents/guidance/old%20guide.md#part) suffix.",
+        "after": "Prefix Old guide suffix."
+      }
+    ],
+    "scan": {
+      "filesScanned": 11,
+      "occurrences": 2
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route remove",
+    "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan."
+  }
+}

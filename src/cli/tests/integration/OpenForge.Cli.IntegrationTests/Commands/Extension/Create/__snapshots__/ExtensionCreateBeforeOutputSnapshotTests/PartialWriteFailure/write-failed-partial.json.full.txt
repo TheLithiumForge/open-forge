@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 3,
+  "command": "extension create",
+  "status": "failed",
+  "detail": "full",
+  "filter": null,
+  "workspace": null,
+  "summary": {
+    "headline": "Extension create stopped after 1 of 2 files.",
+    "kind": "failed"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-create.application-failed",
+      "title": "Writing failed",
+      "message": "Extension create stopped after 1 of 2 files. Created files were left in place.",
+      "subject": {
+        "kind": "directory",
+        "path": "<extension-source>\\toolkit\\content\\.agents\\",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": "<extension-source>\\toolkit\\extension.json",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": "<extension-source>\\toolkit\\content\\.agents\\",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "filesCreated": 1,
+    "directoriesCreated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "toolkit",
+    "folder": "<extension-source>",
+    "packagePath": "<extension-source>\\toolkit",
+    "manifestPath": "<extension-source>\\toolkit\\extension.json",
+    "contentPath": "<extension-source>\\toolkit\\content\\.agents\\",
+    "manifest": {
+      "name": "Toolkit",
+      "description": "Open Forge Extension package toolkit.",
+      "version": "0.1.0",
+      "dependencies": []
+    },
+    "manifestContent": "{\"id\":\"toolkit\",\"name\":\"Toolkit\",\"description\":\"Open Forge Extension package toolkit.\",\"version\":\"0.1.0\",\"dependencies\":[]}"
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension create --detail debug",
+    "reason": "Inspect the retained destination state before retrying Extension Create."
+  }
+}

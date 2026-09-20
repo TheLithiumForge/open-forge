@@ -1,11 +1,14 @@
 using System.Text.Json;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
+using OpenForge.Cli.IntegrationTests.Serialization.Shared.Assertions;
 using OpenForge.Cli.Core.Commands.Extension.Create;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Manifest;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Planning;
-using OpenForge.Cli.Core.Commands.Extension.Create.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
-using OpenForge.Cli.Core.Commands.Extension.Create.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Extension.Create;
+using OpenForge.Cli.Core.Presentation.Extension.Create.Models;
+using OpenForge.Cli.Core.Presentation.Extension.Create.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
@@ -14,77 +17,50 @@ namespace OpenForge.Cli.IntegrationTests.Serialization;
 
 public sealed class ExtensionCreateGeneratedSerializationTests
 {
-    [Fact(DisplayName = "Extension Create JSON document uses generated metadata with exact null and property coordinates"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
-    public void DocumentUsesGeneratedMetadataWithExactCoordinates()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Extension Create native data uses generated metadata with exact coordinates"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
+    public void NativeDataUsesGeneratedMetadataWithExactCoordinates()
     {
-        var document = new ExtensionCreateJsonDocument
+        var data = new ExtensionCreateData
         {
-            SchemaVersion = 1,
-            Command = "extension create",
-            Status = "invalid",
-            Workspace = null,
-            Result = new ExtensionCreateJsonResult
-            {
-                Catalogue = null,
-                Destination = null,
-                Id = null,
-                Manifest = null,
-                Mode = "apply",
-                IntendedEffects = [],
-                AppliedEffects = [],
-                Verification = new ExtensionCreateJsonVerification
-                {
-                    Catalogue = "not-started",
-                    Destination = "not-started",
-                    Manifest = "not-started",
-                    Payload = "not-started",
-                    Cause = "A stable ID is required.",
-                },
-                WorkspaceLifecycleChanged = false,
-            },
-            Next = null,
+            Mode = "apply",
+            Id = null,
+            Folder = null,
+            PackagePath = null,
+            ManifestPath = null,
+            ContentPath = null,
+            Manifest = null,
+            ManifestContent = null,
         };
 
         var json = JsonSerializer.Serialize(
-            document,
-            ExtensionCreateJsonContext.Default.ExtensionCreateJsonDocument);
+            data,
+            ExtensionCreateDataJsonContext.Default.ExtensionCreateData);
 
         using var parsed = JsonDocument.Parse(json);
-        var root = parsed.RootElement;
         Assert.Equal(
-            ["schemaVersion", "command", "status", "workspace", "result", "next"],
-            root.EnumerateObject().Select(property => property.Name));
-        Assert.Equal(JsonValueKind.Null, root.GetProperty("workspace").ValueKind);
-        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
-        var result = root.GetProperty("result");
-        Assert.Equal(
-            ["catalogue", "destination", "id", "manifest", "mode", "intendedEffects", "appliedEffects", "verification", "workspaceLifecycleChanged"],
-            result.EnumerateObject().Select(property => property.Name));
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("catalogue").ValueKind);
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("destination").ValueKind);
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("id").ValueKind);
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("manifest").ValueKind);
-        Assert.False(result.GetProperty("workspaceLifecycleChanged").GetBoolean());
+            ["mode", "id", "folder", "packagePath", "manifestPath", "contentPath"],
+            parsed.RootElement.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(JsonValueKind.Null, parsed.RootElement.GetProperty("id").ValueKind);
+        Assert.Equal(JsonValueKind.Null, parsed.RootElement.GetProperty("folder").ValueKind);
+        Assert.Equal(JsonValueKind.Null, parsed.RootElement.GetProperty("packagePath").ValueKind);
     }
 
-    [Fact(DisplayName = "Extension Create JSON renderer preserves exact generated projection order and result parity"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
-    public void RendererPreservesGeneratedProjectionOrderAndParity()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Extension Create native JSON renderer preserves generated data order and detail parity"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
+    public void NativeRendererPreservesGeneratedDataOrderAndDetailParity()
     {
         var result = CompleteResult();
         var presentation = new CliPresentationRequest<ExtensionCreateResult>(
             result,
-            new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal));
+            new CliPresentation(CliFormat.Json, CliDetail.Standard, null));
 
-        var rendered = ExtensionCreateJsonRenderer.Render(presentation);
-        var expected = JsonSerializer.Serialize(
-            ExtensionCreateJsonProjection.Create(result),
-            ExtensionCreateJsonContext.Default.ExtensionCreateJsonDocument);
-
-        Assert.Equal(expected, rendered);
+        var rendered = CommandOutputRenderers<ExtensionCreateResult>.Render(presentation, ExtensionCreatePresentation.Rendering);
         using var parsed = JsonDocument.Parse(rendered);
-        var commandResult = parsed.RootElement.GetProperty("result");
+        Schema3Assertions.Envelope(parsed.RootElement, "extension create", "completed", "standard");
+        var commandResult = parsed.RootElement.GetProperty("data");
         Assert.Equal(
-            ["catalogue", "destination", "id", "manifest", "mode", "intendedEffects", "appliedEffects", "verification", "workspaceLifecycleChanged"],
+            ["mode", "id", "folder", "packagePath", "manifestPath", "contentPath", "manifest"],
             commandResult.EnumerateObject().Select(property => property.Name));
         Assert.Equal(
             ["name", "description", "version", "dependencies"],

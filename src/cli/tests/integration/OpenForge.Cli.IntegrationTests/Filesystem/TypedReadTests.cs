@@ -6,6 +6,7 @@ namespace OpenForge.Cli.IntegrationTests.Filesystem;
 
 public sealed class TypedReadTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Strict UTF-8 reader distinguishes all foundational outcomes")]
     [Trait("Feature", "cli-filesystem"), Trait("Evidence", "Integration")]
     public async Task StrictReaderDistinguishesCompleteMissingInvalidAndCancelled()
@@ -30,6 +31,7 @@ public sealed class TypedReadTests
         Assert.Equal(FileReadState.Cancelled, cancelled.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Directory enumerator materializes entries and typed outcomes")]
     [Trait("Feature", "cli-filesystem"), Trait("Evidence", "Integration")]
     public void DirectoryEnumeratorMaterializesEntriesAndReportsMissingAndCancellation()

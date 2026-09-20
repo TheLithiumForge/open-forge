@@ -15,6 +15,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Find;
 
 public sealed class FindEnumMappingTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find file read mapping is exhaustive and names null"), Trait("Feature", "find-enum-mapping"), Trait("Evidence", "Unit")]
     public void FileReadMappingIsExhaustiveAndNamesNull()
     {
@@ -41,6 +42,7 @@ public sealed class FindEnumMappingTests
         Assert.Equal(undefined, exception.ActualValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find layer finding cause mapping is exhaustive"), Trait("Feature", "find-enum-mapping"), Trait("Evidence", "Unit")]
     public void LayerFindingCauseMappingIsExhaustive()
     {
@@ -77,6 +79,7 @@ public sealed class FindEnumMappingTests
         Assert.Equal(undefined, exception.ActualValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find matching coverage mapping is exhaustive"), Trait("Feature", "find-enum-mapping"), Trait("Evidence", "Unit")]
     public void MatchingCoverageMappingIsExhaustive()
     {
@@ -112,6 +115,7 @@ public sealed class FindEnumMappingTests
         Assert.Equal(undefined, exception.ActualValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find projection layer rank mapping is exhaustive and names null"), Trait("Feature", "find-enum-mapping"), Trait("Evidence", "Unit")]
     public void ProjectionLayerRankMappingIsExhaustiveAndNamesNull()
     {
@@ -126,6 +130,7 @@ public sealed class FindEnumMappingTests
         Assert.Equal(undefined, exception.ActualValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find route projection mapping is exhaustive and preserves the routed guard"), Trait("Feature", "find-enum-mapping"), Trait("Evidence", "Unit")]
     public void RouteProjectionMappingIsExhaustiveAndPreservesRoutedGuard()
     {
@@ -158,6 +163,7 @@ public sealed class FindEnumMappingTests
         Assert.Equal(undefined, exception.ActualValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find exact-path cause mapping is exhaustive and preserves candidate presence"), Trait("Feature", "find-enum-mapping"), Trait("Evidence", "Unit")]
     public void ExactPathCauseMappingIsExhaustiveAndPreservesCandidatePresence()
     {
@@ -188,6 +194,7 @@ public sealed class FindEnumMappingTests
         Assert.Equal(undefined, exception.ActualValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find source kind mapping is exhaustive"), Trait("Feature", "find-enum-mapping"), Trait("Evidence", "Unit")]
     public void SourceKindMappingIsExhaustive()
     {
@@ -215,6 +222,7 @@ public sealed class FindEnumMappingTests
         Assert.Equal(undefined, exception.ActualValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find stage-state agreement mapping is exhaustive"), Trait("Feature", "find-enum-mapping"), Trait("Evidence", "Unit")]
     public void StageStateAgreementMappingIsExhaustive()
     {
@@ -245,6 +253,7 @@ public sealed class FindEnumMappingTests
         Assert.Equal(undefined, exception.ActualValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find allowed finding-status mapping is exhaustive"), Trait("Feature", "find-enum-mapping"), Trait("Evidence", "Unit")]
     public void AllowedFindingStatusMappingIsExhaustive()
     {

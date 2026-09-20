@@ -17,6 +17,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Application;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryRelativeFileLinkDeleteSafetyIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Link delete rechecks missing changed ordinary and generic occupants immediately before application")]
     [InlineData("missing"), InlineData("ordinary"), InlineData("different-link"), InlineData("absolute-link"), InlineData("parent")]
     public static async Task DoesNotDeleteChangedObject(string scenario)

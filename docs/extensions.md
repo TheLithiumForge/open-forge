@@ -6,17 +6,27 @@ An Extension is a way to distribute files. Routed content keeps its destination'
 
 ## Choose A Package
 
-The [first-party catalogue](../src/extensions/README.md) offers five focused packages:
+The [first-party catalogue](../src/extensions/README.md) offers six packages that add content:
 
-| Package | What it helps you do |
-| --- | --- |
-| `project-documents` | Establish project direction and architecture with workflows and document starters |
-| `memory-starters` | Start useful analysis, decision, handoff, idea, and observation records |
-| `planning` | Plan work and keep its records clear with a Workflow, a Pattern, and four starters |
-| `development` | Develop, debug, and review changes using your project's rules and tools |
-| `orchestration` | Coordinate dependent work through Managed Delivery; includes Planning and Development as dependencies |
+| Package             | What it helps you do                                                                                     |
+| ------------------- | -------------------------------------------------------------------------------------------------------- |
+| `collaboration` | Explore directions with Adaptive Collaboration and a Brainstorming starter |
+| `workflows`         | Select and follow installed methods through the native `use-workflow` Skill, its catalogue, and a starter |
+| `project-documents` | Maintain current project knowledge with a Documents convention, five starters, Vision, and Architecture   |
+| `planning`          | Explore, decide, and organize work with Ideas, Analysis, Decisions, Checkpoints, Work Records, and starters |
+| `development`       | Implement, debug, and review changes using your project's rules and tools                                 |
+| `orchestration`     | Coordinate related tasks, capture execution learning with Observations, and transfer work through Handoffs  |
 
-The sixth package, `development-toolkit`, bundles the first four through dependencies. It contributes no files of its own. Choose a focused package when you need only that part, or the Toolkit when the whole set is useful.
+Workflow Support keeps the stable ID `workflows`. Project Documents, Planning, and Development each depend on it, so it installs once. Orchestration depends on Planning and Development.
+
+The seventh package, `development-toolkit`, selects Project Documents, Planning, and Development through dependencies. It contributes no files of its own. Collaboration is a separate optional choice with no dependencies. Orchestration is deliberately excluded from the Toolkit: multi-agent coordination is a stronger methodological choice and stays explicit.
+
+Methods live beneath `.agents/skills/use-workflow/references/`, grouped by the package that supplies them. That tree is reached through the Skill rather than from the loader roots, so rebuild its Entries with an explicit selection:
+
+```sh
+open-forge index .agents/skills/use-workflow/references/_references.md
+```
+
 
 The CLI includes the first-party catalogue from its build. Omit `--source` to
 use those embedded packages; no source checkout is needed. Each build includes
@@ -51,11 +61,11 @@ open-forge extension install orchestration \
   --dry-run
 ```
 
-Review the proposed files, then repeat the command without `--dry-run` to apply it. If you are running from another directory, add `--workspace /path/to/project` to both commands. Check the resulting diff before adopting the content.
+Review the proposed files, then repeat the command without `--dry-run` to apply it. An interactive confirmation shows the established minimal plan before it asks to apply the changes. If you are running from another directory, add `--workspace /path/to/project` to both commands. Check the resulting diff before adopting the content.
 
 You can select several package IDs in one request. `--all` selects all packages in the chosen source. `--automatic` disables prompting; it does not select packages or authorize overwrites for you.
 
-Installation records managed ownership in `.agents/open-forge.lifecycle.json`. This lets later operations distinguish package files from workspace changes. The record supports file maintenance and does not become agent context or grant authority to the content.
+Installation records managed ownership in `.agents/open-forge.lock.json`. This lets later operations distinguish package files from workspace changes. The record supports file maintenance and does not become agent context or grant authority to the content.
 
 ## Update And Remove
 
@@ -75,7 +85,7 @@ open-forge extension update orchestration \
   --dry-run
 ```
 
-Normal updates preserve locally changed files, missing files, and retired content that needs a deliberate choice. Use the result to decide which differences to keep:
+Normal updates replace changed owned files and restore missing owned files. Retired content is preserved unless `--prune` selects its deletion. Use the result to review which differences to keep:
 
 | Option              | What it selects                                                    |
 | ------------------- | ------------------------------------------------------------------ |
@@ -166,7 +176,7 @@ Native Skill packages retain their own `SKILL.md` metadata and resources. Suppor
 
 ### Files Used By Other Tools
 
-Files outside `.agents/`, such as an agent definition consumed by another tool, require exact consumer grants in `.agents/open-forge.permissions.json` for managed installation. An interactive apply request can ask whether to remember a missing grant. Dry runs, JSON output, redirected input, and automatic mode report missing grants without saving approval.
+Files outside `.agents/`, such as an agent definition consumed by another tool, require exact consumer grants in `.agents/open-forge.json` for managed installation. An interactive apply request can ask whether to remember a missing grant; the staged settings change is saved only during confirmed application. Dry runs, JSON output, redirected input, and automatic mode report missing grants without saving approval unless explicit `--allow-path` authority supplies them.
 
 `--force` and `--prune` do not bypass those grants. Keep one manager per installed path. Installing a capability through another tool does not by itself satisfy an Open Forge package dependency.
 

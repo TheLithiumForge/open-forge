@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Created 2 entrypoints for documents/design.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/documents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/documents/design",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/documents/_documents.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/documents/design/_design.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "entrypointsCreated": 2,
+    "entrypointsPresent": 0,
+    "sectionsUpdated": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "documents/design",
+      "path": ".agents/documents/design/_design.md"
+    },
+    "scaffold": "generic",
+    "entrypoints": [
+      {
+        "path": ".agents/documents/_documents.md",
+        "outcome": "created",
+        "needsAuthoring": true
+      },
+      {
+        "path": ".agents/documents/design/_design.md",
+        "outcome": "created",
+        "needsAuthoring": true
+      }
+    ],
+    "listedIn": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

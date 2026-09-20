@@ -1,0 +1,7 @@
+1 source matches --tag Guide.
+Workspace: <workspace>
+  docs/guide  .agents/docs/guide.md  Guide
+
+=== .agents/docs/guide.md (docs/guide) ===
+# Guide
+## Rules

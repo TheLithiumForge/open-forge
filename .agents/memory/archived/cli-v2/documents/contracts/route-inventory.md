@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Shared authored route topology, natural identity, metadata, generated-navigation, context projection, and invalid-state semantics for replacement CLI consumers
+  description: "Historical CLI-v2 source: Shared authored route topology, natural identity, metadata, generated-navigation, context projection, and invalid-state semantics for replacement CLI consumers"
   responsibility: Define one route inventory behind context, find, route inspection, diagnosis, and derived navigation
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
@@ -20,12 +20,12 @@ resource limits.
 
 CLI route arguments and results use one exact natural identity:
 
-| Route identity                         | Source                                            |
-| -------------------------------------- | ------------------------------------------------- |
-| `loader`                               | `.agents/loader.md`                               |
-| `directives`                           | `.agents/directives/_directives.md`               |
+| Route identity                                        | Source                                                           |
+| ----------------------------------------------------- | ---------------------------------------------------------------- |
+| `loader`                                              | `.agents/loader.md`                                              |
+| `directives`                                          | `.agents/directives/_directives.md`                              |
 | `directives/open-forge/cli/cli-interface-consistency` | `.agents/directives/open-forge/cli/cli-interface-consistency.md` |
-| `skills/experience-design`             | `.agents/skills/experience-design/SKILL.md`       |
+| `skills/experience-design`                            | `.agents/skills/experience-design/SKILL.md`                      |
 
 Each segment is the exact routed file stem or child folder slug. Entrypoint
 filenames, `.agents`, and `.md` are representation details and do not appear in

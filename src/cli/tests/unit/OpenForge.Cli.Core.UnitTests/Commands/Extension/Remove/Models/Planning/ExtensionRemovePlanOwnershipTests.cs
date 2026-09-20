@@ -11,6 +11,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Remove.Models.Planning
 
 public sealed class ExtensionRemovePlanOwnershipTests
 {
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Remove Plan isolates each mutable caller topology layer"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     [InlineData("target-dictionary")]
     [InlineData("target-bytes")]
@@ -58,6 +59,7 @@ public sealed class ExtensionRemovePlanOwnershipTests
         Assert.Equal(".agents/retained.md", Assert.Single(plan.Topology.ProtectedPaths));
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Remove Plan preserves no-op and blocked classifications after caller decision replacement"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     [InlineData(false)]
     [InlineData(true)]
@@ -102,14 +104,13 @@ public sealed class ExtensionRemovePlanOwnershipTests
             });
             Input = new ExtensionRemovePlanInput
             {
-                Request = new ExtensionRemoveRequest(workspace, ExtensionRemoveMode.Apply, ["toolkit"], false, true, false),
+                Request = new ExtensionRemoveRequest(workspace, ExtensionRemoveMode.Apply, ["toolkit"], true, false),
                 Selection = new ExtensionRemoveSelection(ExtensionRemoveSelectionKind.ExplicitIds, ["toolkit"]),
                 Dependencies = new ExtensionRemoveDependencyPlan(
                     [new ExtensionRemovePackageFact("toolkit", true, []), new ExtensionRemovePackageFact("other", false, [])],
                     ["toolkit"], [], []),
                 Planning = new ExtensionRemovePlanningPlan
                 {
-                    Authority = new ExtensionRemovePlanningAuthority(ExtensionRemoveChangedContentPolicy.KeepAsUnmanaged),
                     Decisions = Decisions,
                 },
                 Topology = new ExtensionRemoveTopology
@@ -119,8 +120,6 @@ public sealed class ExtensionRemovePlanOwnershipTests
                     ProtectedPaths = ProtectedPaths,
                 },
                 Effects = [],
-                LifecycleChange = null,
-                LifecycleRecoveryTarget = null,
             };
         }
 

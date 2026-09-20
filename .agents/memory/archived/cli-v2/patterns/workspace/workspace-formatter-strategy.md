@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Select one workspace-aligned formatter strategy per affected file through explicit evidence, exact argv, trust-aware execution, and a manual fallback
+  description: "Historical CLI-v2 source: Select one workspace-aligned formatter strategy per affected file through explicit evidence, exact argv, trust-aware execution, and a manual fallback"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

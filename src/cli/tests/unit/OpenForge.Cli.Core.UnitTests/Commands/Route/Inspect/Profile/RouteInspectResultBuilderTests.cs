@@ -14,6 +14,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Profile;
 
 public sealed class RouteInspectResultBuilderTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect result builder forms a complete result with no conditions or next action")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void CompleteResultRetainsResolvedFacts()
@@ -37,6 +38,7 @@ public sealed class RouteInspectResultBuilderTests
         Assert.Same(graph, resolution.Graph);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect exact-path selection makes a safe non-unique automatic ID attention without a next action")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void ExactPathCollisionProducesAttentionWithoutAction()
@@ -59,6 +61,7 @@ public sealed class RouteInspectResultBuilderTests
         Assert.Same(graph, resolution.Graph);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect interactive non-unique automatic ID attention has one exact-path next action")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void InteractiveCollisionProducesOneNextAction()
@@ -76,6 +79,7 @@ public sealed class RouteInspectResultBuilderTests
         Assert.Single(new[] { next });
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect neutral compatibility detached and overwrite observations do not change complete status")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void NeutralObservationsRemainComplete()
@@ -108,6 +112,7 @@ public sealed class RouteInspectResultBuilderTests
         Assert.Null(result.Next);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect known unrouted observation remains complete without route recommendation")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void NotRoutedObservationRemainsComplete()
@@ -129,6 +134,7 @@ public sealed class RouteInspectResultBuilderTests
         Assert.Null(result.Next);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect unavailable fact forms an incomplete result with one typed condition")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void UnavailableProfileFactProducesIncomplete()
@@ -160,6 +166,7 @@ public sealed class RouteInspectResultBuilderTests
         Assert.Same(graph, resolution.Graph);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect incomplete resolution retains safe identity and unreadable-source condition")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void IncompleteResolutionProducesIncomplete()
@@ -209,6 +216,7 @@ public sealed class RouteInspectResultBuilderTests
         AssertSafeRecoveryAction(result);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect incomplete precedence wins over a safe non-unique-ID attention observation")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void IncompletePrecedenceWinsOverAttention()
@@ -247,6 +255,7 @@ public sealed class RouteInspectResultBuilderTests
         AssertSafeRecoveryAction(result);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect blocked precedence wins over incomplete conditions and retains one next action")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void BlockedPrecedenceWinsOverIncomplete()
@@ -272,6 +281,7 @@ public sealed class RouteInspectResultBuilderTests
         AssertAction(result, "route inspect", "exact");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect unresolved automatic-ID collision is blocked with every candidate path")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void UnresolvedCollisionRetainsCandidatesAndNextAction()
@@ -305,6 +315,7 @@ public sealed class RouteInspectResultBuilderTests
         AssertAction(result, "route inspect", "exact");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect invalid reference forms invalid result before profile formation")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void InvalidReferenceProducesInvalid()
@@ -334,6 +345,7 @@ public sealed class RouteInspectResultBuilderTests
         AssertAction(result, "--help", "input");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "CLI-EDGE-003 route inspect bounded operation failure forms failed without invoking a production trigger")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void BoundedFailureFormsFailedWithoutOperationTrigger()
@@ -361,6 +373,7 @@ public sealed class RouteInspectResultBuilderTests
         AssertAction(result, "route inspect", "retry");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect interruption forms interrupted result with one rerun action")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void InterruptionFormsInterrupted()
@@ -387,6 +400,7 @@ public sealed class RouteInspectResultBuilderTests
         AssertAction(result, "route inspect", "rerun");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect result builder is deterministic and returns immutable observation and condition collections")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void ResultBuilderIsDeterministicAndImmutable()

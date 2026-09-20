@@ -11,8 +11,9 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
 public sealed class InstallCompositionIntegrationTests
 {
-    private const string ConfirmationPrompt = "Apply this Install plan? [y/N] ";
+    private const string ConfirmationSentence = "Apply these changes? [y/N]";
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed Install dry-run serializes real safe-absence facts without persistent effects"),
      Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task DryRunSerializesRealSafeAbsenceFactsWithoutEffects()
@@ -20,57 +21,51 @@ public sealed class InstallCompositionIntegrationTests
         using var workspace = InstallOperationWorkspace.Create("install-dry-run-packet");
         var before = workspace.SnapshotHashes();
         var result = await RunAsync(
-            ["install", "--dry-run", "--automatic", "--json"], workspace.PhysicalPath,
+            ["install", "--dry-run", "--automatic", "--format", "json"], workspace.PhysicalPath,
             "unused", standardInputRedirected: true, promptOutputRedirected: true);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         Assert.Equal("unused", result.RemainingInput);
-        Assert.DoesNotContain("Apply this Install plan?", result.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain(ConfirmationSentence, result.StandardOutput, StringComparison.Ordinal);
         using var document = JsonDocument.Parse(result.StandardOutput);
         var root = document.RootElement;
-        Assert.Equal(["schemaVersion", "command", "status", "workspace", "result", "next"], root.EnumerateObject().Select(property => property.Name));
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(["schemaVersion", "command", "status", "detail", "filter", "workspace", "summary", "findings", "effects", "counts", "limitations", "data", "recovery", "next"], root.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
         Assert.Equal("install", root.GetProperty("command").GetString());
-        Assert.Equal("complete", root.GetProperty("status").GetString());
+        Assert.Equal("completed", root.GetProperty("status").GetString());
         Assert.Equal(workspace.PhysicalPath, root.GetProperty("workspace").GetProperty("path").GetString());
         Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
-        var facts = root.GetProperty("result");
+        var facts = root.GetProperty("data");
         Assert.Equal(
-            ["mode", "force", "automatic", "source", "classification", "footprint", "effects", "lifecycle", "recovery", "verification", "findings"],
+            ["mode", "force", "automatic", "classification", "footprint", "lockPath"],
             facts.EnumerateObject().Select(property => property.Name));
         Assert.Equal("dry-run", facts.GetProperty("mode").GetString());
         Assert.False(facts.GetProperty("force").GetBoolean());
         Assert.True(facts.GetProperty("automatic").GetBoolean());
-        var source = facts.GetProperty("source");
-        Assert.Equal(["inventoryFingerprint", "assetCount"], source.EnumerateObject().Select(property => property.Name));
-        Assert.False(string.IsNullOrWhiteSpace(source.GetProperty("inventoryFingerprint").GetString()));
-        Assert.Equal(InstallOperationWorkspace.EmbeddedPayloadPaths.Count + 2, source.GetProperty("assetCount").GetInt32());
         Assert.Equal("safe-absence", facts.GetProperty("classification").GetString());
         var footprint = facts.GetProperty("footprint");
-        Assert.Equal(["payloadFiles", "managedRegions", "generatedRegions"], footprint.EnumerateObject().Select(property => property.Name));
-        Assert.True(footprint.GetProperty("payloadFiles").GetInt32() > 0);
-        Assert.True(footprint.GetProperty("managedRegions").GetInt32() > 0);
-        Assert.True(footprint.GetProperty("generatedRegions").GetInt32() > 0);
-        var firstEffect = facts.GetProperty("effects")[0];
-        Assert.Equal(["path", "kind", "action", "sourceAssetPath", "outcome", "residual"], firstEffect.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(["files", "directories", "sections"], footprint.EnumerateObject().Select(property => property.Name));
+        Assert.True(footprint.GetProperty("files").GetInt32() > 0);
+        Assert.True(footprint.GetProperty("directories").GetInt32() > 0);
+        Assert.True(footprint.GetProperty("sections").GetInt32() > 0);
+        Assert.Equal(".agents/open-forge.lock.json", facts.GetProperty("lockPath").GetString());
+        var firstEffect = root.GetProperty("effects")[0];
         Assert.Equal(".agents", firstEffect.GetProperty("path").GetString());
         Assert.Equal("directory", firstEffect.GetProperty("kind").GetString());
-        Assert.Equal("create", firstEffect.GetProperty("action").GetString());
-        Assert.Equal(JsonValueKind.Null, firstEffect.GetProperty("sourceAssetPath").ValueKind);
+        Assert.Equal("created", firstEffect.GetProperty("action").GetString());
         Assert.Equal("planned", firstEffect.GetProperty("outcome").GetString());
-        Assert.Equal("none", firstEffect.GetProperty("residual").GetString());
-        Assert.Equal("publish", facts.GetProperty("lifecycle").GetProperty("action").GetString());
-        Assert.Equal("planned", facts.GetProperty("lifecycle").GetProperty("outcome").GetString());
-        Assert.Equal("not-required", facts.GetProperty("recovery").GetProperty("state").GetString());
-        Assert.Equal("not-requested", facts.GetProperty("verification").GetString());
-        Assert.Empty(facts.GetProperty("findings").EnumerateArray());
+        var recovery = root.GetProperty("recovery");
+        Assert.Equal("not-required", recovery.GetProperty("disposition").GetString());
+        Assert.Equal(JsonValueKind.Null, recovery.GetProperty("path").ValueKind);
+        Assert.Empty(root.GetProperty("findings").EnumerateArray());
         Assert.Equal(before, workspace.SnapshotHashes());
         Assert.False(result.LockInfrastructureExists);
         Assert.False(workspace.RecoveryDirectoryExists());
         Assert.Equal(0, await workspace.ReadRecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Root-composed Install prompts once for human apply and never prompts for its verified no-op"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task RootCompositionOwnsOneEligibleConfirmation()
     {
@@ -84,9 +79,13 @@ public sealed class InstallCompositionIntegrationTests
 
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, applied.Status);
-        Assert.Equal(ConfirmationPrompt, applied.StandardError);
-        Assert.StartsWith("Open Forge install", applied.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Installation state: no existing installation content", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.EndsWith(
+            ConfirmationSentence + Environment.NewLine,
+            applied.StandardError,
+            StringComparison.Ordinal);
+        Assert.Contains("Would install the Open Forge Framework into", applied.StandardError, StringComparison.Ordinal);
+        Assert.StartsWith("Installed the Open Forge Framework into", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Created 12 files and 11 directories under .agents", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("remaining", applied.RemainingInput);
         Assert.True(workspace.AgentsDirectoryExists());
         Assert.True(applied.LockInfrastructureExists);
@@ -102,12 +101,13 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Equal(0, noOp.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, noOp.Status);
         Assert.Equal(string.Empty, noOp.StandardError);
-        Assert.Contains("Installation state: matches the installed Framework", noOp.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Open Forge is already installed and current. Nothing to do.", noOp.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("unused", noOp.RemainingInput);
         Assert.Equal(afterApply, workspace.SnapshotHashes());
         Assert.False(noOp.LockInfrastructureExists);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Root-composed Install refusal is interrupted without writes and preserves remaining input"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task RootCompositionRefusalPreservesNoWriteBoundary()
     {
@@ -123,14 +123,44 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Equal(130, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Interrupted, run.Status);
         Assert.Equal(string.Empty, run.StandardOutput);
-        Assert.StartsWith(ConfirmationPrompt, run.StandardError, StringComparison.Ordinal);
-        Assert.Contains("Status: interrupted", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains(ConfirmationSentence, run.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Install was cancelled. Nothing was changed.", run.StandardError, StringComparison.Ordinal);
         Assert.Equal("remaining", run.RemainingInput);
         Assert.Equal(before, workspace.SnapshotHashes());
         Assert.False(workspace.AgentsDirectoryExists());
         Assert.False(run.LockInfrastructureExists);
     }
 
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Root-composed Install end of input cancels without writes"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
+    public async Task RootCompositionEndOfInputCancelsBeforeWrites()
+    {
+        using var workspace = InstallOperationWorkspace.Create("install-composed-end-of-input");
+        var before = workspace.SnapshotHashes();
+        var run = await RunAsync(
+            ["install"],
+            workspace.PhysicalPath,
+            string.Empty,
+            standardInputRedirected: false,
+            promptOutputRedirected: false);
+
+        Assert.Equal(130, run.ExitCode);
+        Assert.Equal(CliSemanticStatus.Interrupted, run.Status);
+        Assert.Equal(string.Empty, run.StandardOutput);
+        Assert.Contains("Install was cancelled. Nothing was changed.", run.StandardError, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status: interrupted", run.StandardError, StringComparison.Ordinal);
+        var previewPosition = run.StandardError.IndexOf(
+            "Would install the Open Forge Framework into",
+            StringComparison.Ordinal);
+        var questionPosition = run.StandardError.IndexOf(ConfirmationSentence, StringComparison.Ordinal);
+        Assert.True(previewPosition >= 0 && previewPosition < questionPosition);
+        Assert.Null(run.RemainingInput);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        Assert.False(workspace.AgentsDirectoryExists());
+        Assert.False(run.LockInfrastructureExists);
+    }
+
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Root-composed Install dry-run and automatic apply never prompt or consume terminal input"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task ExplicitNonPromptModesPreserveTerminalInput()
     {
@@ -166,13 +196,14 @@ public sealed class InstallCompositionIntegrationTests
         Assert.True(automatic.LockInfrastructureExists);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Root-composed Install JSON and redirected human writes never prompt or consume input"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task NonPromptCapableWritesRequireAutomaticWithoutInputConsumption()
     {
         using var jsonWorkspace = InstallOperationWorkspace.Create("install-composed-json-nonprompt");
         var jsonBefore = jsonWorkspace.SnapshotHashes();
         var json = await RunAsync(
-            ["install", "--json"],
+            ["install", "--format", "json"],
             jsonWorkspace.PhysicalPath,
             $"unused{Environment.NewLine}",
             standardInputRedirected: false,
@@ -184,10 +215,10 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Equal("unused", json.RemainingInput);
         using (var document = JsonDocument.Parse(json.StandardOutput))
         {
-            Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
+            Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
             Assert.Equal(
                 "install.confirmation-required",
-                document.RootElement.GetProperty("result").GetProperty("findings")[0]
+                document.RootElement.GetProperty("findings")[0]
                     .GetProperty("code").GetString());
         }
 
@@ -206,13 +237,14 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Equal(4, redirected.ExitCode);
         Assert.Equal(CliSemanticStatus.Invalid, redirected.Status);
         Assert.Equal(string.Empty, redirected.StandardOutput);
-        Assert.DoesNotContain(ConfirmationPrompt, redirected.StandardError, StringComparison.Ordinal);
-        Assert.Contains("Status: invalid", redirected.StandardError, StringComparison.Ordinal);
+        Assert.DoesNotContain(ConfirmationSentence, redirected.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Install needs confirmation, and this session cannot ask.", redirected.StandardError, StringComparison.Ordinal);
         Assert.Equal("unused", redirected.RemainingInput);
         Assert.Equal(redirectedBefore, redirectedWorkspace.SnapshotHashes());
         Assert.False(redirected.LockInfrastructureExists);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Root and Install leaf help are truthful direct terminal modes without workspace effects"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task ComposedHelpRegistersOneDirectInstallLeaf()
     {

@@ -37,9 +37,9 @@ Guidance can explain how to choose among Patterns, when to use a Skill or Workfl
 
 A decision preserves why an important choice was accepted. Guidance generalizes reusable judgment from one or more choices without replacing their historical rationale.
 
-## Standard Adaptive Collaboration
+## Optional Adaptive Collaboration
 
-Open Forge ships one standard Guidance for adapting exploration, questions, detail, convergence, and review to the current user and decision.
+The optional Collaboration Extension supplies Guidance for adapting exploration, questions, detail, convergence, and review to the current user and decision.
 
 At convergence, Adaptive Collaboration separates settled and unsettled material, then identifies the question each accepted part answers, where it applies, and its expected lifetime. Related outcomes may require several linked sources, but acceptance alone does not make them durable or reusable. Classification remains agent work unless material ambiguity requires user judgment.
 

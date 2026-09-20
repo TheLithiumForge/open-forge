@@ -18,15 +18,15 @@ public sealed class PublishedRouteListProcessTests
         var result = await RunAsync(
             target,
             working.Path,
-            ["route", "list", "--json"]);
+            ["route", "list", "--format=json"]);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
         Assert.Equal("route list", document.RootElement.GetProperty("command").GetString());
-        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
-        var resultBody = document.RootElement.GetProperty("result");
-        Assert.Equal(1, resultBody.GetProperty("requestedDepth").GetInt32());
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        var resultBody = document.RootElement.GetProperty("data");
+        Assert.Equal(1, resultBody.GetProperty("depth").GetInt32());
         Assert.Contains(resultBody.GetProperty("rows").EnumerateArray(), row => row.GetProperty("id").GetString() == "workspace-defined");
         Assert.Equal(before, working.SnapshotHashes());
     }
@@ -37,13 +37,14 @@ public sealed class PublishedRouteListProcessTests
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedRouteWorkspace.CreateComplete();
         var result = await RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotHashes,
-            ["route", "list", ".agents/root/_root.md", "--depth=0", "--view=compact"]);
+            ["route", "list", ".agents/root/_root.md", "--depth=0", "--detail=minimal"]);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
-        Assert.Contains("Status: complete", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("roots: 1; depth: 0; routes: 1", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("root  .agents/root/_root.md", result.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", result.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Coverage:", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("  root", result.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain(".agents/root/_root.md", result.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("root/child", result.StandardOutput, StringComparison.Ordinal);
     }
 
@@ -52,14 +53,14 @@ public sealed class PublishedRouteListProcessTests
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedRouteWorkspace.CreateComplete();
-        var result = await RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotHashes, ["route", "list", "--depth=-1", "--json"]);
+        var result = await RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotHashes, ["route", "list", "--depth=-1", "--format=json"]);
 
         Assert.Equal(4, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
-        Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
-        Assert.Equal("route-list.invalid-depth", document.RootElement.GetProperty("result").GetProperty("findings")[0].GetProperty("code").GetString());
-        Assert.Equal("open-forge route list --help", document.RootElement.GetProperty("next").GetProperty("command").GetString());
+        Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
+        Assert.Equal("route-list.invalid-depth", document.RootElement.GetProperty("findings")[0].GetProperty("code").GetString());
+        Assert.Equal(JsonValueKind.Null, document.RootElement.GetProperty("next").ValueKind);
     }
 
 }

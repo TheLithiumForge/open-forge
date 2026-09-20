@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 3,
+  "command": "route update",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot update memory/project-alpha/overview: Another Open Forge command holds the workspace lock. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-update.workspace-lock-unavailable",
+      "title": "Workspace lock is held",
+      "message": "Another Open Forge command holds the workspace lock. Nothing was changed.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/memory/project-alpha/overview.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route update",
+          "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/memory/project-alpha/overview.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/memory/project-alpha/_project-alpha.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "fieldsChanged": 1,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "memory/project-alpha/overview",
+      "path": ".agents/memory/project-alpha/overview.md"
+    },
+    "changes": [
+      {
+        "field": "description",
+        "before": "Before overview",
+        "after": "After overview"
+      }
+    ],
+    "template": null,
+    "listedIn": ".agents/memory/project-alpha/_project-alpha.md",
+    "frontmatterBefore": "description: Before overview",
+    "frontmatterAfter": "description: After overview"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route update",
+    "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan."
+  }
+}

@@ -23,30 +23,35 @@ source-generated YamlDotNet and STJ serialization, fixed Markdig where used,
 real `System.IO`, Native AOT, OS locking, isolated tests, and package journeys.
 These contracts do not claim that implementation or proof.
 
+All Extension child commands use the shared native report: `--format
+<text|json>`, `--detail <minimal|standard|full|debug>`, and repeatable
+`--detail-filter <error|warning|info|all>`. Their result names are `completed`,
+`completed-with-warnings`, `incomplete`, `invalid-input`, `blocked`, `failed`,
+and `cancelled`; JSON is the schema-3 envelope. All child contracts use this
+report and do not define alternate legacy presentations or envelope forms.
+
 ## Shared Lifecycle Boundary
 
-Extension install and update use one exact source universe, complete dependency
-closure, route projection, ownership plan, and the only new-CLI lifecycle
-document, `.agents/open-forge.lifecycle.json`, schema v1. Remove uses trusted
-workspace ownership and route facts and does not require package source bytes.
-List and inspect are read-only. Create writes only a catalogue scaffold and
-treats `--path` as a catalogue destination, not a source or workspace.
+Extension install and update use one selected source universe, dependency
+closure, route projection and ownership plan. Framework, Extension and Library
+receipts share `.agents/open-forge.lock.json`. Remove uses current ownership and
+route facts without requiring package source bytes. Missing or unusable
+ownership yields information and no inferred deletion. List and inspect are
+read-only. Create writes only a catalogue scaffold.
 
-The lifecycle document has a common envelope and isolated `framework` and
-`extensions` sections. An Extension operation changes only `extensions` and
-preserves the unrelated section and envelope meaning semantically. A selected
-semantic change emits one deterministic canonical UTF-8 whole-document
-representation, so lifecycle property order, whitespace, and line endings may
-be normalized. A semantic no-op writes nothing. For Extension install, update,
-and remove effects, prior bytes are retained only in the verified external
-recovery bundle defined by the [Mutation And Recovery Technical
-Design](../../technical-designs/mutation-and-recovery.md); the CLI does not
-inspect or report repository state or claim history evidence. Standalone
-Extension Create is the explicit create-only exception: it has no
-Replace/Delete, no recovery bundle, and no workspace lease. The lifecycle
-document stores no plan, runtime history, journal, recovery evidence, or session.
-The consumer permission document is separate admission input, not lifecycle
-state; other files are not lifecycle input.
+A mutation preserves unrelated owners and publishes ownership after its effects
+verify. Equal intended ownership causes no rewrite; a changed lock is written
+wholesale with deterministic UTF-8. The existing public state-file outcome names
+this single lock. Old records are unrelated content and are never migrated or
+consulted. Current/intended comparison is computed within the invocation, with
+no stored baseline. Shared allow-list admission, physical containment, reserved
+paths and cross-owner checks apply before effects.
+
+Prior bytes are captured in the verified external recovery bundle before
+reversible effects. Update retains that bundle and supplies review advice under
+its command contract. Standalone Extension Create remains a create-only
+operation without a workspace lease or recovery bundle. Authored settings stay
+separate from machine-owned receipts.
 
 The CLI distribution embeds Framework and first-party Extension assets with
 deterministic inventory and hash proof. That proof identifies distributed source
@@ -63,8 +68,11 @@ The replacement CLI reads, creates, inventories and embeds `content/` only.
 Each file below it retains its workspace-relative destination. First-party folders, embedded asset keys, scaffolds, help and examples use
 this same layout. The user explicitly excludes legacy handling: update our own packages and
 use `content/` throughout the replacement CLI. Do not add old-folder detection,
-diagnostics, aliases or migration. A package without `content/` retains the
-existing empty-package semantics.
+diagnostics, aliases or migration. A package without `content/` is reported by
+Extension Install as `completed-with-warnings`: `Nothing was installed from
+<extension-source>: the package has no content directory.` The report also says
+`Package files belong under <extension-source>/content/.agents/.` and does not
+write package files.
 
 The rename does not rename JSON members such as `payload` or `payloadTargets`,
 internal payload concepts, or stable effect tags. Those describe contributed
@@ -85,7 +93,7 @@ its required grants and preserves its existing ownership and force boundaries.
 
 - [`list/`](list/_list.md) reports separate Installed and Available sections.
 - [`inspect/`](inspect/_inspect.md) reports package-specific installed,
-  available, and three-way facts.
+  available, and package facts.
 - [`create/`](create/_create.md) creates a local catalogue scaffold.
 - [`install/`](install/_install.md) establishes managed ownership for selected
   absent packages or verifies an exact managed no-op.
@@ -99,11 +107,9 @@ its required grants and preserves its existing ownership and force boundaries.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Route the accepted local Extension catalogue-scaffold creation contracts](create/_create.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Create #Catalogue #Mutation #CurrentTruth
 - [Route the accepted read-only Extension inspect contracts for one stable package identity](inspect/_inspect.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Inspect #Interface #Behavior #ReadOnly #CurrentTruth
 - [Route the accepted Extension management-establishment and exact-no-op install contracts](install/_install.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Install #Lifecycle #Ownership #CurrentTruth
 - [Route the accepted read-only Extension list contracts for Installed and Available package facts](list/_list.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #List #Interface #Behavior #ReadOnly #CurrentTruth
-- [Route the accepted Extension ownership-release and bounded removal contracts](remove/_remove.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Remove #Ownership #Prune #CurrentTruth
+- [Route the accepted Extension ownership-release and bounded removal contracts](remove/_remove.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Remove #Ownership #CurrentTruth
 - [Route the accepted Extension trusted-managed update contracts for force replacement, prune, and automatic safe reconciliation](update/_update.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Update #Lifecycle #Ownership #CurrentTruth
-<!-- open-forge:generated-index:end -->

@@ -1,13 +1,14 @@
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Commands.Status.Shared.Aggregation;
-using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using StatusValueState = OpenForge.Cli.Core.Commands.Status.Models.Result.StatusValueState;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Status;
 
 public sealed class StatusMeasurementAndPolicyTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status preserves available values and derives signed differences without fabricating unavailable values"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void AvailableMeasurementsPreserveProjectionAndSignedDifferences()
     {
@@ -20,8 +21,8 @@ public sealed class StatusMeasurementAndPolicyTests
             StatusResultSeeds.Available(0),
             StatusMeasurementCalculator.Difference(StatusResultSeeds.Available(10), StatusResultSeeds.Available(10)));
 
-        var unavailable = new StatusIntegerValue(OperationalValueState.Unavailable, null);
-        var notApplicable = new StatusIntegerValue(OperationalValueState.NotApplicable, null);
+        var unavailable = new StatusIntegerValue(StatusValueState.Unavailable, null);
+        var notApplicable = new StatusIntegerValue(StatusValueState.NotApplicable, null);
         Assert.Equal(
             unavailable,
             StatusMeasurementCalculator.Project(StatusObservationSeeds.Unavailable()));
@@ -42,33 +43,35 @@ public sealed class StatusMeasurementAndPolicyTests
             StatusMeasurementCalculator.Difference(StatusResultSeeds.Available(3), notApplicable));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status startup percentage distinguishes numeric zero unavailable and not-applicable inputs"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void StartupPercentageDistinguishesNumericBothZeroUnavailableAndNotApplicable()
     {
         Assert.Equal(
-            new StatusDecimalValue(OperationalValueState.Available, 25m),
+            new StatusDecimalValue(StatusValueState.Available, 25m),
             StatusMeasurementCalculator.StartupPercentage(StatusResultSeeds.Available(25), StatusResultSeeds.Available(100)));
         Assert.Equal(
-            new StatusDecimalValue(OperationalValueState.Available, 0m),
+            new StatusDecimalValue(StatusValueState.Available, 0m),
             StatusMeasurementCalculator.StartupPercentage(StatusResultSeeds.Available(0), StatusResultSeeds.Available(100)));
         Assert.Equal(
-            new StatusDecimalValue(OperationalValueState.NotApplicable, null),
+            new StatusDecimalValue(StatusValueState.NotApplicable, null),
             StatusMeasurementCalculator.StartupPercentage(StatusResultSeeds.Available(0), StatusResultSeeds.Available(0)));
         Assert.Equal(
-            new StatusDecimalValue(OperationalValueState.Unavailable, null),
+            new StatusDecimalValue(StatusValueState.Unavailable, null),
             StatusMeasurementCalculator.StartupPercentage(StatusResultSeeds.Available(1), StatusResultSeeds.Available(0)));
         Assert.Equal(
-            new StatusDecimalValue(OperationalValueState.Unavailable, null),
+            new StatusDecimalValue(StatusValueState.Unavailable, null),
             StatusMeasurementCalculator.StartupPercentage(
-                new StatusIntegerValue(OperationalValueState.Unavailable, null),
+                new StatusIntegerValue(StatusValueState.Unavailable, null),
                 StatusResultSeeds.Available(100)));
         Assert.Equal(
-            new StatusDecimalValue(OperationalValueState.NotApplicable, null),
+            new StatusDecimalValue(StatusValueState.NotApplicable, null),
             StatusMeasurementCalculator.StartupPercentage(
-                new StatusIntegerValue(OperationalValueState.NotApplicable, null),
+                new StatusIntegerValue(StatusValueState.NotApplicable, null),
                 StatusResultSeeds.Available(100)));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Status result precedence selects the contracted semantic result without parsing cause text"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void StatusPrecedenceSelectsTheContractedSemanticResultWithoutParsingCauseText()
     {
@@ -139,7 +142,7 @@ public sealed class StatusMeasurementAndPolicyTests
             [StatusResultSeeds.Finding(CliSemanticStatus.Invalid)]);
         AssertNext("open-forge status", CliSemanticStatus.Blocked,
             [StatusResultSeeds.Finding(CliSemanticStatus.Blocked)]);
-        AssertNext("open-forge status --verbose", CliSemanticStatus.Failed,
+        AssertNext("open-forge status --detail debug", CliSemanticStatus.Failed,
             [StatusResultSeeds.Finding(CliSemanticStatus.Failed)]);
         AssertNext("open-forge status", CliSemanticStatus.Interrupted,
             [StatusResultSeeds.Finding(CliSemanticStatus.Interrupted)]);

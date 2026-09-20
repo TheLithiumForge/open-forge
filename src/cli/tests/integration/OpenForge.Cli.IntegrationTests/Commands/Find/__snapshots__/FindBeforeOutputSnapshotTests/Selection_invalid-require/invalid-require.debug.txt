@@ -1,0 +1,5 @@
+Cannot search: --require must be all or any.
+Workspace: <workspace>
+  Error  find  Invalid input [find.invalid-input]
+         --require must be all or any.
+1 errors.

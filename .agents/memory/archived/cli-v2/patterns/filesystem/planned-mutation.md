@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Run every CLI mutation through complete effect planning, read-only preflight, revalidation, application, verification, and recovery
+  description: "Historical CLI-v2 source: Run every CLI mutation through complete effect planning, read-only preflight, revalidation, application, verification, and recovery"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

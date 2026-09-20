@@ -1,8 +1,12 @@
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
-using OpenForge.Cli.Core.Framework.Libraries.Operational;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
+using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.IntegrationTests.Framework.Libraries.Operational.Shared.Reading;
@@ -12,6 +16,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Libraries.Operational;
 [Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
 public sealed class LibraryOperationalContributorIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library producer distinguishes safely absent and strict empty records with complete zero-library coverage")]
     [InlineData(false, false), InlineData(false, true), InlineData(true, false), InlineData(true, true)]
     public static async Task EmptyCoverage(bool doctor, bool recordPresent)
@@ -25,7 +30,7 @@ public sealed class LibraryOperationalContributorIntegrationTests
         var before = fixture.Snapshot();
         var contributor = new LibraryOperationalContributor();
 
-        LibrariesRecordRead record;
+        LibraryRegistrationRead record;
         if (doctor)
         {
             var view = await contributor.ReadDoctorAsync(fixture.Workspace, TestContext.Current.CancellationToken);
@@ -36,18 +41,19 @@ public sealed class LibraryOperationalContributorIntegrationTests
         }
         else
         {
-            var view = await contributor.ReadStatusAsync(fixture.Workspace, TestContext.Current.CancellationToken);
+            var view = await contributor.ReadStatusAsync(fixture.Workspace,
+            await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(), fixture.Workspace, CancellationToken.None), TestContext.Current.CancellationToken);
             Assert.Equal(OperationalViewState.Complete, view.State);
             Assert.Empty(view.Sources);
             Assert.Empty(view.Mappings);
             record = view.Record;
         }
 
-        Assert.Equal(recordPresent ? LibrariesRecordReadState.Complete : LibrariesRecordReadState.Missing, record.State);
-        Assert.Equal(fixture.PathFor(".agents/open-forge.libraries.json"), Assert.IsType<FileStateSnapshot>(record.Snapshot).LogicalPath);
+        Assert.Equal(recordPresent ? LibraryRegistrationReadState.Complete : LibraryRegistrationReadState.Missing, record.State);
+        Assert.Equal(fixture.PathFor(".agents/open-forge.lock.json"), Assert.IsType<FileStateSnapshot>(record.Snapshot).LogicalPath);
         if (recordPresent)
         {
-            Assert.Empty(Assert.IsType<LibrariesRecord>(record.Record).Libraries);
+            Assert.Empty(Assert.IsType<LibraryRegistrationSet>(record.Record).Libraries);
         }
         else
         {
@@ -56,6 +62,7 @@ public sealed class LibraryOperationalContributorIntegrationTests
         Assert.Equal(before, fixture.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library Status observes every registered root and mapping without adopting additions or unregistered sources")]
     public static async Task StatusRemainsBoundedToRegistration()
     {
@@ -64,7 +71,8 @@ public sealed class LibraryOperationalContributorIntegrationTests
         fixture.Write("shared/beta/.agents/addition.md", "unregistered addition\n");
         var before = fixture.Snapshot();
 
-        var view = await new LibraryOperationalContributor().ReadStatusAsync(fixture.Workspace, TestContext.Current.CancellationToken);
+        var view = await new LibraryOperationalContributor().ReadStatusAsync(fixture.Workspace,
+            await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(), fixture.Workspace, CancellationToken.None), TestContext.Current.CancellationToken);
 
         Assert.Equal(["shared/alpha", "shared/beta", "shared/gamma"], view.Sources.Select(source => source.Request.SourceRoot.Value));
         Assert.Equal([".agents/alpha.md", ".agents/beta.md", ".agents/gamma.md"], view.Mappings.Select(mapping => mapping.LogicalDestinationPath));
@@ -72,6 +80,7 @@ public sealed class LibraryOperationalContributorIntegrationTests
         Assert.Equal(before, fixture.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library Doctor attempts the entire declared source coverage despite a missing first or last source")]
     [InlineData("alpha"), InlineData("gamma")]
     public static async Task DoctorRetainsIncompleteRootInCoverage(string missingSource)
@@ -91,6 +100,7 @@ public sealed class LibraryOperationalContributorIntegrationTests
         Assert.Equal(before, fixture.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library Doctor inventories additions in every registered source and excludes an unregistered source")]
     public static async Task DoctorCompletesAllRegisteredInventories()
     {
@@ -107,6 +117,7 @@ public sealed class LibraryOperationalContributorIntegrationTests
         Assert.Equal(before, fixture.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Missing lifecycle ownership does not fabricate unsupported Library capability or discover unrelated links")]
     [InlineData(false), InlineData(true)]
     public static async Task OwnershipAndCapabilityAreIndependent(bool doctor)
@@ -116,7 +127,7 @@ public sealed class LibraryOperationalContributorIntegrationTests
         fixture.Files.CreateFileSymbolicLink("workspace/capability-link", "sibling.txt");
         var before = fixture.Snapshot();
         var contributor = new LibraryOperationalContributor();
-        LifecycleOwnershipReadResult? ownership;
+        WorkspaceOwnershipRead? ownership;
         LibraryLinkCapabilityFact? capability;
 
         if (doctor)
@@ -127,16 +138,15 @@ public sealed class LibraryOperationalContributorIntegrationTests
         }
         else
         {
-            var view = await contributor.ReadStatusAsync(fixture.Workspace, TestContext.Current.CancellationToken);
+            var view = await contributor.ReadStatusAsync(fixture.Workspace,
+            await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(), fixture.Workspace, CancellationToken.None), TestContext.Current.CancellationToken);
             ownership = view.Ownership;
             capability = view.LinkCapability;
         }
 
         Assert.NotNull(ownership);
-        Assert.Equal(LifecycleOwnershipReadState.Blocked, ownership.Framework.State);
-        Assert.Equal(LifecycleOwnershipReadState.Blocked, ownership.Extensions.State);
-        Assert.Empty(ownership.Claims);
-        Assert.Contains(ownership.Findings, finding => finding.Code == LifecycleOwnershipFindingCode.LifecycleMissing);
+        Assert.Equal(WorkspaceOwnershipReadState.Complete, ownership.State);
+        Assert.Empty(ownership.Document.ManagedPaths());
         if (capability is not null)
         {
             Assert.Equal(LibraryLinkCapabilityState.Supported, capability.State);
@@ -145,6 +155,7 @@ public sealed class LibraryOperationalContributorIntegrationTests
         Assert.Equal(before, fixture.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library producer reads trusted lifecycle ownership independently from Library record membership")]
     [InlineData(false), InlineData(true)]
     public static async Task ReadsIndependentTrustedLifecycleClaims(bool doctor)
@@ -157,17 +168,16 @@ public sealed class LibraryOperationalContributorIntegrationTests
 
         var ownership = doctor
             ? (await contributor.ReadDoctorAsync(fixture.Workspace, TestContext.Current.CancellationToken)).Ownership
-            : (await contributor.ReadStatusAsync(fixture.Workspace, TestContext.Current.CancellationToken)).Ownership;
+            : (await contributor.ReadStatusAsync(fixture.Workspace,
+            await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(), fixture.Workspace, CancellationToken.None), TestContext.Current.CancellationToken)).Ownership;
 
         Assert.NotNull(ownership);
-        Assert.Equal(LifecycleOwnershipReadState.Trusted, ownership.Framework.State);
-        Assert.Equal(LifecycleOwnershipReadState.Trusted, ownership.Extensions.State);
-        var claim = Assert.Single(ownership.Claims);
+        Assert.Equal(WorkspaceOwnershipReadState.Complete, ownership.State);
+        var claim = Assert.Single(ownership.Document.ManagedPaths());
         Assert.Equal(".agents/framework-owned.md", claim.Path);
-        Assert.Equal(LifecycleOwnershipManager.Framework, claim.Manager);
+        Assert.Equal(OwnedPathManager.Framework, claim.Manager);
         Assert.Equal("open-forge", claim.Owner);
-        Assert.Empty(ownership.Findings);
-        Assert.Equal(fixture.PathFor(".agents/open-forge.lifecycle.json"), ownership.LifecycleFileExpectation?.LogicalPath);
+        Assert.Equal(fixture.PathFor(".agents/open-forge.lock.json"), ownership.Snapshot?.Expectation?.LogicalPath);
         Assert.Equal(before, fixture.Snapshot());
     }
 }

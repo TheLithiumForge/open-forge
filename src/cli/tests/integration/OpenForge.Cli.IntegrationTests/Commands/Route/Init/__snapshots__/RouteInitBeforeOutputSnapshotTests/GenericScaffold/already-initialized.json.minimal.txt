@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "documents is already initialized. Nothing to do.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "entrypointsCreated": 0,
+    "entrypointsPresent": 1,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "documents",
+      "path": ".agents/documents/_documents.md"
+    },
+    "scaffold": "generic",
+    "entrypoints": [
+      {
+        "path": ".agents/documents/_documents.md",
+        "outcome": "unchanged",
+        "needsAuthoring": false
+      }
+    ],
+    "listedIn": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

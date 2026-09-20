@@ -17,6 +17,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Doctor;
 
 public sealed class DoctorTypedFactMappingTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Doctor retains each exact target from one partial Framework recovery final")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public void PartialFrameworkRecoveryRetainsPerTargetComparisonEvidence()
@@ -65,6 +66,7 @@ public sealed class DoctorTypedFactMappingTests
         Assert.All(finding.Evidence, evidence => Assert.IsType<DoctorComparisonEvidence>(evidence));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Doctor maps exact Extension dependency-list drift with source and installed evidence")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public void ExtensionDependencyComparisonRetainsExpectedAndActualLists()
@@ -105,6 +107,7 @@ public sealed class DoctorTypedFactMappingTests
         Assert.Equal("installed", evidence.Actual);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Doctor retains every exact producer-owned candidate basis")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public void CandidateProjectionRetainsAllFourTypedBases()

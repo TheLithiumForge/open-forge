@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 3,
+  "command": "route create",
+  "status": "cancelled",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Route create was cancelled. Nothing was changed.",
+    "kind": "cancelled"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-create.interrupted",
+      "title": "Route create was cancelled",
+      "message": "Route create was cancelled. Nothing was changed.",
+      "subject": {
+        "kind": "file",
+        "path": "memory/project-alpha/overview",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route create",
+          "reason": "Rerun the same Route Create request."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": null,
+      "path": null
+    },
+    "listedIn": null,
+    "template": null,
+    "metadata": {
+      "description": "Project overview",
+      "responsibility": "Explains the project",
+      "tags": [
+        "Docs",
+        "Overview"
+      ]
+    },
+    "sections": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route create",
+    "reason": "Rerun the same Route Create request."
+  }
+}

@@ -4,33 +4,28 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 
 public sealed class StatusLifecycleSectionIsolationIntegrationTests
 {
-    [Fact(DisplayName = "Framework and Extension lifecycle contributors decode only their supplied snapshot section"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
-    public async Task FrameworkAndExtensionLifecycleContributorsDecodeOnlyTheirSuppliedSnapshotSection()
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Framework and Extension ignore malformed legacy sections and read current lock claims"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
+    public async Task FrameworkAndExtensionIgnoreMalformedLegacySections()
     {
         using var frameworkWorkspace = await StatusIntegrationWorkspace.CreateInstalledAsync(
             "status-framework-section-isolation");
-        var installedLifecycle = StatusLifecycleFixture.Read(frameworkWorkspace);
-        StatusLifecycleFixture.WriteSections(
-            frameworkWorkspace,
-            installedLifecycle.Framework,
-            StatusLifecycleFixture.MalformedSection());
+        frameworkWorkspace.WritePostInstallAgentText(StatusIntegrationWorkspace.LifecyclePath, "{ malformed legacy extensions }");
         var frameworkBefore = frameworkWorkspace.SnapshotHashes();
 
         var frameworkRun = await RunStatusAsync(frameworkWorkspace);
 
-        Assert.Equal(3, frameworkRun.ExitCode);
+        Assert.Equal(0, frameworkRun.ExitCode);
         Assert.Equal(string.Empty, frameworkRun.StandardError);
         using var frameworkDocument = StatusIntegrationApplication.ParseJson(frameworkRun);
         var frameworkResult = StatusJsonAssertions.Result(frameworkDocument.RootElement);
-        var framework = frameworkResult.GetProperty("lifecycle").GetProperty("framework");
-        var malformedExtensions = frameworkResult.GetProperty("lifecycle").GetProperty("extensions");
-        Assert.Equal("trusted", framework.GetProperty("state").GetString());
-        Assert.NotEmpty(framework.GetProperty("targets").EnumerateArray());
-        Assert.Equal("incomplete", malformedExtensions.GetProperty("state").GetString());
-        Assert.Empty(malformedExtensions.GetProperty("installed").EnumerateArray());
-        Assert.Contains(
-            frameworkResult.GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("code").GetString() == "extension-lifecycle-incomplete");
+        var framework = frameworkResult.GetProperty("frameworkFiles");
+        var malformedExtensions = frameworkResult.GetProperty("extensions");
+        Assert.NotEmpty(framework.EnumerateArray());
+        Assert.Empty(malformedExtensions.EnumerateArray());
+        Assert.DoesNotContain(
+            frameworkDocument.RootElement.GetProperty("findings").EnumerateArray(),
+            finding => finding.GetProperty("code").GetString() == "status.extension-lifecycle-incomplete");
         Assert.Equal(frameworkBefore, frameworkWorkspace.SnapshotHashes());
 
         using var extensionWorkspace = StatusIntegrationWorkspace.Create(
@@ -43,15 +38,9 @@ public sealed class StatusLifecycleSectionIsolationIntegrationTests
                 "2.0.0",
                 extensionWorkspace.Combine("missing-isolated-extension-source"),
                 [],
-                [StatusIntegrationWorkspace.ExtensionTargetPath])],
-            [new StatusLifecycleFixture.PathSeed(
-                StatusIntegrationWorkspace.ExtensionTargetPath,
-                ["isolated-extension"],
-                StatusLifecycleFixture.Hash(targetBytes))]);
-        StatusLifecycleFixture.WriteSections(
-            extensionWorkspace,
-            StatusLifecycleFixture.MalformedSection(),
-            StatusLifecycleFixture.ExtensionSection(extensions));
+                [StatusIntegrationWorkspace.ExtensionTargetPath])]);
+        StatusLifecycleFixture.Write(extensionWorkspace, null, extensions);
+        extensionWorkspace.WriteText(StatusIntegrationWorkspace.LifecyclePath, "{ malformed legacy framework }");
         var extensionBefore = extensionWorkspace.SnapshotHashes();
 
         var extensionRun = await RunStatusAsync(extensionWorkspace);
@@ -60,19 +49,17 @@ public sealed class StatusLifecycleSectionIsolationIntegrationTests
         Assert.Equal(string.Empty, extensionRun.StandardError);
         using var extensionDocument = StatusIntegrationApplication.ParseJson(extensionRun);
         var extensionResult = StatusJsonAssertions.Result(extensionDocument.RootElement);
-        var malformedFramework = extensionResult.GetProperty("lifecycle").GetProperty("framework");
-        var extension = extensionResult.GetProperty("lifecycle").GetProperty("extensions");
-        Assert.Equal("incomplete", malformedFramework.GetProperty("state").GetString());
-        Assert.Empty(malformedFramework.GetProperty("targets").EnumerateArray());
-        Assert.Equal("trusted", extension.GetProperty("state").GetString());
-        var installed = Assert.Single(extension.GetProperty("installed").EnumerateArray());
+        var malformedFramework = extensionResult.GetProperty("frameworkFiles");
+        var extension = extensionResult.GetProperty("extensions");
+        Assert.Empty(malformedFramework.EnumerateArray());
+        var installed = Assert.Single(extension.EnumerateArray());
         Assert.Equal("isolated-extension", installed.GetProperty("id").GetString());
-        var target = Assert.Single(extension.GetProperty("managedFiles").GetProperty("targets").EnumerateArray());
+        var target = Assert.Single(installed.GetProperty("files").EnumerateArray());
         Assert.Equal(StatusIntegrationWorkspace.ExtensionTargetPath, target.GetProperty("path").GetString());
-        Assert.Equal("current", target.GetProperty("state").GetString());
+        Assert.Equal("unavailable", target.GetProperty("state").GetString());
         Assert.Contains(
-            extensionResult.GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("code").GetString() == "framework-lifecycle-incomplete");
+            extensionDocument.RootElement.GetProperty("findings").EnumerateArray(),
+            finding => finding.GetProperty("code").GetString() == "status.framework-ownership-observation");
         Assert.Equal(extensionBefore, extensionWorkspace.SnapshotHashes());
     }
 
@@ -82,5 +69,6 @@ public sealed class StatusLifecycleSectionIsolationIntegrationTests
             "status",
             "--workspace",
             workspace.Path,
-            "--json");
+            "--format", "json",
+            "--detail", "full");
 }

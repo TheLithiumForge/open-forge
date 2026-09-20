@@ -62,6 +62,10 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
 
     internal WorkspaceLockStoreRoot LockStoreRoot => _lockStore.StoreRoot;
 
+    internal FileStream HoldLock() => _lockStore.OpenExclusive(Workspace);
+
+    internal void TrackRecoveryPath(string path) => _recoveryPaths.Add(path);
+
     internal static RouteUpdateIntegrationWorkspace Create(string purpose)
         => Create(purpose, seedRoute: true);
 
@@ -193,7 +197,7 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
                 new RouteUpdateEffectApplication(
                     new FileChangeApplier(
                         mutationRevalidator,
-                        expectationValidator)),
+                        expectationValidator).ApplyAsync),
                 new RouteUpdateAppliedVerifier(
                     planBuilder,
                     expectationValidator)),
@@ -214,14 +218,6 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
             TestContext.Current.CancellationToken);
 
     internal string ReadText(string path) => File.ReadAllText(Absolute(path));
-
-    internal string ReadPrefix(string path)
-    {
-        using var reader = File.OpenText(Absolute(path));
-        var buffer = new char[256];
-        var length = reader.Read(buffer);
-        return new string(buffer, 0, length);
-    }
 
     internal byte[] ReadBytes(string path) => File.ReadAllBytes(Absolute(path));
 

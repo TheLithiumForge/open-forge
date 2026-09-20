@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 3,
+  "command": "route move",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Moved guidance/old guide to .agents/guidance/new guide.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/guidance/new guide.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/guidance/new guide.overwrite.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "missing",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/guidance/topics/child.md",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/guidance/topics/child.overwrite.md",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": "README.md",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": "notes.md",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "file:<sha256>"
+    },
+    {
+      "path": ".agents/guidance/old guide.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "missing"
+    },
+    {
+      "path": ".agents/guidance/old guide.overwrite.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": "file:<sha256>",
+      "after": "missing"
+    }
+  ],
+  "counts": {
+    "filesMoved": 2,
+    "sectionsUpdated": 1,
+    "linksRewritten": 5,
+    "filesScanned": 12
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "destination": {
+      "id": "guidance/new guide",
+      "path": ".agents/guidance/new guide.md"
+    },
+    "moved": [
+      {
+        "from": ".agents/guidance/old guide.md",
+        "to": ".agents/guidance/new guide.md",
+        "overwrite": {
+          "from": ".agents/guidance/old guide.overwrite.md",
+          "to": ".agents/guidance/new guide.overwrite.md"
+        }
+      }
+    ],
+    "rewrittenLinks": [
+      {
+        "path": ".agents/guidance/topics/child.md",
+        "location": ":8:13",
+        "from": {
+          "id": "guidance/old guide",
+          "path": ".agents/guidance/old guide.md"
+        },
+        "to": {
+          "id": "guidance/new guide",
+          "path": ".agents/guidance/new guide.md"
+        }
+      },
+      {
+        "path": ".agents/guidance/topics/child.overwrite.md",
+        "location": ":1:35",
+        "from": {
+          "id": "guidance/old guide",
+          "path": ".agents/guidance/old guide.md"
+        },
+        "to": {
+          "id": "guidance/new guide",
+          "path": ".agents/guidance/new guide.md"
+        }
+      },
+      {
+        "path": "README.md",
+        "location": ":3:13",
+        "from": {
+          "id": "guidance/old guide",
+          "path": ".agents/guidance/old guide.md"
+        },
+        "to": {
+          "id": "guidance/new guide",
+          "path": ".agents/guidance/new guide.md"
+        }
+      },
+      {
+        "path": "README.md",
+        "location": ":5:23",
+        "from": {
+          "id": "guidance/old guide",
+          "path": ".agents/guidance/old guide.md"
+        },
+        "to": {
+          "id": "guidance/new guide",
+          "path": ".agents/guidance/new guide.md"
+        }
+      },
+      {
+        "path": "notes.md",
+        "location": ":3:11",
+        "from": {
+          "id": "guidance/old guide",
+          "path": ".agents/guidance/old guide.md"
+        },
+        "to": {
+          "id": "guidance/new guide",
+          "path": ".agents/guidance/new guide.md"
+        }
+      }
+    ],
+    "scan": {
+      "filesScanned": 12,
+      "occurrences": 9
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

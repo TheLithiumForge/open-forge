@@ -1,16 +1,18 @@
+using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Doctor;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
-using OpenForge.Cli.Core.Commands.Doctor.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Doctor;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
-using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Doctor;
 
 public sealed class DoctorProjectionParityTests
 {
-    [Fact(DisplayName = "Doctor compact, expanded, and JSON projections retain one typed result")]
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Doctor native text and JSON projections retain the same typed result")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public async Task ProjectionsRetainTheSameTypedResult()
     {
@@ -19,46 +21,45 @@ public sealed class DoctorProjectionParityTests
             .ExecuteAsync(
                 new DoctorRequest(DoctorOperationTestSupport.Workspace()),
                 CancellationToken.None);
-        var compact = Render(result, CliView.Compact);
-        var expanded = Render(result, CliView.Expanded);
-        var json = DoctorJsonProjection.Create(result);
 
-        Assert.Contains($"Status: {DoctorHumanVocabulary.Status(result.Status)}", compact, StringComparison.Ordinal);
-        Assert.Contains($"Status: {DoctorHumanVocabulary.Status(result.Status)}", expanded, StringComparison.Ordinal);
-        Assert.Equal(DoctorWireVocabulary.Status(result.Status), json.Status);
-        Assert.Equal(DoctorWireVocabulary.Coverage(result.Diagnosis.Coverage), json.Result.Coverage);
+        var text = CliRenderingStage.Render(
+            new CliPresentationRequest<DoctorResult>(result, new(CliFormat.Text, CliDetail.Full, null)),
+            DoctorPresentation.Rendering).PrimaryContent;
+        using var json = JsonDocument.Parse(CliRenderingStage.Render(
+            new CliPresentationRequest<DoctorResult>(result, new(CliFormat.Json, CliDetail.Full, null)),
+            DoctorPresentation.Rendering).PrimaryContent);
 
-        foreach (var domain in result.Diagnosis.Domains)
+        var root = json.RootElement;
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(result.Command, root.GetProperty("command").GetString());
+        Assert.Equal(result.Status switch
         {
-            var domainName = DoctorWireVocabulary.Domain(domain.Domain);
-            Assert.Contains(DoctorHumanVocabulary.Domain(domain.Domain), compact, StringComparison.Ordinal);
-            Assert.Contains(DoctorHumanVocabulary.Domain(domain.Domain), expanded, StringComparison.Ordinal);
-            var jsonDomain = Assert.Single(json.Result.Domains, candidate =>
-                string.Equals(candidate.Domain, domainName, StringComparison.Ordinal));
-            Assert.Equal(DoctorWireVocabulary.Coverage(domain.Coverage), jsonDomain.Coverage);
-            foreach (var limitation in domain.Limitations)
-            {
-                Assert.Contains(limitation.Message, compact, StringComparison.Ordinal);
-                Assert.Contains(limitation.Message, expanded, StringComparison.Ordinal);
-                Assert.Contains(jsonDomain.Limitations, candidate =>
-                    string.Equals(candidate.Message, limitation.Message, StringComparison.Ordinal));
-            }
+            CliSemanticStatus.Complete => "completed",
+            CliSemanticStatus.Attention => "completed-with-warnings",
+            CliSemanticStatus.Incomplete => "incomplete",
+            CliSemanticStatus.Invalid => "invalid-input",
+            CliSemanticStatus.Blocked => "blocked",
+            CliSemanticStatus.Failed => "failed",
+            CliSemanticStatus.Interrupted => "cancelled",
+            _ => throw new ArgumentOutOfRangeException(),
+        }, root.GetProperty("status").GetString());
 
-            foreach (var finding in domain.Findings)
-            {
-                var kind = DoctorDefinitions.ReadFindingKind(finding.Kind);
-                Assert.Contains(kind, compact, StringComparison.Ordinal);
-                Assert.Contains(kind, expanded, StringComparison.Ordinal);
-                Assert.Contains(jsonDomain.Findings, candidate =>
-                    string.Equals(candidate.Kind, kind, StringComparison.Ordinal));
-            }
+        var findings = root.GetProperty("findings").EnumerateArray().ToArray();
+        foreach (var finding in result.Diagnosis.Domains.SelectMany(domain => domain.Findings))
+        {
+            var code = DoctorDefinitions.ReadFindingKind(finding.Kind);
+            Assert.Contains(findings, value => value.GetProperty("code").GetString() == code);
+            Assert.Contains(finding.Subject.Path ?? finding.Subject.Identifier ?? string.Empty, text, StringComparison.Ordinal);
         }
-    }
 
-    private static string Render(
-        DoctorResult result,
-        CliView view)
-        => DoctorHumanRenderer.Render(new CliPresentationRequest<DoctorResult>(
-            result,
-            new CliPresentation(CliOutputFormat.Human, view, CliVerbosity.Normal)));
+        var categories = root.GetProperty("data").GetProperty("categories").EnumerateArray().ToArray();
+        Assert.Equal(Enum.GetValues<DoctorDomainKind>().Length, categories.Length);
+        Assert.All(categories, category =>
+        {
+            Assert.True(category.TryGetProperty("name", out _));
+            Assert.True(category.TryGetProperty("coverage", out _));
+            Assert.True(category.TryGetProperty("counts", out _));
+            Assert.True(category.TryGetProperty("lanes", out _));
+        });
+    }
 }

@@ -1,0 +1,3 @@
+Cannot synchronize team-knowledge: .agents/directives/review.md is no longer the link the Library created. Nothing was changed.
+  It is now an ordinary file. Move it away or restore the link, then rerun.
+Next: open-forge library inspect team-knowledge

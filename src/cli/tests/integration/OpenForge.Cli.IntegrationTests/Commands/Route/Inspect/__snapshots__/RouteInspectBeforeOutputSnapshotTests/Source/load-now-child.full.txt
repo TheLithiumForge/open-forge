@@ -1,0 +1,27 @@
+docs/guide  .agents/docs/guide.md
+Workspace: <workspace>
+
+Where this source belongs
+  Route chain: docs -> guide
+  Parent: docs
+  Tags: Docs, LoadNow
+
+When it is read
+  At task start or resume: yes
+  Read automatically when docs is read
+  May be read again: no
+
+Context size
+  This file: 73 B, about 19 tokens
+  Selecting this route adds: nothing (already in startup context)
+  Selected context: 2 files, 231 B, about 58 tokens
+  Already in startup context: 2 files, 231 B, about 58 tokens
+
+Axioms
+  Inherited rules from: none
+  Local rules: no
+  Why: all applicable route facts are available
+  Selection: source ID; automatic ID; requested "docs/guide"
+
+Physical layers
+  base .agents/docs/guide.md

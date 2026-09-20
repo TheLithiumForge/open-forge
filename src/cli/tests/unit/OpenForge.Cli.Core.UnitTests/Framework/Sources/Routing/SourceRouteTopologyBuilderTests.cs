@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Routing;
 
 public sealed class SourceRouteTopologyBuilderTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral route topology admits entrypoints Markdown and Skill sources by authored directory topology")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void AuthoredRelationshipsAreParentFirst()
@@ -35,6 +36,7 @@ public sealed class SourceRouteTopologyBuilderTests
         Assert.Equal([root.Identity.CanonicalBasePath], topology.LoaderRootPaths);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral route topology keeps detached entrypoints separate from Loader roots")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void DetachedRootsHaveNoFabricatedLoaderParent()
@@ -58,6 +60,7 @@ public sealed class SourceRouteTopologyBuilderTests
             detachedNode.ChildPaths);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral route topology retains ambiguous compatibility parent candidates")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void AmbiguousParentageIsNotResolvedByOrder()
@@ -84,6 +87,7 @@ public sealed class SourceRouteTopologyBuilderTests
             leafNode.ParentPaths);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral route topology retains identity collisions as distinct path nodes")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void IdentityCollisionsRemainDistinctTopologyNodes()
@@ -106,6 +110,7 @@ public sealed class SourceRouteTopologyBuilderTests
         Assert.Equal(3, topology.Nodes.Count);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral route topology uses only selected sources and explicit Loader roots")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void GeneratedEntriesNeverBecomeTopologyInput()

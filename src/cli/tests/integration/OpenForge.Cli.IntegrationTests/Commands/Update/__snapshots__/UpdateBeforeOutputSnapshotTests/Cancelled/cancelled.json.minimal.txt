@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 3,
+  "command": "update",
+  "status": "cancelled",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Update was cancelled. Nothing was changed.",
+    "kind": "cancelled"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "update.interrupted",
+      "title": "Update cancelled",
+      "message": "Update was cancelled. Nothing was changed.",
+      "subject": {
+        "kind": "workspace",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge update",
+          "reason": "Rerun the same Update request."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 14,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": false,
+    "automatic": false,
+    "previousContent": null,
+    "lockPath": ".agents/open-forge.lock.json"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge update",
+    "reason": "Rerun the same Update request."
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 3,
+  "command": "extension update",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Updated the toolkit Extension to 1.0.0.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/toolkit.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": "no longer part of the package",
+      "owner": "toolkit",
+      "before": "<sha256>",
+      "after": null
+    }
+  ],
+  "counts": {
+    "packagesUpdated": 1,
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 1,
+    "filesKept": 0,
+    "filesUnchanged": 0,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": true,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "toolkit",
+        "from": "1.0.0",
+        "to": "1.0.0"
+      }
+    ],
+    "previousContent": null,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "unchanged": [],
+    "sections": [],
+    "dependencies": [
+      {
+        "id": "toolkit",
+        "requires": []
+      }
+    ],
+    "effects": [
+      {
+        "path": ".agents/toolkit.md",
+        "before": "<sha256>",
+        "after": null,
+        "relation": {
+          "current": "changed",
+          "shipped": "retired"
+        },
+        "verification": {
+          "targets": "verified",
+          "topology": "verified",
+          "extensionRecord": "verified"
+        },
+        "recovery": {
+          "state": "retained",
+          "path": "<recovery-bundle>"
+        }
+      }
+    ]
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Review previous content in the recovery bundle at <recovery-bundle>."
+  }
+}

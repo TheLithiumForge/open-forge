@@ -1,0 +1,2 @@
+Cannot list references: The source ID does not identify a retained logical source.
+Next: open-forge route list --depth=all

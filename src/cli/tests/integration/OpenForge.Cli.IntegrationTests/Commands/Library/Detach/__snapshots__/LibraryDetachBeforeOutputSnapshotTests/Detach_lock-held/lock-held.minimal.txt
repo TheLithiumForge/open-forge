@@ -1,0 +1,3 @@
+Cannot detach team-knowledge: another Open Forge command holds the workspace lock. Nothing was changed.
+Workspace: <workspace>
+Next: open-forge doctor

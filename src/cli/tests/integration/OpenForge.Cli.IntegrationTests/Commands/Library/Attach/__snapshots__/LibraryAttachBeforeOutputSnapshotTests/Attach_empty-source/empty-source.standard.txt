@@ -1,0 +1,4 @@
+Registered the team-knowledge Library from shared/team-knowledge. It has no eligible files yet.
+Workspace: <workspace>
+  Source inventory: 0 eligible files, 0 excluded items
+  .agents/open-forge.lock.json records the Library

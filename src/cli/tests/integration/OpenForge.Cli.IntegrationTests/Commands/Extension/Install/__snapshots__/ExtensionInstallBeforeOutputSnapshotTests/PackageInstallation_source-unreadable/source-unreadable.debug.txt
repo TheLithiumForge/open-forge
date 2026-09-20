@@ -1,0 +1,7 @@
+The selected Extension could not be installed: The source <extension-source> could not be read. Nothing was changed.
+Workspace: <workspace>
+  Warning  <extension-source>  Source is unavailable [extension-install.source-unavailable]
+         The source <extension-source> could not be read.
+  Entries sections unchanged: none
+  Verification: targets not checked; Entries not checked; Extension record not checked; Framework record not checked
+  Recovery: not-required.

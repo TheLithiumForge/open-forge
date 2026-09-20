@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 3,
+  "command": "extension update",
+  "status": "completed-with-warnings",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "The toolkit Extension is up to date, but 1 file from an earlier version was kept.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "extension-update.managed-divergence",
+      "title": "Retired file was kept",
+      "message": "A retired managed file was kept because --prune was not supplied.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/toolkit.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/toolkit.md",
+      "kind": "file",
+      "action": "kept",
+      "outcome": "done",
+      "reason": "no longer part of the package",
+      "owner": "toolkit"
+    }
+  ],
+  "counts": {
+    "packagesUpdated": 1,
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 1,
+    "filesUnchanged": 0,
+    "sectionsUpdated": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "toolkit",
+        "from": "1.0.0",
+        "to": "1.0.0"
+      }
+    ],
+    "previousContent": null,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension update toolkit --prune --dry-run  (preview deleting the kept file)",
+    "reason": "preview deleting the kept file"
+  }
+}

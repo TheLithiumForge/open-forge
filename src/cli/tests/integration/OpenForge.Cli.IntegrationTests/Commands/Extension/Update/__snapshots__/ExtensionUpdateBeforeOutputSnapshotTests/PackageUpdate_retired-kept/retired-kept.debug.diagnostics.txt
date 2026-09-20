@@ -1,0 +1,5 @@
+status=completed-with-warnings
+packages=1
+effects=1
+findings=1
+A retired managed file was kept because --prune was not supplied.

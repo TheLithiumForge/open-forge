@@ -15,6 +15,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryRecoveryBundleIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library recovery prepares one verified external schema-v1 bundle with link and prior-missing record identities and no source payload")]
     public async Task PreparesTypedBundleWithoutSourceBytes()
     {

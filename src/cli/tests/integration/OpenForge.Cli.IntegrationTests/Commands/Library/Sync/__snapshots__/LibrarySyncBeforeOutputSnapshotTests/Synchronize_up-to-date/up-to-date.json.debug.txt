@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 3,
+  "command": "library sync",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "The team-knowledge Library is up to date. Nothing to do.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "linksAdded": 0,
+    "linksRemoved": 0,
+    "linksUnchanged": 1,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "proposedScopes": [],
+      "approvedScopes": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [],
+    "unchanged": [
+      ".agents/directives/review.md"
+    ],
+    "inventory": {
+      "rootState": "available",
+      "inventoryState": "complete",
+      "eligiblePaths": [
+        {
+          "sourcePath": ".agents/directives/review.md",
+          "destinationPath": ".agents/directives/review.md",
+          "sourceId": "directives/review"
+        }
+      ],
+      "excludedPaths": [],
+      "unavailablePaths": [],
+      "lexicalRoot": "<workspace>\\shared\\team-knowledge",
+      "physicalRoot": "<workspace>\\shared\\team-knowledge",
+      "lexicallyContained": true,
+      "physicallyContained": true
+    },
+    "expectedStates": [],
+    "verification": {
+      "state": "not-started",
+      "recordPublication": "not-started",
+      "publishedLast": null
+    },
+    "recovery": {
+      "state": "not-requested",
+      "path": null,
+      "residuals": []
+    }
+  },
+  "recovery": null,
+  "next": null
+}

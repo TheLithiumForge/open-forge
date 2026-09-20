@@ -1,0 +1,13 @@
+Updated 1 Framework file. 1 file from an earlier version was kept.
+Workspace: <workspace>
+  Warning  .agents/guidance/retired-framework.md  Retired content kept
+         .agents/guidance/retired-framework.md is no longer part of this release, so it was kept.
+         open-forge update --prune --dry-run
+         Preview deleting the retained files before applying the prune.
+  .agents/guidance/_guidance.md          replaced (you had changed it and this release changes it)
+  .agents/guidance/retired-framework.md  kept; no longer part of this release
+  .agents/guidance/_guidance.md          Entries section updated
+  .agents/open-forge.lock.json           updated
+  13 files unchanged
+  Preview deleting the retained files before applying the prune.
+Next: open-forge update --prune --dry-run

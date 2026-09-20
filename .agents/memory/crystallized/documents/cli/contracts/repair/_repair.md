@@ -37,7 +37,5 @@ targeted lifecycle operation.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Current technology-neutral exact and guided Repair lifecycle, safety, recovery, and conformance](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Repair #Behavior #Mutation #Safety #Recovery #CurrentTruth
 - [Current accepted interface for automatic, guided, explicit-relink, and dry-run Repair](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Repair #Interface #Mutation #Relink #Safety #CurrentTruth
-<!-- open-forge:generated-index:end -->

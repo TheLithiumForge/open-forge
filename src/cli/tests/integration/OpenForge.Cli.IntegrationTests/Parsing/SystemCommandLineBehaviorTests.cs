@@ -14,6 +14,7 @@ namespace OpenForge.Cli.IntegrationTests.Parsing;
 
 public sealed class SystemCommandLineBehaviorTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Binding parse retains raw attached-empty spelling that the pinned parser erases")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
     public void BindingParseRetainsRawAttachedEmptySpelling()
@@ -59,42 +60,44 @@ public sealed class SystemCommandLineBehaviorTests
             bareCarrier.OriginalArguments[^1]);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Pinned parser reports scalar repetition and Boolean occurrences")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
     public void PinnedParserReportsScalarRepetitionAndCountsBooleanOccurrences()
     {
         var tree = CliCommandTree.Create(CliHelpContent.Empty, [], []);
-        var scalar = tree.Parse(["--view=compact", "--view=expanded"]);
-        var booleans = tree.Parse(["--json", "--json"]);
+        var scalar = tree.Parse(["--detail=minimal", "--detail=standard"]);
+        var booleans = tree.Parse(["--help", "--help"]);
 
         Assert.NotEmpty(scalar.Result.Errors);
-        var scalarResult = Assert.IsType<OptionResult>(scalar.Result.GetResult(tree.Options.View));
+        var scalarResult = Assert.IsType<OptionResult>(scalar.Result.GetResult(tree.Options.Detail));
         Assert.Equal(2, scalarResult.IdentifierTokenCount);
         Assert.Equal(2, scalarResult.Tokens.Count(token => token.Type == TokenType.Argument));
         AssertFacts(
-            CliOptionResultFactsReader.Read(scalar.Result, tree.Options.View),
+            CliOptionResultFactsReader.Read(scalar.Result, tree.Options.Detail),
             true,
             2,
             2);
         Assert.Empty(booleans.Result.Errors);
-        var booleanResult = Assert.IsType<OptionResult>(booleans.Result.GetResult(tree.Options.Json));
+        var booleanResult = Assert.IsType<OptionResult>(booleans.Result.GetResult(tree.Options.Help));
         Assert.Equal(2, booleanResult.IdentifierTokenCount);
         Assert.Empty(booleanResult.Tokens);
         AssertFacts(
-            CliOptionResultFactsReader.Read(booleans.Result, tree.Options.Json),
+            CliOptionResultFactsReader.Read(booleans.Result, tree.Options.Help),
             true,
             2,
             0);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Pinned parser accepts native global value forms and owns occurrences")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
     [InlineData("--workspace", "example", "example", true)]
     [InlineData("--workspace=example", null, "example", true)]
     [InlineData("--workspace:example", null, "example", true)]
-    [InlineData("--view", "compact", "compact", false)]
-    [InlineData("--view=compact", null, "compact", false)]
-    [InlineData("--view:compact", null, "compact", false)]
+    [InlineData("--detail", "minimal", "minimal", false)]
+    [InlineData("--detail=minimal", null, "minimal", false)]
+    [InlineData("--detail:minimal", null, "minimal", false)]
     public void ParserAcceptsNativeGlobalValueFormsAndOwnsOccurrences(
         string option,
         string? separateValue,
@@ -110,13 +113,13 @@ public sealed class SystemCommandLineBehaviorTests
         Assert.Empty(parse.Result.Errors);
         Assert.Equal(arguments, parse.OriginalArguments);
         var optionResult = Assert.IsType<OptionResult>(
-            parse.Result.GetResult(workspace ? tree.Options.Workspace : tree.Options.View));
+            parse.Result.GetResult(workspace ? tree.Options.Workspace : tree.Options.Detail));
         Assert.Equal(1, optionResult.IdentifierTokenCount);
         Assert.Equal(1, optionResult.Tokens.Count(token => token.Type == TokenType.Argument));
         AssertFacts(
             workspace
                 ? CliOptionResultFactsReader.Read(parse.Result, tree.Options.Workspace)
-                : CliOptionResultFactsReader.Read(parse.Result, tree.Options.View),
+                : CliOptionResultFactsReader.Read(parse.Result, tree.Options.Detail),
             true,
             1,
             1);
@@ -127,23 +130,24 @@ public sealed class SystemCommandLineBehaviorTests
             Assert.Equal(expectedValue, parse.Result.GetValue(tree.Options.Workspace));
             Assert.Equal(expectedValue, input.WorkspaceValue);
             Assert.Equal(1, input.WorkspaceOccurrences);
-            Assert.Equal(0, input.ViewOccurrences);
+            Assert.Equal(0, input.DetailOccurrences);
         }
         else
         {
-            Assert.Equal(CliView.Compact, parse.Result.GetValue(tree.Options.View));
-            Assert.Equal(CliView.Compact, input.View);
+            Assert.Equal(CliDetail.Minimal, parse.Result.GetValue(tree.Options.Detail));
+            Assert.Equal(CliDetail.Minimal, input.Detail);
             Assert.Equal(0, input.WorkspaceOccurrences);
-            Assert.Equal(1, input.ViewOccurrences);
+            Assert.Equal(1, input.DetailOccurrences);
         }
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Pinned parser attached-empty global values remain invalid")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
     [InlineData("--workspace=")]
     [InlineData("--workspace:")]
-    [InlineData("--view=")]
-    [InlineData("--view:")]
+    [InlineData("--detail=")]
+    [InlineData("--detail:")]
     public void ParserAttachedEmptyGlobalValuesRemainInvalid(string option)
     {
         var tree = CliCommandTree.Create(CliHelpContent.Empty, [], []);
@@ -153,24 +157,25 @@ public sealed class SystemCommandLineBehaviorTests
         Assert.Null(resolution.Input);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Pinned parser preserves following globals after attached-empty scalar values")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
-    [InlineData("--workspace=", "workspace", "--json", "json")]
-    [InlineData("--workspace=", "workspace", "--verbose", "verbose")]
+    [InlineData("--workspace=", "workspace", "--format=json", "format")]
+    [InlineData("--workspace=", "workspace", "--detail-filter=warning", "filter")]
     [InlineData("--workspace=", "workspace", "--help", "help")]
     [InlineData("--workspace=", "workspace", "--version", "version")]
-    [InlineData("--workspace:", "workspace", "--json", "json")]
-    [InlineData("--workspace:", "workspace", "--verbose", "verbose")]
+    [InlineData("--workspace:", "workspace", "--format=json", "format")]
+    [InlineData("--workspace:", "workspace", "--detail-filter=warning", "filter")]
     [InlineData("--workspace:", "workspace", "--help", "help")]
     [InlineData("--workspace:", "workspace", "--version", "version")]
-    [InlineData("--view=", "view", "--json", "json")]
-    [InlineData("--view=", "view", "--verbose", "verbose")]
-    [InlineData("--view=", "view", "--help", "help")]
-    [InlineData("--view=", "view", "--version", "version")]
-    [InlineData("--view:", "view", "--json", "json")]
-    [InlineData("--view:", "view", "--verbose", "verbose")]
-    [InlineData("--view:", "view", "--help", "help")]
-    [InlineData("--view:", "view", "--version", "version")]
+    [InlineData("--detail=", "detail", "--format=json", "format")]
+    [InlineData("--detail=", "detail", "--detail-filter=warning", "filter")]
+    [InlineData("--detail=", "detail", "--help", "help")]
+    [InlineData("--detail=", "detail", "--version", "version")]
+    [InlineData("--detail:", "detail", "--format=json", "format")]
+    [InlineData("--detail:", "detail", "--detail-filter=warning", "filter")]
+    [InlineData("--detail:", "detail", "--help", "help")]
+    [InlineData("--detail:", "detail", "--version", "version")]
     public void ParserPreservesFollowingGlobalsAfterAttachedEmptyScalarValues(
         string emptyOption,
         string emptyOptionName,
@@ -190,19 +195,15 @@ public sealed class SystemCommandLineBehaviorTests
             ReadGlobalFacts(parse.Result, tree.Options, followingOptionName),
             true,
             1,
-            0);
-        Assert.True(parse.Result.GetValue(ReadBooleanOption(tree.Options, followingOptionName)));
-
-        var followingResult = Assert.IsType<OptionResult>(
-            parse.Result.GetResult(ReadBooleanOption(tree.Options, followingOptionName)));
-        Assert.Equal(1, followingResult.IdentifierTokenCount);
-        Assert.Equal(0, followingResult.Tokens.Count(token => token.Type == TokenType.Argument));
+            followingOptionName is "format" or "filter" ? 1 : 0);
+        AssertFollowingGlobal(parse.Result, tree.Options, followingOptionName);
 
         var resolution = CliTerminalValidator.Validate(parse);
         Assert.Equal(CliInvalidInputSource.Semantic, resolution.InvalidInput?.Source);
         Assert.Null(resolution.Input);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Pinned parser normalizes native forms for policy-free typed depth")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
     [InlineData("--depth", "7")]
@@ -234,6 +235,7 @@ public sealed class SystemCommandLineBehaviorTests
             1);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Pinned parser aggregates repeated multi-value options from OptionResult facts")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
     public void PinnedParserAggregatesRepeatedMultiValueOptions()
@@ -258,14 +260,15 @@ public sealed class SystemCommandLineBehaviorTests
             3);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Pinned parser preserves following globals after attached-empty route-list depth")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
-    [InlineData("--depth=", "--json", "json")]
-    [InlineData("--depth=", "--verbose", "verbose")]
+    [InlineData("--depth=", "--format=json", "format")]
+    [InlineData("--depth=", "--detail-filter=warning", "filter")]
     [InlineData("--depth=", "--help", "help")]
     [InlineData("--depth=", "--version", "version")]
-    [InlineData("--depth:", "--json", "json")]
-    [InlineData("--depth:", "--verbose", "verbose")]
+    [InlineData("--depth:", "--format=json", "format")]
+    [InlineData("--depth:", "--detail-filter=warning", "filter")]
     [InlineData("--depth:", "--help", "help")]
     [InlineData("--depth:", "--version", "version")]
     public void ParserPreservesFollowingGlobalsAfterAttachedEmptyRouteListDepth(
@@ -291,13 +294,8 @@ public sealed class SystemCommandLineBehaviorTests
             ReadGlobalFacts(parse.Result, tree.Options, followingOptionName),
             true,
             1,
-            0);
-        var following = ReadBooleanOption(tree.Options, followingOptionName);
-        Assert.True(parse.Result.GetValue(following));
-
-        var followingResult = Assert.IsType<OptionResult>(parse.Result.GetResult(following));
-        Assert.Equal(1, followingResult.IdentifierTokenCount);
-        Assert.Equal(0, followingResult.Tokens.Count(token => token.Type == TokenType.Argument));
+            followingOptionName is "format" or "filter" ? 1 : 0);
+        AssertFollowingGlobal(parse.Result, tree.Options, followingOptionName);
     }
 
     private static CliOptionResultFacts ReadGlobalFacts(
@@ -308,29 +306,35 @@ public sealed class SystemCommandLineBehaviorTests
         return optionName switch
         {
             "workspace" => CliOptionResultFactsReader.Read(result, options.Workspace),
-            "view" => CliOptionResultFactsReader.Read(result, options.View),
-            "json" => CliOptionResultFactsReader.Read(result, options.Json),
-            "verbose" => CliOptionResultFactsReader.Read(result, options.Verbose),
+            "detail" => CliOptionResultFactsReader.Read(result, options.Detail),
+            "format" => CliOptionResultFactsReader.Read(result, options.Format),
+            "filter" => CliOptionResultFactsReader.Read(result, options.DetailFilter),
             "help" => CliOptionResultFactsReader.Read(result, options.Help),
             "version" => CliOptionResultFactsReader.Read(result, options.Version),
             _ => throw new ArgumentOutOfRangeException(nameof(optionName), optionName, "Unknown test option."),
         };
     }
 
-    private static Option<bool> ReadBooleanOption(
-        CliGlobalOptionSymbols options,
-        string optionName)
+    private static void AssertFollowingGlobal(ParseResult result, CliGlobalOptionSymbols options, string optionName)
     {
-        return optionName switch
+        switch (optionName)
         {
-            "json" => options.Json,
-            "verbose" => options.Verbose,
-            "help" => options.Help,
-            "version" => options.Version,
-            _ => throw new ArgumentOutOfRangeException(nameof(optionName), optionName, "Unknown Boolean test option."),
-        };
+            case "format":
+                Assert.Equal(CliFormat.Json, result.GetValue(options.Format));
+                break;
+            case "filter":
+                Assert.Equal([CliSeverityFilter.Warning], result.GetValue(options.DetailFilter));
+                break;
+            case "help":
+                Assert.True(result.GetValue(options.Help));
+                break;
+            case "version":
+                Assert.True(result.GetValue(options.Version));
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(optionName));
+        }
     }
-
     private static void AssertFacts(
         CliOptionResultFacts facts,
         bool isExplicit,

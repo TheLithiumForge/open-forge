@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Exact accepted replacement CLI development tools, strict checking, test configuration, portable artifact boundary, runtime floors, and embedded-asset build shape
+  description: "Historical CLI-v2 source: Exact accepted replacement CLI development tools, strict checking, test configuration, portable artifact boundary, runtime floors, and embedded-asset build shape"
   responsibility: Define accepted development and build relationships, quality and portability obligations, and how exact executable values from package metadata, the lockfile, configuration, scripts, and focused source fit together
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

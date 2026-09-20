@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Shared containment, identity, dispatch, persistence, verification, concurrency, and recovery boundaries for CLI filesystem effects
+  description: "Historical CLI-v2 source: Shared containment, identity, dispatch, persistence, verification, concurrency, and recovery boundaries for CLI filesystem effects"
   responsibility: Define safe mechanical filesystem-effect semantics beneath Git-first workspace recovery and explicit Gitless backups
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

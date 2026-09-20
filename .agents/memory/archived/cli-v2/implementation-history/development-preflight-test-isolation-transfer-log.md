@@ -239,7 +239,7 @@ user direction.
   `Record<string, unknown>` was returned as `Record<string, string>` without a
   typed accumulator. This must be corrected before Red acceptance.
 - Package-process Red compiled and failed because overlapping real probes both
-  inherited `HOME=C:\Users\Tedy`. Its minimal helper skeleton exposes the final
+  inherited `HOME=<home>`. Its minimal helper skeleton exposes the final
   interface and delegates directly to `runProcess()` without isolation.
 - No Green change, stage, commit, snapshot mutation, retry, or full gate ran.
 - Green now passes for isolated generator output, ordinary-script exclusion of

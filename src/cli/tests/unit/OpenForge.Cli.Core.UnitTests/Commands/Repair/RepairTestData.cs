@@ -17,21 +17,24 @@ internal static class RepairTestData
 {
     internal const string SourcePath = ".agents/docs/guide.md";
     internal const string TargetPath = ".agents/docs/new.md";
-    internal const string WorkspaceRoot = "/tmp/open-forge-repair-workspace";
+    internal static string WorkspaceRoot { get; } = Path.GetFullPath(
+        Path.Combine(Path.GetTempPath(), "open-forge-repair-workspace"));
+    internal static string RecoveryPath { get; } = Path.GetFullPath(
+        Path.Combine(Path.GetTempPath(), "open-forge-repair", "recovery.zip"));
 
     internal static CliWorkspace Workspace(
         CliWorkspaceSelectionMethod selectedBy = CliWorkspaceSelectionMethod.ExplicitWorkspace)
         => new(WorkspaceRoot, WorkspaceRoot, selectedBy);
 
     internal static CliInvocation Invocation(
-        CliOutputFormat format = CliOutputFormat.Json,
-        CliVerbosity verbosity = CliVerbosity.Normal,
+        CliFormat format = CliFormat.Json,
+        CliDetail? diagnosticDetail = null,
         CliWorkspace? workspace = null)
     {
         workspace ??= Workspace();
         return new CliInvocation(
             new CliProcessIdentity("open-forge", "test"),
-            new CliPresentation(format, CliView.Expanded, verbosity),
+            new CliPresentation(format, diagnosticDetail ?? CliDetail.Standard, null),
             CliTerminalMode.None,
             new CliWorkspaceRequest(workspace.LexicalRoot, workspace.LexicalRoot),
             workspace);

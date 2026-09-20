@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 3,
+  "command": "library inspect",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "No ownership record exists, so team-knowledge cannot be inspected.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "sourceFiles": 0,
+    "linksCurrent": 0,
+    "filesAdded": 0,
+    "filesRetired": 0,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "team-knowledge",
+    "sourceFolder": null,
+    "destinationFolder": null,
+    "current": false,
+    "files": []
+  },
+  "recovery": null,
+  "next": null
+}

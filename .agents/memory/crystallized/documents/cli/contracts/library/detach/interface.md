@@ -1,11 +1,14 @@
 ---
 open-forge:
-  description: Define the exact public syntax, source-independent link checks, all-or-nothing effects, record, and results for `library detach`
+  description: Define the exact public syntax, source-independent link checks, verified effects, record, and results for `library detach`
   responsibility: Define what detach accepts, removes, preserves, rejects, and reports for one complete registered Workspace Library
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Library, Detach, Interface, Mutation, Recovery, Safety, CurrentTruth]
 ---
 
 # library detach Interface Contract
+
+Unavailable ownership is reported as `library-detach.ownership-observation`
+with `completed` status. This finding grants no ownership or mutation permission.
 
 ## Status And Authority
 
@@ -15,7 +18,7 @@ grammar, source-independent link boundary, observable effects, record changes,
 statuses, output, errors, examples, non-goals, and public verification.
 
 The sibling [Behavior Contract](behavior.md) defines deterministic
-technology-neutral record and mapping facts, all-or-nothing planning,
+technology-neutral record and mapping facts, verified planning,
 preflight, application, verification, and recovery. The shared [Global CLI Flags](../../shared/global-flags/interface.md),
 [Shared Result Coordinates](../../shared/result-coordinates/interface.md), and
 [Shared CLI Operation Contract](../../../shared-operation-contract.md) retain
@@ -26,6 +29,15 @@ and [Mutation And Recovery Technical Design](../../../technical-designs/mutation
 define accepted shared realization boundaries. The [Index Behavior Contract](../../index-candidate/behavior.md)
 defines existing generated-navigation projection. This Interface Contract adds
 no callable or implementation choice. The active Task records implementation and executable evidence.
+
+The sole generated state publication is `.agents/open-forge.lock.json`.
+The existing public record-effect and publication fields describe that lock
+write. Its Libraries section contains validated registration identities and
+source-relative paths; other ownership sections are preserved. No retired
+record is read, written, converted, or deleted. An unavailable lock write is
+skipped without blocking otherwise safe effects, and reports no publication.
+Recovery protects the exact prior lock bytes before any effects; the planned
+lock publication remains last after verified link and generated-region effects.
 
 ## Purpose And Operation Boundary
 
@@ -41,29 +53,35 @@ relative file symlink may be removed even when it is dangling, provided its
 no-follow parent and leaf identity and raw relative target still match the
 recorded mapping. Strong typed recovery can recreate that same dangling link.
 
-Detach is one whole-library, all-or-nothing mutation. It has no selector-based
-partial form. A changed, unsafe, separately owned, missing, or otherwise
-unverifiable occupant blocks every link and record effect. Only an exact
-registered link, including an exact dangling link, supplies a deletable
-projection identity. A missing destination is not silently converted into
-record removal.
+Detach is one whole-library request with no selector-based partial form. It
+removes every exact registered link that can be proven and may release the
+selected registration after safe remaining work. A positively missing
+registered destination and a changed ordinary occupant are `Attention2`
+observations: their bytes are preserved, but exact other links may be removed
+and the selected registration may be released after permission, alternate-link,
+directory, alias, conflicting-ownership, and other safety checks. An alternate
+link, directory, alias, unsafe or unknown state, separately owned or conflicting
+occupant, unavailable fact, or required permission failure blocks the request.
+Only an exact registered link, including an exact dangling link, supplies a
+deletable projection identity.
 
 ## Syntax
 
 ```text
-open-forge library detach <library-id> [--dry-run] [global flags]
+open-forge library detach <library-id> [--dry-run] [--automatic] [global flags]
 ```
 
 The command path selects the detach operation. The shared [Global CLI Flags](../../shared/global-flags/interface.md)
-contract defines `--workspace`, `--json`, `--view`, `--verbose`, `--help`, and
-`--version`; all six retain their shared spelling, composition, repetition,
+contract defines `--workspace <path>`, `--format <text|json>`,
+`--detail <minimal|standard|full|debug>`, repeatable
+`--detail-filter <error|warning|info|all>`, `--help`, and `--version`; all six retain their shared spelling, composition, repetition,
 terminal behavior, and output meaning.
 
 `--dry-run` is the only preview spelling. `--help` and `--version` are terminal
 forms and stop before workspace, record, mapping, or projection work.
 
 Detach has no source-root operand, aliases, extra positional operands, `--force`,
-`--automatic`, `--yes`, `--apply`, collection selector, remapping flag, glob,
+`--yes`, `--apply`, collection selector, remapping flag, glob,
 copy mode, saved plan, partial selector, or generic mutation dispatcher.
 
 ## Operand And Repetition
@@ -72,6 +90,7 @@ copy mode, saved plan, partial selector, or generic mutation dispatcher.
 | ------------------- | ----------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | `<library-id>`      | Select one registered management identity | One value matching the library-ID grammar below | Required and singleton. An unknown ID is invalid; a successful prior detach does not establish a repeat no-op. |
 | `--dry-run`         | Write policy                              | Boolean flag with no value                      | Application is selected when omitted. Repetition is accepted and idempotent.                                   |
+| `--automatic`      | Confirmation policy                       | Boolean flag with no value                      | Final confirmation is required when omitted; this flag bypasses that confirmation only. Repetition is accepted and idempotent. |
 | Shared global flags | Workspace and presentation                | Defined by the shared global contract           | Shared defaults and repetition rules apply.                                                                    |
 
 The library ID supplies record selection only. It does not select a source
@@ -92,44 +111,18 @@ characters are invalid. The ID is a management identity in the consumer
 library-record namespace. It is not derived from the source root and is not an
 automatic source ID or source-reference operand.
 
-Detach reads the separate consumer-owned record:
+Selection reads `libraries` claims in `.agents/open-forge.lock.json`. A usable
+claim supplies `id`, `sourceRoot`, `destinationRoot`, and source-relative `paths`.
+The shared codec reads understood fields without requiring exact member sets,
+member order, or a matching schema version. Typed portable roots, eligible source
+suffixes, and unambiguous destinations remain required before using a claim.
 
-```text
-.agents/open-forge.libraries.json
-```
-
-The record must have exactly schema-v1 shape:
-
-```json
-{
-  "schemaVersion": 1,
-  "libraries": [
-    {
-      "id": "team-knowledge",
-      "sourceRoot": "shared/team-knowledge",
-      "destinationRoot": ".",
-      "paths": [".agents/directives/review.md"]
-    }
-  ]
-}
-```
-
-The only properties are `schemaVersion`, `libraries`, `id`, `sourceRoot`, `destinationRoot`, and
-`paths` at their declared levels. `schemaVersion` is exactly numeric `1`.
-Library records are sorted by ID, and each `paths` array is sorted by portable
-path spelling. `paths` contains unique eligible source-relative
-path strings mapped below the recorded `destinationRoot`. The record
-stores no expected link target; detach derives the expected relative target
-from recorded `sourceRoot`, `destinationRoot` and each source-relative suffix,
-measured from the actual destination parent to the source leaf. Extra fields,
-duplicates, malformed values, unsafe paths, or a missing record block or make
-the request invalid under the shared result boundary. Detach never migrates or
-repairs the record.
-
-An unknown ID is `invalid`. After a successful detach, a repeat therefore
-reports an unknown ID rather than claiming a no-op from absence alone. This is
-a lower-tier repeat detail; the public journey remains the changed-occupant
-blocking journey below.
+An absent, unreadable, nonordinary, malformed, or uninterpretable lock produces
+an informational ownership observation with `completed` status, no selected
+Library, and no effects. It never falls back to the old record or infers ownership
+from matching links. An unknown ID in a readable lock remains `invalid-input`.
+Exact relative-link targets derive from both recorded roots and each suffix.
+The lock stores no target bytes or comparison hashes.
 
 ## Source Independence And Mapping Boundary
 
@@ -154,7 +147,7 @@ siblings and destination directories remain untouched.
 Validate recorded path grammar and destination protection without resolving or
 enumerating source content. Protect
 Git metadata, Framework and recognized manager controls, `.agents` Loader,
-entrypoint and overwrite controls, lifecycle/Library/permission/lock controls, recovery and temporary
+entrypoint and overwrite controls, authored settings and generated ownership controls, recovery and temporary
 storage, and every selected or registered Library source tree. A grant covering
 a containing directory never overrides these leaf checks. Compare portable
 identity and physical containment. Different source-relative paths and different
@@ -176,8 +169,9 @@ facts:
 | Destination fact                                                                                                                                  | Detach treatment                                                                        |
 | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | Exact registered relative file symlink with the derived raw target                                                                                | Plan one link deletion. The target may exist or be dangling; detach does not follow it. |
-| Positively missing leaf with safe no-follow parents                                                                                               | Block the complete request because the registered link identity cannot be verified.     |
-| Ordinary file, directory, different link, junction, special entry, changed raw target, unsafe parent, unknown state, or separately owned occupant | Block the complete request and preserve every occupant and the record.                  |
+| Positively missing leaf with safe no-follow parents                                                                                               | `Attention2`; preserve the path and bytes, remove other exact links, and release the selected registration after remaining checks. |
+| Changed ordinary file with safe no-follow parents                                                                                                 | `Attention2`; preserve the ordinary bytes, remove other exact links, and release the selected registration after remaining checks. |
+| Directory, different link, junction, special entry, changed raw target, unsafe parent, alias, unknown state, or separately owned/conflicting occupant | Block the request and preserve every occupant and the record. |
 
 An exact registered dangling link is still an exact registered link. Detach may
 remove it even when both source and target are absent because raw target
@@ -202,47 +196,56 @@ parents, repairs a missing route chain, rewrites authored entrypoints, rewrites
 the Loader, or invents Framework semantics. A required generated region that
 is missing, ambiguous, changed, or unsafe blocks the complete request.
 
-If other library records remain, the intended schema-v1 record removes only the
-selected library and retains all other records in sorted ID order. If the
-selected library is the last record, detach removes
-`.agents/open-forge.libraries.json` only after every planned link and generated
-effect verifies. Record publication is last. An unsafe, changed, or missing
-occupant never permits record publication.
-
-The record remains separate from `.agents/open-forge.lifecycle.json`. It has no
-expected-link, source-byte, timestamp, Git, collection, per-file remapping, glob,
-dependency, or source metadata field.
+The intended lock removes only the selected Library registration and retains
+other registrations in sorted ID order. Removing the final Library publishes
+an empty Libraries section; the shared lock and its Framework and Extension
+sections remain. Publication occurs last after every exact-link and generated
+effect verifies. A positively missing or changed ordinary destination supplies
+no deletion effect and never authorizes deletion of its bytes; it may still be
+retained as an `Attention2` observation while safe remaining effects and the
+selected-registration release complete. An unsafe, aliased, conflicting, or
+otherwise unavailable occupant cannot authorize any effect.
+Library registrations carry identity, source root, destination root, and paths;
+link targets remain derived from those roots rather than stored baselines.
 
 ## Consumer Permission
 
+The repeatable `--allow-path <path>` explicitly authors shared `allowInstallPaths`
+in `.agents/open-forge.json` after safe planning and before permission evaluation.
+It persists in non-interactive execution; `--dry-run` never writes it. A refused
+explicit write is reported and prevents content application. Eligible interactive
+approval offers always, once or cancel. Once changes no settings. Unknown or
+malformed settings withhold external grants while implicit `.agents/` admission
+remains independent; an always choice cannot overwrite malformed settings.
+
 This command selects [Workspace Permissions](../../shared/workspace-permissions/interface.md)
-for every registered destination selected for exact-link deletion. `.agents/**` leaves remain implicit.
-Requirements bind the selected Library ID and source root. Permission remains
+for every registered destination in the detach plan, including a positively
+missing or changed ordinary destination whose bytes are retained. `.agents/**`
+leaves remain implicit.
+Requirements are destination paths shared by every Extension and Library; they carry no Library ID or source binding. Permission remains
 necessary even for existing owned links; recorded identity makes removal
 source-independent, without exempting it from revocation.
 
 Every missing permission proposal is an exact file grant. Detach does not request future-folder authority or revoke saved grants.
 Directory proposals explicitly include future descendants and never cover the
-workspace root. A conflicting saved source binding requires disclosed old/new
-source replacement approval under the shared contract. Protected paths,
+workspace root. Changing a Library source does not change destination permission. Protected paths,
 source trees, ancestry, ownership and collision checks still apply per leaf.
 
-Only human prompt-capable application can approve the displayed scopes. JSON,
+Human prompt-capable application can approve the displayed scopes once or always; explicit `--allow-path` can persist shared grants without a prompt. JSON,
 redirected execution and dry-run never prompt; missing or declined approval is
-`blocked` and cancellation is `interrupted`, without effects. Malformed or unsafe
-permission observations are `blocked`; unavailable observations are `incomplete`.
+`blocked` and cancellation is `cancelled`, without effects. Invalid or unsafe settings supply no external grants. A refused always approval reports its existing permission finding; implicit paths require no grant.
 
 `result.permissions` appears after `plan` and before `application`. It uses the
-shared Library leaf, scope, rebinding and receipt coordinates exactly. Required
+shared destination-string, scope and receipt coordinates exactly. Required
 and missing arrays are concrete destinations; proposed/approved scopes expose
-remembered authority. A proposed rebind is not an applied one. Only a verified
+the requested scope using only `{kind,path}`. No rebinding field exists. Only a verified
 outcome says permission was saved; later content failure retains that outcome.
 
 Permission findings use the `library-detach.` prefix and suffixes
 `permission-required`, `permission-declined`, `permission-invalid`,
 `permission-unavailable`, `permission-changed` and `permission-write-failed`.
 Changed lease-bound permission facts block; failed permission publication is
-`failed` with its actual receipt; cancellation uses the existing `interrupted`
+`failed` with its actual receipt; cancellation uses the existing `cancelled`
 finding. No content effect proceeds after an unverified permission write.
 
 ## Dry Run And Application
@@ -250,13 +253,14 @@ finding. No content effect proceeds after an unverified permission write.
 `--dry-run` forms the same typed request, record facts, source-independent
 derived targets, destination classifications, generated projection, intended
 record, ordered plan, expected-state facts, and effect-free preflight as
-application. It reports every exact link deletion, missing-link blocker,
-generated-region effect, record effect, and blocker, then writes nothing. It
+application. It reports every exact link deletion, retained missing or changed
+ordinary destination warning, generated-region effect, record effect, and
+blocker, then writes nothing. It
 creates no directory, link, record, generated navigation, recovery artifact,
 or lock, and performs no lease or recovery capability probe.
 
 Omitting `--dry-run` selects application. Application completes all mapping
-checks and all-or-nothing preflight before acquiring one same-workspace lease
+checks and verified preflight before acquiring one same-workspace lease
 for the effectful plan. Under that lease it revalidates the record, selected
 ID, destination and parent states, generated regions, and expected record.
 Every link, generated-region, and record effect receives an immediate
@@ -268,249 +272,254 @@ source, or uses a copy fallback. For an effectful application, typed recovery
 is prepared and verified before the first effect; an effect-free plan has no
 recovery bundle. Effects are monotonic and are not rolled back or
 compensated after verification. Link and generated effects verify before the
-record is published last. When the selected ID is the last library, record
-removal is the final publication effect.
+lock is published last. Final detach removes the selected registration while
+retaining the lock with an empty Libraries section when appropriate. A
+positively missing or changed ordinary destination remains untouched and is
+reported as an `Attention2` warning.
 
 ## Human Output
 
-Human output comes from one typed result. Expanded output includes the selected
-workspace, library ID, record source root, source-independent mode, every
-registered path, exact raw-target and no-follow classification, dangling or
-missing target facts, generated-region effects, record effect, dry-run or
-application mode, verification, recovery disposition, residual paths, and
-semantic status.
+Every semantic result is rendered by the shared native report. --format text
+is the default. The applicable global flags are --workspace <path>, --format
+<text|json>, --detail <minimal|standard|full|debug>, repeatable
+--detail-filter <error|warning|info|all>, --help, and --version. The default
+detail is minimal; standard adds workspace and command context, full adds all
+bounded facts, and debug adds bounded diagnostics on stderr. Detail does not
+change semantics, effects, counts, or status. Filters select finding severities;
+all is the default filter.
 
-Compact output retains the library ID, mode, status, completeness, safety,
-every removed or safely absent path, every blocker, and at most one required
-`Next:` action. The primary human result for `complete`, `attention`, and
-`incomplete` goes to stdout. The primary human result for `invalid`, `blocked`,
-`failed`, and `interrupted` goes to stderr. Bounded diagnostics use stderr.
+Library detach shows a plan review before final confirmation. `--automatic`
+bypasses the final confirmation only; without it the prompt is `Remove the <N>
+links listed above? [y/N]`. Permission prompts for links outside `.agents`
+remain separate. In a noninteractive invocation, when final confirmation is
+required and `--automatic` is absent, the result is `Invalid4` with
+`library-detach.confirmation-required`; no link or record effect is applied.
 
-Both views lead with the operation outcome or preview, status, exact workspace
-and selection method, then Library identity and the recorded roots. Human
-`requires attention` represents the typed `attention` status. Findings and
-blockers remain prominent before a plan can be mistaken for completed work.
+The catalogue text by detail level is:
 
-The observed record and links are labelled as before-change facts. Comparison
-labels describe membership in the intended Library and never imply a source scan
-for Detach. Mappings and effects are grouped beside their exact paths. Both views retain
-all affected or preserved paths, permission decisions, application and
-verification state, recovery disposition and residual paths. Expanded adds
-supporting source, ownership, expected-state and hash details. Plan rows remain
-labelled as planned when application is incomplete, failed or interrupted;
-rendering does not infer that an individual planned effect was applied. A
-source file and the relative link exposing it remain distinct identities.
-No path is truncated. At most one required Next action comes from the result.
-
-### Dry-run excerpt
+`minimal`:
 
 ```text
-Library detach preview completed.
-Status: complete
+Detached team-knowledge: removed 12 links under docs. Source files in shared/team were kept.
+  Updated the Entries section of docs/_docs.md
 ```
 
-Identity includes the recorded source and destination roots and the statement
-`Source files are not scanned for this operation.` The plan lists exact links:
+At minimal detail, a positively absent registered destination produces a
+visible warning on stdout alongside the detach headline. Only exact links
+actually removed contribute to the removal count; the absent destination has
+no delete effect. Selected registration release is reported from its verified
+publication.
 
-```text
-Plan: complete
-  Remove link: docs/guide.md -> ../shared/team-knowledge/guide.md
-  Record: delete (.agents/open-forge.libraries.json)
-```
+`standard` adds `Workspace:`, every removed link as a row, and the lock row
+(`.agents/open-forge.lock.json  registration removed`).
 
-The preview also prints `No files changed (--dry-run).` A completed apply reports
-actual application and verification states. A failed or interrupted apply keeps
-its recovery disposition and residual paths visible beside those states.
+`full` adds expected states, verification and recovery facts.
+
+Results with completed, completed-with-warnings, or incomplete status use
+stdout. Invalid-input, blocked, failed, and cancelled results use stderr.
+A parser failure is text on stderr without a result envelope.
 
 ## Structured Output
 
-`--json` emits one complete structured result to stdout for every semantic
-status from the same typed result used by human output. It never prompts and
-never reruns resolution, mapping checks, planning, application, verification,
-or residual reporting. Human text is not mixed into JSON stdout; bounded
-diagnostics use stderr.
+--format json emits one schema-3 envelope on stdout for each semantic result.
+The envelope has exactly these fields:
 
-The result exposes the concrete detach facts under the exact shared result
-envelope, including:
+~~~text
+{
+  schemaVersion: 3,
+  command,
+  status,
+  detail,
+  filter,
+  workspace,
+  summary,
+  findings,
+  effects,
+  counts,
+  limitations,
+  data,
+  recovery,
+  next
+}
+~~~
 
-- selected workspace, library ID, record validity, and source-independent mode;
-- recorded source root and mapped consumer-relative paths without source
-  bytes or a stored expected-link field;
-- every exact, dangling, missing, changed, unsafe, unknown, or separately
-  owned destination fact;
-- generated-region effects, record effect, remaining library records, and
-  record-publication-last evidence;
-- dry-run or application mode, expected-state, verification, recovery, and
-  residual facts; and
-- semantic status and at most one required `Next:` action.
+The command is exactly library detach; data follows the catalogue:
 
-The result does not follow, disclose, or materialize source bytes.
+| Level    | `data`                                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------------------ |
+| minimal  | `{ mode, id, sourceFolder, destinationFolder, registrationRemoved: bool, permissions { ... } }` plus effects |
+| standard | per effect `target`                                                                                          |
+| full     | + `expectedStates`, `verification`, `recovery` details                                                       |
+
+Human and JSON output are projections of one typed result. data is null only at
+the parser boundary before command binding. There is no alternate JSON
+projection.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                                                                                     |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | A complete safe dry-run plan was established, or all exact registered links and permitted generated effects verified and the resulting record was published or removed. Every registered destination had an exact link identity.                                                            |
-| `attention`   | Target effects verified, but post-verification recovery cleanup has a positively observed retained residual under the shared recovery boundary. Planned detach effects do not create `attention`.                                                                                           |
-| `incomplete`  | A valid record or consumer boundary has a required coverage or application fact that cannot be completely inspected or prepared. No effect begins. Source unavailability alone is not incomplete because detach is source-independent.                                                      |
-| `invalid`     | Command input, operand cardinality, library-ID grammar, unknown ID, malformed selection, source-root operand, or terminal-mode use is outside this interface.                                                                                                                               |
-| `blocked`     | The request is syntactically valid but a malformed record, unsafe recorded path, changed or unsafe occupant, unproven raw target, collision, unsafe generated region, unavailable real-link capability, or another mutation precondition prevents a safe complete detach. No effect begins. |
-| `failed`      | An unexpected application, verification, or unknown recovery-disposition failure occurs after a persistent effect begins.                                                                                                                                                                   |
-| `interrupted` | The caller cancels before completion. Effects already verified remain residual truth; an unexpected post-effect failure remains `failed`.                                                                                                                                                   |
+| Status                  | When                                                   | Headline                                                                                    | Exit | Stream |
+| ----------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | detached                                               | `Detached <id>: removed <N> links under <destination>. Source files in <source> were kept.` |    0 | stdout |
+| completed               | registration with no links                             | `Detached <id>. It had no links.`                                                           |    0 | stdout |
+| completed (dry run)     | planned without a retained missing/changed-ordinary warning | `Would detach <id>: remove <N> links under <destination>.`                              |    0 | stdout |
+| completed               | no ownership record                                    | `No ownership record exists, so <id> cannot be detached. Nothing was changed.`              |    0 | stdout |
+| completed-with-warnings | positively missing or changed ordinary destination retained; or recovery bundle retained | `Detached <id>: removed <N> links under <destination>.` + warning rows; retained bytes are named |    2 | stdout |
+| completed-with-warnings (dry run) | positively missing or changed ordinary destination observed | `Would detach <id>: remove <N> links under <destination>.` + warning rows; no writes |    2 | stdout |
+| incomplete              | record, Entries or recovery unreadable                 | `<id> could not be detached: <limitation>. Nothing was changed.`                            |    3 | stdout |
+| invalid-input           | bad or unknown ID, extra operand, required final confirmation unavailable without `--automatic` | `Cannot detach <ref>: <problem>.`                                                           |    4 | stderr |
+| blocked                 | alternate/different link, directory, alias, unsafe or unknown state, separately owned/conflicting occupant, permission, lock | `Cannot detach <id>: <reason>. Nothing was changed.`                                        |    5 | stderr |
+| failed                  | after effects                                          | `Library detach stopped after <n> of <m> links were removed.`                               |    1 | stderr |
+| cancelled               | prompt cancelled, Ctrl+C                               | `Library detach was cancelled. Nothing was changed.`                                        |  130 | stderr |
 
-For ordinary conditions, status precedence is `blocked` > `incomplete` >
-`attention` > `complete`. Invalid input stops before operation resolution. The
-shared [Result Coordinates](../../shared/result-coordinates/interface.md)
-define numeric exits, stream coordinates, and the structured envelope.
+### Current merged behavior and open questions
+
+The catalogue assigns lock-held to blocked with exit 5. The merged operation
+returns failed with exit 1, operation-failed, and an IOException. Maintainer
+decision remains open with the corresponding attach and sync questions.
+
+The catalogue assigns record-invalid to incomplete with exit 3. The merged
+operation returns blocked with exit 5. Maintainer decision remains open.
+
+The accepted mapping boundary treats a changed ordinary destination as
+`Attention2` with preserved bytes and safe remaining effects, while a
+directory, alternate link, alias, unsafe state, or conflicting occupant stays
+`blocked`. The result should retain the occupant kind; any implementation
+qualification remains deferred.
+
+The accepted noninteractive confirmation boundary is `Invalid4` with
+`library-detach.confirmation-required` and no effects unless `--automatic` is
+present. Any implementation qualification remains deferred.
+
+The interrupted-after-effects native cause differs from the catalogue's
+cancellation case. Maintainer decision remains open.
 
 ## Errors And Boundaries
 
-Detach rejects or blocks:
+The finding catalogue is:
 
-- zero or several positional operands;
-- an ID outside the exact grammar, an unknown ID, or a source-root operand;
-- a missing, malformed, extra-field, duplicate, unsorted, or unsafe
-  `.agents/open-forge.libraries.json` record;
-- an absolute, backslash, dot-traversing, escaping, aliased, outside, or
-  otherwise unsafe recorded source-root or path form;
-- a missing or non-ordinary consumer `.agents` root or linked/reparse consumer
-  ancestry;
-- a consumer destination parent that crosses a link, reparse point, special
-  entry, external transition, alias, or unknown state;
-- a missing destination leaf, because the registered link identity cannot be
-  proven for all-or-nothing detachment;
-- any changed raw target, ordinary file, directory, different link, special
-  entry, unsafe occupant, unknown state, or separately owned path;
-- a missing, ambiguous, changed, or unsafe existing generated region when the
-  route projection is required; or
-- unavailable real-link capability or unavailable required application
-  recovery preparation.
+| Code                                           | Severity | Family                     | Message                                                                                                 | Next                              |
+| ---------------------------------------------- | -------- | -------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| library-detach.invalid-input                   | error    | invalid-input              |                                                                                                         |                                   |
+| library-detach.confirmation-required           | error    | confirmation-required      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.confirmation-required`).                                       | `open-forge library detach --automatic` |
+| library-detach.invalid-id                      | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.invalid-id`).                                                                    | `open-forge library list`         |
+| library-detach.unknown-id                      | error    | unknown-id                 |                                                                                                         | `open-forge library list`         |
+| library-detach.ownership-observation           | info     | ownership-observation      |                                                                                                         |                                   |
+| library-detach.record-invalid                  | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.record-invalid`).                             | `open-forge doctor`               |
+| library-detach.record-unavailable              | warning  | lifecycle-unavailable      |                                                                                                         |                                   |
+| library-detach.record-blocked                  | error    | lifecycle-blocked          |                                                                                                         |                                   |
+| library-detach.registered-link-missing         | warning  | local                      | The registered destination is positively absent; no bytes were removed, safe exact links may still be removed, and registration may be released. | `open-forge library inspect <id>` |
+| library-detach.mapping-blocked                 | error    | local                      | `<path> is <an ordinary file \| a folder \| a different link> and is not the link the Library created.` Ordinary-file drift is an `Attention2` retained-destination warning; other kinds block. | `open-forge library inspect <id>` |
+| library-detach.mapping-unavailable             | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.mapping-unavailable`).                                                  | `open-forge doctor`               |
+| library-detach.link-capability-unavailable     | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.link-capability-unavailable`).                                               | none                              |
+| library-detach.consumer-blocked                | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.consumer-blocked`).                                      | none                              |
+| library-detach.ownership-conflict              | error    | ownership-conflict         |                                                                                                         |                                   |
+| library-detach.permission-required             | error    | permission-required        |                                                                                                         |                                   |
+| library-detach.permission-declined             | error    | permission-declined        |                                                                                                         |                                   |
+| library-detach.permission-invalid              | error    | permissions-invalid        |                                                                                                         |                                   |
+| library-detach.permission-unavailable          | warning  | permissions-unavailable    |                                                                                                         |                                   |
+| library-detach.permission-changed              | error    | permissions-changed        |                                                                                                         |                                   |
+| library-detach.permission-write-failed         | error    | permission-write-failed    |                                                                                                         |                                   |
+| library-detach.generated-navigation-blocked    | error    | generated-region-unsafe    |                                                                                                         |                                   |
+| library-detach.generated-navigation-incomplete | warning  | projection-unavailable     |                                                                                                         |                                   |
+| library-detach.lock-unavailable                | error    | workspace-lock-unavailable |                                                                                                         |                                   |
+| library-detach.recovery-unavailable            | warning  | recovery-unavailable       |                                                                                                         |                                   |
+| library-detach.recovery-retained               | warning  | recovery-artifact-retained |                                                                                                         |                                   |
+| library-detach.application-failed              | error    | write-failed               |                                                                                                         |                                   |
+| library-detach.verification-failed             | error    | verification-failed        |                                                                                                         |                                   |
+| library-detach.operation-failed                | error    | operation-failed           |                                                                                                         |                                   |
+| library-detach.interrupted                     | error    | interrupted                |                                                                                                         |                                   |
 
-Every error names `library detach`, the library ID or affected path, the cause,
-and one useful next action when one is known. Detach does not inspect Git,
-perform Git operations or diagnostics, mutate remote or public state, create a
-route, rewrite the Loader, or change any source file.
+Findings retain code, severity, family, message, subject, cause, and next
+action when available. Counts are:
+
+`linksRemoved`, `sectionsUpdated`.
 
 ## Scenarios
 
-Preview complete detachment as structured output:
+`detached`, `detached-no-links`, `dry-run`, `unknown-id` (invalid),
+`registered-link-gone` (completed-with-warnings, `Attention2`),
+`changed-occupant` (ordinary file: completed-with-warnings, `Attention2`; unsafe
+or alternate occupant: blocked),
+`permission-required`, `no-ownership-record` (info), `lock-held`,
+`write-failed-partial`, `cancelled`.
 
-```text
-open-forge library detach team-knowledge --dry-run --json
-```
+Prompt rules from the catalogue:
 
-Apply whole-library detachment:
+Permission when links outside `.agents` are removed; plan review listing
+every link; `Remove the <N> links listed above? [y/N]` unless `--automatic`
+(added by 04).
 
-```text
-open-forge library detach team-knowledge
-```
+## Representative Transcripts
 
-The request remains valid when the recorded source root or a registered link's
-target is absent, provided every consumer destination is an exact registered
-link with the derived raw target. A missing destination leaf is not an exact
-registered link and blocks whole-library detachment.
+### completed
 
-## Non-Goals
+~~~text
+Detached team-knowledge: removed 1 link under .. Source files in shared/team-knowledge were kept.
+~~~
 
-`library detach` does not:
+### completed-with-warnings
 
-- detach one selected path, a collection, subset, glob, or partial mapping;
-- attach or sync a library, choose another source root, or select an unrecorded
-  link;
-- require source availability, enumerate source inventory, resolve source
-  targets, follow source bytes, copy a source, or use a copy fallback;
-- overwrite, adopt, rename, or release a changed consumer occupant or
-  lifecycle claim;
-- remove any source file, source directory, source link, or source record;
-- create route parents, materialize entrypoints, repair a missing route chain,
-  rewrite authored entrypoints, rewrite the Loader, or invent Framework roots;
-- change the `.agents/open-forge.lifecycle.json` document or add library data to
-  that lifecycle schema;
-- perform Git fetch, pull, checkout, switch, stage, commit, or diagnostics;
-- write through a projected file or make Route Update, Index, Route Move, or
-  Route Remove follow or delete a library source target; their link-aware guard
-  and real-filesystem regression are prerequisites to library dogfood;
-- add compatibility, migration, remote publication, deployment, JavaScript,
-  dependency injection, a runtime registry, a generic mutation dispatcher, or
-  another callable design; or
-- create a receipt, saved plan, journal, or automatic rollback history.
+~~~text
+Detached team-knowledge: removed 1 link under ..
+  Warning  <recovery-bundle>  Recovery artifact retained
+~~~
 
-## EndToEnd Journeys
+### incomplete
 
-1. **Dry-run has no effect.** Run
-   `open-forge library detach team-knowledge --dry-run` for a valid record. The
-   result lists the same complete exact-link, dangling-link, generated-region,
-   and record plan as application, while no link, record, generated region,
-   lease, recovery artifact, or source byte changes.
-2. **Apply removes the exact projection and preserves the source.** Apply
-   `open-forge library detach team-knowledge` when each registered destination
-   is an exact relative link, including an exact dangling link. Detach removes
-   only exact registered consumer links, removes or updates the record after
-   link verification, and leaves every source path and source byte unchanged
-   even when a source or link target is missing.
-3. **A changed occupant blocks all effects.** Replace one registered
-   destination with an ordinary file, directory, different link, or unsafe
-   occupant and run detach. The whole request is `blocked`, no link or record
-   effect occurs.
+~~~text
+team-knowledge could not be detached: <limitation>. Nothing was changed.
+~~~
 
-## Verification Requirements
+### invalid-input
 
-Lower-tier and public proof must cover the following without adding another
-public EndToEnd journey:
+~~~text
+Cannot detach unknown: No Library has the ID unknown.
+Next: open-forge library list
+~~~
 
-- exact command and flag parsing, singleton ID, shared global flags, terminal
-  modes, JSON parity, stream assignment, and all seven statuses;
-- library-ID length, ASCII grammar, unknown-ID invalidity, successful-repeat
-  unknown-ID behavior, namespace separation, exact schema-v1 properties,
-  sorting, duplicates, and malformed-record preservation;
-- source-independent operation with missing source roots, missing source files,
-  missing link targets, exact dangling links, valid recorded path derivation,
-  unsafe recorded paths, and no source-byte read/write/follow effect;
-- consumer containment, real ordinary no-follow parents, missing-leaf blocking,
-  exact raw-target and leaf identity, different-link detection, ordinary and
-  special occupants, aliases, Extension/lifecycle/library ownership, and
-  whole-request blocking;
-- existing generated-region projection, authored-byte preservation, no route
-  creation, no Loader rewrite, and pre-dogfood link-aware guards for Route
-  Update, Index, Route Move, and Route Remove;
-- immutable dry-run/application plan parity, no dry-run lease or recovery
-  capability probe, complete all-or-nothing preflight, one lease, under-lock
-  revalidation, immediate no-follow checks, record-publication-last ordering,
-  typed recovery, monotonic effects, verification, residual truth, and no
-  automatic rollback;
-- typed recovery for prior-missing ordinary record creation and relative-link
-  creation/deletion, exact created-link removal, exact deleted-link recreation
-  including dangling links, and no source-byte storage or following; and
-- complete, `attention`, `incomplete`, `invalid`, `blocked`, `failed`, and
-  `interrupted` result mapping with human/JSON parity.
+### blocked
 
-The three public EndToEnd journeys are defined only by the [Interface
-Contract](interface.md#endtoend-journeys). Lower-tier evidence may exercise
-additional record, occupant, dangling-link, failure, and residual branches
-without creating additional public journeys.
+~~~text
+Cannot detach team-knowledge: .agents/directives/review.md is an ordinary file and is not the link the Library created. Nothing was changed.
+Workspace: <workspace>
+Next: open-forge library inspect team-knowledge
+~~~
+
+### failed
+
+~~~text
+Library detach stopped after 0 of 1 links were removed.
+Workspace: <workspace>
+Next: open-forge library detach team-knowledge --detail debug
+~~~
+
+### cancelled
+
+~~~text
+Library detach was cancelled. Nothing was changed.
+Workspace: <workspace>
+Next: open-forge library detach team-knowledge
+~~~
 
 ## Related Current Sources
 
 - [library detach Contract Set](_detach.md)
 - [library detach Interface Contract](interface.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
+CLI help syntax: [`library.detach.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Library/Detach/LibraryDetachText.cs).
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef library.detach.help.syntax -->
+
+## Approved Journey Wording References
+
+The following stable IDs link the approved journey behavior above to its typed
+human-wording factories. Independently reviewed snapshots and state assertions
+remain the output evidence.
+
+- [LibraryDetachWording.cs](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Library/Detach/LibraryDetachWording.cs)
+  <!-- @OpenForgeTextRef library.detach.wording.registered-link-is-already-absent -->
+  <!-- @OpenForgeTextRef library.detach.wording.changed-ordinary-destination-was-kept -->

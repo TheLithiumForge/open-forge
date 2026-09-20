@@ -1,0 +1,6 @@
+Route move was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  guidance/old guide  Route move was cancelled
+         Route move was cancelled. Nothing was changed.
+  files scanned: the reference scan was not completed
+Next: open-forge route move

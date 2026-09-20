@@ -1,0 +1,6 @@
+Workspace: <workspace>
+4 sources, about 0.1k tokens.
+AGENTS.md
+.agents/loader.md
+.agents/docs/_docs.md
+.agents/docs/guide.md

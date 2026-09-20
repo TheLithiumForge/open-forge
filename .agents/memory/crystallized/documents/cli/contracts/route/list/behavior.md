@@ -17,7 +17,8 @@ the public vocabulary and observable shape. The shared [CLI Source References](.
 and [Global CLI Flags](../../shared/global-flags/interface.md) contracts own
 their shared input and presentation meaning.
 
-The operation is read-only, stateless, and non-shipping. Implementation and executable evidence are tracked in
+The operation is read-only and stateless. The merged native CLI implements it;
+implementation and executable evidence are tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md). Its behavior ends at one typed result;
 it has no mutation phase, receipt, cache, persistent reverse index,
 or hidden `index` invocation.
@@ -54,7 +55,7 @@ drop coverage evidence, or turn an incomplete result into a complete one.
 5. Reject the Loader as a route subject, reject an unrouted source as a route-list
    subject, and block unsafe or structurally ambiguous route meaning.
 
-Invalid input produces `invalid`; an unresolved safe boundary produces `blocked`.
+Invalid input produces `invalid-input`; an unresolved safe boundary produces `blocked`.
 No route facts are used to silently repair an invalid request.
 
 ## Authored Topology Is Authority
@@ -109,7 +110,7 @@ A routed leaf is a valid subject and produces that leaf only, at relative depth
 operand resolves to the same logical base route. The overwrite layer is evidence
 for that logical row, not a second row.
 
-An unrouted source is `invalid`. Unknown references follow the shared invalid
+An unrouted source is `invalid-input`. Unknown references follow the shared invalid
 meaning. Unsafe paths and ambiguous IDs or route structures are `blocked`.
 
 ## Depth And Closure
@@ -162,7 +163,7 @@ stable canonical route/path ordering derived from authored identity. The orderin
 must be independent of filesystem enumeration, generated `Entries` order,
 modification time, traversal accident, or semantic relevance.
 
-The typed order is established once and reused by compact, expanded, and JSON
+The typed order is established once and reused by minimal-detail, full-detail, and JSON
 renderers. Multiple selected Loader roots retain their deterministic root order;
 each root's descendants remain after their parent and within its topology.
 
@@ -172,17 +173,17 @@ The operation produces one typed result containing workspace selection, requeste
 subject or operand-free root selection, requested/effective depth, ordered rows,
 coverage, findings, and semantic status.
 
-- `complete` requires complete establishment of every requested root and every
+- `completed` requires complete establishment of every requested root and every
   requested depth row. A complete empty result is valid after complete inspection.
-- `attention` is allowed only when coverage remains complete and the finding is
+- `completed-with-warnings` is allowed only when coverage remains complete and the finding is
   safe and non-blocking, such as an authored-form or identity finding that does
   not remove or add route coverage.
 - `incomplete` means safe rows exist but requested topology or closure coverage is
   not fully established. The result states what boundary remains unknown.
-- `invalid`, `blocked`, `failed`, and `interrupted` retain their shared meanings.
+- `invalid-input`, `blocked`, `failed`, and `cancelled` retain their shared meanings.
 
 Missing or malformed required route metadata is `incomplete`. Unsafe identity or
-ambiguous route structure is `blocked`. Cancellation is `interrupted`, retains
+ambiguous route structure is `blocked`. Cancellation is `cancelled`, retains
 already confirmed safe rows when available, and never reports complete coverage.
 Cancellation observed after result formation does not replace the completed
 result.
@@ -194,14 +195,14 @@ complete result; this contract defines no such limit.
 
 ## Presentation Invariants
 
-Compact human output includes the result, coverage, selected roots, effective
+minimal-detail human output includes the result, coverage, selected roots, effective
 depth, count, and deterministic indented rows with ID, canonical path, exact
-authored description, and exact authored tags. Expanded output adds explicit
+authored description, and exact authored tags. full-detail output adds explicit
 parent, absolute and relative depths, kind, applicable child count, provenance,
 coverage evidence, and explanation.
 
 JSON retains the complete typed result and all route rows regardless of human
-view. JSON view selects the expanded or compact projection. `--verbose` may add bounded
+view. JSON view selects the full-detail or minimal-detail projection. `--detail debug` may add bounded
 diagnostics but cannot change the typed result.
 
 ## Safety And Recovery
@@ -214,8 +215,8 @@ diagnostics but cannot change the typed result.
 - Never claim a Loader root for a detached tree.
 - Preserve safe confirmed rows when a later boundary becomes incomplete, while
   clearly reporting the incomplete status and next action.
-- Preserve `interrupted` when the caller stops execution; do not convert a partial
-  result into `complete`.
+- Preserve `cancelled` when the caller stops execution; do not convert a partial
+  result into `completed`.
 
 ## Conformance Scenarios
 
@@ -234,10 +235,10 @@ Gate 5 executable proof should cover at least these observable scenarios:
 6. Stale generated `Entries` cannot add, hide, or reorder rows.
 7. Exact descriptions and tags, parent facts, both depth values, kinds, child
    counts, and provenance remain identical across repeated invocations.
-8. Compact, expanded, and JSON use identical row membership, order, and coverage;
-   JSON retains its defined core under compact view.
+8. minimal-detail, full-detail, and JSON use identical row membership, order, and coverage;
+   JSON retains its defined core under minimal-detail view.
 9. Unsafe and ambiguous references block, invalid depth and source kinds are
-   invalid, and incomplete topology never reports `complete`.
+   invalid, and incomplete topology never reports `completed`.
 
 ## Related Current Sources
 

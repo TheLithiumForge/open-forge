@@ -14,6 +14,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
 
 public sealed class RecoveryBundleStoreIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Recovery store closes reopens and verifies one exact multi-target bundle")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task PreparePublishesOneExactStreamedOperationBundle()
@@ -102,6 +103,7 @@ public sealed class RecoveryBundleStoreIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Recovery store and observer leave create-only operations bundle free")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CreateOnlyNeedsNoBundleAndObserverCreatesNothing()
@@ -140,6 +142,7 @@ public sealed class RecoveryBundleStoreIntegrationTests
         Assert.False(Directory.Exists(workspaceDirectory));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Recovery store reports deterministic collision and cancellation paths honestly")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CollisionAndCancellationReportActualResidualPaths()

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 3,
+  "command": "references",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": ".agents/docs/reference.md has no authored links out. Entries links are not counted.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "incoming": null,
+    "outgoing": 0,
+    "sourcesScanned": null
+  },
+  "limitations": [],
+  "data": {
+    "source": {
+      "id": "docs/reference",
+      "path": ".agents/docs/reference.md"
+    },
+    "direction": "out",
+    "outgoing": [],
+    "coverage": {
+      "outgoing": "complete"
+    }
+  },
+  "recovery": null,
+  "next": null
+}

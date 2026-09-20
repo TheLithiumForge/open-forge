@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Route.Create;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Create.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
@@ -46,6 +47,8 @@ internal sealed class RouteCreateIntegrationWorkspace : IDisposable
     private readonly TemporaryWorkspace _temporary;
     private readonly WorkspaceLockTestStore _lockStore;
     private readonly HashSet<string> _recoveryPaths = new(StringComparer.Ordinal);
+    private readonly HashSet<string> _applicationCreatedFiles = new(StringComparer.Ordinal);
+    private readonly HashSet<string> _applicationCreatedDirectories = new(StringComparer.Ordinal);
     private string? _applicationCreatedTargetPath;
     private bool _disposed;
 
@@ -65,6 +68,10 @@ internal sealed class RouteCreateIntegrationWorkspace : IDisposable
     internal CliWorkspace Workspace { get; }
 
     internal WorkspaceLockStoreRoot LockStoreRoot => _lockStore.StoreRoot;
+
+    internal FileStream HoldLock() => _lockStore.OpenExclusive(Workspace);
+
+    internal void TrackRecoveryPath(string path) => _recoveryPaths.Add(path);
 
     internal static RouteCreateIntegrationWorkspace Create(string purpose)
     {
@@ -139,6 +146,9 @@ internal sealed class RouteCreateIntegrationWorkspace : IDisposable
             ".agents/memory/project-alpha/index.md",
             ParentDocument(entries: "- none - No entries - #Empty"));
 
+    internal void SeedNestedTeamDirectory()
+        => _temporary.CreateDirectory(".agents/memory/project-alpha/team");
+
     internal void RemoveParent()
         => File.Delete(Absolute(ParentPath));
 
@@ -175,49 +185,30 @@ internal sealed class RouteCreateIntegrationWorkspace : IDisposable
             new SourceCatalogueRequest(Workspace, [SourceLogicalPath.AgentsRoot]),
             TestContext.Current.CancellationToken);
 
+    internal void OwnNestedApplicationPlan(RouteCreatePlan plan)
+    {
+        foreach (var change in plan.FileChanges.Where(change => change.Kind == PlannedFileChangeKind.Create))
+        {
+            Assert.False(EntryExists(change.LogicalPath));
+            _applicationCreatedFiles.Add(change.LogicalPath);
+        }
+
+        foreach (var creation in plan.DirectoryCreations)
+        {
+            Assert.False(EntryExists(creation.LogicalPath));
+            _applicationCreatedDirectories.Add(creation.LogicalPath);
+        }
+    }
+
     internal async ValueTask<RouteCreatePlan> BuildPlanAsync()
     {
-        var catalogue = await ReadCatalogueAsync();
-        var parent = catalogue.FindByPath(ParentPath)
-            ?? throw new InvalidOperationException("The Route Create parent seed was not discovered.");
-        var target = IntendedTarget();
-        var targetBytes = TargetBytes();
-        var targetAbsolutePath = Absolute(TargetPath);
-        var parentAbsolutePath = Absolute(ParentPath);
-        var parentBeforeBytes = await File.ReadAllBytesAsync(
-            parentAbsolutePath,
+        var build = await new RouteCreatePlanBuilder().BuildAsync(
+            Request(),
             TestContext.Current.CancellationToken);
-        var parentIntendedBytes = ParentIntendedBytes();
-        var targetSnapshot = FileStateSnapshot.Missing(targetAbsolutePath);
-        var parentSnapshot = FileStateSnapshot.File(
-            parentAbsolutePath,
-            parentAbsolutePath,
-            parentBeforeBytes);
-        var targetChange = PlannedFileChange.Create(
-            targetSnapshot.Expectation,
-            targetBytes.AsSpan());
-        var parentChange = PlannedFileChange.ReplaceGeneratedRegion(
-            parentSnapshot.Expectation,
-            parentIntendedBytes.AsSpan());
-        var formation = new GeneratedNavigationFormationBuilder().Build(
-            catalogue,
-            [.. catalogue.Sources, target]);
-        return new RouteCreatePlan
-        {
-            Request = Request(),
-            Preview = Preview(
-                targetBytes,
-                parentSnapshot,
-                parentIntendedBytes),
-            NavigationFormation = formation,
-            TargetSnapshot = targetSnapshot,
-            TargetSource = target,
-            ParentSource = parent,
-            TemplateSource = null,
-            IntendedTargetBytes = targetBytes,
-            FileChanges = [targetChange, parentChange],
-            RecoveryTargets = [RecoveryBundleTarget.Create(parentChange, parentSnapshot)],
-        };
+        return build.Plan
+            ?? throw new InvalidOperationException(
+                build.Formation.Findings.FirstOrDefault()?.Cause
+                    ?? "The Route Create integration plan could not be built.");
     }
 
     internal ImmutableArray<FileChangeReceipt> ApplyPlan(RouteCreatePlan plan)
@@ -313,6 +304,20 @@ internal sealed class RouteCreateIntegrationWorkspace : IDisposable
         if (_applicationCreatedTargetPath is { } targetPath)
         {
             DeleteApplicationCreatedTarget(targetPath);
+        }
+
+        foreach (var path in _applicationCreatedFiles)
+        {
+            DeleteApplicationCreatedTarget(path);
+        }
+
+        foreach (var path in _applicationCreatedDirectories.OrderByDescending(path => path.Length))
+        {
+            if (Directory.Exists(path))
+            {
+                Assert.Equal((FileAttributes)0, File.GetAttributes(path) & FileAttributes.ReparsePoint);
+                Directory.Delete(path, recursive: false);
+            }
         }
 
         _lockStore.Dispose();

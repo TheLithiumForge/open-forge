@@ -1,0 +1,5 @@
+Library sync was cancelled. Nothing was changed.
+Workspace: <workspace>
+interrupted
+  Error  team-knowledge  Library sync was cancelled
+         Library sync was cancelled. Nothing was changed.

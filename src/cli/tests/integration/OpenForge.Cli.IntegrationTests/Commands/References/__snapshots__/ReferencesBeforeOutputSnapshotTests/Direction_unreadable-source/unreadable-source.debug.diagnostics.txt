@@ -1,0 +1,5 @@
+status=incomplete
+incoming=0
+outgoing=0
+scanned=3
+The source layer bytes could not be inspected.

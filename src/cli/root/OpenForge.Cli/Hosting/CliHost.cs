@@ -1,4 +1,5 @@
 using OpenForge.Cli.Hosting.Shared.Presentation;
+using OpenForge.Cli.Hosting.Shared.Interaction;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Shell.Composition;
@@ -27,6 +28,14 @@ internal static class CliHost
                     PromptOutput = writers.StandardError,
                     StandardInputRedirected = Console.IsInputRedirected,
                     PromptOutputRedirected = Console.IsErrorRedirected,
+                    Terminal = CliHostTerminalFactory.Create(
+                        Console.In,
+                        writers.StandardError,
+                        Console.IsInputRedirected,
+                        Console.IsErrorRedirected,
+                        Environment.GetEnvironmentVariable("TERM"),
+                        OperatingSystem.IsWindows()),
+                    StandardErrorColor = writers.Colors.StandardError,
                 }),
             cancellationToken: cancellationToken);
     }

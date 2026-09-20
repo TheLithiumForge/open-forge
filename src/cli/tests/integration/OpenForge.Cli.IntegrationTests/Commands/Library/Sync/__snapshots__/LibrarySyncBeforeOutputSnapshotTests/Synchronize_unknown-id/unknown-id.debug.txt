@@ -1,0 +1,13 @@
+Cannot synchronize unknown: The Library ID is not registered.
+Workspace: <workspace>
+unknown-id
+  Error  unknown  Library ID is unknown [library-sync.unknown-id]
+         The Library ID is not registered
+         use open-forge library list
+         open-forge library list
+         Choose a registered Library ID.
+  Inventory: 0 eligible files, 0 excluded items, 0 unavailable paths.
+  Verification: not started; record publication: not started.
+  Recovery: no recovery data was requested.
+  Choose a registered Library ID.
+Next: open-forge library list

@@ -220,7 +220,7 @@ prove its productivity or token economics:
   implementer questions. The [Review Evidence](../../../directives/review-evidence.md)
   Directive already defines stable findings, independent first passes, grouped
   corrections, and targeted rechecks.
-- The current [CLI quality-remediation Task](../../working/cli-development/tasks/cli-quality-remediation.md)
+- The current [CLI quality-remediation Task](../../archived/cli-development/tasks/cli-quality-remediation.md)
   captures eleven actual defects and two candidates from a strategic first-pass
   audit. Those findings show the value of architecture, refactoring, C# design,
   and test-evidence lenses, but they do not establish that continuous review
@@ -384,7 +384,7 @@ second Mastermind blurs authority. A no-op result is valid.
 
 ## Related Records And Sources
 
-- [CLI Quality Remediation](../../working/cli-development/tasks/cli-quality-remediation.md)
+- [CLI Quality Remediation](../../archived/cli-development/tasks/cli-quality-remediation.md)
 - [CLI Development Flow Evaluation](../observations/2026-08-21_cli-development-flow-evaluation.md)
 - [Architectural Perspectives](../../../guidance/architectural-perspectives.md)
 - [Adaptive Collaboration](../../../guidance/adaptive-collaboration.md)
@@ -392,7 +392,7 @@ second Mastermind blurs authority. A no-op result is valid.
 - [Hierarchical Project Orchestration](../../../directives/hierarchical-orchestration.md)
 - [Program Architecture And Delegation](../../../directives/program-architecture.md)
 - [Review Evidence](../../../directives/review-evidence.md)
-- [Review Workflow](../../../workflows/review.md)
-- [Adaptive Development Workflow](../../../workflows/adaptive-development.md)
+- [Review Workflow](../../../skills/use-workflow/references/open-forge/review.md)
+- [Adaptive Development Workflow](../../../skills/use-workflow/references/open-forge/adaptive-development.md)
 - [Perspective Lenses](perspective-lenses.md)
 - [Scope Capsules And A Critical Loader Loop](scope-capsules-and-critical-loader-loop.md)

@@ -1,0 +1,7 @@
+Synchronized team-knowledge: 1 link added.
+Workspace: <workspace>
+local
+  Warning  .agents/directives/review.md  Registered link was restored
+         .agents/directives/review.md was registered but missing, so it was restored.
+  Added    .agents/directives/review.md
+    Target: ../../shared/team-knowledge/.agents/directives/review.md

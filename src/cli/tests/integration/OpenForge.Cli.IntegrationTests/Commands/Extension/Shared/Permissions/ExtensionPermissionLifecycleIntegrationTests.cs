@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Permissions;
 [Trait("Feature", "workspace-permissions"), Trait("Evidence", "Integration")]
 public sealed class ExtensionPermissionLifecycleIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory]
     [InlineData("install", "preserve content")]
     [InlineData("update", "copy")]
@@ -22,7 +23,7 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
         {
             var installed = await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--automatic"]);
             Assert.Equal(0, installed.ExitCode);
-            workspace.ReplaceText(PermissionFixture.PermissionPath, """{"schemaVersion":1,"extensions":[],"libraries":[]}""");
+            workspace.ReplaceText(PermissionFixture.PermissionPath, """{"allowInstallPaths":[]}""");
             if (effect == "copy")
             {
                 source.ReplaceText($"content/{PermissionFixture.ExternalPath}", "updated exact content\n");
@@ -30,20 +31,39 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
             string[] arguments = command == "remove"
                 ? ["extension", command, "team"]
                 : ["extension", command, "team", "--source", source.Path];
+            if (command == "update")
+            {
+                arguments = [.. arguments, "--detail", "standard"];
+            }
 
-            var run = await workspace.RunAsync(arguments, "  YEs  \nsentinel\n", standardInputRedirected: false, promptOutputRedirected: false);
+            var run = await workspace.RunAsync(arguments, "  ALways  \nyes\nsentinel\n", standardInputRedirected: false, promptOutputRedirected: false);
 
             Assert.True(run.ExitCode == 0, run.StandardOutput + run.StandardError);
             Assert.Equal("sentinel", run.RemainingInput);
-            Assert.Contains($"({effect})", run.StandardError, StringComparison.Ordinal);
+            Assert.Contains(PermissionFixture.ExternalPath, run.StandardError, StringComparison.Ordinal);
             if (command != "remove")
             {
                 Assert.Contains(source.Path, run.StandardError, StringComparison.Ordinal);
             }
-            Assert.Contains("Permissions: approved", run.StandardOutput, StringComparison.Ordinal);
-            Assert.Contains("Permissions: approved; record replace; verified", run.StandardOutput, StringComparison.Ordinal);
+            if (command == "update")
+            {
+                if (command == "install")
+                {
+                    Assert.Contains(
+                        "The team Extension is already installed and matches the package. Nothing to do.",
+                        run.StandardOutput,
+                        StringComparison.Ordinal);
+                }
+                else
+                {
+                    Assert.Contains("Grant: ", run.StandardOutput, StringComparison.Ordinal);
+                    Assert.Contains("decision approved", run.StandardOutput, StringComparison.Ordinal);
+                    Assert.Contains("action replace", run.StandardOutput, StringComparison.Ordinal);
+                    Assert.Contains("outcome verified", run.StandardOutput, StringComparison.Ordinal);
+                }
+            }
             using var permission = JsonDocument.Parse(workspace.ReadText(PermissionFixture.PermissionPath));
-            Assert.Equal("team", Assert.Single(permission.RootElement.GetProperty("extensions").EnumerateArray()).GetProperty("id").GetString());
+            Assert.Contains(permission.RootElement.GetProperty("allowInstallPaths").EnumerateArray(), value => value.GetString() == PermissionFixture.ExternalPath);
             if (command == "remove")
             {
                 Assert.False(File.Exists(workspace.Combine(PermissionFixture.ExternalPath)));
@@ -60,6 +80,7 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Theory]
     [InlineData("update")]
     [InlineData("remove")]
@@ -72,7 +93,7 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
         try
         {
             Assert.Equal(0, (await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--automatic"])).ExitCode);
-            workspace.ReplaceText(PermissionFixture.PermissionPath, """{"schemaVersion":1,"extensions":[],"libraries":[]}""");
+            workspace.ReplaceText(PermissionFixture.PermissionPath, """{"allowInstallPaths":[]}""");
             var before = workspace.Snapshot();
             var externalBefore = File.ReadAllBytes(workspace.Combine(PermissionFixture.ExternalPath));
             string[] arguments = command == "remove"
@@ -81,8 +102,8 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
 
             var run = await workspace.RunAsync(arguments, "no\nsentinel\n", standardInputRedirected: false, promptOutputRedirected: false);
 
-            Assert.Equal(5, run.ExitCode);
-            Assert.Equal("sentinel", run.RemainingInput);
+            Assert.Equal(130, run.ExitCode);
+            Assert.Null(run.RemainingInput);
             Assert.Equal(before, workspace.Snapshot());
             Assert.Equal(externalBefore, File.ReadAllBytes(workspace.Combine(PermissionFixture.ExternalPath)));
         }
@@ -92,6 +113,7 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Theory]
     [InlineData("install")]
     [InlineData("update")]
@@ -104,9 +126,9 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
         try
         {
             Assert.Equal(0, (await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--automatic"])).ExitCode);
-            const string revoked = """{"schemaVersion":1,"extensions":[],"libraries":[]}""";
+            const string revoked = """{"allowInstallPaths":[]}""";
             workspace.ReplaceText(PermissionFixture.PermissionPath, revoked);
-            var lifecycle = workspace.ReadText(ExtensionInstallIntegrationWorkspace.LifecyclePath);
+            var lifecycle = workspace.ReadText(ExtensionInstallIntegrationWorkspace.OwnershipPath);
             using var input = new ChangingInput(() => File.WriteAllText(workspace.Combine(PermissionFixture.ExternalPath), "changed during approval\n"));
 
             var run = await workspace.RunAsync(["extension", command, "team", "--source", source.Path], input,
@@ -114,7 +136,7 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
 
             Assert.Equal(5, run.ExitCode);
             Assert.Equal(revoked, workspace.ReadText(PermissionFixture.PermissionPath));
-            Assert.Equal(lifecycle, workspace.ReadText(ExtensionInstallIntegrationWorkspace.LifecyclePath));
+            Assert.Equal(lifecycle, workspace.ReadText(ExtensionInstallIntegrationWorkspace.OwnershipPath));
             Assert.Equal("changed during approval\n", File.ReadAllText(workspace.Combine(PermissionFixture.ExternalPath)));
         }
         finally
@@ -123,6 +145,7 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact]
     public static async Task InitialExternalOccupantRequiresForceSeparatelyFromPermission()
     {
@@ -134,11 +157,11 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
         workspace.CreateOccupant(PermissionFixture.ExternalPath, "unmanaged content\n");
         try
         {
-            var blocked = await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--automatic", "--json"]);
+            var blocked = await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--automatic", "--format", "json"]);
             Assert.Equal(5, blocked.ExitCode);
             Assert.Equal("unmanaged content\n", File.ReadAllText(workspace.Combine(PermissionFixture.ExternalPath)));
 
-            var applied = await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--force", "--automatic", "--json"]);
+            var applied = await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--force", "--automatic", "--format", "json"]);
 
             Assert.Equal(0, applied.ExitCode);
             Assert.Equal("content bytes\n", File.ReadAllText(workspace.Combine(PermissionFixture.ExternalPath)));
@@ -150,7 +173,7 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
         }
     }
 
-    private sealed class ChangingInput(Action change) : StringReader("yes\n")
+    private sealed class ChangingInput(Action change) : StringReader("always\nyes\n")
     {
         public override ValueTask<string?> ReadLineAsync(CancellationToken cancellationToken)
         {

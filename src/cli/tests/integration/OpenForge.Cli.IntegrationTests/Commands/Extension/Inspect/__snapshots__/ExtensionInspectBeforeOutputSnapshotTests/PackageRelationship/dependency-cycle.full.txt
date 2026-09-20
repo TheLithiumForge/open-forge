@@ -1,0 +1,24 @@
+Cannot inspect toolkit: toolkit requires helper, which requires toolkit.
+Workspace: <workspace>
+  Error  toolkit  Dependency cycle [extension-inspect.dependency-cycle]
+         toolkit requires helper, which requires toolkit.
+         fix by hand
+         Cause: Extension dependency cycle detected at 'helper'.
+Source: <extension-source>
+Dependencies
+  helper   1.0.0  available
+  toolkit  1.0.0  available
+
+Files
+  .agents/helper.md   new in the package
+  .agents/toolkit.md  unchanged
+    Installed SHA-256: unavailable
+    Package SHA-256: <sha256>
+    Installed SHA-256: <sha256>
+    Package SHA-256: <sha256>
+Manifest: toolkit/extension.json
+Resolution order: helper, toolkit
+Registered in
+  none
+Record coverage: complete
+1 file unchanged, 1 file new, 1 errors, 1 warnings.

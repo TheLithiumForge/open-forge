@@ -5,6 +5,7 @@ namespace OpenForge.Cli.IntegrationTests.Hosting.Shared.Presentation;
 
 public sealed class CliHostColorPolicyTests
 {
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "Host color policy keeps redirected streams plain independently"), Trait("Feature", "cli-color"), Trait("Evidence", "Integration")]
     [InlineData(false, false)]
     [InlineData(true, false)]
@@ -17,6 +18,7 @@ public sealed class CliHostColorPolicyTests
         Assert.Equal(!errorRedirected, colors.StandardError);
     }
 
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "No-color preference and unavailable terminal capability select plain output"), Trait("Feature", "cli-color"), Trait("Evidence", "Integration")]
     [InlineData(null, null, false)]
     [InlineData("", null, false)]

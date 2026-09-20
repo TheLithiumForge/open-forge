@@ -9,6 +9,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Cleanup.Shared.Application;
 
 public sealed class CleanupDeletionProgressTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup stops after a changed candidate and preserves prior deletion and remaining residual facts"),
      Trait("Feature", "cleanup-session-progress"), Trait("Evidence", "UnitContract")]
     public void ChangedCandidateStopsFurtherEffects()
@@ -21,6 +22,7 @@ public sealed class CleanupDeletionProgressTests
         AssertStopped(progress, plan, CleanupEffectOutcome.CompletionUnknown, CleanupEffectResidual.Unknown, CleanupFindingCode.CandidateChangedDuringApply);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup stops after cancellation with prior verified deletion and the remaining candidates retained"),
      Trait("Feature", "cleanup-session-progress"), Trait("Evidence", "UnitContract")]
     public void CancellationStopsFurtherEffects()
@@ -33,6 +35,7 @@ public sealed class CleanupDeletionProgressTests
         AssertStopped(progress, plan, CleanupEffectOutcome.NotStarted, CleanupEffectResidual.Retained, CleanupFindingCode.Interrupted);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup stops after failed absence verification and reports the retained candidate separately from prior success"),
      Trait("Feature", "cleanup-session-progress"), Trait("Evidence", "UnitContract")]
     public void FailedVerificationStopsFurtherEffects()

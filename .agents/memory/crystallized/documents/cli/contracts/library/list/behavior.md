@@ -7,11 +7,14 @@ open-forge:
 
 # library list Behavior Contract
 
+Unavailable ownership is reported as `library-list.ownership-observation`
+with `completed` status. This finding grants no ownership or mutation permission.
+
 ## Status And Boundary
 
 This is the accepted current Crystallized Behavior Contract for read-only
 `open-forge library list`. It defines technology-neutral request resolution,
-strict record handling, source-root checks, bounded registered-link observation,
+lock ownership observation, source-root checks, bounded registered-link observation,
 deterministic result formation, safety, and conformance. The [Interface Contract](interface.md)
 owns the public grammar, result fields, statuses, output, errors, examples, and
 the exactly three public EndToEnd journeys.
@@ -24,10 +27,10 @@ technology.
 ## Operation Invariants
 
 - List consumes only the exact selected workspace and the bounded
-  `.agents/open-forge.libraries.json` record.
-- A missing record is a known empty record with zero libraries and `complete`
-  status. A malformed or unavailable record is never converted to that empty
-  result.
+  `.agents/open-forge.lock.json` record.
+- Unavailable ownership yields `completed` with an ownership observation, no
+  registrations, and unavailable counts. Only a readable empty lock proves zero
+  recorded Libraries.
 - The operation reads only source-root directory facts and registered
   destination directory entries. It does not enumerate a source root's
   eligible files or infer unregistered paths.
@@ -43,7 +46,7 @@ technology.
 ```text
 validated request
   -> exact workspace
-  -> strict bounded record resolution
+  -> bounded lock ownership observation
   -> source-root state and registered-link no-follow observations
   -> deterministic typed result, findings, and status
   -> human or JSON projection of that same result
@@ -51,7 +54,7 @@ validated request
 
 Presentation does not rerun record parsing, source-root checks, link
 observation, or status selection. It cannot create a complete inventory or
-change an incomplete, blocked, or attention result.
+change an incomplete, blocked, or completed-with-warnings result.
 
 ## Request And Workspace Resolution
 
@@ -63,50 +66,32 @@ change an incomplete, blocked, or attention result.
    has no domain operand.
 4. Form one complete request with the shared presentation and diagnostic facts.
 
-Invalid syntax forms `invalid`. An unavailable selected workspace forms the
+Invalid syntax forms `invalid-input`. An unavailable selected workspace forms the
 shared blocked or unavailable workspace result required by the global contract.
 No later record fact repairs an invalid request.
 
-## Strict Record Resolution
+## Ownership Record Resolution
 
-The consumer record is `.agents/open-forge.libraries.json`, separate from
-lifecycle ownership and consumer permissions. Its exact current schema is:
+Library selection reads the `libraries` claims in `.agents/open-forge.lock.json`.
+The shared ownership codec accepts understood keys without requiring an exact
+schema version or member set. It never reads the old Library or lifecycle file
+for selection. Each usable Library claim supplies `id`, `sourceRoot`,
+`destinationRoot`, and source-relative `paths`. IDs and paths are presented in
+ordinal order; typed portable identities and unambiguous mapped destinations
+remain required before using a claim. The destination root may be `.`; a source
+root may not. Link identity derives from the two roots and each source suffix.
+Permissions remain separate from ownership.
 
-```json
-{
-  "schemaVersion": 1,
-  "libraries": [
-    {
-      "id": "team-knowledge",
-      "sourceRoot": "shared/team-knowledge",
-      "destinationRoot": ".apm/agents/team",
-      "paths": ["checks/security.md", "review.md"]
-    }
-  ]
-}
-```
-
-Require exactly `schemaVersion` and `libraries` at the top level, and exactly
-`id`, `sourceRoot`, `destinationRoot` and `paths` per Library. Require integer
-`1`, existing Library-ID grammar, canonical portable roots and source-relative
-eligible paths. The destination root is `.` or a normal relative directory;
-source roots do not admit `.`. Unknown, missing, null, duplicate and wrongly
-typed members are malformed. No previous schema shape, migration or alternate
-reader is accepted.
-
-IDs and each source-relative path array use ordinal order. Paths are unique
-within a Library. Derived destinations must be unique across Libraries under
-portable identity; equal source-relative paths at different destinations are
-valid. Empty path arrays and an empty Library array are valid. The record stores
-no expected-link text, contents, hashes, timestamps, Git facts, dependencies,
-globs or per-file remapping. Link identity derives from both recorded roots and
-the source-relative path. Permission is separate from ownership and may be
-revoked independently.
-
-A missing record is a valid prior-absence fact for Attach and a complete empty
-List result. Inspect, Sync and Detach require the requested ID in a valid record.
-Malformed, unavailable and unsafe records retain their existing invalid,
-incomplete and blocked classification; none becomes an empty valid record.
+An absent, unreadable, nonordinary, malformed, or uninterpretable ownership lock
+provides no usable registrations and yields a `completed` ownership observation.
+It is never reported as a valid empty record: the record state remains `missing`,
+`unavailable`, or `invalid-input`, with unavailable counts and no selected paths.
+List returns no registrations; Inspect, Sync, and Detach select nothing and do
+not invent an unknown-ID error. Their `ownership-observation` finding explains
+why. A valid readable lock with no matching requested ID still yields `invalid-input`.
+Attach may verify new effects from its explicit source and destination inputs
+and publish ownership best-effort after verification. Read-only operations never
+reconstruct or write a lock. Matching files and old records create no claims.
 
 ## Source-Root Checks
 
@@ -117,9 +102,9 @@ ancestor and the selected root must be a real ordinary directory, without
 symlink, junction or reparse ancestry. No specially named child is required.
 The selected directory itself scopes the recursively discovered eligible files.
 
-An absent or non-directory source root is `invalid` for Attach. For an existing
+An absent or non-directory source root is `invalid-input` for Attach. For an existing
 registration, unavailable or missing source facts make Inspect or Sync
-`incomplete`; a readable non-directory root is `invalid`. Unsafe containment,
+`incomplete`; a readable non-directory root is `invalid-input`. Unsafe containment,
 linked ancestry or ambiguous identity is `blocked`. List reports only bounded
 root availability and does not enumerate descendants. An incomplete source is
 never an empty source inventory.
@@ -171,21 +156,21 @@ known empty result or stopped stage requires them. `inventory` is
 
 Select status from the highest applicable condition:
 
-1. `interrupted` when caller interruption stops result formation.
+1. `cancelled` when caller interruption stops result formation.
 2. `failed` for an unexpected operation or result-formation failure.
-3. `invalid` for request or strict-record invalidity, including a source root
+3. `invalid-input` for request invalidity, including a source root
    that is not an ordinary directory.
-4. `blocked` for unsafe or ambiguous identity, containment, record, or link
+4. `blocked` for unsafe or ambiguous identity, containment or link
    facts.
-5. `incomplete` when a required record, source-root, or registered-link fact is
+5. `incomplete` when a required source-root or registered-link fact is
    unavailable or incomplete.
-6. `attention` when every bounded fact is complete and safe and at least one
+6. `completed-with-warnings` when every bounded fact is complete and safe and at least one
    registered link is safely missing or changed.
-7. `complete` when the bounded facts are complete and safe with no drift, or
-   when the record is known missing and therefore has zero libraries.
+7. `completed` when the bounded facts are complete and safe with no drift, or
+   when unavailable ownership has been reported without selecting any claim.
 
-`interrupted` and `failed` retain their event meaning under the shared result
-coordinates. A lower-tier finding never becomes `attention` merely because safe
+`cancelled` and `failed` retain their event meaning under the shared result
+coordinates. A lower-tier finding never becomes `completed-with-warnings` merely because safe
 partial facts are present.
 
 The command-local `next` value is always `null`. The result reports the
@@ -193,11 +178,11 @@ observation boundary and does not select a repair or follow-up operation.
 
 ## Presentation And Safety
 
-Human and structured renderers consume one typed result. Compact presentation
+Human and structured renderers consume one typed result. minimal-detail presentation
 retains IDs, source roots, registered paths, source IDs, link states, coverage,
-the explicit fact that source inventory was not scanned, findings, and status. Expanded
+the explicit fact that source inventory was not scanned, findings, and status. full-detail
 presentation adds raw link targets and bounded causes. Both views retain
-workspace identity and selection. `--verbose` adds only
+workspace identity and selection. `--detail debug` adds only
 bounded diagnostics. JSON preserves the complete command-local result and the
 shared envelope for every status.
 
@@ -218,7 +203,8 @@ Unit and Integration evidence should cover:
 - no-follow current, missing, changed, unavailable, and blocked link states;
 - destination-derived automatic source IDs kept separate from Library IDs;
 - deterministic human/JSON parity and unchanged-state snapshots; and
-- complete, attention, incomplete, invalid, blocked, failed, and interrupted
+- completed, completed-with-warnings, incomplete, invalid-input, blocked, failed,
+  and cancelled
   formation without a full source inventory.
 
 Public EndToEnd evidence is limited to the exactly three journeys named by the

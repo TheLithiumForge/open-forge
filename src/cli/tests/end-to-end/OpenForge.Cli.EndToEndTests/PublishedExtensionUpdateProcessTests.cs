@@ -24,7 +24,7 @@ public sealed class PublishedExtensionUpdateProcessTests
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         Assert.Contains(
-            "open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [global options]",
+            "open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [--allow-path <path>] [global options]",
             string.Join(" ", result.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
             StringComparison.Ordinal);
         lockStore.AssertNoInfrastructure();
@@ -55,7 +55,7 @@ public sealed class PublishedExtensionUpdateProcessTests
         {
             "extension", "update", "toolkit",
             "--source", working.CataloguePath,
-            "--automatic", "--json",
+            "--automatic", "--format=json",
             "--workspace", working.WorkspacePath,
         };
 
@@ -69,28 +69,34 @@ public sealed class PublishedExtensionUpdateProcessTests
         Assert.Equal(string.Empty, applied.StandardError);
         using var appliedDocument = JsonDocument.Parse(applied.StandardOutput);
         Assert.Equal("extension update", appliedDocument.RootElement.GetProperty("command").GetString());
-        Assert.Equal("complete", appliedDocument.RootElement.GetProperty("status").GetString());
-        Assert.Empty(appliedDocument.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray());
+        Assert.Equal("completed", appliedDocument.RootElement.GetProperty("status").GetString());
+        Assert.Empty(appliedDocument.RootElement.GetProperty("findings").EnumerateArray());
         Assert.True(File.Exists(working.TargetPath));
         Assert.Equal(updatedPayload, File.ReadAllText(working.TargetPath));
         Assert.False(beforeUpdate.OrderBy(pair => pair.Key, StringComparer.Ordinal)
             .SequenceEqual(working.SnapshotWorkspace().OrderBy(pair => pair.Key, StringComparer.Ordinal)));
         Assert.Equal(sourceAfterEdit, working.SnapshotSource());
 
+        var recoveryPath = appliedDocument.RootElement.GetProperty("recovery").GetProperty("path").GetString();
+        var recoveryBytes = File.ReadAllBytes(Assert.IsType<string>(recoveryPath));
+        var beforeRepeat = working.SnapshotWorkspace();
         var repeated = await PublishedProcessTestSupport.RunAsync(
             target,
             working.WorkspacePath,
             arguments,
             working.EnvironmentVariables);
 
-        Assert.Equal(0, repeated.ExitCode);
+        Assert.True(repeated.ExitCode == 0, repeated.StandardOutput + repeated.StandardError);
         Assert.Equal(string.Empty, repeated.StandardError);
         using var repeatedDocument = JsonDocument.Parse(repeated.StandardOutput);
-        var repeatedResult = repeatedDocument.RootElement.GetProperty("result");
+        var repeatedResult = repeatedDocument.RootElement;
         Assert.Empty(repeatedResult.GetProperty("effects").EnumerateArray());
-        Assert.Equal("preserve", repeatedResult.GetProperty("lifecycle").GetProperty("action").GetString());
-        Assert.Equal("already-current", repeatedResult.GetProperty("lifecycle").GetProperty("outcome").GetString());
+        Assert.Equal(
+            "The toolkit Extension is up to date. Nothing to do.",
+            repeatedResult.GetProperty("summary").GetProperty("headline").GetString());
         Assert.Equal(sourceAfterEdit, working.SnapshotSource());
+        Assert.Equal(beforeRepeat, working.SnapshotWorkspace());
+        Assert.Equal(recoveryBytes, File.ReadAllBytes(recoveryPath));
         working.AssertPersistentLock();
     }
 
@@ -117,8 +123,9 @@ public sealed class PublishedExtensionUpdateProcessTests
 
         Assert.Equal(5, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardOutput);
-        Assert.Contains("Status: blocked", result.StandardError, StringComparison.Ordinal);
-        Assert.Contains("extension-update.", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Cannot update toolkit:", result.StandardError, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status: blocked", result.StandardError, StringComparison.Ordinal);
+        Assert.DoesNotContain("extension-update.", result.StandardError, StringComparison.Ordinal);
         Assert.Equal(beforeWorkspace, working.SnapshotWorkspace());
         Assert.Equal(beforeSource, working.SnapshotSource());
         working.AssertPersistentLock();
@@ -143,7 +150,7 @@ public sealed class PublishedExtensionUpdateProcessTests
             [
                 "extension", "install", "toolkit",
                 "--source", working.CataloguePath,
-                "--automatic", "--json",
+                "--automatic", "--format=json",
                 "--workspace", working.WorkspacePath,
             ],
             working.EnvironmentVariables);

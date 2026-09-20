@@ -11,6 +11,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init.Generic;
 
 public sealed class RouteInitPlanBuilderIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Init plan formation emits the fixed generic scaffold and draft provenance"), Trait("Feature", "route-init"), Trait("Evidence", "Integration")]
     public async Task PlanFormationEmitsFixedGenericScaffoldAndDraftProvenance()
     {
@@ -45,9 +46,8 @@ public sealed class RouteInitPlanBuilderIntegrationTests
 
             ## Entries
 
-            <!-- open-forge:generated-index:start -->
             - none - No entries - #Empty
-            <!-- open-forge:generated-index:end -->
+
             """;
 
         Assert.Equal(RouteInitEntrypointOwnership.User, entrypoint.Ownership);
@@ -58,6 +58,7 @@ public sealed class RouteInitPlanBuilderIntegrationTests
         Assert.Equal(expected, Encoding.UTF8.GetString(change.IntendedBytes.AsSpan()));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Init plan formation applies explicit final metadata without changing ancestor draft provenance"), Trait("Feature", "route-init"), Trait("Evidence", "Integration")]
     public async Task PlanFormationAppliesExplicitFinalMetadataOnlyToFinalTarget()
     {
@@ -90,6 +91,7 @@ public sealed class RouteInitPlanBuilderIntegrationTests
         });
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Init plan formation rejects punctuation in a Framework scope label before effects"), Trait("Feature", "route-init"), Trait("Evidence", "Integration")]
     public async Task FrameworkPlanFormationRejectsPunctuationBeforeEffects()
     {
@@ -97,7 +99,7 @@ public sealed class RouteInitPlanBuilderIntegrationTests
         var workspace = Workspace(temporary);
         var request = new RouteInitRequest(
             workspace,
-            "memory/Mobile!App/crystallized/documents",
+            "memory/Mobile!App/working",
             RouteInitScaffold.Framework,
             RouteInitMode.DryRun,
             RouteInitMetadataInput.None);

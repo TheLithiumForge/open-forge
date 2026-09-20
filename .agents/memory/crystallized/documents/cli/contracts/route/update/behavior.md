@@ -10,8 +10,8 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the technology-neutral
-Behavior Contract behind `route update`. The command does not ship yet;
-implementation and executable evidence are tracked in
+Behavior Contract behind `route update`. The command is implemented in the
+merged native CLI; implementation and executable evidence are tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md).
 
 The [Interface Contract](interface.md) defines the complete public syntax,
@@ -21,7 +21,7 @@ resolution, current facts, result formation, effects, safety, recovery, and
 conformance. It does not add operands, flags, aliases, output fields, semantic
 results, or other public meaning. Request normalization, status formation, and
 presentation follow the accepted repetition, status, dry-run, stream, and
-compact-result rules in the Interface Contract.
+native-report rules in the Interface Contract.
 
 The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
 define the accepted shared result schema and process-status mapping. The [CLI
@@ -53,8 +53,8 @@ generated navigation, plan, effects, evidence, and semantic result are
 deterministic. A successful application repeated against unchanged state
 converges to the verified byte-level no-op defined by the [Interface
 Contract](interface.md#existing-state-and-no-ops). A protected Template request
-retains `attention` while its explicit body intent remains unapplied; other
-successful repeated updates are `complete` no-ops.
+retains `completed-with-warnings` while its explicit body intent remains unapplied; other
+successful repeated updates are `completed` no-ops.
 
 The operation is a field patch rather than whole-file replacement. It changes
 the base file of the resolved logical source, never its overwrite companion,
@@ -129,8 +129,11 @@ by the ordinary filesystem path contract.
 ### Frontmatter and field patch
 
 The resolver establishes exactly one safely parseable scoped `open-forge`
-frontmatter block for the base target. It may identify one missing supported
-field that the request explicitly supplies. It does not guess a missing
+frontmatter block for the base target. If its `open-forge` value is an existing
+safely parsed canonical `open-forge: {}` mapping, the narrow enrichment path admits only a request
+with a complete non-empty description and at least one valid tag, with
+responsibility following the existing set and exact-empty removal rules. A description-only or tags-only request
+against that empty mapping is invalid. The resolver does not guess a missing
 ownership boundary, choose among duplicate blocks, or continue through a
 malformed boundary. The complete intended source must remain valid for its
 ordinary-file or entrypoint representation.
@@ -139,13 +142,17 @@ The field patch is resolved as a set of explicitly supplied operations. Omitted
 fields retain their current values. Supplied description, responsibility, and
 tag values follow the replacement, addition, exact-empty removal, validation,
 and required-metadata rules in [Metadata Patch](interface.md#metadata-patch).
+For the empty-map enrichment path, the complete supplied metadata is formed by
+an exact span patch that preserves unrelated YAML, body bytes, line endings,
+and encoding. It rejects arbitrary non-empty flow mappings, aliases, duplicate
+ownership maps, whole-file rewrites, and any partial enrichment request.
 The resolver preserves unrelated top-level and unsupported scoped metadata when
 safe preservation can be established. It does not derive, summarize, correct,
 or judge field meaning from filenames, bodies, Templates, generated entries, or
 overwrite companions.
 
 An invocation with no metadata operation and no Template operation forms the
-public `invalid` result. Invalid field syntax, invalid tags, required-metadata
+public `invalid-input` result. Invalid field syntax, invalid tags, required-metadata
 removal, unsafe preservation, or a malformed target boundary forms the public
 invalid or blocked result required by the Interface, before any mutation plan
 can be applied.
@@ -187,7 +194,10 @@ safe update and its dependency-minimal generated navigation:
   base path, compatibility form, and logical overwrite layers.
 - The base target's readable bytes, source kind, route relationship, scoped
   frontmatter boundary, supported and unrelated metadata, body bytes, and
-  entrypoint structure when applicable.
+  entrypoint structure when applicable. The facts include whether the scoped
+  `open-forge` value is the safely parsed canonical `open-forge: {}` mapping eligible for narrow
+  enrichment, its exact metadata span, and the surrounding bytes, line-ending,
+  and encoding facts needed for preservation.
 - The current destination metadata and the exact field operations requested by
   the invocation.
 - The selected Template's identity, route, source classification, overwrite
@@ -204,6 +214,11 @@ safe update and its dependency-minimal generated navigation:
   projection.
 - The expected current bytes, recovery-bundle readiness, and volatile target
   facts needed for preflight and later revalidation.
+
+For an eligible empty mapping, current facts also prove that the requested
+description and tag list are complete and valid before any exact-span patch is
+formed. A non-empty flow mapping, alias, duplicate ownership map, malformed
+boundary, or ambiguous layout is not treated as an enrichment candidate.
 
 Current generated entries are comparison input. Filesystem topology and authored
 source metadata remain authoritative for the generated projection. The operation
@@ -264,9 +279,16 @@ only into an eligible whitespace-only body and becomes independent destination
 content.
 
 The intended destination must satisfy the source-type contract, including the
-required title, Axioms meaning, final `Entries` section, and generated region of
+required title, Axioms meaning, `Entries` section, and generated region of
 an entrypoint. Its bytes are not normalized beyond the bounded representation
 needed by the requested field patch or eligible body completion.
+
+When the empty-map enrichment path is selected, the intended bytes are formed
+by replacing only the exact scoped metadata span with the complete supplied
+fields. Unrelated YAML and body bytes, line endings, and encoding remain
+unchanged. The operation does not serialize the whole document, accept a
+non-empty flow mapping or alias as an empty map, merge duplicate ownership
+maps, or treat partial enrichment as valid.
 
 ### Generated projection
 
@@ -309,39 +331,39 @@ or timestamp-only effect.
 A complete intended state with no replacement effects forms verified byte-level
 no-op facts. When the caller supplied `--template` and authored non-whitespace
 body content protects the target, those facts remain available but the semantic
-status is `attention` because the explicit Template intent was not applied.
-The public semantic conditions for `complete`, `attention`, `incomplete`,
-`invalid`, `blocked`, `failed`, and `interrupted` remain exactly those in
+status is `completed-with-warnings` because the explicit Template intent was not applied.
+The public semantic conditions for `completed`, `completed-with-warnings`, `incomplete`,
+`invalid-input`, `blocked`, `failed`, and `cancelled` remain exactly those in
 [Semantic Results](interface.md#semantic-results); Behavior does not define
 another status or an exit mapping.
 
 The status formation rules are deterministic:
 
-- `complete` is formed for a complete safe dry-run plan or a completed and
+- `completed` is formed for a complete safe dry-run plan or a completed and
   verified application, including ordinary changes and all other verified
-  no-ops, when the protected-Template `attention` condition does not apply.
-  Planned changes alone do not create `attention`.
-- `attention` is formed for the complete protected-Template condition above or
+  no-ops, when the protected-Template `completed-with-warnings` condition does not apply.
+  Planned changes alone do not create `completed-with-warnings`.
+- `completed-with-warnings` is formed for the complete protected-Template condition above or
   post-verification recovery deletion `Failed`/positively observed `Retained`
   after verified target effects. In apply mode, requested metadata and generated effects complete and verify when
   present. In dry-run, only the protected-Template condition can form
-  `attention`, because recovery deletion does not run. A Template-only request
-  may have no replacement effect and still forms `attention`.
+  `completed-with-warnings`, because recovery deletion does not run. A Template-only request
+  may have no replacement effect and still forms `completed-with-warnings`.
 - `incomplete` is formed when safe facts are available but required inspection or
   planning coverage cannot finish. No mutation begins.
-- `invalid` is formed for input, field, Template-reference, repetition, or
+- `invalid-input` is formed for input, field, Template-reference, repetition, or
   target-kind violations. `blocked` is formed for a valid request whose safe
   complete plan cannot be established because an unsafe or ambiguous boundary
-  remains. Neither is converted to `attention`.
+  remains. Neither is converted to `completed-with-warnings`.
 - `failed` is formed when an application or verification failure after effects
   begin, post-verification recovery deletion `Failed`/`Unknown`, or another
-  unexpected failure after a write prevents completion. `interrupted` retains its cancellation meaning when
+  unexpected failure after a write prevents completion. `cancelled` retains its cancellation meaning when
   no unexpected application or verification failure changes the result.
 
 For ordinary operation conditions, status precedence is `blocked` > `incomplete`
 
-> `attention` > `complete`. Invalid input stops before operation resolution and
-> forms `invalid`. Failed and interrupted results retain their event meaning.
+> `completed-with-warnings` > `completed`. Invalid input stops before operation resolution and
+> forms `invalid-input`. Failed and cancelled results retain their event meaning.
 
 ## Effects
 
@@ -380,8 +402,8 @@ diff required by the complete plan, plus the body-protection observation when an
 authored body prevents Template copying. It does not expose unrelated authored
 bytes or private recovery material. It reports no persistent file changes and
 does not claim verification of bytes that were not written. A protected Template
-request has the same `attention` status and observation as application; planned
-changes alone do not create `attention`.
+request has the same `completed-with-warnings` status and observation as application; planned
+changes alone do not create `completed-with-warnings`.
 
 ### Application
 
@@ -402,6 +424,9 @@ Each replacement uses the complete planned file bytes through a safe
 same-directory replacement property. The operation does not edit the target in
 place or fall back to a weaker write after an atomicity or identity check fails.
 It never replaces bytes outside the intended destination or generated interior.
+For empty-map enrichment, those planned file bytes differ only at the exact
+scoped metadata span; the operation never obtains them by whole-document
+reserialization.
 
 After each replacement, the effect target bytes are verified. After all effects,
 the operation verifies the requested field states, the authored-body protection
@@ -409,10 +434,10 @@ or Template-body-copy decision, source-type validity, compatibility filename
 preservation, and the complete generated projection.
 
 When the protected-Template condition is complete, the operation preserves the
-authored body byte-for-byte and forms `attention` after the selected metadata
+authored body byte-for-byte and forms `completed-with-warnings` after the selected metadata
 and generated effects have completed and verified. A Template-only request may
 have no replacement effect, but retains verified byte-level no-op facts and the
-same `attention` status because the explicit Template body was not applied.
+same `completed-with-warnings` status because the explicit Template body was not applied.
 
 ## Safety And Recovery
 
@@ -429,7 +454,7 @@ Environment.SpecialFolderOption.Create)` and its application-owned
 pre-effect `incomplete` result. It prepares exactly one immutable ZIP bundle
 outside the workspace. An operation containing only Create effects or
 no-ops creates no bundle. Its source-generated
-schema-v1 `manifest.json` and streamed ordinal payload entries record
+versioned `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
 exact prior bytes/lengths/hashes, and intended final absence or length/hash.
 `Create` and semantic/byte no-op effects have no entry. A CreateNew draft is
@@ -465,8 +490,8 @@ preserved and reported as residual state rather than overwritten.
 
 A failed operation remains `failed` because the requested update did not
 complete. Any unexpected failure after a write, including application or
-verification failure, is `failed`, not `attention`. An interruption remains
-`interrupted` when no unexpected application or verification failure changes the
+verification failure, is `failed`, not `completed-with-warnings`. An interruption remains
+`cancelled` when no unexpected application or verification failure changes the
 result. For these pre-deletion outcomes, the result reports ordinary effect
 facts and the actual residual draft or final path without a recovery-derived
 current-target classification.
@@ -477,9 +502,9 @@ ZIP may remain after abrupt process termination, without an executable crash or
 power-loss guarantee. Recovery provenance does not classify current target
 state. After final verification, `Deleted`/`Removed` permits normal completion.
 `Failed`/positively observed `Retained` keeps target effects successful and
-produces `attention`, the exact residual path, and
+produces `completed-with-warnings`, the exact residual path, and
 cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
-provides one. When `Failed`/positively observed `Retained` recovery attention
+provides one. When `Failed`/positively observed `Retained` recovery warning
 coexists with the protected-Template condition, cleanup guidance owns the single
 next action; the Template-protection facts remain visible evidence. Cleanup owns exact named
 final and draft deletion under its separate lease-bound contract.
@@ -493,8 +518,8 @@ Human and structured renderers consume that same result. They do not rerun
 resolution, planning, application, or verification and do not reinterpret its
 semantic status.
 
-The [Interface Contract](interface.md) owns the exact human blocks, compact and
-expanded content, structured facts, accepted stream allocations, and semantic
+The [Interface Contract](interface.md) owns the exact human blocks, minimal-detail and
+full-detail content, structured facts, accepted stream allocations, and semantic
 result meanings. Behavior supplies the result evidence for workspace, selection
 method, and target identity, field state, Template decision, preservation,
 completeness and safety, intended effects, exact preview effects, preflight,
@@ -518,6 +543,11 @@ boundary:
   unrelated-metadata preservation, malformed and duplicate boundary blocking,
   field omission, replacement, exact-empty responsibility removal, required
   metadata protection, tag ordering, duplicate rejection, and invalid values.
+  The sole empty-mapping enrichment path requires complete description and tags
+  (with the existing responsibility set/remove rules), patches one exact metadata
+  span, preserves unrelated YAML/body bytes, line endings, and encoding, and
+  rejects partial enrichment, non-empty flow mappings, aliases, duplicate
+  ownership maps, and whole-file rewrites.
 - Singleton rejection for repeated `--description`, `--responsibility`, and
   `--template` values, accepted complete tag-list replacement, idempotent
   Boolean repetition, and unchanged shared-global repetition and composition
@@ -527,10 +557,10 @@ boundary:
   provenance or continuing ownership, frontmatter-only whitespace insertion,
   ordinary-file validity, entrypoint validity, and authored-body protection.
 - Byte-for-byte preservation of authored titles, prose, links, whitespace, line
-  endings, generated markers, and generated interiors whenever the body is
+  endings, generated section headings, and generated interiors whenever the body is
   protected, including prose, headings, comments, markers, and whitespace
   variants.
-- Template-only protected-body byte-level no-op formation with `attention` status,
+- Template-only protected-body byte-level no-op formation with `completed-with-warnings` status,
   metadata application alongside protection, exact intended-state comparison,
   unchanged-field observations, absent-responsibility removal observations, and
   unchanged generated projections without synthetic effects.
@@ -547,7 +577,8 @@ boundary:
   unsafe or ambiguous blocked boundaries, post-write or `Failed`/`Unknown`
   recovery failed behavior, ordinary complete changes and no-ops, and the
   protected-Template and `Failed`/positively observed `Retained` recovery
-  attention conditions. Planned changes alone must not form `attention`.
+  completed-with-warnings conditions. Planned changes alone must not form
+  `completed-with-warnings`.
 - Verified no-op behavior before recovery-bundle preparation; external bundle
   storage, semantic final-ZIP verification, unknown/mismatched artifact
   protection, collision handling, typed post-verification deletion
@@ -558,17 +589,18 @@ boundary:
   concurrent-edit preservation, residual evidence, interruption, and fresh-plan
   rerun convergence.
 - Formation of one typed result and rendering of human and structured output
-  from that result without a second operation run. Human complete, attention,
-  and incomplete results use stdout; invalid, blocked, failed, and interrupted
+  from that result without a second operation run. Human completed,
+  completed-with-warnings, and incomplete results use stdout; invalid-input,
+  blocked, failed, and cancelled
   results use stderr. JSON uses stdout for every status and bounded diagnostics
-  on stderr, with compact identity, mode, status, completeness, safety, field,
+  on stderr, with minimal-detail identity, mode, status, completeness, safety, field,
   Template, protection, path, effect, exact-preview, and at-most-one-Next
   evidence. No result proposes overwriting authored body content.
 
 Direct tests should prove request resolution, field-patch semantics, Template
 classification and body decisions, byte preservation, no-op formation,
 authoritative generated projection, plan ordering, dry-run parity, effect
-boundaries, statuses, stream allocation, compact next-action limits, and
+boundaries, statuses, stream allocation, minimal-detail next-action limits, and
 recovery conditions. Focused integration tests should
 use real temporary routed workspaces, ordinary and compatibility entrypoints,
 overwrite pairs and orphans, external recovery bundles,

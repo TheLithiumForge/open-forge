@@ -73,7 +73,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 
 - Source and dogfood authored loader content remain identical.
 - Source and CLI Maintenance define which `entrypoints` Open Forge ships, updates, restores, and validates. Extension contracts define their own managed files. Management remains a lifecycle relationship rather than a runtime `route` type.
-- The final marker-bounded `Entries` body is derived locally and may differ when the installed `root routes` differ.
+- The heading-owned `Entries` body is derived locally and may differ when the installed `root routes` differ.
 - Generated loader `entries` expose direct active root `entrypoints` only. They never flatten nested `routes`.
 - Generated links resolve relative to `.agents/loader.md`; CLI `route` identities remain workspace-relative.
 - The authored loader stays within 35 to 80 non-empty lines unless an accepted Framework change explicitly revises that review budget.

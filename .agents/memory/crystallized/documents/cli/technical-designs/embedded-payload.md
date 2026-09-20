@@ -17,7 +17,7 @@ and results remain in their contracts.
 
 ## Resource Realization
 
-The Core project embeds the complete canonical `src/open-forge/` tree through
+The Framework project embeds the complete canonical `src/open-forge/` tree through
 ordinary C# project `EmbeddedResource` items under one fixed logical-name prefix.
 Runtime code uses BCL manifest-resource APIs only for that exact prefix. Bounded
 resource-name enumeration and exact resource access are permitted. Reflective
@@ -42,7 +42,7 @@ operation does not fall back to repository source paths.
 
 ## First-Party Extension Catalogue
 
-`Framework/Extensions/Embedded/` owns the first-party catalogue reader. The Core
+`Framework/Extensions/Embedded/` owns the first-party catalogue reader. The Framework
 project embeds `src/extensions/` package files through ordinary `EmbeddedResource`
 items under `OpenForge.Extensions.Payload/`, excluding the catalogue-level
 README. Every package contributes its manifest, documentation and `content/`
@@ -77,7 +77,7 @@ remain visible until a supported sequence resolves them.
 ## Related Current Sources
 
 - [CLI Architecture](../architecture.md)
-- [Lifecycle Provenance Technical Design](lifecycle-provenance.md)
+- [Ownership And Source Alignment Technical Design](lifecycle-provenance.md)
 - [Install Contract](../contracts/install/_install.md)
 - [Update Contract](../contracts/update/_update.md)
 - [Route Init Contract](../contracts/route/init/_init.md)

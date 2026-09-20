@@ -1,0 +1,7 @@
+Would update the Entries section in 1 of 1 file.
+Workspace: <workspace>
+  .agents/root/_root.md  unknown -> 1 entries
+--- .agents/root/_root.md  (Entries section)
+- - stale
++ - [Child](child.md) - #Docs
+No files were changed.

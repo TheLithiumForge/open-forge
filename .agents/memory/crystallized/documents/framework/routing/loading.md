@@ -21,11 +21,11 @@ Each loaded file retains the meaning and authority established by its `route`, c
 
 Open Forge uses three context classes:
 
-| Context    | Purpose                                                                                                |
-| ---------- | ------------------------------------------------------------------------------------------------------ |
-| Baseline   | Small universal and immediate context needed to enter and navigate the environment                     |
-| Continuity | Follow-ups and resumability context refreshed while their scope remains active |
-| Selected   | On-demand context chosen for the current goal                                                          |
+| Context    | Purpose                                                                            |
+| ---------- | ---------------------------------------------------------------------------------- |
+| Baseline   | Small universal and immediate context needed to enter and navigate the environment |
+| Continuity | Follow-ups and resumability context refreshed while their scope remains active     |
+| Selected   | On-demand context chosen for the current goal                                      |
 
 The shipped root `entrypoints` and compact route maps deliberately pay a small baseline cost so agents can discover the Framework and its standard roles. That cost should not grow with local specialization. Put specialized content in narrow scopes and let each scope choose on-demand, #LoadNow, or #KeepInMind loading according to the thresholds below.
 

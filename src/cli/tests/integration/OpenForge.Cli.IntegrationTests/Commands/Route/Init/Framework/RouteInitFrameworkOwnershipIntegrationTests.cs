@@ -1,24 +1,24 @@
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Commands.Route.Init;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
-using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init.Framework;
 
 public sealed class RouteInitFrameworkOwnershipIntegrationTests
 {
-    private const string CanonicalDocumentsPath = ".agents/memory/crystallized/documents/_documents.md";
-    private const string CompatibilityDocumentsPath = ".agents/memory/crystallized/documents/index.md";
-    private const string CrystallizedPath = ".agents/memory/crystallized/_crystallized.md";
-    private const string CanonicalDocumentsLink = "documents/_documents.md";
-    private const string CompatibilityDocumentsLink = "documents/index.md";
-    private const string GeneratedEntriesRegion = "entries";
+    private const string CanonicalWorkingPath = ".agents/memory/working/_working.md";
+    private const string CompatibilityWorkingPath = ".agents/memory/working/index.md";
+    private const string MemoryPath = ".agents/memory/_memory.md";
+    private const string CanonicalWorkingLink = "working/_working.md";
+    private const string CompatibilityWorkingLink = "working/index.md";
+    private const string EntriesRegion = "entries";
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Framework alignment does not adopt an unchanged untracked canonical or compatibility source")]
     [InlineData(false)]
     [InlineData(true)]
@@ -29,8 +29,8 @@ public sealed class RouteInitFrameworkOwnershipIntegrationTests
             "route-init-framework-untracked-unchanged",
             TestContext.Current.CancellationToken);
         var target = await PrepareUntrackedSourceAsync(workspace, compatibility, staleEntries: false);
-        var before = workspace.SnapshotHashes();
-        var beforeLifecycle = workspace.ReadText(RouteInitFrameworkIntegrationWorkspace.LifecyclePath);
+        var before = workspace.SnapshotHashesWithoutOwnership();
+        var beforeLifecycle = workspace.ReadText(RouteInitFrameworkIntegrationWorkspace.OwnershipPath);
 
         var result = await ExecuteAsync(workspace, target);
 
@@ -40,16 +40,42 @@ public sealed class RouteInitFrameworkOwnershipIntegrationTests
         Assert.Equal(RouteInitLifecycleAction.Preserve, result.Lifecycle.Action);
         Assert.Equal(RouteInitLifecycleOutcome.AlreadyCurrent, result.Lifecycle.Outcome);
         Assert.Equal(RouteInitVerificationState.Verified, result.Verification);
-        Assert.Equal(before, workspace.SnapshotHashes());
-        Assert.Equal(beforeLifecycle, workspace.ReadText(RouteInitFrameworkIntegrationWorkspace.LifecyclePath));
+        Assert.Equal(before, workspace.SnapshotHashesWithoutOwnership());
+        Assert.Equal(beforeLifecycle, workspace.ReadText(RouteInitFrameworkIntegrationWorkspace.OwnershipPath));
         AssertUserOwnedFinalEntrypoint(result, target, compatibility);
 
         var lifecycle = await ReadFrameworkAsync(workspace);
-        Assert.DoesNotContain(lifecycle.Targets, item => IsTarget(item, target, region: null));
-        Assert.DoesNotContain(lifecycle.Targets, item => IsTarget(item, target, GeneratedEntriesRegion));
-        Assert.DoesNotContain(lifecycle.GeneratedRegions, item => IsRegion(item, target));
+        Assert.DoesNotContain(target, lifecycle.Paths);
+        Assert.DoesNotContain(lifecycle.Regions, item => IsRegion(item, target));
     }
 
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "The existing ownership lock is preserved by repeated no-op route observations")]
+    [Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration")]
+    public async Task OwnershipLockIsCreatedOnceAndIsStableOnRepeat()
+    {
+        using var workspace = await RouteInitFrameworkIntegrationWorkspace.CreateTrustedAsync(
+            "route-init-framework-ownership-stable",
+            TestContext.Current.CancellationToken);
+        var target = await PrepareUntrackedSourceAsync(workspace, compatibility: false, staleEntries: false);
+
+        var first = await ExecuteAsync(workspace, target);
+        Assert.Equal(CliSemanticStatus.Complete, first.Status);
+
+        var afterFirst = workspace.ReadText(RouteInitFrameworkIntegrationWorkspace.OwnershipPath);
+        Assert.False(string.IsNullOrWhiteSpace(afterFirst));
+
+        var beforeRepeat = workspace.SnapshotHashes();
+        var second = await ExecuteAsync(workspace, target);
+        Assert.Equal(CliSemanticStatus.Complete, second.Status);
+
+        // An identical intended ownership must plan Unchanged rather than a
+        // rewrite, so the whole workspace including the lock is stable here.
+        Assert.Equal(afterFirst, workspace.ReadText(RouteInitFrameworkIntegrationWorkspace.OwnershipPath));
+        Assert.Equal(beforeRepeat, workspace.SnapshotHashes());
+    }
+
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Framework alignment repairs only stale Entries for an untracked canonical or compatibility source")]
     [InlineData(false)]
     [InlineData(true)]
@@ -91,49 +117,41 @@ public sealed class RouteInitFrameworkOwnershipIntegrationTests
         Assert.DoesNotContain("Stale route entry", afterDocument.Source, StringComparison.Ordinal);
 
         var lifecycle = await ReadFrameworkAsync(workspace);
-        Assert.DoesNotContain(lifecycle.Targets, item => IsTarget(item, target, region: null));
-        var regionTarget = Assert.Single(
-            lifecycle.Targets,
-            item => IsTarget(item, target, GeneratedEntriesRegion));
-        Assert.Null(regionTarget.SourceAssetPath);
-        Assert.Equal(LifecycleSchema.ExactBytesFingerprintKind, regionTarget.FingerprintKind);
-        Assert.Single(lifecycle.GeneratedRegions, item => IsRegion(item, target));
+        Assert.DoesNotContain(target, lifecycle.Paths);
+        Assert.Single(lifecycle.Regions, item => IsRegion(item, target));
     }
 
-    [Fact(DisplayName = "Framework missing copied managed source publishes whole and Entries lifecycle identity")]
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Framework missing copied managed source publishes whole-file and Entries ownership")]
     [Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration")]
     public async Task MissingCopiedManagedSourceRetainsEmbeddedProvenance()
     {
-        const string target = "memory/release-notes/crystallized/documents";
-        const string destination = ".agents/memory/release-notes/crystallized/documents/_documents.md";
+        const string target = "memory/release-notes/working";
+        const string destination = ".agents/memory/release-notes/working/_working.md";
         using var workspace = await RouteInitFrameworkIntegrationWorkspace.CreateTrustedAsync(
             "route-init-framework-missing-managed-ownership",
             TestContext.Current.CancellationToken);
 
         var result = await ExecuteAsync(workspace, target);
 
-        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
         var entrypoint = Assert.Single(result.Entrypoints, item => item.Path == destination);
         Assert.Equal(RouteInitEntrypointCurrent.Missing, entrypoint.Current);
         Assert.Equal(RouteInitEntrypointOwnership.Framework, entrypoint.Ownership);
-        Assert.Equal(CanonicalDocumentsPath, entrypoint.SourceAssetPath);
+        Assert.Equal(CanonicalWorkingPath, entrypoint.SourceAssetPath);
         Assert.Equal(RouteInitEntrypointOutcome.Created, entrypoint.Outcome);
         var lifecycle = await ReadFrameworkAsync(workspace);
-        var whole = Assert.Single(lifecycle.Targets, item => IsTarget(item, destination, region: null));
-        Assert.Equal(CanonicalDocumentsPath, whole.SourceAssetPath);
-        var region = Assert.Single(
-            lifecycle.Targets,
-            item => IsTarget(item, destination, GeneratedEntriesRegion));
-        Assert.Null(region.SourceAssetPath);
-        Assert.Single(lifecycle.GeneratedRegions, item => IsRegion(item, destination));
+        Assert.Contains(destination, lifecycle.Paths);
+        Assert.Single(lifecycle.Regions, item => IsRegion(item, destination));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Framework trusted repeat retains proven whole-source ownership without effects")]
     [Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration")]
     public async Task TrustedRepeatRetainsProvenFrameworkOwnership()
     {
-        const string target = "memory/release-notes/crystallized/documents";
-        const string destination = ".agents/memory/release-notes/crystallized/documents/_documents.md";
+        const string target = "memory/release-notes/working";
+        const string destination = ".agents/memory/release-notes/working/_working.md";
         using var workspace = await RouteInitFrameworkIntegrationWorkspace.CreateTrustedAsync(
             "route-init-framework-trusted-repeat-ownership",
             TestContext.Current.CancellationToken);
@@ -151,7 +169,7 @@ public sealed class RouteInitFrameworkOwnershipIntegrationTests
         var entrypoint = Assert.Single(result.Entrypoints, item => item.Path == destination);
         Assert.Equal(RouteInitEntrypointCurrent.Existing, entrypoint.Current);
         Assert.Equal(RouteInitEntrypointOwnership.Framework, entrypoint.Ownership);
-        Assert.Equal(CanonicalDocumentsPath, entrypoint.SourceAssetPath);
+        Assert.Equal(CanonicalWorkingPath, entrypoint.SourceAssetPath);
         Assert.Equal(RouteInitEntrypointOutcome.Unchanged, entrypoint.Outcome);
         var scope = Assert.Single(
             result.Entrypoints,
@@ -174,7 +192,7 @@ public sealed class RouteInitFrameworkOwnershipIntegrationTests
             entrypoint.Form);
         var segment = Assert.Single(result.Framework!.Segments, item => item.Path == target);
         Assert.Equal(RouteInitFrameworkSegmentRole.Managed, segment.Role);
-        Assert.Equal(CanonicalDocumentsPath, segment.SourceAssetPath);
+        Assert.Equal(CanonicalWorkingPath, segment.SourceAssetPath);
     }
 
     private static async ValueTask<string> PrepareUntrackedSourceAsync(
@@ -182,16 +200,16 @@ public sealed class RouteInitFrameworkOwnershipIntegrationTests
         bool compatibility,
         bool staleEntries)
     {
-        var target = compatibility ? CompatibilityDocumentsPath : CanonicalDocumentsPath;
+        var target = compatibility ? CompatibilityWorkingPath : CanonicalWorkingPath;
         if (compatibility)
         {
-            workspace.WriteText(target, workspace.ReadText(CanonicalDocumentsPath));
-            workspace.Delete(CanonicalDocumentsPath);
+            workspace.WriteText(target, workspace.ReadText(CanonicalWorkingPath));
+            workspace.Delete(CanonicalWorkingPath);
             workspace.WriteText(
-                CrystallizedPath,
-                workspace.ReadText(CrystallizedPath).Replace(
-                    CanonicalDocumentsLink,
-                    CompatibilityDocumentsLink,
+                MemoryPath,
+                workspace.ReadText(MemoryPath).Replace(
+                    CanonicalWorkingLink,
+                    CompatibilityWorkingLink,
                     StringComparison.Ordinal));
         }
 
@@ -205,87 +223,30 @@ public sealed class RouteInitFrameworkOwnershipIntegrationTests
                     StringComparison.Ordinal));
         }
 
-        var store = new LifecycleStore(new PhysicalPathResolver());
-        var read = await store.ReadAsync(
-            workspace.Workspace,
-            LifecycleSection.Framework,
+        var read = await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace,
             TestContext.Current.CancellationToken);
-        var current = read.Framework
-            ?? throw new InvalidOperationException("The ownership fixture has no trusted Framework lifecycle state.");
-        var identity = new FrameworkContentIdentity();
-        var targets = current.Targets
-            .Where(item => !string.Equals(item.Path, CanonicalDocumentsPath, StringComparison.Ordinal))
-            .Select(item => compatibility
-                    && IsTarget(item, CrystallizedPath, GeneratedEntriesRegion)
-                ? CopyTarget(
-                    item,
-                    identity.ReadGeneratedEntriesFingerprint(
-                        File.ReadAllBytes(workspace.Combine(CrystallizedPath)),
-                        LifecycleSchema.ExactBytesFingerprintKind))
-                : item)
-            .OrderBy(item => item.Path, StringComparer.Ordinal)
-            .ThenBy(item => item.Region, StringComparer.Ordinal)
-            .ToArray();
-        var generated = current.GeneratedRegions
-            .Where(item => !string.Equals(item.Path, CanonicalDocumentsPath, StringComparison.Ordinal))
-            .OrderBy(item => item.Path, StringComparer.Ordinal)
-            .ThenBy(item => item.Region, StringComparer.Ordinal)
-            .ToArray();
-        var intended = new FrameworkLifecycleState
+        var current = read.Document.Framework ?? throw new InvalidOperationException("Expected Framework ownership.");
+        var intended = current with
         {
-            Coverage = current.Coverage,
-            Source = current.Source,
-            Targets = targets,
-            GeneratedRegions = generated,
+            Paths = [.. current.Paths.Where(path => path != CanonicalWorkingPath)],
+            Regions = [.. current.Regions.Where(region => region.Path != CanonicalWorkingPath)],
         };
-        var plan = store.PlanFrameworkUpdate(read, intended);
-        if (plan.State != LifecycleWritePlanState.Planned || plan.Change is not { } change)
-        {
-            throw new InvalidOperationException(
-                $"The untracked ownership fixture could not form a lifecycle change: {plan.State}: {plan.Cause}");
-        }
-
-        workspace.WriteBytes(
-            RouteInitFrameworkIntegrationWorkspace.LifecyclePath,
-            change.IntendedBytes.ToArray());
+        var plan = new WorkspaceOwnershipStore().PlanFrameworkOwnership(read, intended);
+        workspace.WriteBytes(RouteInitFrameworkIntegrationWorkspace.OwnershipPath,
+            Assert.IsType<OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files.PlannedFileChange>(plan.Change).IntendedBytes.ToArray());
         return target;
     }
 
-    private static FrameworkLifecycleTarget CopyTarget(
-        FrameworkLifecycleTarget source,
-        string baselineFingerprint)
-        => new()
-        {
-            Path = source.Path,
-            SourceAssetPath = source.SourceAssetPath,
-            Region = source.Region,
-            BaselineFingerprint = baselineFingerprint,
-            FingerprintKind = source.FingerprintKind,
-        };
-
-    private static async ValueTask<FrameworkLifecycleState> ReadFrameworkAsync(
-        RouteInitFrameworkIntegrationWorkspace workspace)
+    private static async ValueTask<FrameworkOwnership> ReadFrameworkAsync(RouteInitFrameworkIntegrationWorkspace workspace)
     {
-        var read = await new LifecycleStore(new PhysicalPathResolver()).ReadAsync(
-            workspace.Workspace,
-            LifecycleSection.Framework,
+        var read = await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace,
             TestContext.Current.CancellationToken);
-        return read.State == LifecycleStoreReadState.Available && read.Framework is { } framework
-            ? framework
-            : throw new InvalidOperationException(
-                $"The ownership fixture lifecycle is not available: {read.State}: {read.Cause}");
+        Assert.True(read.IsTrustworthy);
+        return Assert.IsType<FrameworkOwnership>(read.Document.Framework);
     }
 
-    private static bool IsTarget(
-        FrameworkLifecycleTarget target,
-        string path,
-        string? region)
-        => string.Equals(target.Path, path, StringComparison.Ordinal)
-            && string.Equals(target.Region, region, StringComparison.Ordinal);
-
-    private static bool IsRegion(FrameworkGeneratedRegion region, string path)
-        => string.Equals(region.Path, path, StringComparison.Ordinal)
-            && string.Equals(region.Region, GeneratedEntriesRegion, StringComparison.Ordinal);
+    private static bool IsRegion(OwnedRegion region, string path)
+        => region.Path == path && region.Region == EntriesRegion;
 
     private static ValueTask<RouteInitResult> ExecuteAsync(
         RouteInitFrameworkIntegrationWorkspace workspace,

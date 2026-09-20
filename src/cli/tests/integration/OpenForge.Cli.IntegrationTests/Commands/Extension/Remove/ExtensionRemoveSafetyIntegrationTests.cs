@@ -8,87 +8,41 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Remove;
 
 public sealed class ExtensionRemoveSafetyIntegrationTests
 {
-    [Fact(
-        DisplayName = "Extension Remove treats a missing lifecycle document as incomplete without effects"),
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Extension Remove uses lock ownership despite missing or malformed legacy lifecycle"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "IntegrationSafety")]
-    public async Task MissingLifecycleIsIncompleteAndWriteFree()
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task LegacyLifecycleDoesNotGateRemoval(bool malformed)
     {
-        using var workspace = ExtensionInstallIntegrationWorkspace.Create(
-            "extension-remove-missing-lifecycle");
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-remove-legacy-independent");
         await workspace.SeedFrameworkAsync();
-        using var source = ExtensionInstallCatalogue.Create(
-            "extension-remove-missing-lifecycle-source");
-        source.AddPackage(
-            "toolkit",
-            [],
-            (".agents/toolkit.md", Document("Toolkit")));
+        using var source = ExtensionInstallCatalogue.Create("extension-remove-legacy-independent-source");
+        source.AddPackage("toolkit", [], (".agents/toolkit.md", Document("Toolkit")));
         await InstallAsync(workspace, source);
-        File.Delete(workspace.Combine(ExtensionInstallIntegrationWorkspace.LifecyclePath));
-        var beforeWorkspace = workspace.Snapshot();
-        var beforeSource = source.Snapshot();
+        if (malformed)
+        {
+            workspace.CreateOccupant(ExtensionInstallIntegrationWorkspace.LifecyclePath, "{\n");
+        }
+        else
+        {
+            Assert.False(File.Exists(workspace.Combine(ExtensionInstallIntegrationWorkspace.LifecyclePath)));
+        }
+        var sourceBefore = source.Snapshot();
 
-        var run = await workspace.RunAsync(
-        [
-            "extension", "remove", "toolkit",
-            "--automatic", "--json",
-        ]);
+        var run = await workspace.RunAsync(["extension", "remove", "toolkit", "--automatic", "--format", "json"]);
 
-        Assert.Equal(3, run.ExitCode);
-        Assert.Equal(CliSemanticStatus.Incomplete, run.Status);
-        Assert.Equal(string.Empty, run.StandardError);
-        using var document = JsonDocument.Parse(run.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
-        Assert.Contains(
-            result.GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("code").GetString()
-                == "extension-remove.lifecycle-unavailable");
-        Assert.Empty(result.GetProperty("effects").EnumerateArray());
-        Assert.Equal("not-required", result.GetProperty("recovery").GetProperty("state").GetString());
-        Assert.Equal(beforeWorkspace, workspace.Snapshot());
-        Assert.Equal(beforeSource, source.Snapshot());
+        Assert.Equal(0, run.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, run.Status);
+        Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
+        Assert.Equal(sourceBefore, source.Snapshot());
+        if (malformed)
+        {
+            Assert.Equal("{\n", workspace.ReadText(ExtensionInstallIntegrationWorkspace.LifecyclePath));
+        }
     }
 
-    [Fact(
-        DisplayName = "Extension Remove treats a malformed lifecycle document as blocked without effects"),
-     Trait("Feature", "extension-remove"), Trait("Evidence", "IntegrationSafety")]
-    public async Task MalformedLifecycleIsBlockedAndWriteFree()
-    {
-        using var workspace = ExtensionInstallIntegrationWorkspace.Create(
-            "extension-remove-malformed-lifecycle");
-        await workspace.SeedFrameworkAsync();
-        using var source = ExtensionInstallCatalogue.Create(
-            "extension-remove-malformed-lifecycle-source");
-        source.AddPackage(
-            "toolkit",
-            [],
-            (".agents/toolkit.md", Document("Toolkit")));
-        await InstallAsync(workspace, source);
-        workspace.ReplaceText(
-            ExtensionInstallIntegrationWorkspace.LifecyclePath,
-            "{\n");
-        var beforeWorkspace = workspace.Snapshot();
-        var beforeSource = source.Snapshot();
-
-        var run = await workspace.RunAsync(
-        [
-            "extension", "remove", "toolkit",
-            "--automatic", "--json",
-        ]);
-
-        Assert.Equal(5, run.ExitCode);
-        Assert.Equal(CliSemanticStatus.Blocked, run.Status);
-        Assert.Equal(string.Empty, run.StandardError);
-        using var document = JsonDocument.Parse(run.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
-        Assert.Contains(
-            result.GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("code").GetString()
-                == "extension-remove.lifecycle-blocked");
-        Assert.Empty(result.GetProperty("effects").EnumerateArray());
-        Assert.Equal(beforeWorkspace, workspace.Snapshot());
-        Assert.Equal(beforeSource, source.Snapshot());
-    }
-
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension Remove rejects omitted IDs in automatic JSON mode before mutation"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "IntegrationSafety")]
@@ -102,22 +56,24 @@ public sealed class ExtensionRemoveSafetyIntegrationTests
         var run = await workspace.RunAsync(
         [
             "extension", "remove",
-            "--automatic", "--json",
+            "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(4, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Invalid, run.Status);
         Assert.Equal(string.Empty, run.StandardError);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
+        var result = document.RootElement.GetProperty("data");
         Assert.Contains(
-            result.GetProperty("findings").EnumerateArray(),
+            document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString()
                 == "extension-remove.selection-required");
-        Assert.Empty(result.GetProperty("effects").EnumerateArray());
+        Assert.DoesNotContain(result.GetProperty("effects").EnumerateArray(),
+            effect => effect.GetProperty("outcome").GetString() is "verified" or "planned");
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension Remove respects the real workspace lock before any effect"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "IntegrationSafety")]
@@ -140,24 +96,24 @@ public sealed class ExtensionRemoveSafetyIntegrationTests
         var run = await workspace.RunAsync(
         [
             "extension", "remove", "toolkit",
-            "--automatic", "--json",
+            "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(5, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Blocked, run.Status);
         Assert.Equal(string.Empty, run.StandardError);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
+        var result = document.RootElement.GetProperty("data");
         Assert.Contains(
-            result.GetProperty("findings").EnumerateArray(),
+            document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString()
                 == "extension-remove.workspace-lock-unavailable");
         Assert.Empty(result.GetProperty("effects").EnumerateArray());
-        Assert.Equal("not-created", result.GetProperty("recovery").GetProperty("state").GetString());
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeSource, source.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension Remove dry-run leaves the external recovery boundary untouched"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "IntegrationSafety")]
@@ -181,21 +137,18 @@ public sealed class ExtensionRemoveSafetyIntegrationTests
         var run = await workspace.RunAsync(
         [
             "extension", "remove", "toolkit",
-            "--automatic", "--dry-run", "--json",
+            "--automatic", "--dry-run", "--format", "json",
         ]);
 
         Assert.Equal(0, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
         Assert.Equal(string.Empty, run.StandardError);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        Assert.Equal(
-            "not-created",
-            document.RootElement.GetProperty("result")
-                .GetProperty("recovery").GetProperty("state").GetString());
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeRecovery, SnapshotRecovery(recoveryDirectory));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension Remove blocks a physical target escape and preserves the outside file"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "IntegrationSafety")]
@@ -216,7 +169,7 @@ public sealed class ExtensionRemoveSafetyIntegrationTests
         var targetPath = workspace.Combine(".agents/toolkit.md");
         File.Delete(targetPath);
         File.CreateSymbolicLink(targetPath, outsidePath);
-        var lifecycleBefore = workspace.ReadText(ExtensionInstallIntegrationWorkspace.LifecyclePath);
+        var lifecycleBefore = workspace.ReadText(ExtensionInstallIntegrationWorkspace.OwnershipPath);
         var sourceBefore = source.Snapshot();
 
         try
@@ -224,7 +177,7 @@ public sealed class ExtensionRemoveSafetyIntegrationTests
             var run = await workspace.RunAsync(
             [
                 "extension", "remove", "toolkit",
-                "--prune", "--automatic", "--json",
+                "--automatic", "--format", "json",
             ]);
 
             Assert.Equal(5, run.ExitCode);
@@ -232,11 +185,11 @@ public sealed class ExtensionRemoveSafetyIntegrationTests
             Assert.Equal(string.Empty, run.StandardError);
             using var document = JsonDocument.Parse(run.StandardOutput);
             Assert.Contains(
-                document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray(),
+                document.RootElement.GetProperty("findings").EnumerateArray(),
                 finding => finding.GetProperty("code").GetString()
                     == "extension-remove.target-unsafe");
             Assert.Equal(lifecycleBefore, workspace.ReadText(
-                ExtensionInstallIntegrationWorkspace.LifecyclePath));
+                ExtensionInstallIntegrationWorkspace.OwnershipPath));
             Assert.Equal("outside content\n", File.ReadAllText(outsidePath));
             Assert.Equal(sourceBefore, source.Snapshot());
         }
@@ -254,7 +207,7 @@ public sealed class ExtensionRemoveSafetyIntegrationTests
         [
             "extension", "install", "toolkit",
             "--source", source.Path,
-            "--automatic", "--json",
+            "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(0, run.ExitCode);

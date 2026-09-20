@@ -4,6 +4,7 @@ namespace OpenForge.Cli.IntegrationTests.TestSupport;
 
 public sealed class TemporaryWorkspaceSafetyTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Temporary workspace refuses cleanup after ownership marker removal")]
     [Trait("Feature", "cli-test-support"), Trait("Evidence", "Integration")]
     public void TemporaryWorkspaceRefusesCleanupWithoutOwnershipMarker()
@@ -24,6 +25,7 @@ public sealed class TemporaryWorkspaceSafetyTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Temporary workspace refuses writes through a replaced file link")]
     [Trait("Feature", "cli-test-support"), Trait("Evidence", "Integration")]
     public void TemporaryWorkspaceRefusesWritesThroughReplacedFileLink()
@@ -47,6 +49,7 @@ public sealed class TemporaryWorkspaceSafetyTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Temporary workspace replacement preserves exact UTF-8 bytes without a stale tail"), Trait("Feature", "cli-test-support"), Trait("Evidence", "Integration")]
     public void TemporaryWorkspaceReplacementPreservesExactBytes()
     {
@@ -59,6 +62,7 @@ public sealed class TemporaryWorkspaceSafetyTests
         Assert.Equal(expected, File.ReadAllBytes(ownedFile));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Temporary workspace replacement refuses a substituted link and preserves its target"), Trait("Feature", "cli-test-support"), Trait("Evidence", "Integration")]
     public void TemporaryWorkspaceReplacementRefusesReplacedLinkWithoutTouchingTarget()
     {

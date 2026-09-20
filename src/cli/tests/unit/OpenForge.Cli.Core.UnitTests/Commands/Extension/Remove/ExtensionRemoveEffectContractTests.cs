@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Remove;
 
 public sealed class ExtensionRemoveEffectContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove effects preserve path, package provenance, action, outcome, and residual"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void EffectPreservesTypedFacts()
     {
@@ -24,6 +25,7 @@ public sealed class ExtensionRemoveEffectContractTests
         Assert.Equal(ExtensionRemoveEffectResidual.None, effect.Residual);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove effects permit lifecycle effects without package provenance"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void LifecycleEffectPermitsMissingPackageIdentity()
     {
@@ -40,6 +42,7 @@ public sealed class ExtensionRemoveEffectContractTests
         Assert.Equal(ExtensionRemoveEffectOutcome.Verified, effect.Outcome);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove effects reject absolute traversal separator control and blank paths"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void EffectRejectsUnsafePaths()
     {
@@ -66,6 +69,7 @@ public sealed class ExtensionRemoveEffectContractTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove effects reject blank package IDs and undefined enum values"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void EffectRejectsInvalidTypedFacts()
     {

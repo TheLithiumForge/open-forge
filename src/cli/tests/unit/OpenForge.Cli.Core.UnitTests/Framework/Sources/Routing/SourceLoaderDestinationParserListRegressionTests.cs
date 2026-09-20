@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Routing;
 
 public sealed class SourceLoaderDestinationParserListRegressionTests
 {
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Loader destination parser accepts canonical and exactly-once decoded destinations"),
         InlineData("root/_root.md", "root/_root.md", ".agents/root/_root.md"),
         InlineData("root%2F_root.md", "root/_root.md", ".agents/root/_root.md"),
@@ -26,6 +27,7 @@ public sealed class SourceLoaderDestinationParserListRegressionTests
         Assert.Null(result.Cause);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Loader destination parser rejects malformed percent triplets and UTF-8"),
         InlineData("root%/_root.md"),
         InlineData("root%2/_root.md"),
@@ -47,6 +49,7 @@ public sealed class SourceLoaderDestinationParserListRegressionTests
         Assert.False(string.IsNullOrWhiteSpace(result.Cause));
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Loader destination parser blocks every decoded path-boundary hazard"),
         InlineData("root%5C_root.md", "root\\_root.md"),
         InlineData("root/%00source.md", "root/\0source.md"),
@@ -78,6 +81,7 @@ public sealed class SourceLoaderDestinationParserListRegressionTests
         Assert.False(string.IsNullOrWhiteSpace(result.Cause));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Neutral Loader destination parser does not decode an encoded percent twice")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EncodedPercentIsDecodedExactlyOnce()

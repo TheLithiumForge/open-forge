@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Profile;
 
 public sealed class RouteInspectOperationApplicabilityIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect reports detached local topology and LoadNow descendants without inventing Loader-rooted facts")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task DetachedEntrypointRetainsLocalFactsOnly()
@@ -79,6 +80,7 @@ public sealed class RouteInspectOperationApplicabilityIntegrationTests
         RouteInspectProfileIntegrationAssertions.AssertNoWriteOrInspectionState(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect reports a known unrouted source with own bytes while all route-dependent facts remain not applicable")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task KnownUnroutedSourceRetainsOwnMeasurementOnly()

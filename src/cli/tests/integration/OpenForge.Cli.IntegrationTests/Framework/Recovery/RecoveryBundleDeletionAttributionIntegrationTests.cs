@@ -15,6 +15,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
 
 public sealed class RecoveryBundleDeletionAttributionIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Recovery deletion rejects a final whose schema-v1 attribution changed after selection")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task DeletionGuardRejectsChangedAttributionAndRetainsFinal()

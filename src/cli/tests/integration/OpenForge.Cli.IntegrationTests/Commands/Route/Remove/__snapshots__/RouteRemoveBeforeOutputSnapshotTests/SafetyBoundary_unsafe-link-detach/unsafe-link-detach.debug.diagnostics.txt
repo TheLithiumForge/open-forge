@@ -1,0 +1,9 @@
+status=blocked
+mode=apply
+source=guidance/old guide
+subject=file
+effects=0
+removed=0
+detached=0
+findings=1
+An incoming Markdown reference cannot be detached without losing authored meaning.

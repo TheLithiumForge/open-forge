@@ -30,8 +30,8 @@ internal static class LibraryRepairData
             NoFollowLinkKind.SymbolicLink, "../../shared/team-knowledge/.agents/directives/review.md"));
         if (kind == RecoveryEntryKind.OrdinaryReplaceGeneratedRegion)
         {
-            const string host = "# Directives\n\n## Entries\n\n<!-- open-forge:generated-index:start -->\n";
-            const string end = "<!-- open-forge:generated-index:end -->\n";
+            const string host = "# Directives\n\n## Entries\n\n";
+            const string end = "";
             ordinary = RecoveryEntryState.Ordinary(RecoveryContentIdentity.FromBytes(Encoding.UTF8.GetBytes(host + end)));
             intendedOrdinary = RecoveryEntryState.Ordinary(RecoveryContentIdentity.FromBytes(
                 Encoding.UTF8.GetBytes(host + "- [Review](review.md) - #Directive\n" + end)));
@@ -113,8 +113,8 @@ internal static class LibraryRepairData
             Request = new RepairRequest(LibraryMutationPlanningData.Workspace, RepairMode.Apply, automatic, [], allowInteraction: false),
             References = [],
             Libraries = [new RepairLibraryRecoveryProposal(evidence)],
-            WizardRelinks = [],
-            WizardLibraries = null,
+            PromptRelinks = [],
+            PromptLibraries = null,
         };
 
     internal static RepairPlan Plan(LibraryResidualEvidence? evidence = null)
@@ -125,7 +125,7 @@ internal static class LibraryRepairData
         {
             Ordinal = 0,
             Selection = selected,
-            Dependency = new RepairDependency([RepairDependencyDomain.WorkspaceContainment, RepairDependencyDomain.LibraryRecord, RepairDependencyDomain.LibraryResidual]),
+            Dependency = new RepairDependency([RepairDependencyDomain.WorkspaceContainment, RepairDependencyDomain.LibraryRegistration, RepairDependencyDomain.LibraryResidual]),
             Verification = new RepairVerificationRequirement([RepairVerificationKind.NoFollowIdentity, RepairVerificationKind.PriorState]),
             Effect = new RepairLibraryRecoveryEffect(selected),
             Outcome = RepairStepOutcome.Planned,

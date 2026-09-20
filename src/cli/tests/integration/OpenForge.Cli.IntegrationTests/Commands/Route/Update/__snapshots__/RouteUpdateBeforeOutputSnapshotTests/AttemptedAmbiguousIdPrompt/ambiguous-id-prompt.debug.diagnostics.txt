@@ -1,0 +1,11 @@
+status=blocked
+mode=apply
+target=docs/guide
+completeness=not-established
+safety=blocked
+body=not-established
+effects=0
+recovery=not required
+verification=not run
+findings=1
+The source ID resolves to more than one logical source.

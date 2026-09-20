@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Installed the toolkit Extension and 1 packages it requires: base.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/base.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "base"
+    },
+    {
+      "path": ".agents/toolkit.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "toolkit"
+    }
+  ],
+  "counts": {
+    "packagesInstalled": 2,
+    "filesCreated": 2,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "base",
+        "version": "1.0.0",
+        "selected": false,
+        "requiredBy": [
+          "toolkit"
+        ]
+      },
+      {
+        "id": "toolkit",
+        "version": "1.0.0",
+        "selected": true,
+        "requiredBy": []
+      }
+    ],
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "selection": {
+      "method": "explicit-ids"
+    },
+    "sections": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

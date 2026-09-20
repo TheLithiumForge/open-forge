@@ -1,138 +1,154 @@
+using System.Reflection;
+using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Cleanup;
+using OpenForge.Cli.Core.Commands.Cleanup.Models.Request;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
-using OpenForge.Cli.Core.Commands.Cleanup.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
-using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Presentation.Cleanup;
+using OpenForge.Cli.Core.Presentation.Cleanup.Models;
+using OpenForge.Cli.Core.Presentation.Cleanup.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Cleanup.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Cleanup.Shared.Wording;
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Text;
+using OpenForge.Cli.Core.Presentation.Shared.Text.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Cleanup;
 
 public sealed class CleanupPresentationContractTests
 {
-    [Fact(DisplayName = "Cleanup wire vocabulary exposes every accepted finite machine spelling"),
-     Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
-    public void WireVocabularyMapsEveryFiniteValue()
+    [Trait("Boundary", "Output")]
+    [Fact(
+        DisplayName = "Cleanup native data preserves frozen property order and nullable boundaries"),
+     Trait("Feature", "cleanup-presentation"),
+     Trait("Evidence", "Unit")]
+    public void NativeDataPreservesPropertyOrderAndNullableBoundaries()
     {
-        Assert.Equal(
-            ["complete", "failed", "attention", "incomplete", "invalid", "blocked", "interrupted"],
-            Enum.GetValues<CliSemanticStatus>().Select(CleanupWireVocabulary.Status));
-        Assert.Equal(
-            ["current-directory", "explicit-workspace"],
-            Enum.GetValues<CliWorkspaceSelectionMethod>().Select(CleanupWireVocabulary.WorkspaceSelection));
-        Assert.Equal(
-            ["not-established", "apply", "dry-run"],
-            Enum.GetValues<CleanupMode>().Select(CleanupWireVocabulary.Mode));
-        Assert.Equal(
-            ["not-established", "complete", "incomplete", "interrupted"],
-            Enum.GetValues<CleanupCatalogueCoverage>().Select(CleanupWireVocabulary.Coverage));
-        Assert.Equal(
-            ["not-established", "eligible", "blocked"],
-            Enum.GetValues<CleanupCandidateEligibility>().Select(CleanupWireVocabulary.Eligibility));
-        Assert.Equal(
-            ["not-established", "delete", "preserve"],
-            Enum.GetValues<CleanupPlanAction>().Select(CleanupWireVocabulary.Action));
-        Assert.Equal(
-            ["not-established", "safe", "blocked"],
-            Enum.GetValues<CleanupPlanSafety>().Select(CleanupWireVocabulary.Safety));
-        Assert.Equal(
-            ["final", "draft"],
-            Enum.GetValues<RecoveryBundleCandidateKind>().Select(CleanupWireVocabulary.CandidateKind));
-        Assert.Equal(
-            ["verified", "malformed", "unsupported", "unavailable", "incomplete"],
-            Enum.GetValues<RecoveryBundleIntegrity>().Select(CleanupWireVocabulary.Integrity));
-        Assert.Equal(
-            ["not-established", "ordinary", "non-ordinary"],
-            Enum.GetValues<CleanupArtifactFileKind>().Select(CleanupWireVocabulary.FileKind));
-        Assert.Equal(
-            ["not-established", "current-workspace", "mismatched", "unavailable"],
-            Enum.GetValues<CleanupWorkspaceAssociationState>().Select(CleanupWireVocabulary.WorkspaceAssociation));
-        Assert.Equal(
-            ["not-established", "not-requested", "required", "held", "mismatched"],
-            Enum.GetValues<CleanupLeaseBoundaryState>().Select(CleanupWireVocabulary.LeaseBoundary));
-        Assert.Equal(
-            ["not-established", "not-requested", "exact-path-and-kind", "semantic-final", "absence"],
-            Enum.GetValues<CleanupVerificationConditionState>().Select(CleanupWireVocabulary.VerificationCondition));
-        Assert.Equal(
-            ["not-requested", "complete", "incomplete", "blocked", "failed", "interrupted"],
-            Enum.GetValues<CleanupPreflightState>().Select(CleanupWireVocabulary.Preflight));
-        Assert.Equal(
-            ["not-requested", "acquired", "failed", "cancelled"],
-            Enum.GetValues<CleanupLeaseState>().Select(CleanupWireVocabulary.Lease));
-        Assert.Equal(
-            ["not-requested", "matched", "changed", "incomplete", "blocked", "cancelled"],
-            Enum.GetValues<CleanupCatalogueComparisonState>().Select(CleanupWireVocabulary.Comparison));
-        Assert.Equal(
-            ["planned", "not-started", "verified", "verification-failed", "completion-unknown"],
-            Enum.GetValues<CleanupEffectOutcome>().Select(CleanupWireVocabulary.EffectOutcome));
-        Assert.Equal(
-            ["none", "retained", "unknown"],
-            Enum.GetValues<CleanupEffectResidual>().Select(CleanupWireVocabulary.EffectResidual));
-        Assert.Equal(
-            ["not-requested", "verified", "failed", "unknown"],
-            Enum.GetValues<CleanupVerificationState>().Select(CleanupWireVocabulary.Verification));
-        Assert.Equal(
-            ["framework", "extension", "index", "route", "repair", "library"],
-            Enum.GetValues<RecoveryBundleProducer>().Select(CleanupWireVocabulary.RecoveryProducer));
-        Assert.Equal(
-            ["install", "index", "create", "init", "move", "update", "remove", "repair", "attach", "sync", "detach"],
-            Enum.GetValues<RecoveryBundleOperation>().Select(CleanupWireVocabulary.RecoveryOperation));
-        Assert.Equal(
-            ["workspace"],
-            Enum.GetValues<RecoveryBundleSubjectKind>().Select(CleanupWireVocabulary.RecoverySubjectKind));
-        Assert.Equal(
-            [
-                "cleanup.invalid-input",
-                "cleanup.workspace-unavailable",
-                "cleanup.workspace-not-directory",
-                "cleanup.workspace-unsafe",
-                "cleanup.catalogue-incomplete",
-                "cleanup.recovery-final-malformed",
-                "cleanup.recovery-final-unsupported",
-                "cleanup.recovery-final-unavailable",
-                "cleanup.recovery-draft-unsafe",
-                "cleanup.workspace-lock-unavailable",
-                "cleanup.catalogue-changed-during-apply",
-                "cleanup.candidate-changed-during-apply",
-                "cleanup.deletion-failed",
-                "cleanup.verification-failed",
-                "cleanup.operation-failed",
-                "cleanup.interrupted",
-            ],
-            Enum.GetValues<CleanupFindingCode>().Select(CleanupWireVocabulary.FindingCode));
+        AssertProperties<CleanupData>("Mode", "Items", "NotEligible", "Lock", "FinalCheck");
+        AssertProperties<CleanupDataItem>("Path", "Kind", "Outcome", "Origin", "Integrity");
+        AssertProperties<CleanupDataNotEligible>("Path", "Reason");
+
+        AssertNotNullable<CleanupData>(nameof(CleanupData.Mode));
+        AssertNotNullable<CleanupData>(nameof(CleanupData.Items));
+        AssertNullable<CleanupData>(nameof(CleanupData.NotEligible));
+        AssertNullable<CleanupData>(nameof(CleanupData.Lock));
+        AssertNullable<CleanupData>(nameof(CleanupData.FinalCheck));
+        AssertNullable<CleanupDataItem>(nameof(CleanupDataItem.Origin));
+        AssertNullable<CleanupDataItem>(nameof(CleanupDataItem.Integrity));
+        AssertNotNullable<CleanupDataNotEligible>(nameof(CleanupDataNotEligible.Path));
+        AssertNotNullable<CleanupDataNotEligible>(nameof(CleanupDataNotEligible.Reason));
     }
 
-    [Fact(DisplayName = "Cleanup wire vocabulary rejects every undefined finite value"),
-     Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
-    public void UndefinedWireValuesThrow()
+    [Trait("Boundary", "Output")]
+    [Fact(
+        DisplayName = "Cleanup native rendering uses one typed report for exact text and JSON"),
+     Trait("Feature", "cleanup-presentation"),
+     Trait("Evidence", "Unit")]
+    public void NativeRenderingUsesOneTypedReportForJsonAndText()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.Status((CliSemanticStatus)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.WorkspaceSelection((CliWorkspaceSelectionMethod)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.Mode((CleanupMode)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.Coverage((CleanupCatalogueCoverage)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.Eligibility((CleanupCandidateEligibility)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.Action((CleanupPlanAction)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.Safety((CleanupPlanSafety)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.CandidateKind((RecoveryBundleCandidateKind)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.Integrity((RecoveryBundleIntegrity)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.FileKind((CleanupArtifactFileKind)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.WorkspaceAssociation((CleanupWorkspaceAssociationState)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.LeaseBoundary((CleanupLeaseBoundaryState)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.VerificationCondition((CleanupVerificationConditionState)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.Preflight((CleanupPreflightState)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.Lease((CleanupLeaseState)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.Comparison((CleanupCatalogueComparisonState)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.EffectOutcome((CleanupEffectOutcome)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.EffectResidual((CleanupEffectResidual)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.Verification((CleanupVerificationState)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.FindingCode((CleanupFindingCode)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.RecoveryProducer((RecoveryBundleProducer)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.RecoveryOperation((RecoveryBundleOperation)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => CleanupWireVocabulary.RecoverySubjectKind((RecoveryBundleSubjectKind)int.MaxValue));
+        var plan = CleanupTestData.Plan(CleanupTestData.Request(mode: CleanupMode.DryRun));
+        var facts = CleanupTestData.Facts(
+            plan,
+            effects: [CleanupTestData.Effect(plan.Entries.Single(), CleanupEffectOutcome.Planned)]);
+        var result = CleanupTestData.Result(facts: facts);
+        var selected = Select(result, CliDetail.Minimal);
+
+        var text = CliTextRenderer.Render(
+            selected,
+            CliTextStyle.Plain,
+            CleanupPresentation.Rendering.DataTextRenderer).Content;
+        Assert.StartsWith("Would remove 1 recovery bundle.", text, StringComparison.Ordinal);
+        Assert.Contains("open-forge-cleanup-recovery", text, StringComparison.Ordinal);
+        Assert.Contains("No files were changed.", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("deleted", text, StringComparison.Ordinal);
+
+        using var json = JsonDocument.Parse(
+            CliJsonRenderer.Render(selected, CleanupPresentation.Rendering.DataJsonTypeInfo));
+        var root = json.RootElement;
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal("cleanup", root.GetProperty("command").GetString());
+        Assert.Equal("completed", root.GetProperty("status").GetString());
+        Assert.Equal("dry-run", root.GetProperty("data").GetProperty("mode").GetString());
+        var item = Assert.Single(root.GetProperty("data").GetProperty("items").EnumerateArray());
+        Assert.Equal("bundle", item.GetProperty("kind").GetString());
+        Assert.Equal("would-be-removed", item.GetProperty("outcome").GetString());
+        Assert.Equal(1, root.GetProperty("counts").GetProperty("bundlesRemoved").GetInt32());
+        Assert.Single(root.GetProperty("effects").EnumerateArray());
     }
 
-    [Fact(DisplayName = "Cleanup help retains stable sections and names the non-recursive command boundary"),
-     Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
+    [Trait("Boundary", "Output")]
+    [Fact(
+        DisplayName = "Cleanup minimal warning keeps the damaged path beside independent removal"),
+     Trait("Feature", "cleanup-presentation"),
+     Trait("Evidence", "Unit")]
+    public void MinimalWarningKeepsDamagedPathBesideIndependentRemoval()
+    {
+        var eligiblePath = Path.Combine(Path.GetTempPath(), "open-forge-cleanup-recovery", "eligible.recovery.json");
+        var damagedPath = Path.Combine(Path.GetTempPath(), "open-forge-cleanup-recovery", "damaged.recovery.json");
+        var plan = CleanupTestData.Plan(
+            CleanupTestData.Request(),
+            CleanupTestData.Catalogue(
+                candidates:
+                [
+                    CleanupTestData.Candidate(
+                        integrity: RecoveryBundleIntegrity.Malformed,
+                        path: damagedPath),
+                    CleanupTestData.Candidate(path: eligiblePath),
+                ]));
+        var finding = CleanupFinding.Create(
+            CleanupFindingCode.RecoveryFinalMalformed,
+            "The stored bytes are not a valid recovery bundle.",
+            damagedPath);
+        var result = CleanupTestData.Result(
+            CleanupTestData.Facts(plan, findings: [finding]),
+            status: CliSemanticStatus.Attention);
+
+        var minimal = Select(result, CliDetail.Minimal);
+        var minimalText = CliTextRenderer.Render(
+            minimal,
+            CliTextStyle.Plain,
+            CleanupPresentation.Rendering.DataTextRenderer).Content;
+        Assert.StartsWith("Removed 1 recovery bundle.", minimalText, StringComparison.Ordinal);
+        Assert.Contains(damagedPath, minimalText, StringComparison.Ordinal);
+        Assert.Contains("damaged", minimalText, StringComparison.Ordinal);
+        Assert.Single(minimal.TextFindings, finding =>
+            finding.Code == CleanupWording.FindingCode(CleanupFindingCode.RecoveryFinalMalformed));
+
+        var standard = Select(result, CliDetail.Standard);
+        Assert.Single(standard.TextFindings, finding =>
+            finding.Code == CleanupWording.FindingCode(CleanupFindingCode.RecoveryFinalMalformed));
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(
+        DisplayName = "Cleanup native wording maps every finite finding code"),
+     Trait("Feature", "cleanup-presentation"),
+     Trait("Evidence", "Unit")]
+    public void FindingVocabularyMapsEveryFiniteValue()
+    {
+        var values = Enum.GetValues<CleanupFindingCode>();
+        Assert.All(values, code =>
+        {
+            Assert.StartsWith("cleanup.", CleanupWording.FindingCode(code), StringComparison.Ordinal);
+            Assert.NotEqual(string.Empty, CleanupWording.FindingTitle(code));
+        });
+
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => CleanupWording.FindingCode((CleanupFindingCode)int.MaxValue));
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => CleanupWording.FindingTitle((CleanupFindingCode)int.MaxValue));
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(
+        DisplayName = "Cleanup help retains stable sections and names the non-recursive command boundary"),
+     Trait("Feature", "cleanup-presentation"),
+     Trait("Evidence", "Unit")]
     public void HelpRetainsStableSectionsAndBoundaries()
     {
         var help = CleanupHelpSections.Create();
@@ -141,13 +157,11 @@ public sealed class CleanupPresentationContractTests
             Environment.NewLine,
             help.Sections.Select(section => $"{section.Heading}\n{section.Body}"));
 
-        Assert.Equal(
-            ["Syntax", "Catalogue", "Write policy", "Global options", "Notes"],
-            headings);
+        Assert.Equal(["Syntax", "Catalogue", "Write policy", "Global options", "Notes"], headings);
         Assert.Contains("open-forge cleanup [--dry-run] [global options]", text, StringComparison.Ordinal);
         Assert.Contains("every recognized completed recovery bundle and draft with an exact expected name", text, StringComparison.Ordinal);
         Assert.Contains("without locking the workspace or writing files", text, StringComparison.Ordinal);
-        Assert.Contains("--workspace <path>, --json, --view <compact|expanded>, --verbose, --help, and --version", text, StringComparison.Ordinal);
+        Assert.Contains("--workspace <path>, --format <text|json>, --detail <minimal|standard|full|debug>, --detail-filter <error|warning|info|all>, --help, and --version", text, StringComparison.Ordinal);
         Assert.Contains("accepts no operands, selectors, prompts, confirmations", text, StringComparison.Ordinal);
         Assert.Contains("force mode, age filters, glob filters,", text, StringComparison.Ordinal);
         Assert.Contains("or arbitrary recursive deletion.", text, StringComparison.Ordinal);
@@ -155,4 +169,32 @@ public sealed class CleanupPresentationContractTests
         Assert.DoesNotContain("--force", text, StringComparison.Ordinal);
         Assert.DoesNotContain("--automatic", text, StringComparison.Ordinal);
     }
+
+    private static CliSelectedReport<CleanupData> Select(CleanupResult result, CliDetail detail)
+    {
+        var selection = new CliSelection(detail, null);
+        var rendering = CleanupPresentation.Rendering;
+        var selected = CliReportTrimmer.Trim(rendering.Selector(result, selection), selection, rendering.Shape);
+        return rendering.SelectText!(selected);
+    }
+
+    private static void AssertProperties<T>(params string[] expected)
+        => Assert.Equal(
+            expected,
+            typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Select(property => property.Name));
+
+    private static PropertyInfo Property<T>(string name)
+        => typeof(T).GetProperty(name, BindingFlags.Instance | BindingFlags.Public)
+            ?? throw new InvalidOperationException($"Missing property {typeof(T).Name}.{name}.");
+
+    private static void AssertNullable<T>(string name)
+        => Assert.Equal(
+            NullabilityState.Nullable,
+            new NullabilityInfoContext().Create(Property<T>(name)).ReadState);
+
+    private static void AssertNotNullable<T>(string name)
+        => Assert.Equal(
+            NullabilityState.NotNull,
+            new NullabilityInfoContext().Create(Property<T>(name)).ReadState);
 }

@@ -7,8 +7,8 @@ internal sealed class PublishedRouteInitWorkspace : IDisposable
 {
     internal const string GenericTargetPath = ".agents/docs/_docs.md";
     internal const string FrameworkScopePath = ".agents/memory/mobile-app/_mobile-app.md";
-    internal const string FrameworkManagedPath = ".agents/memory/mobile-app/crystallized/_crystallized.md";
-    internal const string FrameworkFinalPath = ".agents/memory/mobile-app/crystallized/documents/_documents.md";
+    internal const string FrameworkManagedPath = ".agents/memory/mobile-app/working/_working.md";
+    internal const string FrameworkFinalPath = ".agents/memory/mobile-app/working/_working.md";
     private const string MetadataMissingChildPath = ".agents/root/child.md";
     private static readonly UTF8Encoding StrictUtf8NoBom = new(
         encoderShouldEmitUTF8Identifier: false,
@@ -44,8 +44,8 @@ internal sealed class PublishedRouteInitWorkspace : IDisposable
             PublishedInstallWorkspace.Create(),
             [FrameworkScopePath, FrameworkManagedPath, FrameworkFinalPath],
             [
-                ".agents/memory/mobile-app/crystallized/documents",
-                ".agents/memory/mobile-app/crystallized",
+                ".agents/memory/mobile-app/working",
+                ".agents/memory/mobile-app/working",
                 ".agents/memory/mobile-app",
             ]);
 

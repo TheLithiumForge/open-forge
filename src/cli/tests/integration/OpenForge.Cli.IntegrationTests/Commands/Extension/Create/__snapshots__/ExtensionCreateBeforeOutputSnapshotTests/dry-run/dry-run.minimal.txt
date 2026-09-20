@@ -1,0 +1,5 @@
+Would create the toolkit Extension scaffold at <extension-source>/toolkit
+  Would create <extension-source>/toolkit/extension.json
+  Would create <extension-source>/toolkit/content/.agents/
+  Edit extension.json, then add files under content/.agents/.
+No files were changed.

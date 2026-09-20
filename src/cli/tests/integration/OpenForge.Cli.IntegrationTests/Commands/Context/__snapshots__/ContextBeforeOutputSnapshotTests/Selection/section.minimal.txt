@@ -1,0 +1,16 @@
+  Warning  .agents/docs/_docs.md  Section is missing
+         .agents/docs/_docs.md has no section named Rules.
+  Warning  .agents/loader.md  Section is missing
+         .agents/loader.md has no section named Rules.
+  Warning  AGENTS.md  Section is missing
+         AGENTS.md has no section named Rules.
+=== AGENTS.md ===
+
+=== .agents/loader.md (loader) ===
+
+=== .agents/docs/_docs.md (docs) ===
+
+=== .agents/docs/guide.md (docs/guide) ===
+## Rules
+
+Read the [Reference](reference.md#details).

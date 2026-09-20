@@ -1,0 +1,16 @@
+toolkit 1.0.0 is available and not installed.
+Workspace: <workspace>
+Source: <extension-source>
+Dependencies
+  toolkit  1.0.0  available
+
+Files
+  .agents/toolkit.md  not applicable
+    Installed SHA-256: unavailable
+    Package SHA-256: <sha256>
+Manifest: toolkit/extension.json
+Resolution order: toolkit
+Registered in
+  none
+Record coverage: complete
+1 dependency.

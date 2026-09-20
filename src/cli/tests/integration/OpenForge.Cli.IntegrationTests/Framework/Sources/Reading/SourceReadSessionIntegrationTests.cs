@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Reading;
 
 public sealed class SourceReadSessionIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral source read reader establishes the agents catalogue document reader and contained default scope"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task ReaderEstablishesContainedAgentsSession()
     {
@@ -28,6 +29,7 @@ public sealed class SourceReadSessionIntegrationTests
         Assert.NotNull(session.Catalogue.FindByPath(".agents/loader.md"));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral source read reader omits the default scope when the agents root is not contained"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task ReaderOmitsScopeForMissingAgentsRoot()
     {

@@ -1,0 +1,5 @@
+status=cancelled
+packages=0
+effects=0
+findings=1
+Extension remove was cancelled. Nothing was changed.

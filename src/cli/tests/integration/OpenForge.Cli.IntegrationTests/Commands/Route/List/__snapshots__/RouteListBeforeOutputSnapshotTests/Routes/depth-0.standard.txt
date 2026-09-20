@@ -1,0 +1,4 @@
+Workspace: <workspace>
+  docs  Documents
+        .agents/docs/_docs.md   #Docs
+1 route to depth 0. Deeper routes: open-forge route list --depth=all

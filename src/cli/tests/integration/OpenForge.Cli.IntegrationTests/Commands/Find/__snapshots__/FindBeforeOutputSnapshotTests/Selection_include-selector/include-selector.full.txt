@@ -1,0 +1,11 @@
+1 source matches.
+Workspace: <workspace>
+  docs/guide  .agents/docs/guide.md  Guide
+
+Search details:
+  Filters: none
+  Require: all
+  Regions searched: frontmatter, body
+  Source set: filtered
+  1 of 1 sources inspected
+1 matches, 1 sources inspected, 1 source candidates.

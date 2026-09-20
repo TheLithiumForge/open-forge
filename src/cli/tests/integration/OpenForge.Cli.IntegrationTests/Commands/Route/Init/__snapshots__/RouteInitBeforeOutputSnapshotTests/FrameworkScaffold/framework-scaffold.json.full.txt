@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "memory/working is already initialized. Nothing to do.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "entrypointsCreated": 0,
+    "entrypointsPresent": 2,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "memory/working",
+      "path": ".agents/memory/working/_working.md"
+    },
+    "scaffold": "framework",
+    "entrypoints": [
+      {
+        "path": ".agents/memory/_memory.md",
+        "outcome": "unchanged",
+        "needsAuthoring": false
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "outcome": "unchanged",
+        "needsAuthoring": false
+      }
+    ],
+    "listedIn": [],
+    "lockPath": ".agents/open-forge.lock.json",
+    "sections": [],
+    "frameworkFingerprint": "<sha256>",
+    "verification": "verified"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

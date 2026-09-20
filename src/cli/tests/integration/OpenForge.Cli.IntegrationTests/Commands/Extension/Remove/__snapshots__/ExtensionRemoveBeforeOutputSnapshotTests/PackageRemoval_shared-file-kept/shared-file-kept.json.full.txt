@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 3,
+  "command": "extension remove",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Removed the toolkit Extension.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "packagesRemoved": 1,
+    "filesDeleted": 0,
+    "filesKept": 1,
+    "filesReleased": 0,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "automatic": true,
+    "packages": [
+      {
+        "id": "toolkit"
+      }
+    ],
+    "orphaned": [],
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/toolkit.md",
+        "action": "retain-shared",
+        "outcome": "retain-shared",
+        "owner": "toolkit",
+        "keptFor": [
+          "base"
+        ],
+        "ownersBefore": [
+          "toolkit"
+        ],
+        "ownersAfter": [
+          "base"
+        ]
+      }
+    ],
+    "removalOrder": [
+      "toolkit"
+    ],
+    "entriesUnchanged": [],
+    "verification": {
+      "targets": "verified",
+      "entries": "verified",
+      "extensionRecord": "verified"
+    },
+    "recovery": {
+      "state": "retained",
+      "protectedPaths": [
+        ".agents/open-forge.lock.json"
+      ],
+      "path": "<recovery-bundle>"
+    }
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge cleanup",
+    "reason": "after reviewing the bundle"
+  }
+}

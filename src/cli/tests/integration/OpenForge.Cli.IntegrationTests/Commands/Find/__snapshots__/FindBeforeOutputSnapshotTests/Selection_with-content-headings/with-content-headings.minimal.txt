@@ -1,0 +1,5 @@
+  docs/guide  .agents/docs/guide.md
+
+=== .agents/docs/guide.md (docs/guide) ===
+# Guide
+## Rules

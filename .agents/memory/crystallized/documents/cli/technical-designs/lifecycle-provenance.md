@@ -1,52 +1,59 @@
 ---
 open-forge:
-  description: Exact Framework lifecycle schema-v1 target provenance and identity design
-  responsibility: Define how lifecycle targets retain canonical embedded-asset provenance without adding lifecycle instances or migration
+  description: Ownership receipts and operation-time Framework source alignment
+  responsibility: Define stored ownership separately from current payload comparison and mutation evidence
   tags: [Memory, Crystallized, Document, CurrentTruth, Evergreen, CLI, TechnicalDesign, Framework, Lifecycle, Provenance]
 ---
 
-# Lifecycle Provenance Technical Design
+# Ownership And Source Alignment Technical Design
 
 ## Boundary
 
-Framework lifecycle state remains one `.agents/open-forge.lifecycle.json`
-document at schema version 1. This design defines exact per-target source-asset
-provenance and identity realization. Command contracts retain creation,
-reconciliation, release, and consumer policy.
+The generated `.agents/open-forge.lock.json` records Framework, Extension and
+Library ownership through the shared source-generated document. The authored
+`.agents/open-forge.json` owns settings. The lock is best-effort bookkeeping;
+missing, stale or unreadable ownership is reported without treating it as an
+integrity gate. Old state files are unrelated user content, with no migration,
+legacy reader or automatic deletion.
 
-## Source-Asset Provenance
+## Stored Ownership
 
-Every `FrameworkLifecycleTarget` has required nullable JSON
-`sourceAssetPath`. A payload file or managed root/provider block records the
-normalized canonical embedded asset-relative path that produced it. A derived
-generated-region target records `null`.
+Framework ownership stores source ID and optional descriptive version, whole
+paths and named regions. Extension receipts add package IDs, source locations
+and dependencies. Library registrations store source root, destination root and
+source-relative paths. Each receipt corresponds to effects that actually
+verified. A whole-path receipt may support deletion within its admitted physical
+boundary; a region receipt cannot authorize deletion of its host file.
 
-Structural validation accepts a normalized historical non-null source path even
-when the current embedded inventory no longer contains it. A publishing
-operation separately verifies every new non-null path against the exact embedded
-inventory it records. User-owned scope entrypoints are never Framework lifecycle
-targets.
+The lock stores no target baseline, fingerprint kind, fingerprint policy,
+workspace binding, per-target source asset provenance, command history or
+recovery evidence. Generated Entries region ownership survives; the duplicate
+stored fingerprint of generated content does not.
 
-## Target Identity
+## Current Source Alignment And Comparison
 
-Exact concrete target path, source asset path, optional managed region,
-generated-region identity, fingerprint kind, and baseline fingerprint provide
-per-effect identity and provenance. The Framework section retains its one
-embedded-source identity, ordered managed targets, and ordered generated-region
-identities. Source identity retains its ID, optional descriptive version, and
-lowercase SHA-256 inventory fingerprint.
+Distribution aligns owned Framework destinations with the running payload,
+including scoped entrypoint mappings. Alignment is computed for the operation
+and is never a stored cross-release integrity claim. A retired destination may
+have no current payload asset. Current bytes and intended payload bytes are
+compared within the same invocation using Markdown semantic identity where
+applicable; opaque files and generated navigation use their local exact-byte
+rules. Root managed blocks preserve surrounding authored host content.
 
-The schema retains the existing single Framework state. It adds no lifecycle-
-instance collection, root/scoped duplicate sections, migration engine, command
-history, recovery receipt, or continuing Template ownership.
+The mutation plan retains exact expected current bytes, intended changes and
+recovery targets. Those operation-time facts support revalidation, application
+and verification; the ownership lock does not replace them. Recovery bundles
+are prepared before reversible effects and retained where the command contract
+requires review of previous content.
 
 ## Serialization And Validation
 
-Lifecycle JSON uses the existing source-generated schema-v1 graph. Evidence
-proves property presence, order, and nullability; normalized canonical payload
-paths; derived-region `null`; unsafe and noncanonical rejection; acceptance of a
-historical path missing from the current inventory; duplicate and cross-section
-validation; and Native AOT serialization with reflection disabled.
+The existing source-generated ownership codec writes deterministic whole-document
+UTF-8. Equal intended ownership is unchanged. Unknown members are not retained
+when a real change rewrites the machine-owned file. Readers tolerate unknown
+shape and report unusable ownership; command-specific destination, shared
+allow-list, collision and physical checks remain mandatory before any effect.
+Native AOT uses the same typed serialization without reflection.
 
 ## Related Current Sources
 

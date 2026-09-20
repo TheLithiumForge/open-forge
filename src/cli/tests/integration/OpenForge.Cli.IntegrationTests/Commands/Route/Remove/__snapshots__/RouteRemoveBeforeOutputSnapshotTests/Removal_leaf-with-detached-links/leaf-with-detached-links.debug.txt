@@ -1,0 +1,14 @@
+Removed .agents/guidance/old guide.md
+Workspace: <workspace>
+  Removed .agents/guidance/old guide.overwrite.md
+  Entry removed from .agents/guidance/_guidance.md
+  Detached 1 link that pointed at it; the link text was kept:
+    README.md:1:8
+    [Old guide](.agents/guidance/old%20guide.md#part) -> Old guide
+    Before: <sha256>
+    After: <sha256>
+    Before: <sha256>
+    After: <sha256>
+    Before: <sha256>
+    Before: <sha256>
+  Scanned 11 files and found 2 links.

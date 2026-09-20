@@ -1,0 +1,3 @@
+  docs              Documents
+    docs/guide      Guide
+    docs/reference  Reference

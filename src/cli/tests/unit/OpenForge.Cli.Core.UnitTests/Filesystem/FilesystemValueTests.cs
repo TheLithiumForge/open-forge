@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Filesystem;
 
 public sealed class FilesystemValueTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Physical containment respects path-root boundaries")]
     [Trait("Feature", "cli-filesystem"), Trait("Evidence", "Unit")]
     public void PhysicalContainmentRespectsRootBoundaries()
@@ -19,6 +20,7 @@ public sealed class FilesystemValueTests
         Assert.False(PhysicalContainment.Contains(root, root + "-other"));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Physical walker fails closed for unsupported components")]
     [Trait("Feature", "cli-filesystem"), Trait("Evidence", "Unit")]
     public void PhysicalWalkerFailsClosedForUnsupportedComponents()
@@ -39,6 +41,7 @@ public sealed class FilesystemValueTests
         Assert.Same(failure, result?.Failure);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Physical identity tracker distinguishes active cycles from sequential aliases")]
     [Trait("Feature", "cli-filesystem"), Trait("Evidence", "Unit")]
     public void IdentityTrackerDistinguishesCyclesFromSequentialAliases()
@@ -53,6 +56,7 @@ public sealed class FilesystemValueTests
         tracker.Exit(target);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Typed read values preserve invalid syntax separately")]
     [Trait("Feature", "cli-filesystem"), Trait("Evidence", "Unit")]
     public void TypedReadValuesPreserveInvalidSyntaxSeparately()
@@ -66,6 +70,7 @@ public sealed class FilesystemValueTests
         Assert.Equal("document", result.LogicalPath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Filesystem result factories reject inconsistent states")]
     [Trait("Feature", "cli-filesystem"), Trait("Evidence", "Unit")]
     public void FilesystemResultFactoriesRejectInconsistentStates()
@@ -94,6 +99,7 @@ public sealed class FilesystemValueTests
             FileReadResult<string>.Failed(FileReadState.InvalidSyntax, "document", mismatched));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Filesystem exception projection removes physical paths")]
     [Trait("Feature", "cli-filesystem"), Trait("Evidence", "Unit")]
     public void ExceptionProjectionRemovesPhysicalPaths()

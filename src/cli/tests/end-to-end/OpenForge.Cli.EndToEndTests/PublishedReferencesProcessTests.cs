@@ -18,11 +18,11 @@ public sealed class PublishedReferencesProcessTests
 
         Assert.Equal(2, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
-        Assert.Contains("Workspace:", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Direction: both", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Incoming", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Outgoing", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Direct links", result.StandardOutput, StringComparison.Ordinal);
+        Assert.StartsWith(".agents/docs.md", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("  out  ", result.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Direction:", result.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Direct links", result.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Inspected:", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("target.md", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("unicodé.md", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("space file.md", result.StandardOutput, StringComparison.Ordinal);
@@ -38,24 +38,24 @@ public sealed class PublishedReferencesProcessTests
             target,
             working.Path,
             working.SnapshotState,
-            ["references", "docs", "--direction=out", "--json"]);
+            ["references", "docs", "--direction=out", "--format=json", "--detail=full"]);
 
         Assert.Equal(2, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
-        Assert.Equal("attention", document.RootElement.GetProperty("status").GetString());
-        var outgoing = document.RootElement.GetProperty("result").GetProperty("outgoing");
-        Assert.Equal(8, outgoing.GetProperty("occurrenceCount").GetInt32());
-        var occurrences = outgoing.GetProperty("occurrences").EnumerateArray().ToArray();
+        Assert.Equal("completed-with-warnings", document.RootElement.GetProperty("status").GetString());
+        var occurrences = document.RootElement.GetProperty("data").GetProperty("outgoing").EnumerateArray().ToArray();
         Assert.Equal(8, occurrences.Length);
         Assert.Equal(
             ["target.md#Overview", "target.md#Overview", "space file.md", "unicodé.md#Café", "missing.md#Absent", "#Overview", "https://example.invalid/reference", "target.md#Overview"],
-            occurrences.Select(value => value.GetProperty("rawDestination").GetString()));
-        Assert.Equal("external-unchecked", occurrences[6].GetProperty("target").GetProperty("resolution").GetString());
-        Assert.Equal("network-not-attempted", occurrences[6].GetProperty("target").GetProperty("network").GetString());
-        Assert.Equal("missing", occurrences[4].GetProperty("target").GetProperty("resolution").GetString());
-        Assert.Equal("fragment-missing", occurrences[5].GetProperty("target").GetProperty("resolution").GetString());
-        Assert.Equal(["base", "base", "base", "base", "base", "base", "base", "overwrite"], occurrences.Select(value => value.GetProperty("source").GetProperty("layer").GetString()));
+            occurrences.Select(value => value.GetProperty("destination").GetString()));
+        Assert.Equal("external-unchecked", occurrences[6].GetProperty("state").GetString());
+        Assert.Equal("missing", occurrences[4].GetProperty("state").GetString());
+        Assert.Equal("fragment-missing", occurrences[5].GetProperty("state").GetString());
+        Assert.Equal(["base", "base", "base", "base", "base", "base", "base", "overwrite"], occurrences.Select(value => value.GetProperty("layer").GetString()));
+
+        // An external destination resolves to nothing, so the nullable member is omitted.
+        Assert.False(occurrences[6].TryGetProperty("resolvedPath", out _));
     }
 
     [Fact(DisplayName = "Published References incoming filters preserve supplied order and filtered provenance"), Trait("Feature", "references"), Trait("Evidence", "EndToEnd")]
@@ -67,21 +67,24 @@ public sealed class PublishedReferencesProcessTests
             target,
             working.Path,
             working.SnapshotState,
-            ["references", "docs", "--direction=in", "--include", "alpha", "--exclude=beta", "--json"]);
+            ["references", "docs", "--direction=in", "--include", "alpha", "--exclude=beta", "--format=json", "--detail=full"]);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
-        var selection = document.RootElement.GetProperty("result").GetProperty("incomingSelection");
-        Assert.Equal("filtered", selection.GetProperty("mode").GetString());
-        Assert.Equal(
-            [("include", "alpha"), ("exclude", "beta")],
-            selection.GetProperty("supplied").EnumerateArray().Select(value =>
-                (value.GetProperty("role").GetString(), value.GetProperty("value").GetString())));
+        var filters = document.RootElement.GetProperty("data").GetProperty("filters");
+        Assert.Equal(["alpha"], filters.GetProperty("include").EnumerateArray().Select(value => value.GetString()));
+        Assert.Equal(["beta"], filters.GetProperty("exclude").EnumerateArray().Select(value => value.GetString()));
         var occurrence = Assert.Single(
-            document.RootElement.GetProperty("result").GetProperty("incoming").GetProperty("occurrences").EnumerateArray());
-        Assert.Equal("filtered-incoming-scan", occurrence.GetProperty("provenance").GetString());
-        Assert.Equal("alpha", occurrence.GetProperty("source").GetProperty("id").GetString());
+            document.RootElement.GetProperty("data").GetProperty("incoming").EnumerateArray());
+        Assert.Equal(".agents/alpha.md", occurrence.GetProperty("path").GetString());
+
+        // The scan that produced the row is evidence in its own right: only the included source
+        // was read.
+        Assert.Equal(
+            [".agents/alpha.md"],
+            document.RootElement.GetProperty("data").GetProperty("scanned").EnumerateArray()
+                .Select(value => value.GetProperty("path").GetString()));
     }
 
 }

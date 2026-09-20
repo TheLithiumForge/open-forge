@@ -7,11 +7,12 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Init;
 
 public sealed class RouteInitPlanBuilderTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init Framework plan formation slugifies inserted Unicode scope labels and preserves managed segment order"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void FrameworkPlanFormationSlugifiesInsertedUnicodeScopes()
     {
         var request = RouteInitRedTestData.Request(
-            routeTarget: "memory/Überblick 2026/crystallized/documents",
+            routeTarget: "memory/Überblick 2026/working",
             scaffold: RouteInitScaffold.Framework,
             mode: RouteInitMode.DryRun);
         var payload = EmbeddedFrameworkPayloadReader.Read().Payload
@@ -26,20 +27,21 @@ public sealed class RouteInitPlanBuilderTests
         var alignment = Assert.IsType<RouteInitFrameworkAlignment>(build.Alignment);
 
         Assert.Equal(
-            "memory/überblick-2026/crystallized/documents",
+            "memory/überblick-2026/working",
             alignment.Target.Id);
         Assert.Equal(
-            ["memory", "überblick-2026", "crystallized", "documents"],
+            ["memory", "überblick-2026", "working"],
             alignment.Segments.Select(item => item.ConcreteSegment));
         Assert.Equal(
-            [RouteInitFrameworkSegmentRole.InstalledRoot, RouteInitFrameworkSegmentRole.Scope, RouteInitFrameworkSegmentRole.Managed, RouteInitFrameworkSegmentRole.Managed],
+            [RouteInitFrameworkSegmentRole.InstalledRoot, RouteInitFrameworkSegmentRole.Scope, RouteInitFrameworkSegmentRole.Managed],
             alignment.Segments.Select(item => item.Role));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init Framework alignment preserves an exact compatibility target path"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void FrameworkAlignmentPreservesExactCompatibilityTargetPath()
     {
-        const string targetPath = ".agents/memory/release-notes/crystallized/documents/index.md";
+        const string targetPath = ".agents/memory/release-notes/working/index.md";
         var request = RouteInitRedTestData.Request(
             routeTarget: targetPath,
             scaffold: RouteInitScaffold.Framework,

@@ -1,0 +1,11 @@
+status=completed
+mode=dry-run
+force=false
+automatic=true
+classification=safe-absence
+effects=27
+lifecycle=publish/planned
+recovery=not-required
+verification=not-requested
+findings=0
+next=none

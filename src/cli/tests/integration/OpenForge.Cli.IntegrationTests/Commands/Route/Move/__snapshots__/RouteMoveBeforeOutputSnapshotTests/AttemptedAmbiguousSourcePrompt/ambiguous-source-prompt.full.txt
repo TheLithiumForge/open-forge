@@ -1,0 +1,7 @@
+Cannot move docs/guide: The ID docs/guide matches more than one file. Use the exact path.
+Workspace: <workspace>
+  Error  docs/guide  Identity collision [route-move.identity-collision]
+         The ID docs/guide matches more than one file. Use the exact path.
+  Effects:
+  0 files scanned; 0 links found.
+  files scanned: the reference scan was not completed

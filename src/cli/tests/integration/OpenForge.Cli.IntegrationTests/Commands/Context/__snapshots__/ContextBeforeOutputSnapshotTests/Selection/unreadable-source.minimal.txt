@@ -1,0 +1,32 @@
+  Warning  .agents/docs/guide.md  Source encoding is invalid
+         .agents/docs/guide.md is not valid UTF-8, so it was not included.
+=== AGENTS.md ===
+# Workspace
+
+Read `.agents/loader.md`.
+
+=== .agents/loader.md (loader) ===
+# Open Forge Loader
+
+## Entries
+
+- [Documents](docs/_docs.md) - #LoadNow #Docs
+
+=== .agents/docs/_docs.md (docs) ===
+---
+open-forge:
+  description: Documents
+  tags: [Docs]
+---
+# Documents
+
+## Entries
+
+- [Guide](guide.md) - #Docs #Guide
+- [Reference](reference.md) - #Docs
+
+=== .agents/docs/guide.md (docs/guide) ===
+  sources: The selected Context source layer .agents/docs/guide.md could not be read completely.
+  tokens: The selected Context source layer .agents/docs/guide.md could not be read completely.
+  bytes: The selected Context source layer .agents/docs/guide.md could not be read completely.
+Next: open-forge doctor

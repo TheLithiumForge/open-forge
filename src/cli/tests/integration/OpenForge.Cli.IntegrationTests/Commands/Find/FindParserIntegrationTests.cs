@@ -8,6 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Find;
 
 public sealed class FindParserIntegrationTests
 {
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Pinned Find parser preserves native forms, cross-option occurrence order, and explicit missing values")]
     [InlineData("spaced-equals-colon")]
     [InlineData("missing-include")]

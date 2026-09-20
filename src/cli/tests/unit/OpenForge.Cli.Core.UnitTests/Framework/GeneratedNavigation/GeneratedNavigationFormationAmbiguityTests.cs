@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.GeneratedNavigation;
 
 public sealed class GeneratedNavigationFormationAmbiguityTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Root-entrypoint ambiguity accepts exact intended entrypoints for one represented folder")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void RootEntrypointKindValidatesItsSemanticShape()
@@ -26,6 +27,7 @@ public sealed class GeneratedNavigationFormationAmbiguityTests
         Assert.Equal([canonical, compatibility], ambiguity.IntendedSources);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-parent ambiguity accepts exact intended parents for a canonical subject")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void RouteParentKindValidatesItsSemanticShape()
@@ -47,6 +49,7 @@ public sealed class GeneratedNavigationFormationAmbiguityTests
         Assert.Equal([first, second], ambiguity.IntendedSources);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Physical-alias ambiguity accepts its observed canonical representative")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void PhysicalAliasKindValidatesItsSemanticShape()
@@ -71,6 +74,7 @@ public sealed class GeneratedNavigationFormationAmbiguityTests
         Assert.Equal([first, second], ambiguity.Candidates);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "An undefined generated-navigation ambiguity kind is rejected")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void UndefinedKindIsRejected()

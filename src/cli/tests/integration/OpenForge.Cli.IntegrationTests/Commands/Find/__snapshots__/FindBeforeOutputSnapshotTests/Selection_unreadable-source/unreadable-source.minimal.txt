@@ -1,0 +1,8 @@
+  Warning  .agents/docs/guide.md  Source encoding is invalid
+         .agents/docs/guide.md is not valid UTF-8 and was skipped.
+
+  docs            .agents/docs/_docs.md
+  docs/guide      .agents/docs/guide.md
+  docs/reference  .agents/docs/reference.md
+  loader          .agents/loader.md
+Next: open-forge doctor

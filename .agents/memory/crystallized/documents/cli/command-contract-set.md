@@ -178,13 +178,13 @@ actual leaf operations. Each leaf keeps its Interface and Behavior in its own
 local scope, while all five use the one shared-capability Workspace Libraries
 Technical Design:
 
-| Operation         | Interface                                                     | Behavior                                                       | Technical Design                                                                    |
-| ----------------- | ------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `library list`    | [`list Interface`](contracts/library/list/interface.md)       | [`list Behavior`](contracts/library/list/behavior.md)          | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
-| `library inspect` | [`inspect Interface`](contracts/library/inspect/interface.md) | [`inspect Behavior`](contracts/library/inspect/behavior.md)    | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
-| `library attach`  | [`attach Interface`](contracts/library/attach/interface.md)   | [`attach Behavior`](contracts/library/attach/behavior.md)      | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
-| `library sync`    | [`sync Interface`](contracts/library/sync/interface.md)       | [`sync Behavior`](contracts/library/sync/behavior.md)         | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
-| `library detach`  | [`detach Interface`](contracts/library/detach/interface.md)   | [`detach Behavior`](contracts/library/detach/behavior.md)     | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
+| Operation         | Interface                                                     | Behavior                                                    | Technical Design                                                                   |
+| ----------------- | ------------------------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `library list`    | [`list Interface`](contracts/library/list/interface.md)       | [`list Behavior`](contracts/library/list/behavior.md)       | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
+| `library inspect` | [`inspect Interface`](contracts/library/inspect/interface.md) | [`inspect Behavior`](contracts/library/inspect/behavior.md) | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
+| `library attach`  | [`attach Interface`](contracts/library/attach/interface.md)   | [`attach Behavior`](contracts/library/attach/behavior.md)   | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
+| `library sync`    | [`sync Interface`](contracts/library/sync/interface.md)       | [`sync Behavior`](contracts/library/sync/behavior.md)       | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
+| `library detach`  | [`detach Interface`](contracts/library/detach/interface.md)   | [`detach Behavior`](contracts/library/detach/behavior.md)   | [`Workspace Libraries Technical Design`](technical-designs/workspace-libraries.md) |
 
 The `library` group performs no operation by itself. Its five leaves share the
 accepted Library record and projection capability while keeping each operation's

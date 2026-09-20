@@ -11,6 +11,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveRevalidationIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove refuses a held workspace lock before observing effects"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task ContendedWorkspaceLockIsWriteFree()
@@ -22,7 +23,7 @@ public sealed class RouteRemoveRevalidationIntegrationTests
         var error = new StringWriter();
 
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--automatic"],
             output,
             error);
 
@@ -30,12 +31,13 @@ public sealed class RouteRemoveRevalidationIntegrationTests
         Assert.Equal(CliSemanticStatus.Blocked, completion.Status);
         Assert.Equal(string.Empty, output.ToString());
         Assert.Contains(
-            "route-remove.workspace-lock-unavailable",
+            "Cannot remove guidance/old guide: Another Open Forge command holds the workspace lock. Nothing was changed.",
             error.ToString(),
             StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove revalidates generated navigation before applying a stale plan"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task ChangedGeneratedRegionBlocksApplicationWithoutWrites()
@@ -69,6 +71,7 @@ public sealed class RouteRemoveRevalidationIntegrationTests
         Assert.Equal(beforeRevalidation, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove revalidates the live target instead of reusing an old snapshot"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task ChangedSubjectBytesBlockApplicationWithoutWrites()

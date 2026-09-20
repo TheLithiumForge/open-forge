@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Loading;
 
 public sealed class SourceGeneratedDestinationResolverCharacterizationTests
 {
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Generated destinations preserve literal characters and decode escaped runs exactly once"),
         InlineData("space%20name.md", ".agents/root/space name.md"),
         InlineData("space%C2%A0name.md", ".agents/root/space\u00A0name.md"),
@@ -20,6 +21,7 @@ public sealed class SourceGeneratedDestinationResolverCharacterizationTests
         Assert.Equal(expectedPath, actual);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Generated destinations reject raw whitespace and malformed escaped byte runs"),
         InlineData("space name.md"),
         InlineData("space\tname.md"),
@@ -44,6 +46,7 @@ public sealed class SourceGeneratedDestinationResolverCharacterizationTests
         Assert.Null(SourceGeneratedDestinationResolver.Resolve(".agents/root/_root.md", false, destination));
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Generated destinations retain containing-source and Loader traversal policies"),
         InlineData(false, "./child//../leaf.md", ".agents/root/leaf.md"),
         InlineData(true, "./child//../leaf.md", ".agents/leaf.md"),
@@ -61,6 +64,7 @@ public sealed class SourceGeneratedDestinationResolverCharacterizationTests
         Assert.Equal(expectedPath, SourceGeneratedDestinationResolver.Resolve(".agents/root/_root.md", isLoader, destination));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Generated destinations preserve literal unpaired UTF-16 surrogates"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void LiteralSurrogatesAreNotReencoded()
     {

@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Filesystem;
 
 public sealed class RouteListInventoryReaderPhysicalIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list inventory traverses finite contained file and directory aliases deterministically")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task ContainedAliasesRemainFiniteFactsAndRetainLogicalSources()
@@ -56,6 +57,7 @@ public sealed class RouteListInventoryReaderPhysicalIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list inventory blocks external, reentering, dangling, and cyclic boundaries without outside reads")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task UnsafePhysicalBoundariesBlockAndRetainSafeSources()

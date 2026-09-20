@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 3,
+  "command": "install",
+  "status": "blocked",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot install: 1 file already exists where the Framework would write.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "install.target-occupied",
+      "title": "Target is occupied",
+      "message": ".agents/memory/_memory.md already exists and is not managed by Open Forge.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/memory/_memory.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge install --force --dry-run",
+          "reason": "Preview replacing the occupied Framework targets."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0,
+    "sectionsAdded": 0,
+    "filesReplaced": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "classification": "eligible-initial-occupant",
+    "footprint": {
+      "files": 12,
+      "directories": null,
+      "sections": 2
+    },
+    "lockPath": ".agents/open-forge.lock.json",
+    "effects": [],
+    "source": {
+      "inventoryFingerprint": "<sha256>",
+      "assetCount": 14
+    },
+    "lifecycle": {
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "verification": "not-requested"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge install --force --dry-run",
+    "reason": "Preview replacing the occupied Framework targets."
+  }
+}

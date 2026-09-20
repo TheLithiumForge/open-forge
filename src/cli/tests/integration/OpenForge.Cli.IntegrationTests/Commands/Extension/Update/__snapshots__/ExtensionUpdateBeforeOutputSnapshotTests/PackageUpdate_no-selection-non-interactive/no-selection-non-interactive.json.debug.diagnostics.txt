@@ -1,0 +1,5 @@
+status=invalid-input
+packages=0
+effects=0
+findings=1
+A multi-package Extension source requires explicit Extension IDs or --all.

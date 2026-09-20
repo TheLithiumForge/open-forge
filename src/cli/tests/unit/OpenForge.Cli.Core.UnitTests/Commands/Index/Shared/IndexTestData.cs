@@ -76,11 +76,10 @@ internal static class IndexTestData
 
     internal static CliPresentationRequest<IndexResult> Presentation(
         IndexResult result,
-        CliView view = CliView.Expanded,
-        CliVerbosity verbosity = CliVerbosity.Normal)
+        CliDetail view = CliDetail.Standard)
         => CliPresentationStage.Create(
             result,
-            new CliPresentation(CliOutputFormat.Human, view, verbosity));
+            new CliPresentation(CliFormat.Text, view));
 
     internal static CliWorkspace Workspace()
     {

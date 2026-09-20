@@ -1,0 +1,5 @@
+Open Forge is not installed in <workspace>.
+Workspace: <workspace>
+1 routed files, 3 all routed tokens, 3 infos.
+  Preview the installation for this workspace.
+Next: open-forge install --dry-run

@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Reading;
 
 public sealed class SourceReadSessionTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source read sessions retain catalogue reader and optional default scope"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void SessionRetainsFactsAndRejectsNullRequirements()
     {

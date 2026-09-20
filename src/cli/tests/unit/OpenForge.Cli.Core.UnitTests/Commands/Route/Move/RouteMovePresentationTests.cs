@@ -1,9 +1,11 @@
+using System.Collections.Immutable;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
-using OpenForge.Cli.Core.Commands.Route.Move.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
+using OpenForge.Cli.Core.Presentation.Route.Move;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
@@ -12,131 +14,77 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Move;
 
 public sealed class RouteMovePresentationTests
 {
-    [Fact(DisplayName = "Route Move JSON preserves every nested object order"), Trait("Feature", "route-move"), Trait("Evidence", "Unit")]
-    public void JsonPreservesEveryNestedObjectOrder()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Move native JSON exposes the accepted ordered change data"),
+     Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
+    public void NativeJsonExposesOrderedChangeData()
     {
-        using var document = JsonDocument.Parse(RouteMoveJsonRenderer.Render(
-            Presentation(Result(CliSemanticStatus.Attention), CliOutputFormat.Json, CliView.Compact, CliVerbosity.Normal)));
+        var output = Render(
+            Result(CliSemanticStatus.Attention),
+            CliFormat.Json,
+            CliDetail.Standard);
+        using var document = JsonDocument.Parse(output.PrimaryContent);
         var root = document.RootElement;
-        var result = root.GetProperty("result");
-        AssertPropertyOrder(root.GetProperty("workspace"), "path", "selectedBy");
-        AssertPropertyOrder(result.GetProperty("source"), "requested", "selectedBy", "id", "path", "form");
-        AssertPropertyOrder(result.GetProperty("destination"), "requested", "id", "path", "parentId", "parentPath");
-        var subject = result.GetProperty("subject");
-        AssertPropertyOrder(subject, "kind", "layers", "items");
-        Assert.All(subject.GetProperty("layers").EnumerateArray(), layer => AssertPropertyOrder(layer, "layer", "sourcePath", "destinationPath"));
-        AssertPropertyOrder(result.GetProperty("ownership"), "state", "framework", "extensions", "claims");
-        var references = result.GetProperty("references");
-        AssertPropertyOrder(references, "coverage", "scannedSourceCount", "inspectedSourceCount", "occurrenceCount", "rewrites");
-        var rewrite = Assert.Single(references.GetProperty("rewrites").EnumerateArray());
-        AssertPropertyOrder(rewrite, "sourcePath", "destinationSourcePath", "layer", "location", "before", "expected", "oldTarget", "expectedTarget");
-        AssertPropertyOrder(rewrite.GetProperty("location"), "line", "column", "byteOffset", "byteLength");
-        AssertPropertyOrder(rewrite.GetProperty("oldTarget"), "id", "path");
-        AssertPropertyOrder(rewrite.GetProperty("expectedTarget"), "id", "path");
-        var generated = result.GetProperty("generatedNavigation");
-        AssertPropertyOrder(generated, "coverage", "regions");
-        AssertPropertyOrder(Assert.Single(generated.GetProperty("regions").EnumerateArray()), "path", "reasons", "state");
-        AssertPropertyOrder(result.GetProperty("plan"), "completeness", "safety");
-        Assert.All(result.GetProperty("effects").EnumerateArray(), effect =>
-        {
-            AssertPropertyOrder(effect, "path", "kind", "action", "before", "expected", "outcome", "residual");
-            AssertPropertyOrder(effect.GetProperty("before"), "kind", "contentSha256");
-            AssertPropertyOrder(effect.GetProperty("expected"), "kind", "contentSha256");
-        });
-        AssertPropertyOrder(result.GetProperty("recovery"), "state", "protectedPaths", "residualPath");
-        AssertPropertyOrder(Assert.Single(result.GetProperty("findings").EnumerateArray()), "code", "status", "target", "cause");
-        AssertPropertyOrder(root.GetProperty("next"), "command", "reason");
-    }
+        var data = root.GetProperty("data");
 
-    private const string RecoveryPath = "/recovery/route-move-final.zip";
-
-    [Fact(DisplayName = "Route Move attention human views expose every compact and expanded change fact"),
-     Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
-    public void AttentionHumanViewsExposeEveryChangeFact()
-    {
-        var result = Result(CliSemanticStatus.Attention);
-
-        var expanded = RouteMoveHumanRenderer.Render(
-            Presentation(result, CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal));
-        var compact = RouteMoveHumanRenderer.Render(
-            Presentation(result, CliOutputFormat.Human, CliView.Compact, CliVerbosity.Normal));
-
-        foreach (var text in new[] { expanded, compact })
-        {
-            Assert.Contains("requires attention", text, StringComparison.OrdinalIgnoreCase);
-            Assert.Contains(RouteMoveTestData.DestinationPath, text, StringComparison.Ordinal);
-            Assert.Contains("README.md:3:2", text, StringComparison.Ordinal);
-            Assert.Contains(RouteMoveTestData.SourcePath, text, StringComparison.Ordinal);
-            Assert.Contains("old%20guide.md", text, StringComparison.Ordinal);
-            Assert.Contains("new%20guide.md", text, StringComparison.Ordinal);
-            Assert.Contains(".agents/guidance/_guidance.md", text, StringComparison.Ordinal);
-            Assert.Contains(RecoveryPath, text, StringComparison.Ordinal);
-            Assert.Contains("open-forge cleanup", text, StringComparison.Ordinal);
-            Assert.Contains("[route-move.recovery-artifact-retained]", text, StringComparison.Ordinal);
-            Assert.Contains(Assert.Single(result.Findings).Cause, text, StringComparison.Ordinal);
-            Assert.All(result.Recovery.ProtectedPaths, path => Assert.Contains(path, text, StringComparison.Ordinal));
-        }
-
-        var verbose = RouteMoveHumanRenderer.Render(
-            Presentation(result, CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Verbose));
-        Assert.Equal(expanded, verbose);
-    }
-
-    [Fact(DisplayName = "Route Move attention JSON exposes the exact ordered schema-v1 graph"),
-     Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
-    public void AttentionJsonExposesExactOrderedSchemaV1Graph()
-    {
-        var json = RouteMoveJsonRenderer.Render(
-            Presentation(
-                Result(CliSemanticStatus.Attention),
-                CliOutputFormat.Json,
-                CliView.Expanded,
-                CliVerbosity.Normal));
-        using var document = JsonDocument.Parse(json);
-        var root = document.RootElement;
-        var result = root.GetProperty("result");
-
-        AssertPropertyOrder(root, "schemaVersion", "command", "status", "workspace", "result", "next");
         AssertPropertyOrder(
-            result,
-            "mode",
-            "source",
-            "destination",
-            "subject",
-            "ownership",
-            "references",
-            "generatedNavigation",
-            "plan",
+            root,
+            "schemaVersion",
+            "command",
+            "status",
+            "detail",
+            "filter",
+            "workspace",
+            "summary",
+            "findings",
             "effects",
-            "unchangedPaths",
+            "counts",
+            "limitations",
+            "data",
             "recovery",
-            "verification",
-            "findings");
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
-        Assert.Equal("route move", root.GetProperty("command").GetString());
-        Assert.Equal("attention", root.GetProperty("status").GetString());
-        Assert.Equal("leaf", result.GetProperty("subject").GetProperty("kind").GetString());
-        Assert.Empty(result.GetProperty("subject").GetProperty("items").EnumerateArray());
-        Assert.Equal(
-            ["moved-file", "reference-source", "moved-file"],
-            result.GetProperty("effects").EnumerateArray()
-                .Select(effect => effect.GetProperty("kind").GetString()));
-        Assert.Equal(
-            [RouteMoveTestData.DestinationPath, "README.md", RouteMoveTestData.SourcePath],
-            result.GetProperty("effects").EnumerateArray()
-                .Select(effect => effect.GetProperty("path").GetString()));
-        Assert.Equal("retained", result.GetProperty("recovery").GetProperty("state").GetString());
-        Assert.Equal(RecoveryPath, result.GetProperty("recovery").GetProperty("residualPath").GetString());
-        Assert.Equal("verified", result.GetProperty("verification").GetString());
-        Assert.Equal(
-            "route-move.recovery-artifact-retained",
-            Assert.Single(result.GetProperty("findings").EnumerateArray()).GetProperty("code").GetString());
+            "next");
+        AssertPropertyOrder(data, "mode", "subject", "source", "destination", "moved", "rewrittenLinks");
+        AssertPropertyOrder(data.GetProperty("source"), "id", "path");
+        AssertPropertyOrder(data.GetProperty("destination"), "id", "path");
+        AssertPropertyOrder(Assert.Single(data.GetProperty("moved").EnumerateArray()), "from", "to");
+        var link = Assert.Single(data.GetProperty("rewrittenLinks").EnumerateArray());
+        AssertPropertyOrder(link, "path", "location", "from", "to");
+        AssertPropertyOrder(link.GetProperty("from"), "id", "path");
+        AssertPropertyOrder(link.GetProperty("to"), "id", "path");
+        Assert.Equal("completed-with-warnings", root.GetProperty("status").GetString());
+        Assert.Equal("file", data.GetProperty("subject").GetString());
+        Assert.Equal("retained", root.GetProperty("recovery").GetProperty("disposition").GetString());
         Assert.Equal("open-forge cleanup", root.GetProperty("next").GetProperty("command").GetString());
     }
 
-    [Fact(DisplayName = "Route Move category JSON retains every item field in exact order"),
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Move native text retains changes at the accepted detail levels"),
      Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
-    public void CategoryJsonRetainsEveryItemFieldInExactOrder()
+    public void NativeTextRetainsChangesAtDetailLevels()
+    {
+        var result = Result(CliSemanticStatus.Attention);
+        var minimal = Render(result, CliFormat.Text, CliDetail.Minimal).PrimaryContent;
+        var standard = Render(result, CliFormat.Text, CliDetail.Standard).PrimaryContent;
+
+        Assert.StartsWith("Moved ", minimal, StringComparison.Ordinal);
+        Assert.Contains(RouteMoveTestData.DestinationPath, minimal, StringComparison.Ordinal);
+        Assert.Contains("Entry updated in .agents/guidance/_guidance.md", minimal, StringComparison.Ordinal);
+        Assert.Contains("Rewrote 1 link that pointed at the old path:", minimal, StringComparison.Ordinal);
+        Assert.Contains("README.md:3:2", minimal, StringComparison.Ordinal);
+        Assert.DoesNotContain("old%20guide.md", minimal, StringComparison.Ordinal);
+        Assert.Contains("Workspace:", standard, StringComparison.Ordinal);
+        Assert.Contains(
+            $"{RouteMoveTestData.SourcePath} -> {RouteMoveTestData.DestinationPath}",
+            standard,
+            StringComparison.Ordinal);
+        Assert.Contains("Recovery bundle was retained", standard, StringComparison.Ordinal);
+        Assert.Contains("open-forge cleanup", standard, StringComparison.Ordinal);
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Move category JSON lists each moved member in the native data"),
+     Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
+    public void CategoryJsonListsEachMovedMember()
     {
         var formation = RouteMoveTestData.Formation(RouteMoveMode.DryRun) with
         {
@@ -157,8 +105,6 @@ public sealed class RouteMovePresentationTests
                     new RouteMoveSubjectItem
                     {
                         Kind = RouteMoveItemKind.Directory,
-                        Layer = null,
-                        SourceId = null,
                         SourcePath = ".agents/guidance/topics",
                         DestinationPath = ".agents/archive/topics",
                     },
@@ -170,72 +116,64 @@ public sealed class RouteMovePresentationTests
                         SourcePath = ".agents/guidance/topics/_topics.md",
                         DestinationPath = ".agents/archive/topics/_topics.md",
                     },
+                    new RouteMoveSubjectItem
+                    {
+                        Kind = RouteMoveItemKind.Resource,
+                        SourcePath = ".agents/guidance/topics/image.bin",
+                        DestinationPath = ".agents/archive/topics/image.bin",
+                    },
                 ],
             },
         };
         var result = new RouteMoveResult(formation, CliSemanticStatus.Complete, next: null);
 
-        var json = RouteMoveJsonRenderer.Render(
-            Presentation(
-                result,
-                CliOutputFormat.Json,
-                CliView.Expanded,
-                CliVerbosity.Normal));
-        using var document = JsonDocument.Parse(json);
-        var items = document.RootElement.GetProperty("result")
-            .GetProperty("subject")
-            .GetProperty("items")
-            .EnumerateArray()
-            .ToArray();
+        var output = Render(result, CliFormat.Json, CliDetail.Standard);
+        using var document = JsonDocument.Parse(output.PrimaryContent);
+        var data = document.RootElement.GetProperty("data");
+        var moved = data.GetProperty("moved").EnumerateArray().ToArray();
 
-        Assert.Equal(2, items.Length);
-        Assert.All(
-            items,
-            item => AssertPropertyOrder(
-                item,
-                "kind",
-                "layer",
-                "sourceId",
-                "sourcePath",
-                "destinationPath"));
-        Assert.Equal("directory", items[0].GetProperty("kind").GetString());
-        Assert.Equal(JsonValueKind.Null, items[0].GetProperty("layer").ValueKind);
-        Assert.Equal("entrypoint", items[1].GetProperty("kind").GetString());
-        Assert.Equal("base", items[1].GetProperty("layer").GetString());
+        Assert.Equal("route", data.GetProperty("subject").GetString());
+        Assert.Equal(
+            [
+                ".agents/guidance/topics/_topics.md",
+                ".agents/guidance/topics/image.bin",
+            ],
+            moved.Select(item => item.GetProperty("from").GetString()));
+        Assert.Equal(
+            [
+                ".agents/archive/topics/_topics.md",
+                ".agents/archive/topics/image.bin",
+            ],
+            moved.Select(item => item.GetProperty("to").GetString()));
     }
 
-    [Theory(DisplayName = "Route Move failed and interrupted results render their exact status and next action"),
-     InlineData((int)CliSemanticStatus.Failed, "failed", "open-forge route move --verbose"),
-     InlineData((int)CliSemanticStatus.Interrupted, "interrupted", "open-forge route move"),
-     Trait("Feature", "route-move"), Trait("Evidence", "UnitBehavior")]
-    public void FailedAndInterruptedResultsRenderExactStatusAndNextAction(
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Route Move native output preserves failed and cancelled status actions")]
+    [InlineData((int)CliSemanticStatus.Failed, "Route move stopped after 0 of 3 changes.", "open-forge route move --detail debug")]
+    [InlineData((int)CliSemanticStatus.Interrupted, "Route move was cancelled. Nothing was changed.", "open-forge route move")]
+    [Trait("Feature", "route-move")]
+    [Trait("Evidence", "UnitBehavior")]
+    public void FailedAndInterruptedResultsUseNativeStatusActions(
         int statusValue,
-        string expectedStatus,
+        string expectedHeadline,
         string expectedCommand)
     {
         var result = Result((CliSemanticStatus)statusValue);
-        var humanPresentation = Presentation(
-            result,
-            CliOutputFormat.Human,
-            CliView.Compact,
-            CliVerbosity.Normal);
-        var jsonPresentation = Presentation(
-            result,
-            CliOutputFormat.Json,
-            CliView.Compact,
-            CliVerbosity.Normal);
+        var text = Render(result, CliFormat.Text, CliDetail.Minimal);
+        var json = Render(result, CliFormat.Json, CliDetail.Minimal);
+        using var document = JsonDocument.Parse(json.PrimaryContent);
 
-        var human = RouteMoveHumanRenderer.Render(humanPresentation);
-        var json = RouteMoveJsonRenderer.Render(jsonPresentation);
-        using var document = JsonDocument.Parse(json);
-
-        Assert.Contains(expectedStatus, human, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains(expectedCommand, human, StringComparison.Ordinal);
-        Assert.Equal(expectedStatus, document.RootElement.GetProperty("status").GetString());
+        Assert.StartsWith(expectedHeadline, text.PrimaryContent, StringComparison.Ordinal);
+        Assert.Contains($"Next: {expectedCommand}", text.PrimaryContent, StringComparison.Ordinal);
+        Assert.Equal(
+            statusValue == (int)CliSemanticStatus.Interrupted ? "cancelled" : "failed",
+            document.RootElement.GetProperty("status").GetString());
         Assert.Equal(
             expectedCommand,
             document.RootElement.GetProperty("next").GetProperty("command").GetString());
     }
+
+    private const string RecoveryPath = "/recovery/route-move-final.zip";
 
     private static RouteMoveResult Result(CliSemanticStatus status)
     {
@@ -326,24 +264,11 @@ public sealed class RouteMovePresentationTests
             },
             Findings = [finding],
         };
-        var next = status switch
-        {
-            CliSemanticStatus.Attention => new CliNextAction(
-                "open-forge cleanup",
-                "Review and remove the reported recovery artifact after confirming the verified Route Move result."),
-            CliSemanticStatus.Failed => new CliNextAction(
-                "open-forge route move --verbose",
-                "Report the failure and retry the same Route Move request with bounded diagnostics."),
-            CliSemanticStatus.Interrupted => new CliNextAction(
-                "open-forge route move",
-                "Rerun the same Route Move request."),
-            _ => throw new ArgumentOutOfRangeException(nameof(status), status, "Unsupported presentation status."),
-        };
 
-        return new RouteMoveResult(formation, status, next);
+        return new RouteMoveResult(formation, status, next: null);
     }
 
-    private static System.Collections.Immutable.ImmutableArray<RouteMoveEffect> Effects(
+    private static ImmutableArray<RouteMoveEffect> Effects(
         RouteMoveEffectOutcome outcome,
         RouteMoveEffectResidual residual)
         =>
@@ -389,14 +314,15 @@ public sealed class RouteMovePresentationTests
             Residual = residual,
         };
 
-    private static CliPresentationRequest<RouteMoveResult> Presentation(
+    private static CliRenderedOutput Render(
         RouteMoveResult result,
-        CliOutputFormat format,
-        CliView view,
-        CliVerbosity verbosity)
-        => new(
-            result,
-            new CliPresentation(format, view, verbosity));
+        CliFormat format,
+        CliDetail detail)
+        => CliRenderingStage.Render(
+            new CliPresentationRequest<RouteMoveResult>(
+                result,
+                new CliPresentation(format, detail, null)),
+            RouteMovePresentation.Rendering);
 
     private static void AssertPropertyOrder(
         JsonElement element,

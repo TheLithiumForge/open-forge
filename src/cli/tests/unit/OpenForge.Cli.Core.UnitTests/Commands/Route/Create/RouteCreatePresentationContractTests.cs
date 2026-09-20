@@ -1,43 +1,42 @@
-using OpenForge.Cli.Core.Commands.Route.Create.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Route.Create;
+using OpenForge.Cli.Core.Presentation.Shared.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
+using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Create;
 
 public sealed class RouteCreatePresentationContractTests
 {
-    [Fact(DisplayName = "Route Create JSON projection preserves the accepted typed envelope"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
-    public void JsonProjectionPreservesAcceptedTypedEnvelope()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Create selector preserves the accepted typed data"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
+    public void SelectorPreservesAcceptedTypedData()
     {
-        var projected = RouteCreateJsonProjection.Create(RouteCreateTestData.Result());
+        var selected = CliReportSelection.Select(
+            RouteCreateTestData.Result(),
+            new CliSelection(CliDetail.Standard),
+            RouteCreatePresentation.Rendering);
+        var report = selected.Report;
+        var data = report.Data;
 
-        Assert.Equal(1, projected.SchemaVersion);
-        Assert.Equal("route create", projected.Command);
-        Assert.Equal("complete", projected.Status);
-        Assert.Equal(RouteCreateTestData.Workspace().LexicalRoot, projected.Workspace?.Path);
-        Assert.Equal("explicit-workspace", projected.Workspace?.SelectedBy);
-        Assert.Equal("apply", projected.Result.Mode);
-        Assert.Equal(RouteCreateTestData.TargetId, projected.Result.Target.Requested);
-        Assert.Equal(RouteCreateTestData.TargetId, projected.Result.Target.Id);
-        Assert.Equal(RouteCreateTestData.TargetPath, projected.Result.Target.Path);
-        Assert.Equal(RouteCreateTestData.ParentId, projected.Result.Parent?.Id);
-        Assert.Equal(RouteCreateTestData.ParentPath, projected.Result.Parent?.Path);
-        Assert.Equal("canonical", projected.Result.Parent?.Form);
-        Assert.Equal("Project overview", projected.Result.Metadata.Description);
-        Assert.Equal("Explains the project", projected.Result.Metadata.Responsibility);
-        Assert.Equal(["Docs", "Overview"], projected.Result.Metadata.Tags);
-        Assert.Null(projected.Result.Template);
-        Assert.Equal("complete", projected.Result.Plan.Completeness);
-        Assert.Equal("safe", projected.Result.Plan.Safety);
-        var effect = Assert.Single(projected.Result.Effects);
+        Assert.Equal("route create", report.Command);
+        Assert.Equal(CliSemanticStatus.Complete, report.Status);
+        Assert.Equal("apply", data.Mode);
+        Assert.Equal(RouteCreateTestData.TargetId, data.Target.Id);
+        Assert.Equal(RouteCreateTestData.TargetPath, data.Target.Path);
+        Assert.Equal(RouteCreateTestData.ParentPath, data.ListedIn);
+        Assert.Equal("Project overview", data.Metadata?.Description);
+        Assert.Equal("Explains the project", data.Metadata?.Responsibility);
+        Assert.Equal(["Docs", "Overview"], data.Metadata?.Tags);
+        Assert.Null(data.Template);
+        var effect = Assert.Single(report.Effects);
         Assert.Equal(RouteCreateTestData.TargetPath, effect.Path);
-        Assert.Equal("routed-file", effect.Kind);
-        Assert.Equal("create", effect.Action);
-        Assert.Equal("verified", effect.Outcome);
-        Assert.Equal("none", effect.Residual);
-        Assert.Equal([".agents/loader.md"], projected.Result.UnchangedPaths);
-        Assert.Equal("not-required", projected.Result.Recovery.State);
-        Assert.Null(projected.Result.Recovery.ResidualPath);
-        Assert.Equal("verified", projected.Result.Verification);
-        Assert.Empty(projected.Result.Findings);
-        Assert.Null(projected.Next);
+        Assert.Equal(CliEffectKind.File, effect.Kind);
+        Assert.Equal(CliEffectAction.Created, effect.Action);
+        Assert.Equal(CliEffectOutcome.Done, effect.Outcome);
+        var fileCount = report.Counts.Single(count => count.Name == "filesCreated");
+        Assert.Equal(1, fileCount.Value);
+        Assert.Empty(report.Findings);
+        Assert.Null(report.Next);
     }
 }

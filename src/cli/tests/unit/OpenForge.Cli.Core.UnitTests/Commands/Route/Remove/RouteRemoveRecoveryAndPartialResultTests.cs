@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveRecoveryAndPartialResultTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove plan revalidation requires a cause for every non-exact state"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void PlanRevalidationRequiresCauseForNonExactStates()
@@ -35,6 +36,7 @@ public sealed class RouteRemoveRecoveryAndPartialResultTests
                 "invalid state"));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove applied verification preserves verified and interrupted boundaries"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void AppliedVerificationPreservesBoundaries()
@@ -63,6 +65,7 @@ public sealed class RouteRemoveRecoveryAndPartialResultTests
                 null));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove partial progress retains receipts recovery verification and findings together"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitBehavior")]
     public void PartialProgressRetainsAllOutcomeCoordinates()
@@ -87,6 +90,7 @@ public sealed class RouteRemoveRecoveryAndPartialResultTests
         Assert.Same(finding, Assert.Single(progress.Findings));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove recovery preparation records pre-effect state without claiming completion"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitBehavior")]
     public void RecoveryPreparationRecordsPreEffectState()

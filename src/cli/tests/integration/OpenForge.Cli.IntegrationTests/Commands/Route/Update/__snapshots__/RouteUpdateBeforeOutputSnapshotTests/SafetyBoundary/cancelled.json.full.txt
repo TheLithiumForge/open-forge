@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 3,
+  "command": "route update",
+  "status": "cancelled",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Route update was cancelled. Nothing was changed.",
+    "kind": "cancelled"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-update.interrupted",
+      "title": "Route update was cancelled",
+      "message": "Route update was cancelled. Nothing was changed.",
+      "subject": {
+        "kind": "file",
+        "path": "memory/project-alpha/overview",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route update",
+          "reason": "Rerun the same Route Update request."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "fieldsChanged": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": null,
+      "path": null
+    },
+    "changes": [],
+    "template": null,
+    "listedIn": null
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route update",
+    "reason": "Rerun the same Route Update request."
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 3,
+  "command": "update",
+  "status": "cancelled",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Update was cancelled. Nothing was changed.",
+    "kind": "cancelled"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "update.interrupted",
+      "title": "Update cancelled",
+      "message": "Update was cancelled. Nothing was changed.",
+      "subject": {
+        "kind": "workspace",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge update",
+          "reason": "Rerun the same Update request."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 14,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": false,
+    "automatic": false,
+    "previousContent": null,
+    "lockPath": ".agents/open-forge.lock.json",
+    "unchanged": [
+      {
+        "path": ".agents/directives/_directives.md"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md"
+      },
+      {
+        "path": ".agents/loader.md"
+      },
+      {
+        "path": ".agents/maps/_maps.md"
+      },
+      {
+        "path": ".agents/memory/_memory.md"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md"
+      },
+      {
+        "path": ".agents/memory/working/_working.md"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md"
+      },
+      {
+        "path": ".agents/skills/_skills.md"
+      },
+      {
+        "path": ".agents/templates/_templates.md"
+      },
+      {
+        "path": "AGENTS.md"
+      },
+      {
+        "path": "CLAUDE.md"
+      }
+    ],
+    "entriesSections": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge update",
+    "reason": "Rerun the same Update request."
+  }
+}

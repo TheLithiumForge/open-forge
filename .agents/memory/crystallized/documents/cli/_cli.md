@@ -17,11 +17,21 @@ exact implementation and evidence state.
 The retired TypeScript MVP remains historical reference in Git at `c4428a90`.
 Replacement work uses the executable built in the same worktree.
 
+## Reading Rule
+
+This file is a route map, not a second copy of the CLI contracts. Each
+question has one narrowest authoritative owner below. Higher-level records keep
+only the short summary needed to select that owner and link to it; detailed
+behavior, rationale, and evidence belong in the linked source. The active Task
+route owns current implementation state, while this crystallized route owns
+accepted CLI meaning.
+
 ## Authority Map
 
 | Question                                                                | Source                                                                                  |
 | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| What is the accepted greenfield structure and implementation model?     | [Replacement CLI Architecture](architecture.md)                                         |
+| What is the accepted structure, layer model, and implementation model?  | [Replacement CLI Architecture](architecture.md)                                         |
+| How does one layer work inside?                                         | [CLI Layers](layers/_layers.md)                                                         |
 | Where are replacement command-contract roles, topology, and boundaries? | [Command Contract Set](command-contract-set.md)                                         |
 | What conventions cross replacement commands?                            | [Shared CLI Operation Contract](shared-operation-contract.md)                           |
 | What are the exact shared result, status, exit, and stream coordinates? | [Shared Result Coordinates](contracts/shared/result-coordinates/_result-coordinates.md) |
@@ -42,14 +52,13 @@ discuss an old idea before carrying it into the replacement.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
+- [Reviewed CLI flows and scenarios, their selection decisions, and the boundary before new tests](experience/_experience.md) - #Memory #Document #CLI #Experience #Evergreen
 
-- [Current cross-cutting structure and invariants for the greenfield C# replacement CLI](architecture.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #Architecture #Greenfield #DotNet #NativeAOT #Testing #Release
+- [Current cross-cutting structure and invariants for the C# replacement CLI, with the four-layer model and links to each layer's own record](architecture.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #Architecture #Layers #DotNet #NativeAOT #Testing #Release
 - [Accepted current replacement CLI command-contract roles, topology, and authority boundaries](command-contract-set.md) - #Memory #Crystallized #CLI #Release #Document #Evergreen #CurrentTruth #Contract #Set #Interface #Behavior #TechnicalDesign #Routing #Locality
 - [Accepted detailed command contracts for the non-shipping replacement Open Forge CLI after Gate 2 and Gate 3 closeout](contracts/_contracts.md) - #Memory #Crystallized #CLI #Release #Command #Interface #Contract #CurrentTruth #Evergreen #Architecture
 - [Accepted public package graph, x64 and ARM64 platform horizon, staging, packing, checksum, proof, and publication boundary for the replacement CLI](distribution.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #Distribution #Npm #NativeAOT #Release
+- [The four architectural layers of the replacement CLI, each with the one question it answers and the record that defines its inner workings](layers/_layers.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #Architecture #Layers
 - [Historical frozen Open Forge CLI MVP role, command surface, deterministic state, safety model, verification boundary, proven properties, and liabilities](mvp-architecture.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #Architecture #CLI #MVP #Tooling #Legacy
 - [Accepted current shared operation contract for the non-shipping Open Forge CLI](shared-operation-contract.md) - #Memory #Crystallized #CLI #Release #Document #Evergreen #CurrentTruth #Contract #Operation #Shared #Interface #Behavior #Determinism #Output #Safety #Locality
 - [Concrete designs for shared replacement CLI capabilities whose exact realization does not belong in system Architecture](technical-designs/_technical-designs.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Implementation
-
-<!-- open-forge:generated-index:end -->

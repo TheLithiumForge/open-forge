@@ -1,0 +1,28 @@
+3 routes listed with warnings.
+Workspace: <workspace>
+  Warning  .agents/docs/guide.md  Description is missing [route-list.metadata-missing]
+         .agents/docs/guide.md has no description in its frontmatter.
+
+  docs              Documents
+                    .agents/docs/_docs.md   #Docs
+    docs/guide      (no description)
+                    .agents/docs/guide.md
+    docs/reference  Reference
+                    .agents/docs/reference.md   #Docs
+  Parent: none
+  Depth: absolute 0; relative 0
+  Kind: entrypoint; direct children: 2
+  Selected as: loader root
+  Overwrite: none
+    Parent: docs; .agents/docs/_docs.md
+    Depth: absolute 1; relative 1
+    Kind: file; direct children: none
+    Selected as: descendant
+    Overwrite: none
+    Parent: docs; .agents/docs/_docs.md
+    Depth: absolute 1; relative 1
+    Kind: file; direct children: none
+    Selected as: descendant
+    Overwrite: none
+  Add the missing route description, then rerun the listing.
+Next: open-forge route update docs/guide --description "..."

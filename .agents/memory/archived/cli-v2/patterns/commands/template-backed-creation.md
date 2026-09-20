@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Instantiate an explicitly selected Template body into independently owned Markdown without transferring source metadata or authority
+  description: "Historical CLI-v2 source: Instantiate an explicitly selected Template body into independently owned Markdown without transferring source metadata or authority"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

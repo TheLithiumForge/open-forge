@@ -1,0 +1,4 @@
+Created .agents/memory/project-alpha/overview.md  (memory/project-alpha/overview)
+Workspace: <workspace>
+  Body copied from the Template templates/route
+  Listed in .agents/memory/project-alpha/_project-alpha.md

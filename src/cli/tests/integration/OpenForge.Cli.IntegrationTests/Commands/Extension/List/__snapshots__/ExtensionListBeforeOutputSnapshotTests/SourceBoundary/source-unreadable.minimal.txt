@@ -1,0 +1,7 @@
+Extension list could not be read completely.
+  Warning  <extension-source>  Extension source is unavailable
+         <extension-source> could not be read, so available packages are not listed.
+Installed  (no ownership record, so installed packages cannot be listed)
+
+Available (from <extension-source>)  unavailable
+  available packages: <extension-source>/toolkit/extension.json: the file is in use by another process.

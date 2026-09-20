@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot repair: The link at .agents/docs/source.md:9:10 is not one doctor reports as repairable. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "repair.proposal-unavailable",
+      "title": "Repair proposal unavailable",
+      "message": "The link at .agents/docs/source.md:9:10 is not one doctor reports as repairable.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": {
+          "line": 9,
+          "column": 10
+        }
+      },
+      "category": null,
+      "actions": []
+    },
+    {
+      "severity": "warning",
+      "code": "repair.guided-finding-remaining",
+      "title": "Broken link",
+      "message": "missing.md: Broken link; 4 possible targets",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": {
+          "line": 9,
+          "column": 10
+        }
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksRepaired": 0,
+    "problemsRemaining": 1,
+    "problemsNeedingChoice": 1,
+    "problemsNeedingHand": 0,
+    "librarySteps": 0,
+    "warnings": 2
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "selection": "relink",
+    "repairs": [],
+    "remaining": [
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 10
+        },
+        "kind": "guided",
+        "candidates": 4
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor --detail standard",
+    "reason": "Inspect unavailable Repair diagnosis or recovery facts before relying on this result."
+  }
+}

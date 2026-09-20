@@ -5,6 +5,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Resolution;
 
 public sealed class RouteInspectResolverLoaderAvailabilityIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect keeps route state unresolved when the Loader is unreadable")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task UnreadableLoaderLeavesRouteMeaningUnresolved()
@@ -39,6 +40,7 @@ public sealed class RouteInspectResolverLoaderAvailabilityIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect keeps route state unresolved when Loader Entries are malformed")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task MalformedLoaderLeavesRouteMeaningUnresolved()

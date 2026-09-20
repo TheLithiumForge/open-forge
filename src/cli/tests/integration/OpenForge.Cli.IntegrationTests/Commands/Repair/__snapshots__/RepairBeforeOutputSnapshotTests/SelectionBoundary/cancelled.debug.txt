@@ -1,0 +1,12 @@
+Repair was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  repair.interrupted  Repair was cancelled [repair.interrupted]
+         Repair was cancelled. Nothing was changed.
+  Diagnosis coverage: Workspace and path were checked; route and heading were checked; local references were checked; selected scope was checked.
+  Checks before writing: not run.
+  No verification was needed.
+  Recovery: No recovery bundle was required.
+  Checks after writing: completed.
+2 problems remaining, 1 problem needing a choice, 1 problem needing a hand, 1 error.
+  Rerun the same Repair request from a fresh diagnosis.
+Next: open-forge repair

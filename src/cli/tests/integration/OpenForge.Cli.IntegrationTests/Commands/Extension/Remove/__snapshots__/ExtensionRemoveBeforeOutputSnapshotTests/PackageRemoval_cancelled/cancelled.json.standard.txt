@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 3,
+  "command": "extension remove",
+  "status": "cancelled",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Extension remove was cancelled. Nothing was changed.",
+    "kind": "cancelled"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-remove.interrupted",
+      "title": "Extension remove was cancelled",
+      "message": "Extension remove was cancelled. Nothing was changed.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "the selected",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesRemoved": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesReleased": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "automatic": true,
+    "packages": [],
+    "orphaned": [],
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [],
+    "removalOrder": []
+  },
+  "recovery": null,
+  "next": null
+}

@@ -1,14 +1,18 @@
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
-using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Route.Remove;
+using OpenForge.Cli.Core.Presentation.Shared.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Remove;
 
 public sealed class RouteRemovePresentationTests
 {
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route Remove result exposes the same command identity for every semantic status"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitBehavior")]
     public void ResultCommandIdentityIsStableAcrossStatuses()
@@ -34,6 +38,31 @@ public sealed class RouteRemovePresentationTests
         }
     }
 
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Remove completed absence names the requested source in its no-op headline"),
+     Trait("Feature", "route-remove"), Trait("Evidence", "UnitBehavior")]
+    public void CompletedAbsentSourceUsesRequestedIdentity()
+    {
+        const string requested = "guidance/notes";
+        var formation = RouteRemoveTestData.Formation() with
+        {
+            Source = RouteRemoveTestData.Source(
+                requested: requested,
+                id: null,
+                path: ".agents/guidance/notes.md"),
+            Effects = [],
+        };
+        var result = new RouteRemoveResult(formation, CliSemanticStatus.Complete, null);
+
+        var report = RouteRemovePresentation.Rendering.Selector(
+            result,
+            new CliSelection(CliDetail.Minimal));
+
+        Assert.Equal("Nothing to do for guidance/notes.", report.Headline.Sentence);
+        Assert.Equal(CliHeadlineKind.NothingToDo, report.Headline.Kind);
+    }
+
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route Remove public status policy retains the shared exit and human stream mapping"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitBehavior")]
     public void PublicStatusPolicyRetainsSharedExitAndStreamMapping()
@@ -58,31 +87,50 @@ public sealed class RouteRemovePresentationTests
         }
     }
 
+    [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Route Remove human views do not discard detachment or generated evidence"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitBehavior")]
     [InlineData(false)]
     [InlineData(true)]
     public void CompactRetentionKeepsDetachmentAndGeneratedEvidence(bool compact)
     {
-        var formation = RouteRemoveTestData.Formation();
+        var parent = RouteRemoveTestData.Effect(
+            path: ".agents/guidance/_guidance.md",
+            kind: RouteRemoveEffectKind.GeneratedRegion,
+            action: RouteRemoveEffectAction.Replace,
+            outcome: RouteRemoveEffectOutcome.Verified);
+        var formation = RouteRemoveTestData.Formation() with
+        {
+            Effects =
+            [
+                RouteRemoveTestData.Effect(outcome: RouteRemoveEffectOutcome.Verified),
+                parent,
+            ],
+        };
         var result = new RouteRemoveResult(
             formation,
             CliSemanticStatus.Complete,
             null);
 
-        var text = RouteRemoveHumanRenderer.Render(new CliPresentationRequest<RouteRemoveResult>(result,
-            new CliPresentation(CliOutputFormat.Human, compact ? CliView.Compact : CliView.Expanded, CliVerbosity.Normal)));
+        var text = CliRenderingStage.Render(
+            new CliPresentationRequest<RouteRemoveResult>(result,
+                new CliPresentation(CliFormat.Text, compact ? CliDetail.Minimal : CliDetail.Standard, null)),
+            RouteRemovePresentation.Rendering).PrimaryContent;
         var detachment = Assert.Single(result.References.Detachments);
         Assert.Contains($"{detachment.SourcePath}:3:5", text, StringComparison.Ordinal);
-        Assert.Contains(detachment.Before, text, StringComparison.Ordinal);
-        Assert.Contains(detachment.Expected, text, StringComparison.Ordinal);
-        Assert.Contains(".agents/open-forge.lifecycle.json", text, StringComparison.Ordinal);
-        Assert.Contains(Assert.Single(result.GeneratedNavigation.Regions).Path, text, StringComparison.Ordinal);
-        Assert.Contains(Assert.Single(result.Effects).Path, text, StringComparison.Ordinal);
+        if (compact)
+        {
+            Assert.DoesNotContain(detachment.Before, text, StringComparison.Ordinal);
+            Assert.DoesNotContain(detachment.Expected, text, StringComparison.Ordinal);
+        }
+        else
+        {
+            Assert.Contains("[Old guide](.agents/guidance/old%20guide.md#part) -> Old guide", text, StringComparison.Ordinal);
+        }
+
+        Assert.Contains(parent.Path, text, StringComparison.Ordinal);
+        Assert.Contains(Assert.IsType<string>(result.Source.Path), text, StringComparison.Ordinal);
         Assert.Single(result.GeneratedNavigation.Regions);
-        Assert.Single(result.Effects);
-        Assert.Contains(
-            result.UnchangedPaths,
-            path => path == ".agents/open-forge.lifecycle.json");
+        Assert.Equal(2, result.Effects.Length);
     }
 }

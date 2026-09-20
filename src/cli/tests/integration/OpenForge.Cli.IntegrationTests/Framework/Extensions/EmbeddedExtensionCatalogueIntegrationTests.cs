@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Extensions;
 
 public sealed class EmbeddedExtensionCatalogueIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Embedded Extension catalogue matches every authored package, asset, and hash"), Trait("Feature", "extension-discovery"), Trait("Evidence", "Integration")]
     public void EmbeddedCatalogueMatchesAuthoredPackagesAssetsAndHashes()
     {
@@ -62,6 +63,7 @@ public sealed class EmbeddedExtensionCatalogueIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Core manifest resources contain the exact authored Extension asset set and bytes"), Trait("Feature", "extension-discovery"), Trait("Evidence", "Integration")]
     public void ManifestResourcesContainExactAuthoredAssets()
     {
@@ -69,7 +71,9 @@ public sealed class EmbeddedExtensionCatalogueIntegrationTests
         var assembly = typeof(EmbeddedExtensionCatalogueReader).Assembly;
         var resources = assembly.GetManifestResourceNames()
             .Where(name => name.StartsWith(prefix, StringComparison.Ordinal))
-            .ToDictionary(name => name[prefix.Length..], StringComparer.Ordinal);
+            .ToDictionary(
+                name => name[prefix.Length..].Replace('\\', '/'),
+                StringComparer.Ordinal);
         var authored = ReadAuthoredAssets();
         Assert.Equal(authored.Keys.Order(StringComparer.Ordinal), resources.Keys.Order(StringComparer.Ordinal));
         foreach (var (path, bytes) in authored)

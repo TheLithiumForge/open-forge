@@ -25,6 +25,7 @@ public sealed class RecoveryBundleAttributionContractTests
         SubjectWorkspaceMismatch,
     }
 
+    [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Recovery schema v1 rejects incomplete unknown and contradictory attribution")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     [InlineData(AttributionDefect.MissingProducer)]

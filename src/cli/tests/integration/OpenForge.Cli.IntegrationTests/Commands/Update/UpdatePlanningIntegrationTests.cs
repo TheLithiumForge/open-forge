@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Update;
 
 public sealed class UpdatePlanningIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace planning builds a trusted no-op for installed state"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task BuildsTrustedNoOpForInstalledWorkspace()
     {
@@ -23,6 +24,7 @@ public sealed class UpdatePlanningIntegrationTests
         Assert.Empty(build.Preview.Effects);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace planning plans a safe source change for baseline-equivalent content"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task PlansSafeSourceChangeForBaselineEquivalentFile()
     {
@@ -39,6 +41,7 @@ public sealed class UpdatePlanningIntegrationTests
                 && decision.Disposition is UpdatePlanningDisposition.Replace);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace planning creates a genuinely new target"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task PlansGenuinelyNewTargetCreation()
     {
@@ -55,38 +58,26 @@ public sealed class UpdatePlanningIntegrationTests
                 && decision.Disposition is UpdatePlanningDisposition.Create);
     }
 
-    [Fact(DisplayName = "Update real workspace planning preserves changed content with attention"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
-    public async Task PreservesChangedTargetAndReportsAttention()
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Ordinary Update plans replacement or restoration of owned content"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
+    [InlineData(false), InlineData(true)]
+    public async Task PlansOwnedContentWithoutForce(bool missing)
     {
-        using var workspace = UpdateIntegrationWorkspace.Create("update-plan-divergence");
+        using var workspace = UpdateIntegrationWorkspace.Create("update-plan-owned-content");
         await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
-        workspace.MutateManagedContent();
-
+        if (missing) workspace.RemoveManagedContent();
+        else workspace.MutateManagedContent();
+        var before = workspace.SnapshotHashes();
         var build = await workspace.BuildAsync(workspace.Request());
-
-        Assert.Equal(CliSemanticStatus.Attention, build.Preview.Status);
-        Assert.Contains(
-            build.Preview.Findings,
-            finding => finding.Code.ToString().Contains("ManagedDivergence", StringComparison.Ordinal));
-        Assert.Empty(build.Preview.Effects);
+        Assert.Equal(CliSemanticStatus.Complete, build.Preview.Status);
+        Assert.Empty(build.Preview.Findings);
+        var decision = Assert.Single(build.Plan!.Decisions, value => value.Comparison.RelativePath == UpdateIntegrationWorkspace.ManagedPath
+            && value.Comparison.Kind == UpdateComparisonTargetKind.File);
+        Assert.Equal(missing ? UpdatePlanningDisposition.Restore : UpdatePlanningDisposition.Replace, decision.Disposition);
+        Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Update real workspace planning preserves a missing target with attention"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
-    public async Task PreservesMissingTargetAndReportsAttention()
-    {
-        using var workspace = UpdateIntegrationWorkspace.Create("update-plan-missing-target");
-        await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
-        workspace.RemoveManagedContent();
-
-        var build = await workspace.BuildAsync(workspace.Request());
-
-        Assert.Equal(CliSemanticStatus.Attention, build.Preview.Status);
-        Assert.Contains(
-            build.Preview.Findings,
-            finding => finding.Code.ToString().Contains("ManagedTargetMissing", StringComparison.Ordinal));
-        Assert.Empty(build.Preview.Effects);
-    }
-
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace planning recognizes historical retired source absent from inventory"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task RecognizesHistoricalRetiredSourceAbsentFromInventory()
     {
@@ -101,9 +92,10 @@ public sealed class UpdatePlanningIntegrationTests
             build.Preview.Comparisons,
             comparison => comparison.RelativePath == UpdateIntegrationWorkspace.HistoricalTargetPath
                 && comparison.IntendedState is UpdateComparisonIntendedState.Retired);
-        Assert.Empty(build.Preview.Effects);
+        Assert.DoesNotContain(build.Preview.Effects, effect => effect.Path == UpdateIntegrationWorkspace.HistoricalTargetPath);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace planning force replaces and restores without retired deletion"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task PlansForceReplacementAndRestorationWithoutRetiredDeletion()
     {
@@ -128,6 +120,7 @@ public sealed class UpdatePlanningIntegrationTests
                 && decision.Disposition is UpdatePlanningDisposition.Restore);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace planning prune deletes eligible retired content only"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task PlansPruneDeletionOnlyForEligibleRetiredContent()
     {
@@ -142,13 +135,13 @@ public sealed class UpdatePlanningIntegrationTests
             build.Plan!.Decisions,
             decision => decision.Comparison.RelativePath == UpdateIntegrationWorkspace.HistoricalTargetPath
                 && decision.Disposition is UpdatePlanningDisposition.Delete);
-        Assert.DoesNotContain(
-            build.Plan.Decisions,
-            decision => decision.Disposition is UpdatePlanningDisposition.Replace or UpdatePlanningDisposition.Restore);
+        Assert.DoesNotContain(build.Plan.Decisions, decision => decision.Disposition == UpdatePlanningDisposition.Delete
+            && decision.Comparison.RelativePath != UpdateIntegrationWorkspace.HistoricalTargetPath);
     }
 
-    [Fact(DisplayName = "Update real workspace planning blocks the complete plan on one ineligible retirement"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
-    public async Task BlocksCompletePlanOnOneIneligibleRetirement()
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Update real workspace planning allows edited retired content inside the destination boundary"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
+    public async Task AllowsEditedRetiredContentInsideBoundary()
     {
         using var workspace = UpdateIntegrationWorkspace.Create("update-plan-ineligible-retirement");
         await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
@@ -157,11 +150,12 @@ public sealed class UpdatePlanningIntegrationTests
 
         var build = await workspace.BuildAsync(workspace.Request(prune: true));
 
-        Assert.True(build.Plan is null || build.Plan.IsBlocked);
-        Assert.Equal(CliSemanticStatus.Blocked, build.Preview.Status);
-        Assert.Empty(build.Preview.Effects);
+        Assert.Equal(CliSemanticStatus.Complete, build.Preview.Status);
+        Assert.Contains(build.Preview.Effects, effect => effect.Path == UpdateIntegrationWorkspace.HistoricalTargetPath
+            && effect.Action == UpdatePhysicalEffectAction.Delete);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update real workspace planning coalesces generated navigation into one physical effect"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task ProjectsGeneratedNavigationIntoOneCoalescedPhysicalEffect()
     {
@@ -189,9 +183,9 @@ public sealed class UpdatePlanningIntegrationTests
             [UpdateComparisonTargetKind.File, UpdateComparisonTargetKind.GeneratedRegion],
             applied.Changes.Select(change => change.Kind));
         Assert.Equal(intended, workspace.ReadBytes(UpdateIntegrationWorkspace.GeneratedPath));
-        Assert.Equal(UpdateRecoveryState.Removed, result.Recovery.State);
+        Assert.Equal(UpdateRecoveryState.Retained, result.Recovery.State);
         Assert.Equal(
-            [UpdateIntegrationWorkspace.GeneratedPath, UpdateIntegrationWorkspace.LifecyclePath],
+            [UpdateIntegrationWorkspace.GeneratedPath],
             result.Recovery.ProtectedPaths);
         Assert.Equal(UpdateVerificationState.Verified, result.Verification);
         var afterApplication = workspace.SnapshotHashes();

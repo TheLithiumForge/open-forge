@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "failed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Repair stopped after 1 of 2 links were rewritten.",
+    "kind": "failed"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "repair.write-failed",
+      "title": "Write failed",
+      "message": "Writing .agents/docs/source.md failed. Stopped after 1 of 2 changes. Recovery data: <recovery-bundle>.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/docs/aaa.md:8:8",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": "./guide.md -> guide.md",
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/docs/source.md:9:8",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": "./guide.md -> guide.md",
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "linksRepaired": 1,
+    "problemsRemaining": 1,
+    "problemsNeedingChoice": 0,
+    "problemsNeedingHand": 1,
+    "librarySteps": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "selection": "automatic",
+    "repairs": [
+      {
+        "path": ".agents/docs/aaa.md",
+        "location": {
+          "line": 8,
+          "column": 8
+        },
+        "from": "./guide.md",
+        "to": "guide.md",
+        "before": "<sha256>",
+        "after": "<sha256>"
+      },
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 8
+        },
+        "from": "./guide.md",
+        "to": "guide.md",
+        "before": "<sha256>",
+        "after": "<sha256>"
+      }
+    ],
+    "remaining": [
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 8
+        },
+        "kind": "manual",
+        "candidates": []
+      }
+    ],
+    "diagnosis": {
+      "workspaceAndPath": "complete",
+      "routeAndHeading": "complete",
+      "localReferences": "complete",
+      "selectedScope": "complete"
+    },
+    "verification": {
+      "targets": "planned",
+      "resultingBytes": "planned",
+      "postConditions": "verified"
+    }
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge repair --detail debug",
+    "reason": "Inspect the bounded failure details and rerun Repair from a fresh plan."
+  }
+}

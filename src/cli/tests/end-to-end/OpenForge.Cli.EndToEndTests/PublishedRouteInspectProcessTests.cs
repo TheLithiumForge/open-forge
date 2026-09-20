@@ -15,27 +15,25 @@ public sealed class PublishedRouteInspectProcessTests
             target,
             working.Path,
             working.SnapshotHashes,
-            ["route", "inspect", "root", "--workspace", working.Path, "--json"]);
+            ["route", "inspect", "root", "--workspace", working.Path, "--format=json", "--detail=full"]);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
         var root = document.RootElement;
 
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
         Assert.Equal("route inspect", root.GetProperty("command").GetString());
-        Assert.Equal("complete", root.GetProperty("status").GetString());
-        Assert.Equal(
-            "root",
-            root.GetProperty("result").GetProperty("selection").GetProperty("requestedReference").GetString());
+        Assert.Equal("completed", root.GetProperty("status").GetString());
+        var data = root.GetProperty("data");
+        Assert.Equal("root", data.GetProperty("selection").GetProperty("requested").GetString());
 
-        var identity = root.GetProperty("result").GetProperty("identity");
-        Assert.Equal(".agents/root/_root.md", identity.GetProperty("path").GetString());
-        var layers = identity.GetProperty("physicalLayers").EnumerateArray().ToArray();
+        Assert.Equal(".agents/root/_root.md", data.GetProperty("path").GetString());
+        var layers = data.GetProperty("layers").EnumerateArray().ToArray();
         Assert.Equal(
             [".agents/root/_root.md", ".agents/root/_root.overwrite.md"],
-            layers.Select(layer => layer.GetProperty("workspaceRelativePath").GetString()));
-        Assert.Equal(["base", "overwrite"], layers.Select(layer => layer.GetProperty("role").GetString()));
+            layers.Select(layer => layer.GetProperty("path").GetString()));
+        Assert.Equal(["base", "overwrite"], layers.Select(layer => layer.GetProperty("kind").GetString()));
 
         Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
     }
@@ -50,11 +48,11 @@ public sealed class PublishedRouteInspectProcessTests
             target,
             working.Path,
             working.SnapshotHashes,
-            ["route", "inspect", ".agents/root/collision.md", "--view=compact"]);
+            ["route", "inspect", ".agents/root/collision.md", "--detail=minimal"]);
 
         Assert.Equal(2, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
-        Assert.Contains("Status: requires attention", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("root/collision  .agents/root/collision.md", result.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Next:", result.StandardOutput, StringComparison.Ordinal);
     }
 
@@ -68,13 +66,14 @@ public sealed class PublishedRouteInspectProcessTests
             target,
             working.Path,
             working.SnapshotHashes,
-            ["route", "inspect", "root/collision", "--view=compact"]);
+            ["route", "inspect", "root/collision", "--detail=minimal"]);
 
         Assert.Equal(5, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardOutput);
-        Assert.DoesNotContain("matches more than one source", result.StandardError, StringComparison.Ordinal);
-        Assert.DoesNotContain("Choose a source by number or exact path", result.StandardError, StringComparison.Ordinal);
-        Assert.Contains("Status: blocked", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains(
+            "Cannot inspect root/collision: root/collision matches more than one source. Use the exact path.",
+            result.StandardError,
+            StringComparison.Ordinal);
         Assert.Contains("Next: open-forge route inspect \".agents/root/collision.md\"", result.StandardError, StringComparison.Ordinal);
     }
 

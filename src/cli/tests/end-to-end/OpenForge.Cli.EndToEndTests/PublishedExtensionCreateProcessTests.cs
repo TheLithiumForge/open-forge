@@ -35,7 +35,7 @@ public sealed class PublishedExtensionCreateProcessTests
             "--path", working.CataloguePath,
             "--workspace", working.WorkspacePath,
             "--automatic",
-            "--view=compact",
+            "--detail=minimal",
         };
 
         var applied = await PublishedProcessTestSupport.RunAsync(
@@ -46,7 +46,7 @@ public sealed class PublishedExtensionCreateProcessTests
 
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
-        Assert.Contains("2 intended; 2 applied", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Created the development-toolkit Extension scaffold at", applied.StandardOutput, StringComparison.Ordinal);
         Assert.True(File.Exists(working.ManifestPath));
         Assert.True(Directory.Exists(working.PayloadAgentsPath));
         using (var manifest = JsonDocument.Parse(await File.ReadAllTextAsync(working.ManifestPath, TestContext.Current.CancellationToken)))
@@ -67,7 +67,8 @@ public sealed class PublishedExtensionCreateProcessTests
 
         Assert.Equal(0, noOp.ExitCode);
         Assert.Equal(string.Empty, noOp.StandardError);
-        Assert.Contains("2 intended; 0 applied", noOp.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("The development-toolkit scaffold at", noOp.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Nothing to do.", noOp.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(afterApply, working.SnapshotCatalogue());
         Assert.Equal(beforeWorkspace, working.SnapshotWorkspace());
         lockStore.AssertNoInfrastructure();
@@ -103,7 +104,8 @@ public sealed class PublishedExtensionCreateProcessTests
                 "--dependency", "alpha",
                 "--workspace", working.WorkspacePath,
                 "--dry-run",
-                "--json",
+                "--detail=standard",
+                "--format=json",
             ]);
 
         Assert.Equal(0, result.ExitCode);
@@ -113,28 +115,27 @@ public sealed class PublishedExtensionCreateProcessTests
         using var document = JsonDocument.Parse(result.StandardOutput);
         var root = document.RootElement;
         Assert.Equal(
-            ["schemaVersion", "command", "status", "workspace", "result", "next"],
+            ["schemaVersion", "command", "status", "detail", "filter", "workspace", "summary", "findings", "effects", "counts", "limitations", "data", "recovery", "next"],
             root.EnumerateObject().Select(property => property.Name));
         Assert.Equal("extension create", root.GetProperty("command").GetString());
-        Assert.Equal("complete", root.GetProperty("status").GetString());
+        Assert.Equal("completed", root.GetProperty("status").GetString());
         Assert.Equal(JsonValueKind.Null, root.GetProperty("workspace").ValueKind);
         Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
-        var commandResult = root.GetProperty("result");
+        var commandResult = root.GetProperty("data");
         Assert.Equal(
-            ["catalogue", "destination", "id", "manifest", "mode", "intendedEffects", "appliedEffects", "verification", "workspaceLifecycleChanged"],
+            ["mode", "id", "folder", "packagePath", "manifestPath", "contentPath", "manifest"],
             commandResult.EnumerateObject().Select(property => property.Name));
-        Assert.Equal(working.CataloguePath, commandResult.GetProperty("catalogue").GetString());
-        Assert.Equal(working.DestinationPath, commandResult.GetProperty("destination").GetString());
+        Assert.Equal("dry-run", commandResult.GetProperty("mode").GetString());
         Assert.Equal(PublishedExtensionCreateWorkspace.StableId, commandResult.GetProperty("id").GetString());
+        Assert.Equal(working.CataloguePath, commandResult.GetProperty("folder").GetString());
+        Assert.Equal(working.DestinationPath, commandResult.GetProperty("packagePath").GetString());
+        Assert.Equal(working.ManifestPath, commandResult.GetProperty("manifestPath").GetString());
+        Assert.Equal(working.PayloadAgentsPath + Path.DirectorySeparatorChar, commandResult.GetProperty("contentPath").GetString());
         var manifest = commandResult.GetProperty("manifest");
         Assert.Equal(
             ["name", "description", "version", "dependencies"],
             manifest.EnumerateObject().Select(property => property.Name));
         Assert.Equal(["alpha", "zeta"], manifest.GetProperty("dependencies").EnumerateArray().Select(value => value.GetString()));
-        Assert.Equal("dry-run", commandResult.GetProperty("mode").GetString());
-        Assert.Equal(2, commandResult.GetProperty("intendedEffects").GetArrayLength());
-        Assert.Empty(commandResult.GetProperty("appliedEffects").EnumerateArray());
-        Assert.False(commandResult.GetProperty("workspaceLifecycleChanged").GetBoolean());
         Assert.Equal(beforeCatalogue, working.SnapshotCatalogue());
         Assert.Equal(beforeWorkspace, working.SnapshotWorkspace());
     }

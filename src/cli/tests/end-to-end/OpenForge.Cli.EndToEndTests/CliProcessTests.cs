@@ -19,7 +19,7 @@ public sealed class CliProcessTests
         var otherBefore = other.SnapshotHashes();
         var request = new ProcessRunRequest(
             target.ExecutablePath,
-            ["--workspace", missingWorkspace, "--json", "--version"],
+            ["--workspace", missingWorkspace, "--format=json", "--version"],
             other.Path,
             timeout: TimeSpan.FromSeconds(30));
 
@@ -62,6 +62,15 @@ public sealed class CliProcessTests
         Assert.Equal(root.StandardOutput, help.StandardOutput);
         Assert.Contains("Inspect and maintain an Open Forge workspace.", root.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Getting started:", root.StandardOutput, StringComparison.Ordinal);
+        foreach (var output in new[] { root.StandardOutput, leaf.StandardOutput, inspectLeaf.StandardOutput })
+        {
+            Assert.Contains("--detail", output, StringComparison.Ordinal);
+            Assert.Contains("--detail-filter", output, StringComparison.Ordinal);
+            Assert.Contains("--format", output, StringComparison.Ordinal);
+            Assert.DoesNotContain("--view", output, StringComparison.Ordinal);
+            Assert.DoesNotContain("--json", output, StringComparison.Ordinal);
+            Assert.DoesNotContain("--verbose", output, StringComparison.Ordinal);
+        }
         Assert.Contains("route list", root.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("open-forge route --help", root.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Commands:", group.StandardOutput, StringComparison.Ordinal);
@@ -118,7 +127,7 @@ public sealed class CliProcessTests
         var startedProcessId = 0;
         var request = new ProcessRunRequest(
             target.ExecutablePath,
-            ["route", "list", "root", "--depth=all", "--json"],
+            ["route", "list", "root", "--depth=all", "--format=json"],
             working.Path,
             timeout: TimeSpan.FromSeconds(30),
             processStarted: processId =>

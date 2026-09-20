@@ -4,14 +4,17 @@ using OpenForge.Cli.Core.Commands.Extension.Create;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Interaction;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Interaction;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Create;
 
 public sealed class ExtensionCreateScaffoldIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create writes only the exact manifest and empty payload agents scaffold"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task ApplyCreatesExactScaffoldAndStrictManifest()
     {
@@ -55,6 +58,7 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create dry-run forms the apply plan without creating destination state"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task DryRunDoesNotWrite()
     {
@@ -74,6 +78,7 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
         Assert.False(Directory.Exists(catalogue.Combine("development-toolkit")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create treats an exact scaffold as a verified no-op and remains byte-stable on the second apply"),
      Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task ExactScaffoldIsVerifiedNoOpAndRepeatIsStable()
@@ -111,6 +116,7 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Extension Create blocks every divergent or colliding destination without overwriting existing bytes"),
      Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     [InlineData("divergent-manifest")]
@@ -179,6 +185,7 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
         DeleteDestination(destination);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create rejects an external destination link without adopting the linked package"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task ExternalDestinationLinkIsBlocked()
     {
@@ -214,9 +221,8 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
         ExtensionCreateMode mode = ExtensionCreateMode.Apply,
         CancellationToken cancellationToken = default)
     {
-        using var reader = new StringReader(string.Empty);
-        using var prompts = new StringWriter();
-        var session = new CliInteractiveSession(reader, prompts, canPrompt: false);
+        var scripted = ScriptedCliTerminal.Lines([], canPrompt: false);
+        var prompts = new CliPrompts(scripted.Terminal);
         var request = new ExtensionCreateRequest
         {
             StableId = stableId,
@@ -225,10 +231,12 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
             Description = null,
             PackageVersion = null,
             Dependencies = [],
+            Automatic = mode == ExtensionCreateMode.Apply,
             AllowInteraction = false,
             Mode = mode,
         };
-        return await ExtensionCreateOperationFactory.Create(session).ExecuteAsync(request, cancellationToken);
+        return await ExtensionCreateOperationFactory.Create(
+            ExtensionInteractionTestFactory.ForCreate(prompts)).ExecuteAsync(request, cancellationToken);
     }
 
     private static void DeleteDestination(string destination)

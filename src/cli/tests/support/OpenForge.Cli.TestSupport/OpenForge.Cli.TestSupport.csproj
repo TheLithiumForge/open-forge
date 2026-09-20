@@ -6,6 +6,9 @@
     <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="TheLithium.Imprint" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="../../../../extensions/**/extension.json"
                       LogicalName="OpenForge.Tests.ExtensionManifests/%(RecursiveDir)%(Filename)%(Extension)"
                       WithCulture="false" />

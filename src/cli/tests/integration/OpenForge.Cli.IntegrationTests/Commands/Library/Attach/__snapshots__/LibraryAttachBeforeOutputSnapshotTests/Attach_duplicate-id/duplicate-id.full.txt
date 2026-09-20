@@ -1,0 +1,12 @@
+Cannot attach team-knowledge: A Library with the ID team-knowledge is already registered.
+Workspace: <workspace>
+  Error  team-knowledge  Library ID is already registered [library-attach.duplicate-id]
+         A Library with the ID team-knowledge is already registered.
+         use open-forge library inspect team-knowledge
+         open-forge library inspect team-knowledge
+         Inspect the registered Library before choosing another ID.
+  Permission evaluation: permission was not evaluated. Required paths: none. Missing paths: none. No grant was saved.
+  Verification: verification has not started; 0 of 0 links created; the Library was not recorded
+  No recovery data was requested.
+  Inspect the registered Library before choosing another ID.
+Next: open-forge library inspect team-knowledge

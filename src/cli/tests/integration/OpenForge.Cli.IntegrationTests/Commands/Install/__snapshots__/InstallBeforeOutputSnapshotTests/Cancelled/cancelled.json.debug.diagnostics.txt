@@ -1,0 +1,11 @@
+status=cancelled
+mode=apply
+force=false
+automatic=false
+classification=safe-absence
+effects=27
+lifecycle=publish/not-started
+recovery=not-required
+verification=not-requested
+findings=1
+next=present

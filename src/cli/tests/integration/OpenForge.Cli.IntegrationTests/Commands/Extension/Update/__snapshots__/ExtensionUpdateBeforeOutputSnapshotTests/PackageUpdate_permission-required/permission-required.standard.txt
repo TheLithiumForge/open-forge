@@ -1,0 +1,8 @@
+Cannot update toolkit: it writes outside .agents and no grant allows that.
+Workspace: <workspace>
+  Error  toolkit  Permission is required
+         Cannot update: it writes outside .agents and no grant allows that.
+  Source: <extension-source>
+  Dependency closure: toolkit
+  1 file unchanged
+  Grant: required workspace-note.md; missing workspace-note.md; decision required; action no action; outcome no outcome recorded

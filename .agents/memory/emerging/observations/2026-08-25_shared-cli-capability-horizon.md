@@ -24,7 +24,7 @@ found the duplicated document boundary and established the shared
 Find acceptance. The correction required an additional Gray, Red, Green, Blue,
 and Purple sequence even though both command slices had focused passing evidence.
 
-The current [CLI Architecture](../../crystallized/documents/cli/architecture.md#sources-routing-and-documents)
+The current [CLI Framework layer](../../crystallized/documents/cli/layers/framework.md)
 already names source, routing, Markdown, YAML, and generated-navigation consumers.
 The active [Plan](../../working/cli-development/plan.md#approach) requires neutral
 mechanical foundations before dependent commands and keeps semantic policy local

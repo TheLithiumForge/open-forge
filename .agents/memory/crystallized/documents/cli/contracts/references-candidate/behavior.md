@@ -56,7 +56,7 @@ re-resolve occurrences.
    valid for `in` and `both`, apply to incoming work only, and are invalid for
    `out`.
 
-Unknown or malformed input is `invalid`. Unsafe paths, ambiguous IDs, ambiguous
+Unknown or malformed input is `invalid-input`. Unsafe paths, ambiguous IDs, ambiguous
 targets, or an unsafe scan boundary are `blocked` under the shared meanings.
 
 ## Logical Source And Layers
@@ -126,7 +126,7 @@ the Framework Markdown contract establishes exactly one valid bounded generated
 extraction and does not treat generated entries as authored route references.
 
 If the region is malformed, duplicated, misplaced, or unsafe, the extractor does
-not choose a marker pair or suppress the links it might contain. It records
+not choose an arbitrary section or suppress the links it might contain. It records
 `references.generated-region-unavailable` and retains parser-produced link facts
 whose byte boundaries are safely established outside any selected exclusion.
 When the source bytes and a safe no-suppression boundary remain established, the
@@ -136,8 +136,8 @@ scan merely because some entries can be parsed.
 
 The rule is per physical layer. A valid base region does not exclude links from
 the overwrite, and an invalid region in one layer does not invalidate an
-independently established region in another layer. The extractor never infers a
-generated region from a heading, a link shape, or generated-entry content alone.
+independently established region in another layer. The extractor uses the shared Markdown section facts; it does not infer a
+second boundary from link shapes or generated-entry content.
 
 ### Occurrence Spans And Authored Text
 
@@ -176,7 +176,7 @@ target identity, or authored text.
 For an HTTP or HTTPS occurrence, record the raw URL, direction `out`, target kind
 `external`, null local ID and path, `external-unchecked`, and
 `network-not-attempted`. Never fetch, follow, or network-check that URL. The
-unchecked fact is not by itself an attention or incomplete finding when the
+unchecked fact is not by itself a completed-with-warnings or incomplete finding when the
 outgoing source layers were otherwise inspected completely.
 
 For a non-HTTP external scheme, record an occurrence with target kind
@@ -277,13 +277,13 @@ Broken, unsupported, unsafe, or ambiguous local destinations are not silently
 omitted. When safe to retain, the occurrence remains visible with the applicable
 finding and section status. If the operation cannot establish a safe boundary,
 the section or aggregate becomes blocked. A safe occurrence set beside an
-uncompleted scan or unresolved layer becomes incomplete rather than complete.
+uncompleted scan or unresolved layer becomes incomplete rather than completed.
 
 Finding construction uses the exact Interface vocabulary. Invalid request,
-source, direction, and filter facts are `invalid`. Workspace, source, selector,
+source, direction, and filter facts are `invalid-input`. Workspace, source, selector,
 and target safety or ambiguity are `blocked`. Established identity collisions
 and malformed, unsupported, missing, or fragment-missing destinations are
-`attention`. Candidate, layer, inspection, encoding, generated-region, and
+`completed-with-warnings`. Candidate, layer, inspection, encoding, generated-region, and
 target-read boundaries are `incomplete`, except that an unavailable generated
 region is `blocked` when no safe exclusion boundary exists. Operation failure and
 interruption retain their event statuses. HTTP/HTTPS no-fetch is never a
@@ -302,7 +302,7 @@ effective incoming filter evidence when applicable, separate Incoming and
 Outgoing sections, every safe occurrence, per-section coverage/status, findings,
 and aggregate status.
 
-Result construction follows the exact schema-v1 command-local shape in the
+Result construction follows the exact schema-3 command-local shape in the
 Interface. It always forms the nullable selected logical `source`, nullable
 effective requested direction, nullable incoming-selection object, nullable
 direction sections, and ordered finding array. Invalid, ambiguous, or unsafe
@@ -312,7 +312,7 @@ sections null. Once an effective direction is established, each requested sectio
 is present even when its work is blocked before occurrence inspection; an
 unrequested direction is null. A present section uses only `complete`,
 `incomplete`, or `blocked` coverage, keeps its occurrence count equal to its
-occurrence array length, and may report `attention` status while coverage is
+occurrence array length, and may report `completed-with-warnings` status while coverage is
 complete.
 
 The result builder receives already resolved selector occurrences, physical
@@ -327,16 +327,16 @@ selector correction precedes the general blocked action only when its finding is
 the first blocked finding. Complete results have no next action. Renderers consume
 the selected action without changing its command or reason.
 
-- `complete` requires every requested section to complete its declared work and
+- `completed` requires every requested section to complete its declared work and
   have no unresolved finding that changes the result. With both directions,
-  both sections must meet that condition. A complete empty incoming set is valid
+  both sections must meet that condition. A completed empty incoming set is valid
   after a complete scan.
-- `attention` is allowed when requested coverage is complete but a safe,
+- `completed-with-warnings` is allowed when requested coverage is complete but a safe,
   non-blocking authored-form or identity finding remains. External no-fetch is
   not such a finding by itself.
 - `incomplete` means safe facts exist but a requested incoming scan, layer read,
   or local-resolution boundary did not complete.
-- `invalid`, `blocked`, `failed`, and `interrupted` retain their shared meanings.
+- `invalid-input`, `blocked`, `failed`, and `cancelled` retain their shared meanings.
 
 An excluded direction is absent and contributes no coverage or status. A complete
 outgoing section cannot make an incomplete incoming section, or an incomplete
@@ -360,16 +360,16 @@ Finding order is fixed by the Interface finding-code table. Within one code,
 request facts precede selector facts, then incoming before outgoing facts, followed
 by canonical source identity, physical path, layer, location, and destination
 location. Include selectors precede exclude selectors, and selector occurrences
-retain their role-local 1-based number. Failed and interrupted event findings are
+retain their role-local 1-based number. Failed and cancelled event findings are
 last. This order is fixed before either renderer runs.
 
 Human rendering names the one-hop boundary “Direct links” and retains every
-physical occurrence in the requested sections. Both views report per-section
+physical occurrence in the requested sections. Each detail level reports per-section
 coverage and status, source/target identity, line/column, authored destination,
-resolution and source layer. Findings precede occurrence rows. Expanded adds
-fragment and destination coordinates, target layer and the actual scan origin
-in plain language. It does not repeat byte ranges outside JSON. JSON retains the complete typed sections,
-occurrences, coverage, and findings. `--view` cannot change JSON.
+resolution and source layer. Higher detail adds fragment and destination
+coordinates, target layer and the actual scan origin in plain language. It does
+not repeat byte ranges outside JSON. JSON retains the complete typed sections,
+occurrences, coverage, and findings. `--detail` cannot change JSON.
 
 ## Safety And Recovery
 
@@ -382,7 +382,7 @@ occurrences, coverage, and findings. `--view` cannot change JSON.
   likely intent.
 - Preserve safe occurrence facts when a later scan or layer becomes incomplete,
   and report the missing boundary.
-- Preserve `interrupted` when cancelled; never convert a partial scan to complete.
+- Preserve `cancelled` when cancelled; never convert a partial scan to completed.
 
 ## Conformance Scenarios
 
@@ -416,15 +416,16 @@ A conforming implementation should prove at least these observable scenarios:
     every declared local resolution, non-HTTP unsupported schemes, and external
     HTTP/HTTPS facts are represented with no network attempt.
 11. An otherwise complete outgoing result containing external-unchecked facts is
-    not attention or incomplete solely because network access was not attempted.
+    not completed-with-warnings or incomplete solely because network access was not attempted.
 12. Raw spaces, Unicode, fragments, duplicate authored occurrences, and
     base/overwrite layer evidence survive extraction, resolution, incoming scan,
     ordering, and JSON serialization.
 13. One-hop behavior does not follow targets, merge cycles, load target bodies
     into context, build a graph, or apply a hidden result cap.
-14. Compact, expanded, and JSON have identical section membership, occurrence
-    identity, order, locations, findings, and coverage; JSON retains its defined core under compact view.
-15. The exact schema-v1 result always includes its ordered members, nullable
+14. Minimal, standard, full, debug, and JSON have identical section membership,
+    occurrence identity, order, locations, findings, and coverage; JSON retains
+    its defined core at every detail level.
+15. The exact schema-3 result always includes its ordered members, nullable
     values, arrays, finite values, selector duplicates, and source-layer evidence;
     each finding code has its declared status and aggregate effect.
 16. The candidate `contracts/references-candidate/_references-candidate.md`
@@ -432,7 +433,7 @@ A conforming implementation should prove at least these observable scenarios:
     compatibility-name path `contracts/references/_references.md` and proves
     that physical source is processed once.
 17. Repeated unchanged invocations are semantically identical and incomplete,
-    blocked, failed, or interrupted scans never appear complete.
+    blocked, failed, or cancelled scans never appear completed.
 
 ## Related Current Sources
 

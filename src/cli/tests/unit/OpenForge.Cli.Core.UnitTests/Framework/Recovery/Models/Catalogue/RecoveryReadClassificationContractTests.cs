@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Recovery.Models.Catalogue;
 [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
 public sealed class RecoveryReadClassificationContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Classified recovery reads retain each admitted state and supplied failure and cause")]
     [InlineData((int)RecoveryBundleReadState.Malformed), InlineData((int)RecoveryBundleReadState.Unsupported), InlineData((int)RecoveryBundleReadState.Unavailable)]
     public void ReadClassifiedRetainsAdmittedFacts(int state)
@@ -22,6 +23,7 @@ public sealed class RecoveryReadClassificationContractTests
         Assert.Same(cause, result.Cause);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Classified recovery reads reject reserved states before an invalid cause")]
     [InlineData((int)RecoveryBundleReadState.Valid), InlineData((int)RecoveryBundleReadState.Cancelled)]
     public void ReadClassifiedRejectsReservedStatesBeforeCause(int state)
@@ -32,6 +34,7 @@ public sealed class RecoveryReadClassificationContractTests
         Assert.Equal("state", exception.ParamName);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Classified recovery reads reject an undefined state with otherwise valid facts")]
     public void ReadClassifiedRejectsUndefinedState()
     {
@@ -41,6 +44,7 @@ public sealed class RecoveryReadClassificationContractTests
         Assert.Equal("state", exception.ParamName);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Classified recovery reads reject an undefined state before an invalid cause")]
     public void ReadClassifiedChecksUndefinedStateBeforeCause()
     {
@@ -50,6 +54,7 @@ public sealed class RecoveryReadClassificationContractTests
         Assert.Equal("state", exception.ParamName);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Classified recovery candidates retain each admitted kind and integrity with normalized path and supplied facts")]
     [InlineData((int)RecoveryBundleCandidateKind.Final, (int)RecoveryBundleIntegrity.Malformed)]
     [InlineData((int)RecoveryBundleCandidateKind.Final, (int)RecoveryBundleIntegrity.Unsupported)]
@@ -80,6 +85,7 @@ public sealed class RecoveryReadClassificationContractTests
         Assert.Same(cause, result.Cause);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Classified recovery candidates reject reserved integrity before invalid kind cause and path")]
     [InlineData((int)RecoveryBundleIntegrity.Verified), InlineData((int)RecoveryBundleIntegrity.Incomplete)]
     public void CandidateClassifiedRejectsReservedIntegrityBeforeOtherFacts(int integrity)
@@ -90,6 +96,7 @@ public sealed class RecoveryReadClassificationContractTests
         Assert.Equal("integrity", exception.ParamName);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Classified recovery candidates reject undefined integrity with otherwise valid facts")]
     public void CandidateClassifiedRejectsUndefinedIntegrity()
     {
@@ -99,6 +106,7 @@ public sealed class RecoveryReadClassificationContractTests
         Assert.Equal("integrity", exception.ParamName);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Classified recovery candidates reject undefined integrity before invalid kind cause and path")]
     public void CandidateClassifiedChecksUndefinedIntegrityBeforeOtherFacts()
     {
@@ -108,6 +116,7 @@ public sealed class RecoveryReadClassificationContractTests
         Assert.Equal("integrity", exception.ParamName);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Classified recovery candidates reject undefined kind with otherwise valid facts")]
     public void CandidateClassifiedRejectsUndefinedKind()
     {
@@ -117,6 +126,7 @@ public sealed class RecoveryReadClassificationContractTests
         Assert.Equal("kind", exception.ParamName);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Classified recovery candidates reject undefined kind before cause validation and path normalization"), InlineData(" "), InlineData("Classified candidate.")]
     public void CandidateClassifiedChecksUndefinedKindBeforeCauseAndPath(string cause)
     {
@@ -126,6 +136,7 @@ public sealed class RecoveryReadClassificationContractTests
         Assert.Equal("kind", exception.ParamName);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Classified recovery candidates validate cause before normalizing the supplied path")]
     public void CandidateClassifiedChecksCauseBeforePath()
     {
@@ -135,6 +146,7 @@ public sealed class RecoveryReadClassificationContractTests
         Assert.Equal("cause", exception.ParamName);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Classified recovery reads and candidates preserve an absent optional filesystem failure")]
     public void ClassifiedFactoriesRetainAbsentFailure()
     {

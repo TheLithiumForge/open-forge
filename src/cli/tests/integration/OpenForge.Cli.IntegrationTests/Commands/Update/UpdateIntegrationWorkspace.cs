@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -9,37 +10,36 @@ using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Update.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
-using OpenForge.Cli.Core.Framework.Lifecycle;
+
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.IntegrationTests.Commands.Install;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
+
+using OpenForge.Cli.IntegrationTests.Commands.Update.Shared.Interaction;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Update;
 
 internal sealed class UpdateIntegrationWorkspace : IDisposable
 {
-    private const string PreviousInventoryFingerprint =
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
     private const string PreviousAuthoredContent = "Earlier authored fixture content.";
 
     private static readonly FrameworkContentIdentity ContentIdentity = new();
     private static readonly UTF8Encoding StrictUtf8NoBom = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
-    private static readonly JsonSerializerOptions LifecycleJsonOptions = new()
+    private static readonly JsonSerializerOptions OwnershipJsonOptions = new()
     {
         WriteIndented = true,
     };
 
-    internal const string LifecyclePath = ".agents/open-forge.lifecycle.json";
+    internal const string OwnershipPath = ".agents/open-forge.lock.json";
     internal const string ManagedPath = ".agents/loader.md";
     internal const string GeneratedPath = ".agents/memory/_memory.md";
-    internal const string RetiredCandidatePath = ".agents/guidance/adaptive-collaboration.md";
+    internal const string RetiredCandidatePath = ".agents/guidance/_guidance.md";
     internal const string HistoricalTargetPath = ".agents/guidance/retired-framework.md";
 
-    private const string HistoricalSourcePath = "historical/retired-framework.md";
     private const string HistoricalTargetContents = """
         ---
         open-forge:
@@ -70,10 +70,8 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
 
     internal async Task EstablishTrustedFrameworkAsync(CancellationToken cancellationToken)
     {
-        using var standardInput = new StringReader(string.Empty);
-        using var promptOutput = new StringWriter();
         var result = await InstallOperationFactory.Create(
-                new CliInteractiveSession(standardInput, promptOutput, canPrompt: false),
+                InstallInteractionTestSupport.Unavailable(),
                 LockStoreRoot)
             .ExecuteAsync(
                 new InstallRequest(
@@ -112,10 +110,8 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
         bool canPrompt = false,
         string input = "")
     {
-        using var standardInput = new StringReader(input);
-        using var promptOutput = new StringWriter();
         return await UpdateOperationFactory.Create(
-                new CliInteractiveSession(standardInput, promptOutput, canPrompt),
+                UpdateInteractionTestSupport.ScriptedConfirmation(input, canPrompt),
                 LockStoreRoot)
             .ExecuteAsync(request, TestContext.Current.CancellationToken);
     }
@@ -124,10 +120,9 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
         UpdateRequest request,
         Action mutation)
     {
-        using var standardInput = new MutatingConfirmationReader(mutation);
-        using var promptOutput = new StringWriter();
         return await UpdateOperationFactory.Create(
-                new CliInteractiveSession(standardInput, promptOutput, canPrompt: true),
+                UpdateInteractionTestSupport.Confirmation(
+                    observe: (_, _) => mutation()),
                 LockStoreRoot)
             .ExecuteAsync(request, TestContext.Current.CancellationToken);
     }
@@ -140,6 +135,12 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
 
     internal byte[] ReadBytes(string relativePath)
         => File.ReadAllBytes(_installWorkspace.Combine(relativePath));
+
+    internal void WriteText(string relativePath, string contents)
+        => _installWorkspace.WriteText(relativePath, contents);
+
+    internal void CreateDirectory(string relativePath)
+        => _installWorkspace.CreateDirectory(relativePath);
 
     internal void ReplaceText(string relativePath, string contents)
         => _installWorkspace.ReplaceInstalledText(relativePath, contents);
@@ -155,8 +156,8 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
 
     internal void MutateManagedContent()
         => ReplaceUniqueManagedText(
-            "Read this after `AGENTS.md` to enter the workspace.",
-            "Read this after `AGENTS.md` to enter one workspace.");
+            "It defines how to select context, follow applicable rules, and maintain the workspace.",
+            "It defines how to select context, follow applicable rules, and maintain one workspace.");
 
     internal string MutateManagedContentAgain()
         => ReplaceUniqueManagedText(
@@ -171,20 +172,19 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
 
     internal void SeedPreviousInventoryIdentity()
     {
-        var lifecycle = ReadLifecycle();
+        var lifecycle = ReadOwnership();
         SetPreviousInventory(lifecycle);
-        WriteLifecycle(lifecycle);
+        WriteOwnership(lifecycle);
     }
 
-    internal (string Id, string? Version, string InventoryFingerprint) ReadLifecycleSourceIdentity()
+    internal (string Id, string? Version) ReadOwnershipSourceIdentity()
     {
-        var source = ReadFramework(ReadLifecycle())["source"]?.AsObject()
+        var source = ReadFramework(ReadOwnership())["source"]?.AsObject()
             ?? throw new InvalidOperationException(
                 "The installed lifecycle fixture must contain Framework source state.");
         return (
             ReadRequiredString(source, "id"),
-            source["version"]?.GetValue<string>(),
-            ReadRequiredString(source, "inventoryFingerprint"));
+            source["version"]?.GetValue<string>());
     }
 
     internal void SeedSafePreviousSourceVersion()
@@ -193,33 +193,16 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
         var previous = $"{current}\n{PreviousAuthoredContent}\n";
 
         ReplaceText(RetiredCandidatePath, previous);
-        var lifecycle = ReadLifecycle();
-        var target = ReadSourceTarget(lifecycle, RetiredCandidatePath);
-        SetSourceBaseline(target, Encoding.UTF8.GetBytes(previous));
-        SetPreviousInventory(lifecycle);
-        WriteLifecycle(lifecycle);
     }
 
     internal void SeedGenuinelyNewSourceTarget()
     {
         RemoveRetiredCandidate();
-        var lifecycle = ReadLifecycle();
-        var targets = ReadTargets(lifecycle);
-        var matches = targets
-            .Select((node, index) => (Node: node?.AsObject(), Index: index))
-            .Where(value => string.Equals(
-                value.Node?["sourceAssetPath"]?.GetValue<string>(),
-                RetiredCandidatePath,
-                StringComparison.Ordinal))
-            .ToArray();
-        if (matches.Length != 1)
-        {
-            throw new InvalidOperationException("The new-target fixture requires one installed lifecycle target.");
-        }
-
-        targets.RemoveAt(matches[0].Index);
-        SetPreviousInventory(lifecycle);
-        WriteLifecycle(lifecycle);
+        var lifecycle = ReadOwnership();
+        var paths = ReadFramework(lifecycle)["paths"]!.AsArray();
+        var target = paths.Single(path => path!.GetValue<string>() == RetiredCandidatePath);
+        paths.Remove(target);
+        WriteOwnership(lifecycle);
     }
 
     internal byte[] SeedCoalescedAuthoredAndGeneratedChange()
@@ -231,7 +214,7 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
             throw new InvalidOperationException("The coalesced-change fixture requires a generated Entries region.");
         }
 
-        var emptyEntries = $"\n{MarkdownGeneratedRegionSyntax.EmptyEntry}\n";
+        var emptyEntries = $"\n{MarkdownEntriesSectionReader.EmptyEntry}\n";
         if (string.Equals(current[content.Start..content.End], emptyEntries, StringComparison.Ordinal))
         {
             throw new InvalidOperationException("The coalesced-change fixture requires populated Entries.");
@@ -239,16 +222,6 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
 
         var previous = $"{current[..body.Start]}\n{PreviousAuthoredContent}\n\n{current[body.Start..content.Start]}{emptyEntries}{current[content.End..]}";
         ReplaceText(GeneratedPath, previous);
-        var lifecycle = ReadLifecycle();
-        SetSourceBaseline(
-            ReadSourceTarget(lifecycle, GeneratedPath),
-            Encoding.UTF8.GetBytes(previous));
-        var generatedTarget = ReadGeneratedTarget(lifecycle, GeneratedPath);
-        generatedTarget["baselineFingerprint"] = ContentIdentity.ReadGeneratedEntriesFingerprint(
-            Encoding.UTF8.GetBytes(previous),
-            ReadRequiredString(generatedTarget, "fingerprintKind"));
-        SetPreviousInventory(lifecycle);
-        WriteLifecycle(lifecycle);
         return Encoding.UTF8.GetBytes(current);
     }
 
@@ -265,26 +238,9 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
             writer.Write(HistoricalTargetContents);
         }
 
-        var lifecycle = ReadLifecycle();
-        var bytes = Encoding.UTF8.GetBytes(HistoricalTargetContents);
-        var identity = ContentIdentity.ReadSourceFingerprint(bytes);
-        if (!identity.IsSemantic || identity.Sha256 is null)
-        {
-            throw new InvalidOperationException("The historical target fixture must have semantic identity.");
-        }
-
-        var targets = ReadTargets(lifecycle);
-        targets.Add((JsonNode)new JsonObject
-        {
-            ["path"] = HistoricalTargetPath,
-            ["sourceAssetPath"] = HistoricalSourcePath,
-            ["region"] = null,
-            ["baselineFingerprint"] = identity.Sha256,
-            ["fingerprintKind"] = LifecycleSchema.SemanticFingerprintKind,
-        });
-        SortTargets(targets);
-        SetPreviousInventory(lifecycle);
-        WriteLifecycle(lifecycle);
+        var lifecycle = ReadOwnership();
+        ReadFramework(lifecycle)["paths"]!.AsArray().Add((JsonNode?)JsonValue.Create(HistoricalTargetPath));
+        WriteOwnership(lifecycle);
     }
 
     internal void DivergeHistoricalRetiredTarget()
@@ -296,49 +252,33 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
         ReplaceText(
             GeneratedPath,
             current.Replace(
-                "<!-- open-forge:generated-index:start -->",
-                "<!-- open-forge:generated-index:broken -->",
+                "## Entries",
+                "## Entries\n\n## Entries",
                 StringComparison.Ordinal));
     }
 
     internal void RemoveGeneratedBoundary()
     {
-        const string startMarker = "<!-- open-forge:generated-index:start -->";
-        const string endMarker = "<!-- open-forge:generated-index:end -->";
         var current = ReadText(GeneratedPath);
-        var start = current.IndexOf(startMarker, StringComparison.Ordinal);
-        var end = current.IndexOf(endMarker, StringComparison.Ordinal);
-        if (start < 0
-            || end < start
-            || current.IndexOf(startMarker, start + startMarker.Length, StringComparison.Ordinal) >= 0
-            || current.IndexOf(endMarker, end + endMarker.Length, StringComparison.Ordinal) >= 0)
+        const string heading = "## Entries";
+        var start = current.IndexOf(heading, StringComparison.Ordinal);
+        if (start < 0)
         {
-            throw new InvalidOperationException(
-                "The generated-boundary fixture requires one complete marker pair.");
+            throw new InvalidOperationException("The generated-boundary fixture requires its Entries heading.");
         }
 
-        var endExclusive = end + endMarker.Length;
-        if (endExclusive < current.Length && current[endExclusive] == '\r')
-        {
-            endExclusive++;
-        }
-        if (endExclusive < current.Length && current[endExclusive] == '\n')
-        {
-            endExclusive++;
-        }
-
-        ReplaceText(GeneratedPath, current.Remove(start, endExclusive - start));
+        ReplaceText(GeneratedPath, current.Remove(start));
     }
 
     internal void CorruptGeneratedUtf8()
     {
         var bytes = ReadBytes(GeneratedPath);
-        var marker = Encoding.UTF8.GetBytes("<!-- open-forge:generated-index:start -->");
+        var marker = Encoding.UTF8.GetBytes("## Entries");
         var markerOffset = bytes.AsSpan().IndexOf(marker);
         if (markerOffset < 0)
         {
             throw new InvalidOperationException(
-                "The invalid-UTF8 fixture requires one generated start marker.");
+                "The invalid-UTF8 fixture requires one generated Entries heading.");
         }
 
         var bodyOffset = markerOffset + marker.Length;
@@ -361,100 +301,42 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
 
     internal void SeedInvalidSourceProvenance()
     {
-        var lifecycle = ReadLifecycle();
-        ReadSourceTarget(lifecycle, GeneratedPath)["region"] = "authored";
-        SortTargets(ReadTargets(lifecycle));
-        WriteLifecycle(lifecycle);
+        var lifecycle = ReadOwnership();
+        ReadFramework(lifecycle)["regions"]!.AsArray().Add((JsonNode)new JsonObject
+        { ["path"] = GeneratedPath, ["region"] = "authored" });
+        WriteOwnership(lifecycle);
     }
 
     internal void SeedExplicitManagedHostRegion(string path)
     {
-        var lifecycle = ReadLifecycle();
-        ReadSourceTarget(lifecycle, path)["region"] = "managed";
-        SortTargets(ReadTargets(lifecycle));
-        WriteLifecycle(lifecycle);
+        var lifecycle = ReadOwnership();
+        Assert.Contains(ReadFramework(lifecycle)["regions"]!.AsArray(),
+            region => region!["path"]!.GetValue<string>() == path
+                && region["region"]!.GetValue<string>() == "open-forge");
+        WriteOwnership(lifecycle);
     }
 
     internal void SeedMalformedLifecycle()
-        => ReplaceText(LifecyclePath, "{\"framework\": {\"coverage\": \"broken\"}}\n");
+        => ReplaceText(OwnershipPath, "{\"framework\": {\"coverage\": \"broken\"}}\n");
 
-    private JsonObject ReadLifecycle()
-        => JsonNode.Parse(ReadText(LifecyclePath))?.AsObject()
+    private JsonObject ReadOwnership()
+        => JsonNode.Parse(ReadText(OwnershipPath))?.AsObject()
             ?? throw new InvalidOperationException("The installed lifecycle fixture must be a JSON object.");
 
-    private void WriteLifecycle(JsonObject lifecycle)
+    private void WriteOwnership(JsonObject lifecycle)
         => ReplaceText(
-            LifecyclePath,
-            lifecycle.ToJsonString(LifecycleJsonOptions) + "\n");
-
-    private static JsonArray ReadTargets(JsonObject lifecycle)
-        => ReadFramework(lifecycle)["targets"]?.AsArray()
-            ?? throw new InvalidOperationException("The installed lifecycle fixture must contain Framework targets.");
-
-    private static JsonObject ReadSourceTarget(JsonObject lifecycle, string sourceAssetPath)
-    {
-        var matches = ReadTargets(lifecycle)
-            .Select(node => node?.AsObject())
-            .Where(target => string.Equals(
-                target?["sourceAssetPath"]?.GetValue<string>(),
-                sourceAssetPath,
-                StringComparison.Ordinal))
-            .ToArray();
-        return matches.Length == 1 && matches[0] is { } target
-            ? target
-            : throw new InvalidOperationException("The source fixture requires one installed lifecycle target.");
-    }
-
-    private static JsonObject ReadGeneratedTarget(JsonObject lifecycle, string path)
-    {
-        var matches = ReadTargets(lifecycle)
-            .Select(node => node?.AsObject())
-            .Where(target => string.Equals(
-                    target?["path"]?.GetValue<string>(),
-                    path,
-                    StringComparison.Ordinal)
-                && string.Equals(
-                    target?["region"]?.GetValue<string>(),
-                    LifecycleSchema.GeneratedEntriesRegion,
-                    StringComparison.Ordinal)
-                && target?["sourceAssetPath"] is null)
-            .ToArray();
-        return matches.Length == 1 && matches[0] is { } target
-            ? target
-            : throw new InvalidOperationException("The generated fixture requires one installed lifecycle target.");
-    }
+            OwnershipPath,
+            lifecycle.ToJsonString(OwnershipJsonOptions));
 
     private static JsonObject ReadFramework(JsonObject lifecycle)
         => lifecycle["framework"]?.AsObject()
             ?? throw new InvalidOperationException("The installed lifecycle fixture must contain Framework state.");
 
-    private static void SetSourceBaseline(JsonObject target, byte[] bytes)
-    {
-        target["baselineFingerprint"] = ContentIdentity.ReadSourceFingerprint(
-            bytes,
-            ReadRequiredString(target, "fingerprintKind"));
-    }
-
     private static void SetPreviousInventory(JsonObject lifecycle)
     {
         var source = ReadFramework(lifecycle)["source"]?.AsObject()
             ?? throw new InvalidOperationException("The installed lifecycle fixture must contain Framework source state.");
-        source["inventoryFingerprint"] = PreviousInventoryFingerprint;
-    }
-
-    private static void SortTargets(JsonArray targets)
-    {
-        var ordered = targets
-            .Select(node => node?.DeepClone()
-                ?? throw new InvalidOperationException("Lifecycle targets cannot contain null members."))
-            .OrderBy(node => ReadRequiredString(node.AsObject(), "path"), StringComparer.Ordinal)
-            .ThenBy(node => node["region"]?.GetValue<string>(), StringComparer.Ordinal)
-            .ToArray();
-        targets.Clear();
-        foreach (var target in ordered)
-        {
-            targets.Add(target);
-        }
+        source["version"] = "previous-release";
     }
 
     private static string ReadRequiredString(JsonObject value, string propertyName)
@@ -504,24 +386,5 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
         }
 
         File.Delete(path);
-    }
-
-    private sealed class MutatingConfirmationReader(Action mutation) : TextReader
-    {
-        private readonly Action _mutation = mutation;
-        private bool _read;
-
-        public override ValueTask<string?> ReadLineAsync(CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (_read)
-            {
-                return ValueTask.FromResult<string?>(null);
-            }
-
-            _read = true;
-            _mutation();
-            return ValueTask.FromResult<string?>("y");
-        }
     }
 }

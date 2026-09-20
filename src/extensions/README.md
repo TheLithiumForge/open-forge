@@ -1,60 +1,47 @@
 # Open Forge Extensions
 
-We built these Extensions to give you more starting points as you make Open Forge your own. Each package is optional, so you can bring in what helps your work and adapt it to your workspace.
+Choose optional content by the work it helps you do. Core supplies routing, scope, authority, and generic Memory. Extensions add useful methods, record conventions, and starting files.
 
-## Current Catalogue
+## Choose By Need
 
-| Package | Contents | Dependencies |
-| --- | --- | --- |
-| [Project Documents](project-documents/README.md) | Vision and Architecture Workflows, with four document Templates | None |
-| [Memory Starters](memory-starters/README.md) | Five Memory Templates | None |
-| [Planning](planning/README.md) | A planning Workflow, the Work Records Pattern, and four planning Templates | None |
-| [Development](development/README.md) | Development, Debugging, and Review Workflows | None |
-| [Orchestration](orchestration/README.md) | One Workflow for dependent tasks, recovery, and integration | Planning, Development |
-| [Development Toolkit](development-toolkit/README.md) | A bundle of Project Documents, Memory Starters, Planning, and Development | All four included packages |
+| Need | Package | What it adds | Direct dependencies |
+| --- | --- | --- | --- |
+| Explore choices and clarify direction | [Collaboration](collaboration/README.md) | Adaptive Collaboration; Brainstorming starter | None |
+| Maintain current project knowledge | [Project Documents](project-documents/README.md) | Documents; five document starters; Vision and Architecture | Workflow Support |
+| Explore, decide, and organize work | [Planning](planning/README.md) | Ideas, Analysis, Decisions, Checkpoints; eleven starters; Work Records; Planning | Workflow Support |
+| Implement, debug, or review | [Development](development/README.md) | Three focused methods | Workflow Support |
+| Coordinate related tasks and learn from execution | [Orchestration](orchestration/README.md) | Managed Delivery; Observations, Handoffs; Observation and Handoff starters | Planning, Development |
+| Start with project knowledge, planning, and development | [Development Toolkit](development-toolkit/README.md) | Selects the three packages together; no content of its own | Project Documents, Planning, Development |
+| Author or select reusable methods | [Workflow Support](workflows/README.md) | One native selector Skill, its catalogue, and a Workflow starter | None |
 
-Choose a focused package for the work at hand, or use Development Toolkit to bring its four dependencies in together. Orchestration is available separately when coordination across tasks would help.
+Workflow Support keeps the stable ID `workflows`. All packages remain optional. Category definitions and recipe bodies are selected on demand rather than loaded merely because a package was installed.
 
-Use what fits, adapt it as your project changes, and remove content that adds no value. Installed Workflows stay optional.
+## How They Fit
 
-## Installation
+Dependency arrows below point from a package to what it needs:
 
-You can install a package with the CLI or copy the files yourself. The [Extension installation guide](../../docs/extensions.md#install-an-extension) covers both approaches.
-
-These commands browse the catalogue embedded in your CLI and preview a package
-before adding it to your workspace. Replace the destination path with your
-project; you do not need a source checkout.
-
-```sh
-open-forge extension list --available --workspace /path/to/project
-open-forge extension install development-toolkit --workspace /path/to/project --dry-run
-open-forge extension install orchestration --workspace /path/to/project --dry-run
+```text
+collaboration       -> no dependencies
+project-documents   -> workflows
+planning            -> workflows
+development         -> workflows
+orchestration       -> planning, development
+development-toolkit -> project-documents, planning, development
+workflows           -> no dependencies
 ```
 
-After reviewing the preview, apply the same command without `--dry-run`. The guide also covers updates, removal, and permissions. Managed state lives in `.agents/open-forge.lifecycle.json`. It does not become agent context.
+Collaboration and Orchestration are not part of the Toolkit. Selecting Orchestration also supplies Planning, Development, and one copy of Workflow Support, but not Project Documents.
 
-Each CLI build embeds the current package sources automatically. To try local
-package changes without rebuilding, add `--source /path/to/open-forge/src/extensions`
-and keep that source checkout separate from the destination workspace.
+## Packaging Does Not Change Meaning
 
-For [manual installation](../../docs/extensions.md#manual-installation), copy the `content/` files from the selected package and its dependencies into the workspace. A bundle has no separate payload to copy. Update affected `Entries`, check links in the assembled workspace, and review the changes. Manual copying does not create managed lifecycle state.
+A Decision is still an accepted choice, whether used during planning, operations, or research. An Observation does not require an Overseer. A Document need not have been produced by a planning process.
 
-## Source Shape
+Each package owns complete files at their installed paths. Shared template parents are avoided: Planning owns `templates/planning/`, Project Documents owns `templates/documents/`, and Orchestration owns `templates/orchestration/`. Collaboration owns `templates/collaboration/`. Workflow Support owns `templates/workflows/` and the shared selector. Generated Entries expose whichever files are present.
 
-Each Extension adds complete files. A package contains `extension.json`, an optional `README.md`, and workspace-relative files under `content/`. A package containing only dependencies may omit `content/`.
+Users can customize or remove content. Review actual descendants and dependencies when removing a category; user-created records and Template copies are not disposable package files. Removed defaults are not permission to restore them later.
 
-Routed content follows the roles and scopes of its destination in the Framework. Native formats and support files keep the meaning defined by their consumers. The installed files remain usable without the package manifest or CLI.
+## Review And Use
 
-The manifest identifies the package and declares its dependencies. Dependencies resolve transitively before their dependents. The [package format](../../docs/extensions.md#package-format) defines the accepted representation. [Create an Extension](../../docs/extensions.md#create-an-extension) walks through assembling one.
+See [installation and customization](../../docs/extensions.md).
 
-## Content And Verification
-
-Each reusable file has one package source. Dependency packages provide shared files instead of competing copies. Runtime relationships use ordinary links and explicit Workflow steps because manifest dependencies describe installation only.
-
-Keep native formats such as `SKILL.md` in their native form. Routed Open Forge files normally carry `Extension`, their role, and useful topic tags. Add eager-loading tags only when their loading cost is deliberate.
-
-Check each dependency closure for conflicting destinations and missing links, and verify that its metadata and Workflow sections are valid. Check route indexing after assembly. Verify installation and removal in a separate workspace with a CLI built from the same source tree.
-
-Keep packaged Templates and the Work Records Pattern aligned with their repository copies. Local Workflow profiles may differ where repository-specific rules justify it.
-
-Adding a package to this catalogue requires evidence of useful outcomes and clear decisions about dependencies and runtime boundaries. A successful local experiment alone does not establish that it belongs in the catalogue.
+The source uses `content/` exactly as supplied. Revision versions are `0.3.0`; they are source metadata, not a published compatibility guarantee. The former `memory-starters` package is retired, not a hidden dependency or a compatibility alias. Existing ownership requires a reviewed migration.

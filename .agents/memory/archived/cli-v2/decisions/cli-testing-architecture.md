@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Replacement CLI tests progress from direct function and command evidence to focused integration and built-process journeys
+  description: "Historical CLI-v2 source: Replacement CLI tests progress from direct function and command evidence to focused integration and built-process journeys"
   responsibility: Preserve why the replacement uses a gradual evidence ladder, focused snapshots, real boundaries, and a small built-process suite
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

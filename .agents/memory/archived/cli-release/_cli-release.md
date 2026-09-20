@@ -30,7 +30,7 @@ descendants here preserve origin, reasoning, dissent, and evidence only.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
+- [Programme-era prose removed from the CLI Architecture when it was split into layer records, covering the greenfield reset framing, the build sequence, and Task delegation rules](architecture-programme-prose.md) - #Memory #Archived #CLI #Architecture #Reset #History
 - [Completed lossless migration evidence for the new CLI split contracts, with temporary Index staging and open product decisions recorded](contract-migration-ledger.md) - #Memory #Archived #CLI #Release #Contract #Migration #Coverage #Conflict #Traceability #Review #Contextual #Historical
 - [Historical accepted direction and decision agenda from the removed first C# CLI implementation program](decision-agenda-2026-08-21.md) - #Memory #Archived #Contextual #Historical #CLI #Release #Gate #Decision #Discussion
 - [Integrated Gate 1 evidence audit, provenance, current truth, job model, and unresolved CLI proposal map](gate-1-audit.md) - #Memory #Archived #CLI #Release #Gate #Audit #Evidence #Contextual #Historical
@@ -40,4 +40,3 @@ descendants here preserve origin, reasoning, dissent, and evidence only.
 - [Historical lessons and salvage inventory from the removed C# CLI and route-list implementation](implementation-reset-2026-08-21.md) - #Memory #Archived #Contextual #Historical #CLI #Architecture #Implementation #Testing #Reset
 - [Historical gates, tasks, dependencies, validation, and stop states from the removed first C# CLI implementation program](release-plan-2026-08-21.md) - #Memory #Archived #Contextual #Historical #CLI #Release #Program #Gate #Plan
 - [Historical CLI release review records retained after accepted units left active review](review/_review.md) - #Memory #Archived #Contextual #Historical #CLI #Release #Review #Council
-<!-- open-forge:generated-index:end -->

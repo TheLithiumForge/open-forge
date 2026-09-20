@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Update;
 
 public sealed class ExtensionUpdateRequestContractTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Update request preserves its normalized selection and policies"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void RequestPreservesNormalizedSelectionAndPolicies()
     {
@@ -40,6 +41,7 @@ public sealed class ExtensionUpdateRequestContractTests
         Assert.False(request.AllowInteraction);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Update request rejects null inputs, null IDs, and undefined modes"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void RequestRejectsNullInputsAndUndefinedModes()
     {

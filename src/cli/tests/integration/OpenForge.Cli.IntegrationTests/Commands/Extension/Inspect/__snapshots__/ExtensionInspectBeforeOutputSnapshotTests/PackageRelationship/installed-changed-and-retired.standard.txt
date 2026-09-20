@@ -1,0 +1,12 @@
+toolkit 1.0.0 is installed. 2 files need attention.
+Workspace: <workspace>
+Source: <extension-source>
+Dependencies
+  toolkit  1.0.0  available
+
+Files
+  .agents/retired.md  no longer part of the package
+  .agents/toolkit.md  changed
+1 file changed, 1 file retired, 1 dependency, 2 warnings.
+  Review the selected package changes before applying them.
+Next: open-forge extension update toolkit --dry-run

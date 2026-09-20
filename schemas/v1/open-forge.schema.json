@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v1/open-forge.schema.json",
+  "title": "Open Forge workspace settings",
+  "description": "Authored workspace settings. A person writes and reviews this file; its generated counterpart is open-forge.lock.json. Unknown keys are accepted and ignored, so a file written for a newer release stays usable by an older one.",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "The schema describing this file. Used by editors for completion and validation; never fetched by the CLI.",
+      "format": "uri"
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "description": "The shape this file was written for. A version the CLI does not recognise is read for the keys it understands and reported, never refused.",
+      "minimum": 1
+    },
+    "allowInstallPaths": {
+      "type": "array",
+      "description": "Destinations outside .agents that the six permission-gated commands may write to: extension install, remove, and update, and library attach, detach, and sync. Entries are paths, not patterns. An entry naming a file admits that file; an entry naming a directory admits everything beneath it. There is no glob language, so what an entry admits is visible by reading it.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "description": "A workspace-relative path to a file or directory."
+      },
+      "uniqueItems": true
+    },
+    "removedCategories": {
+      "type": "array",
+      "description": "Root categories deliberately deleted from this workspace. Install and update do not reinstate them.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    }
+  },
+  "examples": [
+    {
+      "schemaVersion": 1,
+      "allowInstallPaths": ["docs/agents", "tools/agent-notes.md"],
+      "removedCategories": ["skills"]
+    }
+  ]
+}

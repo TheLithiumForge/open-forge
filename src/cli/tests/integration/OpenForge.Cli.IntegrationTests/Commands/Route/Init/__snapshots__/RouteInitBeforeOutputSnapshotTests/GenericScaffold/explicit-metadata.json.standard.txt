@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Created .agents/documents/_documents.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/documents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/documents/_documents.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "entrypointsCreated": 1,
+    "entrypointsPresent": 0,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "documents",
+      "path": ".agents/documents/_documents.md"
+    },
+    "scaffold": "generic",
+    "entrypoints": [
+      {
+        "path": ".agents/documents/_documents.md",
+        "outcome": "created",
+        "needsAuthoring": false
+      }
+    ],
+    "listedIn": [],
+    "metadata": {
+      "description": "Documents",
+      "responsibility": "Owns documents.",
+      "tags": [
+        "Docs"
+      ],
+      "sources": {
+        "description": "explicit",
+        "responsibility": "explicit",
+        "tags": "explicit"
+      }
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

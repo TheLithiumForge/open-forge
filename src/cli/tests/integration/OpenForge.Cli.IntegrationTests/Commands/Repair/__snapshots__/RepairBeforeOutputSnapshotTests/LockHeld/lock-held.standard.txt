@@ -1,0 +1,14 @@
+Cannot repair: another Open Forge command holds the workspace lock. Nothing was changed.
+Workspace: <workspace>
+  Error  repair.workspace-lock-unavailable  Workspace lock is held
+         Another Open Forge command holds the workspace lock. Nothing was changed.
+  Warning  .agents/docs/source.md:10:10  Broken link
+         missing.md: Broken link; 4 possible targets
+  .agents/docs/source.md:9:8    ./guide.md -> guide.md
+  .agents/docs/source.md:10:10  possible target: .agents/docs/guide.md
+  .agents/docs/source.md:10:10  possible target: .agents/docs/index.md
+  .agents/docs/source.md:10:10  possible target: .agents/docs/replacement.md
+  .agents/docs/source.md:10:10  possible target: .agents/docs/source.md
+2 problems remaining, 1 problem needing a choice, 1 problem needing a hand, 1 error, 1 warning.
+  Inspect the blocked diagnosis, selection, target, plan, or recovery boundary before retrying Repair.
+Next: open-forge doctor

@@ -1,0 +1,5 @@
+status=incomplete
+installed=0
+available=0
+The process cannot access the file '<extension-source>\toolkit\extension.json' because it is being used by another process.
+No Extension ownership is recorded; installed packages cannot be established.

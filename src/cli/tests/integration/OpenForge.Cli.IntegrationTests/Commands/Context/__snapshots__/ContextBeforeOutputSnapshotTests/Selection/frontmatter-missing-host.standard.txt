@@ -1,0 +1,15 @@
+Workspace: <workspace>
+3 sources, about 0.1k tokens.
+=== AGENTS.md ===
+included because workspace entry
+
+=== .agents/loader.md (loader) ===
+included because Loader
+
+=== .agents/docs/_docs.md (docs) ===
+included because #LoadNow from .agents/loader.md
+---
+open-forge:
+  description: Documents
+  tags: [Docs]
+---

@@ -15,6 +15,7 @@ public sealed class RouteCreatePlanningIntegrationTests
         Differing,
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Create Template resolution copies only the exact classified body"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     public async Task TemplateResolutionCopiesOnlyExactClassifiedBody()
     {
@@ -37,6 +38,7 @@ public sealed class RouteCreatePlanningIntegrationTests
             System.Text.Encoding.UTF8.GetString(resolution.BodyBytes.AsSpan()));
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Create Template resolution rejects missing or malformed sources"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     [InlineData(false, (int)RouteCreateFindingCode.InvalidTemplate)]
     [InlineData(true, (int)RouteCreateFindingCode.MetadataUnsafe)]
@@ -67,6 +69,7 @@ public sealed class RouteCreatePlanningIntegrationTests
         Assert.Empty(resolution.BodyBytes);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Create planning classifies complete, dry-run, no-op, and collision states"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     [InlineData(PlanningScenario.Apply)]
     [InlineData(PlanningScenario.DryRun)]
@@ -117,6 +120,7 @@ public sealed class RouteCreatePlanningIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Create planning blocks missing or ambiguous parents before effects"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     [InlineData(false, (int)RouteCreateFindingCode.ParentMissing)]
     [InlineData(true, (int)RouteCreateFindingCode.RouteAmbiguous)]
@@ -150,6 +154,7 @@ public sealed class RouteCreatePlanningIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Create planning blocks a physical alias at the target path"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
     public async Task PlanningBlocksPhysicalAliasAtTarget()
     {

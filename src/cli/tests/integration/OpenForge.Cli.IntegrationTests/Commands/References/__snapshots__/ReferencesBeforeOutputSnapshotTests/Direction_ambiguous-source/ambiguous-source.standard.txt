@@ -1,0 +1,10 @@
+Cannot list references: The source ID resolves to more than one logical source.
+Workspace: <workspace>
+  Error  docs/guide  Source is ambiguous
+         Cannot list references: The source ID resolves to more than one logical source.
+  Warning  .agents/docs/guide.md  Two sources share an identity
+         The ID docs/guide matches more than one file. Use the exact path.
+0 in, 0 out
+The incoming scan used every source.
+  check the workspace for broken links
+Next: open-forge doctor

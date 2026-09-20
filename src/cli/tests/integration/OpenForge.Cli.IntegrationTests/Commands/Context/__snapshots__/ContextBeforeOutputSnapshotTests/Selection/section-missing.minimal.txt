@@ -1,0 +1,15 @@
+  Warning  .agents/docs/_docs.md  Section is missing
+         .agents/docs/_docs.md has no section named Absent.
+  Warning  .agents/docs/guide.md  Section is missing
+         .agents/docs/guide.md has no section named Absent.
+  Warning  .agents/loader.md  Section is missing
+         .agents/loader.md has no section named Absent.
+  Warning  AGENTS.md  Section is missing
+         AGENTS.md has no section named Absent.
+=== AGENTS.md ===
+
+=== .agents/loader.md (loader) ===
+
+=== .agents/docs/_docs.md (docs) ===
+
+=== .agents/docs/guide.md (docs/guide) ===

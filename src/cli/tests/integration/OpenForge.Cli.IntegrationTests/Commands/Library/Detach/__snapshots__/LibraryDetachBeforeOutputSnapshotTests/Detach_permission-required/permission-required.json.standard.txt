@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 3,
+  "command": "library detach",
+  "status": "blocked",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot detach team-knowledge: it writes outside .agents and no grant allows that. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-detach.permission-required",
+      "title": "Permission is required",
+      "message": "Cannot detach: it writes outside .agents and no grant allows that.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge library detach team-knowledge --allow-path docs/review.md --automatic",
+          "reason": "Grant the destination path, then rerun the detach request."
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "path": "docs/review.md",
+      "kind": "link",
+      "action": "deleted",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "detached",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "linksRemoved": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "registrationRemoved": false,
+    "permissions": {
+      "required": [
+        "docs/review.md"
+      ],
+      "missing": [
+        "docs/review.md"
+      ],
+      "decision": "required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": "docs/review.md",
+        "kind": "link",
+        "action": "delete",
+        "outcome": "not-started",
+        "target": "../shared/team-knowledge/docs/review.md"
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "kind": "record",
+        "action": "replace",
+        "outcome": "not-started"
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge library detach team-knowledge --allow-path docs/review.md --automatic",
+    "reason": "Grant the destination path, then rerun the detach request."
+  }
+}

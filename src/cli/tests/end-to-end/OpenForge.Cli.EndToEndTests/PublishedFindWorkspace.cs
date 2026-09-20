@@ -131,9 +131,8 @@ internal sealed class PublishedFindWorkspace : IDisposable
             ".agents/loader.md",
             "---\nopen-forge:\n  description: Loader\n  tags: [LoadNow]\n---\n# Loader\n\n"
             + "## Entries\n\n"
-            + "<!-- open-forge:generated-index:start -->\n"
             + "- none - No entries - #Empty\n"
-            + "<!-- open-forge:generated-index:end -->\n");
+            );
         workspace.WriteText(
             ".agents/docs.md",
             "---\nopen-forge:\n  description: Docs\n  tags: [Architecture]\n---\n# Architecture\n\n## Target\n\nTarget body\n");

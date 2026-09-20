@@ -1,0 +1,11 @@
+toolkit is installed, but the comparison could not finish: The explicit Extension source does not exist.
+Workspace: <workspace>
+  Warning  <extension-source>/missing-source  Extension source is unavailable
+         The source <extension-source>/missing-source could not be read, so the comparison could not finish.
+Source: <extension-source>/missing-source
+Dependencies
+  toolkit  1.0.0  available
+
+Files
+  .agents/toolkit.md  could not be compared
+1 dependency, 1 warnings.

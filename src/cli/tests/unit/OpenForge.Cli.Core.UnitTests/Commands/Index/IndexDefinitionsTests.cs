@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Index;
+using OpenForge.Cli.Core.Commands.Index.Models.Result;
 using OpenForge.Cli.Core.Commands.Index.Models.Operation;
 using OpenForge.Cli.Core.Commands.Index.Models.Planning;
 using OpenForge.Cli.Core.Commands.Index.Models.Request;
@@ -9,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Index;
 
 public sealed class IndexDefinitionsTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index definitions expose the exact ordered finding vocabulary and fixed statuses"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void FindingVocabularyIsExact()
     {
@@ -24,12 +26,14 @@ public sealed class IndexDefinitionsTests
             ("index.target-unexposed", CliSemanticStatus.Blocked),
             ("index.target-unsafe", CliSemanticStatus.Blocked),
             ("index.metadata-unsafe", CliSemanticStatus.Blocked),
+            ("index.metadata-optional", CliSemanticStatus.Attention),
             ("index.generated-region-unsafe", CliSemanticStatus.Blocked),
             ("index.workspace-lock-unavailable", CliSemanticStatus.Blocked),
             ("index.target-changed", CliSemanticStatus.Blocked),
             ("index.recovery-conflict", CliSemanticStatus.Blocked),
             ("index.discovery-incomplete", CliSemanticStatus.Incomplete),
             ("index.metadata-incomplete", CliSemanticStatus.Incomplete),
+            ("index.metadata-skipped", CliSemanticStatus.Incomplete),
             ("index.projection-incomplete", CliSemanticStatus.Incomplete),
             ("index.recovery-unavailable", CliSemanticStatus.Incomplete),
             ("index.recovery-artifact-retained", CliSemanticStatus.Attention),
@@ -45,6 +49,7 @@ public sealed class IndexDefinitionsTests
                 .Select(definition => (definition.MachineName, definition.Status)));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index definitions centralize every exact public finite spelling"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void FiniteSpellingsAreExact()
     {
@@ -61,6 +66,7 @@ public sealed class IndexDefinitionsTests
             Enum.GetValues<IndexRecoveryState>().Select(IndexDefinitions.ReadMachineName));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index finite mappings reject undefined runtime values"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void FiniteMappingsRejectUndefinedValues()
     {

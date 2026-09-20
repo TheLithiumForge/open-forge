@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Remove;
 
 public sealed class ExtensionRemoveSelectionContractTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Remove selection snapshots IDs and preserves explicit selection identity"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void SelectionSnapshotsExplicitIds()
     {
@@ -20,7 +21,8 @@ public sealed class ExtensionRemoveSelectionContractTests
         Assert.NotSame(ids, selection.Ids);
     }
 
-    [Fact(DisplayName = "Extension Remove selection preserves interactive wizard identity"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Extension Remove selection preserves interactive prompt identity"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void SelectionPreservesInteractiveIdentity()
     {
         var selection = new ExtensionRemoveSelection(
@@ -31,6 +33,7 @@ public sealed class ExtensionRemoveSelectionContractTests
         Assert.Equal(["toolkit"], selection.Ids);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Remove selection rejects undefined kinds, null IDs, duplicates, blanks, and empty input"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void SelectionRejectsInvalidKindsAndIds()
     {

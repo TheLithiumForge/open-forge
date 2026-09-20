@@ -18,6 +18,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 internal sealed class ExtensionInstallIntegrationWorkspace : IDisposable
 {
     internal const string LifecyclePath = ".agents/open-forge.lifecycle.json";
+    internal const string OwnershipPath = ".agents/open-forge.lock.json";
     private static readonly UTF8Encoding StrictUtf8NoBom = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
@@ -41,6 +42,8 @@ internal sealed class ExtensionInstallIntegrationWorkspace : IDisposable
     internal string Path => _workspace.Path;
 
     internal CliWorkspace Workspace { get; }
+
+    internal WorkspaceLockStoreRoot LockStoreRoot => _lockStore.StoreRoot;
 
     internal bool LockInfrastructureExists => _lockStore.InfrastructureExists;
 
@@ -68,7 +71,8 @@ internal sealed class ExtensionInstallIntegrationWorkspace : IDisposable
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
         Assert.Equal(string.Empty, run.StandardError);
         Assert.True(Directory.Exists(Combine(".agents")));
-        Assert.True(File.Exists(Combine(LifecyclePath)));
+        Assert.False(File.Exists(Combine(LifecyclePath)));
+        Assert.True(File.Exists(Combine(OwnershipPath)));
     }
 
     internal async Task<ExtensionInstallRun> RunAsync(
@@ -156,17 +160,19 @@ internal sealed class ExtensionInstallIntegrationWorkspace : IDisposable
 
     internal string ReadText(string relativePath) => File.ReadAllText(Combine(relativePath));
 
-    internal JsonElement ReadFrameworkLifecycle()
+    internal JsonElement ReadFrameworkOwnership()
     {
-        using var document = JsonDocument.Parse(ReadText(LifecyclePath));
+        using var document = JsonDocument.Parse(ReadText(OwnershipPath));
         return document.RootElement.GetProperty("framework").Clone();
     }
 
-    internal JsonElement ReadExtensionsLifecycle()
+    internal JsonElement ReadExtensionOwnership()
     {
-        using var document = JsonDocument.Parse(ReadText(LifecyclePath));
+        using var document = JsonDocument.Parse(ReadText(OwnershipPath));
         return document.RootElement.GetProperty("extensions").Clone();
     }
+
+    internal void CreateDirectory(string relativePath) => _workspace.CreateDirectory(relativePath);
 
     internal void CreateOccupant(string relativePath, string contents)
     {
@@ -369,6 +375,9 @@ internal sealed class ExtensionInstallCatalogue : IDisposable
         }
     }
 
+    internal void AddMisplacedPayload(string id, string target, string contents)
+        => _source.WriteText($"{id}/{target}", contents);
+
     internal string PackagePath(string id) => _source.Combine(id);
 
     internal byte[] ReadPayloadBytes(string id, string target)
@@ -376,6 +385,22 @@ internal sealed class ExtensionInstallCatalogue : IDisposable
 
     internal void ReplacePayload(string id, string target, string contents)
         => _source.ReplaceText($"{id}/content/{target}", contents);
+
+    internal void ReplaceManifest(string id, string contents)
+        => _source.ReplaceText($"{id}/extension.json", contents);
+
+    internal void AddPayload(string id, string target, string contents)
+        => _source.WriteText($"{id}/content/{target}", contents);
+
+    internal void RemovePayload(string id, string target)
+        => File.Delete(_source.Combine($"{id}/content/{target}"));
+
+    internal void SetVersion(string id, string version)
+    {
+        var path = $"{id}/extension.json";
+        _source.ReplaceText(path, File.ReadAllText(_source.Combine(path))
+            .Replace("\"version\": \"1.0.0\"", $"\"version\": \"{version}\"", StringComparison.Ordinal));
+    }
 
     public void Dispose() => _source.Dispose();
 }

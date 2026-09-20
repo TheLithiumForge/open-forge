@@ -1,0 +1,6 @@
+Cannot index .agents/root: it is a folder, not a source.
+Workspace: <workspace>
+  Error  .agents/root  Invalid source
+         .agents/root is a folder, not a source.
+  Choose a source ID or exact path.
+Next: open-forge index root

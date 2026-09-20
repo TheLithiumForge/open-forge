@@ -1,0 +1,11 @@
+Cannot create .agents/memory/project-alpha/overview.md: .agents/memory/project-alpha/overview.md already exists with different content.
+Workspace: <workspace>
+  Error  .agents/memory/project-alpha/overview.md  Existing target differs
+         .agents/memory/project-alpha/overview.md already exists with different content.
+         open-forge route update memory/project-alpha/overview
+         Update the existing route explicitly, then rerun Route Create if needed.
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project
+  Update the existing route explicitly, then rerun Route Create if needed.
+Next: open-forge route update memory/project-alpha/overview

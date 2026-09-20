@@ -1,0 +1,4 @@
+status=incomplete
+mode=apply
+regions=1
+A direct routed child document could not be read for authored metadata.

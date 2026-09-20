@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Place direct, focused integration, and built-CLI snapshot evidence at the scope of the behavior each tier proves
+  description: "Historical CLI-v2 source: Place direct, focused integration, and built-CLI snapshot evidence at the scope of the behavior each tier proves"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

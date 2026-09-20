@@ -23,12 +23,13 @@ public sealed class IndexProjectionIntegrationTests
 {
     private const string RootPath = ".agents/root/_root.md";
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Index projection uses base metadata, ignores overwrite metadata, and preserves workspace bytes")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
     public async Task RealProjectionUsesBaseMetadataAndPreservesWorkspaceBytes()
     {
         using var workspace = TemporaryWorkspace.Create("index-projection-base");
-        workspace.WriteText(RootPath, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"));
+        workspace.WriteText(RootPath, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"));
         workspace.WriteText(
             ".agents/root/child.md",
             OpenForgeDocumentSeed.Metadata("Base child", ["Docs"], "# Child\n"));
@@ -54,6 +55,7 @@ public sealed class IndexProjectionIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Index projection counts a wholly parseable generated Entries interior on real files")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
     public async Task RealProjectionRetainsTheAuthoritativeBeforeEntryCount()
@@ -77,7 +79,8 @@ public sealed class IndexProjectionIntegrationTests
         Assert.Equal(1, region.ExpectedEntryCount);
     }
 
-    [Fact(DisplayName = "Index projection distinguishes missing metadata from invalidly encoded metadata on real files")]
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Index projection keeps ordinary missing metadata optional and invalid encoding unsafe on real files")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
     public async Task RealMetadataFailuresKeepMissingAndUnsafeMeaningsDistinct()
     {
@@ -90,7 +93,9 @@ public sealed class IndexProjectionIntegrationTests
             missingContext,
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(IndexFindingCode.MetadataIncomplete, Assert.Single(missing.Findings).Code);
+        Assert.True(missing.IsComplete);
+        Assert.Equal(IndexFindingCode.MetadataOptional, Assert.Single(missing.Findings).Code);
+        Assert.Equal("- [root/child](child.md)", Assert.Single(Assert.Single(missing.Projection.Regions).Entries).Line);
 
         using var invalidWorkspace = TemporaryWorkspace.Create("index-projection-invalid-metadata");
         invalidWorkspace.WriteText(RootPath, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"));
@@ -109,6 +114,88 @@ public sealed class IndexProjectionIntegrationTests
         Assert.Equal(before, invalidWorkspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Index projection independently skips readable malformed native Skill but refuses malformed-only")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
+    public async Task ReadableMalformedNativeSkillRequiresAnIndependentUpdate()
+    {
+        using var independentWorkspace = TemporaryWorkspace.Create("index-projection-native-skill-independent");
+        WriteTarget(
+            independentWorkspace,
+            targetPath: ".agents/alpha/_alpha.md",
+            childPath: ".agents/alpha/child.md",
+            description: "Alpha Child",
+            tag: "Alpha");
+        independentWorkspace.WriteText(
+            ".agents/beta/_beta.md",
+            OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+            {
+                Entries = "stale",
+                Prefix = "# Beta",
+            }));
+        independentWorkspace.WriteText(
+            ".agents/beta/native/SKILL.md",
+            "---\nname: beta-native\ndescription: [\n---\n# Native\n");
+        var independentBefore = independentWorkspace.SnapshotHashes();
+        var independent = await new IndexProjectionBuilder().BuildAsync(
+            await CreateContextAsync(
+                independentWorkspace,
+                ".agents/alpha/_alpha.md",
+                ".agents/beta/_beta.md"),
+            TestContext.Current.CancellationToken);
+
+        Assert.False(independent.IsComplete);
+        Assert.True(independent.IsExecutable);
+        var skipped = Assert.Single(independent.Findings);
+        Assert.Equal(IndexFindingCode.MetadataSkipped, skipped.Code);
+        Assert.Equal(".agents/beta/_beta.md", skipped.Details?.ParentPath);
+        Assert.Equal(".agents/beta/native/SKILL.md", skipped.Source?.Path);
+        Assert.Collection(
+            independent.Regions,
+            alpha =>
+            {
+                Assert.Equal(".agents/alpha/_alpha.md", alpha.Source.Path);
+                Assert.Equal(GeneratedNavigationRegionState.Available, alpha.Region.State);
+                Assert.Equal(GeneratedNavigationChangeKind.Update, alpha.Region.Change?.Kind);
+                Assert.Equal(
+                    "- [Alpha Child](child.md) - #Alpha",
+                    Assert.Single(alpha.Region.Entries).Line);
+            },
+            beta =>
+            {
+                Assert.Equal(".agents/beta/_beta.md", beta.Source.Path);
+                Assert.Equal(GeneratedNavigationRegionState.Unavailable, beta.Region.State);
+            });
+        Assert.Equal(independentBefore, independentWorkspace.SnapshotHashes());
+
+        independentWorkspace.ReplaceText(".agents/beta/native/SKILL.md", "# Native without required metadata\n");
+        var missingBefore = independentWorkspace.SnapshotHashes();
+        var missing = await new IndexProjectionBuilder().BuildAsync(
+            await CreateContextAsync(independentWorkspace, ".agents/alpha/_alpha.md", ".agents/beta/_beta.md"),
+            TestContext.Current.CancellationToken);
+        Assert.False(missing.IsExecutable);
+        Assert.Contains(missing.Findings, finding => finding.Code == IndexFindingCode.MetadataIncomplete);
+        Assert.Equal(missingBefore, independentWorkspace.SnapshotHashes());
+
+        using var strictWorkspace = TemporaryWorkspace.Create("index-projection-native-skill-strict");
+        strictWorkspace.WriteText(
+            RootPath,
+            OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"));
+        strictWorkspace.WriteText(
+            ".agents/root/native/SKILL.md",
+            "---\nname: root-native\ndescription: [\n---\n# Native\n");
+        var strictBefore = strictWorkspace.SnapshotHashes();
+        var strict = await new IndexProjectionBuilder().BuildAsync(
+            await CreateContextAsync(strictWorkspace),
+            TestContext.Current.CancellationToken);
+
+        Assert.False(strict.IsComplete);
+        Assert.False(strict.IsExecutable);
+        Assert.Equal(IndexFindingCode.MetadataUnsafe, Assert.Single(strict.Findings).Code);
+        Assert.Equal(strictBefore, strictWorkspace.SnapshotHashes());
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Index projection rejects a missing generated region without changing real workspace bytes")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
     public async Task MissingGeneratedRegionIsUnsafeAndReadOnly()
@@ -129,7 +216,9 @@ public sealed class IndexProjectionIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    private static async Task<IndexProjectionContext> CreateContextAsync(TemporaryWorkspace workspace)
+    private static async Task<IndexProjectionContext> CreateContextAsync(
+        TemporaryWorkspace workspace,
+        params string[] sourcePaths)
     {
         var cliWorkspace = new CliWorkspace(
             workspace.Path,
@@ -139,7 +228,10 @@ public sealed class IndexProjectionIntegrationTests
             new SourceCatalogueRequest(cliWorkspace, [SourceLogicalPath.AgentsRoot]),
             TestContext.Current.CancellationToken);
         var formation = new GeneratedNavigationFormationBuilder().Build(catalogue);
-        var selection = CreateSelection(cliWorkspace, formation);
+        var selection = CreateSelection(
+            cliWorkspace,
+            formation,
+            sourcePaths.Length == 0 ? [RootPath] : sourcePaths);
         Assert.True(selection.IsComplete);
         return new IndexProjectionContext
         {
@@ -151,7 +243,8 @@ public sealed class IndexProjectionIntegrationTests
 
     private static IndexSelectionResolution CreateSelection(
         CliWorkspace workspace,
-        GeneratedNavigationFormation formation)
+        GeneratedNavigationFormation formation,
+        IReadOnlyList<string> sourcePaths)
     {
         var physicalPathResolver = new PhysicalPathResolver();
         var referenceResolver = new SourceReferenceResolver((currentWorkspace, canonicalPath) =>
@@ -160,7 +253,29 @@ public sealed class IndexProjectionIntegrationTests
                 currentWorkspace.PhysicalRoot,
                 SourceLogicalPath.ToLexicalPath(currentWorkspace.LexicalRoot, canonicalPath)));
         return new IndexSelectionResolver(referenceResolver).Resolve(
-            new IndexRequest(workspace, [RootPath], IndexMode.Apply),
+            new IndexRequest(workspace, sourcePaths, IndexMode.Apply),
             formation);
+    }
+
+    private static void WriteTarget(
+        TemporaryWorkspace workspace,
+        string targetPath,
+        string childPath,
+        string description,
+        string tag)
+    {
+        workspace.WriteText(
+            targetPath,
+            OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+            {
+                Entries = "stale",
+                Prefix = $"# {description}",
+            }));
+        workspace.WriteText(
+            childPath,
+            OpenForgeDocumentSeed.Metadata(
+                description,
+                [tag],
+                $"# {description}\n"));
     }
 }

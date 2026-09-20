@@ -1,0 +1,3 @@
+Cannot move docs/guide: The ID docs/guide matches more than one file. Use the exact path.
+Workspace: <workspace>
+  files scanned: the reference scan was not completed

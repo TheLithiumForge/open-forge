@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: The replacement CLI uses nineteen focused leaves, destination-first creation, dry-run preview, one direct whole-Framework install command, and minimal Extension and completion lifecycles
+  description: "Historical CLI-v2 source: The replacement CLI uses nineteen focused leaves, destination-first creation, dry-run preview, one direct whole-Framework install command, and minimal Extension and completion lifecycles"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

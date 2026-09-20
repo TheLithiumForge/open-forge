@@ -1,0 +1,2 @@
+Extension install was cancelled. Nothing was changed.
+Workspace: <workspace>

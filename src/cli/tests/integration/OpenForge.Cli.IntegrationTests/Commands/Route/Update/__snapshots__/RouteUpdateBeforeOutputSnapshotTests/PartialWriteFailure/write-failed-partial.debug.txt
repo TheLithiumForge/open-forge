@@ -1,0 +1,15 @@
+Route update stopped after 1 of 2 changes.
+Workspace: <workspace>
+  Error  .agents/memory/project-alpha/overview.md  Write failed [route-update.write-failed]
+         Writing .agents/memory/project-alpha/overview.md failed. Stopped after 1 of 2 changes. Recovery data: <recovery-bundle>.
+  Path: .agents/memory/project-alpha/overview.md
+  description: "Before overview" -> "After overview"
+  .agents/memory/project-alpha/overview.md  frontmatter rewritten
+    Before: <sha256>
+    After: <sha256>
+  Frontmatter before:
+    description: Before overview
+  Frontmatter after:
+    description: After overview
+  Report the failure and retry the same Route Update request with bounded diagnostics.
+Next: open-forge route update --detail debug

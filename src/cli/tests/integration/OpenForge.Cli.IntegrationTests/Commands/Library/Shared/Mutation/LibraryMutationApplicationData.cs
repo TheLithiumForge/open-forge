@@ -8,10 +8,10 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 
@@ -20,33 +20,23 @@ internal static class LibraryMutationApplicationData
     internal const string ManagedPath = ".agents/framework-owned.md";
     private const string ManagedBody = "---\nopen-forge:\n  description: Unrelated Framework file\n  tags: [Framework]\n---\n# Unrelated Framework file\n";
 
-    internal static void Lifecycle(LibraryMutationWorkspace workspace)
-    {
-        workspace.Write(ManagedPath, ManagedBody);
-        var fingerprint = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(ManagedBody)));
-        workspace.Write(".agents/open-forge.lifecycle.json", $$$"""
-            {"schemaVersion":1,"fingerprintPolicy":"open-forge-markdown-v1","workspacePath":"{{{JsonEncodedText.Encode(workspace.Path)}}}",
-             "framework":{"coverage":"complete","source":{"id":"open-forge","version":"1.0.0","inventoryFingerprint":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
-              "targets":[{"path":".agents/framework-owned.md","sourceAssetPath":".agents/framework-owned.md","region":null,
-                "baselineFingerprint":"{{{fingerprint}}}","fingerprintKind":"exact-bytes"}],"generatedRegions":[]},
-             "extensions":{"coverage":"complete","packages":[],"paths":[]}}
-            """);
-    }
+    internal static void FrameworkFile(LibraryMutationWorkspace workspace)
+        => workspace.Write(ManagedPath, ManagedBody);
 
-    internal static LibrariesRecordRead ReadRecord(LibraryMutationWorkspace workspace, bool exists, bool registered)
+    internal static LibraryRegistrationRead ReadRecord(LibraryMutationWorkspace workspace, bool exists, bool registered)
     {
         var path = workspace.Absolute(LibraryMutationWorkspace.RecordPath);
-        return new LibrariesRecordRead
+        return new LibraryRegistrationRead
         {
-            State = exists ? LibrariesRecordReadState.Complete : LibrariesRecordReadState.Missing,
+            State = exists ? LibraryRegistrationReadState.Complete : LibraryRegistrationReadState.Missing,
             Record = exists ? Record(registered) : null,
             Snapshot = exists ? FileStateSnapshot.File(path, path, File.ReadAllBytes(path)) : FileStateSnapshot.Missing(path),
             Cause = null,
         };
     }
 
-    internal static LibrariesRecord Record(bool registered)
-        => LibrariesRecord.Create([LibraryRecord.Create(LibraryId.Create("team-knowledge"),
+    internal static LibraryRegistrationSet Record(bool registered)
+        => LibraryRegistrationSet.Create([LibraryRegistration.Create(LibraryId.Create("team-knowledge"),
             WorkspaceRelativeDirectory.Create(LibraryMutationWorkspace.SourceRoot), LibraryDestinationRoot.Create("."),
             registered ? [SourceRelativeEligiblePath.Create(LibraryMutationWorkspace.Leaf)] : [])]);
 
@@ -106,13 +96,19 @@ internal static class LibraryMutationApplicationData
         => linked ? NoFollowLeafObservation.CreateRelativeFileLink(workspace.Absolute(LibraryMutationWorkspace.Leaf), Link(delete: true).Link)
             : NoFollowLeafObservation.Missing(workspace.Absolute(LibraryMutationWorkspace.Leaf));
 
-    internal static LifecycleOwnershipReadResult Ownership(LibraryMutationWorkspace workspace)
-        => new(
-            framework: new(LifecycleOwnershipSection.Framework, LifecycleOwnershipReadState.Trusted, null),
-            extensions: new(LifecycleOwnershipSection.Extensions, LifecycleOwnershipReadState.Trusted, null),
-            claims: [new LifecycleOwnershipClaim(ManagedPath, LifecycleOwnershipManager.Framework, "open-forge")],
-            lifecycleFileExpectation: FileStateSnapshot.File(workspace.Absolute(".agents/open-forge.lifecycle.json"),
-                workspace.Absolute(".agents/open-forge.lifecycle.json"), File.ReadAllBytes(workspace.Absolute(".agents/open-forge.lifecycle.json"))).Expectation, findings: []);
+    internal static WorkspaceOwnershipRead WorkspaceOwnership(LibraryMutationWorkspace workspace)
+    {
+        var path = workspace.Absolute(LibraryMutationWorkspace.OwnershipPath);
+        if (!File.Exists(path))
+        {
+            return WorkspaceOwnershipRead.Absent(path);
+        }
+        var bytes = File.ReadAllBytes(path);
+        var decoded = OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization.WorkspaceOwnershipCodec.Read(bytes);
+        return new(WorkspaceOwnershipReadState.Complete,
+            decoded.Document ?? throw new InvalidOperationException("Expected test ownership."),
+            path, FileStateSnapshot.File(path, path, bytes), null);
+    }
 
     private static LibraryConsumerDirectoryObservation Directory(string path)
         => new(NoFollowLeafObservation.Directory(path), PhysicalPathResolution.Contained(path, path));

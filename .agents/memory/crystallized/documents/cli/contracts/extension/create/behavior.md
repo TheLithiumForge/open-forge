@@ -40,7 +40,7 @@ does not acquire the external workspace mutation lock or mutate workspace state.
 1. Resolve terminal help/version before any catalogue work.
 2. Accept zero or one stable-ID operand and zero or one `--path` value. Require
    both after wizard/direct resolution; missing non-interactive semantic input is
-   `invalid`.
+   `invalid-input`.
 3. Accept zero or one nonblank `--name`, `--description`, and
    `--package-version` value plus repeated `--dependency` values. Reject repeated
    singleton metadata, preserve accepted override text exactly, and keep package
@@ -58,8 +58,8 @@ facts not supplied explicitly. The argumentless form asks for stable ID and
 catalogue parent, a partial explicit request asks only for the missing fact, and
 a complete explicit request asks none. Blank or invalid input may be explained
 and asked again while input remains available. There is no arbitrary attempt
-limit or shared retry abstraction. End of input leaves the request `invalid` and
-writes nothing; caller cancellation is `interrupted` and writes nothing.
+limit or shared retry abstraction. End of input leaves the request `invalid-input`
+and writes nothing; caller cancellation is `cancelled` and writes nothing.
 Automatic mode suppresses interaction only when ID and path are already explicit.
 No recommendation, current folder, workspace, or source resemblance fills a
 missing value.
@@ -116,7 +116,7 @@ Dry-run and application share the same request, facts, plan, and preflight.
 Dry-run writes no directory, scaffold file, recovery bundle, temporary artifact,
 or lifecycle state and cannot claim application verification. It forms the same
 pre-effect planning status as application but never produces an apply-time
-`failed` or `interrupted` result because it performs no effects. A planning or
+`failed` or `cancelled` result because it performs no effects. A planning or
 read failure and caller cancellation before effects retain their own event
 meaning.
 
@@ -130,7 +130,7 @@ adopts existing package bytes and never acquires the workspace lease.
 On failure, stop new effects and preserve any concurrent or partial state; do not
 restore, reverse, or compensate for an earlier create effect. A create or
 verification failure is `failed`; caller cancellation without a stronger
-failure is `interrupted`. A later invocation forms a fresh plan. The persistent
+failure is `cancelled`. A later invocation forms a fresh plan. The persistent
 workspace lock is deliberately not involved, and no recovery bundle is created.
 
 ## Results And Conformance
@@ -146,14 +146,14 @@ and `workspaceLifecycleChanged` in that order. The manifest emits `name`,
 `description`, `version`, and `dependencies` in that order. The final Boolean is
 always `false`. Do not duplicate the shared envelope's command, status,
 workspace, or next-action members.
-Use the shared seven statuses and streams; `attention` is currently unreachable
-for create.
+Use the shared seven statuses and streams; `completed-with-warnings` is currently
+unreachable for create.
 
-Create never mutates a workspace, package source, lifecycle document, generated
+Create never mutates a workspace, package source, ownership lock, generated
 navigation, or Framework file. It does not acquire the external workspace lock.
 Conformance must cover zero, one, and all currently missing required human facts, local
 blank/invalid correction without an attempt limit, invalid end of input,
-interrupted cancellation, direct requests, automatic omission states,
+caller cancellation, direct requests, automatic omission states,
 deterministic manifest defaults, singleton metadata
 overrides and repetition rejection, every accepted native option-value form,
 dependency ordering and duplicate/self/invalid rejection, exact manifest

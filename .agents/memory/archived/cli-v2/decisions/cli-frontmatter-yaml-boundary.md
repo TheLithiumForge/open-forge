@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Use the yaml package for frontmatter syntax while Open Forge retains a narrow semantic schema and parser-independent document facts
+  description: "Historical CLI-v2 source: Use the yaml package for frontmatter syntax while Open Forge retains a narrow semantic schema and parser-independent document facts"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 3,
+  "command": "library list",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "No ownership record exists, so Libraries cannot be listed from it.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "libraries": 0,
+    "linksCurrent": 0,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "linksUnavailable": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "libraries": []
+  },
+  "recovery": null,
+  "next": null
+}

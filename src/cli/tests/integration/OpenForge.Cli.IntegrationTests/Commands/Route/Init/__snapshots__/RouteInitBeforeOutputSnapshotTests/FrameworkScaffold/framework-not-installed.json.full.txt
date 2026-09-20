@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot initialize .agents/memory/working/_working.md: The Framework scaffold needs an installed Framework.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-init.framework-install-required",
+      "title": "Framework installation is required",
+      "message": "The Framework scaffold needs an installed Framework.",
+      "subject": {
+        "kind": "source",
+        "path": "memory/working",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge install --dry-run",
+          "reason": "Establish a trusted current Framework installation before rerunning Route Init in Framework mode."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "entrypointsCreated": 0,
+    "entrypointsPresent": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "memory/working",
+      "path": ".agents/memory/working/_working.md"
+    },
+    "scaffold": "framework",
+    "entrypoints": [],
+    "listedIn": [],
+    "sections": [],
+    "verification": "not-requested"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge install --dry-run",
+    "reason": "Establish a trusted current Framework installation before rerunning Route Init in Framework mode."
+  }
+}

@@ -1,0 +1,3 @@
+status=completed-with-warnings
+findings=1
+The registered Library projection is missing.

@@ -17,6 +17,7 @@ public sealed class MutationValidationIntegrationTests : IDisposable
     private readonly WorkspaceLockTestStore lockStore = WorkspaceLockTestStore.Create(
         "mutation-validation-lock-store");
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File expectation validation observes exact real filesystem states")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task ValidatorObservesMissingFileDirectoryMismatchAndCancellation()
@@ -68,6 +69,7 @@ public sealed class MutationValidationIntegrationTests : IDisposable
         Assert.Equal(FileExpectationValidationState.Cancelled, cancelled.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File expectation validation blocks an escaping physical alias")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task ValidatorBlocksExternalPhysicalAlias()
@@ -87,6 +89,7 @@ public sealed class MutationValidationIntegrationTests : IDisposable
         Assert.Null(result.Actual);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Mutation preflight blocks aliased prospective create targets")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task PreflightBlocksMissingTargetsWithOneProspectivePhysicalIdentity()
@@ -118,6 +121,7 @@ public sealed class MutationValidationIntegrationTests : IDisposable
         Assert.False(File.Exists(Path.Combine(shared, "new.md")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Mutation preflight accepts nonempty plans and reports cancellation and real I/O failure"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task PreflightReportsNonemptyCancellationAndExclusiveHandleFailure()
     {
@@ -161,6 +165,7 @@ public sealed class MutationValidationIntegrationTests : IDisposable
         Assert.Equal(FilesystemFailureKind.InputOutput, failed.Failure?.Kind);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Mutation revalidation observes an actual directory-entry replacement"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task RevalidatorDetectsDirectoryEntryReplacement()
     {
@@ -192,6 +197,7 @@ public sealed class MutationValidationIntegrationTests : IDisposable
         Assert.True(File.Exists(lockStore.Track(workspace)));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Mutation revalidation holds external coordination independently of workspace .agents changes"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task RevalidatorUsesExternalLeaseWhenAgentsDirectoryAppears()
     {
@@ -221,6 +227,7 @@ public sealed class MutationValidationIntegrationTests : IDisposable
         Assert.True(Directory.Exists(temporary.Combine(".agents")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Mutation preflight no longer reserves the former workspace lock path"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task PreflightTreatsFormerWorkspaceLockPathAsOrdinaryTarget()
     {
@@ -244,6 +251,7 @@ public sealed class MutationValidationIntegrationTests : IDisposable
         Assert.False(File.Exists(formerLockPath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Mutation revalidation detects a stale expectation under the live lock")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task RevalidatorRequiresLiveLeaseAndDetectsAfterPlanChangeWithoutEffects()

@@ -1,0 +1,6 @@
+No ownership record exists, so team-knowledge cannot be detached. Nothing was changed.
+Workspace: <workspace>
+  Info  team-knowledge  Ownership record is missing [library-detach.ownership-observation]
+         No ownership record exists, so team-knowledge cannot be detached.
+  Verification: was not requested; registration was not published.
+  Recovery: no recovery bundle was required; no residual effects.

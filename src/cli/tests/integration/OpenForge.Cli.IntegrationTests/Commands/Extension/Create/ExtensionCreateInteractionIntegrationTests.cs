@@ -1,14 +1,17 @@
 using OpenForge.Cli.Core.Commands.Extension.Create;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Interaction;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Interaction;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Create;
 
 public sealed class ExtensionCreateInteractionIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Extension Create direct and interactive flows resolve zero, one, and all missing required facts equivalently"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     [InlineData("zero")]
     [InlineData("one-id")]
@@ -77,6 +80,7 @@ public sealed class ExtensionCreateInteractionIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create interaction-disabled requests never prompt or infer omitted required facts"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task InteractionDisabledOmissionIsInvalidAndSilent()
     {
@@ -95,6 +99,7 @@ public sealed class ExtensionCreateInteractionIntegrationTests
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create cancellation returns interrupted and leaves both catalogue and workspace unchanged"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task CancellationRetainsNoWritesAndNoWorkspaceLifecycle()
     {
@@ -114,6 +119,7 @@ public sealed class ExtensionCreateInteractionIntegrationTests
         Assert.False(Directory.Exists(workspace.Combine(".agents")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create keeps the workspace path irrelevant and never creates lock or lifecycle state"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task WorkspaceIsACompleteNoOp()
     {
@@ -132,6 +138,7 @@ public sealed class ExtensionCreateInteractionIntegrationTests
         Assert.False(File.Exists(workspace.Combine(".agents", "open-forge.lifecycle.json")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create revalidates a fresh plan and refuses a destination occupant introduced after preview"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task FreshPlanRefusesPreviewCollision()
     {
@@ -153,10 +160,11 @@ public sealed class ExtensionCreateInteractionIntegrationTests
         Assert.Equal("occupant", File.ReadAllText(Path.Combine(destination, "extension.json")));
     }
 
-    [Theory(DisplayName = "Extension Create wizard explains and corrects a missing or non-directory catalogue answer"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Extension Create prompt explains and corrects a missing or non-directory catalogue answer"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     [InlineData("missing")]
     [InlineData("file")]
-    public async Task WizardCorrectsIneligibleCatalogueAnswer(string scenario)
+    public async Task PromptCorrectsIneligibleCatalogueAnswer(string scenario)
     {
         using var catalogue = TemporaryWorkspace.Create($"extension-create-catalogue-correction-{scenario}");
         var ineligible = catalogue.Combine("ineligible");
@@ -175,13 +183,14 @@ public sealed class ExtensionCreateInteractionIntegrationTests
             cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
-        Assert.Equal(2, CountPromptLines(prompts.ToString()));
-        Assert.Contains("not an existing ordinary directory", prompts.ToString(), StringComparison.Ordinal);
+        Assert.Equal(3, CountPromptLines(prompts.ToString()));
+        Assert.Contains("ordinary directory", prompts.ToString(), StringComparison.Ordinal);
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Extension Create wizard returns invalid when input ends after an ineligible catalogue answer"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
-    public async Task WizardEndOfInputAfterIneligibleCatalogueIsInvalid()
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Extension Create prompt is interrupted when input ends after an ineligible catalogue answer"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
+    public async Task PromptEndOfInputAfterIneligibleCatalogueIsInvalid()
     {
         using var catalogue = TemporaryWorkspace.Create("extension-create-catalogue-correction-eof");
         var missing = catalogue.Combine("missing");
@@ -194,9 +203,9 @@ public sealed class ExtensionCreateInteractionIntegrationTests
             canPrompt: true,
             cancellationToken: TestContext.Current.CancellationToken);
 
-        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
-        Assert.Contains(result.Findings, finding => finding.Code == ExtensionCreateFindingCode.InvalidInput);
-        Assert.Equal(2, CountPromptLines(prompts.ToString()));
+        Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
+        Assert.Contains(result.Findings, finding => finding.Code == ExtensionCreateFindingCode.Interrupted);
+        Assert.Equal(5, CountPromptLines(prompts.ToString()));
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
@@ -216,10 +225,16 @@ public sealed class ExtensionCreateInteractionIntegrationTests
         bool canPrompt = false,
         CancellationToken cancellationToken = default)
     {
-        using var reader = new StringReader(input);
-        using var ownedPrompts = prompts is null ? new StringWriter() : null;
-        var session = new CliInteractiveSession(reader, prompts ?? ownedPrompts!, canPrompt);
-        return await ExtensionCreateOperationFactory.Create(session).ExecuteAsync(request, cancellationToken);
+        var lines = string.IsNullOrEmpty(input)
+            ? Array.Empty<string?>()
+            : input.Split(["\r\n", "\n", "\r"], StringSplitOptions.None);
+        var scripted = ScriptedCliTerminal.Lines(lines, canPrompt);
+        var terminalPrompts = new CliPrompts(scripted.Terminal);
+        var result = await ExtensionCreateOperationFactory
+            .Create(ExtensionInteractionTestFactory.ForCreate(terminalPrompts))
+            .ExecuteAsync(request, cancellationToken);
+        prompts?.Write(scripted.Output.ToString());
+        return result;
     }
 
     private static ExtensionCreateRequest Request(
@@ -235,6 +250,7 @@ public sealed class ExtensionCreateInteractionIntegrationTests
             Description = null,
             PackageVersion = null,
             Dependencies = [],
+            Automatic = mode == ExtensionCreateMode.Apply && !allowInteraction,
             AllowInteraction = allowInteraction,
             Mode = mode,
         };

@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Reading;
 
 public sealed class SourceDocumentReaderIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral document reader verifies a selected physical layer before its first body read")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task VerificationAndRawReadsAreMemoizedAcrossOwnedFixtureMutation()
@@ -45,6 +46,7 @@ public sealed class SourceDocumentReaderIntegrationTests
         Assert.Equal(beforeSecondRead, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral document reader returns a logically rebound read for contained physical aliases")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task AliasReadsRetainTheRequestedLogicalPath()
@@ -76,6 +78,7 @@ public sealed class SourceDocumentReaderIntegrationTests
         Assert.Equal("alias body", secondRead.Value);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral document reader distinguishes missing unsafe unavailable and changed verification states without retrying")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task VerificationOutcomesAreTypedAndSingleAttempt()
@@ -124,6 +127,7 @@ public sealed class SourceDocumentReaderIntegrationTests
         Assert.Null(changedResult.Read);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral document reader preserves strict UTF-8 failures and does not open an invalid body twice")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task StrictUtf8AndMemoizedFailureRemainDeterministic()
@@ -151,6 +155,7 @@ public sealed class SourceDocumentReaderIntegrationTests
         Assert.Equal(beforeSecondRead, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral document reader retains cancellation as a terminal verification and read state")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task CancellationIsNotRetried()
@@ -174,6 +179,7 @@ public sealed class SourceDocumentReaderIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral document reader retains verified identity and a typed access-denied body result for a locked file")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task LockedFileProducesTypedReadAccessFailure()

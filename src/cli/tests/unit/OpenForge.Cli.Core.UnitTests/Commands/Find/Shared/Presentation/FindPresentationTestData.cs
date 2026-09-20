@@ -45,13 +45,13 @@ internal static class FindPresentationTestData
         };
 
     internal static FindResult CompleteResult()
-        => RichResult(Workspace(), FindRequirement.All, CliView.Expanded, AllContent());
+        => RichResult(Workspace(), FindRequirement.All, CliDetail.Standard, AllContent());
 
     internal static FindResult CompactResult()
-        => RichResult(Workspace(), FindRequirement.All, CliView.Compact, OmittedContent());
+        => RichResult(Workspace(), FindRequirement.All, CliDetail.Minimal, OmittedContent());
 
     internal static FindResult AnyResult()
-        => RichResult(Workspace(), FindRequirement.Any, CliView.Expanded, OmittedContent());
+        => RichResult(Workspace(), FindRequirement.Any, CliDetail.Standard, OmittedContent());
 
     internal static FindResult AttentionResult()
     {
@@ -106,7 +106,7 @@ internal static class FindPresentationTestData
             Workspace(),
             new FindUniverseFilter([], []),
             EmptyQuery(),
-            Presentation(OmittedContent(), CliView.Compact, CliView.Compact),
+            Presentation(OmittedContent(), CliDetail.Minimal, CliDetail.Minimal),
             new FindUniverse(FindUniverseMode.Default, [], [], sources.Length, sources.Length, sources.Length),
             [],
             [],
@@ -272,7 +272,7 @@ internal static class FindPresentationTestData
             Workspace(),
             new FindUniverseFilter([], []),
             query,
-            Presentation(content, suppliedView: null));
+            Presentation(content, suppliedDetail: null));
         return new FindResultBuilder().Build(new FindResultInput(
             request,
             null,
@@ -315,7 +315,7 @@ internal static class FindPresentationTestData
             Workspace(),
             new FindUniverseFilter([], []),
             EmptyQuery(),
-            Presentation(OmittedContent(), suppliedView: null, effectiveView: CliView.Compact),
+            Presentation(OmittedContent(), suppliedDetail: null, effectiveView: CliDetail.Minimal),
             new FindUniverse(FindUniverseMode.Default, [], [], 1, 1, 1),
             [SafeMatch(Source())],
             [],
@@ -334,7 +334,7 @@ internal static class FindPresentationTestData
             Workspace(),
             new FindUniverseFilter(include.Select(selector => selector.Value), exclude.Select(selector => selector.Value)),
             query,
-            Presentation(AllContent(), suppliedView: CliView.Compact, effectiveView: CliView.Compact),
+            Presentation(AllContent(), suppliedDetail: CliDetail.Minimal, effectiveView: CliDetail.Minimal),
             new FindUniverse(FindUniverseMode.Filtered, include, exclude, 5, 5, 2),
             [JsonMatch(routed, query, position: 1), JsonMatch(unrouted, query, position: 2)],
             Projections(routed, position: 1, routeState: FindRouteState.Routed)
@@ -522,10 +522,10 @@ internal static class FindPresentationTestData
 
     internal static CliPresentationRequest<FindResult> PresentationRequest(
         FindResult result,
-        CliOutputFormat format = CliOutputFormat.Human,
-        CliView view = CliView.Expanded,
-        CliVerbosity verbosity = CliVerbosity.Normal)
-        => new(result, new CliPresentation(format, view, verbosity));
+        CliFormat format = CliFormat.Text,
+        CliDetail view = CliDetail.Standard,
+        CliDetail? diagnosticDetail = null)
+        => new(result, new CliPresentation(format, diagnosticDetail ?? view, null));
 
     internal static FindContentSelection OmittedContent()
         => new([], []);
@@ -555,7 +555,7 @@ internal static class FindPresentationTestData
     private static FindResult RichResult(
         CliWorkspace workspace,
         FindRequirement requirement,
-        CliView view,
+        CliDetail view,
         FindContentSelection content)
     {
         var source = Source(withOverwrite: true);
@@ -685,9 +685,9 @@ internal static class FindPresentationTestData
 
     private static FindPresentationSelection Presentation(
         FindContentSelection content,
-        CliView? suppliedView = CliView.Expanded,
-        CliView effectiveView = CliView.Expanded)
-        => new(suppliedView, effectiveView, content);
+        CliDetail? suppliedDetail = CliDetail.Standard,
+        CliDetail effectiveView = CliDetail.Standard)
+        => new(suppliedDetail, effectiveView, content);
 
     private static FindQuery EmptyQuery()
         => new(

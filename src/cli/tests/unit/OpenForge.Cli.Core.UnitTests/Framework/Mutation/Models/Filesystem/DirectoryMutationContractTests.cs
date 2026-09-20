@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Mutation.Models.Filesystem;
 
 public sealed class DirectoryMutationContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Planned directory creations require one missing absolute target")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void PlannedDirectoryCreationsRequireMissingTargets()
@@ -25,6 +26,7 @@ public sealed class DirectoryMutationContractTests
                 FileExpectation.Hash("content"u8))));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Directory creation receipts expose every state-valid mechanical outcome")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void DirectoryCreationReceiptsExposeFiniteStates()
@@ -89,6 +91,7 @@ public sealed class DirectoryMutationContractTests
         Assert.Same(retargeted, unknownObserved.After);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Directory creation receipts reject contradictory states and undefined reasons")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void DirectoryCreationReceiptsRejectImpossibleStates()
@@ -143,6 +146,7 @@ public sealed class DirectoryMutationContractTests
             ""));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Directory creation failure receipts reject after-states for another logical target")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void DirectoryCreationFailureReceiptsRequireThePlannedLogicalTarget()
@@ -169,6 +173,7 @@ public sealed class DirectoryMutationContractTests
             "Completion was unknown."));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Filesystem receipt enums retain their exact shared members")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void FilesystemReceiptEnumsRetainExactMembers()

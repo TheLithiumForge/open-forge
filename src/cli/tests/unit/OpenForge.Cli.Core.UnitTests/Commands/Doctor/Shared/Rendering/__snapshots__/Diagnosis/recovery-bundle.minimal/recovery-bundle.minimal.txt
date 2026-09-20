@@ -1,0 +1,3 @@
+No problems found. 1 info finding was recorded.
+  6 checks complete. 21 links and 20 routes checked.
+  To list the info findings: open-forge doctor --detail full

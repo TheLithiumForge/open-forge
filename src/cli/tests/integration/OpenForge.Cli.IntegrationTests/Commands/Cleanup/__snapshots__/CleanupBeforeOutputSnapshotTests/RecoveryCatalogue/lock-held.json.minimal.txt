@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 3,
+  "command": "cleanup",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "cleanup.workspace-lock-unavailable",
+      "title": "Workspace lock is unavailable",
+      "message": "Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.",
+      "subject": {
+        "kind": "identifier",
+        "path": "cleanup",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge cleanup",
+          "reason": "Rerun Cleanup from a fresh catalogue."
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "path": "<recovery-bundle-1>",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "unknown",
+      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "owner": "open-forge index"
+    },
+    {
+      "path": "<recovery-bundle-2>",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "unknown",
+      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "owner": "open-forge repair"
+    },
+    {
+      "path": "<recovery-bundle-3>",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "unknown",
+      "reason": "No deletion was attempted; the candidate's current disposition was not established.",
+      "owner": null
+    }
+  ],
+  "counts": {
+    "bundlesRemoved": 0,
+    "draftsRemoved": 0,
+    "itemsLeftInPlace": 3,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "items": [
+      {
+        "path": "<recovery-bundle-1>",
+        "kind": "bundle",
+        "outcome": "not-started"
+      },
+      {
+        "path": "<recovery-bundle-2>",
+        "kind": "bundle",
+        "outcome": "not-started"
+      },
+      {
+        "path": "<recovery-bundle-3>",
+        "kind": "draft",
+        "outcome": "not-started"
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge cleanup",
+    "reason": "Rerun Cleanup from a fresh catalogue."
+  }
+}

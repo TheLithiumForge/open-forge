@@ -1,0 +1,9 @@
+status=invalid-input
+coverage=not-started
+matching=not-started
+projection=not run
+matches=0
+sourcesInspected=null
+sourcesCandidates=null
+findings=1
+finding=find.invalid-input

@@ -32,7 +32,5 @@ resolution and conformance.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted current technology-neutral resolution and conformance for shared CLI source references](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Source #Reference #Behavior #CurrentTruth
 - [Accepted current caller-visible contract for shared CLI source references](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Source #Reference #Interface #CurrentTruth
-<!-- open-forge:generated-index:end -->

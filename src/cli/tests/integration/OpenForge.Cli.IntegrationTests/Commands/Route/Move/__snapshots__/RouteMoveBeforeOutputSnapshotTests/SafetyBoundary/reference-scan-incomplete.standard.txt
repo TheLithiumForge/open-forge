@@ -1,0 +1,8 @@
+guidance/old guide could not be moved: Some files could not be scanned for links to invalid.md, so the move was not planned. Nothing was changed.
+Workspace: <workspace>
+  Warning  invalid.md  Reference scan is incomplete
+         Some files could not be scanned for links to invalid.md, so the move was not planned.
+  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  .agents/guidance/old guide.overwrite.md -> .agents/guidance/new guide.overwrite.md
+  Inspect the unavailable inventory, reference, projection, or recovery facts before relying on this Route Move result.
+Next: open-forge doctor

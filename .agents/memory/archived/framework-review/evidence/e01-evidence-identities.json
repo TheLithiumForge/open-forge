@@ -1,0 +1,33 @@
+{
+  "captured_utc": "2026-09-10T13:55:06.157481+00:00",
+  "source_root": "<home>/dev/open-forge",
+  "head_at_capture": "7013cb2998de0b29f28afd050c0c04acc41c91af",
+  "sources": {
+    "src/extensions/development-toolkit/content/.agents/workflows/review.md": {
+      "sha256": "d65b97ad1daa5a96706884126fc44d4ba7d8a5a4d07d5a3631be2ca8f16f924b",
+      "reviewed_extent": "complete file"
+    },
+    ".agents/memory/emerging/observations/2026-08-15_lean-agent-batching.md": {
+      "sha256": "78547edc2056c403e52ae594350bc5e455e2158e1979714a4c96a86d475bcaf5",
+      "reviewed_extent": "complete file; cited lines 77-211"
+    },
+    ".agents/memory/working/cli-development/tasks/cli-command-surface-audit-report.md": {
+      "sha256": "424b914a4fc48e21447ef2bf9c4c94f6121f912907e0bb207bfd7fad0aa280df",
+      "reviewed_extent": "lines 1-180"
+    },
+    ".agents/memory/working/cli-development/tasks/cli-command-surface-remediation.md": {
+      "sha256": "274d5f75e19a907dd7ab548b168c710bb519d1c0043f051bad86ed6266ff67c5",
+      "reviewed_extent": "lines 43-172 plus targeted search"
+    },
+    ".agents/memory/emerging/observations/2026-09-02_agent-and-workflow-change-audit.md": {
+      "sha256": "ad8031a397a1844a4e1558a162af1558774fd2123a5db435949b8a3edece9bce",
+      "reviewed_extent": "lines 239-258 plus targeted search"
+    },
+    "src/extensions/development-toolkit/extension.json": {
+      "sha256": "fdc960b90e343668f43d0d4b13cb8d6659747d122b4a288de1aadd72cae3efa8",
+      "reviewed_extent": "complete file"
+    }
+  },
+  "status": "Proposed trial draft only. Source unchanged. Historical records inspected; reported tests and reviews not rerun.",
+  "draft_sha256": "4f2fbc6f7aaca195d7b2dfa5047b19020582a21d2edb669fd0fd053893c17e40"
+}

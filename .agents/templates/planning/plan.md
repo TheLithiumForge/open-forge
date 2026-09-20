@@ -1,34 +1,35 @@
 ---
 open-forge:
-  description: Starting structure for an independently maintained sequence, dependencies, and verification linked to its outcome source
-  tags: [Extension, Template, Memory, Planning, Working, Contextual]
+  description: "Maintain a separate sequence only when its steps and dependencies need their own source"
+  tags: [Extension, Template, Planning, Plan, Memory]
 ---
 
 # {Work} Plan
 
-{
-Template selection:
-
-- Need: A sequence that requires maintenance separate from the task's outcome and current state.
-- Primary question: Which steps and dependencies lead to the outcome, and how will they be verified?
-
-Keep a short plan inside the Task when that is enough. Use the project's existing planning source and format when one already applies. The [Work Records Pattern](../../patterns/work-records.md) explains the default relationship.
-
-Choose the destination from the plan's current role and scope. Replace the Template metadata with accurate destination metadata, adapt the structure to the project, and remove all braced guidance. A planned step does not authorize its execution.
-}
+<!-- TEMPLATE: Keep a short plan in the Task. Use this only when the sequence needs independent maintenance.
+Replace {prompts}; remove this comment and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying. -->
 
 ## Outcome Source
 
-{Link to the Task, accepted request, or external source that defines the outcome and its boundaries. Identify the current-state source. Do not maintain another copy of either answer here.}
+**Outcome and boundaries:** {Link to the accepted Task, request, or external source.}
+
+**Current state:** {Link to the source that owns progress. Do not maintain duplicate status here.}
 
 ## Steps And Dependencies
 
-{Keep the smallest coherent sequence. Use the project's step format, or adapt the table below. Name decisions, inputs, or predecessor work that must be resolved before a step begins. Include parallel work only where the dependencies, available capabilities, and authority permit it.}
-
-| Step | Observable Result | Depends On | Verification |
+| Step | Observable result | Depends on | Verification |
 | --- | --- | --- | --- |
-| {Coherent step} | {Result this step produces} | {Predecessor, required input, decision, or none} | {Applicable project check or other evidence} |
+| {Coherent step} | {What becomes true} | {Predecessor, input, decision, or none} | {How to distinguish success from failure} |
+
+**Parallel work:** {Only genuinely independent steps with permitted isolation and available capabilities; omit when sequential.}
+
+**Decision or stop points:** {What requires a decision, permission, or revised plan before continuing.}
 
 ## Verification And Completion
 
-{Link to the outcome's completion criteria. Describe any combined verification that the individual step checks do not establish, using the project's actual requirements and procedures. Keep execution progress in its defining current-state source.}
+{Link to the outcome's completion criteria. State combined checks that individual steps cannot establish, using the project's actual procedures.}
+
+**Recovery or reversal:** {What protects the current system if adoption fails; omit when immaterial.}
+
+<!-- Revise remaining steps when evidence changes the plan. Preserve completed evidence in its owning source. -->

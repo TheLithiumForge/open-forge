@@ -1,0 +1,5 @@
+Cannot move missing: No source has the ID missing.
+Workspace: <workspace>
+  Error  missing  Source is unknown
+         No source has the ID missing.
+  files scanned: the reference scan was not completed

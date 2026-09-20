@@ -1,0 +1,6 @@
+status=completed-with-warnings
+findings=4
+The managed lifecycle target is not current.
+The managed lifecycle target is not current.
+The generated navigation target is not current.
+The generated navigation target is not current.

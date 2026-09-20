@@ -1,0 +1,6 @@
+status=cancelled
+mode=apply
+items=3
+findings=1
+lock=acquired
+final-check=matched

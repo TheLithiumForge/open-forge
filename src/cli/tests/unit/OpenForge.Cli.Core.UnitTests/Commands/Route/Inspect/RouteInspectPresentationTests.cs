@@ -1,73 +1,79 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
-using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
+using OpenForge.Cli.Core.Presentation.Route.Inspect;
+using OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Shared.Presentation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect;
 
 public sealed class RouteInspectPresentationTests
 {
-    [Fact(DisplayName = "Route Inspect compact output retains identity reading route topology measurements overwrite and status")]
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Inspect minimal output keeps the three question blocks and removes selection restatements")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
-    public void CompactOutputRetainsRequiredFacts()
+    public void MinimalOutputKeepsQuestionBlocks()
     {
-        var output = RouteInspectHumanRenderer.Render(
-            RouteInspectPresentationTestData.Presentation(
-                RouteInspectPresentationTestData.CompleteResult(),
-                CliView.Compact));
+        var output = RenderText(RouteInspectPresentationTestData.CompleteResult(), CliDetail.Minimal);
 
-        Assert.StartsWith($"Route: root/item{Environment.NewLine}Status: complete", output, StringComparison.Ordinal);
-        Assert.Contains("Workspace:", output, StringComparison.Ordinal);
-        Assert.Contains("Selected by:", output, StringComparison.Ordinal);
-        Assert.Contains("Route: root/item", output, StringComparison.Ordinal);
-        Assert.Contains("Path:", output, StringComparison.Ordinal);
-        Assert.Contains("Source state:", output, StringComparison.Ordinal);
-        Assert.Contains("Route state:", output, StringComparison.Ordinal);
-        Assert.Contains("Route chain:", output, StringComparison.Ordinal);
-        Assert.Contains("Parent:", output, StringComparison.Ordinal);
-        Assert.Contains("Depth: 2", output, StringComparison.Ordinal);
-        Assert.Contains("Direct children:", output, StringComparison.Ordinal);
-        Assert.Contains("Descendants:", output, StringComparison.Ordinal);
-        Assert.Contains("Read at task start or resume: yes", output, StringComparison.Ordinal);
-        Assert.Contains("Read automatically when:", output, StringComparison.Ordinal);
+        Assert.StartsWith(
+            "root/item  .agents/root/item/_item.md\n\nWhere this source belongs\n",
+            output,
+            StringComparison.Ordinal);
+        Assert.Contains("Route chain: root -> item", output, StringComparison.Ordinal);
+        Assert.Contains("Parent: root", output, StringComparison.Ordinal);
+        Assert.Contains("Direct children: 2 files, 1 entrypoint", output, StringComparison.Ordinal);
+        Assert.Contains("Descendants: 4 files, 2 entrypoints", output, StringComparison.Ordinal);
+        Assert.Contains("At task start or resume: yes", output, StringComparison.Ordinal);
+        Assert.Contains("Read automatically when root is read", output, StringComparison.Ordinal);
         Assert.Contains("May be read again: yes", output, StringComparison.Ordinal);
-        Assert.Contains("Own source:", output, StringComparison.Ordinal);
-        Assert.Contains("Selecting this route adds:", output, StringComparison.Ordinal);
-        Assert.Contains("Automatically read below it through #LoadNow:", output, StringComparison.Ordinal);
-        Assert.Contains("Overwrite:", output, StringComparison.Ordinal);
-        Assert.Contains("Status: complete", output, StringComparison.Ordinal);
-        Assert.Contains("Completeness: complete", output, StringComparison.Ordinal);
-        Assert.Contains("Safety: safe", output, StringComparison.Ordinal);
+        Assert.Contains("This file: 2 files, 24 B, about 5 tokens", output, StringComparison.Ordinal);
+        Assert.Contains("Selecting this route adds: 1 file, 24 B, about 4 tokens", output, StringComparison.Ordinal);
+        Assert.Contains("Overwrite file: .agents/root/item/_item.overwrite.md", output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Axioms", output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Selection:", output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", output, StringComparison.Ordinal);
+        Assert.DoesNotContain("1 files", output, StringComparison.Ordinal);
+        Assert.DoesNotContain("·", output, StringComparison.Ordinal);
         Assert.DoesNotContain("Next:", output, StringComparison.Ordinal);
-        Assert.DoesNotContain("ParentLoadNow", output, StringComparison.Ordinal);
-        Assert.DoesNotContain("RouteSelected", output, StringComparison.Ordinal);
-        Assert.DoesNotContain("custom item", output, StringComparison.Ordinal);
-        Assert.DoesNotContain("scope count", output, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("health", output, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("recommend", output, StringComparison.OrdinalIgnoreCase);
     }
 
-    [Fact(DisplayName = "Route Inspect expanded output adds plain explanations and Axioms provenance without authored bodies")]
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Inspect standard output adds workspace axioms and tags without authored bodies")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
-    public void ExpandedOutputAddsExplanationsAndProvenance()
+    public void StandardOutputAddsSharedContext()
     {
-        var output = RouteInspectHumanRenderer.Render(
-            RouteInspectPresentationTestData.Presentation(
-                RouteInspectPresentationTestData.CompleteResult(),
-                CliView.Expanded));
+        var output = RenderText(RouteInspectPresentationTestData.CompleteResult(), CliDetail.Standard);
 
-        Assert.Contains("Axioms", output, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("loader", output, StringComparison.Ordinal);
-        Assert.Contains("Why", output, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("ParentLoadNow", output, StringComparison.Ordinal);
-        Assert.DoesNotContain("RouteSelected", output, StringComparison.Ordinal);
+        Assert.Contains("Workspace:", output, StringComparison.Ordinal);
+        Assert.Contains("Axioms", output, StringComparison.Ordinal);
+        Assert.Contains("Inherited rules from: loader, root", output, StringComparison.Ordinal);
+        Assert.Contains("Local rules: no", output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Selection:", output, StringComparison.Ordinal);
         Assert.DoesNotContain("custom item", output, StringComparison.Ordinal);
-        Assert.DoesNotContain("scope count", output, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("health grade", output, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("recommendation", output, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Inspect full output adds status reason selected closure selection and physical layers")]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
+    public void FullOutputAddsSelectedFacts()
+    {
+        var output = RenderText(RouteInspectPresentationTestData.CompleteResult(), CliDetail.Full);
+
+        Assert.Contains("Why: all applicable route facts are available", output, StringComparison.Ordinal);
+        Assert.Contains("Selected context: 4 files, 64 B, about 12 tokens", output, StringComparison.Ordinal);
+        Assert.Contains("Already in startup context: 3 files, 40 B, about 8 tokens", output, StringComparison.Ordinal);
+        Assert.Contains("Selection: source ID; automatic ID; requested \"root/item\"", output, StringComparison.Ordinal);
+        Assert.Contains("Physical layers", output, StringComparison.Ordinal);
+        Assert.Contains("base .agents/root/item/_item.md", output, StringComparison.Ordinal);
+        Assert.Contains("overwrite .agents/root/item/_item.overwrite.md", output, StringComparison.Ordinal);
+    }
+
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route Inspect rich presentation fixture uses a canonical entrypoint with applicable topology and LoadNow facts")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void RichPresentationFixtureUsesEntrypointFacts()
@@ -88,6 +94,7 @@ public sealed class RouteInspectPresentationTests
             Assert.IsType<RouteInspectMeasurement>(profile.Measurements.LoadNowDescendants.Value).PhysicalFileCount);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route Inspect help owns exact grammar flags statuses examples related commands and JSON view relationship")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void HelpSectionsDocumentAcceptedPresentationSurface()
@@ -100,22 +107,22 @@ public sealed class RouteInspectPresentationTests
         Assert.Contains(".agents/", text, StringComparison.Ordinal);
         Assert.Contains("./.agents/", text, StringComparison.Ordinal);
         Assert.Contains("--workspace <path>", text, StringComparison.Ordinal);
-        Assert.Contains("--json", text, StringComparison.Ordinal);
-        Assert.Contains("--view=<compact|expanded>", text, StringComparison.Ordinal);
-        Assert.Contains("--verbose", text, StringComparison.Ordinal);
-        Assert.Contains("complete", text, StringComparison.Ordinal);
-        Assert.Contains("attention", text, StringComparison.Ordinal);
+        Assert.Contains("--format", text, StringComparison.Ordinal);
+        Assert.Contains("--detail=<minimal|standard|full|debug>", text, StringComparison.Ordinal);
+        Assert.Contains("--detail-filter", text, StringComparison.Ordinal);
+        Assert.Contains("completed", text, StringComparison.Ordinal);
+        Assert.Contains("completed-with-warnings", text, StringComparison.Ordinal);
         Assert.Contains("incomplete", text, StringComparison.Ordinal);
-        Assert.Contains("invalid", text, StringComparison.Ordinal);
+        Assert.Contains("invalid-input", text, StringComparison.Ordinal);
         Assert.Contains("blocked", text, StringComparison.Ordinal);
         Assert.Contains("failed", text, StringComparison.Ordinal);
-        Assert.Contains("interrupted", text, StringComparison.Ordinal);
+        Assert.Contains("cancelled", text, StringComparison.Ordinal);
         Assert.Contains("exit 0", text, StringComparison.Ordinal);
         Assert.Contains("exit 130", text, StringComparison.Ordinal);
-        Assert.Contains("open-forge route inspect memory/working/checkpoints", text, StringComparison.Ordinal);
+        Assert.Contains("open-forge route inspect memory/working", text, StringComparison.Ordinal);
         Assert.Contains("route inspect --help", text, StringComparison.Ordinal);
         Assert.Contains("route inspect --version", text, StringComparison.Ordinal);
-        Assert.Contains("--view", text, StringComparison.Ordinal);
+        Assert.Contains("--detail", text, StringComparison.Ordinal);
         Assert.Contains("JSON", text, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("route list", text, StringComparison.Ordinal);
         Assert.Contains("context — use", text, StringComparison.Ordinal);
@@ -125,21 +132,25 @@ public sealed class RouteInspectPresentationTests
         Assert.DoesNotContain("doctor — unavailable", text, StringComparison.Ordinal);
     }
 
-    [Theory(DisplayName = "Route Inspect expanded output renders each observation or condition message once")]
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Route Inspect output uses the native finding shape without legacy status or selection rows")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
-    [InlineData("observation", "The automatic source ID is not unique.")]
-    [InlineData("condition", "route inspect requires one known source reference.")]
-    public void ExpandedOutputDoesNotDuplicateMessages(string scenario, string expectedMessage)
+    [InlineData("observation")]
+    [InlineData("condition")]
+    public void OutputUsesNativeFindingShape(string scenario)
     {
         var result = scenario == "observation"
             ? RouteInspectPresentationTestData.ExactPathAttentionResult()
             : RouteInspectPresentationTestData.InvalidResult();
-        var output = RouteInspectHumanRenderer.Render(
-            RouteInspectPresentationTestData.Presentation(result, CliView.Expanded));
+        var output = RenderText(result, CliDetail.Standard);
 
-        Assert.Equal(1, Count(output, expectedMessage));
+        Assert.DoesNotContain("Status:", output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Selected by:", output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Route:", output, StringComparison.Ordinal);
+        Assert.DoesNotContain("The automatic source ID is not unique.", output, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Route Inspect KeepInMind explanations name the actual typed event")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     [InlineData((int)RouteInspectAutomaticReadingEvent.ExposingParentRead, "its exposing parent is read")]
@@ -151,19 +162,11 @@ public sealed class RouteInspectPresentationTests
             "parent",
             [(RouteInspectAutomaticReadingEvent)eventValue]);
 
-        Assert.Equal(expected, RouteInspectHumanAutomaticReading.Explanation(reading));
+        Assert.Equal(expected, RouteInspectWording.AutomaticExplanation(reading));
     }
 
-    private static int Count(string value, string expected)
-    {
-        var count = 0;
-        var index = 0;
-        while ((index = value.IndexOf(expected, index, StringComparison.Ordinal)) >= 0)
-        {
-            count++;
-            index += expected.Length;
-        }
-
-        return count;
-    }
+    private static string RenderText(RouteInspectResult result, CliDetail detail)
+        => CliRenderingStage.Render(
+            RouteInspectPresentationTestData.Presentation(result, detail),
+            RouteInspectPresentation.Rendering).PrimaryContent;
 }

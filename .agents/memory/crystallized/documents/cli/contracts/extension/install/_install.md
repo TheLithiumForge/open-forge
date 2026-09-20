@@ -34,7 +34,5 @@ verifies exact managed no-ops. Managed divergence directs to `extension update`.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted technology-neutral Extension install behavior for source-universe closure, ownership establishment, and initial force](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Install #Behavior #Dependency #Ownership #Safety #Recovery #CurrentTruth
 - [Accepted Interface for establishing managed Extension packages, resolving dependencies, and applying only eligible initial force](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Install #Interface #Lifecycle #Ownership #Dependency #Safety #CurrentTruth
-<!-- open-forge:generated-index:end -->

@@ -1,0 +1,9 @@
+status=blocked
+referenceKind=source-path
+selectionMethod=unresolved
+requested=.agents/orphan.overwrite.md
+identity=none
+profile=none
+observations=0
+conditions=1
+next=present

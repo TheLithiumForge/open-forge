@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.List;
 
 public sealed class LibraryListOrderingAndPrecedenceTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library List preserves ordinal Library and canonical path order with destination-derived IDs"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     public async Task OrdinalIdentityOrder()
     {
@@ -33,8 +34,9 @@ public sealed class LibraryListOrderingAndPrecedenceTests
         Assert.Equal(before, fixture.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library List chooses invalid before blocked before incomplete before safe drift"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
-    [InlineData("incomplete", (int)CliSemanticStatus.Incomplete)]
+    [InlineData("incomplete", (int)CliSemanticStatus.Attention)]
     [InlineData("blocked", (int)CliSemanticStatus.Blocked)]
     [InlineData("invalid", (int)CliSemanticStatus.Invalid)]
     public static async Task MixedConditionPrecedence(string highest, int status)
@@ -69,7 +71,13 @@ public sealed class LibraryListOrderingAndPrecedenceTests
         Assert.Contains(result.Result.Findings, finding => finding.Code == LibraryListFindingCode.LinkMissing);
         Assert.Contains(result.Result.Findings, finding => finding.Code == LibraryListFindingCode.SourceRootUnavailable);
         Assert.Equal(LibraryListInventoryState.NotRequested, result.Result.Inventory);
-        Assert.NotEqual(LibraryCoverage.Complete, result.Result.Coverage);
+        Assert.Equal(result.Status switch
+        {
+            CliSemanticStatus.Attention => LibraryCoverage.Complete,
+            CliSemanticStatus.Blocked => LibraryCoverage.Blocked,
+            CliSemanticStatus.Invalid => LibraryCoverage.NotStarted,
+            _ => throw new ArgumentOutOfRangeException(nameof(result.Status), result.Status, "Unexpected precedence status."),
+        }, result.Result.Coverage);
         Assert.Equal(before, fixture.Snapshot());
         fixture.AssertNoPersistentState();
     }

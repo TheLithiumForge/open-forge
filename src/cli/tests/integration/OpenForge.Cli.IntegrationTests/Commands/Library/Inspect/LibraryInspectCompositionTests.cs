@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Inspect;
 
 public sealed class LibraryInspectCompositionTests
 {
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "Library Inspect terminal modes require no ID or workspace and remain text only"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     [InlineData("--help")]
     [InlineData("--version")]
@@ -15,7 +16,7 @@ public sealed class LibraryInspectCompositionTests
         using var fixture = new LibraryReadWorkspace();
         var before = fixture.Snapshot();
         var capture = await CliHostCapture.RunAsync(
-            ["library", "inspect", terminal, "--json", "--workspace", fixture.Files.Combine("does-not-exist")], fixture.Path);
+            ["library", "inspect", terminal, "--format", "json", "--workspace", fixture.Files.Combine("does-not-exist")], fixture.Path);
 
         Assert.Equal(0, capture.ExitCode);
         Assert.Empty(capture.Error);
@@ -25,7 +26,7 @@ public sealed class LibraryInspectCompositionTests
         {
             Assert.Contains("library inspect", capture.Output, StringComparison.Ordinal);
             Assert.Contains("library-id", capture.Output, StringComparison.Ordinal);
-            foreach (var flag in new[] { "--workspace", "--json", "--view", "--verbose", "--help", "--version" })
+            foreach (var flag in new[] { "--workspace", "--format", "--detail", "--detail-filter", "--help", "--version" })
             {
                 Assert.Contains(flag, capture.Output, StringComparison.Ordinal);
             }
@@ -35,6 +36,7 @@ public sealed class LibraryInspectCompositionTests
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "Library Inspect composed invalid subjects stop before record inventory and operation work"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     [InlineData("missing")]
     [InlineData("multiple")]
@@ -55,7 +57,7 @@ public sealed class LibraryInspectCompositionTests
             _ => throw new ArgumentOutOfRangeException(nameof(scenario)),
         };
         var before = fixture.Snapshot();
-        var capture = await CliHostCapture.RunAsync(["library", "inspect", "--json", .. suffix], fixture.Path);
+        var capture = await CliHostCapture.RunAsync(["library", "inspect", "--format", "json", .. suffix], fixture.Path);
 
         Assert.Equal(4, capture.ExitCode);
         if (scenario is "multiple" or "mutation")
@@ -66,18 +68,20 @@ public sealed class LibraryInspectCompositionTests
         else
         {
             using var document = JsonDocument.Parse(capture.Output);
-            var payload = document.RootElement.GetProperty("result");
-            Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
-            Assert.Equal("not-started", payload.GetProperty("record").GetProperty("state").GetString());
-            Assert.Equal("not-started", payload.GetProperty("source").GetProperty("state").GetString());
-            Assert.Empty(payload.GetProperty("source").GetProperty("eligiblePaths").EnumerateArray());
-            Assert.Empty(payload.GetProperty("projection").GetProperty("comparisons").EnumerateArray());
+            var payload = document.RootElement;
+            var data = payload.GetProperty("data");
+            Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
+            Assert.Null(data.GetProperty("sourceFolder").GetString());
+            Assert.Null(data.GetProperty("destinationFolder").GetString());
+            Assert.False(data.GetProperty("current").GetBoolean());
+            Assert.Empty(data.GetProperty("files").EnumerateArray());
         }
 
         Assert.Equal(before, fixture.Snapshot());
         fixture.AssertNoPersistentState();
     }
 
+    [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     [InlineData(true, true), InlineData(true, false), InlineData(false, true), InlineData(false, false)]
     public static async Task WorkspaceFailureRetainsParsedLibrarySubject(bool globalsFirst, bool ordinaryFile)
@@ -91,8 +95,8 @@ public sealed class LibraryInspectCompositionTests
         var badPath = workspace.Absolute("bad-workspace");
         var before = workspace.Snapshot();
         string[] arguments = globalsFirst
-            ? ["--workspace", badPath, "--json", "library", "inspect", "team-knowledge"]
-            : ["library", "inspect", "team-knowledge", "--workspace", badPath, "--json"];
+            ? ["--workspace", badPath, "--format", "json", "library", "inspect", "team-knowledge"]
+            : ["library", "inspect", "team-knowledge", "--workspace", badPath, "--format", "json"];
 
         var capture = await CliHostCapture.RunAsync(arguments, workspace.Path);
 
@@ -100,19 +104,19 @@ public sealed class LibraryInspectCompositionTests
         Assert.Empty(capture.Error);
         using var document = JsonDocument.Parse(capture.Output);
         var envelope = document.RootElement;
-        var payload = envelope.GetProperty("result");
+        var data = envelope.GetProperty("data");
         Assert.Equal("library inspect", envelope.GetProperty("command").GetString());
         Assert.Equal(ordinaryFile ? "blocked" : "incomplete", envelope.GetProperty("status").GetString());
         Assert.Equal(JsonValueKind.Null, envelope.GetProperty("workspace").ValueKind);
-        var finding = Assert.Single(payload.GetProperty("findings").EnumerateArray());
+        var finding = Assert.Single(envelope.GetProperty("findings").EnumerateArray());
         Assert.Equal(ordinaryFile ? "library-inspect.record-blocked" : "library-inspect.record-unavailable", finding.GetProperty("code").GetString());
-        Assert.Equal(ordinaryFile ? "The selected workspace root is not a directory." : "The selected workspace is missing.", finding.GetProperty("cause").GetString());
-        Assert.Equal(ordinaryFile ? "blocked" : "unavailable", payload.GetProperty("record").GetProperty("state").GetString());
-        Assert.Equal("not-started", payload.GetProperty("source").GetProperty("state").GetString());
-        Assert.Empty(payload.GetProperty("source").GetProperty("eligiblePaths").EnumerateArray());
-        Assert.Empty(payload.GetProperty("projection").GetProperty("comparisons").EnumerateArray());
+        Assert.Equal(ordinaryFile
+            ? ".agents/open-forge.lock.json is invalid: The selected workspace root is not a directory."
+            : ".agents/open-forge.lock.json could not be read completely.", finding.GetProperty("message").GetString());
+        Assert.False(data.GetProperty("current").GetBoolean());
+        Assert.Empty(data.GetProperty("files").EnumerateArray());
         Assert.Equal(before, workspace.Snapshot());
-        Assert.Equal("team-knowledge", payload.GetProperty("record").GetProperty("id").GetString());
-        Assert.Equal("team-knowledge", finding.GetProperty("libraryId").GetString());
+        Assert.Equal("team-knowledge", data.GetProperty("id").GetString());
+        Assert.Equal("team-knowledge", finding.GetProperty("subject").GetProperty("id").GetString());
     }
 }

@@ -1,0 +1,10 @@
+=== AGENTS.md ===
+
+=== .agents/loader.md (loader) ===
+
+=== .agents/docs/_docs.md (docs) ===
+---
+open-forge:
+  description: Documents
+  tags: [Docs]
+---

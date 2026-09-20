@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Apply Bun selection, parallel-runner, workspace, and snapshot-update rules to replacement CLI tests
+  description: "Historical CLI-v2 source: Apply Bun selection, parallel-runner, workspace, and snapshot-update rules to replacement CLI tests"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

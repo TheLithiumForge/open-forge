@@ -1,0 +1,5 @@
+Extension install was cancelled. Nothing was changed.
+Workspace: <workspace>
+  docs/first.md  final state unknown
+  Saved a grant for docs/first.md to .agents/open-forge.json
+  Saved a grant for docs/not-started.md to .agents/open-forge.json

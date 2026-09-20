@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery.Application;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryOrdinaryFileRecoveryIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Explicit ordinary recovery deletes exact prior-missing creates and restores verified prior bytes including deleted targets")]
     [InlineData("create"), InlineData("replace"), InlineData("generated"), InlineData("delete")]
     public static async Task RestoresExactPriorOrdinaryState(string kind)
@@ -42,6 +43,7 @@ public sealed class LibraryOrdinaryFileRecoveryIntegrationTests
         fixture.AssertUnrelatedPreserved();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Explicit ordinary recovery cancellation before observation performs no effect")]
     public static async Task CancelsBeforeObservation()
     {

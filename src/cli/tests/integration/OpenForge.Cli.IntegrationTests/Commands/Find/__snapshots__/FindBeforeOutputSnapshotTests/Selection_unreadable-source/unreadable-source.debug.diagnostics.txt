@@ -1,0 +1,9 @@
+status=incomplete
+coverage=incomplete
+matching=incomplete
+projection=not run
+matches=4
+sourcesInspected=3
+sourcesCandidates=4
+findings=1
+finding=find.invalid-encoding

@@ -24,11 +24,11 @@ The [Open Forge Principles](principles.md) define the product identity that this
 
 An Open Forge environment combines four areas:
 
-| Area                | Responsibility                                                                  | Depends on                                       |
-| ------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------ |
-| Framework           | Shared routing, Core primitives, and Memory mechanics                           | No other Open Forge area                         |
-| Workspace context   | Local goals, knowledge, constraints, decisions, methods, history, and scopes    | The `routes` it uses                             |
-| Extensions          | Optional reusable capabilities                                                  | The `routes` they extend                         |
+| Area                | Responsibility                                                                  | Depends on                                 |
+| ------------------- | ------------------------------------------------------------------------------- | ------------------------------------------ |
+| Framework           | Shared routing, Core primitives, and Memory mechanics                           | No other Open Forge area                   |
+| Workspace context   | Local goals, knowledge, constraints, decisions, methods, history, and scopes    | The `routes` it uses                       |
+| Extensions          | Optional reusable capabilities                                                  | The `routes` they extend                   |
 | Deterministic tools | Mechanical loading, navigation, validation, installation, packaging, and safety | The readable files they inspect and change |
 
 User direction establishes goals and accepted direction. An agent runtime builds the best current model from that direction and accepted context, surfaces consequential unsettled choices, recommends coherent defaults, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose canonical Framework entries without defining independent policy.

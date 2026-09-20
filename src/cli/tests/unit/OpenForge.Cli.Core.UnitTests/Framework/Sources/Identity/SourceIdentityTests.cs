@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Identity;
 
 public sealed class SourceIdentityTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral source identity derives IDs for every accepted source form"),
         InlineData(".agents/loader.md", "loader"),
         InlineData(".agents/memory/_memory.md", "memory"),
@@ -25,6 +26,7 @@ public sealed class SourceIdentityTests
         Assert.Equal(expectedId, SourceIdentity.DeriveId(canonicalPath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral source identity rejects unsafe and noncanonical paths"),
         InlineData(""),
         InlineData("loader.md"),
@@ -43,6 +45,7 @@ public sealed class SourceIdentityTests
         Assert.Null(SourceIdentity.DeriveId(canonicalPath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source identity rejects a null path without inventing an ID")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void NullPathHasNoIdentity()
@@ -50,6 +53,7 @@ public sealed class SourceIdentityTests
         Assert.Null(SourceIdentity.DeriveId(null));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral source identity validates exact IDs without normalization"),
         InlineData("memory/project alpha/工作%20note", true),
         InlineData("src/file.md", true),
@@ -68,6 +72,7 @@ public sealed class SourceIdentityTests
         Assert.Equal(expected, SourceIdentity.IsValidId(id));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral source identity recognizes canonical and compatibility entrypoints only"),
         InlineData(".agents/root/_root.md", true),
         InlineData(".agents/root/index.md", true),

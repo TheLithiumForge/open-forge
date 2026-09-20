@@ -1,0 +1,8 @@
+route-list diagnostics
+status=completed
+workspace.lexical=<workspace>
+selection.kind=loader-roots
+requested-depth=all
+effective-depth=all
+rows=3
+findings=0

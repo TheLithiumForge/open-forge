@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Repair;
 
 public sealed class RepairApplicationIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Repair automatic application changes only safe-exact links and leaves "
         + "guided candidates unselected"),
      Trait("Feature", "repair"), Trait("Evidence", "Integration")]
@@ -74,6 +75,7 @@ public sealed class RepairApplicationIntegrationTests
         Assert.NotEqual(sourceBefore, workspace.ReadText(RepairIntegrationWorkspace.SourcePath));
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Repair explicit relink preserves labels and unrelated bytes, removes recovery, "
         + "and converges to a verified no-op"),
      Trait("Feature", "repair"), Trait("Evidence", "Integration")]

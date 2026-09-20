@@ -1,17 +1,26 @@
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Commands.Status.Shared.Aggregation;
-using OpenForge.Cli.Core.Framework.Lifecycle.Operational.Models;
+using OpenForge.Cli.Core.Framework.Distribution.Operational.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using StatusGeneratedNavigationState = OpenForge.Cli.Core.Commands.Status.Models.Result.StatusGeneratedNavigationState;
+using StatusInstallationState = OpenForge.Cli.Core.Commands.Status.Models.Result.StatusInstallationState;
+using StatusLifecycleState = OpenForge.Cli.Core.Commands.Status.Models.Result.StatusLifecycleState;
+using StatusManagedTargetKind = OpenForge.Cli.Core.Commands.Status.Models.Result.StatusManagedTargetKind;
+using StatusRecoveryCandidateKind = OpenForge.Cli.Core.Commands.Status.Models.Result.StatusRecoveryCandidateKind;
+using StatusRecoveryIntegrity = OpenForge.Cli.Core.Commands.Status.Models.Result.StatusRecoveryIntegrity;
+using StatusSourceAvailability = OpenForge.Cli.Core.Commands.Status.Models.Result.StatusSourceAvailability;
+using StatusTargetState = OpenForge.Cli.Core.Commands.Status.Models.Result.StatusTargetState;
+using StatusValueState = OpenForge.Cli.Core.Commands.Status.Models.Result.StatusValueState;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Status;
 
 internal static class StatusResultSeeds
 {
     internal static StatusIntegerValue Available(long value)
-        => new(OperationalValueState.Available, value);
+        => new(StatusValueState.Available, value);
 
     internal static StatusMeasurement Measurement(
         long files,
@@ -39,7 +48,7 @@ internal static class StatusResultSeeds
             Facts = new StatusFacts
             {
                 Installation = new StatusInstallation(
-                    OperationalInstallationState.Installed,
+                    StatusInstallationState.Installed,
                     "AGENTS.md",
                     ".agents/loader.md"),
                 Context = new StatusContext
@@ -50,7 +59,7 @@ internal static class StatusResultSeeds
                         Measurement(4, 21, 25, 6),
                         Measurement(2, 12, 14, 3)),
                     TotalAvailable = Measurement(7, 81, 100, 21),
-                    StartupPercentage = new StatusDecimalValue(OperationalValueState.Available, 25m),
+                    StartupPercentage = new StatusDecimalValue(StatusValueState.Available, 25m),
                     Continuity = Measurement(2, 12, 15, 3),
                     ContinuitySources =
                     [
@@ -85,33 +94,31 @@ internal static class StatusResultSeeds
                         new StatusGeneratedNavigation(
                             ".agents/directives/_directives.md",
                             status == CliSemanticStatus.Attention
-                                ? OperationalGeneratedNavigationState.Changed
-                                : OperationalGeneratedNavigationState.Current),
+                                ? StatusGeneratedNavigationState.Changed
+                                : StatusGeneratedNavigationState.Current),
                     ],
                 },
                 Lifecycle = new StatusLifecycle(
                     new StatusFrameworkLifecycle
                     {
-                        State = OperationalLifecycleState.Trusted,
-                        SourceAvailability = OperationalSourceAvailability.Available,
+                        State = StatusLifecycleState.Trusted,
+                        SourceAvailability = StatusSourceAvailability.Available,
                         Targets =
                         [
                             new StatusFrameworkTarget
                             {
                                 Path = ".agents/loader.md",
-                                Kind = FrameworkManagedTargetKind.File,
+                                Kind = StatusManagedTargetKind.File,
                                 SourceAssetPath = "loader.md",
                                 Region = null,
-                                BaselineFingerprint = "sha256:loader",
-                                FingerprintKind = "bytes-v1",
-                                State = OperationalTargetState.Current,
+                                State = StatusTargetState.Current,
                             },
                         ],
                     },
                     new StatusExtensionLifecycle
                     {
-                        State = OperationalLifecycleState.Trusted,
-                        SourceAvailability = OperationalSourceAvailability.Available,
+                        State = StatusLifecycleState.Trusted,
+                        SourceAvailability = StatusSourceAvailability.Available,
                         Installed =
                         [
                             new StatusInstalledExtension
@@ -119,7 +126,7 @@ internal static class StatusResultSeeds
                                 Id = "alpha",
                                 Version = "1.0.0",
                                 Source = "embedded:alpha",
-                                SourceAvailability = OperationalSourceAvailability.Available,
+                                SourceAvailability = StatusSourceAvailability.Available,
                                 Dependencies = [],
                                 Paths = [".agents/shared.md"],
                             },
@@ -140,9 +147,7 @@ internal static class StatusResultSeeds
                                 {
                                     Path = ".agents/shared.md",
                                     Owners = ["alpha", "zeta"],
-                                    BaselineFingerprint = "sha256:shared",
-                                    FingerprintKind = "open-forge-markdown-v1",
-                                    State = OperationalTargetState.Current,
+                                State = StatusTargetState.Current,
                                 },
                             ],
                         },
@@ -157,8 +162,8 @@ internal static class StatusResultSeeds
                         [
                             new StatusRecoveryCandidate(
                                 "/recovery/final.zip",
-                                RecoveryBundleCandidateKind.Final,
-                                RecoveryBundleIntegrity.Verified),
+                                StatusRecoveryCandidateKind.Final,
+                                StatusRecoveryIntegrity.Verified),
                         ]
                         : [],
                 },

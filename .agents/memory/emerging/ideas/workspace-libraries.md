@@ -12,7 +12,7 @@ This is accepted contextual input for the queued permanent Task 23
 “Workspace Libraries”. It is not accepted architecture or an implementation
 contract, and it does not authorize implementation. The current [Extensions
 MVP Architecture](../../crystallized/documents/extensions/architecture.md), CLI
-contracts, and Framework routes remain authoritative. The [Task 23 record](../../working/cli-development/tasks/workspace-libraries.md)
+contracts, and Framework routes remain authoritative. The [Task 23 record](../../archived/cli-development/tasks/workspace-libraries.md)
 and current CLI control documents register this idea outside the active command
 sequence as a post-command last-stage improvement. No phase or milestone
 horizon is assigned until a future contract freeze.

@@ -1,0 +1,10 @@
+Library detach stopped after 1 of 1 links were removed.
+Workspace: <workspace>
+  Error  team-knowledge  Library detach failed
+         Library detach stopped because of an unexpected error: filesystem access was denied.
+         open-forge library detach team-knowledge --detail debug
+         Retry the same Library detach request with bounded diagnostics.
+  .agents/directives/review.md  link removed
+  .agents/open-forge.lock.json  not started
+  Retry the same Library detach request with bounded diagnostics.
+Next: open-forge library detach team-knowledge --detail debug

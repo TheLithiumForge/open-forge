@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Models.Identity;
 
 public sealed class SourceIdentityModelTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source document forms retain the exact finite vocabulary")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void DocumentFormsAreStable()
@@ -23,6 +24,7 @@ public sealed class SourceIdentityModelTests
             Enum.GetNames<SourceDocumentForm>());
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source-reference result factories preserve kind, attempt, and cause independently")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void ReferenceFactoriesRetainTheirTypedAttempt()

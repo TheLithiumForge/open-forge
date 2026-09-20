@@ -2,8 +2,12 @@ using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Context;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Commands.Context.Models.Selection;
-using OpenForge.Cli.Core.Commands.Context.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Context.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Text;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
@@ -13,8 +17,9 @@ public sealed class ContextPresentationTests
 {
     private const int ExpectedSourceCount = 2;
     private const int MaximumDiagnosticLength = 4095;
-    private const string OverwriteHeading = "=== Overwrite ===";
+    private const string OverwriteHeading = "=== .agents/projects/guide.overwrite.md (projects/guide, overwrite) ===";
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Context human views preserve selected authored text and canonical overwrite framing")]
     [Trait("Feature", "context"), Trait("Evidence", "Unit")]
     public void HumanViewsPreserveAuthoredTextAndLayerFraming()
@@ -24,8 +29,8 @@ public sealed class ContextPresentationTests
                 ContextContentPartKind.Frontmatter,
                 ContextContentPartKind.Body));
 
-        var compact = ContextHumanRenderer.Render(Presentation(result, CliView.Compact));
-        var expanded = ContextHumanRenderer.Render(Presentation(result, CliView.Expanded));
+        var compact = RenderText(result, CliDetail.Minimal);
+        var expanded = RenderText(result, CliDetail.Standard);
 
         Assert.Contains(ContextPresentationTestData.GuideFrontmatter.TrimEnd('\n'), compact, StringComparison.Ordinal);
         Assert.Contains(ContextPresentationTestData.GuideBody, compact, StringComparison.Ordinal);
@@ -33,9 +38,10 @@ public sealed class ContextPresentationTests
         Assert.Contains(ContextPresentationTestData.GuideBody, expanded, StringComparison.Ordinal);
         Assert.Contains(OverwriteHeading, compact, StringComparison.Ordinal);
         Assert.Contains(OverwriteHeading, expanded, StringComparison.Ordinal);
-        Assert.Contains("Included because: selected source for projects/guide", expanded, StringComparison.Ordinal);
+        Assert.Contains("included because selected source for projects/guide", expanded, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Context paths-only human projection emits ordered paths without authored bodies")]
     [Trait("Feature", "context"), Trait("Evidence", "Unit")]
     public void PathsOnlyReplacesSourceContentFraming()
@@ -43,45 +49,44 @@ public sealed class ContextPresentationTests
         var result = ContextPresentationTestData.Create(
             ContextPresentationTestData.Content(ContextContentPartKind.Paths));
 
-        var compact = ContextHumanRenderer.Render(Presentation(result, CliView.Compact));
-        var expanded = ContextHumanRenderer.Render(Presentation(result, CliView.Expanded));
+        var compact = RenderText(result, CliDetail.Minimal);
+        var expanded = RenderText(result, CliDetail.Standard);
 
         Assert.Contains(".agents/projects/guide.md", compact, StringComparison.Ordinal);
-        Assert.Contains("Ordered paths", expanded, StringComparison.Ordinal);
+        Assert.Contains(".agents/projects/guide.md", expanded, StringComparison.Ordinal);
         Assert.DoesNotContain("Base rule.", compact, StringComparison.Ordinal);
         Assert.DoesNotContain("Base rule.", expanded, StringComparison.Ordinal);
-        Assert.DoesNotContain("Route: projects/guide", expanded, StringComparison.Ordinal);
+        Assert.DoesNotContain("route:", expanded, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Context compact fixed rows preserve byte-exact separators, culture, ordering, and final newline"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
-    public void CompactFixedRowsAreByteExact()
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Context minimal text fixed rows preserve byte-exact separators, culture, ordering, and final newline"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    public void MinimalTextFixedRowsAreByteExact()
     {
         var result = ContextPresentationTestData.Create(
-            ContextPresentationTestData.Content(ContextContentPartKind.Metadata));
+            ContextPresentationTestData.Content(ContextContentPartKind.Metadata),
+            counts: ContextCounts.Complete(2, 0, 0, 0, 0));
 
-        var rendered = ContextHumanRenderer.Render(Presentation(result, CliView.Compact));
+        var rendered = RenderText(result, CliDetail.Minimal);
         Assert.Equal(ExpectedSourceCount, result.Sources.Count);
-        var expected = $"""
-            Context
-            Status: complete
-            Workspace: {result.Workspace?.LexicalRoot}
-            Selected by: current directory
-            Sources: 2; coverage complete
-            Content: metadata
-            Startup context included: no; additions only: yes
-            Follow links: none
-            Requested: projects/guide -> resolved; projects/guide; .agents/projects/guide.md
-            Source: .agents/docs/topic.md; docs/topic; base; order 1
-            Source: .agents/projects/guide.md; projects/guide; base; order 2
-            Source: .agents/projects/guide.overwrite.md; projects/guide; overwrite; order 3
-            """.ReplaceLineEndings(Environment.NewLine) + Environment.NewLine;
+        var expected =
+            "=== .agents/docs/topic.md (docs/topic) ===\n"
+            + "id: docs/topic\n"
+            + "route: docs/topic\n\n"
+            + "=== .agents/projects/guide.md (projects/guide) ===\n"
+            + "id: projects/guide\n"
+            + "route: projects/guide\n\n"
+            + OverwriteHeading + "\n"
+            + "id: projects/guide\n"
+            + "route: projects/guide\n";
 
         Assert.Equal(expected, rendered);
     }
 
-    [Fact(DisplayName = "Context compact findings name distinct known source paths")]
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Context standard text findings name distinct known source paths")]
     [Trait("Feature", "context"), Trait("Evidence", "Unit")]
-    public void CompactFindingsNameDistinctKnownSourcePaths()
+    public void StandardTextFindingsNameDistinctKnownSourcePaths()
     {
         const string firstPath = ".agents/skills/first/SKILL.md";
         const string secondPath = ".agents/skills/second/SKILL.md";
@@ -93,7 +98,7 @@ public sealed class ContextPresentationTests
                 ClosureFinding(secondPath),
             ]);
 
-        var rendered = ContextHumanRenderer.Render(Presentation(result, CliView.Compact));
+        var rendered = RenderText(result, CliDetail.Standard);
 
         Assert.Contains(
             $"  {firstPath}",
@@ -105,9 +110,10 @@ public sealed class ContextPresentationTests
             StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Context compact finding subjects are escaped without truncation")]
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Context standard text finding subjects are escaped without truncation")]
     [Trait("Feature", "context"), Trait("Evidence", "Unit")]
-    public void CompactFindingSubjectsAreEscapedWithoutTruncation()
+    public void StandardTextFindingSubjectsAreEscapedWithoutTruncation()
     {
         var hostileSubject = $"line\n{new string('x', 300)}";
         var finding = new ContextFinding(
@@ -126,16 +132,18 @@ public sealed class ContextPresentationTests
             ContextPresentationTestData.Content(ContextContentPartKind.Metadata),
             findings: [finding]);
 
-        var rendered = ContextHumanRenderer.Render(Presentation(result, CliView.Compact));
+        var rendered = RenderText(result, CliDetail.Standard);
         var findingLine = Assert.Single(
-            rendered.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
-            line => line.StartsWith("  Subject:", StringComparison.Ordinal));
+            rendered.Split('\n', StringSplitOptions.RemoveEmptyEntries),
+            line => line.Contains("line\\n", StringComparison.Ordinal)
+                && line.Contains(new string('x', 300), StringComparison.Ordinal));
 
         Assert.DoesNotContain(hostileSubject, findingLine, StringComparison.Ordinal);
-        Assert.Contains("Subject: line\\u000a", findingLine, StringComparison.Ordinal);
-        Assert.EndsWith(new string('x', 300), findingLine, StringComparison.Ordinal);
+        Assert.Contains("line\\n", findingLine, StringComparison.Ordinal);
+        Assert.Contains(new string('x', 300), findingLine, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Context JSON uses the frozen ordered schema from the same typed result")]
     [Trait("Feature", "context"), Trait("Evidence", "Unit")]
     public void JsonUsesFrozenOrderedSchema()
@@ -144,27 +152,22 @@ public sealed class ContextPresentationTests
             ContextPresentationTestData.Content(ContextContentPartKind.Metadata),
             ContextLinkExpansion.All);
 
-        var json = ContextJsonRenderer.Render(new CliPresentationRequest<ContextResult>(
-            result,
-            new CliPresentation(
-                Format: CliOutputFormat.Json,
-                View: CliView.Expanded,
-                Verbosity: CliVerbosity.Normal)));
+        var json = RenderJson(result, CliDetail.Full);
         using var document = JsonDocument.Parse(json);
         var root = document.RootElement;
 
         Assert.Equal(
-            ["schemaVersion", "command", "status", "workspace", "result", "next"],
+            ["schemaVersion", "command", "status", "detail", "filter", "workspace", "summary", "findings", "effects", "counts", "limitations", "data", "recovery", "next"],
             root.EnumerateObject().Select(property => property.Name));
-        var commandResult = root.GetProperty("result");
+        var commandResult = root.GetProperty("data");
         Assert.Equal(
-            ["selection", "presentation", "coverage", "paths", "links", "sources", "findings"],
+            ["sources", "links"],
             commandResult.EnumerateObject().Select(property => property.Name));
         Assert.Equal("context", root.GetProperty("command").GetString());
-        Assert.Equal("all", commandResult.GetProperty("selection").GetProperty("linkExpansion").GetProperty("mode").GetString());
-        Assert.Equal("network-not-attempted", commandResult.GetProperty("links")[1].GetProperty("target").GetProperty("network").GetString());
+        Assert.Equal("external-unchecked", commandResult.GetProperty("links")[1].GetProperty("resolution").GetString());
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Context help retains public grammar and stream guidance")]
     [Trait("Feature", "context"), Trait("Evidence", "Unit")]
     public void HelpRetainsPublicGrammarAndStreamGuidance()
@@ -174,62 +177,71 @@ public sealed class ContextPresentationTests
 
         Assert.Contains("--additions-only", text, StringComparison.Ordinal);
         Assert.Contains("--follow-links <positive-depth|all>", text, StringComparison.Ordinal);
-        Assert.Contains("Human complete, attention, and incomplete results use stdout", text, StringComparison.Ordinal);
-        Assert.Contains("deterministic, stateless, and read-only", text, StringComparison.Ordinal);
+        Assert.Contains("Text completed, completed-with-warnings, and incomplete results use stdout", text, StringComparison.Ordinal);
+        Assert.Contains("preserves authored source bytes", text, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Context diagnostics retain bounded typed-result evidence")]
     [Trait("Feature", "context"), Trait("Evidence", "Unit")]
     public void DiagnosticsRetainBoundedTypedResultEvidence()
     {
         var result = ContextPresentationTestData.Create(
-            ContextPresentationTestData.Content(ContextContentPartKind.Metadata));
+            ContextPresentationTestData.Content(ContextContentPartKind.Metadata),
+            findings: [ClosureFinding(".agents/missing.md")]);
 
-        var diagnostics = ContextDiagnosticRenderer.Render(Presentation(
-            result,
-            CliView.Expanded,
-            CliVerbosity.Verbose));
+        var diagnostics = CliRenderingStage.Render(
+            Presentation(result, CliDetail.Debug),
+            OpenForge.Cli.Core.Presentation.Context.ContextPresentation.Rendering).DiagnosticContent;
 
         Assert.NotNull(diagnostics);
         Assert.InRange(diagnostics.Length, 1, MaximumDiagnosticLength);
-        Assert.Contains("status=complete", diagnostics, StringComparison.Ordinal);
-        Assert.Contains("links=0", diagnostics, StringComparison.Ordinal);
+        Assert.Contains("Loading metadata is unavailable.", diagnostics, StringComparison.Ordinal);
     }
 
     private static CliPresentationRequest<ContextResult> Presentation(
         ContextResult result,
-        CliView view,
-        CliVerbosity verbosity = CliVerbosity.Normal)
+        CliDetail view,
+        CliFormat format = CliFormat.Text)
         => new(
             result,
             new CliPresentation(
-                Format: CliOutputFormat.Human,
-                View: view,
-                Verbosity: verbosity));
+                Format: format,
+                Detail: view,
+                Filter: null));
 
+    [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Context views retain exact content and place incomplete findings before source blocks"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
-    [InlineData((int)CliView.Compact)]
-    [InlineData((int)CliView.Expanded)]
+    [InlineData((int)CliDetail.Minimal)]
+    [InlineData((int)CliDetail.Standard)]
     public void ViewsKeepContentAndPartialFacts(int viewValue)
     {
         var result = ContextPresentationTestData.Create(
             ContextPresentationTestData.Content(ContextContentPartKind.Paths, ContextContentPartKind.Body),
             findings: [ClosureFinding(".agents/missing.md")]);
-        var jsonRequest = new CliPresentationRequest<ContextResult>(result, new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal));
-        var json = ContextJsonRenderer.Render(jsonRequest);
-        var rendered = ContextHumanRenderer.Render(Presentation(result, (CliView)viewValue));
+        var json = RenderJson(result, CliDetail.Standard);
+        var rendered = RenderText(result, (CliDetail)viewValue);
 
         Assert.Contains(ContextPresentationTestData.GuideBody, rendered, StringComparison.Ordinal);
-        Assert.Contains("Status: incomplete", rendered, StringComparison.Ordinal);
-        Assert.Contains(".agents/missing.md", rendered, StringComparison.Ordinal);
-        Assert.True(rendered.IndexOf("context.closure-unavailable", StringComparison.Ordinal) < rendered.IndexOf(ContextPresentationTestData.GuideBody, StringComparison.Ordinal));
+        Assert.Contains("Startup context is unavailable", rendered, StringComparison.Ordinal);
+        Assert.True(rendered.IndexOf("Startup context is unavailable", StringComparison.Ordinal) < rendered.IndexOf(ContextPresentationTestData.GuideBody, StringComparison.Ordinal));
+
         Assert.DoesNotContain("Ordered paths", rendered, StringComparison.Ordinal);
-        var sourceRows = rendered.Split(Environment.NewLine).Where(line =>
-            line.StartsWith("Source: .agents/docs/topic.md", StringComparison.Ordinal)
-            || line.StartsWith("Path: .agents/docs/topic.md", StringComparison.Ordinal));
+        var sourceRows = rendered.Split('\n').Where(line =>
+            line.StartsWith("=== .agents/docs/topic.md", StringComparison.Ordinal));
         Assert.Single(sourceRows);
-        Assert.Equal(json, ContextJsonRenderer.Render(jsonRequest));
+        Assert.Equal(json, RenderJson(result, CliDetail.Standard));
     }
+
+    private static string RenderText(ContextResult result, CliDetail detail)
+        => CliRenderingStage.Render(
+            Presentation(result, detail),
+            OpenForge.Cli.Core.Presentation.Context.ContextPresentation.Rendering).PrimaryContent;
+
+    private static string RenderJson(ContextResult result, CliDetail detail)
+        => CliRenderingStage.Render(
+            Presentation(result, detail, CliFormat.Json),
+            OpenForge.Cli.Core.Presentation.Context.ContextPresentation.Rendering).PrimaryContent;
 
     private static ContextFinding ClosureFinding(string path)
         => new(

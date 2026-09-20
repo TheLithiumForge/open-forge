@@ -1,0 +1,3 @@
+1 source matches --tag Docs --tag Guide --require all.
+Workspace: <workspace>
+  docs/guide  .agents/docs/guide.md  Guide

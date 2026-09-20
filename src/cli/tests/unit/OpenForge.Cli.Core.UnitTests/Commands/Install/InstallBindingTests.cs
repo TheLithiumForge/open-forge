@@ -14,6 +14,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Install;
 
 public sealed class InstallBindingTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Install exposes the exact direct zero-operand command and three boolean options"), Trait("Feature", "install-command"), Trait("Evidence", "Unit")]
     public void SymbolsExposeExactDirectGrammar()
     {
@@ -34,6 +35,7 @@ public sealed class InstallBindingTests
         Assert.NotEmpty(operandParse.Errors);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Install binding collapses repeated boolean options without changing independent dimensions"), Trait("Feature", "install-command"), Trait("Evidence", "Unit")]
     public void BindingNormalizesRepeatedBooleans()
     {
@@ -49,7 +51,7 @@ public sealed class InstallBindingTests
         ];
         var bound = new InstallRequestBinder(symbols).Bind(
             new CliBindingParse(symbols.InstallCommand.Parse(arguments), arguments),
-            Invocation(CliOutputFormat.Human));
+            Invocation(CliFormat.Text));
 
         var request = Assert.IsType<InstallRequest>(bound.Request);
         Assert.Null(bound.InvalidResult);
@@ -59,6 +61,7 @@ public sealed class InstallBindingTests
         Assert.False(request.AllowsInteractiveConfirmation);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Install binding normalizes interaction policy from presentation and mode"), Trait("Feature", "install-command"), Trait("Evidence", "Unit")]
     [InlineData("human", false, false, true)]
     [InlineData("human", true, false, false)]
@@ -93,6 +96,7 @@ public sealed class InstallBindingTests
         Assert.Equal(dryRun ? InstallMode.DryRun : InstallMode.Apply, request.Mode);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Install request rejects an undefined mode"), Trait("Feature", "install-command"), Trait("Evidence", "Unit")]
     public void RequestRejectsUndefinedMode()
     {
@@ -118,6 +122,7 @@ public sealed class InstallBindingTests
             allowsInteractiveConfirmation: true));
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Install confirmation-required result directs the same request to automatic mode"), Trait("Feature", "install-command"), Trait("Evidence", "Unit")]
     [InlineData(false, "open-forge install --automatic")]
     [InlineData(true, "open-forge install --force --automatic")]
@@ -141,6 +146,7 @@ public sealed class InstallBindingTests
         Assert.Equal(expectedCommand, next.Command);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Install managed divergence directs callers to the root update operation"), Trait("Feature", "install-command"), Trait("Evidence", "Unit")]
     public void ManagedDivergenceUsesUpdateNextAction()
     {
@@ -159,22 +165,22 @@ public sealed class InstallBindingTests
         Assert.Equal("open-forge update", next.Command);
     }
 
-    private static CliInvocation Invocation(CliOutputFormat format)
+    private static CliInvocation Invocation(CliFormat format)
     {
         var workspace = Workspace();
         return new CliInvocation(
             new CliProcessIdentity("open-forge", "1.0.0"),
-            new CliPresentation(format, CliView.Expanded, CliVerbosity.Normal),
+            new CliPresentation(format, CliDetail.Standard, null),
             CliTerminalMode.None,
             new CliWorkspaceRequest(null, workspace.LexicalRoot),
             workspace);
     }
 
-    private static CliOutputFormat ReadFormat(string format)
+    private static CliFormat ReadFormat(string format)
         => format switch
         {
-            "human" => CliOutputFormat.Human,
-            "json" => CliOutputFormat.Json,
+            "human" => CliFormat.Text,
+            "json" => CliFormat.Json,
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, "The test format is not defined."),
         };
 

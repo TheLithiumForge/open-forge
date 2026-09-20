@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 3,
+  "command": "route move",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot move guidance/old guide: .agents/guidance/old guide.md is managed by the toolkit Extension, so Route Move cannot move it.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-move.ownership-claimed",
+      "title": "Source is managed",
+      "message": ".agents/guidance/old guide.md is managed by the toolkit Extension, so Route Move cannot move it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/guidance/old guide.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge extension update toolkit",
+          "reason": "Update the owning Extension before rerunning Route Move."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesMoved": 0,
+    "sectionsUpdated": 0,
+    "linksRewritten": 0,
+    "filesScanned": null,
+    "errors": 1
+  },
+  "limitations": [
+    {
+      "what": "files scanned",
+      "why": "the reference scan was not completed",
+      "subject": null
+    }
+  ],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "destination": {
+      "id": null,
+      "path": null
+    },
+    "moved": [],
+    "rewrittenLinks": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension update toolkit",
+    "reason": "Update the owning Extension before rerunning Route Move."
+  }
+}

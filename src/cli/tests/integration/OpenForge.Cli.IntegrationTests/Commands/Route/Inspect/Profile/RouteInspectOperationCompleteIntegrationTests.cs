@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Profile;
 
 public sealed class RouteInspectOperationCompleteIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect forms a complete rooted profile with route topology, loading facts, measurements, and Axioms provenance")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task CompleteRootedOperationFormsEveryProfileFact()
@@ -198,6 +199,7 @@ public sealed class RouteInspectOperationCompleteIntegrationTests
         RouteInspectProfileIntegrationAssertions.AssertNoWriteOrInspectionState(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect round-trips BOM, CRLF, and non-ASCII UTF-8 while measuring a valid base-overwrite pair and zero descendants")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task StrictUtf8AndOverwriteMeasurementsRemainExact()
@@ -225,11 +227,10 @@ public sealed class RouteInspectOperationCompleteIntegrationTests
             + "\r\n"
             + "## Entries\r\n"
             + "\r\n"
-            + "<!-- open-forge:generated-index:start -->\r\n"
             + "\r\n"
             + "- none - No entries - #Empty\r\n"
             + "\r\n"
-            + "<!-- open-forge:generated-index:end -->\r\n");
+            );
         var bomEncoding = new UTF8Encoding(
             encoderShouldEmitUTF8Identifier: true,
             throwOnInvalidBytes: true);

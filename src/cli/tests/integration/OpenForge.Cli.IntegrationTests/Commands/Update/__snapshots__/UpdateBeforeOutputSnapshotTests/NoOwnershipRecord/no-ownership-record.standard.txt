@@ -1,0 +1,4 @@
+No ownership record exists, so update cannot tell which files it manages. Nothing was changed.
+Workspace: <workspace>
+  Inspect the blocked, unavailable, or incomplete Update facts before rerunning.
+Next: open-forge doctor

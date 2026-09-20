@@ -1,0 +1,56 @@
+Workspace: <workspace>
+5 sources, about 0.1k tokens.
+=== AGENTS.md ===
+included because workspace entry
+# Workspace
+
+Read `.agents/loader.md`.
+
+=== .agents/loader.md (loader) ===
+included because Loader
+# Open Forge Loader
+
+## Entries
+
+- [Documents](docs/_docs.md) - #LoadNow #Docs
+
+=== .agents/docs/_docs.md (docs) ===
+included because #LoadNow from .agents/loader.md
+included because ancestor required from .agents/docs/guide.md for docs/guide
+---
+open-forge:
+  description: Documents
+  tags: [Docs]
+---
+# Documents
+
+## Entries
+
+- [Guide](guide.md) - #Docs #Guide
+- [Reference](reference.md) - #Docs
+
+=== .agents/docs/guide.md (docs/guide) ===
+included because selected source for docs/guide
+---
+open-forge:
+  description: Guide
+  tags: [Docs, Guide]
+---
+# Guide
+
+## Rules
+
+Read the [Reference](reference.md#details).
+
+=== .agents/docs/reference.md (docs/reference) ===
+included because linked source from .agents/docs/guide.md at depth 1
+---
+open-forge:
+  description: Reference
+  tags: [Docs]
+---
+# Reference
+
+## Details
+
+Use the guide.

@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 3,
+  "command": "library sync",
+  "status": "failed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Library sync stopped after 1 of 2 changes.",
+    "kind": "failed"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-sync.operation-failed",
+      "title": "Library sync failed",
+      "message": "filesystem access was denied",
+      "subject": {
+        "kind": "file",
+        "path": "team-knowledge",
+        "id": null,
+        "location": null
+      },
+      "category": "operation-failed",
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/directives/review.md",
+      "kind": "link",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "replaced",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "linksAdded": 1,
+    "linksRemoved": 0,
+    "linksUnchanged": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "proposedScopes": [],
+      "approvedScopes": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/directives/review.md",
+        "action": "add",
+        "outcome": "done",
+        "target": "../../shared/team-knowledge/.agents/directives/review.md"
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "action": "update",
+        "outcome": "not-started"
+      }
+    ],
+    "unchanged": [],
+    "inventory": {
+      "rootState": "available",
+      "inventoryState": "complete",
+      "eligiblePaths": [
+        {
+          "sourcePath": ".agents/directives/review.md",
+          "destinationPath": ".agents/directives/review.md",
+          "sourceId": "directives/review"
+        }
+      ],
+      "excludedPaths": [],
+      "unavailablePaths": [],
+      "lexicalRoot": "<workspace>\\shared\\team-knowledge",
+      "physicalRoot": "<workspace>\\shared\\team-knowledge",
+      "lexicallyContained": true,
+      "physicallyContained": true
+    },
+    "expectedStates": [
+      {
+        "path": ".agents/directives/review.md",
+        "kind": "missing",
+        "length": null,
+        "sha256": null,
+        "target": null
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "kind": "ordinary-file",
+        "length": null,
+        "sha256": "<sha256>",
+        "target": null
+      }
+    ],
+    "verification": {
+      "state": "failed",
+      "recordPublication": "failed",
+      "publishedLast": null
+    },
+    "recovery": {
+      "state": "prepared",
+      "path": "<recovery-bundle>",
+      "residuals": [
+        {
+          "path": ".agents/directives/review.md",
+          "kind": "link",
+          "state": "retained"
+        }
+      ]
+    }
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": null
+}

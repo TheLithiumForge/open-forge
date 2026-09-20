@@ -8,6 +8,26 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Markdown;
 
 public sealed class FrameworkMarkdownDocumentWriterTests
 {
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Optional Markdown writer omits tags and preserves exact UTF8 body bytes")]
+    [Trait("Feature", "framework-markdown-document"), Trait("Evidence", "Unit")]
+    public void OptionalWriterPreservesBodyWithoutInventingMetadata()
+    {
+        const string body = "\r\n# Body\r\n\nUnicode: café\0";
+        const string expected = "---\nopen-forge:\n  description: Description\n---\n" + body;
+        var bytes = new FrameworkMarkdownDocumentWriter().WriteOptional(
+            new FrameworkDocumentMetadataEmission("Description", [], null), body);
+
+        Assert.Equal(Encoding.UTF8.GetBytes(expected), bytes.ToArray());
+        Assert.Equal((byte)'-', bytes[0]);
+        var document = new MarkdownDocumentParser().Parse(Encoding.UTF8.GetString(bytes.AsSpan()));
+        var facts = new FrameworkDocumentMetadataParser().Parse(document);
+        Assert.Equal(FrameworkDocumentMetadataState.Missing, facts.State);
+        Assert.Equal("Description", facts.ObservedDescription);
+        Assert.Empty(facts.ObservedTags);
+    }
+
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Framework Markdown writer emits canonical frontmatter and preserves the exact body bytes"), Trait("Feature", "framework-markdown-document"), Trait("Evidence", "Unit")]
     public void WritesCanonicalFrontmatterAndExactBody()
     {
@@ -25,6 +45,7 @@ public sealed class FrameworkMarkdownDocumentWriterTests
         Assert.Equal(Encoding.UTF8.GetBytes(expected), bytes.ToArray());
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Framework Markdown writer output round-trips through the Markdown and metadata parsers"), Trait("Feature", "framework-markdown-document"), Trait("Evidence", "Unit")]
     public void WrittenDocumentRoundTripsThroughCanonicalParsers()
     {
@@ -51,6 +72,7 @@ public sealed class FrameworkMarkdownDocumentWriterTests
         Assert.Contains("tags: [Évidence2, 工作-2]", source, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Framework Markdown writer closes metadata-only documents with one canonical delimiter newline"), Trait("Feature", "framework-markdown-document"), Trait("Evidence", "Unit")]
     public void MetadataOnlyOutputEndsAtClosingDelimiterNewline()
     {

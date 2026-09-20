@@ -1,0 +1,6 @@
+Cannot synchronize team-knowledge: The selected Library destinations require shared permission in .agents/open-forge.json; use --allow-path <path> to record a grant. Nothing was changed.
+Workspace: <workspace>
+permission-required
+  Error  .agents/open-forge.json  Permission is required
+         The selected Library destinations require shared permission in .agents/open-forge.json; use --allow-path <path> to record a grant
+  1 link unchanged

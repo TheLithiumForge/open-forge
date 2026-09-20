@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "failed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Extension install stopped after 1 of 2 changes.",
+    "kind": "failed"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-install.write-failed",
+      "title": "Writing failed",
+      "message": "filesystem access was denied.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/toolkit.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/aaa.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "toolkit",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/toolkit.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": "toolkit",
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "packagesInstalled": 0,
+    "filesCreated": 1,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": true,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "toolkit",
+        "version": "1.0.0",
+        "selected": true,
+        "requiredBy": []
+      }
+    ],
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "selection": {
+      "method": "explicit-ids"
+    },
+    "sections": [],
+    "entriesUnchanged": [
+      ".agents/directives/_directives.md",
+      ".agents/guidance/_guidance.md",
+      ".agents/loader.md",
+      ".agents/maps/_maps.md",
+      ".agents/memory/_memory.md",
+      ".agents/memory/archived/_archived.md",
+      ".agents/memory/crystallized/_crystallized.md",
+      ".agents/memory/emerging/_emerging.md",
+      ".agents/memory/working/_working.md",
+      ".agents/patterns/_patterns.md",
+      ".agents/skills/_skills.md",
+      ".agents/templates/_templates.md"
+    ],
+    "frameworkFingerprint": "<sha256>",
+    "verification": {
+      "targets": "unknown",
+      "topology": "unknown",
+      "extensionsLifecycle": "unknown",
+      "frameworkLifecycle": "unknown"
+    },
+    "recovery": {
+      "state": "retained",
+      "protectedPaths": [
+        ".agents/toolkit.md",
+        ".agents/open-forge.lock.json"
+      ],
+      "residualPath": "<recovery-bundle>"
+    }
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": null
+}

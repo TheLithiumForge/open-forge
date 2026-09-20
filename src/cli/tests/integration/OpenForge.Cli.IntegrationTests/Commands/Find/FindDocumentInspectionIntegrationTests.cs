@@ -23,6 +23,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Find;
 
 public sealed class FindDocumentInspectionIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Find inspection preserves YAML, Markdown, Unicode, CRLF, and overwrite-layer evidence")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Integration")]
     public async Task RealYamlMarkdownUnicodeCrLfAndOverwriteLayersProduceExactEvidenceAndLocations()
@@ -177,6 +178,7 @@ public sealed class FindDocumentInspectionIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Find inspection maps invalid, changed, missing, and unavailable layers to typed incomplete facts")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Integration")]
     public async Task InvalidEncodingChangedMissingAndUnavailableLayersProduceTypedIncompleteFacts()

@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "docs/guide  .agents/docs/guide.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "ownBytes": 76,
+    "ownTokens": 19,
+    "addedFiles": 0,
+    "addedBytes": 0,
+    "addedTokens": 0,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null
+  },
+  "limitations": [],
+  "data": {
+    "id": "docs/guide",
+    "path": ".agents/docs/guide.md",
+    "kind": "markdown",
+    "entrypointForm": "markdown",
+    "overwritePath": null,
+    "belongs": {
+      "routeChain": [
+        "docs",
+        "guide"
+      ],
+      "parent": "docs",
+      "directChildren": {
+        "files": 0,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 0,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": true,
+      "automaticallyWhen": [
+        "its exposing parent is read, or a later review point is reached while its scope is active"
+      ],
+      "mayReadAgain": true
+    },
+    "size": {
+      "own": {
+        "files": 1,
+        "bytes": 76,
+        "tokens": 19
+      },
+      "adds": {
+        "files": 0,
+        "bytes": 0,
+        "tokens": 0
+      },
+      "loadNow": null
+    },
+    "axioms": {
+      "inheritedFrom": [],
+      "local": "not applicable"
+    },
+    "tags": [
+      "Docs",
+      "KeepInMind"
+    ],
+    "selected": {
+      "closure": {
+        "files": 2,
+        "bytes": 237,
+        "tokens": 60
+      },
+      "startupOverlap": {
+        "files": 2,
+        "bytes": 237,
+        "tokens": 60
+      }
+    },
+    "selection": {
+      "kind": "source-id",
+      "method": "automatic-id",
+      "requested": "docs/guide"
+    },
+    "layers": [
+      {
+        "path": ".agents/docs/guide.md",
+        "kind": "base"
+      }
+    ],
+    "statusReason": "all applicable route facts are available"
+  },
+  "recovery": null,
+  "next": null
+}

@@ -1,0 +1,9 @@
+No errors. 1 warning was recorded.
+Extensions
+  Warning  .agents/toolkit/example.md  Extension file changed
+         .agents/toolkit/example.md changed since it was installed by toolkit.
+         open-forge extension update toolkit
+         Reconcile the Extension files.
+  21 links and 20 routes checked.
+  Reconcile the Extension files.
+Next: open-forge extension update toolkit

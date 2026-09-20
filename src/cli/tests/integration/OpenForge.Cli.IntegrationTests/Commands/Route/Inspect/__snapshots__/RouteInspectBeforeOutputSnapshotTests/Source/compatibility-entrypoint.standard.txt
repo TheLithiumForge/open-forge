@@ -1,0 +1,22 @@
+legacy  .agents/legacy/index.md
+Workspace: <workspace>
+
+Where this source belongs
+  Route chain: legacy
+  Parent: none (Loader root)
+  Entrypoint name: index.md (compatibility name; the canonical name is _legacy.md)
+  Tags: Docs
+
+When it is read
+  At task start or resume: no
+  Read automatically after another route: no
+  Read when this route is selected: yes
+  May be read again: no
+
+Context size
+  This file: 108 B, about 27 tokens
+  Selecting this route adds: 1 file, 108 B, about 27 tokens
+
+Axioms
+  Inherited rules from: none
+  Local rules: no

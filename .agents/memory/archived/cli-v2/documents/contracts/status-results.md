@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Exact shallow status facts, typed data, semantic outcomes, advisory suggestions, and exhaustive share-safe redaction behavior
+  description: "Historical CLI-v2 source: Exact shallow status facts, typed data, semantic outcomes, advisory suggestions, and exhaustive share-safe redaction behavior"
   responsibility: Define status orientation and exposure without expanding it into diagnosis, mutation, logging, or an executable recommendation engine
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

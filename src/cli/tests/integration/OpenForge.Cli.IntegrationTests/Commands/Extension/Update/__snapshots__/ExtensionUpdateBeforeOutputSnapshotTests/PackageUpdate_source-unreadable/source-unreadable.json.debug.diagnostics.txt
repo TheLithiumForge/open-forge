@@ -1,0 +1,5 @@
+status=incomplete
+packages=0
+effects=0
+findings=1
+The process cannot access the file '<extension-source>\toolkit\extension.json' because it is being used by another process.

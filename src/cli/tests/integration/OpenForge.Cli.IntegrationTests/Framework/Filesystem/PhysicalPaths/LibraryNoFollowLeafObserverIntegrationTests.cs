@@ -8,6 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Filesystem.PhysicalPaths;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryNoFollowLeafObserverIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "No-follow observations classify ordinary missing directory and exact dangling link objects")]
     [InlineData("missing", "Missing"), InlineData("file", "OrdinaryFile"), InlineData("directory", "Directory")]
     [InlineData("relative", "RelativeFileLink"), InlineData("dangling", "RelativeFileLink"), InlineData("absolute", "Link")]
@@ -48,6 +49,7 @@ public sealed class LibraryNoFollowLeafObserverIntegrationTests
         Assert.False(File.Exists(temporary.Combine("source/missing.md")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "No-follow observation retains raw identity without resolving an external final-link target")]
     public void ObservesExternalLinkObjectWithoutEnteringTarget()
     {

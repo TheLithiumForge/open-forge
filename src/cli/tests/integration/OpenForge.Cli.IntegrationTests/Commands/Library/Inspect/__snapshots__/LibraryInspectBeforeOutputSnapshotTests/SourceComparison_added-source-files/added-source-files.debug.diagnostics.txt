@@ -1,0 +1,6 @@
+status=completed-with-warnings
+library=team-knowledge
+source-files=2
+comparisons=2
+findings=1
+The eligible source path is not registered.

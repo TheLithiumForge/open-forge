@@ -1,0 +1,11 @@
+Installed the team Extension.
+Workspace: <workspace>
+  .apm/agents/team.md  created (team)
+  Source: <extension-source> (package)
+  Permission scope: .apm/agents/team.md
+  .agents/open-forge.lock.json  updated
+  Entries sections unchanged: .agents/directives/_directives.md, .agents/guidance/_guidance.md, .agents/loader.md, .agents/maps/_maps.md, .agents/memory/_memory.md, .agents/memory/archived/_archived.md, .agents/memory/crystallized/_crystallized.md, .agents/memory/emerging/_emerging.md, .agents/memory/working/_working.md, .agents/patterns/_patterns.md, .agents/skills/_skills.md, .agents/templates/_templates.md
+  Permission evaluation: decision approved; required 1; missing 1; saved no
+  Framework fingerprint: <sha256>
+  Verification: targets verified; Entries verified; Extension record verified; Framework record verified
+  Recovery: removed.

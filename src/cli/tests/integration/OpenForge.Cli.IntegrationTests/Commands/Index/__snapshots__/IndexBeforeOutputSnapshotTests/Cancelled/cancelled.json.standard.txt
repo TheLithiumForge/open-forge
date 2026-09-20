@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 3,
+  "command": "index",
+  "status": "cancelled",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Index was cancelled. Nothing was changed.",
+    "kind": "cancelled"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "index.interrupted",
+      "title": "Index was cancelled",
+      "message": "Index was cancelled. Nothing was changed.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "<workspace>",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesChecked": 0,
+    "filesUpdated": 0,
+    "filesCurrent": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "changes": [],
+    "unchanged": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge index",
+    "reason": "Rerun the same Index request."
+  }
+}

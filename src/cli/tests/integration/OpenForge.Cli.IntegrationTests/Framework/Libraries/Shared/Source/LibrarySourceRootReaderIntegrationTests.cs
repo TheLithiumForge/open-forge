@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Libraries.Shared.Source;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibrarySourceRootReaderIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library source root is available without any specially named child")]
     public void ReadsContainedOrdinarySource()
     {
@@ -28,6 +29,7 @@ public sealed class LibrarySourceRootReaderIntegrationTests
         Assert.Null(result.Cause);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library source never treats missing or non-directory source roots as empty available sources")]
     [InlineData("source-missing"), InlineData("source-file")]
     public static void RejectsMissingAndNonordinaryBoundaries(string scenario)
@@ -45,6 +47,7 @@ public sealed class LibrarySourceRootReaderIntegrationTests
         Assert.NotNull(result.Cause);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library source blocks linked source ancestry and outside aliases")]
     [InlineData("source-link"), InlineData("ancestor-link"), InlineData("outside-link")]
     public static void BlocksUnsafeBoundaries(string scenario)
@@ -70,6 +73,7 @@ public sealed class LibrarySourceRootReaderIntegrationTests
         Assert.False(string.IsNullOrWhiteSpace(result.Cause));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Inaccessible Library source boundary never produces available empty facts")]
     public void ReportsInaccessibleSource()
     {

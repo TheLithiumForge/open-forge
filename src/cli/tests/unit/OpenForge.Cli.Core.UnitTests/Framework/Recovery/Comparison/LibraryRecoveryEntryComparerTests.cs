@@ -14,6 +14,7 @@ public sealed class LibraryRecoveryEntryComparerTests
 {
     private const string RawTarget = "../shared/.agents/a.md";
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Recovery comparison preserves exact prior intended and third ordinary object identities")]
     [InlineData("create", "missing", "Prior"), InlineData("create", "after", "Intended"), InlineData("create", "third", "Third")]
     [InlineData("replace", "before", "Prior"), InlineData("replace", "after", "Intended"), InlineData("replace", "third", "Third")]
@@ -38,6 +39,7 @@ public sealed class LibraryRecoveryEntryComparerTests
         Assert.Null(actual.RelativeFileLink);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Recovery comparison uses exact raw relative link identity and safely observed absence")]
     [InlineData("link-create", "missing", "Prior"), InlineData("link-create", "exact", "Intended"), InlineData("link-create", "changed", "Third")]
     [InlineData("link-delete", "exact", "Prior"), InlineData("link-delete", "missing", "Intended"), InlineData("link-delete", "changed", "Third")]
@@ -59,6 +61,7 @@ public sealed class LibraryRecoveryEntryComparerTests
         Assert.Null(result.Input.OrdinaryContent);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Recovery comparison blocks unsafe object kinds and preserves unavailable observation coverage")]
     [InlineData("directory", "Blocked"), InlineData("absolute-link", "Blocked"), InlineData("unknown-link", "Blocked")]
     [InlineData("reparse", "Blocked"), InlineData("special", "Blocked"), InlineData("inaccessible", "Unavailable"), InlineData("unknown", "Unavailable")]
@@ -88,6 +91,7 @@ public sealed class LibraryRecoveryEntryComparerTests
         Assert.False(string.IsNullOrWhiteSpace(result.Cause));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Ordinary recovery content read failure remains unavailable despite ordinary leaf admission")]
     public void IndependentReadFailureIsNotMissingOrThirdIdentity()
     {
@@ -103,6 +107,7 @@ public sealed class LibraryRecoveryEntryComparerTests
         Assert.False(string.IsNullOrWhiteSpace(result.Cause));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Equal prior and intended recovery identities retain Prior precedence")]
     public void EqualPriorAndIntendedRetainsPriorPrecedence()
     {

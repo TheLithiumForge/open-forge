@@ -8,9 +8,14 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Source;
 
 public sealed class RouteSkillMetadataCharacterizationTests
 {
-    [Theory(DisplayName = "Route native Skill metadata preserves current alias, unmatched-member, and non-scalar behavior")]
+    [Trait("Boundary", "Input")]
+    [Theory(DisplayName = "Route native Skill metadata reads name and description and ignores every other member")]
     [InlineData("---\nname: &identity native-skill\ndescription: *identity\n---\n", nameof(RouteSourceMetadataState.Complete), "native-skill")]
-    [InlineData("---\nname: native-skill\ndescription: Native description.\nunmatched: value\n---\n", nameof(RouteSourceMetadataState.Malformed), null)]
+    // A Skill keeps the metadata its own runtime requires. `license`, `allowed-tools` and
+    // anything else are read past, not rejected: rejecting them blocked the whole workspace.
+    [InlineData("---\nname: native-skill\ndescription: Native description.\nunmatched: value\n---\n", nameof(RouteSourceMetadataState.Complete), "Native description.")]
+    [InlineData("---\nname: native-skill\ndescription: Native description.\nlicense: Apache-2.0\nallowed-tools: Read, Bash\n---\n", nameof(RouteSourceMetadataState.Complete), "Native description.")]
+    [InlineData("---\nname: native-skill\ndescription: Native description.\nmetadata:\n  nested: true\n---\n", nameof(RouteSourceMetadataState.Complete), "Native description.")]
     [InlineData("---\nname: [native-skill]\ndescription: Native description.\n---\n", nameof(RouteSourceMetadataState.Malformed), null)]
     [InlineData("---\nname: native-skill\ndescription:\n  value: Native description.\n---\n", nameof(RouteSourceMetadataState.Malformed), null)]
     [InlineData("---\nnull\n---\n", nameof(RouteSourceMetadataState.Missing), null)]

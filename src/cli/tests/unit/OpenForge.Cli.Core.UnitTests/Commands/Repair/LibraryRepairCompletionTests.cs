@@ -13,6 +13,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class LibraryRepairCompletionTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("Lease"), InlineData("Revalidation"), InlineData("ForwardPreparation"), InlineData("Effect")]
     [InlineData("Verification"), InlineData("ForwardCleanup"), InlineData("PostDiagnosis")]
@@ -28,6 +29,7 @@ public sealed class LibraryRepairCompletionTests
         Assert.Equal(RepairApplicationState.Interrupted, outcome.Application.State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("removed", "Removed"), InlineData("retained", "Retained"), InlineData("unknown", "Unknown")]
     public void IndependentForwardCleanupFactsPreserveResidualTruth(string cleanup, string recoveryState)
@@ -48,6 +50,7 @@ public sealed class LibraryRepairCompletionTests
         Assert.Empty(outcome.LibraryExecution.LibraryReceipts);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData(false, "Interrupted"), InlineData(true, "Failed")]
     public void ResultFormationPreservesFailurePrecedenceOverCancellation(bool failed, string status)
@@ -76,6 +79,7 @@ public sealed class LibraryRepairCompletionTests
         Assert.Same(execution, result.LibraryExecution);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData(false), InlineData(true)]
     public void UndefinedExecutionStagesAreRejected(bool failure)
@@ -87,6 +91,7 @@ public sealed class LibraryRepairCompletionTests
         Assert.Throws<ArgumentException>(() => RepairLibraryRecoveryApplication.Complete(LibraryRepairData.Plan(), execution));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData(false, true, false, (int)RepairStepOutcome.Interrupted), InlineData(false, false, true, (int)RepairStepOutcome.Failed)]
     [InlineData(false, true, true, (int)RepairStepOutcome.Failed), InlineData(true, true, false, (int)RepairStepOutcome.Interrupted)]
@@ -125,6 +130,7 @@ public sealed class LibraryRepairCompletionTests
         Assert.Equal((RepairStepOutcome)expected, actual.Outcome);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData(false, null), InlineData(true, null), InlineData(true, 0)]
     public void UnrelatedOrAbsentAtomicOrdinalPreservesLibraryStep(bool mixed, int? effectOrdinal)

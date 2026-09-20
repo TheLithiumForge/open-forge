@@ -5,7 +5,8 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Remove;
 
 public sealed class ExtensionRemovePathPlanContractTests
 {
-    [Fact(DisplayName = "Extension Remove path plans preserve shared, final-owner, changed, and missing classifications"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Extension Remove path plans preserve shared, final-owner, and missing classifications"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void PathPlansPreserveClassificationsAndActions()
     {
         var shared = PathPlan(
@@ -16,19 +17,7 @@ public sealed class ExtensionRemovePathPlanContractTests
             ExtensionRemovePathAction.RetainShared);
         var unchanged = PathPlan(
             ".agents/unchanged.md",
-            ExtensionRemovePathClassification.UnchangedFinalOwner,
-            ["toolkit"],
-            [],
-            ExtensionRemovePathAction.Delete);
-        var changedKeep = PathPlan(
-            ".agents/changed-keep.md",
-            ExtensionRemovePathClassification.ChangedFinalOwner,
-            ["toolkit"],
-            [],
-            ExtensionRemovePathAction.KeepAsUnmanaged);
-        var changedDelete = PathPlan(
-            ".agents/changed-delete.md",
-            ExtensionRemovePathClassification.ChangedFinalOwner,
+            ExtensionRemovePathClassification.FinalOwner,
             ["toolkit"],
             [],
             ExtensionRemovePathAction.Delete);
@@ -43,11 +32,10 @@ public sealed class ExtensionRemovePathPlanContractTests
         Assert.Equal(["other"], shared.RemainingOwnerIds);
         Assert.Equal(ExtensionRemovePathAction.RetainShared, shared.Action);
         Assert.Equal(ExtensionRemovePathAction.Delete, unchanged.Action);
-        Assert.Equal(ExtensionRemovePathAction.KeepAsUnmanaged, changedKeep.Action);
-        Assert.Equal(ExtensionRemovePathAction.Delete, changedDelete.Action);
         Assert.Equal(ExtensionRemovePathAction.ReleaseOwnership, missing.Action);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove path plans reject inconsistent classifications and actions"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void PathPlansRejectInconsistentClassificationsAndActions()
     {
@@ -65,10 +53,10 @@ public sealed class ExtensionRemovePathPlanContractTests
             ExtensionRemovePathAction.Delete));
         Assert.Throws<ArgumentException>(() => PathPlan(
             "path",
-            ExtensionRemovePathClassification.UnchangedFinalOwner,
+            ExtensionRemovePathClassification.FinalOwner,
             ["toolkit"],
             [],
-            ExtensionRemovePathAction.KeepAsUnmanaged));
+            ExtensionRemovePathAction.ReleaseOwnership));
         Assert.Throws<ArgumentException>(() => PathPlan(
             "path",
             ExtensionRemovePathClassification.Missing,
@@ -77,7 +65,7 @@ public sealed class ExtensionRemovePathPlanContractTests
             ExtensionRemovePathAction.Delete));
         Assert.Throws<ArgumentException>(() => PathPlan(
             "path",
-            ExtensionRemovePathClassification.ChangedFinalOwner,
+            ExtensionRemovePathClassification.FinalOwner,
             ["toolkit"],
             ["other"],
             ExtensionRemovePathAction.Delete));
@@ -89,24 +77,25 @@ public sealed class ExtensionRemovePathPlanContractTests
             ExtensionRemovePathAction.Delete));
         Assert.Throws<ArgumentOutOfRangeException>(() => PathPlan(
             "path",
-            ExtensionRemovePathClassification.ChangedFinalOwner,
+            ExtensionRemovePathClassification.FinalOwner,
             ["toolkit"],
             [],
             (ExtensionRemovePathAction)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove path plans reject empty, duplicate, and overlapping owners"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void PathPlansRejectInvalidOwners()
     {
         Assert.Throws<ArgumentException>(() => PathPlan(
             "path",
-            ExtensionRemovePathClassification.UnchangedFinalOwner,
+            ExtensionRemovePathClassification.FinalOwner,
             [],
             [],
             ExtensionRemovePathAction.Delete));
         Assert.Throws<ArgumentException>(() => PathPlan(
             "path",
-            ExtensionRemovePathClassification.UnchangedFinalOwner,
+            ExtensionRemovePathClassification.FinalOwner,
             ["toolkit", "toolkit"],
             [],
             ExtensionRemovePathAction.Delete));
@@ -118,7 +107,7 @@ public sealed class ExtensionRemovePathPlanContractTests
             ExtensionRemovePathAction.RetainShared));
         Assert.Throws<ArgumentException>(() => PathPlan(
             " ",
-            ExtensionRemovePathClassification.UnchangedFinalOwner,
+            ExtensionRemovePathClassification.FinalOwner,
             ["toolkit"],
             [],
             ExtensionRemovePathAction.Delete));

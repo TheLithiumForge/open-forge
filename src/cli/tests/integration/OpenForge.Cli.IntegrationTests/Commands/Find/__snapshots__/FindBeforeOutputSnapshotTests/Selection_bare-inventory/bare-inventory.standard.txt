@@ -1,0 +1,6 @@
+4 sources match.
+Workspace: <workspace>
+  docs            .agents/docs/_docs.md      Documents
+  docs/guide      .agents/docs/guide.md      Guide
+  docs/reference  .agents/docs/reference.md  Reference
+  loader          .agents/loader.md          

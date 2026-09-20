@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 3,
+  "command": "library detach",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot detach unknown: No Library has the ID unknown.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-detach.unknown-id",
+      "title": "Library ID is unknown",
+      "message": "No Library has the ID unknown.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "unknown",
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge library list",
+          "reason": "Choose a registered Library ID."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksRemoved": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "unknown",
+    "sourceFolder": null,
+    "destinationFolder": null,
+    "registrationRemoved": false,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [],
+    "expectedStates": [],
+    "verification": {
+      "state": "not-started",
+      "registration": "not-started"
+    },
+    "recovery": {
+      "state": "not-requested",
+      "path": null,
+      "residuals": []
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge library list",
+    "reason": "Choose a registered Library ID."
+  }
+}

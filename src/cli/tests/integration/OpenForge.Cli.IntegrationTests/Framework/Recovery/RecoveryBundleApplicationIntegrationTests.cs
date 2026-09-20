@@ -20,6 +20,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
 
 public sealed class RecoveryBundleApplicationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Recovery preparation authorizes every existing-target effect and excludes create")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task OneRealPreparationAuthorizesItsExactMultiTargetApplication()
@@ -148,6 +149,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File application rejects absent foreign mismatched corrupt and draft evidence")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task ExistingTargetEffectsRequireTheirMatchingRealFinalPreparation()

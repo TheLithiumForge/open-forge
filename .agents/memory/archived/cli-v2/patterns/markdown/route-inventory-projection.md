@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Discover authored route topology once, verify its derived navigation, and project consumer-specific route and context views
+  description: "Historical CLI-v2 source: Discover authored route topology once, verify its derived navigation, and project consumer-specific route and context views"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

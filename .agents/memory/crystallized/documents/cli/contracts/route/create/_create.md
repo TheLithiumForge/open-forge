@@ -10,9 +10,9 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized entrypoint for `route create`. The
-command does not ship yet. Its local implementation and complete managed,
-published-process, Native AOT, dogfood, and independent-review proof are
-squash-integrated at `19412d2`; replacement-CLI delivery remains pending. Its
+command is implemented in the merged native CLI. Its local implementation and
+complete managed, published-process, Native AOT, dogfood, and independent-review
+proof are squash-integrated at `19412d2`. Its
 sibling Interface and Behavior Contracts define command meaning. This
 entrypoint does not duplicate their detail. No Route Technical Design is needed.
 
@@ -31,7 +31,5 @@ only. They do not define command detail.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted current technology-neutral contract for deterministic route create resolution, effects, safety, recovery, and conformance](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Behavior #Route #Create #Template #Mutation #CurrentTruth
-- [Accepted current public contract for creating one ordinary routed Markdown file with explicit metadata and optional Template body content](interface.md) - #Memory #Crystallized #CLI #Release #Command #Interface #Route #Create #Template #Mutation #CurrentTruth
-<!-- open-forge:generated-index:end -->
+- [Accepted current public contract for creating one ordinary routed Markdown file with optional metadata and optional Template body content](interface.md) - #Memory #Crystallized #CLI #Release #Command #Interface #Route #Create #Template #Mutation #CurrentTruth

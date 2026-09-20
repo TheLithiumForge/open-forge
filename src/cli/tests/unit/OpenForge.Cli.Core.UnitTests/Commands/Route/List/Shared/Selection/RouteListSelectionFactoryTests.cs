@@ -9,6 +9,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List.Shared.Selection;
 
 public sealed class RouteListSelectionFactoryTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list selection policy classifies an omitted reference as Loader roots")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void OmittedReferenceUsesLoaderRootSelectionPolicy()
@@ -22,6 +23,7 @@ public sealed class RouteListSelectionFactoryTests
         Assert.Null(selection.ResolvedPath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list selection factory forms Loader roots without any attempted or resolved identity")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void LoaderRootsContainNoSourceIdentity()
@@ -36,6 +38,7 @@ public sealed class RouteListSelectionFactoryTests
         Assert.True(selection.IsResolved);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list selection factory retains only an attempted source ID")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void AttemptedIdRetainsOnlyId()
@@ -50,6 +53,7 @@ public sealed class RouteListSelectionFactoryTests
         Assert.False(selection.IsResolved);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list selection factory retains only a canonical attempted exact path")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void AttemptedPathRetainsOnlyPath()
@@ -64,6 +68,7 @@ public sealed class RouteListSelectionFactoryTests
         Assert.False(selection.IsResolved);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list selection factory gives a resolved ID selection both source identities")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ResolvedIdContainsBothIdentities()
@@ -79,6 +84,7 @@ public sealed class RouteListSelectionFactoryTests
         Assert.True(selection.IsResolved);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list selection factory gives a resolved path selection both source identities")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ResolvedPathContainsBothIdentities()
@@ -94,6 +100,7 @@ public sealed class RouteListSelectionFactoryTests
         Assert.True(selection.IsResolved);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list selection rejects construction outside its factory boundary")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void SelectionRejectsConstructionOutsideFactory()
@@ -115,6 +122,7 @@ public sealed class RouteListSelectionFactoryTests
             null));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list selection factory rejects null or empty identity inputs")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void FactoryRejectsInvalidIdentityInputs()

@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.References;
 
 public sealed class ReferencesEnumMappingTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References layer verification mapping is exhaustive"), Trait("Feature", "references-enum-mapping"), Trait("Evidence", "Unit")]
     public void LayerVerificationMappingIsExhaustive()
     {
@@ -34,6 +35,7 @@ public sealed class ReferencesEnumMappingTests
         Assert.Equal(undefined, exception.ActualValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References file read mapping is exhaustive"), Trait("Feature", "references-enum-mapping"), Trait("Evidence", "Unit")]
     public void FileReadMappingIsExhaustive()
     {
@@ -59,6 +61,7 @@ public sealed class ReferencesEnumMappingTests
         Assert.Equal(undefined, exception.ActualValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References layer rank mapping is exhaustive and names null"), Trait("Feature", "references-enum-mapping"), Trait("Evidence", "Unit")]
     public void LayerRankMappingIsExhaustiveAndNamesNull()
     {
@@ -73,6 +76,7 @@ public sealed class ReferencesEnumMappingTests
         Assert.Equal(undefined, exception.ActualValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References root issue mapping is exhaustive"), Trait("Feature", "references-enum-mapping"), Trait("Evidence", "Unit")]
     public void RootIssueMappingIsExhaustive()
     {
@@ -101,6 +105,7 @@ public sealed class ReferencesEnumMappingTests
         Assert.Equal(undefined, exception.ActualValue);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References source catalogue issue mapping is exhaustive"), Trait("Feature", "references-enum-mapping"), Trait("Evidence", "Unit")]
     public void SourceCatalogueIssueMappingIsExhaustive()
     {
@@ -112,9 +117,9 @@ public sealed class ReferencesEnumMappingTests
             (SourceCatalogueIssueCode.DirectoryUnavailable, ReferencesFindingCode.InspectionUnavailable),
             (SourceCatalogueIssueCode.CandidateUnsafe, ReferencesFindingCode.CandidateUnsafe),
             (SourceCatalogueIssueCode.CandidateUnavailable, ReferencesFindingCode.InspectionUnavailable),
-            (SourceCatalogueIssueCode.IdentityUnavailable, ReferencesFindingCode.IdentityCollision),
+            (SourceCatalogueIssueCode.IdentityUnavailable, ReferencesFindingCode.IdentityUnavailable),
             (SourceCatalogueIssueCode.IdentityCollision, ReferencesFindingCode.IdentityCollision),
-            (SourceCatalogueIssueCode.PhysicalAlias, ReferencesFindingCode.IdentityCollision),
+            (SourceCatalogueIssueCode.PhysicalAlias, ReferencesFindingCode.PhysicalAlias),
             (SourceCatalogueIssueCode.OrphanOverwrite, ReferencesFindingCode.LayerUnresolved),
         };
         foreach (var (code, findingCode) in expected)

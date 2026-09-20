@@ -1,0 +1,10 @@
+status=invalid-input
+mode=apply
+target=memory/project-alpha/overview
+completeness=not-established
+safety=blocked
+effects=0
+recovery=not required
+verification=not run
+findings=1
+The source ID does not identify a retained logical source.

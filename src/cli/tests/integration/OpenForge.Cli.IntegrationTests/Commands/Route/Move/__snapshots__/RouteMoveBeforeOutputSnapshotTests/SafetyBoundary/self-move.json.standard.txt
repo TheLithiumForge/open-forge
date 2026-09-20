@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 3,
+  "command": "route move",
+  "status": "invalid-input",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot move guidance/old guide: The source and the destination are the same.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-move.self-move",
+      "title": "Source and destination are the same",
+      "message": "The source and the destination are the same.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/guidance/old guide.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesMoved": 0,
+    "sectionsUpdated": 0,
+    "linksRewritten": 0,
+    "filesScanned": null,
+    "errors": 1
+  },
+  "limitations": [
+    {
+      "what": "files scanned",
+      "why": "the reference scan was not completed",
+      "subject": null
+    }
+  ],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "destination": {
+      "id": null,
+      "path": null
+    },
+    "moved": [],
+    "rewrittenLinks": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

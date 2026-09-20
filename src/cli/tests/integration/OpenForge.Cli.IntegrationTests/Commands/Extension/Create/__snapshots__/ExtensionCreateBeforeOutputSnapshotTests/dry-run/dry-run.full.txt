@@ -1,0 +1,11 @@
+Would create the toolkit Extension scaffold at <extension-source>/toolkit
+  Would create <extension-source>/toolkit/extension.json
+  Would create <extension-source>/toolkit/content/.agents/
+  name: Toolkit
+  description: Open Forge Extension package toolkit.
+  version: 0.1.0
+  dependencies: none
+  Edit extension.json, then add files under content/.agents/.
+  manifest content:
+  {"id":"toolkit","name":"Toolkit","description":"Open Forge Extension package toolkit.","version":"0.1.0","dependencies":[]}
+No files were changed.

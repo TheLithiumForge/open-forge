@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Route.List;
+using OpenForge.Cli.Core.Commands.Route.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
@@ -18,6 +19,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List.Shared.Topology;
 
 public sealed class RouteListTopologyTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list graph derives authored route relationships without routing through an unrepresented folder"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void GraphDerivesAuthoredRelationships()
     {
@@ -51,6 +53,7 @@ public sealed class RouteListTopologyTests
         Assert.Null(topology.ReadAbsoluteDepth(".agents/root/unrepresented/leaf.md"));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route list topology applies zero finite and all structural depth"), InlineData(0, 1), InlineData(1, 4), InlineData(2, 5), InlineData(-1, 5), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void TopologyAppliesStructuralDepth(int requestedDepth, int expectedRows)
     {
@@ -68,7 +71,7 @@ public sealed class RouteListTopologyTests
         Assert.Equal(RouteListSelectionProvenance.LoaderRoot, result.Rows[0].Provenance.Selection);
         if (requestedDepth == 0)
         {
-            Assert.Null(result.Rows[0].DirectChildCount);
+            Assert.Equal(3, result.Rows[0].DirectChildCount);
         }
         else
         {
@@ -85,6 +88,7 @@ public sealed class RouteListTopologyTests
         Assert.Equal(expectedIds, result.Rows.Select(row => row.Id));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list explicitly selected nested routes retain actual parent and absolute depth"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ExplicitNestedRouteRetainsActualAncestry()
     {
@@ -105,6 +109,7 @@ public sealed class RouteListTopologyTests
         Assert.Equal(1, result.Rows[1].RelativeDepth);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list Loader selection preserves nested authored parentage while resetting relative depth"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void LoaderSelectionPreservesNestedAuthoredParentage()
     {
@@ -143,6 +148,7 @@ public sealed class RouteListTopologyTests
             result.Next));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list a nested-only Loader selection retains authored absolute depth"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void NestedOnlyLoaderSelectionRetainsAuthoredAbsoluteDepth()
     {
@@ -171,6 +177,7 @@ public sealed class RouteListTopologyTests
         Assert.Equal(RouteListSelectionProvenance.LoaderRoot, row.Provenance.Selection);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list explicitly selected detached routes retain local ancestry without Loader depth"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ExplicitDetachedRouteRetainsLocalAncestry()
     {
@@ -198,6 +205,7 @@ public sealed class RouteListTopologyTests
         Assert.Equal(RouteListSelectionProvenance.Descendant, result.Rows[1].Provenance.Selection);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list rejects a metadata-bearing leaf below an unrepresented folder as unrouted"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ExplicitLeafBelowUnrepresentedFolderIsInvalid()
     {
@@ -213,6 +221,7 @@ public sealed class RouteListTopologyTests
         Assert.Equal("open-forge route list --help", result.Next?.Command);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list exact overwrite selection emits one base row with overwrite provenance"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ExactOverwriteSelectionEmitsOneBaseRow()
     {
@@ -249,6 +258,7 @@ public sealed class RouteListTopologyTests
         Assert.Equal(RouteListSelectionProvenance.ExplicitRoot, row.Provenance.Selection);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list blocks an explicitly selected leaf whose routed parent is ambiguous"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ExplicitLeafWithAmbiguousParentIsBlocked()
     {
@@ -293,8 +303,9 @@ public sealed class RouteListTopologyTests
         Assert.Contains(result.Findings, finding => finding.Code == RouteListFindingCode.RouteAmbiguous);
     }
 
-    [Fact(DisplayName = "Route list retains safe rows and incomplete depth when requested metadata is malformed"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
-    public void MalformedRequestedMetadataIsIncomplete()
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Route list retains the listed route and complete coverage when metadata is malformed"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    public void MalformedRequestedMetadataIsAttention()
     {
         var root = Source(".agents/root/_root.md", RouteListSourceKind.Entrypoint);
         var malformed = Source(
@@ -314,15 +325,17 @@ public sealed class RouteListTopologyTests
             ]);
         var result = BuildResult(input, routeFacts);
 
-        Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
-        Assert.Equal(["root"], result.Rows.Select(row => row.Id));
-        Assert.Equal(RouteListCoverageState.Incomplete, result.Coverage.State);
-        Assert.Equal(0, result.EffectiveDepth?.Value);
-        Assert.Null(result.Rows[0].DirectChildCount);
+        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(["root", "root/malformed"], result.Rows.Select(row => row.Id));
+        Assert.Equal(RouteListCoverageState.Complete, result.Coverage.State);
+        Assert.Equal(RouteListDepthKind.All, result.EffectiveDepth?.Kind);
+        Assert.Equal(1, result.Rows[0].DirectChildCount);
+        Assert.Equal("(no description)", result.Rows[1].Description);
         Assert.Contains(result.Findings, finding => finding.Code == RouteListFindingCode.MetadataMalformed);
-        Assert.NotNull(result.Next);
+        Assert.Null(result.Next);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list compatibility entrypoints produce attention with complete coverage"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void CompatibilityEntrypointProducesAttention()
     {
@@ -348,6 +361,7 @@ public sealed class RouteListTopologyTests
         Assert.Null(result.Next);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list blocks duplicate selected route IDs while retaining deterministic safe rows"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void DuplicateSelectedIdsAreBlocked()
     {
@@ -377,6 +391,7 @@ public sealed class RouteListTopologyTests
         Assert.Equal(RouteListCoverageState.Blocked, result.Coverage.State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list exact-path selection reports an ID collision outside the selected closure"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ExactPathSelectionReportsExternalIdCollision()
     {
@@ -419,6 +434,7 @@ public sealed class RouteListTopologyTests
             && finding.Status == CliSemanticStatus.Attention);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list ignores inventory findings outside the selected route closure"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void UnrelatedInventoryFindingIsIgnored()
     {
@@ -441,6 +457,7 @@ public sealed class RouteListTopologyTests
         Assert.Single(result.Rows);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list interruption retains already confirmed parent-first rows"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void InterruptedInventoryRetainsConfirmedRows()
     {
@@ -474,6 +491,7 @@ public sealed class RouteListTopologyTests
         Assert.NotNull(result.Next);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list pre-cancelled topology selection is interrupted without inventing rows"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void PreCancelledTopologySelectionIsInterrupted()
     {
@@ -492,6 +510,7 @@ public sealed class RouteListTopologyTests
         Assert.Contains(result.Findings, finding => finding.Code == RouteListFindingCode.Interrupted);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list topology input rejects reconstructed source facts"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void TopologyInputRejectsReconstructedSourceFacts()
     {
@@ -518,6 +537,7 @@ public sealed class RouteListTopologyTests
             selection));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list result builder forms a typed failed result without route rows"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ResultBuilderFormsTypedFailure()
     {
@@ -536,6 +556,7 @@ public sealed class RouteListTopologyTests
         Assert.NotNull(result.Next);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route list next-action policy is exhaustive"), InlineData((int)CliSemanticStatus.Complete, null), InlineData((int)CliSemanticStatus.Attention, null), InlineData((int)CliSemanticStatus.Incomplete, "open-forge route list"), InlineData((int)CliSemanticStatus.Invalid, "open-forge route list --help"), InlineData((int)CliSemanticStatus.Blocked, "open-forge route list"), InlineData((int)CliSemanticStatus.Failed, "open-forge route list"), InlineData((int)CliSemanticStatus.Interrupted, "open-forge route list"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void NextActionPolicyIsExhaustive(int statusValue, string? expectedCommand)
     {
@@ -548,6 +569,7 @@ public sealed class RouteListTopologyTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list topology status precedence is invalid interrupted blocked incomplete attention complete"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void TopologyStatusPrecedenceIsDeterministic()
     {
@@ -557,7 +579,7 @@ public sealed class RouteListTopologyTests
             ".agents/root/index.md",
             "A compatibility entrypoint is present.");
         var incomplete = new RouteListFinding(
-            RouteListFindingCode.MetadataMalformed,
+            RouteListFindingCode.ReadUnavailable,
             CliSemanticStatus.Incomplete,
             ".agents/root/child.md",
             "Metadata is malformed.");

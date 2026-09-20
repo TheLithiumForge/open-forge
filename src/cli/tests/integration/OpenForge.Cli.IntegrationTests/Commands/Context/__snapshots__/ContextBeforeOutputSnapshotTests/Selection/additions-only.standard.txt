@@ -1,0 +1,14 @@
+Workspace: <workspace>
+1 source, about 0.0k tokens.
+=== .agents/docs/guide.md (docs/guide) ===
+included because selected source for docs/guide
+---
+open-forge:
+  description: Guide
+  tags: [Docs, Guide]
+---
+# Guide
+
+## Rules
+
+Read the [Reference](reference.md#details).

@@ -1,0 +1,13 @@
+Updated the toolkit Extension to 2.0.0.
+Workspace: <workspace>
+  .agents/new.md  created (new in this version)
+    Before SHA-256: unavailable; After SHA-256: <sha256>; source asset: content/.agents/new.md; verification: Verification: targets verified; Entries verified; Extension record verified; recovery: The recovery bundle was retained at <recovery-bundle>.
+  Previous content: recovery bundle at <recovery-bundle>
+  Source: <extension-source>
+  Dependency closure: toolkit
+  1 file unchanged
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+  Verification: targets verified; Entries verified; Extension record verified
+  The recovery bundle was retained at <recovery-bundle>.
+  Review previous content in the recovery bundle at <recovery-bundle>.
+Next: open-forge doctor

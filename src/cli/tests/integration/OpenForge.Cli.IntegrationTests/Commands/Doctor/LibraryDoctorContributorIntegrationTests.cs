@@ -1,6 +1,12 @@
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 
@@ -8,31 +14,33 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Doctor;
 
 public sealed class LibraryDoctorContributorIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mapping"), Trait("Evidence", "Integration")]
     public async Task SharedSourceAndDestinationObserveEachCompleteMappingOnce()
     {
         using var workspace = new LibraryMutationWorkspace();
         workspace.Source("a.md");
         workspace.Source("b.md");
-        workspace.Write(LibraryMutationWorkspace.RecordPath, """
+        workspace.Write(LibraryMutationWorkspace.OwnershipPath, """
             {"schemaVersion":1,"libraries":[
               {"id":"alpha","sourceRoot":"shared/team-knowledge","destinationRoot":"docs","paths":["a.md"]},
               {"id":"beta","sourceRoot":"shared/team-knowledge","destinationRoot":"docs","paths":["b.md"]}]}
             """);
         var before = workspace.Snapshot();
         var view = await new LibraryOperationalContributor().ReadDoctorAsync(workspace.Workspace, TestContext.Current.CancellationToken);
-        Assert.Equal(OpenForge.Cli.Core.Framework.Libraries.Models.Record.LibrariesRecordReadState.Complete, view.Record.State);
+        Assert.Equal(OpenForge.Cli.Core.Framework.Libraries.Models.Observation.LibraryRegistrationReadState.Complete, view.Record.State);
         Assert.Single(view.Inventories);
         Assert.Equal(["docs/a.md", "docs/b.md"], view.Mappings.Select(mapping => mapping.Mapping.DestinationPath.Value));
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mapping"), Trait("Evidence", "Integration")]
     public async Task SharedSourceIsObservedOnceWhileEachDestinationRemainsDistinct()
     {
         using var workspace = new LibraryMutationWorkspace();
         workspace.Source("README.md");
-        workspace.Write(LibraryMutationWorkspace.RecordPath, """
+        workspace.Write(LibraryMutationWorkspace.OwnershipPath, """
             {"schemaVersion":1,"libraries":[
               {"id":"alpha","sourceRoot":"shared/team-knowledge","destinationRoot":"docs/a","paths":["README.md"]},
               {"id":"beta","sourceRoot":"shared/team-knowledge","destinationRoot":"docs/b","paths":["README.md"]}]}
@@ -40,7 +48,8 @@ public sealed class LibraryDoctorContributorIntegrationTests
         var before = workspace.Snapshot();
         var contributor = new LibraryOperationalContributor();
         var doctor = await contributor.ReadDoctorAsync(workspace.Workspace, TestContext.Current.CancellationToken);
-        var status = await contributor.ReadStatusAsync(workspace.Workspace, TestContext.Current.CancellationToken);
+        var status = await contributor.ReadStatusAsync(workspace.Workspace,
+            await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace, CancellationToken.None), TestContext.Current.CancellationToken);
         Assert.Single(doctor.Inventories);
         Assert.Single(status.Sources);
         Assert.Equal(["docs/a/README.md", "docs/b/README.md"], doctor.Mappings.Select(mapping => mapping.Mapping.DestinationPath.Value));
@@ -48,6 +57,7 @@ public sealed class LibraryDoctorContributorIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task MissingRecordHasEmptyCompleteLibraryCoverage()
     {
@@ -55,12 +65,13 @@ public sealed class LibraryDoctorContributorIntegrationTests
         var before = workspace.Snapshot();
         var view = await new LibraryOperationalContributor().ReadDoctorAsync(workspace.Workspace, TestContext.Current.CancellationToken);
         Assert.Equal(OperationalViewState.Complete, view.State);
-        Assert.Equal(LibrariesRecordReadState.Missing, view.Record.State);
+        Assert.Equal(LibraryRegistrationReadState.Missing, view.Record.State);
         Assert.Empty(view.Inventories);
         Assert.Empty(view.Mappings);
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task EveryRegisteredSourceReceivesItsOwnCompleteInventory()
     {
@@ -68,7 +79,7 @@ public sealed class LibraryDoctorContributorIntegrationTests
         workspace.Source();
         workspace.Write("shared/second/.agents/guidance/note.md", "Second source.");
         workspace.Write("unregistered/.agents/directives/hidden.md", "Not a registered source root.");
-        workspace.Write(LibraryMutationWorkspace.RecordPath, """
+        workspace.Write(LibraryMutationWorkspace.OwnershipPath, """
             {"schemaVersion":1,"libraries":[
               {"id":"alpha","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[]},
               {"id":"beta","sourceRoot":"shared/second","destinationRoot":".","paths":[]}
@@ -84,6 +95,7 @@ public sealed class LibraryDoctorContributorIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task MissingSourceIsUnavailableCoverageInsteadOfAnEmptyCompleteInventory()
     {

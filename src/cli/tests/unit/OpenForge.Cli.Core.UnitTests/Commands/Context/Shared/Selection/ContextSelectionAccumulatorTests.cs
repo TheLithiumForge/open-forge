@@ -13,6 +13,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Context.Shared.Selection;
 
 public sealed class ContextSelectionAccumulatorTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Context selection retains the first source and distinct reasons in encounter order"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
     public void RetainsFirstSourceAndDistinctReasonsInEncounterOrder()
     {
@@ -40,6 +41,7 @@ public sealed class ContextSelectionAccumulatorTests
         Assert.Same(otherReason, Assert.Single(sources[1].InclusionReasons));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Context snapshots and cloned selections keep independent reason collections"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
     public void SnapshotsAndCloneKeepIndependentReasonCollections()
     {
@@ -68,6 +70,7 @@ public sealed class ContextSelectionAccumulatorTests
         Assert.Same(other, clonedSources[1].Source);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Context selection compares canonical paths ordinally"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
     public void CanonicalPathComparisonIsOrdinal()
     {
@@ -98,10 +101,16 @@ public sealed class ContextSelectionAccumulatorTests
                 {
                     Kind = SourceLayerKind.Base,
                     CanonicalPath = canonicalPath,
-                    PhysicalPath = $"/tmp/context-accumulator/{canonicalPath}",
+                    PhysicalPath = PhysicalPath(canonicalPath),
                     ReadState = FileReadState.Complete,
                     Text = text,
                     Document = new MarkdownDocumentParser().Parse(text),
                 },
             ]);
+
+    private static string PhysicalPath(string canonicalPath)
+        => Path.GetFullPath(Path.Combine(
+            Path.GetTempPath(),
+            "open-forge-context-accumulator",
+            canonicalPath.Replace('/', Path.DirectorySeparatorChar)));
 }

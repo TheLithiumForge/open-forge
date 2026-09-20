@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
@@ -16,7 +16,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Libraries.Operational.Shared.
 
 internal sealed class LibraryObservationWorkspace : IDisposable
 {
-    internal const string RecordPath = ".agents/open-forge.libraries.json";
+    internal const string RecordPath = ".agents/open-forge.lock.json";
     internal const string SingleRecord = """
         {"schemaVersion":1,"libraries":[{"id":"team","sourceRoot":"shared/team","destinationRoot":".","paths":[".agents/a.md"]}]}
         """;
@@ -63,14 +63,16 @@ internal sealed class LibraryObservationWorkspace : IDisposable
     internal void TrustedLifecycle()
     {
         Write(".agents/framework-owned.md", "# Framework-owned file\n");
-        Write(".agents/open-forge.lifecycle.json", $$$"""
-            {"schemaVersion":1,"fingerprintPolicy":"open-forge-markdown-v1","workspacePath":"{{{JsonEncodedText.Encode(Workspace.PhysicalRoot)}}}",
-             "framework":{"coverage":"complete","source":{"id":"open-forge","version":"1.0.0",
-               "inventoryFingerprint":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
-               "targets":[{"path":".agents/framework-owned.md","sourceAssetPath":".agents/framework-owned.md","region":null,
-                 "baselineFingerprint":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","fingerprintKind":"exact-bytes"}],"generatedRegions":[]},
-             "extensions":{"coverage":"complete","packages":[],"paths":[]}}
-            """);
+        var bytes = File.ReadAllBytes(PathFor(RecordPath));
+        var document = OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization.WorkspaceOwnershipCodec.Read(bytes).Document
+            ?? throw new InvalidOperationException("The fixture requires a readable lock.");
+        var intended = document with
+        {
+            Framework = new OpenForge.Cli.Core.Framework.Ownership.Models.Document.FrameworkOwnership(
+                new("open-forge", "1.0.0"), [".agents/framework-owned.md"], []),
+        };
+        File.WriteAllBytes(PathFor(RecordPath),
+            OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization.WorkspaceOwnershipCodec.Write(intended));
     }
 
     internal void ThreeLibraries(string? missingSource = null)
@@ -100,9 +102,9 @@ internal sealed class LibraryObservationWorkspace : IDisposable
             State = OperationalViewState.Complete,
             Ownership = null,
             LinkCapability = null,
-            Record = new LibrariesRecordRead
+            Record = new LibraryRegistrationRead
             {
-                State = currentRecord ? LibrariesRecordReadState.Complete : LibrariesRecordReadState.Missing,
+                State = currentRecord ? LibraryRegistrationReadState.Complete : LibraryRegistrationReadState.Missing,
                 Record = currentRecord ? TeamRecord() : null,
                 Snapshot = currentRecord
                     ? FileStateSnapshot.File(path, path, Encoding.UTF8.GetBytes(SingleRecord))
@@ -114,9 +116,9 @@ internal sealed class LibraryObservationWorkspace : IDisposable
         };
     }
 
-    internal static LibrariesRecord TeamRecord()
-        => LibrariesRecord.Create([
-            LibraryRecord.Create(LibraryId.Create("team"), WorkspaceRelativeDirectory.Create("shared/team"), LibraryDestinationRoot.Create("."),
+    internal static LibraryRegistrationSet TeamRecord()
+        => LibraryRegistrationSet.Create([
+            LibraryRegistration.Create(LibraryId.Create("team"), WorkspaceRelativeDirectory.Create("shared/team"), LibraryDestinationRoot.Create("."),
                 [SourceRelativeEligiblePath.Create(".agents/a.md")]),
         ]);
 

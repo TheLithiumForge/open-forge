@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 3,
+  "command": "extension list",
+  "status": "invalid-input",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot list Extensions: the content is not valid JSON.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-list.source-invalid",
+      "title": "Extension source is invalid",
+      "message": "<extension-source> is not an Extension package or package folder: the content is not valid JSON. Expected extension.json with id, name, description, version, dependencies.",
+      "subject": {
+        "kind": "source",
+        "path": null,
+        "id": "<extension-source>",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "Cause",
+          "value": "The Extension manifest is invalid: 'm' is an invalid start of a property name. Expected a '\"'. LineNumber: 0 | BytePositionInLine: 2."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "extension-list.ownership-observation",
+      "title": "Ownership record is unavailable",
+      "message": "No ownership record exists, so installed packages cannot be listed from it.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": ".agents/open-forge.lock.json",
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "Cause",
+          "value": "No Extension ownership is recorded; installed packages cannot be established."
+        }
+      ],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "installed": 0,
+    "available": null,
+    "errors": 1,
+    "infos": 1
+  },
+  "limitations": [
+    {
+      "what": "available packages",
+      "why": "the content is not valid JSON.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "source": {
+      "kind": null,
+      "path": "<extension-source>"
+    },
+    "installed": [],
+    "available": []
+  },
+  "recovery": null,
+  "next": null
+}

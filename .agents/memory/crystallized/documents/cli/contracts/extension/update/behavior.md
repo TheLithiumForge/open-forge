@@ -12,7 +12,7 @@ open-forge:
 This is the accepted current Crystallized Behavior Contract for non-shipping
 `open-forge extension update`. It defines exact request and source resolution,
 Framework-anchor and route-host gating, trusted lifecycle facts, dependency
-closure, baseline/current/intended comparison, semantic fingerprints, ownership,
+closure, current/intended comparison, semantic fingerprints, ownership,
 normal/force/prune planning, generated navigation, dry-run/application,
 verification, recovery, result formation, and conformance. It does not choose
 package schema, parser, storage, or implementation technology. The [Shared Result
@@ -22,10 +22,31 @@ Architecture](../../../architecture.md) defines the cross-cutting implementation
 boundary; this behavior does not duplicate those mechanics
 or claim their Gate 5 proof.
 
+## Ownership Source
+
+`.agents/open-forge.lock.json` is the sole ownership input and publication target.
+Selection, dependencies, whole-file paths and shared owners come from receipts.
+Preserve unselected Extensions, selected region receipts, Framework and Libraries.
+Missing or unreadable ownership supplies no claims; an unrecorded selected ID
+reports `extension-update.lifecycle-observation` without inferred file effects.
+Duplicated identities likewise produce information without partial inference.
+No retired state file is read, migrated, changed or deleted.
+
+The existing lifecycle outcome reports the lock publication. An unchanged lock
+is preserved, a planned write reports its actual verified receipt, and a skipped
+write reports `none`/`not-requested`. Never synthesize integrity from membership.
+
 ## Consumer Destination Permissions
 
+Explicit non-dry-run `--allow-path` edits the shared authored settings after safe
+planning and before admission; failure is reported and stops content application.
+It is a separate authored edit and remains if later content fails. Interactive
+always approval declares a settings effect covered by the operation's recovery
+bundle. Once approves only this operation and writes no settings; cancel applies
+nothing. The shared contract owns the exact reader, authoring and receipt rules.
+
 Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
-[Behavior](../../shared/workspace-permissions/behavior.md). Require exact grants for intended external targets and previously owned
+[Behavior](../../shared/workspace-permissions/behavior.md). Require shared allow-list admission for intended external targets and previously owned
 external targets in the selected update plan, including retirement and
 preserved paths.
 Existing `.agents/` targets need no grant; their prior safety and ownership
@@ -35,13 +56,13 @@ installed packages do not enter this request's required set.
 
 An eligible human apply request asks once for the complete missing set after
 safe preflight. JSON, automatic, redirected and dry-run execution never ask the
-permission question or create grants. Existing selection and force/prune
+permission question. An explicit non-dry-run `--allow-path` still authors a grant. Existing selection and force/prune
 questions keep their separate rules. Force and prune never supply permission.
-Malformed or unsafe permission storage is diagnosed without overwriting it.
+Malformed or unsafe settings are never overwritten by approval.
 
-Permission create/replace is a declared control-file effect. Revalidate the
-observed document and approved plan under the existing workspace lease. Cover
-prior permission bytes or proven absence in the one verified operation bundle,
+Interactive always approval creates a declared settings-file create/replace effect. Revalidate the
+observed settings and approved plan under the existing workspace lease. Cover
+prior settings bytes or proven absence in the one verified operation bundle,
 then persist and verify approval before content and lifecycle effects. Later
 failure retains the grant and its actual outcome. Restoration is manual; no
 new automatic Repair behavior follows.
@@ -53,7 +74,7 @@ validated IDs or --all and exact source
   -> exact workspace and source disjointness
   -> Framework anchor and route-host coverage
   -> trusted Extension section and dependency closure
-  -> baseline/current/intended semantic comparison
+  -> current/intended semantic comparison
   -> intended authored topology and generated projection
   -> one complete dependency-first plan
   -> preflight
@@ -98,30 +119,53 @@ folder.
 
 ## Framework Anchor And Route Hosts
 
-Before any managed mutation, establish a trustworthy installed Framework anchor
-and complete facts for every affected authored host, generated boundary, route,
-ownership relation, and cross-section preservation boundary. A missing safe fact
-is `incomplete`; an unsafe or ambiguous fact is `blocked`. List and inspect may
-read without this anchor, but update may not mutate around it.
+Before mutation, require an ordinary contained `.agents` container and complete
+facts for affected authored hosts, generated boundaries, routes and physical
+paths. Stored Framework version, inventory and content hashes are not gates. The
+only exception is the exact proof for an unrelated readable ordinary
+metadata-invalid generated region defined below; it does not relax any selected
+or dependency boundary.
 
-## Lifecycle Trust And Dependency Closure
+## Proven Unrelated Readable Metadata
 
-Read the `extensions` section of `.agents/open-forge.lifecycle.json`, schema v1.
-Keep the `framework` section and common envelope isolated and preserve their
-meaning semantically on publication. A selected semantic change emits one
-deterministic canonical UTF-8 whole-document representation, so lifecycle
-property order, whitespace, and line endings may be normalized. A semantic
-no-op writes nothing. Require supported versions and `open-forge-markdown-v1`,
-exact workspace binding, stable ID and dependency reciprocity, target-relative
-paths, shared owners, semantic baselines, duplicate-free identities, and complete
-verifiable coverage. The document stores no plan, runtime history, journal,
-recovery evidence, or session. Files outside this exact path are ordinary
-workspace content, not lifecycle input.
+An unavailable `MetadataInvalid` generated region may be treated as unrelated to
+one selected Update only after exact typed evidence proves all of these facts:
 
-An absent document or section is not, by itself, proof of unmanaged state.
-Missing expected, malformed, unsupported, unverifiable, or inconsistent facts are
-never treated as empty. Force and prune cannot promote them; safe unavailable
-coverage is `incomplete` and unsafe ambiguity is `blocked`.
+1. The affected closure is derived from the original selected package paths,
+   including exclusions, retired paths, admission-affected paths, ancestors, and
+   direct projected dependencies through the existing formation.
+2. The unavailable region itself is outside that closure. Every malformed direct
+   child is also outside that closure, is ordinary Markdown or
+   a recognized entrypoint, and has successfully read current bytes. Every other
+   direct child observation is usable. Native Skill metadata never qualifies.
+3. A pure counterfactual re-projection that changes only those malformed ordinary
+   metadata facts to `Missing`, with the eligible automatic-ID fallback, has no
+   other projection blocker.
+
+When the proof succeeds, skip only that unavailable region from generated effects
+and generated `Entries`. Preserve its exact on-disk bytes and malformed child,
+retain every other projection, and continue all global catalogue safety,
+alias/collision, selected-scope, dependency, read, encoding, ownership, and
+admission checks. Do not add a global warning to selected Update. A selected
+no-op/preview and valid selected changes remain `completed` / Complete0. This is
+not an arbitrary scope filter or early success: normal selected-plan
+verification, ownership, no-op, recovery, invalid-input, and JSON-schema behavior
+still run.
+
+If any proof fact is missing or false, the existing strict result remains in
+force. Selected or dependency metadata, native Skill metadata, unreadable or
+encoding failures, incomplete or unrepresentable coverage, unsafe or ambiguous
+boundaries, and any other projection blocker are not skipped or demoted.
+
+## Ownership And Dependency Closure
+
+Read the Extension receipts from the shared lock. Normalize supported ownership
+fields with the forgiving ownership codec; schema metadata is non-binding.
+Use canonical stable IDs, dependencies and paths to resolve selected ownership.
+Publish one normalized UTF-8 lock transition after target effects verify,
+preserving other sections and unselected receipts. Unchanged state writes nothing.
+Missing, malformed or unreadable state grants no ownership; report the observation
+without using a legacy fallback. Old files remain unrelated user content.
 
 Resolve source manifests and dependency closure exactly, offline, transitively,
 and within one source universe. Order dependencies before dependents. Reject
@@ -132,8 +176,7 @@ and source identity conflicts before planning effects.
 ## Semantic Comparison
 
 For each selected package path and owner set, collect current exact bytes and
-semantic facts and compare persisted baseline, current state, and intended
-source. Distinguish unchanged, new, changed, missing, retired, shared, unknown,
+semantic facts and compare current state with intended source. Distinguish unchanged, new, changed, missing, retired, shared, unknown,
 and source-unavailable paths.
 
 Supported parseable kinds use the `open-forge-markdown-v1` conservative
@@ -144,7 +187,7 @@ endings and parser-proven formatting trivia. Generated `Entries` interiors are
 derived navigation and excluded from authored package identity. Unsupported,
 binary, and unparseable kinds use exact-byte identity and fail closed.
 
-Persist semantic baseline fingerprints, not exact-byte baseline digests. Capture
+Compute current and intended fingerprints within the operation; persist neither. Capture
 exact current bytes freshly for diff, expected-state revalidation, replacement,
 deletion, verification, and recovery. Equal semantic identity with formatting-
 only byte differences is an observation and does not create divergence or
@@ -165,15 +208,15 @@ user routes, overwrite companions, Framework files, unknown paths, and
 intentionally absent defaults. Project affected generated regions from intended
 authored topology and metadata through current Index behavior. Generated
 interiors are not package-owned authored bytes and never come from stale package
-lines. A missing, duplicate, reversed, nested, misplaced, or ambiguous generated
-boundary blocks; no hidden index subprocess runs.
+lines. A missing or duplicate top-level `## Entries` section blocks; no hidden
+index subprocess runs.
 
-Reject payload targets under the lifecycle document, repository metadata,
-recovery/temporary artifacts, workspace overwrite companions, Framework blocks,
+Reject payload targets at or beneath `.agents/open-forge.json`,
+`.agents/open-forge.lock.json`, or `.agents/open-forge.lock`. Also reject
+repository metadata, recovery/temporary artifacts, workspace overwrite companions, Framework blocks,
 or another manager's paths. Source remains read-only.
 
-An exact destination path claim in the consumer Library record
-`.agents/open-forge.libraries.json`, or a real relative projection link at that
+An exact destination path claim in the lock Libraries section, or a real relative projection link at that
 destination, is separately owned by Library management. Update never adopts,
 overwrites, updates, or removes that destination in any mode, including normal
 operation, `--force`, `--prune`, and combined `--force --prune`. The neutral
@@ -185,21 +228,27 @@ Library operation.
 
 ## Normal, Force, Prune, And Automatic Plans
 
-Normal mode may update baseline-unchanged current expected paths and add safe new
-paths. It preserves changed current expected paths, missing current expected
-paths, retired paths, and ownership or route divergence. Safe effects can apply
-while complete coverage returns `attention` for finite preserved divergence.
+Normal update compares current content with the selected source, replaces owned
+current paths that differ, restores missing owned current paths, and creates safe
+new paths. Formatting-only equivalence does not cause a replacement. An existing
+unowned target is never adopted. Without `--prune`, retired paths and receipts
+remain and produce completed-with-warnings. Retained shared owners block incompatible rewrites.
 
-Force admits only changed current expected path replacement and missing current
-expected path restoration. It does not delete retired content or bypass any
-ownership, route, marker, containment, expected-state, verification, or
-recovery boundary.
+When the proven unrelated readable-metadata condition holds, a selected no-op or
+preview and valid selected changes remain `completed` / Complete0. The skipped
+region does not become an effect, warning, adoption, or health claim, and all
+ordinary selected effects and verification remain unchanged.
 
-Prune admits only retired managed deletion when trusted baseline identity,
-current source retirement, current semantic and physical identity, owner/route
-safety, verification, and recovery-bundle facts all pass. It never deletes unknown,
-unowned, shared, current expected, or unsafe content. Force and prune compose
-only their two named effect classes.
+`--force` remains accepted but adds no authority to overwrite owned current paths;
+ordinary update already does that. It cannot bypass ownership, physical, route,
+permission, expected-state, verification or recovery checks and never implies prune.
+
+`--prune` releases selected retired ownership. It deletes a retired whole-file
+path only when it exists as an ordinary contained file, the shared allow list
+(with implicit `.agents` admission) admits it, reserved-path checks pass, and no
+remaining owner or route dependency requires it. Changed content is eligible.
+Absent paths are never deleted. Out-of-boundary claims cannot authorize deletion.
+The verified recovery bundle precedes every deletion.
 
 Automatic mode suppresses interaction but selects no package beyond explicit
 IDs, `--all`, or the permitted single-package manifest-ID inference. It adds no
@@ -209,7 +258,7 @@ safe effects already authorized by the request and preserves/reports divergence.
 ## Plan, Preflight, And Dry-Run
 
 The complete plan records source and target identity, dependency order, manifest
-facts, baseline/current/intended fingerprints, current exact bytes, owner sets,
+facts, current/intended fingerprints, current exact bytes, owner sets,
 route and generated effects, lifecycle publication, expected-state guards,
 affected paths, recovery-bundle readiness, per-effect verification, and final
 cleanup handling. One failed selected condition blocks all effects. Before the
@@ -230,7 +279,7 @@ artifact. It cannot prove application-time verification, publication, or
 recovery.
 
 Because dry-run performs no effects, it never produces an apply-time `failed` or
-`interrupted` result. A planning or read failure and caller cancellation before
+`cancelled` result. A planning or read failure and caller cancellation before
 effects retain their own event meaning.
 
 ## Application, Verification, And Recovery
@@ -263,30 +312,22 @@ Every planned existing-target effect has exactly one matching verified entry. Or
 Create has a reversible prior-absence entry. All preparation completes before the first effect.
 `FileChangeApplier` refuses an existing-target effect without its matching preparation
 and performs one final effect per target. Immediately before effects, revalidate
-all volatile facts. Apply dependency-first payload and generated effects, then
-publish the complete Extension-section transition only after every effect and
-the whole operation verify. Preserve unrelated lifecycle-section and envelope
-meaning semantically. A selected lifecycle semantic change is source-generated
-as one deterministic canonical UTF-8 whole-document representation; formatting,
-ordering, and line-ending trivia may be normalized. A semantic no-op publishes
-no lifecycle write.
+all volatile facts. Any under-lease topology recomputation repeats the same
+unrelated-readable-metadata proof from fresh typed facts and cannot broaden the
+excluded region. Apply dependency-first payload and generated effects, then
+publish the selected Extension ownership transition after target effects verify,
+then verify the whole operation. Preserve unrelated sections and receipts.
+A skipped lock publication reports that fact without claiming a record write.
 
-Before post-verification deletion begins, a handled application, verification,
-publication, or cancellation outcome stops new effects and reports the actual
-residual draft or final path; a valid final remains when preparation completed.
-A closed final ZIP may remain after abrupt process termination, without an
-executable crash or power-loss guarantee. Never restore, roll back, compensate
-for an effect, derive current target state from recovery provenance, or create a
-journal, progress receipt, or persisted plan. After final
-verification of whole-operation success, delete the bundle. `Deleted`/`Removed`
-permits normal completion.
-`Failed`/positively observed `Retained` keeps target effects successful and
-produces `attention`, the exact residual path, and
-cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
-provides one.
-When `Failed`/positively observed `Retained` recovery attention coexists with
-finite divergence, cleanup guidance owns the single next action; divergence
-facts remain visible evidence.
+A handled application, verification, publication or cancellation outcome stops
+new effects and reports the actual residual draft or final path. The valid final
+bundle remains after successful target and lock verification; verify its identity
+and report its exact path. Retention is successful protection, not cleanup failure.
+When `.git` is an ordinary directory, point at `git diff`; otherwise point at the
+retained bundle. No Git executable or cleanliness check is required.
+Never restore, roll back, compensate, infer current target state from recovery,
+or create a journal or persisted plan. A final ZIP may remain after abrupt
+termination without a crash or power-loss guarantee.
 
 Explicit Cleanup owns exact named final and draft deletion under its separate
 lease-bound contract. Unknown or differently named artifacts remain untouched.
@@ -300,7 +341,7 @@ introduced.
 ## Result Formation And Conformance
 
 Form one typed result with exact source/workspace, selected roots and closure,
-trust/coverage, baseline/current/intended facts, safe/preserved/overwritten/
+trust/coverage, current/intended facts, safe/preserved/overwritten/
 restored/deleted/shared effects, generated projection, lifecycle publication,
 recovery-bundle/verification, status, and one next action. Human and JSON
 renderers consume it once. Use the Interface seven statuses, ordinary precedence,
@@ -313,8 +354,17 @@ projection collisions, independent no-follow final-leaf guards,
 normal/force/prune/automatic effects, generated navigation, reserved paths, complete plan,
 recovery-bundle behavior, expected-state revalidation, verification, interruption,
 dry-run parity, no-op repetition, human/JSON parity, and no formatter or source
-mutation. The [Shared Result
+mutation. It must also cover the exact unrelated readable ordinary metadata proof,
+preserved skipped bytes and malformed children, no selected-update global warning,
+under-lease proof reuse, and strict refusal for selected/dependency, native Skill,
+unreadable, encoding, incomplete, unsafe, ambiguous, unrepresentable, and other
+projection failures. The [Shared Result
 Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
 result schema and exit mapping. Gate 5 must prove source-generated serialization, fixed Markdig
 where used, real `System.IO`, Native AOT, OS locking, isolated tests, and package
 journeys.
+
+A recognized recovery residual does not block an effect-free repeat. Recovery
+inspection must remain available and in-flight preparation must still match.
+A plan containing new content or ownership effects retains the existing recovery
+conflict check. A write-free repeat leaves the retained review bundle untouched.

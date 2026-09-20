@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Route.List;
+using OpenForge.Cli.Core.Commands.Route.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
@@ -14,6 +15,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Topology;
 
 public sealed class RouteListTopologyIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route list forms canonical rows from real authored topology instead of generated Entries"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task FormsCanonicalRowsFromRealAuthoredTopology()
     {
@@ -28,12 +30,9 @@ public sealed class RouteListTopologyIntegrationTests
             "Root",
             """
             ## Entries
-
-            <!-- open-forge:generated-index:start -->
             - [Fake](fake.md) - #Fake
             - [Zeta](zeta.md) - #Zeta
             - [Alpha](alpha.md) - #Alpha
-            <!-- open-forge:generated-index:end -->
             """);
         WriteRoute(workspace, ".agents/root/zeta.md", "Zeta route", "Zeta");
         WriteRoute(workspace, ".agents/root/alpha.md", "Alpha route", "Alpha");
@@ -77,6 +76,7 @@ public sealed class RouteListTopologyIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route list real explicit selection distinguishes nested and detached ancestry"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task ExplicitSelectionDistinguishesNestedAndDetachedAncestry()
     {
@@ -103,6 +103,7 @@ public sealed class RouteListTopologyIntegrationTests
         Assert.Equal(RouteListSelectionProvenance.DetachedRoot, detachedResult.Rows[0].Provenance.Selection);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route list real inventory preserves exact finite and all depth boundaries"), InlineData(0, 1), InlineData(1, 2), InlineData(2, 3), InlineData(-1, 4), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task PreservesExactDepthBoundaries(int depthValue, int expectedRows)
     {
@@ -124,7 +125,8 @@ public sealed class RouteListTopologyIntegrationTests
         Assert.Equal(depth.MachineValue, result.EffectiveDepth?.MachineValue);
     }
 
-    [Fact(DisplayName = "Route list real malformed metadata retains safe rows and honest incomplete coverage"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route list real malformed metadata retains the listed route with complete coverage"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task MalformedMetadataRetainsSafeRows()
     {
         using var workspace = RouteListFilesystemIntegrationWorkspace.Create();
@@ -138,10 +140,11 @@ public sealed class RouteListTopologyIntegrationTests
         var first = await RunAsync(workspace, "root", RouteListDepth.All);
         var second = await RunAsync(workspace, "root", RouteListDepth.All);
 
-        Assert.Equal(CliSemanticStatus.Incomplete, first.Status);
-        Assert.Equal(["root"], first.Rows.Select(row => row.Id));
-        Assert.Null(first.Rows[0].DirectChildCount);
-        Assert.Equal(0, first.EffectiveDepth?.Value);
+        Assert.Equal(CliSemanticStatus.Attention, first.Status);
+        Assert.Equal(["root", "root/malformed"], first.Rows.Select(row => row.Id));
+        Assert.Equal(1, first.Rows[0].DirectChildCount);
+        Assert.Equal(RouteListDepthKind.All, first.EffectiveDepth?.Kind);
+        Assert.Equal("(no description)", first.Rows[1].Description);
         Assert.Contains(first.Findings, finding => finding.Code == RouteListFindingCode.MetadataMalformed);
         Assert.Contains(first.Findings, finding => finding.Code == RouteListFindingCode.AuthoredForm);
         Assert.Equal(
@@ -155,7 +158,8 @@ public sealed class RouteListTopologyIntegrationTests
             second.Rows.Select(RowKey));
     }
 
-    [Fact(DisplayName = "Route list real partial Loader selection retains safe roots without complete coverage"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route list real malformed Loader blocks while retaining safe roots"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task PartialLoaderSelectionRetainsSafeRoots()
     {
         using var workspace = RouteListFilesystemIntegrationWorkspace.Create();
@@ -166,14 +170,16 @@ public sealed class RouteListTopologyIntegrationTests
 
         var result = await RunAsync(workspace, null, RouteListDepth.All);
 
-        Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
+        Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Equal(["root"], result.Rows.Select(row => row.Id));
         Assert.Equal(1, result.Coverage.SelectedRootCount);
+        Assert.Equal(RouteListCoverageState.Blocked, result.Coverage.State);
         Assert.Null(result.EffectiveDepth);
         Assert.Contains(result.Findings, finding => finding.Code == RouteListFindingCode.LoaderMalformed);
         Assert.NotNull(result.Next);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route list real duplicate entrypoints block the ambiguous branch and retain its safe parent"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task DuplicateEntrypointsBlockAmbiguousBranch()
     {
@@ -193,6 +199,7 @@ public sealed class RouteListTopologyIntegrationTests
         Assert.Equal(RouteListCoverageState.Blocked, result.Coverage.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route list finite depth retains a child entrypoint when its overwrite read is incomplete"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task ChildEntrypointOverwriteFailureUsesLogicalDepth()
     {
@@ -214,6 +221,7 @@ public sealed class RouteListTopologyIntegrationTests
             && finding.Subject == ".agents/root/child/_child.overwrite.md");
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route list accepts a completely inspected empty Loader root set"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task EmptyLoaderRootSetIsComplete()
     {

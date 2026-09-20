@@ -10,7 +10,7 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the caller-visible
-Interface Contract for `route inspect`. The command does not ship yet;
+Interface Contract for `route inspect`. The command is implemented in the merged CLI;
 implementation and executable evidence are tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md).
 
@@ -32,9 +32,9 @@ The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
 define the accepted shared JSON envelope and process-status mapping. The [CLI
 Architecture](../../../architecture.md) defines source and runtime boundaries,
 the BCL-first filesystem boundary, and diagnostic structure. Primary
-human `complete`, `attention`, and `incomplete` results use
-stdout. Primary human `invalid`, `blocked`, `failed`, and `interrupted` results
-use stderr. `--json` writes one complete structured result to stdout for every
+human `completed`, `completed-with-warnings`, and `incomplete` results use
+stdout. Primary human `invalid-input`, `blocked`, `failed`, and `cancelled` results
+use stderr. `--format json` writes one complete structured result to stdout for every
 status; bounded diagnostics use stderr, and human text is never mixed into JSON
 stdout. Command-specific repetition beyond the shared global flags is not
 invented here.
@@ -95,7 +95,7 @@ disambiguation, overwrite identity, and reported paths. A source reference is
 not a list of subjects.
 
 The shared [Global CLI Flags](../../shared/global-flags/interface.md) contract defines
-`--workspace`, `--json`, `--view`, `--verbose`, `--help`, and `--version`. All
+`--workspace <path>`, `--format <text|json>`, `--detail <minimal|standard|full|debug>`, repeatable `--detail-filter <error|warning|info|all>`, `--help`, and `--version`. All
 six apply to `route inspect` under that contract.
 
 The `route` group itself continues to show help and performs no domain
@@ -128,7 +128,7 @@ for Loader-rooted generated navigation.
 An unsupported source kind is invalid. An unresolved ambiguous source ID is
 blocked. An exact path or interactive choice may resolve only the physical source
 identity. If the selected source has a safe, complete route and its automatic ID
-is still non-unique, the result is `attention`. Exact path input cannot turn an
+is still non-unique, the result is `completed-with-warnings`. Exact path input cannot turn an
 ambiguous route relationship into a valid one. A structurally ambiguous route
 remains blocked even when an exact path selects one recognized file.
 
@@ -149,12 +149,14 @@ selection method.
 
 JSON and redirected requests never prompt. They retain every candidate and the
 existing blocked exact-path guidance. An invalid answer or end of input retains
-that same blocked collision; caller cancellation forms `interrupted`. The prompt
+that same blocked collision; caller cancellation forms `cancelled`. The prompt
 never writes to stdout. Interactive selection does not repair an ambiguous route,
-grant mutation authority, or change the accepted `attention` observation and
+grant mutation authority, or change the accepted `completed-with-warnings` observation and
 exact-path next action.
 
 ## Source-State Classification
+
+Readable generated `Entries` in an ordinary entrypoint remain measurable when optional description or tags are absent. This includes intermediate entrypoints created by nested Route Create. Missing optional metadata alone does not make those Entries unavailable. Malformed metadata, unreadable bodies, unavailable Entries and required native metadata retain their existing strict boundaries. Independently unavailable selected-source reading facts remain unavailable.
 
 The command uses this finite source-state classification after input resolution.
 The table assumes that no higher incomplete, blocked, failed, or interrupted
@@ -163,19 +165,19 @@ does not diagnose the workspace or recommend a change.
 
 | Established source state                                                                                     | Semantic result           | Route-profile treatment                                                                                                                                                     |
 | ------------------------------------------------------------------------------------------------------------ | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Routed entrypoint, routed leaf, or routed native source                                                      | `complete`                | Applicable route, reading, topology, and measurements are reported.                                                                                                         |
-| Accepted compatibility entrypoint filename                                                                   | `complete`                | The filename is reported as compatibility input; its route facts remain ordinary complete facts.                                                                            |
-| Valid base and overwrite pair                                                                                | `complete`                | The pair is one logical source with base-first physical layers. Customization is neutral.                                                                                   |
-| Detached entrypoint with safe local identity and topology                                                    | `complete`                | Local route facts are reported. Loader-root reading facts are not-applicable.                                                                                               |
-| Known supported source with no established route                                                             | `complete`                | The source identity and applicable physical measurements are reported; route-dependent facts are not-applicable.                                                            |
-| Safe source and route with a non-unique automatic ID, resolved by exact path or interactive source selection | `attention`               | The non-unique ID remains an observation. Interactive selection requires an exact path for later non-interactive use; exact-path selection has no invented required action. |
+| Routed entrypoint, routed leaf, or routed native source                                                      | `completed`                | Applicable route, reading, topology, and measurements are reported.                                                                                                         |
+| Accepted compatibility entrypoint filename                                                                   | `completed`                | The filename is reported as compatibility input; its route facts remain ordinary complete facts.                                                                            |
+| Valid base and overwrite pair                                                                                | `completed`                | The pair is one logical source with base-first physical layers. Customization is neutral.                                                                                   |
+| Detached entrypoint with safe local identity and topology                                                    | `completed`                | Local route facts are reported. Loader-root reading facts are not-applicable.                                                                                               |
+| Known supported source with no established route                                                             | `completed`                | The source identity and applicable physical measurements are reported; route-dependent facts are not-applicable.                                                            |
+| Safe source and route with a non-unique automatic ID, resolved by exact path or interactive source selection | `completed-with-warnings`               | The non-unique ID remains an observation. Interactive selection requires an exact path for later non-interactive use; exact-path selection has no invented required action. |
 | Safe identity with an unreadable required source, incomplete route chain, or unmeasurable applicable fact    | `incomplete`              | Safe observations remain visible and the affected availability is `unavailable`.                                                                                            |
 | Orphan or ambiguous overwrite, ambiguous route, unsafe identity, or containment failure                      | `blocked`                 | The command does not choose a pair, route, alias, or out-of-bound source.                                                                                                   |
-| Zero or several operands, Loader, unknown, missing, or unsupported source                                    | `invalid`                 | Input is rejected before route inspection.                                                                                                                                  |
-| Unexpected failure or caller interruption before completion                                                  | `failed` or `interrupted` | The event status retains its own meaning.                                                                                                                                   |
+| Zero or several operands, Loader, unknown, missing, or unsupported source                                    | `invalid-input`                 | Input is rejected before route inspection.                                                                                                                                  |
+| Unexpected failure or caller interruption before completion                                                  | `failed` or `cancelled` | The event status retains its own meaning.                                                                                                                                   |
 
 When several ordinary conditions occur, `blocked` takes precedence over
-`incomplete`, `incomplete` over `attention`, and `attention` over `complete`.
+`incomplete`, `incomplete` over `completed-with-warnings`, and `completed-with-warnings` over `completed`.
 Invalid input stops before operation resolution, while failure and interruption
 retain their event meanings.
 
@@ -399,7 +401,7 @@ not-applicable as zero.
 
 The command reports exact measurements. It never assigns a `light`, `heavy`,
 `too large`, grade, risk score, budget, or recommendation. Changes in size do
-not produce `attention` by themselves. Users and automation may compare the
+not produce `completed-with-warnings` by themselves. Users and automation may compare the
 neutral facts with their own needs.
 
 ## Route Structure
@@ -431,7 +433,7 @@ For an ordinary routed leaf, child and descendant counts are not applicable. A
 detached entrypoint reports applicable local topology, while a known supported
 unrouted source reports route-dependent topology as not-applicable. An entrypoint
 with no children reports numeric zero rather than omitting a measured empty
-structure. Compact output keeps these zero and not-applicable distinctions
+structure. minimal-detail output keeps these zero and not-applicable distinctions
 visible.
 
 ### Why There Is No Scope Count
@@ -467,557 +469,246 @@ are lifecycle facts rather than the reading and route behavior inspected here.
 
 ## Human Output
 
-The default expanded human output contains route facts, measurements,
-observations, availability conditions, explanations, and provenance useful for
-understanding one source. It uses plain explanations instead of internal stage
-terms. It does not diagnose the workspace or recommend a route or content
-change.
+Every semantic result is rendered by the shared native report. --format text
+is the default. The applicable global flags are --workspace <path>, --format
+<text|json>, --detail <minimal|standard|full|debug>, repeatable
+--detail-filter <error|warning|info|all>, --help, and --version. The default
+detail is minimal; standard adds workspace and command-specific context, full
+adds all bounded facts, and debug adds bounded diagnostics on stderr. Detail
+does not change semantics, counts, or status. Filters select finding severities;
+all is the default filter.
 
-Both human views lead with the route ID (or Route inspection when unresolved),
-status, selected workspace, selection method and canonical path. Workspace
-identity remains separate from route identity. Observations and availability
-conditions precede the profile, retaining their stable code, exact subject and
-all paths. Generated human values are escaped without truncation.
 
-The profile groups where the source belongs, when it is read, and context size.
-Expanded adds applicable inherited/local Axioms, the status explanation, selected
-closure and task-start overlap measurements. Each measurement and automatic
-reading explanation appears once. Physical layer identities remain visible in
-both views. The operation's actual Next command appears once at the end, with its
-reason in expanded output. Rendering does not select an action or change facts.
 
-Compact view is one stable summary. It retains:
+The catalogue text by detail level is:
 
-- Workspace, selection method, ID, path, source state, and route state.
-- Route chain, applicable parent, depth, and child structure.
-- Task-start, automatic-reading, and later-reading behavior.
-- Own-source, selection-addition, and `#LoadNow` descendant measurements.
-- Numeric zero, `unavailable`, and `not-applicable` distinctions.
-- Overwrite state, semantic status, completeness, and safety.
-- At most one required operation-level `Next:` line.
-
-Compact output omits inherited-`Axioms` detail and optional explanation. It keeps
-an observation or availability condition when that condition is needed to
-understand `attention`, `incomplete`, or `blocked`; it does not turn that
-condition into a diagnosis.
-
-Illustrative output:
+`minimal`:
 
 ```text
-Route: memory/working/checkpoints
-Status: complete
-Workspace: D:/Repositories/open-forge
-Selected by: current directory
-Path: .agents/memory/working/checkpoints/_checkpoints.md
-Entrypoint: canonical
-
-When it is read
-  Read at task start or resume: yes
-  Why: memory/working exposes it as context that should be revisited during the task
-  May be read again: yes
-  When: after context restoration, before handoff or closeout, or after a change that may affect its follow-up work
-
-Context size
-  This source: 3.7 KiB · ~955 tokens
-  Selecting this route adds: none; its required context is already read at task start
-  Automatically read below it through #LoadNow: 1 file · 2.1 KiB · ~525 tokens
+memory  .agents/memory/_memory.md
 
 Where this source belongs
-  Parent: memory/working
-  Route chain: memory → working → checkpoints
-  Depth: 3
-  Direct children: 7 files, 1 child entrypoint
-  All descendants: 12 files, 2 descendant entrypoints
+  Route chain: memory
+  Parent: none (Loader root)
+  Direct children: 4 entrypoints
+  Descendants: 11 entrypoints
 
-Rules and customization
-  Axioms inherited from: loader → memory → working
-  Local Axioms: none
-  Overwrite: none
+When it is read
+  At task start or resume: yes
+  Read automatically when the Loader is read
+  May be read again later: no
+
+Context size
+  This file: 3.36 KiB, about 861 tokens
+  Selecting this route adds: nothing (already in startup context)
+  Read automatically below it through #LoadNow: 6 files, 7.03 KiB, about 1801 tokens
 ```
 
-The values are illustrative. They do not claim to measure this repository.
+Lines that do not apply are omitted: `Direct children` when a file has none,
+`Read automatically below it` when nothing is tagged. Unusual facts appear as
+extra lines in the first block: `Entrypoint name: index.md (compatibility
+name; the canonical name is _memory.md)`, `Overwrite file: .agents/memory/_memory.overwrite.md`.
 
-An illustrative compact result is:
+`standard` adds `Workspace:`, the Axioms block (`Inherited rules from:
+loader`, `Local rules: yes`), and the tags line.
 
-```text
-Route: memory/working/checkpoints
-Status: complete
-Workspace: D:/Repositories/open-forge
-Selected by: current directory
-Path: .agents/memory/working/checkpoints/_checkpoints.md
-Source state: routed entrypoint
-Route state: routed
-Route chain: memory → working → checkpoints
-Parent: memory/working
-Depth: 3
-Direct children: 7 files, 1 child entrypoint
-Descendants: 12 files, 2 descendant entrypoints
-Read at task start or resume: yes
-Read automatically when: memory/working is read
-May be read again: yes
-Later: after context restoration, before handoff or closeout, or after a change that may affect its follow-up work
-Own source: 1 file · 3.7 KiB · ~955 tokens
-Selecting this route adds: none (0 files · 0 B · 0 tokens)
-Automatically read below it through #LoadNow: 1 file · 2.1 KiB · ~525 tokens
-Overwrite: none
-Completeness: complete
-Safety: safe
-```
+`full` adds the reason for the status, the selected-closure measurements
+(`Selected context: 11 files, 14.41 KiB, about 3689 tokens`, `Already in
+startup context: ...`), how the source was selected, and the physical layer
+paths.
 
-The values are illustrative. A complete entrypoint with no automatic
-descendants reports a measured zero, while an ordinary routed leaf reports its
-descendant measure as `not-applicable`. Detached and known unrouted subjects
-show their Loader-rooted or route-dependent facts as `not-applicable`; an
-applicable unmeasurable fact remains `unavailable`.
-
-Human output may say `none` for a measured zero. It never uses `none` or zero to
-stand for an unavailable or not-applicable fact.
-
-The human result has no workspace startup table, total workspace inventory,
-character count, Extension summary, recovery summary, scope count, health
-grade, or recommendation. Those facts either belong to another operation or do
-not have safe route-level meaning.
-
-`--verbose` adds bounded diagnostics under the shared global contract. It does
-not add source bodies, change measurement sets, or turn inspection into
-diagnosis.
-
-Primary human `complete`, `attention`, and `incomplete` results use stdout.
-Primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
-stderr. `--json` writes one complete structured result to stdout for every
-semantic status. Separate bounded diagnostics use stderr, and no human text is
-mixed into JSON stdout.
-
-Human results expose at most one `Next:` line containing the actual typed
-`next.command` listed below. Ordinary quoting is retained so commands with exact
-paths can be copied. Expanded output adds `next.reason`. Complete results and
-attention after exact-path selection have no Next. Interactive attention keeps
-the exact-path command selected by the operation. Blocked collisions retain all
-candidate paths alongside the operation's first-candidate command; displaying it
-does not resolve the ambiguity or run it.
-
-A direct safe correction names only the observed input or safety boundary when
-that correction is already known. It is not a route mutation proposal.
-
-The structured `next` member uses `{ command, reason }` with these exact values:
-
-- `complete`, and `attention` after exact-path selection: null;
-- interactive `attention`: the command is `open-forge route inspect
-"<canonical-path>"`, and the reason is `Rerun with the exact path for
-non-interactive use.`;
-- `invalid`: `{ command: "open-forge route inspect --help", reason: "Correct
-the named source or input, then rerun route inspect." }`;
-- `incomplete`: `{ command: "open-forge doctor", reason: "Review the unavailable
-route fact, then rerun route inspect." }`;
-- a blocked source-ID collision: the command reruns `open-forge route inspect`
-  with the first listed exact path, and the reason is `Rerun with one listed
-exact path to resolve the source collision.`;
-- an ambiguous-route block: the command reruns `open-forge route inspect` with
-  the selected exact path, and the reason is `Rerun with the exact source path
-after resolving the ambiguous route.`;
-- another `blocked` result: `{ command: "open-forge doctor", reason: "Review the
-blocked source boundary, then rerun route inspect." }`;
-- `failed`: `{ command: "open-forge route inspect", reason: "Address the reported
-failure, then retry route inspect." }`; and
-- `interrupted`: `{ command: "open-forge route inspect", reason: "Rerun the same
-route-inspect request." }`.
-
-`route inspect` never emits route mutation proposals, health recommendations,
-content-placement advice, or diagnostic recommendations. `doctor` owns complete
-diagnosis and recommendations; this command reports only observations,
-availability conditions, and required next operations.
+Results with completed, completed-with-warnings, or incomplete status use
+stdout. Invalid-input, blocked, failed, and cancelled results use stderr.
+A parser failure is text on stderr without a result envelope.
 
 ## Structured Output
 
-`--json` returns the complete typed result used by human rendering. It never
-prompts and never reruns resolution or measurement.
+--format json emits one schema-3 envelope on stdout for each semantic result.
+The envelope has exactly these fields:
 
-The structured result exposes:
-
-- Workspace and selection method.
-- Requested reference and resolved identity.
-- Every candidate path for an unresolved source-ID collision.
-- Source kind, route state, canonical or compatibility form, and physical
-  layers.
-- Task-start membership, later-read membership, automatic-reading event, and
-  typed reasons.
-- Exact own-source, selected-closure, task-start-overlap, selection-addition,
-  and `#LoadNow` descendant measurements.
-- Root route, route chain, depth, parent, direct counts, and descendant counts.
-- Inherited and local Axioms source provenance.
-- Overwrite relationship.
-- Directly observed source and route facts.
-- Availability conditions for every reported fact, including numeric zero,
-  `unavailable`, and `not-applicable` states.
-- Semantic status and next operations only when a required next operation exists.
-
-The accepted camel-case command-local `result` object uses this exact member
-shape and order. Every listed member is present. Generic `Fact<T>` values use
-`{ state, value, reason }`; Boolean facts use the same members with a Boolean or
-null `value`.
-
-```text
-result: {
-  selection: {
-    referenceKind: ReferenceKind,
-    selectionMethod: SelectionMethod,
-    requestedReference: string | null,
-    candidatePaths: string[]
-  },
-  identity: {
-    id: string,
-    path: string,
-    sourceKind: SourceKind,
-    sourceForm: SourceForm,
-    routeState: RouteState,
-    physicalLayers: [{
-      workspaceRelativePath: string,
-      physicalPath: string,
-      role: LayerRole
-    }]
-  } | null,
-  profile: {
-    reading: {
-      taskStart: BooleanFact,
-      automatic: Fact<{
-        reasons: [{
-          kind: ReadingKind,
-          relatedSourceId: string | null,
-          events: ReadingEvent[]
-        }]
-      }>,
-      later: Fact<{
-        mayBeReadAgain: boolean,
-        occasions: LaterOccasion[]
-      }>
-    },
-    measurements: {
-      ownSource: Fact<Measurement>,
-      selectedClosure: Fact<Measurement>,
-      taskStartOverlap: Fact<Measurement>,
-      selectionAddition: Fact<Measurement>,
-      loadNowDescendants: Fact<Measurement>
-    },
-    topology: Fact<{
-      rootRoute: string,
-      routeChain: string[],
-      parentId: string | null,
-      depth: nonnegative-integer,
-      counts: Fact<{
-        directRoutedFileCount: nonnegative-integer,
-        directEntrypointCount: nonnegative-integer,
-        descendantRoutedFileCount: nonnegative-integer,
-        descendantEntrypointCount: nonnegative-integer
-      }>
-    }>,
-    axioms: Fact<{
-      inherited: Fact<{ sourceIds: string[] }>,
-      local: Fact<LocalAxiomsState>
-    }>,
-    completeness: Completeness,
-    safety: Safety
-  } | null,
-  observations: [{
-    code: ObservationCode,
-    subject: string,
-    message: string,
-    paths: string[]
-  }],
-  conditions: [{
-    code: ConditionCode,
-    status: SharedStatus,
-    subject: string,
-    message: string,
-    paths: string[]
-  }]
+~~~text
+{
+  schemaVersion: 3,
+  command,
+  status,
+  detail,
+  filter,
+  workspace,
+  summary,
+  findings,
+  effects,
+  counts,
+  limitations,
+  data,
+  recovery,
+  next
 }
+~~~
 
-Measurement: {
-  physicalFileCount: nonnegative-integer,
-  unicodeScalarCount: nonnegative-integer,
-  utf8ByteCount: nonnegative-integer,
-  estimatedTokens: nonnegative-integer
-}
+The command is exactly route inspect; data follows the catalogue:
 
-Fact<T>: {
-  state: FactState,
-  value: T | null,
-  reason: string | null
-}
+| Level    | `data`                                                                                                                                                                                                                                         |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| minimal  | `{ id, path, kind, entrypointForm, overwritePath, belongs { routeChain, parent, directChildren { files, entrypoints }, descendants { files, entrypoints } }, read { atStart, automaticallyWhen, mayReadAgain }, size { own, adds, loadNow } }` |
+| standard | + `axioms { inheritedFrom: [...], local }`, `tags`                                                                                                                                                                                             |
+| full     | + `selected { closure, startupOverlap }`, `selection { kind, method, requested }`, `layers: [ { path, kind } ]`, `statusReason`                                                                                                                |
 
-BooleanFact: {
-  state: FactState,
-  value: boolean | null,
-  reason: string | null
-}
-```
-
-String, Boolean, integer, array, and null members use their JSON types.
-Measurement and topology count members are nonnegative integers. `depth` is a
-nonnegative integer. The finite strings are:
-
-- `referenceKind`: `missing`, `source-id`, `source-path`, or `invalid`;
-- `selectionMethod`: `unresolved`, `automatic-id`, `exact-path`, or
-  `interactive`;
-- `sourceKind`: `entrypoint`, `markdown`, or `native`;
-- `sourceForm`: `canonical`, `compatibility`, `markdown`, or `native`;
-- `routeState`: `routed`, `detached`, `not-routed`, `ambiguous`, or
-  `unresolved`;
-- physical-layer `role`: `base` or `overwrite`;
-- fact `state`: `value`, `unavailable`, or `not-applicable`;
-- automatic-reading `kind`: `on-demand`, `parent-load-now`,
-  `entrypoint-keep-in-mind`, `routed-file-keep-in-mind`, or
-  `overwrite-after-base`;
-- automatic-reading `events`: `route-selected`, `exposing-parent-read`,
-  `task-start-visible`, `scope-selected`, `ancestor-required`, `task-review`,
-  `later-review`, or `base-read`;
-- later-reading `occasions`: `context-restoration`, `handoff`, `closeout`, or
-  `followup-transition`;
-- profile `completeness`: `complete`, `incomplete`, or `not-started`;
-- profile `safety`: `safe`, `blocked`, or `unknown`; and
-- local Axioms fact value: `substantive`, `inherited-sentinel`, `empty`,
-  `missing`, or `not-applicable`.
-
-A fact in `value` state has a non-null value and null reason. An `unavailable` or
-`not-applicable` fact has null value and one nonempty reason. Arrays are always
-present. The exact observation codes are
-`route-inspect.automatic-id-not-unique`,
-`route-inspect.compatibility-entrypoint`, `route-inspect.detached-source`,
-`route-inspect.not-routed`, and `route-inspect.valid-overwrite`.
-
-The exact condition codes and their condition status are:
-
-- `invalid`: `route-inspect.invalid-workspace`, `route-inspect.missing-source`,
-  `route-inspect.multiple-sources`, `route-inspect.invalid-source-reference`,
-  `route-inspect.loader-subject`, `route-inspect.unknown-source`,
-  `route-inspect.missing-source-file`, and
-  `route-inspect.unsupported-source`;
-- `blocked`: `route-inspect.workspace-unavailable`,
-  `route-inspect.unsafe-workspace`, `route-inspect.ambiguous-source`,
-  `route-inspect.unsafe-source`, `route-inspect.ambiguous-route`,
-  `route-inspect.orphan-overwrite`, and `route-inspect.ambiguous-overwrite`;
-- `incomplete`: `route-inspect.unreadable-source`,
-  `route-inspect.incomplete-route`, and `route-inspect.unavailable-fact`;
-- `failed`: `route-inspect.operation-failed`; and
-- `interrupted`: `route-inspect.interrupted`.
-
-`command` in the shared envelope is exactly `route inspect`. The envelope's
-`workspace` uses the [Shared Result
-Coordinates](../../shared/result-coordinates/interface.md) member, and `next` uses that shared
-shape with the exact Route Inspect values above; neither is repeated inside
-`result`. Arrays are present when empty. `requestedReference`, `identity`,
-`profile`, nullable fact values, fact reasons, `relatedSourceId`, and `parentId`
-retain null when their typed fact is unavailable or inapplicable under this
-Interface.
-
-The result does not include authored source bodies or sections, ordinary links,
-all route paths in the workspace, a generated-index comparison, diagnosis,
-recommendations, or route mutation proposals. Exact field names, schema
-versioning, and command-local field meaning are defined by this Interface. The
-shared envelope and compatibility coordinates are defined by the [Shared Result
-Coordinates](../../shared/result-coordinates/interface.md), and concrete
-serialization relationships are defined by the [CLI
-Architecture](../../../architecture.md).
-
-With JSON, view selection uses the expanded or compact shared envelope. This command retains its complete result core in both.
+Human and JSON output are projections of one typed result. data is null only at
+the parser boundary before command binding. There is no alternate JSON
+projection.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                                             |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | Every applicable inspection fact and measurement was established for a safely resolved source. This includes routed sources, accepted compatibility entrypoints, valid overwrite pairs, detached entrypoints, and known supported unrouted sources. |
-| `attention`   | The physical source and route are safe and complete, but the automatic source ID is non-unique. The source identity was resolved by exact path or interactive selection.                                                                            |
-| `incomplete`  | Safe identity is established, but an unreadable required source, incomplete route chain, or unmeasurable applicable fact leaves the profile incomplete.                                                                                             |
-| `invalid`     | The request has zero or several subjects, names the Loader, or uses an unknown, missing, unsupported, or otherwise invalid source or input.                                                                                                         |
-| `blocked`     | The command cannot establish a safe source or route boundary because identity, containment, route, or overwrite meaning is ambiguous or unsafe.                                                                                                     |
-| `failed`      | An unexpected failure prevents normal completion.                                                                                                                                                                                                   |
-| `interrupted` | The caller cancels or interrupts the operation before completion.                                                                                                                                                                                   |
+| Status                  | When                                                    | Headline                                                                                  | Exit | Stream |
+| ----------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | resolved                                                | `<id>  <path>`                                                                            |    0 | stdout |
+| completed-with-warnings | resolved by exact path or choice while the ID is shared | headline + warning row `The ID <id> also matches <other>. Use the exact path to be sure.` |    2 | stdout |
+| incomplete              | a fact could not be measured or a layer read            | headline, blocks with the missing fact stated, warning rows                               |    3 | stdout |
+| invalid-input           | unknown source, the Loader, several operands            | `Cannot inspect <ref>: <problem>.`                                                        |    4 | stderr |
+| blocked                 | ambiguous route or overwrite, unsafe path               | `Cannot inspect <ref>: <reason>.`                                                         |    5 | stderr |
+| failed                  | unexpected error                                        | `Route inspect stopped because of an unexpected error: <reason>.`                         |    1 | stderr |
+| cancelled               | prompt cancelled, Ctrl+C                                | `Route inspect was cancelled.`                                                            |  130 | stderr |
 
-Compatibility filenames, detached routes, known unrouted sources, valid overwrite
-customization, route depth, added context, and context size are neutral facts.
-None produces `attention` by itself. The only ordinary `attention` condition is
-the safely resolved non-unique automatic ID described above.
+### Current merged behavior and open questions
 
-For ordinary conditions, the precedence is `blocked`, `incomplete`, `attention`,
-then `complete`. Invalid input stops before operation work; failed and
-interrupted retain their event meanings.
+The catalogue's next-action policy conflicts with the actions emitted by the
+merged command: some rows emit --help where the catalogue asks for route list,
+open-forge doctor where it says fix by hand, or a next action where it says none.
+The frozen strings were preserved. Maintainer decision remains open.
 
-The shared process-status mapping is defined by the [Shared Result
-Coordinates](../../shared/result-coordinates/interface.md).
+The catalogue and current native report also differ in the detail of some
+finding and next-action wording. This contract records the current report and
+does not choose which wording to retain.
 
-## Errors
+## Errors And Boundaries
 
-Every error names the inspection operation, requested source, direct cause, and
-useful next operation when one exists.
+The finding catalogue is:
 
-- A missing source reference or several source references are invalid.
-- An empty, unknown, missing, or unsupported source reference is invalid.
-- A Loader subject is invalid for this operation.
-- An unresolved ambiguous source ID is blocked, retains every candidate path,
-  and tells the caller to rerun with one listed exact path. Exact-path or
-  interactive source selection may resolve only source identity; a safe,
-  complete route with a still non-unique automatic ID is `attention`.
-- An ambiguous route remains blocked even when an exact path selects one
-  recognized file.
-- An unsafe path, physical identity, or containment boundary is blocked.
-- An orphan or ambiguous overwrite pair is blocked. A valid base and overwrite
-  pair is one logical source and does not create attention.
-- An incomplete route chain, unreadable required source, or unmeasurable source
-  makes affected facts incomplete rather than guessed.
+| Code                                   | Severity | Family                | Message                                                                          | Next                                         |
+| -------------------------------------- | -------- | --------------------- | -------------------------------------------------------------------------------- | -------------------------------------------- |
+| route-inspect.invalid-source-reference | error    | invalid-input         | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.invalid-source-reference`).                          | `open-forge route list --depth=all`          |
+| route-inspect.unknown-source           | error    | unknown-source        |                                                                                  |                                              |
+| route-inspect.missing-source           | error    | unknown-source        |                                                                                  |                                              |
+| route-inspect.missing-source-file      | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.missing-source-file`).                                                         | `open-forge route list --depth=all`          |
+| route-inspect.multiple-sources         | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.multiple-sources`).                                                | none                                         |
+| route-inspect.loader-subject           | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.loader-subject`).                  | `open-forge route list`                      |
+| route-inspect.invalid-workspace        | error    | workspace-unavailable |                                                                                  |                                              |
+| route-inspect.workspace-unavailable    | error    | workspace-unavailable |                                                                                  |                                              |
+| route-inspect.unsafe-workspace         | error    | workspace-unsafe      |                                                                                  |                                              |
+| route-inspect.ambiguous-source         | error    | source-ambiguous      | (the prompt resolves it in a terminal)                                           |                                              |
+| route-inspect.ambiguous-route          | error    | route-ambiguous       |                                                                                  |                                              |
+| route-inspect.ambiguous-overwrite      | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.ambiguous-overwrite`).                   | fix by hand                                  |
+| route-inspect.unsafe-source            | error    | source-unsafe         |                                                                                  |                                              |
+| route-inspect.unsupported-source       | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.unsupported-source`).                             | none                                         |
+| route-inspect.orphan-overwrite         | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.orphan-overwrite`).                                | fix by hand                                  |
+| route-inspect.unreadable-source        | warning  | inspection-incomplete |                                                                                  |                                              |
+| route-inspect.incomplete-route         | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.incomplete-route`).    | `open-forge doctor`                          |
+| route-inspect.unavailable-fact         | warning  | local                 | `<fact> could not be measured: <reason>.` (rendered in place of the block line)  | `open-forge doctor`                          |
+| route-inspect.automatic-id-not-unique  | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.automatic-id-not-unique`).          | none                                         |
+| route-inspect.not-routed               | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.not-routed`). | `open-forge index` when its parent is routed |
+| route-inspect.detached-source          | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.detached-source`).                        | none                                         |
+| route-inspect.compatibility-entrypoint | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.compatibility-entrypoint`). | none                                         |
+| route-inspect.valid-overwrite          | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.valid-overwrite`).                                      | none                                         |
+| route-inspect.operation-failed         | error    | operation-failed      |                                                                                  |                                              |
+| route-inspect.interrupted              | error    | interrupted           |                                                                                  |                                              |
 
-`doctor` provides complete diagnosis and recommendations. `route inspect`
-reports only observations and availability conditions needed to answer its
-route-profile questions.
+Findings retain code, severity, family, message, subject, cause, and next
+action when available. Counts are:
+
+`ownBytes`, `ownTokens`, `addedFiles`, `addedBytes`, `addedTokens`,
+`loadNowFiles`, `loadNowBytes`, `loadNowTokens`, `directChildren`, `descendants`.
 
 ## Scenarios
 
-The smallest valid domain invocation has one source reference:
+`entrypoint`, `routed-file`, `load-now-child`, `keep-in-mind`, `overwrite-pair`,
+`compatibility-entrypoint`, `not-routed-file`, `id-not-unique-exact-path`
+(warnings), `ambiguous-id-prompt`, `unknown-source` (invalid), `loader-subject`
+(invalid), `unreadable-source` (incomplete), `orphan-overwrite` (blocked).
 
-```text
-open-forge route inspect memory/working/checkpoints
-```
+Prompt rules from the catalogue:
 
-It resolves one known source and returns its route profile. The same logical
-source may be identified by an exact path:
+When an ID matches several files in a terminal: Select among the paths (see
+[04 interaction system](../../../../../../working/cli-development/tasks/task30-g4/04-interaction-system.md)). The result then carries the warning row above.
 
-```text
-open-forge route inspect ".agents/memory/working/checkpoints/_checkpoints.md"
-open-forge route inspect "./.agents/memory/working/checkpoints/_checkpoints.md"
-```
+## Representative Transcripts
 
-An overwrite path is also one subject when it names a valid pair:
+### completed
 
-```text
-open-forge route inspect ".agents/<route>/<name>.overwrite.md"
-```
+~~~text
+docs  .agents/docs/_docs.md
 
-The result reports the base and overwrite as one logical source rather than as
-an independent route.
+Where this source belongs
+  Route chain: docs
+  Parent: none (Loader root)
+  Direct children: 2 files
+  Descendants: 2 files
 
-Compact human presentation and complete structured presentation are selected
-without changing inspection:
+When it is read
+  At task start or resume: yes
+  Read automatically when the Loader is read
+  May be read again: no
 
-```text
-open-forge route inspect memory/working/checkpoints --view=compact
-open-forge route inspect memory/working/checkpoints --view=expanded
-open-forge route inspect memory/working/checkpoints --json
-open-forge route inspect memory/working/checkpoints --json --view=compact
-```
+Context size
+  This file: 156 B, about 39 tokens
+  Selecting this route adds: nothing (already in startup context)
+~~~
 
-The first two select human density, the third returns the complete typed result,
-and the fourth selects the compact JSON envelope. A verbose request adds bounded
-diagnostics without changing the result:
+### completed-with-warnings
 
-```text
-open-forge route inspect memory/working/checkpoints --verbose
-```
+~~~text
+docs/guide  .agents/docs/guide.md
+  Warning  docs/guide  ID is not unique
+         The ID docs/guide also matches .agents/docs/guide/_guide.md. Use the exact path to be sure.
+~~~
 
-Terminal informational modes follow the shared global contract and do not
-inspect a subject:
+### incomplete
 
-```text
-open-forge route inspect --help
-open-forge route inspect --version
-```
+~~~text
+docs/guide  .agents/docs/guide.md
+  Warning  .agents/docs/guide.md  Source could not be read
+         .agents/docs/guide.md could not be read completely.
 
-An explicitly selected detached entrypoint reports local identity and topology
-without claiming Loader-rooted reading facts. An existing supported exact path
-with no established route reports a complete `not routed` identity, with
-route-dependent fields not-applicable. An unresolved ambiguous identity or route
-relationship returns `blocked`.
+Where this source belongs
+  Route chain: docs -> guide
+  Parent: docs
 
-When an automatic-ID collision is resolved interactively, the selected source
-and route can be complete while the result is `attention`. Illustrative Next
-excerpt when the selected path is `.agents/root/collision.md`:
+When it is read
+  At task start or resume could not be measured: The loading facts needed for reading classification are unavailable.
+  Read automatically could not be measured: The loading facts needed for reading classification are unavailable.
+  May be read again could not be measured: The loading facts needed for reading classification are unavailable.
 
-```text
-Next: open-forge route inspect ".agents/root/collision.md"
-Rerun with the exact path for non-interactive use.
-```
+Context size
+  This file could not be measured: The selected source body is unavailable.
+  Selecting this route adds could not be measured: The selection addition cannot be established completely.
+Next: open-forge doctor
+~~~
 
-When the same source is selected by its exact path, the result preserves the
-non-unique-ID observation but emits no required next action. An entrypoint with
-no `#LoadNow` descendants reports measured zero, an ordinary routed leaf reports
-that descendant measure as not-applicable, and an applicable unreadable measure
-is visibly unavailable and incomplete.
+### invalid-input
 
-In a non-interactive or JSON request, an unresolved automatic-ID collision is
-`blocked`, returns every candidate path, and says to rerun with one listed exact
-path. It never chooses a candidate.
+~~~text
+Cannot inspect missing/source: No source has the ID missing/source.
+Next: open-forge route inspect --help
+~~~
 
-## Non-Goals
+### blocked
 
-`route inspect` does not:
+~~~text
+Cannot inspect .agents/orphan.overwrite.md: orphan.overwrite.md has no orphan.md beside it.
+Workspace: <workspace>
+Next: open-forge doctor
+~~~
 
-- Replace or rename `status`.
-- Provide a generic `inspect` operation for unrelated subjects.
-- Discover a source or list workspace routes.
-- Return frontmatter, bodies, sections, or ordinary linked content.
-- Follow links.
-- Report actual model, runtime, cache, billing, latency, or memory behavior.
-- Count scopes by inferring semantic roles from paths or tags.
-- Assign a heaviness score, budget, grade, or recommendation.
-- Diagnose workspace health, emit diagnostic recommendations, or advise content
-  placement.
-- Validate every route, generated region, link, overwrite, or Framework rule.
-- Compare or repair generated `Entries`.
-- Propose route mutations or other lifecycle changes.
-- Mutate, format, index, repair, install, update, move, or remove anything.
-- Create a Git commit.
+### failed
 
-Use `find` to discover sources, `context` to return selected content, `status` to
-summarize the workspace, `doctor` to diagnose problems, and the other `route`
-operations to change routed files or entrypoints.
+~~~text
+Route inspect stopped because of an unexpected error: <reason>.
+~~~
 
-## Verification
+### cancelled
 
-Gate 5 executable proof must cover:
-
-- Exact CWD and `--workspace` selection without discovery.
-- IDs, exact paths, quoting, collisions, and disambiguation from the shared
-  source-reference contract.
-- Prompt-capable human collision selection through one stderr question, one-based
-  candidate-number and exact displayed-path validation, blocked invalid/end-of-
-  input, and interrupted cancellation, plus proof that JSON and redirected
-  requests never prompt or write prompt text to stdout.
-- Routed entrypoints, routed leaves, native routed sources, canonical and each
-  compatibility entrypoint filename, detached entrypoints, known unrouted
-  sources, and unsupported source kinds.
-- Base, overwrite-path, orphan, ambiguous, and inherited overwrite selection.
-- The finite source-state classification, including accepted compatibility,
-  detached, known unrouted, safely resolved non-unique-ID, incomplete,
-  blocked, invalid, failed, and interrupted states.
-- Task-start membership that is independent of the inspection operand.
-- Plain human explanations for task-start, parent-triggered, selected, and later
-  reads, including another transition that may affect standing follow-up work,
-  without `target-sensitive` or `continuity boundary` labels.
-- Human and structured distinction among measured zero, unavailable, and
-  not-applicable facts, including empty selection, empty `#LoadNow` descendants,
-  ordinary leaves, detached entrypoints, and known unrouted sources.
-- Workspace, selection method, source ID, and canonical path framing in compact,
-  expanded, and structured results.
-- Compact retention of ID/path, source and route state, route chain, reading
-  behavior, three route measurements, applicable topology, overwrite state,
-  status, completeness, safety, and at most one required `Next:` line.
-- Interactive collision recovery, exact-path non-unique-ID observation, and the
-  absence of an invented action for an already exact-path selection, plus
-  blocked non-interactive collisions with every candidate path and exact-path
-  recovery.
-- Human and structured rendering from one typed result.
-- Primary human stdout/stderr assignment, one complete JSON result on stdout for
-  every status, bounded diagnostics on stderr, and no human text in JSON stdout.
-- Observations and availability conditions instead of diagnosis-like findings,
-  and no route, health, placement, or diagnostic recommendations.
-- Complete, attention, incomplete, invalid, blocked, failed, and interrupted
-  outcomes.
-- Evidence that size and customization do not create attention or
-  recommendations.
-
-The [Behavior Contract](behavior.md#conformance-evidence) owns the semantic
-evidence for graph construction, reading classification, set calculation,
-measurement, topology, inheritance provenance, availability, read-only safety,
-and process-level conformance. The source and test modality remain visible
-there, including the required direct, integration, and built-process evidence.
+~~~text
+Route inspect was cancelled.
+~~~
 
 ## Related Current Sources
 
@@ -1050,23 +741,10 @@ there, including the required direct, integration, and built-process evidence.
 - [Accepted State And Synchronization](../../../../framework/truth.md)
 - [Open Forge Principles](../../../../principles.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
+CLI help syntax: [`route.inspect.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Inspect/RouteInspectText.cs).
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef route.inspect.help.syntax -->

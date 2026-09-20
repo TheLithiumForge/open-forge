@@ -1,0 +1,13 @@
+Cannot list Extensions: The explicit Extension source overlaps the selected workspace.
+Workspace: <workspace>
+  Error  <workspace>  Extension source is blocked [extension-list.source-blocked]
+         <workspace> cannot be used as a source: it is inside the workspace.
+         Cause: The explicit Extension source overlaps the selected workspace.
+  Info  .agents/open-forge.lock.json  Ownership record is unavailable [extension-list.ownership-observation]
+         No ownership record exists, so installed packages cannot be listed from it.
+         Cause: No Extension ownership is recorded; installed packages cannot be established.
+Source: <workspace>
+Installed  (no ownership record, so installed packages cannot be listed)
+
+Available (from <workspace>)  unavailable
+  available packages: The explicit Extension source overlaps the selected workspace.

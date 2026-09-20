@@ -46,7 +46,7 @@ release source changed during this audit.
 ## Audit Boundary And Method
 
 - Task: [Task 9, CLI Architecture Authority
-  Audit](../../working/cli-development/tasks/cli-architecture-authority-audit.md).
+  Audit](../../archived/cli-development/tasks/cli-architecture-authority-audit.md).
 - Starting condition: Established greenfield-replacement program with an accepted
   current Architecture and substantial implemented source.
 - Decision authority: The maintainer decides any accepted source relocation or
@@ -172,8 +172,8 @@ Help, And Diagnostics`.
 - Severity: High.
 - Category: Command-local design placement and current-source conflict.
 - Exact source: Architecture lines 378-389 under `Parsing And Invocation`;
-  [edge-case ledger](../../working/cli-development/edge-cases.md#cli-edge-005--raw-lexical-option-edge)
-  lines 134-172; and [Route Update Task](../../working/cli-development/tasks/route-mutation/route-update.md)
+  [edge-case ledger](../../archived/cli-development/edge-cases.md#cli-edge-005--raw-lexical-option-edge)
+  lines 134-172; and [Route Update Task](../../archived/cli-development/tasks/route-mutation/route-update.md)
   lines 550-557 at the audited base.
 - Evidence: Architecture uses `CLI-EDGE-005` for Route Update's attached-empty
   `--responsibility` exception. The active edge ledger uses the same identity for
@@ -493,8 +493,8 @@ Authority`, `Physical Workspace`, and `Sources, Routing, And Documents`.
 - Severity: High.
 - Category: Accepted release-authority placement and delivery/package mechanics.
 - Exact source: Architecture lines 24-26, 963-980, 1015-1016, and 1043-1053;
-  [CLI Delivery](../../working/cli-development/tasks/delivery/_delivery.md) and
-  [thin npm package Task](../../working/cli-development/tasks/delivery/01-npm-packages.md).
+  [CLI Delivery](../../archived/cli-development/tasks/delivery/_delivery.md) and
+  [thin npm package Task](../../archived/cli-development/tasks/delivery/01-npm-packages.md).
 - Evidence: At the frozen base, Architecture limits delivery to `linux-x64`,
   forbids partial release, and constrains plural thin wrappers to no
   behavior/download/postinstall/fallback, but does not name an exact package
@@ -521,7 +521,7 @@ Authority`, `Physical Workspace`, and `Sources, Routing, And Documents`.
   accretion.
 - Canonical proposed owner: Permanent Task 7 “npm Package Manager Release and
   Local Linking” for the accepted graph and platform horizon; the active
-  [thin npm package Task](../../working/cli-development/tasks/delivery/01-npm-packages.md)
+  [thin npm package Task](../../archived/cli-development/tasks/delivery/01-npm-packages.md)
   and a later narrow durable CLI distribution source for package source, staging,
   packing, CI, publication, and evidence; Architecture only for thin,
   no-domain-behavior, no-download, no-postinstall, and no-fallback invariants and
@@ -813,6 +813,6 @@ A later remediation is complete only when all of the following are true:
 - [Repository-Root CLI Tooling Decision](../../crystallized/decisions/repository-root-cli-tooling.md)
 - [CLI Development Plan](../../working/cli-development/plan.md)
 - [CLI Project Control Ledger](../../working/cli-development/project-control.md)
-- [CLI Delivery](../../working/cli-development/tasks/delivery/_delivery.md)
+- [CLI Delivery](../../archived/cli-development/tasks/delivery/_delivery.md)
 - [CLI Distribution Channels Idea](../ideas/cli-distribution-channels.md)
 - [Agent And Workflow Change Audit](../observations/2026-09-02_agent-and-workflow-change-audit.md)

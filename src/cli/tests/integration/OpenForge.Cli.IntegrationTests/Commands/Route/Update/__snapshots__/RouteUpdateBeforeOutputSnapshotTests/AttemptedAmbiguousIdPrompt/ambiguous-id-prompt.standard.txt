@@ -1,0 +1,8 @@
+Cannot update docs/guide: docs/guide could match more than one route.
+Workspace: <workspace>
+  Error  docs/guide  Route is ambiguous
+         docs/guide could match more than one route.
+         open-forge route list --depth=all
+         Choose an exact route, then rerun Route Update.
+  Choose an exact route, then rerun Route Update.
+Next: open-forge route list --depth=all

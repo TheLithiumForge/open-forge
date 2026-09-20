@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 3,
+  "command": "library attach",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Registered the team-knowledge Library from shared/team-knowledge. It has no eligible files yet.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "library-attach.ownership-observation",
+      "title": "Ownership record is missing",
+      "message": "No ownership record exists, so the team-knowledge Library cannot be read from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "linksCreated": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "sourceFiles": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "recorded": true,
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "links": [],
+    "inventory": {
+      "eligible": 0,
+      "excluded": 0
+    },
+    "expectedStates": [
+      {
+        "path": ".agents/open-forge.lock.json",
+        "kind": "missing",
+        "length": null,
+        "sha256": null,
+        "target": null
+      }
+    ],
+    "verification": {
+      "state": "verified",
+      "linksCreated": 0,
+      "linksExpected": 0,
+      "recorded": true
+    },
+    "recovery": {
+      "state": "removed",
+      "path": "<recovery-bundle>",
+      "remaining": []
+    }
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "removed"
+  },
+  "next": null
+}

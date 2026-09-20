@@ -1,0 +1,13 @@
+Cannot synchronize team-knowledge: .agents/directives/review.md is no longer the link the Library created. Nothing was changed.
+Workspace: <workspace>
+local
+  Error  .agents/directives/review.md  Destination is occupied [library-sync.destination-collision]
+         .agents/directives/review.md is no longer the link the Library created.
+         use open-forge library inspect team-knowledge
+         open-forge library inspect team-knowledge
+         Inspect the destination link before synchronizing it.
+  Inventory: 1 eligible file, 0 excluded items, 0 unavailable paths.
+  Verification: not started; record publication: not started.
+  Recovery: no recovery data was requested.
+  Inspect the destination link before synchronizing it.
+Next: open-forge library inspect team-knowledge

@@ -4,7 +4,7 @@ using OpenForge.Cli.Core.Commands.References.Models.Request;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
 using OpenForge.Cli.Core.Commands.References.Models.Selection;
 using OpenForge.Cli.Core.Commands.References.Models.Source;
-using OpenForge.Cli.Core.Commands.References.Shared.Documents.Parsing;
+using OpenForge.Cli.Core.Commands.References.Shared.Documents;
 using OpenForge.Cli.Core.Commands.References.Shared.Extraction;
 using OpenForge.Cli.Core.Commands.References.Shared.Inspection;
 using OpenForge.Cli.Core.Commands.References.Shared.Resolution;
@@ -24,10 +24,23 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.References;
 
 public sealed class ReferencesDomainModelTests
 {
+    private static string WorkspaceRoot(string name)
+        => Path.GetFullPath(Path.Combine(Path.GetTempPath(), $"open-forge-{name}"));
+
+    private static CliWorkspace Workspace(string name)
+    {
+        var root = WorkspaceRoot(name);
+        return new CliWorkspace(root, root, CliWorkspaceSelectionMethod.CurrentDirectory);
+    }
+
+    private static string PhysicalPath(string workspaceRoot, string canonicalPath)
+        => SourceLogicalPath.ToLexicalPath(workspaceRoot, canonicalPath);
+
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References definitions expose exactly the accepted finding vocabulary"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void FindingVocabularyIsFiniteAndOrdered()
     {
-        Assert.Equal(25, ReferencesDefinitions.FindingCodes.Count);
+        Assert.Equal(28, ReferencesDefinitions.FindingCodes.Count);
         Assert.Equal(
             [
                 "references.invalid-input",
@@ -41,10 +54,13 @@ public sealed class ReferencesDomainModelTests
                 "references.selector-ambiguous",
                 "references.selector-unsafe",
                 "references.identity-collision",
+                "references.physical-alias",
+                "references.identity-unavailable",
                 "references.candidate-unsafe",
                 "references.layer-unresolved",
                 "references.inspection-unavailable",
                 "references.invalid-encoding",
+                "references.link-encoding-invalid",
                 "references.generated-region-unavailable",
                 "references.destination-malformed",
                 "references.destination-unsupported",
@@ -59,10 +75,11 @@ public sealed class ReferencesDomainModelTests
             ReferencesDefinitions.FindingCodes.Select(ReferencesDefinitions.ReadMachineName));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References requests preserve global selector order and reject selectors for outgoing-only work"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void RequestValidatesDirectionAndSelectorPositions()
     {
-        var workspace = new CliWorkspace("/tmp/references-workspace", "/tmp/references-workspace", CliWorkspaceSelectionMethod.CurrentDirectory);
+        var workspace = Workspace("references-workspace");
         var selectors = new[]
         {
             new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Include, "docs", 1),
@@ -83,6 +100,7 @@ public sealed class ReferencesDomainModelTests
             [new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Include, "docs", 2)]));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References extraction preserves accepted links, locations, and generated-region exclusion"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void ExtractionUsesNeutralMarkdownFactsOnly()
     {
@@ -95,12 +113,17 @@ public sealed class ReferencesDomainModelTests
             + "[target]: <target>\n"
             + "\n"
             + "## Entries\n\n"
-            + "<!-- open-forge:generated-index:start -->\n"
-            + "[generated](generated.md)\n"
-            + "<!-- open-forge:generated-index:end -->\n";
+            + "[before](before.md)\n\n"
+            + "- [generated](generated.md)\n\n"
+            + "[after](after.md)\n\n"
+            + "- [authored list](authored.md)\n";
         var source = new SourceLogicalSource(
             new SourceLogicalIdentity("docs", ".agents/docs.md"),
-            new SourceLayer(".agents/docs.md", "/tmp/references-workspace/.agents/docs.md", SourceDocumentForm.Markdown, SourceLayerKind.Base));
+            new SourceLayer(
+                ".agents/docs.md",
+                PhysicalPath(WorkspaceRoot("references-workspace"), ".agents/docs.md"),
+                SourceDocumentForm.Markdown,
+                SourceLayerKind.Base));
         var facts = new MarkdownDocumentParser().Parse(sourceText);
         var extracted = new ReferencesLinkExtractor().Extract(
             source,
@@ -110,8 +133,9 @@ public sealed class ReferencesDomainModelTests
             ReferencesDirection.Out,
             ReferencesProvenance.SelectedSource);
 
-        Assert.True(extracted.Links.Count == 3, string.Join("|", extracted.Links.Select(link => link.RawDestination)));
-        Assert.Equal(["target.md", "target", "https://example.invalid"], extracted.Links.Select(link => link.RawDestination));
+        Assert.Equal(
+            ["target.md", "target", "https://example.invalid", "before.md", "after.md", "authored.md"],
+            extracted.Links.Select(link => link.RawDestination));
         Assert.Equal(ReferencesDirection.Out, extracted.Links[0].Direction);
         Assert.True(extracted.Links[0].Location.ByteLength > 0);
         Assert.Null(extracted.Links[2].DestinationLocation);
@@ -135,6 +159,7 @@ public sealed class ReferencesDomainModelTests
                         or ReferencesFindingCode.SourceUnsafe
                         or ReferencesFindingCode.SelectorAmbiguous
                         or ReferencesFindingCode.SelectorUnsafe
+                        or ReferencesFindingCode.PhysicalAlias
                         or ReferencesFindingCode.TargetUnsafe
                         or ReferencesFindingCode.TargetAmbiguous => CliSemanticStatus.Blocked,
                     ReferencesFindingCode.IdentityCollision
@@ -142,10 +167,12 @@ public sealed class ReferencesDomainModelTests
                         or ReferencesFindingCode.DestinationUnsupported
                         or ReferencesFindingCode.TargetMissing
                         or ReferencesFindingCode.FragmentMissing => CliSemanticStatus.Attention,
-                    ReferencesFindingCode.CandidateUnsafe
+                    ReferencesFindingCode.IdentityUnavailable
+                        or ReferencesFindingCode.CandidateUnsafe
                         or ReferencesFindingCode.LayerUnresolved
                         or ReferencesFindingCode.InspectionUnavailable
                         or ReferencesFindingCode.InvalidEncoding
+                        or ReferencesFindingCode.LinkEncodingInvalid
                         or ReferencesFindingCode.GeneratedRegionUnavailable
                         or ReferencesFindingCode.TargetUnreadable => CliSemanticStatus.Incomplete,
                     ReferencesFindingCode.OperationFailed => CliSemanticStatus.Failed,
@@ -154,6 +181,7 @@ public sealed class ReferencesDomainModelTests
                 },
             });
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References findings map every accepted code to its exact status"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void FindingStatusMappingIsExact()
     {
@@ -166,6 +194,7 @@ public sealed class ReferencesDomainModelTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References generated-region status is conditionally incomplete or blocked only"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void GeneratedRegionStatusOverrideIsBounded()
     {
@@ -182,6 +211,7 @@ public sealed class ReferencesDomainModelTests
             CliSemanticStatus.Blocked));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References extraction retains links and reports an invalid generated boundary"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void ExtractionRetainsLinksWhenGeneratedBoundaryIsInvalid()
     {
@@ -189,10 +219,8 @@ public sealed class ReferencesDomainModelTests
             "# Document\n\n"
             + "[authored](authored.md)\n\n"
             + "## Entries\n\n"
-            + "<!-- open-forge:generated-index:start -->\n"
             + "[candidate](candidate.md)\n"
-            + "<!-- open-forge:generated-index:end -->\n"
-            + "## Later\n";
+            + "## Entries\n";
         var source = CreateLogicalSource();
         var document = new MarkdownDocumentParser().Parse(sourceText);
         Assert.Equal(MarkdownGeneratedRegionState.Invalid, document.GeneratedRegion.State);
@@ -213,6 +241,7 @@ public sealed class ReferencesDomainModelTests
         Assert.False(finding.Blocked);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References extraction blocks only when the Markdown body boundary is unavailable"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void ExtractionBlocksOnlyWhenBodyBoundaryIsUnavailable()
     {
@@ -233,6 +262,7 @@ public sealed class ReferencesDomainModelTests
         Assert.Single(blocked.Findings, value => value.Code == ReferencesFindingCode.GeneratedRegionUnavailable);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References occurrence and selection models enforce direction and order invariants"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void ModelsRejectContradictoryDirectionAndSelectorFacts()
     {
@@ -286,6 +316,7 @@ public sealed class ReferencesDomainModelTests
             null));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "References operation converts an unexpected boundary failure into failed partial evidence"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public async Task UnexpectedBoundaryFailureStopsWithFailedIncompleteSections()
     {
@@ -306,7 +337,7 @@ public sealed class ReferencesDomainModelTests
                 markdownParser),
             new ReferencesResultBuilder());
         var request = new ReferencesRequest(
-            new CliWorkspace("/tmp/references-failed", "/tmp/references-failed", CliWorkspaceSelectionMethod.CurrentDirectory),
+            Workspace("references-failed"),
             "docs",
             ReferencesDirection.Both,
             []);
@@ -319,9 +350,10 @@ public sealed class ReferencesDomainModelTests
         Assert.Empty(result.Incoming.Occurrences);
         Assert.Empty(result.Outgoing.Occurrences);
         Assert.Single(result.Findings, finding => finding.Code == ReferencesFindingCode.OperationFailed);
-        Assert.Equal("open-forge references --verbose", result.Next!.Command);
+        Assert.Equal("open-forge references --detail debug", result.Next!.Command);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "References incoming requests admit interleaved duplicate selectors"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     [InlineData(false), InlineData(true)]
     public void IncomingRequestsAdmitInterleavedDuplicates(bool both)
@@ -334,7 +366,7 @@ public sealed class ReferencesDomainModelTests
             new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Exclude, "./.agents/skip.md", 4),
         };
         var request = new ReferencesRequest(
-            new CliWorkspace("/tmp/references-filtered", "/tmp/references-filtered", CliWorkspaceSelectionMethod.CurrentDirectory),
+            Workspace("references-filtered"),
             "docs",
             both ? ReferencesDirection.Both : ReferencesDirection.In,
             selectors);
@@ -345,6 +377,7 @@ public sealed class ReferencesDomainModelTests
         Assert.Equal(["docs", ".agents/skip.md", "docs", "./.agents/skip.md"], request.SelectorOccurrences.Select(row => row.Value));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "References reader failure retains unresolved incoming selector rows"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     [InlineData(false), InlineData(true)]
     public async Task EarlyReaderFailureRetainsIncomingSelectors(bool both)
@@ -373,7 +406,7 @@ public sealed class ReferencesDomainModelTests
             new SourceUniverseSelectorOccurrence(SourceUniverseSelectorRole.Exclude, "./.agents/skip.md", 4),
         };
         var request = new ReferencesRequest(
-            new CliWorkspace("/tmp/references-failed", "/tmp/references-failed", CliWorkspaceSelectionMethod.CurrentDirectory),
+            Workspace("references-failed"),
             "docs",
             both ? ReferencesDirection.Both : ReferencesDirection.In,
             selectors);
@@ -386,7 +419,7 @@ public sealed class ReferencesDomainModelTests
         Assert.Null(finding.Direction);
         Assert.Null(finding.Subject);
         Assert.NotNull(result.Next);
-        Assert.Equal("open-forge references --verbose", result.Next.Command);
+        Assert.Equal("open-forge references --detail debug", result.Next.Command);
         Assert.Null(result.Source);
         var selection = Assert.IsType<ReferencesIncomingSelection>(result.IncomingSelection);
         Assert.Equal(ReferencesSelectionMode.Filtered, selection.Mode);
@@ -455,7 +488,7 @@ public sealed class ReferencesDomainModelTests
             new SourceLogicalIdentity("docs", ".agents/docs.md"),
             new SourceLayer(
                 ".agents/docs.md",
-                "/tmp/references-workspace/.agents/docs.md",
+                PhysicalPath(WorkspaceRoot("references-workspace"), ".agents/docs.md"),
                 SourceDocumentForm.Markdown,
                 SourceLayerKind.Base));
 }

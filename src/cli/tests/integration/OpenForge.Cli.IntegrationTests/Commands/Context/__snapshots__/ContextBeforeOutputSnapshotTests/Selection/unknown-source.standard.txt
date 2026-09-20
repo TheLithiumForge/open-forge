@@ -1,0 +1,9 @@
+Cannot read context: No source has the ID missing/source.
+Workspace: <workspace>
+  Error  missing/source  Invalid source
+         No source has the ID missing/source.
+  sources: The Context source closure could not be resolved completely.
+  tokens: The Context source closure could not be resolved completely.
+  bytes: The Context source closure could not be resolved completely.
+  List source IDs and exact paths, then rerun Context.
+Next: open-forge route list --depth=all

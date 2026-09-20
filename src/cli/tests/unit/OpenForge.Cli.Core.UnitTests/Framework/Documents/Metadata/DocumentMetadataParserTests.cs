@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Metadata;
 
 public sealed class DocumentMetadataParserTests
 {
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Framework metadata reads flow and block tag sequences identically")]
     [InlineData("tags: [Docs, Architecture]")]
     [InlineData("tags:\n  - Docs\n  - Architecture")]
@@ -18,8 +19,10 @@ public sealed class DocumentMetadataParserTests
         Assert.Equal(FrameworkDocumentMetadataState.Complete, facts.State);
         var metadata = Assert.IsType<FrameworkDocumentMetadata>(facts.Metadata);
         Assert.Equal(["Docs", "Architecture"], metadata.Tags);
+        Assert.Equal(metadata.Tags, facts.ObservedTags);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Framework metadata recognizes only the Open Forge root")]
     [Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
     public void RecognizesOnlyOpenForgeRoot()
@@ -44,8 +47,10 @@ public sealed class DocumentMetadataParserTests
         Assert.Equal(["Route-List", "工作2"], metadata.Tags);
         Assert.Equal("  Exact owner  ", metadata.Responsibility);
         Assert.Equal(2, facts.TagSpans.Length);
+        Assert.Equal(metadata.Tags, facts.ObservedTags);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Framework metadata ignores Rune as opaque unrelated YAML")]
     [Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
     public void RuneOnlyMetadataIsAbsentEvenWithUnrelatedYamlFeatures()
@@ -58,6 +63,22 @@ public sealed class DocumentMetadataParserTests
         Assert.Empty(facts.TagSpans);
     }
 
+    [Trait("Boundary", "Input")]
+    [Theory(DisplayName = "Framework metadata preserves only validated observed tags while incomplete")]
+    [InlineData("---\nopen-forge:\n  tags: [Route-List, Évidence2]\n---\n", "Route-List|Évidence2")]
+    [InlineData("---\nopen-forge:\n  description: Description\n---\n", "")]
+    [InlineData("# Body\n", "")]
+    [Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
+    public void PreservesObservedTagsWithoutRelaxingMetadataState(string source, string expectedObservedTags)
+    {
+        var facts = Parse(source);
+
+        Assert.Equal(FrameworkDocumentMetadataState.Missing, facts.State);
+        Assert.Null(facts.Metadata);
+        Assert.Equal(expectedObservedTags, string.Join("|", facts.ObservedTags));
+    }
+
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Framework metadata reads Open Forge and ignores a sibling Rune root")]
     [Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
     public void OpenForgeTakesSoleAuthorityWhenRuneIsAlsoPresent()
@@ -71,6 +92,7 @@ public sealed class DocumentMetadataParserTests
         Assert.Equal(["Canonical"], metadata.Tags);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Framework metadata reports absent or incomplete authored values as missing")]
     [InlineData("# Body\n")]
     [InlineData("---\nunknown: value\n---\n")]
@@ -90,6 +112,7 @@ public sealed class DocumentMetadataParserTests
         Assert.Empty(facts.TagSpans);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Framework metadata fails closed for ambiguous or malformed authored values")]
     [InlineData("---\nopen-forge: [\n---\n")]
     [InlineData("---\nopen-forge:\n  description: &value Value\n  tags: [*value]\n---\n")]
@@ -107,6 +130,46 @@ public sealed class DocumentMetadataParserTests
         Assert.Equal(FrameworkDocumentMetadataState.Malformed, facts.State);
         Assert.Null(facts.Metadata);
         Assert.Empty(facts.TagSpans);
+        Assert.Empty(facts.ObservedTags);
+    }
+
+    [Trait("Boundary", "Input")]
+    [Theory(DisplayName = "Framework metadata preserves a safe description when required values are missing or malformed")]
+    [InlineData("---\nopen-forge:\n  description: Value\n---\n", nameof(FrameworkDocumentMetadataState.Missing), "Value")]
+    [InlineData("---\nopen-forge:\n  description: Value\n  tags: [1Invalid]\n---\n", nameof(FrameworkDocumentMetadataState.Malformed), "Value")]
+    [InlineData("# Body\n", nameof(FrameworkDocumentMetadataState.Missing), null)]
+    [Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
+    public void PreservesObservedDescriptionWithoutRelaxingMetadataState(
+        string source,
+        string expectedState,
+        string? expectedObservedDescription)
+    {
+        var facts = Parse(source);
+
+        Assert.Equal(Enum.Parse<FrameworkDocumentMetadataState>(expectedState), facts.State);
+        Assert.Equal(expectedObservedDescription, facts.ObservedDescription);
+        Assert.Null(facts.Metadata);
+        Assert.Empty(facts.ObservedTags);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Framework metadata facts own and validate observed tags")]
+    [Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
+    public void FactsOwnAndValidateObservedTags()
+    {
+        var tags = new List<string> { "First", "Second" };
+        var facts = FrameworkDocumentMetadataFacts.WithoutValues(
+            FrameworkDocumentMetadataState.Missing,
+            observedTags: tags);
+        tags.Clear();
+
+        Assert.Equal(["First", "Second"], facts.ObservedTags);
+        _ = Assert.Throws<ArgumentException>(() => FrameworkDocumentMetadataFacts.WithoutValues(
+            FrameworkDocumentMetadataState.Missing,
+            observedTags: ["1Invalid"]));
+        _ = Assert.Throws<ArgumentException>(() => FrameworkDocumentMetadataFacts.WithoutValues(
+            FrameworkDocumentMetadataState.Missing,
+            observedTags: new[] { "Valid", (string)null! }));
     }
 
     private static FrameworkDocumentMetadataFacts Parse(string source)

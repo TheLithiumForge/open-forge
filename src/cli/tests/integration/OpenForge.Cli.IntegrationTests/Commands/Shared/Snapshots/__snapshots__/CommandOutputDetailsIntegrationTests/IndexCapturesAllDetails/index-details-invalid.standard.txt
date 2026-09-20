@@ -1,0 +1,6 @@
+Cannot index missing: No source has the ID missing.
+Workspace: <workspace>
+  Error  missing  Invalid source
+         No source has the ID missing.
+  Choose a source ID or exact path.
+Next: open-forge route list --depth=all

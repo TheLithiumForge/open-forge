@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Libraries.Shared.Observation;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryMappingObserverIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library mapping observations distinguish exact dangling links missing links changed text and unsafe occupants")]
     [InlineData("exact", "Current"), InlineData("dangling", "Current"), InlineData("missing", "Missing")]
     [InlineData("changed", "Changed"), InlineData("file", "Changed"), InlineData("absolute", "Blocked"), InlineData("parent", "Blocked")]

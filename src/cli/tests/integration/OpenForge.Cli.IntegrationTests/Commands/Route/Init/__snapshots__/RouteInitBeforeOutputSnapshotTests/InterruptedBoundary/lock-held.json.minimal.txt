@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot initialize .agents/documents/_documents.md: Another Open Forge command holds the workspace lock. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-init.workspace-lock-unavailable",
+      "title": "Workspace lock is held",
+      "message": "Another Open Forge command holds the workspace lock. Nothing was changed.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "documents",
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route init",
+          "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan."
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/documents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/documents/_documents.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "entrypointsCreated": 0,
+    "entrypointsPresent": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "documents",
+      "path": ".agents/documents/_documents.md"
+    },
+    "scaffold": "generic",
+    "entrypoints": [
+      {
+        "path": ".agents/documents/_documents.md",
+        "outcome": "not-started",
+        "needsAuthoring": true
+      }
+    ],
+    "listedIn": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route init",
+    "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan."
+  }
+}

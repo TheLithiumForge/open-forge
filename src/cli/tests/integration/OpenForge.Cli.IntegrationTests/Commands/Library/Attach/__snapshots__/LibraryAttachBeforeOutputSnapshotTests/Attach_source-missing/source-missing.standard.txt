@@ -1,0 +1,4 @@
+Cannot attach team-knowledge: shared/missing is not a folder inside the workspace.
+Workspace: <workspace>
+  Error  shared/missing  Source folder is invalid
+         shared/missing is not a folder inside the workspace.

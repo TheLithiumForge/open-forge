@@ -1,0 +1,6 @@
+status=blocked
+source=Invalid
+lifecycle=Complete
+comparison=Complete
+Extension dependency cycle detected at 'helper'.
+The intended source contains a path without recorded ownership.

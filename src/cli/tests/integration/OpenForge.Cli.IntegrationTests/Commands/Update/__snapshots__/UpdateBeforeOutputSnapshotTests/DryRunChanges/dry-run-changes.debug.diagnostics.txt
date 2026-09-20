@@ -1,0 +1,12 @@
+status=completed
+mode=dry-run
+force=false
+prune=false
+automatic=true
+effects=1
+unchanged=13
+sections=0
+recovery=not-created
+verification=not-requested
+findings=0
+next=none

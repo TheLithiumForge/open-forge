@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 3,
+  "command": "route move",
+  "status": "blocked",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot move guidance/old guide: .agents/guidance/new guide.md already exists.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-move.destination-occupied",
+      "title": "Destination already exists",
+      "message": ".agents/guidance/new guide.md already exists.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/guidance/new guide.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "choose another destination",
+          "reason": "Choose another destination, then rerun Route Move."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesMoved": 0,
+    "sectionsUpdated": 0,
+    "linksRewritten": 0,
+    "filesScanned": null,
+    "errors": 1
+  },
+  "limitations": [
+    {
+      "what": "files scanned",
+      "why": "the reference scan was not completed",
+      "subject": null
+    }
+  ],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "destination": {
+      "id": null,
+      "path": null
+    },
+    "moved": [],
+    "rewrittenLinks": [],
+    "scan": {
+      "filesScanned": 0,
+      "occurrences": 0
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "sentence",
+    "command": "choose another destination",
+    "reason": "Choose another destination, then rerun Route Move."
+  }
+}

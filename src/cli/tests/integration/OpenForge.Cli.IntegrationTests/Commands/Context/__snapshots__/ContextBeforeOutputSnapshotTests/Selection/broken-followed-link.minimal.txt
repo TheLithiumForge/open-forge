@@ -1,0 +1,42 @@
+  Warning  .agents/docs/guide.md:8:1  Link target is missing
+         The link at .agents/docs/guide.md:8:1 points to missing.md, which does not exist. It was not followed.
+=== AGENTS.md ===
+# Workspace
+
+Read `.agents/loader.md`.
+
+=== .agents/loader.md (loader) ===
+# Open Forge Loader
+
+## Entries
+
+- [Documents](docs/_docs.md) - #LoadNow #Docs
+
+=== .agents/docs/_docs.md (docs) ===
+---
+open-forge:
+  description: Documents
+  tags: [Docs]
+---
+# Documents
+
+## Entries
+
+- [Guide](guide.md) - #Docs #Guide
+- [Reference](reference.md) - #Docs
+
+=== .agents/docs/guide.md (docs/guide) ===
+---
+open-forge:
+  description: Guide
+  tags: [Docs, Guide]
+---
+# Guide
+
+[Missing](missing.md).
+  sources: The followed Context links could not be resolved completely.
+  tokens: The followed Context links could not be resolved completely.
+  bytes: The followed Context links could not be resolved completely.
+  links followed: The followed Context links could not be resolved completely.
+  links not followed: The followed Context links could not be resolved completely.
+Next: open-forge doctor

@@ -29,7 +29,7 @@ The [current Templates contract](../../../framework/primitives/templates.md) def
 ### Distribution And Dogfood
 
 - The standard Framework ships only the Templates category contract.
-- The optional [Project Documents](../../../../../../../src/extensions/project-documents/content/.agents/templates/documents/), [Memory Starters](../../../../../../../src/extensions/memory-starters/content/.agents/templates/memory/), and [Planning](../../../../../../../src/extensions/planning/content/.agents/templates/planning/) payloads are canonical for their respective packaged Templates. Development Toolkit includes them through dependencies.
+- The optional [Project Documents](../../../../../../../src/extensions/project-documents/content/.agents/templates/documents/), [Collaboration](../../../../../../../src/extensions/collaboration/content/.agents/templates/collaboration/), [Orchestration](../../../../../../../src/extensions/orchestration/content/.agents/templates/orchestration/), [Workflow Support](../../../../../../../src/extensions/workflows/content/.agents/templates/workflows/), and [Planning](../../../../../../../src/extensions/planning/content/.agents/templates/planning/) payloads are canonical for their respective packaged Templates. Development Toolkit includes Project Documents and Planning through dependencies; the other packages remain separately selectable.
 - Repository-local copies of packaged leaf Templates remain aligned through automated parity verification. Repository-only Templates remain dogfood candidates rather than installable defaults.
 - Promoting another dogfood Template into the package requires its own review of generic value, authority boundary, portability, and source verification.
 

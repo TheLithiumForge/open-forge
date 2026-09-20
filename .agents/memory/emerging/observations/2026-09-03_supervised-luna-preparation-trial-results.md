@@ -11,7 +11,7 @@ open-forge:
 This Observation records three opt-in preparation samples. It does not replace
 the ordinary Task Mastermind, authorize Luna/max semantic implementation, or
 change the default development Workflow. The selected workflow remains
-[Supervised Luna Preparation Trial](../../../workflows/supervised-luna-preparation-trial.md).
+[Supervised Luna Preparation Trial](../../../skills/use-workflow/references/open-forge/supervised-luna-preparation-trial.md).
 
 ## Sample 1: Task 13 Native CI Preparation
 

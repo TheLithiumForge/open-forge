@@ -47,38 +47,56 @@ which files it may manage.
 These options keep the same spelling and meaning on every command that accepts
 them.
 
-| Option                     | Meaning                                                                                                                                                          |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--workspace <path>`       | Use one exact directory instead of the current directory. Relative paths resolve from the process current directory. The CLI does not search parent directories. |
-| `--json`                   | Write one complete structured result to standard output. The operation and its status are the same as in text output.                                            |
-| `--view=compact\|expanded` | Choose text or JSON detail. `expanded` is the default; `compact` keeps the identities, order, status, and next action needed for scanning.                       |
-| `--verbose`                | Add bounded diagnostic detail. Diagnostics go to standard error and do not change the operation or its status.                                                   |
-| `--help`                   | Show help for the selected command path and exit.                                                                                                                |
-| `--version`                | Show the executable version and exit.                                                                                                                            |
+| Option | Meaning |
+| --- | --- |
+| `--workspace <path>` | Use one exact directory instead of the current directory. Relative paths resolve from the process current directory; the CLI does not search parent directories. |
+| `--format <text\|json>` | Select human text or one schema-3 JSON result. The default is `text`; JSON always goes to standard output. |
+| `--detail <minimal\|standard\|full\|debug>` | Select result detail. The default is `minimal`; `debug` adds bounded diagnostics on standard error. |
+| `--detail-filter <error\|warning\|info\|all>` | Repeat to select listed finding severities. Counts, effects, status, and exit are unchanged. |
+| `--help` | Show help for the selected command path and exit. |
+| `--version` | Show the executable version and exit. |
 
 `--help` and `--version` are terminal modes. They do not resolve a workspace
 or run a domain operation, and they cannot be used together. Other well-formed
 global options may accompany them, but command operands and command-specific
 options remain invalid in a terminal invocation.
 
-`--json` uses the full expanded document by default. Add `--view=compact` for
-a minified document that retains core facts and selected content while omitting
-specified supporting evidence. Compact JSON identifies itself with
-`schemaVersion: 2` and `view: "compact"`; expanded JSON uses `schemaVersion: 1`.
-Mutation commands retain complete plans, effects and recovery details in both
-JSON views.
+The detail levels are cumulative. `minimal` leads with the result, subject or
+path, cause, and supported action; `standard` adds reasons and per-finding
+actions; `full` adds evidence, candidates, provenance, hashes, and finding
+codes; `debug` adds bounded diagnostics on standard error. Changed, restored,
+deleted, kept, and rewritten paths remain visible at every level. A dry run
+ends with `No files were changed.` and a verified no-op says `Nothing to do.`
 
-`--json` always writes its result to standard output. In text mode, `complete`,
-`attention`, and `incomplete` results use standard output. `failed`, `invalid`,
-`blocked`, and `interrupted` results use standard error. This keeps command
-output usable in a pipeline without hiding the operation's status.
+`--detail-filter` changes which findings are listed, not their totals or the
+operation's status. JSON records the selected detail and filter in one schema-3
+document with `summary`, `findings`, `effects`, `counts`, `limitations`, `data`,
+`recovery`, and `next` members. The text and JSON forms use the same typed
+operation result and never rerun the operation.
 
-Human results use colour automatically on supported Unix terminals: green for
-success, yellow for conditions that need attention, red for errors, and cyan for
-information labels. Written status labels always remain visible. Redirected
-output, Windows, missing or `dumb` `TERM`, and a nonempty `NO_COLOR` environment
-variable use plain text. JSON, selected file content and preview diffs stay plain.
-There is no colour option to configure.
+In text mode, `completed`, `completed-with-warnings`, and `incomplete` results
+use standard output. `failed`, `invalid-input`, `blocked`, and `cancelled`
+results use standard error. JSON always uses standard output. Human results use
+colour automatically on capable terminals: green for completed, yellow for
+completed-with-warnings and warnings, red for errors, and cyan for information
+labels. Written labels remain visible. Redirected output, Windows, missing or
+`dumb` `TERM`, and a nonempty `NO_COLOR` use plain text. JSON, selected file
+content, and preview diffs stay plain. There is no colour option to configure.
+
+### Prompts and noninteractive runs
+
+Mutating commands that need confirmation show their already-built minimal plan
+on standard error and ask the command-specific question. Install and Update use
+`Apply these changes? [y/N]`; Update includes the eligible prune deletion count
+when `--prune` is supplied. Library Attach, Sync, and Detach use the same
+confirmation boundary and expose `--automatic` to bypass only that question.
+
+Permission prompts list the affected path and scope. A directory grant means
+everything beneath that directory. `--allow-path <path>` supplies the same
+grant noninteractively. Explicit grants and interactive Always answers are
+published only after final confirmation; a declined, exhausted, or cancelled
+prompt leaves files and settings unchanged and returns `cancelled` with exit
+`130`. JSON, redirected operation, `--automatic`, and dry-run never prompt.
 
 ### Status and exit codes
 
@@ -87,13 +105,13 @@ code:
 
 | Status        | Exit code | Meaning                                                                                |
 | ------------- | --------: | -------------------------------------------------------------------------------------- |
-| `complete`    |       `0` | The requested operation or verified no-op completed.                                   |
+| `completed`   |       `0` | The requested operation or verified no-op completed.                                   |
 | `failed`      |       `1` | The operation began or could not finish and reported a failure.                        |
-| `attention`   |       `2` | The requested result is usable, but a reported condition needs review.                 |
+| `completed-with-warnings` | `2` | The requested result is usable, but a reported warning needs review. |
 | `incomplete`  |       `3` | Some required facts were unavailable, so the result is not complete.                   |
-| `invalid`     |       `4` | The command input does not follow its grammar or metadata rules.                       |
+| `invalid-input` |     `4` | The command input does not follow its grammar or metadata rules.                     |
 | `blocked`     |       `5` | A workspace, ownership, safety, or authority boundary prevents the operation.          |
-| `interrupted` |     `130` | The operation ended before completion, usually because input or cancellation ended it. |
+| `cancelled`   |     `130` | The operation ended before completion, usually because input or cancellation ended it. |
 
 The status is more useful than a Boolean success value. For example, a route
 inspection can complete while reporting a structural observation, whereas a
@@ -111,8 +129,8 @@ recovery observations.
 
 ```sh
 open-forge status
-open-forge status --view=compact
-open-forge status --json
+open-forge status --detail minimal
+open-forge status --format json --detail standard
 ```
 
 It is a report. It does not repair stale navigation, adopt changed files, or
@@ -317,7 +335,7 @@ The options are patches, not inferred replacements:
   removes it.
 - `--template <template-reference>` completes an eligible frontmatter-only
   body. If the target already has authored body content, the CLI preserves it
-  and reports `attention` rather than overwriting it.
+  and reports the applicable warning status rather than overwriting it.
 
 At least one metadata or Template operation is required. The selected Template
 contributes body content only; its frontmatter and continuing lifecycle do not
@@ -370,12 +388,12 @@ and recovery facts without changing them.
 
 ```sh
 open-forge doctor
-open-forge doctor --json
-open-forge doctor --verbose
+open-forge doctor --format json
+open-forge doctor --detail debug
 ```
 
 Use it when `status` or another command reports `blocked`, `incomplete`, or
-`attention`. Diagnosis can show the next repair boundary, but it does not
+`completed-with-warnings`. Diagnosis can show the next repair boundary, but it does not
 apply a proposal.
 
 ### `repair`
@@ -435,14 +453,18 @@ open-forge update --force --dry-run
 open-forge update --force --prune --dry-run
 ```
 
-Normal update applies safe new or unchanged content and preserves changed,
-missing, and retired divergence for review. `--force` replaces or restores
-changed or missing current content when eligible. `--prune` deletes eligible
-retired managed content. These are separate named boundaries; `--automatic`
-does not imply either one.
+Normal update replaces changed owned files and restores missing ones when the
+current ownership facts authorize the effect. It reports every replaced,
+restored, deleted, and retained path. Retired managed content is retained unless
+`--prune` is supplied; `--force` and `--prune` remain separate named boundaries,
+and `--automatic` implies neither one. When `.git` is present, the result says
+that previous content is available through `git diff`; without `.git`, the
+pre-effect recovery bundle is transient and is removed after successful
+verification, so no durable previous-content pointer is promised.
 
-The lifecycle record is `.agents/open-forge.lifecycle.json`. The Framework and
-Extension sections are independent.
+Ownership state is recorded in `.agents/open-forge.lock.json`; authored settings
+are in `.agents/open-forge.json`. Framework and Extension records share the lock
+but remain independent command domains.
 
 ### Cleanup
 

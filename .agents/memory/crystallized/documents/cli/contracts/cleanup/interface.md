@@ -28,7 +28,7 @@ Architecture](../../architecture.md) defines source and runtime boundaries,
 BCL-first filesystem structure, the workspace-lock boundary, and recovery
 identity relationships. This Interface Contract remains the authority for cleanup's public
 meaning. The development implementation provides this operation;
-[Task 20: Cleanup](../../../../../working/cli-development/tasks/operations/cleanup.md)
+[Task 20: Cleanup](../../../../../archived/cli-development/tasks/operations/cleanup.md)
 records its implementation and execution evidence. The CLI remains non-shipping.
 
 ## Purpose And Operation Boundary
@@ -56,7 +56,7 @@ open-forge cleanup [--dry-run] [global flags]
 
 The command has no child operations, aliases, or positional operands. The
 shared [Global CLI Flags Interface](../shared/global-flags/interface.md) defines
-`--workspace <path>`, `--json`, `--view=compact|expanded`, `--verbose`,
+`--workspace <path>`, `--format json`, `--detail <minimal|standard|full|debug>`, `--detail debug`,
 `--help`, and `--version`. Their grammar, defaults, repetition, composition,
 and terminal behavior apply without local redefinition.
 
@@ -106,7 +106,7 @@ candidate retains its path, current file kind, and integrity condition:
 
 | Artifact kind    | Candidate and eligibility facts                                                                                                                                                                                                                                                                                                                                |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Exact-name final | Semantic source-generated current schema-v1 validation, including the required immutable typed attribution, determines `Verified`, `Malformed`, `Unsupported`, or `Unavailable`. Only a `Verified` ordinary file is deletion-eligible; every other integrity condition, including missing or invalid attribution, is reported, preserved, and blocks deletion. |
+| Exact-name final | Semantic source-generated current schema-v1 validation, including the required immutable typed attribution, determines `Verified`, `Malformed`, `Unsupported`, or `Unavailable`. Only a `Verified` ordinary file is deletion-eligible. A readable ordinary `Malformed` final is reported as a warning, preserved, and may coexist with independently eligible removals; it is never deleted. Every other integrity or file-kind condition, including unsupported, unavailable, non-ordinary, unsafe, or unreadable state, is reported, preserved, and blocks deletion. |
 | Exact-name draft | An ordinary direct-child file is exact-name, path-only `Incomplete` support data, never a recovery preparation, and is deletion-eligible; observers do not inspect or use its bytes for attribution. A non-ordinary or otherwise unsafe exact-name draft is reported, preserved, and blocks deletion.                                                          |
 
 A final is `Verified` only when the schema discriminator is exactly `1`, the
@@ -158,8 +158,8 @@ Cooperating-process exclusion uses the existing same-workspace
 deletion. Cleanup writes no marker, PID, journal, or lock metadata.
 
 The catalogue excludes workspace files, raw evidence and snapshots, source
-files, managed Framework or Extension content, lifecycle documents and
-receipts, generated navigation, build outputs, package caches, logs, arbitrary
+files, managed Framework or Extension content, workspace settings, ownership
+locks and receipts, generated navigation, build outputs, package caches, logs, arbitrary
 support files, lookalike items, and arbitrary filesystem content. Cleanup does
 not recursively delete a support-artifact tree or infer provenance from a
 parent directory.
@@ -188,16 +188,21 @@ deterministic deletion plan before effects. The catalogue includes every exact
 named final or draft path and its observed kind and integrity condition. The plan
 includes only verified final ordinary files and ordinary exact-name drafts, with
 the required same-workspace lease boundary, deletion verification condition, and
-result effect. A malformed, unsupported, unavailable, non-ordinary, or unsafe
-exact-name candidate remains reported and preserved and blocks all deletion.
+result effect. A readable ordinary `Malformed` final is retained as a warning
+preservation entry and does not block independently eligible deletions; it is
+never a deletion entry. Unsupported, unavailable, unreadable, non-ordinary,
+unsafe, or changed exact-name candidates remain reported and preserved and
+block all deletion.
 
 `--dry-run` uses the same candidate catalogue, plan, deterministic ordering,
 expected-state facts, and preflight as application. It lists every exact-name
 candidate and identifies each eligible planned effect or blocking condition as
 contingent on application acquiring the same-workspace lease and passing final
 under-lease validation. It writes nothing,
-acquires no lease, creates no recovery bundle or other cleanup artifact, and does
-not create `attention` merely because deletions are planned.
+acquires no lease, creates no recovery bundle or other cleanup artifact. A
+readable ordinary `Malformed` final remains a warning preservation condition in
+the dry-run result and does not prevent independently eligible effects from
+being listed; planned deletions alone do not create `completed-with-warnings`.
 
 An empty candidate catalogue is a verified complete no-op and acquires no lease.
 Before any deletion, Cleanup acquires one live same-workspace
@@ -247,141 +252,163 @@ Only verified final ordinary files and ordinary exact-name drafts that pass fina
 under-lease validation are eligible. A bundle is not a restore source: Cleanup
 never extracts, binds, restores, rolls back, or compensates for target effects.
 It may report a bundle for an original workspace path after a workspace move,
-but it never binds that bundle to the newly selected path. Malformed,
-unsupported, unavailable, non-ordinary, or changed exact-name candidates remain
-reported and preserved and block deletion. Unknown, mismatched, differently
-keyed, or differently named items remain outside the candidate set and untouched.
+but it never binds that bundle to the newly selected path. A readable ordinary
+`Malformed` final remains reported and preserved as a warning and does not
+block independently eligible removals. Unsupported, unavailable, unreadable,
+non-ordinary, unsafe, or changed exact-name candidates remain reported and
+preserved and block deletion. Unknown, mismatched, differently keyed, or
+differently named items remain outside the candidate set and untouched.
 
 ## Human Output
 
-Human output comes from one typed cleanup result. The default expanded view
-includes the selected workspace and selection method, application or dry-run
-mode, complete filtered candidate-catalogue coverage, lease and final-validation
-facts when application reaches deletion, every exact-name candidate, its kind
-and integrity condition, every planned or verified deletion, preserved or
-remaining items, residual facts, and semantic status.
+The command uses the shared native report. The default detail is `minimal`; `standard`, `full` and `debug` add the catalogue-defined facts. `--detail-filter <error|warning|info|all>` is repeatable and changes only the rendered detail. Use `--format text` for this text report. Primary result text for `completed`, `completed-with-warnings` and `incomplete` is on stdout; primary errors for `invalid-input`, `blocked`, `failed` and `cancelled` are on stderr. There is no `Status:` line.
 
-Compact output retains the workspace identity, mode, deterministic artifact
-order, every candidate path and its kind, integrity and eligibility, every exact
-planned or verified effect, completeness and safety facts, semantic status, all
-findings, and at most one actual `Next:` command. Candidate facts appear beneath
-their effect without repeating the path. Candidate-only preview rows stay visible.
-Expanded adds workspace-lock and final-validation details during preview and the
-reason for Next. Both views retain actual lock and validation facts during apply. It does not replace
-the artifact list with a count.
+### Statuses and headlines
 
-Primary human `complete`, `attention`, and `incomplete` results go to stdout.
-Primary human `invalid`, `blocked`, `failed`, and `interrupted` results go to
-stderr. Each primary result remains together on its assigned stream. Human
-output may say `requires attention` for the `attention` status.
+| Status              | When                                            | Headline                                                                                                                        | Exit | Stream |
+| ------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed           | empty catalogue                                 | `No recovery data to remove.`                                                                                                   |    0 | stdout |
+| completed           | removed                                         | `Removed <N> recovery bundles and <K> unfinished drafts.` (omit a zero part; singular forms)                                    |    0 | stdout |
+| completed (dry run) | planned                                         | `Would remove <N> recovery bundles and <K> unfinished drafts.`                                                                  |    0 | stdout |
+| completed-with-warnings | readable ordinary malformed final retained; any independently eligible items are handled separately | normal cleanup headline plus the retained-candidate warning | 2 | stdout |
+| incomplete          | store could not be read completely              | `The recovery store could not be read completely. Nothing was removed.`                                                         |    3 | stdout |
+| invalid-input       | operand or bad flag                             | family                                                                                                                          |    4 | stderr |
+| blocked             | lock held                                       | `Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.`                                    |    5 | stderr |
+| blocked             | unsupported, unavailable, unreadable, non-ordinary, unsafe, or changed candidate | Identifies the preserved candidate and its actual blocking cause; states that nothing was removed. | 5 | stderr |
+| blocked             | catalogue changed under the lock                | `Cannot clean up: the recovery store changed while cleanup was running. Nothing was removed.`                                   |    5 | stderr |
+| failed              | a deletion or verification failed after effects | `Cleanup stopped after removing <n> of <m> items.`                                                                              |    1 | stderr |
+| cancelled           | Ctrl+C                                          | `Cleanup was cancelled after removing <n> of <m> items.` / `... Nothing was removed.`                                           |  130 | stderr |
 
-Both views lead with the operation, status, workspace and selection method.
-A preview is headed `Preview of recovery-data cleanup`; apply uses `Recovery-data
-cleanup`. Each row reports the typed outcome, residual and candidate facts.
-Only verified effects say `Removed and verified`. A planned removal explicitly
-requires the workspace lock and final validation before application. Preview
-ends with `No files changed (--dry-run).` Finding lines start with uppercase
-status and cause, followed by the stable code. Neither mode changes operation
-status, candidate eligibility or deletion behavior.
+### Text by level
 
-An empty catalogue is a verified complete no-op, acquires no lease, and does not
-prompt. A partial result names every artifact already deleted and verified and
-every artifact remaining or preserved.
+`minimal`, removed:
+
+```text
+Removed 2 recovery bundles and 1 unfinished draft.
+  <store>/myrepo-2026-09-13T21-04-11.zip
+  <store>/myrepo-2026-09-13T21-09-52.zip
+  <store>/myrepo-2026-09-13T21-11-30.draft
+```
+
+`minimal`, dry run: the same rows under `Would remove ...` and `No files were
+changed.`
+
+`minimal`, partial (stderr):
+
+```text
+Cleanup stopped after removing 1 of 3 items.
+  <path-1>   removed
+  <path-2>   could not be removed: <reason>
+  <path-3>   not started
+Next: open-forge cleanup
+```
+
+`standard` adds `Workspace:` and per row the kind and origin: `(bundle from
+update, verified)`, `(unfinished draft from extension install)`, and rows for
+items seen but not eligible (`<path>  left in place: not recognized`).
+
+`full` adds the lock and final-check facts in words and each item's
+integrity check.
+
+A readable ordinary malformed final is shown as a warning and remains in
+place; independently verified eligible items may still be removed. Unsupported,
+unavailable, unreadable, non-ordinary, unsafe, and changed candidates retain
+the blocking result and no-delete rule.
+
+### Representative transcripts by status
+
+### Transcript — completed
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-completed). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Cleanup/__snapshots__/CleanupBeforeOutputSnapshotTests/RecoveryCatalogue/nothing-to-remove.minimal.txt).
+
+### Transcript — completed-with-warnings
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-completed-with-warnings).
+
+### Transcript — incomplete
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-incomplete). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Cleanup/__snapshots__/CleanupBeforeOutputSnapshotTests/StoreUnreadable/store-unreadable.minimal.txt).
+
+### Transcript — invalid-input
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-invalid-input). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Cleanup/__snapshots__/CleanupBeforeOutputSnapshotTests/InvalidInput/invalid-input.standard.txt).
+
+### Transcript — blocked
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-blocked). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Cleanup/__snapshots__/CleanupBeforeOutputSnapshotTests/RecoveryCatalogue/lock-held.minimal.txt).
+
+### Transcript — failed
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-failed).
+
+### Transcript — cancelled
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#cleanup-cancelled). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Cleanup/__snapshots__/CleanupBeforeOutputSnapshotTests/CancelledBetweenRealDeletionStages/cancelled-partial.minimal.txt).
 
 ## Structured Output
 
-`--json` emits one complete structured result to stdout from the same typed
-result used by human output. It never prompts and never reruns catalogue
-formation, planning, preflight, deletion, or verification. Human text is not
-mixed into JSON stdout; bounded diagnostics use stderr under the shared output
-contract.
+`--format json` writes one schema-3 envelope to stdout for every report status. It contains the command, status, workspace when applicable, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
 
-The result retains, using the shared structured schema defined by the [Shared
-Result Coordinates](../shared/result-coordinates/interface.md):
+### JSON data by level
 
-- workspace and selection method;
-- dry-run or application mode and normalized flags;
-- filtered-catalogue coverage and every exact named final or draft with path,
-  kind, integrity condition, eligibility, and required lease boundary;
-- lease acquisition and one final under-lease filtered-catalogue comparison,
-  including relevant path, kind, and integrity facts, when application reaches
-  deletion;
-- every planned, deleted-and-verified, remaining, and preserved bundle or draft,
-  with current-workspace association and recovery-bundle provenance;
-- verification, cancellation, or failure facts; and
-- semantic status and at most one required `Next:` action.
-
-`--view` selects human or JSON presentation. Both JSON views retain every exact
-artifact and effect.
+| Level    | `data`                                                                               |
+| -------- | ------------------------------------------------------------------------------------ |
+| minimal  | `{ mode, items: [ { path, kind: "bundle" \| "draft", outcome } ] }`                  |
+| standard | + per item `origin` (command), `integrity`, plus `notEligible: [ { path, reason } ]` |
+| full     | + `lock`, `finalCheck` in words                                                      |
 
 ## Semantic Results
 
-Cleanup uses the shared seven-status vocabulary:
+The status and exit mapping above are unchanged by detail or format. Root effects and recovery receipts retain their complete result facts at every detail level; command-owned data follows the catalogue's level rows.
 
-| Result        | Meaning                                                                                                                                                                                                                                                                                                   |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | The complete safe candidate catalogue and contingent deletion plan were established in dry-run, application acquired the lease and deleted and verified every final planned artifact, or a complete current catalogue verified that no candidate exists without acquiring a lease.                        |
-| `attention`   | Reserved by the shared status contract and reachable only if a finite condition already required by that shared current authority applies. Cleanup has no such accepted condition, so planned deletions and preserved unknown items do not produce it.                                                    |
-| `incomplete`  | Safe catalogue enumeration or another required coverage fact could not be completed. No deletion begins while the operation has only this pre-effect condition.                                                                                                                                           |
-| `invalid`     | Operands, an unknown or malformed flag, an invalid value, an invalid repetition, or command-specific input in a terminal help/version mode prevents request resolution.                                                                                                                                   |
-| `blocked`     | The required same-workspace lease cannot be acquired, an exact-name candidate is malformed, unsupported, unavailable, non-ordinary, or unsafe, the filtered under-lease candidate set differs from the planned catalogue, or final revalidation prevents safe deletion. No unstarted deletion is applied. |
-| `failed`      | An unexpected deletion, verification, or other partial application failure occurs after effects begin. Already verified deletions and remaining or residual items are reported.                                                                                                                           |
-| `interrupted` | The caller cancels and no stronger unsafe residual condition applies. Any already verified monotonic deletions and all remaining items are reported.                                                                                                                                                      |
+### Effects wording
 
-For ordinary pre-effect conditions, status precedence is `blocked` >
-`incomplete` > `attention` > `complete`. Invalid input stops before catalogue
-formation. `failed` and `interrupted` preserve their event meaning. Exact
-process-status mapping is defined by the [Shared Result
-Coordinates](../shared/result-coordinates/interface.md).
+`<path>  removed` / `would be removed` / `could not be removed: <reason>` /
+`not started` / `left in place: <reason>`.
+
+### Counts and limitations
+
+`bundlesRemoved`, `draftsRemoved`, `itemsLeftInPlace`.
+
+### Next rules
+
+Partial, lock or changed -> `open-forge cleanup`; damaged -> a sentence;
+completed -> none.
 
 ## Errors And Boundaries
 
-Cleanup rejects or blocks:
+The findings catalogue below is the command's finite error and warning vocabulary. Findings keep their code, severity, family, subject and cause; detail filtering affects display only. A blocked, failed or cancelled result prevents further effects according to the catalogue.
 
-- any positional operand, artifact ID, path, selector, profile, or generic
-  deletion input;
-- an unknown, malformed, repeated, or terminal-conflicting flag;
-- a selected workspace that is unavailable or not a directory;
-- incomplete required catalogue enumeration;
-- an exact-name final that is malformed, unattributed, unsupported, unavailable, non-ordinary,
-  or unsafe, or a planned draft path that is not the exact named ordinary file
-  under the selected workspace bucket;
-- failure to acquire the same-workspace lease, including when a cooperating
-  mutator owns it;
-- an under-lease filtered exact-name candidate set or relevant current fact that
-  differs from the planned catalogue; or
-- an unexpected partial deletion or verification failure.
+### Findings catalogue
 
-Unknown, user-created, arbitrary, and otherwise differently named items remain
-outside candidate comparison and are preserved rather than reclassified or
-deleted. Every ordinary error names `cleanup`, the affected workspace or bundle
-or draft when known, the direct cause, and at most one useful next action.
+| Code                                   | Severity | Family                     | Message                                                                      | Next                           |
+| -------------------------------------- | -------- | -------------------------- | ---------------------------------------------------------------------------- | ------------------------------ |
+| cleanup.invalid-input                  | error    | invalid-input              |                                                                              |                                |
+| cleanup.workspace-unavailable          | error    | workspace-unavailable      |                                                                              |                                |
+| cleanup.workspace-not-directory        | error    | workspace-not-directory    |                                                                              |                                |
+| cleanup.workspace-unsafe               | error    | workspace-unsafe           |                                                                              |                                |
+| cleanup.workspace-lock-unavailable     | error    | workspace-lock-unavailable | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Cleanup/Shared/Wording/CleanupWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`cleanup.workspace-lock-unavailable`).                                                   | `open-forge cleanup`           |
+| cleanup.catalogue-incomplete           | warning  | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Cleanup/Shared/Wording/CleanupWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`cleanup.catalogue-incomplete`).                 | `open-forge doctor`            |
+| cleanup.recovery-final-malformed       | warning  | local                      | [`cleanup.phrase.is-damaged-and-was-left-in-place`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Cleanup/CleanupPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Cleanup/Shared/Wording/CleanupWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`cleanup.recovery-final-malformed`).                                   | remove it by hand after review |
+| cleanup.recovery-final-unsupported     | error    | local                      | [`cleanup.phrase.was-written-by-an-unsupported-version-and-was-left-in-place`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Cleanup/CleanupPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Cleanup/Shared/Wording/CleanupWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`cleanup.recovery-final-unsupported`).        | remove it by hand after review |
+| cleanup.recovery-final-unavailable     | error    | local                      | [`cleanup.phrase.could-not-be-read-and-was-left-in-place`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Cleanup/CleanupPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Cleanup/Shared/Wording/CleanupWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`cleanup.recovery-final-unavailable`).                            | none                           |
+| cleanup.recovery-draft-unsafe          | error    | local                      | [`cleanup.phrase.is-not-an-ordinary-file-and-was-left-in-place`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Cleanup/CleanupPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Cleanup/Shared/Wording/CleanupWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`cleanup.recovery-draft-unsafe`).                      | none                           |
+| cleanup.catalogue-changed-during-apply | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Cleanup/Shared/Wording/CleanupWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`cleanup.catalogue-changed-during-apply`). | `open-forge cleanup`           |
+| cleanup.candidate-changed-during-apply | error    | local                      | [`cleanup.phrase.changed-while-cleanup-was-running-and-was-left-in-place`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Cleanup/CleanupPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Cleanup/Shared/Wording/CleanupWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`cleanup.candidate-changed-during-apply`).            | `open-forge cleanup`           |
+| cleanup.deletion-failed                | error    | local                      | [`cleanup.removal.failed-path`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Cleanup/CleanupPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Cleanup/Shared/Wording/CleanupWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`cleanup.deletion-failed`).                                     | `open-forge cleanup`           |
+| cleanup.verification-failed            | error    | local                      | [`cleanup.label.could-not-be-removed`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Cleanup/CleanupText.cs), [`cleanup.label.still-exists-after-removal`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Cleanup/CleanupText.cs), [`cleanup.phrase.still-exists-after-removal`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Cleanup/CleanupPhrases.cs), [`cleanup.removal.failure-reason`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Cleanup/CleanupPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Cleanup/Shared/Wording/CleanupWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`cleanup.verification-failed`).                                         | `open-forge cleanup`           |
+| cleanup.operation-failed               | error    | operation-failed           |                                                                              |                                |
+| cleanup.interrupted                    | error    | cancelled |                                                                              |                                |
 
 ## Scenarios
 
-Discover and remove all currently eligible artifacts in the exact current
-workspace:
+### Catalogue situations
 
-```text
-open-forge cleanup
-```
+`nothing-to-remove`, `two-bundles-one-draft`, `dry-run`, `damaged-bundle`,
+`lock-held`, `store-unreadable`, `deletion-failed-partial`, `cancelled-partial`,
+`invalid-input`.
 
-Preview the same filtered exact-name default-all candidate catalogue as structured
-output. Each proposed deletion remains contingent on application acquiring the
-same-workspace lease and completing final validation:
-
-```text
-open-forge cleanup --dry-run --json
-```
-
-Repeat after successful cleanup:
-
-```text
-open-forge cleanup
-```
-
-The repeated invocation forms a fresh catalogue. With no exact named final or
-draft candidate, it returns a verified complete no-op.
+Each status has one representative native text transcript above. JSON uses the same status and command facts under the schema-3 envelope.
 
 ## Non-Goals And Technical Boundary
 
@@ -394,7 +421,8 @@ Cleanup does not:
   to a person;
 - delete unknown, differently keyed, differently named, or non-ordinary items;
 - remove raw evidence or snapshots, source or managed
-  content, lifecycle documents or receipts, generated navigation, build output,
+  content, workspace settings, ownership locks or receipts, generated navigation,
+  build output,
   package caches, logs that are not positively identified as one of the listed
   cleanup artifact kinds, or arbitrary support files;
 - run Doctor, Repair, Index, Framework or Extension lifecycle, package cleanup,
@@ -421,9 +449,10 @@ Conformance evidence must cover:
   modes, and idempotent Boolean repetition;
 - exact CWD and `--workspace` selection without parent or marker discovery;
 - filtered exact-name candidate formation, semantic final-ZIP integrity,
-  deletion eligibility only for verified finals and ordinary drafts, and
-  blocking preservation of malformed, unsupported, unavailable, non-ordinary,
-  or unsafe exact-name candidates;
+  deletion eligibility only for verified finals and ordinary drafts, warning
+  preservation of a readable ordinary malformed final with independent eligible
+  removal, and blocking preservation of unsupported, unavailable, unreadable,
+  non-ordinary, or unsafe exact-name candidates;
 - representative payload validation with exact declared
   lengths and hashes, bounded buffers and memory independent of entry size, and
   no extraction, disclosure, retention, or materialization;
@@ -453,8 +482,9 @@ Conformance evidence must cover:
 - immediate final semantic validation, ordinary `File.Delete`, absence
   verification, monotonic partial application, residual reporting,
   interruption, and fresh-catalogue rerun;
-- all seven statuses, reserved unreachable `attention`, human stream rules,
-  complete JSON parity, exact effect visibility, and no mixed JSON stdout; and
+- all seven statuses, the accepted reachable `completed-with-warnings` warning
+  condition, human stream rules, complete JSON parity, exact effect visibility,
+  and no mixed JSON stdout; and
 - no Doctor, Repair, Index, lifecycle, package, build, arbitrary filesystem, or
   Gate 6 cleanup side effects.
 
@@ -469,23 +499,20 @@ Conformance evidence must cover:
 - [Historical CLI Decision Agenda](../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
+CLI help syntax: [`cleanup.help.syntax`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Cleanup/CleanupText.cs).
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef cleanup.help.syntax -->
+<!-- @OpenForgeTextRef cleanup.label.could-not-be-removed -->
+<!-- @OpenForgeTextRef cleanup.label.still-exists-after-removal -->
+<!-- @OpenForgeTextRef cleanup.phrase.changed-while-cleanup-was-running-and-was-left-in-place -->
+<!-- @OpenForgeTextRef cleanup.phrase.could-not-be-read-and-was-left-in-place -->
+<!-- @OpenForgeTextRef cleanup.phrase.is-damaged-and-was-left-in-place -->
+<!-- @OpenForgeTextRef cleanup.phrase.is-not-an-ordinary-file-and-was-left-in-place -->
+<!-- @OpenForgeTextRef cleanup.phrase.still-exists-after-removal -->
+<!-- @OpenForgeTextRef cleanup.phrase.was-written-by-an-unsupported-version-and-was-left-in-place -->
+<!-- @OpenForgeTextRef cleanup.removal.failed-path -->
+<!-- @OpenForgeTextRef cleanup.removal.failure-reason -->

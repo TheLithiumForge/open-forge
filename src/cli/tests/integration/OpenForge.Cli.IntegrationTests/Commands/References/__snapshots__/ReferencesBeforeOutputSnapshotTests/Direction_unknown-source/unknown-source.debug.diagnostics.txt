@@ -1,0 +1,5 @@
+status=invalid-input
+incoming=0
+outgoing=0
+scanned=0
+The source ID does not identify a retained logical source.

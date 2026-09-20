@@ -9,10 +9,11 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Create;
 
 public sealed class ExtensionCreateCompositionIntegrationTests
 {
-    [Fact(DisplayName = "Root-composed Extension Create wizard reads supplied stdin and writes prompts only to stderr"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
-    public async Task RootCompositionOwnsPromptCapableWizardSession()
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Root-composed Extension Create prompt reads supplied stdin and writes prompts only to stderr"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
+    public async Task RootCompositionOwnsPromptCapableInteraction()
     {
-        using var catalogue = TemporaryWorkspace.Create("extension-create-composed-wizard");
+        using var catalogue = TemporaryWorkspace.Create("extension-create-composed-prompt");
         var before = catalogue.SnapshotHashes();
         var run = await RunAsync(
             ["extension", "create", "--dry-run"],
@@ -24,17 +25,18 @@ public sealed class ExtensionCreateCompositionIntegrationTests
         Assert.Equal(0, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
         Assert.Equal(
-            $"Stable ID (lowercase ASCII letters or digits separated by single hyphens):{Environment.NewLine}"
-            + $"Catalogue path (existing ordinary directory; aliases are allowed):{Environment.NewLine}",
+            $"Extension ID (lowercase, digits and hyphens):{Environment.NewLine}"
+            + $"Package folder:{Environment.NewLine}",
             run.StandardError);
-        Assert.Contains("Package: development-toolkit", run.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Mode: dry-run", run.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Status: complete", run.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Would create the development-toolkit Extension scaffold at", run.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Would create ", run.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("No files were changed.", run.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Stable ID", run.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("remaining", run.RemainingInput);
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "Root-composed Extension Create prompts only for eligible human omissions"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     [InlineData("explicit", false, false, 0, CliSemanticStatus.Complete, "development-toolkit")]
     [InlineData("redirected", true, true, 4, CliSemanticStatus.Invalid, "development-toolkit")]
@@ -67,6 +69,7 @@ public sealed class ExtensionCreateCompositionIntegrationTests
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "Root Extension group and Create leaf help derive from the composed command tree"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     [InlineData("root")]
     [InlineData("group")]
@@ -119,7 +122,7 @@ public sealed class ExtensionCreateCompositionIntegrationTests
             "explicit" => ["extension", "create", "development-toolkit", "--path", cataloguePath, "--dry-run"],
             "redirected" => ["extension", "create", "--dry-run"],
             "automatic" => ["extension", "create", "--automatic", "--dry-run"],
-            "json" => ["extension", "create", "--json", "--dry-run"],
+            "json" => ["extension", "create", "--format", "json", "--dry-run"],
             _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "The non-prompt scenario is not defined."),
         };
 

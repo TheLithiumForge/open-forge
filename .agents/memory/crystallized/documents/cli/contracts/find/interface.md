@@ -16,7 +16,7 @@ claim executable behavior.
 The [Shared Result Coordinates](../shared/result-coordinates/interface.md)
 defines only the shared JSON envelope, source-location primitive, and
 status/process coordinates. This Interface owns the exact command-local
-`find.result` object, its findings and finite values, and every `find`-specific
+`find` command-data object, its findings and finite values, and every `find`-specific
 `next` value. The [Technical Design](technical-design.md) records accepted
 implementation choices without changing this contract.
 
@@ -72,8 +72,8 @@ contract defines the global flags used here.
 - `find` has no positional operands. Every query value names
   the field or source-universe dimension it constrains, so source references,
   tag values, and heading values use named flags.
-- The six shared global flags, `--workspace`, `--json`,
-  `--view`, `--verbose`, `--help`, and `--version`, apply to `find` under the shared
+- The six shared global flags, `--workspace`, `--format json`,
+  `--detail`, `--detail debug`, `--help`, and `--version`, apply to `find` under the shared
   [Global CLI Flags](../shared/global-flags/interface.md) contract. That contract supplies their
   complete spelling, grammar, defaults, repetition rules, terminal behavior,
   and errors; this command does not restate them.
@@ -90,10 +90,10 @@ contract defines the global flags used here.
 | `--within=<part>[,<part>...]`  | Selection  | One escaped comma-separated region union  | Each predicate uses its natural authored region                     | Repeating the flag is invalid. Parts compose inside one value; duplicate parts have no extra effect. |
 | `--content=<part>[,<part>...]` | Projection | One escaped comma-separated content union | No content projection                                               | Repeating the flag is invalid. Parts compose inside one value in canonical result order.             |
 
-- The shared `--view` flag applies to `find`. Its values,
+- The shared `--detail` flag applies to `find`. Its values,
   default, repetition, composition, and JSON relationship remain defined only by
-  the [Global CLI Flags](../shared/global-flags/interface.md) contract. The Find-specific compact
-  and expanded result content appears under [Human Result View](#human-result-view).
+  the [Global CLI Flags](../shared/global-flags/interface.md) contract. The Find-specific minimal
+  and standard result content appears under [Human Output](#human-output).
 
 The [Behavior Contract](behavior.md) records only the deterministic operation
 stages and conformance mechanics behind these public facts. This file owns the
@@ -315,820 +315,149 @@ complete public selection, matching, projection, and result meaning.
   inapplicable members of the region union contribute no candidates and do not
   invalidate the query.
 
-### Human Result View
+## Human Output
 
-- The shared `--view` flag selects the Find-specific human
-  result shapes below. Under the shared contract, changing the view does not
-  change candidate selection, matching, evidence collection, or status. The
-  shared contract remains the sole owner of the flag's values, default,
-  repetition, composition, and JSON relationship.
+The command uses the shared native report. The default detail is `minimal`; `standard`, `full` and `debug` add the catalogue-defined facts. `--detail-filter <error|warning|info|all>` is repeatable and changes only the rendered detail. Use `--format text` for this text report. Primary result text for `completed`, `completed-with-warnings` and `incomplete` is on stdout; primary errors for `invalid-input`, `blocked`, `failed` and `cancelled` are on stderr. There is no `Status:` line.
 
-- `compact` begins with one tab-separated result line, followed
-  by one source identity per line. The summary visibly identifies whether the
-  effective source universe is the default or filtered universe:
+### Statuses and text
 
-  ```text
-  result=complete	coverage=complete	universe=default	matches=2
-  <source-id>	<canonical-path>
-  ```
+| Status                  | When                                   | Text                                                                                                                               | Exit | Stream |
+| ----------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | matches                                | rows                                                                                                                               |    0 | stdout |
+| completed               | no matches                             | `No sources match <query>.` (`No sources match --tag Zzz.`; bare inventory empty: `No Markdown sources were found under .agents.`) |    0 | stdout |
+| completed-with-warnings | requested section absent, ID collision | warning rows, blank line, match rows                                                                                               |    2 | stdout |
+| incomplete              | a source could not be inspected        | warning rows, blank line, the safe rows; `standard` headline says `The search is incomplete.`                                      |    3 | stdout |
+| invalid-input           | bad selector, part, require value      | `Cannot search: <problem>.`                                                                                                        |    4 | stderr |
+| blocked                 | ambiguous or unsafe selector           | `Cannot search: <reason>.`                                                                                                         |    5 | stderr |
+| failed                  | unexpected error                       | `Find stopped because of an unexpected error: <reason>.`                                                                           |    1 | stderr |
+| cancelled               | Ctrl+C                                 | `Find was cancelled.`                                                                                                              |  130 | stderr |
 
-  Example:
+### Text by level
 
-  ```text
-  result=complete	coverage=complete	universe=default	matches=2
-  directives/public-facing-writing	.agents/directives/public-facing-writing.md
-  directives/security	.agents/directives/security.md
-  ```
+`minimal`:
 
-  The compact stream has no heading, workspace block, query explanation,
-  selector detail, description, or optional evidence. A filtered invocation uses
-  `universe=filtered` in the same summary position without repeating its full
-  selectors. A result with a required next action follows its summary with the
-  concise finding and next action. An `attention` result has no `Next:` line. It
-  is deterministic, understandable without color,
-  and exposes both ID and path as required by the shared source-reference
-  contract.
+```text
+memory                          .agents/memory/_memory.md
+memory/archived                 .agents/memory/archived/_archived.md
+memory/crystallized             .agents/memory/crystallized/_crystallized.md
+```
 
-  When `--content` is present, the summary adds projection coverage immediately
-  after match coverage:
+Two columns, aligned with spaces, id then path. IDs may contain spaces, so
+nothing promises that whitespace splits the row; JSON is the machine form.
 
-  ```text
-  result=attention	coverage=complete	projection=complete	universe=default	matches=1
-  ```
+`standard`:
 
-  `projection` uses `not-started`, `complete`, `incomplete`, `blocked`, `failed`,
-  or `interrupted`, matching structured projection coverage. A known missing
-  section keeps `projection=complete` and produces `attention`; unavailable or
-  ambiguous requested content uses `projection=incomplete`. The projection field
-  is absent from compact output only when `--content` is omitted.
+```text
+12 sources match --tag Memory.
+memory                          .agents/memory/_memory.md                        Self-growing Markdown memory for active work, coordination, accepted knowledge, candidates, and history
+memory/archived                 .agents/memory/archived/_archived.md             Useful history that no longer controls current work
+```
 
-- `expanded` leads with the number of matching sources, status, workspace,
-  selection method and coverage. Findings appear before matches. Each match
-  retains its exact ID/path, description when present, and the evidence that
-  explains why it matched. Search details follow the useful answer: predicates,
-  requirement, effective regions, supplied selectors and their resolved identities,
-  default/filtered source universe and inspected/candidate counts. Optional absent
-  selector detail is omitted rather than printed as a series of `none` fields.
-  Unknown counts remain explicit; incomplete search is never a complete empty
-  answer. Matching coverage is shown when it differs from overall coverage;
-  projection coverage is shown when content was requested.
+`full` adds under each row the match evidence (`  matched tag Memory in
+frontmatter`) and, after the rows, the search details: filters, require,
+regions searched, source set, `21 of 21 sources inspected`.
 
-  Illustrative excerpt before search details:
+`--content` parts print after the rows through the shared
+`ContentPartsTextRenderer` from [17](../../../../../working/cli-development/tasks/task30-g4/17-context.md), with the same delimiter
+form, at every level.
 
-  ```text
-  Found 1 matching source.
-  Status: complete
-  Workspace: /work/demo
-  Selected by: current directory
-  Coverage: complete
+### Representative transcripts by status
 
-  directives/review
-    Path: .agents/directives/review.md
-    Description: Review proposed changes
-    Matched:
-      Testing — frontmatter, base
-  ```
+### Transcript — completed
 
-  Both views retain every finding's status/code, cause, full source coordinates
-  and candidate identities. Human locations use line/column; byte ranges remain
-  in JSON. Compact keeps the TSV summary and rows above. It no longer truncates
-  finding subjects. The actual typed Next command is printed once when present;
-  expanded adds its existing reason. Expanded Next remains after match/search
-  explanation and before requested projection blocks. Selected authored text
-  remains exact, including its existing content-block boundaries.
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#find-completed).
 
-- `--verbose` retains its shared diagnostic meaning. It does
-  not select expanded view. The command never changes view based on terminal
-  interactivity or output redirection.
+### Transcript — completed-with-warnings
 
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#find-completed-with-warnings).
+
+### Transcript — incomplete
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#find-incomplete).
+
+### Transcript — invalid-input
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#find-invalid-input).
+
+### Transcript — blocked
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#find-blocked).
+
+### Transcript — failed
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#find-failed).
+
+### Transcript — cancelled
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#find-cancelled).
 ### Content Projection
 
-- `--content` reuses the per-source result-content parts and
-  section grammar from [`context` Interface Contract](../context/interface.md):
+`--content=<part>[,<part>...]` requests exact per-source content after the match rows. Supported parts are `metadata`, `frontmatter`, `headings`, `body`, and `section:<name>`. The value is a singleton input; compose several parts in its comma-separated value. The context-specific `paths` part is invalid for `find`.
 
-  ```text
-  --content=<part>[,<part>...]
-  ```
+When a requested section is known to be absent, the source remains in the result with `find.projection-missing` and completed-with-warnings status. An ambiguous or unavailable requested projection keeps the safe matches and forms incomplete status. Find does not widen the effective source universe to resolve route facts or infer a Framework scope.
+## Structured Output
 
-- The supported `--content` parts are:
+`--format json` writes one schema-3 envelope to stdout for every report status. The envelope carries the command, status, workspace, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
 
-  | Part             | Result                                        |
-  | ---------------- | --------------------------------------------- |
-  | `metadata`       | Complete Find source metadata block           |
-  | `frontmatter`    | Complete authored YAML frontmatter            |
-  | `headings`       | Parsed heading outline without section bodies |
-  | `body`           | Complete Markdown after frontmatter           |
-  | `section:<name>` | Exact parsed Markdown section                 |
+### JSON data by level
 
-  The context-specific `paths` part is invalid for `find`. It represents context
-  resolver order, physical layers, and inclusion reasons, while Find orders
-  matched logical sources by its inventory contract. Compact Find view already
-  supplies the token-friendly matched ID-and-path list.
-
-  Find metadata contains the logical result position, automatic ID, canonical
-  base path, routed or unrouted state, mechanically established route when
-  present, and each physical base or overwrite layer path and kind. `route` is
-  the automatic ID when one unambiguous Loader-rooted route reaches that source;
-  an unrouted source reports null route. When routing facts are ambiguous or
-  unavailable, the metadata projection is unavailable and projection coverage is
-  incomplete rather than guessing. A source-universe filter is not widened to
-  read route-supporting sources outside the effective universe; if those facts
-  are required, the affected metadata projection is unavailable. Find does not
-  infer a scope because the Framework scope role is authored meaning, not a
-  mechanically identifiable path segment. It does not invent context inclusion
-  reasons or context order. Match evidence remains part of the expanded Find
-  result rather than source metadata. Authored YAML remains available through
-  `frontmatter`.
-
-- Unlike `context`, omitting `--content` in `find` emits no
-  content projection. Compact or expanded match output still appears according
-  to `--view`. Supplying `--content` appends selected source blocks and authored
-  parts in result order.
-- Matching and presentation remain independent:
-
-  ```text
-  # Search frontmatter tags; return compact identities
-  open-forge find --tag=Directive --view=compact
-
-  # Search body tags; return complete bodies
-  open-forge find \
-    --tag=Architecture \
-    --within=body \
-    --content=body
-
-  # Return CLI-generated metadata for matched sources
-  open-forge find --tag=Directive --content=metadata
-
-  # Return heading outlines for matched sources
-  open-forge find --tag=Directive --content=headings
-
-  # Find tagged sources with Instructions and return those sections
-  open-forge find \
-    --tag=Directive \
-    --heading=Instructions \
-    --content=section:Instructions
-
-  # Find either heading and return both exact sections when present
-  open-forge find \
-    --heading=Axioms \
-    --heading=Instructions \
-    --require=any \
-    --content=section:Axioms,section:Instructions
-
-  # Expanded match evidence plus frontmatter
-  open-forge find \
-    --tag=CurrentTruth \
-    --view=expanded \
-    --content=frontmatter
-  ```
-
-- When neither physical layer contains a requested section, the
-  source remains present with a named missing-section finding. A known absence
-  after complete inspection produces `attention`; an ambiguous section or
-  incomplete layer inspection produces `incomplete`. Compact output retains
-  result and projection coverage, source identity, and the affected section
-  name. Expanded and structured output add layer, location, evidence, and every
-  independently available section. Section projection never changes whether the
-  source matched the Find predicates.
-
-### Structured Result
-
-- `--json` serializes the selected structured projection of the typed result.
-  `--view` selects compact or expanded JSON detail. `--content` continues to
-  select exact result content in either view.
-- Repeating `--view`, `--content`, or `--within` is invalid.
-  Several parts must be composed inside one comma-separated value for that
-  dimension.
-- The structured result exposes the complete typed public result described in
-  [Structured Result Fields](#structured-result-fields) and the source-universe
-  facts in [Filtered Coverage, Results, And Ordering](#filtered-coverage-results-and-ordering).
-  The exact command-local schema is defined below. The [Shared Result
-  Coordinates](../shared/result-coordinates/interface.md) supply only the shared
-  top-level envelope, location, and status coordinates.
-- The JSON document preserves the complete typed facts above and the semantic
-  status through the shared top-level envelope. Its command-local members are
-  not duplicated in the shared result-coordinate contract.
-
-#### Exact Command-Local Schema
-
-The following camel-case grammar lists every command-local member in wire order.
-No member in this grammar is omitted. `SourceLocation` is the shared primitive
-defined by the [Shared Result Coordinates](../shared/result-coordinates/interface.md).
-The shared envelope's `command` member is exactly `find`; the complete public
-command form remains `open-forge find`.
-
-```text
-type FindResult = {
-  universe: Universe;
-  query: Query;
-  presentation: Presentation;
-  coverage: Coverage;
-  findings: Finding[];
-  matches: Match[];
-};
-
-type Universe = {
-  mode: "default" | "filtered";
-  include: Selector[];
-  exclude: Selector[];
-  candidateCount: nonnegative-integer | null;
-  inspectedCount: nonnegative-integer | null;
-  matchedCount: nonnegative-integer | null;
-};
-
-type Selector = {
-  value: string;
-  form: "id" | "path" | null;
-  resolution: "resolved" | "invalid" | "unknown" | "unsupported" | "ambiguous" | "unsafe";
-  identity: { id: string; path: string } | null;
-  sourceKind: "loader" | "entrypoint" | "skill" | "ordinary" | null;
-  expansion: "folder" | "source" | null;
-  candidates: { id: string; path: string }[];
-};
-
-type Query = {
-  predicates: Predicate[];
-  effectivePredicates: Predicate[];
-  require: "all" | "any";
-  within: Within;
-};
-
-type Predicate = {
-  kind: "tag" | "heading";
-  value: string;
-};
-
-type Within = {
-  supplied: CanonicalRegion[];
-  tag: CanonicalRegion[];
-  heading: CanonicalRegion[];
-};
-
-type Presentation = {
-  view: {
-    supplied: "compact" | "expanded" | null;
-    effective: "compact" | "expanded";
-  };
-  content: {
-    supplied: CanonicalPart[];
-    effective: CanonicalPart[];
-  };
-};
-
-type Coverage = {
-  state: CoverageState;
-  matching: CoverageState;
-  projection: ProjectionCoverageState;
-};
-
-type Finding = {
-  code: FindFindingCode;
-  status: SharedStatus;
-  subject: bounded-string | null;
-  cause: bounded-string;
-  selectorRole: "include" | "exclude" | null;
-  selectorOccurrence: positive-integer | null;
-  source: { id: string; path: string } | null;
-  layer: "base" | "overwrite" | null;
-  path: string | null;
-  region: CanonicalRegion | null;
-  location: SourceLocation | null;
-  candidates: { id: string; path: string }[];
-};
-
-type Match = {
-  position: positive-integer;
-  id: string;
-  path: string;
-  description: string | null;
-  evidence: Evidence[];
-  projections: Projection[];
-};
-
-type Evidence = {
-  predicate: positive-integer;
-  kind: "tag" | "heading";
-  query: string;
-  authored: string;
-  region: CanonicalRegion;
-  layer: "base" | "overwrite";
-  path: string;
-  location: SourceLocation;
-  occurrence: positive-integer;
-  heading: HeadingEvidence | null;
-};
-
-type HeadingEvidence = {
-  level: positive-integer;
-  form: "atx" | "setext";
-  canonical: boolean;
-};
-
-type Projection = {
-  part: "metadata" | "frontmatter" | "headings" | "body" | "section";
-  name: string | null;
-  layer: "base" | "overwrite" | null;
-  path: string | null;
-  state: "available" | "missing" | "unavailable" | "ambiguous";
-  metadata: Metadata | null;
-  text: string | null;
-  headings: ProjectedHeading[];
-  location: SourceLocation | null;
-};
-
-type Metadata = {
-  position: positive-integer;
-  id: string;
-  path: string;
-  routeState: "routed" | "unrouted";
-  route: string | null;
-  layers: MetadataLayer[];
-};
-
-type MetadataLayer = {
-  kind: "base" | "overwrite";
-  path: string;
-};
-
-type ProjectedHeading = {
-  text: string;
-  level: positive-integer;
-  form: "atx" | "setext";
-  location: SourceLocation;
-  canonical: boolean;
-};
-
-type SharedStatus =
-  "complete" | "attention" | "incomplete" | "invalid" | "blocked" | "failed" | "interrupted";
-
-type CoverageState =
-  "not-started" | "complete" | "incomplete" | "blocked" | "failed" | "interrupted";
-
-type ProjectionCoverageState = CoverageState | "not-requested";
-
-type CanonicalRegion = "document" | "frontmatter" | "body" | "section:<name>";
-
-type CanonicalPart =
-  "metadata" | "frontmatter" | "headings" | "body" | "section:<name>";
-```
-
-`include` and `exclude` are always-present selector arrays. Within each role,
-they retain supplied command-line order. Counts are nonnegative integers when
-established, `null` when not established, and `0` for a known empty count.
-`candidates` is always present in every selector record and is used for
-ambiguity; it is otherwise an empty array. `identity`, `sourceKind`, and
-`expansion` are `null` when the corresponding fact is not established.
-
-`predicates` contains every supplied predicate occurrence in cross-flag
-command-line order. `effectivePredicates` contains the deduplicated first
-occurrences in public order. `require` is always `all` or `any`, including the
-default `all`. `within.supplied` is empty when `--within` is omitted. Its
-`tag` and `heading` arrays contain the effective regions after defaults. All
-three arrays contain canonical strings: `document`, `frontmatter`, `body`, or
-`section:<name>`.
-
-`view.supplied` is `null` when omitted, and `view.effective` is always
-`compact` or `expanded`. `content.supplied` preserves parsed input order, while
-`content.effective` uses canonical projection order. Both content arrays are
-empty when `--content` is omitted. Their values are canonical part strings:
-`metadata`, `frontmatter`, `headings`, `body`, or `section:<name>`.
-
-`coverage.state` is the overall established coverage. `coverage.matching` is
-predicate and inventory coverage. `coverage.projection` is `not-requested`
-when content is omitted. The state and matching values are
-`not-started`, `complete`, `incomplete`, `blocked`, `failed`, or `interrupted`;
-projection accepts those values plus `not-requested`. A known missing requested
-section has complete projection coverage and an `attention` finding. Requested
-content that is unavailable or ambiguous has incomplete projection coverage.
-Find has no truncation coverage state.
-
-`subject` and `cause` are bounded strings. `subject` may be `null`; `cause` is
-required. `selectorOccurrence` is 1-based within its selector role. The
-`selectorRole`, `source`, `layer`, `path`, and `region` members are `null` when
-they do not apply or are unavailable. A `location` is `null` when it does not
-apply; when it applies but is unavailable, the finding itself explains that
-unavailability. `candidates` is always present. A finding's `status` is one of
-the seven shared status names.
-
-`position` is the 1-based match result order. `description` may be `null`, and
-`evidence` and `projections` are always arrays. An evidence `predicate` is a
-1-based index into `effectivePredicates`. `occurrence` is the 1-based
-source-order occurrence for that predicate, region, and layer. `heading` is
-`null` when it has no heading value; otherwise it has `level`, `form`, and
-`canonical` in that order. `form` is `atx` or `setext`, and `canonical` means
-eligible for canonical Framework semantic-section syntax.
-
-Projection `part` uses the finite values `metadata`, `frontmatter`, `headings`,
-`body`, and `section`; a section entry carries its requested name in `name`.
-`name` is non-`null` only for `section`. `layer` and `path` are `null` only for
-the logical `metadata` entry. `state` is `available`, `missing`, `unavailable`,
-or `ambiguous`. Only requested projection entries occur. Metadata produces one
-logical entry. `frontmatter`, `headings`, and `body` produce one entry per
-physical layer. Each requested section produces one entry per layer. `missing`
-means only a known absent section; `ambiguous` means repeated matching headings
-in one layer; `unavailable` means that the selected content could not be
-established. Projection `location` applies to available `frontmatter`, `body`,
-and `section` text. It is `null` for metadata and heading-outline entries because
-metadata has no authored span and each projected heading owns its location.
-
-`metadata` is non-`null` only for an available metadata projection. `text` is
-non-`null` only for an available `frontmatter`, `body`, or `section` projection;
-an empty string is valid. `headings` is populated only for available headings
-projection and is otherwise `[]`. For unavailable, ambiguous, or missing
-projections, only the payload members `metadata`, `text`, `headings`, and
-`location` remain `null` or empty. The discriminator and identity members
-`part`, `name`, `layer`, `path`, and `state` retain their established values.
-Arrays are always present, and no command-local schema member is omitted.
-
-Metadata records keep `layers` in base-then-overwrite order as `{ kind, path }`
-records. Projected heading records use `text`, `level`, `form`, `location`, and
-`canonical` in that order. The top-level `workspace` and `next` members remain
-the shared result-coordinate envelope members; Find supplies the command-local `next`
-values below.
-
-#### Finding Codes And Ordering
-
-Find has exactly this finding vocabulary. Each code has only the status shown:
-
-| Machine code                   | Finding status |
-| ------------------------------ | -------------- |
-| `find.invalid-input`           | `invalid`      |
-| `find.invalid-selector`        | `invalid`      |
-| `find.workspace-unavailable`   | `blocked`      |
-| `find.workspace-unsafe`        | `blocked`      |
-| `find.selector-ambiguous`      | `blocked`      |
-| `find.selector-unsafe`         | `blocked`      |
-| `find.identity-collision`      | `attention`    |
-| `find.candidate-unsafe`        | `incomplete`   |
-| `find.layer-unresolved`        | `incomplete`   |
-| `find.inspection-unavailable`  | `incomplete`   |
-| `find.invalid-encoding`        | `incomplete`   |
-| `find.frontmatter-unavailable` | `incomplete`   |
-| `find.section-ambiguous`       | `incomplete`   |
-| `find.projection-missing`      | `attention`    |
-| `find.projection-unavailable`  | `incomplete`   |
-| `find.operation-failed`        | `failed`       |
-| `find.interrupted`             | `interrupted`  |
-
-The codes mean:
-
-- `find.invalid-input` covers Find command grammar, flag, non-selector value, and
-  dependency errors. Selector value and form errors use
-  `find.invalid-selector`; neither code exposes parser exception identity.
-- `find.invalid-selector` covers missing, empty, unknown, unsupported, comma,
-  glob, and arbitrary-directory selectors.
-- `find.workspace-unavailable` and `find.workspace-unsafe` are pre-universe
-  workspace blockers.
-- `find.selector-ambiguous` and `find.selector-unsafe` are unresolved filter
-  blockers.
-- `find.identity-collision` retains all exact paths with complete coverage and
-  therefore has `attention` status.
-- `find.candidate-unsafe` means an effective candidate cannot be safely
-  inspected while the workspace boundary remains established. It is
-  `incomplete`, not `blocked`.
-- `find.layer-unresolved` covers an orphan or ambiguous overwrite.
-- `find.inspection-unavailable` covers a missing race, access failure,
-  directory-enumeration failure, or I/O failure. It does not expose exception
-  names.
-- `find.invalid-encoding` means strict UTF-8 decoding failed.
-- `find.frontmatter-unavailable` is emitted only when semantic frontmatter is
-  needed for matching and cannot be established. Raw authored frontmatter may
-  still be projected when its boundary and bytes are available. Body-only work
-  does not become incomplete merely because optional metadata is unavailable.
-- `find.section-ambiguous` applies only when one requested `section:<name>` maps
-  to several headings in one layer during region matching or section projection.
-  Duplicate headings remain ordinary ordered evidence and heading-outline items
-  when no singular section boundary is requested.
-- `find.projection-missing` means a requested section is known to be absent
-  after complete inspection. It has `attention` status.
-- `find.projection-unavailable` is used only when no more specific inspection,
-  frontmatter, or section finding explains a requested projection failure. It
-  also represents unavailable metadata route facts when no more specific
-  candidate finding applies.
-- `find.operation-failed` and `find.interrupted` preserve their event meaning.
-
-A `complete` result has no findings. A higher aggregate result may retain lower-
-severity findings that were already established. Accepted Setext,
-compatibility, and other noncanonical forms do not create a Find finding merely
-for their form. `doctor` owns that diagnosis.
-
-Findings use the fixed code and stage order shown in the table first. Within
-selector codes, `include` precedes `exclude`, followed by supplied occurrence.
-Within source codes, order is source ID ordinal, path tie-break, base then overwrite,
-frontmatter, then body in document order, and then location. Failure and
-interruption are last. Finding order never follows filesystem order, discovery
-order, or exception order.
-
-#### Next Actions
-
-The top-level `next` member uses the [Shared Result
-Coordinates](../shared/result-coordinates/interface.md) shape `{ command, reason }` or
-`null`, with these exact Find values. The compact human line is shown in the
-last column. `next.command` is a canonical action command line, not the result's
-command identity and not a reconstruction of the caller's original arguments.
-It includes a fixed option only when that option is the action itself; a reason
-that says to rerun the same request requires the caller to preserve the original
-Find arguments.
-
-| Condition                                                              | Top-level `next`                                                                                                                      | Compact human line                |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| `complete`                                                             | `null`                                                                                                                                | no line                           |
-| `attention`                                                            | `null`                                                                                                                                | no line                           |
-| `incomplete`                                                           | `{ command: "open-forge doctor", reason: "Inspect the unavailable source or projection facts before relying on this Find result." }`  | `Next: open-forge doctor`         |
-| `invalid`                                                              | `{ command: "open-forge find --help", reason: "Correct the named Find input, then rerun the request." }`                              | `Next: open-forge find --help`    |
-| `blocked` where `find.selector-ambiguous` is the only blocking finding | `{ command: "open-forge find", reason: "Replace every ambiguous selector with one listed exact path, then rerun the same request." }` | `Next: open-forge find`           |
-| other `blocked`                                                        | `{ command: "open-forge doctor", reason: "Inspect the blocked workspace or source boundary before rerunning Find." }`                 | `Next: open-forge doctor`         |
-| `failed`                                                               | `{ command: "open-forge find --verbose", reason: "Report the failure and retry the same request with bounded diagnostics." }`         | `Next: open-forge find --verbose` |
-| `interrupted`                                                          | `{ command: "open-forge find", reason: "Rerun the same Find request." }`                                                              | `Next: open-forge find`           |
-
-Find never recommends mutation, repair, or content rewriting. These values are
-status-deterministic except for the selector-ambiguity-only blocked branch.
-
+| Level    | `data`                                                                                                                      |
+| -------- | --------------------------------------------------------------------------------------------------------------------------- |
+| minimal  | `{ matches: [ { id, path, description, parts: [ ... ] when requested } ] }`                                                 |
+| standard | + per match `evidence: [ { kind: "tag" \| "heading", value, region, layer } ]`, `query { tags, headings, require, within }` |
+| full     | + `sourceSet { mode, include: [...], exclude: [...], inspected, candidates }`                                               |
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                     |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | The complete effective source universe was inspected and the returned sources are exactly those that satisfy the request under the accepted matching rules. |
-| `attention`   | Match coverage is complete, but an established identity-collision or known missing-projection finding remains.                                              |
-| `incomplete`  | Safe matches are available, but candidate inspection or a requested projection is ambiguous or incomplete.                                                  |
-| `invalid`     | Command input or one filter, region, view, or projection value is invalid.                                                                                  |
-| `blocked`     | The command cannot establish the selected workspace or a safe source-universe boundary.                                                                     |
-| `failed`      | An unexpected internal failure prevents normal completion.                                                                                                  |
-| `interrupted` | The caller cancels or interrupts the operation before completion.                                                                                           |
-
-- A complete search with zero matches is successful. Compact
-  human output states `result=complete`, `coverage=complete`, the default or
-  filtered `universe`, and `matches=0`, followed by `No matches.` Expanded output
-  states `Found 0 matching sources.`. JSON returns an empty match array with complete coverage.
-- An incomplete search may emit independently verified safe
-  matches. Compact mode starts with `result=incomplete` and
-  `coverage=incomplete`, marks the default or filtered `universe`, writes safe
-  rows to stdout, and adds a concise required finding and next action. The
-  semantic result remains non-success so automation cannot mistake the rows for a
-  complete set. Expanded and JSON output include complete typed findings.
-- `attention` never hides a candidate that might match. Any
-  uncertainty that can change the result set is `incomplete` or `blocked`.
-- The exact numeric process-status mapping is defined by the
-  [Shared Result Coordinates](../shared/result-coordinates/interface.md). The semantic result names and
-  conditions above remain the public `find` meanings.
-
-## Errors
-
-- Every error names the `find` operation, affected query value,
-  source, or boundary, states the direct cause, and gives a useful next action
-  when one exists.
-- A missing predicate value is invalid.
-- An invalid tag grammar is invalid.
-- An empty heading value is invalid.
-- A comma-separated tag list is invalid and recommends repeating
-  `--tag`.
-- A repeated `--require`, invalid `--view` value, or malformed
-  list grammar is invalid.
-- `--view` with `--json` selects the JSON projection under the shared
-  global-flag contract.
-- `--require` or `--within` without a predicate is invalid.
-- An entirely incompatible predicate and region selection is
-  invalid.
-- A missing, unavailable, or non-directory workspace is blocked.
-- An unsafe filesystem identity or containment boundary is
-  blocked when the source universe cannot be established safely.
-- An unreadable, non-UTF-8, orphaned, or otherwise
-  uninspectable candidate makes coverage incomplete when safe results remain
-  available.
-- `doctor` owns complete diagnosis and recommendations. `find`
-  reports only the facts needed to establish its result and coverage.
-
-## Complete Usage Scenarios
-
-The following scenarios preserve the complete representative usage set from the
-authoritative source. They demonstrate omission, every finite predicate and view
-choice, region and content composition, another workspace, and structured output
-without enumerating every compatible Cartesian combination.
-
-### Flat Inventory
-
-```text
-open-forge find
-```
-
-Returns every logical Markdown source below `.agents` in the default expanded
-form with workspace, coverage, count, and source identity.
-
-### One Tag
-
-```text
-open-forge find --tag=Architecture
-```
-
-Matches the complete authored frontmatter tag value while ignoring case.
-
-### Tag With A Hash And Different Case
-
-```text
-open-forge find --tag="#architecture"
-```
-
-Matches authored `Architecture`, `architecture`, or another case variant and
-preserves each authored spelling in expanded evidence.
-
-### Require Several Tags
-
-```text
-open-forge find \
-  --tag=Memory \
-  --tag=CurrentTruth \
-  --tag=Architecture
-```
-
-Returns sources that contain all three tags.
-
-### Match Any Tag
-
-```text
-open-forge find \
-  --tag=Architecture \
-  --tag=Principles \
-  --tag=Vision \
-  --require=any
-```
-
-Returns sources that contain at least one requested tag.
-
-### One Heading
-
-```text
-open-forge find --heading=Axioms
-```
-
-Returns sources containing a parsed structural heading whose complete visible
-text equals `Axioms` while ignoring case.
-
-### Heading With Spaces
-
-```text
-open-forge find --heading="Current State"
-```
-
-Quotes keep the complete heading value in one shell argument.
-
-### Require Several Headings
-
-```text
-open-forge find \
-  --heading="Current State" \
-  --heading="Next Steps" \
-  --heading=Blockers
-```
-
-Returns sources containing all three headings.
-
-### Match Any Heading
-
-```text
-open-forge find \
-  --heading=Axioms \
-  --heading=Instructions \
-  --require=any
-```
-
-Returns sources containing either heading.
-
-### Tag And Heading
-
-```text
-open-forge find \
-  --tag=Directive \
-  --heading=Instructions
-```
-
-Returns sources with the Directive frontmatter tag and an Instructions heading.
-
-### Several Tags And Headings
-
-```text
-open-forge find \
-  --tag=Memory \
-  --tag=Working \
-  --heading="Current State" \
-  --heading="Next Steps"
-```
-
-Returns sources satisfying every tag and heading predicate.
-
-### Any Tag Or Heading
-
-```text
-open-forge find \
-  --tag=Architecture \
-  --tag=Principles \
-  --heading=Axioms \
-  --heading=Instructions \
-  --require=any
-```
-
-Returns sources satisfying at least one of the four predicates.
-
-### Search Body Tags
-
-```text
-open-forge find \
-  --tag=Architecture \
-  --within=body
-```
-
-Searches exact visible bare-tag tokens in parsed body text instead of
-frontmatter tags.
-
-### Search The Complete Authored Document
-
-```text
-open-forge find \
-  --tag=Architecture \
-  --within=document
-```
-
-Searches frontmatter tags and body tag tokens.
-
-### Search One Section
-
-```text
-open-forge find \
-  --tag=Architecture \
-  --within="section:Current State"
-```
-
-Searches body tag tokens only within the exact parsed Current State section.
-
-### Search Several Regions
-
-```text
-open-forge find \
-  --tag=Architecture \
-  --within="frontmatter,section:Current State"
-```
-
-Searches the frontmatter tag list and the named body section.
-
-### Compact Output From Another Workspace
-
-```text
-open-forge find \
-  --tag=CurrentTruth \
-  --view=compact \
-  --workspace ../another-workspace
-```
-
-Uses the exact selected workspace and emits compact ID-and-path rows.
-
-### Expanded Match Evidence
-
-```text
-open-forge find \
-  --tag=Directive \
-  --heading=Instructions \
-  --view=expanded
-```
-
-Shows workspace, effective filters, locations, coverage, counts, descriptions,
-and match evidence.
-
-### Return Exact Sections
-
-```text
-open-forge find \
-  --tag=Directive \
-  --heading=Instructions \
-  --content=section:Instructions
-```
-
-Returns the exact Instructions section from each matched source.
-
-### Return Several Possible Sections
-
-```text
-open-forge find \
-  --heading=Axioms \
-  --heading=Instructions \
-  --require=any \
-  --content=section:Axioms,section:Instructions
-```
-
-Returns each requested section that exists and reports the missing projection
-for matched sources that contain only the other heading.
-
-### Structured Result
-
-```text
-open-forge find \
-  --tag=Memory \
-  --tag=CurrentTruth \
-  --heading=Scope \
-  --json
-```
-
-Returns one structured result with the complete query, coverage, ordered source
-matches, evidence, and findings.
-
+The status and exit mapping above are unchanged by detail or format. A
+completed search with zero matches is successful. Safe matches remain visible
+for incomplete results, but the non-success status prevents automation from
+treating them as a complete set.
+
+### Counts and limitations
+
+`matches`, `sourcesInspected`, `sourcesCandidates`.
+
+### Next rules
+
+Invalid selector -> `open-forge route list --depth=all`; incomplete ->
+`open-forge doctor`; otherwise none.
+
+## Errors And Boundaries
+
+The findings catalogue below is the command's finite error and warning vocabulary. Findings keep their code, severity, family, subject and cause; detail filtering affects display only. A missing, unavailable or unsafe workspace or source boundary remains invalid-input, incomplete or blocked according to the catalogue.
+
+### Findings catalogue
+
+| Code                         | Severity | Family                | Message                                                                              | Next                                |
+| ---------------------------- | -------- | --------------------- | ------------------------------------------------------------------------------------ | ----------------------------------- |
+| find.invalid-input           | error    | invalid-input         | examples: `--require must be all or any.`, `--within <value> is not a known region.` |                                     |
+| find.invalid-selector        | error    | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Find/Shared/Wording/FindWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`find.invalid-selector`).                      | `open-forge route list --depth=all` |
+| find.workspace-unavailable   | error    | workspace-unavailable |                                                                                      |                                     |
+| find.workspace-unsafe        | error    | workspace-unsafe      |                                                                                      |                                     |
+| find.selector-ambiguous      | error    | selector-ambiguous    |                                                                                      |                                     |
+| find.selector-unsafe         | error    | selector-unsafe       |                                                                                      |                                     |
+| find.identity-collision      | warning  | identity-collision    |                                                                                      |                                     |
+| find.candidate-unsafe        | warning  | local                 | [`find.phrase.could-not-be-checked-safely-and-was-skipped`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Find/FindPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Find/Shared/Wording/FindWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`find.candidate-unsafe`).                                | `open-forge doctor`                 |
+| find.layer-unresolved        | warning  | local                 | [`find.phrase.has-no-base-file-and-was-skipped`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Find/FindPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Find/Shared/Wording/FindWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`find.layer-unresolved`).                              | `open-forge doctor`                 |
+| find.inspection-unavailable  | warning  | local                 | [`find.phrase.could-not-be-read-and-was-skipped`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Find/FindPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Find/Shared/Wording/FindWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`find.inspection-unavailable`).                                          | `open-forge doctor`                 |
+| find.invalid-encoding        | warning  | local                 | [`find.phrase.is-not-valid-utf-8-and-was-skipped`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Find/FindPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Find/Shared/Wording/FindWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`find.invalid-encoding`).                                         | fix the file                        |
+| find.frontmatter-unavailable | warning  | local                 | [`find.phrase.the-frontmatter-of-could-not-be-read-so-its-tags-were-not-matched`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Find/FindPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Find/Shared/Wording/FindWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`find.frontmatter-unavailable`).         | `open-forge doctor`                 |
+| find.section-ambiguous       | warning  | local                 | [`find.phrase.has-more-than-one-section-named-none-was-returned`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Find/FindPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Find/Shared/Wording/FindWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`find.section-ambiguous`).                  | fix by hand                         |
+| find.projection-missing      | warning  | local                 | [`shared.phrase.has-no-section-named`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Find/Shared/Wording/FindWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`find.projection-missing`).                                                | none                                |
+| find.projection-unavailable  | warning  | local                 | [`shared.phrase.the-of-could-not-be-produced`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Shared/SharedPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Find/Shared/Wording/FindWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`find.projection-unavailable`).                              | `open-forge doctor`                 |
+| find.operation-failed        | error    | operation-failed      |                                                                                      |                                     |
+| find.interrupted             | error    | cancelled |                                                                                      |                                     |
+
+## Scenarios
+
+### Catalogue situations
+
+`bare-inventory`, `one-tag`, `two-tags-all`, `heading`, `no-matches`,
+`with-content-headings`, `include-selector`, `ambiguous-selector` (blocked),
+`unreadable-source` (incomplete), `section-missing` (warnings), `invalid-selector`,
+`invalid-require`.
+
+Each status has one representative native text transcript above. JSON uses the same status and command facts under the schema-3 envelope.
 ## Non-Goals
 
 - `find` does not search arbitrary words or phrases in
@@ -1162,8 +491,8 @@ interface. Detailed technology-neutral semantic evidence is mapped in the
 
 - Verify exact current-directory and `--workspace` selection
   without workspace discovery.
-- Verify bare inventory in the default expanded view and
-  explicit compact ID-and-path output.
+- Verify bare inventory in the default standard view and
+  explicit minimal ID-and-path output.
 - Verify tag and heading flag parsing, no operands, omission
   defaults, repeatability, ordering, conflicts, and dependencies.
 - Verify optional leading `#`, tag grammar, case variants,
@@ -1180,13 +509,13 @@ interface. Detailed technology-neutral semantic evidence is mapped in the
   `all`, `any`, duplicate inputs, and flat-logic limitations.
 - Verify default regions, `document`, `frontmatter`, `body`,
   exact sections, unions, redundancy, escaping, and incompatible selections.
-- Verify compact, expanded, content-projected, verbose, and
+- Verify minimal, standard, content-projected, debug, and
   structured output from one typed result.
 - Verify source ID collisions, canonical result ordering, layer
   ordering, evidence ordering, and stable repeat invocation.
-- Verify complete matches, complete zero matches, attention,
-  incomplete safe matches, invalid input, blocked boundaries, failed execution,
-  and interruption.
+- Verify completed matches, completed zero matches, completed-with-warnings,
+  incomplete safe matches, invalid-input, blocked boundaries, failed execution,
+  and cancellation.
 - Verify that `find` does not use a persistent index, follow
   links, search arbitrary text, rank results, build the complete graph, or mutate
   anything.
@@ -1210,7 +539,7 @@ interface. Detailed technology-neutral semantic evidence is mapped in the
   after equivalent query duplicates have been removed.
 - The typed structured result exposes the requirement and the
   selected or default search regions.
-- The typed structured result exposes the requested human view
+- The typed structured result exposes the requested detail level
   and content projection.
 - The typed structured result exposes effective candidate,
   inspected, and matched source counts. Excluded sources are outside those
@@ -1268,7 +597,7 @@ interface. Detailed technology-neutral semantic evidence is mapped in the
   logical result. Both physical layers remain independently inspectable match
   locations in this order: base, then overwrite.
 - The logical source uses the automatic ID and canonical
-  workspace-relative path of its base file. Compact output emits that base ID and
+  workspace-relative path of its base file. Minimal output emits that base ID and
   path, and the logical source is emitted only once.
 - Predicates may be satisfied across the base and overwrite
   layers. Evidence records which layer supplied each match.
@@ -1279,13 +608,13 @@ interface. Detailed technology-neutral semantic evidence is mapped in the
   ordered layers. Evidence keeps that composition visible. `context` remains
   responsible for presenting the ordered layers and their scoped precedence when
   a caller reads the source.
-- Every expanded and structured layer record identifies whether
+- Every standard and structured layer record identifies whether
   it is the `base` or `overwrite` layer.
-- Every expanded and structured layer record includes that
+- Every standard and structured layer record includes that
   layer's canonical physical workspace-relative path.
-- Every expanded and structured layer record includes its match
+- Every standard and structured layer record includes its match
   region and source location.
-- Every matched tag or heading in an expanded or structured layer
+- Every matched tag or heading in an standard or structured layer
   record retains its exact authored spelling.
 - Content projection preserves the `context` framing: the base
   layer is emitted first, followed by the overwrite layer and its own physical
@@ -1534,17 +863,17 @@ contract.
   inspection rules. Excluded sources and excluded physical areas are outside
   that universe and need not be parsed. A valid effective universe with zero
   candidates or zero matches is complete.
-- Expanded human results echo the supplied include and exclude
+- Standard human results echo the supplied include and exclude
   occurrences, their resolved selector identities, whether the default or
   filtered universe was used, and the effective candidate, inspected, and
   matched counts. The selector detail appears in the source-universe portion of
   the result, not as predicate evidence.
 - JSON results expose the same supplied and resolved selector
   facts, default-or-filtered universe state, and effective candidate, inspected,
-  and matched counts in either JSON view. `--view` selects the structured
+  and matched counts in either JSON view. `--detail` selects the structured
   projection under the shared global contract.
-- Compact output visibly marks the universe as `default` or
-  `filtered` in its summary line. A filtered compact result does not repeat the
+- Minimal output visibly marks the universe as `default` or
+  `filtered` in its summary line. A filtered minimal result does not repeat the
   full include and exclude selector detail; it still keeps the result, coverage,
   source identity, and required next-action facts.
 - Selector occurrences are echoed in supplied command-line
@@ -1635,7 +964,7 @@ contract.
     --exclude=memory/crystallized/documents/architecture
   ```
 
-  The effective universe is empty, so the complete result reports zero
+  The effective universe is empty, so the completed result reports zero
   candidates and zero matches.
 
 - Presentation exposes the filter state at the appropriate
@@ -1644,16 +973,16 @@ contract.
   ```text
   open-forge find \
     --include=memory/crystallized/documents \
-    --view=compact
+    --detail minimal
 
   open-forge find \
     --include=memory/crystallized/documents \
-    --json \
-    --view=compact
+    --format json \
+    --detail minimal
   ```
 
-  Compact output marks `universe=filtered`. JSON echoes supplied and resolved
-  selectors, with the well-formed `--view` selecting the JSON projection.
+  Minimal output marks `universe=filtered`. JSON echoes supplied and resolved
+  selectors, with the well-formed `--detail` selecting the JSON projection.
 
 ### Filter-Specific Errors And Non-Goals
 
@@ -1694,8 +1023,8 @@ contract.
 - Verify that effective-universe formation precedes inspection
   and matching, excluded areas need not be parsed, and effective zero-candidate
   and zero-match results are complete.
-- Verify expanded and JSON selector echo, default-or-filtered
-  state, effective candidate/inspected/matched counts, compact filtered marking,
+- Verify standard and JSON selector echo, default-or-filtered
+  state, effective candidate/inspected/matched counts, minimal filtered marking,
   stable source ordering, flat `all`/`any` behavior, and absence of result caps.
 
 ## Related Current Sources
@@ -1719,23 +1048,18 @@ contract.
 - [CLI Architecture](../../architecture.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-The result retains universe, query, presentation, coverage, findings and every
-ordered match. Each match retains position, id, path, description and complete
-selected projections. Only the match's evidence array is omitted. Requested
-authored content, headings and projection states remain exact.
+CLI help syntax: [`find.help.syntax`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Find/FindText.cs).
 
-Compact omissions are defined field membership, distinct from unavailable data,
-null values, empty collections or incomplete inspection. No collection is
-truncated and no finding is filtered. Counts describe the original operation.
-Select expanded on the original invocation when supporting evidence is needed.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef find.help.syntax -->
+<!-- @OpenForgeTextRef find.phrase.could-not-be-checked-safely-and-was-skipped -->
+<!-- @OpenForgeTextRef find.phrase.could-not-be-read-and-was-skipped -->
+<!-- @OpenForgeTextRef find.phrase.has-more-than-one-section-named-none-was-returned -->
+<!-- @OpenForgeTextRef find.phrase.has-no-base-file-and-was-skipped -->
+<!-- @OpenForgeTextRef find.phrase.is-not-valid-utf-8-and-was-skipped -->
+<!-- @OpenForgeTextRef find.phrase.the-frontmatter-of-could-not-be-read-so-its-tags-were-not-matched -->
+<!-- @OpenForgeTextRef shared.phrase.has-no-section-named -->
+<!-- @OpenForgeTextRef shared.phrase.the-of-could-not-be-produced -->

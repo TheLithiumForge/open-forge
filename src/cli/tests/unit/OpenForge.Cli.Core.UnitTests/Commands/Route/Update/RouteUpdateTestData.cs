@@ -20,6 +20,9 @@ internal static partial class RouteUpdateTestData
     internal const string TemplateId = "templates/topic";
     internal const string TemplatePath = ".agents/templates/topic.md";
 
+    internal static string RecoveryPath(string fileName = "open-forge-recovery.zip")
+        => Path.GetFullPath(Path.Combine(Path.GetTempPath(), fileName));
+
     internal const string TargetText = """
         ---
         open-forge:
@@ -50,9 +53,8 @@ internal static partial class RouteUpdateTestData
         return new CliInvocation(
             Process: new CliProcessIdentity("open-forge", "test"),
             Presentation: new CliPresentation(
-                CliOutputFormat.Json,
-                CliView.Expanded,
-                CliVerbosity.Normal),
+                CliFormat.Json,
+                CliDetail.Standard, null),
             TerminalMode: CliTerminalMode.None,
             WorkspaceRequest: new CliWorkspaceRequest(
                 selectedWorkspace.LexicalRoot,

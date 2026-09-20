@@ -14,6 +14,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Application;
 [Trait("Feature", "library-mapping"), Trait("Evidence", "Integration")]
 public sealed class LibraryLinkPreflightIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory]
     [InlineData(false), InlineData(true)]
     public static async Task MissingParentRequiresItsExplicitCreationInTheReviewedPlan(bool planned)
@@ -37,6 +38,7 @@ public sealed class LibraryLinkPreflightIntegrationTests
         Assert.False(Directory.Exists(workspace.Absolute("docs")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact]
     public async Task RedirectedParentCannotSatisfyAPlannedDirectoryCreation()
     {

@@ -1,0 +1,4 @@
+status=invalid-input
+mode=apply
+regions=0
+The source ID does not identify a retained logical source.

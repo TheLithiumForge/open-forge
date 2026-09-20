@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Move;
 
 public sealed class RouteMoveBindingTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Move symbols expose the exact two-operand command grammar"), Trait("Feature", "route-move"), Trait("Evidence", "Unit")]
     public void SymbolsExposeExactTwoOperandCommandGrammar()
     {
@@ -30,6 +31,7 @@ public sealed class RouteMoveBindingTests
         Assert.Contains(symbols.DryRun, symbols.MoveCommand.Options);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Route Move parser rejects every repeated positional operand")]
     [InlineData("memory/docs/_docs.md", "memory/docs/_docs.md", "memory/archive/_docs.md")]
     [InlineData("memory/docs/_docs.md", "memory/archive/_docs.md", "memory/archive/_docs.md")]
@@ -53,6 +55,7 @@ public sealed class RouteMoveBindingTests
         Assert.NotEmpty(parseResult.Errors);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Route Move validator preserves complete apply and dry-run facts")]
     [InlineData(false)]
     [InlineData(true)]
@@ -76,6 +79,7 @@ public sealed class RouteMoveBindingTests
         Assert.Equal(mode, facts.Mode);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Route Move validator rejects missing, blank, and parser-invalid input")]
     [InlineData(null, "memory/archive/_docs.md", false)]
     [InlineData("", "memory/archive/_docs.md", false)]

@@ -1,0 +1,6 @@
+Workspace: boundary=workspace, coverage=incomplete
+Recovery data: boundary=recovery-store, coverage=incomplete
+Routes and Entries: boundary=route-universe, coverage=incomplete
+Links: boundary=local-reference-universe, coverage=incomplete
+Framework files: boundary=framework-lifecycle, coverage=incomplete
+Extensions: boundary=extension-lifecycle, coverage=incomplete

@@ -20,6 +20,17 @@ records exact execution state.
 Shared interfaces such as global flags live beside command contracts so every
 command can link to one accepted definition.
 
+## Shared Native Report
+
+Every retained command uses the shared native report. `--format <text|json>`
+selects text or one schema-3 JSON envelope; `--detail
+<minimal|standard|full|debug>` selects the detail level; and repeatable
+`--detail-filter <error|warning|info|all>` filters only the displayed severity
+rows. The current result names are `completed`, `completed-with-warnings`,
+`incomplete`, `invalid-input`, `blocked`, `failed`, and `cancelled`. All command
+contracts use this report and do not define alternate legacy presentations or
+envelope versions.
+
 The grouped [`library`](library/_library.md) family has exactly five leaves:
 `list`, `inspect`, `attach`, `sync`, and `detach`. Their local Interface and
 Behavior pairs define operation meaning. The one shared-capability [Workspace
@@ -51,7 +62,6 @@ active development records track execution without replacing these contracts.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Route the accepted non-shipping root cleanup contracts for lease-validated recovery-bundle and draft deletion](cleanup/_cleanup.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Mutation #Recovery #Safety #CurrentTruth
 - [Current Crystallized contract set for stateless ordered context resolution, projection, and explicit link expansion](context/_context.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Context #CurrentTruth
 - [Route the accepted current read-only Doctor Interface and Behavior contracts](doctor/_doctor.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Doctor #CurrentTruth
@@ -66,4 +76,3 @@ active development records track execution without replacing these contracts.
 - [Permanent route for accepted shared CLI contract sets](shared/_shared.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #CurrentTruth
 - [Current Crystallized contract set for workspace status, context-size comparison, root customization, managed Extensions, and recognized recovery bundles](status/_status.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Status #CurrentTruth
 - [Route the accepted non-shipping root Framework update contracts for trusted managed reconciliation](update/_update.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Update #Framework #Lifecycle #CurrentTruth
-<!-- open-forge:generated-index:end -->

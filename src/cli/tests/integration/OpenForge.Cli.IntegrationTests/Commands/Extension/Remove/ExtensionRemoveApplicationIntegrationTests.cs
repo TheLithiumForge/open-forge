@@ -1,12 +1,18 @@
+using System.IO.Compression;
+using OpenForge.Cli.Core.Framework.Recovery;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Remove;
 
 public sealed class ExtensionRemoveApplicationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension Remove applies source-independent ownership release and preserves unowned content"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
@@ -22,14 +28,14 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
             [],
             (".agents/toolkit.md", Document("Toolkit")));
         await InstallAsync(workspace, source);
-        var frameworkBefore = workspace.ReadFrameworkLifecycle();
+        var frameworkBefore = workspace.ReadFrameworkOwnership();
         var sourceBefore = source.Snapshot();
         var unownedBefore = workspace.ReadText("workspace-note.md");
 
         var run = await workspace.RunAsync(
         [
             "extension", "remove", "toolkit",
-            "--automatic", "--json",
+            "--automatic", "--detail", "full", "--format", "json",
         ]);
 
         Assert.Equal(0, run.ExitCode);
@@ -38,34 +44,32 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
         using var document = JsonDocument.Parse(run.StandardOutput);
         var root = document.RootElement;
         Assert.Equal("extension remove", root.GetProperty("command").GetString());
-        Assert.Equal("complete", root.GetProperty("status").GetString());
-        var result = root.GetProperty("result");
+        Assert.Equal("completed", root.GetProperty("status").GetString());
+        var result = root.GetProperty("data");
         Assert.Equal("apply", result.GetProperty("mode").GetString());
         Assert.True(result.GetProperty("automatic").GetBoolean());
-        Assert.False(result.GetProperty("prune").GetBoolean());
+        Assert.False(result.TryGetProperty("prune", out _));
         Assert.Contains(
             result.GetProperty("effects").EnumerateArray(),
             effect => effect.GetProperty("path").GetString() == ".agents/toolkit.md"
                 && effect.GetProperty("action").GetString() == "delete"
                 && effect.GetProperty("outcome").GetString() == "verified");
-        Assert.Equal("publish", result.GetProperty("lifecycle").GetProperty("action").GetString());
-        Assert.Equal("verified", result.GetProperty("lifecycle").GetProperty("outcome").GetString());
-        Assert.Equal("removed", result.GetProperty("recovery").GetProperty("state").GetString());
+        Assert.Equal("verified", result.GetProperty("verification").GetProperty("extensionRecord").GetString());
+        Assert.Equal("retained", result.GetProperty("recovery").GetProperty("state").GetString());
         Assert.All(
             result.GetProperty("verification").EnumerateObject(),
             verification => Assert.Equal("verified", verification.Value.GetString()));
-        Assert.True(result.GetProperty("packageSourceUnchanged").GetBoolean());
-        Assert.Empty(result.GetProperty("findings").EnumerateArray());
+        Assert.Empty(root.GetProperty("findings").EnumerateArray());
         Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
         Assert.Equal(unownedBefore, workspace.ReadText("workspace-note.md"));
         Assert.True(JsonNode.DeepEquals(
             JsonNode.Parse(frameworkBefore.GetRawText()),
-            JsonNode.Parse(workspace.ReadFrameworkLifecycle().GetRawText())));
-        Assert.Empty(workspace.ReadExtensionsLifecycle().GetProperty("packages").EnumerateArray());
-        Assert.Empty(workspace.ReadExtensionsLifecycle().GetProperty("paths").EnumerateArray());
+            JsonNode.Parse(workspace.ReadFrameworkOwnership().GetRawText())));
+        Assert.Empty(workspace.ReadExtensionOwnership().EnumerateArray());
         Assert.Equal(sourceBefore, source.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension Remove releases one shared owner and deletes the unchanged final owner later"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
@@ -80,61 +84,86 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
         source.AddPackage("alpha", [], (target, "shared package bytes\n"));
         source.AddPackage("beta", [], (target, "shared package bytes\n"));
         await InstallAllAsync(workspace, source);
+        var installedOwnership = await WorkspaceOwnershipReader.ReadAsync(
+            new PhysicalPathResolver(),
+            workspace.Workspace,
+            CancellationToken.None);
+        Assert.Equal(
+            ["alpha", "beta"],
+            installedOwnership.Document.Extensions.Select(extension => extension.Id));
+        Assert.Equal(["alpha", "beta"], installedOwnership.Document.OwnersOf(target));
+        Assert.All(
+            installedOwnership.Document.Extensions,
+            extension => Assert.Contains(target, extension.Paths));
         var sourceBefore = source.Snapshot();
 
         var first = await workspace.RunAsync(
         [
             "extension", "remove", "alpha",
-            "--automatic", "--json",
+            "--automatic", "--detail", "full", "--format", "json",
         ]);
 
         Assert.Equal(0, first.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, first.Status);
         using var firstDocument = JsonDocument.Parse(first.StandardOutput);
-        var firstResult = firstDocument.RootElement.GetProperty("result");
+        var firstResult = firstDocument.RootElement.GetProperty("data");
         var shared = Assert.Single(
-            firstResult.GetProperty("paths").EnumerateArray(),
+            firstResult.GetProperty("effects").EnumerateArray(),
             value => value.GetProperty("path").GetString() == target);
-        Assert.Equal("shared", shared.GetProperty("classification").GetString());
         Assert.Equal("retain-shared", shared.GetProperty("action").GetString());
         Assert.Equal(
             ["alpha"],
-            shared.GetProperty("selectedOwnerIds").EnumerateArray()
+            shared.GetProperty("ownersBefore").EnumerateArray()
                 .Select(value => value.GetString()));
         Assert.Equal(
             ["beta"],
-            shared.GetProperty("remainingOwnerIds").EnumerateArray()
+            shared.GetProperty("ownersAfter").EnumerateArray()
                 .Select(value => value.GetString()));
         Assert.True(File.Exists(workspace.Combine(target)));
         var remainingPath = Assert.Single(
-            workspace.ReadExtensionsLifecycle().GetProperty("paths").EnumerateArray());
-        Assert.Equal(["beta"], remainingPath.GetProperty("owners").EnumerateArray()
-            .Select(value => value.GetString()));
+            workspace.ReadExtensionOwnership().EnumerateArray());
+        Assert.Equal("beta", remainingPath.GetProperty("id").GetString());
+        Assert.Equal(target, Assert.Single(remainingPath.GetProperty("paths").EnumerateArray()).GetString());
+        var remainingOwnership = await WorkspaceOwnershipReader.ReadAsync(
+            new PhysicalPathResolver(),
+            workspace.Workspace,
+            CancellationToken.None);
+        Assert.Equal(["beta"], remainingOwnership.Document.OwnersOf(target));
+        Assert.DoesNotContain(
+            remainingOwnership.Document.Extensions,
+            extension => extension.Id == "alpha");
+        Assert.Contains(
+            remainingOwnership.Document.Extensions,
+            extension => extension.Id == "beta"
+                && extension.Paths.Contains(target, StringComparer.Ordinal));
+
+        var cleanup = await workspace.RunAsync(["cleanup", "--format", "json"]);
+        Assert.Equal(0, cleanup.ExitCode);
 
         var second = await workspace.RunAsync(
         [
             "extension", "remove", "beta",
-            "--automatic", "--json",
+            "--automatic", "--detail", "full", "--format", "json",
         ]);
 
         Assert.Equal(0, second.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, second.Status);
         using var secondDocument = JsonDocument.Parse(second.StandardOutput);
-        var secondResult = secondDocument.RootElement.GetProperty("result");
+        var secondResult = secondDocument.RootElement.GetProperty("data");
         var final = Assert.Single(
-            secondResult.GetProperty("paths").EnumerateArray(),
+            secondResult.GetProperty("effects").EnumerateArray(),
             value => value.GetProperty("path").GetString() == target);
-        Assert.Equal("unchanged-final-owner", final.GetProperty("classification").GetString());
         Assert.Equal("delete", final.GetProperty("action").GetString());
         Assert.False(File.Exists(workspace.Combine(target)));
-        Assert.Empty(workspace.ReadExtensionsLifecycle().GetProperty("paths").EnumerateArray());
+        Assert.Empty(workspace.ReadExtensionOwnership().EnumerateArray());
         Assert.Equal(sourceBefore, source.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
-        DisplayName = "Extension Remove keeps changed final-owner content unmanaged without prune"),
+        DisplayName = "Extension Remove deletes edited final-owner content and retains its exact recovery bytes"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
-    public async Task ChangedFinalOwnerIsKeptAsUnmanagedByDefault()
+    public async Task EditedFinalOwnerIsDeletedWithRecovery()
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             "extension-remove-changed-keep-application");
@@ -153,67 +182,32 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
         var run = await workspace.RunAsync(
         [
             "extension", "remove", "toolkit",
-            "--automatic", "--json",
-        ]);
-
-        Assert.Equal(2, run.ExitCode);
-        Assert.Equal(CliSemanticStatus.Attention, run.Status);
-        Assert.Equal(string.Empty, run.StandardError);
-        using var document = JsonDocument.Parse(run.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
-        var path = Assert.Single(
-            result.GetProperty("paths").EnumerateArray(),
-            value => value.GetProperty("path").GetString() == ".agents/toolkit.md");
-        Assert.Equal("changed-final-owner", path.GetProperty("classification").GetString());
-        Assert.Equal("keep-as-unmanaged", path.GetProperty("action").GetString());
-        Assert.Contains(
-            result.GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("code").GetString()
-                == "extension-remove.managed-divergence");
-        Assert.Equal(changed, workspace.ReadText(".agents/toolkit.md"));
-        Assert.Empty(workspace.ReadExtensionsLifecycle().GetProperty("paths").EnumerateArray());
-        Assert.Equal(sourceBefore, source.Snapshot());
-    }
-
-    [Fact(
-        DisplayName = "Extension Remove deletes changed final-owner content only with same-request prune"),
-     Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
-    public async Task SameRequestPruneDeletesChangedFinalOwner()
-    {
-        using var workspace = ExtensionInstallIntegrationWorkspace.Create(
-            "extension-remove-changed-prune-application");
-        await workspace.SeedFrameworkAsync();
-        using var source = ExtensionInstallCatalogue.Create(
-            "extension-remove-changed-prune-application-source");
-        source.AddPackage(
-            "toolkit",
-            [],
-            (".agents/toolkit.md", Document("Toolkit")));
-        await InstallAsync(workspace, source);
-        workspace.ReplaceText(".agents/toolkit.md", Document("User edit"));
-        var sourceBefore = source.Snapshot();
-
-        var run = await workspace.RunAsync(
-        [
-            "extension", "remove", "toolkit",
-            "--prune", "--automatic", "--json",
+            "--automatic", "--detail", "full", "--format", "json",
         ]);
 
         Assert.Equal(0, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
+        Assert.Equal(string.Empty, run.StandardError);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
-        Assert.True(result.GetProperty("prune").GetBoolean());
-        Assert.Contains(
+        var result = document.RootElement.GetProperty("data");
+        var path = Assert.Single(
             result.GetProperty("effects").EnumerateArray(),
-            effect => effect.GetProperty("path").GetString() == ".agents/toolkit.md"
-                && effect.GetProperty("action").GetString() == "delete"
-                && effect.GetProperty("outcome").GetString() == "verified");
+            value => value.GetProperty("path").GetString() == ".agents/toolkit.md");
+        Assert.Equal("delete", path.GetProperty("action").GetString());
+        Assert.Empty(document.RootElement.GetProperty("findings").EnumerateArray());
         Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
-        Assert.Empty(workspace.ReadExtensionsLifecycle().GetProperty("paths").EnumerateArray());
+        var bundlePath = Assert.IsType<string>(result.GetProperty("recovery").GetProperty("path").GetString());
+        var recovered = await RecoveryBundleReader.ReadFinalAsync(workspace.Workspace, bundlePath, TestContext.Current.CancellationToken);
+        var entry = Assert.Single(Assert.IsType<RecoveryBundleVerifiedRead>(recovered.Verified).Entries,
+            value => value.TargetPath == ".agents/toolkit.md");
+        using var archive = ZipFile.OpenRead(bundlePath);
+        using var prior = new StreamReader(Assert.IsType<ZipArchiveEntry>(archive.GetEntry(entry.PriorPayload!)).Open());
+        Assert.Equal(changed, await prior.ReadToEndAsync(TestContext.Current.CancellationToken));
+        Assert.Empty(workspace.ReadExtensionOwnership().EnumerateArray());
         Assert.Equal(sourceBefore, source.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension Remove projects generated navigation while preserving the package source"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
@@ -234,21 +228,23 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
         var run = await workspace.RunAsync(
         [
             "extension", "remove", "toolkit",
-            "--automatic", "--json",
+            "--automatic", "--detail", "full", "--format", "json",
         ]);
 
         Assert.Equal(0, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
+        var result = document.RootElement.GetProperty("data");
         Assert.Contains(
-            result.GetProperty("generatedNavigation").GetProperty("regions").EnumerateArray(),
-            region => region.GetProperty("state").GetString() == "changed");
+            result.GetProperty("effects").EnumerateArray(),
+            effect => effect.GetProperty("action").GetString() == "updated"
+                && effect.GetProperty("outcome").GetString() == "changed");
         Assert.False(File.Exists(workspace.Combine(target)));
         Assert.DoesNotContain("toolkit/_toolkit.md", workspace.ReadText(".agents/loader.md"), StringComparison.Ordinal);
         Assert.Equal(sourceBefore, source.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension Remove converges a trusted repeated request to an exact no-op"),
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
@@ -266,7 +262,7 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
         await InstallAsync(workspace, source);
         var arguments = new[]
         {
-            "extension", "remove", "toolkit", "--automatic", "--json",
+            "extension", "remove", "toolkit", "--automatic", "--detail", "full", "--format", "json",
         };
         var applied = await workspace.RunAsync(arguments);
         Assert.Equal(0, applied.ExitCode);
@@ -279,12 +275,8 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, repeated.Status);
         Assert.Equal(string.Empty, repeated.StandardError);
         using var document = JsonDocument.Parse(repeated.StandardOutput);
-        var result = document.RootElement.GetProperty("result");
+        var result = document.RootElement.GetProperty("data");
         Assert.Empty(result.GetProperty("effects").EnumerateArray());
-        Assert.Equal("preserve", result.GetProperty("lifecycle").GetProperty("action").GetString());
-        Assert.Equal(
-            "already-current",
-            result.GetProperty("lifecycle").GetProperty("outcome").GetString());
         Assert.Equal("not-required", result.GetProperty("recovery").GetProperty("state").GetString());
         Assert.All(
             result.GetProperty("verification").EnumerateObject(),
@@ -300,7 +292,7 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
         [
             "extension", "install", "toolkit",
             "--source", source.Path,
-            "--automatic", "--json",
+            "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(0, run.ExitCode);
@@ -316,7 +308,7 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
         [
             "extension", "install", "--all",
             "--source", source.Path,
-            "--automatic", "--json",
+            "--automatic", "--format", "json",
         ]);
 
         Assert.Equal(0, run.ExitCode);

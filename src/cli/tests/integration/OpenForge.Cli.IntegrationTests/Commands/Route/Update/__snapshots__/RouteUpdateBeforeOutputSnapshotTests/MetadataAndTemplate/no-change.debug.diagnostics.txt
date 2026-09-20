@@ -1,0 +1,10 @@
+status=completed
+mode=apply
+target=memory/project-alpha/overview
+completeness=complete
+safety=safe
+body=preserved
+effects=0
+recovery=not required
+verification=verified
+findings=0

@@ -9,6 +9,7 @@ internal sealed class PublishedInstallWorkspace : IDisposable
     private const string AgentsPath = "AGENTS.md";
     private const string ClaudePath = "CLAUDE.md";
     private const string LifecyclePath = ".agents/open-forge.lifecycle.json";
+    private const string OwnershipPath = ".agents/open-forge.lock.json";
     private static readonly UTF8Encoding StrictUtf8NoBom = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
@@ -17,25 +18,16 @@ internal sealed class PublishedInstallWorkspace : IDisposable
     [
         ".agents/directives/_directives.md",
         ".agents/guidance/_guidance.md",
-        ".agents/guidance/adaptive-collaboration.md",
         ".agents/loader.md",
         ".agents/maps/_maps.md",
         ".agents/memory/_memory.md",
         ".agents/memory/archived/_archived.md",
         ".agents/memory/crystallized/_crystallized.md",
-        ".agents/memory/crystallized/decisions/_decisions.md",
-        ".agents/memory/crystallized/documents/_documents.md",
         ".agents/memory/emerging/_emerging.md",
-        ".agents/memory/emerging/analysis/_analysis.md",
-        ".agents/memory/emerging/ideas/_ideas.md",
-        ".agents/memory/emerging/observations/_observations.md",
         ".agents/memory/working/_working.md",
-        ".agents/memory/working/checkpoints/_checkpoints.md",
-        ".agents/memory/working/handoffs/_handoffs.md",
         ".agents/patterns/_patterns.md",
         ".agents/skills/_skills.md",
         ".agents/templates/_templates.md",
-        ".agents/workflows/_workflows.md",
     ];
 
     private readonly TemporaryWorkspace _workspace;
@@ -77,11 +69,17 @@ internal sealed class PublishedInstallWorkspace : IDisposable
         }
     }
 
+    internal void SeedLegacyLeftovers()
+    {
+        _workspace.CreateFile(LifecyclePath, "{ malformed lifecycle stranger }");
+        _workspace.CreateFile(".agents/open-forge.libraries.json", "{ malformed library stranger }");
+    }
+
     internal IReadOnlyList<string> InstalledPayloadPaths()
         => Directory
             .EnumerateFiles(Combine(".agents"), "*", SearchOption.AllDirectories)
             .Select(path => System.IO.Path.GetRelativePath(Path, path).Replace('\\', '/'))
-            .Where(path => path is not LifecyclePath)
+            .Where(path => path is not (LifecyclePath or OwnershipPath))
             .Order(StringComparer.Ordinal)
             .ToArray();
 
@@ -126,7 +124,7 @@ internal sealed class PublishedInstallWorkspace : IDisposable
     private void DeleteInstallArtifacts()
     {
         foreach (var path in EmbeddedPayloadPaths
-                     .Append(LifecyclePath)
+                     .Append(OwnershipPath)
                      .Append(AgentsPath)
                      .Append(ClaudePath))
         {

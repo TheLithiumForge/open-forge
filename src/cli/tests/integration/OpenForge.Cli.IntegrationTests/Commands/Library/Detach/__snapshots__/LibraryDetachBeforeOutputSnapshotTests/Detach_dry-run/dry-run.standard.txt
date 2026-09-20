@@ -1,0 +1,5 @@
+Would detach team-knowledge: remove 1 link under ..
+Workspace: <workspace>
+  .agents/directives/review.md  would remove
+  .agents/open-forge.lock.json  registration would be removed
+  No files were changed.

@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 3,
+  "command": "references",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot list references: Direction 'invalid' is not one of in, out, or both.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "references.invalid-direction",
+      "title": "Direction is invalid",
+      "message": "--direction must be in, out, or both.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "invalid",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "incoming": null,
+    "outgoing": null,
+    "sourcesScanned": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "coverage": {}
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge references --help",
+    "reason": "see the accepted options"
+  }
+}

@@ -46,7 +46,7 @@ internal static class LibraryInspectResultFixture
                 Record = seed.Result.Record with { State = record, SourceRoot = null, RegisteredPaths = [] },
                 Source = new() { RootState = LibrarySourceRootViewState.NotStarted, State = LibraryInventoryViewState.NotStarted, EligiblePaths = [] },
                 Projection = new() { State = LibraryCoverage.NotStarted, Comparisons = [] },
-                Findings = [seed.Result.Findings[0] with { Code = finding, Status = status, Path = ".agents/open-forge.libraries.json", Cause = "Record observation stopped." }],
+                Findings = [seed.Result.Findings[0] with { Code = finding, Status = status, Path = ".agents/open-forge.lock.json", Cause = "Record observation stopped." }],
             },
         };
     }
@@ -68,7 +68,7 @@ internal static class LibraryInspectResultFixture
             {
                 Record = new LibraryInspectRecordView
                 {
-                    Path = ".agents/open-forge.libraries.json",
+                    Path = ".agents/open-forge.lock.json",
                     State = LibraryRecordViewState.Complete,
                     Id = "team-knowledge",
                     SourceRoot = "shared/team",

@@ -50,7 +50,5 @@ journeys. This contract set does not claim that implementation or proof.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted technology-neutral install behavior for management establishment, exact no-op, initial force, and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Behavior #Determinism #Lifecycle #Safety #Recovery #CurrentTruth
 - [Accepted non-shipping Interface for establishing and verifying the managed root Framework lifecycle](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Interface #Lifecycle #Safety #Recovery #CurrentTruth
-<!-- open-forge:generated-index:end -->

@@ -147,14 +147,14 @@ When material should no longer be current, extract its still-current content int
 
 These are inspected integration targets, not edits made by this proposal. Recheck their current contents before preparing patches because the shared checkout has concurrent work.
 
-| Source | Responsibility in the later change |
-| --- | --- |
-| [Framework acceptance document](../../../crystallized/documents/framework/truth.md) | Explain evidence validation, acceptance, scoped current knowledge, and alignment of affected sources. |
-| [Memory model](../../../crystallized/documents/framework/memory/model.md) | Explain refinement, Memory's knowledge authority, and its relationship to category-specific content. |
-| [Memory transitions](../../../crystallized/documents/framework/memory/transitions.md) | Define extraction, transition, archival, and restoration without a mandatory file pipeline. |
+| Source                                                                                                                                             | Responsibility in the later change                                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| [Framework acceptance document](../../../crystallized/documents/framework/truth.md)                                                                | Explain evidence validation, acceptance, scoped current knowledge, and alignment of affected sources.                           |
+| [Memory model](../../../crystallized/documents/framework/memory/model.md)                                                                          | Explain refinement, Memory's knowledge authority, and its relationship to category-specific content.                            |
+| [Memory transitions](../../../crystallized/documents/framework/memory/transitions.md)                                                              | Define extraction, transition, archival, and restoration without a mandatory file pipeline.                                     |
 | [Shipped loader](../../../../../src/open-forge/.agents/loader.md) and [Memory entrypoint](../../../../../src/open-forge/.agents/memory/_memory.md) | State the concise operative rules; reconcile relevant state and category entrypoints without duplicating the explanatory model. |
-| [README](../../../../../README.md) | Present the understandable overview and diagram, derived from the reconciled defining sources. |
+| [README](../../../../../README.md)                                                                                                                 | Present the understandable overview and diagram, derived from the reconciled defining sources.                                  |
 
 ## Review boundary
 
-The user requested sequential proposals and a stop whenever their answer is needed. Both diagrams are now deferred ideas and are not production-ready. Further diagram refinement or approval is not a prerequisite for the remaining review work. The [review notes](../../../working/framework-review/review-followup-instructions.md) preserve accepted conceptual directions separately from these drafts. No shared source, installed content, Git history, or frozen review evidence changed. Nothing was merged to `develop`.
+The user requested sequential proposals and a stop whenever their answer is needed. Both diagrams are now deferred ideas and are not production-ready. Further diagram refinement or approval is not a prerequisite for the remaining review work. The [review notes](../../../archived/framework-review/review-followup-instructions.md) preserve accepted conceptual directions separately from these drafts. No shared source, installed content, Git history, or frozen review evidence changed. Nothing was merged to `develop`.

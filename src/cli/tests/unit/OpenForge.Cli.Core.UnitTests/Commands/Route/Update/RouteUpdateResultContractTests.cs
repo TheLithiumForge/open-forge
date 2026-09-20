@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
 public sealed class RouteUpdateResultContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update request preserves the accepted typed facts"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void RequestPreservesAcceptedTypedFacts()
     {
@@ -28,6 +29,33 @@ public sealed class RouteUpdateResultContractTests
         Assert.True(request.IsDryRun);
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Route Update freezes the selected exact source without mutating the requested operand"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
+    public void RequestFreezesSelectedExactSource()
+    {
+        var patch = RouteUpdateTestData.DescriptionPatch("After");
+        var request = new RouteUpdateRequest(
+            RouteUpdateTestData.Workspace(),
+            RouteUpdateTestData.TargetId,
+            patch,
+            null,
+            RouteUpdateMode.Apply,
+            allowInteractiveSourceSelection: true);
+
+        var frozen = request.FreezeSource(RouteUpdateTestData.TargetPath);
+
+        Assert.Equal(RouteUpdateTestData.TargetId, request.SourceReference);
+        Assert.Null(request.FrozenSourceReference);
+        Assert.Equal(RouteUpdateTestData.TargetId, request.ResolutionReference);
+        Assert.Equal(RouteUpdateTestData.TargetId, frozen.SourceReference);
+        Assert.Equal(RouteUpdateTestData.TargetPath, frozen.FrozenSourceReference);
+        Assert.Equal(RouteUpdateTestData.TargetPath, frozen.ResolutionReference);
+        Assert.True(frozen.AllowInteractiveSourceSelection);
+        Assert.Same(patch, frozen.Patch);
+        Assert.Equal(request.Mode, frozen.Mode);
+    }
+
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update request rejects missing and undefined required facts"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void RequestRejectsMissingAndUndefinedRequiredFacts()
     {
@@ -54,6 +82,7 @@ public sealed class RouteUpdateResultContractTests
             (RouteUpdateMode)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update complete no-op retains exact public facts"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void CompleteNoOpRetainsExactPublicFacts()
     {
@@ -78,6 +107,7 @@ public sealed class RouteUpdateResultContractTests
         Assert.Null(result.Next);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update requested unresolved Template retains nullable unavailable facts"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void RequestedUnresolvedTemplateRetainsNullableUnavailableFacts()
     {
@@ -111,6 +141,7 @@ public sealed class RouteUpdateResultContractTests
         Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update result rejects duplicate and out-of-order effects"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void ResultRejectsDuplicateAndOutOfOrderEffects()
     {
@@ -125,6 +156,7 @@ public sealed class RouteUpdateResultContractTests
             ChangedFormation([parent, target])));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route Update effect change requires both hashes"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     [InlineData("", "expected-hash")]
     [InlineData("before-hash", "")]
@@ -143,6 +175,7 @@ public sealed class RouteUpdateResultContractTests
             ChangedFormation([effect])));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update unchanged paths are initialized ordered unique and disjoint"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void UnchangedPathsAreInitializedOrderedUniqueAndDisjoint()
     {
@@ -165,6 +198,7 @@ public sealed class RouteUpdateResultContractTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update recovery residual nullability follows state"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void RecoveryResidualNullabilityFollowsState()
     {
@@ -183,7 +217,7 @@ public sealed class RouteUpdateResultContractTests
                 Recovery = new RouteUpdateRecovery
                 {
                     State = RouteUpdateRecoveryState.Removed,
-                    ResidualPath = "/tmp/recovery.zip",
+                    ResidualPath = RouteUpdateTestData.RecoveryPath("recovery.zip"),
                 },
             }));
     }

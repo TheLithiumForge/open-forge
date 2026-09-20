@@ -12,7 +12,6 @@ open-forge:
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Historical CLI-v2 source: The Open Forge CLI primarily serves any capable agent while preserving human authority, provider neutrality, and trustworthy workspace management](cli-agent-first-product-contract.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical CLI-v2 source: Build replacement CLI routing from authored topology while treating generated Entries as a verified derived projection](cli-authored-route-inventory.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical CLI-v2 source: The accepted replacement command boundary uses Commander with inferred TypeScript definitions and contract-preserving shell completion](cli-command-framework.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
@@ -32,4 +31,3 @@ open-forge:
 - [Historical CLI-v2 source: Commander validates command input while other untrusted boundaries use focused runtime validation without a mandatory schema library](cli-runtime-boundary-validation.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical CLI-v2 source: The replacement CLI organizes commands, helpers, and tests by behavioral locality and promotes shared code only to the nearest common scope](cli-source-locality.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical CLI-v2 source: Replacement CLI tests progress from direct function and command evidence to focused integration and built-process journeys](cli-testing-architecture.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
-<!-- open-forge:generated-index:end -->

@@ -1,0 +1,12 @@
+status=blocked
+mode=apply
+source=guidance/old guide
+destination=.agents/guidance/new guide.md
+subject=leaf
+completeness=not-established
+safety=blocked
+effects=0
+recovery=not required
+verification=not run
+findings=1
+finding=route-move.ownership-claimed:target=.agents/guidance/old guide.md:cause=The selected Route Move subject contains lifecycle-managed paths.

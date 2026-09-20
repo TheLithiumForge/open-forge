@@ -61,29 +61,72 @@ details once, while preserving distinct occurrences, findings, evidence and
 ordering. Repetition removal must not silently remove diagnostic kinds or change
 counts. Measure output size on a real large result before claiming improvement.
 
+## Build Failures From Your Own Facts
+
+State a failure in your system's terms, using facts the operation already holds:
+what it was doing, which source it was doing it to, and what stopped it. The
+operation knows the path it opened. That is structured data you have; do not
+discard it and do not try to recover it later from a runtime string.
+
+Never show a reader a runtime type name, an error code, or a parser position.
+`IOException (0x80070020)`, `UnauthorizedAccessException`, `LineNumber: 0 |
+BytePositionInLine: 2` are internals. They belong in the diagnostic evidence at
+the deepest detail level, where someone debugging the tool can find them, and
+nowhere else.
+
+**Removing the internals is not the same as removing the information.** A
+message that says only "the filesystem operation failed" has dropped the one
+fact that makes it actionable. The rule is to keep the subject and the reason,
+and drop the implementation:
+
+```text
+Leaks internals:  Cannot read: IOException (0x80070020): The filesystem operation failed.
+Loses the fact:   Cannot read: the filesystem operation failed.
+Useful:           Cannot read .agents/extensions/toolkit/extension.json: the file is in use by another process.
+```
+
+Prefer composing the sentence from your own values over sanitising a message the
+platform produced. A classifier that searches a runtime string for a marker and
+rewrites around it will eventually discard a path that sat on the wrong side of
+that marker, and the loss will be silent.
+
+Describe the platform only when the platform is genuinely the subject — a
+permission the user must change, a path form the operating system rejects, a
+capability the system does not offer. Then name it plainly, in the user's terms,
+without the type that carried it.
+
+Preserve the distinctions that change what the reader does. "Missing",
+"unreadable", "locked by another process" and "not valid JSON" call for
+different actions, so they are different messages, not one bounded phrase.
+
 ## Offer Deliberate Levels Of Detail
 
-Compact output should keep core identities, order, status, completeness and
-required actions. Use short meaningful labels and stable rows. People and agents
-both benefit from this; a separate AI view needs a distinct demonstrated use.
-Avoid obscure abbreviations that save characters but require explanation.
+One report serves people and machines. `--format text|json` chooses the
+encoding, while `--detail minimal|standard|full|debug` chooses how much of the
+same report is shown. `minimal` is the default. `--detail-filter` is repeatable
+for `error`, `warning`, `info`, or `all`; it changes which findings are listed,
+not the operation's counts, status, effects, or completeness. Do not create a
+second machine presentation or a second verbosity axis.
 
-Expanded output should explain the result with relevant evidence and context.
-It should still read as a useful command result. Keep implementation diagnostics
-in a separate verbose channel. A view changes presentation, not the operation's
-selection, findings, effects or exit status. Implement each promised view for
-each command. If fallback is supported, define it explicitly; a renderer failure
-is not a reason to rerun the operation.
+`minimal` keeps core identities, order, status, completeness and required
+actions. `standard` adds the reasons and per-finding actions. `full` adds
+evidence, possible-target explanations, provenance, hashes and finding codes.
+`debug` keeps the full primary result and adds bounded run diagnostics on
+stderr. Use short meaningful labels and stable rows; avoid obscure
+abbreviations that save characters but require explanation.
 
-Selected authored content stays exact in every view. Mutation plans, safety
-conditions and recovery details need enough space to remain actionable. A short
-view is not useful if it hides the information needed to make a safe decision.
+Text and JSON use the same selected typed report. JSON is one schema-3 envelope,
+and its detail level follows the same rules as text. Selected authored content,
+requested rows and mutation receipts stay exact and are not shortened by a
+detail level. A minimal result is not useful if it hides the information needed
+to make a safe decision.
 
-If JSON has different detail levels, define their retained fields and schema
-identity explicitly. Removing whitespace and removing information are different
-changes. Any filtering or result limit also needs an accepted contract for what
-is selected, what is omitted, ordering, totals and how to obtain the rest. Visible
-detail must not redefine the underlying operation's status or completeness.
+If a format has different detail levels, define their retained fields and
+schema identity explicitly. Removing whitespace and removing information are
+different changes. Any filtering or result limit also needs an accepted
+contract for what is selected, what is omitted, ordering, totals and how to
+obtain the rest. Visible detail must not redefine the underlying operation's
+status or completeness.
 
 ## Support Terminals And Automation
 
@@ -99,10 +142,12 @@ redirected output; injected writers alone cannot reveal host initialization
 effects. State unsupported-terminal fallback in the public contract.
 
 Prompts should resolve a real missing choice or authority boundary. Honor complete
-authorized requests without redundant confirmation. Define how noninteractive
-invocations report missing input, and keep structured output free of prompts.
-A dry run should expose the real plan and blockers without applying changes.
-Report partial completion honestly; explain recovery only when it actually exists.
+authorized requests without redundant confirmation. Before every confirmation,
+render the already established minimal plan review; do not rerun the operation to
+produce it. Define how noninteractive invocations report missing input, and keep
+structured output free of prompts. A dry run should expose the real plan and
+blockers without applying changes. Report partial completion honestly; explain
+recovery only when it actually exists.
 
 ## Keep Rendering Separate From The Operation
 
@@ -144,6 +189,7 @@ active guidance and keep useful history in work records.
 ## Adapting The Guidance
 
 Dense search results favor rows; a risky mutation may need a longer explanation.
-Grouping saves repetition but adds navigation. Compact JSON saves output while
-creating a schema obligation. Use real journeys to choose among these tradeoffs,
-and update the project's contracts when an accepted choice changes behavior.
+Grouping saves repetition but adds navigation. A single report with multiple
+detail levels saves duplicated presentation paths while creating a schema
+obligation. Use real journeys to choose among these tradeoffs, and update the
+project's contracts when an accepted choice changes behavior.

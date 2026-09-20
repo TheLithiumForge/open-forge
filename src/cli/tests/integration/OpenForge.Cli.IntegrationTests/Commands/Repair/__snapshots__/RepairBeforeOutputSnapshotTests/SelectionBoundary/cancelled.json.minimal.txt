@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "cancelled",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Repair was cancelled. Nothing was changed.",
+    "kind": "cancelled"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "repair.interrupted",
+      "title": "Repair was cancelled",
+      "message": "Repair was cancelled. Nothing was changed.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "repair.interrupted",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksRepaired": 0,
+    "problemsRemaining": 2,
+    "problemsNeedingChoice": 1,
+    "problemsNeedingHand": 1,
+    "librarySteps": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "selection": "automatic",
+    "repairs": [],
+    "remaining": [
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 8
+        },
+        "kind": "manual",
+        "candidates": 0
+      },
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 10,
+          "column": 10
+        },
+        "kind": "guided",
+        "candidates": 0
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge repair",
+    "reason": "Rerun the same Repair request from a fresh diagnosis."
+  }
+}

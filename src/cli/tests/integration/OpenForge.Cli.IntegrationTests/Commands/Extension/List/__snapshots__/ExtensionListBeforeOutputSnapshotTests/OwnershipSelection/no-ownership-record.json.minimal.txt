@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 3,
+  "command": "extension list",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "The result contains 0 installed packages and 7 available packages.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "installed": 0,
+    "available": 7,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "source": {
+      "kind": "embedded-catalogue",
+      "path": "embedded catalogue"
+    },
+    "installed": [],
+    "available": [
+      {
+        "id": "collaboration",
+        "version": "0.3.0",
+        "name": "Collaboration",
+        "description": "Explore choices and match collaboration depth to the decision",
+        "packages": 1
+      },
+      {
+        "id": "development",
+        "version": "0.3.0",
+        "name": "Development",
+        "description": "Implement changes, investigate defects, and review results with the workspace's existing tools",
+        "packages": 2
+      },
+      {
+        "id": "development-toolkit",
+        "version": "0.3.0",
+        "name": "Development Toolkit",
+        "description": "Project knowledge, planning, and development methods in one optional selection",
+        "packages": 5
+      },
+      {
+        "id": "orchestration",
+        "version": "0.3.0",
+        "name": "Orchestration",
+        "description": "Coordinate related tasks, capture useful execution learning, and transfer work safely",
+        "packages": 4
+      },
+      {
+        "id": "planning",
+        "version": "0.3.0",
+        "name": "Planning",
+        "description": "Explore possibilities, preserve accepted choices, and organize work with optional records and a planning method",
+        "packages": 2
+      },
+      {
+        "id": "project-documents",
+        "version": "0.3.0",
+        "name": "Project Documents",
+        "description": "Maintain current project knowledge with a Documents convention, five templates, and Vision and Architecture methods",
+        "packages": 2
+      },
+      {
+        "id": "workflows",
+        "version": "0.3.0",
+        "name": "Workflow Support",
+        "description": "Select and follow scoped methods through one native use-workflow Skill",
+        "packages": 1
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension install <id>",
+    "reason": "Install one of the available Extensions."
+  }
+}

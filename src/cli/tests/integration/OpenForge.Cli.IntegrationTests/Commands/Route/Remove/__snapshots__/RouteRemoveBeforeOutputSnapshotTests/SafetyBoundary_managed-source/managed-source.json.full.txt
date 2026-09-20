@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot remove guidance/old guide: .agents/guidance/old guide.md is managed by the Framework, so Route Remove cannot remove it.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-remove.ownership-claimed",
+      "title": "Source is managed",
+      "message": ".agents/guidance/old guide.md is managed by the Framework, so Route Remove cannot remove it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/guidance/old guide.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge update",
+          "reason": "Update the owning route explicitly, then rerun Route Remove if needed."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesRemoved": 0,
+    "sectionsUpdated": 0,
+    "linksDetached": 0,
+    "filesScanned": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "removed": [],
+    "detachedLinks": [],
+    "scan": {
+      "filesScanned": 0,
+      "occurrences": 0
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge update",
+    "reason": "Update the owning route explicitly, then rerun Route Remove if needed."
+  }
+}

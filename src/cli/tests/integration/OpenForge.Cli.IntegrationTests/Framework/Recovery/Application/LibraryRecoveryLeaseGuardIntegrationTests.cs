@@ -17,6 +17,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery.Application;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryRecoveryLeaseGuardIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Explicit link recovery rejects released leases foreign workspaces and entries outside the verified preparation")]
     [InlineData("released"), InlineData("foreign-workspace"), InlineData("foreign-entry")]
     public static async Task RejectsUnheldOrMismatchedRecoveryAuthority(string scenario)

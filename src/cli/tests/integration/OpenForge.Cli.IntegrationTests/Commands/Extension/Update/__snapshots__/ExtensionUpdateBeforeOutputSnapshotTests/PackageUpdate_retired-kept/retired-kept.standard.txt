@@ -1,0 +1,11 @@
+The toolkit Extension is up to date, but 1 file from an earlier version was kept.
+Workspace: <workspace>
+  Warning  .agents/toolkit.md  Retired file was kept
+         A retired managed file was kept because --prune was not supplied.
+  .agents/toolkit.md  kept; no longer part of the package
+  Source: <extension-source>
+  Dependency closure: toolkit
+  0 files unchanged
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+  preview deleting the kept file
+Next: open-forge extension update toolkit --prune --dry-run

@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Cleanup.Shared.Planning;
 
 public sealed class CleanupUnestablishedFactsTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Invalid Cleanup ingress can retain empty unestablished facts without inventing a request or workspace"),
      Trait("Feature", "cleanup-gray-corrections"), Trait("Evidence", "UnitContract")]
     public void UnestablishedPlanHasNoRequestOrDeletionAuthority()
@@ -33,6 +34,7 @@ public sealed class CleanupUnestablishedFactsTests
         Assert.Empty(facts.Residuals);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Unavailable non-ordinary drafts are represented only as blocked preservation"), Trait("Feature", "cleanup-gray-corrections"), Trait("Evidence", "UnitContract")]
     public void UnavailableDraftCannotBecomeDeletionEligible()
     {

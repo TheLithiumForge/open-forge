@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot repair: The link at .agents/docs/source.md:9:10 is not one doctor reports as repairable. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "repair.proposal-unavailable",
+      "title": "Repair proposal unavailable",
+      "message": "The link at .agents/docs/source.md:9:10 is not one doctor reports as repairable.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": {
+          "line": 9,
+          "column": 10
+        }
+      },
+      "category": null,
+      "resolution": "blocked-repair",
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "repair.guided-finding-remaining",
+      "title": "Broken link",
+      "message": "missing.md: Broken link; 4 possible targets",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": {
+          "line": 9,
+          "column": 10
+        }
+      },
+      "category": null,
+      "resolution": "guided-choice",
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksRepaired": 0,
+    "problemsRemaining": 1,
+    "problemsNeedingChoice": 1,
+    "problemsNeedingHand": 0,
+    "librarySteps": 0,
+    "warnings": 2
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "selection": "relink",
+    "repairs": [],
+    "remaining": [
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 10
+        },
+        "kind": "guided",
+        "candidates": [
+          {
+            "path": ".agents/docs/guide.md",
+            "reasons": [
+              "nearby route: sibling"
+            ]
+          },
+          {
+            "path": ".agents/docs/index.md",
+            "reasons": [
+              "nearby route: parent"
+            ]
+          },
+          {
+            "path": ".agents/docs/replacement.md",
+            "reasons": [
+              "title match: Guided",
+              "content match: Guided",
+              "nearby route: sibling"
+            ]
+          },
+          {
+            "path": ".agents/docs/source.md",
+            "reasons": [
+              "content match: Guided"
+            ]
+          }
+        ]
+      }
+    ],
+    "diagnosis": {
+      "workspaceAndPath": "complete",
+      "routeAndHeading": "complete",
+      "localReferences": "complete",
+      "selectedScope": "complete"
+    },
+    "verification": {
+      "targets": "not-requested",
+      "resultingBytes": "not-requested",
+      "postConditions": "not-requested"
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor --detail standard",
+    "reason": "Inspect unavailable Repair diagnosis or recovery facts before relying on this result."
+  }
+}

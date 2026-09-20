@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Context.Shared.Links;
 
 public sealed class ContextLinkExpansionSeedTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Context link expansion traverses a zero-reason seed without adding it to selected sources"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task ZeroReasonSeedStillSuppliesTraversalLinks()
     {
@@ -32,8 +33,8 @@ public sealed class ContextLinkExpansionSeedTests
             additionsOnly: false,
             content: new ContextContentSelection([], []),
             linkExpansion: ContextLinkExpansion.Bounded(1),
-            suppliedView: null,
-            effectiveView: CliView.Compact);
+            suppliedDetail: null,
+            effectiveView: CliDetail.Minimal);
 
         var expansion = await new ContextLinkExpander().ExpandAsync(request, graph, closure, CancellationToken.None);
 

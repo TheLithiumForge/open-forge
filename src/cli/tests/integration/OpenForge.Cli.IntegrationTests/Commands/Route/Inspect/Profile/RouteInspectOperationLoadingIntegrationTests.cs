@@ -8,6 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Profile;
 
 public sealed class RouteInspectOperationLoadingIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect separates startup overlap and selection addition while keeping reordered and stale Entries out of narrow LoadNow descendants")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task StartupAndSelectedClosuresRespectAuthoredTopologyAndVisibleEntries()
@@ -88,6 +89,7 @@ public sealed class RouteInspectOperationLoadingIntegrationTests
         RouteInspectProfileIntegrationAssertions.AssertNoWriteOrInspectionState(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect excludes unexposed continuity and inactive ancestors without following ordinary links")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task ContinuityAndOnDemandReasonsRemainIndependent()
@@ -175,6 +177,7 @@ public sealed class RouteInspectOperationLoadingIntegrationTests
         RouteInspectProfileIntegrationAssertions.AssertNoWriteOrInspectionState(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route inspect measures exposed ordinary continuity with independent tag validation and excludes it from LoadNow-only descendants")]
     [InlineData(false), InlineData(true)]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
@@ -183,9 +186,11 @@ public sealed class RouteInspectOperationLoadingIntegrationTests
         using var workspace = CreateLoadingWorkspace();
         var rootPath = workspace.Absolute(".agents/root/_root.md");
         var tags = staleLoadNowTag ? "#LoadNow #KeepInMind" : "#KeepInMind";
+        const string baseline = "- [Baseline](baseline.md) - #LoadNow";
+        Assert.Contains(baseline, File.ReadAllText(rootPath), StringComparison.Ordinal);
         File.WriteAllText(rootPath, File.ReadAllText(rootPath).Replace(
-            "<!-- open-forge:generated-index:end -->",
-            $"- [Continuity](global.md) - {tags}\n<!-- open-forge:generated-index:end -->",
+            baseline,
+            $"- [Continuity](global.md) - {tags}{Environment.NewLine}{baseline}",
             StringComparison.Ordinal));
         var before = workspace.Snapshot();
         var result = await workspace.InspectAsync("root/global", TestContext.Current.CancellationToken);

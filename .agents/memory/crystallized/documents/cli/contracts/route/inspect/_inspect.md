@@ -10,7 +10,8 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized entrypoint for the `route inspect`
-command. The command does not ship yet; implementation and executable evidence are tracked in
+command. The command is implemented in the merged native CLI; implementation
+and executable evidence are tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md). Its sibling Interface and Behavior Contracts define
 command meaning. This entrypoint does not duplicate their detail. No Route
 Technical Design is needed.
@@ -30,7 +31,5 @@ only.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted current technology-neutral resolution, graph use, measurement, topology, safety, and conformance for `route inspect`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Route #Inspect #Behavior #CurrentTruth
 - [Accepted current public grammar and observable one-source route profile for `route inspect`](interface.md) - #Memory #Crystallized #CLI #Release #Command #Route #Inspect #Interface #CurrentTruth
-<!-- open-forge:generated-index:end -->

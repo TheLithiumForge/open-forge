@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 3,
+  "command": "cleanup",
+  "status": "completed-with-warnings",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "<recovery-bundle-1> is damaged and was left in place.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "cleanup.recovery-final-malformed",
+      "title": "Recovery bundle is damaged",
+      "message": "<recovery-bundle-1> is damaged and was left in place.",
+      "subject": {
+        "kind": "file",
+        "path": "<recovery-bundle-1>",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Remove it by hand after review.",
+          "reason": "Review the recovery file before removing it."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "bundlesRemoved": 0,
+    "draftsRemoved": 0,
+    "itemsLeftInPlace": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "items": [],
+    "notEligible": [
+      {
+        "path": "<recovery-bundle-1>",
+        "reason": "not recognized"
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "sentence",
+    "command": "Remove it by hand after review.",
+    "reason": "Review the recovery file before removing it."
+  }
+}

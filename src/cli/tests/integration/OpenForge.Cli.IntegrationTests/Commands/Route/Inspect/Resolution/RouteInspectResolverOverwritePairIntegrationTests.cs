@@ -4,6 +4,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Resolution;
 
 public sealed class RouteInspectResolverOverwritePairIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route inspect preserves exact catalogue pairs despite an automatic ID collision"),
         InlineData(".agents/root/ambiguous.md"),
         InlineData(".agents/root/ambiguous.overwrite.md"),

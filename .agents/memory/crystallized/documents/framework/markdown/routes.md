@@ -79,26 +79,31 @@ It is the only `Entries` line without a link.
 
 ## Generated Regions
 
-The loader and every category entrypoint end with:
+The loader and every category entrypoint contain one generated section:
 
 ```md
 ## Entries
 
-<!-- open-forge:generated-index:start -->
-
 - none - No entries - #Empty
-
-<!-- open-forge:generated-index:end -->
 ```
 
-The marker-bounded body is derived navigation metadata. Deterministic generation may replace only the content between the markers and must preserve authored content outside them. It must be the final inline region in its final `Entries` section, and every generated entry must accurately reflect a reachable direct routed source's authored description and tags. Generation and validation fail closed when the region, entry shape, destination, or metadata meaning cannot be established.
+One top-level canonical ATX `## Entries` heading owns the body from the end of
+its heading span to the next top-level heading of level 1 or 2, or EOF. Fenced,
+indented-code, quoted, nested-list, Setext, differently cased and differently
+leveled lookalikes do not establish this semantic section. Trailing horizontal
+heading whitespace and an initial BOM are accepted. Duplicate `## Entries`
+headings are diagnosed; no arbitrary first section is selected.
 
-The `Entries` heading and generated region:
+The heading-owned body contains derived navigation only. Generation replaces that
+body and preserves every byte outside it, including following authored sections.
+Canonical authoring places Entries last, but a following section does not make
+its bounded body invalid. Every generated entry reflects a reachable direct
+routed source's authored description and tags. Generation and validation fail
+closed when the section, destination, or metadata meaning is unavailable.
 
-- Appear exactly once
-- Form the final section
-- Keep the markers complete and ordered
-- Contain no authored prose
+Old generated guard comments are migration input only. Readers ignore exact
+retired guard lines inside this section; Index removes them when rewriting its
+body. They never define ownership. New documents never emit them.
 
 The [routing model](../routing/model.md) defines which direct destinations the region represents. Generated entries are derived navigation, not an independent definition of behavior, authority, or current truth.
 

@@ -1,0 +1,3 @@
+Cannot inspect .agents/orphan.overwrite.md: orphan.overwrite.md has no orphan.md beside it.
+Workspace: <workspace>
+Next: open-forge doctor

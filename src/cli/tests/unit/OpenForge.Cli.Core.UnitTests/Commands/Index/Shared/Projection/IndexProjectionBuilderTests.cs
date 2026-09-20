@@ -26,6 +26,7 @@ public sealed class IndexProjectionBuilderTests
     private const string RootPath = ".agents/root/_root.md";
     private const string NestedPath = ".agents/root/nested/_nested.md";
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Index projection assigns every catalogue issue to its accepted local owner")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     [InlineData(SourceCatalogueIssueCode.RootMissing, null)]
@@ -44,6 +45,7 @@ public sealed class IndexProjectionBuilderTests
         Assert.Equal(expectedCode, IndexProjectionBuilder.ReadCatalogueFindingCode(issueCode));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index projection blocks incompatible direct-child aliases and admits compatible aliases")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void DirectChildAliasCompatibilityUsesFormationProof()
@@ -69,7 +71,7 @@ public sealed class IndexProjectionBuilderTests
             Selection = compatibleSelection,
             Regions = [IndexProjectionRegionInput.FromDocument(
                 compatibleRoot,
-                new MarkdownDocumentParser().Parse(OpenForgeDocumentSeed.GeneratedEntries(entries: "stale")))],
+                new MarkdownDocumentParser().Parse(OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale")))],
             Metadata = [new GeneratedNavigationMetadata(
                 alpha,
                 SourceAuthoredMetadataFacts.Complete("Alpha", ["Docs"]))],
@@ -92,6 +94,7 @@ public sealed class IndexProjectionBuilderTests
         Assert.Equal([RootPath], incompatibleReadiness.UnavailableTargetPaths);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index projection slices each target without leaking sibling, detached, or nested-entrypoint issues")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void CatalogueSlicesRetainOnlyTargetAndDirectDiscoveryDependencies()
@@ -134,6 +137,7 @@ public sealed class IndexProjectionBuilderTests
             finding => finding.Source?.Path is ".agents/sibling/_sibling.md" or ".agents/detached/_detached.md");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index projection retains distinct direct-child destinations across an automatic ID collision")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void IdentityCollisionIsNonblockingWhenCanonicalDestinationsRemainDistinct()
@@ -158,7 +162,7 @@ public sealed class IndexProjectionBuilderTests
             Selection = selection,
             Regions = [IndexProjectionRegionInput.FromDocument(
                 root,
-                new MarkdownDocumentParser().Parse(OpenForgeDocumentSeed.GeneratedEntries(entries: "stale")))],
+                new MarkdownDocumentParser().Parse(OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale")))],
             Metadata =
             [
                 new GeneratedNavigationMetadata(
@@ -179,6 +183,7 @@ public sealed class IndexProjectionBuilderTests
             Assert.Single(projection.Projection.Regions).Entries.Select(entry => entry.Destination));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Index projection maps every neutral generated-navigation reason without cause inspection")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     [InlineData(GeneratedNavigationRegionUnavailableReason.RegionSourceUnsupported, IndexFindingCode.TargetUnsafe)]
@@ -202,6 +207,7 @@ public sealed class IndexProjectionBuilderTests
         Assert.Equal(expectedCode, IndexProjectionBuilder.ReadFindingCode(reason));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index projection rejects an undefined generated-navigation reason")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void UndefinedGeneratedNavigationReasonIsRejected()
@@ -210,6 +216,7 @@ public sealed class IndexProjectionBuilderTests
             IndexProjectionBuilder.ReadFindingCode((GeneratedNavigationRegionUnavailableReason)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index projection input counts only wholly parseable generated Entries interiors")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void ProjectionInputDerivesBeforeCountFromTheAuthoritativeParser()
@@ -225,7 +232,7 @@ public sealed class IndexProjectionBuilderTests
             parser.Parse(OpenForgeDocumentSeed.GeneratedEntries("- none - No entries - #Empty")));
         var unparseable = IndexProjectionRegionInput.FromDocument(
             source,
-            parser.Parse(OpenForgeDocumentSeed.GeneratedEntries("stale generated body")));
+            parser.Parse(OpenForgeDocumentSeed.GeneratedEntries("- stale generated body")));
         var missing = IndexProjectionRegionInput.FromDocument(
             source,
             parser.Parse("# Root\n"));
@@ -236,6 +243,7 @@ public sealed class IndexProjectionBuilderTests
         Assert.Null(missing.BeforeEntryCount);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index projected regions derive expected counts for every generated-navigation state")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void ProjectedRegionExpectedCountMappingRejectsUndefinedState()
@@ -253,6 +261,7 @@ public sealed class IndexProjectionBuilderTests
             entryCount: 0));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Index projection maps non-readable source-layer verification by document role")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     [InlineData(SourceLayerVerificationState.Missing, IndexFindingCode.TargetChanged, IndexFindingCode.TargetChanged)]
@@ -275,6 +284,7 @@ public sealed class IndexProjectionBuilderTests
             IndexProjectionBuilder.ReadAcquisitionFindingCode(result, IndexProjectionDocumentRole.Metadata));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Index projection maps verified read states by target and metadata purpose")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     [InlineData(FileReadState.Complete, null, null)]
@@ -299,6 +309,7 @@ public sealed class IndexProjectionBuilderTests
             IndexProjectionBuilder.ReadAcquisitionFindingCode(result, IndexProjectionDocumentRole.Metadata));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index projection forms one complete generated-navigation projection for the whole selected closure")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void OneAssemblyProjectsTheWholeClosureAndEnforcesCoverage()
@@ -308,7 +319,7 @@ public sealed class IndexProjectionBuilderTests
         var formation = Formation([child, root]);
         var selection = Selection(formation, root);
         var document = new MarkdownDocumentParser().Parse(
-            OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"));
+            OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"));
         var assembly = new IndexProjectionAssembly
         {
             Formation = formation,
@@ -355,6 +366,70 @@ public sealed class IndexProjectionBuilderTests
             beforeEntryCount: projectedRegion.BeforeEntryCount));
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Index projection converts only typed ordinary malformed metadata beside an independent update")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void TypedOrdinaryMalformedMetadataBecomesSkippedOnlyWithAnIndependentUpdate()
+    {
+        var safeRoot = Source(RootPath, SourceDocumentForm.CanonicalEntrypoint);
+        var safeChild = Source(".agents/root/safe.md", SourceDocumentForm.Markdown);
+        var skippedRoot = Source(".agents/skipped/_skipped.md", SourceDocumentForm.CanonicalEntrypoint);
+        var skippedChild = Source(".agents/skipped/bad.md", SourceDocumentForm.Markdown);
+        var formation = Formation([safeChild, safeRoot, skippedChild, skippedRoot]);
+        var selection = Selection(formation, safeRoot, skippedRoot);
+        var metadataFinding = new IndexFinding(
+            IndexFindingCode.MetadataUnsafe,
+            sourceOccurrence: null,
+            source: IndexLogicalSourceProjector.Project(skippedChild, formation),
+            cause: "The authored metadata is invalid.",
+            candidates: [])
+        {
+            Details = new IndexFindingDetails
+            {
+                ParentPath = skippedRoot.Identity.CanonicalBasePath,
+                MetadataProblem = IndexMetadataProblem.Invalid,
+            },
+        };
+        var parser = new MarkdownDocumentParser();
+
+        var result = new IndexProjectionBuilder().Form(new IndexProjectionAssembly
+        {
+            Formation = formation,
+            Selection = selection,
+            Regions =
+            [
+                IndexProjectionRegionInput.FromDocument(
+                    safeRoot,
+                    parser.Parse(OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))),
+                IndexProjectionRegionInput.FromDocument(
+                    skippedRoot,
+                    parser.Parse(OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))),
+            ],
+            Metadata =
+            [
+                new GeneratedNavigationMetadata(
+                    safeChild,
+                    SourceAuthoredMetadataFacts.Complete("Safe", ["Docs"])),
+                new GeneratedNavigationMetadata(
+                    skippedChild,
+                    SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Malformed)),
+            ],
+            Readiness = new IndexProjectionReadiness([], []),
+            MetadataFindings = [metadataFinding],
+        });
+
+        Assert.False(result.IsComplete);
+        Assert.True(result.IsExecutable);
+        Assert.Equal(IndexFindingCode.MetadataSkipped, Assert.Single(result.Findings).Code);
+        Assert.Equal(
+            GeneratedNavigationRegionState.Available,
+            result.Projection.Regions.Single(region => region.CanonicalPath == RootPath).State);
+        Assert.Equal(
+            GeneratedNavigationRegionState.Unavailable,
+            result.Projection.Regions.Single(region => region.CanonicalPath == skippedRoot.Identity.CanonicalBasePath).State);
+    }
+
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index projected closure targets retain shared rooted source facts")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void RootedProjectedRegionRetainsSharedLogicalSourceProjection()
@@ -369,7 +444,7 @@ public sealed class IndexProjectionBuilderTests
             Selection = Selection(formation, root),
             Regions = [IndexProjectionRegionInput.FromDocument(
                 root,
-                new MarkdownDocumentParser().Parse(OpenForgeDocumentSeed.GeneratedEntries(entries: "stale")))],
+                new MarkdownDocumentParser().Parse(OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale")))],
             Metadata = [new GeneratedNavigationMetadata(
                 child,
                 SourceAuthoredMetadataFacts.Complete("Child", ["Docs"]))],
@@ -385,6 +460,7 @@ public sealed class IndexProjectionBuilderTests
         Assert.Equal(IndexLogicalSourceScope.Rooted, projectedRegion.Source.Scope);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index projection readiness rejects null and incoherent unavailable-target evidence")]
     [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void ReadinessRequiresFindingsAndCanonicalUnavailableTargetsTogether()

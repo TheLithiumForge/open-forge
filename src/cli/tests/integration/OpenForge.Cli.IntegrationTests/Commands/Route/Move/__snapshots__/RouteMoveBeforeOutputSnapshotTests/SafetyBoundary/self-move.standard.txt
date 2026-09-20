@@ -1,0 +1,5 @@
+Cannot move guidance/old guide: The source and the destination are the same.
+Workspace: <workspace>
+  Error  .agents/guidance/old guide.md  Source and destination are the same
+         The source and the destination are the same.
+  files scanned: the reference scan was not completed

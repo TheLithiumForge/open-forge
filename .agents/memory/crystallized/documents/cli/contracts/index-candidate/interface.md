@@ -40,8 +40,8 @@ returns a verified no-op.
 ## Related Contracts And Sources
 
 The shared [Global CLI Flags](../shared/global-flags/interface.md) contract
-defines the complete spelling and meaning of `--workspace`, `--json`, `--view`,
-`--verbose`, `--help`, and `--version`. All six apply to `index` under that
+defines the complete spelling and meaning of `--workspace`, `--format json`, `--detail`,
+`--detail debug`, `--help`, and `--version`. All six apply to `index` under that
 contract.
 
 The shared [CLI Source References](../shared/source-references/interface.md)
@@ -133,7 +133,7 @@ has no additional effect. Repetition does not multiply application authority or
 create another bypass. This matches repeated Boolean global flags.
 Value-bearing repetition rules are unchanged under their defining contract.
 
-`--dry-run` does not grant authority to repair markers, replace authored
+`--dry-run` does not grant authority to repair headings, replace authored
 content, modify overwrites, escape the workspace, invent metadata, or perform
 another repair operation.
 
@@ -279,8 +279,8 @@ become a second route inventory or a metadata fallback.
 
 For each selected Loader or entrypoint, the observable expected projection
 contains one canonical generated entry per current direct routed child, after
-required metadata is validated and entries are sorted by canonical
-containing-file-relative destination using ordinal comparison.
+safe topology and metadata facts are evaluated, with entries sorted by
+canonical containing-file-relative destination using ordinal comparison.
 
 Ambiguous entrypoints, proven incompatible aliases, or two children that cannot
 retain distinct safe route identities block the complete selected plan.
@@ -293,10 +293,26 @@ The command preserves authored description and tag spelling. It does not infer,
 summarize, correct, normalize, or invent semantic metadata from filenames,
 titles, bodies, generated lines, or overwrite companions.
 
-Missing, empty, malformed, ambiguous, or mechanically inconsistent required
-metadata blocks the complete selected plan. Whether a description is useful or
-accurate remains authored responsibility and may become a `doctor` finding;
-`index` does not perform semantic search or rewrite prose.
+For an ordinary Markdown or eligible Open Forge entrypoint source, Missing
+optional metadata remains routable and projectable through the accepted
+automatic-ID fallback and any observed valid tags. It remains Missing rather
+than becoming Complete, emits the visible `index.metadata-optional` Attention2
+finding on apply, preview, and verified no-op, and never rewrites the source.
+Native Skill, Loader, and overwrite-companion forms remain strict and do not
+use this fallback. Supplied malformed or otherwise invalid values are not
+reclassified as optional Missing.
+
+A readable malformed ordinary or native Skill metadata region may be skipped only when the
+complete selected topology, identity, and catalogue readiness are established
+and at least one independent available region has a change to apply. The safe
+regions remain projectable and executable; the skipped region remains
+`not-established`, reports `index.metadata-skipped` with its exact source and
+cause, and makes the result `incomplete`. This is not generic best-effort
+processing: unreadable or unsafe boundaries, missing native Skill metadata,
+and malformed-only selections are not admitted or silently skipped. Whether a
+description is useful or accurate remains authored responsibility and may
+become a `doctor` finding; `index` does not perform semantic search or rewrite
+prose.
 
 ### Generated lines
 
@@ -331,35 +347,23 @@ observable shapes and stable-byte requirement remain in force.
 
 ## Generated Boundary And Bounded Effects
 
-The only generated region eligible for replacement has this exact shape:
+One top-level canonical ATX `## Entries` heading owns the body from the end of
+its heading span to the next top-level heading of level 1 or 2, or EOF. Fenced,
+indented-code, quoted, nested-list, Setext, differently cased and differently
+leveled lookalikes do not establish this semantic section. Trailing horizontal
+heading whitespace and an initial BOM are accepted. Duplicate `## Entries`
+headings are diagnosed; no arbitrary first section is selected.
 
-```md
-## Entries
+Index replaces only that generated body, including any retired guard comments
+found there. Missing, stale or malformed entry lines inside an established body
+may be replaced with the expected entries. A missing or ambiguous heading boundary
+blocks the plan before writes. The command does not create or repair headings.
 
-<!-- open-forge:generated-index:start -->
-
-...
-
-<!-- open-forge:generated-index:end -->
-```
-
-`index` changes only the body between the exact markers in one valid final
-`Entries` section.
-
-A valid generated boundary has exactly one final `Entries` section, exactly one
-complete and ordered marker pair, no nested or overlapping marker pair, and the
-generated region as the final inline region in the file's final section.
-
-Stale, missing, duplicate, or malformed generated entry lines inside a valid
-marker pair may be replaced with the complete expected body.
-
-The command does not create, move, or repair missing, duplicate, misplaced,
-reversed, nested, or otherwise ambiguous markers. It blocks before writes when
-the generated ownership boundary cannot be established.
-
-Every replacement preserves the marker tokens and all bytes outside the
-generated interior. `index` never formats the complete file or normalizes
-authored frontmatter, headings, prose, links, or whitespace outside that body.
+Every replacement preserves the heading and all outside bytes. Canonical generated
+output uses a blank line after the heading, one entry per line, a final newline,
+and a blank separator before a following section. It retains the selected LF or
+CRLF line ending. Prettier and repeated Index runs produce stable bytes for
+canonical Markdown. Whole-file formatting remains outside Index authority.
 
 Before replacing an existing generated target, application preparation uses only
 `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
@@ -386,8 +390,8 @@ phase: target drift discovered after it is
 and the final bundle is retained. After final
 verification, only the positively recognized bundle created by this command is
 deleted. `Deleted`/`Removed` produces recovery `removed` and, absent another
-finding, `complete`. `Failed`/`Retained` is possible only after positive presence
-and produces `attention`, `index.recovery-artifact-retained`, the exact residual
+finding, `completed`. `Failed`/`Retained` is possible only after positive presence
+and produces `completed-with-warnings`, `index.recovery-artifact-retained`, the exact residual
 path, and cleanup guidance. `Failed`/`Unknown` produces `failed`,
 `index.recovery-failed`, and recovery `unknown`; it carries the exact expected
 path only when M1 returns it. `Blocked` and `Cancelled` retain their neutral M1
@@ -410,7 +414,7 @@ is an exact Workspace Library projection, is separately owned and unsafe for
 ordinary `index` mutation. The command returns its existing `blocked` target-safety
 result, identifies the affected destination, and performs no effect.
 
-This boundary does not consult `.agents/open-forge.libraries.json`. A missing,
+This physical-leaf boundary does not depend on Library registration state. A missing,
 malformed, stale, or otherwise unreadable Library record neither makes the
 final leaf ordinary nor grants `index` mutation authority.
 
@@ -419,411 +423,199 @@ not resolve a final leaf and then write its physical target. The guard concerns
 the final component addressed by each generated-region replacement; ordinary
 directory-ancestry rules remain defined by the filesystem contract.
 
-## Operation Modes And Observable Output
+## Human Output
 
-### Application authority
+The command uses the shared native report. The default detail is `minimal`; `standard`, `full` and `debug` add the catalogue-defined facts. `--detail-filter <error|warning|info|all>` is repeatable and changes only the rendered detail. Use `--format text` for this text report. Primary result text for `completed`, `completed-with-warnings` and `incomplete` is on stdout; primary errors for `invalid-input`, `blocked`, `failed` and `cancelled` are on stderr. There is no `Status:` line.
 
-Omitting `--dry-run` selects application. The explicit invocation confirms
-replacement of every changed body inside the selected machine-owned generated
-boundary. The command does not prompt again and does not accept `--yes`.
+### Statuses and headlines
 
-This application authority does not permit marker repair, authored-content
-replacement, whole-file formatting, overwrite mutation, path escape, metadata
-invention, or another repair operation.
+| Status                  | When                                                | Headline                                                                                       | Exit | Stream |
+| ----------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | nothing stale                                       | `Entries sections are current in all <M> files. Nothing to do.`                                |    0 | stdout |
+| completed               | rewritten                                           | `Updated the Entries section in <N> of <M> files.`                                             |    0 | stdout |
+| completed (dry run)     | changes planned                                     | `Would update the Entries section in <N> of <M> files.`                                        |    0 | stdout |
+| completed-with-warnings | optional metadata warning or recovery bundle retained | headline + visible finding rows                                                               |    2 | stdout |
+| incomplete              | independent safe regions applied while a readable malformed region was skipped, or a routed file, its metadata, or recovery was unreadable | `The Entries sections could not be rebuilt completely.` + verified update rows and exact limitation rows |    3 | stdout |
+| invalid-input           | bad flag, folder operand, unknown source            | `Cannot index <operand>: <reason>.` / family                                                   |    4 | stderr |
+| blocked                 | malformed leaf, unsafe target, lock, changed        | `Cannot rebuild the Entries section of <leaf's parent>.` + the leaf row                        |    5 | stderr |
+| failed                  | after effects                                       | `Index stopped after <n> of <m> files.`                                                        |    1 | stderr |
+| cancelled               | Ctrl+C                                              | `Index was cancelled. Nothing was changed.` or `... Stopped after <n> of <m> files.`           |  130 | stderr |
 
-### Dry run
+### Text by level
 
-Representative form:
-
-```text
-open-forge index --dry-run
-```
-
-Dry-run output represents every planned update with the exact bounded
-generated-region diff. It does not expose unrelated authored bytes or private
-recovery material.
-
-Each human diff block begins with this exact header, where all three values are
-JSON strings using JSON escaping:
+`minimal`, rewritten:
 
 ```text
-@@ {"id":<JSON string>,"path":<JSON string>,"scope":<JSON string>} @@
+Updated the Entries section in 2 of 21 files.
+  .agents/memory/emerging/ideas/_ideas.md   0 -> 1 entries
+  .agents/skills/_skills.md                 3 -> 4 entries
 ```
 
-The before body is tokenized first and every token is emitted with `- `; the
-expected body follows and every token is emitted with `+`. Tokenization splits
-after every newline and retains that newline, including exact LF versus CRLF. A
-final non-newline tail is its own token, and an empty body is one `""` token.
-Decoding and concatenating the before or expected tokens reproduces its exact
-generated-interior body. The diff contains no context, whole-file bytes,
-authored prefix or suffix, heuristics, elision, size limit, or truncation.
-Compact and expanded views both include every exact dry-run diff block. JSON
-stores the before and expected generated-interior bodies as typed change facts;
-it does not store this textual diff.
-
-A dry run with changes is `complete` when the complete plan and application
-preconditions were established safely. It says that regions would be updated
-and that no files changed. A dry run does not claim on-disk verification of bytes
-that were not written. No current dry-run condition produces `attention`; the
-only current `attention` producer is a retained recovery artifact after a
-verified application.
-
-### Human output
-
-Human output leads with what happened or would happen. Primary human rendering
-for `complete`, `attention`, and `incomplete` results goes to stdout. Primary
-human error rendering for `invalid`, `blocked`, `failed`, and `interrupted`
-results goes to stderr. Each primary human typed result stays together on its
-assigned stream; an `incomplete` result does not split safe facts from its
-findings. Separate bounded diagnostics use stderr. Human output avoids internal
-stage terms when the user only needs the outcome.
-
-Both views put the outcome, semantic status, workspace and selection method first.
-They retain mode, changed and unchanged region counts, verification counts, every
-changed path and before/after entry count, all findings and recovery facts. A
-compact dry run includes every exact bounded diff; view selection cannot weaken
-effect review. Expanded adds source-selection details and the reason for the
-actual `Next:` command. A partial failure names each affected path and its typed
-outcome; the heading does not claim that no writes occurred.
-
-`attention` is displayed as `requires attention`. Finding lines lead with the
-uppercase status and cause, followed by the stable code in brackets. There is no
-new diagnostic kind or severity. `--verbose` remains separate bounded diagnostics.
-
-Illustrative compact no-op:
+`minimal`, dry run:
 
 ```text
-Generated Entries are up to date.
-Status: complete
-Workspace: /work/demo
-Selected by: current directory
-Mode: apply
-Regions: 12; updates: 0; already current: 12; verified: 12
-
-No files changed.
+Would update the Entries section in 1 of 20 files.
+  .agents/loader.md   8 -> 7 entries
+No files were changed.
 ```
 
-A successful application uses `Generated Entries were updated.` and includes
-all changed paths with before/after entry counts and actual outcomes. Unchanged
-paths remain summarized by count. A dry run uses `Preview of generated navigation
-changes`, retains the existing exact diff framing and body bytes, and ends with
-`No files changed (--dry-run).` The exact operation Next command appears once
-when present; rendering never substitutes an instruction for that command.
+An optional-metadata finding remains visible at `minimal` for apply, dry-run,
+and verified no-op results. It names the source and missing optional metadata;
+it never describes that source as unreadable or recommends cleanup. An
+`incomplete` partial result names the skipped source, exact reason and cause,
+and the verified updates that were applied.
 
-Every ordinary error names the `index` operation, affected source or region,
-direct cause, and useful next action when one exists. Its primary human
-rendering is kept together on stderr for `invalid`, `blocked`, `failed`, and
-`interrupted` results.
-
-### Structured output
-
-`--json` returns one complete structured result document to stdout for every
-semantic status from the same typed result used by human rendering. It never
-prompts and never reruns planning, application, or verification. Separate
-bounded diagnostics use stderr, and ordinary human text is never mixed into
-structured JSON stdout.
-
-The command-owned `result` object is reduced to these members in exactly this
-order:
+`minimal`, blocked (stderr):
 
 ```text
-mode,
-selection,
-regions,
-recovery,
-findings,
-counts
+Cannot rebuild the Entries section of .agents/skills/_skills.md.
+  Error  .agents/skills/pdf/SKILL.md:1:1  Frontmatter is invalid
+         The frontmatter block is not closed.
+  Nothing was written. The other 19 sections are current.
+Next: open-forge doctor
 ```
 
-`mode` is a required JSON string exactly `apply` or `dry-run`.
-`IndexSelectionV1` has members exactly `origin`, `scope`, `sources`, in that
-order. `origin` and `scope` are required JSON strings. `origin` is exactly
-`automatic-loader` or `explicit-sources`; `scope` is exactly `not-established`,
-`rooted`, `detached`, or `mixed`; and `sources` is a never-null array.
-
-Every `sources` member is an `IndexLogicalSourceV1` with members exactly `id`,
-`path`, `scope`, in that order. All three are required non-null JSON strings;
-`scope` is exactly `rooted` or `detached`. The selection contains safe normalized
-logical sources only: `automatic-loader` contains exactly the normalized Loader,
-when that Loader is safely established. A pre-selection workspace or Loader
-failure retains origin `automatic-loader`, scope `not-established`, and an empty
-`sources` array. `explicit-sources` contains only safely resolved sources and may
-be empty when none was established. Overwrite references are normalized to the
-base, proven physical aliases are deduplicated, and final ordering is by
-canonical path then ID using ordinal comparison. Raw operands are never retained
-in the result.
-
-Selection coherence is exact: `not-established` means no safe source scope was
-established and requires `sources = []`; `rooted` means every normalized source
-has logical scope `rooted` and `sources` is non-empty; `detached` means every
-normalized source has logical scope `detached` and `sources` is non-empty; and
-`mixed` means the normalized sources contain both logical scopes.
-
-Each `IndexRegionV1` has members in exactly this order:
+`minimal`, folder operand (stderr):
 
 ```text
-source,
-action,
-beforeEntryCount,
-expectedEntryCount,
-change,
-outcome
+Cannot index .agents/memory/emerging/ideas/pricing: it is a folder, not a source.
+Next: open-forge index memory/emerging/ideas/pricing
 ```
 
-`action` is exactly `not-established`, `unchanged`, or `update`. `outcome` is
-exactly `not-established`, `already-current`, `not-requested`, `not-started`,
-`applied`, `verified`, or `unknown`. `source` is a required non-null
-`IndexLogicalSourceV1`. `action` and `outcome` are required non-null JSON strings.
-The two entry counts and `change` are required members that serialize explicit
-`null` where the coherence rules below say the value is absent; a non-null entry
-count is a nonnegative JSON integer.
+`standard` adds `Workspace:`, the unchanged files as one count line, and for
+a dry run the diff of each changed section:
 
-Non-null `change` is an `IndexChangeV1` with members exactly `beforeBody`,
-`expectedBody`, in that order. Both are required non-null JSON strings containing
-the exact generated-interior bodies. It does not contain whole-file bytes or a
-textual diff.
+```text
+--- .agents/loader.md  (Entries section)
+- - [Reusable default shapes for code, files, APIs, documents, and other work](patterns/_patterns.md) - #LoadNow #Core #Pattern
+```
 
-The region coherence rules are exact:
+Diff lines are authored content, written byte-exact through the authored span.
+Blank list lines are not shown as `- ` lines.
 
-- `not-established` has no entry counts or change and has outcome
-  `not-established`.
-- `unchanged` has both non-null entry counts, no change, and outcome
-  `already-current`.
-- `update` has a non-null `expectedEntryCount` and one change.
-  `beforeEntryCount` is the count only when the complete bounded interior parses
-  through the sole generated-Entries parser; it is `null` when a valid
-  replaceable interior is unparseable. Human output renders that null as
-  `unknown`, never `0`. Dry run uses
-  `not-requested`; an apply stopped before that target uses `not-started`; a
-  known applied but unverified target uses `applied`; a known applied and
-  verified target uses `verified`; and unprovable target disposition uses
-  `unknown`.
+`full` adds the selection (`loader roots` or the explicit sources), every
+unchanged file as a row, and recovery facts in words.
 
-`IndexRecoveryV1` has members exactly `state`, `residualPath`, in that order.
-Both members are present; `residualPath` serializes explicit `null` where no exact
-path is available and otherwise is a JSON string. `state` is a required non-null
-JSON string exactly `not-required`, `not-created`, `removed`, `retained`, or
-`unknown`. It is `not-required` for dry run, no-op, or a plan with no existing
-target; `not-created` when recovery was required but no artifact was positively
-created; `removed` when the verified operation artifact was positively removed;
-`retained` only when the support candidate is positively present; and `unknown`
-when its disposition is unprovable. `residualPath` is non-null for `retained` and
-is the exact path. It may also be non-null for `unknown` when the Mutation
-Foundation truthfully reports one exact observed or expected support path. It is
-null whenever no exact path is known.
+### Representative transcripts by status
 
-`IndexFindingV1` has members exactly `code`, `status`, `sourceOccurrence`,
-`source`, `cause`, `candidates`, in that order. All members are present;
-`code`, `status`, and `cause` are required non-null JSON strings.
-`sourceOccurrence` is `null` or a one-based positive JSON integer; `source` is
-`null` or an `IndexLogicalSourceV1`. Both serialize explicit `null` where they do
-not apply. A non-null `source` and every `candidates` member use
-`IndexLogicalSourceV1`. `candidates` is a never-null array of safe normalized
-logical sources ordered by path then ID ordinal.
+### Transcript — completed
 
-`IndexCountsV1` has members in exactly this order: `regions`, `updates`, `unchanged`,
-`applied`, `verified`. All five are required nonnegative JSON integers.
-`regions` equals the `regions` array length; `updates` equals the number of
-regions with action `update`; `unchanged` equals the number with action
-`unchanged`; `applied` counts update outcomes `applied` and `verified`;
-`verified` counts `already-current` and `verified`; and
-`updates + unchanged <= regions`.
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#index-candidate-completed).
 
-The `selection.sources`, `regions`, `findings`, and each finding's `candidates`
-arrays are never `null`. The nullable members are region `beforeEntryCount`,
-`expectedEntryCount`, and `change`; recovery `residualPath`; and finding
-`sourceOccurrence` and `source`. They serialize explicit `null` where not
-applicable; no member is omitted.
+### Transcript — completed-with-warnings
 
-Result, human output, and diagnostics expose no raw absolute operand, physical
-source path, complete document or surrounding authored bytes, GN or M1 internal
-record or enum, hash, lock or operation ID, manifest or payload, temporary or
-staging path, or raw exception. The exact recovery `residualPath` is the sole
-accepted absolute-path exception. Finding `cause` is bounded command-authored
-text; it is never a forwarded exception or raw absolute operand.
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#index-candidate-completed-with-warnings).
 
-For the current attention result—a retained recovery artifact after verified
-application—the structured status value is `attention`; only human presentation
-uses `requires attention`.
+### Transcript — incomplete
 
-The exact field names, schema versioning, compatibility rules, and numeric exit
-mapping are defined by the accepted [Shared Result Coordinates](../shared/result-coordinates/interface.md).
-The [Technical Design](technical-design.md#json-and-presentation) describes
-the source-generated serialization path without changing that shared authority.
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#index-candidate-incomplete).
+
+### Transcript — invalid-input
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#index-candidate-invalid-input).
+
+### Transcript — blocked
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#index-candidate-blocked).
+
+### Transcript — failed
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#index-candidate-failed).
+
+### Transcript — cancelled
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#index-candidate-cancelled).
+
+## Structured Output
+
+`--format json` writes one schema-3 envelope to stdout for every report status. It contains the command, status, workspace when applicable, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
+
+### JSON data by level
+
+| Level    | `data`                                                                                                          |
+| -------- | --------------------------------------------------------------------------------------------------------------- |
+| minimal  | `{ mode, changes: [ { path, before, after } ] }`                                                                |
+| standard | + `diff` per change (lines with `+`/`-` prefixes), `unchanged: [ { path } ]`                                    |
+| full     | + `selection { origin, scope, sources: [ { id, path } ] }`, `regions: [ every region with action and outcome ]` |
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                         |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | Dry run formed and preflighted the complete plan, or application and final verification completed, including a verified no-op.                                                  |
-| `attention`   | Application and verification completed, but the command-owned recovery artifact is positively retained. Human output says `requires attention`.                                 |
-| `incomplete`  | Safe inspection facts are available, but complete target discovery or projection coverage could not finish. No mutation begins, and human facts and findings remain one result. |
-| `invalid`     | Command input, a flag value, or a source reference does not follow the accepted interface.                                                                                      |
-| `blocked`     | A valid request cannot establish or apply one safe complete plan. No mutation begins.                                                                                           |
-| `failed`      | Application, verification, or bundle handling failed to complete the selected operation.                                                                                        |
-| `interrupted` | The caller cancelled or interrupted the operation before completion and no unexpected application or verification failure changes the result.                                   |
+The status and exit mapping above are unchanged by detail or format. Root effects and recovery receipts retain their complete result facts at every detail level; command-owned data follows the catalogue's level rows.
 
-Changes and verified no-ops are ordinary `complete` results. They do not
-require `attention` merely because bytes changed or no effect was needed.
+### Effects wording
 
-When more than one condition is present, semantic status uses this exact
-precedence: `failed` > `interrupted` > `invalid` > `blocked` > `incomplete` >
-`attention` > `complete`. Every finding's status matches its fixed code mapping.
-A `complete` result has no findings; the only currently accepted `attention`
-producer is a retained recovery artifact.
+`<path>  <before> -> <after> entries` for a rewritten section; `unknown ->
+<after>` when the section was missing or unreadable before. Dry run: same
+row. Partial: `<path>  not started` / `<path>  final state unknown`.
 
-### Finding codes, order, and status
+### Counts and limitations
 
-The complete Index finding vocabulary is fixed in this order:
+`filesChecked`, `filesUpdated`, `filesCurrent`. They satisfy
+`checked = updated + current` in every result; a file whose outcome is
+unknown counts as neither and is listed.
 
-| Order | Code                                | Status        | Public condition                                                                       |
-| ----: | ----------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
-|     1 | `index.invalid-input`               | `invalid`     | An option or binding combination is invalid.                                           |
-|     2 | `index.invalid-source`              | `invalid`     | An explicit source is malformed, unknown, or unsupported.                              |
-|     3 | `index.workspace-unavailable`       | `blocked`     | The selected workspace cannot be established.                                          |
-|     4 | `index.workspace-unsafe`            | `blocked`     | Workspace identity or containment is unsafe.                                           |
-|     5 | `index.source-ambiguous`            | `blocked`     | One explicit source has multiple normalized candidates.                                |
-|     6 | `index.source-unsafe`               | `blocked`     | A selected source crosses an unsafe boundary.                                          |
-|     7 | `index.topology-ambiguous`          | `blocked`     | The selected topology closure is not unique.                                           |
-|     8 | `index.target-unexposed`            | `blocked`     | A selected routed leaf has no safe exposing entrypoint or parent.                      |
-|     9 | `index.target-unsafe`               | `blocked`     | Target identity, containment, or write boundary is unsafe.                             |
-|    10 | `index.metadata-unsafe`             | `blocked`     | Admitted metadata makes the complete plan unsafe.                                      |
-|    11 | `index.generated-region-unsafe`     | `blocked`     | The generated boundary is missing, malformed, ambiguous, or unsafe.                    |
-|    12 | `index.workspace-lock-unavailable`  | `blocked`     | The workspace lock could not be acquired; no contention claim is inferred.             |
-|    13 | `index.target-changed`              | `blocked`     | A required target changed before any effect.                                           |
-|    14 | `index.recovery-conflict`           | `blocked`     | Recovery collision or recognition blocks preparation.                                  |
-|    15 | `index.discovery-incomplete`        | `incomplete`  | Required source or topology facts are unavailable.                                     |
-|    16 | `index.metadata-incomplete`         | `incomplete`  | Required metadata is unavailable.                                                      |
-|    17 | `index.projection-incomplete`       | `incomplete`  | Exact expected generated bodies are unavailable.                                       |
-|    18 | `index.recovery-unavailable`        | `incomplete`  | Writable recovery storage is unavailable before effects.                               |
-|    19 | `index.recovery-artifact-retained`  | `attention`   | Verified effects succeeded, but cleanup leaves the recognized artifact.                |
-|    20 | `index.target-changed-during-apply` | `failed`      | A required target changed after successful recovery preparation began the apply phase. |
-|    21 | `index.write-failed`                | `failed`      | A target effect failed.                                                                |
-|    22 | `index.verification-failed`         | `failed`      | Applied content could not be verified.                                                 |
-|    23 | `index.recovery-failed`             | `failed`      | Recovery handling failed after effects began.                                          |
-|    24 | `index.operation-failed`            | `failed`      | An unexpected operation failure falls outside every named condition.                   |
-|    25 | `index.interrupted`                 | `interrupted` | Cancellation occurred without a higher-priority failure.                               |
+### Next rules
 
-Findings are ordered by this table, then by `sourceOccurrence` with `null` first
-and positive integers in numeric ascending order, followed by `source.path`,
-`source.id`, and `cause` using ordinal comparison.
-
-### Exact next actions
-
-`next` is deterministic and never interpolates a source operand:
-
-| Result condition                                            | `next.command`               | `next.reason`                                                                                                       |
-| ----------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `complete`                                                  | `null`                       | `null`                                                                                                              |
-| `invalid`                                                   | `open-forge index --help`    | `Correct the named Index input, then rerun the request.`                                                            |
-| `blocked`, first finding `index.source-ambiguous`           | `open-forge index`           | `Replace every ambiguous source with one listed exact path, then rerun the same Index request.`                     |
-| `blocked`, first finding `index.workspace-lock-unavailable` | `open-forge index`           | `Wait for the workspace lock to become available or inspect lock availability, then rerun Index from a fresh plan.` |
-| `blocked`, first finding `index.target-changed`             | `open-forge index`           | `Inspect the changed target, then rerun Index from a fresh plan.`                                                   |
-| other `blocked`                                             | `open-forge doctor`          | `Inspect the blocked workspace, topology, metadata, generated-region, or recovery boundary before rerunning Index.` |
-| `incomplete`                                                | `open-forge doctor`          | `Inspect the unavailable discovery, metadata, projection, or recovery facts before relying on this Index result.`   |
-| `attention`                                                 | `open-forge cleanup`         | `Review and remove the reported recovery artifact after confirming the verified Index result.`                      |
-| `failed`                                                    | `open-forge index --verbose` | `Report the failure and retry the same Index request with bounded diagnostics.`                                     |
-| `interrupted`                                               | `open-forge index`           | `Rerun the same Index request.`                                                                                     |
-
-Specialized blocked guidance uses the first finding of the overall result status.
-
-The numeric process-exit mapping is the shared mapping defined by the [Shared
-Result Coordinates](../shared/result-coordinates/interface.md). This command adds
-no command-specific exits.
+Invalid source -> the corrected command; blocked or incomplete ->
+`open-forge doctor`; lock -> rerun; retained recovery -> `open-forge cleanup`;
+completed -> none.
 
 ## Errors And Boundaries
 
-Primary human errors for `invalid`, `blocked`, `failed`, and `interrupted`
-results use stderr under the [accepted public output rules](#accepted-public-output-and-result-rules).
-Under `--json`, the complete structured result for any of these statuses
-remains the single stdout document under [Structured output](#structured-output);
-separate bounded diagnostics use stderr.
+The findings catalogue below is the command's finite error and warning vocabulary. Findings keep their code, severity, family, subject and cause; detail filtering affects display only. A blocked, failed or cancelled result prevents further effects according to the catalogue.
 
-An empty, unknown, missing, or unsupported source reference is invalid.
+### Findings catalogue
 
-A directory path is invalid because `index` operands identify sources. Use the
-entrypoint ID or exact entrypoint file path.
+| Code                              | Severity | Family                      | Message                                                                                                     | Next                                                                             |
+| --------------------------------- | -------- | --------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| index.invalid-input               | error    | invalid-input               |                                                                                                             |                                                                                  |
+| index.invalid-source              | error    | local                       | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Index/Shared/Wording/IndexWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`index.invalid-source`). | `open-forge index <id>` when derivable, else `open-forge route list --depth=all` |
+| index.workspace-unavailable       | error    | workspace-unavailable       |                                                                                                             |                                                                                  |
+| index.workspace-unsafe            | error    | workspace-unsafe            |                                                                                                             |                                                                                  |
+| index.source-ambiguous            | error    | source-ambiguous            |                                                                                                             |                                                                                  |
+| index.source-unsafe               | error    | source-unsafe               |                                                                                                             |                                                                                  |
+| index.topology-ambiguous          | error    | local                       | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Index/Shared/Wording/IndexWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`index.topology-ambiguous`).                               | `open-forge doctor`                                                              |
+| index.target-unexposed            | error    | local                       | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Index/Shared/Wording/IndexWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`index.target-unexposed`).                                  | `open-forge doctor`                                                              |
+| index.target-unsafe               | error    | target-unsafe               |                                                                                                             |                                                                                  |
+| index.metadata-unsafe             | error    | metadata-unsafe             | the leaf row under the blocked headline                                                                     | edit the file                                                                    |
+| index.generated-region-unsafe     | error    | generated-region-unsafe     |                                                                                                             |                                                                                  |
+| index.workspace-lock-unavailable  | error    | workspace-lock-unavailable  |                                                                                                             |                                                                                  |
+| index.target-changed              | error    | target-changed              |                                                                                                             |                                                                                  |
+| index.recovery-conflict           | error    | recovery-conflict           |                                                                                                             |                                                                                  |
+| index.discovery-incomplete        | warning  | local                       | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Index/Shared/Wording/IndexWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`index.discovery-incomplete`).                                             | `open-forge doctor`                                                              |
+| index.metadata-optional           | warning  | metadata-optional           |                                                                                                             |                                                                                  |
+| index.metadata-skipped            | warning  | metadata-skipped            | the skipped source row with its exact reason and cause                                                     | `open-forge doctor`                                                              |
+| index.metadata-incomplete         | warning  | metadata-incomplete         |                                                                                                             |                                                                                  |
+| index.projection-incomplete       | warning  | projection-unavailable      |                                                                                                             |                                                                                  |
+| index.recovery-unavailable        | warning  | recovery-unavailable        |                                                                                                             |                                                                                  |
+| index.recovery-artifact-retained  | warning  | recovery-artifact-retained  |                                                                                                             |                                                                                  |
+| index.target-changed-during-apply | error    | target-changed-during-apply |                                                                                                             |                                                                                  |
+| index.write-failed                | error    | write-failed                |                                                                                                             |                                                                                  |
+| index.verification-failed         | error    | verification-failed         |                                                                                                             |                                                                                  |
+| index.recovery-failed             | error    | recovery-failed             |                                                                                                             |                                                                                  |
+| index.operation-failed            | error    | operation-failed            |                                                                                                             |                                                                                  |
+| index.interrupted                 | error    | cancelled |                                                                                                             |                                                                                  |
 
-An ambiguous source ID is blocked unless interactive source disambiguation
-resolves it under the shared contract.
+## Scenarios
 
-A structurally ambiguous route relationship remains blocked even when an exact
-path identifies the file.
+### Catalogue situations
 
-A path escape, unsafe physical identity, or proven current-host target collision is
-blocked.
+`all-current`, `one-stale`, `dry-run-one-stale`, `explicit-source`,
+`optional-metadata`, `folder-operand` (invalid-input), `unknown-source`
+(invalid-input), `blocked-malformed-only`, `incomplete-independent-malformed`,
+`incomplete-unreadable-child`, `lock-held`, `write-failed-partial`, `cancelled`.
 
-A filesystem link or reparse point at a generated region's final leaf is an
-unsafe target, including an exact Workspace Library projection and a projection
-whose Library record is missing or invalid. This condition keeps the existing
-`blocked` target-safety result and prevents every effect; `index` never follows
-the final leaf to write its physical target.
+Each status has one representative native text transcript above. JSON uses the same status and command facts under the schema-3 envelope.
 
-A missing Loader blocks the operand-free form but does not block an otherwise
-complete explicit detached selection.
+### Open maintainer questions
 
-A selected source without an exposing region is blocked.
-
-Missing or invalid required routing metadata blocks the complete plan.
-
-Missing, duplicate, misplaced, reversed, nested, or ambiguous generated
-markers block the complete plan.
-
-A missing, unverified, or colliding required recovery bundle blocks before the
-first write. Unavailable or unsafe bundle storage is `incomplete` before the
-first write.
-
-A source or destination change detected before successful recovery preparation
-blocks the plan. Successful preparation begins the apply phase. A later
-per-target drift fails the operation as `index.target-changed-during-apply`,
-keeps that region `not-started`, retains the final recovery bundle, and stops
-new effects before stale intent can write that target.
-
-`doctor` owns complete structural diagnosis and recommendations. `index` reports
-only findings needed to select, project, apply, and verify generated navigation.
-
-## Representative Scenarios
-
-The scenarios below cover each selection form, each omission state, each
-Boolean write-policy state, accepted Boolean repetition, each global terminal
-mode, the assigned human and structured streams, and each semantic result
-without enumerating every compatible combination.
-
-| Invocation or state                                                                                                                        | Observable result                                                                                                                                                                                       |
-| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `open-forge index` with a valid Loader and rooted topology                                                                                 | The Loader and every reachable entrypoint region are selected.                                                                                                                                          |
-| `open-forge index memory`                                                                                                                  | The entrypoint, its routed descendant closure, and its direct exposing parent when present are selected.                                                                                                |
-| `open-forge index .agents/memory/_memory.md`                                                                                               | The exact entrypoint path selects the same logical entrypoint as its source ID.                                                                                                                         |
-| `open-forge index skills/experience-design`                                                                                                | Only the direct exposing parent is selected, and that parent projects all current direct children.                                                                                                      |
-| An explicit detached entrypoint with complete local topology                                                                               | Its local subtree and any parent present in that topology are maintained without inventing a Loader or installed Framework route.                                                                       |
-| An ID, base path, or overwrite path for a valid pair                                                                                       | The base logical source supplies route identity; overwrite content never becomes a generated entry.                                                                                                     |
-| `open-forge index memory skills/experience-design` with duplicate or overlapping closures                                                  | Each target region is processed once in canonical path order.                                                                                                                                           |
-| A compatible recognized entrypoint reached through more than one current-host physical-alias path                                          | The physical entrypoint is processed exactly once; a proven incompatible alias blocks.                                                                                                                  |
-| A selected entrypoint has no direct routed children                                                                                        | Its expected generated body is `- none - No entries - #Empty`.                                                                                                                                          |
-| A valid target has stale generated lines                                                                                                   | Application replaces only the bounded generated interior.                                                                                                                                               |
-| `open-forge index --dry-run` with changes                                                                                                  | The result is `complete`; human output shows exact bounded diffs and says no files changed, and structured output carries exact before/expected bodies.                                                 |
-| `open-forge index --dry-run --dry-run`                                                                                                     | Repeated Boolean occurrences are accepted with no additional effect, and the preview still writes nothing.                                                                                              |
-| `open-forge index --workspace ../another-workspace`                                                                                        | The exact supplied workspace is used; no parent or Git-root discovery occurs.                                                                                                                           |
-| `open-forge index --json`                                                                                                                  | One complete structured result for every semantic status is written to stdout, preserving the typed status. Separate bounded diagnostics use stderr; ordinary human text is not mixed into JSON stdout. |
-| `open-forge index --verbose`                                                                                                               | Bounded diagnostics are added without changing operation behavior or status.                                                                                                                            |
-| `open-forge index --help`                                                                                                                  | Help for `index` is shown without workspace resolution or domain execution.                                                                                                                             |
-| `open-forge index --version`                                                                                                               | The distributed CLI version is shown without workspace resolution or a domain operation.                                                                                                                |
-| A valid unchanged target set after a successful prior application                                                                          | The result is `complete`, reports a verified no-op, and performs no write or bundle preparation.                                                                                                        |
-| A valid empty target projection                                                                                                            | The result can be a complete update or verified no-op with the exact empty body, depending on current bytes.                                                                                            |
-| Safe facts exist but complete discovery or projection coverage cannot finish                                                               | The result is `incomplete`, no mutation begins, and safe facts remain together with their findings in the primary human result.                                                                         |
-| An unknown source, invalid flag value, or conflicting terminal input                                                                       | The result is `invalid`; the primary human error is on stderr and identifies the useful correction when one exists.                                                                                     |
-| Missing Loader, invalid metadata, unsafe boundary, missing/unverified/colliding recovery bundle, or another unsafe complete-plan condition | The result is `blocked`, no mutation begins, and the primary human error is on stderr.                                                                                                                  |
-| Unavailable or unsafe recovery-bundle storage                                                                                              | The result is `incomplete`, no mutation begins, and the primary human result retains the safe facts and storage limitation.                                                                             |
-| Application, verification, or bundle handling cannot complete                                                                              | The result is `failed` or `interrupted` according to the semantic-result definitions, the primary human error is on stderr, and residual bundle state is reported when present.                         |
-| `open-forge index --view=compact`                                                                                                          | Human output retains semantic result, effect counts, affected paths, safety findings, required next actions, and every dry-run diff while omitting optional explanation and provenance.                 |
-| `open-forge index --view=expanded` or omitted `--view`                                                                                     | Human output uses the default expanded examples and includes complete ordinary evidence and provenance.                                                                                                 |
-
+The native all-current minimal report includes a `Workspace: <workspace>` echo, although the catalogue's no-op acceptance says one line. This contract records the native two-line transcript and leaves the precedence question unresolved. **Maintainer decision remains open.**
 ## Non-Goals
 
 `index` does not:
 
 - Validate every Framework, route, link, overwrite, or lifecycle contract.
-- Repair or create generated markers.
+- Repair or create semantic headings.
 - Rewrite authored metadata, prose, links, headings, or whitespace.
 - Format complete files.
 - Add, move, remove, or rename routed sources.
@@ -855,56 +647,61 @@ mandatory evidence concerns. Eventual implementation evidence must cover:
 - Final filesystem link and reparse-point leaves, including exact Workspace
   Library projections with and without a valid Library record, are reported as
   unsafe and block before effects; `index` never writes through them.
-- Human `up to date` and `requires attention` wording on the assigned result
+- Human `up to date` and `completed-with-warnings` wording on the assigned result
   stream without default preflight jargon.
 - Human and structured output from the same typed result, with primary human
   result and error streams, one JSON document on stdout, and bounded diagnostics
   on stderr.
-- Complete, attention, incomplete, invalid, blocked, failed, and interrupted
-  results, including proof that dry run never produces the current retained-
-  artifact attention condition.
+- Completed, completed-with-warnings, incomplete, invalid-input, blocked,
+  failed, and cancelled results, including proof that dry run never produces
+  a retained recovery artifact while optional-metadata warnings remain visible.
 - Exact human examples, structured bounded-change evidence, accepted idempotent
   Boolean repetition, no-op output, and the no-files-changed dry-run promise.
 
 ## Accepted Public Output And Result Rules
 
-Primary human rendering for `complete`, `attention`, and `incomplete` results
+Primary human rendering for `completed`, `completed-with-warnings`, and `incomplete` results
 goes to stdout. Each primary human typed result stays together on stdout,
 including safe incomplete facts and their findings.
 
-Primary human error rendering for `invalid`, `blocked`, `failed`, and
-`interrupted` results goes to stderr. Each primary human typed error result stays
+Primary human error rendering for `invalid-input`, `blocked`, `failed`, and
+`cancelled` results goes to stderr. Each primary human typed error result stays
 together on stderr.
 
-A dry run with a safely established complete plan returns `complete`, exposes
-every exact bounded diff, and states that no files changed. Other dry-run
-conditions retain their exact invalid, blocked, incomplete, failed, or
-interrupted code/status mapping. Dry run never creates or retains a recovery
-artifact and therefore has no accepted `attention` producer.
+A dry run with a safely established complete plan returns `completed`, exposes
+every exact bounded diff, and states that no files changed. A safely established
+plan with eligible optional Missing metadata retains its visible
+`completed-with-warnings`/Attention2 finding in preview, without creating or
+retaining a recovery artifact. Other dry-run conditions retain their exact
+invalid-input, blocked, incomplete, failed, or cancelled code/status mapping.
 
 The shared [Global CLI Flags](../shared/global-flags/interface.md) contract
-remains authoritative for `--json`: it renders one complete structured result
+remains authoritative for `--format json`: it renders one schema-3 structured result
 document to stdout for every semantic status. Separate bounded diagnostics
 remain on stderr, and the accepted human stream rules above do not mix ordinary
 human text into JSON stdout.
 
-## Compact JSON Output
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
+## Executable Wording References
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
+
+CLI help syntax: [`index.help.syntax`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Index/IndexText.cs).
+
+<!-- @OpenForgeTextRef index.help.syntax -->
+
+## Approved Journey Wording References
+
+The following stable IDs link the approved journey behavior above to its typed
+human-wording factories. Independently reviewed snapshots and state assertions
+remain the output evidence.
+
+- [IndexPhrases.cs](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Index/IndexPhrases.cs)
+  <!-- @OpenForgeTextRef index.phrase.updated-the-entries-section-in-of-other-sources-were-skipped -->
+  <!-- @OpenForgeTextRef index.phrase.would-update-the-entries-section-in-of-other-sources-were-skipped -->
+  <!-- @OpenForgeTextRef index.phrase.optional-metadata-is-missing-for-observed-values-were-used -->
+  <!-- @OpenForgeTextRef index.phrase.skipped-because-authored-metadata-is-malformed -->
+- [IndexText.cs](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Index/IndexText.cs)
+  <!-- @OpenForgeTextRef index.title.optional-metadata-is-missing -->
+  <!-- @OpenForgeTextRef index.title.metadata-was-skipped -->

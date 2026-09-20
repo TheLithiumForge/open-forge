@@ -1,0 +1,11 @@
+status=completed
+mode=apply
+force=false
+automatic=true
+classification=safe-absence
+effects=27
+lifecycle=publish/verified
+recovery=not-required
+verification=verified
+findings=0
+next=none

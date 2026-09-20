@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models.Source;
 
 public sealed class RouteSourceDocumentAndMetadataModelTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route projections retain neutral forms and complete or unavailable document reads")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void DocumentsPreserveReadStateAndNeutralLayerAssociation()
@@ -26,6 +27,7 @@ public sealed class RouteSourceDocumentAndMetadataModelTests
         Assert.Equal(logicalSource.Base.PhysicalPath, complete.BaseRead.Layer.PhysicalPath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route projections retain Loader, entrypoint, compatibility, Markdown, and Skill intrinsic forms")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void IntrinsicFormsRemainNeutralInputsToRouteProjection()
@@ -64,6 +66,7 @@ public sealed class RouteSourceDocumentAndMetadataModelTests
         Assert.False(skillSource.Metadata.IsCompatibilityEntrypoint);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route metadata retains every unavailable state without authored values")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void MetadataStatesRemainDistinct()
@@ -84,6 +87,7 @@ public sealed class RouteSourceDocumentAndMetadataModelTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route metadata snapshots complete descriptions and strict tags")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void CompleteMetadataOwnsItsValues()
@@ -99,6 +103,7 @@ public sealed class RouteSourceDocumentAndMetadataModelTests
         Assert.True(metadata.IsOverwritePresent);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route metadata overwrite presence follows the selected projection layers rather than neutral availability")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void BaseOnlyProjectionSuppressesOverwriteMetadata()

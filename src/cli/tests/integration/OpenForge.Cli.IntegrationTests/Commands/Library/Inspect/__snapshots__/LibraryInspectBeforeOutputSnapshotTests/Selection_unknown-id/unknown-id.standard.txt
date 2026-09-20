@@ -1,0 +1,6 @@
+Cannot inspect unknown: No Library has the ID unknown.
+Workspace: <workspace>
+  Error  .agents/open-forge.lock.json  Library ID is unknown
+         No Library has the ID unknown.
+  Choose a registered Library ID.
+Next: open-forge library list

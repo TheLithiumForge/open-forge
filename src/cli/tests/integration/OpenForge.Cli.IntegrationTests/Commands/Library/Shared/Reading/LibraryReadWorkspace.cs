@@ -15,7 +15,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Reading;
 
 internal sealed class LibraryReadWorkspace : IDisposable
 {
-    internal const string RecordPath = ".agents/open-forge.libraries.json";
+    internal const string RecordPath = ".agents/open-forge.lock.json";
     internal const string SourceRoot = "shared/team";
     internal const string ReviewPath = ".agents/directives/review.md";
     internal const string ReviewTarget = "../../shared/team/.agents/directives/review.md";

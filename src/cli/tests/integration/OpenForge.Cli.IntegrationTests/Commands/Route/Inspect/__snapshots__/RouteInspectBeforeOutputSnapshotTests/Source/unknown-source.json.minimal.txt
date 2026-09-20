@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "invalid-input",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot inspect missing/source: No source has the ID missing/source.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-inspect.unknown-source",
+      "title": "Source is unknown",
+      "message": "No source has the ID missing/source.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "missing/source",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "ownBytes": null,
+    "ownTokens": null,
+    "addedFiles": null,
+    "addedBytes": null,
+    "addedTokens": null,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": null,
+    "path": null,
+    "kind": null,
+    "entrypointForm": null,
+    "overwritePath": null,
+    "belongs": {
+      "routeChain": null,
+      "parent": null,
+      "directChildren": null,
+      "descendants": null
+    },
+    "read": {
+      "atStart": null,
+      "automaticallyWhen": null,
+      "mayReadAgain": null
+    },
+    "size": {
+      "own": null,
+      "adds": null,
+      "loadNow": null
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route inspect --help",
+    "reason": "Correct the named source or input, then rerun route inspect."
+  }
+}

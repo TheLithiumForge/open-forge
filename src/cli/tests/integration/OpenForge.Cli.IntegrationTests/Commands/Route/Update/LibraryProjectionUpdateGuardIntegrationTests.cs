@@ -5,6 +5,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 
 public sealed class LibraryProjectionUpdateGuardIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(true), InlineData(false)]
     public static async Task ProjectionLeafCannotBeMutatedEvenWithoutRegistration(bool registered)

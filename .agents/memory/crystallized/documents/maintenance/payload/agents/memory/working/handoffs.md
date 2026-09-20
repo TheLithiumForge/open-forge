@@ -9,7 +9,7 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/memory/working/handoffs/_handoffs.md`](../../../../../../../../../src/open-forge/.agents/memory/working/handoffs/_handoffs.md) is the canonical installed Handoffs `entrypoint`. The repository [Handoffs `entrypoint`](../../../../../../../working/handoffs/_handoffs.md) dogfoods the same authored contract and may add local generated `Entries`.
+[`src/open-forge/.agents/memory/working/handoffs/_handoffs.md`](../../../../../../../../../src/open-forge/.agents/memory/working/handoffs/_handoffs.md) is the canonical installed Handoffs `entrypoint`. The repository [Handoffs `entrypoint`](../../../../../../../archived/cli-development/handoffs/_handoffs.md) dogfoods the same authored contract and may add local generated `Entries`.
 
 The [Working state contract](../../../../../framework/memory/working.md) defines Handoffs as sealed boundary snapshots within temporary Working Memory.
 

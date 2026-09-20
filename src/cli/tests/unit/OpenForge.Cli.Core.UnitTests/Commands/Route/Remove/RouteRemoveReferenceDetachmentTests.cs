@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveReferenceDetachmentTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove detachment facts preserve the visible label and surrounding authored bytes"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitBehavior")]
     public void DetachmentFactsPreserveVisibleLabelAndAuthoredBytes()
@@ -29,6 +30,7 @@ public sealed class RouteRemoveReferenceDetachmentTests
         Assert.True(detachment.Location.ByteLength > 0);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove reference plans retain complete scan and document edit boundaries"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void ReferencePlansRetainCompleteScanAndDocumentBoundaries()

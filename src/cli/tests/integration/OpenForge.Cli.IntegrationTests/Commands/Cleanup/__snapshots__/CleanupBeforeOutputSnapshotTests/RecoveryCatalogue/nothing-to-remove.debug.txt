@@ -1,0 +1,4 @@
+No recovery data to remove.
+Workspace: <workspace>
+  No workspace lock was needed.
+  No final recovery-store check was needed.

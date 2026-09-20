@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.GeneratedNavigation;
 
 public sealed class GeneratedNavigationObservedTargetCollisionTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "A new intended root colliding with an observed unrecognized occupant is not admitted")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void NewRootReportsItsObservedTargetOccupant()
@@ -28,6 +29,7 @@ public sealed class GeneratedNavigationObservedTargetCollisionTests
         Assert.Empty(formation.PhysicalAliasGroups);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "A same-path replacement reports a separate observed occupant without inheriting its old candidate")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void SameCanonicalReplacementKeepsSeparateObservedOccupancy()
@@ -54,6 +56,7 @@ public sealed class GeneratedNavigationObservedTargetCollisionTests
         Assert.Empty(formation.Topology.LoaderRootPaths);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "A removed canonical layer leaves its former target available for an intended replacement")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void RemovedLayerTargetCanBeReused()
@@ -71,6 +74,7 @@ public sealed class GeneratedNavigationObservedTargetCollisionTests
         Assert.Same(replacement, formation.FindSource(replacement.Identity.CanonicalBasePath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Observed base and overwrite layers are reconciled independently")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void ReplacementRetainsBaseEvidenceAndDropsItsRemovedOverwriteEvidence()

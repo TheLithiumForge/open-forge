@@ -1,0 +1,8 @@
+1 Library registered. 1 link needs attention.
+Workspace: <workspace>
+  Warning  .agents/directives/review.md  Registered link changed
+         .agents/directives/review.md  is no longer the link team-knowledge created
+  team-knowledge  shared/team -> .  0 links current, 1 changed
+    .agents/directives/review.md  changed
+  Inspect the Library before changing it.
+Next: open-forge library inspect team-knowledge

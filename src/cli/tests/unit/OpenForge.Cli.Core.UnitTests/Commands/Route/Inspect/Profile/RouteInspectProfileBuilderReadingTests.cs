@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Profile;
 
 public sealed class RouteInspectProfileBuilderReadingTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect task-start membership is stable when the same source uses ID or exact-path selection")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void TaskStartMembershipDoesNotDependOnInspectionOperand()
@@ -62,6 +63,7 @@ public sealed class RouteInspectProfileBuilderReadingTests
             byPathSelectionAddition.PhysicalFileCount);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect startup roots and visible ordered LoadNow entries form the task-start closure")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void StartupClosureUsesLoaderRootsAndVisibleLoadNowEntries()
@@ -131,6 +133,7 @@ public sealed class RouteInspectProfileBuilderReadingTests
         Assert.Equal(0, selectionAddition.PhysicalFileCount);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect inactive continuity requires selection and retains scoped refresh occasions")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void InactiveContinuityRequiresScopeSelection()
@@ -199,6 +202,7 @@ public sealed class RouteInspectProfileBuilderReadingTests
         Assert.Equal(2, selectionAddition.PhysicalFileCount);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect selected KeepInMind entrypoints retain task-start visibility and route selection reasons")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void SelectedKeepInMindEntrypointRetainsApplicableReasons()
@@ -248,6 +252,7 @@ public sealed class RouteInspectProfileBuilderReadingTests
         Assert.Equal(2, selectedClosure.PhysicalFileCount);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect entrypoint KeepInMind selection preserves the selected reason while its ancestor is measured in the closure")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void KeepInMindEntrypointSelectionAndAncestorClosureRemainDistinct()
@@ -307,6 +312,7 @@ public sealed class RouteInspectProfileBuilderReadingTests
         Assert.Equal(RouteInspectAutomaticReadingKind.OnDemand, Assert.Single(leafAutomatic.Reasons).Kind);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect LoadNow and routed-file KeepInMind reasons remain dual and overwrite remains last")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void DualLoadNowAndKeepInMindReasonsRemainOrdered()
@@ -356,6 +362,7 @@ public sealed class RouteInspectProfileBuilderReadingTests
             Assert.IsType<RouteInspectMeasurement>(profile.Measurements.OwnSource.Value).PhysicalFileCount);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect OnDemand source with overwrite retains selection and immediate-after-base reasons")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void OnDemandOverwriteReasonsRemainCanonical()

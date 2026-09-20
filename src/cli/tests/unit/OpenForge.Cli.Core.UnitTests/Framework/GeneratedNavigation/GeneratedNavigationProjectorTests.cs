@@ -22,6 +22,7 @@ public sealed class GeneratedNavigationProjectorTests
 {
     private const string RootPath = ".agents/root/_root.md";
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation projects Loader exposure from current direct topology and authored facts")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void LoaderProjectionUsesDirectChildrenAndAuthoredMetadata()
@@ -37,7 +38,7 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [loader, root],
-            [Region(loader, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
+            [Region(loader, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
             [Metadata(root, "Root", ["Root", "Guide"])]);
 
         var projection = new GeneratedNavigationProjector().Project(request);
@@ -50,11 +51,12 @@ public sealed class GeneratedNavigationProjectorTests
         Assert.Equal("root/_root.md", entry.Destination);
         Assert.Equal("- [Root](root/_root.md) - #Root #Guide", entry.Line);
         Assert.Equal(
-            "\n- [Root](root/_root.md) - #Root #Guide\n",
+            "- [Root](root/_root.md) - #Root #Guide\n",
             region.ExpectedBody);
         Assert.True(projection.IsComplete);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation emits the exact empty body for a childless entrypoint")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void EmptyEntrypointProjectionUsesCanonicalSentinel()
@@ -69,16 +71,17 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [root],
-            [Region(root, OpenForgeDocumentSeed.GeneratedEntries(entries: "old"))],
+            [Region(root, OpenForgeDocumentSeed.GeneratedEntries(entries: "- old"))],
             []);
 
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
 
         Assert.Equal(GeneratedNavigationRegionState.Available, region.State);
         Assert.Empty(region.Entries);
-        Assert.Equal("\n- none - No entries - #Empty\n", region.ExpectedBody);
+        Assert.Equal("- none - No entries - #Empty\n", region.ExpectedBody);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation percent-encodes safe containing-file-relative Unicode and space destinations")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void DestinationsUseCanonicalUtf8PathEncoding()
@@ -99,7 +102,7 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [parent, child],
-            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
             [Metadata(child, "Café", ["Docs"])]);
 
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
@@ -117,6 +120,7 @@ public sealed class GeneratedNavigationProjectorTests
             entry.Destination));
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation encodes Markdown delimiter parentheses for parser round trips")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void DestinationsEncodeMarkdownDelimitersForAcceptedRoundTrip()
@@ -137,7 +141,7 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [parent, child],
-            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
             [Metadata(child, "Parentheses", ["Docs"])]);
 
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
@@ -160,6 +164,7 @@ public sealed class GeneratedNavigationProjectorTests
                 Assert.Single(parsed.Entries).Destination));
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation encodes Markdown delimiter parentheses for Loader parser round trips")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void LoaderDestinationsEncodeMarkdownDelimitersForAcceptedRoundTrip()
@@ -175,7 +180,7 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [loader, child],
-            [Region(loader, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
+            [Region(loader, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
             [Metadata(child, "Root", ["Root"])]);
 
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
@@ -193,6 +198,7 @@ public sealed class GeneratedNavigationProjectorTests
         Assert.Equal(child.Identity.CanonicalBasePath, destination.CanonicalPath);
     }
 
+    [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Generated navigation escapes authored backslashes into one canonical Markdown link")]
     [InlineData("Trailing backslash\\", "- [Trailing backslash\\\\](child.md) - #Docs")]
     [InlineData("Repeated backslashes \\\\", "- [Repeated backslashes \\\\\\\\](child.md) - #Docs")]
@@ -215,7 +221,7 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [parent, child],
-            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
             [Metadata(child, description, ["Docs"])]);
 
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
@@ -235,6 +241,7 @@ public sealed class GeneratedNavigationProjectorTests
             SourceGeneratedEntriesParser.Parse(reparsed).State);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation orders destinations and retains one physical child across aliases")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void ProjectionDeduplicatesPhysicalAliasesDeterministically()
@@ -261,7 +268,7 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [parent, secondAlias, other, firstAlias],
-            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
             [
                 Metadata(secondAlias, "Alias Z", ["Two"]),
                 Metadata(other, "Other", ["Three"]),
@@ -288,6 +295,7 @@ public sealed class GeneratedNavigationProjectorTests
             repeated.Regions.Single().Change?.ContentLocation);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation blocks a direct child when authored metadata is not complete")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void MissingChildMetadataIsUnavailable()
@@ -306,7 +314,7 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [parent, child],
-            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
             []);
 
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
@@ -318,6 +326,104 @@ public sealed class GeneratedNavigationProjectorTests
         Assert.Contains("complete authored", region.Cause, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Generated navigation uses an ordinary child's automatic identity for plain missing metadata")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void PlainMissingMetadataUsesAutomaticIdentityWithoutTags()
+    {
+        var parent = Source(
+            ".agents/root/_root.md",
+            "root",
+            SourceDocumentForm.CanonicalEntrypoint);
+        var child = Source(".agents/root/child.md", "root/child");
+        var topology = new SourceRouteTopology(
+            [
+                Node(parent, SourceRouteParentState.None, [], [child.Identity.CanonicalBasePath]),
+                Node(child, SourceRouteParentState.Resolved, [parent.Identity.CanonicalBasePath], []),
+            ],
+            []);
+        var request = Request(
+            topology,
+            [parent, child],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
+            [MissingMetadata(child)]);
+
+        var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
+        var entry = Assert.Single(region.Entries);
+
+        Assert.Equal(GeneratedNavigationRegionState.Available, region.State);
+        Assert.Equal(child.Identity.AutomaticId, entry.Description);
+        Assert.Empty(entry.Tags);
+        Assert.Equal("- [root/child](child.md)", entry.Line);
+        Assert.Equal("- [root/child](child.md)\n", region.ExpectedBody);
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Generated navigation uses an observed description for description-only missing metadata")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void DescriptionOnlyMissingMetadataUsesObservedDescriptionWithoutTagSeparator()
+    {
+        var parent = Source(
+            ".agents/root/_root.md",
+            "root",
+            SourceDocumentForm.CanonicalEntrypoint);
+        var child = Source(".agents/root/child.md", "root/child");
+        var topology = new SourceRouteTopology(
+            [
+                Node(parent, SourceRouteParentState.None, [], [child.Identity.CanonicalBasePath]),
+                Node(child, SourceRouteParentState.Resolved, [parent.Identity.CanonicalBasePath], []),
+            ],
+            []);
+        var request = Request(
+            topology,
+            [parent, child],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
+            [MissingMetadata(child, observedDescription: "Child description")]);
+
+        var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
+        var entry = Assert.Single(region.Entries);
+
+        Assert.Equal("Child description", entry.Description);
+        Assert.Empty(entry.Tags);
+        Assert.Equal("- [Child description](child.md)", entry.Line);
+        Assert.DoesNotContain(" - #", entry.Line, StringComparison.Ordinal);
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Generated navigation preserves exact observed tags for an entrypoint with missing description")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void TagsOnlyMissingEntrypointUsesObservedTagsVerbatim()
+    {
+        var parent = Source(
+            ".agents/root/_root.md",
+            "root",
+            SourceDocumentForm.CanonicalEntrypoint);
+        var child = Source(
+            ".agents/root/child/_child.md",
+            "root/child",
+            SourceDocumentForm.CanonicalEntrypoint);
+        var topology = new SourceRouteTopology(
+            [
+                Node(parent, SourceRouteParentState.None, [], [child.Identity.CanonicalBasePath]),
+                Node(child, SourceRouteParentState.Resolved, [parent.Identity.CanonicalBasePath], []),
+            ],
+            []);
+        var request = Request(
+            topology,
+            [parent, child],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
+            [MissingMetadata(child, observedTags: ["Docs", "Guide"])]);
+
+        var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
+        var entry = Assert.Single(region.Entries);
+
+        Assert.Equal(child.Identity.AutomaticId, entry.Description);
+        Assert.Equal(["Docs", "Guide"], entry.Tags);
+        Assert.Equal("- [root/child](child/_child.md) - #Docs #Guide", entry.Line);
+    }
+
+    [Trait("Boundary", "Output")]
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation keeps one target for aliased entrypoint regions and ignores overwrite companions")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void ProjectionDeduplicatesAliasedTargetsAndUsesBaseFacts()
@@ -349,10 +455,10 @@ public sealed class GeneratedNavigationProjectorTests
             [
                 Region(
                     secondTarget,
-                    OpenForgeDocumentSeed.GeneratedEntries(entries: "stale")),
+                    OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale")),
                 Region(
                     firstTarget,
-                    OpenForgeDocumentSeed.GeneratedEntries(entries: "stale")),
+                    OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale")),
             ],
             [Metadata(child, "Child", ["Child"])]);
 
@@ -364,7 +470,8 @@ public sealed class GeneratedNavigationProjectorTests
         Assert.NotNull(child.Overwrite);
     }
 
-    [Fact(DisplayName = "Generated navigation returns immutable unavailable facts for malformed marker ownership")]
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Generated navigation returns immutable unavailable facts for duplicate heading ownership")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void MalformedBoundaryDoesNotFormAChange()
     {
@@ -376,9 +483,7 @@ public sealed class GeneratedNavigationProjectorTests
             [Node(root, SourceRouteParentState.None, [], [])],
             []);
         var malformed = new MarkdownDocumentParser().Parse(
-            "# Root\n\n## Entries\n\n"
-            + "<!-- open-forge:generated-index:start -->\n"
-            + "stale\n");
+            "# Root\n\n## Entries\n\n## Entries\n\nstale\n");
         var request = Request(
             topology,
             [root],
@@ -394,6 +499,7 @@ public sealed class GeneratedNavigationProjectorTests
         Assert.False(string.IsNullOrWhiteSpace(region.Cause));
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation preserves exact CRLF bounded bytes and Unicode UTF-8 location")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void BoundedChangeRetainsPrefixSuffixAndByteCoordinates()
@@ -411,7 +517,7 @@ public sealed class GeneratedNavigationProjectorTests
             []);
         var source = OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
         {
-            Entries = "stale",
+            Entries = "- stale",
             LineEnding = "\r\n",
             Prefix = "# Root 😀\r\nnotes",
         });
@@ -425,11 +531,11 @@ public sealed class GeneratedNavigationProjectorTests
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
         var change = Assert.IsType<GeneratedNavigationBoundedChange>(region.Change);
         var span = Assert.IsType<OpenForge.Cli.Core.Framework.Documents.Markdown.Models.MarkdownTextSpan>(
-            document.GeneratedRegion.ContentSpan);
+            document.GeneratedRegion.EntriesBlock?.Span);
         var expectedLocation = new Utf8SourceMap(source).Map(span.Start, span.Length);
 
         Assert.Equal(GeneratedNavigationChangeKind.Update, change.Kind);
-        Assert.Equal("\r\n- [Café](child.md) - #Docs\r\n", change.ExpectedBody);
+        Assert.Equal("- [Café](child.md) - #Docs\r\n", change.ExpectedBody);
         Assert.Equal(expectedLocation, change.ContentLocation);
         Assert.True(Encoding.UTF8.GetByteCount(change.ExpectedBody) > change.ExpectedBody.Length);
         Assert.Equal(source[..span.Start], change.Prefix);
@@ -444,6 +550,54 @@ public sealed class GeneratedNavigationProjectorTests
             change.ExpectedDocumentBytes.ToArray());
     }
 
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Generated navigation preserves partial metadata changes and surrounding line endings")]
+    [InlineData("\n")]
+    [InlineData("\r\n")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void PartialMetadataRetainsExteriorBytesForLfAndCrlf(string lineEnding)
+    {
+        var parent = Source(
+            ".agents/root/_root.md",
+            "root",
+            SourceDocumentForm.CanonicalEntrypoint);
+        var child = Source(".agents/root/child.md", "root/child");
+        var topology = new SourceRouteTopology(
+            [
+                Node(parent, SourceRouteParentState.None, [], [child.Identity.CanonicalBasePath]),
+                Node(child, SourceRouteParentState.Resolved, [parent.Identity.CanonicalBasePath], []),
+            ],
+            []);
+        var source = OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+        {
+            Entries = "- stale",
+            LineEnding = lineEnding,
+            Prefix = $"# Root 😀{lineEnding}notes",
+        });
+        var document = new MarkdownDocumentParser().Parse(source);
+        var request = Request(
+            topology,
+            [parent, child],
+            [Region(parent, document)],
+            [MissingMetadata(child, observedDescription: "Child")]);
+
+        var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
+        var change = Assert.IsType<GeneratedNavigationBoundedChange>(region.Change);
+        var span = Assert.IsType<OpenForge.Cli.Core.Framework.Documents.Markdown.Models.MarkdownTextSpan>(
+            document.GeneratedRegion.EntriesBlock?.Span);
+
+        Assert.Equal($"- [Child](child.md){lineEnding}", change.ExpectedBody);
+        Assert.Equal(source[..span.Start], change.Prefix);
+        Assert.Equal(source[span.End..], change.Suffix);
+        Assert.Equal(
+            Encoding.UTF8.GetBytes(source),
+            change.BeforeDocumentBytes.ToArray());
+        Assert.Equal(
+            Encoding.UTF8.GetBytes(change.Prefix + change.ExpectedBody + change.Suffix),
+            change.ExpectedDocumentBytes.ToArray());
+    }
+
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation classifies an already canonical body as an immutable no-op")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void CanonicalBodyIsUnchanged()
@@ -479,6 +633,7 @@ public sealed class GeneratedNavigationProjectorTests
             change.ExpectedDocumentBytes.ToArray());
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation keeps strict UTF-8 read failures as unavailable without a document")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void StrictUtf8FailureIsUnavailable()
@@ -504,13 +659,14 @@ public sealed class GeneratedNavigationProjectorTests
         Assert.Null(region.Change);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation distinguishes unsupported source and unsafe topology rejections")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void SourceAndTopologyRejectionsAssignTypedReasons()
     {
         var ordinary = Source(".agents/ordinary.md", "ordinary");
         var emptyTopology = new SourceRouteTopology([], []);
-        var validDocument = OpenForgeDocumentSeed.GeneratedEntries(entries: "stale");
+        var validDocument = OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale");
         Assert.Equal(
             GeneratedNavigationRegionUnavailableReason.RegionSourceUnsupported,
             ReadUnavailableReason(Request(
@@ -539,6 +695,7 @@ public sealed class GeneratedNavigationProjectorTests
                 [Metadata(aliasChild, "Alias", ["Docs"])])));
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation distinguishes missing, unavailable, and unsupported-line-ending regions")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void RegionDocumentRejectionsAssignTypedReasons()
@@ -564,18 +721,19 @@ public sealed class GeneratedNavigationProjectorTests
                 [root],
                 [Region(root, OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
                 {
-                    Entries = "stale",
+                    Entries = "- stale",
                     LineEnding = "\r",
                 }))],
                 [])));
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation distinguishes invalid metadata and unsafe destinations")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void MetadataAndDestinationRejectionsAssignTypedReasons()
     {
         var root = Source(RootPath, "root", SourceDocumentForm.CanonicalEntrypoint);
-        var validDocument = OpenForgeDocumentSeed.GeneratedEntries(entries: "stale");
+        var validDocument = OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale");
         var child = Source(".agents/root/child.md", "root/child");
         var routedTopology = new SourceRouteTopology(
             [
@@ -614,6 +772,35 @@ public sealed class GeneratedNavigationProjectorTests
                 [root, unsafeDestination],
                 [Region(root, validDocument)],
                 [Metadata(unsafeDestination, "Unsafe destination", ["Docs"])])));
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Generated navigation rejects an unsafe observed partial description")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void UnsafeObservedPartialDescriptionIsUnavailable()
+    {
+        var root = Source(
+            ".agents/root/_root.md",
+            "root",
+            SourceDocumentForm.CanonicalEntrypoint);
+        var child = Source(".agents/root/child.md", "root/child");
+        var topology = new SourceRouteTopology(
+            [
+                Node(root, SourceRouteParentState.None, [], [child.Identity.CanonicalBasePath]),
+                Node(child, SourceRouteParentState.Resolved, [root.Identity.CanonicalBasePath], []),
+            ],
+            []);
+
+        var region = Assert.Single(new GeneratedNavigationProjector().Project(Request(
+            topology,
+            [root, child],
+            [Region(root, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
+            [MissingMetadata(child, observedDescription: "[Unsafe]")])).Regions);
+
+        Assert.Equal(GeneratedNavigationRegionState.Unavailable, region.State);
+        Assert.Equal(GeneratedNavigationRegionUnavailableReason.MetadataUnrepresentable, region.UnavailableReason);
+        Assert.Empty(region.Entries);
+        Assert.Null(region.Change);
     }
 
     private static GeneratedNavigationProjectionRequest Request(
@@ -657,6 +844,19 @@ public sealed class GeneratedNavigationProjectorTests
         return new GeneratedNavigationMetadata(
             source,
             SourceAuthoredMetadataFacts.Complete(description, tags));
+    }
+
+    private static GeneratedNavigationMetadata MissingMetadata(
+        SourceLogicalSource source,
+        string? observedDescription = null,
+        IEnumerable<string>? observedTags = null)
+    {
+        return new GeneratedNavigationMetadata(
+            source,
+            SourceAuthoredMetadataFacts.WithoutValues(
+                SourceAuthoredMetadataState.Missing,
+                observedDescription,
+                observedTags));
     }
 
     private static SourceRouteNode Node(

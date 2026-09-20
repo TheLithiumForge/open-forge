@@ -1,0 +1,11 @@
+status=completed
+mode=dry-run
+target=documents/design
+scaffold=generic
+completeness=complete
+safety=safe
+effects=5
+recovery=not-created
+verification=not-requested
+findings=1
+One or more new Route Init entrypoints require authoring.

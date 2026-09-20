@@ -11,6 +11,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Create;
 
 public sealed class ExtensionCreateModelsTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Create request retains every raw input and an immutable dependency snapshot"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     public void RequestRetainsImmutableRawInput()
     {
@@ -40,6 +41,7 @@ public sealed class ExtensionCreateModelsTests
         Assert.Equal(ExtensionCreateMode.DryRun, request.Mode);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Create manifest retains exact identity metadata and dependency sequence"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     public void ManifestRetainsExactMetadata()
     {
@@ -62,6 +64,7 @@ public sealed class ExtensionCreateModelsTests
         Assert.Equal(["alpha", "zeta"], manifest.Dependencies);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Create plan keeps catalogue and destination identity, manifest bytes, mode, and ordered effects"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     public void PlanRetainsExactScaffoldFacts()
     {
@@ -94,6 +97,7 @@ public sealed class ExtensionCreateModelsTests
         Assert.False(plan.IsVerifiedNoOp);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Create complete result is workspace-free and retains intended and applied effect facts"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     public void ResultRetainsWorkspaceFreeFacts()
     {
@@ -118,14 +122,15 @@ public sealed class ExtensionCreateModelsTests
         Assert.Null(result.Next);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Extension Create next-action mapping has no attention action and one bounded action for every other named status"),
      Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     [InlineData(CliSemanticStatus.Complete, "none")]
-    [InlineData(CliSemanticStatus.Incomplete, "open-forge extension create --verbose")]
+    [InlineData(CliSemanticStatus.Incomplete, "open-forge extension create --detail debug")]
     [InlineData(CliSemanticStatus.Attention, "none")]
     [InlineData(CliSemanticStatus.Invalid, "open-forge extension create --help")]
     [InlineData(CliSemanticStatus.Blocked, "open-forge extension create --dry-run")]
-    [InlineData(CliSemanticStatus.Failed, "open-forge extension create --verbose")]
+    [InlineData(CliSemanticStatus.Failed, "open-forge extension create --detail debug")]
     [InlineData(CliSemanticStatus.Interrupted, "open-forge extension create")]
     public void NextActionsAreExactAndBounded(
         object statusValue,
@@ -145,6 +150,7 @@ public sealed class ExtensionCreateModelsTests
         Assert.False(string.IsNullOrWhiteSpace(next.Reason));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Create next-action cases cover every named semantic status"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     public void NextActionCasesCoverEveryNamedStatus()
     {
@@ -162,6 +168,7 @@ public sealed class ExtensionCreateModelsTests
         Assert.Equal(Enum.GetValues<CliSemanticStatus>(), specified);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Create rejects an undefined semantic status at the next-action mapping"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     public void NextActionRejectsUndefinedStatus()
     {
@@ -170,6 +177,7 @@ public sealed class ExtensionCreateModelsTests
         Assert.Throws<ArgumentOutOfRangeException>(() => ExtensionCreateDefinitions.ReadNext(undefined));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Create result formation rejects the unreachable attention status"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     public void ResultFactoryRejectsAttention()
     {

@@ -1,0 +1,4 @@
+status=completed
+libraries=0
+links=0
+The ownership lock is absent; no Library registrations are recorded.

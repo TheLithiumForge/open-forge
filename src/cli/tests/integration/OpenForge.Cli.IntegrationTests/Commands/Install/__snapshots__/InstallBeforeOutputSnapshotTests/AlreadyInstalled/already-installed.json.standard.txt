@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 3,
+  "command": "install",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Open Forge is already installed and current. Nothing to do.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0,
+    "sectionsAdded": 0,
+    "filesReplaced": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "classification": "trusted-exact",
+    "footprint": {
+      "files": 12,
+      "directories": 0,
+      "sections": 2
+    },
+    "lockPath": ".agents/open-forge.lock.json"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

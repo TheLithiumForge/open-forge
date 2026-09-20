@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Return one typed command result and select human or structured display only at the CLI boundary
+  description: "Historical CLI-v2 source: Return one typed command result and select human or structured display only at the CLI boundary"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

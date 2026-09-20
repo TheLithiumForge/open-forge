@@ -1,0 +1,24 @@
+Would move guidance/old guide to .agents/archive/new guide.md
+Workspace: <workspace>
+  Would move .agents/guidance/old guide.overwrite.md -> .agents/archive/new guide.overwrite.md
+  Entry updated in .agents/archive/_archive.md
+  Entry updated in .agents/guidance/_guidance.md
+  Rewrote 5 links that pointed at the old path:
+  .agents/guidance/topics/child.md:8:13  .agents/guidance/old guide.md -> .agents/archive/new guide.md
+  .agents/guidance/topics/child.overwrite.md:1:35  .agents/guidance/old guide.md -> .agents/archive/new guide.md
+  README.md:3:13  .agents/guidance/old guide.md -> .agents/archive/new guide.md
+  README.md:5:23  .agents/guidance/old guide.md -> .agents/archive/new guide.md
+  notes.md:3:11  .agents/guidance/old guide.md -> .agents/archive/new guide.md
+  Effects:
+  .agents/archive/new guide.md: create file / missing -> file:<sha256> / planned
+  .agents/archive/new guide.overwrite.md: create file / missing -> file:<sha256> / planned
+  .agents/archive/_archive.md: rewrite Entries section / file:<sha256> -> file:<sha256> / planned
+  .agents/guidance/_guidance.md: rewrite Entries section / file:<sha256> -> file:<sha256> / planned
+  .agents/guidance/topics/child.md: rewrite link source / file:<sha256> -> file:<sha256> / planned
+  .agents/guidance/topics/child.overwrite.md: rewrite link source / file:<sha256> -> file:<sha256> / planned
+  README.md: rewrite link source / file:<sha256> -> file:<sha256> / planned
+  notes.md: rewrite link source / file:<sha256> -> file:<sha256> / planned
+  .agents/guidance/old guide.md: delete file / file:<sha256> -> missing / planned
+  .agents/guidance/old guide.overwrite.md: delete file / file:<sha256> -> missing / planned
+  12 files scanned; 9 links found.
+No files were changed.

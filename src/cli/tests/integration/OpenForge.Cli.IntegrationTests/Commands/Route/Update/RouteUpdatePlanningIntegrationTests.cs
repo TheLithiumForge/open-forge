@@ -6,6 +6,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 
 public sealed class RouteUpdatePlanningIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update description and tags regenerate only their dependent navigation")]
     [InlineData(true)]
     [InlineData(false)]
@@ -37,6 +38,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update responsibility-only patch schedules no generated work")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
     public async Task ResponsibilityHasNoNavigationDependency()
@@ -61,6 +63,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
             effect => effect.Kind == RouteUpdateEffectKind.GeneratedRegion);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update coalesces target metadata and self-region work before the parent")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
     public async Task TargetSelfRegionIsOneOrderedPhysicalEffect()
@@ -88,6 +91,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
             build.Formation.Effects.Select(effect => effect.Path));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update always mutates base bytes and preserves the overwrite companion")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationSafety")]
     public async Task OverwriteSelectionStillPlansBaseOnly()
@@ -120,6 +124,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
             workspace.ReadText(RouteUpdateIntegrationWorkspace.OverwritePath));
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update Template copies an exact empty-body completion and protects authored body")]
     [InlineData(true, (int)RouteUpdateBodyState.TemplateCopied, (int)RouteUpdateTemplateDecision.Copied)]
     [InlineData(false, (int)RouteUpdateBodyState.AuthoredBodyProtected, (int)RouteUpdateTemplateDecision.AuthoredBodyProtected)]
@@ -153,6 +158,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
                 System.Text.Encoding.UTF8.GetBytes(RouteUpdateIntegrationWorkspace.TemplateBody)));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Update ordinary Template-only copy has no navigation dependency")]
     [Trait("Feature", "route-update"), Trait("Evidence", "IntegrationBehavior")]
     public async Task OrdinaryTemplateOnlyCopyHasNoNavigationDependency()
@@ -179,6 +185,7 @@ public sealed class RouteUpdatePlanningIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update no-op and dry-run planning never write or create recovery")]
     [InlineData(false, "Before overview", true)]
     [InlineData(true, "After overview", false)]

@@ -1,0 +1,2 @@
+Cannot create the Extension: no ID was given, and this session cannot ask.
+Next: open-forge extension create <id> --path <folder>

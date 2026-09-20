@@ -1,0 +1,12 @@
+status=invalid-input
+mode=apply
+source=guidance/old guide
+destination=.agents/guidance/old guide.md
+subject=leaf
+completeness=not-established
+safety=not-established
+effects=0
+recovery=not required
+verification=not run
+findings=1
+finding=route-move.self-move:target=.agents/guidance/old guide.md:cause=The destination is the selected source path.

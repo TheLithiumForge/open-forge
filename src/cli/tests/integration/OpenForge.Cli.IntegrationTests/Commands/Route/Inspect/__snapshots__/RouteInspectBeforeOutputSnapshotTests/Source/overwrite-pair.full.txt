@@ -1,0 +1,33 @@
+docs/guide  .agents/docs/guide.md
+Workspace: <workspace>
+  Info  .agents/docs/guide.md  Overwrite is valid [route-inspect.valid-overwrite]
+         .agents/docs/guide.overwrite.md is read together with .agents/docs/guide.md.
+
+Where this source belongs
+  Route chain: docs -> guide
+  Parent: docs
+  Overwrite file: .agents/docs/guide.overwrite.md
+  Tags: Docs, Guide
+
+When it is read
+  At task start or resume: no
+  Read automatically after another route: no
+  Read when this route is selected: yes
+  Read automatically when the base source is read
+  May be read again: no
+
+Context size
+  This file: 2 files, 202 B, about 51 tokens
+  Selecting this route adds: 2 files, 202 B, about 51 tokens
+  Selected context: 3 files, 358 B, about 90 tokens
+  Already in startup context: 1 file, 156 B, about 39 tokens
+
+Axioms
+  Inherited rules from: none
+  Local rules: no
+  Why: all applicable route facts are available
+  Selection: source ID; automatic ID; requested "docs/guide"
+
+Physical layers
+  base .agents/docs/guide.md
+  overwrite .agents/docs/guide.overwrite.md

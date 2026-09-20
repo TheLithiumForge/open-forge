@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 3,
+  "command": "cleanup",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "No recovery data to remove.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "bundlesRemoved": 0,
+    "draftsRemoved": 0,
+    "itemsLeftInPlace": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "items": [],
+    "notEligible": [],
+    "lock": "No workspace lock was needed.",
+    "finalCheck": "No final recovery-store check was needed."
+  },
+  "recovery": null,
+  "next": null
+}

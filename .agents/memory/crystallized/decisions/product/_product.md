@@ -12,6 +12,4 @@ open-forge:
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Open Forge stays markdown-first, user-directed, small by default, and optimized for recursive customization](product-direction.md) - #Memory #Decision #CurrentTruth #Product
-<!-- open-forge:generated-index:end -->

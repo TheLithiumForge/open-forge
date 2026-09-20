@@ -1,0 +1,3 @@
+Cannot move guidance/topics: The destination is inside the folder being moved.
+Workspace: <workspace>
+  files scanned: the reference scan was not completed

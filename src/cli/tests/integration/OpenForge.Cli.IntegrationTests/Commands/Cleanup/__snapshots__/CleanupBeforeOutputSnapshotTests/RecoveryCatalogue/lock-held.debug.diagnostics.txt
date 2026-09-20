@@ -1,0 +1,6 @@
+status=blocked
+mode=apply
+items=3
+findings=1
+lock=failed
+final-check=not-requested

@@ -1,0 +1,11 @@
+Library registration could not be checked completely.
+Workspace: <workspace>
+  Warning  .agents/open-forge.lock.json  Library record is unavailable
+         The Library section of .agents/open-forge.lock.json could not be read, so no Libraries are listed.
+  libraries: .agents/open-forge.lock.json could not be read.
+  links current: .agents/open-forge.lock.json could not be read.
+  links missing: .agents/open-forge.lock.json could not be read.
+  links changed: .agents/open-forge.lock.json could not be read.
+  links unavailable: .agents/open-forge.lock.json could not be read.
+  Inspect the reported Library state.
+Next: open-forge doctor

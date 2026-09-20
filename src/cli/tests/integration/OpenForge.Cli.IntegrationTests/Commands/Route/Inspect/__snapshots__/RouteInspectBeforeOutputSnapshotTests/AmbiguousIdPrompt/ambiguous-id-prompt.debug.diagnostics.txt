@@ -1,0 +1,9 @@
+status=completed-with-warnings
+referenceKind=source-id
+selectionMethod=interactive
+requested=docs/guide
+identity=present
+profile=present
+observations=1
+conditions=0
+next=present

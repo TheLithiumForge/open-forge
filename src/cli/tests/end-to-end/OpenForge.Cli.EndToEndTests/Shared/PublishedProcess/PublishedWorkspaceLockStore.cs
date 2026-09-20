@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
@@ -10,68 +11,53 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
     private static readonly StringComparer PathComparer = OperatingSystem.IsWindows()
         ? StringComparer.OrdinalIgnoreCase
         : StringComparer.Ordinal;
-    private static readonly SemaphoreSlim WindowsCatalogueGate = new(
-        initialCount: 1,
-        maxCount: 1);
     private readonly TemporaryWorkspace _temporary;
+    private readonly TestDataHome _dataHome;
     private readonly Dictionary<string, string> _lockPaths = new(PathComparer);
     private readonly HashSet<string> _testCreatedCatalogueDirectories = new(PathComparer);
-    private readonly bool _ownsWindowsCatalogueGate;
     private bool _cataloguePreconditionsRecorded;
     private bool _disposed;
 
-    private PublishedWorkspaceLockStore(
-        TemporaryWorkspace temporary,
-        bool ownsWindowsCatalogueGate)
+    private PublishedWorkspaceLockStore(TemporaryWorkspace temporary, TestDataHome dataHome)
     {
         _temporary = temporary;
-        _ownsWindowsCatalogueGate = ownsWindowsCatalogueGate;
-        var localApplicationData = LocalApplicationDataPath();
-        EnvironmentVariables = OperatingSystem.IsWindows()
-            ? new Dictionary<string, string>(StringComparer.Ordinal)
-            : new Dictionary<string, string>(StringComparer.Ordinal)
-            {
-                ["XDG_DATA_HOME"] = localApplicationData,
-                ["LOCALAPPDATA"] = localApplicationData,
-                ["HOME"] = temporary.Path,
-            };
+        _dataHome = dataHome;
+        EnvironmentVariables = dataHome.EnvironmentVariables(temporary.Path);
     }
 
     internal IReadOnlyDictionary<string, string> EnvironmentVariables { get; }
 
     internal string LocalApplicationDataDirectory => LocalApplicationDataPath();
 
-    internal string RecoveryStoreRoot => Path.Combine(LocalApplicationDataDirectory, "OpenForge", "recovery", "v1");
+    internal string RecoveryStoreRoot => _dataHome.RecoveryStoreRoot;
 
     internal string RecoveryWorkspaceDirectory(string workspacePath)
-        => Path.Combine(RecoveryStoreRoot, RecoveryWorkspaceKey(workspacePath));
+        => _dataHome.RecoveryWorkspaceDirectory(workspacePath);
 
     internal static string RecoveryWorkspaceKey(string workspacePath)
-        => WorkspaceKey(Normalize(workspacePath));
+        => TestDataHome.WorkspaceKey(workspacePath);
 
     internal static PublishedWorkspaceLockStore Create(string purpose)
     {
         var temporary = TemporaryWorkspace.Create(purpose);
-        var ownsWindowsCatalogueGate = false;
         try
         {
-            if (OperatingSystem.IsWindows())
+            // The data home is this test's own, beside the workspace rather than inside it: the
+            // published process writes locks and recovery bundles there, and those entries belong
+            // to the child process, which the workspace's ownership rules reject.
+            var dataHome = TestDataHome.Create(purpose);
+            try
             {
-                WindowsCatalogueGate.Wait();
-                ownsWindowsCatalogueGate = true;
+                return new PublishedWorkspaceLockStore(temporary, dataHome);
             }
-
-            return new PublishedWorkspaceLockStore(
-                temporary: temporary,
-                ownsWindowsCatalogueGate: ownsWindowsCatalogueGate);
+            catch
+            {
+                dataHome.Dispose();
+                throw;
+            }
         }
         catch
         {
-            if (ownsWindowsCatalogueGate)
-            {
-                WindowsCatalogueGate.Release();
-            }
-
             temporary.Dispose();
             throw;
         }
@@ -118,14 +104,9 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
 
     internal void AssertNoInfrastructure()
     {
-        if (OperatingSystem.IsWindows())
+        foreach (var lockPath in _lockPaths.Values)
         {
-            foreach (var lockPath in _lockPaths.Values)
-            {
-                RequireAbsent(lockPath);
-            }
-
-            return;
+            RequireAbsent(lockPath);
         }
 
         Assert.False(Directory.Exists(LocalApplicationDataPath()));
@@ -162,11 +143,7 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
         }
 
         DeleteEmptyDirectory(workspaceDirectory);
-        if (!OperatingSystem.IsWindows())
-        {
-            DeleteEmptyDirectoryTree(Path.Combine(LocalApplicationDataPath(), "OpenForge", "recovery"));
-        }
-
+        DeleteEmptyDirectoryTree(_dataHome.RecoveryDirectory);
         return artifacts;
     }
 
@@ -184,10 +161,7 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
                 DeleteExactOwnedLock(lockPath);
             }
 
-            if (!OperatingSystem.IsWindows())
-            {
-                DeleteEmptyDirectoryTree(Path.Combine(LocalApplicationDataPath(), "OpenForge"));
-            }
+            DeleteEmptyDirectoryTree(_dataHome.ApplicationDirectory);
 
             foreach (var directory in _testCreatedCatalogueDirectories.OrderByDescending(
                          path => path.Length))
@@ -195,15 +169,8 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
                 DeleteEmptyOwnedDirectory(directory);
             }
 
-            if (!OperatingSystem.IsWindows())
-            {
-                DeleteEmptyDirectory(LocalApplicationDataPath());
-            }
+            DeleteEmptyDirectory(LocalApplicationDataPath());
 
-            if (OperatingSystem.IsMacOS())
-            {
-                DeleteEmptyDirectory(Path.Combine(_temporary.Path, "Library"));
-            }
         }
         finally
         {
@@ -213,11 +180,7 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
             }
             finally
             {
-                if (_ownsWindowsCatalogueGate)
-                {
-                    WindowsCatalogueGate.Release();
-                }
-
+                DeleteOwnedDataHome();
                 _disposed = true;
             }
         }
@@ -229,29 +192,16 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
             $"{FriendlyName(normalizedWorkspacePath)}-{WorkspaceKey(normalizedWorkspacePath)}.lock");
 
     private string StoreDirectory()
-        => Path.Combine(LocalApplicationDataPath(), "OpenForge", "locks", "v1");
+        => _dataHome.LockStoreRoot;
 
-    private string LocalApplicationDataPath()
-    {
-        if (OperatingSystem.IsWindows())
-        {
-            var localApplicationData = Environment.GetFolderPath(
-                Environment.SpecialFolder.LocalApplicationData,
-                Environment.SpecialFolderOption.DoNotVerify);
-            if (string.IsNullOrWhiteSpace(localApplicationData)
-                || !Path.IsPathFullyQualified(localApplicationData))
-            {
-                throw new InvalidOperationException(
-                    "The Windows published test requires an absolute LocalApplicationData Known Folder.");
-            }
+    private string LocalApplicationDataPath() => _dataHome.Path;
 
-            return Path.GetFullPath(localApplicationData);
-        }
-
-        return OperatingSystem.IsMacOS()
-            ? Path.Combine(_temporary.Path, "Library", "Application Support")
-            : _temporary.Combine("application-data");
-    }
+    /// <summary>
+    /// Removes the directory this store created for itself. The ordered cleanup above already
+    /// asserted what the command was expected to leave behind; this only makes sure nothing
+    /// survives the test, including bundles a test deliberately retained.
+    /// </summary>
+    private void DeleteOwnedDataHome() => _dataHome.Dispose();
 
     private void RecordCataloguePreconditions()
     {
@@ -281,7 +231,7 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
 
     private IReadOnlyList<string> CatalogueDirectories()
     {
-        var openForge = Path.Combine(LocalApplicationDataPath(), "OpenForge");
+        var openForge = _dataHome.ApplicationDirectory;
         var locks = Path.Combine(openForge, "locks");
         return [openForge, locks, Path.Combine(locks, "v1")];
     }
@@ -297,12 +247,7 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
     }
 
     private static string WorkspaceKey(string normalizedPath)
-    {
-        var identity = OperatingSystem.IsWindows()
-            ? normalizedPath.ToUpperInvariant()
-            : normalizedPath;
-        return Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(identity)));
-    }
+        => TestDataHome.WorkspaceKey(normalizedPath);
 
     private static string FriendlyName(string normalizedPath)
     {

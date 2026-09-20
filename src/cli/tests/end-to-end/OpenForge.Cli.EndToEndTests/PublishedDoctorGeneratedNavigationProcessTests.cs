@@ -13,14 +13,14 @@ public sealed class PublishedDoctorGeneratedNavigationProcessTests
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedExtensionInstallWorkspace.Create();
-        await ApplyAsync(target, workspace, ["install", "--automatic", "--json"]);
-        await ApplyAsync(target, workspace, ["extension", "install", id, "--automatic", "--json"]);
+        await ApplyAsync(target, workspace, ["install", "--automatic", "--format=json"]);
+        await ApplyAsync(target, workspace, ["extension", "install", id, "--automatic", "--format=json"]);
 
         var run = await DiagnoseAsync(target, workspace, command);
 
-        Assert.Equal(0, run.ExitCode);
+        Assert.True(run.ExitCode == 0, $"Expected exit 0, got {run.ExitCode}. Stdout: {run.StandardOutput} Stderr: {run.StandardError}");
         using var document = JsonDocument.Parse(run.StandardOutput);
-        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
         if (command == "doctor")
         {
             Assert.Empty(Findings(document, "framework-lifecycle"));
@@ -34,11 +34,11 @@ public sealed class PublishedDoctorGeneratedNavigationProcessTests
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedExtensionInstallWorkspace.Create();
-        await ApplyAsync(target, workspace, ["install", "--automatic", "--json"]);
+        await ApplyAsync(target, workspace, ["install", "--automatic", "--format=json"]);
         const string entrypoint = ".agents/memory/working/_working.md";
         var sourcePath = Path.Combine(workspace.WorkspacePath, ".agents/memory/working/project.md");
         await File.WriteAllTextAsync(sourcePath, "---\nopen-forge:\n  description: Project note\n  tags: [Note]\n---\n# Project\n\nAn authored project note.\n", TestContext.Current.CancellationToken);
-        await ApplyAsync(target, workspace, ["index", entrypoint, "--json"]);
+        await ApplyAsync(target, workspace, ["index", entrypoint, "--format=json"]);
         var current = await DiagnoseAsync(target, workspace);
         Assert.Equal(0, current.ExitCode);
 
@@ -53,8 +53,8 @@ public sealed class PublishedDoctorGeneratedNavigationProcessTests
             Assert.Contains(Findings(document, "routes-metadata-overwrites-generated-navigation"), finding => Kind(finding) == "route.generated-region-stale");
         }
 
-        await ApplyAsync(target, workspace, ["index", entrypoint, "--json"]);
-        await File.AppendAllTextAsync(Path.Combine(workspace.WorkspacePath, ".agents/guidance/adaptive-collaboration.md"), "\nAn intentional authored Framework edit.\n", TestContext.Current.CancellationToken);
+        await ApplyAsync(target, workspace, ["index", entrypoint, "--format=json"]);
+        await File.AppendAllTextAsync(Path.Combine(workspace.WorkspacePath, ".agents/guidance/_guidance.md"), "\nAn intentional authored Framework edit.\n", TestContext.Current.CancellationToken);
         var changed = await DiagnoseAsync(target, workspace);
         Assert.Equal(2, changed.ExitCode);
         using var changedDocument = JsonDocument.Parse(changed.StandardOutput);
@@ -62,44 +62,60 @@ public sealed class PublishedDoctorGeneratedNavigationProcessTests
         Assert.Contains(Findings(changedDocument, "framework-lifecycle"), finding => Kind(finding) == "framework.partial-lifecycle");
     }
 
-    [Fact(DisplayName = "Doctor still reports malformed generated markers"),
+    [Fact(DisplayName = "Doctor reports duplicate generated Entries headings"),
         Trait("Feature", "doctor-generated-navigation"), Trait("Evidence", "EndToEnd")]
-    public async Task MalformedGeneratedMarkersRemainDiagnosed()
+    public async Task DuplicateGeneratedHeadingsRemainDiagnosed()
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedExtensionInstallWorkspace.Create();
-        await ApplyAsync(target, workspace, ["install", "--automatic", "--json"]);
+        await ApplyAsync(target, workspace, ["install", "--automatic", "--format=json"]);
         var path = Path.Combine(workspace.WorkspacePath, ".agents/memory/working/_working.md");
         var source = await File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
-        const string marker = "<!-- open-forge:generated-index:end -->";
+        const string marker = "## Entries";
         Assert.Contains(marker, source, StringComparison.Ordinal);
-        await File.WriteAllTextAsync(path, source.Replace(marker, "<!-- missing end marker -->", StringComparison.Ordinal), TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(path, source.Replace(marker, "## Entries\n\n## Entries", StringComparison.Ordinal), TestContext.Current.CancellationToken);
 
         var run = await DiagnoseAsync(target, workspace);
 
         Assert.NotEqual(0, run.ExitCode);
         using var document = JsonDocument.Parse(run.StandardOutput);
-        Assert.Contains(Findings(document, "routes-metadata-overwrites-generated-navigation"), finding => Kind(finding) == "route.generated-region-malformed");
+        Assert.Contains(Findings(document, "routes-metadata-overwrites-generated-navigation"), finding => Kind(finding) == "route.generated-region-duplicate");
     }
 
     private static async Task ApplyAsync(PublishedExecutableTarget target, PublishedExtensionInstallWorkspace workspace, IReadOnlyList<string> arguments)
     {
         var run = await PublishedProcessTestSupport.RunAsync(target, workspace.WorkspacePath, arguments, workspace.EnvironmentVariables);
         Assert.Equal(string.Empty, run.StandardError);
-        Assert.Equal(0, run.ExitCode);
+        Assert.True(run.ExitCode == 0, $"Expected exit 0, got {run.ExitCode}. Stdout: {run.StandardOutput} Stderr: {run.StandardError}");
     }
 
     private static async Task<ProcessRunResult> DiagnoseAsync(PublishedExecutableTarget target, PublishedExtensionInstallWorkspace workspace, string command = "doctor")
     {
-        var run = await PublishedProcessTestSupport.RunWithoutWritesAsync(target, workspace.WorkspacePath, workspace.SnapshotWorkspace, [command, "--json"], workspace.EnvironmentVariables);
+        var arguments = command == "doctor"
+            ? new[] { command, "--format=json", "--detail=full" }
+            : new[] { command, "--format=json" };
+        var run = await PublishedProcessTestSupport.RunWithoutWritesAsync(target, workspace.WorkspacePath, workspace.SnapshotWorkspace, arguments, workspace.EnvironmentVariables);
         Assert.Equal(string.Empty, run.StandardError);
         workspace.AssertPersistentLock();
         return run;
     }
 
     private static JsonElement[] Findings(JsonDocument document, string domain)
-        => Assert.Single(document.RootElement.GetProperty("result").GetProperty("domains").EnumerateArray(), item => item.GetProperty("domain").GetString() == domain)
-            .GetProperty("findings").EnumerateArray().ToArray();
+    {
+        var category = domain switch
+        {
+            "workspace-entry" => "Workspace",
+            "recovery-residuals" => "Recovery data",
+            "routes-metadata-overwrites-generated-navigation" => "Routes and Entries",
+            "local-references" => "Links",
+            "framework-lifecycle" => "Framework files",
+            "extension-lifecycle" => "Extensions",
+            _ => throw new ArgumentOutOfRangeException(nameof(domain), domain, "The Doctor category is not defined."),
+        };
+        return document.RootElement.GetProperty("findings").EnumerateArray()
+            .Where(item => item.GetProperty("category").GetString() == category)
+            .ToArray();
+    }
 
-    private static string? Kind(JsonElement finding) => finding.GetProperty("kind").GetString();
+    private static string? Kind(JsonElement finding) => finding.GetProperty("code").GetString();
 }

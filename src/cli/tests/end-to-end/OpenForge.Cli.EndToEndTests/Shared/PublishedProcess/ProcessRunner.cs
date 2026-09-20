@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text;
 
 namespace OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
@@ -191,6 +192,8 @@ internal static class ProcessRunner
             WorkingDirectory = request.WorkingDirectory,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
+            StandardOutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
+            StandardErrorEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
             UseShellExecute = false,
             CreateNoWindow = true,
         };

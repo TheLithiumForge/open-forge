@@ -1,0 +1,16 @@
+docs  .agents/docs/_docs.md
+
+Where this source belongs
+  Route chain: docs
+  Parent: none (Loader root)
+  Direct children: 2 files
+  Descendants: 2 files
+
+When it is read
+  At task start or resume: yes
+  Read automatically when the Loader is read
+  May be read again: no
+
+Context size
+  This file: 156 B, about 39 tokens
+  Selecting this route adds: nothing (already in startup context)

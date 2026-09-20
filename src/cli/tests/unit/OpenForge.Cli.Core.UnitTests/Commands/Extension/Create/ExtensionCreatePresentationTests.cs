@@ -1,14 +1,12 @@
-using System.Globalization;
+using OpenForge.Cli.Core.Commands.Extension.Create.Models.Request;
+using System.Text.Json;
+using OpenForge.Cli.Core.Commands.Extension.Create;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Manifest;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Planning;
-using OpenForge.Cli.Core.Commands.Extension.Create.Models.Presentation;
-using OpenForge.Cli.Core.Commands.Extension.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
-using OpenForge.Cli.Core.Commands.Extension.Create.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Extension.Create;
+using OpenForge.Cli.Core.Presentation.Extension.Create;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
-using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
@@ -17,7 +15,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Create;
 
 public sealed class ExtensionCreatePresentationTests
 {
-    [Theory(DisplayName = "Extension Create maps every named operation mode to its stable machine name"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "Extension Create maps every named operation mode to its stable machine name"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
     [InlineData(ExtensionCreateMode.Apply, "apply")]
     [InlineData(ExtensionCreateMode.DryRun, "dry-run")]
     public void OperationModesHaveExactMachineNames(
@@ -28,7 +26,7 @@ public sealed class ExtensionCreatePresentationTests
         Assert.Equal(expected, ExtensionCreateDefinitions.ReadMachineName(mode));
     }
 
-    [Theory(DisplayName = "Extension Create maps every named finding code to its stable machine name"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "Extension Create maps every named finding code to its stable machine name"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
     [InlineData(ExtensionCreateFindingCode.InvalidInput, "extension-create.invalid-input")]
     [InlineData(ExtensionCreateFindingCode.CatalogueUnavailable, "extension-create.catalogue-unavailable")]
     [InlineData(ExtensionCreateFindingCode.CatalogueUnsafe, "extension-create.catalogue-unsafe")]
@@ -45,7 +43,7 @@ public sealed class ExtensionCreatePresentationTests
         Assert.Equal(expected, ExtensionCreateDefinitions.ReadFindingCode(code));
     }
 
-    [Theory(DisplayName = "Extension Create maps every named effect kind to its stable machine name"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "Extension Create maps every named effect kind to its stable machine name"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
     [InlineData(ExtensionCreateEffectKind.ManifestFile, "manifest")]
     [InlineData(ExtensionCreateEffectKind.PayloadAgentsDirectory, "payload-agents-directory")]
     public void EffectKindsHaveExactMachineNames(
@@ -56,7 +54,7 @@ public sealed class ExtensionCreatePresentationTests
         Assert.Equal(expected, ExtensionCreateDefinitions.ReadEffectKind(kind));
     }
 
-    [Theory(DisplayName = "Extension Create maps every named verification state to its stable machine name"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "Extension Create maps every named verification state to its stable machine name"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
     [InlineData(ExtensionCreateVerificationState.NotStarted, "not-started")]
     [InlineData(ExtensionCreateVerificationState.Planned, "planned")]
     [InlineData(ExtensionCreateVerificationState.Verified, "verified")]
@@ -70,7 +68,7 @@ public sealed class ExtensionCreatePresentationTests
         Assert.Equal(expected, ExtensionCreateDefinitions.ReadVerificationState(state));
     }
 
-    [Fact(DisplayName = "Extension Create machine mappings cover every declared enum member"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Extension Create machine mappings cover every declared enum member"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
     public void MachineMappingsCoverEveryDeclaredMember()
     {
         Assert.Equal(Enum.GetValues<ExtensionCreateMode>(), [ExtensionCreateMode.Apply, ExtensionCreateMode.DryRun]);
@@ -84,6 +82,7 @@ public sealed class ExtensionCreatePresentationTests
                 ExtensionCreateFindingCode.DestinationChanged,
                 ExtensionCreateFindingCode.ApplicationFailed,
                 ExtensionCreateFindingCode.VerificationFailed,
+                ExtensionCreateFindingCode.ConfirmationRequired,
                 ExtensionCreateFindingCode.Interrupted,
             ]);
         Assert.Equal(
@@ -100,7 +99,7 @@ public sealed class ExtensionCreatePresentationTests
             ]);
     }
 
-    [Fact(DisplayName = "Extension Create machine mappings reject every undefined enum value"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Extension Create machine mappings reject every undefined enum value"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
     public void MachineMappingsRejectUndefinedValues()
     {
         Assert.Throws<ArgumentOutOfRangeException>(
@@ -113,79 +112,56 @@ public sealed class ExtensionCreatePresentationTests
             () => ExtensionCreateDefinitions.ReadVerificationState((ExtensionCreateVerificationState)int.MaxValue));
     }
 
-    [Fact(DisplayName = "Extension Create JSON projection retains the workspace-free ordered result graph and empty arrays"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
-    public void JsonProjectionRetainsCompleteOrderedGraph()
+    [Fact(DisplayName = "Extension Create native JSON data follows the detail contract"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void NativeJsonDataFollowsDetailContract()
     {
         var result = CreateResult(CliSemanticStatus.Complete);
 
-        var document = ExtensionCreateJsonProjection.Create(result);
+        var minimal = SelectJson(result, CliDetail.Minimal);
+        var standard = SelectJson(result, CliDetail.Standard);
+        var full = SelectJson(result, CliDetail.Full);
 
-        Assert.Equal(1, document.SchemaVersion);
-        Assert.Equal("extension create", document.Command);
-        Assert.Equal("complete", document.Status);
-        Assert.Null(document.Workspace);
-        Assert.NotNull(document.Result);
-        Assert.Null(document.Next);
-        Assert.Equal("/catalogue", document.Result.Catalogue);
-        Assert.Equal("/catalogue/development-toolkit", document.Result.Destination);
-        Assert.Equal("development-toolkit", document.Result.Id);
-        Assert.NotNull(document.Result.Manifest);
-        Assert.Equal("Development Toolkit", document.Result.Manifest.Name);
-        Assert.Equal("Open Forge Extension package development-toolkit.", document.Result.Manifest.Description);
-        Assert.Equal("0.1.0", document.Result.Manifest.Version);
-        Assert.Empty(document.Result.Manifest.Dependencies);
-        Assert.Equal("apply", document.Result.Mode);
-        Assert.Equal(["manifest", "payload-agents-directory"], document.Result.IntendedEffects.Select(effect => effect.Kind));
-        Assert.Equal(["manifest", "payload-agents-directory"], document.Result.AppliedEffects.Select(effect => effect.Kind));
-        Assert.Equal("verified", document.Result.Verification.Catalogue);
-        Assert.Equal("verified", document.Result.Verification.Destination);
-        Assert.Equal("verified", document.Result.Verification.Manifest);
-        Assert.Equal("verified", document.Result.Verification.Payload);
-        Assert.Null(document.Result.Verification.Cause);
-        Assert.False(document.Result.WorkspaceLifecycleChanged);
+        Assert.Equal("apply", minimal.GetProperty("mode").GetString());
+        Assert.Equal("development-toolkit", minimal.GetProperty("id").GetString());
+        Assert.Equal("/catalogue", minimal.GetProperty("folder").GetString());
+        Assert.Equal("/catalogue/development-toolkit", minimal.GetProperty("packagePath").GetString());
+        Assert.Equal("/catalogue/development-toolkit/extension.json", minimal.GetProperty("manifestPath").GetString());
+        Assert.Equal("/catalogue/development-toolkit/content/.agents/", minimal.GetProperty("contentPath").GetString());
+        Assert.False(minimal.TryGetProperty("manifest", out _));
+        Assert.False(minimal.TryGetProperty("manifestContent", out _));
+
+        var manifest = standard.GetProperty("manifest");
+        Assert.Equal("Development Toolkit", manifest.GetProperty("name").GetString());
+        Assert.Equal("Open Forge Extension package development-toolkit.", manifest.GetProperty("description").GetString());
+        Assert.Equal("0.1.0", manifest.GetProperty("version").GetString());
+        Assert.Empty(manifest.GetProperty("dependencies").EnumerateArray());
+        Assert.Contains("\"id\":\"development-toolkit\"", full.GetProperty("manifestContent").GetString(), StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Extension Create human renderer exposes compact and expanded plan, effect, verification, and unchanged-workspace facts"),
-     Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
-    public void HumanViewsExposeCompleteFacts()
+    [Fact(DisplayName = "Extension Create native text renderer exposes the scaffold and edit instruction"),
+     Trait("Feature", "extension-create"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void NativeTextRendererExposesScaffoldAndEditInstruction()
     {
         var result = CreateResult(CliSemanticStatus.Complete);
 
-        var compact = ExtensionCreateHumanRenderer.Render(
-            new CliPresentationRequest<ExtensionCreateResult>(
-                result,
-                new CliPresentation(CliOutputFormat.Human, CliView.Compact, CliVerbosity.Normal)));
-        var expanded = ExtensionCreateHumanRenderer.Render(
-            new CliPresentationRequest<ExtensionCreateResult>(
-                result,
-                new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal)));
+        var compact = SelectText(result, CliDetail.Minimal);
+        var expanded = SelectText(result, CliDetail.Standard);
 
-        Assert.Contains("Extension creation", compact, StringComparison.Ordinal);
-        Assert.Contains("development-toolkit", compact, StringComparison.Ordinal);
-        Assert.Contains("Catalogue: /catalogue", compact, StringComparison.Ordinal);
-        Assert.Contains("/catalogue/development-toolkit", compact, StringComparison.Ordinal);
-        Assert.Contains("Mode: apply", compact, StringComparison.Ordinal);
-        Assert.Contains("Verification: catalogue verified", compact, StringComparison.Ordinal);
-        Assert.Contains("Workspace installation: unchanged", compact, StringComparison.Ordinal);
-        Assert.Contains("complete", compact, StringComparison.Ordinal);
-        Assert.Contains("Extension creation", expanded, StringComparison.Ordinal);
-        Assert.Contains("Catalogue: /catalogue", expanded, StringComparison.Ordinal);
-        Assert.Contains("Destination: /catalogue/development-toolkit", expanded, StringComparison.Ordinal);
-        Assert.Contains("Package: development-toolkit", expanded, StringComparison.Ordinal);
-        Assert.Contains("Mode: apply", expanded, StringComparison.Ordinal);
-        Assert.Contains("Description: Open Forge Extension package development-toolkit.", expanded, StringComparison.Ordinal);
-        Assert.Contains("Name: Development Toolkit", expanded, StringComparison.Ordinal);
-        Assert.Contains("Version: 0.1.0", expanded, StringComparison.Ordinal);
-        Assert.Contains("Dependencies: none", expanded, StringComparison.Ordinal);
+        Assert.StartsWith("Created the development-toolkit Extension scaffold at /catalogue/development-toolkit", compact, StringComparison.Ordinal);
+        Assert.Contains("/catalogue/development-toolkit/extension.json", compact, StringComparison.Ordinal);
+        Assert.Contains("/catalogue/development-toolkit/content/.agents/", compact, StringComparison.Ordinal);
+        Assert.Contains("Edit extension.json, then add files under content/.agents/.", compact, StringComparison.Ordinal);
+        Assert.Contains("name: Development Toolkit", expanded, StringComparison.Ordinal);
+        Assert.Contains("description: Open Forge Extension package development-toolkit.", expanded, StringComparison.Ordinal);
+        Assert.Contains("version: 0.1.0", expanded, StringComparison.Ordinal);
+        Assert.Contains("dependencies: none", expanded, StringComparison.Ordinal);
         Assert.Contains("extension.json", expanded, StringComparison.Ordinal);
         Assert.Contains("content/.agents", expanded, StringComparison.Ordinal);
-        Assert.Contains("Verification: catalogue verified; destination verified; manifest verified; content verified", expanded, StringComparison.Ordinal);
-        Assert.Contains("Workspace installation: unchanged", expanded, StringComparison.Ordinal);
-        Assert.Contains("Status: complete", expanded, StringComparison.Ordinal);
+        Assert.Contains("Edit extension.json, then add files under content/.agents/.", expanded, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Extension Create human errors expose the exact subject, direct cause, and bounded next action in both views"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
-    public void HumanErrorsExposeSubjectCauseAndNextAction()
+    [Fact(DisplayName = "Extension Create native text errors expose the catalogue message and next action"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void NativeTextErrorsExposeCatalogueMessageAndNextAction()
     {
         var result = CreateResult(
             CliSemanticStatus.Blocked,
@@ -193,28 +169,21 @@ public sealed class ExtensionCreatePresentationTests
             {
                 Code = ExtensionCreateFindingCode.DestinationCollision,
                 Status = CliSemanticStatus.Blocked,
-                Subject = "/catalogue/collision",
+                Subject = "/catalogue/development-toolkit",
                 Cause = "The destination contains an existing occupant.",
             });
 
-        var compact = ExtensionCreateHumanRenderer.Render(
-            new CliPresentationRequest<ExtensionCreateResult>(
-                result,
-                new CliPresentation(CliOutputFormat.Human, CliView.Compact, CliVerbosity.Normal)));
-        var expanded = ExtensionCreateHumanRenderer.Render(
-            new CliPresentationRequest<ExtensionCreateResult>(
-                result,
-                new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal)));
+        var compact = SelectText(result, CliDetail.Minimal);
+        var expanded = SelectText(result, CliDetail.Standard);
 
         foreach (var rendered in new[] { compact, expanded })
         {
-            Assert.Contains("/catalogue/collision", rendered, StringComparison.Ordinal);
-            Assert.Contains("The destination contains an existing occupant.", rendered, StringComparison.Ordinal);
+            Assert.Contains("Cannot create development-toolkit at /catalogue/development-toolkit: /catalogue/development-toolkit already exists with different content.", rendered, StringComparison.Ordinal);
             Assert.Contains("Next: open-forge extension create --dry-run", rendered, StringComparison.Ordinal);
         }
     }
 
-    [Fact(DisplayName = "Extension Create diagnostics remain bounded and escape the retained finding subject and cause"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Extension Create diagnostics remain bounded and escape the retained finding subject and cause"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
     public void DiagnosticsAreBoundedAndSafe()
     {
         var result = CreateResult(
@@ -227,71 +196,50 @@ public sealed class ExtensionCreatePresentationTests
                 Cause = "existing\tbytes",
             });
 
-        var diagnostic = ExtensionCreateDiagnosticRenderer.Render(
+        var diagnostic = CliRenderingStage.Render(
             new CliPresentationRequest<ExtensionCreateResult>(
                 result,
-                new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Verbose)));
+                new CliPresentation(CliFormat.Text, CliDetail.Debug, null)), ExtensionCreatePresentation.Rendering).DiagnosticContent;
 
         Assert.NotNull(diagnostic);
-        Assert.True(diagnostic.Length <= CliRenderingStage.MaximumDiagnosticLength);
-        Assert.DoesNotContain('\n', diagnostic);
+        Assert.True(diagnostic.Length <= CliPresentationDefinitions.MaximumDiagnosticLength);
+        Assert.All(diagnostic.Split('\n'), line => Assert.InRange(line.Length, 1, 240));
         Assert.DoesNotContain('\r', diagnostic);
         Assert.Contains("extension-create.destination-collision", diagnostic, StringComparison.Ordinal);
-        Assert.Contains("existing", diagnostic, StringComparison.Ordinal);
+        Assert.Contains("destination\\nwith-control", diagnostic, StringComparison.Ordinal);
+        Assert.Contains("existing\\tbytes", diagnostic, StringComparison.Ordinal);
     }
 
-    [Theory(DisplayName = "Extension Create status policy selects the fixed stream and exit for every semantic status"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
-    [InlineData(CliSemanticStatus.Complete, 0, CliOutputTarget.StandardOutput)]
-    [InlineData(CliSemanticStatus.Failed, 1, CliOutputTarget.StandardError)]
-    [InlineData(CliSemanticStatus.Attention, 2, CliOutputTarget.StandardOutput)]
-    [InlineData(CliSemanticStatus.Incomplete, 3, CliOutputTarget.StandardOutput)]
-    [InlineData(CliSemanticStatus.Invalid, 4, CliOutputTarget.StandardError)]
-    [InlineData(CliSemanticStatus.Blocked, 5, CliOutputTarget.StandardError)]
-    [InlineData(CliSemanticStatus.Interrupted, 130, CliOutputTarget.StandardError)]
-    public async Task StatusPolicyIsExact(
-        object statusValue,
-        int expectedExitCode,
-        object targetValue)
-    {
-        var status = Assert.IsType<CliSemanticStatus>(statusValue);
-        var expectedTarget = Assert.IsType<CliOutputTarget>(targetValue);
-        var result = CreateResult(status);
-        var pipeline = new CliCommandPipeline<ExtensionCreateResult, ExtensionCreateResult>(
-            (_, _) => ValueTask.FromResult(result),
-            new CliRendererSet<ExtensionCreateResult>(
-                presentation => $"human:{presentation.Result.Command}",
-                presentation => $"json:{presentation.Result.Command}"));
-        using var standardOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var standardError = new StringWriter(CultureInfo.InvariantCulture);
-
-        var completion = await pipeline.ExecuteAsync(
-            result,
-            new CliPresentation(CliOutputFormat.Human, CliView.Compact, CliVerbosity.Normal),
-            new CliOutputWriters(standardOutput, standardError),
-            TestContext.Current.CancellationToken);
-
-        Assert.Equal(status, completion.Status);
-        Assert.Equal(expectedExitCode, completion.ExitCode);
-        Assert.Equal(expectedTarget, completion.PrimaryOutputTarget);
-        var rendered = $"human:{result.Command}{Environment.NewLine}";
-        Assert.Equal(expectedTarget == CliOutputTarget.StandardOutput ? rendered : string.Empty, standardOutput.ToString());
-        Assert.Equal(expectedTarget == CliOutputTarget.StandardError ? rendered : string.Empty, standardError.ToString());
-    }
-
-    [Theory(DisplayName = "Both Extension Create views keep every intended path without claiming an unchanged scaffold was applied"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
-    [InlineData((int)CliView.Compact)]
-    [InlineData((int)CliView.Expanded)]
+    [Theory(DisplayName = "Both Extension Create views keep every intended path without claiming an unchanged scaffold was applied"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    [InlineData((int)CliDetail.Minimal)]
+    [InlineData((int)CliDetail.Standard)]
     public void VerifiedNoOpRetainsPaths(int view)
     {
         var result = CreateResult(CliSemanticStatus.Complete) with { AppliedEffects = [] };
-        var rendered = ExtensionCreateHumanRenderer.Render(new(result, new(CliOutputFormat.Human, (CliView)view, CliVerbosity.Normal)));
-        Assert.Contains("Scaffold: 2 intended; 0 applied", rendered, StringComparison.Ordinal);
-        Assert.Contains("/catalogue/development-toolkit/extension.json: intended; not applied", rendered, StringComparison.Ordinal);
-        Assert.Contains("/catalogue/development-toolkit/content/.agents/: intended; not applied", rendered, StringComparison.Ordinal);
-        Assert.Contains("manifest verified", rendered, StringComparison.Ordinal);
-        Assert.DoesNotContain("Workspace: unavailable", rendered, StringComparison.Ordinal);
+        var rendered = SelectText(result, (CliDetail)view);
+        Assert.StartsWith("The development-toolkit scaffold at /catalogue/development-toolkit already matches. Nothing to do.", rendered, StringComparison.Ordinal);
+        Assert.Contains("/catalogue/development-toolkit/extension.json", rendered, StringComparison.Ordinal);
+        Assert.Contains("/catalogue/development-toolkit/content/.agents/", rendered, StringComparison.Ordinal);
+        Assert.DoesNotContain("created", rendered, StringComparison.Ordinal);
         Assert.Empty(result.AppliedEffects);
     }
+
+    private static JsonElement SelectJson(ExtensionCreateResult result, CliDetail detail)
+    {
+        var request = new CliPresentationRequest<ExtensionCreateResult>(
+            result,
+            new CliPresentation(CliFormat.Json, detail, null));
+        using var document = JsonDocument.Parse(
+            CliRenderingStage.Render(request, ExtensionCreatePresentation.Rendering).PrimaryContent);
+        return document.RootElement.GetProperty("data").Clone();
+    }
+
+    private static string SelectText(ExtensionCreateResult result, CliDetail detail)
+        => CliRenderingStage.Render(
+            new CliPresentationRequest<ExtensionCreateResult>(
+                result,
+                new CliPresentation(CliFormat.Text, detail, null)),
+            ExtensionCreatePresentation.Rendering).PrimaryContent;
 
     private static ExtensionCreateResult CreateResult(
         CliSemanticStatus status,

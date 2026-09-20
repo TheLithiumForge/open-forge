@@ -1,0 +1,13 @@
+Cannot create toolkit at <extension-source>/toolkit: <extension-source>/toolkit already exists with different content.
+  Error  <extension-source>/toolkit  Destination has other content [extension-create.destination-collision]
+         <extension-source>/toolkit already exists with different content.
+  <extension-source>/toolkit/extension.json    not started
+  <extension-source>/toolkit/content/.agents/  not started
+  name: Toolkit
+  description: Open Forge Extension package toolkit.
+  version: 0.1.0
+  dependencies: none
+  manifest content:
+  {"id":"toolkit","name":"Toolkit","description":"Open Forge Extension package toolkit.","version":"0.1.0","dependencies":[]}
+  Resolve the named catalogue identity or destination collision before rerunning Extension Create.
+Next: open-forge extension create --dry-run

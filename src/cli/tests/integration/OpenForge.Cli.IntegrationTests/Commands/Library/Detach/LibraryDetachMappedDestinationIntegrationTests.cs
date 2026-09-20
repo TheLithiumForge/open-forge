@@ -8,20 +8,21 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Detach;
 [Trait("Feature", "library-mapping"), Trait("Evidence", "Integration")]
 public sealed class LibraryDetachMappedDestinationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory]
     [InlineData(false), InlineData(true)]
     public static async Task MissingSourceDoesNotBypassCurrentPermissionForExactMappedRemoval(bool granted)
     {
         using var workspace = new LibraryMutationWorkspace();
-        LibraryMutationApplicationData.Lifecycle(workspace);
+        LibraryMutationApplicationData.FrameworkFile(workspace);
         Directory.Delete(workspace.Absolute(LibraryMutationWorkspace.SourceRoot), recursive: true);
         workspace.RecordAt("docs", "gone.md");
         workspace.Link("docs/gone.md", "../shared/team-knowledge/gone.md");
         workspace.Write("docs/local.txt", "Unrelated consumer bytes.");
         if (granted)
         {
-            workspace.Write(".agents/open-forge.permissions.json", """
-                {"schemaVersion":1,"extensions":[],"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","paths":["docs/gone.md"],"directories":[]}]}
+            workspace.Write(".agents/open-forge.json", """
+                {"allowInstallPaths":["docs/gone.md"]}
                 """);
         }
         var before = workspace.Snapshot();
@@ -36,8 +37,9 @@ public sealed class LibraryDetachMappedDestinationIntegrationTests
         if (granted)
         {
             Assert.Null(new FileInfo(workspace.Absolute("docs/gone.md")).LinkTarget);
-            Assert.False(File.Exists(workspace.Absolute(LibraryMutationWorkspace.RecordPath)));
-            Assert.True(File.Exists(workspace.Absolute(".agents/open-forge.permissions.json")));
+            using var document = System.Text.Json.JsonDocument.Parse(File.ReadAllBytes(workspace.Absolute(LibraryMutationWorkspace.RecordPath)));
+            Assert.Empty(document.RootElement.GetProperty("libraries").EnumerateArray());
+            Assert.True(File.Exists(workspace.Absolute(".agents/open-forge.json")));
         }
         else
         {

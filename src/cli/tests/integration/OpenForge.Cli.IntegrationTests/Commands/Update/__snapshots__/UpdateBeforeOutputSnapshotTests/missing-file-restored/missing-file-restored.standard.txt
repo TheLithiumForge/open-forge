@@ -1,0 +1,5 @@
+Updated 1 Framework file.
+Workspace: <workspace>
+  .agents/loader.md  restored (it was missing)
+  .agents/loader.md  Entries section updated
+  13 files unchanged

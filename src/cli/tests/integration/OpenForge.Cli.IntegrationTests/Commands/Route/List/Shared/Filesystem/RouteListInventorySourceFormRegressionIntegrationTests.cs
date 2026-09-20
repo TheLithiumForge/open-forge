@@ -4,6 +4,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Filesystem;
 
 public sealed class RouteListInventorySourceFormRegressionIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route-list inventory retains accepted findings for root and suffix-only source forms"),
         InlineData(".agents/SKILL.md", "---\nname: root-skill\ndescription: Root skill\n---\n"),
         InlineData(".agents/index.md", "---\nopen-forge:\n  description: Root index\n  tags: [Route]\n---\n"),

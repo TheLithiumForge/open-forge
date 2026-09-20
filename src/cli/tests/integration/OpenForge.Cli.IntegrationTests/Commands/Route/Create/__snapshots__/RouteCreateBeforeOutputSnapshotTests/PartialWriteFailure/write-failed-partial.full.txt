@@ -1,0 +1,22 @@
+Route create stopped after 1 of 2 changes.
+Workspace: <workspace>
+  Error  .agents/memory/project-alpha/_project-alpha.md  Write failed [route-create.write-failed]
+         Writing .agents/memory/project-alpha/_project-alpha.md failed. Stopped after 1 of 2 changes. Recovery data: <recovery-bundle>.
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project
+  Created .agents/memory/project-alpha/overview.md
+  .agents/memory/project-alpha/_project-alpha.md  not started
+--- .agents/memory/project-alpha/overview.md (new file) ---
+---
+open-forge:
+  description: Project overview
+  tags: [Docs, Overview]
+  responsibility: Explains the project
+---
+  Entries section: .agents/memory/project-alpha/_project-alpha.md
+    Before: <sha256>
+    After: <sha256>
+    Verification: not-started
+  Report the failure and retry the same Route Create request with bounded diagnostics.
+Next: open-forge route create --detail debug

@@ -11,7 +11,7 @@ open-forge:
 
 This entrypoint routes the accepted current Crystallized Interface and Behavior
 contracts for read-only `open-forge extension inspect`. The command does not
-ship yet and never mutates a workspace, package source, lifecycle document, or
+ship yet and never mutates a workspace, package source, ownership lock, or
 generated navigation.
 
 ## Contract Roles
@@ -34,7 +34,5 @@ generated navigation.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted technology-neutral behavior for read-only Extension identity inspection and source-unavailable comparisons](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Inspect #Behavior #ReadOnly #Determinism #Lifecycle #CurrentTruth
-- [Accepted read-only Interface for inspecting one Extension ID across installed, available, and three-way facts](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Inspect #Interface #ReadOnly #Source #Lifecycle #CurrentTruth
-<!-- open-forge:generated-index:end -->
+- [Accepted read-only Interface for inspecting one Extension ID across the installed record, the workspace, and the package](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Inspect #Interface #ReadOnly #Source #Lifecycle #CurrentTruth

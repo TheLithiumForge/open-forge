@@ -49,46 +49,45 @@ The operation always uses these six diagnostic domains, in this order:
 | 2     | `recovery and residual state`                            | Report exact named external final bundles and incomplete drafts, with one semantic final-ZIP integrity check and Cleanup guidance.                                                                                               |
 | 3     | `routes, metadata, overwrites, and generated navigation` | Compare authored topology and metadata with derived route relationships and generated `Entries`.                                                                                                                                 |
 | 4     | `local references`                                       | Inspect supported authored local references, target and fragment resolution, containment, and bounded repair evidence.                                                                                                           |
-| 5     | `Framework lifecycle`                                    | Diagnose the installed or absent Framework payload, isolated Framework lifecycle section, managed files and regions, trust, ownership boundaries, and recovery evidence.                                                         |
-| 6     | `Extension lifecycle`                                    | Diagnose the isolated `extensions` section of the exact lifecycle document, manifests, managed files, dependencies, source availability, catalogues, ownership, and registration evidence.                                       |
+| 5     | `Framework lifecycle`                                    | Diagnose the installed or absent Framework payload, Framework ownership claims, managed files and regions, trust, ownership boundaries, and recovery evidence.                                                                   |
+| 6     | `Extension lifecycle`                                    | Diagnose the `extensions` claims of the ownership lock, manifests, managed files, dependencies, source availability, catalogues, ownership, and registration evidence.                                                           |
 
 All six domain groups remain in the result. A dependent domain reports
 `incomplete` or `blocked` coverage when an earlier boundary prevents trustworthy
 work; it does not disappear.
 
-## Unified Lifecycle Document Boundary
+## Ownership And Current Target Boundary
 
-Doctor reads `.agents/open-forge.lifecycle.json`, schema v1, as one physical
-common envelope with separate logical `framework` and `extensions` sections. The
-sections remain isolated authorities: Framework source, target, and managed
-region facts are not Extension package, dependency, or owner facts. Doctor
-reports each section's state without mutating, rebaselining, repairing, or
-publishing it. The document stores no plan, runtime history, journal, recovery
-evidence, or session. Files outside this exact path are ordinary workspace
-content, not lifecycle input.
+Ownership is read from `.agents/open-forge.lock.json` through the shared forgiving
+reader. Framework, Extension, and Library claims remain separate. Neither the
+old lifecycle document nor the old Library record supplies ownership facts.
+An absent, unreadable, nonordinary, malformed, or uninterpretable lock supplies
+no usable claims and produces an informational ownership observation, without
+blocking the command or reconstructing ownership from files. Read-only commands
+never create or repair the lock. Actual source, target, route, and recovery
+boundaries still determine their own coverage and findings.
 
-Each section may be `absent`, `trusted`, `untrusted`, `incomplete`, or
-`blocked`:
+Target comparison uses actual disk content against current intended content:
+the running embedded Framework payload, or the currently read exact Extension
+source recorded by its owner. A recorded version or stored content hash does not
+gate comparison. Missing targets remain `missing`; unavailable reads or intended
+sources remain `unavailable`; unsafe physical or Markdown boundaries remain
+`blocked`. Comparable content is `current` when equal and `changed` otherwise.
+The existing immutable `open-forge-markdown-v1` policy normalizes line endings
+and eligible generated content only; authored whitespace and final-newline
+choices remain significant. Non-Markdown Extension payloads use exact bytes.
+Comparison evidence is computed during the invocation and stores no baseline.
 
-- `absent` requires complete inspection proving that no expected managed state,
-  managed boundary, or recovery residual exists.
-- `trusted` requires schema v1 and `open-forge-markdown-v1`, exact workspace
-  and managed identities, intact reciprocal facts, and complete verifiable
-  coverage.
-- `untrusted` identifies readable facts whose provenance, integrity,
-  compatibility, identity, or coverage cannot establish current trust.
-- `incomplete` identifies safe unavailable lifecycle or source coverage.
-- `blocked` identifies malformed, ambiguous, colliding, or unsafe lifecycle
-  identity.
+Root managed hosts compare only their `open-forge` region. Scoped Framework
+entrypoints use the existing canonical payload alignment; ambiguous or missing
+alignment makes intended comparison unavailable. Generated Entries compare with
+the current authored route projection, without consulting stored fingerprints.
 
-A path, matching bytes, matching fingerprint, source, or recommendation never
-promotes a section to trusted. An absent document or section is not, by itself,
-proof of an unmanaged or empty workspace; complete inspection is required for
-safe absence. Installed Extension IDs, ownership, and recorded paths remain
-reportable when package source bytes are unavailable. Source unavailability
-prevents source-dependent comparison or mutation planning but does not erase
-read-only installed facts. Unsupported or ambiguous schema facts are
-`incomplete` when safely unavailable and `blocked` when unsafe.
+The existing lifecycle vocabulary remains a presentation of observed coverage.
+`absent` still requires independent complete footprint and recovery inspection;
+no lock or matching file alone proves absence or ownership. Readable claims may
+remain reportable while their source is unavailable. An unavailable lock yields
+an observation, not an installation error or a trusted empty inventory.
 
 The CLI distribution embeds Framework and first-party Extension assets with
 deterministic inventory and hash proof. That proof identifies distributed source
@@ -110,9 +109,9 @@ global flags:
 
 ```text
 --workspace <path>
---json
---view=compact|expanded
---verbose
+--format <text|json>
+--detail <minimal|standard|full|debug>
+--detail debug
 --help
 --version
 ```
@@ -123,7 +122,7 @@ make `--automatic`, `--dry-run`, or `--relink` global. Those spellings are not
 accepted by Doctor.
 
 An omitted global flag uses the shared default. Repeated Boolean global flags
-retain the shared idempotent behavior. Repeating `--workspace` or `--view`
+retain the shared idempotent behavior. Repeating `--workspace` or `--detail`
 retains the shared invalid-repetition rule. `--help` and `--version` are
 terminal informational modes, are mutually exclusive, and stop before workspace
 resolution or diagnosis. A domain operand or doctor-specific flag remains
@@ -226,12 +225,10 @@ The following catalogue is the complete first-release set of detectable finding
 kinds. A domain may also report a limitation or coverage boundary when the
 declared check cannot be trusted. A fact that is valid and needs no action is
 represented as an informational finding where that distinction helps the user.
-For the unreleased schema-v1 first release, this catalogue contains exactly 120
-kinds: 33 workspace-and-entry (including the Workspace Library
-subcatalogue), 4 recovery, 22 route, 28 local-reference, 14 Framework, and 19
-Extension kinds. The Workspace Library kinds are owned by the existing
-`workspace and entry` domain; Doctor retains six domains and does not add a
-seventh result domain.
+The Workspace Library kinds remain in `workspace and entry`; Doctor retains six
+domains. Ownership observations replace legacy document-admission findings.
+Unused legacy identifiers may remain internal during the migration and do not
+establish an emission path or a current document gate.
 
 ### Workspace And Entry
 
@@ -267,11 +264,10 @@ seventh Doctor domain:
 
 | Kind                                  | Detectable condition                                                                                                                                                                                                                          | Resolution or next action                                                                              |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `library.record-malformed`            | A present `.agents/open-forge.libraries.json` file is not a supported schema-v1 record, or its IDs, roots, or mappings are malformed, duplicated, or ambiguous.                                                                               | `blocked-repair`; preserve the record and correct its authored shape.                                  |
-| `library.record-unavailable`          | A present Library record cannot be read or its required record fact is unavailable; Library coverage is `incomplete`. A safely proven absent record is valid zero-Library evidence and does not produce this finding.                         | `informational`; report the unavailable boundary and do not treat it as an empty record.               |
+| `library.ownership-observation`       | Ownership claims are absent, unavailable, or uninterpretable; no ownership is inferred.                                                                                                                                                       | `informational`; do not gate diagnosis or write state.                                                 |
 | `library.source-root-invalid`         | A typed `sourceRoot` is malformed, not contained, or not an ordinary directory.                                                                                                                                                               | `blocked-repair`; correct the exact source-root boundary without creating or adopting it.              |
 | `library.source-root-aliased`         | A source root or its ancestry physically aliases another identity or cannot be assigned one safe physical identity.                                                                                                                           | `blocked-repair`; resolve the physical identity ambiguity.                                             |
-| `library.inventory-incomplete`        | Complete eligible inventory cannot be established for one or more Library source roots named by a readable strict record; Library coverage is `incomplete` and no source addition or retirement is inferred.                                  | `informational`; report incomplete coverage and do not narrow the inventory silently.                  |
+| `library.inventory-incomplete`        | Complete eligible inventory cannot be established for one or more Library source roots named by a readable ownership catalogue; Library coverage is `incomplete` and no source addition or retirement is inferred.                            | `informational`; report incomplete coverage and do not narrow the inventory silently.                  |
 | `library.projection-missing`          | A typed registered destination has no current directory entry.                                                                                                                                                                                | `manual-decision`; report projection drift and leave link creation to the accepted Library operation.  |
 | `library.projection-dangling`         | The expected relative link is present, but its source target is unavailable; Doctor does not follow it to read source bytes.                                                                                                                  | `blocked-repair`; preserve the link and resolve the source boundary explicitly.                        |
 | `library.projection-retargeted`       | A registered destination is a relative link whose raw target differs from the exact recorded target.                                                                                                                                          | `blocked-repair`; preserve the occupant and do not retarget it automatically.                          |
@@ -283,9 +279,8 @@ seventh Doctor domain:
 Library findings carry typed Library ID, source-root, mapping, projection, or
 residual subjects and provenance. They never invoke Library, mutate, adopt,
 delete recovery, probe link capability, or infer identity from a filename or
-path. A safely proven absent Library record means zero Libraries and complete
-Library coverage, produces no Library finding, grants no ownership, and does not
-infer a mapping. For a readable strict record, Doctor attempts a complete
+path. Unavailable Library ownership produces an informational ownership observation,
+complete observation coverage, and no inferred registrations or mappings. For a readable ownership catalogue, Doctor attempts a complete
 eligible inventory for every named source root. Those registered roots are the
 complete declared Library coverage. `library.projection-missing` is safe drift
 only when every registered-root inventory and mapping fact is complete; an
@@ -361,7 +356,7 @@ a presentation dependency, or a generic bag.
 | `route.axioms-invalid`              | Required `Axioms` structure or inherited sentinel is missing or malformed; route coverage is `blocked` when active rules cannot be established safely. | `manual-decision`; do not rewrite active rules automatically.                                                                                  |
 | `route.generated-region-stale`      | A valid generated region does not match current route facts.                                                                                           | `targeted-operation`; use accepted `index` behavior, not general Repair.                                                                       |
 | `route.generated-region-missing`    | A required generated region is absent; route coverage is `blocked` when its boundary cannot be established safely.                                     | `targeted-operation`; use accepted `index` behavior only after the route boundary is valid; generated-region authoring remains outside Repair. |
-| `route.generated-region-malformed`  | A generated region cannot be parsed as one valid bounded region.                                                                                       | `blocked-repair`; do not repair markers through general Repair.                                                                                |
+| `route.generated-region-malformed`  | A generated region cannot be parsed as one valid bounded region.                                                                                       | `blocked-repair`; do not repair Entries headings through general Repair.                                                                       |
 | `route.generated-region-misplaced`  | A generated region is not in its accepted location.                                                                                                    | `manual-decision`; no authored-file rewrite is inferred.                                                                                       |
 | `route.generated-region-duplicate`  | More than one generated region claims one entrypoint.                                                                                                  | `blocked-repair`; resolve the boundary manually.                                                                                               |
 | `route.generated-entry-missing`     | A required generated entry is absent.                                                                                                                  | `targeted-operation`; use `index` after the route boundary is valid.                                                                           |
@@ -431,22 +426,19 @@ Doctor does not infer it.
 
 ### Framework Lifecycle
 
-| Kind                                       | Detectable condition                                                                                                                                                                                                                                                                                                | Resolution or next action                                                                                |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `framework.install-absent`                 | No Framework installation is present, and absence is safely established.                                                                                                                                                                                                                                            | `informational` with `open-forge install` as a typed next action; Doctor and Repair do not mutate it.    |
-| `framework.install-incomplete`             | Installation evidence is present but incomplete or cannot establish a safe state; Framework coverage is `incomplete` or `blocked` as applicable.                                                                                                                                                                    | `blocked-repair`; use the accepted lifecycle contract or a manual action after the boundary is resolved. |
-| `framework.managed-missing`                | A trusted Framework lifecycle section names a managed file or region that is missing.                                                                                                                                                                                                                               | `targeted-operation`; use `open-forge update`; do not restore it through Doctor.                         |
-| `framework.managed-changed`                | A trusted Framework managed file or region differs from its semantic baseline.                                                                                                                                                                                                                                      | `targeted-operation`; use `open-forge update`; do not replace it automatically.                          |
-| `framework.lifecycle-evidence-unavailable` | Framework lifecycle evidence or required embedded source facts are unavailable; affected Framework coverage is `incomplete`.                                                                                                                                                                                        | `blocked-repair`; do not infer installation, ownership, or an update source.                             |
-| `framework.lifecycle-evidence-malformed`   | Framework lifecycle evidence cannot be trusted or safely preserved.                                                                                                                                                                                                                                                 | `blocked-repair`; preserve the ordinary evidence and do not guess a section or baseline state.           |
-| `framework.lifecycle-untrusted`            | Framework facts are readable but provenance, integrity, compatibility, identity, or coverage does not establish `trusted`; coverage is `incomplete` when safely unavailable and `blocked` when unsafe.                                                                                                              | `blocked-repair`; force is not inferred.                                                                 |
-| `framework.lifecycle-section-missing`      | A Framework section is expected but absent from the lifecycle document; affected Framework coverage is `incomplete` or `blocked`.                                                                                                                                                                                   | `blocked-repair`; never treat the section as empty.                                                      |
-| `framework.bridge-boundary`                | A provider bridge or root-region boundary is missing, changed, or ambiguous.                                                                                                                                                                                                                                        | `blocked-repair`; future lifecycle contracts own exact mutation.                                         |
-| `framework.root-region-boundary`           | A managed root region cannot be delimited safely.                                                                                                                                                                                                                                                                   | `blocked-repair`; do not replace or adopt the region.                                                    |
-| `framework.ownership-conflict`             | Managed, user, and Extension claims overlap incompatibly.                                                                                                                                                                                                                                                           | `manual-decision`; ownership is not inferred from severity.                                              |
-| `framework.partial-lifecycle`              | Within one exact trusted declared managed subject or set, at least one expected member is current and at least one other expected member is non-current.                                                                                                                                                            | `blocked-repair`; preserve the partial state until a typed recovery action is available.                 |
-| `framework.partial-recovery`               | For one semantically verified same-workspace Framework-attributed final, a neutral producer compares every ordered existing-target entry with its exact prior and intended states; every entry is safely observable, at least one matches prior, at least one other matches intended, and none is third or unknown. | `blocked-repair`; preserve recovery evidence.                                                            |
-| `framework.distributed-payload-defect`     | The distributed Framework payload is missing or internally inconsistent.                                                                                                                                                                                                                                            | `manual-decision`; report the defect or a typed distribution action; Repair does not alter the payload.  |
+| Kind                                       | Detectable condition                                                                                                                                                                                                                                                                                                | Resolution or next action                                                                               |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `framework.install-absent`                 | No Framework installation is present, and absence is safely established.                                                                                                                                                                                                                                            | `informational` with `open-forge install` as a typed next action; Doctor and Repair do not mutate it.   |
+| `framework.ownership-observation`          | Ownership claims are absent, unavailable, or uninterpretable; no ownership is inferred.                                                                                                                                                                                                                             | `informational`; do not gate diagnosis or write state.                                                  |
+| `framework.managed-missing`                | A trusted Framework lifecycle section names a managed file or region that is missing.                                                                                                                                                                                                                               | `targeted-operation`; use `open-forge update`; do not restore it through Doctor.                        |
+| `framework.managed-changed`                | A trusted Framework managed file or region differs from its current intended payload.                                                                                                                                                                                                                               | `targeted-operation`; use `open-forge update`; do not replace it automatically.                         |
+| `framework.lifecycle-evidence-unavailable` | Framework lifecycle evidence or required embedded source facts are unavailable; affected Framework coverage is `incomplete`.                                                                                                                                                                                        | `blocked-repair`; do not infer installation, ownership, or an update source.                            |
+| `framework.bridge-boundary`                | A provider bridge or root-region boundary is missing, changed, or ambiguous.                                                                                                                                                                                                                                        | `blocked-repair`; future lifecycle contracts own exact mutation.                                        |
+| `framework.root-region-boundary`           | A managed root region cannot be delimited safely.                                                                                                                                                                                                                                                                   | `blocked-repair`; do not replace or adopt the region.                                                   |
+| `framework.ownership-conflict`             | Managed, user, and Extension claims overlap incompatibly.                                                                                                                                                                                                                                                           | `manual-decision`; ownership is not inferred from severity.                                             |
+| `framework.partial-lifecycle`              | Within one exact trusted declared managed subject or set, at least one expected member is current and at least one other expected member is non-current.                                                                                                                                                            | `blocked-repair`; preserve the partial state until a typed recovery action is available.                |
+| `framework.partial-recovery`               | For one semantically verified same-workspace Framework-attributed final, a neutral producer compares every ordered existing-target entry with its exact prior and intended states; every entry is safely observable, at least one matches prior, at least one other matches intended, and none is third or unknown. | `blocked-repair`; preserve recovery evidence.                                                           |
+| `framework.distributed-payload-defect`     | The distributed Framework payload is missing or internally inconsistent.                                                                                                                                                                                                                                            | `manual-decision`; report the defect or a typed distribution action; Repair does not alter the payload. |
 
 `framework.partial-lifecycle` is a finite mixed-current-state observation within
 one exact trusted declared managed subject or set. It requires at least one
@@ -488,27 +480,24 @@ lifecycle actions. General Repair does not mutate Framework files.
 
 ### Extension Lifecycle
 
-| Kind                                   | Detectable condition                                                                                                                                                                                                                              | Resolution or next action                                                                                        |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `extension.lifecycle-document-missing` | The exact new-CLI lifecycle document is absent. Complete inspection may still establish safe absence, but the missing document alone does not prove an empty installed set; Extension coverage is `incomplete` until that inspection is complete. | `informational`; do not infer managed state.                                                                     |
-| `extension.lifecycle-document-invalid` | The lifecycle document cannot be parsed as supported schema v1, or its section shape is unsupported or ambiguous; affected Extension coverage is `incomplete` when safely unavailable and `blocked` when unsafe.                                  | `blocked-repair`; retain the ordinary file and do not invent lifecycle facts.                                    |
-| `extension.lifecycle-untrusted`        | Extension lifecycle facts are readable but cannot establish trusted package, dependency, path, owner, or fingerprint coverage; coverage is `incomplete` when safely unavailable and `blocked` when unsafe.                                        | `blocked-repair`; no lifecycle mutation through Doctor or Repair.                                                |
-| `extension.lifecycle-section-missing`  | An Extension section is expected but absent from the unified lifecycle document; affected Extension coverage is `incomplete` or `blocked`.                                                                                                        | `blocked-repair`; never reconstruct it from paths, bytes, or source.                                             |
-| `extension.manifest-missing`           | An expected Extension manifest is absent.                                                                                                                                                                                                         | `manual-decision`; decide whether to author or restore it through an accepted lifecycle action.                  |
-| `extension.manifest-malformed`         | An Extension manifest cannot be trusted.                                                                                                                                                                                                          | `blocked-repair`; do not infer dependencies or ownership.                                                        |
-| `extension.duplicate-id`               | More than one lifecycle record or manifest claims one Extension ID.                                                                                                                                                                               | `blocked-repair`; no identity winner is chosen.                                                                  |
-| `extension.unknown-id`                 | Lifecycle evidence names an unknown Extension ID.                                                                                                                                                                                                 | `manual-decision`; catalogue or lifecycle authority is unresolved.                                               |
-| `extension.version-invalid`            | An Extension version is missing, malformed, or incompatible with its evidence.                                                                                                                                                                    | `manual-decision`; do not choose a version.                                                                      |
-| `extension.managed-missing`            | Trusted lifecycle facts name a managed Extension file that is missing.                                                                                                                                                                            | `targeted-operation`; use `open-forge extension update`; no restoration through Doctor.                          |
-| `extension.managed-changed`            | A trusted managed Extension file differs from recorded evidence.                                                                                                                                                                                  | `targeted-operation`; use `open-forge extension update`; no automatic replacement.                               |
-| `extension.dependency-missing`         | A declared Extension dependency is unavailable.                                                                                                                                                                                                   | `manual-decision`; decide the dependency action or use a future lifecycle action.                                |
-| `extension.dependency-cycle`           | Extension dependencies contain a cycle.                                                                                                                                                                                                           | `blocked-repair`; dependency order is not guessed.                                                               |
-| `extension.dependency-incompatible`    | Dependency versions or capabilities cannot satisfy the declared relation.                                                                                                                                                                         | `manual-decision`; no version is selected automatically.                                                         |
-| `extension.source-unavailable`         | The Extension source or catalogue needed for source-dependent diagnosis is unavailable; source-dependent coverage is `incomplete`.                                                                                                                | `informational`; retain independently readable installed IDs and ownership facts and do not substitute a source. |
-| `extension.catalogue-unavailable`      | The declared catalogue cannot be inspected; Extension coverage is `incomplete` or `blocked` according to the boundary.                                                                                                                            | `blocked-repair`; no catalogue fallback is inferred.                                                             |
-| `extension.partial-lifecycle`          | Within one exact trusted declared managed subject or set, at least one expected member is current and at least one other expected member is non-current.                                                                                          | `blocked-repair`; preserve the partial state until a typed recovery action is available.                         |
-| `extension.ownership-collision`        | User, Framework, or Extension ownership claims conflict.                                                                                                                                                                                          | `manual-decision`; ownership is not inferred.                                                                    |
-| `extension.bridge-registration`        | One exact lifecycle-owned routed Extension payload target has a missing, unreadable, or inconsistent ordinary generated-navigation parent `Entries` registration.                                                                                 | `manual-decision`; report the evidence or use a typed future lifecycle action.                                   |
+| Kind                                | Detectable condition                                                                                                                                              | Resolution or next action                                                                                        |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `extension.ownership-observation`   | Ownership claims are absent, unavailable, or uninterpretable; no ownership is inferred.                                                                           | `informational`; do not gate diagnosis or write state.                                                           |
+| `extension.manifest-missing`        | An expected Extension manifest is absent.                                                                                                                         | `manual-decision`; decide whether to author or restore it through an accepted lifecycle action.                  |
+| `extension.manifest-malformed`      | An Extension manifest cannot be trusted.                                                                                                                          | `blocked-repair`; do not infer dependencies or ownership.                                                        |
+| `extension.duplicate-id`            | The inspected Extension source has an ambiguous or duplicate package identity.                                                                                    | `blocked-repair`; no identity winner is chosen.                                                                  |
+| `extension.unknown-id`              | Lifecycle evidence names an unknown Extension ID.                                                                                                                 | `manual-decision`; catalogue or lifecycle authority is unresolved.                                               |
+| `extension.version-invalid`         | An Extension version is missing, malformed, or incompatible with its evidence.                                                                                    | `manual-decision`; do not choose a version.                                                                      |
+| `extension.managed-missing`         | Trusted lifecycle facts name a managed Extension file that is missing.                                                                                            | `targeted-operation`; use `open-forge extension update`; no restoration through Doctor.                          |
+| `extension.managed-changed`         | A trusted managed Extension file differs from recorded evidence.                                                                                                  | `targeted-operation`; use `open-forge extension update`; no automatic replacement.                               |
+| `extension.dependency-missing`      | A declared Extension dependency is unavailable.                                                                                                                   | `manual-decision`; decide the dependency action or use a future lifecycle action.                                |
+| `extension.dependency-cycle`        | Extension dependencies contain a cycle.                                                                                                                           | `blocked-repair`; dependency order is not guessed.                                                               |
+| `extension.dependency-incompatible` | Dependency versions or capabilities cannot satisfy the declared relation.                                                                                         | `manual-decision`; no version is selected automatically.                                                         |
+| `extension.source-unavailable`      | The Extension source or catalogue needed for source-dependent diagnosis is unavailable; source-dependent coverage is `incomplete`.                                | `informational`; retain independently readable installed IDs and ownership facts and do not substitute a source. |
+| `extension.catalogue-unavailable`   | The declared catalogue cannot be inspected; Extension coverage is `incomplete` or `blocked` according to the boundary.                                            | `blocked-repair`; no catalogue fallback is inferred.                                                             |
+| `extension.partial-lifecycle`       | Within one exact trusted declared managed subject or set, at least one expected member is current and at least one other expected member is non-current.          | `blocked-repair`; preserve the partial state until a typed recovery action is available.                         |
+| `extension.ownership-collision`     | User, Framework, or Extension ownership claims conflict.                                                                                                          | `manual-decision`; ownership is not inferred.                                                                    |
+| `extension.bridge-registration`     | One exact lifecycle-owned routed Extension payload target has a missing, unreadable, or inconsistent ordinary generated-navigation parent `Entries` registration. | `manual-decision`; report the evidence or use a typed future lifecycle action.                                   |
 
 `extension.partial-lifecycle` uses the same finite mixed-current-state rule as
 Framework lifecycle: within one exact trusted declared managed subject or set,
@@ -534,12 +523,9 @@ This observation adds no manifest or lifecycle field or schema change. It never
 uses a compatibility path, provider bridge, symbolic link, registry, dependency
 injection, fuzzy path, or content inference.
 
-The fixed first-release catalogue retains `extension.bridge-registration` as a
-producer-backed kind. Task 17 closed its accepted set-valued observation by
-extending the typed contributor views and Doctor. The current Extension domain
-has no remaining observation horizon, and the final pre-release completeness
-gate has an honest emission path for all 120 kinds, including the Workspace
-Library subcatalogue.
+`extension.bridge-registration` remains backed by the accepted set-valued
+contributor observation. No finding is synthesized without its required current
+facts.
 
 Neither legacy `open-forge.extensions.json`, package-source manifests, broad
 `.agents` recursion, payload/path/byte resemblance, nor Framework bridges may
@@ -553,370 +539,332 @@ decisions, or blocked boundaries. Doctor does not run `extension install`,
 does not mutate Extension files, lifecycle sections, manifests,
 dependencies, catalogues, or registrations.
 
-## Output
+## Human Output
 
-Human output starts with the outcome and an explicit statement that no files
-changed, followed by status, exact workspace identity and selection method,
-overall check coverage, finding counts and resolution counts. Human status
-`requires attention` represents the typed status `attention`.
+The command uses the shared native report. The default detail is `minimal`; `standard`, `full` and `debug` add the catalogue-defined facts. `--detail-filter <error|warning|info|all>` is repeatable and changes only the rendered detail. Use `--format text` for this text report. Primary result text for `completed`, `completed-with-warnings` and `incomplete` is on stdout; primary errors for `invalid-input`, `blocked`, `failed` and `cancelled` are on stderr. There is no `Status:` line.
 
-The six categories remain in their defined order, labelled `Workspace`,
-`Recovery`, `Routes and navigation`, `Links`, `Framework`, and `Extensions`.
-Each category retains its coverage and limitations. Lifecycle and source
-availability remain visible when supplied. Counts describe the original
-findings, never the number of display groups. Unavailable counts do not become
-zero. When every finding and resolution count is available and zero, human
-output uses `Findings: none`. Neither view emits a health score or percentage.
+Doctor text has an opt-in minimal-warning presentation. Without an explicit
+severity filter, minimal text renders known error and warning findings with
+their exact source/path/location, cause or message, and first action; info
+findings remain a Full-only text detail. An explicit `--detail-filter` is
+authoritative and selects only its requested severity rows. This presentation
+rule does not change the typed result, status, streams, structured schema, or
+the JSON detail ladder.
 
-Both human views group findings with the same exact typed subject within a
-category. Source coordinates include line and column when available, directly
-beside the path. Subject kind, identifier and full location distinguish separate
-occurrences; identical displayed paths alone are insufficient for grouping.
-Each finding keeps its severity, readable explanation, stable diagnostic code
-and resolution. No diagnostic kind or severity is filtered out. Shared candidate
-lists, evidence and exact proposals appear once within their subject group;
-different facts remain separate. Actions appear with their finding group, with
-any additional category or overall actions retained once at their own scope.
-The operation result and its deterministic finding order remain unchanged.
+### Statuses and headlines
 
-The default human view is `expanded`. Compact keeps the same subjects, findings,
-resolutions, possible-target counts and paths, exact proposed replacements and
-required actions with short rows. Expanded adds distinct supporting evidence,
-where it was read, why each possible target was included, and proposal
-verification and recovery detail. Possible targets are explicitly unselected;
-being the only possible target does not make a candidate a confirmed repair.
-Paths, identifiers and commands are not truncated. Human source locations omit
-byte offsets and byte lengths; exact edit coordinates remain in structured data.
+| Status                  | When                                                | Headline                                                                                        | Exit | Stream |
+| ----------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | no error, no warning, complete coverage             | `No problems found.`                                                                            |    0 | stdout |
+| completed               | Info findings only                                  | `No problems found. <N> info findings were recorded.`                                           |    0 | stdout |
+| completed-with-warnings | warnings, no errors                                 | `No errors. <W> warnings and <I> info findings were recorded.` (omit the info clause when zero) |    2 | stdout |
+| completed-with-warnings | errors present                                      | `<E> errors, <W> warnings and <I> info findings.` (singular forms when 1; omit zero parts)      |    2 | stdout |
+| incomplete              | a category could not finish                         | previous sentence + ` <K> checks could not finish.`                                             |    3 | stdout |
+| invalid-input           | operand or unknown flag                             | family `invalid-input`: `Cannot run doctor: <problem>.`                                         |    4 | stderr |
+| blocked                 | workspace missing, not a directory, unsafe boundary | `Cannot check this workspace: <reason>.`                                                        |    5 | stderr |
+| failed                  | unexpected error                                    | `Doctor stopped because of an unexpected error: <reason>.`                                      |    1 | stderr |
+| cancelled               | Ctrl+C                                              | `Doctor was cancelled.`                                                                         |  130 | stderr |
 
-For example, a missing-link finding can appear as:
+Doctor retains `completed-with-warnings` for warning-only and error-containing
+diagnoses; exposing warning rows at minimal text does not change that status,
+its exit, or its stream. Errors do not make diagnosis fail.
+
+### Text by level
+
+`minimal`, healthy:
 
 ```text
-Links: checks complete
-  .agents/directives/review.md:12:4
-  WARNING  Broken link [reference.target-missing]
-    The linked file was not found: ../guidance/testing.md
-    Resolution: choose a target after reviewing the evidence
+No problems found.
+  6 checks complete. 21 links and 20 routes checked.
 ```
 
-This is illustrative; candidate lists and action commands appear only when
-supported by the actual result. `--verbose` remains separate from expanded view
-and adds bounded diagnostics without changing facts, coverage, findings or status.
+`minimal`, warnings only:
 
-`--json` emits one complete structured result derived from the same typed result
-as human output. JSON is non-interactive and never prompts. It includes the
-complete domain groups, coverage and limitations, counts, findings, typed
-subjects and evidence, provenance, resolution lanes, candidates or proposals,
-next actions, status, and post-condition facts that the contract exposes. Exact
-field names, schema compatibility, and exit mapping follow the [Shared Result
-Coordinates](../shared/result-coordinates/interface.md).
+Minimal text renders the known warning findings immediately with their exact
+source/path/location, cause or message, and first action. Info findings remain
+counted but omitted; no extra run is required to see warnings.
 
-Workspace Library findings appear in the existing `workspace-entry` domain with
-typed Library subjects and `library-record`, `library-source`,
-`library-projection`, or `library-recovery` provenance. A safe-exact Library
-residual may carry the typed `library-residual-recovery` proposal; Doctor only
-reports it and never applies or invokes Repair.
+`minimal`, errors:
 
-### Command-Local JSON Result Graph
+Minimal text renders all known error and warning findings with their exact
+source/path/location, cause or message, and first action. Info findings remain
+counted but omitted; any hint for hidden findings points to `--detail full`.
+The typed next action remains governed by the Next rules below.
 
-The command-local `result` object uses these members in exactly this order. Every
-object and array member is present and non-null; members declared `| null` are
-present and may be `null` only under the discriminator rules below:
+`minimal`, incomplete:
+
+Minimal text renders known warning findings with their exact
+source/path/location, cause or message, and first action while retaining the
+coverage sentence for checks that could not finish. Info findings remain
+omitted; any hint for hidden findings points to `--detail full`.
+
+`standard`, errors and warnings (categories appear only when they have listed
+findings; Info stays counted):
 
 ```text
-DoctorJsonResult {
-  readOnly: boolean,
-  changesMade: boolean,
-  coverage: "complete" | "incomplete" | "blocked",
-  counts: DoctorJsonCounts,
-  actions: DoctorJsonAction[],
-  domains: DoctorJsonDomain[]
-}
+1 error, 2 warnings and 3 info findings.
+Workspace: D:/work/myrepo
 
-DoctorJsonCounts {
-  resolution: {
-    safeExact: DoctorJsonCount,
-    guidedChoice: DoctorJsonCount,
-    targetedOperation: DoctorJsonCount,
-    manualDecision: DoctorJsonCount,
-    blockedRepair: DoctorJsonCount,
-    informational: DoctorJsonCount
-  },
-  severity: {
-    information: DoctorJsonCount,
-    warning: DoctorJsonCount,
-    error: DoctorJsonCount
-  }
-}
+Routes and Entries
+  Error    .agents/skills/pdf/SKILL.md:1:1   Frontmatter is invalid
+           The frontmatter block is not closed. Edit the file by hand.
 
-DoctorJsonCount {
-  state: "available" | "unavailable" | "not-applicable",
-  value: integer >= 0 | null
-}
+Links
+  Warning  .agents/loader.md:105:3           Broken link
+           The linked file was not found: patterns/_patterns.md
+           Possible target (not chosen): .agents/patterns/_patterns.md
+           Choose it: open-forge repair
+  Warning  .agents/maps/_maps.md:32:3        Broken link
+           The linked file was not found: nowhere/_nope.md
+           No possible target was found. Fix the link by hand.
 
-DoctorJsonDomain {
-  domain: "workspace-entry" | "recovery-residuals"
-    | "routes-metadata-overwrites-generated-navigation"
-    | "local-references" | "framework-lifecycle" | "extension-lifecycle",
-  boundary: {
-    kind: "workspace" | "recovery-store" | "route-universe"
-      | "local-reference-universe" | "framework-lifecycle"
-      | "extension-lifecycle",
-    path: string | null
-  },
-  coverage: "complete" | "incomplete" | "blocked",
-  lifecycle: "absent" | "trusted" | "untrusted" | "incomplete" | "blocked" | null,
-  sourceAvailability: "available" | "unavailable" | "not-applicable" | null,
-  limitations: DoctorJsonLimitation[],
-  counts: DoctorJsonCounts,
-  findings: DoctorJsonFinding[],
-  actions: DoctorJsonAction[]
-}
-
-DoctorJsonFinding {
-  kind: one of the 120 finite catalogue values,
-  severity: "information" | "warning" | "error",
-  message: string,
-  subject: DoctorJsonSubject,
-  evidence: DoctorJsonEvidence[],
-  provenance: DoctorJsonProvenance,
-  resolution: "safe-exact" | "guided-choice" | "targeted-operation"
-    | "manual-decision" | "blocked-repair" | "informational",
-  candidates: DoctorJsonCandidates | null,
-  proposal: DoctorJsonProposal | null,
-  actions: DoctorJsonAction[]
-}
-
-DoctorJsonSubject {
-  kind: "workspace" | "path" | "route" | "generated-region"
-    | "source-occurrence" | "target" | "recovery-item" | "managed-file"
-    | "extension" | "dependency" | "library",
-  path: string | null,
-  id: string | null,
-  location: SourceLocation | null
-}
-
-DoctorJsonEvidence {
-  kind: "availability" | "state" | "comparison" | "integrity"
-    | "authored-value" | "candidate-basis",
-  basis: "filename" | "title" | "literal-content" | "route-neighborhood" | null,
-  state: "available" | "unavailable" | "not-applicable" | "present" | "absent"
-    | "current" | "changed" | "missing" | "blocked" | "incomplete"
-    | "dangling" | "retargeted" | "safe-exact" | "valid" | "invalid"
-    | "unsupported" | "malformed" | "untrusted"
-    | "verified" | null,
-  expected: string | null,
-  actual: string | null,
-  value: string | null,
-  path: string | null,
-  location: SourceLocation | null
-}
-
-DoctorJsonProvenance {
-  domain: "workspace-entry" | "recovery-residuals"
-    | "routes-metadata-overwrites-generated-navigation"
-    | "local-references" | "framework-lifecycle" | "extension-lifecycle",
-  source: "workspace-entry" | "recovery-residuals" | "route-inventory"
-    | "route-metadata" | "generated-navigation" | "local-references"
-    | "framework-lifecycle" | "framework-payload" | "extension-lifecycle"
-    | "extension-source" | "lifecycle-ownership" | "library-record"
-    | "library-source" | "library-projection" | "library-recovery",
-  path: string | null,
-  location: SourceLocation | null
-}
-
-DoctorJsonCandidates {
-  cardinality: "none" | "one" | "several",
-  items: DoctorJsonCandidate[]
-}
-
-DoctorJsonCandidate {
-  subject: DoctorJsonSubject,
-  evidence: DoctorJsonCandidateBasis[],
-  provenance: DoctorJsonProvenance
-}
-
-DoctorJsonCandidateBasis {
-  kind: "filename" | "title" | "literal-content" | "route-neighborhood",
-  value: string | null,
-  location: SourceLocation | null
-}
-
-DoctorJsonProposal {
-  kind: "reference-canonicalization" | "library-residual-recovery",
-  subject: DoctorJsonSubject,
-  expected: string,
-  intended: string,
-  boundary: DoctorJsonBoundary,
-  verification: "same-target-identity" | "resulting-bytes"
-    | "library-no-follow-exact",
-  recovery: "no-persistent-state" | "repair-receipt-required"
-}
-
-DoctorJsonAction {
-  kind: "repair-preview" | "accepted-operation" | "future-operation"
-    | "review-candidates" | "manual-decision",
-  operation: "repair" | "index" | "cleanup" | "install" | "update"
-    | "extension-create" | "extension-install" | "extension-update"
-    | "extension-remove" | null,
-  command: string | null,
-  reason: string
-}
-
-DoctorJsonLimitation {
-  kind: "unavailable" | "unsupported" | "incomplete" | "blocked",
-  message: string
-}
+  21 links valid, 3 external links not checked, 20 routes checked.
+Next: open-forge repair --dry-run  (preview the 1 repair that is safe to apply)
 ```
 
-The following command-local coordinates are finite machine-value sets, not
-open-ended strings:
+`full` adds Info rows, the code after each title, `why this was suggested`
+under each possible target, `Read from: <source>` per finding, the lane
+sentence (`can be fixed automatically`, `needs a choice`) after the message,
+and the lane counts sentence: `1 can be fixed automatically, 2 need a choice,
+1 must be fixed by hand.`
 
-```text
-DoctorJsonBoundary.kind:
-  "workspace" | "recovery-store" | "route-universe"
-    | "local-reference-universe" | "framework-lifecycle"
-    | "extension-lifecycle"
+`debug` adds each category's boundary and coverage on stderr.
 
-DoctorJsonEvidence.state:
-  "available" | "unavailable" | "not-applicable" | "present" | "absent"
-    | "current" | "changed" | "missing" | "blocked" | "incomplete"
-    | "dangling" | "retargeted" | "safe-exact" | "valid" | "invalid"
-    | "unsupported" | "malformed" | "untrusted"
-    | "verified" | null
+The hint line appears only when the level hides at least one finding. Because
+Doctor text opts into minimal warnings, minimal text names `--detail full`
+only when Info findings are hidden; standard likewise names `--detail full`
+when only Info is hidden. An explicit severity filter controls its requested
+rows and does not receive automatic warning inclusion.
 
-DoctorJsonProvenance.source:
-  "workspace-entry" | "recovery-residuals" | "route-inventory"
-    | "route-metadata" | "generated-navigation" | "local-references"
-    | "framework-lifecycle" | "framework-payload" | "extension-lifecycle"
-    | "extension-source" | "lifecycle-ownership" | "library-record"
-    | "library-source" | "library-projection" | "library-recovery"
+### Representative transcripts by status
 
-DoctorJsonAction.operation:
-  "repair" | "index" | "cleanup" | "install" | "update"
-    | "extension-create" | "extension-install" | "extension-update"
-    | "extension-remove" | null
-```
+### Transcript — completed
 
-For `DoctorJsonAction`, `operation` is `"repair"` for `repair-preview`, is one
-of the listed operation values for `accepted-operation` and `future-operation`,
-and is `null` for `review-candidates` and `manual-decision`. The accepted and
-future operation forms retain a typed operation even when only the latter lacks
-an established command spelling; the command member remains nullable.
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#doctor-completed). [Matching reviewed capture](../../../../../../../src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Doctor/Shared/Rendering/__snapshots__/Diagnosis/healthy.minimal/healthy.minimal.txt).
 
-`DoctorJsonBoundary.path`, `DoctorJsonEvidence.basis`, `expected`, `actual`,
-`value`, `path`, and `location`, `DoctorJsonProvenance.path` and `location`,
-and `DoctorJsonAction.operation` are present but nullable. `basis` is non-null
-only for `candidate-basis` evidence; `state` is non-null for `availability`,
-`state`, and `integrity` evidence and null for `comparison`, `authored-value`,
-and `candidate-basis` evidence. `expected` and `actual` are non-null only for
-`comparison`; `value` and `location` are non-null only for `authored-value`;
-`path` and `location` remain null when the corresponding typed fact is
-unavailable. `DoctorJsonProposal.boundary` is always present for a proposal
-and carries the affected typed boundary.
+### Transcript — completed-with-warnings
 
-Every aggregate and per-domain `DoctorJsonCounts` uses the same
-`DoctorJsonCount` coordinate. Its `value` is non-null exactly when `state` is
-`available`; it is `null` for `unavailable` and `not-applicable`. Zero is an
-available count and is never used to represent either unavailable state.
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#doctor-completed-with-warnings). [Matching reviewed capture](../../../../../../../src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Doctor/Shared/Rendering/__snapshots__/Diagnosis/warnings-only.minimal/warnings-only.minimal.txt).
 
-The shared envelope remains the outer graph and keeps its exact six-member order,
-including `workspace` and `next` nullability. `readOnly` is always `true` and
-`changesMade` is always `false` for a Doctor result. `domains` has exactly six
-members in the fixed diagnostic order. Domain `lifecycle` and
-`sourceAvailability` are present but `null` outside their applicable lifecycle
-domains. Finding `candidates` is non-null only for bounded candidate evidence,
-and `proposal` is non-null only for an exact proposal. Every array is present and
-non-null, including empty arrays. Nullable subject, evidence, provenance, and
-action members are present with `null` only when their discriminator makes the
-member inapplicable or the fact is unavailable.
+### Transcript — incomplete
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#doctor-incomplete). [Matching reviewed capture](../../../../../../../src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Doctor/Shared/Rendering/__snapshots__/Diagnosis/incomplete.minimal/incomplete.minimal.txt).
+
+### Transcript — invalid-input
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#doctor-invalid-input). [Matching reviewed capture](../../../../../../../src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Doctor/Shared/Rendering/__snapshots__/Diagnosis/invalid-input.full/invalid-input.full.txt).
+
+### Transcript — blocked
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#doctor-blocked). [Matching reviewed capture](../../../../../../../src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Doctor/Shared/Rendering/__snapshots__/Diagnosis/blocked-workspace.minimal/blocked-workspace.minimal.txt).
+
+### Transcript — failed
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#doctor-failed).
+
+### Transcript — cancelled
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#doctor-cancelled).
+
+## Structured Output
+
+`--format json` writes one schema-3 envelope to stdout for every report status. It contains the command, status, workspace when applicable, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
+
+### JSON data by level
+
+| Level    | Findings                                  | `data`                                                                                            |
+| -------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| minimal  | errors                                    | `{}`                                                                                              |
+| standard | + warnings; `category`, `resolution`      | `{ categories: [ { name, coverage, counts: { errors, warnings, infos }, limitations: [...] } ] }` |
+| full     | + infos; candidates, evidence, provenance | + `lanes: { safeExact, guidedChoice, targetedOperation, manualDecision, blockedRepair }`          |
+
+The JSON ladder remains unchanged: minimal JSON contains errors only,
+standard adds warnings, and full adds infos and evidence. The minimal-warning
+opt-in is text-only.
+
+Counts at every level: `checks`, `checksComplete`, `errors`, `warnings`,
+`infos`, `linksChecked`, `linksValid`, `externalLinksNotChecked`,
+`imageLinks`, `routesChecked`, `frameworkFiles`, `extensionsInstalled`,
+`librariesRegistered`.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                         |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | All six domains have complete coverage and no warning or error finding requires attention. Informational facts alone do not change this result. |
-| `attention`   | All six domains have complete coverage, but one or more actionable warning or error findings remain.                                            |
-| `incomplete`  | Safe facts are available, but one or more required domains has trustworthy partial coverage.                                                    |
-| `invalid`     | The command input does not follow the exact Doctor grammar or shared global-flag contract.                                                      |
-| `blocked`     | A required workspace, identity, containment, parsing, or other safety boundary cannot be established.                                           |
-| `failed`      | An unexpected failure prevents normal diagnosis or result formation.                                                                            |
-| `interrupted` | The caller cancels or interrupts diagnosis before completion, with the accepted interruption meaning.                                           |
+The status and exit mapping above are unchanged by detail or format. Root effects and recovery receipts retain their complete result facts at every detail level; command-owned data follows the catalogue's level rows.
 
-Coverage and health are separate. A domain can be `complete` with findings. A
-workspace can be safely absent from a lifecycle boundary and still have complete
-diagnostic coverage. Informational findings alone do not produce `attention`.
-Severity does not override coverage and does not select a repair.
+### Next rules
 
-The Workspace Library subcatalogue is part of `workspace and entry` coverage.
-A safely proven absent record gives zero Libraries and complete Library
-coverage with no Library finding. When a readable strict record names one or
-more source roots, Doctor attempts a complete eligible inventory for every one.
-Complete safe registered-projection drift may produce `attention`; unavailable
-or incomplete source coverage produces `library.inventory-incomplete` and
-`incomplete` coverage; malformed, aliased, colliding, or otherwise unsafe
-identity produces `blocked`. Doctor never inventories an unregistered source
-root or treats a safe prefix as complete. A `library.recovery-safe-exact`
-finding is a typed report for Repair selection, not Doctor mutation authority.
+One overall `Next:`, chosen in this order: any safe-exact finding ->
+`open-forge repair --dry-run` (reason: preview the N repairs that are safe to
+apply); any targeted-operation finding -> that command, first by category
+order; any guided-choice finding -> `open-forge repair`; any
+manual-decision error -> a sentence naming the first file; blocked ->
+none; healthy -> none.
 
-## Errors And Omission States
+## Errors And Boundaries
 
-Doctor has no domain-specific omission state because it has no domain selector.
-Omitting all operands and doctor-specific flags is the required valid form. The
-following states are finite:
+The findings catalogue below is the command's finite error and warning vocabulary. Findings keep their code, severity, family, subject and cause; detail filtering affects display only. A blocked, failed or cancelled result prevents further effects according to the catalogue.
 
-- An unexpected operand or doctor-specific flag is `invalid`.
-- An unknown flag, malformed global value, missing global value, or invalid
-  shared repetition is `invalid` under the shared contract.
-- `--help` or `--version` alone, or with other compatible global flags, is a
-  terminal informational request. It does not diagnose.
-- Supplying both `--help` and `--version` is `invalid`.
-- A missing, unavailable, or non-directory selected workspace is `blocked`.
-- An unsafe path, physical alias, ambiguous identity, or required unreadable
-  boundary is `blocked`.
-- A trustworthy partial inspection is `incomplete`, not a guessed complete
-  result.
+### Findings catalogue
 
-Every ordinary error names the `doctor` operation, affected workspace or typed
-subject when known, direct cause, and useful next action. Human primary results
-for `complete`, `attention`, and `incomplete` use stdout. Primary human errors
-for `invalid`, `blocked`, `failed`, and `interrupted` use stderr, in line with
-the accepted Index output policy. JSON always emits one complete structured
-result to stdout for every semantic status; separate bounded diagnostics use
-stderr.
+Severities are the contract's. Lanes decide the per-finding action phrase.
+Family rows use the shared sentence with the subject filled in. Titles are the
+current catalogue titles.
 
-## Examples
+### Workspace
 
-Run complete diagnosis for the exact current workspace:
+| Kind                                    | Severity | Lane            | Title                                 | Message                                                                                  | Action                                                                          |
+| --------------------------------------- | -------- | --------------- | ------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| workspace.unavailable                   | error    | blocked-repair  | Workspace cannot be read              | `<path> does not exist or cannot be read.`                                               | none                                                                            |
+| workspace.not-directory                 | error    | blocked-repair  | Workspace is not a directory          | `<path> is a file, not a directory.`                                                     | none                                                                            |
+| workspace.agents-missing                | info     | informational   | The .agents folder is missing         | `<path> has no .agents folder. Open Forge is not installed here.`                        | `open-forge install --dry-run`                                                  |
+| workspace.agents-inaccessible           | error    | blocked-repair  | The .agents folder cannot be read     | `.agents exists but cannot be read: <reason>.`                                           | none                                                                            |
+| workspace.loader-missing                | error    | blocked-repair  | Loader is missing                     | `.agents/loader.md is missing.`                                                          | `open-forge update` when the record exists, else `open-forge install --dry-run` |
+| workspace.loader-unreadable             | error    | blocked-repair  | Loader cannot be read                 | `.agents/loader.md cannot be read: <reason>.`                                            | none                                                                            |
+| workspace.loader-malformed              | error    | blocked-repair  | Loader has invalid content            | `.agents/loader.md could not be understood: <reason>.`                                   | `open-forge update` (restore the shipped Loader)                                |
+| workspace.entry-missing                 | warning  | manual-decision | Entrypoint is missing                 | `<folder> is routed but has no entrypoint file.`                                         | `open-forge route init <id>`                                                    |
+| workspace.entry-ambiguous               | error    | blocked-repair  | Several entrypoints match             | `<folder> has more than one entrypoint file: <names>. Keep one.`                         | edit by hand                                                                    |
+| workspace.entry-compatibility-collision | error    | blocked-repair  | Entrypoint names conflict             | `<folder> has both <_name.md> and <index.md>. Keep one.`                                 | edit by hand                                                                    |
+| workspace.source-id-collision           | warning  | manual-decision | Source IDs conflict                   | `The ID <id> is derived by more than one file: <paths>. Use exact paths, or rename one.` | edit by hand                                                                    |
+| workspace.path-invalid                  | error    | blocked-repair  | Path is invalid                       | `<path> is not a valid path for a <kind>.`                                               | edit by hand                                                                    |
+| workspace.path-containment              | error    | blocked-repair  | Path is outside the workspace         | `<path> points outside the workspace.`                                                   | edit by hand                                                                    |
+| workspace.physical-alias                | error    | blocked-repair  | Path identity is ambiguous            | `<path> and <other> resolve to the same file, so its identity is ambiguous.`             | edit by hand                                                                    |
+| workspace.frontmatter-malformed         | warning  | manual-decision | Frontmatter is invalid                | `<what is wrong, from the parser, in plain words>` at `<path>:line:col`                  | edit by hand                                                                    |
+| workspace.frontmatter-duplicate         | warning  | manual-decision | Frontmatter contains duplicate fields | `The key <key> appears more than once.`                                                  | edit by hand                                                                    |
+| workspace.parse-incomplete              | info     | informational   | Source could not be read completely   | `<path> could not be parsed completely: <reason>. Its checks are incomplete.`            | none                                                                            |
+| workspace.unsupported-source            | info     | informational   | Source type is unsupported            | `<path> is not a kind of file Open Forge checks.`                                        | none                                                                            |
+| workspace.root-missing                  | warning  | manual-decision | Root route is missing                 | `The Loader lists <route> but <path> does not exist.`                                    | `open-forge route init <id>` or remove the entry                                |
+| workspace.root-unreachable              | warning  | manual-decision | Root route cannot be reached          | `<route> is listed but cannot be reached from the Loader: <reason>.`                     | edit by hand                                                                    |
+| workspace.detached                      | info     | informational   | Source is outside the loaded routes   | `<path> is not reachable from any route, so agents never load it.`                       | `open-forge index` when its parent is routed                                    |
 
-```text
-open-forge doctor
-```
+### Recovery data
 
-Select another exact workspace and a compact human projection:
+| Kind                            | Severity | Lane           | Title                                                   | Message                                                                            | Action                         |
+| ------------------------------- | -------- | -------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------ |
+| recovery.bundle-recognized | info | informational | Recovery bundle is kept | `A recovery bundle from an earlier command is kept at <path>.` | `open-forge cleanup` |
+| recovery.draft-recognized       | warning  | informational  | Incomplete recovery draft found                         | `An unfinished recovery draft is at <path>. A command did not finish.`             | `open-forge cleanup --dry-run` |
+| recovery.bundle-collision | error | blocked-repair | Recovery bundle is damaged | `The recovery bundle at <path> is damaged: <reason>. It was left in place.` | `open-forge cleanup --dry-run` |
+| recovery.provenance-unavailable | error    | blocked-repair | Recovery origin could not be verified                   | `The recovery bundle at <path> cannot be verified, so cleanup will not delete it.` | none                           |
 
-```text
-open-forge doctor --workspace ../another-workspace --view=compact
-```
+### Routes and Entries
 
-Request the complete non-interactive result:
+| Kind                              | Severity | Lane               | Title                                                                        | Message                                                                                             | Action                                             |
+| --------------------------------- | -------- | ------------------ | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| route.entrypoint-missing          | warning  | manual-decision    | Route entrypoint is missing                                                  | `<folder> is routed but has no entrypoint file.`                                                    | `open-forge route init <id>`                       |
+| route.entrypoint-duplicate        | error    | blocked-repair     | Route has several entrypoints                                                | `<folder> has more than one entrypoint: <names>.`                                                   | edit by hand                                       |
+| route.escape                      | error    | blocked-repair     | Route leaves its allowed boundary                                            | `The entry <text> in <path>:l:c points outside <folder>.`                                           | edit by hand                                       |
+| route.unreachable                 | warning  | manual-decision    | Route cannot be reached                                                      | `<path> is routed but no parent lists it.`                                                          | `open-forge index`                                 |
+| route.detached                    | warning  | manual-decision    | Source is outside the loaded routes                                          | `<folder> looks like a route but no Loader entry or parent reaches it.`                             | edit by hand                                       |
+| route.metadata-required-missing   | warning  | manual-decision    | Required route metadata is missing                                           | `<path> has no <description \| tags> in its frontmatter.`                                           | `open-forge route update <id> --description "..."` |
+| route.title-invalid               | warning  | manual-decision    | Route title is invalid                                                       | `<path> has no level-1 heading.`                                                                    | edit by hand                                       |
+| route.axioms-invalid              | info     | manual-decision    | Route Axioms are invalid                                                     | `<path> has no Axioms section, or its Axioms section is malformed.`                                 | edit by hand                                       |
+| route.generated-region-stale | warning | targeted-operation | Entries section is stale | `The Entries section of <path> does not match its routed files.` | `open-forge index` |
+| route.generated-region-missing | warning | targeted-operation | Entries section is missing | `<path> has no Entries section.` | `open-forge index` |
+| route.generated-region-malformed | error | blocked-repair | Entries section is malformed | `The Entries section of <path> could not be read as a list.` | edit by hand |
+| route.generated-region-misplaced | warning | manual-decision | Entries section is not last | `The Entries section of <path> is followed by another section.` | edit by hand |
+| route.generated-region-duplicate | error | blocked-repair | More than one Entries section | `<path> has more than one Entries section.` | edit by hand |
+| route.generated-entry-missing | warning | targeted-operation | Entry is missing | `<path> does not list <child>.` | `open-forge index` |
+| route.generated-entry-extra | warning | targeted-operation | Entry has no file | `<path> lists <child>, which does not exist.` | `open-forge index` |
+| route.generated-entry-order | warning | targeted-operation | Entries are out of order | `The entries in <path> are not in the expected order.` | `open-forge index` |
+| route.generated-entry-path | warning | targeted-operation | Entry path is wrong | `The entry for <child> in <path> points to <wrong path>.` | `open-forge index` |
+| route.generated-entry-description | warning | targeted-operation | Entry description is stale | `The entry for <child> in <path> has an old description.` | `open-forge index` |
+| route.generated-entry-tags | warning | targeted-operation | Entry tags are stale | `The entry for <child> in <path> has old tags.` | `open-forge index` |
+| route.overwrite-orphan            | warning  | manual-decision    | Overwrite has no base file                                                   | `<name>.overwrite.md has no <name>.md beside it.`                                                   | edit by hand                                       |
+| route.overwrite-independent-index | warning  | targeted-operation | Overwrite is listed independently                                            | `<path> lists <name>.overwrite.md as its own entry. Overwrite files are read with their base file.` | `open-forge index`                                 |
+| route.compatibility-conflict      | error    | blocked-repair     | Route names conflict                                                         | `<folder> can be reached by two route names: <names>.`                                              | edit by hand                                       |
 
-```text
-open-forge doctor --json
-```
+### Links
 
-Add bounded diagnostics without changing diagnosis:
+| Kind                               | Severity | Lane            | Title                                    | Message                                                                                            | Action                                                      |
+| ---------------------------------- | -------- | --------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| reference.target-missing           | warning  | guided-choice   | Broken link                              | `The linked file was not found: <destination>.` then candidates or `No possible target was found.` | `open-forge repair` when candidates exist; else fix by hand |
+| reference.fragment-missing         | warning  | guided-choice   | Linked heading was not found             | `<file> has no heading <#fragment>.` then candidates                                               | `open-forge repair` or fix by hand                          |
+| reference.fragment-unverified      | warning  | blocked-repair  | Linked heading could not be checked      | `<file> could not be parsed, so <#fragment> was not checked.`                                      | `open-forge doctor` after fixing the file                   |
+| reference.destination-malformed    | warning  | manual-decision | Link destination is invalid              | `<destination> is not a link Open Forge can check.`                                                | fix by hand                                                 |
+| reference.destination-absolute     | warning  | manual-decision | Absolute local link is unsupported       | `<destination> is an absolute path. Use a relative path.`                                          | fix by hand                                                 |
+| reference.destination-query        | warning  | manual-decision | Local link query is unsupported          | `<destination> has a query string, which local links do not support.`                              | fix by hand                                                 |
+| reference.destination-encoding     | error    | blocked-repair  | Link encoding is unsupported             | `<destination> uses an encoding that cannot be resolved safely.`                                   | fix by hand                                                 |
+| reference.target-outside-workspace | error    | blocked-repair  | Link leaves the workspace                | `<destination> points outside the workspace.`                                                      | fix by hand                                                 |
+| reference.target-physical-escape   | error    | blocked-repair  | Link resolves outside the workspace      | `<destination> resolves outside the workspace through a link.`                                     | fix by hand                                                 |
+| reference.target-alias             | error    | blocked-repair  | Link target identity is ambiguous        | `<destination> resolves to more than one file.`                                                    | fix by hand                                                 |
+| reference.target-unreadable        | warning  | blocked-repair  | Link target cannot be read               | `<file> exists but cannot be read: <reason>.`                                                      | none                                                        |
+| reference.target-unsupported       | info     | informational   | Link target type is unsupported          | `<destination> is a kind of file Open Forge does not check.`                                       | none                                                        |
+| reference.same-target-path         | info     | safe-exact      | Equivalent link path is available        | `<destination> works but is not the canonical spelling: <canonical>.`                              | `open-forge repair --automatic`                             |
+| reference.same-target-case         | info     | safe-exact      | Equivalent link letter case is available | `<destination> differs from the file's name only by letter case: <canonical>.`                     | `open-forge repair --automatic`                             |
+| reference.same-target-encoding     | info     | safe-exact      | Equivalent link encoding is available    | `<destination> uses a different encoding than the canonical <canonical>.`                          | `open-forge repair --automatic`                             |
+| reference.same-target-fragment     | info     | safe-exact      | Equivalent heading link is available     | `<#fragment> matches the heading <#canonical> apart from spelling.`                                | `open-forge repair --automatic`                             |
 
-```text
-open-forge doctor --verbose
-```
+Counts on this category: `linksChecked`, `linksValid`,
+`externalLinksNotChecked`, `imageLinks`.
 
-Doctor never prompts and never applies the suggested action in any of these
-forms. A safe exact finding may show the explicit next preview
-`open-forge repair --automatic --dry-run`. A generated-navigation finding may
-show the accepted `open-forge index --dry-run` action. Framework and Extension
-lifecycle findings may show the accepted `install`, `update`, or Extension
-operation as a typed next action, but Doctor never invokes it or grants its
-mutation authority.
+### Framework files
+
+| Kind                                     | Severity | Lane               | Title                                                                           | Message                                                                                                | Action                            |
+| ---------------------------------------- | -------- | ------------------ | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------- |
+| framework.install-absent                 | info     | informational      | Framework is not installed                                                      | `Open Forge is not installed in this workspace.`                                                       | `open-forge install --dry-run`    |
+| framework.ownership-observation | info | informational | No ownership record | family `ownership-observation` (`Framework files`) | none |
+| framework.managed-missing | warning | targeted-operation | Framework file is missing | `<path> is missing. It was installed by the Framework.` | `open-forge update` |
+| framework.managed-changed | warning | targeted-operation | Framework file changed | `<path> changed since it was installed.` | `open-forge update` |
+| framework.lifecycle-evidence-unavailable | warning | blocked-repair | Ownership record cannot be read | `.agents/open-forge.lock.json could not be read: <reason>.` | none |
+| framework.bridge-boundary | error | blocked-repair | Open Forge section in AGENTS.md needs review | `The Open Forge section in <AGENTS.md \ | CLAUDE.md> is missing or changed.` |
+| framework.root-region-boundary | error | blocked-repair | Open Forge section boundary is unclear | `The Open Forge section in <file> has no clear start or end.` | edit by hand |
+| framework.ownership-conflict             | warning  | manual-decision    | Framework file ownership conflicts                                              | `<path> is claimed by the Framework and by <other>.`                                                   | fix by hand                       |
+| framework.partial-lifecycle | error | blocked-repair | Framework update did not finish | `Some Framework files are current and others are not, so an update did not finish.` | `open-forge update` |
+| framework.partial-recovery               | error    | blocked-repair     | Framework recovery is incomplete                                                | `The recovery bundle at <path> was partly applied: some files match the old content and some the new.` | `open-forge doctor --detail full` |
+| framework.distributed-payload-defect | error | manual-decision | Bundled Framework is invalid | family `payload-invalid` | reinstall the CLI |
+
+### Extensions
+
+| Kind                              | Severity | Lane               | Title                                                                                    | Message                                                                                                           | Action                                      |
+| --------------------------------- | -------- | ------------------ | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| extension.ownership-observation   | info     | informational      | No ownership record                                                                      | family `ownership-observation` (`installed Extensions`)                                                           | none                                        |
+| extension.manifest-missing        | warning  | manual-decision    | Extension manifest is missing                                                            | `The package at <path> has no extension.json.`                                                                    | fix by hand                                 |
+| extension.manifest-malformed      | error    | blocked-repair     | Extension manifest is invalid                                                            | `<path>/extension.json could not be read: <reason>. Expected keys: id, name, description, version, dependencies.` | fix by hand                                 |
+| extension.duplicate-id            | error    | blocked-repair     | Extension ID is duplicated                                                               | `Two packages in <source> have the ID <id>.`                                                                      | fix by hand                                 |
+| extension.unknown-id              | warning  | manual-decision    | Extension ID is unknown                                                                  | `The ownership record names <id>, which is not in the bundled Extensions or the recorded source.`                 | `open-forge extension list`                 |
+| extension.version-invalid         | warning  | manual-decision    | Extension version is invalid                                                             | `<id> has an invalid version: <value>.`                                                                           | fix by hand                                 |
+| extension.managed-missing | warning | targeted-operation | Extension file is missing | `<path> is missing. It was installed by <id>.` | `open-forge extension update <id>` |
+| extension.managed-changed | warning | targeted-operation | Extension file changed | `<path> changed since it was installed by <id>.` | `open-forge extension update <id>` |
+| extension.dependency-missing      | warning  | manual-decision    | Required Extension dependency is missing                                                 | `<id> requires <dependency>, which is not installed.`                                                             | `open-forge extension install <dependency>` |
+| extension.dependency-cycle        | error    | blocked-repair     | Extension dependencies form a cycle                                                      | `<a> requires <b>, which requires <a>.`                                                                           | fix by hand                                 |
+| extension.dependency-incompatible | warning  | manual-decision    | Extension dependency version is incompatible                                             | `<id> requires <dependency> <range>, but <version> is installed.`                                                 | fix by hand                                 |
+| extension.source-unavailable      | info     | informational      | Extension source cannot be read                                                          | `The source of <id>, <path>, cannot be read, so its files were not compared.`                                     | none                                        |
+| extension.catalogue-unavailable | error | blocked-repair | Package folder cannot be read | `The package folder <path> cannot be read.` | none |
+| extension.partial-lifecycle | error | blocked-repair | Extension update did not finish | `Some files of <id> are current and others are not.` | `open-forge extension update <id>` |
+| extension.ownership-collision     | warning  | manual-decision    | Extension file ownership conflicts                                                       | `<path> is claimed by <id> and by <other>.`                                                                       | fix by hand                                 |
+| extension.bridge-registration | warning | manual-decision | Extension entry is missing from its parent | `<parent> does not list <path>, which <id> installed.` | `open-forge index` |
+
+### Libraries (reported under Workspace)
+
+| Kind                                | Severity | Lane            | Title                                                              | Message                                                                    | Action                            |
+| ----------------------------------- | -------- | --------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------- | --------------------------------- |
+| library.ownership-observation       | info     | informational   | No ownership record                                                | family `ownership-observation` (`Libraries`)                               | none                              |
+| library.source-root-invalid | error | blocked-repair | Library source folder is invalid | `The source folder of <id>, <path>, is not a folder inside the workspace.` | `open-forge library inspect <id>` |
+| library.source-root-aliased         | error    | blocked-repair  | Library source root has an ambiguous path                          | `The source folder of <id>, <path>, resolves to an ambiguous location.`    | none                              |
+| library.inventory-incomplete        | warning  | informational   | Library source scan is incomplete                                  | `The source folder of <id> could not be scanned completely: <reason>.`     | `open-forge library inspect <id>` |
+| library.projection-missing          | warning  | manual-decision | Registered Library link is missing                                 | `<path>, a link of <id>, is missing.`                                      | `open-forge library sync <id>`    |
+| library.projection-dangling         | error    | blocked-repair  | Library link target is missing                                     | `<path> links to <target>, which does not exist.`                          | `open-forge library inspect <id>` |
+| library.projection-retargeted       | error    | blocked-repair  | Library link target changed                                        | `<path> no longer links to <expected>; it links to <actual>.`              | `open-forge library inspect <id>` |
+| library.path-collision              | warning  | manual-decision | Library destination is occupied                                    | `<path> is used by <id> and by <other>.`                                   | fix by hand                       |
+| library.link-capability-unsupported | error    | blocked-repair  | Required Library links are unsupported                             | `This system cannot create the file links the <id> Library needs.`         | none                              |
+| library.extension-collision         | warning  | manual-decision | Library and Extension paths conflict                               | `<path> is claimed by the <id> Library and the <id> Extension.`            | fix by hand                       |
+| library.recovery-safe-exact         | info     | safe-exact      | Verified Library recovery is available                             | `A verified recovery step for <id> can restore <path>.`                    | `open-forge repair --automatic`   |
+
+## Scenarios
+
+### Catalogue situations
+
+Fixtures only: `healthy`, `info-only` (no ownership record),
+`warnings-only` (two broken links, one with candidates), `error-and-warnings`
+(malformed frontmatter plus links), `incomplete` (Extension source
+unreadable), `blocked-workspace`, `invalid-input`, `changed-extension-file`,
+`stale-entries`, `library-drift`, `recovery-bundle`. Each at all four levels,
+text and JSON.
+
+Each status has one representative native text transcript above. JSON uses the same status and command facts under the schema-3 envelope.
+
+### Open maintainer questions
+
+Current native output uses `To list the warnings: open-forge doctor --detail standard` and `To list the info findings`; the catalogue's shorter hint is different. At standard, full and debug, the native renderer also doubles `Fix it by hand.` where the catalogue says the manual-action sentence is emitted once. The `error-and-warnings` situation currently has no error finding and reports `No errors. 3 warnings and 3 info findings were recorded.` These wording, rendering, and situation-definition questions remain unresolved. **Maintainer decision/clarification remains open.**
 
 ## Non-Goals And Architecture Boundary
 
@@ -963,7 +911,7 @@ Conformance evidence must cover:
 - Complete, incomplete, and blocked coverage independently of finding health.
 - Fresh Extension installation and successful Index generation do not produce
   Framework drift solely because the recorded generated fingerprint predates
-  current Entries. Real authored drift, stale navigation, malformed markers,
+  current Entries. Real authored drift, stale navigation, ambiguous Entries headings,
   missing targets and unavailable source evidence remain diagnosed.
 - A fresh Framework installation with a trusted empty Extension section has
   complete coverage and no false error. Installed embedded packages retain their
@@ -997,11 +945,11 @@ Conformance evidence must cover:
   to mutate those domains, including unified-document section isolation,
   absent/trusted/untrusted/incomplete/blocked states, ownership facts,
   and source-unavailable installed facts.
-- Compact, expanded, JSON, and verbose projections from one typed result, with no
+- Minimal, standard, JSON, and debug projections from one typed result, with no
   health score or percentage and no prompts.
-- `complete`, `attention`, `incomplete`, `invalid`, `blocked`, `failed`, and
-  `interrupted` meanings, including informational findings that do not create
-  `attention`.
+- `completed`, `completed-with-warnings`, `incomplete`, `invalid-input`, `blocked`, `failed`, and
+  `cancelled` meanings, including informational findings that do not create
+  `completed-with-warnings`.
 - Read-only, stateless, repeatable behavior with no plan, recovery-bundle,
   temporary, lifecycle, or public-command effect.
 - The existing three public Doctor EndToEnd journeys remain unchanged; Library
@@ -1018,30 +966,11 @@ Conformance evidence must cover:
 - [CLI Source References Interface Contract](../shared/source-references/interface.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
 
-## Compact JSON Output
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+## Executable Wording References
 
-All diagnosis and domain counts, coverage, limitations, actions and findings remain.
-Each finding retains kind, severity, message, subject, evidence, resolution,
-proposal and actions; its supporting provenance is omitted. A nullable
-candidateSet integer replaces the finding's candidates object.
-The result's candidateSets array contains { id, cardinality, items }, retaining
-the complete candidate subject, basis evidence and provenance graph. IDs start
-at 1 in first-use domain/finding order. Every reference resolves to exactly one
-entry. Equal ordered sets share an entry only when cardinality, subject,
-provenance and basis evidence are equal. Different order or evidence remains
-distinct. Null means no candidate set; a present empty set has an ID.
-No finding kind, severity or occurrence is collapsed.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-Compact omissions are defined field membership, distinct from unavailable data,
-null values, empty collections or incomplete inspection. No collection is
-truncated and no finding is filtered. Counts describe the original operation.
-Select expanded on the original invocation when supporting evidence is needed.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+CLI help syntax: [`doctor.help.syntax`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Doctor/DoctorText.cs).
+
+<!-- @OpenForgeTextRef doctor.help.syntax -->

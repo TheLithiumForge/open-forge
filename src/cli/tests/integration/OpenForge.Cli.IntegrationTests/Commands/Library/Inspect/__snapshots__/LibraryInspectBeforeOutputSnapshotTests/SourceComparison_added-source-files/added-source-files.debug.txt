@@ -1,0 +1,13 @@
+team-knowledge needs a sync: 1 file differs between shared/team and ..
+Workspace: <workspace>
+  Warning  .agents/directives/added.md  Source file is not linked [library-inspect.path-added]
+         .agents/directives/added.md  not linked yet; new in the source folder
+  .agents/directives/added.md   new in the source folder
+      Expected target: unavailable
+      Observed target: unavailable
+  .agents/directives/review.md  current
+      Expected target: ../../shared/team/.agents/directives/review.md
+      Observed target: ../../shared/team/.agents/directives/review.md
+Source inventory: 2 eligible files, 0 excluded items.
+  Preview the synchronization before changing files.
+Next: open-forge library sync team-knowledge --dry-run

@@ -1,15 +1,56 @@
+using System.IO;
 using OpenForge.Cli.Core.Commands.Library.Attach;
+using OpenForge.Cli.Core.Commands.Library.Attach.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
 using OpenForge.Cli.Core.Commands.Library.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Effects;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
+using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
+using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Permissions;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Library.Attach;
 
 public sealed class LibraryAttachOperationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
+    [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
+    public static async Task RepeatedAttachLeavesOwnershipLockByteIdentical()
+    {
+        using var workspace = new LibraryMutationWorkspace();
+        workspace.Source();
+        workspace.Directory(".agents/directives");
+        try
+        {
+            var first = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(
+                workspace.Attach(LibraryMode.Apply), TestContext.Current.CancellationToken);
+            Assert.Equal(CliSemanticStatus.Complete, first.Status);
+            var afterFirst = File.ReadAllBytes(workspace.Absolute(LibraryMutationWorkspace.OwnershipPath));
+
+            var second = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(
+                workspace.Attach(LibraryMode.Apply), TestContext.Current.CancellationToken);
+
+            Assert.Equal(CliSemanticStatus.Blocked, second.Status);
+            Assert.Equal(afterFirst, File.ReadAllBytes(workspace.Absolute(LibraryMutationWorkspace.OwnershipPath)));
+        }
+        finally
+        {
+            if (new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget
+                == "../../shared/team-knowledge/.agents/directives/review.md")
+            {
+                File.Delete(workspace.Absolute(LibraryMutationWorkspace.Leaf));
+            }
+            if (File.Exists(workspace.Absolute(LibraryMutationWorkspace.RecordPath)))
+            {
+                File.Delete(workspace.Absolute(LibraryMutationWorkspace.RecordPath));
+            }
+        }
+    }
+
+    [Trait("Boundary", "OS")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData("file"), InlineData("directory"), InlineData("different-link"), InlineData("absolute-link")]
     public static async Task EveryNonExactOccupantRefusesAllEffects(string occupant)
@@ -33,6 +74,7 @@ public sealed class LibraryAttachOperationIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task EmptySourceWithoutNamedChildIsComplete()
     {
@@ -44,6 +86,104 @@ public sealed class LibraryAttachOperationIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Attach requires an explicit final confirmation before apply"), Trait("Feature", "library-interaction"), Trait("Evidence", "Integration")]
+    public static async Task MissingConfirmationCannotAuthorizeApply()
+    {
+        using var workspace = new LibraryMutationWorkspace();
+        workspace.Source();
+        workspace.Directory(".agents/directives");
+        var before = workspace.Snapshot();
+
+        var result = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(
+            workspace.Attach(LibraryMode.Apply) with
+            {
+                AllowPrompt = true,
+                Automatic = false,
+                Allow = [".agents/directives"],
+            },
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        Assert.Contains(result.Result.Findings, finding => finding.Code == LibraryAttachFindingCode.ConfirmationRequired);
+        Assert.Equal(before, workspace.Snapshot());
+    }
+
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Declining or ending attach confirmation leaves the workspace unchanged"), Trait("Feature", "library-interaction"), Trait("Evidence", "Integration")]
+    [InlineData("no\n")]
+    [InlineData("")]
+    public static async Task FinalConfirmationCancellationLeavesWorkspaceUnchanged(string finalAnswer)
+    {
+        using var workspace = new LibraryMutationWorkspace();
+        workspace.Source("README.md");
+        var destination = LibraryDestinationRoot.Create("docs");
+        var before = workspace.Snapshot();
+        using var input = new StringReader($"always\n{finalAnswer}");
+        using var output = new StringWriter();
+        var permissions = new LibraryPermissionOperation(LibraryPermissionTestPrompt.Create(input, output, canPrompt: true));
+
+        var result = await new LibraryAttachOperation(
+            permissions,
+            LibraryPermissionTestPrompt.AttachTerminalConfirmation(input, output, canPrompt: true)).ExecuteAsync(
+                workspace.Attach(LibraryMode.Apply) with
+                {
+                    DestinationRoot = destination,
+                    AllowPrompt = true,
+                    Automatic = false,
+                },
+                TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
+        Assert.Contains(result.Result.Findings, finding =>
+            finding.Code == LibraryAttachFindingCode.Interrupted
+            && finding.Cause == "Library attach was cancelled. Nothing was changed.");
+        var review = output.ToString();
+        var reviewPosition = review.IndexOf("Would register the team-knowledge Library from shared/team-knowledge.", StringComparison.Ordinal);
+        var confirmationPosition = review.IndexOf("Apply these changes? [y/N]", StringComparison.Ordinal);
+        Assert.True(reviewPosition >= 0 && reviewPosition < confirmationPosition);
+        Assert.Equal(before, workspace.Snapshot());
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Cancelling attach permission admission reports attach cancellation"), Trait("Feature", "library-interaction"), Trait("Evidence", "Integration")]
+    public static async Task PermissionPromptCancellationReportsAttachCancellation()
+    {
+        using var workspace = new LibraryMutationWorkspace();
+        workspace.Source("README.md");
+        workspace.Write(".agents/open-forge.json", "{\"unknown\":true,\"allowInstallPaths\":[]}");
+        var before = workspace.Snapshot();
+        var sourceBefore = File.ReadAllBytes(workspace.Absolute("shared/team-knowledge/README.md"));
+        var settingsBefore = File.ReadAllBytes(workspace.Absolute(".agents/open-forge.json"));
+        using var cancellation = new CancellationTokenSource();
+        var promptRead = false;
+        using var input = LibraryPermissionTestPrompt.CancelOnRead(cancellation, () => promptRead = true);
+        using var output = new StringWriter();
+
+        var result = await new LibraryAttachOperation(
+            new LibraryPermissionOperation(LibraryPermissionTestPrompt.Create(input, output, canPrompt: true))).ExecuteAsync(
+                workspace.Attach(LibraryMode.Apply) with
+                {
+                    DestinationRoot = LibraryDestinationRoot.Create("docs"),
+                    AllowPrompt = true,
+                    Automatic = false,
+                },
+                cancellation.Token);
+
+        Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
+        Assert.Contains(result.Result.Findings, finding =>
+            finding.Code == LibraryAttachFindingCode.Interrupted
+            && finding.Cause == "Library attach was cancelled. Nothing was changed.");
+        Assert.True(promptRead);
+        Assert.True(cancellation.IsCancellationRequested);
+        Assert.Contains("docs   (directory: everything under it)", output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("always, once, cancel:", output.ToString(), StringComparison.Ordinal);
+        Assert.Equal(before, workspace.Snapshot());
+        Assert.Equal(sourceBefore, File.ReadAllBytes(workspace.Absolute("shared/team-knowledge/README.md")));
+        Assert.Equal(settingsBefore, File.ReadAllBytes(workspace.Absolute(".agents/open-forge.json")));
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task SourceControlsAndLinksNeverBecomeProjections()
     {
@@ -52,8 +192,8 @@ public sealed class LibraryAttachOperationIntegrationTests
         workspace.Write($"{LibraryMutationWorkspace.SourceRoot}/.agents/loader.md", "# Loader");
         workspace.Write($"{LibraryMutationWorkspace.SourceRoot}/.agents/directives/_directives.md", "# Directives");
         workspace.Write($"{LibraryMutationWorkspace.SourceRoot}/.agents/directives/review.overwrite.md", "# Private override");
-        workspace.Write($"{LibraryMutationWorkspace.SourceRoot}/.agents/open-forge.lifecycle.json", "{}");
-        workspace.Write($"{LibraryMutationWorkspace.SourceRoot}/.agents/open-forge.libraries.json", "{}");
+        workspace.Write($"{LibraryMutationWorkspace.SourceRoot}/.agents/open-forge.json", "{}");
+        workspace.Write($"{LibraryMutationWorkspace.SourceRoot}/.agents/open-forge.lock.json", "{}");
         workspace.Link($"{LibraryMutationWorkspace.SourceRoot}/.agents/linked.md", "directives/review.md");
         var before = workspace.Snapshot();
         var result = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(workspace.Attach(), TestContext.Current.CancellationToken);
@@ -65,6 +205,7 @@ public sealed class LibraryAttachOperationIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task DryRunIncludesParentsAndPreservesLocalSibling()
     {
@@ -81,6 +222,7 @@ public sealed class LibraryAttachOperationIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task ContainedDirectoryLinkAncestryStillBlocksLibraryMutation()
     {
@@ -95,6 +237,7 @@ public sealed class LibraryAttachOperationIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task PreCancelledOperationReturnsInterruptedWithoutEffects()
     {
@@ -109,6 +252,7 @@ public sealed class LibraryAttachOperationIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task EligibleJsonIsLinkedAndRecordedWithoutGeneratedNavigation()
     {
@@ -130,7 +274,7 @@ public sealed class LibraryAttachOperationIntegrationTests
             Assert.Equal(jsonPath, Assert.Single(result.Result.Plan.Links).Path);
             Assert.Empty(result.Result.Plan.GeneratedRegions);
             Assert.Equal(LibraryRecordEffect.Create, result.Result.Plan.RecordEffect);
-            Assert.Contains(jsonPath, Assert.Single(Assert.IsType<LibrariesRecordDocument>(
+            Assert.Contains(jsonPath, Assert.Single(Assert.IsType<LibraryRegistrationsDocument>(
                 result.Result.Record.Intended).Libraries).Paths);
             Assert.NotNull(new FileInfo(workspace.Absolute(jsonPath)).LinkTarget);
             Assert.Equal(sourceBytes, File.ReadAllBytes(sourcePath));
@@ -139,6 +283,54 @@ public sealed class LibraryAttachOperationIntegrationTests
         {
             File.Delete(workspace.Absolute(jsonPath));
             File.Delete(workspace.Absolute(LibraryMutationWorkspace.RecordPath));
+        }
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
+    public async Task MalformedOwnershipPublishesVerifiedAttachAndRetainsObservation()
+    {
+        using var workspace = new LibraryMutationWorkspace();
+        workspace.Source();
+        workspace.Directory(".agents/directives");
+        workspace.Write(LibraryMutationWorkspace.RecordPath, "{ malformed ownership record");
+        var sourcePath = workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/{LibraryMutationWorkspace.Leaf}");
+        var sourceBytes = File.ReadAllBytes(sourcePath);
+
+        try
+        {
+            var result = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(
+                workspace.Attach(LibraryMode.Apply), TestContext.Current.CancellationToken);
+
+            Assert.Equal(CliSemanticStatus.Complete, result.Status);
+            Assert.Equal(LibraryApplicationState.Applied, result.Result.Application.State);
+            Assert.Equal(LibraryRecordEffect.Replace, result.Result.Plan.RecordEffect);
+            Assert.True(result.Result.Application.RecordPublication.PublishedLast);
+            Assert.Contains(result.Result.Findings, finding =>
+                finding.Code == LibraryAttachFindingCode.OwnershipObservation
+                && finding.Status == CliSemanticStatus.Complete);
+
+            var link = Assert.Single(result.Result.Plan.Links);
+            Assert.Equal(LibraryMutationWorkspace.Leaf, link.Path);
+            Assert.Equal(
+                "../../shared/team-knowledge/.agents/directives/review.md",
+                new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
+            Assert.Equal(sourceBytes, File.ReadAllBytes(sourcePath));
+
+            var ownership = LibraryMutationApplicationData.WorkspaceOwnership(workspace);
+            var registration = Assert.Single(ownership.Document.Libraries);
+            Assert.Equal("team-knowledge", registration.Id);
+            Assert.Equal(LibraryMutationWorkspace.SourceRoot, registration.SourceRoot);
+            Assert.Equal(".", registration.DestinationRoot);
+            Assert.Equal([LibraryMutationWorkspace.Leaf], registration.Paths);
+        }
+        finally
+        {
+            if (new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget
+                == "../../shared/team-knowledge/.agents/directives/review.md")
+            {
+                File.Delete(workspace.Absolute(LibraryMutationWorkspace.Leaf));
+            }
         }
     }
 }

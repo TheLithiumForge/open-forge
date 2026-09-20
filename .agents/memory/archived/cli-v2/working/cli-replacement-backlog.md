@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Ordered replacement CLI slices, delivery state, and essential authority links for just-in-time Task planning
+  description: "Historical CLI-v2 source: Ordered replacement CLI slices, delivery state, and essential authority links for just-in-time Task planning"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

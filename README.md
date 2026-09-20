@@ -33,7 +33,7 @@ Your project has its own tools, constraints, and habits. Open Forge gives them a
 
 - A recurring correction can become a Directive or useful Guidance.
 - A structure that makes mistakes easier to spot can become a Pattern or Template.
-- A method that repeatedly helps can become a Workflow.
+- A method that repeatedly helps can become a workflow recipe behind the `use-workflow` Skill.
 - A specialized capability can become a Skill.
 - A useful finding or accepted decision can become Memory that supports later work.
 
@@ -43,7 +43,7 @@ Add, adapt, replace, or remove the defaults as your needs change. Open Forge is 
 
 The Framework has no fixed limit on the number or depth of routed scopes. Active context follows the selected paths and their relationships, so adding knowledge need not mean reading the whole workspace.
 
-The complete base Framework is **about 8.3k tokens**, with **about 6.8k loaded at startup** before project-specific context or Extensions. These are measured source counts, not a context-window requirement for every model. See the [counting method](docs/development.md#measure-context-size).
+Startup loads the shared routing and Memory context; specialized material is selected as needed. Source counts depend on the installed packages and loading policy. See the [counting method](docs/development.md#measure-context-size).
 
 ## What Goes Where
 
@@ -58,10 +58,9 @@ Core categories each answer a different question:
 | [Patterns](src/open-forge/.agents/patterns/_patterns.md)       | What reusable shape makes related work easy to create and inspect?          |
 | [Skills](src/open-forge/.agents/skills/_skills.md)             | Which specialized capability would help with this work?                     |
 | [Templates](src/open-forge/.agents/templates/_templates.md)    | What starting content can be copied, adapted, and maintained independently? |
-| [Workflows](src/open-forge/.agents/workflows/_workflows.md)    | What repeatable method can help reach this goal?                            |
 | [Maps](src/open-forge/.agents/maps/_maps.md)                   | Where is a useful local or external source, and when should it be used?     |
 
-A Pattern gives work a recognizable shape. A Workflow gives it a repeatable method. A Skill provides a specialized capability through its native `SKILL.md` package. Choose the combination that suits the work.
+A Pattern gives work a recognizable shape. A Skill provides a specialized capability through its native `SKILL.md` package. Repeatable methods are not a Core category: the optional Workflow Support Extension supplies a `use-workflow` Skill whose catalogue holds them. Choose the combination that suits the work.
 
 [Memory](src/open-forge/.agents/memory/_memory.md) asks: **What is worth remembering for current or future work?** Its default states separate temporary context, unsettled findings, accepted knowledge, and history:
 
@@ -131,13 +130,13 @@ The Framework explains itself through its own files. This README and the documen
 
 Extensions package optional content you can use and customize. The [first-party catalogue](src/extensions/README.md) includes:
 
-- **Project Documents:** establish your project's direction and architecture with workflows and document starters.
-- **Memory Starters:** keep useful analysis, decisions, ideas, observations, and handoffs in reusable starting formats.
-- **Planning:** organize work with a Planning Workflow, a Work Records Pattern, and Task, Plan, Backlog, and Checkpoint starters. Use only the records your work needs.
-- **Development:** follow adaptable workflows for development, debugging, and review.
-- **Orchestration:** coordinate dependent tasks and isolated work through Managed Delivery. It brings in Planning and Development.
+- **Workflow Support:** select and follow installed methods through one native `use-workflow` Skill, its catalogue, and a Workflow starter. The packages below depend on it.
+- **Project Documents:** maintain current project knowledge with a Documents convention, five document starters, and Vision and Architecture methods.
+- **Planning:** explore possibilities and organize work with Ideas, Analysis, Decisions, a Work Records Pattern, and seven starters. Use only the records your work needs.
+- **Development:** follow adaptable methods for development, debugging, and review, without adopting Planning.
+- **Orchestration:** coordinate related tasks through Managed Delivery, and keep execution learning with Observations and Handoffs. It brings in Planning and Development.
 
-Choose the pieces that fit, or install **Development Toolkit** to get the first four together. Orchestration remains a separate choice.
+Choose the pieces that fit, or install **Development Toolkit** to get Project Documents, Planning, and Development together. Orchestration remains a separate choice, because multi-agent coordination is a stronger methodological commitment.
 
 Routed files keep their destination's meaning. Native capabilities and support files follow the tools that use them. Packaging does not add authority.
 

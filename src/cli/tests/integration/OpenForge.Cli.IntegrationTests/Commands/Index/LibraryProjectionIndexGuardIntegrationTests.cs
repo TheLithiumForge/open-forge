@@ -5,6 +5,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Index;
 
 public sealed class LibraryProjectionIndexGuardIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task LinkedGeneratedTargetIsNeverWrittenThrough()
     {
@@ -12,9 +13,7 @@ public sealed class LibraryProjectionIndexGuardIntegrationTests
         workspace.Write(".agents/loader.md", """
             # Loader
             ## Entries
-            <!-- open-forge:generated-index:start -->
             - [Directives](directives/_directives.md) - #Directive
-            <!-- open-forge:generated-index:end -->
             """);
         workspace.Write($"{LibraryMutationWorkspace.SourceRoot}/.agents/directives/_directives.md", """
             ---
@@ -24,9 +23,7 @@ public sealed class LibraryProjectionIndexGuardIntegrationTests
             ---
             # Directives
             ## Entries
-            <!-- open-forge:generated-index:start -->
             stale generated body
-            <!-- open-forge:generated-index:end -->
             """);
         workspace.Link(".agents/directives/_directives.md", "../../shared/team-knowledge/.agents/directives/_directives.md");
         var before = workspace.Snapshot();

@@ -1,0 +1,2 @@
+Cannot update: Extension update needs to know which packages. Pass their IDs or --all.
+Next: open-forge extension list --installed

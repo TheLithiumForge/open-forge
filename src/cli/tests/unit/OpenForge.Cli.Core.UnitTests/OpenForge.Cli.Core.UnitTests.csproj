@@ -9,15 +9,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="TheLithium.Imprint" />
     <PackageReference Include="xunit.v3.mtp-v2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../../core/OpenForge.Cli.Core/OpenForge.Cli.Core.csproj" />
+    <ProjectReference Include="../../../framework/OpenForge.Cli.Framework/OpenForge.Cli.Framework.csproj" />
+    <ProjectReference Include="../../../shell/OpenForge.Cli.Shell/OpenForge.Cli.Shell.csproj" />
+    <ProjectReference Include="../../../operations/OpenForge.Cli.Operations/OpenForge.Cli.Operations.csproj" />
+    <ProjectReference Include="../../../rendering/OpenForge.Cli.Rendering/OpenForge.Cli.Rendering.csproj" />
     <ProjectReference Include="../../support/OpenForge.Cli.TestSupport/OpenForge.Cli.TestSupport.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="../../support/Interaction/ScriptedCliTerminal.cs" Link="Support/Interaction/ScriptedCliTerminal.cs" />
   </ItemGroup>
 </Project>

@@ -53,20 +53,18 @@ the same workspace, runs the same domain checks, preserves the same evidence,
 orders the same findings, and forms the same semantic result. It stores no
 session, report, graph, proposal authority, cache, or historical baseline.
 
-Doctor reads `.agents/open-forge.lifecycle.json`, schema v1, when lifecycle facts
-are in scope. The common envelope and isolated `framework` and `extensions`
-sections remain separate. The document stores no plan, runtime history, journal,
-recovery evidence, or session. Files outside this exact path are ordinary
-workspace content, not lifecycle input. The CLI distribution embeds Framework and
-first-party Extension assets with deterministic inventory and hash proof; that
-proof is distributed-source identity, not workspace or runtime implementation
-evidence.
+Doctor reads the shared `.agents/open-forge.lock.json` ownership snapshot for
+Framework, Extension and Library facts. Missing or unusable ownership is an
+informational observation, never a persisted-integrity gate. Framework targets
+are compared with the running payload. Library registrations retain their typed
+mapping, source inventory, projection and residual checks under the workspace
+and entry domain. Doctor never invokes a Library mutation, probes link
+capability, adopts content or deletes recovery.
 
-The exact `.agents/open-forge.libraries.json` record is a separate consumer-local
-authority. Doctor validates its typed record, every registered source-root
-inventory, registered projections, and typed residual evidence under the
-`workspace and entry` domain. It never invokes a Library command, probes link
-capability, mutates, adopts, or deletes recovery.
+Old state files are ordinary workspace content and are not consulted. The CLI
+embeds Framework and first-party Extension assets with deterministic inventory
+and hash proof; that identifies distributed source, not workspace ownership.
+The lock contains no plan, runtime journal, recovery evidence or session.
 
 ## Request Resolution
 
@@ -162,32 +160,31 @@ artifact into a known one.
 
 Aggregate result formation preserves the public distinctions in the Interface:
 
-- Invalid request input forms `invalid` before domain work.
+- Invalid request input forms `invalid-input` before domain work.
 - A required unsafe workspace or domain boundary forms `blocked`.
 - A trustworthy but partial required inspection forms `incomplete` when no
   stronger blocked condition applies.
 - An unexpected execution failure forms `failed`.
-- Caller cancellation or interruption forms `interrupted` according to the
+- Caller cancellation or interruption forms `cancelled` according to the
   accepted interruption boundary.
 - When all six domains have complete coverage, actionable warning or error
-  findings form `attention`.
+  findings form `completed-with-warnings`.
 - When all six domains have complete coverage and no actionable warning or error
-  remains, the result is `complete`.
+  remains, the result is `completed`.
 
 The Workspace Library subcatalogue contributes to the existing
-`workspace and entry` coverage. A safely proven absent Library record means
-zero Libraries and complete Library coverage with no Library finding; it grants
-no ownership and infers no mapping. For a readable strict record, Doctor
+`workspace and entry` coverage. Unavailable Library ownership produces an informational ownership observation
+with complete observation coverage, no claims, and no inferred mapping. For a readable ownership catalogue, Doctor
 attempts a complete eligible inventory for every named source root. Those
 registered roots are the complete declared Library coverage. Complete safely
-observed missing or changed registered projections form `attention`; an
+observed missing or changed registered projections form `completed-with-warnings`; an
 unavailable or incomplete registered-root inventory emits
 `library.inventory-incomplete` and forms `incomplete` coverage; malformed,
 aliased, colliding, or otherwise unsafe identity forms `blocked`. Doctor never
 treats a safe prefix as complete and never enumerates an unregistered source
 root. It does not authorize adoption or mutation.
 
-Informational findings alone do not form `attention`. Severity remains separate
+Informational findings alone do not form `completed-with-warnings`. Severity remains separate
 from resolution, and neither severity nor resolution changes coverage.
 
 ## Finding And Proposal Formation
@@ -235,18 +232,15 @@ does not make an ID authoritative, routed, managed, or safe to mutate.
 
 ### Workspace Library subcatalogue
 
-Within the same workspace-and-entry stage, the operation reads the exact
-consumer-owned `.agents/open-forge.libraries.json` record, schema v1, and keeps
-it separate from Framework and Extension lifecycle authority. A safely proven
-absent record is valid zero-Library evidence: Library coverage is complete,
-Doctor emits no Library finding, and no ownership or mapping is inferred. For a
-present strict record, it validates the typed record discriminator, stable IDs,
-normalized workspace-relative `sourceRoot` values, and exact `paths` mappings.
-An unreadable or otherwise unavailable present record emits the existing
-`library.record-unavailable` finding and makes Library coverage incomplete; it
-is not treated as an empty record.
+Within the workspace-and-entry stage, Doctor reads typed Library claims from
+`.agents/open-forge.lock.json`. Missing, unreadable, nonordinary, malformed, or
+uninterpretable ownership produces `library.ownership-observation`, with
+information severity, informational resolution, and complete Library observation
+coverage. It grants no ownership, creates no mapping, and starts no source
+inventory. Actual registered source and destination boundaries retain their
+independent incomplete or blocked results.
 
-For each readable strict record, establish canonical lexical and physical
+For each readable ownership catalogue, establish canonical lexical and physical
 containment and an ordinary source root with safe real ancestry,
 then attempt a complete eligible inventory for every named source root. Those
 registered source roots are the complete declared Library coverage. If any
@@ -380,7 +374,7 @@ The stage realizes the route catalogue:
   expected projection and forms a `targeted-operation` action for `index`.
 - `route.generated-region-missing`, `route.generated-region-malformed`,
   `route.generated-region-misplaced`, and `route.generated-region-duplicate`
-  preserve the generated ownership boundary. Missing or malformed markers are
+  preserve the generated ownership boundary. Missing or duplicate Entries headings are
   not general Repair proposals.
 - `route.generated-entry-missing`, `route.generated-entry-extra`,
   `route.generated-entry-order`, `route.generated-entry-path`,
@@ -434,7 +428,7 @@ The stage realizes the complete reference catalogue:
   infer a semantic image repair.
 - `reference.external-unchecked` records external HTTP or HTTPS facts without a
   network attempt. No-fetch alone does not make complete local coverage
-  incomplete or attentive.
+  incomplete or produce `completed-with-warnings`.
 - `reference.cycle` and `reference.repeat` record bounded cycle or repetition
   evidence as information. They do not create a traversal or repair choice.
 - `reference.same-target-path`, `reference.same-target-case`, and
@@ -476,50 +470,47 @@ stage does not infer it.
 
 ## Domain 5: Framework Lifecycle
 
-The Framework lifecycle stage diagnoses the isolated `framework` section of
-`.agents/open-forge.lifecycle.json`, schema v1, without taking lifecycle
-authority. It distinguishes
-safe absence, trusted management, untrusted evidence, incomplete coverage, and
-blocked ambiguity. It compares managed paths only when the Framework section is
-trusted and retains bridge, root-region, ownership, generated-navigation,
-cross-section, and distributed-payload boundaries.
+Ownership is read from `.agents/open-forge.lock.json` through the shared forgiving
+reader. Framework, Extension, and Library claims remain separate. Neither the
+old lifecycle document nor the old Library record supplies ownership facts.
+An absent, unreadable, nonordinary, malformed, or uninterpretable lock supplies
+no usable claims and produces an informational ownership observation, without
+blocking the command or reconstructing ownership from files. Read-only commands
+never create or repair the lock. Actual source, target, route, and recovery
+boundaries still determine their own coverage and findings.
 
-The section is `absent` only after complete inspection proves no expected managed
-state, managed boundary, or recovery residual. It is `trusted` only when exact
-workspace and target identities, schema v1 and `open-forge-markdown-v1`,
-internal consistency, and complete verifiable coverage hold. A path, matching
-bytes, matching fingerprint, or force flag never promotes it. If the Extension
-section or common envelope is malformed, the Framework stage retains any safe
-independent facts but reports the preservation or coverage limitation.
+Target comparison uses actual disk content against current intended content:
+the running embedded Framework payload, or the currently read exact Extension
+source recorded by its owner. A recorded version or stored content hash does not
+gate comparison. Missing targets remain `missing`; unavailable reads or intended
+sources remain `unavailable`; unsafe physical or Markdown boundaries remain
+`blocked`. Comparable content is `current` when equal and `changed` otherwise.
+The existing immutable `open-forge-markdown-v1` policy normalizes line endings
+and eligible generated content only; authored whitespace and final-newline
+choices remain significant. Non-Markdown Extension payloads use exact bytes.
+Comparison evidence is computed during the invocation and stores no baseline.
 
-For a trusted Framework section with available source evidence, a valid derived
-Entries target is current when the safely observed generated region matches the
-current authored topology at that exact path. A different recorded generated
-fingerprint alone is not drift after Extension installation or indexing. This
-read-only comparison preserves the recorded fingerprint and does not rebaseline
-lifecycle state or authorize mutation. Authored targets, stale or malformed
-navigation, missing targets and unavailable or blocked evidence retain their
-separate checks.
+Root managed hosts compare only their `open-forge` region. Scoped Framework
+entrypoints use the existing canonical payload alignment; ambiguous or missing
+alignment makes intended comparison unavailable. Generated Entries compare with
+the current authored route projection, without consulting stored fingerprints.
+
+The existing lifecycle vocabulary remains a presentation of observed coverage.
+`absent` still requires independent complete footprint and recovery inspection;
+no lock or matching file alone proves absence or ownership. Readable claims may
+remain reportable while their source is unavailable. An unavailable lock yields
+an observation, not an installation error or a trusted empty inventory.
 
 The mixed managed-set observation uses these same currentness facts.
 
 The stage realizes every Framework kind:
 
-- `framework.install-absent` records safely established absence without creating
-  an install effect in Doctor or general Repair; it may identify
-  `open-forge install` as a typed next action.
-- `framework.install-incomplete` preserves partial installation evidence and
-  marks coverage incomplete or blocked as required.
-- `framework.managed-missing` and `framework.managed-changed` compare current
-  managed paths and semantic fingerprints with trusted lifecycle evidence but
-  never replace user content; they may identify `open-forge update` as a typed
-  next action.
-- `framework.lifecycle-evidence-unavailable` and
-  `framework.lifecycle-evidence-malformed` prevent inferred installation,
-  ownership, or managed-file counts.
-- `framework.lifecycle-untrusted` and `framework.lifecycle-section-missing`
-  retain readable but untrusted or missing-section facts and never treat them as
-  an empty trusted baseline.
+- `framework.ownership-observation` reports unavailable ownership without a gate.
+- `framework.managed-missing` and `framework.managed-changed` compare owned
+  targets with the current intended payload and never replace user content;
+  they may identify `open-forge update` as a typed next action.
+- `framework.lifecycle-evidence-unavailable` reports an unavailable embedded
+  payload, independently of whether ownership is available.
 - `framework.bridge-boundary` and `framework.root-region-boundary` preserve
   unsafe bridge or root-region boundaries without selecting a replacement.
 - `framework.ownership-conflict` keeps managed, user, and Extension claims
@@ -555,7 +546,7 @@ The stage realizes every Framework kind:
   evidence and never claims that recovery occurred. Doctor never guesses
   attribution or state from a GUID, path, filename, command text, ordered entry,
   or untrusted bytes. The producer may expose only finite comparison states or
-  bounded evidence; no payload bytes enter Doctor output. The lifecycle document
+  bounded evidence; no payload bytes enter Doctor output. The ownership lock
   itself stores no recovery evidence or operation history.
 - `framework.distributed-payload-defect` reports a defect in the distributed
   payload as diagnosis or a future distribution action. It does not mutate the
@@ -567,44 +558,22 @@ invokes them, creates their authority, or mutates Framework state.
 
 ## Domain 6: Extension Lifecycle
 
-The Extension lifecycle stage diagnoses the isolated `extensions` section of
-`.agents/open-forge.lifecycle.json`, schema v1, plus manifest, dependency,
-source, ownership, bridge, and registration evidence without installing,
-updating, removing, creating, adopting, or registering an Extension.
+The Extension stage reads lock ownership, current manifests, dependencies,
+source content, bridge, and registration evidence without any mutation. Current
+source reads retain their exact declared source and safety checks. Unavailable
+sources do not erase readable owner IDs or paths; they make intended comparison
+unavailable. A readable empty Extension claim set needs no warning.
 
-A complete present empty Extension section is trusted and requires no warning.
-The recorded source identity `embedded catalogue` refers to the embedded package
-catalogue; recorded explicit filesystem paths retain their exact source and
-safety checks. Reading a complete exact source does not require a separate
-workspace manifest scan or an unconditional coverage limitation. Actual source
-and bridge unavailability remains incomplete or blocked.
+The six-domain result shape is retained. Three informational kinds are added:
+`framework.ownership-observation`, `extension.ownership-observation`, and
+`library.ownership-observation`. Missing or malformed legacy state emits no retired
+Framework or Extension lifecycle-document or lifecycle-section finding, and no
+retired Library record finding. The current catalogue's domain findings and
+coverage facts are the only public diagnosis for those conditions.
 
-The stage preserves installed IDs, ownership, and recorded paths when package
-source bytes are unavailable. It marks source-dependent comparison incomplete and
-never substitutes another source. A trusted current section requires exact
-workspace/package/path/owner/dependency identities, the `open-forge-markdown-v1`
-semantic baseline policy, reciprocal facts, and complete verifiable coverage. An
-absent document or section is not reconstructed from paths, bytes, or manifests.
-
-The unreleased schema-v1 catalogue contains exactly 120 kinds: 33
-workspace-and-entry (including the Workspace Library subcatalogue), 4 recovery,
-22 route, 28 local-reference, 14 Framework, and 19 Extension kinds. Doctor
-retains six result domains.
-The accepted Task 16 implementation, as extended by Task 17, realizes
-producer-backed findings for the complete catalogue. Task 17 closed the
-accepted set-valued bridge-registration observation by extending the typed
-contributor views and Doctor. The current Extension domain has no remaining
-observation horizon, and the final pre-release completeness gate has an honest
-emission path for all 120 kinds.
-
-- `extension.lifecycle-document-missing` distinguishes a missing document from a
-  safely established absence; the missing document alone does not prove an empty
-  installed set.
-- `extension.lifecycle-document-invalid`, `extension.manifest-missing`, and
-  `extension.manifest-malformed` preserve unsupported, malformed, or untrusted
-  lifecycle evidence and do not fabricate an Extension record.
-- `extension.lifecycle-untrusted` and `extension.lifecycle-section-missing`
-  preserve the section's explicit state and prevent trust promotion.
+- `extension.ownership-observation` reports unavailable ownership without a gate.
+- `extension.manifest-missing` and `extension.manifest-malformed` report actual
+  current source manifest defects without fabricating an installed claim.
 - `extension.duplicate-id`, `extension.unknown-id`, and
   `extension.version-invalid` retain identity and version ambiguity without
   choosing a record or version.
@@ -623,7 +592,7 @@ emission path for all 120 kinds.
   reports operation history, transition intent, or recovery attribution. The
   more specific `extension.managed-missing` and `extension.managed-changed`
   findings remain whenever their facts apply. Recovery evidence remains outside
-  the lifecycle document.
+  the ownership lock.
 - `extension.ownership-collision` keeps user, Framework, and Extension claims
   separate and requires a manual decision.
 - `extension.bridge-registration` is a set-valued producer horizon. It forms one
@@ -639,8 +608,7 @@ emission path for all 120 kinds.
   mapping is `blocked`, without inference.
   Task 16 emits `extension.bridge-registration` from the producer-owned facts
   accepted by Task 17. No Extension finding is synthesized without its required
-  producer-owned facts, and the final pre-release completeness gate requires an
-  honest emission path for all 120 kinds.
+  producer-owned facts; internal legacy identifiers are not an emission claim.
 
 Neither legacy `open-forge.extensions.json`, package-source manifests, broad
 `.agents` recursion, payload/path/byte resemblance, nor Framework bridges may
@@ -690,25 +658,30 @@ the shared envelope coordinates inside `result`. Every command-local object and
 array is present; nullable members remain present and are `null` only for an
 inapplicable or unavailable typed fact.
 
-Compact rendering is a projection only. It retains the identity, status,
-coverage, resolution lane, typed subject, candidate count when applicable, and
-next action for each finding. Expanded rendering adds evidence, provenance,
-locations, and candidate basis. `--verbose` adds bounded diagnostics as a
-separate dimension. `--json` emits the complete typed result and never prompts.
+Minimal rendering is a projection only. For Doctor text, the minimal
+projection opts into known error and warning rows and retains each selected
+finding's exact source/path/location, cause or message, and first action; info
+rows remain a Full-only text detail. Standard adds the same warning rows when
+they are not already visible; full adds info rows and evidence; debug adds
+bounded diagnostics as a separate dimension. An explicit `--detail-filter` is
+authoritative and selects only its requested severity rows. `--format json`
+emits the complete typed result in the schema-3 envelope and never prompts:
+its minimal/errors, standard/warnings, and full/infos-and-evidence ladder is
+unchanged.
 
 No renderer creates a health score, percentage, recommendation authority, or
-new finding. `--view` cannot change domain selection, coverage, finding order,
-or status.
+new finding. Detail selection cannot change domain selection, coverage, finding
+order, or status.
 
-Primary human `complete`, `attention`, and `incomplete` results are kept
-together on stdout. Primary human `invalid`, `blocked`, `failed`, and
-`interrupted` results are kept together on stderr. JSON emits one complete result
+Primary human `completed`, `completed-with-warnings`, and `incomplete` results are kept
+together on stdout. Primary human `invalid-input`, `blocked`, `failed`, and
+`cancelled` results are kept together on stderr. JSON emits one complete result
 to stdout for every semantic status; separate bounded diagnostics use stderr.
 
 ## Read-Only Safety
 
 Doctor performs no persistent effect. It does not write authored files,
-generated navigation, lifecycle sections, lifecycle records, recovery bundles,
+generated navigation, workspace settings, ownership locks, recovery bundles,
 temporary files, reports, sessions, or caches. It does not remove or restore
 recovery bundles or drafts, invoke a public command, or acquire mutation authority
 through an interactive or structured renderer.
@@ -759,10 +732,13 @@ section. A conforming implementation must additionally prove:
   registered-projection, collision, and typed safe-exact residual evidence
   within the existing workspace-and-entry domain, with no unregistered-source
   enumeration, Library invocation, capability probe, adoption, or mutation.
-- Human compact and expanded, JSON, and verbose projections from one typed
-  result, including the accepted stdout and stderr policy.
-- Complete, attention, incomplete, invalid, blocked, failed, and interrupted
-  formation, with informational facts not producing attention by themselves.
+- Minimal, standard, full, debug, and JSON projections from one typed
+  result, including Doctor's minimal text warning rows, authoritative
+  severity filters, the unchanged JSON detail ladder, and the accepted stdout
+  and stderr policy.
+- Completed, completed-with-warnings, incomplete, invalid-input, blocked, failed,
+  and cancelled formation, with informational facts not producing
+  completed-with-warnings by themselves.
 - Repeatability, no prompt behavior, no persistent state, no plan, and no public
   command invocation.
 - Preservation of the existing three public Doctor EndToEnd journeys and six
@@ -798,4 +774,4 @@ domain and show equal supporting facts once. Grouping does not alter diagnosis,
 severities, resolution lanes, counts, proposals, actions, or the stored finding
 order. Distinct locations and subject identities remain distinct even when their
 human path text is identical. Candidate selection is never inferred by rendering.
-The Interface defines the readable labels and compact/expanded detail boundary.
+The Interface defines the readable labels and detail-level boundary.

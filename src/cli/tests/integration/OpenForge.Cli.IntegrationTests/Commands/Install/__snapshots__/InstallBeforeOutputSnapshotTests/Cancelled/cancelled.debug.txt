@@ -1,0 +1,8 @@
+Install was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Bundled Framework fingerprint: <sha256> (14 assets).
+  Ownership record publication did not start.
+  No recovery bundle was required.
+  Verification was not requested.
+  Rerun the same Install request.
+Next: open-forge install

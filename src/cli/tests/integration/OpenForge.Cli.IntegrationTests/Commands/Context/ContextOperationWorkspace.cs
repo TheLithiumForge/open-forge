@@ -87,7 +87,8 @@ internal sealed class ContextOperationWorkspace : IDisposable
 
     internal static ContextOperationWorkspace Create(
         bool includeSelectedAncestorLoadNow = false,
-        bool startupLinksToSelectedTarget = false)
+        bool startupLinksToSelectedTarget = false,
+        string linkedTargetPath = ".agents/projects/linked.md")
     {
         var temporary = TemporaryWorkspace.Create("context-operation");
         try
@@ -97,12 +98,9 @@ internal sealed class ContextOperationWorkspace : IDisposable
             # Loader
 
             ## Entries
-
-            <!-- open-forge:generated-index:start -->
             - [Docs](docs/_docs.md) - #LoadNow #Core
             - [State](state/_state.md) - #Memory
             - [Projects](projects/_projects.md) - #Project
-            <!-- open-forge:generated-index:end -->
             """);
             Write(temporary, ".agents/docs/_docs.md", EntryPoint("Docs", "LoadNow, Core", """
             - [Topic](topic.md) - #LoadNow #Core
@@ -136,7 +134,7 @@ internal sealed class ContextOperationWorkspace : IDisposable
 
             Write(temporary, ".agents/projects/guide.md", GuideFrontmatter + GuideBody);
             Write(temporary, ".agents/projects/guide.overwrite.md", Document("Guide overwrite", "Guide", "# Guide overwrite\n\n## Rules\n\nOverwrite rule.\n"));
-            Write(temporary, ".agents/projects/linked.md", Document("Linked", "Guide", "# Linked\n\n## Details\n\nLinked details. [Back](guide.md).\n"));
+            Write(temporary, linkedTargetPath, Document("Linked", "Guide", "# Linked\n\n## Details\n\nLinked details. [Back](guide.md).\n"));
             return new ContextOperationWorkspace(temporary);
         }
         catch

@@ -1,0 +1,8 @@
+Cannot list Libraries: The Library destination parent is not a real ordinary directory.
+Workspace: <workspace>
+  Error  .agents/linked/review.md  Registered link is blocked
+         .agents/linked/review.md  could not be checked safely: The Library destination parent is not a real ordinary directory.
+  team-knowledge  shared/team -> .  0 links current, 1 unavailable
+    .agents/linked/review.md  blocked
+  Inspect the reported Library state.
+Next: open-forge doctor

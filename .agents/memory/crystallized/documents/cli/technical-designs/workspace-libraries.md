@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Exact local-only Workspace Libraries record, inventory, projection, and recovery design
-  responsibility: Define the strict Library record, complete source inventory, relative-link effects, capability gate, and explicit composition boundary
+  responsibility: Define typed Library ownership, complete source inventory, relative-link effects, capability gate, and explicit composition boundary
   tags: [Memory, Crystallized, Document, CurrentTruth, Evergreen, CLI, TechnicalDesign, Framework, Library, Workspace, Filesystem, Mutation, Recovery]
 ---
 
@@ -20,14 +20,16 @@ define consumer grants. Source bytes remain read-only input.
 `Framework/Filesystem/` owns neutral no-follow leaf observation and portable
 path grammar. `Framework/Mutation/` owns real-directory creation and typed
 relative-file-link effects. `Framework/Recovery/` owns their exact identities,
-comparison and guarded application. `Framework/Permissions/` owns strict grant
-representation, observation, evaluation and proposed ordinary-file changes.
+comparison and guarded application. `Framework/Settings/` owns authored settings observation, shared allow-list
+evaluation and proposed explicit settings changes. No Library source binding
+exists in permission state.
 Commands own policy, plans, prompting, findings, results and orchestration.
 
 Library permission policy lives below `Commands/Library/Shared/Permissions`.
 It does not import Extension-private policy. `CliLibraryComposer` receives the
-existing typed interactive session from root composition and constructs each
-Library operation explicitly. Shell remains command-independent. There is no
+neutral `CliInteractionComposition` with `CliTerminal` and typed `CliPrompts`
+from root composition and constructs each Library operation explicitly. Shell
+remains command-independent. There is no
 DI container, runtime registry, reflection, extra project or dependency.
 
 ## Physical Source And Destination Boundaries
@@ -52,42 +54,28 @@ and physical containment per target. Whole-root disjointness would incorrectly
 reject the default mapping. No grant overrides this source-preservation check.
 Detach derives source identity from records without requiring source existence.
 
-## Strict Current Record
+## Current Ownership And Publication
 
-The separate ordinary consumer file `.agents/open-forge.libraries.json` has one
-strict current schema-v1 shape:
+`LibraryRegistrationReader` projects Library claims from the shared forgiving
+`.agents/open-forge.lock.json` read into immutable typed registrations. IDs retain
+the 1–128 lowercase ASCII stable-ID grammar. Roots and source-relative paths
+retain portable validation; mapped destinations must be unambiguous. Projection
+canonicalizes ordinal ID and path order. Unknown members or schema versions do
+not gate an operation. An absent, unreadable, nonordinary, malformed or
+uninterpretable lock supplies no usable registrations and an informational
+ownership observation. Actual source and mapped destination checks remain
+mandatory before effects.
 
-```json
-{
-  "schemaVersion": 1,
-  "libraries": [
-    {
-      "id": "team",
-      "sourceRoot": "shared/team",
-      "destinationRoot": ".apm/agents/team",
-      "paths": ["checks/security.md", "review.md"]
-    }
-  ]
-}
-```
+There is one ownership publication and one public state-file outcome, naming
+the lock. Its exact snapshot supplies prior recovery bytes and revalidation.
+Publication follows verified effects, preserves unrelated owners, and is
+best-effort. Final detach removes the selected registration while retaining
+other owners. No old Library record is read, written, converted or deleted.
 
-Require exactly `schemaVersion` and `libraries` at the root. Each Library has
-exactly `id`, `sourceRoot`, `destinationRoot` and `paths`. The version is exactly
-integer `1`. Unknown, duplicate, missing, null or wrongly typed properties are
-malformed. There is no earlier-shape reader, migration, alternate spelling or
-compatibility branch.
-
-IDs retain the 1–128 lowercase ASCII stable-ID grammar and ordinal uniqueness.
-Libraries and source-relative path lists are ordinally ordered. Paths are
-unique within a Library. Derived destination leaves are unique across Libraries
-under portable identity. Identical source-relative names at distinct mapped
-destinations are valid. Empty records and empty path arrays remain valid.
-
-`LibrariesRecordDocument` is the source-generated wire model. The strict codec
-validates the entire object before producing immutable `LibrariesRecord` and
-`LibraryRecord` facts. The record has no lifecycle authority and stores no
-expected target, source bytes, hashes, timestamps, Git facts, dependencies,
-globs or per-file remapping. Grants remain in the separate permission document.
+Library claims contain no expected link target, source bytes, hashes, timestamps,
+Git facts, dependencies, globs, or per-file remapping. Exact link identity derives
+from source root, destination root, and source-relative suffix. Permission stays
+in the authored workspace settings.
 
 ## Inventory And Mapping Facts
 
@@ -121,37 +109,42 @@ remain the membership keys for current-versus-registered reconciliation.
 
 Final destination admission separately protects Git metadata, known manager
 controls, Framework-owned paths/regions, `.agents` Loader/entrypoint/overwrite
-controls, lifecycle/Library/permission/lock controls, operation temporary and
+controls, authored settings and generated ownership controls, operation temporary and
 recovery storage, and source trees. Library external Markdown remains opaque.
 Only mapped `.agents/**` leaves can affect existing generated navigation under
 the Index contract. No new route chain, Loader or source entrypoint is created.
 
 ## Library Permission Planning
 
-Library grants bind ID and source root. Their required `paths` and `directories`
-arrays contain exact external files and recursive external folder scopes.
-Extension grant shape and exact-file semantics remain unchanged. Directory
-matching uses portable segment-prefix identity and covers strict descendant
-leaves, never the directory itself. Workspace-root grants are invalid.
+Library admission uses the same `allowInstallPaths` as Extension admission.
+An entry admits itself and descendants through the shared portable path
+comparison. There is no persisted ID, source root, file/directory discriminator
+or rebinding graph in permission state. Existing reserved, source-tree,
+ownership and physical checks remain independent.
 
-The command forms complete required/missing concrete external leaves. Live
+The command forms complete required/missing external destination strings. Live
 missing leaves propose their immediate parent directory; root leaves and
 retirement-only/Detach leaves propose exact files. Deduplicate scopes and remove
 child proposals covered by another proposed directory. Top-level directories
-are valid; do not invent a minimum depth. Prompts describe future descendants
-explicitly and show the source, ID, exact current effects and scopes.
+are valid. Prompts describe future descendants and the operation's source, ID,
+exact effects and scopes. Those operation coordinates do not become grant keys.
 
-When the same ID has grants for a different source root, show old and new roots
-and require explicit replacement approval. Replace only that Library subject
-with the newly approved scopes. Preserve same-source existing grants and all
-unrelated subjects. An old-source grant never admits a new-source operation.
+Always approves the displayed scopes and stages a settings update using the sole
+settings codec. Prospective grants are evaluated in memory; publication waits
+for confirmed application under the existing lease, revalidation and recovery
+rules. Once approves this operation without changing settings; cancel or refusal
+before application applies nothing. Explicit `--allow-path` uses the same
+staged permission plan and publishes only during application. Revalidation
+compares the actual settings observation; changing a Library source never
+requires grant rebinding. Unknown authored keys remain preserved.
 
 `LibraryPermissionRequest`, `LibraryPermissionApproval` and
 `LibraryPermissionStage` keep structural target facts, immutable approval,
 observation, proposed file change, recovery target and failure separate.
-`LibraryPermissionView` adds proposed/approved scopes and source-rebinding facts
-to concrete required/missing leaves and the standard permission receipt fields.
-A not-evaluated stage never claims no permission is required.
+`LibraryPermissionView` adds proposed/approved `{kind,path}` scopes to destination
+strings and the standard decision/action/outcome fields. A not-evaluated stage
+never claims no permission is required. Interactive settings publication requires
+verified recovery before either Create or Replace, before content effects.
 
 ## Mutation And Recovery Lifecycle
 
@@ -168,7 +161,8 @@ Every mutator follows one complete plan:
    navigation. Finish structural preflight before asking for permission.
 2. Derive required external leaves and scopes. Human prompt-capable application
    asks once; JSON, redirected execution and dry-run never prompt. Missing or
-   declined permission blocks without effects. Cancellation is interrupted.
+   declined permission blocks without effects. Cancellation has the `cancelled`
+   status.
 3. Acquire the existing same-workspace lease and reobserve all volatile facts,
    including exact permission bytes or absence. A changed plan or permission
    observation blocks; approval cannot transfer to a wider recomputed plan.
@@ -183,7 +177,7 @@ Before every effect, repeat no-follow leaf, ordinary ancestry and expected-state
 checks. Relative-file-link Create accepts missing and produces the exact raw
 symbolic link. Delete accepts that exact link and produces missing. Ordinary
 file effects never operate through links. The source target is never written,
-removed or used as recovery payload. Failure/interruption stops new effects;
+removed or used as recovery payload. Failure/cancellation stops new effects;
 verified effects and actual permission outcome remain visible. There is no
 rollback or copy fallback. Failed cleanup retains explicit residual evidence.
 
@@ -197,8 +191,9 @@ identity, never the Library ID.
 destinations, using recorded roots and raw link identity. It excludes the
 permission control-file entry from automatic Library repair attribution.
 `LibraryRecoveryPermissionReader` checks current grants under the same lease,
-using the attributed recorded Library/source identity. Revoked or unavailable
-permission blocks explicit recovery; recovery never prompts, restores grants,
+for the actual attributed destination strings. Recorded Library/source identity
+still establishes mapping and source protection, not a grant binding. Revoked
+or unavailable external permission blocks explicit recovery; recovery never prompts, restores grants,
 widens them or reads source bytes. Permission restoration is manual from the
 retained evidence. Cleanup only deletes recognized bundles through its existing
 explicit guarded path and never applies entries.
@@ -213,7 +208,7 @@ source-relative/destination facts; automatic source IDs apply only to eligible
 command prompts, acquires a lease or writes persistent state.
 
 Status remains bounded; Doctor attempts complete inventories of registered
-sources only. Missing record means complete empty Library coverage. Incomplete
+sources only. Unavailable ownership means a complete information observation with no inferred registrations. Incomplete
 or unavailable inventory never becomes empty or grants permission to retire.
 Their typed record/mapping facts use the central mapping, as do Extension
 Install/Update/Remove Library-ownership guards and Repair attribution. Extension
@@ -233,5 +228,7 @@ individual links, root leaves, ordinary parents, collisions, source preservation
 future-descendant grants, explicit rebinding, revocation, lease drift, partial
 permission outcomes and exact recovery. Preserve three public journeys per
 Library command and unchanged Extension journeys. Shared schema, composition and
-filesystem changes require complete managed and supported linux-x64 Native AOT
-evidence under the active Task.
+filesystem changes require complete managed and supported Windows Native AOT
+evidence under the active Task. That gate is host-only: it requires `vswhere` on
+`PATH` and cannot run inside a sandboxed worker, so an overseer or other
+unsandboxed host must run it.

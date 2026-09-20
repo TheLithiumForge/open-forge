@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: The CLI surrounds agent reasoning with five deterministic jobs for orientation, context, authoring support, health, and lifecycle management
+  description: "Historical CLI-v2 source: The CLI surrounds agent reasoning with five deterministic jobs for orientation, context, authoring support, health, and lifecycle management"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

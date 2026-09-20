@@ -60,9 +60,9 @@ The six and only six global flags are:
 
 ```text
 --workspace <path>
---json
---view=compact|expanded
---verbose
+--format <text|json>
+--detail <minimal|standard|full|debug>
+--detail debug
 --help
 --version
 ```
@@ -139,6 +139,13 @@ inside the path remains part of the path unless the remaining terminal text is
 one valid positive line-and-column suffix. The line and column identify the
 start of the authored destination token for the supported reference occurrence.
 
+Only authored local-reference occurrences enter Repair classification. A link in
+a recognized generated `Entries` region is navigation output, not an authored
+occurrence, and is excluded from Repair occurrence classification, catalogue
+admission, and explicit relink resolution. An authored, unambiguous occurrence
+elsewhere in the same source remains independently eligible when its own facts
+are safe.
+
 ### Expected destination
 
 The second value is the exact expected current authored destination string. It is
@@ -179,11 +186,11 @@ resolves the source occurrence, old literal, target, and expected and intended
 bytes before planning and again before application.
 
 An explicit tuple is admitted only when current Doctor facts classify the
-occurrence as either a same-target safe-exact catalogue member or a missing-target
-guided choice whose current bounded candidate set contains the selected target.
-The tuple is not an arbitrary link editor. A valid unrelated occurrence, a
-semantic target change without current candidate evidence, or any other
-out-of-catalogue request is blocked.
+authored occurrence as either a same-target safe-exact catalogue member or a
+missing-target guided choice whose current bounded candidate set contains the
+selected target. The tuple is not an arbitrary link editor. A generated `Entries`
+occurrence, a valid unrelated occurrence, a semantic target change without
+current candidate evidence, or any other out-of-catalogue request is blocked.
 
 ## Selection And Interaction
 
@@ -228,8 +235,8 @@ does not save the plan for later application.
 
 Any prompt-capable request with neither `--automatic` nor an explicit `--relink`
 enters this same wizard, including requests that supply only `--workspace`,
-`--view`, `--verbose`, or `--dry-run`. Those flags remain in the one request and
-keep their normal meanings. `--json`, `--help`, and
+`--detail`, `--detail debug`, or `--dry-run`. Those flags remain in the one request and
+keep their normal meanings. `--format json`, `--help`, and
 `--version` retain their non-prompting or terminal boundaries.
 
 ### Automatic selection
@@ -251,7 +258,7 @@ scope can be a verified no-op; guided and manual findings remain unselected and
 visible.
 
 An unselected guided finding is not an unresolved choice in the automatic
-request. It remains visible and can produce `attention` after the selected scope
+request. It remains visible and can produce `completed-with-warnings` after the selected scope
 completes. If an explicit requested effect requires a guided choice and no user
 choice or exact relink supplies it, that requested effect is blocked.
 
@@ -276,7 +283,7 @@ only under the Behavior rules and retain both origins.
 ### Non-interactive and JSON omission states
 
 JSON is always non-interactive. An environment that cannot prompt uses the same
-non-interactive rules even without `--json`:
+non-interactive rules even without `--format json`:
 
 | Request                                                             | Result and required next action                                                                                                  |
 | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -288,12 +295,12 @@ non-interactive rules even without `--json`:
 | One or more `--relink` values with `--dry-run`                      | Resolve and preview only the explicit relinks without prompting.                                                                 |
 | `--automatic` plus one or more `--relink` values                    | Apply or preview their union without prompting, subject to all conflicts and gates.                                              |
 
-In particular, `--json --dry-run` without a selection is blocked. It does not
+In particular, `--format json --dry-run` without a selection is blocked. It does not
 invent a guided choice or silently change to an automatic default. Prefer the
 explicit boring structured preview:
 
 ```text
-open-forge repair --automatic --dry-run --json
+open-forge repair --automatic --dry-run --format json
 ```
 
 ## Admitted First-Release Catalogue
@@ -313,7 +320,11 @@ The filename, title, literal-content, and route-neighborhood evidence is finite
 and visible. Zero, one, and several candidates remain distinct. A recommendation
 is never selected automatically, including when there is only one candidate.
 Explicit `--relink` supplies the user's selected target and does not rely on a
-recommendation ranking.
+recommendation ranking. Only authored occurrences participate in this catalogue;
+generated `Entries` links remain outside it. A concrete Library observation that
+is not a typed residual recovery proposal remains a diagnostic observation with
+its actual path, identifier, and cause. It is not converted into a Markdown
+broken-link occurrence, a guided candidate, or a Repair proposal.
 
 The catalogue does not include external repairs, semantic or fuzzy target
 choices, authored prose or labels, generated navigation, route authoring or
@@ -341,13 +352,21 @@ but a selected edit is gated only by the diagnosis dependency closure it
 actually uses: exact workspace and path containment, the route/heading facts
 needed by that target, and the local-reference occurrence and candidate facts.
 Every required domain must have complete coverage for the selected edit.
-Incomplete or blocked unrelated lifecycle, Extension, Framework, or recovery-
-observer coverage remains visible but does not block a safe local-reference
-repair. A selected typed Library residual instead requires complete current
-Library record attribution, exact entry, workspace, and no-follow identity facts
-for that residual; unrelated domains remain separate and do not grant Library
-authority. Recovery writer readiness for a real Replace is checked separately in
-mutation preflight. Repair never borrows mutation authority from another domain.
+Unsafe or unavailable facts required by a selected write dependency remain
+strict and block that selected effect before application. Read or coverage
+uncertainty outside the selected write dependency remains visible; it is not
+silently treated as absence, safety, or complete coverage. In particular, a
+concrete non-information Library observation retains its warning severity and `completed-with-warnings` status (exit 2) and actual known path, identifier, and cause while an independent
+ordinary authored safe link may proceed. That Library observation does not become
+a Markdown broken-link occurrence or grant a proposal. Incomplete or blocked
+unrelated lifecycle, Extension, Framework, Library read/coverage, or recovery-
+observer facts therefore remain visible without blocking an independent safe
+local-reference repair. A selected typed Library residual instead requires
+complete current Library record attribution, exact entry, workspace, and
+no-follow identity facts for that residual; unrelated domains remain separate
+and do not grant Library authority. Recovery writer readiness for a real Replace
+is checked separately in mutation preflight. Repair never borrows mutation
+authority from another domain.
 
 ## Mutation Authority And Safety
 
@@ -456,10 +475,10 @@ selected original Library residual ZIP remains byte-identical, including its
 unselected entries; only explicit Cleanup may delete that original bundle.
 `Deleted`/`Removed` permits normal completion.
 `Failed`/positively observed `Retained` keeps target effects successful and
-produces `attention`, the exact residual path, and
+produces `completed-with-warnings`, the exact residual path, and
 cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
 provides one.
-When `Failed`/positively observed `Retained` recovery attention coexists with
+When `Failed`/positively observed `Retained` recovery warning coexists with
 remaining non-information findings, cleanup guidance owns the single next
 action; those findings remain visible evidence.
 
@@ -506,206 +525,207 @@ origin. Overlapping byte ranges, different expected
 complete-file states, or any combination that cannot prove one deterministic
 resulting file block the complete plan.
 
-## Output
+## Human Output
 
-Repair output has one hierarchy:
+The command uses the shared native report. The default detail is `minimal`; `standard`, `full` and `debug` add the catalogue-defined facts. `--detail-filter <error|warning|info|all>` is repeatable and changes only the rendered detail. Use `--format text` for this text report. Primary result text for `completed`, `completed-with-warnings` and `incomplete` is on stdout; primary errors for `invalid-input`, `blocked`, `failed` and `cancelled` are on stderr. There is no `Status:` line.
 
-1. Semantic status, selection source, application policy, and whether the
-   request was interactive, automatic, explicit, or a combination.
-2. Exact workspace identity and selection method.
-3. Diagnosis and selection coverage, including the relevant-domain gate for the
-   selected edits.
-4. An explicit application or Preview statement and the no-files-changed fact
-   when dry-run is selected.
-5. Finding counts and effect counts, separated into selected, unselected,
-   repaired, remaining, new, manual, guided, and blocked outcomes.
-6. Affected paths and exact bounded diffs or equivalent byte and fingerprint
-   evidence where available.
-7. Preflight, application, verification, recovery, and residual state.
-8. Fresh post-repair relevant-domain diagnosis and its coverage.
+### Statuses and headlines
 
-When a selected typed Library residual is present, output identifies its
-Library attribution, entry class, exact no-follow identity checks, and bounded
-recovery outcome. It never renders source-target bytes as link payload or
-claims a rollback.
+| Status                  | When                                                                                      | Headline                                                                                  | Exit | Stream |
+| ----------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | nothing in scope needs repair                                                             | `Nothing to repair.`                                                                      |    0 | stdout |
+| completed               | repairs applied, nothing left in scope                                                    | `Repaired <N> links.` (`Repaired 1 link.`)                                                |    0 | stdout |
+| completed (dry run)     | repairs planned                                                                           | `Would repair <N> links.`                                                                 |    0 | stdout |
+| completed-with-warnings | repairs applied, problems remain that need a choice or hand                               | `Repaired <N> links. <K> problems still need a choice.` / `... need a choice or a hand.`  |    2 | stdout |
+| completed-with-warnings | nothing safe, problems remain                                                             | `Nothing could be repaired automatically. <K> problems need a choice.`                    |    2 | stdout |
+| completed-with-warnings | recovery bundle retained                                                                  | + family row                                                                              |    2 | stdout |
+| incomplete              | diagnosis or a required fact could not finish                                             | `Repair could not check the workspace completely. Nothing was changed.` + limitation rows |    3 | stdout |
+| invalid-input           | bad flags, invalid or contradictory `--relink`                                            | `Cannot repair: <problem>.`                                                               |    4 | stderr |
+| blocked                 | no selection outside a terminal, diagnosis blocked, stale target, missing authority, lock | `Cannot repair: <reason>. Nothing was changed.`                                           |    5 | stderr |
+| failed                  | after effects                                                                             | `Repair stopped after <n> of <m> links were rewritten.`                                   |    1 | stderr |
+| cancelled               | prompt cancelled, Ctrl+C                                                                  | `Repair was cancelled. Nothing was changed.`                                              |  130 | stderr |
 
-The default human view is `expanded`. Compact output retains identity, status,
-mode, coverage, effect and finding counts, selected and remaining resolution
-lanes, affected paths, every finding, selected exact destination changes and
-no-ops, recovery state and required next actions. Human locations use file line
-and column; JSON retains byte coordinates. Expanded adds candidate evidence and
-selection-step detail. Library selections retain Library and logical-path
-identity, recovery-data path, observed link target without following it, and
-actual effect and verification outcomes. The operation header precedes Library
-details. The actual `Next:` command appears once, with its reason in expanded
-output. No view emits a health score or percentage.
+### Text by level
 
-Human output leads with the result. It does not require the reader to understand
-planning stages to understand a normal success or failure. `--verbose` is a
-separate diagnostic dimension and does not change selection, planning, effects,
-verification, recovery, status, or exit behavior.
+Guided broken-link findings for authored occurrences include the concrete
+expected destination in the finding message so the unresolved target is visible
+before candidate details. Concrete Library observations retain their actual
+path, identifier, and cause and are not rendered as Markdown broken-link
+findings. Cancelled and interrupted results retain their existing status,
+headline, stream, and output boundary; a fresh Library observation does not add
+new cancellation output.
 
-An illustrative automatic preview is:
+`minimal`, applied:
 
 ```text
-Open Forge repair
-Workspace: D:/work/example
-Selection: automatic
-Application: preview
-Diagnosis coverage: complete; 6 domains complete
-Selected: 2 safe-exact effects
-Guided: 1 candidate set unselected
-Plan: 2 local-reference destination literals
-
-<exact bounded diffs>
-
-No files changed (--dry-run).
-Status: requires attention
-Next: review the guided candidate before selecting it.
+Repaired 2 links.
+  .agents/loader.md:105:3    ../patterns/_patterns.md -> patterns/_patterns.md
+  .agents/maps/_maps.md:32:3   nowhere/_Nope.md -> nowhere/_nope.md
 ```
 
-An illustrative guided result is:
+`minimal`, applied with remaining problems:
+
+Report completed link effects and each remaining problem. Guided authored-link findings name the unresolved destination before the available choices; Library findings show their actual observed subject and cause. The next action follows the rules below.
+
+`minimal`, nothing safe outside a terminal:
+
+Report that no automatic repair was available, retain each unresolved authored destination and its bounded choices, and direct the user to interactive Repair or an explicit relink. Concrete examples are retained in the reviewed Repair output snapshots.
+
+`minimal`, no selection possible (stderr):
 
 ```text
-Open Forge repair
-Mode: interactive wizard
-Selected: 1 guided relink
-Unselected: 1 guided candidate set
-Affected path: .agents/docs/guide.md
-Effect: replace the destination at line 12, column 8
-Verification: current target is contained and the authored label is unchanged
-Confirmation: No [default]
+Cannot repair: repair needs to know which repairs to apply, and this session cannot ask.
+Next: open-forge repair --automatic  (apply the 6 repairs that are safe)
 ```
 
-The values are illustrative. JSON emits one complete structured result derived
-from the same typed result as human output. JSON never prompts and retains the
-complete selected, unselected, finding, effect, exact-diff, fingerprint,
-preflight, application, verification, recovery, residual, and post-diagnosis
-meaning that the contract exposes. Exact field names and schema compatibility are
-defined by the [Shared Result
-Coordinates](../shared/result-coordinates/interface.md).
+`minimal`, partial (stderr):
 
-Primary human `complete`, `attention`, and `incomplete` results are kept
-together on stdout. Primary human `invalid`, `blocked`, `failed`, and
-`interrupted` results are kept together on stderr, following the accepted Index
-policy. JSON always emits one complete structured result to stdout for every
-semantic status; separate bounded diagnostics use stderr.
+```text
+Repair stopped after 1 of 2 links were rewritten.
+  .agents/loader.md:105:3    rewritten
+  .agents/maps/_maps.md:32:3   not started
+  Recovery data: <path>
+Next: open-forge doctor
+```
+
+`standard` adds `Workspace:`, each remaining authored guided-link problem with
+its possible targets as rows, the Library recovery steps selected or skipped,
+concrete Library observations with their actual path, identifier, and cause,
+and the reason for `Next`. Library observations do not gain candidate rows.
+
+`full` adds why each possible target was suggested, the expected and new
+SHA-256 of each rewritten file, the checks that ran (diagnosis coverage as a
+sentence), and recovery facts in words.
+
+### Prompts
+
+Per [04](../../../../../working/cli-development/tasks/task30-g4/04-interaction-system.md): summary line, `Apply the <N> repairs that
+are safe? [y/N]`, then for each authored guided link a Select among possible targets
+with `skip` as the last row, then plan review, then `Apply these changes?
+[y/N]`. The old typed words (`select`, `skip`, `back`, `cancel`) and the
+SHA-256 confirmation text are removed.
+
+### Representative transcripts by status
+
+### Transcript — completed
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#repair-completed). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Repair/__snapshots__/RepairBeforeOutputSnapshotTests/AutomaticSelection/automatic-two-links.minimal.txt).
+
+### Transcript — completed-with-warnings
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#repair-completed-with-warnings). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Repair/__snapshots__/RepairBeforeOutputSnapshotTests/AutomaticSelection/automatic-nothing-safe-two-guided.minimal.txt).
+
+### Transcript — incomplete
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#repair-incomplete). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Repair/__snapshots__/RepairBeforeOutputSnapshotTests/LibraryRecoveryStep/library-recovery-step.minimal.txt).
+
+### Transcript — invalid-input
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#repair-invalid-input). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Repair/__snapshots__/RepairBeforeOutputSnapshotTests/InvalidInput/invalid-input.standard.txt).
+
+### Transcript — blocked
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#repair-blocked). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Repair/__snapshots__/RepairBeforeOutputSnapshotTests/LockHeld/lock-held.minimal.txt).
+
+### Transcript — failed
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#repair-failed). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Repair/__snapshots__/RepairBeforeOutputSnapshotTests/PartialWriteFailure/write-failed-partial.minimal.txt).
+
+### Transcript — cancelled
+
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#repair-cancelled). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Repair/__snapshots__/RepairBeforeOutputSnapshotTests/SelectionBoundary/cancelled.minimal.txt).
+
+## Structured Output
+
+`--format json` writes one schema-3 envelope to stdout for every report status. It contains the command, status, workspace when applicable, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
+
+### JSON data by level
+
+| Level    | `data`                                                                                                                                                        |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| minimal  | `{ mode, selection: "automatic" \| "relink" \| "prompt", repairs: [ { path, location, from, to } ], remaining: [ { path, location, kind, candidates: n } ] }` |
+| standard | + `remaining[].candidates: [ { path } ]`, `libraryRecovery: [ { id, path, selected } ]`                                                                       |
+| full     | + `candidates[].reasons`, per repair `before`, `after`, `diagnosis { coverage per category }`, `verification`                                                 |
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                                                                                                                                                         |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | The selected Repair scope completed its dry-run or application path, including a verified no-op, with complete required diagnosis and no remaining non-information finding that requires attention in that scope. It does not claim that all Doctor findings are gone.                                                                                          |
-| `attention`   | The selected scope was safely processed but finite non-information findings remain, or post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`. `Failed`/`Retained` recovery keeps target effects successful and reports the exact residual path with cleanup guidance. Human output may say `requires attention`. |
-| `incomplete`  | Safe facts or partial results are available, but required diagnosis, proposal resolution, post-diagnosis, or another declared coverage boundary could not finish. No general Repair write begins.                                                                                                                                                               |
-| `invalid`     | Command grammar, flag values, relink tuples, repetition, or explicit inputs are invalid.                                                                                                                                                                                                                                                                        |
-| `blocked`     | A valid request lacks required selection or authority, has incomplete or blocked coverage in a domain required by the selected edit, is stale or conflicting, has malformed, colliding, or mismatched recovery facts, or cannot establish a safe exact effect. No write begins.                                                                                 |
-| `failed`      | Application, verification, or post-condition processing fails, or post-verification deletion returns `Failed` with disposition `Unknown`. Typed observed or unknown recovery facts remain visible; an exact expected path appears only when the recovery result provides one.                                                                                   |
-| `interrupted` | The caller cancels or interrupts before the selected operation completes, unless an unexpected application or verification failure is classified as `failed`.                                                                                                                                                                                                   |
+The status and exit mapping above are unchanged by detail or format. Root effects and recovery receipts retain their complete result facts at every detail level; command-owned data follows the catalogue's level rows.
 
-`--dry-run` uses the same status conditions while stopping before persistent
-effects. It does not claim that intended bytes were written or verified on disk.
-A successful automatic or explicit no-op is `complete`, not an artificial
-update. A final interactive `No`, back out of the final application boundary,
-or cancellation is a non-applied interruption with no residual failure.
+Post-diagnosis output uses current residual Library observations in place of
+pre-diagnosis Library observations that were resolved, and deduplicates only
+identical actual code, path, identifier, and cause facts. Concrete Library
+observations retain their warning severity and `completed-with-warnings` status (exit 2) and actual path, identifier, and
+cause, do not become Markdown broken-link rows or candidates, and do not add
+members to the public schema.
 
-`complete` is deliberately scoped to the selected Repair work. Remaining
-informational findings do not change it. Remaining guided, manual, targeted,
-blocked, or newly actionable findings produce `attention` when the selected
-scope itself completed safely.
+### Effects wording
 
-## Errors And Omission States
+`<path>:l:c  <old destination> -> <new destination>` for a rewritten link;
+`<path>  restored from recovery` for a Library recovery step. Dry run: same
+rows under `Would repair`. Partial: `rewritten`, `not started`, `final state
+unknown`.
 
-Repair has no positional-operand omission state. The following input states are
-finite:
+### Counts and limitations
 
-- A positional operand, generic proposal reference, choice token, finding text
-  or code, domain or kind selector, generic batch input, plugin fixer selector,
-  or unsupported alias is `invalid`.
-- A missing value for a flag, a malformed source location, a non-positive or
-  absent line or column, an incomplete `--relink` triple, or an invalid target
-  path or fragment is `invalid`.
-- Repeated identical relink tuples deduplicate. Contradictory tuples for one
-  occurrence are `invalid`; argument order does not choose a winner.
-- Repeated `--automatic` and `--dry-run` are accepted and idempotent. Shared
-  global repetition follows the shared contract. Unknown options are invalid.
-- An interactive bare `repair` opens the wizard. In a non-interactive or JSON
-  request, no selection authority is `blocked`; the next action names
-  `--automatic` or explicit `--relink`.
-- Non-interactive or JSON `--dry-run` without `--automatic` or explicit relinks
-  is `blocked`; dry-run alone never supplies selection authority.
-- A source occurrence, expected literal, selected target, candidate, identity,
-  containment boundary, expected bytes, or intended bytes that differs during
-  fresh resolution is `blocked`.
-- An incomplete or blocked required Doctor domain is `incomplete` or `blocked`
-  and prevents all general Repair writes, including explicit relinks.
-- An incomplete or blocked typed Library residual attribution, entry, or
-  no-follow identity prevents that residual recovery; a third or unsafe current
-  state is `blocked` and no other effect is selected.
-- Unavailable recovery storage or preparation coverage is `incomplete`; malformed,
-  colliding, or mismatched recovery-bundle facts, overlap conflict, missing
-  authority, or any other unsafe plan condition is `blocked`.
-- An unexpected application, verification, or post-diagnosis failure, or
-  post-verification recovery deletion `Failed`/`Unknown`, is `failed`. A caller
-  interruption without an unexpected application or verification failure is
-  `interrupted`.
+`linksRepaired`, `problemsRemaining`, `problemsNeedingChoice`,
+`problemsNeedingHand`, `librarySteps`.
 
-Every ordinary error names the `repair` operation, affected selection, occurrence,
-target, plan, or path when known, direct cause, and useful next action. It never
-uses severity, message order, or a finding code to choose an effect.
+### Next rules
 
-## Examples
+Remaining guided authored-link findings -> `open-forge repair`; no selection ->
+`open-forge repair --automatic`; Library-only remaining problems ->
+`open-forge doctor`; mixed authored-link and Library problems retain the Repair
+action for authored links and explain Doctor for the Library diagnosis; partial
+or retained recovery keeps its existing `open-forge doctor` /
+`open-forge cleanup` boundary; completed -> none.
+Never `verified` wording anywhere.
 
-Open the interactive wizard. Safe-exact proposals are shown first, guided
-candidates require selection, and final application confirmation defaults to No:
+## Errors And Boundaries
 
-```text
-open-forge repair
-```
+The findings catalogue below is the command's finite error and warning vocabulary. Findings keep their code, severity, family, subject and cause; detail filtering affects display only. A blocked, failed or cancelled result prevents further effects according to the catalogue.
 
-Preview every current safe-exact effect without prompting or applying:
+### Findings catalogue
 
-```text
-open-forge repair --automatic --dry-run
-```
+| Code                              | Severity | Family                     | Message                                                                                        | Next                                                             |
+| --------------------------------- | -------- | -------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| repair.invalid-input              | error    | invalid-input              |                                                                                                |                                                                  |
+| repair.relink-invalid             | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.relink-invalid`). | `open-forge repair --help`                                       |
+| repair.contradictory-relink       | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.contradictory-relink`).                      | none                                                             |
+| repair.selection-required         | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.selection-required`).                    | `open-forge repair --automatic`                                  |
+| repair.missing-authority          | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.missing-authority`).         | add the path to `allowInstallPaths` in `.agents/open-forge.json` |
+| repair.diagnosis-blocked          | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.diagnosis-blocked`).                                                | `open-forge doctor`                                              |
+| repair.diagnosis-incomplete       | warning  | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.diagnosis-incomplete`).                                 | `open-forge doctor`                                              |
+| repair.proposal-unavailable       | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.proposal-unavailable`).                              | `open-forge doctor --detail standard`                            |
+| repair.proposal-unsupported       | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.proposal-unsupported`).                                       | fix by hand                                                      |
+| repair.plan-conflict              | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.plan-conflict`).                                              | none                                                             |
+| repair.guided-finding-remaining   | warning  | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.guided-finding-remaining`).                                                | `open-forge repair`                                              |
+| repair.manual-finding-remaining   | warning  | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.manual-finding-remaining`).                                                             | none                                                             |
+| repair.target-changed             | error    | target-changed             |                                                                                                |                                                                  |
+| repair.target-unsafe              | error    | target-unsafe              |                                                                                                |                                                                  |
+| repair.workspace-lock-unavailable | error    | workspace-lock-unavailable |                                                                                                |                                                                  |
+| repair.recovery-conflict          | error    | recovery-conflict          |                                                                                                |                                                                  |
+| repair.recovery-unavailable       | warning  | recovery-unavailable       |                                                                                                |                                                                  |
+| repair.recovery-artifact-retained | warning  | recovery-artifact-retained |                                                                                                |                                                                  |
+| repair.write-failed               | error    | write-failed               |                                                                                                |                                                                  |
+| repair.verification-failed        | error    | verification-failed        |                                                                                                |                                                                  |
+| repair.recovery-failed            | error    | recovery-failed            |                                                                                                |                                                                  |
+| repair.operation-failed           | error    | operation-failed           |                                                                                                |                                                                  |
+| repair.interrupted                | error    | cancelled |                                                                                                |                                                                  |
 
-Request the same preview as one non-interactive structured result:
+## Scenarios
 
-```text
-open-forge repair --automatic --dry-run --json
-```
+### Catalogue situations
 
-Select one exact contained target for a local-reference occurrence. The complete
-values are quoted so the shell passes each tuple member as one value:
+`nothing-to-repair`, `automatic-two-links`, `automatic-nothing-safe-two-guided`,
+`dry-run-automatic`, `relink-one`, `relink-invalid`, `contradictory-relinks`,
+`non-interactive-no-selection`, `library-recovery-step`, `lock-held`,
+`write-failed-partial`, `cancelled`, `invalid-input`.
 
-```sh
-open-forge repair \
-  --relink ".agents/docs/guide.md@12:8" \
-  "../old.md#Old" \
-  ".agents/docs/new.md#New" \
-  --dry-run
-```
+Each status has one representative native text transcript above. JSON uses the same status and command facts under the schema-3 envelope.
 
-The CLI resolves the source occurrence and expected old literal, computes the
-correct authored relative destination to `.agents/docs/new.md#New`, preserves
-the label and every unrelated byte, and shows the exact bounded change without
-writing. A shifted occurrence, changed old literal, missing target, changed
-candidate, ambiguous identity, or unsafe containment blocks instead of using a
-fallback.
+### Open maintainer questions
 
-Apply only explicit relinks in a non-interactive request:
-
-```text
-open-forge repair --json \
-  --relink ".agents/docs/guide.md@12:8" \
-  "../old.md#Old" \
-  ".agents/docs/new.md#New"
-```
-
-This request does not prompt. It still requires complete relevant-domain diagnosis,
-fresh expected-state validation, one conflict-free plan, verified recovery-bundle
-preparation, and verification.
-
+The native evidence leaves four catalogue questions unresolved: whether the `relink-invalid` situation should be renamed to the current `plan-conflict` situation or accompanied by a real malformed relink case; which code and message should describe the current explicit-relink conflict; whether the dry-run warning headline should say `Would repair`; and whether the singular sentence should read `1 problem still needs a choice.` The current outputs are recorded without choosing among those alternatives. **Maintainer decision remains open.**
 ## Non-Goals And Targeted Boundary
 
 Repair does not:
@@ -754,18 +774,20 @@ Conformance evidence must cover:
 - Interactive dry-run parity and the absence of every persistent effect.
 - Automatic selection of every current safe-exact proposal, rejection of guided
   automatic choices, explicit relink union, and idempotent repetition.
-- Non-interactive and JSON omission states, including blocked `--json --dry-run`
-  without selection and the explicit `--automatic --dry-run --json` preview.
+- Non-interactive and JSON omission states, including blocked `--format json --dry-run`
+  without selection and the explicit `--automatic --dry-run --format json` preview.
 - Exact source-location, expected-destination, and selected-target grammar,
   shell quoting, one-based locations, contained local boundary, relative
   destination computation, label and unrelated-byte preservation, and all stale
   or ambiguous-state blocks.
 - Every admitted safe-exact and guided catalogue member, candidate evidence
-  basis, zero/one/several candidate cardinality, and no external or semantic
-  repair.
+  basis, zero/one/several candidate cardinality, generated `Entries` exclusion,
+  and no external or semantic repair. Concrete Library observations remain
+  observations with their actual path, identifier, and cause rather than
+  Markdown broken-link occurrences or invented proposals.
 - Complete coverage for the exact diagnosis domains required by selected edits,
-  with unrelated incomplete lifecycle or recovery-observer facts visible but
-  non-blocking.
+  with unsafe or unavailable selected-write facts blocking strictly and
+  unrelated read/coverage uncertainty visible without silent masking.
 - One atomic selection union, equivalent-effect coalescing, contradictory and
   overlapping conflict blocking, missing authority, verified recovery-bundle
   preparation, and no partial application.
@@ -780,16 +802,18 @@ Conformance evidence must cover:
   recovery-bundle preparation, revalidation, apply, per-effect and semantic
   verification, residual-path reporting, and fresh relevant-domain diagnosis,
   with no fixpoint loop.
-- Human compact and expanded, JSON, and verbose projections from one typed
+- Human minimal, standard, full, debug, and JSON projections from one typed
   result, including exact bounded effects and the accepted stdout and stderr
   policy under the shared schema and process-status mapping defined by the
   [Shared Result Coordinates](../shared/result-coordinates/interface.md).
 - Selected, unselected, repaired, remaining, new, manual, guided, and blocked
   findings and effects, mode, affected paths, preflight, application,
   verification, recovery, residual, and post-diagnosis coverage.
-- Complete, attention, incomplete, invalid, blocked, failed, and interrupted
-  meanings, including selected-scope completion and remaining non-information
-  attention.
+- Completed, completed-with-warnings, incomplete, invalid-input, blocked,
+  failed, and cancelled meanings, including selected-scope completion and
+  remaining non-information warnings, Library-only Doctor next action, mixed
+  authored-link/Library next-action explanation, and the unchanged
+  cancelled/interrupted output boundary.
 - Repeatability, verified no-op behavior, preservation of user content, and
   rejection of all unsupported mutation domains.
 
@@ -825,23 +849,25 @@ protected controls, all selected/registered source trees, exact no-follow link
 identity and collision checks still apply to each actual effect. Recovery adds
 no permission prompt or broad grant. Original residual bytes remain unchanged.
 
-## Compact JSON Output
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+## Executable Wording References
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+CLI help syntax: [`repair.help.syntax`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Repair/RepairText.cs).
+
+<!-- @OpenForgeTextRef repair.help.syntax -->
+
+## Approved Journey Wording References
+
+The following stable IDs link the approved journey behavior above to its typed
+human-wording factories. Independently reviewed snapshots and state assertions
+remain the output evidence.
+
+- [RepairPhrases.cs](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Repair/RepairPhrases.cs)
+  <!-- @OpenForgeTextRef repair.phrase.remaining-link -->
+- [RepairWording.cs](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Repair/RepairWording.cs)
+  <!-- @OpenForgeTextRef repair.wording.remaining-library-diagnosis -->
+  <!-- @OpenForgeTextRef repair.wording.inspect-remaining-library-problems -->
+  <!-- @OpenForgeTextRef repair.wording.review-remaining-links-and-inspect-library-problems -->
+  <!-- @OpenForgeTextRef repair.wording.broken-destination-detail -->

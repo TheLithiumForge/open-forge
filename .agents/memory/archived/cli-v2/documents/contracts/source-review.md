@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Source-visible safety review for external Extension payloads, concealed Markdown constructs, terminal-safe evidence, and authority independent from selection
+  description: "Historical CLI-v2 source: Source-visible safety review for external Extension payloads, concealed Markdown constructs, terminal-safe evidence, and authority independent from selection"
   responsibility: Define what Open Forge must inspect and show before third-party source may enter a workspace without confusing package selection, source review, overwrite, deletion, executable configuration, or Git recovery authority
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

@@ -1,0 +1,8 @@
+status=completed
+coverage=complete
+matching=complete
+projection=complete
+matches=1
+sourcesInspected=4
+sourcesCandidates=4
+findings=0

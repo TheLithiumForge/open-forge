@@ -437,14 +437,16 @@ git diff
 
 ## Measure Context Size
 
-The README's context figures measure the Markdown in `src/open-forge/`, including hidden files, frontmatter, and generated `Entries`. They use [tiktoken](https://github.com/openai/tiktoken) with two named reference encodings:
+Context measurements count the Markdown in `src/open-forge/`, including hidden files, frontmatter, and generated `Entries`. Use [tiktoken](https://github.com/openai/tiktoken) with two named reference encodings:
 
-| Source set              | Files | `o200k_base` tokens | `cl100k_base` tokens |
+The following measurements predate the optional-content extraction and are historical, not counts for the current payload. The current base has 14 Markdown files, with 11 selected at startup through `AGENTS.md`; fresh token totals have not been measured.
+
+| Historical source set   | Files | `o200k_base` tokens | `cl100k_base` tokens |
 | ----------------------- | ----: | ------------------: | -------------------: |
 | Default startup context |    19 |               6,823 |                6,863 |
 | Complete base Framework |    23 |               8,267 |                8,309 |
 
-For startup, start with the canonical `AGENTS.md` handoff and loader, then follow exposed `LoadNow` and `KeepInMind` entries through loaded parents in listed order. Include adjacent overwrites where present. The current default set leaves the archived entrypoint, Templates entrypoint, and on-demand Adaptive Collaboration guidance unloaded. The alternative `CLAUDE.md` bridge adds 24 `o200k_base` tokens when used and is included in the complete-file count.
+For startup, start with the canonical `AGENTS.md` handoff and loader, then follow exposed `LoadNow` and `KeepInMind` entries through loaded parents in listed order. Include adjacent overwrites where present. The current default set leaves the archived and Templates entrypoints unloaded. Adaptive Collaboration is now supplied on demand by the optional Collaboration Extension. The alternative `CLAUDE.md` bridge is included in the complete-file count.
 
 Count each file's raw UTF-8 text independently with `len(encoding.encode(text))`, then sum the results. The measurements use tiktoken `0.14.0`. They exclude tool response wrappers, file separators, system and conversation context, project-specific files, and Extensions. Actual model and harness costs can differ.
 

@@ -21,7 +21,7 @@ This is the accepted current Crystallized contract set for the non-shipping root
 enter and observe. The local Behavior Contract defines deterministic catalogue
 formation, deletion, safety, recovery-bundle handling, and conformance. The new
 CLI does not ship yet. Its development implementation provides this operation;
-[Task 20: Cleanup](../../../../../working/cli-development/tasks/operations/cleanup.md)
+[Task 20: Cleanup](../../../../../archived/cli-development/tasks/operations/cleanup.md)
 records the implementation and execution evidence.
 
 ## Contract Roles
@@ -49,7 +49,5 @@ public and technology-neutral meanings.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted technology-neutral catalogue, deletion, safety, monotonic recovery, and conformance for cleanup](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Behavior #Mutation #Recovery #Safety #Determinism #CurrentTruth
 - [Accepted non-shipping public interface for operand-free, lease-validated cleanup of recognized recovery bundles and drafts](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Interface #Mutation #Recovery #Safety #CurrentTruth
-<!-- open-forge:generated-index:end -->

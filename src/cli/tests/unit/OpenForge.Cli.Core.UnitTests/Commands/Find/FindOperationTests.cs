@@ -32,6 +32,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Find;
 
 public sealed class FindOperationTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find operation reads one boundary, resolves the universe before layers, and invokes explicit boundaries once"),
         InlineData("overwrite-path")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
@@ -67,6 +68,7 @@ public sealed class FindOperationTests
         Assert.Empty(result.Findings);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Find operation requests route facts only when a matched metadata projection is effective"),
         InlineData("", 0),
         InlineData("metadata", 1)]
@@ -97,6 +99,7 @@ public sealed class FindOperationTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find operation retains safe matches when cancellation is raised at a deterministic selected-layer seam")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public async Task OperationRetainsSafeMatchesAcrossDeterministicMidCancellation()
@@ -131,6 +134,7 @@ public sealed class FindOperationTests
         Assert.Equal(FindCoverageState.Interrupted, result.Coverage.State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find operation converts unexpected boundary failures to bounded operation findings without exception identity")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public async Task OperationConvertsUnexpectedBoundaryFailureWithoutLeakingExceptionIdentity()
@@ -260,7 +264,7 @@ public sealed class FindOperationTests
                     [new FindRegion(FindRegionKind.Body, null, "body")])),
             new FindPresentationSelection(
                 null,
-                CliView.Expanded,
+                CliDetail.Standard,
                 new FindContentSelection(contentParts, contentParts)));
     }
 

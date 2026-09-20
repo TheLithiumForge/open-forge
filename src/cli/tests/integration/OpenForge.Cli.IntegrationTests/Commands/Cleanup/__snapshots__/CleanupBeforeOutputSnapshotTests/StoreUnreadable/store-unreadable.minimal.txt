@@ -1,0 +1,2 @@
+The recovery store could not be read completely. Nothing was removed.
+Next: open-forge doctor

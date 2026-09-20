@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 3,
+  "command": "install",
+  "status": "incomplete",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Install could not start: The recovery workspace storage path is not a directory. Nothing was changed.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "install.recovery-unavailable",
+      "title": "Recovery data is unavailable",
+      "message": "Recovery data could not be prepared at <workspace>. Nothing was changed.",
+      "subject": {
+        "kind": "workspace",
+        "path": null,
+        "id": "<workspace>",
+        "location": null
+      },
+      "category": null,
+      "resolution": "blocked-repair",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the reported Install boundary before rerunning it."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0,
+    "sectionsAdded": 0,
+    "filesReplaced": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": true,
+    "automatic": true,
+    "classification": null,
+    "footprint": {
+      "files": 12,
+      "directories": null,
+      "sections": 2
+    },
+    "lockPath": ".agents/open-forge.lock.json",
+    "effects": [],
+    "source": {
+      "inventoryFingerprint": "<sha256>",
+      "assetCount": 14
+    },
+    "lifecycle": {
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "verification": "not-requested"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the reported Install boundary before rerunning it."
+  }
+}

@@ -6,8 +6,6 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
-using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -36,7 +34,7 @@ internal sealed class LibraryResidualWorkspace : IDisposable
     {
         Files = new LibraryMutationWorkspace();
         Files.ConsumerRoute();
-        LibraryMutationApplicationData.Lifecycle(Files);
+        LibraryMutationApplicationData.FrameworkFile(Files);
         if (!dangling)
         {
             Files.RoutedSource();
@@ -56,10 +54,6 @@ internal sealed class LibraryResidualWorkspace : IDisposable
     internal async Task PrepareAsync(string kind, string operation = "sync", bool includeUnselectedHost = false)
     {
         var token = TestContext.Current.CancellationToken;
-        var ownership = await new LifecycleOwnershipReader(new PhysicalPathResolver()).ReadAsync(Files.Workspace, token);
-        Assert.Equal(LifecycleOwnershipReadState.Trusted, ownership.Framework.State);
-        Assert.Equal(LifecycleOwnershipReadState.Trusted, ownership.Extensions.State);
-        Assert.Equal(LibraryMutationApplicationData.ManagedPath, Assert.Single(ownership.Claims).Path);
         RecoveryBundleTarget target;
         var linked = kind is "link-create" or "link-delete";
         _targetPath = Files.Absolute(linked ? LibraryMutationWorkspace.Leaf : LibraryMutationWorkspace.RecordPath);
@@ -145,7 +139,8 @@ internal sealed class LibraryResidualWorkspace : IDisposable
         var comparisons = verified.Entries.Select(CompareIntended).ToImmutableArray();
         var comparison = comparisons[0];
         var candidate = RecoveryBundleCandidateSnapshot.VerifiedFinal(verified);
-        var record = LibraryMutationApplicationData.ReadRecord(Files, exists: kind != "record-delete", registered: true);
+        var record = await OpenForge.Cli.Core.Framework.Libraries.Shared.Observation.LibraryRegistrationReader.ReadAsync(
+            new PhysicalPathResolver(), Files.Workspace, token);
         var priorRecord = kind == "record-delete"
             ? new LibraryRecoveryPriorRecord(LibraryMutationApplicationData.Record(registered: true), entry, Assert.IsType<RecoveryContentIdentity>(entry.Prior.OrdinaryFile))
             : null;

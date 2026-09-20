@@ -1,68 +1,75 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Commands.References.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.References.Shared.Rendering;
 using OpenForge.Cli.IntegrationTests.Hosting;
+using OpenForge.Cli.IntegrationTests.Serialization.Shared.Assertions;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Serialization;
 
 public sealed class ReferencesGeneratedSerializationTests
 {
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "References JSON document is registered as one concrete source-generated graph with reflection disabled"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task ReferencesDocumentUsesGeneratedMetadata()
     {
-        var metadata = ReferencesJsonContext.Default.ReferencesJsonDocument;
+        var metadata = ReferencesDataJsonContext.Default.ReferencesData;
         Assert.False(JsonSerializer.IsReflectionEnabledByDefault);
-        Assert.Equal("ReferencesJsonDocument", metadata.Type.Name);
+        Assert.Equal("ReferencesData", metadata.Type.Name);
 
         using var workspace = CreateWorkspace();
         var result = await CliHostCapture.RunAsync(
-            ["references", "docs", "--direction=out", "--json"],
+            ["references", "docs", "--direction=out", "--format", "json"],
             workspace.Path);
 
         Assert.Equal(0, result.ExitCode);
         using var parsed = JsonDocument.Parse(result.Output);
-        Assert.Equal("references", parsed.RootElement.GetProperty("command").GetString());
-        Assert.Equal("out", parsed.RootElement.GetProperty("result").GetProperty("requestedDirection").GetString());
+        Schema3Assertions.Envelope(parsed.RootElement, "references", "completed", "minimal");
+        Assert.Equal("out", parsed.RootElement.GetProperty("data").GetProperty("direction").GetString());
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "References generated JSON preserves exact member order, nullable values, arrays, locations, and duplicate occurrence graph"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task ReferencesGeneratedDocumentPreservesWireGraph()
     {
         using var workspace = CreateWorkspace();
         var result = await CliHostCapture.RunAsync(
-            ["references", "docs", "--direction=both", "--include=alpha", "--exclude=beta", "--json"],
+            ["references", "docs", "--direction=both", "--include=alpha", "--exclude=beta", "--format", "json", "--detail", "full"],
             workspace.Path);
 
         Assert.Equal(0, result.ExitCode);
         using var parsed = JsonDocument.Parse(result.Output);
         var root = parsed.RootElement;
-        AssertPropertyOrder(root, "schemaVersion", "command", "status", "workspace", "result", "next");
-        var commandResult = root.GetProperty("result");
-        AssertPropertyOrder(commandResult, "source", "requestedDirection", "incomingSelection", "incoming", "outgoing", "findings");
-        AssertPropertyOrder(commandResult.GetProperty("source"), "id", "path", "layers");
-        AssertPropertyOrder(commandResult.GetProperty("incomingSelection"), "mode", "supplied", "resolved", "effectiveSources", "inspectedSources");
-        var supplied = commandResult.GetProperty("incomingSelection").GetProperty("supplied").EnumerateArray().ToArray();
-        Assert.Equal(2, supplied.Length);
-        Assert.Equal(["include", "exclude"], supplied.Select(value => value.GetProperty("role").GetString()));
-        AssertPropertyOrder(commandResult.GetProperty("incoming"), "coverage", "status", "occurrenceCount", "occurrences");
-        AssertPropertyOrder(commandResult.GetProperty("outgoing"), "coverage", "status", "occurrenceCount", "occurrences");
+        Schema3Assertions.Envelope(root, "references", "completed", "full");
+        var commandResult = root.GetProperty("data");
 
-        var occurrence = commandResult.GetProperty("outgoing").GetProperty("occurrences").EnumerateArray().First();
-        AssertPropertyOrder(
-            occurrence,
-            "direction",
-            "level",
-            "source",
-            "location",
-            "destinationLocation",
-            "rawDestination",
-            "fragment",
-            "target",
-            "provenance");
-        AssertPropertyOrder(occurrence.GetProperty("location"), "line", "column", "byteOffset", "byteLength");
-        AssertPropertyOrder(occurrence.GetProperty("target"), "kind", "id", "path", "layer", "resolution", "network");
-        Assert.Equal(1, occurrence.GetProperty("level").GetInt32());
-        Assert.Equal("selected-source", occurrence.GetProperty("provenance").GetString());
+        // The command data is written in declaration order and omits what the level does not
+        // select. `full` selects every member, so this is the complete graph.
+        AssertPropertyOrder(commandResult, "source", "direction", "incoming", "outgoing", "coverage", "filters", "scanned");
+        AssertPropertyOrder(commandResult.GetProperty("source"), "id", "path");
+        AssertPropertyOrder(commandResult.GetProperty("coverage"), "incoming", "outgoing");
+        AssertPropertyOrder(commandResult.GetProperty("filters"), "include", "exclude");
+        Assert.Equal(["alpha"], commandResult.GetProperty("filters").GetProperty("include").EnumerateArray().Select(value => value.GetString()));
+        Assert.Equal(["beta"], commandResult.GetProperty("filters").GetProperty("exclude").EnumerateArray().Select(value => value.GetString()));
+
+        var incoming = commandResult.GetProperty("incoming").EnumerateArray().First();
+        AssertPropertyOrder(incoming, "path", "location", "layer");
+        Assert.Equal(".agents/alpha.md", incoming.GetProperty("path").GetString());
+        Assert.Equal("base", incoming.GetProperty("layer").GetString());
+
+        var outgoing = commandResult.GetProperty("outgoing").EnumerateArray().First();
+        AssertPropertyOrder(outgoing, "location", "destination", "resolvedPath", "state", "layer");
+        Assert.Equal("target.md#overview", outgoing.GetProperty("destination").GetString());
+        Assert.Equal(".agents/target.md", outgoing.GetProperty("resolvedPath").GetString());
+        Assert.Equal("complete", outgoing.GetProperty("state").GetString());
+
+        var scanned = commandResult.GetProperty("scanned").EnumerateArray().First();
+        AssertPropertyOrder(scanned, "id", "path", "layer");
+
+        // An external destination resolves to nothing, so the nullable member is omitted rather
+        // than written as null.
+        var external = commandResult.GetProperty("outgoing").EnumerateArray()
+            .Single(value => value.GetProperty("state").GetString() == "external-unchecked");
+        Assert.False(external.TryGetProperty("resolvedPath", out _));
     }
 
     private static void AssertPropertyOrder(JsonElement element, params string[] names)

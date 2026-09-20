@@ -22,15 +22,24 @@ internal static class LibraryResidualArchive
         string? expectedPriorRecord = null,
         string? storedPayload = null,
         bool includePayload = true,
-        string recordTarget = ".agents/open-forge.libraries.json",
-        string linkTarget = "../shared/team/.agents/a.md")
+        string recordTarget = ".agents/open-forge.lock.json",
+        string linkTarget = "../shared/team/.agents/a.md",
+        bool retainEmptyLock = false)
     {
         var entries = ImmutableArray.CreateBuilder<RecoveryEntry>();
         if (expectedPriorRecord is not null)
         {
             var identity = RecoveryContentIdentity.FromBytes(Encoding.UTF8.GetBytes(expectedPriorRecord));
-            entries.Add(RecoveryEntry.Create(0, CanonicalRelativePath.Create(recordTarget), RecoveryEntryKind.OrdinaryDelete,
-                RecoveryEntryState.Ordinary(identity), RecoveryEntryState.Missing, "payloads/00000000.bin"));
+            const string emptyLock = "{\"schemaVersion\":1,\"framework\":null,\"extensions\":[],\"libraries\":[]}";
+            if (retainEmptyLock)
+            {
+                fixture.Write(recordTarget, emptyLock);
+            }
+            entries.Add(RecoveryEntry.Create(0, CanonicalRelativePath.Create(recordTarget),
+                retainEmptyLock ? RecoveryEntryKind.OrdinaryReplace : RecoveryEntryKind.OrdinaryDelete,
+                RecoveryEntryState.Ordinary(identity),
+                retainEmptyLock ? RecoveryEntryState.Ordinary(RecoveryContentIdentity.FromBytes(Encoding.UTF8.GetBytes(emptyLock))) : RecoveryEntryState.Missing,
+                "payloads/00000000.bin"));
         }
         entries.Add(RecoveryEntry.Create(entries.Count, CanonicalRelativePath.Create(".agents/a.md"), RecoveryEntryKind.RelativeFileLinkDelete,
             RecoveryEntryState.RelativeLink(RelativeFileLinkIdentity.Create(NoFollowLinkKind.SymbolicLink, linkTarget)), RecoveryEntryState.Missing));
@@ -78,12 +87,17 @@ internal static class LibraryResidualArchive
         var observations = verified.Entries.Select(entry =>
         {
             var context = new RecoveryEntryComparisonContext(fixture.Workspace, entry);
-            var leaf = NoFollowLeafObservation.Missing(context.LogicalPath);
+            var leaf = entry.Intended.OrdinaryFile is null
+                ? NoFollowLeafObservation.Missing(context.LogicalPath)
+                : NoFollowLeafObservation.OrdinaryFile(context.LogicalPath);
+            var content = entry.Intended.OrdinaryFile is { } identity
+                ? new RecoveryOrdinaryContentObservation(context.LogicalPath, identity, null)
+                : null;
             return new RecoveryEntryComparison
             {
-                Input = new RecoveryEntryComparisonInput(context, leaf, null),
+                Input = new RecoveryEntryComparisonInput(context, leaf, content),
                 State = RecoveryBundleTargetComparisonState.Intended,
-                Observed = RecoveryEntryState.Missing,
+                Observed = entry.Intended,
                 Cause = null,
             };
         }).ToImmutableArray();

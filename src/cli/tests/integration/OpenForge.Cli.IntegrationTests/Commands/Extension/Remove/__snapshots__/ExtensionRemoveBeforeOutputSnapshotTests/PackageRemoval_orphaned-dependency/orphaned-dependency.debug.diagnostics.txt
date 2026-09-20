@@ -1,0 +1,5 @@
+status=completed-with-warnings
+packages=1
+effects=13
+findings=1
+A dependency becomes unreferenced but remains installed.

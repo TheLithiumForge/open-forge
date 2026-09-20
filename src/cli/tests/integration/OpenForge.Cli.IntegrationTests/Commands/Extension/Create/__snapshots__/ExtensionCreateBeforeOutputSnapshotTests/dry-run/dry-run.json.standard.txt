@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 3,
+  "command": "extension create",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": null,
+  "summary": {
+    "headline": "Would create the toolkit Extension scaffold at <extension-source>\\toolkit",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": "<extension-source>\\toolkit\\extension.json",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "<extension-source>\\toolkit\\content\\.agents\\",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesCreated": 1,
+    "directoriesCreated": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "id": "toolkit",
+    "folder": "<extension-source>",
+    "packagePath": "<extension-source>\\toolkit",
+    "manifestPath": "<extension-source>\\toolkit\\extension.json",
+    "contentPath": "<extension-source>\\toolkit\\content\\.agents\\",
+    "manifest": {
+      "name": "Toolkit",
+      "description": "Open Forge Extension package toolkit.",
+      "version": "0.1.0",
+      "dependencies": []
+    }
+  },
+  "recovery": null,
+  "next": null
+}

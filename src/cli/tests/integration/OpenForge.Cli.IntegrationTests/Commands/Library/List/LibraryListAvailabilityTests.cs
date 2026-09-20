@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.List;
 
 public sealed class LibraryListAvailabilityTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library List preserves unavailable source or link observations and incomplete coverage"), Trait("Feature", "library-read"), Trait("Evidence", "Integration")]
     [InlineData("source")]
     [InlineData("destination")]
@@ -14,7 +15,8 @@ public sealed class LibraryListAvailabilityTests
     {
         if (!OperatingSystem.IsLinux())
         {
-            throw new PlatformNotSupportedException("Required permission evidence targets Linux.");
+            Assert.Skip("Required permission evidence targets Linux.");
+            return;
         }
 
         using var fixture = new LibraryReadWorkspace();
@@ -29,8 +31,8 @@ public sealed class LibraryListAvailabilityTests
         {
             File.SetUnixFileMode(directory, UnixFileMode.None);
             var result = await fixture.ListAsync(TestContext.Current.CancellationToken);
-            Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
-            Assert.Equal(LibraryCoverage.Incomplete, result.Result.Coverage);
+            Assert.Equal(boundary == "source" ? CliSemanticStatus.Attention : CliSemanticStatus.Incomplete, result.Status);
+            Assert.Equal(boundary == "source" ? LibraryCoverage.Complete : LibraryCoverage.Incomplete, result.Result.Coverage);
             var library = Assert.Single(result.Result.Libraries);
             if (boundary == "source")
             {

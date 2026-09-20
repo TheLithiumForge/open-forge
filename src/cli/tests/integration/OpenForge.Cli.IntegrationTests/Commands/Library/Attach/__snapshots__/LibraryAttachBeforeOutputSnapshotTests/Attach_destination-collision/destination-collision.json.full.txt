@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 3,
+  "command": "library attach",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot attach team-knowledge: .agents/directives/review.md already exists and is not a link this Library would create.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-attach.destination-collision",
+      "title": "Destination collision",
+      "message": ".agents/directives/review.md already exists and is not a link this Library would create.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/directives/review.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "guided-choice",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "choose another --to folder",
+          "reason": "Choose another --to folder."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "library-attach.ownership-observation",
+      "title": "Ownership record is missing",
+      "message": "No ownership record exists, so the team-knowledge Library cannot be read from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksCreated": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "sourceFiles": 1,
+    "errors": 1,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "recorded": false,
+    "permissions": {
+      "decision": "not-evaluated",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "links": [],
+    "inventory": {
+      "eligible": 1,
+      "excluded": 0
+    },
+    "expectedStates": [],
+    "verification": {
+      "state": "not-started",
+      "linksCreated": 0,
+      "linksExpected": 0,
+      "recorded": false
+    },
+    "recovery": {
+      "state": "not-requested",
+      "path": null,
+      "remaining": []
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "sentence",
+    "command": "choose another --to folder",
+    "reason": "Choose another --to folder."
+  }
+}

@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Update;
 
 public sealed class UpdateRecoveryDeletionMapperTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update maps every recovery deletion state and disposition without losing residual certainty"), Trait("Feature", "update"), Trait("Evidence", "Unit")]
     public void MapsEveryDeletionStateAndDispositionWithoutLosingResidualCertainty()
     {

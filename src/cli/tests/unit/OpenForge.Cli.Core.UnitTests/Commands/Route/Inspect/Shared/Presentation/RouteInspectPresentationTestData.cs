@@ -243,13 +243,13 @@ internal static class RouteInspectPresentationTestData
 
     internal static CliPresentationRequest<RouteInspectResult> Presentation(
         RouteInspectResult result,
-        CliView view = CliView.Expanded,
-        CliOutputFormat format = CliOutputFormat.Human,
-        CliVerbosity verbosity = CliVerbosity.Normal)
+        CliDetail view = CliDetail.Standard,
+        CliFormat format = CliFormat.Text,
+        CliDetail? diagnosticDetail = null)
     {
         return new CliPresentationRequest<RouteInspectResult>(
             result,
-            new CliPresentation(format, view, verbosity));
+            new CliPresentation(format, diagnosticDetail ?? view, null));
     }
 
     private static RouteInspectResult CreateResolved(

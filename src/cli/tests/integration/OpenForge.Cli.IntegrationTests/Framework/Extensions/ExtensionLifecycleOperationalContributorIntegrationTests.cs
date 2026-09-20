@@ -1,14 +1,15 @@
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
-using OpenForge.Cli.Core.Framework.Lifecycle;
-using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
-using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
+using OpenForge.Cli.Core.Framework.Filesystem.Models.Reading;
+
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
@@ -17,6 +18,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Extensions;
 
 public sealed class ExtensionLifecycleOperationalContributorIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension lifecycle Doctor view treats a present empty section as complete"),
         Trait("Feature", "extension-lifecycle-observation"), Trait("Evidence", "Integration")]
@@ -26,10 +28,9 @@ public sealed class ExtensionLifecycleOperationalContributorIntegrationTests
         WriteLifecycle(workspace, []);
         var resolver = new PhysicalPathResolver();
         var contributor = new ExtensionLifecycleOperationalContributor(
-            lifecycleReader: new LifecycleDocumentReader(resolver),
+            physicalPathResolver: resolver,
             sourceReader: new ExtensionSourceReader(resolver),
-            targetReader: new ExtensionLifecycleTargetReader(resolver),
-            ownershipReader: new LifecycleOwnershipReader(resolver));
+            targetReader: new ExtensionLifecycleTargetReader(resolver));
 
         var view = await contributor.ReadDoctorAsync(
             Workspace(workspace),
@@ -45,6 +46,7 @@ public sealed class ExtensionLifecycleOperationalContributorIntegrationTests
         Assert.Equal(ExtensionSourceReadState.Complete, source.Read.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Extension lifecycle Doctor view preserves distinct sources and installed facts when one source is unavailable"),
         Trait("Feature", "extension-lifecycle-observation"), Trait("Evidence", "Integration")]
@@ -76,17 +78,16 @@ public sealed class ExtensionLifecycleOperationalContributorIntegrationTests
         WriteLifecycle(workspace, packages);
         var resolver = new PhysicalPathResolver();
         var contributor = new ExtensionLifecycleOperationalContributor(
-            lifecycleReader: new LifecycleDocumentReader(resolver),
+            physicalPathResolver: resolver,
             sourceReader: new ExtensionSourceReader(resolver),
-            targetReader: new ExtensionLifecycleTargetReader(resolver),
-            ownershipReader: new LifecycleOwnershipReader(resolver));
+            targetReader: new ExtensionLifecycleTargetReader(resolver));
 
         var view = await contributor.ReadDoctorAsync(
             Workspace(workspace),
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(LifecycleReadState.Complete, view.Lifecycle.State);
-        Assert.Equal(LifecycleExtensionTrust.Trusted, view.Lifecycle.Trust);
+        Assert.Equal(WorkspaceOwnershipReadState.Complete, view.Ownership.State);
+        Assert.Equal(OperationalLifecycleState.Trusted, view.LifecycleState);
         Assert.Equal(
             [
                 ("alpha-embedded", (string?)null),
@@ -95,7 +96,7 @@ public sealed class ExtensionLifecycleOperationalContributorIntegrationTests
                 ("unavailable", missingSource),
                 ("zeta-embedded", (string?)null),
             ],
-            view.Lifecycle.Packages
+            view.Ownership.Document.Extensions
                 .Select(package => (package.Id, package.Source))
                 .OrderBy(package => package.Id, StringComparer.Ordinal));
         Assert.Collection(
@@ -117,42 +118,12 @@ public sealed class ExtensionLifecycleOperationalContributorIntegrationTests
                 readState: ExtensionSourceReadState.Complete));
     }
 
-    private static LifecycleExtensionPackageV1 Package(string id, string? source)
-        => new()
-        {
-            Id = id,
-            Version = "1.0.0",
-            Source = source,
-            Dependencies = [],
-            Paths = [],
-        };
+    private static ExtensionOwnership Package(string id, string? source)
+        => new(id, "1.0.0", source, [], [], []);
 
-    private static void WriteLifecycle(
-        TemporaryWorkspace workspace,
-        LifecycleExtensionPackageV1[] packages)
-    {
-        var extensions = new ExtensionLifecycleState
-        {
-            Coverage = LifecycleSchema.CompleteCoverage,
-            Packages = packages,
-            Paths = [],
-        };
-        var envelope = new LifecycleEnvelopeV1
-        {
-            SchemaVersion = LifecycleSchema.Version,
-            FingerprintPolicy = LifecycleSchema.FingerprintPolicy,
-            WorkspacePath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(workspace.Path)),
-            Framework = null,
-            Extensions = JsonSerializer.SerializeToElement(
-                extensions,
-                LifecycleJsonContext.Default.ExtensionLifecycleState),
-        };
-        workspace.WriteBytes(
-            LifecycleSchema.RelativePath,
-            JsonSerializer.SerializeToUtf8Bytes(
-                envelope,
-                LifecycleJsonContext.Default.LifecycleEnvelopeV1));
-    }
+    private static void WriteLifecycle(TemporaryWorkspace workspace, ExtensionOwnership[] packages)
+        => workspace.WriteBytes(WorkspaceOwnershipDefinitions.RelativePath,
+            WorkspaceOwnershipCodec.Write(WorkspaceOwnershipDocument.Empty with { Extensions = [.. packages] }));
 
     private static CliWorkspace Workspace(TemporaryWorkspace workspace)
         => new(

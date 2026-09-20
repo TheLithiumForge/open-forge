@@ -1,0 +1,6 @@
+team-knowledge is current: 1 file from shared/team is linked under ..
+Workspace: <workspace>
+  .agents/directives/review.md  current
+      Expected target: ../../shared/team/.agents/directives/review.md
+      Observed target: ../../shared/team/.agents/directives/review.md
+Source inventory: 1 eligible file, 0 excluded items.

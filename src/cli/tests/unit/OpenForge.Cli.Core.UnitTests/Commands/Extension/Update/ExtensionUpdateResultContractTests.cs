@@ -2,15 +2,17 @@ using OpenForge.Cli.Core.Commands.Extension.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Selection;
-using OpenForge.Cli.Core.Commands.Extension.Update.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Extension.Update;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Update;
 
 public sealed class ExtensionUpdateResultContractTests
 {
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Extension Update result snapshots typed facts and orders findings deterministically"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void ResultSnapshotsFactsAndOrdersFindings()
     {
@@ -22,10 +24,9 @@ public sealed class ExtensionUpdateResultContractTests
             region: null,
             sourceAssetPath: "toolkit/content/.agents/toolkit.md",
             ExtensionUpdateComparisonFingerprintKind.OpenForgeMarkdownV1,
-            baselineFingerprint: Fingerprint('a'),
             currentFingerprint: Fingerprint('a'),
             intendedFingerprint: Fingerprint('b'),
-            ExtensionUpdateComparisonCurrentState.BaselineEquivalent,
+            ExtensionUpdateComparisonCurrentState.Changed,
             ExtensionUpdateComparisonIntendedState.Changed,
             ExtensionUpdateRetirementEligibility.NotApplicable);
         var changes = new ExtensionUpdateLogicalChange(
@@ -110,25 +111,25 @@ public sealed class ExtensionUpdateResultContractTests
             [ExtensionUpdateFindingCode.ManagedDivergence, ExtensionUpdateFindingCode.TargetUnsafe],
             result.Findings.Select(finding => finding.Code));
         Assert.Null(result.Next);
-        foreach (var view in new[] { CliView.Compact, CliView.Expanded })
+        foreach (var view in new[] { CliDetail.Minimal, CliDetail.Standard })
         {
-            var request = new CliPresentationRequest<ExtensionUpdateResult>(result, new(CliOutputFormat.Human, view, CliVerbosity.Normal));
-            var jsonBefore = ExtensionUpdateJsonProjection.RenderJson(request);
-            var rendered = ExtensionUpdatePresentation.RenderHuman(request);
-            Assert.Contains("Status: blocked", rendered, StringComparison.Ordinal);
-            Assert.Contains(".agents/unsafe.md", rendered, StringComparison.Ordinal);
-            Assert.Contains(".agents/_index.md", rendered, StringComparison.Ordinal);
-            Assert.Equal(view == CliView.Expanded, rendered.Contains(".agents/unchanged-navigation.md", StringComparison.Ordinal));
-            Assert.Equal(view == CliView.Compact, rendered.Contains("Unchanged navigation paths summarized: 1", StringComparison.Ordinal));
-            Assert.Contains("planned", rendered, StringComparison.Ordinal);
-            Assert.DoesNotContain("verified", rendered, StringComparison.Ordinal);
-            Assert.Contains("Protected paths: .agents/toolkit.md", rendered, StringComparison.Ordinal);
-            Assert.Equal(1, rendered.ReplaceLineEndings("\n").Split('\n').Count(line => line == "  .agents/toolkit.md"));
-            Assert.Equal(jsonBefore, ExtensionUpdateJsonProjection.RenderJson(request));
+            var textRequest = new CliPresentationRequest<ExtensionUpdateResult>(result, new(CliFormat.Text, view, null));
+            var text = CliRenderingStage.Render(textRequest, ExtensionUpdatePresentation.Rendering).PrimaryContent;
+            Assert.Contains("Cannot update toolkit:", text, StringComparison.Ordinal);
+            Assert.Contains(".agents/unsafe.md", text, StringComparison.Ordinal);
+            Assert.Equal(
+                view >= CliDetail.Standard,
+                text.Contains("1 Entries section updated", StringComparison.Ordinal));
+            var jsonRequest = textRequest with { Presentation = textRequest.Presentation with { Format = CliFormat.Json } };
+            var json = CliRenderingStage.Render(jsonRequest, ExtensionUpdatePresentation.Rendering).PrimaryContent;
+            using var document = System.Text.Json.JsonDocument.Parse(json);
+            Assert.Equal("extension update", document.RootElement.GetProperty("command").GetString());
+            Assert.Equal("blocked", document.RootElement.GetProperty("status").GetString());
         }
 
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Update empty result initializes every typed safety fact without effects"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void EmptyResultInitializesEveryTypedSafetyFact()
     {

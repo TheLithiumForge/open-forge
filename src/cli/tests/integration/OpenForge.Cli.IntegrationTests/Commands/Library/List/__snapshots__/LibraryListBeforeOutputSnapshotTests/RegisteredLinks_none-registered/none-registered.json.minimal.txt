@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 3,
+  "command": "library list",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "No Libraries are registered.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "libraries": 0,
+    "linksCurrent": 0,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "linksUnavailable": 0
+  },
+  "limitations": [],
+  "data": {
+    "libraries": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge library attach <id> <source-folder>",
+    "reason": "Register a Library before listing it."
+  }
+}

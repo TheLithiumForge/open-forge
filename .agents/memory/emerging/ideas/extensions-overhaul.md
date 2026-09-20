@@ -103,9 +103,9 @@ authorize packaging or externalizing `local/extensions`.
 This idea remains the source for queued permanent Task 24 “Extensions
 Evolution”. Task 24 owns the package-directory decision and consumer-owned
 Extension destination permissions. [Task
-25](../../working/cli-development/tasks/workspace-library-destination-projections.md)
+25](../../archived/cli-development/tasks/workspace-library-destination-projections.md)
 separately owns any later Library relative-link destinations beyond `.agents/`.
-[Task 26](../../working/cli-development/tasks/extension-internal-consolidation.md)
+[Task 26](../../archived/cli-development/tasks/extension-internal-consolidation.md)
 owns only the differential-locked six-command internal refactor and public-test
 streamlining after both behavior tasks are settled.
 

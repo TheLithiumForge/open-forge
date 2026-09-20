@@ -9,6 +9,7 @@ public sealed class LocalReferenceFactReaderTests
     private const string TargetPath = ".agents/target.md";
     private const string Fragment = "Section%20Name";
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Named target resolutions preserve exact fragment observation mappings"),
         InlineData((int)SourceLinkTargetResolution.Complete, TargetPath, (int)LocalReferenceFragmentState.Verified, Fragment),
         InlineData((int)SourceLinkTargetResolution.Missing, TargetPath, (int)LocalReferenceFragmentState.NotRequested, null),
@@ -44,6 +45,7 @@ public sealed class LocalReferenceFactReaderTests
         Assert.Null(observation.Canonical);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "An absent fragment returns before named or undefined resolution mapping"),
         InlineData((int)SourceLinkTargetResolution.Complete), InlineData(int.MaxValue),
         Trait("Feature", "references"), Trait("Evidence", "Unit")]
@@ -61,6 +63,7 @@ public sealed class LocalReferenceFactReaderTests
         Assert.Null(observation.Canonical);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "An established correction returns before named or undefined resolution mapping"),
         InlineData((int)SourceLinkTargetResolution.FragmentMissing), InlineData(int.MaxValue),
         Trait("Feature", "references"), Trait("Evidence", "Unit")]
@@ -93,6 +96,7 @@ public sealed class LocalReferenceFactReaderTests
         Assert.Equal("heading", observation.Canonical);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "An admitted undefined resolution with a fragment is rejected at the mapping boundary"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
     public void UndefinedResolutionWithFragmentIsRejected()
     {

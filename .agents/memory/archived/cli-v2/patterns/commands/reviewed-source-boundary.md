@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Inspect third-party source as escaped positional facts and keep source trust separate from subject selection and mutation authority
+  description: "Historical CLI-v2 source: Inspect third-party source as escaped positional facts and keep source trust separate from subject selection and mutation authority"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

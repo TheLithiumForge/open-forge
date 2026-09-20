@@ -1,0 +1,7 @@
+Created .agents/documents/_documents.md
+Workspace: <workspace>
+  Scaffold: generic
+  description: Documents
+  responsibility: Owns documents.
+  tags: Docs
+  .agents/documents/_documents.md  created

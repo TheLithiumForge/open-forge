@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 3,
+  "command": "route update",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot update docs/guide: docs/guide could match more than one route.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-update.route-ambiguous",
+      "title": "Route is ambiguous",
+      "message": "docs/guide could match more than one route.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "docs/guide",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route list --depth=all",
+          "reason": "Choose an exact route, then rerun Route Update."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "fieldsChanged": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": null,
+      "path": null
+    },
+    "changes": [],
+    "template": null,
+    "listedIn": null
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route list --depth=all",
+    "reason": "Choose an exact route, then rerun Route Update."
+  }
+}

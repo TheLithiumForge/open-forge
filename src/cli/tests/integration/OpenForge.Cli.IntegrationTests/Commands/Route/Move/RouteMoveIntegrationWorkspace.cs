@@ -15,8 +15,8 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
-using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
@@ -29,7 +29,6 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
-using OpenForge.Cli.IntegrationTests.Framework.Lifecycle;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
@@ -45,7 +44,7 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
     internal const string CategoryId = "guidance/topics";
     internal const string CategoryPath = ".agents/guidance/topics/_topics.md";
     internal const string CategoryDestination = ".agents/archive/topics/_topics.md";
-    internal const string LifecyclePath = ".agents/open-forge.lifecycle.json";
+    internal const string OwnershipPath = ".agents/open-forge.lock.json";
     internal const string ApplicationCategoryPath = ".agents/guidance/application/_application.md";
     internal const string ApplicationCategoryDestination = ".agents/archive/application/_application.md";
 
@@ -53,6 +52,7 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
     private readonly WorkspaceLockTestStore lockStore;
     private readonly HashSet<string> recoveryPaths = new(StringComparer.Ordinal);
     private readonly HashSet<string> symbolicLinkPaths = new(StringComparer.Ordinal);
+    private readonly HashSet<string> leafOutputPaths = new(StringComparer.Ordinal);
     private bool _ownsCategoryDestination;
     private static readonly string[] CategoryDestinationFiles =
     [
@@ -69,9 +69,28 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
             temporary.Path,
             temporary.Path,
             CliWorkspaceSelectionMethod.ExplicitWorkspace);
+        _ = lockStore.Track(Workspace);
     }
 
     internal CliWorkspace Workspace { get; }
+
+    internal WorkspaceLockStoreRoot LockStoreRoot => lockStore.StoreRoot;
+
+    internal FileStream HoldLock() => lockStore.OpenExclusive(Workspace);
+
+    internal void TrackRecoveryPath(string path) => recoveryPaths.Add(path);
+
+    internal void OwnLeafDestination(bool crossRoute)
+    {
+        var destination = crossRoute ? CrossRouteDestination : LeafDestination;
+        foreach (var relativePath in new[] { destination, destination[..^3] + ".overwrite.md" })
+        {
+            var path = Absolute(relativePath);
+            Assert.False(File.Exists(path));
+            Assert.False(Directory.Exists(path));
+            leafOutputPaths.Add(path);
+        }
+    }
 
     internal static RouteMoveIntegrationWorkspace Create(string purpose)
     {
@@ -113,21 +132,21 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
                 lexicalPath),
             StrictUtf8FileReader.ReadAsync,
             markdown.Parse);
-        var ownership = new LifecycleOwnershipReader(physical);
         return new RouteMovePlanBuilder(
             new RouteMoveSubjectResolver(
-                new OpenForge.Cli.Core.Framework.Sources.Inventory.SourceCatalogueReader(),
-                new SourceReferenceResolver((workspace, canonicalPath) =>
-                    physical.ResolveCandidate(
-                        workspace.LexicalRoot,
-                        workspace.PhysicalRoot,
-                        Path.Combine(
+                new RouteMoveSubjectSelector(
+                    new OpenForge.Cli.Core.Framework.Sources.Inventory.SourceCatalogueReader(),
+                    new SourceReferenceResolver((workspace, canonicalPath) =>
+                        physical.ResolveCandidate(
                             workspace.LexicalRoot,
-                            canonicalPath.Replace('/', Path.DirectorySeparatorChar)))),
-                new SourceRouteFactsResolver(),
-                new RouteNavigationExposureReader(new MarkdownDocumentParser()),
+                            workspace.PhysicalRoot,
+                            Path.Combine(
+                                workspace.LexicalRoot,
+                                canonicalPath.Replace('/', Path.DirectorySeparatorChar)))),
+                    new SourceRouteFactsResolver(),
+                    new RouteNavigationExposureReader(new MarkdownDocumentParser())),
                 expectation),
-            new RouteMoveCategoryInventoryReader(physical, expectation, ownership),
+            new RouteMoveCategoryInventoryReader(physical, expectation),
             new RouteMoveDestinationResolver(expectation),
             new RouteMoveReferencePlanner(catalogue, markdown, sourceDestination, expectation),
             new RouteMoveNavigationPlanner(
@@ -215,6 +234,9 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
             case "overwrite-collision":
                 WriteText(".agents/guidance/new guide.overwrite.md", "collision overwrite\n");
                 return;
+            case "ownership-region-claim":
+                SeedLifecycleClaim(LeafPath.ToUpperInvariant(), region: true);
+                return;
             case "ownership-claim":
                 SeedLifecycleClaim(LeafPath);
                 return;
@@ -222,23 +244,13 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
                 SeedLifecycleClaim(".agents/archive/_archive.md");
                 return;
             case "ownership-malformed":
-                WriteText(LifecyclePath, "{ malformed lifecycle");
+                WriteText(OwnershipPath, "{ malformed ownership");
                 return;
-            case "ownership-stale":
-                WriteText(
-                    LifecyclePath,
-                    ReadText(LifecyclePath).Replace(
-                        temporary.Path,
-                        $"{temporary.Path}-stale",
-                        StringComparison.Ordinal));
+            case "ownership-old-metadata":
+                SeedLifecycleClaim(path: null, version: "0.0.1");
                 return;
-            case "ownership-incomplete":
-                WriteText(
-                    LifecyclePath,
-                    ReadText(LifecyclePath).Replace(
-                        "\"coverage\":\"complete\"",
-                        "\"coverage\":\"partial\"",
-                        StringComparison.Ordinal));
+            case "ownership-unknown":
+                temporary.ReplaceBytes(OwnershipPath, WorkspaceOwnershipCodec.Write(WorkspaceOwnershipDocument.Empty));
                 return;
             case "ownership-conflicting":
                 SeedLifecycleConflict(LeafPath);
@@ -250,7 +262,7 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
                 CreateSymbolicLink("alias.md", "README.md");
                 return;
             case "unsafe-generated-region":
-                WriteText(".agents/guidance/_guidance.md", Markdown("Guidance", "## Entries\n\n<!-- open-forge:generated-index:start -->\n"));
+                WriteText(".agents/guidance/_guidance.md", Markdown("Guidance", "# Guidance\n\n## Entries\n\n## Entries\n"));
                 return;
             case "invalid-utf8":
                 temporary.CreateFile("invalid.md", [0xff, 0xfe, 0xfd]);
@@ -267,6 +279,25 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
             default:
                 throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "Unknown Route Move test scenario.");
         }
+    }
+
+    internal void SeedMinimalIdentityCollisionScenario()
+    {
+        SeedScenario("identity-collision");
+        WriteText(
+            LeafPath,
+            Markdown(
+                "Old guide",
+                "# Old guide\n"));
+        WriteText(OverwritePath, "Local overwrite.\n");
+        WriteText(
+            ".agents/guidance/topics/child.md",
+            Markdown("Child", "# Child\n"));
+        WriteText(
+            ".agents/guidance/topics/child.overwrite.md",
+            "Child overwrite.\n");
+        WriteText("README.md", "# Outside catalogue\n");
+        WriteText("notes.md", "Notes.\n");
     }
 
     internal void OwnCategoryDestination()
@@ -397,21 +428,21 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
         return new RouteMoveAppliedVerifier(
             new RouteMovePostMoveObserver(
                 new RouteMoveSubjectResolver(
-                    new SourceCatalogueReader(),
-                    new SourceReferenceResolver((workspace, canonicalPath) =>
-                        physical.ResolveCandidate(
-                            workspace.LexicalRoot,
-                            workspace.PhysicalRoot,
-                            Path.Combine(
+                    new RouteMoveSubjectSelector(
+                        new SourceCatalogueReader(),
+                        new SourceReferenceResolver((workspace, canonicalPath) =>
+                            physical.ResolveCandidate(
                                 workspace.LexicalRoot,
-                                canonicalPath.Replace('/', Path.DirectorySeparatorChar)))),
-                    new SourceRouteFactsResolver(),
-                    new RouteNavigationExposureReader(markdown),
+                                workspace.PhysicalRoot,
+                                Path.Combine(
+                                    workspace.LexicalRoot,
+                                    canonicalPath.Replace('/', Path.DirectorySeparatorChar)))),
+                        new SourceRouteFactsResolver(),
+                        new RouteNavigationExposureReader(markdown)),
                     validator),
                 new RouteMoveCategoryInventoryReader(
                     physical,
-                    validator,
-                    new LifecycleOwnershipReader(physical)),
+                    validator),
                 new RouteMoveReferencePlanner(
                     new RouteMarkdownCatalogueReader(physical),
                     markdown,
@@ -427,6 +458,15 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
 
     public void Dispose()
     {
+        foreach (var path in leafOutputPaths)
+        {
+            if (File.Exists(path))
+            {
+                Assert.Equal((FileAttributes)0, File.GetAttributes(path) & (FileAttributes.Directory | FileAttributes.ReparsePoint | FileAttributes.Device));
+                File.Delete(path);
+            }
+        }
+
         foreach (var path in symbolicLinkPaths)
         {
             File.Delete(path);
@@ -601,36 +641,32 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
         SeedLifecycleClaim(path: null);
     }
 
-    private void SeedLifecycleClaim(string? path)
+    private void SeedLifecycleClaim(string? path, string? version = null, bool region = false)
     {
-        var framework = LifecycleStoreIntegrationDocuments.Framework();
-        var extensions = path is null
-            ? LifecycleStoreIntegrationDocuments.EmptyExtensions()
-            : LifecycleStoreIntegrationDocuments.Extensions(path);
-        var envelope = LifecycleStoreIntegrationDocuments.Envelope(
-            temporary,
-            framework,
-            extensions);
-        var bytes = LifecycleStoreIntegrationDocuments.Serialize(envelope);
-        if (File.Exists(Absolute(LifecyclePath)))
+        var document = WorkspaceOwnershipDocument.Empty with
         {
-            temporary.ReplaceBytes(LifecyclePath, bytes);
+            Framework = new(new("framework", version), [], []),
+            Extensions = path is null ? [] : [new("toolkit", version, null, [], region ? [] : [path], region ? [new(path, "entries")] : [])],
+        };
+        var bytes = WorkspaceOwnershipCodec.Write(document);
+        if (File.Exists(Absolute(OwnershipPath)))
+        {
+            temporary.ReplaceBytes(OwnershipPath, bytes);
         }
         else
         {
-            temporary.CreateFile(LifecyclePath, bytes);
+            temporary.CreateFile(OwnershipPath, bytes);
         }
     }
 
     private void SeedLifecycleConflict(string path)
     {
-        var envelope = LifecycleStoreIntegrationDocuments.Envelope(
-            temporary,
-            LifecycleStoreIntegrationDocuments.Framework(path),
-            LifecycleStoreIntegrationDocuments.Extensions(path));
-        temporary.ReplaceBytes(
-            LifecyclePath,
-            LifecycleStoreIntegrationDocuments.Serialize(envelope));
+        var document = WorkspaceOwnershipDocument.Empty with
+        {
+            Framework = new(new("framework", null), [path], []),
+            Extensions = [new("toolkit", null, null, [], [path], [])],
+        };
+        temporary.ReplaceBytes(OwnershipPath, WorkspaceOwnershipCodec.Write(document));
     }
 
     private void MoveCategoryEntrypointToCompatibilityName()

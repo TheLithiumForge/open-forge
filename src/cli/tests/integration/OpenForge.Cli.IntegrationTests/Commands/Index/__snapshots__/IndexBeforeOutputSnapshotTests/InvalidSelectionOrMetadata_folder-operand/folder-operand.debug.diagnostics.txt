@@ -1,0 +1,4 @@
+status=invalid-input
+mode=apply
+regions=0
+The exact path is not an admitted logical source.

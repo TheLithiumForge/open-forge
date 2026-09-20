@@ -1,0 +1,5 @@
+Synchronized team-knowledge: 1 link added.
+Workspace: <workspace>
+  Added    .agents/directives/review.md
+    Target: ../../shared/team-knowledge/.agents/directives/review.md
+  .agents/open-forge.lock.json  updated

@@ -1,0 +1,11 @@
+Nothing was installed from <extension-source>: the package has no content directory.
+Workspace: <workspace>
+  Warning  toolkit  Package content is missing [extension-install.package-content-missing]
+         The package has no content directory. Package files belong under <extension-source>/content/.agents/.
+  Source: <extension-source> (catalogue)
+  .agents/open-forge.lock.json  updated
+  Entries sections unchanged: .agents/directives/_directives.md, .agents/guidance/_guidance.md, .agents/loader.md, .agents/maps/_maps.md, .agents/memory/_memory.md, .agents/memory/archived/_archived.md, .agents/memory/crystallized/_crystallized.md, .agents/memory/emerging/_emerging.md, .agents/memory/working/_working.md, .agents/patterns/_patterns.md, .agents/skills/_skills.md, .agents/templates/_templates.md
+  Permission evaluation: decision not-required; required 0; missing 0; saved no
+  Framework fingerprint: <sha256>
+  Verification: targets verified; Entries verified; Extension record verified; Framework record verified
+  Recovery: not-required.

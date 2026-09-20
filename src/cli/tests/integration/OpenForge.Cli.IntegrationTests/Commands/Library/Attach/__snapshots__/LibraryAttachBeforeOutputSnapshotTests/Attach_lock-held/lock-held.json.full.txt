@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 3,
+  "command": "library attach",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot attach team-knowledge: Another Open Forge command holds the workspace lock. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-attach.lock-unavailable",
+      "title": "Workspace lock is unavailable",
+      "message": "Another Open Forge command holds the workspace lock. Nothing was changed.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "library-attach.ownership-observation",
+      "title": "Ownership record is missing",
+      "message": "No ownership record exists, so the team-knowledge Library cannot be read from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/directives/review.md",
+      "kind": "link",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "linksCreated": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "sourceFiles": 1,
+    "errors": 1,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "recorded": false,
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "links": [
+      {
+        "path": ".agents/directives/review.md",
+        "target": "../../shared/team-knowledge/.agents/directives/review.md"
+      }
+    ],
+    "inventory": {
+      "eligible": 1,
+      "excluded": 0
+    },
+    "expectedStates": [
+      {
+        "path": ".agents/directives/review.md",
+        "kind": "missing",
+        "length": null,
+        "sha256": null,
+        "target": null
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "kind": "missing",
+        "length": null,
+        "sha256": null,
+        "target": null
+      }
+    ],
+    "verification": {
+      "state": "not-started",
+      "linksCreated": 0,
+      "linksExpected": 1,
+      "recorded": false
+    },
+    "recovery": {
+      "state": "not-requested",
+      "path": null,
+      "remaining": []
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

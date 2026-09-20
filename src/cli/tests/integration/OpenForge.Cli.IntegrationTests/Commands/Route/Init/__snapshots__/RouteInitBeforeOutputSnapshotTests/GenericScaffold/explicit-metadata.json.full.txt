@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Created .agents/documents/_documents.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/documents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/documents/_documents.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "---\nopen-forge:\n  description: Documents\n  tags: [Docs]\n  responsibility: Owns documents.\n---\n\n# documents\n\nDocuments.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- none - No entries - #Empty\n"
+    }
+  ],
+  "counts": {
+    "entrypointsCreated": 1,
+    "entrypointsPresent": 0,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "documents",
+      "path": ".agents/documents/_documents.md"
+    },
+    "scaffold": "generic",
+    "entrypoints": [
+      {
+        "path": ".agents/documents/_documents.md",
+        "outcome": "created",
+        "needsAuthoring": false,
+        "content": "---\nopen-forge:\n  description: Documents\n  tags: [Docs]\n  responsibility: Owns documents.\n---\n\n# documents\n\nDocuments.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- none - No entries - #Empty\n"
+      }
+    ],
+    "listedIn": [],
+    "metadata": {
+      "description": "Documents",
+      "responsibility": "Owns documents.",
+      "tags": [
+        "Docs"
+      ],
+      "sources": {
+        "description": "explicit",
+        "responsibility": "explicit",
+        "tags": "explicit"
+      }
+    },
+    "sections": [],
+    "verification": "verified"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

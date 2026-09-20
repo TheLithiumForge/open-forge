@@ -1,0 +1,13 @@
+Cannot update toolkit: Another Open Forge command holds the workspace lock. Nothing was changed.
+Workspace: <workspace>
+  Error  toolkit  Workspace lock is unavailable [extension-update.workspace-lock-unavailable]
+         Another Open Forge command holds the workspace lock. Nothing was changed.
+         fix by hand
+         cause: IOException (0x80070020): The filesystem operation failed.
+         read from <extension-source>
+  Source: <extension-source>
+  Dependency closure: toolkit
+  0 files unchanged
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+  No verification was needed.
+  No recovery bundle was created.

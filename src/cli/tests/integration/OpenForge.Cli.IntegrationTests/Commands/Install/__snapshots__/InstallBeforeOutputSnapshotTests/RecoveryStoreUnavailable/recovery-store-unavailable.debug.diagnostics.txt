@@ -1,0 +1,11 @@
+status=incomplete
+mode=apply
+force=true
+automatic=true
+classification=none
+effects=0
+lifecycle=none/not-requested
+recovery=not-required
+verification=not-requested
+findings=1
+next=present

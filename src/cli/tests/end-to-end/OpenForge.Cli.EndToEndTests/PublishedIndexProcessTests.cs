@@ -17,19 +17,19 @@ public sealed class PublishedIndexProcessTests
             target,
             workspace.Path,
             workspace.SnapshotState,
-            ["index", PublishedIndexWorkspace.RootPath, "--dry-run", "--dry-run", "--view", "compact"],
+            ["index", PublishedIndexWorkspace.RootPath, "--dry-run", "--dry-run", "--detail", "standard"],
             workspace.ProcessEnvironment);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
-        Assert.Contains("Preview of generated navigation changes", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Would update the Entries section in 1 of 1 file.", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
-            "@@ {\"id\":\"root\",\"path\":\".agents/root/_root.md\",\"scope\":\"detached\"} @@",
+            "--- .agents/root/_root.md  (Entries section)",
             result.StandardOutput,
             StringComparison.Ordinal);
-        Assert.Contains("- stale", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("- - stale", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains($"+ {PublishedIndexWorkspace.ExpectedEntry}", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("No files changed (--dry-run).", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("No files were changed.", result.StandardOutput, StringComparison.Ordinal);
         workspace.AssertNoLockInfrastructure();
     }
 
@@ -48,7 +48,7 @@ public sealed class PublishedIndexProcessTests
 
         Assert.Equal(0, first.ExitCode);
         Assert.Equal(string.Empty, first.StandardError);
-        Assert.Contains("Generated Entries were updated.", first.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Updated the Entries section in 1 of 1 file.", first.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(
             OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
             {
@@ -67,8 +67,8 @@ public sealed class PublishedIndexProcessTests
 
         Assert.Equal(0, second.ExitCode);
         Assert.Equal(string.Empty, second.StandardError);
-        Assert.Contains("Generated Entries are up to date.", second.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("No files changed.", second.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("The Entries section is current in 1 file. Nothing to do.", second.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Nothing to do.", second.StandardOutput, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Published Index invalid JSON is one typed stdout document with the shared exit"),
@@ -81,17 +81,17 @@ public sealed class PublishedIndexProcessTests
             target,
             workspace.Path,
             workspace.SnapshotState,
-            ["index", ".agents/../private.md", "--json"],
+            ["index", ".agents/../private.md", "--format", "json"],
             workspace.ProcessEnvironment);
 
         Assert.Equal(4, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         Assert.DoesNotContain("private.md", result.StandardOutput, StringComparison.Ordinal);
         using var document = JsonDocument.Parse(result.StandardOutput);
-        Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
+        Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
         Assert.Equal(
             "index.invalid-source",
-            document.RootElement.GetProperty("result").GetProperty("findings")[0].GetProperty("code").GetString());
+            document.RootElement.GetProperty("findings")[0].GetProperty("code").GetString());
         workspace.AssertNoLockInfrastructure();
     }
 }

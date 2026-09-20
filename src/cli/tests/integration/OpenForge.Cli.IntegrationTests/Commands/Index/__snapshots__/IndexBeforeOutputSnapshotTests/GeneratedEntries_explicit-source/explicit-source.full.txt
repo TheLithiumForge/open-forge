@@ -1,0 +1,6 @@
+Updated the Entries section in 2 of 2 files.
+Workspace: <workspace>
+  .agents/loader.md      1 -> 1 entries
+  .agents/root/_root.md  unknown -> 1 entries
+Selection: .agents/root/_root.md
+The recovery bundle was removed.

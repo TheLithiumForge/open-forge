@@ -1,0 +1,5 @@
+status=blocked
+packages=1
+effects=12
+findings=1
+The requested Extension destinations require shared permission in .agents/open-forge.json; use --allow-path <path> to record a grant.

@@ -8,6 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Filesystem;
 
 public sealed class RouteListInventoryReaderIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list inventory classifies authored source forms and ignores generated descendant authority")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task InventoryClassifiesMetadataOverwriteAmbiguityAndReadFailures()
@@ -19,10 +20,7 @@ public sealed class RouteListInventoryReaderIntegrationTests
             # Loader
 
             ## Entries
-
-            <!-- open-forge:generated-index:start -->
             - [Ghost](ghost/_ghost.md) - #Ghost
-            <!-- open-forge:generated-index:end -->
             """);
         workspace.Write(
             ".agents/root/_root.md",
@@ -110,6 +108,7 @@ public sealed class RouteListInventoryReaderIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list inventory retains an unsupported-form finding for a source without an automatic ID")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task SourceWithoutAutomaticIdRemainsAnAuthoredFormFinding()
@@ -131,6 +130,7 @@ public sealed class RouteListInventoryReaderIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list inventory reports a completely inspected empty .agents root")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task EmptyAgentsDirectoryIsComplete()
@@ -147,6 +147,7 @@ public sealed class RouteListInventoryReaderIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list inventory stops at a pre-cancelled root without filesystem evidence")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task PreCancelledInventoryIsInterruptedBeforeRootAccess()

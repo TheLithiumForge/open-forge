@@ -26,13 +26,13 @@ internal static class RouteInitRedTestData
 
     internal static CliInvocation Invocation(
         CliWorkspace workspace,
-        CliOutputFormat format = CliOutputFormat.Json,
-        CliView view = CliView.Expanded,
-        CliVerbosity verbosity = CliVerbosity.Normal)
+        CliFormat format = CliFormat.Json,
+        CliDetail view = CliDetail.Standard,
+        CliDetail? diagnosticDetail = null)
     {
         return new CliInvocation(
             new CliProcessIdentity("open-forge", "test"),
-            new CliPresentation(format, view, verbosity),
+            new CliPresentation(format, diagnosticDetail ?? view, null),
             CliTerminalMode.None,
             new CliWorkspaceRequest(workspace.LexicalRoot, workspace.LexicalRoot),
             workspace);

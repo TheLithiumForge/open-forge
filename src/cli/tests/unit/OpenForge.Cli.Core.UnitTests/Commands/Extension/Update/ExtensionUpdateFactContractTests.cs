@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Update;
 
 public sealed class ExtensionUpdateFactContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Update package snapshots unique dependency identities"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void PackageSnapshotsUniqueDependencies()
     {
@@ -25,6 +26,7 @@ public sealed class ExtensionUpdateFactContractTests
             dependencies: [" "]));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Update recovery facts require residual certainty only for retained bundles"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void RecoveryFactsRequireRetainedResidualCertainty()
     {
@@ -53,6 +55,7 @@ public sealed class ExtensionUpdateFactContractTests
             residualPath: null));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Update finding derives the declared semantic status and rejects undefined values"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void FindingDerivesStatusAndRejectsUndefinedValues()
     {

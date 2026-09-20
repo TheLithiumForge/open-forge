@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class RepairPlannerTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair planner forms one safe-exact effect with one selected step and recovery boundary"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void PlannerBuildsSafeExactEffect()
     {
@@ -33,6 +34,7 @@ public sealed class RepairPlannerTests
         Assert.NotNull(step.Recovery.Attribution);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair planner forms a verified no-op when the observed destination already equals the intended destination"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void PlannerBuildsNoOpForAlreadyIntendedState()
     {

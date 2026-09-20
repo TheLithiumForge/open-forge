@@ -1,0 +1,10 @@
+Extension list completed with warnings.
+  Warning  <extension-source>/missing-source  Installed Extension source is missing
+         The missing-package Extension's source <extension-source>/missing-source is missing.
+         open-forge extension inspect missing-package
+Installed
+  missing-package  1.0.0  source missing
+
+Available (from <extension-source>)
+  toolkit  1.0.0  Extension package toolkit.
+Next: open-forge extension inspect missing-package

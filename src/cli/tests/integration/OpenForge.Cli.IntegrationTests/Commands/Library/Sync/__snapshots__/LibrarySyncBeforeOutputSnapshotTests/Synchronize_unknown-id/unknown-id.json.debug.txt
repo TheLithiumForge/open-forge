@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 3,
+  "command": "library sync",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot synchronize unknown: The Library ID is not registered.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-sync.unknown-id",
+      "title": "Library ID is unknown",
+      "message": "The Library ID is not registered",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "unknown",
+        "location": null
+      },
+      "category": "unknown-id",
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge library list",
+          "reason": "Choose a registered Library ID."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksAdded": 0,
+    "linksRemoved": 0,
+    "linksUnchanged": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "unknown",
+    "sourceFolder": "unselected-library",
+    "destinationFolder": null,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "proposedScopes": [],
+      "approvedScopes": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [],
+    "unchanged": [],
+    "inventory": {
+      "rootState": "unavailable",
+      "inventoryState": "not-started",
+      "eligiblePaths": [],
+      "excludedPaths": [],
+      "unavailablePaths": [],
+      "lexicalRoot": null,
+      "physicalRoot": null,
+      "lexicallyContained": null,
+      "physicallyContained": null
+    },
+    "expectedStates": [],
+    "verification": {
+      "state": "not-started",
+      "recordPublication": "not-started",
+      "publishedLast": null
+    },
+    "recovery": {
+      "state": "not-requested",
+      "path": null,
+      "residuals": []
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge library list",
+    "reason": "Choose a registered Library ID."
+  }
+}

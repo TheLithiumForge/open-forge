@@ -21,6 +21,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     private readonly WorkspaceLockTestStore lockStore = WorkspaceLockTestStore.Create(
         "file-change-applier-lock-store");
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File change applier creates exact bytes and leaves no stage")]
     [Trait("Feature", "mutation-foundation")]
     [Trait("Evidence", "Integration")]
@@ -60,6 +61,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         File.Delete(path);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File change applier replaces complete bytes for ordinary and generated changes")]
     [Trait("Feature", "mutation-foundation")]
     [Trait("Evidence", "Integration")]
@@ -108,6 +110,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         Assert.Empty(Stages(temporary));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File change applier deletes only an ordinary file and verifies missing")]
     [Trait("Feature", "mutation-foundation")]
     [Trait("Evidence", "Integration")]
@@ -140,6 +143,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         Assert.True(Directory.Exists(directory));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File change applier rejects stale replay before target effect")]
     [Trait("Feature", "mutation-foundation")]
     [Trait("Evidence", "Integration")]
@@ -179,6 +183,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         Assert.Empty(Stages(temporary));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File change applier reports cancellation without a target effect")]
     [Trait("Feature", "mutation-foundation")]
     [Trait("Evidence", "Integration")]
@@ -216,6 +221,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         Assert.Empty(Stages(temporary));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File change applier blocks a disposed or foreign lease")]
     [Trait("Feature", "mutation-foundation")]
     [Trait("Evidence", "Integration")]
@@ -265,6 +271,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File change applier rejects a create collision before staging")]
     [Trait("Feature", "mutation-foundation")]
     [Trait("Evidence", "Integration")]
@@ -304,6 +311,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         Assert.Empty(Stages(temporary));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File change applier rejects a replacement target replaced by a directory")]
     [Trait("Feature", "mutation-foundation")]
     [Trait("Evidence", "Integration")]
@@ -341,6 +349,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         Assert.Empty(Stages(temporary));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File change applier rejects a delete target replaced after planning")]
     [Trait("Feature", "mutation-foundation")]
     [Trait("Evidence", "Integration")]
@@ -379,6 +388,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         Assert.Empty(Stages(temporary));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File change applier rejects a target whose resolved identity changes before staging")]
     [Trait("Feature", "mutation-foundation")]
     [Trait("Evidence", "Integration")]
@@ -432,6 +442,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         Assert.Empty(Stages(temporary));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File change applier rejects a check for a different planned target")]
     [Trait("Feature", "mutation-foundation")]
     [Trait("Evidence", "Integration")]
@@ -472,6 +483,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "File change applier rejects a forged missing physical target before staging")]
     [Trait("Feature", "mutation-foundation")]
     [Trait("Evidence", "Integration")]

@@ -1,0 +1,3 @@
+Installed the team Extension.
+  Created 1 file under .apm/agents
+  Saved a grant for .apm/agents/team.md to .agents/open-forge.json

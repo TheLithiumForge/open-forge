@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "invalid-input",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot initialize ../outside: not a route ID or an entrypoint path under .agents.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-init.invalid-target",
+      "title": "Invalid target",
+      "message": "../outside is not a route ID or an entrypoint path under .agents.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "../outside",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route init --help",
+          "reason": "Correct the named Route Init input, then rerun the request."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "entrypointsCreated": 0,
+    "entrypointsPresent": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": null,
+      "path": null
+    },
+    "scaffold": "generic",
+    "entrypoints": [],
+    "listedIn": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route init --help",
+    "reason": "Correct the named Route Init input, then rerun the request."
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Context is complete.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "sources": 4,
+    "tokens": 100,
+    "bytes": 399,
+    "linksFollowed": 0,
+    "linksNotFollowed": 0
+  },
+  "limitations": [],
+  "data": {
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "workspace entry"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 1,
+        "parts": [
+          {
+            "part": "headings",
+            "headings": [
+              {
+                "text": "Workspace",
+                "level": 1,
+                "line": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": ".agents/loader.md",
+        "id": "loader",
+        "layer": "base",
+        "includedBecause": [
+          "Loader"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 2,
+        "parts": [
+          {
+            "part": "headings",
+            "headings": [
+              {
+                "text": "Open Forge Loader",
+                "level": 1,
+                "line": 1
+              },
+              {
+                "text": "Entries",
+                "level": 2,
+                "line": 3
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/_docs.md",
+        "id": "docs",
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from .agents/loader.md",
+          "ancestor required from .agents/docs/guide.md for docs/guide"
+        ],
+        "route": "docs",
+        "scope": null,
+        "order": 3,
+        "parts": [
+          {
+            "part": "headings",
+            "headings": [
+              {
+                "text": "Documents",
+                "level": 1,
+                "line": 6
+              },
+              {
+                "text": "Entries",
+                "level": 2,
+                "line": 8
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "layer": "base",
+        "includedBecause": [
+          "selected source for docs/guide"
+        ],
+        "route": "docs/guide",
+        "scope": null,
+        "order": 4,
+        "parts": [
+          {
+            "part": "headings",
+            "headings": [
+              {
+                "text": "Guide",
+                "level": 1,
+                "line": 6
+              },
+              {
+                "text": "Rules",
+                "level": 2,
+                "line": 8
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "links": []
+  },
+  "recovery": null,
+  "next": null
+}

@@ -6,9 +6,8 @@ using OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
 using OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Mutation;
@@ -18,8 +17,8 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Doctor;
 
 public sealed class LibraryDoctorClassificationTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
-    [InlineData("RecordMalformed", "BlockedRepair"), InlineData("RecordUnavailable", "Informational")]
     [InlineData("SourceRootInvalid", "BlockedRepair"), InlineData("SourceRootAliased", "BlockedRepair")]
     [InlineData("InventoryIncomplete", "Informational"), InlineData("ProjectionMissing", "ManualDecision")]
     [InlineData("ProjectionDangling", "BlockedRepair"), InlineData("ProjectionRetargeted", "BlockedRepair")]
@@ -47,6 +46,7 @@ public sealed class LibraryDoctorClassificationTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mapping"), Trait("Evidence", "Unit")]
     [InlineData(false, "docs/b/README.md"), InlineData(true, "docs/b/README.md")]
     [InlineData(false, "docs/b/readme.md"), InlineData(true, "docs/b/readme.md")]
@@ -54,8 +54,8 @@ public sealed class LibraryDoctorClassificationTests
     {
         var source = WorkspaceRelativeDirectory.Create(LibraryMutationPlanningData.SourceRoot);
         var leaf = SourceRelativeEligiblePath.Create("README.md");
-        var first = LibraryRecord.Create(LibraryId.Create("alpha"), source, LibraryDestinationRoot.Create("docs/a"), [leaf]);
-        var second = LibraryRecord.Create(LibraryId.Create("beta"),
+        var first = LibraryRegistration.Create(LibraryId.Create("alpha"), source, LibraryDestinationRoot.Create("docs/a"), [leaf]);
+        var second = LibraryRegistration.Create(LibraryId.Create("beta"),
             sameSource ? source : WorkspaceRelativeDirectory.Create("shared/beta"), LibraryDestinationRoot.Create("docs/b"), [leaf]);
         var inventory = LibraryMutationPlanningData.Inventory("README.md");
         var secondInventory = inventory with { Source = inventory.Source with { Request = inventory.Source.Request with { SourceRoot = second.SourceRoot } } };
@@ -64,10 +64,10 @@ public sealed class LibraryDoctorClassificationTests
                 LibraryMappingObservationState.Missing, null)).ToImmutableArray();
         var view = View("ProjectionMissing") with
         {
-            Record = LibraryMutationPlanningData.Record() with { Record = LibrariesRecord.Create([first, second]) },
+            Record = LibraryMutationPlanningData.Record() with { Record = LibraryRegistrationSet.Create([first, second]) },
             Inventories = [inventory, secondInventory],
             Mappings = mappings,
-            Ownership = LibraryMutationPlanningData.Ownership(new LifecycleOwnershipClaim(ownershipPath, LifecycleOwnershipManager.Extension, "toolkit")),
+            Ownership = LibraryMutationPlanningData.Ownership(new OwnedPath(ownershipPath, OwnedPathManager.Extension, "toolkit")),
         };
         var report = LibraryDoctorInspector.Inspect(LibraryMutationPlanningData.Workspace, EmptyWorkspace(), view,
             new RecoveryResidualDoctorView(OperationalViewState.Complete, [], null), []);
@@ -77,6 +77,7 @@ public sealed class LibraryDoctorClassificationTests
         Assert.Same(second, collision.Subject.Library?.Registration);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mapping"), Trait("Evidence", "Unit")]
     [InlineData(false), InlineData(true)]
     public void ForeignInventoryMappingCannotBecomeRegisteredEvidence(bool dangling)
@@ -104,13 +105,6 @@ public sealed class LibraryDoctorClassificationTests
         var state = OperationalViewState.Complete;
         switch (scenario)
         {
-            case "RecordMalformed":
-                record = record with { State = LibrariesRecordReadState.Malformed, Record = null, Cause = "Malformed current-v1 record." };
-                break;
-            case "RecordUnavailable":
-                record = record with { State = LibrariesRecordReadState.Unavailable, Record = null, Snapshot = null, Cause = "Record unreadable." };
-                state = OperationalViewState.Incomplete;
-                break;
             case "SourceRootInvalid":
                 inventory = inventory with { Source = inventory.Source with { State = LibrarySourceRootState.Invalid, Cause = "Not an ordinary root." }, Inventory = null };
                 break;
@@ -140,10 +134,10 @@ public sealed class LibraryDoctorClassificationTests
                     LibraryMappingObservationState.Changed, null);
                 break;
             case "PathCollision":
-                ownership = LibraryMutationPlanningData.Ownership(new LifecycleOwnershipClaim(LibraryMutationPlanningData.Leaf, LifecycleOwnershipManager.Framework, "open-forge"));
+                ownership = LibraryMutationPlanningData.Ownership(new OwnedPath(LibraryMutationPlanningData.Leaf, OwnedPathManager.Framework, "open-forge"));
                 break;
             case "ExtensionCollision":
-                ownership = LibraryMutationPlanningData.Ownership(new LifecycleOwnershipClaim(LibraryMutationPlanningData.Leaf, LifecycleOwnershipManager.Extension, "toolkit"));
+                ownership = LibraryMutationPlanningData.Ownership(new OwnedPath(LibraryMutationPlanningData.Leaf, OwnedPathManager.Extension, "toolkit"));
                 break;
             case "LinkCapabilityUnsupported": capability = new LibraryLinkCapabilityFact(LibraryLinkCapabilityState.Unsupported, "Previously established platform capability."); break;
         }

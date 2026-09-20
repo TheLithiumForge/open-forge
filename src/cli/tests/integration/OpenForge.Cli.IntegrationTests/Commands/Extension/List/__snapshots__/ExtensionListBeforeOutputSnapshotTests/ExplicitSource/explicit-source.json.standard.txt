@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 3,
+  "command": "extension list",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "The result contains 0 installed packages and 1 available package.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "installed": 0,
+    "available": 1,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "installed": [],
+    "available": [
+      {
+        "id": "toolkit",
+        "version": "1.0.0",
+        "name": "toolkit",
+        "description": "Extension package toolkit.",
+        "packages": 1,
+        "dependencies": []
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension install <id>",
+    "reason": "Install one of the available Extensions."
+  }
+}

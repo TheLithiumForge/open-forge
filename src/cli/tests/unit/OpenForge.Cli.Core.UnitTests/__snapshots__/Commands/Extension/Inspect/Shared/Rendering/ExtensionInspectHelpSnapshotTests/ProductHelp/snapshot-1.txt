@@ -1,0 +1,44 @@
+Description:
+
+Usage:
+  inspect
+
+Syntax:
+  open-forge extension inspect <stable-id> [--source <package-or-catalogue-path>] [global options]
+
+Subject and source:
+  Supply one exact lowercase stable ID. Available package details come from the bundled catalogue,
+  or only from the separate local package or catalogue named by --source. There is no fallback,
+  network, registry, cache, or approximate ID matching.
+
+Inspection:
+  Inspect reports ownership, available package, dependency, path, current-byte, generated-boundary,
+  and current-versus-intended comparison facts. It never writes, mutates, executes package content,
+  or invokes another command.
+
+Global options:
+  --workspace <path>, --format <text|json>, --detail <minimal|standard|full|debug>, --detail-filter
+  <error|warning|info|all>, --help, and --version apply to this command. --detail selects detail in
+  text and JSON.
+
+Examples:
+  open-forge extension inspect development-toolkit
+  open-forge extension inspect development-toolkit --source ./packages/toolkit --format json
+
+Results and streams:
+  Text completed, completed-with-warnings, and incomplete results use stdout; invalid-input,
+  blocked, failed, and cancelled results use stderr.
+  JSON writes one minified schema-version-3 envelope to stdout for every semantic status. Debug
+  diagnostics use bounded stderr.
+  completed: exit 0 and text stdout.
+  failed: exit 1 and text stderr.
+  completed-with-warnings: exit 2 and text stdout.
+  incomplete: exit 3 and text stdout.
+  invalid-input: exit 4 and text stderr.
+  blocked: exit 5 and text stderr.
+  cancelled: exit 130 and text stderr.
+
+Fingerprint boundary:
+  open-forge-markdown-v1 uses strict UTF-8, LF-only normalization, heading-bounded Entries
+  exclusion, and exact-byte fallback. Current and intended hashes describe this comparison; no
+  stored baseline is read.

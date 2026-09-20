@@ -1,0 +1,6 @@
+Nothing was installed from <extension-source>: the package has no content directory.
+Workspace: <workspace>
+  Warning  toolkit  Package content is missing
+         The package has no content directory. Package files belong under <extension-source>/content/.agents/.
+  Source: <extension-source> (catalogue)
+  .agents/open-forge.lock.json  updated

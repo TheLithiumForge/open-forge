@@ -1,0 +1,8 @@
+status=completed
+mode=apply
+source=guidance/old guide
+subject=file
+effects=3
+removed=2
+detached=0
+findings=0

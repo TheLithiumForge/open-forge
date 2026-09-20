@@ -25,9 +25,8 @@ internal sealed class PublishedReferencesWorkspace : IDisposable
             workspace.WriteText(
                 ".agents/loader.md",
                 "# Loader\n\n## Entries\n\n"
-                + "<!-- open-forge:generated-index:start -->\n"
-                + "- docs - Docs - #CurrentTruth\n"
-                + "<!-- open-forge:generated-index:end -->\n");
+                    + "- docs - Docs - #CurrentTruth\n"
+                );
             workspace.WriteText(
                 ".agents/docs.md",
                 "# Docs\n\n"

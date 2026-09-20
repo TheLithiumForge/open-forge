@@ -1,48 +1,43 @@
 ---
 open-forge:
-  description: Active top-down architecture, Plan, Tasks, and evidence for the greenfield replacement CLI
-  tags: [Memory, Working, Contextual, Active, KeepInMind, CLI, Architecture, Plan, Task, Development]
+  description: Current CLI migration selection, retained task state and task-owned evidence
+  tags: [Memory, Working, Contextual, Active, KeepInMind, CLI, Task]
 ---
 
 # CLI Development
 
-This route contains the active execution state for the greenfield replacement
-CLI. The current [CLI Architecture](../../crystallized/documents/cli/architecture.md)
-and command contracts define accepted meaning. The records here define temporary
-planning, Task state, sequencing, evidence, and resumption.
+This route records the selected Task 38 migration and retained Task 30/31 state,
+with other open tasks available on demand. Completed CLI work, old plans,
+handoffs and coordination history live in
+[Archived CLI Development](../../archived/cli-development/_cli-development.md).
 
-The Overseer keeps the top-down architecture and integration model. Child Tasks
-may be delegated to a hidden Task Mastermind only after their architecture,
-dependencies, callable contracts, boundaries, evidence, and stop conditions are
-closed.
+The two evidence scopes remain in Emerging while their conclusions are checked
+against the open Tasks. Their provenance remains available here:
 
-Existing `Mastermind` ownership labels are legacy provenance for the role now
-owned at project level by the Overseer. Preserve completed historical labels;
-interpret live labels as Overseer authority unless a record explicitly assigns a
-bounded Task Mastermind.
+- [CLI Experience Audit](../../emerging/analysis/cli-experience-audit/_cli-experience-audit.md)
+  records what was observed and proposed.
+- [CLI Design Retrospective](../../emerging/analysis/cli-design-retrospective/_cli-design-retrospective.md)
+  records how the design and implementation arrived there.
 
-The preserved first implementation remains historical evidence in the
-[reset record](../../archived/cli-release/implementation-reset-2026-08-21.md).
-Do not restore its structure by default.
+Their actionable conclusions are routed into the active Task subtasks and
+candidate records. New implementation findings update those Tasks; the
+Emerging analyses are not rewritten into a second execution plan.
 
 ## Axioms
 
-- Read the active Plan before selecting or changing a CLI Task.
-- Read a parent Task before its child Tasks and preserve every inherited boundary.
-- A child Task may narrow allowed work but may not broaden architecture, scope,
-  dependencies, public behavior, or external effects.
-- Only the Overseer updates Plan and Task state, architecture, cross-cutting
-  contracts, integration, and acceptance unless the maintainer explicitly assigns
-  another responsible role.
-- Stop implementation when a Task requires an unaccepted architecture or product
-  choice. Record the decision frontier in the parent context before continuing.
+- Read the compact [Plan](plan.md), [Project Control](project-control.md), and
+  the selected Task before implementation.
+- A Task owns its current scope, decisions, implementation discoveries, and
+  acceptance state. A subtask narrows that scope and never broadens it.
+- Treat the two Emerging Analysis folders as contextual evidence. Use them for
+  provenance and unresolved reasoning, not as a second executable plan.
+- Keep the active route small. Do not restore archived Task or handoff records
+  to active navigation merely because they remain recoverable.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
-- [Active ledger of deferred replacement-CLI edge cases, owners, risks, and closure conditions](edge-cases.md) - #Memory #Working #CLI #EdgeCase #Evidence #Contextual #Active
-- [Active Overseer continuity for the replacement CLI task graph, decisions, agents, worktrees, and observations](overseer-memory.md) - #Memory #Working #Contextual #Active #KeepInMind #CLI #Overseer #Orchestration #Decision #Evidence
-- [Executable top-down work graph for completing the greenfield replacement CLI](plan.md) - #Memory #Working #CLI #Plan #Architecture #Development #Contextual #Active
-- [Control permanent task identities, the dynamic queue, integration, and recovery for replacement CLI development](project-control.md) - #Memory #Working #Contextual #Active #KeepInMind #CLI #Project #Orchestration #Task #Integration
-- [Hierarchical implementation Tasks for the complete greenfield replacement CLI](tasks/_tasks.md) - #Memory #Working #Contextual #Active #CLI #Task #Architecture #Development
-<!-- open-forge:generated-index:end -->
+- [Jumpstart for a fresh chat taking over beta preparation, with the state, the order, the traps that defeated earlier agents, and the decisions still open](BETA-HANDOVER.md) - #Memory #Working #CLI #Handover #Beta #KeepInMind #Contextual #Active
+- [Current migration selection and retained Task 30/31 sequence](plan.md) - #LoadNow #Memory #Working #CLI #Plan #Contextual #Active
+- [Current CLI task selection and retained task ownership](project-control.md) - #LoadNow #Memory #Working #CLI #Task #Contextual #Active
+- [Open CLI tasks, the selected migration and on-demand follow-ups](tasks/_tasks.md) - #Memory #Working #CLI #Task #Contextual #Active
+- [Accepted project migration, Sol-led Luna swarm batches and shared-worktree handover](tasks/task38/_task38.md) - #Memory #Working #CLI #Plan #Contextual #Active

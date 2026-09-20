@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Routing;
 
 public sealed class SourceLoaderParserTests
 {
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Neutral Loader destination parsing decodes UTF-8 and percent escapes exactly once"),
         InlineData("root/_root.md", "root/_root.md", ".agents/root/_root.md"),
         InlineData("root%2F_root.md", "root/_root.md", ".agents/root/_root.md"),
@@ -25,6 +26,7 @@ public sealed class SourceLoaderParserTests
         Assert.Null(result.Cause);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Neutral Loader destination parsing rejects malformed percent and UTF-8 sequences"),
         InlineData("root%/_root.md"),
         InlineData("root%2/_root.md"),
@@ -44,6 +46,7 @@ public sealed class SourceLoaderParserTests
         Assert.False(string.IsNullOrWhiteSpace(result.Cause));
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Neutral Loader destination parsing blocks decoded separators traversal controls and rooted forms"),
         InlineData("root%5C_root.md", "root\\_root.md"),
         InlineData("root/%00source.md", "root/\0source.md"),
@@ -75,6 +78,7 @@ public sealed class SourceLoaderParserTests
         Assert.False(string.IsNullOrWhiteSpace(result.Cause));
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Neutral Loader destination parsing never decodes an encoded percent twice")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EncodedPercentIsDecodedExactlyOnce()
@@ -86,6 +90,7 @@ public sealed class SourceLoaderParserTests
         Assert.Equal(".agents/encoded%20name/_encoded%20name.md", result.CanonicalPath);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Neutral Loader declaration parsing retains exact generated entry declarations")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void DeclarationParserReturnsOneDestinationAndNoCause()
@@ -100,6 +105,7 @@ public sealed class SourceLoaderParserTests
         Assert.Null(cause);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Neutral Loader Entries parsing preserves declaration order and partial malformed evidence")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EntriesParserPreservesOrderAndEarlierSafeDestinations()
@@ -116,27 +122,27 @@ public sealed class SourceLoaderParserTests
             Assert.Equal(SourceLoaderDestinationParseState.Valid, destination.State));
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Neutral Loader Entries parsing accepts the valid empty forms"),
         InlineData(""),
         InlineData("- none - No entries - #Empty")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
-    public void EmptyEntriesAreACompleteEmptySet(string markerBody)
+    public void EmptyEntriesAreACompleteEmptySet(string entriesBody)
     {
-        var result = SourceLoaderEntriesParser.Parse(LoaderContents(markerBody));
+        var result = SourceLoaderEntriesParser.Parse(LoaderContents(entriesBody));
 
         Assert.Equal(SourceLoaderEntriesParseState.Valid, result.State);
         Assert.Empty(result.Destinations);
         Assert.Null(result.Cause);
     }
 
-    [Theory(DisplayName = "Neutral Loader Entries parsing rejects malformed markers prose and declaration shape drift"),
+    [Trait("Boundary", "Input")]
+    [Theory(DisplayName = "Neutral Loader Entries parsing rejects missing or duplicate sections and malformed declarations"),
         InlineData("# Open Forge Loader\n"),
-        InlineData("# Open Forge Loader\n\n## Entries\n\n<!-- open-forge:generated-index:start -->\n- [Root](root/_root.md) - #Root\n<!-- open-forge:generated-index:end -->\n\n## Notes\n"),
         InlineData("# Open Forge Loader\n\n## Entries\n\n## Entries\n"),
-        InlineData("# Open Forge Loader\n\n## Entries\n\n<!-- open-forge:generated-index:end -->\n<!-- open-forge:generated-index:start -->\n"),
-        InlineData("# Open Forge Loader\n\n## Entries\n\n<!-- open-forge:generated-index:start -->\nAuthored prose\n<!-- open-forge:generated-index:end -->\n"),
-        InlineData("# Open Forge Loader\n\n## Entries\n\n<!-- open-forge:generated-index:start -->\n- [Root](root/_root.md) #Root\n<!-- open-forge:generated-index:end -->\n"),
-        InlineData("# Open Forge Loader\n\n## Entries\n\n<!-- open-forge:generated-index:start -->\n- [   ](root/_root.md) - #Root\n<!-- open-forge:generated-index:end -->\n")]
+        InlineData("# Open Forge Loader\n\n## Entries\n\n- Invalid declaration\n"),
+        InlineData("# Open Forge Loader\n\n## Entries\n\n- [Root](root/_root.md) #Root\n"),
+        InlineData("# Open Forge Loader\n\n## Entries\n\n- [   ](root/_root.md) - #Root\n")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void MalformedEntriesRetainAParseCause(string contents)
     {
@@ -146,16 +152,13 @@ public sealed class SourceLoaderParserTests
         Assert.False(string.IsNullOrWhiteSpace(result.Cause));
     }
 
-    private static string LoaderContents(string markerBody)
+    private static string LoaderContents(string entriesBody)
     {
         return $"""
             # Open Forge Loader
 
             ## Entries
-
-            <!-- open-forge:generated-index:start -->
-            {markerBody}
-            <!-- open-forge:generated-index:end -->
+            {entriesBody}
             """;
     }
 }

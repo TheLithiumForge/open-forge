@@ -1,0 +1,252 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "completed-with-warnings",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Open Forge is installed, but 1 file needs attention.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "status.framework-target-missing",
+      "title": "Missing managed file",
+      "message": "missing; it was installed by the Framework",
+      "subject": {
+        "kind": "file",
+        "path": "CLAUDE.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge update",
+          "reason": "Update the Framework files that need attention."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The managed lifecycle target is not current."
+        }
+      ],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routedFiles": 13,
+    "startupFiles": 11,
+    "startupTokens": 5676,
+    "mayLoadAgainFiles": 1,
+    "mayLoadAgainTokens": 289,
+    "allTokens": 6337,
+    "startupShare": 89.57626449932928272705752387,
+    "rootCategories": 7,
+    "entriesSectionsCurrent": 12,
+    "entriesSectionsStale": 0,
+    "entriesSectionsMissing": 0,
+    "frameworkFilesCurrent": 13,
+    "frameworkFilesChanged": 0,
+    "frameworkFilesMissing": 1,
+    "extensionsInstalled": 0,
+    "librariesRegistered": 0,
+    "libraryLinksCurrent": 0,
+    "libraryLinksMissing": 0,
+    "libraryLinksChanged": 0,
+    "recoveryBundles": 0,
+    "recoveryDrafts": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "installation": {
+      "state": "installed",
+      "entryPath": "AGENTS.md",
+      "loaderPath": ".agents/loader.md"
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": 11,
+          "characters": 22704,
+          "bytes": 22704,
+          "tokens": 5676
+        },
+        "current": {
+          "files": 11,
+          "characters": 22704,
+          "bytes": 22704,
+          "tokens": 5676
+        },
+        "difference": {
+          "files": 0,
+          "characters": 0,
+          "bytes": 0,
+          "tokens": 0
+        },
+        "mayLoadAgain": {
+          "files": 1,
+          "characters": 1153,
+          "bytes": 1153,
+          "tokens": 289
+        }
+      },
+      "allRouted": {
+        "files": 13,
+        "characters": 25346,
+        "bytes": 25346,
+        "tokens": 6337
+      },
+      "startupShare": 89.57626449932928272705752387,
+      "mayLoadAgainSources": [
+        {
+          "sourceId": "memory/emerging",
+          "bytes": 1153,
+          "layers": [
+            {
+              "path": ".agents/memory/emerging/_emerging.md",
+              "bytes": 1153
+            }
+          ]
+        }
+      ]
+    },
+    "structure": {
+      "rootCategories": {
+        "count": 7,
+        "added": [],
+        "removed": []
+      }
+    },
+    "frameworkFiles": [
+      {
+        "path": ".agents/directives/_directives.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/loader.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "state": "current"
+      },
+      {
+        "path": "AGENTS.md",
+        "state": "current"
+      },
+      {
+        "path": "CLAUDE.md",
+        "state": "missing"
+      }
+    ],
+    "entriesSections": [
+      {
+        "path": ".agents/directives/_directives.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/loader.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "state": "current"
+      }
+    ],
+    "extensions": [],
+    "libraries": [],
+    "recovery": {
+      "candidates": []
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge update",
+    "reason": "Update the Framework files that need attention."
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 3,
+  "command": "extension inspect",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot inspect toolkit: toolkit requires helper, which requires toolkit.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-inspect.dependency-cycle",
+      "title": "Dependency cycle",
+      "message": "toolkit requires helper, which requires toolkit.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "toolkit",
+        "location": null
+      },
+      "category": null,
+      "resolution": "manual-decision",
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "Cause",
+          "value": "Extension dependency cycle detected at 'helper'."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "extension-inspect.path-new",
+      "title": "File is new",
+      "message": ".agents/helper.md  new in the package; not installed yet",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/helper.md",
+        "id": "toolkit",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "Cause",
+          "value": "The intended source contains a path without recorded ownership."
+        },
+        {
+          "label": "Path",
+          "value": ".agents/helper.md"
+        }
+      ],
+      "provenance": {
+        "source": "extension inspect",
+        "path": ".agents/helper.md",
+        "location": null
+      }
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesUnchanged": 1,
+    "filesChanged": 0,
+    "filesMissing": 0,
+    "filesNew": 1,
+    "filesRetired": 0,
+    "dependencies": null,
+    "errors": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "toolkit",
+    "installed": {
+      "version": "1.0.0"
+    },
+    "available": {
+      "version": "1.0.0"
+    },
+    "source": {
+      "kind": null,
+      "path": "<extension-source>"
+    },
+    "matches": false,
+    "files": [
+      {
+        "path": ".agents/helper.md",
+        "relation": "new",
+        "installedSha256": null,
+        "packageSha256": "<sha256>"
+      },
+      {
+        "path": ".agents/toolkit.md",
+        "relation": "unchanged",
+        "installedSha256": "<sha256>",
+        "packageSha256": "<sha256>"
+      }
+    ],
+    "dependencies": [
+      {
+        "id": "helper",
+        "version": "1.0.0",
+        "state": "available"
+      },
+      {
+        "id": "toolkit",
+        "version": "1.0.0",
+        "state": "available"
+      }
+    ],
+    "name": "toolkit",
+    "description": "Extension package toolkit.",
+    "manifestPath": "toolkit/extension.json",
+    "resolutionOrder": [
+      "helper",
+      "toolkit"
+    ],
+    "registeredIn": [],
+    "recordCoverage": "complete"
+  },
+  "recovery": null,
+  "next": null
+}

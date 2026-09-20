@@ -1,0 +1,11 @@
+Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.
+Workspace: <workspace>
+  Error  cleanup  Workspace lock is unavailable
+         Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.
+         open-forge cleanup
+         Rerun Cleanup from a fresh catalogue.
+  <recovery-bundle-1>    not started (bundle from index, verified)
+  <recovery-bundle-2>    not started (bundle from repair, verified)
+  <recovery-bundle-3>  not started (unfinished draft, incomplete)
+  Rerun Cleanup from a fresh catalogue.
+Next: open-forge cleanup

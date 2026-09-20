@@ -1,0 +1,9 @@
+Cannot list Extensions: The explicit Extension source overlaps the selected workspace.
+Workspace: <workspace>
+  Error  <workspace>  Extension source is blocked
+         <workspace> cannot be used as a source: it is inside the workspace.
+Source: <workspace>
+Installed  (no ownership record, so installed packages cannot be listed)
+
+Available (from <workspace>)  unavailable
+  available packages: The explicit Extension source overlaps the selected workspace.

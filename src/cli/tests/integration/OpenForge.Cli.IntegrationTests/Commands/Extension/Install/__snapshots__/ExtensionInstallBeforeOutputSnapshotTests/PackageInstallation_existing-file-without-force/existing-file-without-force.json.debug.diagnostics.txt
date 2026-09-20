@@ -1,0 +1,5 @@
+status=blocked
+packages=1
+effects=1
+findings=1
+Eligible initial occupants require explicit --force authority.

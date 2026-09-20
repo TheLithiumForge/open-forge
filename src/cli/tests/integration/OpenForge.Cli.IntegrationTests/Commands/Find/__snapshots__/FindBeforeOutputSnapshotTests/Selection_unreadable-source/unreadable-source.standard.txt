@@ -1,0 +1,11 @@
+The search is incomplete.
+Workspace: <workspace>
+  Warning  .agents/docs/guide.md  Source encoding is invalid
+         .agents/docs/guide.md is not valid UTF-8 and was skipped.
+
+  docs            .agents/docs/_docs.md      Documents
+  docs/guide      .agents/docs/guide.md      
+  docs/reference  .agents/docs/reference.md  Reference
+  loader          .agents/loader.md          
+  Inspect the unavailable source or projection facts before relying on this Find result.
+Next: open-forge doctor

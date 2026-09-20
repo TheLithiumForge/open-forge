@@ -5,6 +5,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Cleanup;
 
 public sealed class CleanupPlanningIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Cleanup dry-run is deterministic and application retains its catalogue and plan order"),
      Trait("Feature", "cleanup-command"),
@@ -23,10 +24,10 @@ public sealed class CleanupPlanningIntegrationTests
         var recoveryBefore = workspace.SnapshotRecovery();
 
         var firstDryRun = await workspace.RunAsync(
-            ["cleanup", "--dry-run", "--workspace", workspace.Path, "--json"],
+            ["cleanup", "--dry-run", "--workspace", workspace.Path, "--format", "json"],
             TestContext.Current.CancellationToken);
         var secondDryRun = await workspace.RunAsync(
-            ["cleanup", "--dry-run", "--workspace", workspace.Path, "--json"],
+            ["cleanup", "--dry-run", "--workspace", workspace.Path, "--format", "json"],
             TestContext.Current.CancellationToken);
 
         Assert.Equal(0, firstDryRun.ExitCode);
@@ -41,38 +42,25 @@ public sealed class CleanupPlanningIntegrationTests
 
         using var dryDocument = firstDryRun.ParseJson();
         var dryResult = CleanupJsonAssertions.Result(dryDocument);
+        CleanupJsonAssertions.PropertyOrder(dryResult, "mode", "items");
         Assert.Equal("dry-run", dryResult.GetProperty("mode").GetString());
-        Assert.Equal("complete", dryResult.GetProperty("catalogue").GetProperty("coverage").GetString());
-        Assert.Equal("safe", dryResult.GetProperty("plan").GetProperty("safety").GetString());
-        Assert.Equal("complete", dryResult.GetProperty("preflight").GetProperty("state").GetString());
-        Assert.Equal("not-requested", dryResult.GetProperty("lease").GetProperty("state").GetString());
-        Assert.Equal("not-requested", dryResult.GetProperty("revalidation").GetProperty("state").GetString());
-        Assert.Equal("not-requested", dryResult.GetProperty("verification").GetProperty("state").GetString());
-        Assert.Empty(dryResult.GetProperty("findings").EnumerateArray());
-        Assert.Equal(
-            [final, draft],
-            CleanupJsonAssertions.Paths(dryResult.GetProperty("catalogue").GetProperty("candidates")));
-        Assert.Equal(
-            [final, draft],
-            CleanupJsonAssertions.Paths(dryResult.GetProperty("plan").GetProperty("entries")));
+        Assert.Equal([final, draft], CleanupJsonAssertions.Paths(dryResult.GetProperty("items")));
         Assert.All(
-            dryResult.GetProperty("plan").GetProperty("entries").EnumerateArray(),
-            entry =>
-            {
-                Assert.Equal("planned", entry.GetProperty("resultEffect").GetProperty("outcome").GetString());
-                Assert.Equal("none", entry.GetProperty("resultEffect").GetProperty("residual").GetString());
-            });
+            dryResult.GetProperty("items").EnumerateArray(),
+            item => Assert.Equal("would-be-removed", item.GetProperty("outcome").GetString()));
+
+        var dryEffects = dryDocument.RootElement.GetProperty("effects").EnumerateArray().ToArray();
+        Assert.Equal(2, dryEffects.Length);
         Assert.All(
-            dryResult.GetProperty("effects").EnumerateArray(),
+            dryEffects,
             effect =>
             {
-                Assert.Equal("delete", effect.GetProperty("action").GetString());
+                Assert.Equal("deleted", effect.GetProperty("action").GetString());
                 Assert.Equal("planned", effect.GetProperty("outcome").GetString());
-                Assert.Equal("none", effect.GetProperty("residual").GetString());
             });
 
         var applied = await workspace.RunAsync(
-            ["cleanup", "--workspace", workspace.Path, "--json"],
+            ["cleanup", "--workspace", workspace.Path, "--format", "json"],
             TestContext.Current.CancellationToken);
 
         Assert.Equal(0, applied.ExitCode);
@@ -82,29 +70,19 @@ public sealed class CleanupPlanningIntegrationTests
         using var appliedDocument = applied.ParseJson();
         var appliedResult = CleanupJsonAssertions.Result(appliedDocument);
         Assert.Equal("apply", appliedResult.GetProperty("mode").GetString());
-        Assert.Equal("complete", appliedResult.GetProperty("catalogue").GetProperty("coverage").GetString());
-        Assert.Equal("safe", appliedResult.GetProperty("plan").GetProperty("safety").GetString());
-        Assert.Equal("complete", appliedResult.GetProperty("preflight").GetProperty("state").GetString());
-        Assert.Equal("acquired", appliedResult.GetProperty("lease").GetProperty("state").GetString());
-        Assert.Equal("matched", appliedResult.GetProperty("revalidation").GetProperty("state").GetString());
-        Assert.Equal("verified", appliedResult.GetProperty("verification").GetProperty("state").GetString());
-        Assert.Empty(appliedResult.GetProperty("findings").EnumerateArray());
-        CleanupJsonAssertions.AssertDryRunApplicationParity(dryResult, appliedResult);
-        Assert.Equal(
-            [final, draft],
-            CleanupJsonAssertions.Paths(appliedResult.GetProperty("catalogue").GetProperty("candidates")));
-        Assert.Equal(
-            CleanupJsonAssertions.Paths(dryResult.GetProperty("plan").GetProperty("entries")),
-            CleanupJsonAssertions.Paths(appliedResult.GetProperty("plan").GetProperty("entries")));
+        Assert.Equal([final, draft], CleanupJsonAssertions.Paths(appliedResult.GetProperty("items")));
         Assert.All(
-            appliedResult.GetProperty("effects").EnumerateArray(),
+            appliedResult.GetProperty("items").EnumerateArray(),
+            item => Assert.Equal("removed", item.GetProperty("outcome").GetString()));
+        var appliedEffects = appliedDocument.RootElement.GetProperty("effects").EnumerateArray().ToArray();
+        Assert.Equal(2, appliedEffects.Length);
+        Assert.All(
+            appliedEffects,
             effect =>
             {
-                Assert.Equal("delete", effect.GetProperty("action").GetString());
-                Assert.Equal("verified", effect.GetProperty("outcome").GetString());
-                Assert.Equal("none", effect.GetProperty("residual").GetString());
+                Assert.Equal("deleted", effect.GetProperty("action").GetString());
+                Assert.Equal("done", effect.GetProperty("outcome").GetString());
             });
-        Assert.Empty(appliedResult.GetProperty("residuals").EnumerateArray());
         Assert.False(File.Exists(final));
         Assert.False(File.Exists(draft));
         Assert.Equal(workspaceBefore, workspace.SnapshotWorkspace());
@@ -114,6 +92,7 @@ public sealed class CleanupPlanningIntegrationTests
         Assert.Empty(workspace.SnapshotLockBytes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(
         DisplayName = "Cleanup repeats an empty catalogue as a deterministic no-lease no-op"),
      Trait("Feature", "cleanup-command"),
@@ -127,10 +106,10 @@ public sealed class CleanupPlanningIntegrationTests
         var recoveryBefore = workspace.SnapshotRecovery();
 
         var first = await workspace.RunAsync(
-            ["cleanup", "--json"],
+            ["cleanup", "--format", "json"],
             TestContext.Current.CancellationToken);
         var second = await workspace.RunAsync(
-            ["cleanup", "--json"],
+            ["cleanup", "--format", "json"],
             TestContext.Current.CancellationToken);
 
         Assert.Equal(0, first.ExitCode);
@@ -143,15 +122,9 @@ public sealed class CleanupPlanningIntegrationTests
         Assert.Equal("current-directory", document.RootElement.GetProperty("workspace").GetProperty("selectedBy").GetString());
         var result = CleanupJsonAssertions.Result(document);
         Assert.Equal("apply", result.GetProperty("mode").GetString());
-        Assert.Equal("complete", result.GetProperty("catalogue").GetProperty("coverage").GetString());
-        Assert.Empty(result.GetProperty("catalogue").GetProperty("candidates").EnumerateArray());
-        Assert.Equal("safe", result.GetProperty("plan").GetProperty("safety").GetString());
-        Assert.Empty(result.GetProperty("plan").GetProperty("entries").EnumerateArray());
-        Assert.Equal("not-requested", result.GetProperty("lease").GetProperty("state").GetString());
-        Assert.Empty(result.GetProperty("effects").EnumerateArray());
-        Assert.Empty(result.GetProperty("residuals").EnumerateArray());
-        Assert.Equal("verified", result.GetProperty("verification").GetProperty("state").GetString());
-        Assert.Empty(result.GetProperty("findings").EnumerateArray());
+        Assert.Empty(result.GetProperty("items").EnumerateArray());
+        Assert.Empty(document.RootElement.GetProperty("effects").EnumerateArray());
+        Assert.Empty(document.RootElement.GetProperty("findings").EnumerateArray());
         CleanupJsonAssertions.AssertNoPersistentEffect(workspace, workspaceBefore, recoveryBefore);
         Assert.False(workspace.LockInfrastructureExists);
         Assert.Empty(workspace.SnapshotLockBytes());

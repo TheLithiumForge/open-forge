@@ -6,6 +6,7 @@ namespace OpenForge.Cli.IntegrationTests.Filesystem;
 
 public sealed class PhysicalPathResolverTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Physical walk classifies links without writes")]
     [Trait("Feature", "cli-filesystem"), Trait("Evidence", "Integration")]
     public void ComponentWalkClassifiesInternalExternalDanglingAndCyclicLinksWithoutWrites()
@@ -55,6 +56,7 @@ public sealed class PhysicalPathResolverTests
         Assert.Equal(before, temporary.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Physical walk blocks the first external transition before reentry")]
     [Trait("Feature", "cli-filesystem"), Trait("Evidence", "Integration")]
     public void ResolverBlocksFirstExternalTransitionEvenWhenALaterLinkReenters()
@@ -74,6 +76,7 @@ public sealed class PhysicalPathResolverTests
         Assert.Equal(Path.GetFullPath(outside), result.ResolvedPhysicalPath);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Physical walk supports root and unrelated internal aliases")]
     [Trait("Feature", "cli-filesystem"), Trait("Evidence", "Integration")]
     public void ResolverSupportsWorkspaceRootAndUnrelatedInternalAliases()

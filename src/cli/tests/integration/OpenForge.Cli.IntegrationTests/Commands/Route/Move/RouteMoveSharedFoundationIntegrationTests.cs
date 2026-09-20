@@ -1,14 +1,17 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.References;
 using OpenForge.Cli.Core.Commands.Route.Shared.References;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
-using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Commands.Route.Shared.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Move;
 
 public sealed class RouteMoveSharedFoundationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Markdown catalogue covers explicit real roots exclusions extensions UTF-8 and cancellation"),
         InlineData("complete", (int)RouteMarkdownCatalogueCoverage.Complete),
         InlineData("explicit-exclusion", (int)RouteMarkdownCatalogueCoverage.Complete),
@@ -57,6 +60,7 @@ public sealed class RouteMoveSharedFoundationIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Markdown catalogue blocks a real Linux filename that has no canonical path representation")]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task CatalogueBlocksUnrepresentableLinuxFilesystemName()
@@ -88,66 +92,32 @@ public sealed class RouteMoveSharedFoundationIntegrationTests
         Assert.DoesNotContain(unsafeName, catalogue.SelectedPaths);
     }
 
-    [Theory(DisplayName = "Lifecycle ownership reads Framework and Extensions from one exact snapshot"),
-        InlineData("trusted", (int)LifecycleOwnershipReadState.Trusted, 1),
-        InlineData("claimed", (int)LifecycleOwnershipReadState.Trusted, 2),
-        InlineData("missing", (int)LifecycleOwnershipReadState.Blocked, 0),
-        InlineData("malformed", (int)LifecycleOwnershipReadState.Blocked, 0),
-        InlineData("stale", (int)LifecycleOwnershipReadState.Blocked, 0),
-        InlineData("incomplete", (int)LifecycleOwnershipReadState.Blocked, 0),
-        InlineData("conflicting", (int)LifecycleOwnershipReadState.Blocked, 0),
-        InlineData("cancelled", (int)LifecycleOwnershipReadState.Interrupted, 0)]
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Route ownership reads current path and region claims from one exact lock snapshot"),
+        InlineData("trusted", true, 0),
+        InlineData("claimed", true, 1),
+        InlineData("missing", false, 0),
+        InlineData("malformed", false, 0),
+        InlineData("old-metadata", true, 0),
+        InlineData("unknown", false, 0),
+        InlineData("conflicting", true, 2)]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
-    public async Task OwnershipRequiresOneTrustedCombinedSnapshot(
-        string scenario,
-        int expectedStateValue,
-        int expectedClaims)
+    public async Task OwnershipUsesOneCurrentSnapshot(string scenario, bool established, int expectedClaims)
     {
         using var workspace = RouteMoveIntegrationWorkspace.Create($"move-ownership-{scenario}");
-        if (scenario == "claimed")
-        {
-            workspace.SeedScenario("ownership-claim");
-        }
-        else if (scenario == "missing")
-        {
-            workspace.DeleteFile(RouteMoveIntegrationWorkspace.LifecyclePath);
-        }
-        else if (scenario == "malformed")
-        {
-            workspace.SeedScenario("ownership-malformed");
-        }
-        else if (scenario is "stale" or "incomplete" or "conflicting")
-        {
-            workspace.SeedScenario($"ownership-{scenario}");
-        }
-
-        using var cancellation = new CancellationTokenSource();
-        if (scenario == "cancelled")
-        {
-            cancellation.Cancel();
-        }
-
+        if (scenario == "claimed") workspace.SeedScenario("ownership-claim");
+        else if (scenario == "missing") workspace.DeleteFile(RouteMoveIntegrationWorkspace.OwnershipPath);
+        else if (scenario != "trusted") workspace.SeedScenario($"ownership-{scenario}");
         var before = workspace.SnapshotHashes();
-        var result = await new LifecycleOwnershipReader(new PhysicalPathResolver())
-            .ReadAsync(workspace.Workspace, cancellation.Token);
-
-        Assert.Equal((LifecycleOwnershipReadState)expectedStateValue, result.Framework.State);
-        Assert.Equal((LifecycleOwnershipReadState)expectedStateValue, result.Extensions.State);
-        Assert.Equal(expectedClaims, result.Claims.Length);
+        var result = await WorkspaceOwnershipReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace, CancellationToken.None);
+        Assert.Equal(established, RouteOwnershipEvidence.IsEstablished(result));
+        Assert.Equal(expectedClaims, RouteOwnershipEvidence.Claims(result).Count());
         Assert.Equal(before, workspace.SnapshotHashes());
         if (scenario == "claimed")
         {
-            var claim = Assert.Single(
-                result.Claims,
-                value => value.Path == RouteMoveIntegrationWorkspace.LeafPath);
+            var claim = Assert.Single(RouteOwnershipEvidence.Claims(result));
             Assert.Equal(RouteMoveIntegrationWorkspace.LeafPath, claim.Path);
-            Assert.Equal(LifecycleOwnershipManager.Extension, claim.Manager);
-        }
-        else if (scenario == "trusted")
-        {
-            var claim = Assert.Single(result.Claims);
-            Assert.Equal(".agents/loader.md", claim.Path);
-            Assert.Equal(LifecycleOwnershipManager.Framework, claim.Manager);
+            Assert.Equal(OwnedPathManager.Extension, claim.Manager);
         }
     }
 }

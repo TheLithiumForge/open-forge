@@ -13,6 +13,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.List;
 
 public sealed class RouteListEncodedWhitespaceIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "An admitted encoded-space Loader declaration preserves known Route List rows as incomplete"),
         Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task EncodedSpaceDeclarationRetainsKnownRootAndMissingDestinationFinding()
@@ -64,20 +65,19 @@ public sealed class RouteListEncodedWhitespaceIntegrationTests
         Assert.Null(blankCause);
         Assert.Equal(before, workspace.SnapshotHashes());
 
-        var result = await CliHostCapture.RunAsync(["route", "list", "--json"], workspace.Path);
+        var result = await CliHostCapture.RunAsync(["route", "list", "--format", "json"], workspace.Path);
 
         Assert.Equal(before, workspace.SnapshotHashes());
         using var output = JsonDocument.Parse(result.Output);
         Assert.Equal("incomplete", output.RootElement.GetProperty("status").GetString());
         Assert.Equal(3, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
-        var facts = output.RootElement.GetProperty("result");
-        Assert.Equal("incomplete", facts.GetProperty("coverage").GetProperty("state").GetString());
+        var facts = output.RootElement.GetProperty("data");
         var row = Assert.Single(facts.GetProperty("rows").EnumerateArray());
         Assert.Equal("root", row.GetProperty("id").GetString());
         Assert.Equal(".agents/root/_root.md", row.GetProperty("path").GetString());
-        var finding = Assert.Single(facts.GetProperty("findings").EnumerateArray());
+        var finding = Assert.Single(output.RootElement.GetProperty("findings").EnumerateArray());
         Assert.Equal("route-list.loader-unavailable", finding.GetProperty("code").GetString());
-        Assert.Equal("%20", finding.GetProperty("subject").GetString());
+        Assert.Equal("%20", finding.GetProperty("subject").GetProperty("id").GetString());
     }
 }

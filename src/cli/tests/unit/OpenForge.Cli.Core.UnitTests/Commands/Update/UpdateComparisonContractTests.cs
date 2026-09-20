@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Update;
 
 public sealed class UpdateComparisonContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update validates file comparison provenance and fingerprints"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void ValidatesFileComparisonPathProvenanceAndFingerprints()
     {
@@ -24,6 +25,7 @@ public sealed class UpdateComparisonContractTests
         Assert.Equal(64, comparison.IntendedFingerprint?.Length);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update validates managed and generated region identity and null provenance"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void ValidatesManagedAndGeneratedRegionIdentityAndNullProvenance()
     {
@@ -49,13 +51,14 @@ public sealed class UpdateComparisonContractTests
         Assert.Null(generated.SourceAssetPresentInCurrentInventory);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update represents a historical retired source absent from current inventory"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void RepresentsHistoricalRetiredSourceAbsentFromCurrentInventory()
     {
         var comparison = Comparison("docs/retired.md") with
         {
             SourceAssetPresentInCurrentInventory = false,
-            CurrentState = UpdateComparisonCurrentState.BaselineEquivalent,
+            CurrentState = UpdateComparisonCurrentState.Same,
             IntendedState = UpdateComparisonIntendedState.Retired,
             IntendedFingerprint = null,
             IntendedBytes = new UpdateComparisonByteFacts
@@ -73,6 +76,7 @@ public sealed class UpdateComparisonContractTests
         Assert.Equal(UpdateRetirementEligibility.Eligible, comparison.RetirementEligibility);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update rejects invalid fingerprints, nullability, and finite states"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void RejectsInvalidFingerprintNullabilityAndFiniteStates()
     {
@@ -84,10 +88,6 @@ public sealed class UpdateComparisonContractTests
         {
             CurrentState = UpdateComparisonCurrentState.Missing,
         }).Validate());
-        Assert.Throws<ArgumentException>(() => (Comparison("docs/non-new.md") with
-        {
-            BaselineFingerprint = null,
-        }).Validate());
         Assert.Throws<ArgumentException>(() => (Comparison("docs/bytes.md") with
         {
             CurrentBytes = new UpdateComparisonByteFacts
@@ -98,7 +98,6 @@ public sealed class UpdateComparisonContractTests
         }).Validate());
         var genuinelyNew = Comparison("docs/new.md") with
         {
-            BaselineFingerprint = null,
             IntendedState = UpdateComparisonIntendedState.New,
         };
         genuinelyNew.Validate();
@@ -108,6 +107,7 @@ public sealed class UpdateComparisonContractTests
         }).Validate());
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update orders comparisons by path, kind, and region"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void OrdersComparisonsByPathAndKindAndRegion()
     {
@@ -161,6 +161,7 @@ public sealed class UpdateComparisonContractTests
         Assert.Equal("docs/z.md", ordered[2].RelativePath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Update comparison coordinates retain admitted relative-path syntax"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     [InlineData("docs/CON.md")]
     [InlineData("docs/a?.md")]
@@ -185,6 +186,7 @@ public sealed class UpdateComparisonContractTests
         Assert.Equal(path, comparison.SourceAssetPath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Update comparison paths reject non-relative and segmented syntax"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     [InlineData("C:x")]
     [InlineData("/x")]
@@ -205,6 +207,7 @@ public sealed class UpdateComparisonContractTests
             exception.Message);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update comparison whitespace keeps path region and provenance precedence"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void KeepsComparisonWhitespaceAdmissionAndGuardPrecedence()
     {
@@ -238,6 +241,7 @@ public sealed class UpdateComparisonContractTests
             provenance.Message);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Update comparison fingerprints require exactly lowercase SHA-256 syntax"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     [InlineData("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")]
     [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
@@ -256,6 +260,7 @@ public sealed class UpdateComparisonContractTests
             exception.Message);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update unavailable byte facts retain an independently available fingerprint"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void RetainsHashOnlyUnavailableComparisonBytes()
     {
@@ -272,6 +277,7 @@ public sealed class UpdateComparisonContractTests
         Assert.Equal(Hash, facts.Sha256);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update unavailable byte facts still reject uppercase fingerprints"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void RejectsInvalidFingerprintWithoutAvailableComparisonBytes()
     {
@@ -289,6 +295,7 @@ public sealed class UpdateComparisonContractTests
             exception.Message);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Update available byte facts require their exact fingerprint"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
     public void RejectsAvailableComparisonBytesWithoutFingerprint()
     {
@@ -311,10 +318,9 @@ public sealed class UpdateComparisonContractTests
             SourceAssetPath = "assets/framework.md",
             SourceAssetPresentInCurrentInventory = true,
             FingerprintKind = UpdateComparisonFingerprintKind.OpenForgeMarkdownV1,
-            BaselineFingerprint = Hash,
             CurrentFingerprint = Hash,
             IntendedFingerprint = Hash,
-            CurrentState = UpdateComparisonCurrentState.BaselineEquivalent,
+            CurrentState = UpdateComparisonCurrentState.Same,
             IntendedState = UpdateComparisonIntendedState.Same,
             RetirementEligibility = UpdateRetirementEligibility.NotApplicable,
             CurrentBytes = Bytes(),

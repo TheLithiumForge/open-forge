@@ -1,16 +1,16 @@
 using System.Text;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Document;
-using OpenForge.Cli.Core.Framework.Lifecycle;
+
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 
 public sealed class StatusLifecycleIntegrationTests
 {
-    [Fact(DisplayName = "Framework source mismatch remains incomplete while the persisted target is compared independently"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
-    public async Task FrameworkSourceMismatchDoesNotBlockIndependentTargetComparison()
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Framework ignores recorded source identity and compares the target with the running payload"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
+    public async Task RecordedSourceIdentityDoesNotReplaceCurrentPayloadComparison()
     {
         using var workspace = StatusIntegrationWorkspace.Create("status-framework-source-mismatch");
         var targetBytes = Encoding.UTF8.GetBytes("# Persisted loader\n");
@@ -19,28 +19,7 @@ public sealed class StatusLifecycleIntegrationTests
             ?? throw new InvalidOperationException("The embedded Framework payload is unavailable.");
         StatusLifecycleFixture.Write(
             workspace,
-            new FrameworkLifecycleState
-            {
-                Coverage = LifecycleSchema.CompleteCoverage,
-                Source = new FrameworkLifecycleSource
-                {
-                    Id = "open-forge",
-                    Version = "1.0.0",
-                    InventoryFingerprint = payload.InventoryFingerprint,
-                },
-                Targets =
-                [
-                    new FrameworkLifecycleTarget
-                    {
-                        Path = FrameworkPayloadAsset.LoaderPath,
-                        SourceAssetPath = ".agents/missing-running-source.md",
-                        Region = null,
-                        BaselineFingerprint = StatusLifecycleFixture.Hash(targetBytes),
-                        FingerprintKind = LifecycleSchema.ExactBytesFingerprintKind,
-                    },
-                ],
-                GeneratedRegions = [],
-            },
+            new(new("older-framework", "0.0.1"), [FrameworkPayloadAsset.LoaderPath], []),
             extensions: null);
 
         var run = await StatusIntegrationApplication.RunAsync(
@@ -48,53 +27,48 @@ public sealed class StatusLifecycleIntegrationTests
             "status",
             "--workspace",
             workspace.Path,
-            "--json");
+            "--format", "json",
+            "--detail", "full");
 
         Assert.Equal(3, run.ExitCode);
         using var document = StatusIntegrationApplication.ParseJson(run);
         var result = StatusJsonAssertions.Result(document.RootElement);
-        var framework = result.GetProperty("lifecycle").GetProperty("framework");
-        Assert.Equal("unavailable", framework.GetProperty("sourceAvailability").GetString());
-        var target = Assert.Single(framework.GetProperty("targets").EnumerateArray());
-        Assert.Equal("current", target.GetProperty("state").GetString());
-        var findingCodes = result.GetProperty("findings").EnumerateArray()
+        var framework = result.GetProperty("frameworkFiles");
+        var target = Assert.Single(framework.EnumerateArray(), item =>
+            item.GetProperty("path").GetString() == FrameworkPayloadAsset.LoaderPath);
+        Assert.Equal("changed", target.GetProperty("state").GetString());
+        var findingCodes = document.RootElement.GetProperty("findings").EnumerateArray()
             .Select(finding => finding.GetProperty("code").GetString())
             .ToArray();
-        Assert.Contains("framework-lifecycle-incomplete", findingCodes);
-        Assert.DoesNotContain("framework-target-blocked", findingCodes);
+        Assert.Contains("status.framework-target-changed", findingCodes);
+        Assert.DoesNotContain("status.framework-lifecycle-incomplete", findingCodes);
+        Assert.DoesNotContain("status.framework-target-blocked", findingCodes);
     }
 
-    [Fact(DisplayName = "Installed workspace with a missing Extension lifecycle section retains incomplete lifecycle facts"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
-    public async Task InstalledWorkspaceDoesNotTreatMissingLifecycleSectionAsAbsent()
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Installed workspace ignores a missing legacy Extension section"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
+    public async Task InstalledWorkspaceIgnoresMissingLegacySection()
     {
         using var workspace = await StatusIntegrationWorkspace.CreateInstalledAsync(
             "status-installed-missing-lifecycle");
-        var lifecycle = StatusLifecycleFixture.Read(workspace);
-        StatusLifecycleFixture.WriteSections(
-            workspace,
-            lifecycle.Framework,
-            extensions: null);
+        workspace.WritePostInstallAgentText(StatusIntegrationWorkspace.LifecyclePath, "{\"framework\":{},\"extensions\":null}");
 
         var run = await StatusIntegrationApplication.RunAsync(
             workspace,
             "status",
             "--workspace",
             workspace.Path,
-            "--json");
+            "--format", "json",
+            "--detail", "full");
 
-        Assert.Equal(3, run.ExitCode);
+        Assert.Equal(0, run.ExitCode);
         using var document = StatusIntegrationApplication.ParseJson(run);
         var result = StatusJsonAssertions.Result(document.RootElement);
-        Assert.Equal(
-            "trusted",
-            result.GetProperty("lifecycle").GetProperty("framework")
-                .GetProperty("state").GetString());
-        Assert.Equal(
-            "incomplete",
-            result.GetProperty("lifecycle").GetProperty("extensions")
-                .GetProperty("state").GetString());
+        Assert.NotEmpty(result.GetProperty("frameworkFiles").EnumerateArray());
+        Assert.Empty(result.GetProperty("extensions").EnumerateArray());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Uninstalled workspace with a recovery residual does not claim lifecycle absence"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
     public async Task RecoveryResidualPreventsUninstalledLifecycleAbsenceProof()
     {
@@ -108,22 +82,20 @@ public sealed class StatusLifecycleIntegrationTests
             "status",
             "--workspace",
             workspace.Path,
-            "--json");
+            "--format", "json",
+            "--detail", "full");
 
         Assert.Equal(3, run.ExitCode);
         using var document = StatusIntegrationApplication.ParseJson(run);
         var result = StatusJsonAssertions.Result(document.RootElement);
-        Assert.Equal(
-            "incomplete",
-            result.GetProperty("lifecycle").GetProperty("framework")
-                .GetProperty("state").GetString());
-        Assert.Equal(
-            "incomplete",
-            result.GetProperty("lifecycle").GetProperty("extensions")
-                .GetProperty("state").GetString());
+        Assert.Empty(result.GetProperty("frameworkFiles").EnumerateArray());
+        Assert.Empty(result.GetProperty("extensions").EnumerateArray());
         Assert.Single(result.GetProperty("recovery").GetProperty("candidates").EnumerateArray());
+        Assert.Contains(document.RootElement.GetProperty("findings").EnumerateArray(), finding =>
+            finding.GetProperty("code").GetString() == "status.recovery-draft-incomplete");
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Generated and managed observations preserve every target state and deduplicate shared owners"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
     public async Task GeneratedAndManagedObservationsPreserveEveryTargetStateAndSharedOwnerDeduplication()
     {
@@ -152,11 +124,7 @@ public sealed class StatusLifecycleIntegrationTests
                     new StatusLifecycleFixture.ExtensionSeed(
                         "beta", "2.0.0", shared.Combine("missing-beta-source"), [],
                         [StatusIntegrationWorkspace.ExtensionTargetPath]),
-                ],
-                [new StatusLifecycleFixture.PathSeed(
-                    StatusIntegrationWorkspace.ExtensionTargetPath,
-                    ["alpha", "beta"],
-                    StatusLifecycleFixture.Hash(sharedBytes))]));
+                ]));
         shared.SeedLockBytes([0x51, 0x52]);
         var before = shared.SnapshotHashes();
         var lockBefore = shared.SnapshotLockBytes();
@@ -167,22 +135,23 @@ public sealed class StatusLifecycleIntegrationTests
             "status",
             "--workspace",
             shared.Path,
-            "--json");
+            "--format", "json",
+            "--detail", "full");
 
         Assert.Equal(3, run.ExitCode);
         Assert.Equal(string.Empty, run.StandardError);
         using var document = StatusIntegrationApplication.ParseJson(run);
-        var extensions = StatusJsonAssertions.Result(document.RootElement)
-            .GetProperty("lifecycle").GetProperty("extensions");
+        var result = StatusJsonAssertions.Result(document.RootElement);
+        var extensions = result.GetProperty("extensions");
         Assert.Equal(
             ["alpha", "beta"],
-            extensions.GetProperty("installed").EnumerateArray()
+            extensions.EnumerateArray()
                 .Select(item => item.GetProperty("id").GetString()));
-        var target = Assert.Single(extensions.GetProperty("managedFiles").GetProperty("targets").EnumerateArray());
-        Assert.Equal(["alpha", "beta"], target.GetProperty("owners").EnumerateArray().Select(owner => owner.GetString()));
-        Assert.Equal("current", target.GetProperty("state").GetString());
-        StatusJsonAssertions.AvailableZero(extensions.GetProperty("managedFiles").GetProperty("counts").GetProperty("changed"));
-        StatusJsonAssertions.AvailableZero(extensions.GetProperty("managedFiles").GetProperty("counts").GetProperty("missing"));
+        Assert.All(extensions.EnumerateArray(), extension =>
+            Assert.Equal("unavailable", Assert.Single(extension.GetProperty("files").EnumerateArray())
+                .GetProperty("state").GetString()));
+        Assert.Contains(document.RootElement.GetProperty("findings").EnumerateArray(), finding =>
+            finding.GetProperty("code").GetString() == "status.extension-source-unavailable");
         Assert.Equal(before, shared.SnapshotHashes());
         Assert.Equal(lockBefore, shared.SnapshotLockBytes());
         Assert.Equal(recoveryBefore, StatusRecoveryCatalogue.SnapshotEntries(shared.RecoveryDirectory()));

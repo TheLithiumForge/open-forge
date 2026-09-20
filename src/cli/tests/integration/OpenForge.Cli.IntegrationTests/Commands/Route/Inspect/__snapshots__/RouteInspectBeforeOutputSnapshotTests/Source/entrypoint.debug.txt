@@ -1,0 +1,29 @@
+docs  .agents/docs/_docs.md
+Workspace: <workspace>
+
+Where this source belongs
+  Route chain: docs
+  Parent: none (Loader root)
+  Direct children: 2 files
+  Descendants: 2 files
+  Tags: Docs
+
+When it is read
+  At task start or resume: yes
+  Read automatically when the Loader is read
+  May be read again: no
+
+Context size
+  This file: 156 B, about 39 tokens
+  Selecting this route adds: nothing (already in startup context)
+  Selected context: 1 file, 156 B, about 39 tokens
+  Already in startup context: 1 file, 156 B, about 39 tokens
+
+Axioms
+  Inherited rules from: none
+  Local rules: no
+  Why: all applicable route facts are available
+  Selection: source ID; automatic ID; requested "docs"
+
+Physical layers
+  base .agents/docs/_docs.md

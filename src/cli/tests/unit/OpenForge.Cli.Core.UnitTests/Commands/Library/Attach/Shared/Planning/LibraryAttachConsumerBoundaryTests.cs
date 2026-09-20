@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Attach.Shared.Planning;
 
 public sealed class LibraryAttachConsumerBoundaryTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("unobserved"), InlineData("ancestor-gap")]
     public void CoverageGapNeverMeansMissingDirectory(string scenario)
@@ -26,6 +27,7 @@ public sealed class LibraryAttachConsumerBoundaryTests
         Assert.Empty(plan.Directories);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("missing-root"), InlineData("file-root"), InlineData("linked-parent")]
     public void PositiveUnsafeBoundaryBlocksCompletePlan(string scenario)
@@ -53,6 +55,7 @@ public sealed class LibraryAttachConsumerBoundaryTests
         Assert.NotEmpty(plan.Findings);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void OnlyExplicitMissingParentProducesDirectoryCreation()
     {

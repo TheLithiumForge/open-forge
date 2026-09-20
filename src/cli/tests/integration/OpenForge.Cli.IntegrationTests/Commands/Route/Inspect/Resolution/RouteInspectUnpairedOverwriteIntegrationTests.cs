@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Resolution;
 
 public sealed class RouteInspectUnpairedOverwriteIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Inspect keeps an unpaired overwrite orphaned when candidate IDs collide"), Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task CollidingIdsCannotInventOverwriteAmbiguity()
     {

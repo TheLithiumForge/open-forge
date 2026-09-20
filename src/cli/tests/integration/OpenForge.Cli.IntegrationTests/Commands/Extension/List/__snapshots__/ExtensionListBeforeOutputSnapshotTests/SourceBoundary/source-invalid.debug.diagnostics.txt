@@ -1,0 +1,5 @@
+status=invalid-input
+installed=0
+available=0
+The Extension manifest is invalid: 'm' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 2.
+No Extension ownership is recorded; installed packages cannot be established.

@@ -4,14 +4,16 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 
 internal static class StatusJsonAssertions
 {
+    private static readonly string[] MeasurementProperties = ["files", "characters", "bytes", "tokens"];
+
     internal static JsonElement Result(JsonElement root)
-        => root.GetProperty("result");
+        => root.GetProperty("data");
 
     internal static long Available(JsonElement value)
-        => AvailableNumber(value).GetInt64();
-
-    internal static decimal AvailableDecimal(JsonElement value)
-        => AvailableNumber(value).GetDecimal();
+    {
+        Assert.Equal(JsonValueKind.Number, value.ValueKind);
+        return value.GetInt64();
+    }
 
     internal static void AvailableValue(JsonElement value, long expected)
         => Assert.Equal(expected, Available(value));
@@ -19,219 +21,125 @@ internal static class StatusJsonAssertions
     internal static void AvailableZero(JsonElement value)
         => AvailableValue(value, 0);
 
-    internal static void NotApplicable(JsonElement value)
-    {
-        Assert.Equal("not-applicable", value.GetProperty("state").GetString());
-        Assert.Equal(JsonValueKind.Null, value.GetProperty("value").ValueKind);
-    }
-
     internal static void MeasurementAvailable(JsonElement measurement)
     {
-        foreach (var name in new[] { "files", "characters", "utf8Bytes", "estimatedTokens" })
-        {
-            _ = Available(measurement.GetProperty(name));
-        }
+        PropertyOrder(measurement, MeasurementProperties);
+        foreach (var name in MeasurementProperties)
+            Available(measurement.GetProperty(name));
     }
 
-    internal static void MeasurementNotApplicable(JsonElement measurement)
+    internal static void MeasurementNullable(JsonElement measurement)
     {
-        foreach (var name in new[] { "files", "characters", "utf8Bytes", "estimatedTokens" })
+        PropertyOrder(measurement, MeasurementProperties);
+        foreach (var name in MeasurementProperties)
         {
-            NotApplicable(measurement.GetProperty(name));
+            var value = measurement.GetProperty(name);
+            Assert.True(value.ValueKind is JsonValueKind.Number or JsonValueKind.Null);
         }
     }
 
     internal static void AssertDifference(JsonElement startup)
     {
-        foreach (var name in new[] { "files", "characters", "utf8Bytes", "estimatedTokens" })
+        var shipped = startup.GetProperty("shipped");
+        var current = startup.GetProperty("current");
+        var difference = startup.GetProperty("difference");
+        foreach (var name in MeasurementProperties)
         {
-            var initial = Available(startup.GetProperty("initial").GetProperty(name));
-            var current = Available(startup.GetProperty("current").GetProperty(name));
-            var difference = Available(startup.GetProperty("difference").GetProperty(name));
-            Assert.Equal(current - initial, difference);
+            var shippedValue = shipped.GetProperty(name);
+            var currentValue = current.GetProperty(name);
+            var differenceValue = difference.GetProperty(name);
+            if (shippedValue.ValueKind == JsonValueKind.Number
+                && currentValue.ValueKind == JsonValueKind.Number)
+            {
+                Assert.Equal(
+                    currentValue.GetInt64() - shippedValue.GetInt64(),
+                    Available(differenceValue));
+            }
+            else
+            {
+                Assert.Equal(JsonValueKind.Null, differenceValue.ValueKind);
+            }
         }
     }
 
     internal static void CompleteInstalled(JsonElement root)
     {
-        Assert.Equal("complete", root.GetProperty("status").GetString());
+        Assert.Equal("completed", root.GetProperty("status").GetString());
         Assert.Equal("status", root.GetProperty("command").GetString());
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
-        var result = Result(root);
-        var installation = result.GetProperty("installation");
-        Assert.Equal("installed", installation.GetProperty("state").GetString());
-        Assert.NotNull(installation.GetProperty("entryPath").GetString());
-        Assert.NotNull(installation.GetProperty("loaderPath").GetString());
-
-        var context = result.GetProperty("context");
-        Assert.Equal("ceiling-characters-divided-by-four", context.GetProperty("tokenEstimator").GetString());
-        MeasurementAvailable(context.GetProperty("startup").GetProperty("initial"));
-        MeasurementAvailable(context.GetProperty("startup").GetProperty("current"));
-        MeasurementAvailable(context.GetProperty("startup").GetProperty("difference"));
-        MeasurementAvailable(context.GetProperty("totalAvailable"));
-        MeasurementAvailable(context.GetProperty("continuity"));
-        _ = AvailableDecimal(context.GetProperty("startupPercentage"));
-        Assert.NotEmpty(context.GetProperty("continuitySources").EnumerateArray());
-
-        var structure = result.GetProperty("structure");
-        Assert.NotEmpty(structure.GetProperty("generatedNavigation").EnumerateArray());
-        var lifecycle = result.GetProperty("lifecycle");
-        Assert.Equal("trusted", lifecycle.GetProperty("framework").GetProperty("state").GetString());
-        Assert.Equal("available", lifecycle.GetProperty("framework").GetProperty("sourceAvailability").GetString());
-        Assert.NotEmpty(lifecycle.GetProperty("framework").GetProperty("targets").EnumerateArray());
-        Assert.Equal("trusted", lifecycle.GetProperty("extensions").GetProperty("state").GetString());
-        Assert.Equal("not-applicable", lifecycle.GetProperty("extensions").GetProperty("sourceAvailability").GetString());
-        Assert.Empty(lifecycle.GetProperty("extensions").GetProperty("installed").EnumerateArray());
-        Assert.Empty(lifecycle.GetProperty("extensions").GetProperty("managedFiles").GetProperty("targets").EnumerateArray());
-        AvailableZero(result.GetProperty("recovery").GetProperty("verifiedFinals"));
-        AvailableZero(result.GetProperty("recovery").GetProperty("incompleteDrafts"));
-        Assert.Empty(result.GetProperty("recovery").GetProperty("candidates").EnumerateArray());
-        Assert.Empty(result.GetProperty("findings").EnumerateArray());
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
+        CompleteGraph(root);
+        Assert.Empty(root.GetProperty("findings").EnumerateArray());
     }
 
     internal static void CompleteGraph(JsonElement root)
     {
-        PropertyOrder(root, "schemaVersion", "command", "status", "workspace", "result", "next");
+        PropertyOrder(root, "schemaVersion", "command", "status", "detail", "filter", "workspace", "summary", "findings", "effects", "counts", "limitations", "data", "recovery", "next");
         PropertyOrder(root.GetProperty("workspace"), "path", "selectedBy");
-        var result = Result(root);
-        PropertyOrder(result, "installation", "context", "structure", "lifecycle", "library", "recovery", "findings");
-        PropertyOrder(result.GetProperty("installation"), "state", "entryPath", "loaderPath");
+        Assert.Equal("status", root.GetProperty("command").GetString());
+        var data = Result(root);
+        PropertyOrder(data, "installation", "context", "structure", "frameworkFiles", "entriesSections", "extensions", "libraries", "recovery");
+        PropertyOrder(data.GetProperty("installation"), "state", "entryPath", "loaderPath");
 
-        var context = result.GetProperty("context");
-        PropertyOrder(context, "tokenEstimator", "startup", "totalAvailable", "startupPercentage", "continuity", "continuitySources");
+        var context = data.GetProperty("context");
+        PropertyOrder(context, "startup", "allRouted", "startupShare", "mayLoadAgainSources");
         var startup = context.GetProperty("startup");
-        PropertyOrder(startup, "initial", "current", "difference");
-        MeasurementGraph(startup.GetProperty("initial"));
-        MeasurementGraph(startup.GetProperty("current"));
-        MeasurementGraph(startup.GetProperty("difference"));
-        MeasurementGraph(context.GetProperty("totalAvailable"));
-        var startupPercentage = context.GetProperty("startupPercentage");
-        PropertyOrder(startupPercentage, "state", "value");
-        _ = AvailableDecimal(startupPercentage);
-        MeasurementGraph(context.GetProperty("continuity"));
-        foreach (var source in context.GetProperty("continuitySources").EnumerateArray())
+        PropertyOrder(startup, "shipped", "current", "difference", "mayLoadAgain");
+        MeasurementAvailable(startup.GetProperty("shipped"));
+        MeasurementAvailable(startup.GetProperty("current"));
+        MeasurementAvailable(startup.GetProperty("difference"));
+        MeasurementAvailable(startup.GetProperty("mayLoadAgain"));
+        MeasurementAvailable(context.GetProperty("allRouted"));
+        Assert.Equal(JsonValueKind.Number, context.GetProperty("startupShare").ValueKind);
+        foreach (var source in context.GetProperty("mayLoadAgainSources").EnumerateArray())
         {
-            PropertyOrder(source, "sourceId", "utf8Bytes", "layers");
+            PropertyOrder(source, "sourceId", "bytes", "layers");
             foreach (var layer in source.GetProperty("layers").EnumerateArray())
-            {
-                PropertyOrder(layer, "path", "utf8Bytes");
-            }
+                PropertyOrder(layer, "path", "bytes");
         }
 
-        var structure = result.GetProperty("structure");
-        PropertyOrder(structure, "rootCategories", "generatedNavigation");
-        PropertyOrder(structure.GetProperty("rootCategories"), "count", "added", "removed");
-        ValueGraph(structure.GetProperty("rootCategories").GetProperty("count"));
-        foreach (var target in structure.GetProperty("generatedNavigation").EnumerateArray())
+        var structure = data.GetProperty("structure");
+        PropertyOrder(structure, "rootCategories");
+        var rootCategories = structure.GetProperty("rootCategories");
+        PropertyOrder(rootCategories, "count", "added", "removed");
+        Assert.Equal(JsonValueKind.Number, rootCategories.GetProperty("count").ValueKind);
+
+        foreach (var file in data.GetProperty("frameworkFiles").EnumerateArray())
+            PropertyOrder(file, "path", "state");
+        foreach (var entry in data.GetProperty("entriesSections").EnumerateArray())
+            PropertyOrder(entry, "path", "state");
+        foreach (var extension in data.GetProperty("extensions").EnumerateArray())
         {
-            PropertyOrder(target, "path", "state");
+            PropertyOrder(extension, "id", "version", "files");
+            foreach (var file in extension.GetProperty("files").EnumerateArray())
+                PropertyOrder(file, "path", "state");
         }
 
-        var lifecycle = result.GetProperty("lifecycle");
-        PropertyOrder(lifecycle, "framework", "extensions");
-        var framework = lifecycle.GetProperty("framework");
-        PropertyOrder(framework, "state", "sourceAvailability", "targets");
-        foreach (var target in framework.GetProperty("targets").EnumerateArray())
+        foreach (var library in data.GetProperty("libraries").EnumerateArray())
         {
-            PropertyOrder(target, "path", "kind", "sourceAssetPath", "region", "baselineFingerprint", "fingerprintKind", "state");
+            PropertyOrder(library, "id", "sourceRoot", "destinationRoot", "links");
+            foreach (var link in library.GetProperty("links").EnumerateArray())
+                PropertyOrder(link, "path", "state", "expectedTarget", "observedTarget");
         }
 
-        var extensions = lifecycle.GetProperty("extensions");
-        PropertyOrder(extensions, "state", "sourceAvailability", "installed", "managedFiles");
-        foreach (var installed in extensions.GetProperty("installed").EnumerateArray())
-        {
-            PropertyOrder(installed, "id", "version", "source", "sourceAvailability", "dependencies", "paths");
-        }
-
-        var managed = extensions.GetProperty("managedFiles");
-        PropertyOrder(managed, "counts", "targets");
-        PropertyOrder(managed.GetProperty("counts"), "current", "changed", "missing", "unavailable", "blocked");
-        foreach (var target in managed.GetProperty("targets").EnumerateArray())
-        {
-            PropertyOrder(target, "path", "owners", "baselineFingerprint", "fingerprintKind", "state");
-        }
-
-        var library = result.GetProperty("library");
-        PropertyOrder(library, "state", "record", "records", "counts");
-        PropertyOrder(library.GetProperty("record"), "path", "state");
-        foreach (var registration in library.GetProperty("records").EnumerateArray())
-        {
-            PropertyOrder(registration, "id", "sourceRoot", "sourceRootState", "sourceAvailability", "registeredLinks");
-            var links = registration.GetProperty("registeredLinks");
-            PropertyOrder(links, "registered", "counts", "links");
-            ValueGraph(links.GetProperty("registered"));
-            LibraryLinkCounts(links.GetProperty("counts"));
-            foreach (var link in links.GetProperty("links").EnumerateArray())
-            {
-                PropertyOrder(link, "sourcePath", "destinationPath", "expectedRelativeLink", "sourceId", "state");
-            }
-        }
-
-        LibraryCounts(library.GetProperty("counts"));
-
-        var recovery = result.GetProperty("recovery");
-        PropertyOrder(recovery, "verifiedFinals", "incompleteDrafts", "candidates");
-        ValueGraph(recovery.GetProperty("verifiedFinals"));
-        ValueGraph(recovery.GetProperty("incompleteDrafts"));
+        var recovery = data.GetProperty("recovery");
+        PropertyOrder(recovery, "candidates");
         foreach (var candidate in recovery.GetProperty("candidates").EnumerateArray())
-        {
             PropertyOrder(candidate, "path", "kind", "integrity");
-        }
 
-        Assert.Empty(result.GetProperty("findings").EnumerateArray());
+        var counts = root.GetProperty("counts");
+        PropertyOrder(counts,
+            "routedFiles", "startupFiles", "startupTokens", "mayLoadAgainFiles", "mayLoadAgainTokens",
+            "allTokens", "startupShare", "rootCategories", "entriesSectionsCurrent", "entriesSectionsStale",
+            "entriesSectionsMissing", "frameworkFilesCurrent", "frameworkFilesChanged", "frameworkFilesMissing",
+            "extensionsInstalled", "librariesRegistered", "libraryLinksCurrent", "libraryLinksMissing",
+            "libraryLinksChanged", "recoveryBundles", "recoveryDrafts");
+        foreach (var property in counts.EnumerateObject())
+            Assert.True(property.Value.ValueKind is JsonValueKind.Number or JsonValueKind.Null);
+
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("recovery").ValueKind);
         Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
     }
 
     internal static void PropertyOrder(JsonElement element, params string[] expected)
         => Assert.Equal(expected, element.EnumerateObject().Select(property => property.Name));
-
-    private static void MeasurementGraph(JsonElement measurement)
-    {
-        PropertyOrder(measurement, "files", "characters", "utf8Bytes", "estimatedTokens");
-        foreach (var name in new[] { "files", "characters", "utf8Bytes", "estimatedTokens" })
-        {
-            ValueGraph(measurement.GetProperty(name));
-        }
-    }
-
-    private static void ValueGraph(JsonElement value)
-    {
-        PropertyOrder(value, "state", "value");
-        var state = Assert.IsType<string>(value.GetProperty("state").GetString());
-        Assert.True(state is "available" or "unavailable" or "not-applicable");
-        if (state == "available")
-        {
-            Assert.Equal(JsonValueKind.Number, value.GetProperty("value").ValueKind);
-        }
-        else
-        {
-            Assert.Equal(JsonValueKind.Null, value.GetProperty("value").ValueKind);
-        }
-    }
-
-    private static void LibraryCounts(JsonElement counts)
-    {
-        PropertyOrder(counts, "registered", "current", "missing", "changed", "blocked", "unavailable");
-        foreach (var name in new[] { "registered", "current", "missing", "changed", "blocked", "unavailable" })
-        {
-            ValueGraph(counts.GetProperty(name));
-        }
-    }
-
-    private static void LibraryLinkCounts(JsonElement counts)
-    {
-        PropertyOrder(counts, "current", "missing", "changed", "blocked", "unavailable");
-        foreach (var name in new[] { "current", "missing", "changed", "blocked", "unavailable" })
-        {
-            ValueGraph(counts.GetProperty(name));
-        }
-    }
-
-    private static JsonElement AvailableNumber(JsonElement value)
-    {
-        Assert.Equal("available", value.GetProperty("state").GetString());
-        var number = value.GetProperty("value");
-        Assert.Equal(JsonValueKind.Number, number.ValueKind);
-        return number;
-    }
 }

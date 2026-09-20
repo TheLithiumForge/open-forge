@@ -7,6 +7,9 @@ open-forge:
 
 # library attach Interface Contract
 
+Unavailable ownership is reported as `library-attach.ownership-observation`
+with `completed` status. This finding grants no ownership or mutation permission.
+
 ## Status And Authority
 
 This is the current Crystallized Interface Contract for
@@ -27,6 +30,22 @@ define accepted shared realization boundaries. The [Index Behavior Contract](../
 defines existing generated-navigation projection. This Interface Contract adds
 no callable or implementation choice. The active Task records implementation and executable evidence.
 
+The sole generated state publication is `.agents/open-forge.lock.json`.
+The existing public record-effect and publication fields describe that lock
+write. Its Libraries section contains validated registration identities and
+source-relative paths; other ownership sections are preserved. No retired
+record is read, written, converted, or deleted. A missing ownership lock may be
+created after the explicit attach effects verify. If the whole lock is a
+readable ordinary malformed file, Attach may replace that unusable snapshot
+with only the newly verified claim; no prior claim is inferred, deleted, or
+updated from malformed bytes. An unreadable, aliased, nonordinary, or otherwise
+unavailable publication remains unavailable and causes no link,
+generated-region, permission, or record effect. Missing or unknown ownership
+observations remain present on a successful new attach and are not
+presented as a valid empty record. Recovery protects the exact prior lock bytes
+before any effect; the planned lock publication remains last after verified
+link and generated-region effects.
+
 ## Purpose And Operation Boundary
 
 `library attach` registers one new consumer-local library ID and projects the
@@ -39,8 +58,12 @@ never copied, moved, deleted, or written through by this operation.
 Attach is one complete mutation for one library. It establishes the source
 root, inventories every eligible file, detects every destination collision,
 forms any permitted generated-region changes, and publishes the consumer
-record as one plan. It never applies a safe subset after a collision,
-incomplete source inventory, unsafe boundary, or other preflight blocker.
+record as one plan. A readable ordinary malformed ownership lock is an
+observation, not a source of old claims: explicit source and destination
+inputs may produce only the new claim after the same inventory, mapping,
+permission, and safety checks. Attach never applies a safe subset after a
+collision, incomplete source inventory, unsafe boundary, or other preflight
+blocker, and it never infers, deletes, or updates an old claim.
 
 The managed library identity is separate from automatic source identity. A
 projected file keeps the normal identity of its consumer destination when a
@@ -50,18 +73,19 @@ operand and never creates a second route identity.
 ## Syntax
 
 ```text
-open-forge library attach <library-id> <source-root> [--to <workspace-relative-directory>] [--dry-run] [global flags]
+open-forge library attach <library-id> <source-root> [--to <workspace-relative-directory>] [--dry-run] [--automatic] [global flags]
 ```
 
 The command path selects the attach operation. The shared [Global CLI Flags](../../shared/global-flags/interface.md)
-contract defines `--workspace`, `--json`, `--view`, `--verbose`, `--help`, and
-`--version`; all six retain their shared spelling, composition, repetition,
+contract defines `--workspace <path>`, `--format <text|json>`,
+`--detail <minimal|standard|full|debug>`, repeatable
+`--detail-filter <error|warning|info|all>`, `--help`, and `--version`; all six retain their shared spelling, composition, repetition,
 terminal behavior, and output meaning.
 
 `--dry-run` is the only preview spelling. `--help` and `--version` are terminal
 forms and stop before workspace, source-root, record, or projection work.
 
-Attach has no aliases, extra operands, `--force`, `--automatic`, `--yes`,
+Attach has no aliases, extra operands, `--force`, `--yes`,
 `--apply`, collection selector, per-file remapping flag, glob, copy mode, saved plan,
 or generic mutation dispatcher.
 
@@ -73,6 +97,7 @@ or generic mutation dispatcher.
 | `<source-root>`                       | Select the source directory relative to the selected workspace | One portable workspace-relative path satisfying the source-root boundary below | Required and singleton. A repeated positional value is invalid.                                                                 |
 | `--to <workspace-relative-directory>` | Destination root                                               | `.` or a canonical portable child directory                                    | Defaults to `.`. Singleton; repetition is invalid. Native spaced, equals and colon option-value forms follow the pinned parser. |
 | `--dry-run`                           | Write policy                                                   | Boolean flag with no value                                                     | Application is selected when omitted. Repetition is accepted and idempotent.                                                    |
+| `--automatic`                         | Confirmation policy                                            | Boolean flag with no value                                                     | Final confirmation is required when omitted; this flag bypasses that confirmation only. Repetition is accepted and idempotent. |
 | Shared global flags                   | Workspace and presentation                                     | Defined by the shared global contract                                          | Shared defaults and repetition rules apply.                                                                                     |
 
 `--to` selects the recorded destination root. No flag changes source selection, ownership, collision,
@@ -107,9 +132,9 @@ ancestor and the selected root must be a real ordinary directory, without
 symlink, junction or reparse ancestry. No specially named child is required.
 The selected directory itself scopes the recursively discovered eligible files.
 
-An absent or non-directory source root is `invalid` for Attach. For an existing
+An absent or non-directory source root is `invalid-input` for Attach. For an existing
 registration, unavailable or missing source facts make Inspect or Sync
-`incomplete`; a readable non-directory root is `invalid`. Unsafe containment,
+`incomplete`; a readable non-directory root is `invalid-input`. Unsafe containment,
 linked ancestry or ambiguous identity is `blocked`. List reports only bounded
 root availability and does not enumerate descendants. An incomplete source is
 never an empty source inventory.
@@ -158,7 +183,7 @@ file fallback or directory ownership is introduced.
 
 Validate source eligibility and final destination protection separately. Protect
 Git metadata, Framework and recognized manager controls, `.agents` Loader,
-entrypoint and overwrite controls, lifecycle/Library/permission/lock controls, recovery and temporary
+entrypoint and overwrite controls, authored settings and generated ownership controls, recovery and temporary
 storage, and every selected or registered Library source tree. A grant covering
 a containing directory never overrides these leaf checks. Compare portable
 identity and physical containment. Different source-relative paths and different
@@ -174,77 +199,77 @@ route or generated region is created.
 
 ## Consumer Record
 
-The consumer record is `.agents/open-forge.libraries.json`, separate from
-lifecycle ownership and consumer permissions. Its exact current schema is:
+Library selection reads the `libraries` claims in `.agents/open-forge.lock.json`.
+The shared ownership codec accepts understood keys without requiring an exact
+schema version or member set. It never reads the old Library or lifecycle file
+for selection. Each usable Library claim supplies `id`, `sourceRoot`,
+`destinationRoot`, and source-relative `paths`. IDs and paths are presented in
+ordinal order; typed portable identities and unambiguous mapped destinations
+remain required before using a claim. The destination root may be `.`; a source
+root may not. Link identity derives from the two roots and each source suffix.
+Permissions remain separate from ownership.
 
-```json
-{
-  "schemaVersion": 1,
-  "libraries": [
-    {
-      "id": "team-knowledge",
-      "sourceRoot": "shared/team-knowledge",
-      "destinationRoot": ".apm/agents/team",
-      "paths": ["checks/security.md", "review.md"]
-    }
-  ]
-}
-```
+An absent, unreadable, nonordinary, malformed, or uninterpretable ownership lock
+provides no usable registrations and yields a truthful ownership observation.
+It is never reported as a valid empty record: the record state remains `missing`,
+`unavailable`, or `invalid-input`, with unavailable counts and no selected paths.
+List returns no registrations; Inspect, Sync, and Detach select nothing and do
+not invent an unknown-ID error. Their `ownership-observation` finding explains
+why. A valid readable lock with no matching requested ID still yields `invalid-input`
+for those selected-record operations.
 
-Require exactly `schemaVersion` and `libraries` at the top level, and exactly
-`id`, `sourceRoot`, `destinationRoot` and `paths` per Library. Require integer
-`1`, existing Library-ID grammar, canonical portable roots and source-relative
-eligible paths. The destination root is `.` or a normal relative directory;
-source roots do not admit `.`. Unknown, missing, null, duplicate and wrongly
-typed members are malformed. No previous schema shape, migration or alternate
-reader is accepted.
+Attach is the narrow exception for explicit new knowledge. A missing lock, or a
+whole lock that is a readable ordinary malformed file, may receive a newly
+verified claim from the explicit source and destination after complete source,
+mapping, ancestor, alias, permission, and safety checks. The malformed bytes do
+not supply prior claims and are not reconciled. The resulting `completed`
+result remains Complete0 and retains the ownership observation.
+An unreadable, aliased, nonordinary, or otherwise unavailable publication has
+no effects. Read-only operations never reconstruct or write a lock. Matching
+files, matching links, legacy records, and unusable old bytes create no claims.
 
-IDs and each source-relative path array use ordinal order. Paths are unique
-within a Library. Derived destinations must be unique across Libraries under
-portable identity; equal source-relative paths at different destinations are
-valid. Empty path arrays and an empty Library array are valid. The record stores
-no expected-link text, contents, hashes, timestamps, Git facts, dependencies,
-globs or per-file remapping. Link identity derives from both recorded roots and
-the source-relative path. Permission is separate from ownership and may be
-revoked independently.
-
-A missing record is a valid prior-absence fact for Attach and a complete empty
-List result. Inspect, Sync and Detach require the requested ID in a valid record.
-Malformed, unavailable and unsafe records retain their existing invalid,
-incomplete and blocked classification; none becomes an empty valid record.
+A successful attach from a readable invalid ownership file keeps Complete0
+while rendering that ownership observation as a visible warning at minimal
+detail. This warning does not imply that prior ownership was reconstructed.
 
 ## Consumer Permission
 
+The repeatable `--allow-path <path>` explicitly authors shared `allowInstallPaths`
+in `.agents/open-forge.json` after safe planning and before permission evaluation.
+It persists in non-interactive execution; `--dry-run` never writes it. A refused
+explicit write is reported and prevents content application. Eligible interactive
+approval offers always, once or cancel. Once changes no settings. Unknown or
+malformed settings withhold external grants while implicit `.agents/` admission
+remains independent; an always choice cannot overwrite malformed settings.
+
 This command selects [Workspace Permissions](../../shared/workspace-permissions/interface.md)
 for the complete eligible mapped inventory. `.agents/**` leaves remain implicit.
-Requirements bind the selected Library ID and source root. Permission remains
+Requirements are destination paths shared by every Extension and Library; they carry no Library ID or source binding. Permission remains
 necessary even for existing owned links; recorded identity makes removal
 source-independent, without exempting it from revocation.
 
 Live uncovered leaves propose their immediate parent folder; root leaves use exact grants.
 Directory proposals explicitly include future descendants and never cover the
-workspace root. A conflicting saved source binding requires disclosed old/new
-source replacement approval under the shared contract. Protected paths,
+workspace root. Changing a Library source does not change destination permission. Protected paths,
 source trees, ancestry, ownership and collision checks still apply per leaf.
 
-Only human prompt-capable application can approve the displayed scopes. JSON,
+Human prompt-capable application can approve the displayed scopes once or always; explicit `--allow-path` can persist shared grants without a prompt. JSON,
 redirected execution and dry-run never prompt; missing or declined approval is
-`blocked` and cancellation is `interrupted`, without effects. Malformed or unsafe
-permission observations are `blocked`; unavailable observations are `incomplete`.
+`blocked` and cancellation is `cancelled`, without effects. Invalid or unsafe settings supply no external grants. A refused always approval reports its existing permission finding; implicit paths require no grant.
 
 `result.permissions` appears after `plan` and before `application`. It uses the
-shared Library leaf, scope, rebinding and receipt coordinates exactly. Required
+shared destination-string, scope and receipt coordinates exactly. Required
 and missing arrays are concrete destinations; proposed/approved scopes expose
-remembered authority. A proposed rebind is not an applied one. Only a verified
+the requested scope using only `{kind,path}`. No rebinding field exists. Only a verified
 outcome says permission was saved; later content failure retains that outcome.
 
 Permission findings use the `library-attach.` prefix and suffixes
 `permission-required`, `permission-declined`, `permission-invalid`,
 `permission-unavailable`, `permission-changed` and `permission-write-failed`.
 Changed lease-bound permission facts block; failed permission publication is
-`failed` with its actual receipt; cancellation uses the existing `interrupted`
+`failed` with its actual receipt; cancellation uses the existing `cancelled`
 finding. No content effect proceeds after an unverified permission write.
-Malformed `--to` uses `library-attach.destination-root-invalid` and `invalid`.
+Malformed `--to` uses `library-attach.destination-root-invalid` and `invalid-input`.
 
 ## Dry Run And Application
 
@@ -254,7 +279,9 @@ record bytes, ordered plan, expected-state facts, and effect-free preflight as
 application. It reports every projected path, generated-region change, record
 change, and blocker, then writes nothing. It creates no directories, links,
 record, generated navigation, recovery artifact, or lock. It performs no lease
-or recovery capability probe.
+or recovery capability probe. Any missing, unknown, or malformed ownership
+observation remains visible in the dry-run result; the preview never turns an
+observation into an unqualified success headline.
 
 Omitting `--dry-run` selects application. Application completes preflight and
 all collision checks before acquiring one workspace lease for the effectful
@@ -284,238 +311,248 @@ defines the external preparation, verification, and residual boundary.
 
 ## Human Output
 
-Human output comes from one typed result. Expanded output includes the selected
-workspace, library ID, normalized source and destination roots, complete eligible path set,
-excluded and incomplete inventory facts, exact destination mappings, collision
-facts, generated-region effects, record effect, dry-run or application mode,
-verification, recovery disposition, residual paths, and semantic status.
+Every semantic result is rendered by the shared native report. --format text
+is the default. The applicable global flags are --workspace <path>, --format
+<text|json>, --detail <minimal|standard|full|debug>, repeatable
+--detail-filter <error|warning|info|all>, --help, and --version. The default
+detail is minimal; standard adds workspace and command context, full adds all
+bounded facts, and debug adds bounded diagnostics on stderr. Detail does not
+change semantics, effects, counts, or status. Filters select finding severities;
+all is the default filter.
 
-Compact output retains the library ID, source and destination roots, mode, status, completeness,
-safety, every affected path or blocker, and at most one required `Next:` action.
-The primary human result for `complete`, `attention`, and `incomplete` goes to
-stdout. The primary human result for `invalid`, `blocked`, `failed`, and
-`interrupted` goes to stderr. Bounded diagnostics use stderr.
+Library attach shows a plan review before final confirmation. --automatic bypasses the final confirmation only; without it the confirmation is Apply these changes? [y/N]. Permission prompts remain separate and use Allow always / Allow once / Cancel.
 
-Both views lead with the operation outcome or preview, status, exact workspace
-and selection method, then Library identity and the recorded roots. Human
-`requires attention` represents the typed `attention` status. Findings and
-blockers remain prominent before a plan can be mistaken for completed work.
+When the final confirmation is required but the invocation is noninteractive or
+redirected, Attach returns `invalid-input` (Invalid4) with
+`library-attach.confirmation-required` and applies no effect. It never silently
+applies a plan. `--automatic` bypasses this final confirmation only; it does not
+bypass destination permission, ownership, collision, or safety checks.
 
-The observed record and links are labelled as before-change facts. Comparison
-labels describe membership in the intended Library and never imply a source scan
-for Detach. Mappings and effects are grouped beside their exact paths. Both views retain
-all affected or preserved paths, permission decisions, application and
-verification state, recovery disposition and residual paths. Expanded adds
-supporting source, ownership, expected-state and hash details. Plan rows remain
-labelled as planned when application is incomplete, failed or interrupted;
-rendering does not infer that an individual planned effect was applied. A
-source file and the relative link exposing it remain distinct identities.
-No path is truncated. At most one required Next action comes from the result.
+The catalogue text by detail level is:
 
-### Dry-run excerpt
+`minimal`:
 
 ```text
-Library attach preview completed.
-Status: complete
+Registered the team-knowledge Library from shared/team.
+  Created 12 links under docs
+  Updated the Entries section of docs/_docs.md
+  Saved a grant for docs to .agents/open-forge.json
 ```
 
-The identity and checks precede the planned changes:
+`minimal`, permission required outside a terminal (stderr):
 
 ```text
-Plan: complete
-  Create link: docs/guide.md -> ../shared/team-knowledge/guide.md
-  Record: create (.agents/open-forge.libraries.json)
+Cannot attach team-knowledge: docs is outside .agents and no grant allows writing there.
+Next: open-forge library attach team-knowledge shared/team --to docs --allow-path docs
 ```
 
-The dry run also prints `No files changed (--dry-run).` Application remains
-`not started`. A completed apply reports its actual application, verification
-and record-publication states; planned paths alone never establish success.
+`minimal`, interrupted after one link (stderr):
+
+```text
+Library attach was cancelled. Stopped after 1 of 2 links were created.
+  docs/first.md    created
+  docs/second.md   not started
+  The Library was not recorded. Recovery data: <path>
+Next: open-forge doctor
+```
+
+`standard` adds `Workspace:`, every link as a row with its target, the
+inventory count, and the lock row.
+
+`full` adds the permission evaluation, expected states, and verification
+and recovery facts in words.
+
+Results with completed, completed-with-warnings, or incomplete status use
+stdout. Invalid-input, blocked, failed, and cancelled results use stderr.
+A parser failure is text on stderr without a result envelope.
 
 ## Structured Output
 
-`--json` emits one complete structured result to stdout for every semantic
-status from the same typed result used by human output. It never prompts and
-never reruns resolution, inventory, planning, application, verification, or
-residual reporting. Human text is not mixed into JSON stdout; bounded
-diagnostics use stderr.
+--format json emits one schema-3 envelope on stdout for each semantic result.
+The envelope has exactly these fields:
 
-The result exposes the concrete attach facts under the exact shared result
-envelope, including:
+~~~text
+{
+  schemaVersion: 3,
+  command,
+  status,
+  detail,
+  filter,
+  workspace,
+  summary,
+  findings,
+  effects,
+  counts,
+  limitations,
+  data,
+  recovery,
+  next
+}
+~~~
 
-- selected workspace and library identity;
-- normalized source root and its lexical and physical boundary facts;
-- complete eligible inventory and excluded or incomplete coverage facts;
-- distinct source-relative and mapped workspace-relative leaf paths and derived-link identity;
-- every collision, Extension or manager ownership fact, and generated-region
-  effect;
-- the exact schema-v1 record effect and sorted resulting record projection;
-- dry-run or application mode, expected-state, verification, recovery, and
-  residual facts without source bytes; and
-- semantic status and at most one required `Next:` action.
+The command is exactly library attach; data follows the catalogue:
 
-The result does not add an expected-link field to the persisted record and does
-not disclose or materialize source content.
+| Level    | `data`                                                                                                              |
+| -------- | ------------------------------------------------------------------------------------------------------------------- |
+| minimal  | `{ mode, id, sourceFolder, destinationFolder, recorded: bool, permissions { decision, required, missing, saved } }` |
+| standard | + `links: [ { path, target } ]`, `inventory { eligible, excluded }`                                                 |
+| full     | + `expectedStates`, `verification`, `recovery` details                                                              |
+
+Human and JSON output are projections of one typed result. data is null only at
+the parser boundary before command binding. There is no alternate JSON
+projection.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                                                                                                          |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | A complete safe dry-run plan was established, or application and final verification completed. An empty eligible source inventory is complete when its record and any permitted generated projection are verified.                                                                                               |
-| `attention`   | Target effects verified, but post-verification recovery cleanup has a positively observed retained residual under the shared recovery boundary. Planned changes alone do not create `attention`.                                                                                                                 |
-| `incomplete`  | A valid request has an unavailable or inaccessible existing record or source fact, incomplete source inventory, incomplete generated projection, or unavailable required application recovery preparation. No effect begins.                                                                                     |
-| `invalid`     | Command input, operand cardinality, library-ID grammar, source-root spelling, a malformed strict record, a missing or non-ordinary mandatory source root, or terminal-mode use is outside this interface.                                                                                                        |
-| `blocked`     | The request is syntactically valid but duplicate or ambiguous identity, unsafe containment or physical aliasing, an unsafe or colliding record or destination, an unsafe generated region, unavailable real-link capability, or another mutation precondition prevents a safe complete attach. No effect begins. |
-| `failed`      | An unexpected application, verification, or unknown recovery-disposition failure occurs after a persistent effect begins.                                                                                                                                                                                        |
-| `interrupted` | The caller cancels before completion. Effects already verified remain residual truth; an unexpected post-effect failure remains `failed`.                                                                                                                                                                        |
+| Status                  | When                                                                          | Headline                                                                                     | Exit | Stream |
+| ----------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | registered and linked, including a new claim formed from a missing or readable ordinary malformed ownership observation | `Registered the <id> Library from <source>.`                         |    0 | stdout |
+| completed               | registered, source empty                                                      | `Registered the <id> Library from <source>. It has no eligible files yet.`                   |    0 | stdout |
+| completed (dry run)     | planned                                                                       | `Would register the <id> Library from <source>.`                                             |    0 | stdout |
+| completed-with-warnings | recovery bundle retained                                                      | + family row                                                                                 |    2 | stdout |
+| incomplete              | source, inventory, Entries or recovery unreadable                             | `The <id> Library could not be attached: <limitation>. Nothing was changed.`                 |    3 | stdout |
+| invalid-input           | bad ID, missing or non-folder source, bad `--to`, or required final confirmation unavailable without `--automatic` | `Cannot attach <id>: <problem>.`                                             |    4 | stderr |
+| blocked                 | ID already registered, collision, unsafe, links unsupported, permission, lock | `Cannot attach <id>: <reason>.`                                                              |    5 | stderr |
+| failed                  | after effects                                                                 | `Library attach stopped after <n> of <m> links were created.`                                |    1 | stderr |
+| cancelled               | prompt cancelled, Ctrl+C                                                      | `Library attach was cancelled. Nothing was changed.` / `... Stopped after <n> of <m> links.` |  130 | stderr |
 
-For ordinary conditions, status precedence is `blocked` > `incomplete` >
-`attention` > `complete`. Invalid input stops before operation resolution. The
-shared [Result Coordinates](../../shared/result-coordinates/interface.md)
-define numeric exits, stream coordinates, and the structured envelope.
+### Current merged behavior and open questions
+
+The catalogue assigns lock-held to blocked with exit 5. The merged operation
+returns failed with exit 1, operation-failed, and an IOException. This
+implementation discrepancy remains deferred; it does not change the accepted
+contract above.
+
+The links-unsupported situation has no deterministic fixture and remains
+unevidenced. Test-owner decision remains open: build a fixture or drop the
+situation.
+
+The native interrupted fixture reports 1 of 1 links, while the catalogue's
+illustrative text says 1 of 2. Confirm whether the fixture or only the
+illustrative count should change.
 
 ## Errors And Boundaries
 
-Attach reports `invalid` for zero or several positional operands, an ID outside
-the exact grammar, a repeated positional operand, a malformed or extra-field
-strict record, an invalid source-root spelling, a missing or non-ordinary
-mandatory source root, or invalid terminal-mode use.
+The finding catalogue is:
 
-Attach reports `incomplete` for an existing record or required source fact that
-is unavailable or inaccessible, an incomplete source enumeration, an
-inaccessible subtree, or unavailable required application recovery preparation.
+| Code                                           | Severity | Family                     | Message                                                                         | Next                              |
+| ---------------------------------------------- | -------- | -------------------------- | ------------------------------------------------------------------------------- | --------------------------------- |
+| library-attach.invalid-input                   | error    | invalid-input              |                                                                                 |                                   |
+| library-attach.confirmation-required           | error    | confirmation-required      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.confirmation-required`).              | `open-forge library attach --automatic` |
+| library-attach.invalid-id                      | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.invalid-id`). | none                              |
+| library-attach.duplicate-id                    | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.duplicate-id`).                             | `open-forge library inspect <id>` |
+| library-attach.source-root-invalid             | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.source-root-invalid`).                                | none                              |
+| library-attach.source-root-unavailable         | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.source-root-unavailable`).                                                      | none                              |
+| library-attach.source-root-blocked             | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.source-root-blocked`).                                      | none                              |
+| library-attach.destination-root-invalid        | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.destination-root-invalid`).                           | none                              |
+| library-attach.destination-collision           | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.destination-collision`).            | choose another `--to` folder      |
+| library-attach.inventory-incomplete            | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.inventory-incomplete`).                                | none                              |
+| library-attach.mapping-unavailable             | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.mapping-unavailable`).                  | `open-forge doctor`               |
+| library-attach.mapping-blocked                 | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.mapping-blocked`).                                     | none                              |
+| library-attach.link-capability-unavailable     | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.link-capability-unavailable`).                      | none                              |
+| library-attach.consumer-blocked                | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.consumer-blocked`).             | none                              |
+| library-attach.ownership-conflict              | error    | ownership-conflict         |                                                                                 |                                   |
+| library-attach.ownership-observation           | info     | ownership-observation      |                                                                                 |                                   |
+| library-attach.record-invalid                  | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.record-invalid`).     | `open-forge doctor`               |
+| library-attach.record-unavailable              | warning  | lifecycle-unavailable      |                                                                                 |                                   |
+| library-attach.record-blocked                  | error    | lifecycle-blocked          |                                                                                 |                                   |
+| library-attach.permission-required             | error    | permission-required        |                                                                                 |                                   |
+| library-attach.permission-declined             | error    | permission-declined        |                                                                                 |                                   |
+| library-attach.permission-invalid              | error    | permissions-invalid        |                                                                                 |                                   |
+| library-attach.permission-unavailable          | warning  | permissions-unavailable    |                                                                                 |                                   |
+| library-attach.permission-changed              | error    | permissions-changed        |                                                                                 |                                   |
+| library-attach.permission-write-failed         | error    | permission-write-failed    |                                                                                 |                                   |
+| library-attach.generated-navigation-blocked    | error    | generated-region-unsafe    |                                                                                 |                                   |
+| library-attach.generated-navigation-incomplete | warning  | projection-unavailable     |                                                                                 |                                   |
+| library-attach.lock-unavailable                | error    | workspace-lock-unavailable |                                                                                 |                                   |
+| library-attach.recovery-unavailable            | warning  | recovery-unavailable       |                                                                                 |                                   |
+| library-attach.recovery-retained               | warning  | recovery-artifact-retained |                                                                                 |                                   |
+| library-attach.application-failed              | error    | write-failed               | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.application-failed`).              |                                   |
+| library-attach.verification-failed             | error    | verification-failed        |                                                                                 |                                   |
+| library-attach.operation-failed                | error    | operation-failed           |                                                                                 |                                   |
+| library-attach.interrupted                     | error    | interrupted                |                                                                                 |                                   |
 
-Attach reports `blocked` for an existing library ID, duplicate or unsafe record
-identity, an aliased, ambiguous, or externally resolving source boundary,
-physical overlap with consumer `.agents`, a missing or non-ordinary consumer
-`.agents` root or linked/reparse consumer ancestry, an existing or changed
-destination occupant, an unsafe or colliding destination, an unsafe generated
-region, unavailable real-link capability, or another unsafe mutation
-precondition. Excluded source controls, links, special entries, and other
-non-ordinary entries remain excluded from the inventory and are never projected.
+Findings retain code, severity, family, message, subject, cause, and next
+action when available. Counts are:
 
-Every error names `library attach`, the library ID or source root, the affected
-path or boundary, the cause, and one useful next action when one is known.
-Attach does not inspect Git, perform Git operations or diagnostics, mutate
-remote or public state, create a root route, rewrite the Loader, or change any
-source file.
+`linksCreated`, `sectionsUpdated`, `grantsSaved`, `sourceFiles`.
 
 ## Scenarios
 
-Attach one contained source root and preview the complete projection:
+`attached-inside-agents`, `attached-outside-with-flag`, `permission-prompt`,
+`permission-required-non-interactive`, `empty-source`, `duplicate-id` (blocked),
+`source-missing` (invalid), `destination-collision` (blocked), `dry-run`,
+`links-unsupported` (blocked), `lock-held`, `interrupted-partial`, `invalid-input`.
 
-```text
-open-forge library attach team-knowledge shared/team-knowledge --dry-run
-```
+Prompt rules from the catalogue:
 
-Apply the same request with structured output:
+Permission (`Allow always / Allow once / Cancel`) for destinations outside
+`.agents`; plan review; `Apply these changes? [y/N]` unless `--automatic`
+(added by 04).
 
-```text
-open-forge library attach team-knowledge shared/team-knowledge --json
-```
+## Representative Transcripts
 
-Use `--workspace` from the shared global contract when the selected consumer
-workspace is not the current workspace. The source-root value remains relative
-to that selected workspace.
+### completed
 
-## Non-Goals
+~~~text
+Registered the team-knowledge Library from shared/team-knowledge.
+  Created 1 link under .agents/directives
+~~~
 
-`library attach` does not:
+### completed-with-warnings
 
-- list or inspect libraries, sync an existing record, or detach any library;
-- select a collection, per-file subset, glob, per-file remapping or dependency;
-- traverse, copy, write, move, delete, or follow source bytes;
-- overwrite, adopt, rename, or release a consumer occupant or lifecycle claim;
-- create route parents, materialize entrypoints, rewrite authored entrypoints,
-  rewrite the Loader, or invent Framework roots;
-- change the `.agents/open-forge.lifecycle.json` document or add library data to
-  that lifecycle schema;
-- perform Git fetch, pull, checkout, switch, stage, commit, or diagnostics;
-- write through a projected file or make Route Update, Index, Route Move, or
-  Route Remove follow or delete a library source target; their link-aware guard
-  and real-filesystem regression are prerequisites to Attach dogfood;
-- add compatibility, migration, remote publication, deployment, JavaScript,
-  dependency injection, a runtime registry, a generic mutation dispatcher, or
-  another callable design; or
-- create a receipt, saved plan, journal, or automatic rollback history.
+~~~text
+Registered the team-knowledge Library from shared/team-knowledge.
+  Warning  <recovery-bundle>  Recovery artifact retained
+~~~
 
-## EndToEnd Journeys
+### incomplete
 
-1. **Dry-run parity and no effect.** Run
-   `open-forge library attach team-knowledge shared/team-knowledge --dry-run`.
-   The result contains the same complete inventory, mappings, collisions,
-   generated-region projection, and record plan that application would use,
-   while no directory, link, record, generated region, lease, recovery
-   artifact, or source byte changes.
-2. **Successful attach preserves the source.** With an eligible source file at
-   `shared/team-knowledge/.agents/directives/review.md` and an unoccupied
-   consumer destination, apply
-   `open-forge library attach team-knowledge shared/team-knowledge`. The
-   consumer receives the exact relative file symlink and schema-v1 record path,
-   any permitted existing generated region is updated, and the source file
-   bytes remain unchanged.
-3. **Invalid source or collision blocks all effects.** Run attach with a source
-   root that is missing or is not a real ordinary directory, or with a
-   destination already occupied. The request is `invalid` for the missing or
-   non-ordinary mandatory source boundary and `blocked` for the collision, and
-   it creates no link, directory, record, generated navigation, recovery
-   artifact, or source change.
+~~~text
+The team-knowledge Library could not be attached: <limitation>. Nothing was changed.
+~~~
 
-## Verification Requirements
+### invalid-input
 
-Lower-tier and public proof must cover the following without adding another
-public EndToEnd journey:
+~~~text
+Cannot attach team-knowledge: shared/missing is not a folder inside the workspace.
+~~~
 
-- exact command and flag parsing, singleton operands, shared global flags,
-  terminal modes, JSON parity, stream assignment, and all seven statuses;
-- library-ID length, ASCII grammar, duplicate IDs, namespace separation from
-  source IDs, and malformed or extra-field record rejection;
-- portable source-root spelling, strict lexical and physical containment,
-  ordinary source and destination directories, link/reparse ancestry, aliases,
-  actual destination overlap with protected source trees, and source-root availability;
-- complete inventory coverage, excluded entrypoints and controls, ordinary
-  file types, links and special entries, inaccessible subtrees, and source-byte
-  preservation;
-- derived source/destination path formation, relative raw-target identity,
-  real parent directories, no copy fallback, local siblings, every collision,
-  Extension/lifecycle ownership, and two-library destination collisions;
-- existing consumer entrypoints and generated-region preservation, no route
-  creation, no Loader rewrite, and pre-dogfood link-aware guards for Route
-  Update, Index, Route Move, and Route Remove;
-- schema-v1 exact serialization, sorted IDs and paths, record creation and
-  publication last, malformed-record preservation, and derived rather than
-  stored expected targets;
-- complete plan/preflight parity, no dry-run lease or recovery probe, one
-  workspace lease for application, under-lock revalidation, immediate
-  no-follow checks, typed recovery, monotonic effects, verification, residual
-  truth, and no automatic rollback;
-- typed recovery for prior-missing ordinary record creation and relative-link
-  creation/deletion, exact created-link removal, exact deleted or dangling-link
-  recreation, and no source-byte storage or following; and
-- invalid, incomplete, blocked, failed, interrupted, complete, and retained
-  recovery `attention` results with useful next actions.
+### blocked
+
+~~~text
+Cannot attach team-knowledge: A Library with the ID team-knowledge is already registered.
+Workspace: <workspace>
+Next: open-forge library inspect team-knowledge
+~~~
+
+### failed
+
+~~~text
+Library attach stopped after 0 of 1 links were created.
+Workspace: <workspace>
+  .agents/directives/review.md  not started
+~~~
+
+### cancelled
+
+~~~text
+Library attach was cancelled. Stopped after 1 of 1 links were created.
+Workspace: <workspace>
+  .agents/directives/review.md  created
+  The Library was not recorded. Recovery data: <recovery-bundle>
+Next: open-forge doctor
+~~~
 
 ## Related Current Sources
 
 - [library attach Contract Set](_attach.md)
 - [library attach Behavior Contract](behavior.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
+CLI help syntax: [`library.attach.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Library/Attach/LibraryAttachText.cs).
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef library.attach.help.syntax -->

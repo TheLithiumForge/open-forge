@@ -10,6 +10,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Create;
 
 public sealed class ExtensionCreatePlanningTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Extension Create destination failures map every terminal state explicitly"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     [InlineData(ExtensionCreateDestinationState.Unavailable, CliSemanticStatus.Incomplete, ExtensionCreateFindingCode.CatalogueUnavailable)]
     [InlineData(ExtensionCreateDestinationState.Unsafe, CliSemanticStatus.Blocked, ExtensionCreateFindingCode.CatalogueUnsafe)]
@@ -33,6 +34,7 @@ public sealed class ExtensionCreatePlanningTests
         Assert.Contains(result.Findings, finding => finding.Code == expectedCode);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Extension Create refuses nonfailure destination states at failure formation"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     [InlineData(ExtensionCreateDestinationState.Absent)]
     [InlineData(ExtensionCreateDestinationState.Exact)]
@@ -48,6 +50,7 @@ public sealed class ExtensionCreatePlanningTests
                 new ExtensionCreateDestinationObservation(state, physicalIdentity: null, cause: null)));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Create rejects an undefined destination state at failure formation"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     public void DestinationFailureRejectsUndefinedState()
     {
@@ -61,6 +64,7 @@ public sealed class ExtensionCreatePlanningTests
                 new ExtensionCreateDestinationObservation(undefined, physicalIdentity: null, cause: null)));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Create destination failure cases cover every named destination state"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     public void DestinationFailureCasesCoverEveryNamedState()
     {

@@ -1,0 +1,3 @@
+Repaired 2 links.
+  .agents/docs/source.md:9:8    ./guide.md -> guide.md
+  .agents/docs/source.md:10:16  ./guide.md -> guide.md

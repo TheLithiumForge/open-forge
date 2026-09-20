@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: The replacement CLI organizes commands, helpers, and tests by behavioral locality and promotes shared code only to the nearest common scope
+  description: "Historical CLI-v2 source: The replacement CLI organizes commands, helpers, and tests by behavioral locality and promotes shared code only to the nearest common scope"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

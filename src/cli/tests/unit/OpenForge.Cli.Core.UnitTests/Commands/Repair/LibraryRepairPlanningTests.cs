@@ -9,6 +9,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class LibraryRepairPlanningTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("OrdinaryCreate"), InlineData("OrdinaryReplace"), InlineData("OrdinaryReplaceGeneratedRegion")]
     [InlineData("OrdinaryDelete"), InlineData("RelativeFileLinkCreate"), InlineData("RelativeFileLinkDelete")]
@@ -22,7 +23,7 @@ public sealed class LibraryRepairPlanningTests
         Assert.Equal([RepairSelectionOrigin.Automatic], step.Selection.Origins);
         Assert.NotNull(step.Effect);
         Assert.Equal(evidence.Entry.Input.Context.Entry, step.Effect.Entry);
-        Assert.Contains(RepairDependencyDomain.LibraryRecord, step.Dependency.Domains);
+        Assert.Contains(RepairDependencyDomain.LibraryRegistration, step.Dependency.Domains);
         Assert.Contains(RepairDependencyDomain.LibraryResidual, step.Dependency.Domains);
         Assert.DoesNotContain(RepairDependencyDomain.LocalReference, step.Dependency.Domains);
         Assert.Contains(RepairVerificationKind.NoFollowIdentity, step.Verification.Kinds);
@@ -30,6 +31,7 @@ public sealed class LibraryRepairPlanningTests
         Assert.Empty(plan.Conflicts);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("Third"), InlineData("Unavailable"), InlineData("Blocked")]
     public void UnsafeOrUnprovenSelectedCurrentStateCannotProduceAnEffect(string state)
@@ -40,6 +42,7 @@ public sealed class LibraryRepairPlanningTests
         Assert.True(plan.IsBlocked);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void AlreadyPriorStateDoesNotProduceAnotherInverseEffect()
     {
@@ -49,6 +52,7 @@ public sealed class LibraryRepairPlanningTests
         Assert.Empty(plan.Effects);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void NoSelectionAuthorityRetainsResidualUnselected()
     {
@@ -59,6 +63,7 @@ public sealed class LibraryRepairPlanningTests
         Assert.Same(evidence, Assert.Single(plan.Selection.Libraries.Unselected).Evidence);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void ChangedIndependentComparisonRefusesRevalidation()
     {
@@ -67,6 +72,7 @@ public sealed class LibraryRepairPlanningTests
         Assert.False(RepairLibraryRecoveryPlanner.Revalidate(plan, input));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void NewAtomicAndReceiptKindsHaveAnExactClosedNamedSet()
     {
@@ -77,6 +83,7 @@ public sealed class LibraryRepairPlanningTests
         Assert.Throws<ArgumentOutOfRangeException>(() => new RepairAtomicEffect(0, (RepairAtomicEffectKind)int.MaxValue, null, null));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void AtomicEffectRejectsMissingAndConflictingPayloads()
     {
@@ -90,6 +97,7 @@ public sealed class LibraryRepairPlanningTests
         Assert.Same(library, new RepairAtomicEffect(1, RepairAtomicEffectKind.LibraryRecovery, null, library).LibraryRecovery);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("ExplicitRelink"), InlineData("Undefined")]
     public void LibrarySelectionRejectsReferenceOnlyAndUndefinedOrigins(string origin)

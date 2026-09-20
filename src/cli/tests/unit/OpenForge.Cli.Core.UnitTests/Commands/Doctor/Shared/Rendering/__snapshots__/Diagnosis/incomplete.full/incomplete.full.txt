@@ -1,0 +1,8 @@
+No problems found. 1 info finding was recorded. 1 check could not finish.
+Extensions
+  Info  ./packages/toolkit  Extension source cannot be read [extension.source-unavailable]
+         The source of toolkit, ./packages/toolkit, cannot be read, so its files were not compared.
+         state: unavailable
+         read from ./packages/toolkit
+  21 links and 20 routes checked.
+  Extensions were not checked: the package source ./packages/toolkit cannot be read.

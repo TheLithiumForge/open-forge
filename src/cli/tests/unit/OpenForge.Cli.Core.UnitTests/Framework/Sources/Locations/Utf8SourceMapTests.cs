@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Locations;
 
 public sealed class Utf8SourceMapTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Source locations use Unicode-scalar coordinates and UTF-8 bytes across line endings")]
     [Trait("Feature", "source-locations"), Trait("Evidence", "Unit")]
     public void LocationsUseUnicodeScalarsAndUtf8BytesAcrossCrLf()
@@ -18,6 +19,7 @@ public sealed class Utf8SourceMapTests
         Assert.Equal(new SourceLocation(4, 1, 12, 2), map.Map(9, 1));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Source locations keep zero-length spans valid at line starts and end of file")]
     [Trait("Feature", "source-locations"), Trait("Evidence", "Unit")]
     public void ZeroLengthAndEndOfFileLocationsRemainValid()
@@ -30,6 +32,7 @@ public sealed class Utf8SourceMapTests
         Assert.Equal(new SourceLocation(3, 1, 9, 0), map.Map(source.Length, 0));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Source locations reject invalid UTF-16 and spans that split a scalar")]
     [Trait("Feature", "source-locations"), Trait("Evidence", "Unit")]
     public void InvalidUtf16AndSplitScalarSpansAreRejected()

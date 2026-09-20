@@ -22,19 +22,10 @@ entrypoint](../_extension.md) defines routing only. Shared Global Flags define
 workspace and presentation. The current Framework and routing sources define
 the runtime meaning of installed files.
 
-The only new-CLI lifecycle document is `.agents/open-forge.lifecycle.json`, schema
-v1. It has a common envelope and isolated `framework` and `extensions` sections.
-Install changes only `extensions` and preserves the unrelated `framework` section
-and common-envelope meaning. When selected lifecycle meaning changes, the writer
-emits one deterministic canonical UTF-8 whole-document representation; lifecycle
-property order, whitespace, and line endings are not preserved. A semantic
-no-op writes nothing. Prior bytes for every existing-target effect (`Replace`,
-`ReplaceGeneratedRegion`, or `Delete`) are retained only in the verified external
-recovery bundle defined by the [Mutation And Recovery Technical
-Design](../../../technical-designs/mutation-and-recovery.md); the CLI does not
-inspect or report repository state or claim history evidence.
-The document stores no plan, runtime history, journal, recovery evidence, or session.
-Files outside this exact path are ordinary workspace content, not lifecycle input.
+The generated lock is the only state-file input and output. Its ownership and
+publication semantics are defined below. Exact prior bytes for planned
+replacements remain in the verified external recovery bundle defined by the
+[Mutation And Recovery Technical Design](../../../technical-designs/mutation-and-recovery.md).
 
 The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
 define the structured JSON result schema and numeric exit mapping. The [CLI
@@ -44,10 +35,42 @@ without duplicating implementation mechanics. Gate 5 must prove
 source-generated YamlDotNet and STJ serialization, fixed Markdig where used,
 real `System.IO`, Native AOT, OS locking, isolated tests, and package journeys.
 
+## Ownership Source
+
+The generated `.agents/open-forge.lock.json` is the only ownership input and
+state-file output. It records package IDs, descriptive versions and sources,
+dependencies, whole-file paths, and regions. Read it forgivingly: missing or
+unreadable ownership supplies no claims, without falling back to earlier files.
+Duplicate recorded IDs or uninterpretable Library mappings produce an informational
+observation and no inferred file effects. The Library boundary cannot turn a
+missing or unreadable lock into an installation gate. Leftover records are not read, migrated, rewritten or deleted.
+
+Compare current selected target content with intended source content in this
+invocation. Recorded release metadata supplies no integrity baseline. A change
+to selected dependency or path membership still requires Extension Update.
+Preserve unselected receipts, existing regions and other ownership sections.
+Revalidate the observed lock even when publication is unchanged.
+
+Publication follows verified target and topology effects. The existing public
+state-file outcome refers to the lock; no second outcome is added. An identical
+receipt is preserved. A skipped write uses action `none`, outcome
+`not-requested`, and does not block target effects. Its unavailable record
+verification is `not-requested`, without claiming a verified publication.
+A planned or preserved readable receipt is checked again after target effects.
+Computed hashes remain operation-time facts; no baseline or policy is stored.
+
 ## Consumer Destination Permissions
 
+The repeatable `--allow-path <path>` explicitly authors shared `allowInstallPaths`
+in `.agents/open-forge.json` after safe planning and before permission evaluation.
+It persists in non-interactive execution; `--dry-run` never writes it. A refused
+explicit write is reported and prevents content application. Eligible interactive
+approval offers always, once or cancel. Once changes no settings. Unknown or
+malformed settings withhold external grants while implicit `.agents/` admission
+remains independent; an always choice cannot overwrite malformed settings.
+
 Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
-[Behavior](../../shared/workspace-permissions/behavior.md). Require an exact grant per package for every external target in the complete
+[Behavior](../../shared/workspace-permissions/behavior.md). Require shared destination admission for every external target in the complete
 selected dependency closure.
 Existing `.agents/` targets need no grant; their prior safety and ownership
 checks remain. Revocation blocks the complete selected lifecycle operation,
@@ -56,13 +79,13 @@ installed packages do not enter this request's required set.
 
 An eligible human apply request asks once for the complete missing set after
 safe preflight. JSON, automatic, redirected and dry-run execution never ask the
-permission question or create grants. Existing selection and force/prune
+permission question. An explicit non-dry-run `--allow-path` still authors a grant. Existing selection and force/prune
 questions keep their separate rules. Force and prune never supply permission.
-Malformed or unsafe permission storage is diagnosed without overwriting it.
+Malformed or unsafe settings are never overwritten by approval.
 
-Permission create/replace is a declared control-file effect. Revalidate the
-observed document and approved plan under the existing workspace lease. Cover
-prior permission bytes or proven absence in the one verified operation bundle,
+Interactive always approval creates a declared settings-file create/replace effect. Revalidate the
+observed settings and approved plan under the existing workspace lease. Cover
+prior settings bytes or proven absence in the one verified operation bundle,
 then persist and verify approval before content and lifecycle effects. Later
 failure retains the grant and its actual outcome. Restoration is manual; no
 new automatic Repair behavior follows.
@@ -76,7 +99,7 @@ existing general target-safety findings: `install` uses the prefix
 `permissions-changed`, and `permission-write-failed`, in that order.
 Their statuses are respectively `blocked`, `blocked`, `blocked`, `incomplete`,
 `blocked`, and `failed`. A failed or unknown permission effect remains failed;
-caller cancellation before an effect keeps the existing interrupted outcome.
+caller cancellation before an effect keeps the existing cancelled outcome.
 Missing grants direct to rerun interactively or edit the displayed exact
 consumer entries. Invalid storage directs to inspect and correct that file.
 
@@ -110,9 +133,9 @@ The shared global flags are:
 
 ```text
 --workspace <path>
---json
---view=compact|expanded
---verbose
+--format <text|json>
+--detail <minimal|standard|full|debug>
+--detail debug
 --help
 --version
 ```
@@ -130,16 +153,23 @@ An external source and target workspace must be lexically and physically
 disjoint; the external source is read-only.
 
 Managed Extension install requires a trustworthy installed Framework anchor and
-complete route-host facts before it can form a mutation plan. Route-host facts
-include affected authored hosts, generated-navigation boundaries, ownership
-relationships, and cross-section preservation facts. A missing or unsafe anchor
-or route-host boundary is `incomplete` or `blocked`, and no managed mutation
-occurs. The installed anchor includes the existing `.agents` Framework
-container, so Extension Install cannot form a plan or create `.agents` when that
-container is absent. This does not change the shared directory-creation
-capability: after the anchor is established, this command may use it only for
-explicitly planned missing descendant directories beneath the workspace for
-admitted targets.
+route-host facts before it can form a mutation plan. Route-host facts include
+affected authored hosts, generated-navigation boundaries, ownership
+relationships, and cross-section preservation facts. A selected or affected
+unsafe, unreadable, ambiguous, or otherwise required boundary is `incomplete`
+or `blocked`, and no managed mutation occurs. An unrelated readable malformed
+ordinary-metadata host outside the selected package's affected ancestor closure
+may instead be reported as an unavailable projection host and omitted from
+generated effects; all otherwise available topology projections remain in the
+plan. The selected package is still applied with a visible
+`extension-install.metadata-projection-skipped` Attention2 finding. This narrow
+skip never covers unreadable or unsafe metadata, native Skill malformed
+requirements, selected/affected hosts, or a missing anchor. The installed anchor
+includes the existing `.agents` Framework container, so Extension Install
+cannot form a plan or create `.agents` when that container is absent. This does
+not change the shared directory-creation capability: after the anchor is
+established, this command may use it only for explicitly planned missing
+descendant directories beneath the workspace for admitted targets.
 
 Before a workspace effect, the implementation must hold the persistent reusable
 zero-byte external lock under `LocalApplicationData/OpenForge/locks/v1` defined
@@ -203,6 +233,9 @@ It writes current package bytes and records only the verified new state. It does
 not adopt the occupant's old bytes, override another owner, repair a marker,
 replace a route collision, or bypass recovery. A known user-owned, Framework-
 owned, Extension-owned, unknown, or ambiguous path is not force-eligible.
+For an ownership conflict or protected-path refusal, minimal blocked output
+retains the exact occupied `finding.Target` path and unchanged cause; it never
+collapses the refusal to a count-only headline.
 
 Managed divergence remains blocked and directs to `extension update`, even with
 `--force`.
@@ -221,14 +254,14 @@ closure after selection. Dependencies are required by the selected roots and
 cannot be deselected. The initial-force prompt grants authority only for the
 exact eligible initial occupants displayed for that request.
 
-End-of-input during either prompt is a no-write `invalid` result. Caller
-cancellation during either prompt is a no-write `interrupted` result. A caller
+End-of-input during either prompt is a no-write `invalid-input` result. Caller
+cancellation during either prompt is a no-write `cancelled` result. A caller
 may decline eligible initial force; that leaves the occupants unchanged and
 returns `blocked`. There is no generic confirmation before applying an already
 authorized plan.
 
 JSON, `--automatic`, and other non-interactive requests never prompt. Missing
-package selection in a multi-package source is `invalid`; an eligible occupant
+package selection in a multi-package source is `invalid-input`; an eligible occupant
 without explicit `--force` is `blocked`. `--automatic` uses only explicit IDs,
 explicit `--all`, or the permitted single-package manifest-ID inference plus
 deterministic safe effects. It grants neither selection nor force and never
@@ -236,26 +269,18 @@ broadens selection, adds replacement, adoption, ownership, or a safety bypass.
 
 ## Lifecycle Identity, Ownership, And Generated Navigation
 
-The physical lifecycle document is `.agents/open-forge.lifecycle.json`, schema v1,
-with separate `framework` and `extensions` sections. After dependency-first
-target and generated effects and intended-topology verification, Install
-publishes only the `extensions` change as the last workspace file effect. It
-verifies that publication, then rereads every target, the Extension lifecycle
-section, and unchanged Framework meaning before success or recovery cleanup.
-Install preserves the common envelope and unrelated `framework` section meaning
-semantically. A selected semantic change emits one deterministic canonical UTF-8
-whole-document representation, so lifecycle property order, whitespace, and
-line endings are not preserved. A semantic no-op writes nothing. Prior bytes for
-existing replaced or deleted targets are retained only in the verified external
-recovery bundle described below; the CLI does not inspect or report repository
-state or claim history evidence. An absent document or section is not, by itself,
-proof of unmanaged state. Unsupported or ambiguous schema facts are `incomplete`
-or `blocked` under the existing safety rules.
+The generated lock contains Framework, Extension, and Library ownership.
+After dependency-first target and generated effects and intended-topology
+verification, Install publishes the selected Extension receipt as the last
+workspace file effect. It preserves unrelated receipts, verifies publication,
+and rereads targets and topology before success. If publication is unchanged,
+verify that the observed receipt remains unchanged. If publication is skipped,
+report that record verification was not requested and continue safely.
 
-Managed package identity is stable ID plus exact source, dependency, target-
-relative path, owner, and semantic baseline facts. Manual copying, idless
-packages, direct overlays, and externally managed native Skills remain unmanaged;
-matching path, bytes, or fingerprint never transfers ownership.
+Managed ownership is stable package ID plus its declared dependency and path
+membership. Source and version are descriptive receipt metadata. No stored hash,
+workspace binding or policy establishes currentness. Matching paths or bytes do
+not transfer ownership of manually copied or externally managed files.
 
 Dependencies are ordered before dependents. Shared-owner sets are explicit. Two
 owners may share a supported path only with equal syntax-aware semantic identity
@@ -266,7 +291,10 @@ semantic equality never adopts an unowned existing file.
 The plan projects affected generated `Entries` from intended authored topology
 and metadata using current Index rules. Generated interiors are derived
 navigation, not package-owned authored bytes. A missing, duplicate, reversed,
-nested, or ambiguous boundary blocks; force does not repair it.
+nested, or ambiguous required boundary blocks; force does not repair it. The
+narrow unrelated-readable-malformed ordinary-metadata case may omit only its
+unavailable projection host, preserving every other available topology
+projection and effect rather than rewriting topology to the selected package.
 
 Every package payload target must be a canonical portable workspace-relative
 file. Validate complete closure, exact consumer grants for external files, and
@@ -276,12 +304,13 @@ directory-effect sets. Only declared missing ordinary parents beneath the
 workspace can be directory-create effects; an external grant covers the exact
 file and does not grant ownership of its parents or siblings.
 
-Extension payloads also cannot target the lifecycle document, repository
-metadata, recovery bundles or drafts, workspace overwrite companions, Framework
-blocks, or another manager's paths.
+Extension payloads also cannot target `.agents/open-forge.json`,
+`.agents/open-forge.lock.json`, `.agents/open-forge.lock`, any descendant of
+those reserved paths, repository metadata, recovery bundles or drafts, workspace
+overwrite companions, Framework blocks, or another manager's paths.
 
-An exact destination path claim in the consumer Library record
-`.agents/open-forge.libraries.json`, or a real relative projection link at that
+A destination claim mapped from Library ownership in
+`.agents/open-forge.lock.json`, or a real relative projection link at that
 destination, is separately owned by Library management. Install never adopts,
 overwrites, updates, or removes that destination, including when `--force` is
 supplied. The no-follow final-leaf guard blocks ordinary Extension `Create`,
@@ -300,9 +329,9 @@ whitespace. Normalize only line endings and parser-proven formatting trivia.
 Unsupported, binary, or unparseable kinds use exact-byte identity and fail
 closed.
 
-Persist only semantic baseline fingerprints for supported kinds. Capture exact
+Persist no comparison fingerprints. Capture exact
 current bytes freshly for plan, diff, expected-state revalidation, verification,
-deletion or write, and recovery. Do not persist a new exact-byte baseline digest.
+deletion or write, and recovery. Do not persist comparison policy or workspace binding.
 Formatting-only equal semantic identity is not managed divergence. The CLI does
 not execute a formatter or persist formatter state; it may give conservative
 advice only.
@@ -337,9 +366,9 @@ all preparation completes before the first target effect.
 After final verification, delete only the positively recognized bundle created
 by this operation. `Deleted`/`Removed` permits normal completion.
 `Failed`/positively observed `Retained` keeps target effects successful and
-produces `attention`, the exact residual path, and
+produces `completed-with-warnings`, the exact residual path, and
 cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
-provides one. When `Failed`/positively observed `Retained` recovery attention
+provides one. When `Failed`/positively observed `Retained` recovery warning
 coexists with a finite lifecycle observation, cleanup guidance owns the single
 next action; the lifecycle facts remain visible evidence. Before
 post-verification deletion begins, a handled
@@ -352,222 +381,214 @@ recovery provenance, and no journal, progress receipt, history, or replayable
 plan is saved. Cleanup owns exact named final and draft deletion under its
 separate lease-bound contract.
 
-## Output And Results
+## Human Output
 
-Human and JSON presentation consume one immutable `ExtensionInstallResult`.
-Both human views lead with outcome or preview, status, exact workspace/selection,
-source and selected packages/dependency closure. Findings and permission/safety
-conditions precede the affected paths. Every effect retains its actual action,
-outcome and residual; a planned path is not presented as an applied change.
+The command uses the shared native report. The default detail is `minimal`; `standard`, `full` and `debug` add the catalogue-defined facts. `--detail-filter <error|warning|info|all>` is repeatable and changes only the rendered detail. Use `--format text` for this text report. Primary result text for `completed`, `completed-with-warnings` and `incomplete` is on stdout; primary errors for `invalid-input`, `blocked`, `failed` and `cancelled` are on stderr. There is no `Status:` line.
 
-Human output groups effects by exact package/path identity and preserves any
-payload or directory footprint path not represented by an effect. Expanded adds supporting Framework,
-footprint, generated-navigation, permission, installation-record and verification
-facts. Compact uses shorter rows while retaining package dependencies, effective
-force/automatic/preview choices, blockers, affected/preserved paths and recovery
-state/residual paths. Both show the actual Next command once when supplied;
-expanded may add its reason. Paths are not truncated.
+### Statuses and headlines
 
-Compact may summarize navigation-only footprint paths by count when their
-observed navigation is unchanged and they have no payload, directory or effect
-that must remain visible. Expanded retains
-those observations. Every changed or uncertain path and every actual effect
-remains visible in both views.
+| Status                  | When                                                                                                  | Headline                                                                                       | Exit | Stream |
+| ----------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | one package                                                                                           | `Installed the <id> Extension.`                                                                |    0 | stdout |
+| completed               | with dependencies                                                                                     | `Installed the <id> Extension and <N> packages it requires: <ids>.`                            |    0 | stdout |
+| completed               | several selected                                                                                      | `Installed <N> Extensions: <ids>.`                                                             |    0 | stdout |
+| completed               | already installed and equal                                                                           | `The <id> Extension is already installed and matches the package. Nothing to do.`              |    0 | stdout |
+| completed (dry run)     | planned                                                                                               | `Would install the <id> Extension.` (variants as above)                                        |    0 | stdout |
+| completed-with-warnings | no content directory, isolated unrelated malformed projection host, lifecycle observation, retained recovery | `Nothing was installed from <source>: the package has no content directory.` / install headline + visible finding rows |    2 | stdout |
+| incomplete              | selected/required source, Framework, route host, permissions or recovery unreadable                         | `The <id> Extension could not be installed: <limitation>. Nothing was changed.`                |    3 | stdout |
+| invalid-input           | bad ID, invalid package, no selection possible, prompt ended                                          | `Cannot install: <problem>.`                                                                   |    4 | stderr |
+| blocked                 | permission required or declined, existing file, changed since install, conflict, lock, target changed | `Cannot install <id>: <reason>.`                                                               |    5 | stderr |
+| failed                  | after effects                                                                                         | `Extension install stopped after <n> of <m> changes.`                                          |    1 | stderr |
+| cancelled               | prompt cancelled, Ctrl+C                                                                              | `Extension install was cancelled. Nothing was changed.`                                        |  130 | stderr |
 
-Human grouping does not change dependency/effect order in the operation or JSON.
-JSON retains the complete payload and declared order below. Help retains the
-same selection, interaction, force and no-write rules. Diagnostics remain bounded
-and project only known result facts without changing the result.
+### Text by level
 
-The command-local JSON `result` uses camel-case properties in exactly this
-order. Every property is present for every semantic status:
-
-1. `mode`: `apply` or `dry-run`;
-2. `force`: Boolean;
-3. `automatic`: Boolean;
-4. `selection`: `null` or one atomic object whose members are `selectedBy` and
-   `rootIds`, in that order;
-5. `source`: `null` or one atomic object whose members are `kind`, `path`,
-   `identity`, and `packageCount`, in that order;
-6. `packages`: a non-null dependency-first array whose members are `id`,
-   `selectedRoot`, and `dependencies`, in that order;
-7. `framework`: `null` or one atomic object whose members are
-   `inventoryFingerprint`, `targetCount`, and `generatedRegionCount`, in that
-   order;
-8. `footprint`: `null` or one atomic object whose members are `packageCount`,
-   `payloadTargets`, `generatedRegions`, and `directories`, in that order;
-9. `effects`: a non-null ordered array whose members are `path`, `packageId`,
-   `kind`, `action`, `outcome`, and `residual`, in that order;
-10. `generatedNavigation`: `null` or one atomic object whose sole member is the
-    non-null `regions` array; each region contains `path` and `state`, in that
-    order;
-11. `permissions`: the complete object defined by the Workspace Permissions
-    Interface, in its declared member order;
-12. `lifecycle`: one object whose members are `action` and `outcome`, in that
-    order;
-13. `recovery`: one object whose members are `state`, `protectedPaths`, and
-    `residualPath`, in that order;
-14. `verification`: one object whose members are `targets`, `topology`,
-    `extensionsLifecycle`, and `frameworkLifecycle`, in that order;
-15. `findings`: a non-null ordered array whose members are `code`, `status`,
-    `target`, and `cause`, in that order.
-
-Every array is present and non-null, including nested `rootIds`, `dependencies`,
-`regions`, and `protectedPaths` arrays. `selection`, `source`, `framework`,
-`footprint`, and `generatedNavigation` are atomic nullable facts when their
-complete safe value is unavailable before an early terminal result. Their
-members are not independently nullable except for `source.path`, which is
-`null` exactly for the embedded catalogue. Nonnegative counts are required.
-`framework.inventoryFingerprint` is a lowercase SHA-256 value when the
-Framework fact is present.
-
-`selection.selectedBy` is `explicit-ids`, `explicit-all`,
-`single-package-inference`, `interactive-ids`, or `interactive-all`.
-`selection.rootIds` contains the exact selected root IDs in ordinal order.
-`source.kind` is `embedded`, `package`, or `catalogue`. A non-null `source.path`
-is the exact normalized source path. `source.identity` is the exact resolved
-embedded or external source identity.
-
-`packages` is the complete resolved closure in dependency-first order.
-`selectedRoot` distinguishes explicit or inferred roots from dependencies.
-Every package `dependencies` array contains its direct stable-ID dependencies in
-ordinal order.
-
-The three `footprint` arrays contain unique canonical workspace-relative paths
-in ordinal order. `payloadTargets` contains only package payload paths,
-`generatedRegions` contains only generated host paths, and `directories`
-contains only legitimately missing planned descendant directory-create paths
-beneath the workspace for admitted targets; it never contains `.agents` itself.
-
-Effect order is the exact planned and application order for target and generated
-effects. Dependencies precede dependents. Lifecycle publication follows those
-effects separately and is the final workspace file effect when required. Effect
-`kind` is `directory`, `package-file`, or `generated-region`. A directory action
-is `create` only for one declared missing ordinary parent of an admitted target;
-a package-file action is `create` or `replace`; and a generated-region action is
-`replace`. `packageId` is the exact package that owns a package effect and is
-otherwise `null`. Effect `outcome` is `planned`, `not-started`, `verified`,
-`verification-failed`, or `completion-unknown`. Effect `residual` is `none`,
-`retained`, or `unknown` and is never Boolean.
-
-Generated region `state` is `changed` or `unchanged`. Lifecycle `action` is
-`none`, `preserve`, or `publish`. Lifecycle `outcome` is `not-requested`,
-`planned`, `already-current`, `not-started`, `verified`,
-`verification-failed`, or `completion-unknown`. Recovery `state` is
-`not-required`, `not-created`, `removed`, `retained`, or `unknown`.
-`protectedPaths` contains the exact canonical workspace-relative paths covered
-by the final recovery bundle. `residualPath` is the exact absolute external
-recovery path when known and is otherwise `null`.
-
-Each verification member is `not-requested`, `planned`, `verified`, `failed`,
-or `unknown`. Successful application requires `verified` targets, topology,
-Extension lifecycle, and unchanged Framework lifecycle. A dry run uses
-`planned` for the checks that application would perform. A verified no-op may
-use `verified` without an effect.
-
-Finding `code` uses exactly the following vocabulary and status mapping in this
-declaration and primary ordering sequence:
-
-| Code                                             | Status        | Meaning                                                                                   |
-| ------------------------------------------------ | ------------- | ----------------------------------------------------------------------------------------- |
-| `extension-install.invalid-input`                | `invalid`     | Syntax, normalized input, repetition, or terminal-mode input is invalid.                  |
-| `extension-install.selection-required`           | `invalid`     | A multi-package source has no explicit or interactive exact selection.                    |
-| `extension-install.interaction-ended`            | `invalid`     | End-of-input ended a selection or eligible-force prompt.                                  |
-| `extension-install.source-unavailable`           | `incomplete`  | The selected source cannot be read completely.                                            |
-| `extension-install.source-invalid`               | `invalid`     | The selected package or catalogue has invalid identity, manifests, or dependency closure. |
-| `extension-install.framework-unavailable`        | `incomplete`  | Complete trusted Framework-anchor facts are unavailable.                                  |
-| `extension-install.framework-unsafe`             | `blocked`     | Framework identity, ownership, or route-host facts are unsafe or ambiguous.               |
-| `extension-install.lifecycle-unavailable`        | `incomplete`  | Required lifecycle facts cannot be read completely.                                       |
-| `extension-install.lifecycle-blocked`            | `blocked`     | Lifecycle facts are malformed, unsupported, untrusted, or conflicting.                    |
-| `extension-install.managed-divergence`           | `blocked`     | A managed package differs from its baseline and requires Extension Update.                |
-| `extension-install.initial-force-required`       | `blocked`     | An eligible initial occupant remains without exact force authority.                       |
-| `extension-install.ownership-conflict`           | `blocked`     | Another owner or manager conflicts with a selected effect.                                |
-| `extension-install.permission-required`          | `blocked`     | Exact external destination grants are missing.                                            |
-| `extension-install.permission-declined`          | `blocked`     | The caller declined the complete missing grant set.                                       |
-| `extension-install.permissions-invalid`          | `blocked`     | The consumer permission document is malformed or unsafe.                                  |
-| `extension-install.permissions-unavailable`      | `incomplete`  | Required consumer permission facts cannot be read completely.                             |
-| `extension-install.permissions-changed`          | `blocked`     | The observed permission document changed before application.                              |
-| `extension-install.permission-write-failed`      | `failed`      | Permission publication or verification failed or completion is unknown.                   |
-| `extension-install.target-unsafe`                | `blocked`     | A selected target is unsafe, reserved, colliding, or cannot be revalidated.               |
-| `extension-install.projection-unavailable`       | `incomplete`  | Intended topology or Generated Navigation cannot be formed completely.                    |
-| `extension-install.generated-region-unsafe`      | `blocked`     | A required generated-region boundary is missing, malformed, or ambiguous.                 |
-| `extension-install.workspace-lock-unavailable`   | `blocked`     | The exact workspace lease cannot be acquired safely.                                      |
-| `extension-install.target-changed`               | `blocked`     | Source, target, ownership, route, marker, or lifecycle state changed before an effect.    |
-| `extension-install.recovery-conflict`            | `blocked`     | A recovery candidate or destination conflicts with the operation.                         |
-| `extension-install.recovery-unavailable`         | `incomplete`  | Required external recovery storage or evidence is unavailable before effects.             |
-| `extension-install.lifecycle-observation`        | `attention`   | Complete safe coverage retains a finite non-blocking lifecycle observation.               |
-| `extension-install.recovery-artifact-retained`   | `attention`   | Verified target effects succeeded but a positively retained recovery artifact remains.    |
-| `extension-install.write-failed`                 | `failed`      | A planned target or generated-region effect failed or could not be verified.              |
-| `extension-install.topology-verification-failed` | `failed`      | Intended target topology did not verify after target and generated effects.               |
-| `extension-install.lifecycle-publication-failed` | `failed`      | Extension lifecycle publication failed or could not be verified.                          |
-| `extension-install.verification-failed`          | `failed`      | Final target, lifecycle, or Framework-preservation reread failed.                         |
-| `extension-install.recovery-failed`              | `failed`      | Recovery preparation or cleanup ended with unsafe or unknown completion.                  |
-| `extension-install.operation-failed`             | `failed`      | Another unexpected Extension Install failure occurred.                                    |
-| `extension-install.interrupted`                  | `interrupted` | Caller cancellation stopped the operation without a stronger failure.                     |
-
-Findings order first by that code order. For equal codes, a `null` target comes
-before every non-null target. Non-null targets and then causes use ordinal
-ordering. Status uses exact precedence `failed` > `interrupted` > `invalid` >
-`blocked` > `incomplete` > `attention` > `complete`. Every finding status agrees
-with its code's declared mapping. The result status is the highest-precedence
-finding status; an empty findings array yields `complete`. The result's primary
-human stream, shared process status, and numeric exit agree with that status.
-
-The result carries at most one `next` action. Positively retained recovery owns
-`open-forge cleanup`. Managed divergence owns `open-forge extension update`
-for the exact affected package. Eligible initial force owns the same exact
-request with `--force`. Invalid input or unresolved selection owns
-`open-forge extension install --help`. An installed-only package without source
-bytes directs the caller to `extension inspect` or an exact `--source` rerun.
-Recovery cleanup guidance wins when it coexists with another attention fact.
-Other results may leave `next` null when no safe deterministic command follows.
-
-The shared schema-v1 envelope already owns `command`, `status`, `workspace`, and
-`next`; none is duplicated inside this result. Changing these required result
-fields, their order, JSON types, nullability, array-presence rules, or finite
-values is a command-local schema-v1 compatibility change.
-
-| Result        | Meaning for `extension install`                                                                                                                                                                                                                                                                                                                                 |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | Absent selected packages were fully installed and verified, an eligible initial force completed, an exact managed state was verified as a no-op, or a complete pre-effect dry-run finished without finite attention.                                                                                                                                            |
-| `attention`   | Complete safe coverage preserves a finite lifecycle observation, or post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`. Managed divergence itself is `blocked` and directs to update. `Failed`/`Retained` recovery keeps target effects successful and reports the exact residual path with cleanup guidance. |
-| `incomplete`  | Safe source, Framework-anchor, lifecycle, dependency, parser, route, or recovery coverage is unavailable. No write occurs.                                                                                                                                                                                                                                      |
-| `invalid`     | IDs, source, `--all`, flags, operands, repetition, or terminal-mode input is invalid.                                                                                                                                                                                                                                                                           |
-| `blocked`     | Unsafe, ambiguous, colliding, untrusted, unauthorized, retained, ownership, route, marker, or containment facts prevent one plan.                                                                                                                                                                                                                               |
-| `failed`      | Application, lifecycle publication, or verification fails unexpectedly after effects begin, or post-verification recovery deletion returns `Failed`/`Unknown`.                                                                                                                                                                                                  |
-| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure remains.                                                                                                                                                                                                                                                          |
-
-Primary human complete/attention/incomplete results go to stdout. Primary human
-invalid/blocked/failed/interrupted results go to stderr. Bounded diagnostics use
-stderr. JSON uses one result on stdout for every status.
-
-## Errors And Examples
-
-Every error names `extension install`, selected IDs/source/workspace, the cause,
-and at most one useful next action. An installed-only ID without embedded or
-selected package bytes is `incomplete`, writes nothing, and directs the caller
-to `extension inspect` or to provide `--source`; it is not an exact no-op.
-
-Install one embedded package:
+`minimal`, with dependencies:
 
 ```text
-open-forge extension install development-toolkit
+Installed the orchestration Extension and 2 packages it requires: planning, project-documents.
+  Created 9 files under .agents/workflows, .agents/patterns and .agents/templates
+  Updated the Entries section of 3 files
+  Saved a grant for tools/review to .agents/open-forge.json
 ```
 
-Install all available roots explicitly with a preview:
+`minimal`, permission required outside a terminal (stderr):
 
 ```text
-open-forge extension install --all --automatic --dry-run --json
+Cannot install team-tools: it writes outside .agents and no grant allows that.
+  tools/review   (directory: everything under it)
+Next: open-forge extension install team-tools --allow-path tools/review
+  Or add "tools/review" to allowInstallPaths in .agents/open-forge.json.
 ```
 
-Install one exact local package with eligible initial force:
+`minimal`, no content (exit 2):
 
 ```text
-open-forge extension install development-toolkit --source D:/packages/open-forge --force
+Nothing was installed from ./mypkg: the package has no content directory.
+  Package files belong under ./mypkg/content/.agents/.
 ```
 
-Managed divergence is not reconciled by the last request. It returns `blocked`
-with `Next: open-forge extension update development-toolkit`.
+`minimal`, existing file without `--force` (stderr):
+
+```text
+Cannot install my-tools: 1 file already exists where the package would write.
+  .agents/workflows/review.md
+Next: open-forge extension install my-tools --force --dry-run  (preview replacing it)
+```
+
+`standard` adds `Workspace:`, the source, every created file as a row with
+its package, every Entries section as a row, the grant scope, and the
+dependency order.
+
+`full` adds the unchanged Entries sections, the permission evaluation, the
+Framework fingerprint, recovery and verification facts in words.
+
+An isolated unrelated malformed ordinary-metadata finding remains visible in
+minimal apply, dry-run, and verified no-op output. It names the exact source or
+projection host and cause, while preserving the selected package effects and
+all other available topology projections. It never presents an unreadable or
+unsafe boundary as skippable.
+
+### Prompts
+
+Per [04](../../../../../../working/cli-development/tasks/task30-g4/04-interaction-system.md): multi-select when the source has several
+packages and no ID was given; Permission for paths outside `.agents`; Confirm
+for existing files (`Replace the 1 existing file listed above? [y/N]`); plan
+review; `Apply these changes? [y/N]`.
+
+### Representative transcripts by status
+
+### Transcript — completed
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-install-completed). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Install/__snapshots__/ExtensionInstallBeforeOutputSnapshotTests/PackageInstallation_single-package/single-package.minimal.txt).
+
+### Transcript — completed-with-warnings
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-install-completed-with-warnings). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Install/__snapshots__/ExtensionInstallBeforeOutputSnapshotTests/PackageInstallation_no-content-directory/no-content-directory.minimal.txt).
+
+### Transcript — incomplete
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-install-incomplete). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Install/__snapshots__/ExtensionInstallBeforeOutputSnapshotTests/PackageInstallation_source-unreadable/source-unreadable.minimal.txt).
+
+### Transcript — invalid-input
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-install-invalid-input). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Install/__snapshots__/ExtensionInstallBeforeOutputSnapshotTests/PackageInstallation_no-selection-non-interactive/no-selection-non-interactive.minimal.txt).
+
+### Transcript — blocked
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-install-blocked). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Install/__snapshots__/ExtensionInstallBeforeOutputSnapshotTests/PackageInstallation_lock-held/lock-held.minimal.txt).
+
+### Transcript — failed
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-install-failed). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Install/__snapshots__/ExtensionInstallBeforeOutputSnapshotTests/PartialWriteFailure/write-failed-partial.minimal.txt).
+
+### Transcript — cancelled
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-install-cancelled). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Install/__snapshots__/ExtensionInstallBeforeOutputSnapshotTests/PackageInstallation_cancelled/cancelled.minimal.txt).
+
+## Structured Output
+
+`--format json` writes one schema-3 envelope to stdout for every report status. It contains the command, status, workspace when applicable, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
+
+### JSON data by level
+
+| Level    | `data`                                                                                                                                                                                        |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| minimal  | `{ mode, force, automatic, source { kind, path }, packages: [ { id, version, selected: bool, requiredBy: [...] } ], permissions { decision, required: [...], missing: [...], saved: bool } }` |
+| standard | + per effect `owner`, `sections: [ path ]`, `selection { method } `                                                                                                                           |
+| full     | + `entriesUnchanged: [ path ]`, `frameworkFingerprint`, `verification`, `recovery` details                                                                                                    |
+
+## Semantic Results
+
+The status and exit mapping above are unchanged by detail or format. Root effects and recovery receipts retain their complete result facts at every detail level; command-owned data follows the catalogue's level rows.
+
+### Effects wording
+
+Created files: at `minimal` counted by directory (`Created 3 files under
+.agents/workflows`), at `standard` rows `<path>  created (<package>)`;
+replaced existing files always rows `<path>  replaced (your previous file is
+in the recovery bundle)`; `Updated the Entries section of <path>` (`minimal`
+counts them when more than three); `Saved a grant for <path> to
+.agents/open-forge.json`; lock `updated` at `standard`. Dry run: `Would
+create`, `Would update`, `Would save`. Partial: `created`, `not started`,
+`final state unknown`.
+
+### Counts and limitations
+
+`packagesInstalled`, `filesCreated`, `filesReplaced`, `sectionsUpdated`,
+`grantsSaved`.
+
+## Errors And Boundaries
+
+The findings catalogue below is the command's finite error and warning vocabulary. Findings keep their code, severity, family, subject and cause; detail filtering affects display only. A blocked, failed or cancelled result prevents further effects according to the catalogue.
+
+### Findings catalogue
+
+| Code                                           | Severity | Family                       | Message                                                                                        | Next                                                  |
+| ---------------------------------------------- | -------- | ---------------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| extension-install.invalid-input                | error    | invalid-input                |                                                                                                |                                                       |
+| extension-install.selection-required           | error    | selection-required           |                                                                                                | `open-forge extension list`                           |
+| extension-install.interaction-ended            | error    | interaction-ended            | (status `cancelled`; record the classification change)                                         |                                                       |
+| extension-install.source-unavailable           | warning  | local                        | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Install/Shared/Wording/ExtensionInstallWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-install.source-unavailable`).                                                         | none                                                  |
+| extension-install.source-invalid               | error    | local                        | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Install/Shared/Wording/ExtensionInstallWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-install.source-invalid`).                                   | fix by hand                                           |
+| extension-install.package-content-missing      | warning  | local                        | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Install/Shared/Wording/ExtensionInstallWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-install.package-content-missing`).    | none                                                  |
+| extension-install.framework-unavailable        | warning  | framework-unavailable        |                                                                                                |                                                       |
+| extension-install.framework-unsafe             | error    | framework-unsafe             |                                                                                                |                                                       |
+| extension-install.lifecycle-unavailable        | warning  | lifecycle-unavailable        |                                                                                                |                                                       |
+| extension-install.lifecycle-blocked            | error    | lifecycle-blocked            |                                                                                                |                                                       |
+| extension-install.lifecycle-observation        | info     | ownership-observation        |                                                                                                |                                                       |
+| extension-install.managed-divergence           | error    | managed-divergence           |                                                                                                | `open-forge extension update <id>`                    |
+| extension-install.package-contents-changed     | error    | managed-divergence           | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Install/Shared/Wording/ExtensionInstallWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-install.package-contents-changed`).                | `open-forge extension update <id>`                    |
+| extension-install.initial-force-required       | error    | target-occupied              | row per existing file                                                                          | `open-forge extension install <id> --force --dry-run` |
+| extension-install.ownership-conflict           | error    | ownership-conflict           |                                                                                                |                                                       |
+| extension-install.permission-required          | error    | permission-required          |                                                                                                |                                                       |
+| extension-install.permission-declined          | error    | permission-declined          |                                                                                                |                                                       |
+| extension-install.permissions-invalid          | error    | permissions-invalid          |                                                                                                |                                                       |
+| extension-install.permissions-unavailable      | warning  | permissions-unavailable      |                                                                                                |                                                       |
+| extension-install.permissions-changed          | error    | permissions-changed          |                                                                                                |                                                       |
+| extension-install.permission-write-failed      | error    | permission-write-failed      |                                                                                                |                                                       |
+| extension-install.target-unsafe                | error    | target-unsafe                | includes reserved paths: `<path> is reserved for Open Forge's own files.`                      |                                                       |
+| extension-install.projection-unavailable | warning | projection-unavailable | Required projection could not be established; remains incomplete. | |
+| extension-install.metadata-projection-skipped | warning | metadata-projection-skipped | Exact readable malformed source whose unrelated host projection was skipped; retain cause. | |
+| extension-install.generated-region-unsafe      | error    | generated-region-unsafe      |                                                                                                |                                                       |
+| extension-install.workspace-lock-unavailable   | error    | workspace-lock-unavailable   |                                                                                                |                                                       |
+| extension-install.target-changed               | error    | target-changed               |                                                                                                |                                                       |
+| extension-install.recovery-conflict            | error    | recovery-conflict            |                                                                                                |                                                       |
+| extension-install.recovery-unavailable         | warning  | recovery-unavailable         |                                                                                                |                                                       |
+| extension-install.recovery-artifact-retained   | warning  | recovery-artifact-retained   |                                                                                                |                                                       |
+| extension-install.write-failed                 | error    | write-failed                 |                                                                                                |                                                       |
+| extension-install.topology-verification-failed | error    | local                        | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Install/Shared/Wording/ExtensionInstallWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-install.topology-verification-failed`). | `open-forge doctor`                                   |
+| extension-install.lifecycle-publication-failed | error    | lifecycle-publication-failed |                                                                                                |                                                       |
+| extension-install.verification-failed          | error    | verification-failed          |                                                                                                |                                                       |
+| extension-install.recovery-failed              | error    | recovery-failed              |                                                                                                |                                                       |
+| extension-install.operation-failed             | error    | operation-failed             |                                                                                                |                                                       |
+| extension-install.interrupted                  | error    | cancelled                    |                                                                                                |                                                       |
+
+## Scenarios
+
+### Catalogue situations
+
+`single-package`, `with-dependencies`, `select-from-source-prompt`,
+`no-selection-non-interactive` (invalid-input), `permission-required-non-interactive`
+(blocked), `permission-prompt-always`, `permission-prompt-once`,
+`allow-path-flag`, `existing-file-without-force` (blocked), `with-force`,
+`already-installed` (no-op), `changed-since-install` (blocked, points at
+update), `no-content-directory` (warnings),
+`unrelated-readable-malformed-metadata` (warning with selected effects),
+`dry-run`, `source-unreadable`, `lock-held`, `write-failed-partial`, `cancelled`.
+
+Each status has one representative native text transcript above. JSON uses the same status and command facts under the schema-3 envelope.
+
+### Open maintainer questions
+
+The catalogue says `--all cannot be combined with package IDs.`; the native command says `Explicit Extension IDs and --all cannot be combined.` The same wording conflict is present in Extension Update and is kept unresolved. The no-content case is current native behavior: `Nothing was installed from <extension-source>: the package has no content directory.` followed by the required content-path row. **Maintainer decision remains open.**
+
+The Extension Install catalogue requires the continuation `Or add
+".apm/agents/team.md" to allowInstallPaths in .agents/open-forge.json.` after
+`Next:`, while the shared report invariant requires `Next:` to be the final
+line. The current output is recorded without deciding whether the continuation
+should move before `Next:` or the invariant should change. **Maintainer
+decision remains open.**
 
 ## Non-Goals And Public Conformance
 
@@ -579,13 +600,14 @@ hidden `index` command, or create a saved plan/journal.
 
 Conformance must cover exact source universe and ID rules, explicit `--all`,
 single-package inference, dependency-first closure and failures, Framework-anchor
-and route-host prerequisites, absent/no-op/divergent/initial-force states,
+and route-host prerequisites, isolated unrelated readable malformed projection
+hosts with preserved available topology, absent/no-op/divergent/initial-force states,
 automatic and exact bounded prompt behavior, trusted/untrusted/absent handling,
 shared owners, Library-record and projection collisions, independent no-follow
 final-leaf guards, semantic fingerprints, generated navigation, eligible
 workspace-relative payload targets, rejection before planning, directory effects
 limited to missing descendants beneath the workspace for admitted targets,
-reserved paths, complete planning, dependency-first target/generated effects, topology
+reserved paths, exact occupied target paths in minimal refusal output, complete planning, dependency-first target/generated effects, topology
 verification, last-effect Extension lifecycle publication, final target and
 lifecycle rereads, external recovery-bundle storage and verification, typed
 post-verification deletion state/disposition facts, dry-run parity, the exact
@@ -596,23 +618,19 @@ result schema and exit mapping. Gate 5 must prove source-generated
 serialization, fixed Markdig where used, real `System.IO`, Native AOT, OS
 locking, isolated tests, and package journeys.
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
+CLI help syntax: [`extension.install.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Extension/Install/ExtensionInstallText.cs).
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef extension.install.help.syntax -->
+
+## Approved Journey Wording References
+
+The following stable IDs link the approved journey behavior above to its typed
+human-wording factories. Independently reviewed snapshots and state assertions
+remain the output evidence.
+
+- [ExtensionInstallPhrases.cs](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Extension/Install/ExtensionInstallPhrases.cs)
+  <!-- @OpenForgeTextRef extension.install.phrase.ownership-conflict -->

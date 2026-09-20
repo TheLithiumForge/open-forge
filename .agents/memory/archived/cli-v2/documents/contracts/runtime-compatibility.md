@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: One-artifact Node.js, Bun, and Deno runtime floors, invocation, behavioral parity, capability gating, and release evidence
+  description: "Historical CLI-v2 source: One-artifact Node.js, Bun, and Deno runtime floors, invocation, behavioral parity, capability gating, and release evidence"
   responsibility: Define what cross-runtime support means without introducing runtime-specific commands, builds, hidden fallbacks, or a polyglot shebang
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

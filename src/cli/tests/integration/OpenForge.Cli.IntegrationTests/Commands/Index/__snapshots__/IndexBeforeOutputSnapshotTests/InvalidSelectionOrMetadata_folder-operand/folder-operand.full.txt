@@ -1,0 +1,7 @@
+Cannot index .agents/root: it is a folder, not a source.
+Workspace: <workspace>
+  Error  .agents/root  Invalid source [index.invalid-source]
+         .agents/root is a folder, not a source.
+No recovery bundle was needed.
+  Choose a source ID or exact path.
+Next: open-forge index root

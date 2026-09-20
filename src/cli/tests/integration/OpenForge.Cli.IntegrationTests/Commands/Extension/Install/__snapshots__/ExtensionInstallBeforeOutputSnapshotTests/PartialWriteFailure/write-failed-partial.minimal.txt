@@ -1,0 +1,5 @@
+Extension install stopped after 1 of 2 changes.
+Workspace: <workspace>
+  .agents/aaa.md      created (toolkit)
+  .agents/toolkit.md  not started
+  Created 1 file under .agents

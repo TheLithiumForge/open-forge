@@ -1,0 +1,3 @@
+Cannot initialize documents: Route Init metadata is invalid.
+Workspace: <workspace>
+Next: open-forge route init documents --description "<one sentence>" --tag <Tag>

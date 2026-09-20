@@ -10,6 +10,7 @@ public sealed class FileMutationContractTests
     private static readonly byte[] AfterBytes = Encoding.UTF8.GetBytes("after\n");
     private static readonly byte[] DifferentBytes = Encoding.UTF8.GetBytes("different\n");
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "File expectations preserve only state-valid path identity and hash facts"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void FileExpectationsPreserveValidStates()
     {
@@ -35,6 +36,7 @@ public sealed class FileMutationContractTests
         Assert.Null(directory.ContentHash);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "File expectations reject relative paths and noncanonical hashes"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     [InlineData("relative-path", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
     [InlineData("absolute-path", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")]
@@ -50,6 +52,7 @@ public sealed class FileMutationContractTests
             contentHash: hash));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "File snapshots own exact bytes and derive their exact-byte hash"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void FileSnapshotsOwnExactBytes()
     {
@@ -64,6 +67,7 @@ public sealed class FileMutationContractTests
         Assert.Equal(FileExpectation.Hash(BeforeBytes), snapshot.ContentHash);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Empty file snapshots retain bytes and the empty hash unlike missing snapshots"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void EmptyFileSnapshotsDifferFromMissingSnapshots()
     {
@@ -86,6 +90,7 @@ public sealed class FileMutationContractTests
         Assert.Null(missing.PhysicalPath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Created file changes own sliced caller intended bytes"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void CreatedChangesOwnSlicedIntendedBytes()
     {
@@ -103,6 +108,7 @@ public sealed class FileMutationContractTests
         Assert.True(change.HasIntendedBytes);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Replaced file changes own sliced caller intended bytes"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void ReplacedChangesOwnSlicedIntendedBytes()
     {
@@ -123,6 +129,7 @@ public sealed class FileMutationContractTests
         Assert.True(change.HasIntendedBytes);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated region changes own sliced caller intended bytes"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void GeneratedRegionChangesOwnSlicedIntendedBytes()
     {
@@ -143,6 +150,7 @@ public sealed class FileMutationContractTests
         Assert.True(change.HasIntendedBytes);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Planned file changes admit only their compatible expected states"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void PlannedChangesRequireCompatibleExpectations()
     {
@@ -173,6 +181,7 @@ public sealed class FileMutationContractTests
         Assert.Throws<ArgumentException>(() => PlannedFileChange.ReplaceGeneratedRegion(file, BeforeBytes));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "File receipts distinguish verified mismatched unavailable not-started and unknown outcomes"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void FileReceiptsExposeFiniteStates()
     {
@@ -219,6 +228,7 @@ public sealed class FileMutationContractTests
         Assert.Same(different, unknownObserved.After);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Not-started file receipts retain every defined neutral reason"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void NotStartedReceiptsRequireDefinedReasons()
     {
@@ -244,6 +254,7 @@ public sealed class FileMutationContractTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "File receipts reject mismatched before state and unverified intended bytes"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void FileReceiptsRejectImpossibleStates()
     {
@@ -278,6 +289,7 @@ public sealed class FileMutationContractTests
             "The effect did not start."));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Verified deletion receipts require the target to be absent"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void VerifiedDeletionRequiresMissingAfterState()
     {

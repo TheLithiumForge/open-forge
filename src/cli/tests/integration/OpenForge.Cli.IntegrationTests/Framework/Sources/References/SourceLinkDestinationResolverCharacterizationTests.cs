@@ -17,6 +17,7 @@ public sealed class SourceLinkDestinationResolverCharacterizationTests
     private const string SourcePath = ".agents/nested/source.md";
     private const string TargetPath = ".agents/target.md";
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Full destination resolution and canonical matching retain distinct admission policies"),
         InlineData("", SourcePath, (int)SourceLinkTargetResolution.Malformed, true, null),
         InlineData("#source", SourcePath, (int)SourceLinkTargetResolution.Complete, true, SourcePath),
@@ -62,6 +63,7 @@ public sealed class SourceLinkDestinationResolverCharacterizationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Literal unpaired UTF-16 retains its exception boundary in both source-link callables"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task LiteralUnpairedSurrogateIsNotSilentlyReplaced()
     {
@@ -83,6 +85,7 @@ public sealed class SourceLinkDestinationResolverCharacterizationTests
             expectedCanonicalPath: TargetPath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "An encoded query character reaches physical resolution while canonical matching preserves it"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task EncodedQueryCharacterRemainsPartOfTheLexicalPath()
     {
@@ -113,6 +116,7 @@ public sealed class SourceLinkDestinationResolverCharacterizationTests
         Assert.True(matches);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Injected physical exceptions remain unsafe facts before read or Markdown work"),
         InlineData(false), InlineData(true), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task PhysicalExceptionsStayInsideTheirExistingBoundary(bool cancellationException)
@@ -151,6 +155,7 @@ public sealed class SourceLinkDestinationResolverCharacterizationTests
         Assert.Equal("The local destination physical boundary could not be established.", facts.Finding?.Cause);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "An injected strict-read exception propagates unchanged instead of becoming a target fact"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task ReadExceptionPropagatesUnchanged()
     {
@@ -175,6 +180,7 @@ public sealed class SourceLinkDestinationResolverCharacterizationTests
         Assert.Equal(0, markdownCalls);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "An injected strict-read cancellation propagates with its original identity"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task ReadCancellationPropagatesUnchanged()
     {
@@ -194,6 +200,7 @@ public sealed class SourceLinkDestinationResolverCharacterizationTests
         Assert.Same(failure, exception);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "A cancelled read result becomes cancellation before Markdown parsing"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task CancelledReadResultPreservesTheOperationToken()
     {
@@ -218,6 +225,7 @@ public sealed class SourceLinkDestinationResolverCharacterizationTests
         Assert.Equal(0, markdownCalls);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Injected Markdown exceptions remain unreadable facts after the target read"),
         InlineData(false), InlineData(true), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task MarkdownExceptionsStayInsideTheirExistingBoundary(bool cancellationException)
@@ -252,6 +260,7 @@ public sealed class SourceLinkDestinationResolverCharacterizationTests
         Assert.Equal("The target Markdown fragment facts could not be established.", facts.Finding?.Cause);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "An exact target ID collision without a fragment returns before target text is read"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task IdentityCollisionWithoutFragmentDoesNotReadTargetText()
     {
@@ -283,6 +292,7 @@ public sealed class SourceLinkDestinationResolverCharacterizationTests
         Assert.Equal([TargetPath, ".agents/target/_target.md"], facts.Finding?.Candidates.Select(candidate => candidate.Path));
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Fragment resolution preserves precedence over an admitted target ID collision"),
         InlineData("details", (int)SourceLinkTargetResolution.Complete, (int)SourceLinkDestinationFindingCode.IdentityCollision, null),
         InlineData("DETAILS", (int)SourceLinkTargetResolution.FragmentMissing, (int)SourceLinkDestinationFindingCode.FragmentMissing, "details"),
@@ -327,6 +337,7 @@ public sealed class SourceLinkDestinationResolverCharacterizationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Unavailable canonical heading facts precede missing-fragment and target ID collision output"), Trait("Feature", "references"), Trait("Evidence", "Integration")]
     public async Task UnavailableCanonicalFragmentPrecedesMissingAndCollision()
     {

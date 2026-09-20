@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models.Source;
 
 public sealed class RouteSourceValidationModelTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route projection rejects reads that do not reference the neutral logical source layers")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void ProjectionLayerAssociationIsStrict()
@@ -39,6 +40,7 @@ public sealed class RouteSourceValidationModelTests
             overwriteRead));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route projection rejects Route output whose identity or projected overwrite presence disagrees with neutral facts")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void ProjectionOutputMustMatchNeutralIdentityAndSelectedLayers()
@@ -64,6 +66,7 @@ public sealed class RouteSourceValidationModelTests
             null));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route projection sets reject duplicate projection paths and unmatched paired facts")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void ProjectionSetValidatesReferenceAndOverwriteSetEquality()
@@ -91,6 +94,7 @@ public sealed class RouteSourceValidationModelTests
             [mismatchedFact]));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route projection result rejects a source-less read without a matching orphan or ambiguous fact")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void SourceLessReadsMustMatchProjectionFacts()
@@ -118,6 +122,7 @@ public sealed class RouteSourceValidationModelTests
             false));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route source model validation still rejects invalid intrinsic form, read, and overwrite shapes")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void ExistingRouteOutputInvariantsRemainGreen()

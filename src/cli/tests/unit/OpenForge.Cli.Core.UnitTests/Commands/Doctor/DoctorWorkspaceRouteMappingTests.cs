@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
@@ -5,8 +6,10 @@ using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
+using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
@@ -17,6 +20,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Doctor;
 
 public sealed class DoctorWorkspaceRouteMappingTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Doctor maps exact Loader-declared root boundaries with typed evidence")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public void DeclaredRootsMapWithoutInventingReachability()
@@ -42,6 +46,7 @@ public sealed class DoctorWorkspaceRouteMappingTests
         Assert.All(findings, finding => Assert.Equal(".agents/loader.md", finding.Provenance.Path));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Doctor maps only producer-owned finite route-shape observations")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public void RouteShapeFactsRetainEveryExactSubjectAndEvidence()
@@ -81,6 +86,7 @@ public sealed class DoctorWorkspaceRouteMappingTests
         Assert.All(findings, finding => Assert.NotEmpty(finding.Evidence));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Doctor projects the precise duplicate Loader root fact as a malformed Loader")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public void DuplicateLoaderRootMapsToLoaderMalformedWithTypedEvidence()
@@ -124,6 +130,7 @@ public sealed class DoctorWorkspaceRouteMappingTests
         Assert.Equal(".agents/loader.md", finding.Provenance.Path);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Unavailable generated navigation never projects expected-entry drift")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public void UnavailableGeneratedNavigationDoesNotProjectEntryComparisons()
@@ -146,15 +153,142 @@ public sealed class DoctorWorkspaceRouteMappingTests
         Assert.Empty(RouteGeneratedEntryDoctorInspector.Inspect([observation]));
     }
 
+    [Trait("Boundary", "Processing")]
+    [Theory(DisplayName = "Readable malformed metadata retains complete route coverage and reports an error")]
+    [InlineData((int)GeneratedNavigationRegionUnavailableReason.MetadataInvalid)]
+    [InlineData((int)GeneratedNavigationRegionUnavailableReason.MetadataUnavailable)]
+    [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
+    public void ReadableMalformedMetadataRetainsCompleteCoverageAndReportsError(
+        int reasonValue)
+    {
+        var reason = (GeneratedNavigationRegionUnavailableReason)reasonValue;
+        const string path = ".agents/source.md";
+        var view = View(
+            [],
+            [],
+            metadata:
+            [
+                new RouteMetadataObservation(
+                    path,
+                    FrameworkDocumentMetadataFacts.Malformed(
+                        FrameworkDocumentMetadataFailureKind.Malformed)),
+            ],
+            sources:
+            [
+                Source(
+                    path,
+                    FileReadState.Complete,
+                    issues:
+                    [
+                        RouteWorkspaceSourceIssue.WithoutLocation(
+                            RouteWorkspaceSourceIssueKind.FrontmatterMalformed,
+                            path),
+                    ]),
+            ],
+            generatedNavigation:
+            [
+                GeneratedNavigationUnavailable(
+                    path,
+                    reason),
+            ]);
+
+        var routeReport = RouteDoctorInspector.Inspect(view);
+        Assert.Equal(DoctorCoverageState.Complete, routeReport.Coverage);
+
+        var findings = new List<DoctorFinding>();
+        WorkspaceSourceDoctorInspector.Inspect(view, findings);
+
+        var finding = Assert.Single(findings);
+        Assert.Equal(DoctorFindingKind.WorkspaceFrontmatterMalformed, finding.Kind);
+        Assert.Equal(DoctorFindingSeverity.Error, finding.Severity);
+        Assert.Equal(path, finding.Subject.Path);
+        Assert.Equal(path, finding.Provenance.Path);
+        var evidence = Assert.IsType<DoctorStateEvidence>(Assert.Single(finding.Evidence));
+        Assert.Equal(DoctorObservedState.Malformed, evidence.State);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Theory(DisplayName = "Unavailable source layers retain incomplete coverage and exact read causes")]
+    [InlineData((int)FileReadState.AccessDenied, "The source read was denied.")]
+    [InlineData((int)FileReadState.InputOutputFailure, "The source read failed.")]
+    [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
+    public void UnavailableSourceLayersRetainIncompleteCoverageAndExactReadCauses(
+        int stateValue,
+        string cause)
+    {
+        var state = (FileReadState)stateValue;
+        const string path = ".agents/source.md";
+        var view = View(
+            [],
+            [],
+            sources:
+            [
+                Source(
+                    path,
+                    state,
+                    cause,
+                    [
+                        RouteWorkspaceSourceIssue.WithoutLocation(
+                            RouteWorkspaceSourceIssueKind.ParseIncomplete,
+                            path),
+                    ]),
+            ],
+            generatedNavigation:
+            [
+                GeneratedNavigationUnavailable(
+                    path,
+                    GeneratedNavigationRegionUnavailableReason.MetadataUnavailable),
+            ]);
+
+        var routeReport = RouteDoctorInspector.Inspect(view);
+        Assert.Equal(DoctorCoverageState.Incomplete, routeReport.Coverage);
+
+        var findings = new List<DoctorFinding>();
+        WorkspaceSourceDoctorInspector.Inspect(view, findings);
+
+        var finding = Assert.Single(findings);
+        Assert.Equal(DoctorFindingKind.WorkspaceParseIncomplete, finding.Kind);
+        Assert.Equal(DoctorFindingSeverity.Error, finding.Severity);
+        Assert.Equal(path, finding.Subject.Path);
+        Assert.Equal(path, finding.Provenance.Path);
+        Assert.Equal(cause, finding.Message);
+        var evidence = Assert.IsType<DoctorStateEvidence>(Assert.Single(finding.Evidence));
+        Assert.Equal(DoctorObservedState.Unavailable, evidence.State);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Theory(DisplayName = "Unrelated generated-navigation unavailability retains incomplete coverage")]
+    [InlineData((int)GeneratedNavigationRegionUnavailableReason.TopologyUnavailable)]
+    [InlineData((int)GeneratedNavigationRegionUnavailableReason.ProjectionUnavailable)]
+    [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
+    public void UnrelatedGeneratedNavigationUnavailabilityRetainsIncompleteCoverage(
+        int reasonValue)
+    {
+        var reason = (GeneratedNavigationRegionUnavailableReason)reasonValue;
+        const string path = ".agents/source.md";
+        var report = RouteDoctorInspector.Inspect(
+            View(
+                [],
+                [],
+                sources: [Source(path, FileReadState.Complete)],
+                generatedNavigation: [GeneratedNavigationUnavailable(path, reason)]));
+
+        Assert.Equal(DoctorCoverageState.Incomplete, report.Coverage);
+    }
+
     private static RouteDoctorView View(
         IReadOnlyList<RouteDeclaredRootObservation> roots,
         IReadOnlyList<RouteShapeObservation> shape,
-        IReadOnlyList<SourceRouteIssue>? issues = null)
+        IReadOnlyList<SourceRouteIssue>? issues = null,
+        IReadOnlyList<RouteMetadataObservation>? metadata = null,
+        IReadOnlyList<RouteSourceObservation>? sources = null,
+        IReadOnlyList<DoctorGeneratedNavigationTargetObservation>? generatedNavigation = null,
+        OperationalViewState state = OperationalViewState.Complete)
     {
         var workspace = DoctorOperationTestSupport.Workspace();
         return new RouteDoctorView
         {
-            State = OperationalViewState.Complete,
+            State = state,
             SourceInventory = RouteSourceInventoryState.Present,
             Catalogue = new SourceCatalogue(workspace, [], [], [], isCancelled: false),
             Routes = new SourceRouteFacts(
@@ -163,15 +297,67 @@ public sealed class DoctorWorkspaceRouteMappingTests
                 issues ?? [],
                 areLoaderRootFactsComplete: true,
                 isCancelled: false),
-            Metadata = [],
+            Metadata = metadata ?? [],
             WorkspaceEntry = new RouteSourceLayerObservation(
                 "AGENTS.md",
                 FileReadState.Missing,
                 Text: null),
-            Sources = [],
-            GeneratedNavigation = [],
+            Sources = sources ?? [],
+            GeneratedNavigation = generatedNavigation ?? [],
             DeclaredRoots = roots,
             Shape = shape,
         };
     }
+
+    private static RouteSourceObservation Source(
+        string path,
+        FileReadState state,
+        string? cause = null,
+        IReadOnlyList<RouteWorkspaceSourceIssue>? issues = null)
+    {
+        var source = new SourceLogicalSource(
+            new SourceLogicalIdentity("source", path),
+            new SourceLayer(
+                path,
+                Path.GetFullPath(Path.Combine(
+                    Path.GetTempPath(),
+                    "open-forge-doctor-unit",
+                    path.Replace('/', Path.DirectorySeparatorChar))),
+                SourceDocumentForm.Markdown,
+                SourceLayerKind.Base));
+        return new RouteSourceObservation
+        {
+            Source = source,
+            Layers =
+            [
+                new RouteSourceLayerObservation(
+                    path,
+                    state,
+                    state == FileReadState.Complete ? "# Source\n" : null,
+                    cause),
+            ],
+            Document = null,
+            AuthoredMetadata = SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Malformed),
+            FrameworkMetadata = FrameworkDocumentMetadataFacts.WithoutValues(FrameworkDocumentMetadataState.Malformed),
+            GeneratedEntries = SourceGeneratedEntriesFacts.Absent,
+            Structure = new RouteSourceStructureObservation(
+                RouteTitleObservation.NotApplicable(),
+                RouteAxiomsObservation.NotApplicable()),
+            WorkspaceIssues = issues ?? [],
+        };
+    }
+
+    private static DoctorGeneratedNavigationTargetObservation GeneratedNavigationUnavailable(
+        string path,
+        GeneratedNavigationRegionUnavailableReason reason)
+        => DoctorGeneratedNavigationTargetObservation.Unavailable(
+            path,
+            OperationalGeneratedNavigationState.Unavailable,
+            new DoctorGeneratedNavigationContent(
+                SourceGeneratedEntriesFacts.Absent,
+                [],
+                EntryComparisons: []),
+            new DoctorGeneratedNavigationUnavailability(
+                reason,
+                "The generated region is unavailable."));
 }

@@ -1,0 +1,8 @@
+3 routes listed with warnings.
+  Warning  .agents/docs/guide.md  Description is missing
+         .agents/docs/guide.md has no description in its frontmatter.
+
+  docs              Documents
+    docs/guide      (no description)
+    docs/reference  Reference
+Next: open-forge route update docs/guide --description "..."

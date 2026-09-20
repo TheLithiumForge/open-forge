@@ -17,6 +17,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Application;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryRecordCreateApplicationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Prior-missing Library record create accepts only its exact recovery preparation and unchanged ordinary missing leaf")]
     [InlineData("exact"), InlineData("foreign-operation"), InlineData("changed-file"), InlineData("changed-link")]
     public static async Task AppliesReversibleOrdinaryRecordCreate(string scenario)

@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 3,
+  "command": "library list",
+  "status": "completed-with-warnings",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "1 Library registered. 1 link needs attention.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "library-list.link-missing",
+      "title": "Registered link is missing",
+      "message": ".agents/directives/review.md  missing",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/directives/review.md",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "library-list.source-root-unavailable",
+      "title": "Source folder is unavailable",
+      "message": "The source folder of team-knowledge, shared/team, cannot be read.",
+      "subject": {
+        "kind": "directory",
+        "path": "shared/team",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "libraries": 1,
+    "linksCurrent": 0,
+    "linksMissing": 1,
+    "linksChanged": 0,
+    "linksUnavailable": 0,
+    "warnings": 2
+  },
+  "limitations": [],
+  "data": {
+    "libraries": [
+      {
+        "id": "team-knowledge",
+        "sourceFolder": "shared/team",
+        "destinationFolder": ".",
+        "links": [
+          {
+            "path": ".agents/directives/review.md",
+            "state": "missing",
+            "expectedTarget": "../../shared/team/.agents/directives/review.md",
+            "observedTarget": null,
+            "sourceId": "directives/review"
+          }
+        ]
+      }
+    ],
+    "recordCoverage": {
+      "path": ".agents/open-forge.lock.json",
+      "state": "complete",
+      "libraryCount": 1
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge library inspect team-knowledge",
+    "reason": "Inspect the Library before changing it."
+  }
+}

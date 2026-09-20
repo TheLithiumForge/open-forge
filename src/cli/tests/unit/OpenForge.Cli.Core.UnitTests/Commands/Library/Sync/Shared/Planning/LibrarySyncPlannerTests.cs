@@ -5,8 +5,8 @@ using OpenForge.Cli.Core.Commands.Library.Sync.Models.Result;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -16,6 +16,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Sync.Shared.Planning;
 
 public sealed class LibrarySyncPlannerTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void DryRunAndApplyHaveIdenticalEffects()
     {
@@ -24,13 +25,14 @@ public sealed class LibrarySyncPlannerTests
         var apply = LibrarySyncPlanner.Plan(input, TestContext.Current.CancellationToken);
         Assert.Equal(apply.State, preview.State);
         Assert.Equal(apply.Links.ToArray(), preview.Links.ToArray());
-        Assert.Equal(apply.RecordChange?.Kind, preview.RecordChange?.Kind);
-        Assert.Equal(apply.RecordChange?.LogicalPath, preview.RecordChange?.LogicalPath);
-        Assert.Equal(apply.RecordChange?.IntendedBytes.ToArray(), preview.RecordChange?.IntendedBytes.ToArray());
+        Assert.Equal(apply.OwnershipChange?.Kind, preview.OwnershipChange?.Kind);
+        Assert.Equal(apply.OwnershipChange?.LogicalPath, preview.OwnershipChange?.LogicalPath);
+        Assert.Equal(apply.OwnershipChange?.IntendedBytes.ToArray(), preview.OwnershipChange?.IntendedBytes.ToArray());
         Assert.Equal(apply.GeneratedRegions.Select(change => change.LogicalPath), preview.GeneratedRegions.Select(change => change.LogicalPath));
         Assert.Equal(apply.Directories.ToArray(), preview.Directories.ToArray());
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData((int)LibraryMappingObservationState.Changed, (int)LibraryPlanState.Blocked)]
     [InlineData((int)LibraryMappingObservationState.Blocked, (int)LibraryPlanState.Blocked)]
@@ -43,43 +45,109 @@ public sealed class LibrarySyncPlannerTests
         var plan = LibrarySyncPlanner.Plan(input, TestContext.Current.CancellationToken);
         Assert.Equal((LibraryPlanState)expectedValue, plan.State);
         Assert.NotEmpty(plan.Findings);
+        if (state == LibraryMappingObservationState.Changed)
+        {
+            Assert.Contains(plan.Findings, finding => finding.Code == LibrarySyncFindingCode.DestinationCollision
+                && finding.Status == CliSemanticStatus.Blocked
+                && finding.Cause == "Library sync never adopts or replaces an unowned destination.");
+        }
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    public void ChangedOrdinaryDestinationRetainsIndependentCreate()
+    {
+        const string added = "three.md";
+        var input = LibraryMutationPlanningData.Sync(
+            [LibraryMutationPlanningData.Leaf, added],
+            [LibraryMutationPlanningData.Leaf]) with
+        {
+            Mappings =
+            [
+                LibraryMutationPlanningData.Mapping(LibraryMutationPlanningData.Leaf, LibraryMappingObservationState.Changed),
+                LibraryMutationPlanningData.Mapping(added, LibraryMappingObservationState.Missing),
+            ],
+        };
+
+        var plan = LibrarySyncPlanner.Plan(input, TestContext.Current.CancellationToken);
+
+        Assert.Equal(LibraryPlanState.Complete, plan.State);
+        Assert.Equal(added, Assert.Single(plan.Links).DestinationPath.Value);
+        var retained = Assert.Single(plan.Findings, finding => finding.Code == LibrarySyncFindingCode.MappingBlocked);
+        Assert.Equal(CliSemanticStatus.Incomplete, retained.Status);
+        Assert.Equal(LibraryMutationPlanningData.Leaf, retained.Path);
+        Assert.Equal(
+            [LibraryMutationPlanningData.Leaf, added],
+            Assert.Single(Assert.IsType<LibraryRegistrationSet>(plan.IntendedRecord).Libraries).Paths.Select(path => path.Value));
+    }
+
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
-    [InlineData((int)LifecycleOwnershipManager.Framework)]
-    [InlineData((int)LifecycleOwnershipManager.Extension)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public void OrdinaryCollisionOutsideCurrentRegistrationBlocksIndependentCreate(bool current, bool registered)
+    {
+        const string added = "three.md";
+        var input = LibraryMutationPlanningData.Sync(
+            current ? [LibraryMutationPlanningData.Leaf, added] : [added],
+            registered ? [LibraryMutationPlanningData.Leaf] : []) with
+        {
+            Mappings =
+            [
+                LibraryMutationPlanningData.Mapping(LibraryMutationPlanningData.Leaf, LibraryMappingObservationState.Changed),
+                LibraryMutationPlanningData.Mapping(added, LibraryMappingObservationState.Missing),
+            ],
+        };
+
+        var plan = LibrarySyncPlanner.Plan(input, TestContext.Current.CancellationToken);
+
+        Assert.Equal(LibraryPlanState.Blocked, plan.State);
+        Assert.Empty(plan.Links);
+        Assert.Empty(plan.GeneratedRegions);
+        Assert.Null(plan.OwnershipChange);
+        Assert.Contains(plan.Findings, finding => finding.Code == LibrarySyncFindingCode.DestinationCollision
+            && finding.Status == CliSemanticStatus.Blocked);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    [InlineData((int)OwnedPathManager.Framework)]
+    [InlineData((int)OwnedPathManager.Extension)]
     public void SeparateOwnershipBlocksEveryEffect(int managerValue)
     {
         var input = LibraryMutationPlanningData.Sync([LibraryMutationPlanningData.Leaf], [LibraryMutationPlanningData.Leaf]);
         input = input with
         {
-            Ownership = LibraryMutationPlanningData.Ownership(new LifecycleOwnershipClaim(
-            LibraryMutationPlanningData.Leaf, (LifecycleOwnershipManager)managerValue, "another-owner"))
+            Ownership = LibraryMutationPlanningData.Ownership(new OwnedPath(
+            LibraryMutationPlanningData.Leaf, (OwnedPathManager)managerValue, "another-owner"))
         };
         var plan = LibrarySyncPlanner.Plan(input, TestContext.Current.CancellationToken);
         Assert.Equal(LibraryPlanState.Blocked, plan.State);
         Assert.NotEmpty(plan.Findings);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void UnavailableRecordIsNeverTreatedAsEmpty()
     {
         var input = LibraryMutationPlanningData.Sync([LibraryMutationPlanningData.Leaf], [LibraryMutationPlanningData.Leaf]);
-        input = input with { Record = new LibrariesRecordRead { State = LibrariesRecordReadState.Unavailable, Record = null, Snapshot = null, Cause = "Record cannot be read." } };
+        input = input with { Record = new LibraryRegistrationRead { State = LibraryRegistrationReadState.Unavailable, Record = null, Snapshot = null, Cause = "Record cannot be read." } };
         var plan = LibrarySyncPlanner.Plan(input, TestContext.Current.CancellationToken);
         Assert.Equal(LibraryPlanState.Incomplete, plan.State);
         Assert.NotEmpty(plan.Findings);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void ExactCurrentProjectionIsNoOp()
     {
         var plan = LibrarySyncPlanner.Plan(LibraryMutationPlanningData.Sync([LibraryMutationPlanningData.Leaf], [LibraryMutationPlanningData.Leaf]), TestContext.Current.CancellationToken);
         Assert.Equal(LibraryPlanState.Complete, plan.State);
         Assert.Empty(plan.Links);
-        Assert.Null(plan.RecordChange);
+        Assert.Null(plan.OwnershipChange);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void AddsPreservesAndRetiresExactRegisteredLinks()
     {
@@ -90,9 +158,10 @@ public sealed class LibrarySyncPlannerTests
         Assert.Equal(LibraryPlanState.Complete, plan.State);
         Assert.Equal([added, retired], plan.Links.Select(link => link.DestinationPath.Value));
         Assert.Equal([RelativeFileLinkEffectKind.Create, RelativeFileLinkEffectKind.Delete], plan.Links.Select(link => link.Kind));
-        Assert.Equal([added, LibraryMutationPlanningData.Leaf], Assert.Single(Assert.IsType<LibrariesRecord>(plan.IntendedRecord).Libraries).Paths.Select(path => path.Value));
+        Assert.Equal([added, LibraryMutationPlanningData.Leaf], Assert.Single(Assert.IsType<LibraryRegistrationSet>(plan.IntendedRecord).Libraries).Paths.Select(path => path.Value));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void MissingCurrentLinkCanBeCreated()
     {
@@ -101,8 +170,13 @@ public sealed class LibrarySyncPlannerTests
         var plan = LibrarySyncPlanner.Plan(input, TestContext.Current.CancellationToken);
         Assert.Equal(LibraryPlanState.Complete, plan.State);
         Assert.Equal(RelativeFileLinkEffectKind.Create, Assert.Single(plan.Links).Kind);
+        var finding = Assert.Single(plan.Findings);
+        Assert.Equal(LibrarySyncFindingCode.RegisteredLinkRestored, finding.Code);
+        Assert.Equal(CliSemanticStatus.Attention, finding.Status);
+        Assert.Equal(LibraryMutationPlanningData.Leaf, finding.Path);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void MissingRetiredLinkBlocksInsteadOfRemovingRecordPath()
     {
@@ -113,6 +187,7 @@ public sealed class LibrarySyncPlannerTests
         Assert.NotEmpty(plan.Findings);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void UnregisteredExactLookingLinkCannotBeAdopted()
     {
@@ -123,6 +198,7 @@ public sealed class LibrarySyncPlannerTests
         Assert.NotEmpty(plan.Findings);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void IncompleteInventoryNeverCreatesASafeSubsetOrRetirement()
     {
@@ -141,18 +217,19 @@ public sealed class LibrarySyncPlannerTests
         Assert.Equal(LibraryPlanState.Incomplete, plan.State);
         Assert.Empty(plan.Links);
         Assert.Empty(plan.GeneratedRegions);
-        Assert.Null(plan.RecordChange);
+        Assert.Null(plan.OwnershipChange);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void MalformedRecordPreservesItsCommandSpecificStatusAndHasNoEffect()
     {
         var input = LibraryMutationPlanningData.Sync([LibraryMutationPlanningData.Leaf], [LibraryMutationPlanningData.Leaf]);
         input = input with
         {
-            Record = new LibrariesRecordRead
+            Record = new LibraryRegistrationRead
             {
-                State = LibrariesRecordReadState.Malformed,
+                State = LibraryRegistrationReadState.Malformed,
                 Record = null,
                 Snapshot = FileStateSnapshot.File(LibraryMutationPlanningData.Absolute(LibraryMutationPlanningData.RecordPath),
                 LibraryMutationPlanningData.Absolute(LibraryMutationPlanningData.RecordPath), "{"u8),
@@ -160,17 +237,18 @@ public sealed class LibrarySyncPlannerTests
             }
         };
         var plan = LibrarySyncPlanner.Plan(input, TestContext.Current.CancellationToken);
-        Assert.Contains(plan.Findings, finding => finding.Status == CliSemanticStatus.Blocked);
+        Assert.Contains(plan.Findings, finding => finding.Status == CliSemanticStatus.Incomplete);
         Assert.NotEmpty(plan.Findings);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void KnownBlockedMappingOutranksUnavailableRecordFacts()
     {
         var input = LibraryMutationPlanningData.Sync([LibraryMutationPlanningData.Leaf], [LibraryMutationPlanningData.Leaf]);
         input = input with
         {
-            Record = new LibrariesRecordRead { State = LibrariesRecordReadState.Unavailable, Record = null, Snapshot = null, Cause = "Record unavailable." },
+            Record = new LibraryRegistrationRead { State = LibraryRegistrationReadState.Unavailable, Record = null, Snapshot = null, Cause = "Record unavailable." },
             Mappings = [LibraryMutationPlanningData.Mapping(LibraryMutationPlanningData.Leaf, LibraryMappingObservationState.Blocked)],
         };
         var plan = LibrarySyncPlanner.Plan(input, TestContext.Current.CancellationToken);
@@ -178,6 +256,7 @@ public sealed class LibrarySyncPlannerTests
         Assert.NotEmpty(plan.Findings);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData(true), InlineData(false)]
     public void UnknownIdAndMissingRecordAreInvalidWithoutAnyEffect(bool completeRecord)
@@ -201,6 +280,6 @@ public sealed class LibrarySyncPlannerTests
         Assert.Empty(plan.Directories);
         Assert.Empty(plan.Links);
         Assert.Empty(plan.GeneratedRegions);
-        Assert.Null(plan.RecordChange);
+        Assert.Null(plan.OwnershipChange);
     }
 }

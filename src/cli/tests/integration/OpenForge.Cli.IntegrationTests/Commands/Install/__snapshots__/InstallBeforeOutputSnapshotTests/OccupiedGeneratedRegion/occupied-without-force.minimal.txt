@@ -1,0 +1,4 @@
+Cannot install: 1 file already exists where the Framework would write.
+Workspace: <workspace>
+  .agents/memory/_memory.md
+Next: open-forge install --force --dry-run

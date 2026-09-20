@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Created 2 entrypoints for documents/design.",
+    "kind": "done"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "route-init.needs-authoring",
+      "title": "Route needs authoring",
+      "message": "Its description and tags are placeholders. Edit them before relying on this route.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "documents/design",
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/documents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/documents/design",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/documents/_documents.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "---\nopen-forge:\n  description: Draft route for documents; replace this description before relying on it for selection\n  tags: [NeedsAuthoring]\n---\n\n# documents\n\nDraft route for documents; replace this description before relying on it for selection.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- [Draft route for documents/design; replace this description before relying on it for selection](design/_design.md) - #NeedsAuthoring\n"
+    },
+    {
+      "path": ".agents/documents/design/_design.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "---\nopen-forge:\n  description: Draft route for documents/design; replace this description before relying on it for selection\n  tags: [NeedsAuthoring]\n---\n\n# design\n\nDraft route for documents/design; replace this description before relying on it for selection.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- none - No entries - #Empty\n"
+    }
+  ],
+  "counts": {
+    "entrypointsCreated": 2,
+    "entrypointsPresent": 0,
+    "sectionsUpdated": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "documents/design",
+      "path": ".agents/documents/design/_design.md"
+    },
+    "scaffold": "generic",
+    "entrypoints": [
+      {
+        "path": ".agents/documents/_documents.md",
+        "outcome": "created",
+        "needsAuthoring": true,
+        "content": "---\nopen-forge:\n  description: Draft route for documents; replace this description before relying on it for selection\n  tags: [NeedsAuthoring]\n---\n\n# documents\n\nDraft route for documents; replace this description before relying on it for selection.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- [Draft route for documents/design; replace this description before relying on it for selection](design/_design.md) - #NeedsAuthoring\n"
+      },
+      {
+        "path": ".agents/documents/design/_design.md",
+        "outcome": "created",
+        "needsAuthoring": true,
+        "content": "---\nopen-forge:\n  description: Draft route for documents/design; replace this description before relying on it for selection\n  tags: [NeedsAuthoring]\n---\n\n# design\n\nDraft route for documents/design; replace this description before relying on it for selection.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- none - No entries - #Empty\n"
+      }
+    ],
+    "listedIn": [],
+    "metadata": {
+      "description": "Draft route for documents/design; replace this description before relying on it for selection",
+      "responsibility": null,
+      "tags": [
+        "NeedsAuthoring"
+      ],
+      "sources": {
+        "description": "draft",
+        "responsibility": "default-omitted",
+        "tags": "draft"
+      }
+    },
+    "sections": [],
+    "verification": "verified"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

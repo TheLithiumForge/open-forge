@@ -1,9 +1,10 @@
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Extensions.Operational;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Operational;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
-using OpenForge.Cli.Core.Framework.Lifecycle.Operational;
-using OpenForge.Cli.Core.Framework.Lifecycle.Operational.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.Models.Reading;
+using OpenForge.Cli.Core.Framework.Distribution.Operational;
+using OpenForge.Cli.Core.Framework.Distribution.Operational.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Operational;
 using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
@@ -18,6 +19,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.OperationalContributors.Models;
 
 public sealed class OperationalContributorCatalogueTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "The operational catalogue retains its seven concrete typed contributor references"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
     public void CatalogueRetainsTheSevenConcreteTypedContributorReferences()
     {
@@ -96,7 +98,8 @@ public sealed class OperationalContributorCatalogueTests
     private sealed class FrameworkLifecycleContributor : IFrameworkLifecycleOperationalContributor
     {
         public ValueTask<FrameworkLifecycleStatusView> ReadStatusAsync(
-            LifecycleDocumentSnapshot snapshot,
+            CliWorkspace workspace,
+            WorkspaceOwnershipRead ownership,
             CancellationToken cancellationToken)
             => throw NotInvoked();
 
@@ -109,7 +112,8 @@ public sealed class OperationalContributorCatalogueTests
     private sealed class ExtensionLifecycleContributor : IExtensionLifecycleOperationalContributor
     {
         public ValueTask<ExtensionLifecycleStatusView> ReadStatusAsync(
-            LifecycleDocumentSnapshot snapshot,
+            CliWorkspace workspace,
+            WorkspaceOwnershipRead ownership,
             CancellationToken cancellationToken)
             => throw NotInvoked();
 

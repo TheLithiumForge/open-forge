@@ -1,0 +1,13 @@
+Cannot repair: The link at .agents/docs/source.md:9:10 is not one doctor reports as repairable. Nothing was changed.
+Workspace: <workspace>
+  Warning  .agents/docs/source.md:9:10  Repair proposal unavailable
+         The link at .agents/docs/source.md:9:10 is not one doctor reports as repairable.
+  Warning  .agents/docs/source.md:9:10  Broken link
+         missing.md: Broken link; 4 possible targets
+  .agents/docs/source.md:9:10  possible target: .agents/docs/guide.md
+  .agents/docs/source.md:9:10  possible target: .agents/docs/index.md
+  .agents/docs/source.md:9:10  possible target: .agents/docs/replacement.md
+  .agents/docs/source.md:9:10  possible target: .agents/docs/source.md
+1 problem remaining, 1 problem needing a choice, 2 warnings.
+  Inspect unavailable Repair diagnosis or recovery facts before relying on this result.
+Next: open-forge doctor --detail standard

@@ -13,7 +13,7 @@ internal static class LibraryMutationPresentationData
     internal static LibraryMutationIdentity Identity(bool sourceIndependent)
         => new() { LibraryId = "team-knowledge", SourceRoot = "shared/team-knowledge", DestinationRoot = ".", Mode = LibraryMode.Apply, SourceIndependent = sourceIndependent };
     internal static LibraryMutationRecord Record()
-        => new() { Path = ".agents/open-forge.libraries.json", State = LibraryMutationRecordState.NotStarted, RegisteredPaths = [], Intended = null };
+        => new() { Path = ".agents/open-forge.lock.json", State = LibraryMutationRecordState.NotStarted, RegisteredPaths = [], Intended = null };
     internal static LibraryMutationSource Source()
         => new()
         {

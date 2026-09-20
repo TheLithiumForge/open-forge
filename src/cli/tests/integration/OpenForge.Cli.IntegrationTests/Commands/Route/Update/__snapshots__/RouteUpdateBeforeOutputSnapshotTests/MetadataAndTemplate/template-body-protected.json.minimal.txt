@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 3,
+  "command": "route update",
+  "status": "completed-with-warnings",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Updated memory/project-alpha/overview, but the Template body was not copied.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "route-update.template-body-protected",
+      "title": "Template body was not copied",
+      "message": "The file already has content, which was kept. The Template templates/route was not copied.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/templates/route.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/memory/project-alpha/overview.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/project-alpha/_project-alpha.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "fieldsChanged": 1,
+    "sectionsUpdated": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "memory/project-alpha/overview",
+      "path": ".agents/memory/project-alpha/overview.md"
+    },
+    "changes": [
+      {
+        "field": "description",
+        "before": "Before overview",
+        "after": "After overview"
+      }
+    ],
+    "template": {
+      "id": "templates/route",
+      "path": ".agents/templates/route.md",
+      "applied": false
+    },
+    "listedIn": ".agents/memory/project-alpha/_project-alpha.md"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

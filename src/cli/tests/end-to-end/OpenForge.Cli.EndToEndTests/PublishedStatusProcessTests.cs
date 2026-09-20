@@ -42,26 +42,36 @@ public sealed class PublishedStatusProcessTests
         var compact = await RunWithoutWritesAsync(
             target,
             working,
-            ["status", "--view=compact"]);
+            ["status", "--detail=minimal"]);
         var expanded = await RunWithoutWritesAsync(
             target,
             working,
-            ["status", "--view=expanded"]);
+            ["status", "--detail=standard"]);
 
         foreach (var result in new[] { compact, expanded })
         {
             Assert.Equal(3, result.ExitCode);
             Assert.Equal(string.Empty, result.StandardError);
-            Assert.Contains("Open Forge is installed.", result.StandardOutput, StringComparison.Ordinal);
-            Assert.Contains("Status: incomplete", result.StandardOutput, StringComparison.Ordinal);
-            Assert.Contains("Incomplete drafts: 1", result.StandardOutput, StringComparison.Ordinal);
+            Assert.Contains("Open Forge is installed", result.StandardOutput, StringComparison.Ordinal);
+
+            // There is no `Status:` line any more. The incomplete draft is stated as a finding,
+            // and its path is payload, so it is listed at every level.
+            Assert.DoesNotContain("Status:", result.StandardOutput, StringComparison.Ordinal);
+            Assert.Contains("Recovery draft is incomplete", result.StandardOutput, StringComparison.Ordinal);
+            Assert.Contains("A command did not finish.", result.StandardOutput, StringComparison.Ordinal);
             Assert.Contains(Path.GetFileName(working.RecoveryDraftPath), result.StandardOutput, StringComparison.Ordinal);
         }
 
-        Assert.DoesNotContain("Total available context", compact.StandardOutput, StringComparison.Ordinal);
-        Assert.DoesNotContain("Largest continuity sources", compact.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Total available context", expanded.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Largest continuity sources", expanded.StandardOutput, StringComparison.Ordinal);
+        // Minimal answers the startup cost in one sentence; standard opens it into the block and
+        // adds the workspace echo and the routed totals.
+        Assert.Contains("Startup reads", compact.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Startup context", compact.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("All routed files:", compact.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Workspace:", compact.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Startup context", expanded.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Shipped by this CLI:", expanded.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("All routed files:", expanded.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Workspace:", expanded.StandardOutput, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Published Status JSON journey emits one schema document and preserves workspace and recovery bytes"), Trait("Feature", "status-command"), Trait("Evidence", "EndToEnd")]
@@ -72,19 +82,21 @@ public sealed class PublishedStatusProcessTests
         var result = await RunWithoutWritesAsync(
             target,
             working,
-            ["status", "--json"]);
+            ["status", "--format=json", "--detail=full"]);
 
         Assert.Equal(3, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
 
         using var document = JsonDocument.Parse(result.StandardOutput);
         var root = document.RootElement;
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
         Assert.Equal("status", root.GetProperty("command").GetString());
         Assert.Equal("incomplete", root.GetProperty("status").GetString());
-        var recovery = root.GetProperty("result").GetProperty("recovery");
-        Assert.Equal(JsonValueKind.Object, recovery.ValueKind);
-        Assert.Equal(1, recovery.GetProperty("incompleteDrafts").GetProperty("value").GetInt64());
+        var candidates = root.GetProperty("data").GetProperty("recovery").GetProperty("candidates");
+        Assert.Equal(JsonValueKind.Array, candidates.ValueKind);
+        var candidate = Assert.Single(candidates.EnumerateArray());
+        Assert.Equal("draft", candidate.GetProperty("kind").GetString());
+        Assert.Equal("incomplete", candidate.GetProperty("integrity").GetString());
     }
 
     private static Task<ProcessRunResult> RunWithoutWritesAsync(

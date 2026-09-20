@@ -1,0 +1,10 @@
+.agents/docs/guide.md
+Workspace: <workspace>
+  out  :10:10   reference.md#details -> .agents/docs/reference.md   base
+0 in, 1 out
+The incoming scan used every source.
+Scanned 4 sources for incoming links.
+    .agents/docs/_docs.md   base
+    .agents/docs/guide.md   base
+    .agents/docs/reference.md   base
+    .agents/loader.md   base

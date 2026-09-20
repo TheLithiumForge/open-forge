@@ -1,0 +1,3 @@
+Update needs confirmation, and this session cannot ask.
+Workspace: <workspace>
+Next: open-forge update --automatic

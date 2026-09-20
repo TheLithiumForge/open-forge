@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Inventory;
 
 public sealed class SourceCatalogueReaderIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral catalogue reads every recognized source form without reading document bodies")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task CatalogueIsBodyFreeAndClassifiesAllSourceForms()
@@ -60,6 +61,7 @@ public sealed class SourceCatalogueReaderIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral catalogue deduplicates duplicate and overlapping roots while retaining deterministic candidate ordering")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task DuplicateAndOverlappingRootsDoNotDuplicateCandidates()
@@ -94,6 +96,7 @@ public sealed class SourceCatalogueReaderIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral catalogue keeps separate root outcomes for missing contained-file and unsafe roots")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task RootOutcomesRemainTypedAndIndependent()
@@ -129,6 +132,7 @@ public sealed class SourceCatalogueReaderIntegrationTests
         Assert.Equal(outsideBefore, outside.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral catalogue blocks external dangling cyclic and re-entry candidates while retaining safe sources")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task CandidateBoundariesStopAtTheFirstUnsafeTransition()
@@ -183,6 +187,7 @@ public sealed class SourceCatalogueReaderIntegrationTests
         Assert.Equal(outsideBefore, outside.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral catalogue retains aliases collisions unavailable IDs and exact overwrite pairing facts")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task IdentityAndPairingFactsRemainDistinct()
@@ -222,6 +227,7 @@ public sealed class SourceCatalogueReaderIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral catalogue honors pre-cancelled requests before accessing an owned missing root")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task PreCancelledReadDoesNotAccessTheMissingRoot()

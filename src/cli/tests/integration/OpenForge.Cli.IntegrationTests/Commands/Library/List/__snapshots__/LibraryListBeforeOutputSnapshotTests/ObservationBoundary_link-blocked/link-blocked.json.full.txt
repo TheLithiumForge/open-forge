@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 3,
+  "command": "library list",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot list Libraries: The Library destination parent is not a real ordinary directory.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-list.link-blocked",
+      "title": "Registered link is blocked",
+      "message": ".agents/linked/review.md  could not be checked safely: The Library destination parent is not a real ordinary directory.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/linked/review.md",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "libraries": 1,
+    "linksCurrent": 0,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "linksUnavailable": 1,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "libraries": [
+      {
+        "id": "team-knowledge",
+        "sourceFolder": "shared/team",
+        "destinationFolder": ".",
+        "links": [
+          {
+            "path": ".agents/linked/review.md",
+            "state": "blocked",
+            "expectedTarget": "../../shared/team/.agents/linked/review.md",
+            "observedTarget": null,
+            "sourceId": "linked/review"
+          }
+        ]
+      }
+    ],
+    "recordCoverage": {
+      "path": ".agents/open-forge.lock.json",
+      "state": "complete",
+      "libraryCount": 1
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the reported Library state."
+  }
+}

@@ -1,0 +1,7 @@
+Cannot inspect INVALID ID: INVALID ID is not a valid Library ID. Use lowercase letters, digits and hyphens.
+Workspace: <workspace>
+  Error  INVALID ID  Invalid Library ID [library-inspect.invalid-id]
+         INVALID ID is not a valid Library ID. Use lowercase letters, digits and hyphens.
+Source inventory: 0 eligible files, 0 excluded items.
+  Choose a registered Library ID.
+Next: open-forge library list

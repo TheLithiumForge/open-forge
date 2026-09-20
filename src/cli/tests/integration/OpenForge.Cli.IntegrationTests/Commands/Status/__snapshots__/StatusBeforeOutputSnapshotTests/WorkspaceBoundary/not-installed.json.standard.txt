@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Open Forge is not installed in <workspace>.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "routedFiles": 1,
+    "startupFiles": null,
+    "startupTokens": null,
+    "mayLoadAgainFiles": null,
+    "mayLoadAgainTokens": null,
+    "allTokens": 3,
+    "startupShare": null,
+    "rootCategories": null,
+    "entriesSectionsCurrent": null,
+    "entriesSectionsStale": null,
+    "entriesSectionsMissing": null,
+    "frameworkFilesCurrent": null,
+    "frameworkFilesChanged": null,
+    "frameworkFilesMissing": null,
+    "extensionsInstalled": null,
+    "librariesRegistered": 0,
+    "libraryLinksCurrent": 0,
+    "libraryLinksMissing": 0,
+    "libraryLinksChanged": 0,
+    "recoveryBundles": 0,
+    "recoveryDrafts": 0,
+    "infos": 3
+  },
+  "limitations": [],
+  "data": {
+    "installation": {
+      "state": "uninstalled",
+      "entryPath": null,
+      "loaderPath": null
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": 11,
+          "characters": 22704,
+          "bytes": 22704,
+          "tokens": 5676
+        },
+        "current": {
+          "files": null,
+          "characters": null,
+          "bytes": null,
+          "tokens": null
+        },
+        "difference": {
+          "files": null,
+          "characters": null,
+          "bytes": null,
+          "tokens": null
+        },
+        "mayLoadAgain": {
+          "files": null,
+          "characters": null,
+          "bytes": null,
+          "tokens": null
+        }
+      },
+      "allRouted": {
+        "files": 1,
+        "characters": 12,
+        "bytes": 12,
+        "tokens": 3
+      },
+      "startupShare": null
+    },
+    "structure": {
+      "rootCategories": {
+        "count": null,
+        "added": [],
+        "removed": []
+      }
+    },
+    "extensions": [],
+    "libraries": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge install --dry-run",
+    "reason": "Preview the installation for this workspace."
+  }
+}

@@ -1,0 +1,21 @@
+Would install the Open Forge Framework into <workspace>.
+Workspace: <workspace>
+  .agents/directives/_directives.md             would be created
+  .agents/guidance/_guidance.md                 would be created
+  .agents/loader.md                             would be created
+  .agents/maps/_maps.md                         would be created
+  .agents/memory/_memory.md                     would be created
+  .agents/memory/archived/_archived.md          would be created
+  .agents/memory/crystallized/_crystallized.md  would be created
+  .agents/memory/emerging/_emerging.md          would be created
+  .agents/memory/working/_working.md            would be created
+  .agents/patterns/_patterns.md                 would be created
+  .agents/skills/_skills.md                     would be created
+  .agents/templates/_templates.md               would be created
+  AGENTS.md                                     would be created with an Open Forge section
+  CLAUDE.md                                     would be created with an Open Forge section
+  .agents/open-forge.lock.json                  would be created
+  Would create 12 files and 11 directories under .agents, plus AGENTS.md and CLAUDE.md.
+  Would create 11 directories.
+  Nothing that already exists would be changed.
+No files were changed.

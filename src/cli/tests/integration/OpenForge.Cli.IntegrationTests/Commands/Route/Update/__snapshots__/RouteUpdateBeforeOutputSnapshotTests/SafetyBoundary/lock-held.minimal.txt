@@ -1,0 +1,4 @@
+Cannot update memory/project-alpha/overview: Another Open Forge command holds the workspace lock. Nothing was changed.
+Workspace: <workspace>
+  description: "Before overview" -> "After overview"
+Next: open-forge route update

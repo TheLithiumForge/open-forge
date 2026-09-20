@@ -1,33 +1,38 @@
 ---
 open-forge:
-  description: Current cross-cutting structure and invariants for the greenfield C# replacement CLI
-  responsibility: Define the replacement CLI system boundaries, dependency direction, composition, safety, evidence, and release invariants
-  tags: [Memory, Crystallized, Document, CurrentTruth, Evergreen, CLI, Architecture, Greenfield, DotNet, NativeAOT, Testing, Release]
+  description: Current cross-cutting structure and invariants for the C# replacement CLI, with the four-layer model and links to each layer's own record
+  responsibility: Define the replacement CLI system boundaries, layer model, dependency direction, composition, safety, evidence, and release invariants
+  tags: [Memory, Crystallized, Document, CurrentTruth, Evergreen, CLI, Architecture, Layers, DotNet, NativeAOT, Testing, Release]
 ---
 
 # Replacement CLI Architecture
 
+This is the land record. It holds what crosses every layer: the boundaries, the
+layer model, dependency direction, and the invariants for serialization,
+testing, build and release. Each layer's inner workings live in its own record
+under [CLI Layers](layers/_layers.md).
+
 ## Status And Authority
 
-This document defines the accepted implementation architecture for the
-non-shipping replacement CLI after the 2026-08-21 greenfield reset. The
-[Command Contract Set](command-contract-set.md), [Shared CLI Operation
-Contract](shared-operation-contract.md), and detailed [command
+This document defines the accepted implementation architecture for the C#
+replacement CLI. The [Command Contract Set](command-contract-set.md), [Shared
+CLI Operation Contract](shared-operation-contract.md), and detailed [command
 contracts](contracts/_contracts.md) define product behavior. The shared
 [Result Coordinates](contracts/shared/result-coordinates/_result-coordinates.md)
 define the public envelope, source locations, statuses, exits, streams, and
 compatibility. The routed [Technical Designs](technical-designs/_technical-designs.md)
 define exact realization that is narrower than system Architecture.
 
-The removed implementation remains historical evidence in the [reset
-record](../../../archived/cli-release/implementation-reset-2026-08-21.md).
-Historical source may inform a Task, but it does not constrain class shape,
-source placement, or implementation.
-
-The replacement remains non-shipping. The [Distribution](distribution.md)
-document defines the accepted package and platform target while the active [CLI
+The [Distribution](distribution.md) document defines the accepted package and
+platform target. The active [CLI
 Development](../../../working/cli-development/_cli-development.md) route records
 implementation, evidence, and release state.
+
+Programme-era prose from the 2026-08-21 greenfield reset — the build sequence,
+Task delegation rules, and the non-shipping framing — was extracted and
+[archived](../../../archived/cli-release/architecture-programme-prose.md) when
+this document was split into layer records. The durable rules it carried are
+restated here.
 
 ## Architectural Goals
 
@@ -45,14 +50,11 @@ The implementation must:
 - remain deterministic, source-visible, free of reflective type or behavior
   discovery, and compatible with trimming and Native AOT;
 - use real operating-system filesystems and fail closed when the identity or
-  containment required by the accepted threat boundary cannot be established;
-  and
-- let bounded implementers execute closed Tasks without inventing architecture.
+  containment required by the accepted threat boundary cannot be established.
 
 The implementation must not add runtime plug-in discovery, dependency injection
 for shell composition, a service locator, a fake filesystem, a universal command
-result, a universal mutation engine, native interop, or a compatibility path to
-`open-forge-old`.
+result, a universal mutation engine, or native interop.
 
 ### Project Criticality And Threat Boundary
 
@@ -79,6 +81,52 @@ against an actor outside it. A stronger later threat model requires a new
 Architecture decision covering platform, portability, Native AOT, maintenance,
 and evidence costs.
 
+## Layer Model
+
+The CLI has four layers. Each answers exactly one question, and the question is
+what decides where something belongs:
+
+| Layer            | The question it answers                                                 | Record                                    |
+| ---------------- | ----------------------------------------------------------------------- | ----------------------------------------- |
+| **Shell**        | What was asked, and how does the answer leave the process?              | [shell.md](layers/shell.md)               |
+| **Framework**    | What is true about this workspace, and what may change it?              | [framework.md](layers/framework.md)       |
+| **Operations**   | What does this command mean?                                            | [operations.md](layers/operations.md)     |
+| **Presentation** | Of everything found, what does this reader need, and how is it written? | [presentation.md](layers/presentation.md) |
+
+A request passes through them in this order:
+
+```text
+arguments
+  -> Shell          parse, select the binding, select the workspace, form a request
+  -> Operations     select what this request needs
+  -> Framework      Documents parse bytes; Sources and Routing build identity and
+                    the graph; State reads lifecycle, permissions, and inventory
+  -> Operations     plan, apply if the command writes, form one result
+  -> Presentation   select what to show, then render text or JSON
+  -> Shell          write the output, return one exit code
+```
+
+Shell appears at both ends because it _is_ the boundary. Operations appears
+twice because selection precedes reading and planning follows it. Framework is
+entered only through an operation, never directly from Shell.
+
+**A layer owns its question.** This is a structural property, not a coding
+style. If two layers can both answer a question, neither owns it, and the
+answers drift — measurably. The selection stage in
+[Presentation](layers/presentation.md) exists because _what to show_ had no
+owner, and the retired per-command renderers each answered it locally. The split of Documents,
+Sources and Routing into three sections in [Framework](layers/framework.md)
+exists because three subjects under one heading let a command grow its own
+`## Axioms` parser without visibly violating anything.
+
+### Vocabulary
+
+- **Routing** is the workspace's document route graph — the Loader, route
+  chains, entrypoints, generated Entries. Choosing which command to run is
+  **binding selection** and belongs to Shell. Never use "routing" for dispatch.
+- **Selection** means narrowing, in both places it appears: Operations selects
+  which sources a request needs; Presentation selects which facts a reader sees.
+
 ## Physical Workspace
 
 The repository root owns the replacement CLI's .NET workspace configuration and
@@ -101,13 +149,11 @@ src/cli/
       Hosting/
       Composition/
 
-  core/
-    OpenForge.Cli.Core/
-      OpenForge.Cli.Core.csproj
-      Shell/
-      Framework/
-      Commands/
-      Properties/
+  framework/OpenForge.Cli.Framework/Framework/
+  shell/OpenForge.Cli.Shell/Shell/
+  operations/OpenForge.Cli.Operations/Commands/
+  rendering/OpenForge.Cli.Rendering/Presentation/
+  output-text/OpenForge.Cli.OutputText/
 
   tests/
     unit/
@@ -134,32 +180,78 @@ architecture.
 
 ## Project Graph
 
-The solution has six direct project entries:
+### Accepted Modularization Target
+
+On 2026-09-19 the maintainer accepted four libraries replacing Core:
+`OpenForge.Cli.Framework`, `OpenForge.Cli.Shell`, `OpenForge.Cli.Operations`
+and `OpenForge.Cli.Rendering`. The existing `OpenForge.Cli` executable remains
+the composition and hosting root. The fifth library,
+`OpenForge.Cli.OutputText`, now owns typed C# human-wording factories. The
+implemented graph has six production projects. The four logical layers remain
+unchanged; OutputText supplies pure wording to their existing semantic owners.
+
+Shell references Framework and OutputText; Operations references Framework and
+Shell; Rendering references Operations result models, neutral Shell contracts
+and OutputText. The host references all five libraries. Cross-layer execution
+orchestration and stream writing belong in the host. Rendering receives display
+facts instead of observing the filesystem. OutputText uses ordinary C# and BCL
+types and has no project or package dependency. Command schema metadata, machine
+vocabulary, outcome selection, escaping, layout and authored content retain their
+existing owners. Existing Wording callables preserve their signatures and forward
+pure prose to the typed factories.
+
+Definition markers use `@OpenForgeText`; selected current contracts use
+`@OpenForgeTextRef` with factory-file links. Existing `@OpenForge` path annotations
+retain their separate meaning. Integration architecture checks validate unique
+definitions, resolved references and the BCL-only dependency boundary. Expected
+outputs remain independent of production factories; relocated contract forms and
+transcripts preserve the original reviewed evidence.
+
+Keep one Unit, one Integration and one EndToEnd test project initially, with
+selectable boundaries within them. Project count does not multiply test tiers.
+Keep compiler-enforced dependency restrictions and retain checks for permitted
+API subsets and intra-assembly ownership. Transitive references and friend access
+must be addressed deliberately; a project reference alone does not prove every
+layer rule. Exact visibility and callable seams are frozen before file moves.
+
+[Task 38](../../../working/cli-development/tasks/task38-project-and-test-split.md)
+owns the behavior-preserving migration and its execution gates. Its packet also
+records the still-conditional scenario continuation. No unreviewed scenario or
+new filesystem abstraction is accepted merely by accepting this project graph.
+
+### Current Implementation
+
+The solution has ten direct entries: six production projects and the existing
+Unit, Integration, EndToEnd and TestSupport projects.
 
 ```text
-OpenForge.Cli --------------------> OpenForge.Cli.Core
-
-OpenForge.Cli.Core.UnitTests -----> OpenForge.Cli.Core
-OpenForge.Cli.IntegrationTests ---> OpenForge.Cli.Core
-                                \-> OpenForge.Cli
-OpenForge.Cli.EndToEndTests ------> OpenForge.Cli.TestSupport
-OpenForge.Cli.TestSupport --------> no production project
-
-UnitTests, IntegrationTests ------> OpenForge.Cli.TestSupport when needed
+OutputText -> no CLI project
+Framework  -> no CLI project
+Shell      -> Framework, OutputText
+Operations -> Framework, Shell
+Rendering  -> Operations, Shell, OutputText
+OpenForge.Cli -> Framework, Shell, Operations, Rendering, OutputText
 ```
 
-`OpenForge.Cli` is the only production executable and publish root.
-`OpenForge.Cli.Core` is one non-shipping class library containing the shell,
-Framework-facing capabilities, and commands. The root project may depend on
-Core. Core never depends on the root. Tests depend only on the production and
-support projects required by their evidence tier. End-to-end tests do not call
-production internals.
+`OpenForge.Cli` remains the only production executable and publish root. The
+five libraries and host disable transitive project references. Rendering has
+no Framework reference and consumes command-owned display facts. Existing
+namespaces and internal accessibility remain unchanged.
 
-Friend assembly access is limited to named test projects and the root
-composition assembly when a closed internal contract would otherwise become
-public solely because of the project boundary. No assembly is a supported
-third-party library API. Public C# visibility is an implementation necessity,
-not a compatibility promise.
+Production friend access follows these exact edges: Framework grants Shell,
+Operations and host; Shell grants Operations, Rendering and host; Operations
+grants Rendering and host; Rendering grants host. OutputText grants only Shell,
+Rendering and host. The four original libraries grant Unit and Integration access;
+the host grants Integration only. Unit references those four libraries without
+the host. Integration references those libraries and the host. Both retain the
+existing callable seams and have no direct OutputText reference or friend access.
+EndToEnd references TestSupport and exercises the published process; TestSupport
+has no production reference.
+
+No assembly is a supported third-party library API. Friend access does not
+authorize Rendering to invoke Operations behavior: semantic boundary checks
+retain the permitted result-model subset. The compiler enforces the absent
+Framework edge, while source checks cover intra-assembly ownership.
 
 ## Root Host Boundary
 
@@ -169,7 +261,7 @@ The root project owns only process and composition concerns:
   capability, and cancellation hookup;
 - the explicit ordered command tree and concrete binding registration;
 - construction of immutable shell services and command capabilities;
-- invocation of one Core host boundary; and
+- orchestration of one complete operation, presentation and output pipeline; and
 - conversion of one process completion into the executable exit code.
 
 `Program.cs` contains no command or domain behavior. `CliHost` owns one complete
@@ -190,37 +282,37 @@ producer baseline.
 
 The root host passes standard input, writers, prompt capability, environment
 facts, and cancellation explicitly. It constructs native interaction from
-ordinary .NET stream and redirection facts; Core never caches ambient console
+ordinary .NET stream and redirection facts; the libraries never cache ambient console
 state.
 
-## Core Source Organization
+## Production Source Organization
 
-Core is organized by bounded capability rather than artifact type:
+Each library retains its logical layer tree, organized by bounded capability rather than artifact type:
 
 ```text
-OpenForge.Cli.Core/
+Logical layer trees across the four libraries:
   Shell/
-    Composition/
-    Definitions/
-    Interaction/
-    Invocation/
     Parsing/
+    Invocation/
+    Definitions/
     Pipeline/
-    Presentation/
-    Output/
+    Interaction/
     Serialization/
+    Composition/
 
   Framework/
-    Distribution/
-    Workspace/
-    Filesystem/
-    Sources/
-    Routing/
     Documents/
+    Serialization/
+    Filesystem/
+    Workspace/
+    Sources/
     GeneratedNavigation/
+    OperationalContributors/
+    Distribution/
     Lifecycle/
     Mutation/
     Recovery/
+    Permissions/
     Libraries/
     Extensions/
 
@@ -236,13 +328,40 @@ OpenForge.Cli.Core/
       Inspect/
     Library/
     <RootLeaf>/
+
+  Presentation/
+    Shared/
+    <Command>/
 ```
 
-Only folders with cohesive source exist. This tree is a placement map, not
-authorization to create empty directories. `Shell` contains process-wide CLI
+Presentation is organized separately from command operations in the Rendering project:
+
+```text
+Presentation/
+  Shared/
+    Models/ Selection/ Rendering/ Text/ Prompts/ Wording/ Help/
+  <Command>/
+    Models/<Command>Data
+    Shared/Selection/<Command>ReportSelector
+    Shared/Rendering/<Command>DataTextRenderer
+                <Command>DataJsonContext
+    Shared/Wording/
+    Shared/Help/
+```
+
+`OpenForge.Cli.Rendering` owns this complete `Presentation/` tree and the render
+stage. Neutral validation/completion stages remain in Shell. The host owns
+application/report binding, complete pipeline orchestration and stream writing.
+The 4096-character diagnostic bound belongs to neutral Shell definitions.
+
+Both lists are in dependency order, base first. Only folders with cohesive
+source exist. This tree is a placement map, not authorization to create empty
+directories. `Shell` contains process-wide CLI
 mechanics with no Framework-domain behavior. `Framework` contains reusable facts
 and effect boundaries derived from accepted Framework contracts. `Commands`
-contains operation meaning and projections.
+contains operation meaning and projections. `Presentation` contains the
+complete report, report selection, shared renderers, and command-owned data
+renderers.
 
 Workspace Libraries follow this ownership map. The neutral no-follow logical-leaf
 observation belongs to the focused `Framework/Filesystem/` capability. Relative
@@ -283,6 +402,15 @@ Shell types do not depend on concrete commands. Framework capabilities do not
 depend on command requests, results, renderers, parser symbols, or process
 writers. Commands may depend on Shell contracts and Framework capabilities.
 
+Presentation has its own checked direction. No `Presentation/**` file may import
+any `Framework.*` namespace. A command presentation under
+`Presentation/<Owner>/` may import `Commands.<Owner>.Models.*` only for its own
+owner, plus the permitted neutral Shell contracts and shared Presentation
+types. No file under `Commands/` or `Framework/` references `Presentation/`.
+When a command result needs to expose a Framework fact, the operation projects
+it into a command-owned value before report selection. `LayerBoundaryTests`
+checks these rules.
+
 Cross-command facts remain free of command-specific status, findings, output,
 and next-action policy. A command translates shared facts into its own result.
 The Library record and inventory are neutral Framework facts; they do not grant
@@ -290,365 +418,43 @@ Library command policy or Framework runtime authority. `CliCompositionRoot`
 constructs the Library capabilities and registers each Library leaf explicitly
 alongside the other command bindings.
 
-## Shell Definitions And Composition
-
-Typed definitions own every executable, command, argument, option, finite value,
-machine code, result-command, and next-action identity exactly once.
-
-Global definitions are split by responsibility: syntax and executable identity;
-presentation format, view, verbosity, and output targets; workspace selection;
-terminal modes and conflict policy; semantic statuses and process exits; process
-completion and output disposition; and parser and shell error identities. Each
-command owns its group, leaf, operands, local options, finite values, finding
-codes, result command name, and next-action contents.
-
-One closed generic binding owns one request/result pair. A non-generic boundary
-stores heterogeneous bindings without erasing concrete operation or
-serialization types. Dispatch uses exact `System.CommandLine.Command` identity,
-never strings. No command binding locates services. The composition root supplies
-complete immutable dependencies through direct construction or narrow capability
-records.
-
-The operational contributor catalogue follows the same explicit-composition
-direction. Each producer owns its contributor and typed observation. Status and
-Doctor consume only their narrow views. Neither command locates producers or
-receives a broad service collection, registry, or generic operational context.
-
-### Native Interaction
-
-`Shell/Interaction/` owns one small native question-and-answer transport. It
-receives explicit input, prompt output, prompt capability, and caller
-cancellation. Prompt capability requires both standard input and the stderr
-prompt stream to be terminal-capable. There is no terminal framework, PTY
-abstraction, native probe, or P/Invoke.
-
-Prompts go to stderr so stdout remains one human result or one JSON document.
-The shared transport owns no command questions, candidates, defaults,
-validation, retry policy, confirmation meaning, or result. Those remain local
-to a prompt-capable command. JSON, `--automatic`, and redirected operation never
-prompt. Unrelated commands and requests gain no interaction or stream parameter.
-
-## Parsing And Invocation
-
-`System.CommandLine` exclusively owns command selection, arity, occurrence
-aggregation, typed conversion, unknown symbols, parser diagnostics, standard
-syntax help, and version dispatch.
-
-The implementation performs one parse, validates its typed facts, resolves
-terminal conflicts, selects the exact binding, handles
-help or version, normalizes one global invocation and optional workspace, and
-forms one command-local request or concrete invalid result.
-
-Ordinary long-option values use the parser's native space, equals and colon
-delimiters. This includes Find and Route tags and Route List depth. There is no
-raw delimiter-policy scan or policy shared across unrelated commands.
-
-The implementation does not rescan raw arguments for facts exposed by the parse
-tree. Route Update alone retains the attached-empty responsibility recognizer
-bounded by its [Technical Design](contracts/route/update/technical-design.md),
-because that distinction is erased by the pinned parser. It does not parse
-values, count occurrences, select commands, or produce parser diagnostics.
-
-`CliInvocation` contains normalized process-wide facts only. A command request
-is complete and immutable. Neither carries `ParseResult`, parser symbols,
-writers, service collections, raw arguments, or an unrelated context bag.
-Workspace-free commands preserve genuine workspace absence. Workspace-aware
-commands receive one selected normalized workspace before domain work.
-
-## Execution Pipeline
-
-The shell uses immutable messages and directly callable stages:
-
-```text
-CliInvocationResolution
-  -> CliOperationRequest<TRequest>
-  -> CliOperationResult<TResult>
-  -> CliPresentation<TResult>
-  -> CliRenderedOutput
-  -> CliOutputReceipt
-  -> CliProcessCompletion
-```
-
-Each stage validates its input before invoking an operation, renderer, or
-writer. Direct stage entry remains testable. Unknown finite values fail closed.
-
-The pipeline invokes one operation at most once, propagates caller cancellation,
-never reruns work during rendering or output, selects one cached concrete
-renderer, writes one primary result and at most one bounded diagnostic
-projection, and returns one fixed process completion from the concrete semantic
-status.
-
-`ICliCommandResult` exposes only shared process facts needed by the pipeline:
-command identity, semantic status, workspace presence, and next-action presence.
-Concrete result records retain complete command payloads and serialize through
-concrete source-generated metadata. The interface is never a wire type.
-
-## Result JSON Coordinates And Process Status
-
-The shared [Result Coordinates Interface
-Contract](contracts/shared/result-coordinates/interface.md) defines the exact
-expanded and compact envelopes, authored source-location coordinates, semantic statuses,
-numeric exits, primary streams, and compatibility. Its [Behavior
-Contract](contracts/shared/result-coordinates/behavior.md) defines technology-
-neutral formation and conformance.
-
-Architecture requires one concrete command result before presentation. The
-pipeline exposes shared process facts through the non-wire result interface,
-keeps command payloads on concrete records, serializes only concrete source-
-generated graphs, and derives one process completion from the selected semantic
-status. It does not create a universal wire result or command-independent
-payload. Compact JSON shares only the neutral envelope coordinates through a
-generic presentation model closed to a concrete command-owned payload. Each
-command registers that closed graph in its source-generated context. Shell
-does not reference command payload types, and the non-wire result interface
-is never serialized.
-
-## Presentation, Help, And Diagnostics
-
-Human and JSON renderers are command-local because they project command meaning.
-Shell presentation owns finite format selection, primary target selection,
-diagnostic target, output messages, and process completion. Both renderers
-consume the same concrete result.
-
-The executable host observes terminal capability independently for stdout and
-stderr and carries immutable capabilities with output writers. The pipeline
-supplies them to presentation after operation completion. Shell's neutral human
-style helper selects the actual primary stream from the shared status mapping;
-command renderers accent explicit generated labels using typed status/severity.
-Core does not inspect or mutate Console state. Injected writers default to plain
-text. JSON always remains plain, as do selected authored content, preview diffs
-and machine-readable rows. The public terminal fallback and palette are defined
-by [Automatic Colour](contracts/shared/global-flags/interface.md#automatic-colour).
-
-Standard help comes from the exact composed `System.CommandLine` symbol graph.
-Bindings provide ordered product sections such as Discovery, examples, related
-commands and bounded notes. The implementation
-does not maintain a second command catalogue or normalize library output through
-ad hoc string replacement.
-
-Verbose diagnostics are bounded, escaped, and redacted command-local projections
-of already-known facts. They never change operation status, rows, effects,
-primary content, or exit. JSON stdout remains one valid document under the
-shared result contract.
-
-## Framework Capability Model
-
-The complete command set demonstrates several shared capabilities before their
-first consumer is implemented. Architecture establishes neutral mechanical
-foundations at their nearest shared scope. Other shared contracts may be
-established early, while semantic behavior is implemented only when a consuming
-Task proves identical meaning.
-
-### Workspace
-
-Workspace selection resolves explicit and inferred subjects, records the exact
-selection method, normalizes identity once, and never invents a fallback fact.
-Terminal modes bypass workspace selection. Workspace-free commands preserve null
-workspace in concrete results.
-
-### Filesystem And Resolved Path Identity
-
-Filesystem code uses real `System.IO` and typed outcomes. Path strings,
-normalized lexical paths, resolved physical paths, and observed link targets are
-separate facts. `physical identity` names this resolved-path and observed-alias
-fact under the stable-workspace boundary. It does not mean an inode, file ID, or
-handle-bound object identity.
-
-`PhysicalPathResolver` walks one existing directory component at a time from a
-proven root. For each directory component needed to reach a final leaf it
-inspects without enumerating descendants, classifies ordinary, missing,
-inaccessible, dangling, or reparse/link state, resolves one permitted link
-target, immediately proves containment, records the identity used for cycle and
-observable-link alias detection, and continues only from the proven contained
-result. The final logical leaf is handed to the no-follow observation below
-before ordinary file identity resolution.
-
-A path that leaves the root and later re-enters is blocked at the first external
-transition. Final-target containment is insufficient. Paths are resolved before
-access, expected state is revalidated immediately before effects, and ordinary
-managed BCL file operations provide atomic replacement. These checks reject
-static escapes and detected persistent changes; they do not claim adversarial
-handle-bound identity across a transient namespace swap.
-
-Every effect that addresses a logical file leaf first obtains a neutral typed
-no-follow observation of that leaf before ordinary physical resolution. The same
-observation is repeated during initial preflight, under-lease revalidation, and
-immediately before the effect. A present link, reparse point, or special final
-leaf blocks ordinary `Create`, `Replace`, `Delete`, and `ReplaceGeneratedRegion`.
-The guard does not resolve or follow that final component. Stable contained
-directory-link ancestry remains governed by this ordinary path contract; this
-Architecture does not broaden rejection of that ancestry. Library source and
-destination rules may require the stricter real-directory boundary defined by
-the [Workspace Libraries Technical Design](technical-designs/workspace-libraries.md).
-
-The no-follow guard is neutral and does not consult Library records. Therefore a
-Route Update, Index, Route Move, or Route Remove operation cannot write through
-or delete a Library projection, even when the projection has no readable or
-matching Library record.
-
-If managed BCL evidence cannot satisfy an accepted required guarantee,
-implementation stops at Architecture rather than adding P/Invoke or silently
-weakening it. A theoretical guarantee outside the accepted threat model does not
-justify exceptional machinery. Typed reads distinguish complete, missing,
-invalid encoding or syntax, access denied, and I/O failure while retaining
-bounded direct causes without leaking sensitive content.
-
-### Sources, Routing, And Documents
-
-Source references use one shared grammar and typed identity model. Commands
-retain attempted identity separately from resolved identity.
-
-The source catalogue and route graph expose immutable facts only: canonical
-source identity, recognized entrypoint form, Loader root, route chain,
-overwrites, loading behavior, and safe topology. A Framework scope is authored
-meaning, not a mechanically identifiable path segment; a consumer reports it
-only from explicit contract evidence. Commands translate shared facts into local
-meaning.
-
-Markdown capabilities use one fixed CommonMark pipeline only when a real
-consumer requires body parsing. One neutral frontmatter parser owns delimiter
-and body boundaries. One neutral YAML syntax parser owns the source-preserving
-node shape, scalar spans, aliases, and unsupported-mapping facts. Semantic
-metadata uses one CLI-root generated YAML context and small models. Command
-interpretation, findings, and status remain local.
-
-Generated navigation is a projection of routed sources, never an independent
-authority. One neutral formation combines retained observed catalogue evidence
-with intended logical membership, topology, Loader, alias, and collision facts
-without command policy or effects. Exact callables, formation rules, missing-
-Loader behavior, collision handling, projection, and region mechanics live in
-the [Generated Navigation Technical
-Design](technical-designs/generated-navigation.md).
-
-### Workspace Libraries
-
-Workspace Libraries project recursively discovered eligible files from one
-workspace-contained real source root. No specially named child is required.
-Each record keeps a source root, a destination root (`.` for the workspace
-root), and source-relative leaf paths. Central typed mapping derives final
-consumer destinations and exact raw relative file-link targets. Destination
-parents are real ordinary directories; only individual leaves are symlinks.
-
-All selected and registered source trees remain protected from actual mutation
-targets. A destination root may be their ancestor, including the workspace root.
-Source and destination ancestry remain no-follow ordinary-directory boundaries.
-Incomplete inventory blocks Sync; Detach uses recorded mappings without source
-availability. Library permissions cover exact external files or explicitly
-approved destination folders and future descendants, bound to Library/source.
-Revocation still gates removal and recovery. Permission never grants ownership
-or overrides protected paths, source trees, ancestry or collisions.
-
-The consumer keeps its Loader and route chain. Only mapped `.agents` leaves
-can affect existing generated navigation under the Index contract; external
-Markdown remains opaque. Relative-link effects never follow or mutate source
-bytes. Prepare one recovery bundle, verify permission publication before links,
-and publish the Library record last. Ordinary file effects reject link leaves.
-
-The [Workspace Libraries Technical Design](technical-designs/workspace-libraries.md)
-defines strict record shape, complete inventory, mapping, grant integration,
-recovery and capability gates. No copy fallback, Git operation, native interop,
-per-file remapping, glob or write-through mutation is introduced.
-
-### Consumer Workspace Permissions
-
-`Framework/Permissions/` owns strict consumer grant representation, observation,
-exact and Library subtree identity lookup and proposed permission-file changes. Consuming commands
-own required-grant policy, prompting, results, lease orchestration and content
-application. Permission is separate from lifecycle ownership. Neutral immutable
-facts serve both Extension and Library consumers under their separate selected
-contracts; no consumer imports another command's policy.
-
-The [Workspace Permissions contracts](contracts/shared/workspace-permissions/_workspace-permissions.md)
-and [Technical Design](technical-designs/workspace-permissions.md) own the exact
-schema, approval, result and recovery behavior. Existing BCL file effects and
-recovery cover permission writes. There is no new automatic Repair catalogue
-entry, DI, runtime registry, independent transaction or compatibility reader.
-
-### Embedded Framework Distribution
-
-`Framework/Distribution/` owns one neutral embedded Framework payload reader and
-immutable asset and inventory facts. The Core project embeds the complete
-canonical `src/open-forge/` tree under one fixed resource prefix. Runtime reads
-that payload through ordinary BCL resource APIs and never reads repository source
-paths.
-
-The payload has canonical asset identity, exact bytes, deterministic ordinal
-inventory, per-asset hashes, and one aggregate inventory fingerprint. Root
-Install and Update consume the complete inventory. Framework-aware Route Init
-consumes route entrypoint assets and topology from the same canonical payload.
-`Framework/Extensions/Embedded/` derives the first-party catalogue from package
-files embedded by the Core project. Package manifests define IDs and dependencies;
-the reader validates dependency closure and hashes embedded payload bytes.
-No separately maintained compressed source snapshot or hash inventory is used.
-
-Exact resource, hashing, parity, and isolated-binary mechanics live in the
-[Embedded Payload Technical Design](technical-designs/embedded-payload.md).
-
-### Lifecycle, Mutation, And Recovery
-
-Read-only commands create no locks, lifecycle files, caches, indexes, recovery
-bundles, or drafts.
-
-Mutation commands follow this cross-cutting stage order:
-
-```text
-resolve and inspect, including no-follow final-leaf facts
-  -> form a command-local immutable plan
-  -> validate policy and collisions
-  -> acquire the real workspace lock when applicable
-  -> revalidate every planned fact under the lease
-  -> prepare and verify one external recovery bundle for every reversible non-no-op effect
-  -> apply bounded filesystem changes with an immediate no-follow check per effect
-  -> verify resulting identity and bytes
-  -> write accepted lifecycle or Library record state last
-  -> remove the command-owned recovery bundle only after whole-command success
-  -> form one concrete result
-```
-
-The lock provides exclusion only among cooperating Open Forge processes. It is
-external to the workspace and distinct from lifecycle and recovery. Existence is
-not ownership, activity, lifecycle authority, or recovery history.
-
-Every complete plan has one immutable verified final external bundle before the
-first effect whenever it contains a non-no-op effect that the operation must be
-able to reverse. This includes relative file-link creates and deletes and the
-prior-missing Library record Create; semantic or byte no-ops have none. A
-multi-file operation is not presented as one filesystem transaction. Shared
-support never automatically restores, rolls back, or compensates for target
-effects and never classifies current target state from recovery provenance.
-Handled failure, interruption, and post-verification cleanup retain truthful
-residual state for explicit Repair.
-
-Shared mutation support provides facts and mechanical capabilities. Commands
-retain their plan, effect ordering, findings, lifecycle publication, recovery
-mapping, and result. Cleanup retains its narrow monotonic command-contract
-exception. Status and Doctor observe recovery facts without acquiring the lease
-or inferring activity.
-
-Directory creation remains a separate Create-only effect rather than a file-
-change kind. A verified directory may remain as residual state and has no
-recovery payload. The [Directory Creation Technical
-Design](technical-designs/directory-creation.md) defines its exact mechanics.
-
-Lifecycle state remains schema version 1 at
-`.agents/open-forge.lifecycle.json`. Each Framework target retains exact
-canonical source-asset provenance or typed derived-region absence. Concrete
-target, source asset, region identities, and baseline fingerprint establish
-per-effect provenance. The [Lifecycle Provenance Technical
-Design](technical-designs/lifecycle-provenance.md) defines the exact fields and
-validation.
-
-The [Mutation And Recovery Technical
-Design](technical-designs/mutation-and-recovery.md) defines application-data
-stores, persistent lock identity, ZIP and manifest realization, expected-state
-checks, same-directory atomic file mechanics, receipts, bounded validation, and
-guarded deletion, no-follow recovery comparison, and relative-file-link
-application. The [Workspace Libraries Technical Design](technical-designs/workspace-libraries.md)
-defines the separate Library record and inventory. The [Shared CLI Operation
-Contract](shared-operation-contract.md) and command contracts define observable
-operation and cleanup policy.
+### Measured direction inside Framework
+
+Framework capabilities form a layered order, with two capabilities at the base
+that depend on nothing else in Framework — `Documents` and `Serialization` —
+then `Filesystem` and `Workspace`, then `Sources`, then the state and effect
+capabilities above them.
+
+Six pairs currently depend on each other in both directions:
+
+| Pair                                    | Dominant direction                 | The edge to invert                                              |
+| --------------------------------------- | ---------------------------------- | --------------------------------------------------------------- |
+| `Sources` and `Workspace`               | Sources -> Workspace               | `Workspace/Operational/WorkspaceEntryOperationalContributor.cs` |
+| `Sources` and `OperationalContributors` | Sources -> OperationalContributors | three files under `OperationalContributors/`                    |
+| `Sources` and `GeneratedNavigation`     | GeneratedNavigation -> Sources     | `Sources` reaching back into generated navigation               |
+| `Sources` and `Mutation`                | —                                  | `Sources/Reading/SourceDocumentSnapshotReader.cs`               |
+| `Extensions` and `Lifecycle`            | Extensions -> Lifecycle            | two files under `Lifecycle/Shared/Validation/`                  |
+| `Mutation` and `Recovery`               | Recovery -> Mutation               | two files under `Mutation/`                                     |
+| `Libraries` and `Permissions`           | Libraries -> Permissions           | `Permissions/Shared/Serialization/WorkspacePermissionCodec.cs`  |
+
+A cycle means the two capabilities are one capability that has not been named,
+or that one of them reached for a fact it should have been given. Inverting the
+minority edge is the smaller change in every case above. These are recorded as
+current state, not accepted as correct.
+
+`Framework/Permissions` and `Framework/OperationalContributors` exist in the
+tree and are named here; earlier revisions of this document omitted them and
+listed a `Framework/Routing` folder that has never existed. Routing facts live
+inside `Framework/Sources`.
 
 ## Serialization And Dependencies
+
+The report pipeline writes one minified schema-3 JSON envelope for every
+semantic status. The envelope carries the shared command, status, detail,
+filter, workspace, summary, findings, effects, counts, limitations, command
+data, recovery and next coordinates. Each command's data is a concrete
+source-generated graph; members omitted by detail are absent rather than empty
+placeholders. Text and JSON are two renderings of the same selected report.
 
 JSON uses `System.Text.Json` source generation with reflection disabled. YAML
 uses one source-generated static context for accepted Framework metadata shapes.
@@ -684,6 +490,13 @@ The active test projects have distinct evidence boundaries:
 - TestSupport contains cohesive real-OS workspace and process fixtures shared by
   at least two active projects. Command-specific builders remain local.
 
+Boundary traits provide focused selection within the independent projects:
+Input, Processing and Output in Unit; Host, OS and Architecture identify
+Integration evidence. Existing data/output cases in Integration retain their
+actual Input/Processing/Output classification. Complete host composition and
+the snapshot-corpus invariants live in Integration; original qualified case
+identities and independently authored snapshot paths remain stable.
+
 Each test owns every mutable workspace, home, temporary directory, cache,
 process, and support artifact it can affect. Parallel tests share no mutable
 state. Snapshots cover stable projections only; safety, identity, effects, and
@@ -694,6 +507,14 @@ managed graph, supported Native AOT execution, public process, package, and
 release boundary at the applicable integration points. Current testing and CLI
 Directives define authoring, traits, historical-test promotion, proportional
 selection, predecessor reuse, and exact gate triggers.
+
+The cross-command report gate is part of the current architecture. Five
+`CliReportInvariantsTests` facts cover the thirteen guarantees listed in
+[CLI Layers](layers/_layers.md#cross-command-presentation-guarantees): detail
+ladder, stderr diagnostics, severity and identity ordering, vocabulary and
+escaping, UTF-8 framing, finding subjects, next-action placement, JSON
+membership and scalar counts, catalogue code coverage, and dependency
+direction. The complete managed and Native AOT evidence includes this gate.
 
 Workspace Library first-release executable evidence targets Linux x64 and must
 prove real relative file-link creation, inspection, dangling-link identity,
@@ -720,6 +541,12 @@ preserving offline feeds, local npm link staging and unrelated artifact scopes.
 The CLI uses stable .NET 10 with C# 14, nullable analysis, warnings as errors,
 deterministic builds, package auditing, and no prerelease SDK. `global.json`
 allows compatible stable feature-band roll-forward.
+
+The supported Windows Native AOT gate is host-only. It needs `vswhere` on
+`PATH` so the Visual Studio linker can be located, and a sandboxed worker
+cannot run that gate. Assign Native AOT qualification to the overseer or
+another unsandboxed host; managed build and test evidence remains separately
+qualified.
 
 The repository-root build graph and `/artifacts/` topology produce one explicit
 managed development publication and explicit RID-selected native publications.
@@ -784,29 +611,6 @@ archives preserve executable modes across transfer. Source, native and package i
 checksums do not establish independent reproducibility or expand publication
 authority. The current Task defines the finite implementation and acceptance
 scope, while the source workflows own exact action and tool pins.
-
-## Durable Implementation Sequence
-
-Stable dependency order runs from cross-cutting shell and filesystem foundations
-to read-only fact formation, then generated navigation and mutation foundations,
-then mutation producers, aggregate Status and Doctor views, repair and cleanup,
-and complete distribution. A consumer never invents a missing shared contract,
-identity, safety primitive, composition boundary, or evidence foundation.
-
-The exact queue, readiness, completion state, and integration receipts belong to
-the active [CLI Development](../../../working/cli-development/_cli-development.md)
-route, its Plan, Tasks, and project control. They are not durable Architecture.
-
-## Planning, Tasks, And Delegation
-
-A bounded implementation Task cannot invent or reinterpret cross-cutting
-architecture, public behavior, shared schema, safety, package, platform, or
-release meaning. It returns an unresolved boundary to the current project
-authority before code continues.
-
-Current Directives, Workflows, role sources, and Task records define work
-orchestration, evidence procedure, review, and acceptance. Local passing tests
-do not accept a change that violates this Architecture or its linked contracts.
 
 ## Release Boundary
 

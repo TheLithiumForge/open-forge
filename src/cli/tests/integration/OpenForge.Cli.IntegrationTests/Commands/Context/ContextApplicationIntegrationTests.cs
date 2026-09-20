@@ -6,16 +6,17 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Context;
 
 public sealed class ContextApplicationIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Context JSON repeats exactly and isolates view evidence and verbose diagnostics"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task JsonRepeatViewAndDiagnosticsPreservePrimaryFacts()
     {
         using var workspace = CreateWorkspace();
         var before = workspace.SnapshotHashes();
-        string[] arguments = ["context", "projects/guide", "--additions-only", "--content=headings,body", "--json"];
-        var compact = await CliHostCapture.RunAsync([.. arguments, "--view=compact"], workspace.Path);
-        var repeat = await CliHostCapture.RunAsync([.. arguments, "--view=compact"], workspace.Path);
-        var expanded = await CliHostCapture.RunAsync([.. arguments, "--view=expanded"], workspace.Path);
-        var verbose = await CliHostCapture.RunAsync([.. arguments, "--view=compact", "--verbose"], workspace.Path);
+        string[] arguments = ["context", "projects/guide", "--additions-only", "--content=headings,body", "--format", "json"];
+        var compact = await CliHostCapture.RunAsync([.. arguments, "--detail=minimal"], workspace.Path);
+        var repeat = await CliHostCapture.RunAsync([.. arguments, "--detail=minimal"], workspace.Path);
+        var expanded = await CliHostCapture.RunAsync([.. arguments, "--detail=standard"], workspace.Path);
+        var verbose = await CliHostCapture.RunAsync([.. arguments, "--detail", "debug"], workspace.Path);
 
         Assert.Equal(0, compact.ExitCode);
         Assert.Equal(compact.ExitCode, repeat.ExitCode);
@@ -25,36 +26,40 @@ public sealed class ContextApplicationIntegrationTests
         Assert.Equal(string.Empty, repeat.Error);
         Assert.Equal(string.Empty, expanded.Error);
         Assert.Equal(compact.Output, repeat.Output);
-        Assert.Equal(compact.Output, verbose.Output);
-        Assert.InRange(verbose.Error.Length, 1, 4096);
-        Assert.EndsWith(Environment.NewLine, verbose.Error, StringComparison.Ordinal);
+        Assert.Empty(verbose.Error);
         using var compactDocument = JsonDocument.Parse(compact.Output);
         using var expandedDocument = JsonDocument.Parse(expanded.Output);
-        var compactResult = compactDocument.RootElement.GetProperty("result");
-        var expandedResult = expandedDocument.RootElement.GetProperty("result");
-        Assert.Equal("compact", compactResult.GetProperty("presentation").GetProperty("view").GetProperty("supplied").GetString());
-        Assert.Equal("expanded", expandedResult.GetProperty("presentation").GetProperty("view").GetProperty("supplied").GetString());
-        Assert.True(JsonViewComparison.RetainsResult(compact.Output, expanded.Output, ["paths.*.inclusionReasons", "sources.*.inclusionReasons", "sources.*.layers.*.inclusionReasons"], allowViewEcho: true));
+        using var verboseDocument = JsonDocument.Parse(verbose.Output);
+        var compactRoot = compactDocument.RootElement;
+        var expandedRoot = expandedDocument.RootElement;
+        var verboseRoot = verboseDocument.RootElement;
+        Assert.Equal("minimal", compactRoot.GetProperty("detail").GetString());
+        Assert.Equal("standard", expandedRoot.GetProperty("detail").GetString());
+        Assert.Equal("debug", verboseRoot.GetProperty("detail").GetString());
+        AssertNativeDataPreserved(compactRoot, expandedRoot);
+        AssertNativeDataPreserved(compactRoot, verboseRoot);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Context unavailable workspace preserves blocked JSON and next action without writes"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task UnavailableWorkspaceIsTypedBlocked()
     {
         using var workspace = CreateWorkspace();
         var before = workspace.SnapshotHashes();
-        var result = await CliHostCapture.RunAsync(["context", "--workspace", workspace.Combine("missing"), "--json"], workspace.Path);
+        var result = await CliHostCapture.RunAsync(["context", "--workspace", workspace.Combine("missing"), "--format", "json"], workspace.Path);
 
         Assert.Equal(5, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
         using var document = JsonDocument.Parse(result.Output);
         Assert.Equal("blocked", document.RootElement.GetProperty("status").GetString());
-        Assert.Equal(JsonValueKind.Object, document.RootElement.GetProperty("next").ValueKind);
-        Assert.Contains(document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray(),
+        Assert.Equal(JsonValueKind.Null, document.RootElement.GetProperty("next").ValueKind);
+        Assert.Contains(document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString() == "context.workspace-unavailable");
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed public root help exposes one direct Context leaf"),
      Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task RootHelpExposesOneContextLeaf()
@@ -79,10 +84,11 @@ public sealed class ContextApplicationIntegrationTests
         Assert.Contains("--follow-links ", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("Examples", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("Results and streams", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("deterministic, stateless, and read-only", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("Context preserves authored source bytes", leaf.Output, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Context composed application resolves startup order without workspace writes"),
      Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task MetadataStartupClosureUsesRealWorkspaceWithoutWrites()
@@ -91,21 +97,24 @@ public sealed class ContextApplicationIntegrationTests
         var before = workspace.SnapshotHashes();
 
         var result = await CliHostCapture.RunAsync(
-            ["context", "--content=metadata"],
+            ["context", "--content=metadata", "--detail", "standard"],
             workspace.Path);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
-        Assert.Contains("Status: complete", result.Output, StringComparison.Ordinal);
+        Assert.Contains("4 sources, about", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status: complete", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("Path:", result.Output, StringComparison.Ordinal);
         AssertOrdered(
             result.Output,
-            "Path: AGENTS.md",
-            "Path: .agents/loader.md",
-            "Path: .agents/startup/_startup.md",
-            "Path: .agents/startup/topic.md");
+            "=== AGENTS.md ===",
+            "=== .agents/loader.md (loader) ===",
+            "=== .agents/startup/_startup.md (startup) ===",
+            "=== .agents/startup/topic.md (startup/topic) ===");
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Context JSON returns route additions, overwrites, links, and outside Markdown in canonical order"),
      Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task JsonAdditionsRetainCompleteExpandedGraph()
@@ -120,7 +129,8 @@ public sealed class ContextApplicationIntegrationTests
                 "--additions-only",
                 "--content=metadata",
                 "--follow-links=all",
-                "--json",
+                "--format", "json",
+                "--detail", "full",
             ],
             workspace.Path);
 
@@ -128,27 +138,31 @@ public sealed class ContextApplicationIntegrationTests
         Assert.Equal(string.Empty, result.Error);
         using var document = JsonDocument.Parse(result.Output);
         var root = document.RootElement;
-        Assert.Equal("complete", root.GetProperty("status").GetString());
-        var commandResult = root.GetProperty("result");
+        Assert.Equal("completed", root.GetProperty("status").GetString());
+        var commandResult = root.GetProperty("data");
         Assert.Equal(
             [
                 ".agents/projects/_projects.md",
                 ".agents/projects/guide.md",
+                ".agents/projects/guide.overwrite.md",
                 ".agents/projects/linked.md",
                 "README.md",
             ],
             commandResult.GetProperty("sources").EnumerateArray()
                 .Select(source => source.GetProperty("path").GetString()));
         var guide = commandResult.GetProperty("sources")[1];
-        Assert.Equal(["base", "overwrite"], guide.GetProperty("layers").EnumerateArray()
-            .Select(layer => layer.GetProperty("kind").GetString()));
-        Assert.Equal(JsonValueKind.Null, commandResult.GetProperty("sources")[3].GetProperty("id").ValueKind);
+        Assert.Equal("base", guide.GetProperty("layer").GetString());
+        var overwrite = commandResult.GetProperty("sources")[2];
+        Assert.Equal("overwrite", overwrite.GetProperty("layer").GetString());
+        Assert.Equal(JsonValueKind.Null, commandResult.GetProperty("sources")[4].GetProperty("id").ValueKind);
         Assert.Contains(commandResult.GetProperty("links").EnumerateArray(), link =>
-            link.GetProperty("target").GetProperty("kind").GetString() == "external"
-            && link.GetProperty("target").GetProperty("network").GetString() == "network-not-attempted");
+            link.GetProperty("destination").GetString() == "https://example.invalid/context"
+            && link.GetProperty("resolution").GetString() == "external-unchecked"
+            && !link.GetProperty("followed").GetBoolean());
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Context composed application resolves multiple explicit routes with one ordered ancestor per chain"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task MultipleExplicitRoutesRetainOperandAndClosureOrder()
     {
@@ -158,18 +172,19 @@ public sealed class ContextApplicationIntegrationTests
         var result = await CliHostCapture.RunAsync(
             [
                 "context", "projects/guide", "areas/nested/leaf", "projects/linked",
-                "--additions-only", "--content=metadata", "--json",
+                "--additions-only", "--content=metadata", "--format", "json",
             ],
             workspace.Path);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
         using var document = JsonDocument.Parse(result.Output);
-        var sources = document.RootElement.GetProperty("result").GetProperty("sources");
+        var sources = document.RootElement.GetProperty("data").GetProperty("sources");
         Assert.Equal(
             [
                 ".agents/projects/_projects.md",
                 ".agents/projects/guide.md",
+                ".agents/projects/guide.overwrite.md",
                 ".agents/areas/_areas.md",
                 ".agents/areas/nested/_nested.md",
                 ".agents/areas/nested/leaf.md",
@@ -180,6 +195,7 @@ public sealed class ContextApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "Context composed application exposes malformed and unreadable selected continuity metadata as incomplete"), Trait("Feature", "context"), Trait("Evidence", "Integration"),
      InlineData(false),
      InlineData(true)]
@@ -200,7 +216,7 @@ public sealed class ContextApplicationIntegrationTests
         var before = workspace.SnapshotHashes();
 
         var result = await CliHostCapture.RunAsync(
-            ["context", "continuity", "--content=metadata", "--json"],
+            ["context", "continuity", "--content=metadata", "--format", "json"],
             workspace.Path);
 
         Assert.Equal(3, result.ExitCode);
@@ -208,14 +224,15 @@ public sealed class ContextApplicationIntegrationTests
         using var document = JsonDocument.Parse(result.Output);
         var root = document.RootElement;
         Assert.Equal("incomplete", root.GetProperty("status").GetString());
-        var commandResult = root.GetProperty("result");
-        Assert.Equal("incomplete", commandResult.GetProperty("coverage").GetProperty("selection").GetString());
-        Assert.Contains(commandResult.GetProperty("findings").EnumerateArray(), finding =>
+        var commandResult = root.GetProperty("data");
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("counts").GetProperty("sources").ValueKind);
+        Assert.Contains(document.RootElement.GetProperty("findings").EnumerateArray(), finding =>
             finding.GetProperty("code").GetString() == "context.closure-unavailable"
-            && finding.GetProperty("path").GetString() == ".agents/continuity/checkpoint.md");
+            && finding.GetProperty("subject").GetProperty("path").GetString() == ".agents/continuity/checkpoint.md");
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Context composed application ignores unavailable metadata outside routed continuity"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task UnroutedMetadataFailureDoesNotInvalidateContinuityCoverage()
     {
@@ -226,26 +243,26 @@ public sealed class ContextApplicationIntegrationTests
         var before = workspace.SnapshotHashes();
 
         var result = await CliHostCapture.RunAsync(
-            ["context", "--content=metadata", "--json"],
+            ["context", "--content=metadata", "--format", "json"],
             workspace.Path);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
         using var document = JsonDocument.Parse(result.Output);
         var root = document.RootElement;
-        Assert.Equal("complete", root.GetProperty("status").GetString());
-        var commandResult = root.GetProperty("result");
-        Assert.Equal("complete", commandResult.GetProperty("coverage").GetProperty("selection").GetString());
-        Assert.DoesNotContain(commandResult.GetProperty("findings").EnumerateArray(), finding =>
-            finding.GetProperty("path").GetString() == ".agents/unrouted.md");
+        Assert.Equal("completed", root.GetProperty("status").GetString());
+        var commandResult = root.GetProperty("data");
+        Assert.DoesNotContain(document.RootElement.GetProperty("findings").EnumerateArray(), finding =>
+            finding.GetProperty("subject").GetProperty("path").GetString() == ".agents/unrouted.md");
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "Context public statuses preserve JSON stdout, semantic exits, next actions, and no writes"),
      Trait("Feature", "context"), Trait("Evidence", "Integration"),
-     InlineData("attention", 2, "context.section-missing"),
+     InlineData("completed-with-warnings", 2, "context.section-missing"),
      InlineData("incomplete", 3, "context.target-missing"),
-     InlineData("invalid", 4, "context.invalid-input")]
+     InlineData("invalid-input", 4, "context.invalid-input")]
     public static async Task JsonSemanticJourneysRemainDistinct(
         string scenario,
         int expectedExit,
@@ -255,13 +272,13 @@ public sealed class ContextApplicationIntegrationTests
         var before = workspace.SnapshotHashes();
         string[] arguments = scenario switch
         {
-            "attention" => [
-                "context", "projects/guide", "--additions-only", "--content=section:Absent", "--json",
+            "completed-with-warnings" => [
+                "context", "projects/guide", "--additions-only", "--content=section:Absent", "--format", "json",
             ],
             "incomplete" => [
-                "context", "projects/broken", "--additions-only", "--content=metadata", "--follow-links=1", "--json",
+                "context", "projects/broken", "--additions-only", "--content=metadata", "--follow-links=1", "--format", "json",
             ],
-            "invalid" => ["context", "--additions-only", "--json"],
+            "invalid-input" => ["context", "--additions-only", "--format", "json"],
             _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "The Context scenario is not defined."),
         };
 
@@ -272,14 +289,15 @@ public sealed class ContextApplicationIntegrationTests
         using var document = JsonDocument.Parse(result.Output);
         Assert.Equal(scenario, document.RootElement.GetProperty("status").GetString());
         Assert.Contains(
-            document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray(),
+            document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString() == expectedFinding);
         Assert.Equal(
-            scenario == "attention" ? JsonValueKind.Null : JsonValueKind.Object,
+            scenario == "incomplete" ? JsonValueKind.Object : JsonValueKind.Null,
             document.RootElement.GetProperty("next").ValueKind);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Context blocks a physical link-target escape on human stderr without following or writing"),
      Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task PhysicalTargetEscapeIsBlockedOnHumanError()
@@ -305,7 +323,7 @@ public sealed class ContextApplicationIntegrationTests
 
         Assert.Equal(5, result.ExitCode);
         Assert.Equal(string.Empty, result.Output);
-        Assert.Contains("context.target-unsafe", result.Error, StringComparison.Ordinal);
+        Assert.Contains("points outside the workspace. It was not followed.", result.Error, StringComparison.Ordinal);
         Assert.Equal(workspaceBefore, workspace.SnapshotHashes());
         Assert.Equal(outsideBefore, outside.SnapshotHashes());
     }
@@ -317,21 +335,19 @@ public sealed class ContextApplicationIntegrationTests
         workspace.WriteText(
             ".agents/loader.md",
             "# Loader\n\n## Entries\n\n"
-            + "<!-- open-forge:generated-index:start -->\n"
             + "- [Startup](startup/_startup.md) - #LoadNow #Core\n"
             + "- [Projects](projects/_projects.md) - #Project\n"
             + "- [Areas](areas/_areas.md) - #Domain\n"
             + "- [Continuity](continuity/_continuity.md) - #Memory\n"
-            + "<!-- open-forge:generated-index:end -->\n");
+            );
         workspace.WriteText(
             ".agents/startup/_startup.md",
             Document(
                 "Startup",
                 "LoadNow, Core",
                 "# Startup\n\n## Entries\n\n"
-                + "<!-- open-forge:generated-index:start -->\n"
-                + "- [Topic](topic.md) - #LoadNow #Core\n"
-                + "<!-- open-forge:generated-index:end -->\n"));
+                    + "- [Topic](topic.md) - #LoadNow #Core\n"
+                + ""));
         workspace.WriteText(
             ".agents/startup/topic.md",
             Document("Topic", "LoadNow, Core", "# Topic\n\nStartup topic.\n"));
@@ -341,12 +357,11 @@ public sealed class ContextApplicationIntegrationTests
                 "Projects",
                 "Project",
                 "# Projects\n\n## Entries\n\n"
-                + "<!-- open-forge:generated-index:start -->\n"
-                + "- [Guide](guide.md) - #Guide\n"
+                    + "- [Guide](guide.md) - #Guide\n"
                 + "- [Linked](linked.md) - #Guide\n"
                 + "- [Broken](broken.md) - #Guide\n"
                 + "- [Unsafe](unsafe.md) - #Guide\n"
-                + "<!-- open-forge:generated-index:end -->\n"));
+                + ""));
         workspace.WriteText(
             ".agents/projects/guide.md",
             Document(
@@ -372,19 +387,17 @@ public sealed class ContextApplicationIntegrationTests
                 "Areas",
                 "Domain",
                 "# Areas\n\n## Entries\n\n"
-                + "<!-- open-forge:generated-index:start -->\n"
-                + "- [Nested](nested/_nested.md) - #Domain\n"
-                + "<!-- open-forge:generated-index:end -->\n"));
+                    + "- [Nested](nested/_nested.md) - #Domain\n"
+                + ""));
         workspace.WriteText(
             ".agents/areas/nested/_nested.md",
             Document(
                 "Nested",
                 "Domain",
                 "# Nested\n\n## Entries\n\n"
-                + "<!-- open-forge:generated-index:start -->\n"
-                + "- [Leaf](leaf.md) - #Guide\n"
+                    + "- [Leaf](leaf.md) - #Guide\n"
                 + "- [Automatic](automatic.md) - #LoadNow #Guide\n"
-                + "<!-- open-forge:generated-index:end -->\n"));
+                + ""));
         workspace.WriteText(
             ".agents/areas/nested/leaf.md",
             Document("Nested leaf", "Guide", "# Nested leaf\n"));
@@ -397,9 +410,8 @@ public sealed class ContextApplicationIntegrationTests
                 "Continuity",
                 "Memory",
                 "# Continuity\n\n## Entries\n\n"
-                + "<!-- open-forge:generated-index:start -->\n"
-                + "- [Checkpoint](checkpoint.md) - #KeepInMind #Memory\n"
-                + "<!-- open-forge:generated-index:end -->\n"));
+                    + "- [Checkpoint](checkpoint.md) - #KeepInMind #Memory\n"
+                + ""));
         workspace.WriteText(
             ".agents/continuity/checkpoint.md",
             Document("Checkpoint", "KeepInMind, Memory", "# Checkpoint\n"));
@@ -412,6 +424,58 @@ public sealed class ContextApplicationIntegrationTests
             description: description,
             tags: tags.Split(", ", StringSplitOptions.None),
             body: $"\n{body}");
+
+    private static void AssertNativeDataPreserved(JsonElement expectedRoot, JsonElement actualRoot)
+    {
+        foreach (var property in new[] { "command", "status", "filter", "workspace", "summary", "findings", "effects", "counts", "limitations", "recovery", "next" })
+        {
+            Assert.Equal(
+                expectedRoot.GetProperty(property).GetRawText(),
+                actualRoot.GetProperty(property).GetRawText());
+        }
+
+        var expectedSources = expectedRoot.GetProperty("data").GetProperty("sources").EnumerateArray().ToArray();
+        var actualSources = actualRoot.GetProperty("data").GetProperty("sources").EnumerateArray().ToArray();
+        Assert.Equal(expectedSources.Length, actualSources.Length);
+        for (var index = 0; index < expectedSources.Length; index++)
+        {
+            Assert.Equal(expectedSources[index].GetProperty("path").GetString(), actualSources[index].GetProperty("path").GetString());
+            Assert.Equal(expectedSources[index].GetProperty("id").GetRawText(), actualSources[index].GetProperty("id").GetRawText());
+            Assert.Equal(expectedSources[index].GetProperty("layer").GetString(), actualSources[index].GetProperty("layer").GetString());
+            AssertNativePartsPreserved(expectedSources[index], actualSources[index]);
+        }
+    }
+
+    private static void AssertNativePartsPreserved(JsonElement expectedSource, JsonElement actualSource)
+    {
+        var expectedParts = expectedSource.GetProperty("parts").EnumerateArray().ToArray();
+        var actualParts = actualSource.GetProperty("parts").EnumerateArray().ToArray();
+        Assert.Equal(expectedParts.Length, actualParts.Length);
+        for (var index = 0; index < expectedParts.Length; index++)
+        {
+            Assert.Equal(expectedParts[index].GetProperty("part").GetString(), actualParts[index].GetProperty("part").GetString());
+            if (expectedParts[index].TryGetProperty("text", out var expectedText))
+            {
+                Assert.Equal(expectedText.GetString(), actualParts[index].GetProperty("text").GetString());
+            }
+            else if (expectedParts[index].TryGetProperty("state", out var expectedState))
+            {
+                Assert.Equal(expectedState.GetString(), actualParts[index].GetProperty("state").GetString());
+            }
+            else if (expectedParts[index].TryGetProperty("paths", out var expectedPaths))
+            {
+                Assert.Equal(expectedPaths.GetRawText(), actualParts[index].GetProperty("paths").GetRawText());
+            }
+            else if (expectedParts[index].TryGetProperty("headings", out var expectedHeadings))
+            {
+                var expectedShape = expectedHeadings.EnumerateArray().Select(heading =>
+                    (heading.GetProperty("text").GetString(), heading.GetProperty("level").GetInt32()));
+                var actualShape = actualParts[index].GetProperty("headings").EnumerateArray().Select(heading =>
+                    (heading.GetProperty("text").GetString(), heading.GetProperty("level").GetInt32()));
+                Assert.Equal(expectedShape, actualShape);
+            }
+        }
+    }
 
     private static void AssertOrdered(string value, params string[] expected)
     {

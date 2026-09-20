@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot read context: docs/guide matches more than one source. Use the exact path.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "context.source-ambiguous",
+      "title": "Source is ambiguous",
+      "message": "docs/guide matches more than one source. Use the exact path.",
+      "subject": {
+        "kind": "identifier",
+        "path": "docs/guide",
+        "id": "docs/guide",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [
+        {
+          "subject": {
+            "kind": "source",
+            "path": ".agents/docs/guide.md",
+            "id": "docs/guide",
+            "location": null
+          },
+          "reasons": []
+        },
+        {
+          "subject": {
+            "kind": "source",
+            "path": ".agents/docs/guide/_guide.md",
+            "id": "docs/guide",
+            "location": null
+          },
+          "reasons": []
+        }
+      ],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sources": null,
+    "tokens": null,
+    "bytes": null,
+    "linksFollowed": 0,
+    "linksNotFollowed": 0,
+    "errors": 1
+  },
+  "limitations": [
+    {
+      "what": "sources",
+      "why": "The selected Context sources could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "tokens",
+      "why": "The selected Context sources could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "bytes",
+      "why": "The selected Context sources could not be resolved completely.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "workspace entry"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 1,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Workspace\n\nRead `.agents/loader.md`.\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/loader.md",
+        "id": "loader",
+        "layer": "base",
+        "includedBecause": [
+          "Loader"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 2,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Open Forge Loader\n\n## Entries\n\n- [Documents](docs/_docs.md) - #LoadNow #Docs"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/_docs.md",
+        "id": "docs",
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from .agents/loader.md"
+        ],
+        "route": "docs",
+        "scope": null,
+        "order": 3,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Documents\n  tags: [Docs]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Documents\n\n## Entries\n\n- [Guide](guide.md) - #Docs #Guide\n- [Reference](reference.md) - #Docs\n"
+          }
+        ]
+      }
+    ],
+    "links": []
+  },
+  "recovery": null,
+  "next": null
+}

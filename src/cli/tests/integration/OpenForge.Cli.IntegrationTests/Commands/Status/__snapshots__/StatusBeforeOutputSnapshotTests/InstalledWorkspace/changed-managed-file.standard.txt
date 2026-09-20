@@ -1,0 +1,17 @@
+Open Forge is installed, but 1 file needs attention.
+Workspace: <workspace>
+  Warning  .agents/guidance/_guidance.md  Changed since it was installed
+         changed since it was installed
+         open-forge update
+         Update the Framework files that need attention.
+Startup context
+  Shipped by this CLI:   11 files, about 5.7k tokens
+  This workspace:        11 files, about 5.7k tokens
+  May load again later:  1 file, about 0.3k tokens
+Added since shipped: about 0.0k tokens
+All routed files: 13 files, about 6.3k tokens (startup is 90%)
+Routes: 7 root categories, 12 Entries sections current
+Framework files: 13 current
+13 routed files, 11 startup files, 5685 startup tokens, 1 may-load-again files, 289 may-load-again tokens, 6346 all routed tokens, 89.59063866671919940112682715 startup share, 7 root categories, 12 current Entries sections, 13 current Framework files, 1 changed Framework files, 1 warnings.
+  Update the Framework files that need attention.
+Next: open-forge update

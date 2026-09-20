@@ -10,7 +10,8 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized entrypoint for `route update`. The
-command does not ship yet; implementation and executable evidence are tracked in
+command is implemented in the merged native CLI; implementation and executable
+evidence are tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md). Its sibling Interface and Behavior Contracts define command meaning.
 Its bounded Technical Design defines one parser-realization exception without
 adding public or technology-neutral meaning. This entrypoint does not duplicate
@@ -34,8 +35,6 @@ not define command detail.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted current technology-neutral resolution, effects, safety, recovery, and conformance for `route update`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Update #Behavior #Metadata #Template #Mutation #CurrentTruth
 - [Accepted current public interface for patching one existing routed Markdown source and completing a protected Template body when eligible](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Update #Interface #Metadata #Template #Mutation #CurrentTruth
 - [Accepted bounded lexical recognizer for Route Update attached-empty responsibility input](technical-design.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Update #TechnicalDesign #Parser #EdgeCase #CurrentTruth
-<!-- open-forge:generated-index:end -->

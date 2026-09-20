@@ -81,7 +81,7 @@ CLI Flags contract:
    explicit according to the selection rules below.
 
 Argument order does not select an effect. Compatible flags form one request;
-conflicting explicit inputs form `invalid`. Repeated Boolean flags do not
+conflicting explicit inputs form `invalid-input`. Repeated Boolean flags do not
 multiply authority, preview, or recovery.
 
 `--help` and `--version` terminate before workspace selection and mutation
@@ -117,7 +117,7 @@ saved.
 
 The same wizard is selected for any prompt-capable request with neither
 `--automatic` nor an explicit relink, including one that carries only
-`--workspace`, `--view`, `--verbose`, or `--dry-run`. Those inputs remain part of
+`--workspace`, `--detail`, `--detail debug`, or `--dry-run`. Those inputs remain part of
 the same normalized request. JSON never enters this path;
 help and version remain terminal before it.
 
@@ -133,7 +133,7 @@ The normalized Boolean is one selection authority regardless of repetition. If
 no safe-exact proposal exists, the selected automatic scope is a verified empty
 selection or no-op, while guided and manual findings remain unselected.
 Those unselected guided findings are reported as remaining evidence and may form
-`attention`; they are not silently resolved. A guided choice becomes a blocking
+`completed-with-warnings`; they are not silently resolved. A guided choice becomes a blocking
 unresolved choice only when the current request explicitly requires that effect
 and supplies neither a wizard selection nor an exact relink.
 
@@ -162,8 +162,8 @@ It is `blocked`, whether or not `--dry-run` is present. Dry-run is a write
 policy, not an implicit automatic-selection command. The useful next action
 identifies `--automatic`, explicit relinks, or an interactive wizard.
 
-Thus `--json --dry-run` without a selection is blocked, while
-`--automatic --dry-run --json` is an explicit automatic preview. The resolver
+Thus `--format json --dry-run` without a selection is blocked, while
+`--automatic --dry-run --format json` is an explicit automatic preview. The resolver
 never invents a guided choice to make a structured request complete.
 
 ## Fresh Relevant-Domain Diagnosis Gate
@@ -173,12 +173,20 @@ but it separately forms the exact diagnosis dependency closure for each
 selectable local-reference edit. It does not use a prior Doctor result, rendered
 command output, saved report, or previous dry-run as current authority.
 
-A selected edit requires complete current coverage only for the workspace/path
-containment, route/heading, and local-reference facts it actually consumes.
-Incomplete or blocked unrelated lifecycle, Extension, Framework, or recovery-
-observer coverage stays visible but does not block the edit. Recovery writer
-readiness for a real Replace is checked separately in mutation preflight. The
-planner never uses a partial required fact or invokes another command's authority.
+A selected edit requires complete current coverage for the workspace/path
+containment, route/heading, local-reference facts, and every other fact it uses
+as a write dependency. Unsafe or unavailable facts required by a selected write
+remain strict and block that effect before application. Read or coverage
+uncertainty outside the selected write dependency stays visible; it is not
+silently treated as absence, safety, or complete coverage. In particular, a
+concrete non-information Library observation retains its warning severity and `completed-with-warnings` status (exit 2) and actual known path, identifier, and cause while an independent
+ordinary authored safe link may proceed. It does not become a Markdown
+broken-link occurrence, guided candidate, or Repair proposal. Incomplete or
+blocked unrelated lifecycle, Extension, Framework, Library read/coverage, or
+recovery-observer facts therefore remain visible without blocking that
+independent edit. Recovery writer readiness for a real Replace is checked
+separately in mutation preflight. The planner never uses a partial required
+fact or invokes another command's authority.
 
 After application, the operation freshly rechecks the same relevant-domain
 dependency closure. It reports repaired, remaining, new, manual, guided, and
@@ -191,7 +199,12 @@ first-release catalogue admitted by the Interface.
 
 ### Safe-exact proposals
 
-The proposal resolver may form a safe-exact effect for:
+The proposal resolver classifies authored local-reference occurrences only. A
+recognized generated `Entries` region is navigation output rather than authored
+content; its links are excluded before classification and cannot produce a
+safe-exact proposal, guided candidate, or explicit relink authority. Authored
+occurrences elsewhere in the same source remain independent. The proposal
+resolver may form a safe-exact effect for:
 
 - A local reference whose authored path spelling differs from the canonical path
   but resolves to the same target.
@@ -231,16 +244,26 @@ link raw target text is identity, not payload. A third, changed, unavailable,
 aliased, ambiguous, or unsafe state blocks the proposal, and no filename or path
 alone can form attribution, a record, or a recovery effect.
 
+A concrete Library observation that is not a typed safe-exact residual remains a
+diagnostic observation with its actual path, identifier, cause, and warning severity and `completed-with-warnings` status (exit 2). It does not become a Markdown broken-link occurrence,
+guided candidate, or invented proposal. An unsafe or unavailable fact required
+by a selected Library write remains a strict blocking boundary; unrelated read
+or coverage uncertainty remains visible rather than silently masked.
+
 ### Guided proposals
 
-For a missing local target, the resolver may form a guided proposal from bounded
-filename, title, literal-content, and structural route-neighborhood evidence.
+For a missing local target on an authored local-reference occurrence, the
+resolver may form a guided proposal from bounded filename, title,
+literal-content, and structural route-neighborhood evidence.
 It records zero, one, or several candidates and preserves each candidate's
 evidence and provenance. It may identify one candidate as a recommendation for
 review, but it never selects that candidate automatically. A user selection in
 the wizard or an explicit relink supplies intent; fresh resolution still proves
 the selected source, target, containment, expected bytes, intended bytes,
 verification, and recovery.
+
+The guided broken-link finding message includes the concrete expected authored
+destination so the unresolved target is visible before candidate details.
 
 No other finding creates a general Repair proposal. A valid reference, an
 external URL, an image, a repeated or cyclic fact, generated drift, route intent,
@@ -262,13 +285,14 @@ For each explicit relink, the resolver parses:
 Shell quoting has already been removed before this stage. The resolver preserves
 the resulting bytes and does not implement another quote or escape language.
 
-The source-location path must identify a supported Markdown source inside the
-selected workspace. If it is outside `.agents`, Doctor's accepted contained
-local-reference boundary must include it. The one-based line and column must
-identify the start of the authored destination token for exactly one current
-local-reference occurrence. Parsing uses the terminal `@<line>:<column>` suffix;
-an earlier `@` remains path text unless the terminal remainder is one valid
-positive location suffix.
+The source-location path must identify a supported authored Markdown source
+inside the selected workspace, and the occurrence must be outside a recognized
+generated `Entries` region. If it is outside `.agents`, Doctor's accepted
+contained local-reference boundary must include it. The one-based line and
+column must identify the start of the authored destination token for exactly one
+current local-reference occurrence. Parsing uses the terminal
+`@<line>:<column>` suffix; an earlier `@` remains path text unless the terminal
+remainder is one valid positive location suffix.
 
 The expected destination must equal the complete current authored destination
 literal at that occurrence. The target path must identify one current contained
@@ -290,12 +314,12 @@ explicit target. It still checks that the selected target is the current target
 or current user-selected candidate and that identity, containment, and fragment
 facts are safe.
 
-The current finding must resolve to one admitted Interface catalogue member: a
-same-target safe-exact correction, or a missing-target guided finding whose
-current bounded candidate set includes the selected target. A valid unrelated
-reference, an unproven semantic target change, a target outside the candidate
-set, or another out-of-catalogue edit is blocked rather than converted into a
-general-purpose relink.
+The current authored finding must resolve to one admitted Interface catalogue
+member: a same-target safe-exact correction, or a missing-target guided finding
+whose current bounded candidate set includes the selected target. A generated
+`Entries` occurrence, a valid unrelated reference, an unproven semantic target
+change, a target outside the candidate set, or another out-of-catalogue edit is
+blocked rather than converted into a general-purpose relink.
 
 If the source occurrence shifts, the old literal differs, the target or candidate
 changes or disappears, identity or containment is ambiguous, or current bytes
@@ -454,7 +478,7 @@ it never derives current target state from recovery provenance.
 A closed final ZIP may remain after abrupt process termination, without an
 executable crash or power-loss guarantee. A failed operation remains `failed`;
 cancellation with incomplete residual facts is also `failed`, while cancellation
-before effects without a stronger failure is `interrupted`. After final
+before effects without a stronger failure is `cancelled`. After final
 verification of whole-operation success, delete the bundle.
 The bundle deleted on success is Repair's newly prepared forward bundle. A
 selected original Library residual ZIP remains byte-identical, including its
@@ -462,9 +486,9 @@ unselected entries; only explicit Cleanup may delete that original bundle.
 `Deleted`/`Removed`
 permits normal completion.
 `Failed`/positively observed `Retained` keeps target effects successful and
-produces `attention`, the exact residual path, and
+produces `completed-with-warnings`, the exact residual path, and
 cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
-provides one. When `Failed`/positively observed `Retained` recovery attention
+provides one. When `Failed`/positively observed `Retained` recovery warning
 coexists with remaining non-information findings, cleanup guidance owns the
 single next action; those findings remain visible evidence. No journal, progress receipt, or persisted
 plan is created. Explicit Cleanup owns
@@ -480,10 +504,12 @@ or package for this boundary.
 
 ## Fresh Post-Diagnosis
 
-After a successful application, verified no-op, handled failure, or interrupted
-boundary, Repair forms fresh relevant-domain diagnosis from current workspace facts.
-It does not run until a fixpoint or treat the post-diagnosis as another
-application request. The post-diagnosis reports:
+After a successful application, verified no-op, handled failure, or cancelled
+boundary, Repair forms fresh relevant-domain diagnosis from current workspace
+facts. It does not run until a fixpoint or treat the post-diagnosis as another
+application request. A cancelled or `Interrupted` result retains its existing
+status, headline, stream, and output boundary; fresh observations do not append
+new cancellation output. The post-diagnosis reports:
 
 - Effects selected, coalesced, applied, verified, retained, or unchanged.
 - Findings selected and unselected.
@@ -491,14 +517,24 @@ application request. The post-diagnosis reports:
 - Affected paths, typed recovery state and disposition, and any residual path.
 - Relevant-domain coverage and selected-scope status.
 
-The result says `complete` only for the selected Repair scope when its required
+For Library findings, current post-diagnosis residual observations replace
+pre-diagnosis Library observations that were resolved. The result deduplicates
+only identical actual facts—code, path, identifier, and cause—so a resolved
+observation is absent and distinct residual facts remain visible. Library
+observations are not reclassified as Markdown broken-link occurrences or used to
+invent proposals.
+
+The result says `completed` only for the selected Repair scope when its required
 coverage and effect path completed. Remaining non-information findings produce
-`attention`; an incomplete or blocked post-diagnosis preserves that status and
-does not claim workspace health.
+`completed-with-warnings`; an incomplete or blocked post-diagnosis preserves that status and
+does not claim workspace health. Library-only remaining problems direct the user
+to Doctor; mixed authored-link and Library problems retain Repair as the action
+for authored links and explain Doctor for the Library diagnosis. An existing
+partial or retained recovery boundary keeps its existing cleanup action.
 
 ## Result Formation And Presentation
 
-Repair forms one typed result after invalid or blocked request resolution,
+Repair forms one typed result after invalid-input or blocked request resolution,
 preflight, dry-run, application verification, recovery, or post-diagnosis. The
 result contains the conceptual facts owned by the Interface: mode, workspace,
 diagnosis coverage, findings and effect counts, selection origins, affected
@@ -506,12 +542,12 @@ paths, exact bounded change evidence, preflight, application, verification,
 recovery, residuals, semantic status, and post-diagnosis coverage.
 
 Human and JSON renderers consume that result without rerunning diagnosis,
-planning, application, verification, or retained-state reporting. Compact and expanded views
-change only framing and density. `--verbose` adds bounded diagnostics without
+planning, application, verification, or retained-state reporting. Detail levels
+change only framing and density. `--detail debug` adds bounded diagnostics without
 changing behavior or status. JSON is complete and non-interactive.
 
-Primary human `complete`, `attention`, and `incomplete` results remain together
-on stdout. Primary human `invalid`, `blocked`, `failed`, and `interrupted`
+Primary human `completed`, `completed-with-warnings`, and `incomplete` results remain together
+on stdout. Primary human `invalid-input`, `blocked`, `failed`, and `cancelled`
 results remain together on stderr. JSON emits one complete structured result to
 stdout for every semantic status; separate bounded diagnostics use stderr.
 
@@ -520,7 +556,7 @@ stdout for every semantic status; separate bounded diagnostics use stderr.
 Result formation preserves the Interface meanings:
 
 - Invalid grammar, malformed values, or contradictory explicit tuples form
-  `invalid`.
+  `invalid-input`.
 - Missing non-interactive selection authority, incomplete or blocked required
   relevant-domain diagnosis, stale or conflicting facts, malformed/colliding/mismatched
   recovery-bundle facts, ambiguous identity, or another unsafe complete-plan
@@ -529,24 +565,27 @@ Result formation preserves the Interface meanings:
 - Safe facts without complete required relevant-domain diagnosis or post-diagnosis coverage form
   `incomplete` when no stronger blocked boundary applies.
 - Post-verification deletion `Failed` with positively observed disposition
-  `Retained` forms `attention` while preserving the exact residual path and
+  `Retained` forms `completed-with-warnings` while preserving the exact residual path and
   cleanup guidance.
 - Application, verification, or post-condition failure, or post-verification
   deletion `Failed` with disposition `Unknown`, forms `failed`. That result
   preserves typed observed or unknown recovery facts and includes an exact
   expected path only when the recovery result provides one.
-- Caller cancellation before completion forms `interrupted` unless bundle
+- Caller cancellation before completion forms `cancelled` unless bundle
   handling is incomplete, which forms `failed`.
 - A selected scope that completes with remaining non-information findings forms
-  `attention`.
+  `completed-with-warnings`. Library-only remaining problems direct the user to
+  Doctor; mixed authored-link and Library findings retain Repair as the action
+  for authored links and explain Doctor for the Library diagnosis. An existing
+  partial or retained recovery boundary keeps its cleanup action.
 - A selected scope that completes, including a verified no-op or exact dry-run,
-  with only informational remaining findings forms `complete`.
+  with only informational remaining findings forms `completed`.
 
-The selector does not treat a byte change as attention by itself, does not treat
+The selector does not treat a byte change as completed-with-warnings by itself, does not treat
 an unchanged target as an effect, and does not treat a recommendation as a
 selected repair. A typed Library residual is selected only through its existing
-safe-exact authority and reaches `complete` only after its exact no-follow
-effect verifies. `complete` does not mean every Doctor finding is gone.
+safe-exact authority and reaches `completed` only after its exact no-follow
+effect verifies. `completed` does not mean every Doctor finding is gone.
 
 ## Read-Only And Mutation Boundaries
 
@@ -581,16 +620,19 @@ section. A conforming implementation must additionally prove:
 - Typed Library residual safe-exact selection and recovery for prior-missing
   ordinary-record Create, ordinary-file prior bytes, and relative-file-link
   Create/Delete entries, with no-follow parent/leaf/raw-target checks and
-  rejection of third, unavailable, unsafe, or source-target effects.
+  rejection of third, unavailable, unsafe, or source-target effects; concrete
+  non-information Library observations retain their actual facts and do not
+  create Markdown broken-link proposals.
 - Non-interactive and JSON selection authority, including blocked bare and
   blocked `--dry-run` requests without automatic or explicit relink authority.
-- Exact relink source occurrence, expected literal, contained target, relative
-  destination computation, label and unrelated-byte preservation, stale state,
-  shifted occurrence, target change, identity ambiguity, containment, and
-  candidate disappearance.
+- Exact authored relink source occurrence outside generated `Entries`, expected
+  literal, contained target, relative destination computation, label and
+  unrelated-byte preservation, stale state, shifted occurrence, target change,
+  identity ambiguity, containment, and candidate disappearance.
 - Fresh relevant-domain diagnosis as the selected-edit write gate and fresh
-  post-diagnosis without a fixpoint loop; unrelated lifecycle and recovery-
-  observer unavailability remains non-blocking.
+  post-diagnosis without a fixpoint loop; unsafe or unavailable selected-write
+  facts remain strict, while unrelated read/coverage uncertainty stays visible
+  without silent masking.
 - Safe-exact path, case, encoding, and unique-fragment effects; guided missing-
   target candidates from each admitted evidence basis; zero/one/several
   cardinality; and absence of external or semantic repair.
@@ -601,11 +643,13 @@ section. A conforming implementation must additionally prove:
   lifecycle, receipt, and public-command effects.
 - Revalidation, per-effect verification, semantic verification, residual draft
   or final paths, interruption, and rerun convergence.
-- Human compact and expanded, JSON, and verbose projections from one typed
+- Minimal, standard, full, debug, and JSON projections from one typed
   result, including effect and finding distinctions and the accepted stream
   policy without choosing exact schema or numeric exits.
-- Complete, attention, incomplete, invalid, blocked, failed, and interrupted
-  meanings scoped to selected Repair work.
+- Completed, completed-with-warnings, incomplete, invalid-input, blocked, failed,
+  and cancelled meanings scoped to selected Repair work, including the
+  Library-only Doctor action, mixed authored-link/Library explanation, and the
+  unchanged cancelled/interrupted output boundary.
 
 Gate 5 executable proof should prove request, selection, candidate, plan, conflict,
 preflight, no-op, dry-run, recovery-bundle preparation, verification, status, and

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Replacement handlers return one five-field typed result while display adapters render human or JSON output through named protocol values and exact centralized exit semantics
+  description: "Historical CLI-v2 source: Replacement handlers return one five-field typed result while display adapters render human or JSON output through named protocol values and exact centralized exit semantics"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Profile;
 
 public sealed class RouteInspectProfileBuilderDeterminismTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect profile formation is deterministic for unchanged graph facts")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void ProfileFormationIsDeterministic()
@@ -131,6 +132,7 @@ public sealed class RouteInspectProfileBuilderDeterminismTests
         Assert.Equal(firstAxioms.Local.Value, secondAxioms.Local.Value);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect profile formation observes cancellation before producing profile facts")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void ProfileFormationHonorsCancellation()
@@ -155,6 +157,7 @@ public sealed class RouteInspectProfileBuilderDeterminismTests
             new RouteInspectProfileBuilder().Build(resolution, cancellation.Token));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect profile output exposes immutable reason provenance and topology collections")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void ProfileOutputCollectionsAreImmutable()

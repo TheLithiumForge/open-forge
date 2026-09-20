@@ -17,6 +17,7 @@ public sealed class RouteMoveDirectoryDeletionIntegrationTests : IDisposable
     private readonly WorkspaceLockTestStore lockStore = WorkspaceLockTestStore.Create(
         "route-move-directory-delete-lock-store");
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move directory deletion removes one exact empty directory nonrecursively")]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task EmptyDirectoryIsRemovedAndVerifiedWithoutRecoveryBytes()
@@ -45,6 +46,7 @@ public sealed class RouteMoveDirectoryDeletionIntegrationTests : IDisposable
         Assert.True(Directory.Exists(temporary.Combine("old")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move directory deletion retains a nonempty directory and every child byte")]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task NonemptyDirectoryIsRetainedWithoutRecursiveDeletion()
@@ -74,6 +76,7 @@ public sealed class RouteMoveDirectoryDeletionIntegrationTests : IDisposable
             TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move directory deletion observes cancellation before the target effect")]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task CancellationLeavesTheDirectoryUntouched()

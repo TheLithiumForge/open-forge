@@ -13,6 +13,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init;
 
 public sealed class RouteInitApplicationIntegrityIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "An escaped directory attempt is the only effect reported with unknown completion"), Trait("Feature", "route-init"), Trait("Evidence", "Integration")]
     public async Task EscapedDirectoryAttemptIsReportedAsUnknown()
     {
@@ -50,6 +51,7 @@ public sealed class RouteInitApplicationIntegrityIntegrationTests
             entrypoint => Assert.Equal(RouteInitEntrypointOutcome.NotStarted, entrypoint.Outcome));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "An escaped entrypoint attempt reports only that entrypoint and effect with unknown completion"), Trait("Feature", "route-init"), Trait("Evidence", "Integration")]
     public async Task EscapedEntrypointAttemptIsReportedAsUnknown()
     {
@@ -86,13 +88,14 @@ public sealed class RouteInitApplicationIntegrityIntegrationTests
             effect => Assert.Equal(RouteInitEffectOutcome.NotStarted, effect.Outcome));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "An escaped lifecycle attempt reports lifecycle completion and recovery state as unknown"), Trait("Feature", "route-init"), Trait("Evidence", "Integration")]
     public void EscapedLifecycleAndRecoveryStoreAttemptsAreUnknown()
     {
         using var owned = TemporaryWorkspace.Create("route-init-attempt-lifecycle");
         var workspace = Workspace(owned);
         var lifecyclePath = owned.CreateFile(
-            ".agents/open-forge.lifecycle.json",
+            ".agents/open-forge.lock.json",
             "old lifecycle bytes"u8.ToArray());
         var before = FileStateSnapshot.File(
             lifecyclePath,
@@ -112,7 +115,7 @@ public sealed class RouteInitApplicationIntegrityIntegrationTests
             directoryCreations: [],
             fileChanges: [change],
             recoveryTargets: [RecoveryBundleTarget.Create(change, before)],
-            intendedLifecycle: null);
+            ownership: null);
 
         var outcome = RouteInitApplicationResultFactory.Build(
             plan,

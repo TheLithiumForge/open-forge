@@ -1,0 +1,10 @@
+Library registration could not be checked completely.
+Workspace: <workspace>
+  Warning  .agents/open-forge.lock.json  Library record is invalid
+         The Library section of .agents/open-forge.lock.json is invalid: the content is not valid JSON.
+  libraries: the content is not valid JSON.
+  links current: the content is not valid JSON.
+  links missing: the content is not valid JSON.
+  links changed: the content is not valid JSON.
+  links unavailable: the content is not valid JSON.
+Next: open-forge doctor

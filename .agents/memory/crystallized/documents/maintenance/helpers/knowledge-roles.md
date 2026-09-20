@@ -51,7 +51,7 @@ The primitive questions below mirror the [Core primitive model](../../framework/
 | [Pattern](../../../../../patterns/_patterns.md)                            | What reusable inspectable shape is the established default?                                        |
 | [Skill](../../../../../skills/_skills.md)                                  | What specialized capability can perform this work?                                                 |
 | [Template](../../../../../templates/_templates.md)                         | What copy-ready source can start this artifact?                                                    |
-| [Workflow](../../../../../workflows/_workflows.md)                         | How should this defined goal be pursued and completed?                                             |
+| [Workflow](../../../../../skills/use-workflow/references/open-forge/_open-forge.md)                         | How should this defined goal be pursued and completed?                                             |
 | [Map `route`](../../../../../maps/_maps.md)                                | Where does relevant local or external truth live?                                                  |
 | [Core primitive decision](../../../decisions/framework/core-primitives.md) | Why does Core use distinct reusable roles instead of one generic content bucket?                   |
 

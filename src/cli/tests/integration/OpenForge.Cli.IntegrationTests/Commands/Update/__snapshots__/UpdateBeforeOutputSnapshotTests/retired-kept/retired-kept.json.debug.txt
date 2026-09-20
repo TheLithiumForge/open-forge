@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 3,
+  "command": "update",
+  "status": "completed-with-warnings",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Updated 1 Framework file. 1 file from an earlier version was kept.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "update.retired-content-preserved",
+      "title": "Retired content kept",
+      "message": ".agents/guidance/retired-framework.md is no longer part of this release, so it was kept.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/guidance/retired-framework.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge update --prune --dry-run",
+          "reason": "Preview deleting the retained files before applying the prune."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": "you had changed it and this release changes it",
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "filesReplaced": 1,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 1,
+    "filesUnchanged": 13,
+    "sectionsUpdated": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": false,
+    "automatic": true,
+    "previousContent": null,
+    "lockPath": ".agents/open-forge.lock.json",
+    "unchanged": [
+      {
+        "path": ".agents/directives/_directives.md"
+      },
+      {
+        "path": ".agents/loader.md"
+      },
+      {
+        "path": ".agents/maps/_maps.md"
+      },
+      {
+        "path": ".agents/memory/_memory.md"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md"
+      },
+      {
+        "path": ".agents/memory/working/_working.md"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md"
+      },
+      {
+        "path": ".agents/skills/_skills.md"
+      },
+      {
+        "path": ".agents/templates/_templates.md"
+      },
+      {
+        "path": "AGENTS.md"
+      },
+      {
+        "path": "CLAUDE.md"
+      }
+    ],
+    "entriesSections": [
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "state": "changed"
+      }
+    ],
+    "effects": [
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "relation": {
+          "current": "changed",
+          "shipped": "changed"
+        },
+        "source": {
+          "id": "framework",
+          "version": null,
+          "fingerprint": "<sha256>"
+        },
+        "verification": "verified"
+      }
+    ],
+    "verification": "verified"
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge update --prune --dry-run",
+    "reason": "Preview deleting the retained files before applying the prune."
+  }
+}

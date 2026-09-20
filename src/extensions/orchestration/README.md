@@ -1,25 +1,33 @@
 # Orchestration
 
-Orchestration gives you a method to come back to when the work spans several tasks. Its one optional Workflow, [Managed Delivery](content/.agents/workflows/managed-delivery.md), helps coordinate dependencies and bring the results together. If work is interrupted, the recipe also covers how to resume it.
+Coordinate related tasks with clear ownership, recoverable state, useful learning, and verified integration. Use the workspace's available agents and tools; no fixed model roster, hierarchy, or scheduler is installed.
 
-The package depends on [Planning](../planning/README.md) for its planning method and Work Records Pattern, and [Development](../development/README.md) for implementation and review.
+## What You Get
 
-Coordination and task execution have separate responsibilities, and one person or agent can handle both. A separate integration role is useful only when combining results needs dedicated attention. You can work through the method sequentially.
+| Source | Use it to |
+| --- | --- |
+| [Managed Delivery](content/.agents/skills/use-workflow/references/orchestration/managed-delivery.md) | Coordinate dependencies, assignments, review, and authorized integration. |
+| [Observations](content/.agents/memory/emerging/observations/_observations.md) | Preserve useful execution evidence without promoting it into a rule. |
+| [Handoffs](content/.agents/memory/working/handoffs/_handoffs.md) | Seal one transfer boundary so another reader can resume from it. |
+| [Two Templates](content/.agents/templates/orchestration/_orchestration.md) | Observation and Handoff. |
 
-Parallel work requires authorization and suitable isolation in the environment you use. The package provides the method. Scheduling and permissions remain outside it. It has no model roster, fixed agent hierarchy, or APM dependency.
+**Direct dependencies:** [Planning](../planning/README.md), [Development](../development/README.md)
 
-## Use
+## Start Using It
 
-You can preview the package and its dependencies with the [Extension installation guide](../../../docs/extensions.md#install-an-extension). Replace the example paths with your source catalogue and destination workspace, keeping the source checkout separate from that workspace.
+> Use Managed Delivery for these tasks. Keep ownership explicit, work sequentially unless concurrency is justified, and preserve only useful learning and transfer state.
 
-```sh
-open-forge extension install orchestration --source /path/to/open-forge/src/extensions --workspace /path/to/project --dry-run
-```
+## Execution And Continuity
 
-Apply the reviewed plan with the same command without `--dry-run`. For [manual installation](../../../docs/extensions.md#manual-installation), copy the `content/` files from this package, Planning, and Development into the workspace, then update affected `Entries`, check links, and review the assembled files. Manual copying does not create managed lifecycle state. The [catalogue](../README.md) describes package composition and verification.
+Planning and Development supply the methods that Managed Delivery directly calls. Their dependencies bring Workflow Support once. Orchestration does not pull in Project Documents.
 
-The installed recipe is `.agents/workflows/managed-delivery.md`. Select it when cross-task coordination adds value. Installation does not authorize parallel execution, commits, integration, or publication.
+One person or agent can carry every responsibility. Parallel mutations require appropriate authority and distinct, safely isolated ownership. Installation grants no permission to commit, integrate, publish, or contact external systems.
 
-## Evidence
+Observations can come from solo work as well as delegated work. Save one only when it can prevent repeated cost or inform later improvement. This package owns both the Handoffs category and its starting format, because a sealed transfer snapshot only earns its place where work actually crosses a boundary. A Handoff is for a real transfer, not a report required after every task.
 
-Judge this Workflow by the work it helps you deliver: how it coordinates tasks, preserves what you need to resume, and verifies authorized integration. Claims about efficiency or reliability gains need evidence from the workspaces and conditions where those gains are expected.
+## Install And Customize
+
+Use the complete source catalogue so dependencies resolve together. See the [installation guide](../../../docs/extensions.md) for managed and manual setup.
+
+Keep or remove the methods, categories, and starter files that fit the workspace. Review dependent references and user-created descendants before removal. Template copies remain independent; deleting a starter never means deleting the work created from it.
+

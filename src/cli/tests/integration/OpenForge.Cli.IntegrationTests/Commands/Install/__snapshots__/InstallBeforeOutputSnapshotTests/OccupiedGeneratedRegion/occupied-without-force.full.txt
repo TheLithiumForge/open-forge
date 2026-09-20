@@ -1,0 +1,13 @@
+Cannot install: 1 file already exists where the Framework would write.
+Workspace: <workspace>
+  Error  .agents/memory/_memory.md  Target is occupied [install.target-occupied]
+         .agents/memory/_memory.md already exists and is not managed by Open Forge.
+         use open-forge install --force --dry-run
+         open-forge install --force --dry-run
+         Preview replacing the occupied Framework targets.
+  Bundled Framework fingerprint: <sha256> (14 assets).
+  No ownership record change was requested.
+  No recovery bundle was required.
+  Verification was not requested.
+  Preview replacing the occupied Framework targets.
+Next: open-forge install --force --dry-run

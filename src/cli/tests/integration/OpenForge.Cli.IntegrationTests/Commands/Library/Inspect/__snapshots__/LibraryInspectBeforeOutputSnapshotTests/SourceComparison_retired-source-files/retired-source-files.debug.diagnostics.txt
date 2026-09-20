@@ -1,0 +1,6 @@
+status=completed-with-warnings
+library=team-knowledge
+source-files=0
+comparisons=1
+findings=1
+The registered path is absent from the complete source inventory.

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted technology-neutral behavior for deterministic read-only Extension list facts and lifecycle trust states
+  description: Accepted technology-neutral behavior for deterministic read-only Extension list facts and ownership observations
   responsibility: Define list's source resolution, section projection, coverage, result formation, and non-mutation conformance
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Extension, List, Behavior, ReadOnly, Determinism, Lifecycle, CurrentTruth]
 ---
@@ -11,7 +11,7 @@ open-forge:
 
 This is the accepted current Crystallized Behavior Contract for read-only
 `open-forge extension list`. It defines deterministic request resolution, exact
-workspace and source handling, lifecycle-section trust classification, Installed
+workspace and source handling, ownership observation, Installed
 and Available projection, coverage, result formation, and read-only conformance.
 The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
 define the exact shared JSON result schema and exit mapping. The accepted [CLI
@@ -24,7 +24,7 @@ behavior does not duplicate those mechanics or claim their Gate 5 proof.
 ```text
 validated request
   -> exact workspace and optional exact source
-  -> installed lifecycle facts and available package facts
+  -> installed ownership facts and available package facts
   -> requested section projection
   -> coverage and trust classification
   -> one typed result
@@ -56,30 +56,27 @@ deterministic inventory and hash proof. That proof identifies distributed source
 assets; it is not evidence of a selected workspace's current installation or of
 a proven runtime implementation.
 
-## Lifecycle Facts
+## Ownership Facts
 
-Read installed facts from `.agents/open-forge.lifecycle.json`, schema v1, in the
-selected workspace. Treat `framework` and `extensions` as separate lifecycle
-sections for their own facts, not as separate authorities. Keep safe facts from
-one section when the unrelated section is malformed, but expose the section
-trust and coverage. The document stores no
-plan, runtime history, journal, recovery evidence, or session. Files outside this
-exact path are ordinary workspace content, not lifecycle input.
+Read installed facts only from `.agents/open-forge.lock.json` in the selected
+workspace through the forgiving ownership reader. Select its Extension receipts;
+Framework and Library claims do not create installed Extension packages. The
+receipt has no persisted content baseline, workspace binding or fingerprint
+policy. Old state files are unrelated user content and are never read,
+converted, rewritten or deleted.
 
-Classify a section as safely absent only after complete inspection proves no
-expected managed state, managed boundary, or recovery residual. An absent
-document or section is not, by itself, proof of an empty installed set. Classify it as
-trusted only when exact workspace/package/path/owner/dependency identities,
-supported versions and fingerprint policy, reciprocal facts, duplicate-free
-IDs and paths, and complete verifiable coverage hold. Classify malformed,
-unsupported, unverifiable, or inconsistent evidence as untrusted/incomplete or
-blocked when ambiguity is unsafe. A matching path, bytes, fingerprint, source,
-or force flag never promotes evidence.
+A complete observation with unambiguous IDs exposes the recorded packages in
+ordinal ID order. An empty Extension section means no recorded packages, not
+proof that manually copied content is absent. Missing, malformed, unreadable or
+ambiguous ownership produces no installed rows, incomplete installed coverage,
+and the informational `extension-list.ownership-observation` finding with
+`status: complete`. It never raises the aggregate status by itself. The finding
+names the lock and explains that installed packages could not be established.
+No matching file, source ID or payload inventory recreates ownership.
 
-Installed facts remain reportable when the package source is missing. Source
-unavailability makes current-source comparison and available facts unavailable;
-it does not erase the installed ID, recorded version, trust state, ownership,
-or baseline facts that can be read safely.
+Installed identities, descriptive versions and path counts remain reportable
+when the selected package source is unavailable. Source availability is an
+independent observation and keeps its existing finding and status rules.
 
 ## Section Projection And Ordering
 
@@ -88,7 +85,7 @@ With no section filter, project Installed followed by Available. With only
 both in the stable order. Each package ID appears once per section, while
 installed and available facts remain separate records for the same ID.
 
-Installed rows expose stable ID, descriptive version when present, lifecycle
+Installed rows expose stable ID, descriptive version when present, ownership
 state, managed-path or dependency counts, source availability, and finite
 current facts. Available rows expose manifest package facts, dependency facts,
 source identity, and package availability. A list does not write lifecycle state
@@ -104,16 +101,16 @@ The operation forms one typed result containing exact workspace and source,
 requested filters, Installed and Available sections, lifecycle trust and
 availability, findings, status, and one next action when needed.
 
-Use the seven shared statuses. `complete` requires complete requested coverage;
-`attention` records a complete safe observation such as source-unavailable
-installed facts when the command can still answer its requested question;
-`incomplete` records safe unavailable source or lifecycle coverage;
-`invalid` stops on input; `blocked` records unsafe identity, containment,
-ownership, or disjointness; `failed` and `interrupted` retain event meaning.
+Use the seven shared statuses. `completed` permits unavailable ownership with its informational finding;
+`completed-with-warnings` records a complete safe observation such as
+source-unavailable installed facts when the command can still answer its requested question;
+`incomplete` records safe unavailable source coverage;
+`invalid-input` stops on input; `blocked` records unsafe identity, containment,
+ownership, or disjointness; `failed` and `cancelled` retain event meaning.
 The operation never fabricates zero, empty, trusted, or available facts.
 
-Primary human complete/attention/incomplete results go to stdout. Primary human
-invalid/blocked/failed/interrupted results go to stderr. JSON emits one complete
+Primary human completed/completed-with-warnings/incomplete results go to stdout. Primary human
+invalid-input/blocked/failed/cancelled results go to stderr. JSON emits one complete
 result on stdout for every status; bounded diagnostics use stderr.
 
 ## Read-Only Safety And Conformance

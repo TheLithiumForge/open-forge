@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Find.Models.Matching;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
@@ -11,6 +12,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Matching;
 
 public sealed class FindBodyTagScannerTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find body tags use whole Unicode token grammar and preserve authored locations")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public void VisibleBareTagsUseWholeUnicodeTokenGrammar()
@@ -50,6 +52,7 @@ public sealed class FindBodyTagScannerTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find body tags exclude code, HTML, destinations, escapes, entities, and generated entries")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public void CodeHtmlDestinationsEscapesEntitiesAndGeneratedEntriesDoNotMatch()
@@ -59,26 +62,12 @@ public sealed class FindBodyTagScannerTests
             + "```text\n"
             + "#code\n"
             + "```\n"
-            + "<div>#html</div>\n"
-            + "<!-- open-forge:generated-index:start -->\n"
-            + "- generated #hidden\n"
-            + "<!-- open-forge:generated-index:end -->\n"
+            + "<div>#html</div>\n\n"
+            + "## Entries\n\n"
+            + "- generated #hidden\n\n"
+            + "## Following\n\n"
             + "After #tail\n";
-        var document = Document(
-            source,
-            [
-                SpanOf(source, "Before #visible "),
-                SpanOf(source, "#label"),
-                SpanOf(source, "\\#escaped &#35;entity"),
-                SpanOf(source, "- generated #hidden"),
-                SpanOf(source, "After #tail"),
-            ],
-            [
-                SpanOf(source, "```text\n#code\n```"),
-                SpanOf(source, "<div>#html</div>"),
-                SpanOf(source, "<!-- open-forge:generated-index:start -->"),
-                SpanOf(source, "<!-- open-forge:generated-index:end -->"),
-            ]);
+        var document = new MarkdownDocumentParser().Parse(source);
 
         var facts = new FindBodyTagScanner().Scan(new FindBodyTagInput(document));
 
@@ -91,7 +80,7 @@ public sealed class FindBodyTagScannerTests
             ExpectedLocation(source, source.IndexOf("#label", StringComparison.Ordinal) + 1, 5, 1, 19),
             facts.Occurrences[1].Location);
         Assert.Equal(
-            ExpectedLocation(source, source.IndexOf("#tail", StringComparison.Ordinal) + 1, 4, 9, 8),
+            ExpectedLocation(source, source.IndexOf("#tail", StringComparison.Ordinal) + 1, 4, 13, 8),
             facts.Occurrences[2].Location);
     }
 

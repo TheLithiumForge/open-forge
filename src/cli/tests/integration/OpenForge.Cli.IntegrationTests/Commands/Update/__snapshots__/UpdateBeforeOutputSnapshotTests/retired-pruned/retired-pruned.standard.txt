@@ -1,0 +1,7 @@
+Updated 1 Framework file.
+Workspace: <workspace>
+  .agents/guidance/retired-framework.md  deleted (no longer part of this release)
+  .agents/open-forge.lock.json           updated
+  14 files unchanged
+  Review previous content in the recovery bundle at <recovery-bundle>.
+Next: open-forge doctor

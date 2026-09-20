@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveFiniteContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove finite machine names retain the accepted wire vocabulary"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void FiniteMachineNamesRetainAcceptedVocabulary()
@@ -76,6 +77,7 @@ public sealed class RouteRemoveFiniteContractTests
         Assert.Equal(
             [
                 "route-remove.invalid-input",
+                "route-remove.confirmation-required",
                 "route-remove.invalid-source",
                 "route-remove.source-not-found",
                 "route-remove.invalid-subject",
@@ -109,6 +111,7 @@ public sealed class RouteRemoveFiniteContractTests
             Enum.GetValues<RouteRemoveFindingCode>().Select(RouteRemoveDefinitions.ReadMachineName));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove rejects undefined finite values instead of inventing wire names"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void UndefinedFiniteValuesAreRejected()

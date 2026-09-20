@@ -1,0 +1,8 @@
+status=blocked
+mode=apply
+selection=automatic
+repairs=1
+remaining=2
+library-steps=0
+verification=not-requested
+next=present

@@ -7,6 +7,9 @@ open-forge:
 
 # library attach Behavior Contract
 
+Unavailable ownership is reported as `library-attach.ownership-observation`
+with `completed` status. This finding grants no ownership or mutation permission.
+
 ## Status And Boundary
 
 This is the current Crystallized Behavior Contract for
@@ -30,6 +33,18 @@ The shared [Global Flags Behavior Contract](../../shared/global-flags/behavior.m
 [Shared CLI Operation Contract](../../../shared-operation-contract.md) retain
 their cross-command meaning.
 
+The sole generated state publication is `.agents/open-forge.lock.json`.
+The existing public record-effect and publication fields describe that lock
+write. Its Libraries section contains validated registration identities and
+source-relative paths; other ownership sections are preserved. No retired
+record is read, written, converted, or deleted. A missing lock may be created
+after the explicit attach effects verify. A readable ordinary malformed lock
+may be replaced only with the newly verified claim; no old claim is inferred,
+deleted, or updated from malformed bytes. An unreadable, aliased, nonordinary,
+or otherwise unavailable publication causes no effect. Recovery protects the
+exact prior lock bytes before any effect; the planned lock publication remains
+last after verified link and generated-region effects.
+
 ## Operation Invariants
 
 Attach performs one complete operation for one new library identity. A
@@ -39,7 +54,7 @@ conforming implementation follows this conceptual flow:
 validated library ID, source root, workspace, and flags
   -> complete physical source and consumer boundary facts
   -> complete eligible source inventory
-  -> valid current library record and every destination collision fact
+  -> ownership observation, duplicate-ID fact, and every destination collision fact
   -> derived source/destination mappings
   -> permitted generated-region projection and intended record
   -> one deterministic ordered mutation plan
@@ -51,11 +66,17 @@ validated library ID, source root, workspace, and flags
 ```
 
 No persistent effect begins until the source boundary, complete inventory,
-record, every destination, generated-region boundary, intended record, ordered
-plan, and preflight are complete. One invalid source or record input, duplicate,
-collision, incomplete source fact, unsafe identity, or other blocker prevents
-every effect. Attach never creates a safe subset and never treats source content
-as destination authority.
+ownership observation, duplicate-ID fact, every destination, generated-region
+boundary, intended record, ordered plan, and preflight are complete. A whole
+readable ordinary malformed ownership lock is not a source of old claims: with
+explicit source and destination inputs it may be replaced only by the newly
+verified claim after all the same source, mapping, ancestor, alias, permission,
+and safety checks. An unreadable, aliased, nonordinary, or otherwise unavailable
+publication prevents every effect. Any invalid source or record input outside
+that narrow malformed-file case, duplicate, collision, incomplete source fact,
+unsafe identity, or other blocker prevents every effect. Attach never creates a
+safe subset and never treats source content, matching bytes, matching links, or
+legacy records as destination authority.
 
 For unchanged workspace bytes and explicit input, resolution, inventory,
 mappings, generated projection, record bytes, plan, and semantic result are
@@ -77,9 +98,9 @@ ancestor and the selected root must be a real ordinary directory, without
 symlink, junction or reparse ancestry. No specially named child is required.
 The selected directory itself scopes the recursively discovered eligible files.
 
-An absent or non-directory source root is `invalid` for Attach. For an existing
+An absent or non-directory source root is `invalid-input` for Attach. For an existing
 registration, unavailable or missing source facts make Inspect or Sync
-`incomplete`; a readable non-directory root is `invalid`. Unsafe containment,
+`incomplete`; a readable non-directory root is `invalid-input`. Unsafe containment,
 linked ancestry or ambiguous identity is `blocked`. List reports only bounded
 root availability and does not enumerate descendants. An incomplete source is
 never an empty source inventory.
@@ -114,44 +135,37 @@ physical path facts feed projection planning.
 
 ## Record Resolution And Identity
 
-The consumer record is `.agents/open-forge.libraries.json`, separate from
-lifecycle ownership and consumer permissions. Its exact current schema is:
+Library selection reads the `libraries` claims in `.agents/open-forge.lock.json`.
+The shared ownership codec accepts understood keys without requiring an exact
+schema version or member set. It never reads the old Library or lifecycle file
+for selection. Each usable Library claim supplies `id`, `sourceRoot`,
+`destinationRoot`, and source-relative `paths`. IDs and paths are presented in
+ordinal order; typed portable identities and unambiguous mapped destinations
+remain required before using a claim. The destination root may be `.`; a source
+root may not. Link identity derives from the two roots and each source suffix.
+Permissions remain separate from ownership.
 
-```json
-{
-  "schemaVersion": 1,
-  "libraries": [
-    {
-      "id": "team-knowledge",
-      "sourceRoot": "shared/team-knowledge",
-      "destinationRoot": ".apm/agents/team",
-      "paths": ["checks/security.md", "review.md"]
-    }
-  ]
-}
-```
+An absent, unreadable, nonordinary, malformed, or uninterpretable ownership lock
+provides no usable registrations and yields a truthful ownership observation.
+It is never reported as a valid empty record for read-only or selected-record
+operations: the record state remains `missing`, `unavailable`, or
+`invalid-input`, with unavailable counts and no selected paths. List returns no
+registrations; Inspect, Sync, and Detach select nothing and do not invent an
+unknown-ID error. Their `ownership-observation` finding explains why. A valid
+readable lock with no matching requested ID still yields `invalid-input` for
+those selected-record operations. Attach has only the narrow new-claim
+exception in the next paragraph.
 
-Require exactly `schemaVersion` and `libraries` at the top level, and exactly
-`id`, `sourceRoot`, `destinationRoot` and `paths` per Library. Require integer
-`1`, existing Library-ID grammar, canonical portable roots and source-relative
-eligible paths. The destination root is `.` or a normal relative directory;
-source roots do not admit `.`. Unknown, missing, null, duplicate and wrongly
-typed members are malformed. No previous schema shape, migration or alternate
-reader is accepted.
-
-IDs and each source-relative path array use ordinal order. Paths are unique
-within a Library. Derived destinations must be unique across Libraries under
-portable identity; equal source-relative paths at different destinations are
-valid. Empty path arrays and an empty Library array are valid. The record stores
-no expected-link text, contents, hashes, timestamps, Git facts, dependencies,
-globs or per-file remapping. Link identity derives from both recorded roots and
-the source-relative path. Permission is separate from ownership and may be
-revoked independently.
-
-A missing record is a valid prior-absence fact for Attach and a complete empty
-List result. Inspect, Sync and Detach require the requested ID in a valid record.
-Malformed, unavailable and unsafe records retain their existing invalid,
-incomplete and blocked classification; none becomes an empty valid record.
+Attach may form a new claim from its explicit source and destination only when
+the ownership snapshot is absent or is a readable ordinary malformed file with
+readable bytes, and only after complete source inventory, destination and
+ancestor checks, alias checks, permission admission, and all other safety
+preflight. A malformed snapshot is replaced by the new verified claim; its
+unknown old claims are neither inferred nor reconciled. The successful result is
+Complete0 with the ownership observation retained. An unreadable,
+aliased, nonordinary, or otherwise unavailable publication has no effects.
+Read-only operations never reconstruct or write a lock. Matching files,
+matching links, and old or legacy records create no claims.
 
 An already registered ID blocks Attach even when all other facts match.
 
@@ -171,7 +185,7 @@ file fallback or directory ownership is introduced.
 
 Validate source eligibility and final destination protection separately. Protect
 Git metadata, Framework and recognized manager controls, `.agents` Loader,
-entrypoint and overwrite controls, lifecycle/Library/permission/lock controls, recovery and temporary
+entrypoint and overwrite controls, authored settings and generated ownership controls, recovery and temporary
 storage, and every selected or registered Library source tree. A grant covering
 a containing directory never overrides these leaf checks. Compare portable
 identity and physical containment. Different source-relative paths and different
@@ -187,8 +201,11 @@ route or generated region is created.
 
 ## Intended Record And Plan
 
-Attach forms the intended schema-v1 record by inserting the new sorted library
-record and its complete sorted path list. The intended record contains no
+Attach forms the intended versioned record by inserting the new sorted library
+record and its complete sorted path list. For a valid readable ownership record,
+other claims are preserved; for a readable ordinary malformed ownership file,
+the intended publication contains only the newly verified claim and does not
+pretend to reconcile unknown old claims. The intended record contains no
 expected-link property, source bytes, absolute path, Git fact, collection,
 per-file remapping, glob, dependency, or exclusion metadata. The resulting record is
 the final consumer publication and is not an early ownership marker.
@@ -220,24 +237,37 @@ whole.
 It reports all links, parent directories, generated regions, record bytes, and
 blockers, then stops before acquiring a workspace lease or probing recovery
 capability. It performs no filesystem or application-data effect. A planned
-change alone does not create `attention`.
+change alone does not create `completed-with-warnings`. Missing, unknown, or
+malformed ownership observations remain in the typed preview; dry-run never
+silently converts them into a stronger ownership claim or an unqualified
+success headline.
+
+A successful attach from a readable invalid ownership file keeps Complete0
+while rendering that ownership observation as a visible warning at minimal
+detail. This warning does not imply that prior ownership was reconstructed.
 
 ## Consumer Permission
 
-Derive required external leaves from the complete eligible mapped inventory, using the recorded
-Library/source identity. The [Interface](interface.md#consumer-permission)
+Explicit non-dry-run `--allow-path` edits the shared authored settings after safe
+planning and before admission; failure is reported and stops content application.
+It is a separate authored edit and remains if later content fails. Interactive
+always approval declares a settings effect covered by the operation's recovery
+bundle. Once approves only this operation and writes no settings; cancel applies
+nothing. The shared contract owns the exact reader, authoring and receipt rules.
+
+Derive required external leaves from the complete eligible mapped inventory, using shared destination admission. The [Interface](interface.md#consumer-permission)
 selects scope proposals and the [Workspace Permissions Behavior](../../shared/workspace-permissions/behavior.md)
-defines exact admission, future-descendant approval, source rebinding, revocation,
+defines exact admission, future-descendant approval, shared destination grants, revocation,
 prompt grammar and receipt truth.
 
 Complete source/record, ownership, mapping and structural preflight before the
 question. Preserve immutable required/missing leaves, proposed/approved scopes
-and any old/new source binding. Missing or declined permission blocks the whole
-request; dry-run and noninteractive execution do not write approval.
+without owner or source-bound grant coordinates. Missing or declined permission blocks the whole
+request; dry-run writes nothing, and noninteractive execution authors grants only through explicit `--allow-path`.
 
-Under the same workspace lease, compare exact permission bytes or prior absence
+Under the same workspace lease, compare exact settings bytes or prior absence
 and every other volatile plan fact. Drift invalidates approval without merging
-new grants. Prepare one bundle including prior permission bytes or absence, then
+new grants. Prepare one bundle including prior settings bytes or absence, then
 verify its ordinary create/replace before directories, links or generated effects.
 Publish the Library record last. Failure preserves actual verified permission
 outcome and residual evidence. Library repair never applies the permission entry;
@@ -250,9 +280,9 @@ lease is acquired. The lease is held through under-lock revalidation, all
 effects, verification, and final record publication. Under the lease, the
 operation revalidates the selected workspace, source-root set, complete
 registered-record state, every destination and parent, generated regions, and
-cancellation. Drift that is safely observable is reported as attention or
-replanned only by a fresh invocation; unsafe mutation preconditions are
-blocked.
+cancellation. Drift that is safely observable is reported as
+`completed-with-warnings` or replanned only by a fresh invocation; unsafe
+mutation preconditions are blocked.
 
 Immediately before each effect, the operation performs a final no-follow
 check of the target component and repeats the matching expected-state check.
@@ -295,15 +325,15 @@ retained recovery evidence under the shared design.
 
 Verification checks every created parent directory, every relative-file link's
 no-follow kind and exact raw target, every generated region's intended bounded
-bytes, and the final consumer record's exact schema, sorted IDs, sorted paths,
+bytes, and the planned lock's exact bytes, sorted IDs, sorted paths,
 and complete path set. It also verifies source bytes and source topology remain
 unchanged by the operation without reading source bytes into recovery state.
 
-An application is `complete` only after all declared effects and the final
-record publication verify. A dry run is `complete` when its complete plan and
-preflight verify. A safe read-side drift may be surfaced as `attention`, but
+An application is `completed` only after all declared effects and any planned
+lock publication verify. A dry run is `completed` when its complete plan and
+preflight verify. A safe read-side drift may be surfaced as `completed-with-warnings`, but
 an unsafe occupant or changed expected state before mutation is `blocked`.
-Recovery-cleanup retention maps to the shared `attention` case; unknown
+Recovery-cleanup retention maps to the shared `completed-with-warnings` case; unknown
 post-effect state remains `failed`.
 
 The operation forms one typed result and does not let human or JSON rendering
@@ -323,17 +353,20 @@ Conformance must prove, at the cheapest boundary that directly owns each fact:
 - derived source/destination path sets, derived relative raw targets, real
   parent directories, local sibling preservation, no copy fallback, collision
   categories, and Extension/lifecycle/library ownership;
-- existing generated-region projection, marker and authored-byte preservation,
+- existing generated-region projection, heading and authored-byte preservation,
   no route or Loader creation, and consumer destination identity;
-- exact schema-v1 record creation/replacement, no extra fields, sorting,
-  malformed-record invalidity, duplicate-identity blocking, and
-  record-publication-last ordering;
+- normalized lock creation/replacement, no extra fields, sorting,
+  truthful missing/unknown ownership observations, the narrow readable-ordinary
+  malformed-lock publication of only a newly verified claim, no effects for an
+  unreadable/aliased/nonordinary publication, registered-ID collision blocking,
+  no adoption from matching links or legacy records, and record-publication-last
+  ordering;
 - immutable dry-run/application plan parity, no dry-run lease or recovery
   capability probe, complete preflight, one lease, under-lock revalidation,
   immediate no-follow checks, typed recovery, monotonic effects, verification,
   residual state, and no automatic rollback; and
 - all shared semantic statuses, stream and JSON parity, retained recovery
-  `attention`, and useful error actions.
+  `completed-with-warnings`, and useful error actions.
 
 The three public EndToEnd journeys are defined only by the [Interface
 Contract](interface.md#endtoend-journeys). Lower-tier evidence may exercise

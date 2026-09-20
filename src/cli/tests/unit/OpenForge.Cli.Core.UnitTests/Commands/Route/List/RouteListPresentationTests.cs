@@ -1,20 +1,19 @@
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.TestSupport;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Models.Binding;
-using OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Route.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Presentation.Route.List;
+using OpenForge.Cli.Core.Presentation.Route.List.Shared.Help;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
-using OpenForge.Cli.Core.Shell.Parsing;
-using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
-using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
@@ -22,7 +21,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List;
 
 public sealed class RouteListPresentationTests
 {
-    [Fact(DisplayName = "Route list binding uses the default and accepted finite or all depths"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Route list binding uses the default and accepted finite or all depths"), Trait("Feature", "route-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
     public void BindingUsesDefaultAndAcceptedDepths()
     {
         var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
@@ -44,7 +43,7 @@ public sealed class RouteListPresentationTests
         Assert.Equal("memory", Assert.IsType<RouteListRequest>(all.Request).SourceReference);
     }
 
-    [Theory(DisplayName = "Route list binding maps invalid depth to one typed invalid result without a request"), InlineData("-1"), InlineData("+1"), InlineData("1.5"), InlineData("ALL"), InlineData("2147483648"), InlineData(""), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "Route list binding maps invalid depth to one typed invalid result without a request"), InlineData("-1"), InlineData("+1"), InlineData("1.5"), InlineData("ALL"), InlineData("2147483648"), InlineData(""), Trait("Feature", "route-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
     public void BindingMapsInvalidDepthToTypedResult(string depth)
     {
         var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
@@ -63,111 +62,90 @@ public sealed class RouteListPresentationTests
         Assert.Same(invocation.Workspace, result.Workspace);
     }
 
-    [Fact(DisplayName = "Route list invalid depth binding bypasses the operation pipeline"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
-    public async Task InvalidDepthBypassesOperation()
-    {
-        var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
-        var operationCalls = 0;
-        var fallback = CompleteResult();
-        var binding = RouteListBinding.Close(
-            symbols,
-            new RouteListBindingComponents
-            {
-                Help = CliHelpContent.Empty,
-                Operation = (request, cancellationToken) =>
-                {
-                    operationCalls++;
-                    return ValueTask.FromResult(fallback);
-                },
-                Renderers = new CliRendererSet<RouteListResult>(
-                    RouteListHumanRenderer.Render,
-                    RouteListJsonRenderer.Render),
-            });
-        var output = new StringWriter();
-        var error = new StringWriter();
-        var tree = CliCommandTree.Create(
-            CliHelpContent.Empty,
-            [new CliRootBranch(symbols.RouteGroup, CliHelpContent.Empty)],
-            [binding]);
-        var parse = tree.Parse(["route", "list", "--depth=-1"]);
-        var completion = await binding.InvokeAsync(
-            new CliBindingParse(parse.Result, parse.OriginalArguments),
-            Invocation(RouteListContractTestData.Workspace()),
-            new CliOutputWriters(output, error),
-            TestContext.Current.CancellationToken);
-
-        Assert.Equal(0, operationCalls);
-        Assert.Equal(4, completion.ExitCode);
-        Assert.Empty(output.ToString());
-        Assert.Contains("route-list.invalid-depth", error.ToString(), StringComparison.Ordinal);
-    }
-
-    [Fact(DisplayName = "Route list compact and expanded renderers retain one immutable row order"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
-    public void HumanViewsRetainTypedRowOrder()
+    [Fact(DisplayName = "Route list detail levels retain one immutable row order"), Trait("Feature", "route-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void TextDetailLevelsRetainTypedRowOrder()
     {
         var result = CompleteResult();
-        var compact = RouteListHumanRenderer.Render(Presentation(result, CliView.Compact));
-        var expanded = RouteListHumanRenderer.Render(Presentation(result, CliView.Expanded));
+        var compact = CliRenderingStage.Render(
+            Presentation(result, CliDetail.Minimal),
+            RouteListPresentation.Rendering).PrimaryContent;
+        var standard = CliRenderingStage.Render(
+            Presentation(result, CliDetail.Standard),
+            RouteListPresentation.Rendering).PrimaryContent;
+        var full = CliRenderingStage.Render(
+            Presentation(result, CliDetail.Full),
+            RouteListPresentation.Rendering).PrimaryContent;
 
-        Assert.StartsWith($"Routes{Environment.NewLine}Status: complete", compact, StringComparison.Ordinal);
-        Assert.Contains("Coverage: complete; roots: 1; depth: 1; routes: 2", compact, StringComparison.Ordinal);
-        Assert.Contains("memory  .agents/memory/_memory.md", compact, StringComparison.Ordinal);
-        Assert.True(compact.IndexOf("memory  ", StringComparison.Ordinal) < compact.IndexOf("memory/child", StringComparison.Ordinal));
-        Assert.StartsWith(
-            $"Routes{Environment.NewLine}Status: complete",
-            expanded,
-            StringComparison.Ordinal);
-        Assert.Contains("Confirmed:", expanded, StringComparison.Ordinal);
-        Assert.Contains("Parent: memory; .agents/memory/_memory.md", expanded, StringComparison.Ordinal);
-        Assert.Contains("Source: authored routed file; overwrite: none", expanded, StringComparison.Ordinal);
-        Assert.True(expanded.IndexOf("memory  ", StringComparison.Ordinal) < expanded.IndexOf("memory/child  ", StringComparison.Ordinal));
+        Assert.DoesNotContain("Status:", compact, StringComparison.Ordinal);
+        Assert.DoesNotContain("Coverage:", compact, StringComparison.Ordinal);
+        Assert.DoesNotContain("Confirmed:", compact, StringComparison.Ordinal);
+        Assert.Contains("  memory", compact, StringComparison.Ordinal);
+        Assert.DoesNotContain(".agents/memory/_memory.md", compact, StringComparison.Ordinal);
+        Assert.True(compact.IndexOf("memory", StringComparison.Ordinal) < compact.IndexOf("memory/child", StringComparison.Ordinal));
+        Assert.Contains("Workspace: ", standard, StringComparison.Ordinal);
+        Assert.Contains(".agents/memory/_memory.md", standard, StringComparison.Ordinal);
+        Assert.Contains("#Memory", standard, StringComparison.Ordinal);
+        Assert.DoesNotContain("Selection:", standard, StringComparison.Ordinal);
+        Assert.Contains("Parent: memory; .agents/memory/_memory.md", full, StringComparison.Ordinal);
+        Assert.Contains("Kind: file; direct children: none", full, StringComparison.Ordinal);
+        Assert.Contains("Selected as: descendant", full, StringComparison.Ordinal);
+        Assert.Contains("Overwrite: none", full, StringComparison.Ordinal);
+        Assert.True(full.IndexOf("memory", StringComparison.Ordinal) < full.IndexOf("memory/child", StringComparison.Ordinal));
     }
 
-    [Fact(DisplayName = "Route list JSON projection keeps its envelope, scalar depth forms, and nullable facts"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
-    public void JsonProjectionKeepsEnvelopeScalarsAndNulls()
+    [Fact(DisplayName = "Route list JSON projection keeps the shared envelope and level data"), Trait("Feature", "route-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void JsonProjectionKeepsSharedEnvelopeAndLevelData()
     {
         var complete = CompleteResult();
-        var json = RouteListJsonRenderer.Render(Presentation(complete, CliView.Compact, CliOutputFormat.Json));
-        var expandedJson = RouteListJsonRenderer.Render(Presentation(complete, CliView.Expanded, CliOutputFormat.Json));
-        Assert.True(JsonViewComparison.RetainsResult(json, expandedJson, ["rows.*.provenance"]));
+        var json = CliRenderingStage.Render(
+            Presentation(complete, CliDetail.Minimal, CliFormat.Json),
+            RouteListPresentation.Rendering).PrimaryContent;
+        var expandedJson = CliRenderingStage.Render(
+            Presentation(complete, CliDetail.Standard, CliFormat.Json),
+            RouteListPresentation.Rendering).PrimaryContent;
+        Assert.True(JsonDetailComparison.RetainsData(json, expandedJson));
         using var document = JsonDocument.Parse(expandedJson);
         var root = document.RootElement;
 
         Assert.Equal(
-            ["schemaVersion", "command", "status", "workspace", "result", "next"],
+            ["schemaVersion", "command", "status", "detail", "filter", "workspace", "summary", "findings", "effects", "counts", "limitations", "data", "recovery", "next"],
             root.EnumerateObject().Select(property => property.Name));
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
         Assert.Equal("route list", root.GetProperty("command").GetString());
-        Assert.Equal("complete", root.GetProperty("status").GetString());
+        Assert.Equal("completed", root.GetProperty("status").GetString());
         Assert.Equal(
-            ["selection", "requestedDepth", "effectiveDepth", "coverage", "findings", "rows"],
-            root.GetProperty("result").EnumerateObject().Select(property => property.Name));
+            ["subject", "depth", "rows"],
+            root.GetProperty("data").EnumerateObject().Select(property => property.Name));
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("data").GetProperty("subject").ValueKind);
+        Assert.Equal(1, root.GetProperty("data").GetProperty("depth").GetInt32());
+        var firstRow = root.GetProperty("data").GetProperty("rows")[0];
         Assert.Equal(
-            ["kind", "attemptedId", "attemptedPath", "resolvedId", "resolvedPath"],
-            root.GetProperty("result").GetProperty("selection").EnumerateObject().Select(property => property.Name));
-        Assert.Equal(
-            ["state", "selectedRootCount", "confirmedRowCount", "confirmations", "unresolvedBoundaries"],
-            root.GetProperty("result").GetProperty("coverage").EnumerateObject().Select(property => property.Name));
-        Assert.Equal(1, root.GetProperty("result").GetProperty("requestedDepth").GetInt32());
-        Assert.Equal(1, root.GetProperty("result").GetProperty("effectiveDepth").GetInt32());
-        var firstRow = root.GetProperty("result").GetProperty("rows")[0];
-        Assert.Equal(
-            ["id", "path", "parentId", "parentPath", "absoluteDepth", "relativeDepth", "kind", "description", "tags", "directChildCount", "provenance"],
+            ["id", "path", "description", "tags", "relativeDepth"],
             firstRow.EnumerateObject().Select(property => property.Name));
-        Assert.Equal(JsonValueKind.Number, root.GetProperty("result").GetProperty("rows")[1].GetProperty("absoluteDepth").ValueKind);
-        Assert.Equal(JsonValueKind.Null, root.GetProperty("result").GetProperty("rows")[1].GetProperty("directChildCount").ValueKind);
         Assert.Equal("Memory", firstRow.GetProperty("tags")[0].GetString());
-        Assert.True(root.GetProperty("result").GetProperty("coverage").TryGetProperty("confirmations", out _));
-        Assert.Equal("loader-root", firstRow.GetProperty("provenance").GetProperty("selection").GetString());
         Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
 
+        var fullJson = CliRenderingStage.Render(
+            Presentation(complete, CliDetail.Full, CliFormat.Json),
+            RouteListPresentation.Rendering).PrimaryContent;
+        using var fullDocument = JsonDocument.Parse(fullJson);
+        var fullRow = fullDocument.RootElement.GetProperty("data").GetProperty("rows")[1];
+        Assert.Equal(
+            ["id", "path", "description", "tags", "relativeDepth", "parentId", "absoluteDepth", "kind", "directChildren", "selectedAs", "hasOverwrite"],
+            fullRow.EnumerateObject().Select(property => property.Name));
+        Assert.Equal("file", fullRow.GetProperty("kind").GetString());
+        Assert.Equal("descendant", fullRow.GetProperty("selectedAs").GetString());
+        Assert.Equal(JsonValueKind.Null, fullRow.GetProperty("directChildren").ValueKind);
+
         var all = CompleteResult(RouteListDepth.All);
-        using var allDocument = JsonDocument.Parse(RouteListJsonRenderer.Render(Presentation(all, CliView.Expanded, CliOutputFormat.Json)));
-        Assert.Equal("all", allDocument.RootElement.GetProperty("result").GetProperty("requestedDepth").GetString());
+        using var allDocument = JsonDocument.Parse(CliRenderingStage.Render(
+            Presentation(all, CliDetail.Standard, CliFormat.Json),
+            RouteListPresentation.Rendering).PrimaryContent);
+        Assert.Equal("all", allDocument.RootElement.GetProperty("data").GetProperty("depth").GetString());
     }
 
-    [Fact(DisplayName = "Route list JSON projection preserves null workspace and MachineCode findings"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
-    public void JsonProjectionPreservesNullWorkspaceAndFindingCode()
+    [Fact(DisplayName = "Route list JSON projection preserves null workspace and report findings"), Trait("Feature", "route-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void JsonProjectionPreservesNullWorkspaceAndReportFinding()
     {
         var result = RouteListResult.Create(
             CliSemanticStatus.Invalid,
@@ -182,30 +160,33 @@ public sealed class RouteListPresentationTests
                 "The workspace is unavailable.")],
             new CliNextAction("open-forge route list --help", "Select a workspace."));
 
-        using var document = JsonDocument.Parse(RouteListJsonRenderer.Render(Presentation(result, CliView.Expanded, CliOutputFormat.Json)));
+        using var document = JsonDocument.Parse(CliRenderingStage.Render(
+            Presentation(result, CliDetail.Standard, CliFormat.Json),
+            RouteListPresentation.Rendering).PrimaryContent);
         var root = document.RootElement;
         Assert.Equal(JsonValueKind.Null, root.GetProperty("workspace").ValueKind);
-        var finding = Assert.Single(root.GetProperty("result").GetProperty("findings").EnumerateArray());
+        var finding = Assert.Single(root.GetProperty("findings").EnumerateArray());
         Assert.Equal(
-            ["code", "status", "subject", "cause", "candidatePaths"],
+            ["severity", "code", "title", "message", "subject", "category", "resolution", "actions"],
             finding.EnumerateObject().Select(property => property.Name));
         Assert.Equal("route-list.invalid-workspace", finding.GetProperty("code").GetString());
-        Assert.Equal("workspace", finding.GetProperty("subject").GetString());
-        Assert.Equal("The workspace is unavailable.", finding.GetProperty("cause").GetString());
-        Assert.Equal("Select a workspace.", root.GetProperty("next").GetProperty("reason").GetString());
+        Assert.Equal("workspace", finding.GetProperty("subject").GetProperty("id").GetString());
+        Assert.Equal(
+            "Cannot use workspace as the workspace: it does not exist or cannot be read.",
+            finding.GetProperty("message").GetString());
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
     }
 
-    [Fact(DisplayName = "Route list workspace selection failure forms one typed null-workspace result"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Route list workspace selection failure forms one typed null-workspace result"), Trait("Feature", "route-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
     public void WorkspaceFailureFormsTypedNullWorkspaceResult()
     {
         var input = new CliGlobalInput(
             "missing-workspace",
             1,
-            CliOutputFormat.Json,
+            CliFormat.Json,
             1,
-            CliView.Expanded,
-            0,
-            CliVerbosity.Normal,
+            CliDetail.Standard,
+            0, null,
             0,
             false,
             0,
@@ -229,15 +210,18 @@ public sealed class RouteListPresentationTests
         Assert.Equal(RouteListFindingCode.InvalidWorkspace, Assert.Single(result.Findings).Code);
     }
 
-    [Fact(DisplayName = "Route list diagnostics remain bounded and contain no row or source-content dump"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Route list diagnostics remain bounded and contain no row or source-content dump"), Trait("Feature", "route-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
     public void DiagnosticsAreBoundedAndDoNotDumpRows()
     {
         var result = CompleteResult();
-        var diagnostics = Assert.IsType<string>(RouteListDiagnosticRenderer.Render(Presentation(result, CliView.Expanded)));
+        var diagnostics = Assert.IsType<string>(CliRenderingStage.Render(
+            Presentation(result, CliDetail.Debug),
+            RouteListPresentation.Rendering).DiagnosticContent);
 
-        Assert.InRange(diagnostics.Length, 1, CliRenderingStage.MaximumDiagnosticLength);
+        Assert.InRange(diagnostics.Length, 1, CliPresentationDefinitions.MaximumDiagnosticLength);
         Assert.Contains("workspace.lexical=", diagnostics, StringComparison.Ordinal);
-        Assert.Contains("workspace.physical=", diagnostics, StringComparison.Ordinal);
+        Assert.Contains("workspace.lexical=", diagnostics, StringComparison.Ordinal);
+        Assert.DoesNotContain("workspace.physical=", diagnostics, StringComparison.Ordinal);
         Assert.Contains("selection.kind=loader-roots", diagnostics, StringComparison.Ordinal);
         Assert.Contains("rows=2", diagnostics, StringComparison.Ordinal);
         Assert.Contains("findings=0", diagnostics, StringComparison.Ordinal);
@@ -245,7 +229,7 @@ public sealed class RouteListPresentationTests
         Assert.DoesNotContain("memory/child", diagnostics, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Route list help sections document grammar depth globals exits and accepted examples"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Route list help sections document grammar depth globals exits and accepted examples"), Trait("Feature", "route-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
     public void HelpSectionsDocumentAcceptedSurface()
     {
         var help = RouteListHelpSections.CreateList();
@@ -256,18 +240,17 @@ public sealed class RouteListPresentationTests
         Assert.Contains("The default depth is 1", text, StringComparison.Ordinal);
         Assert.Contains("--depth=all", text, StringComparison.Ordinal);
         Assert.Contains("--workspace <path>", text, StringComparison.Ordinal);
-        Assert.Contains("JSON always writes one result envelope to stdout", text, StringComparison.Ordinal);
         Assert.Contains("route inspect — inspect", text, StringComparison.Ordinal);
         Assert.Contains("open-forge route list memory", text, StringComparison.Ordinal);
         Assert.Contains("open-forge route list .agents/memory/_memory.md", text, StringComparison.Ordinal);
-        Assert.Contains("open-forge route list --depth=2 --json", text, StringComparison.Ordinal);
+        Assert.Contains("open-forge route list --depth=2 --format json", text, StringComparison.Ordinal);
     }
 
     private static CliInvocation Invocation(CliWorkspace workspace)
     {
         return new CliInvocation(
             new CliProcessIdentity("open-forge", "test"),
-            new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal),
+            new CliPresentation(CliFormat.Text, CliDetail.Standard, null),
             CliTerminalMode.None,
             new CliWorkspaceRequest(workspace.LexicalRoot, workspace.LexicalRoot),
             workspace);
@@ -275,12 +258,12 @@ public sealed class RouteListPresentationTests
 
     private static CliPresentationRequest<RouteListResult> Presentation(
         RouteListResult result,
-        CliView view,
-        CliOutputFormat format = CliOutputFormat.Human)
+        CliDetail view,
+        CliFormat format = CliFormat.Text)
     {
         return new CliPresentationRequest<RouteListResult>(
             result,
-            new CliPresentation(format, view, CliVerbosity.Normal));
+            new CliPresentation(format, view, null));
     }
 
     private static RouteListResult CompleteResult(RouteListDepth? depth = null)

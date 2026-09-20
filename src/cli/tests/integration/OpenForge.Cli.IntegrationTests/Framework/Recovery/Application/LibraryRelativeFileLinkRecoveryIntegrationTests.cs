@@ -20,6 +20,7 @@ public sealed class LibraryRelativeFileLinkRecoveryIntegrationTests
     private const string Destination = ".agents/a.md";
     private const string RawTarget = "../shared/.agents/a.md";
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Explicit link recovery reverses only exact intended create or delete and can recreate a dangling link")]
     [InlineData(false, false), InlineData(true, false), InlineData(true, true)]
     public static async Task RestoresExactPriorObject(bool originalDelete, bool dangling)
@@ -80,6 +81,7 @@ public sealed class LibraryRelativeFileLinkRecoveryIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Explicit link recovery blocks third-state occupants and linked parents while preserving recovery evidence")]
     [InlineData(false, "ordinary"), InlineData(false, "different-link"), InlineData(false, "absolute-link")]
     [InlineData(true, "ordinary"), InlineData(true, "different-link"), InlineData(true, "absolute-link"), InlineData(true, "parent")]

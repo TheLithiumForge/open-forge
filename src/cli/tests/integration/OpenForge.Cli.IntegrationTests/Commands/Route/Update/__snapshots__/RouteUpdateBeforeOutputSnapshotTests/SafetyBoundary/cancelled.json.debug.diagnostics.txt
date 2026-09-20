@@ -1,0 +1,11 @@
+status=cancelled
+mode=apply
+target=memory/project-alpha/overview
+completeness=incomplete
+safety=not-established
+body=not-established
+effects=0
+recovery=not created
+verification=not run
+findings=1
+Route Update target observation was interrupted.

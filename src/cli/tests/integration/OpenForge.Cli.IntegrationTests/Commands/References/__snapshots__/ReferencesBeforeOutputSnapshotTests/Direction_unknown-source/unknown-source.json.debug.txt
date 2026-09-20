@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 3,
+  "command": "references",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot list references: The source ID does not identify a retained logical source.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "references.invalid-source",
+      "title": "Source is unknown",
+      "message": "No source has the ID missing/source.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "missing/source",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "incoming": 0,
+    "outgoing": 0,
+    "sourcesScanned": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "direction": "both",
+    "incoming": [],
+    "outgoing": [],
+    "coverage": {
+      "incoming": "blocked",
+      "outgoing": "blocked"
+    },
+    "filters": {
+      "include": [],
+      "exclude": []
+    },
+    "scanned": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route list --depth=all",
+    "reason": "list the sources that exist"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 3,
+  "command": "library inspect",
+  "status": "incomplete",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "team-knowledge could not be inspected completely: Some files under shared/team could not be listed, so the comparison could not finish.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "library-inspect.inventory-incomplete",
+      "title": "Source inventory is incomplete",
+      "message": "Some files under shared/team could not be listed, so the comparison could not finish.",
+      "subject": {
+        "kind": "directory",
+        "path": ".agents/directives/review.md",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    },
+    {
+      "severity": "warning",
+      "code": "library-inspect.inventory-incomplete",
+      "title": "Source inventory is incomplete",
+      "message": "Some files under shared/team could not be listed, so the comparison could not finish.",
+      "subject": {
+        "kind": "directory",
+        "path": "shared/team",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sourceFiles": 0,
+    "linksCurrent": 0,
+    "filesAdded": 0,
+    "filesRetired": 0,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "warnings": 2
+  },
+  "limitations": [],
+  "data": {
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team",
+    "destinationFolder": ".",
+    "current": false,
+    "files": [
+      {
+        "sourcePath": ".agents/directives/review.md",
+        "destinationPath": ".agents/directives/review.md",
+        "relation": "unavailable"
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

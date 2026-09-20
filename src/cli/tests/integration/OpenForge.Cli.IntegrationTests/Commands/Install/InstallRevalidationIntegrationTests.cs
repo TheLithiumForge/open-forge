@@ -8,8 +8,9 @@ using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.TestSupport;
+
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
@@ -19,6 +20,7 @@ public sealed class InstallRevalidationIntegrationTests
     private const string LifecyclePath = ".agents/open-forge.lifecycle.json";
     private const string RecoveryInputPath = "recovery-race-input.md";
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install blocks when an authored source is added between confirmation and lease acquisition"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task AddedAuthoredSourceInvalidatesTheConfirmedPlan()
     {
@@ -30,6 +32,7 @@ public sealed class InstallRevalidationIntegrationTests
                 Encoding.UTF8));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install blocks when an authored source changes between confirmation and lease acquisition"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task ChangedAuthoredSourceInvalidatesTheConfirmedPlan()
     {
@@ -41,6 +44,7 @@ public sealed class InstallRevalidationIntegrationTests
                 Encoding.UTF8));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install blocks when an authored source is removed between confirmation and lease acquisition"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task RemovedAuthoredSourceInvalidatesTheConfirmedPlan()
     {
@@ -49,6 +53,7 @@ public sealed class InstallRevalidationIntegrationTests
             duringPrompt: File.Delete);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install preserves incomplete status when an authored source becomes unavailable after confirmation"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task UnavailableAuthoredSourcePreservesIncompleteResultMeaning()
     {
@@ -89,6 +94,7 @@ public sealed class InstallRevalidationIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install blocks and preserves a recognized recovery candidate that appears after confirmation"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task RecognizedRecoveryAppearanceInvalidatesTheConfirmedPlan()
     {
@@ -157,6 +163,7 @@ public sealed class InstallRevalidationIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install blocks when planned-missing .agents appears after confirmation"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task RacedAgentsDirectoryCannotSatisfyThePlannedDirectoryEffect()
     {
@@ -173,6 +180,7 @@ public sealed class InstallRevalidationIntegrationTests
         AssertNoInstallTargets(workspace);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Install reports external lock contention before planned .agents creation"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task ExternalLockContentionStartsNoWorkspaceEffect()
     {
@@ -239,13 +247,9 @@ public sealed class InstallRevalidationIntegrationTests
         InstallOperationWorkspace workspace,
         Action mutation)
     {
-        using var input = new MutatingAnswerReader(mutation);
-        using var promptOutput = new StringWriter();
         var result = await InstallOperationFactory.Create(
-                new CliInteractiveSession(
-                    input,
-                    promptOutput,
-                    canPrompt: true),
+                InstallInteractionTestSupport.Confirmation(
+                    observe: (_, _) => mutation()),
                 workspace.LockStoreRoot)
             .ExecuteAsync(
                 workspace.Request(
@@ -253,7 +257,6 @@ public sealed class InstallRevalidationIntegrationTests
                     allowsInteractiveConfirmation: true),
                 TestContext.Current.CancellationToken);
 
-        Assert.Equal("Apply this Install plan? [y/N] ", promptOutput.ToString());
         return result;
     }
 
@@ -292,23 +295,4 @@ public sealed class InstallRevalidationIntegrationTests
             description,
             tags: [tag],
             body: $"# {description}\n");
-}
-
-internal sealed class MutatingAnswerReader(Action mutation) : TextReader
-{
-    private readonly Action _mutation = mutation;
-    private bool _read;
-
-    public override ValueTask<string?> ReadLineAsync(CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-        if (_read)
-        {
-            return ValueTask.FromResult<string?>(null);
-        }
-
-        _read = true;
-        _mutation();
-        return ValueTask.FromResult<string?>("y");
-    }
 }

@@ -1,0 +1,9 @@
+status=cancelled
+mode=apply
+source=guidance/old guide
+subject=file
+effects=0
+removed=0
+detached=0
+findings=1
+Route Remove subject resolution was interrupted.

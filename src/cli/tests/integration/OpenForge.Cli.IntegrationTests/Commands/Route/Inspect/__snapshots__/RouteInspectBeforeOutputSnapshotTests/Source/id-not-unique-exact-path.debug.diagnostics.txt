@@ -1,0 +1,9 @@
+status=completed-with-warnings
+referenceKind=source-path
+selectionMethod=exact-path
+requested=.agents/docs/guide.md
+identity=present
+profile=present
+observations=1
+conditions=0
+next=none

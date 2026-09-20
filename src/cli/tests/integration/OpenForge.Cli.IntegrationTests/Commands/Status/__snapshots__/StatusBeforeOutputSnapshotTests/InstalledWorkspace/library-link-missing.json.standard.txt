@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "completed-with-warnings",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Open Forge is installed, but 1 file needs attention.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "status.library-projection-missing",
+      "title": "Missing Library link",
+      "message": "missing; it is a link of the team-knowledge Library",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/resources/data.json",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge library sync team-knowledge",
+          "reason": "Synchronize the missing Library link."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routedFiles": 13,
+    "startupFiles": 11,
+    "startupTokens": 5676,
+    "mayLoadAgainFiles": 1,
+    "mayLoadAgainTokens": 289,
+    "allTokens": 6337,
+    "startupShare": 89.57626449932928272705752387,
+    "rootCategories": 7,
+    "entriesSectionsCurrent": 12,
+    "entriesSectionsStale": 0,
+    "entriesSectionsMissing": 0,
+    "frameworkFilesCurrent": 14,
+    "frameworkFilesChanged": 0,
+    "frameworkFilesMissing": 0,
+    "extensionsInstalled": 0,
+    "librariesRegistered": 1,
+    "libraryLinksCurrent": 0,
+    "libraryLinksMissing": 1,
+    "libraryLinksChanged": 0,
+    "recoveryBundles": 0,
+    "recoveryDrafts": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "installation": {
+      "state": "installed",
+      "entryPath": "AGENTS.md",
+      "loaderPath": ".agents/loader.md"
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": 11,
+          "characters": 22704,
+          "bytes": 22704,
+          "tokens": 5676
+        },
+        "current": {
+          "files": 11,
+          "characters": 22704,
+          "bytes": 22704,
+          "tokens": 5676
+        },
+        "difference": {
+          "files": 0,
+          "characters": 0,
+          "bytes": 0,
+          "tokens": 0
+        },
+        "mayLoadAgain": {
+          "files": 1,
+          "characters": 1153,
+          "bytes": 1153,
+          "tokens": 289
+        }
+      },
+      "allRouted": {
+        "files": 13,
+        "characters": 25346,
+        "bytes": 25346,
+        "tokens": 6337
+      },
+      "startupShare": 89.57626449932928272705752387
+    },
+    "structure": {
+      "rootCategories": {
+        "count": 7,
+        "added": [],
+        "removed": []
+      }
+    },
+    "extensions": [],
+    "libraries": [
+      {
+        "id": "team-knowledge",
+        "sourceRoot": "shared/team-knowledge",
+        "destinationRoot": ".",
+        "links": {
+          "current": 0,
+          "missing": 1,
+          "changed": 0
+        }
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge library sync team-knowledge",
+    "reason": "Synchronize the missing Library link."
+  }
+}

@@ -1,0 +1,9 @@
+Removed the toolkit Extension.
+Workspace: <workspace>
+  .agents/toolkit.md  kept; still owned by base
+    owners before: toolkit; owners after: base
+  Removal order: toolkit
+  .agents/open-forge.lock.json  updated
+  The deleted files are kept in a recovery bundle at <recovery-bundle>.
+  after reviewing the bundle
+Next: open-forge cleanup

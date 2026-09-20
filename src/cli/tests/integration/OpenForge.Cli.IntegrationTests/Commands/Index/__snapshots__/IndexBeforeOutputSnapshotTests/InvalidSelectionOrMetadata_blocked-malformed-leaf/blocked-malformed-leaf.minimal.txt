@@ -1,0 +1,5 @@
+Cannot rebuild the Entries section of .agents/root/_root.md.
+Workspace: <workspace>
+  Error  .agents/root/child.md  Frontmatter is invalid
+         The frontmatter of .agents/root/child.md cannot be used: A direct routed child document cannot be safely decoded for authored metadata.
+Next: open-forge doctor

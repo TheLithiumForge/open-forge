@@ -1,4 +1,3 @@
-using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 
@@ -29,15 +28,16 @@ internal sealed class PublishedExtensionListWorkspace : IDisposable
 
     internal static PublishedExtensionListWorkspace Create(
         bool trustedInstalled = false,
-        bool opaqueFrameworkDuplicates = false)
+        bool leftoverState = false)
     {
         var workspace = TemporaryWorkspace.Create("e2e-extension-list");
         var source = TemporaryWorkspace.Create("e2e-extension-source");
         try
         {
             workspace.WriteText(
-                ".agents/open-forge.lifecycle.json",
-                Lifecycle(workspace.Path, trustedInstalled, opaqueFrameworkDuplicates));
+                ".agents/open-forge.lock.json",
+                Ownership(trustedInstalled));
+            if (leftoverState) workspace.WriteText(".agents/open-forge.lifecycle.json", "{ obsolete and malformed }");
             source.WriteText(
                 "extension.json",
                 """
@@ -73,53 +73,14 @@ internal sealed class PublishedExtensionListWorkspace : IDisposable
         _workspace.Dispose();
     }
 
-    private static string Lifecycle(
-        string workspacePath,
-        bool trustedInstalled,
-        bool opaqueFrameworkDuplicates)
+    private static string Ownership(bool trustedInstalled)
     {
         var packages = trustedInstalled
             ? """
-              [{
-                "id": "development-toolkit",
-                "version": "0.1.0",
-                "source": "embedded catalogue",
-                "dependencies": [],
-                "paths": [".agents/workflows/architecture.md"]
-              }]
-              """
-            : "[]";
-        var paths = trustedInstalled
-            ? """
-              [{
-                "path": ".agents/workflows/architecture.md",
-                "owners": ["development-toolkit"],
-                "baselineFingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                "fingerprintKind": "semantic"
-              }]
-              """
-            : "[]";
-        var framework = opaqueFrameworkDuplicates
-            ? """
-              {
-                "settings": { "enabled": true, "enabled": false },
-                "settings": null
-              }
-              """
-            : "null";
+              [{"id":"development-toolkit","version":"0.1.0","source":"embedded catalogue","dependencies":[],"paths":[],"regions":[]}]
+              """ : "[]";
         return $$"""
-            {
-              "schemaVersion": 1,
-              "fingerprintPolicy": "open-forge-markdown-v1",
-              "workspacePath": "{{JsonEncodedText.Encode(System.IO.Path.GetFullPath(workspacePath))}}",
-              "framework": {{framework}},
-              "extensions": {
-                "coverage": "complete",
-                "packages": {{packages}},
-                "paths": {{paths}}
-              }
-            }
+            {"schemaVersion":1,"extensions":{{packages}}}
             """;
     }
-
 }

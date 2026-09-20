@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would remove .agents/guidance/old guide.md",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": "README.md",
+      "kind": "link",
+      "action": "detached",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/guidance/old guide.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/guidance/old guide.overwrite.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesRemoved": 2,
+    "sectionsUpdated": 1,
+    "linksDetached": 1,
+    "filesScanned": 11
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "removed": [
+      ".agents/guidance/old guide.md",
+      ".agents/guidance/old guide.overwrite.md"
+    ],
+    "detachedLinks": [
+      {
+        "path": "README.md",
+        "location": "1:8",
+        "before": "Prefix [Old guide](.agents/guidance/old%20guide.md#part) suffix.",
+        "after": "Prefix Old guide suffix."
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

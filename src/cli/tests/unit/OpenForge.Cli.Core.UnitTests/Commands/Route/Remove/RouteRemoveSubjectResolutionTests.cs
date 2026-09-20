@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveSubjectResolutionTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove subject facts distinguish a leaf pair from a complete category inventory"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitBehavior")]
     public void SubjectFactsDistinguishLeafPairAndCategoryInventory()
@@ -26,6 +27,7 @@ public sealed class RouteRemoveSubjectResolutionTests
         Assert.Equal("assets/settings.json", category.Items[^1].RelativePath);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove subject selection requires exactly one subject or boundary"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void SubjectSelectionRequiresExactlyOneResult()
@@ -51,6 +53,7 @@ public sealed class RouteRemoveSubjectResolutionTests
         Assert.Throws<ArgumentException>(() => new RouteRemoveSubjectSelection(subject, boundary));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove subject resolution preserves cancellation and exposed-path facts"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitBehavior")]
     public void SubjectResolutionPreservesExposureFacts()

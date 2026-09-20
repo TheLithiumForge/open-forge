@@ -1,0 +1,20 @@
+Updated 1 Framework file. 1 file from an earlier version was kept.
+Workspace: <workspace>
+  Warning  .agents/guidance/retired-framework.md  Retired content kept [update.retired-content-preserved]
+         .agents/guidance/retired-framework.md is no longer part of this release, so it was kept.
+         use open-forge update --prune --dry-run
+         open-forge update --prune --dry-run
+         Preview deleting the retained files before applying the prune.
+  .agents/guidance/_guidance.md          replaced (you had changed it and this release changes it)
+  .agents/guidance/retired-framework.md  kept; no longer part of this release
+  .agents/guidance/_guidance.md          Entries section updated
+  .agents/open-forge.lock.json           updated
+  .agents/guidance/_guidance.md          unchanged (line endings differ)
+  13 files unchanged
+  .agents/guidance/_guidance.md current SHA-256: <sha256>
+  .agents/guidance/_guidance.md shipped SHA-256: <sha256>
+  .agents/guidance/_guidance.md bundled Framework: id=framework; version=unavailable; fingerprint=<sha256>
+  All written targets were verified.
+  Recovery data: <recovery-bundle>
+  Preview deleting the retained files before applying the prune.
+Next: open-forge update --prune --dry-run

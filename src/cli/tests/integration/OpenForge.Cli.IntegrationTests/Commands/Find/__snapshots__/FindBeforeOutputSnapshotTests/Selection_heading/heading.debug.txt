@@ -1,0 +1,12 @@
+1 source matches --heading Rules.
+Workspace: <workspace>
+  docs/guide  .agents/docs/guide.md  Guide
+  matched heading Rules in body
+
+Search details:
+  Filters: --heading Rules
+  Require: all
+  Regions searched: frontmatter, body
+  Source set: default
+  4 of 4 sources inspected
+1 matches, 4 sources inspected, 4 source candidates.

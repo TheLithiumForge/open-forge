@@ -5,15 +5,18 @@ using OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.UnitTests.Commands.Extension.Shared.Interaction;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using OpenForge.Cli.TestSupport.Interaction;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Install;
 
 public sealed class ExtensionInstallContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Install request and operation close the exact typed callable"), Trait("Feature", "extension-install"), Trait("Evidence", "Unit")]
     public async Task RequestAndCallableAreExact()
     {
@@ -28,10 +31,10 @@ public sealed class ExtensionInstallContractTests
             false,
             true,
             false);
-        using var input = new StringReader(string.Empty);
-        using var prompts = new StringWriter();
+        var scripted = ScriptedCliTerminal.Lines([], canPrompt: false);
+        var prompts = new CliPrompts(scripted.Terminal);
         var operation = ExtensionInstallOperationFactory.Create(
-            new CliInteractiveSession(input, prompts, canPrompt: false));
+            ExtensionInteractionTestFactory.ForInstall(prompts));
         CliOperation<ExtensionInstallRequest, ExtensionInstallResult> callable = operation.ExecuteAsync;
 
         var result = await callable(request, TestContext.Current.CancellationToken);
@@ -51,9 +54,10 @@ public sealed class ExtensionInstallContractTests
         Assert.Same(workspace, result.Workspace);
         AssertTypedResult(result);
         Assert.Contains(result.Findings, finding => finding.Code == ExtensionInstallFindingCode.InvalidInput);
-        Assert.Equal(string.Empty, prompts.ToString());
+        Assert.Equal(string.Empty, scripted.Output.ToString());
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Install findings preserve exact declaration order machine codes and statuses"), Trait("Feature", "extension-install"), Trait("Evidence", "Unit")]
     public void FindingMappingsAreExact()
     {
@@ -65,6 +69,7 @@ public sealed class ExtensionInstallContractTests
             ("extension-install.invalid-input", CliSemanticStatus.Invalid),
             ("extension-install.selection-required", CliSemanticStatus.Invalid),
             ("extension-install.interaction-ended", CliSemanticStatus.Invalid),
+            ("extension-install.confirmation-required", CliSemanticStatus.Invalid),
             ("extension-install.source-unavailable", CliSemanticStatus.Incomplete),
             ("extension-install.source-invalid", CliSemanticStatus.Invalid),
             ("extension-install.framework-unavailable", CliSemanticStatus.Incomplete),
@@ -72,6 +77,7 @@ public sealed class ExtensionInstallContractTests
             ("extension-install.lifecycle-unavailable", CliSemanticStatus.Incomplete),
             ("extension-install.lifecycle-blocked", CliSemanticStatus.Blocked),
             ("extension-install.managed-divergence", CliSemanticStatus.Blocked),
+            ("extension-install.package-contents-changed", CliSemanticStatus.Blocked),
             ("extension-install.initial-force-required", CliSemanticStatus.Blocked),
             ("extension-install.ownership-conflict", CliSemanticStatus.Blocked),
             ("extension-install.permission-required", CliSemanticStatus.Blocked),
@@ -88,6 +94,7 @@ public sealed class ExtensionInstallContractTests
             ("extension-install.recovery-conflict", CliSemanticStatus.Blocked),
             ("extension-install.recovery-unavailable", CliSemanticStatus.Incomplete),
             ("extension-install.lifecycle-observation", CliSemanticStatus.Attention),
+            ("extension-install.package-content-missing", CliSemanticStatus.Attention),
             ("extension-install.recovery-artifact-retained", CliSemanticStatus.Attention),
             ("extension-install.write-failed", CliSemanticStatus.Failed),
             ("extension-install.topology-verification-failed", CliSemanticStatus.Failed),
@@ -96,6 +103,7 @@ public sealed class ExtensionInstallContractTests
             ("extension-install.recovery-failed", CliSemanticStatus.Failed),
             ("extension-install.operation-failed", CliSemanticStatus.Failed),
             ("extension-install.interrupted", CliSemanticStatus.Interrupted),
+            ("extension-install.metadata-projection-skipped", CliSemanticStatus.Attention),
         ],
             ExtensionInstallDefinitions.FindingCodes.Select(code => (
                 ExtensionInstallDefinitions.ReadMachineName(code),
@@ -107,6 +115,7 @@ public sealed class ExtensionInstallContractTests
             ExtensionInstallDefinitions.ReadStatus((ExtensionInstallFindingCode)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Install initial-force next preserves the exact normalized request"), Trait("Feature", "extension-install"), Trait("Evidence", "Unit")]
     public void InitialForceNextPreservesNormalizedRequest()
     {
@@ -163,6 +172,7 @@ public sealed class ExtensionInstallContractTests
                 request));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Extension Install classifies selected payload state before target policy"), Trait("Feature", "extension-install"), Trait("Evidence", "Unit")]
     [InlineData((int)ExtensionPackageFileReadState.Available, false, (int)ExtensionInstallFindingCode.SourceUnavailable)]
     [InlineData((int)ExtensionPackageFileReadState.Missing, false, (int)ExtensionInstallFindingCode.SourceUnavailable)]

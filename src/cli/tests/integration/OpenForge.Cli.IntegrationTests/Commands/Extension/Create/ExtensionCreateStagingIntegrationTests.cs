@@ -3,14 +3,17 @@ using OpenForge.Cli.Core.Commands.Extension.Create.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Create.Shared.Application;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Interaction;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Interaction;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Create;
 
 public sealed class ExtensionCreateStagingIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create cancellation after planning reports planned destination and no started scaffold effects"),
      Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task CancellationAfterPlanningRetainsTruthfulPreEffectVerification()
@@ -34,6 +37,7 @@ public sealed class ExtensionCreateStagingIntegrationTests
         Assert.False(Directory.Exists(catalogue.Combine("development-toolkit")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create rejects undefined request and plan modes before effects"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task UndefinedModesAreRejectedBeforeEffects()
     {
@@ -60,6 +64,7 @@ public sealed class ExtensionCreateStagingIntegrationTests
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create rejects an undefined effect kind before the writer handles application failures"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task UndefinedEffectKindEscapesBeforeWrites()
     {
@@ -82,6 +87,7 @@ public sealed class ExtensionCreateStagingIntegrationTests
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create rejects a destination occupant introduced after forming the same plan"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task SamePlanRevalidationRejectsIntroducedOccupant()
     {
@@ -102,6 +108,7 @@ public sealed class ExtensionCreateStagingIntegrationTests
         Assert.Equal("occupant", File.ReadAllText(catalogue.Combine("development-toolkit", "extension.json")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Create retains a real first create effect when a later effect collides"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task LaterEffectFailureRetainsAppliedManifest()
     {
@@ -148,11 +155,9 @@ public sealed class ExtensionCreateStagingIntegrationTests
 
     private static ExtensionCreateOperation CreateOperation()
     {
-        var session = new CliInteractiveSession(
-            new StringReader(string.Empty),
-            new StringWriter(),
-            canPrompt: false);
-        return ExtensionCreateOperationFactory.Create(session);
+        var scripted = ScriptedCliTerminal.Lines([], canPrompt: false);
+        return ExtensionCreateOperationFactory.Create(
+            ExtensionInteractionTestFactory.ForCreate(new CliPrompts(scripted.Terminal)));
     }
 
     private static ExtensionCreateRequest Request(string cataloguePath)
@@ -164,6 +169,7 @@ public sealed class ExtensionCreateStagingIntegrationTests
             Description = null,
             PackageVersion = null,
             Dependencies = [],
+            Automatic = true,
             AllowInteraction = false,
             Mode = ExtensionCreateMode.Apply,
         };

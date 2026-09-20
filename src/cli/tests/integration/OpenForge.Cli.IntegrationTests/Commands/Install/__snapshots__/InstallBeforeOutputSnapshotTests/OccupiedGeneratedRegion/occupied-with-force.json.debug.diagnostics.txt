@@ -1,0 +1,11 @@
+status=completed
+mode=apply
+force=true
+automatic=true
+classification=eligible-initial-occupant
+effects=25
+lifecycle=publish/verified
+recovery=removed
+verification=verified
+findings=0
+next=none

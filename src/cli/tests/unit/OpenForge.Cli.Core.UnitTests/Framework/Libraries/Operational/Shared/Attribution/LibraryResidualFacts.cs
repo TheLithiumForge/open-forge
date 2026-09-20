@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
@@ -19,13 +19,13 @@ internal sealed class LibraryResidualFacts
     {
         var root = Path.Combine(Path.GetTempPath(), "library-residual-facts");
         Workspace = new CliWorkspace(root, root, CliWorkspaceSelectionMethod.ExplicitWorkspace);
-        Record = LibrariesRecord.Create([
-            LibraryRecord.Create(LibraryId.Create("team"), WorkspaceRelativeDirectory.Create("shared/team"), LibraryDestinationRoot.Create("."),
+        Record = LibraryRegistrationSet.Create([
+            LibraryRegistration.Create(LibraryId.Create("team"), WorkspaceRelativeDirectory.Create("shared/team"), LibraryDestinationRoot.Create("."),
                 [SourceRelativeEligiblePath.Create(".agents/a.md")]),
         ]);
         PayloadIdentity = RecoveryContentIdentity.FromBytes(
             "{\"schemaVersion\":1,\"libraries\":[{\"id\":\"team\",\"sourceRoot\":\"shared/team\",\"destinationRoot\":\".\",\"paths\":[\".agents/a.md\"]}]}"u8);
-        RecordEntry = PriorEntry(".agents/open-forge.libraries.json");
+        RecordEntry = PriorEntry(".agents/open-forge.lock.json");
         LinkEntry = RecoveryEntry.Create(1, CanonicalRelativePath.Create(".agents/a.md"), RecoveryEntryKind.RelativeFileLinkDelete,
             RecoveryEntryState.RelativeLink(RelativeFileLinkIdentity.Create(NoFollowLinkKind.SymbolicLink, "../shared/team/.agents/a.md")),
             RecoveryEntryState.Missing);
@@ -45,7 +45,7 @@ internal sealed class LibraryResidualFacts
     }
 
     internal CliWorkspace Workspace { get; }
-    internal LibrariesRecord Record { get; }
+    internal LibraryRegistrationSet Record { get; }
     internal RecoveryContentIdentity PayloadIdentity { get; }
     internal RecoveryEntry RecordEntry { get; }
     internal RecoveryEntry LinkEntry { get; }
@@ -53,10 +53,10 @@ internal sealed class LibraryResidualFacts
     internal RecoveryEntrySetObservation Residual { get; }
     internal LibraryRecoveryPriorRecord Prior => new(Record, RecordEntry, PayloadIdentity);
 
-    internal LibrariesRecordRead Current(bool present)
+    internal LibraryRegistrationRead Current(bool present)
         => new()
         {
-            State = present ? LibrariesRecordReadState.Complete : LibrariesRecordReadState.Missing,
+            State = present ? LibraryRegistrationReadState.Complete : LibraryRegistrationReadState.Missing,
             Record = present ? Record : null,
             Snapshot = present
                 ? FileStateSnapshot.File(RecordPath, RecordPath,

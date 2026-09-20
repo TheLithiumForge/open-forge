@@ -1,0 +1,7 @@
+Update was cancelled. Nothing was changed.
+Workspace: <workspace>
+  .agents/loader.md  unchanged (line endings differ)
+  14 files unchanged
+  Verification was not requested.
+  Rerun the same Update request.
+Next: open-forge update

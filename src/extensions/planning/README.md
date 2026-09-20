@@ -1,30 +1,34 @@
 # Planning
 
-Planning brings the method and the records for organizing work into one small package. You can start with one Task, keeping its outcome, short plan, and current state together. Separate records are there when the work needs them.
+Turn an outcome into work that can be understood, carried out, and resumed. Keep existing boards and task systems; create only the records that add useful context.
 
-## Contents
+## What You Get
 
-The [Planning Workflow](content/.agents/workflows/planning.md) helps turn accepted direction into ordered work. The [Work Records Pattern](content/.agents/patterns/work-records.md) defines inspectable shapes and explains how the records relate without keeping the same changing answer in several places.
-
-Four [Planning Templates](content/.agents/templates/planning/_planning.md) provide optional starting content:
-
-| Template | Starting point |
+| Source | Use it to |
 | --- | --- |
-| [Task](content/.agents/templates/planning/task.md) | One outcome with a proportionate plan and current state |
-| [Plan](content/.agents/templates/planning/plan.md) | A separately maintained sequence linked to its outcome source |
-| [Backlog](content/.agents/templates/planning/backlog.md) | Work awaiting selection, with priorities and links to existing task sources |
-| [Checkpoint](content/.agents/templates/planning/checkpoint.md) | The current state and next steps needed to resume an active workstream |
+| [Planning method](content/.agents/skills/use-workflow/references/planning/planning.md) | Order work, dependencies, decisions, and verification. |
+| [Work Records](content/.agents/patterns/work-records.md) | Keep the outcome, sequence, and current state in their owning sources. |
+| [Ideas](content/.agents/memory/emerging/ideas/_ideas.md) | Preserve possibilities without turning them into commitments. |
+| [Analysis](content/.agents/memory/emerging/analysis/_analysis.md) | Keep evidence, assumptions, and reasoning inspectable. |
+| [Decisions](content/.agents/memory/crystallized/decisions/_decisions.md) | Record what was accepted, why, and where it applies. |
+| [Checkpoints](content/.agents/memory/working/checkpoints/_checkpoints.md) | Hold the current state, step, and next steps of one active workstream. |
+| [Eleven Templates](content/.agents/templates/planning/_planning.md) | Task, Plan, Backlog, Checkpoint, Idea, Analysis, Decision, User Flow, Scenario, Scenario Collection, and Run Record. |
 
-Use existing task systems and project record formats where they already fit. The Templates fill useful gaps. They do not require an extra set of files. Copy and adapt the ones you need, then maintain each result in its destination.
+**Direct dependencies:** [Workflow Support](../workflows/README.md)
 
-## Install
+## Start Using It
 
-The [Extension installation guide](../../../docs/extensions.md#install-an-extension) covers setup. Preview this package with the CLI, replacing the example paths with your source catalogue and destination workspace. Keep the source checkout separate from that workspace.
+> Use the planning workflow for this change. Keep the plan and state in the existing task; preserve separate reasoning only when it will help later.
 
-```sh
-open-forge extension install planning --source /path/to/open-forge/src/extensions --workspace /path/to/project --dry-run
-```
+## Use Only What Helps
 
-Apply the reviewed plan with the same command without `--dry-run`. Review the resulting files and `.agents/open-forge.lifecycle.json`.
+Ideas, Analysis, and Decisions are independent record conventions, not an enforced pipeline. A clear request can go straight to work. An investigation can remain an Analysis without creating a Task. A Decision records an accepted choice, not a mandatory approval meeting.
 
-For [manual installation](../../../docs/extensions.md#manual-installation), copy this package's `content/` files into the workspace. Update affected `Entries`, check links, and review the assembled files. This package has no Extension dependencies. Manual copying does not create managed lifecycle state.
+The record categories load on demand. Their installed paths remain under Emerging or Crystallized Memory; distributing them with Planning does not narrow their meaning to planning. Planning does not require Project Documents or Orchestration.
+
+## Install And Customize
+
+Use the complete source catalogue so dependencies resolve together. See the [installation guide](../../../docs/extensions.md) for managed and manual setup.
+
+Keep or remove the methods, categories, and starter files that fit the workspace. Review dependent references and user-created descendants before removal. Template copies remain independent; deleting a starter never means deleting the work created from it.
+

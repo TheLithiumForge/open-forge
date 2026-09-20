@@ -39,7 +39,7 @@ internal static class LibraryListResultFixture
                 Record = seed.Result.Record with { State = record, LibraryCount = null },
                 Coverage = coverage,
                 Libraries = [],
-                Findings = [seed.Result.Findings[0] with { Code = finding, Status = status, LibraryId = null, Path = ".agents/open-forge.libraries.json", Cause = "Record observation stopped." }],
+                Findings = [seed.Result.Findings[0] with { Code = finding, Status = status, LibraryId = null, Path = ".agents/open-forge.lock.json", Cause = "Record observation stopped." }],
             },
         };
     }
@@ -51,7 +51,7 @@ internal static class LibraryListResultFixture
             Workspace = LibraryReadInputs.Workspace,
             Result = new LibraryListPayload
             {
-                Record = new LibraryListRecordView { Path = ".agents/open-forge.libraries.json", State = LibraryRecordViewState.Complete, LibraryCount = 1 },
+                Record = new LibraryListRecordView { Path = ".agents/open-forge.lock.json", State = LibraryRecordViewState.Complete, LibraryCount = 1 },
                 Libraries =
                 [
                     new LibraryListView

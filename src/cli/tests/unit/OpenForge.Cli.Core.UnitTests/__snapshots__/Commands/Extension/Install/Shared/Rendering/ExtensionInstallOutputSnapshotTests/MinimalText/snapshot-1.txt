@@ -1,0 +1,3 @@
+Extension install was cancelled. Nothing was changed.
+Workspace: <workspace>
+  .agents/first.md  final state unknown

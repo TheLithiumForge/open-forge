@@ -1,3 +1,4 @@
+using System.Text;
 using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Index.Models.Operation;
 using OpenForge.Cli.Core.Commands.Index.Models.Planning;
@@ -11,6 +12,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Index;
 
 public sealed class IndexOperationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Index operation refuses unsafe targets and missing generated regions without writes"),
      Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
     public async Task InitialUnsafeAndMissingGeneratedBoundariesAreReadOnly()
@@ -43,6 +45,7 @@ public sealed class IndexOperationIntegrationTests
         Assert.Equal(unsafeBefore, unsafeTarget.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Index dry-run reports exact updates without workspace or recovery effects"),
      Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
     public async Task DryRunCreatesNoWritesOrRecoveryArtifact()
@@ -65,6 +68,7 @@ public sealed class IndexOperationIntegrationTests
             await workspace.ReadRecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Index apply verifies exact bounded bytes, removes recovery, and is idempotent"),
      Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
     public async Task ApplyPreservesUnrelatedBytesRemovesRecoveryAndSecondRunIsNoOp()
@@ -109,6 +113,37 @@ public sealed class IndexOperationIntegrationTests
             await workspace.ReadRecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Index applies ordinary missing metadata with an optional warning and preserves it on no-op")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
+    public async Task OrdinaryMissingMetadataWarnsAcrossApplyAndNoOp()
+    {
+        using var workspace = IndexOperationWorkspace.Create("index-operation-optional-metadata");
+        workspace.ReplaceChildBytes(Encoding.UTF8.GetBytes("# Child\n"));
+        var operation = IndexOperationFactory.Create(workspace.LockStoreRoot);
+
+        var first = await operation.ExecuteAsync(
+            workspace.Request(IndexMode.Apply),
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Attention, first.Status);
+        Assert.Equal(IndexFindingCode.MetadataOptional, Assert.Single(first.Findings).Code);
+        Assert.Equal(IndexRegionOutcome.Verified, Assert.Single(first.Regions).Outcome);
+        Assert.Equal(IndexRecoveryState.Removed, first.Recovery.State);
+        var afterFirst = workspace.SnapshotHashes();
+
+        var second = await operation.ExecuteAsync(
+            workspace.Request(IndexMode.Apply),
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Attention, second.Status);
+        Assert.Equal(IndexFindingCode.MetadataOptional, Assert.Single(second.Findings).Code);
+        Assert.Equal(IndexRegionOutcome.AlreadyCurrent, Assert.Single(second.Regions).Outcome);
+        Assert.Equal(IndexRecoveryState.NotRequired, second.Recovery.State);
+        Assert.Equal(afterFirst, workspace.SnapshotHashes());
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Index apply verifies multiple targets in canonical order with one removed recovery bundle"),
      Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
     public async Task MultiTargetApplyPreservesExactBytesRemovesRecoveryAndSecondRunIsNoOp()
@@ -183,6 +218,55 @@ public sealed class IndexOperationIntegrationTests
             await workspace.ReadRecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Index updates an independent safe target while skipping a malformed sibling")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
+    public async Task MalformedSiblingDoesNotBlockIndependentSafeUpdate()
+    {
+        using var workspace = IndexOperationWorkspace.CreateMultiTarget("index-operation-skipped-metadata");
+        File.WriteAllBytes(
+            Path.Combine(workspace.Workspace.PhysicalRoot, IndexOperationWorkspace.BetaChildPath),
+            Encoding.UTF8.GetBytes("---\nopen-forge:\n  description: Beta Child\n"));
+        var betaBefore = await workspace.ReadTargetAsync(
+            IndexOperationWorkspace.BetaPath,
+            TestContext.Current.CancellationToken);
+
+        var result = await IndexOperationFactory.Create(workspace.LockStoreRoot).ExecuteAsync(
+            workspace.MultiTargetRequest(IndexMode.Apply),
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
+        Assert.Equal(IndexRecoveryState.Removed, result.Recovery.State);
+        Assert.Equal(IndexFindingCode.MetadataSkipped, Assert.Single(result.Findings).Code);
+        Assert.Collection(
+            result.Regions,
+            region => AssertRegion(
+                region,
+                IndexOperationWorkspace.AlphaPath,
+                IndexRegionAction.Update,
+                IndexRegionOutcome.Verified),
+            region => AssertRegion(
+                region,
+                IndexOperationWorkspace.BetaPath,
+                IndexRegionAction.NotEstablished,
+                IndexRegionOutcome.NotEstablished));
+        Assert.Equal(
+            OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+            {
+                Entries = IndexOperationWorkspace.AlphaExpectedEntry,
+                Prefix = IndexOperationWorkspace.AlphaPrefix,
+            }),
+            await workspace.ReadTargetAsync(
+                IndexOperationWorkspace.AlphaPath,
+                TestContext.Current.CancellationToken));
+        Assert.Equal(
+            betaBefore,
+            await workspace.ReadTargetAsync(
+                IndexOperationWorkspace.BetaPath,
+                TestContext.Current.CancellationToken));
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Index apply reports real lock unavailability without writing or leaking raw failure text"),
      Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
     public async Task HeldRealLockMapsToUnavailableAndPreservesWorkspace()
@@ -210,6 +294,7 @@ public sealed class IndexOperationIntegrationTests
             await workspace.ReadRecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Index cancellation before discovery creates no workspace or recovery effects"),
      Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
     public async Task PreCancelledOperationIsReadOnlyAndRetainsExplicitOrigin()

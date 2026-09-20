@@ -1,0 +1,7 @@
+Source: embedded catalogue
+Installed  (no ownership record, so installed packages cannot be listed)
+
+Available (bundled with this CLI)
+  toolkit  2.0.0  Review helpers.
+  Install one of the available Extensions.
+Next: open-forge extension install <id>

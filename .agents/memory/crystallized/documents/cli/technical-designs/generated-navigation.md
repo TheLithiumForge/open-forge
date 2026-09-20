@@ -74,8 +74,8 @@ child `Entries` bytes including the empty projection, deduplicates by physical
 identity, preserves deterministic ordinal order, and returns immutable expected-
 region and bounded-change facts.
 
-The region has exactly one accepted final marker pair with non-nested,
-non-overlapping ownership. Reads are strict UTF-8. A malformed boundary produces
+The region is the body of exactly one top-level `## Entries` section, ending
+at the next same-or-higher-level heading or EOF. Reads are strict UTF-8. A malformed boundary produces
 typed failure facts. Change facts preserve bytes outside the generated interior
 and distinguish exact unchanged bodies from bounded updates. The capability
 does not apply those changes.

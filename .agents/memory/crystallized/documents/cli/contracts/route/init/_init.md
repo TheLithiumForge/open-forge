@@ -10,9 +10,9 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized entrypoint for `route init`. The
-command does not ship yet. Its local implementation and complete managed,
-published-process, Native AOT, dogfood, and independent-review proof are
-squash-integrated at `cc5085ce`; replacement-CLI delivery remains pending. Its
+command is implemented in the merged native CLI. Its local implementation and
+complete managed, published-process, Native AOT, dogfood, and independent-review
+proof are squash-integrated at `cc5085ce`. Its
 sibling Interface and Behavior Contracts define
 command meaning. This entrypoint does not duplicate their detail.
 
@@ -42,7 +42,5 @@ implementation technology.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted current technology-neutral resolution, planning, effects, safety, recovery, and conformance for `route init`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Init #Entrypoint #Behavior #CurrentTruth
 - [Accepted current public interface and observable result for recursively initializing missing route entrypoints](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Init #Entrypoint #Interface #CurrentTruth
-<!-- open-forge:generated-index:end -->

@@ -1,0 +1,11 @@
+status=failed
+mode=apply
+force=true
+automatic=true
+classification=eligible-initial-occupant
+effects=25
+lifecycle=publish/not-started
+recovery=retained
+verification=unknown
+findings=1
+next=present

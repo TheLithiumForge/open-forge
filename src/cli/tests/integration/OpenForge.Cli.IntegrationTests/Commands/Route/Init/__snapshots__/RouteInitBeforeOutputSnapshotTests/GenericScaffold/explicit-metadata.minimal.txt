@@ -1,0 +1,2 @@
+Created .agents/documents/_documents.md
+Workspace: <workspace>

@@ -1,0 +1,16 @@
+The toolkit Extension is up to date, but 1 file from an earlier version was kept.
+Workspace: <workspace>
+  Warning  .agents/toolkit.md  Retired file was kept [extension-update.managed-divergence]
+         A retired managed file was kept because --prune was not supplied.
+         cause: A retired managed file was kept because --prune was not supplied.
+         read from <extension-source>
+  .agents/toolkit.md  kept; no longer part of the package
+    Before SHA-256: <sha256>; After SHA-256: unavailable
+  Source: <extension-source>
+  Dependency closure: toolkit
+  0 files unchanged
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+  Verification: targets verified; Entries verified; Extension record verified
+  No recovery bundle was needed.
+  preview deleting the kept file
+Next: open-forge extension update toolkit --prune --dry-run

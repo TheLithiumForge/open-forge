@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 3,
+  "command": "cleanup",
+  "status": "cancelled",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cleanup was cancelled after removing 1 of 3 items.",
+    "kind": "cancelled"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "cleanup.interrupted",
+      "title": "Cleanup was cancelled",
+      "message": "Cleanup was cancelled after removing 1 of 3 items.",
+      "subject": {
+        "kind": "file",
+        "path": "<recovery-bundle-2>",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge cleanup",
+          "reason": "Rerun Cleanup from a fresh catalogue."
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "path": "<recovery-bundle-1>",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "done",
+      "reason": null,
+      "owner": "open-forge index"
+    },
+    {
+      "path": "<recovery-bundle-2>",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "not-started",
+      "reason": "Cleanup was interrupted before the next deletion.",
+      "owner": "open-forge repair"
+    },
+    {
+      "path": "<recovery-bundle-3>",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "bundlesRemoved": 1,
+    "draftsRemoved": 0,
+    "itemsLeftInPlace": 2,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "items": [
+      {
+        "path": "<recovery-bundle-1>",
+        "kind": "bundle",
+        "outcome": "removed",
+        "origin": "open-forge index",
+        "integrity": "verified"
+      },
+      {
+        "path": "<recovery-bundle-2>",
+        "kind": "bundle",
+        "outcome": "not-started",
+        "origin": "open-forge repair",
+        "integrity": "verified"
+      },
+      {
+        "path": "<recovery-bundle-3>",
+        "kind": "draft",
+        "outcome": "not-started",
+        "integrity": "incomplete"
+      }
+    ],
+    "notEligible": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge cleanup",
+    "reason": "Rerun Cleanup from a fresh catalogue."
+  }
+}

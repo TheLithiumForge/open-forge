@@ -11,6 +11,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery.Operational;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibraryRecoveryResidualContributorIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library residual Status producer reports verified metadata without entry-content comparison or mutation")]
     public static async Task StatusDoesNotEnterEntryComparison()
     {
@@ -26,6 +27,7 @@ public sealed class LibraryRecoveryResidualContributorIntegrationTests
         fixture.AssertUnrelatedPreserved();
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Residual Doctor producer routes Library finals through neutral entry sets while retaining Framework-only bundle comparison")]
     [InlineData(false), InlineData(true)]
     public static async Task PreservesSeparateProducerComparisonPolicy(bool library)

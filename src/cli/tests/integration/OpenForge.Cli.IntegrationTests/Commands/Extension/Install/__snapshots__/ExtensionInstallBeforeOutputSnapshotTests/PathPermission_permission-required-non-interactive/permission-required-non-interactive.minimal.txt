@@ -1,0 +1,5 @@
+Cannot install team: it writes outside .agents and no grant allows that.
+Workspace: <workspace>
+  .apm/agents/team.md
+Next: open-forge extension install team --allow-path .apm/agents/team.md
+  Or add ".apm/agents/team.md" to allowInstallPaths in .agents/open-forge.json.

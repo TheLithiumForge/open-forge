@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "cancelled",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Route remove was cancelled. Nothing was changed.",
+    "kind": "cancelled"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-remove.interrupted",
+      "title": "Route remove was cancelled",
+      "message": "Route remove was cancelled. Nothing was changed.",
+      "subject": {
+        "kind": "file",
+        "path": "guidance/old guide",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesRemoved": 0,
+    "sectionsUpdated": 0,
+    "linksDetached": 0,
+    "filesScanned": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": null,
+      "path": null
+    },
+    "removed": [],
+    "detachedLinks": [],
+    "scan": {
+      "filesScanned": 0,
+      "occurrences": 0
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route remove",
+    "reason": "Rerun the same Route Remove request."
+  }
+}

@@ -1,0 +1,5 @@
+No ownership record exists, so team-knowledge cannot be inspected.
+Workspace: <workspace>
+  Info  .agents/open-forge.lock.json  Ownership record is missing [library-inspect.ownership-observation]
+         No ownership record exists, so team-knowledge cannot be inspected.
+Source inventory: 0 eligible files, 0 excluded items.

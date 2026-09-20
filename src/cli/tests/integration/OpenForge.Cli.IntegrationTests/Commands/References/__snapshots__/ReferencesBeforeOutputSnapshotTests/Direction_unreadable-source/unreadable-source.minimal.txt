@@ -1,0 +1,4 @@
+.agents/docs/guide.md
+  Warning  .agents/docs/guide.md  Source encoding is invalid
+         .agents/docs/guide.md is not valid UTF-8, so it was not scanned.
+Next: open-forge doctor

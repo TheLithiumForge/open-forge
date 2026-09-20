@@ -22,6 +22,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Find;
 
 public sealed class FindBindingTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Find symbols expose the exact detached seven-option grammar")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public void SymbolsExposeTheExactDetachedGrammar()
@@ -52,11 +53,12 @@ public sealed class FindBindingTests
         Assert.Equal("part[,part...]", FindDefinitions.Content.ValueName);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Find binding preserves omission defaults and distinguishes a supplied view")]
-    [InlineData("omitted", "expanded")]
-    [InlineData("compact", "compact")]
+    [InlineData("omitted", "minimal")]
+    [InlineData("standard", "standard")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
-    public void BinderPreservesDefaultsAndSuppliedView(
+    public void BinderPreservesDefaultsAndSuppliedDetail(
         string viewInput,
         string expectedEffectiveView)
     {
@@ -65,13 +67,13 @@ public sealed class FindBindingTests
             symbols,
             viewInput == "omitted"
                 ? ["find"]
-                : ["find", "--view=compact"]);
+                : ["find", "--detail=standard"]);
         Assert.Empty(parse.Result.Errors);
 
         var workspace = Workspace();
         var invocation = Invocation(
             workspace,
-            viewInput == "omitted" ? CliView.Expanded : CliView.Compact);
+            viewInput == "omitted" ? CliDetail.Minimal : CliDetail.Standard);
         var bound = new FindRequestBinder(symbols, new FindResultBuilder()).Bind(
             new CliBindingParse(parse.Result, parse.OriginalArguments),
             invocation);
@@ -93,13 +95,14 @@ public sealed class FindBindingTests
         Assert.Empty(request.Presentation.Content.Supplied);
         Assert.Empty(request.Presentation.Content.Effective);
         Assert.Equal(
-            viewInput == "omitted" ? (CliView?)null : CliView.Compact,
-            request.Presentation.SuppliedView);
+            viewInput == "omitted" ? (CliDetail?)null : CliDetail.Standard,
+            request.Presentation.SuppliedDetail);
         Assert.Equal(
-            expectedEffectiveView == "expanded" ? CliView.Expanded : CliView.Compact,
+            expectedEffectiveView == "standard" ? CliDetail.Standard : CliDetail.Minimal,
             request.Presentation.EffectiveView);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Find binding preserves predicate order across spaced, equals, and colon native forms")]
     [InlineData("spaced-equals-colon")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
@@ -128,6 +131,7 @@ public sealed class FindBindingTests
             request.Query.EffectivePredicates);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Find binding rejects missing and repeated singleton option values")]
     [InlineData("missing-require")]
     [InlineData("repeated-require")]
@@ -152,6 +156,7 @@ public sealed class FindBindingTests
         Assert.Equal("open-forge find --help", next.Command);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Find workspace failure preserves recoverable values, local invalid precedence, and unavailable finding")]
     [InlineData("local-invalid")]
     [InlineData("workspace-unavailable")]
@@ -277,11 +282,11 @@ public sealed class FindBindingTests
 
     private static CliInvocation Invocation(
         CliWorkspace workspace,
-        CliView view = CliView.Expanded)
+        CliDetail view = CliDetail.Standard)
     {
         return new CliInvocation(
             new CliProcessIdentity("open-forge", "test"),
-            new CliPresentation(CliOutputFormat.Json, view, CliVerbosity.Normal),
+            new CliPresentation(CliFormat.Json, view, null),
             CliTerminalMode.None,
             new CliWorkspaceRequest(workspace.LexicalRoot, workspace.LexicalRoot),
             workspace);
@@ -292,11 +297,10 @@ public sealed class FindBindingTests
         return new CliGlobalInput(
             null,
             0,
-            CliOutputFormat.Json,
+            CliFormat.Json,
             0,
-            CliView.Expanded,
-            0,
-            CliVerbosity.Normal,
+            CliDetail.Standard,
+            0, null,
             0,
             false,
             0,

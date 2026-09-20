@@ -1,0 +1,2 @@
+guidance/old guide could not be removed: Some files could not be scanned for links to .agents/guidance/old guide.md, so the removal was not planned. Nothing was changed.
+Next: open-forge doctor

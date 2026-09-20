@@ -1,11 +1,64 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
+using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
 public sealed class RouteUpdateMetadataPreservationTests
 {
+    [Trait("Boundary", "Processing")]
+    [Theory(DisplayName = "Route Update metadata patcher expands an empty mapping with exact line endings"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
+    [InlineData("\n")]
+    [InlineData("\r\n")]
+    public void ExpandsEmptyMappingWithExactLineEndings(string lineEnding)
+    {
+        var source = string.Join(
+            lineEnding,
+            "---",
+            "title: \"café 🙂\" # preserve this top-level comment",
+            "open-forge: {}",
+            "# preserve this top-level comment too",
+            "---",
+            string.Empty,
+            "# Body",
+            "Keep the authored body.",
+            string.Empty);
+        var expected = string.Join(
+            lineEnding,
+            "---",
+            "title: \"café 🙂\" # preserve this top-level comment",
+            "open-forge:",
+            "  description: After",
+            "  tags: [Memory]",
+            "# preserve this top-level comment too",
+            "---",
+            string.Empty,
+            "# Body",
+            "Keep the authored body.",
+            string.Empty);
+
+        var build = RouteUpdateTestData.MetadataPatcher().Build(
+            RouteUpdateTestData.Observation(
+                RouteUpdateTestData.Patch(
+                    description: new RouteUpdateDescriptionRequest
+                    {
+                        Requested = true,
+                        Value = "After",
+                    },
+                    tags: new RouteUpdateTagsRequest
+                    {
+                        Requested = true,
+                        Values = ["Memory"],
+                    }),
+                source));
+        var patch = Assert.IsType<RouteUpdateMetadataPatch>(build.Patch);
+
+        Assert.Null(build.Boundary);
+        Assert.Equal(Encoding.UTF8.GetBytes(expected), patch.IntendedTargetBytes);
+    }
+
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route Update metadata patcher preserves the established line ending"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     [InlineData("\r")]
     [InlineData("\n")]
@@ -30,6 +83,7 @@ public sealed class RouteUpdateMetadataPreservationTests
         AssertExactPatch(source, expected);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update metadata patcher preserves mixed line endings outside the edit"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void PreservesMixedLineEndingsOutsideEdit()
     {
@@ -39,6 +93,7 @@ public sealed class RouteUpdateMetadataPreservationTests
         AssertExactPatch(source, expected);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update metadata patcher converts Unicode offsets before a quoted scalar"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void ConvertsUnicodeOffsetsBeforeQuotedScalar()
     {
@@ -48,6 +103,7 @@ public sealed class RouteUpdateMetadataPreservationTests
         AssertExactPatch(source, expected);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update metadata patcher preserves unknown and comment bytes exactly"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void PreservesUnknownAndCommentBytesExactly()
     {

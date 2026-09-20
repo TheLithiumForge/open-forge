@@ -1,0 +1,8 @@
+guidance/old guide could not be removed: Some files could not be scanned for links to .agents/guidance/old guide.md, so the removal was not planned. Nothing was changed.
+Workspace: <workspace>
+  Warning  unreadable.md  Reference scan is incomplete
+         Some files could not be scanned for links to .agents/guidance/old guide.md, so the removal was not planned.
+         open-forge doctor
+         Inspect the reported Route Remove boundary before relying on this result.
+  Inspect the reported Route Remove boundary before relying on this result.
+Next: open-forge doctor

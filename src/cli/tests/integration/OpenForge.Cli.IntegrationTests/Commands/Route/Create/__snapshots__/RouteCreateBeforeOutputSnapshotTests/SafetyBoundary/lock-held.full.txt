@@ -1,0 +1,23 @@
+Cannot create .agents/memory/project-alpha/overview.md: Another Open Forge command holds the workspace lock. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/memory/project-alpha/overview.md  Workspace lock is held [route-create.workspace-lock-unavailable]
+         Another Open Forge command holds the workspace lock. Nothing was changed.
+         cause: IOException (0x80070020): The filesystem operation failed.
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project
+  .agents/memory/project-alpha/overview.md  not started
+  .agents/memory/project-alpha/_project-alpha.md  not started
+--- .agents/memory/project-alpha/overview.md (new file) ---
+---
+open-forge:
+  description: Project overview
+  tags: [Docs, Overview]
+  responsibility: Explains the project
+---
+  Entries section: .agents/memory/project-alpha/_project-alpha.md
+    Before: <sha256>
+    After: <sha256>
+    Verification: not-started
+  Wait for the blocking condition or inspect the changed target, then rerun Route Create from a fresh plan.
+Next: open-forge route create

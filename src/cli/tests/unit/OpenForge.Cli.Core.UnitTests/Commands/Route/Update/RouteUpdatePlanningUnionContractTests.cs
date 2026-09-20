@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
 public sealed class RouteUpdatePlanningUnionContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update planning unions reject incomplete and contradictory states"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void PlanningUnionsRejectIncompleteAndContradictoryStates()
     {
@@ -63,6 +64,7 @@ public sealed class RouteUpdatePlanningUnionContractTests
             "unsafe");
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update observed layers reject partial failure evidence beside success"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
     public void ObservedLayersRejectPartialFailureEvidenceBesideSuccess()
     {

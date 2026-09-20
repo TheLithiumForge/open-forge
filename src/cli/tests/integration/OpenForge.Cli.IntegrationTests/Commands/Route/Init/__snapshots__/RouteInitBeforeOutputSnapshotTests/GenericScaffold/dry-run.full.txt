@@ -1,0 +1,48 @@
+Would create 2 entrypoints for documents/design.
+Workspace: <workspace>
+  Info  documents/design  Route needs authoring [route-init.needs-authoring]
+         Its description and tags are placeholders. Edit them before relying on this route.
+  Scaffold: generic
+  description: Draft route for documents/design; replace this description before relying on it for selection
+  tags: NeedsAuthoring
+  .agents/documents/_documents.md  would create
+  .agents/documents/design/_design.md  would create
+  Its description and tags are placeholders. Edit them before relying on this route.
+--- .agents/documents/_documents.md (new file) ---
+---
+open-forge:
+  description: Draft route for documents; replace this description before relying on it for selection
+  tags: [NeedsAuthoring]
+---
+
+# documents
+
+Draft route for documents; replace this description before relying on it for selection.
+
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
+
+## Entries
+
+- [Draft route for documents/design; replace this description before relying on it for selection](design/_design.md) - #NeedsAuthoring
+--- .agents/documents/design/_design.md (new file) ---
+---
+open-forge:
+  description: Draft route for documents/design; replace this description before relying on it for selection
+  tags: [NeedsAuthoring]
+---
+
+# design
+
+Draft route for documents/design; replace this description before relying on it for selection.
+
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
+
+## Entries
+
+- none - No entries - #Empty
+  Recovery: no recovery bundle was created.
+No files were changed.

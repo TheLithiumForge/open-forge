@@ -1,0 +1,4 @@
+Cannot list routes: --depth must be a whole number or all.
+Workspace: <workspace>
+  Error  -1  Invalid depth
+         --depth must be a whole number or all.

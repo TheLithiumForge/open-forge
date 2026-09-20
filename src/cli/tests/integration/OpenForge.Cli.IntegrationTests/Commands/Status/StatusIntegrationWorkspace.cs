@@ -2,7 +2,7 @@ using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
@@ -12,6 +12,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 internal sealed partial class StatusIntegrationWorkspace : IDisposable
 {
     internal const string LifecyclePath = ".agents/open-forge.lifecycle.json";
+    internal const string OwnershipPath = ".agents/open-forge.lock.json";
     internal const string GeneratedTargetPath = ".agents/memory/_memory.md";
     internal const string ExtensionTargetPath = ".agents/status-extension.md";
     private readonly TemporaryWorkspace _temporary;
@@ -65,10 +66,8 @@ internal sealed partial class StatusIntegrationWorkspace : IDisposable
         try
         {
             workspace._hasInstallArtifacts = true;
-            using var input = new StringReader(string.Empty);
-            using var prompt = new StringWriter();
             var result = await InstallOperationFactory.Create(
-                    new CliInteractiveSession(input, prompt, canPrompt: false),
+                    InstallInteractionTestSupport.Unavailable(),
                     workspace.LockStoreRoot)
                 .ExecuteAsync(
                     new OpenForge.Cli.Core.Commands.Install.Models.Request.InstallRequest(
@@ -83,12 +82,8 @@ internal sealed partial class StatusIntegrationWorkspace : IDisposable
                 throw new InvalidOperationException($"The installed Status fixture did not complete: {result.Status}.");
             }
 
-            var lifecycle = StatusLifecycleFixture.Read(workspace);
-            StatusLifecycleFixture.WriteSections(
-                workspace,
-                lifecycle.Framework,
-                StatusLifecycleFixture.ExtensionSection(
-                    StatusLifecycleFixture.Extensions([], [])));
+            Assert.True(File.Exists(workspace.Combine(OwnershipPath)));
+            Assert.False(File.Exists(workspace.Combine(LifecyclePath)));
             return workspace;
         }
         catch

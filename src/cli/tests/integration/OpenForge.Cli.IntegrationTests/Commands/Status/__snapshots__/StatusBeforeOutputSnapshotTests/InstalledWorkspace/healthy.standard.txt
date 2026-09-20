@@ -1,0 +1,10 @@
+Open Forge is installed and current.
+Workspace: <workspace>
+Startup context
+  Shipped by this CLI:   11 files, about 5.7k tokens
+  This workspace:        11 files, about 5.7k tokens
+  May load again later:  1 file, about 0.3k tokens
+All routed files: 13 files, about 6.3k tokens (startup is 90%)
+Routes: 7 root categories, 12 Entries sections current
+Framework files: 14 current
+13 routed files, 11 startup files, 5676 startup tokens, 1 may-load-again files, 289 may-load-again tokens, 6337 all routed tokens, 89.57626449932928272705752387 startup share, 7 root categories, 12 current Entries sections, 14 current Framework files.

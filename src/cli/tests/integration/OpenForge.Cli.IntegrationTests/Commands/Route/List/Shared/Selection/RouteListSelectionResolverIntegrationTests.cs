@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Selection;
 
 public sealed class RouteListSelectionResolverIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list selection maps an omitted source to the resolved Loader-root selection")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task OmittedSourceMapsLoaderResolutionToLoaderRoots()
@@ -25,6 +26,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Empty(result.Issues);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route-list selection resolves an ID and its exact path to the same physical source"),
         InlineData("root", ".agents/root/_root.md"),
         InlineData("./.agents/root/_root.md", ".agents/root/_root.md")]
@@ -46,6 +48,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Empty(result.Issues);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list selection preserves an unknown ID as attempted identity")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task UnknownIdRetainsOnlyAttemptedId()
@@ -68,6 +71,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Equal("unknown/source", issue.Subject);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list selection preserves a missing exact path as attempted canonical identity")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task MissingExactPathRetainsOnlyAttemptedPath()
@@ -91,6 +95,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Equal(expectedPath, issue.Subject);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route-list selection rejects malformed ID and path grammar while retaining interpreted input"),
         InlineData("root/../child", "root/../child", null),
         InlineData("./.agents/root/../child.md", null, ".agents/root/../child.md")]
@@ -115,6 +120,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Equal(RouteListFindingCode.InvalidSourceReference, Assert.Single(result.Issues).Code);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list selection blocks an ID collision with every ordinal candidate")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task AmbiguousIdRetainsSortedCandidates()
@@ -143,6 +149,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
             issue.CandidatePaths);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list selection resolves base ID, base path, and overwrite path to one source")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task BaseAndOverwriteReferencesHaveParity()
@@ -176,6 +183,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Equal(".agents/guidance/style.md", overwriteResult.Selection.ResolvedPath);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list selection rejects an orphan overwrite even when catalogued as an alias")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task OrphanOverwriteIsInvalid()
@@ -193,6 +201,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Empty(result.SelectedSources);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list selection accepts an explicitly selected detached entrypoint")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task DetachedEntrypointResolvesWithoutLoaderExposure()
@@ -215,6 +224,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Empty(result.Issues);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list selection rejects the Loader as an explicit subject")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task ExplicitLoaderIsInvalid()
@@ -236,6 +246,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Equal(RouteListFindingCode.LoaderSubject, Assert.Single(result.Issues).Code);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list selection rejects an unrouted source")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task UnroutedSourceIsInvalid()
@@ -257,6 +268,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Equal(RouteListFindingCode.UnsupportedSource, Assert.Single(result.Issues).Code);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list selection blocks a structurally ambiguous route")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task AmbiguousRouteIsBlocked()
@@ -283,6 +295,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Equal(RouteListFindingCode.RouteAmbiguous, Assert.Single(result.Issues).Code);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list selection accepts a contained physical file alias under its logical path")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task ContainedFileAliasResolvesWithLogicalIdentity()
@@ -312,6 +325,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list selection blocks an external physical alias without reading outside")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task ExternalFileAliasIsBlocked()
@@ -341,6 +355,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Equal(outsideBefore, outside.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list selection blocks the first external transition before a later reentry")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task ExternalThenReentryIsBlockedAtFirstTransition()

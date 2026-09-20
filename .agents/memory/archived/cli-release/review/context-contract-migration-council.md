@@ -223,10 +223,10 @@ public or behavioral detail.
 The disagreement is about what is being counted, not about whether the route
 needs a recognized entrypoint.
 
-| Reading | Strength | Risk | Synthesis |
-| --- | --- | --- | --- |
+| Reading                                                                                                           | Strength                                                                                                           | Risk                                                                                                       | Synthesis                                                                                 |
+| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | Three-file reading: `interface.md`, `behavior.md`, and `technical-design.md` are the only contract-bearing files. | Smallest semantic surface. It prevents an entrypoint from becoming a fourth place where command meaning can drift. | If the route shell is omitted or asked to carry detail, routability and contract ownership become unclear. | Retain this as the semantic count. `_context.md` has no detailed contract responsibility. |
-| Four-file reading: `_context.md` plus the three contract files form one routed set. | Matches the routed command-scope shape and makes the local set discoverable through `Entries`. | Counting the entrypoint as another contract can duplicate status, roles, purpose, or behavior. | Retain this as the physical file count, while making `_context.md` routes only. |
+| Four-file reading: `_context.md` plus the three contract files form one routed set.                               | Matches the routed command-scope shape and makes the local set discoverable through `Entries`.                     | Counting the entrypoint as another contract can duplicate status, roles, purpose, or behavior.             | Retain this as the physical file count, while making `_context.md` routes only.           |
 
 The resulting recommendation is **four physical files with three semantic
 owners**:
@@ -251,11 +251,11 @@ The lenses agree on the following additive execution recommendation. It remains
 unaccepted until the maintainer reviews the candidate and explicitly accepts a
 cutover.
 
-| Destination | Owns | Must not do |
-| --- | --- | --- |
-| `_context.md` | Route metadata, command-scope title, and generated navigation for the three sibling files. | Define a competing contract, repeat detailed status or roles, or become an authority source. |
-| `interface.md` | The full public purpose, syntax, operands, flags, defaults, repetition, composition, workspace-visible behavior, projections, output, statuses, errors, complete examples, non-goals, and caller-visible verification. | Choose a library, source module, parser, serializer, schema, numeric exit mapping, or private storage design. |
-| `behavior.md` | Technology-neutral request resolution, startup and explicit closure, additions difference, graph facts, link traversal, overwrite layering, projection mechanics, completeness, ordering, deduplication, one typed result, read-only safety, and conformance. | Add public flags or result meanings, name a runtime API or library, or settle an open Gate 3 choice. |
+| Destination           | Owns                                                                                                                                                                                                                                                                                      | Must not do                                                                                                                |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `_context.md`         | Route metadata, command-scope title, and generated navigation for the three sibling files.                                                                                                                                                                                                | Define a competing contract, repeat detailed status or roles, or become an authority source.                               |
+| `interface.md`        | The full public purpose, syntax, operands, flags, defaults, repetition, composition, workspace-visible behavior, projections, output, statuses, errors, complete examples, non-goals, and caller-visible verification.                                                                    | Choose a library, source module, parser, serializer, schema, numeric exit mapping, or private storage design.              |
+| `behavior.md`         | Technology-neutral request resolution, startup and explicit closure, additions difference, graph facts, link traversal, overwrite layering, projection mechanics, completeness, ordering, deduplication, one typed result, read-only safety, and conformance.                             | Add public flags or result meanings, name a runtime API or library, or settle an open Gate 3 choice.                       |
 | `technical-design.md` | The accepted .NET Native AOT implementation context; the invocation-local in-memory graph and shared graph-builder direction; the source-named `StringComparison.OrdinalIgnoreCase` API; the Native AOT process-evidence boundary; and open Gate 3 choices traced to the other two files. | Invent a library, parser extension, schema, exit mapping, filesystem strategy, source-module boundary, or behavior change. |
 
 The technical design must preserve the source-stated direction that each
@@ -276,44 +276,44 @@ source. A row with more than one destination is a deliberate boundary split:
 the first destination owns the detailed meaning, and the other destination owns
 only its distinct relationship or conformance mechanics.
 
-| Authoritative source heading or subsection | Destination | Preservation boundary |
-| --- | --- | --- |
-| File frontmatter and `# Context Command` | `_context.md` for route metadata and the route label; each sibling for its own file metadata | Keep the command scope discoverable without copying the old file's contract prose into the route shell. |
-| `## Status` | `interface.md`, `behavior.md`, and `technical-design.md` | Interface states candidate authority, command availability, Gate 3 public deferrals, and related contracts. Behavior states its subordinate semantic boundary. Technical Design states WIP status, accepted implementation context, and open Gate 3 work. `_context.md` remains route-only. |
-| `## Purpose` | `interface.md` | Preserve the ordered context purpose, explicit-route behavior, no inference, no mutation, no session state, and deterministic promise. |
-| `## Syntax` | `interface.md` | Preserve the complete command form, separate source operands, all operation flags, and the source-reference link. Inline syntax and operand examples stay with the public grammar. |
-| `## Workspace` | `interface.md` and `behavior.md`; link to the shared Global Flags contract set | Interface owns the visible workspace selection and reporting relationship. Behavior owns exact request resolution without creating a second workspace rule. |
-| `## Context Resolution` | `interface.md` and `behavior.md` | Interface owns what each closure means to a caller. Behavior owns the deterministic closure flow and its prerequisites. |
-| `### No Explicit Source` | `interface.md` and `behavior.md` | Preserve the startup-required closure, the five loading-order steps, target-sensitive continuity behavior, and the boundary against frozen broad loading. |
-| `### Explicit Sources` | `interface.md` and `behavior.md`; link to the shared Source References contract set | Preserve selected parent chain, source, overwrite, visible `#LoadNow` descendants, scope-local loading, no ordinary link following by default, and exact-path unrouted behavior. |
-| `### Several Sources` | `interface.md` and `behavior.md` | Preserve independent route chains, scope and authority, all inclusion reasons, physical-source deduplication, and the prohibition on combined-scope conflict resolution. |
-| `### Source Errors` | `interface.md` and `behavior.md` | Interface owns invalid, blocked, attention, and incomplete caller-visible outcomes. Behavior owns safe continuation only when the missing boundary cannot change the claimed complete result. |
-| `## Additions Beyond Startup` | `interface.md` and `behavior.md` | Interface owns `--additions-only`, its required explicit route, and its result meaning. Behavior owns same-invocation expansion and ordered set difference, including subtraction of startup-reachable links. |
-| `## Content Graph` | `behavior.md` and `technical-design.md` | Behavior owns the graph's technology-neutral nodes, relationships, per-invocation lifetime, non-persistence, and reuse boundary. Technical Design preserves only the source-stated in-memory/shared graph-builder direction and leaves the source units open. |
-| `## Content Projection` | `interface.md` and `behavior.md` | Interface owns the public projection grammar and emitted meaning. Behavior owns projection from the already resolved result without rerunning selection. |
-| `### Flag` under Content Projection | `interface.md` | Preserve comma and backslash grammar, idempotent parts, invalid repetition, canonical output independence from flag order, and the default `frontmatter,body`. |
-| `### Source Metadata` | `interface.md` | Preserve generated metadata fields, base/overwrite layer identity, compact and expanded differences, complete JSON facts, and the distinction from authored frontmatter. |
-| `### Ordered Paths` | `interface.md` and `behavior.md` | Interface owns exact physical-layer path output, path-only replacement behavior, framing, and provenance. Behavior owns the invariant that selection and status are not rerun or simplified by projection. |
-| `### Frontmatter` | `interface.md` | Preserve complete authored YAML, without normalization or reconstructed replacement, and visible malformed or missing metadata findings. |
-| `### Body` | `interface.md` | Preserve all Markdown after frontmatter, including generated regions and exact authored bytes; do not silently summarize, truncate, or remove. |
-| `### Headings` | `interface.md`, `behavior.md`, and `technical-design.md` | Interface owns heading outline fields, source form, levels, visible text, canonical evidence, and view differences. Behavior owns structural projection and shared section boundaries without naming a parser. Technical Design preserves the named ordinal API and leaves parser and extension choices open. |
-| `### Exact Sections` | `interface.md`, `behavior.md`, and `technical-design.md` | Interface owns exact visible-name matching, section boundaries, escaping, missing and duplicate-section outcomes, layer framing, and projection coverage. Behavior owns deterministic section selection from parsed nodes. Technical Design leaves parser and source-range realization open. |
-| `### Valid Combinations` | `interface.md` | Preserve every listed valid combination and every invalid empty, unknown, malformed, or unquoted-list condition. Do not expand compatible combinations into an invented catalogue. |
-| `## Explicit Link Expansion` | `interface.md` and `behavior.md` | Interface owns the public selection modifier and link-visible findings. Behavior owns bounded traversal, cycle handling, deduplication, containment, and result formation. |
-| `### Flag` under Explicit Link Expansion | `interface.md` | Preserve positive-depth and `all` values, edge counting from pre-expansion seeds, zero invalidity, and omitted-flag meaning. |
-| `### Link Rules` | `interface.md` and `behavior.md` | Interface owns local-only following, external-link recording, overwrite-target framing, outside-`.agents` `ID: none` behavior, and no inference. Behavior owns relative resolution, physical containment, cycle termination, one-emission traversal, and incoming-reason retention. |
-| `### Link Findings` | `interface.md` and `behavior.md` | Interface owns visible missing, broken, fragment, case, containment, encoding, and ambiguity findings. Behavior owns the rule that broken edges cannot be silently dropped and that complete status cannot be claimed without the required boundary. |
-| `## Overwrites` | `interface.md` and `behavior.md` | Interface owns base-first human framing, separate structured layers, and orphan or ambiguous outcomes. Behavior owns logical-source normalization, layer order, and independent-selection prohibition. |
-| `## Ordering And Deduplication` | `interface.md` and `behavior.md` | Interface owns observable startup, operand, breadth-first link, first-canonical-position, all-reasons, and no-duplicate-content rules. Behavior owns deterministic ordering and deduplication mechanics. Technical Design records unresolved cross-platform identity details only. |
-| `## Results And Failures` | `interface.md` and `behavior.md` | Interface owns the public status and summary. Behavior owns the conditions that form one typed result without fabricating evidence. |
-| `### Semantic Status` | `interface.md`, `behavior.md`, and `technical-design.md` | Interface owns all seven semantic meanings and the fact that numeric exits are open. Behavior maps conditions to those names without adding statuses. Technical Design leaves numeric mapping open. |
-| `### Required Summary` | `interface.md` and `behavior.md` | Interface owns every required workspace, source, closure, flag, count, finding, boundary, view, and content fact. Behavior forms one complete result consumed by both presentations. |
-| `### Human-Readable Errors` | `interface.md` and `behavior.md` | Interface owns the four required error components. Behavior owns formation from the failed operation and known boundary. Output-stream assignment remains open. |
-| `## Global Flags` | `interface.md` and `behavior.md`; link to the current shared Global Flags contracts | Interface declares applicability and the no-op or terminal relationship. Behavior reuses shared parsing and request semantics without copying them. |
-| `## Complete Examples` | `interface.md` | All ten complete examples remain public-interface evidence. Their exact inventory is listed below. Behavior may link to the relevant operation stages but must not duplicate their output prose. |
-| `## Non-Goals` | `interface.md` and `behavior.md` | Interface owns the caller-visible exclusions. Behavior enforces the no-inference, no-persistence, no-fetch, no-repair, no-mutation, and no-silent-truncation boundaries. |
-| `## Verification Requirements` | `interface.md`, `behavior.md`, and `technical-design.md` | Interface owns caller-visible coverage. Behavior owns direct and focused semantic conformance. Technical Design owns the source-stated built Native AOT process-evidence boundary and unresolved concrete evidence choices. Preserve `must` versus `should`. |
-| `## Related Accepted Direction` | Link-only relationships in the applicable sibling files | Link to the Decision Agenda, Release Plan, Checkpoint, shared contracts, and current CLI Working Documents. Do not copy their authority, status, or technical detail into the context contracts. |
+| Authoritative source heading or subsection | Destination                                                                                  | Preservation boundary                                                                                                                                                                                                                                                                                         |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| File frontmatter and `# Context Command`   | `_context.md` for route metadata and the route label; each sibling for its own file metadata | Keep the command scope discoverable without copying the old file's contract prose into the route shell.                                                                                                                                                                                                       |
+| `## Status`                                | `interface.md`, `behavior.md`, and `technical-design.md`                                     | Interface states candidate authority, command availability, Gate 3 public deferrals, and related contracts. Behavior states its subordinate semantic boundary. Technical Design states WIP status, accepted implementation context, and open Gate 3 work. `_context.md` remains route-only.                   |
+| `## Purpose`                               | `interface.md`                                                                               | Preserve the ordered context purpose, explicit-route behavior, no inference, no mutation, no session state, and deterministic promise.                                                                                                                                                                        |
+| `## Syntax`                                | `interface.md`                                                                               | Preserve the complete command form, separate source operands, all operation flags, and the source-reference link. Inline syntax and operand examples stay with the public grammar.                                                                                                                            |
+| `## Workspace`                             | `interface.md` and `behavior.md`; link to the shared Global Flags contract set               | Interface owns the visible workspace selection and reporting relationship. Behavior owns exact request resolution without creating a second workspace rule.                                                                                                                                                   |
+| `## Context Resolution`                    | `interface.md` and `behavior.md`                                                             | Interface owns what each closure means to a caller. Behavior owns the deterministic closure flow and its prerequisites.                                                                                                                                                                                       |
+| `### No Explicit Source`                   | `interface.md` and `behavior.md`                                                             | Preserve the startup-required closure, the five loading-order steps, target-sensitive continuity behavior, and the boundary against frozen broad loading.                                                                                                                                                     |
+| `### Explicit Sources`                     | `interface.md` and `behavior.md`; link to the shared Source References contract set          | Preserve selected parent chain, source, overwrite, visible `#LoadNow` descendants, scope-local loading, no ordinary link following by default, and exact-path unrouted behavior.                                                                                                                              |
+| `### Several Sources`                      | `interface.md` and `behavior.md`                                                             | Preserve independent route chains, scope and authority, all inclusion reasons, physical-source deduplication, and the prohibition on combined-scope conflict resolution.                                                                                                                                      |
+| `### Source Errors`                        | `interface.md` and `behavior.md`                                                             | Interface owns invalid, blocked, attention, and incomplete caller-visible outcomes. Behavior owns safe continuation only when the missing boundary cannot change the claimed complete result.                                                                                                                 |
+| `## Additions Beyond Startup`              | `interface.md` and `behavior.md`                                                             | Interface owns `--additions-only`, its required explicit route, and its result meaning. Behavior owns same-invocation expansion and ordered set difference, including subtraction of startup-reachable links.                                                                                                 |
+| `## Content Graph`                         | `behavior.md` and `technical-design.md`                                                      | Behavior owns the graph's technology-neutral nodes, relationships, per-invocation lifetime, non-persistence, and reuse boundary. Technical Design preserves only the source-stated in-memory/shared graph-builder direction and leaves the source units open.                                                 |
+| `## Content Projection`                    | `interface.md` and `behavior.md`                                                             | Interface owns the public projection grammar and emitted meaning. Behavior owns projection from the already resolved result without rerunning selection.                                                                                                                                                      |
+| `### Flag` under Content Projection        | `interface.md`                                                                               | Preserve comma and backslash grammar, idempotent parts, invalid repetition, canonical output independence from flag order, and the default `frontmatter,body`.                                                                                                                                                |
+| `### Source Metadata`                      | `interface.md`                                                                               | Preserve generated metadata fields, base/overwrite layer identity, compact and expanded differences, complete JSON facts, and the distinction from authored frontmatter.                                                                                                                                      |
+| `### Ordered Paths`                        | `interface.md` and `behavior.md`                                                             | Interface owns exact physical-layer path output, path-only replacement behavior, framing, and provenance. Behavior owns the invariant that selection and status are not rerun or simplified by projection.                                                                                                    |
+| `### Frontmatter`                          | `interface.md`                                                                               | Preserve complete authored YAML, without normalization or reconstructed replacement, and visible malformed or missing metadata findings.                                                                                                                                                                      |
+| `### Body`                                 | `interface.md`                                                                               | Preserve all Markdown after frontmatter, including generated regions and exact authored bytes; do not silently summarize, truncate, or remove.                                                                                                                                                                |
+| `### Headings`                             | `interface.md`, `behavior.md`, and `technical-design.md`                                     | Interface owns heading outline fields, source form, levels, visible text, canonical evidence, and view differences. Behavior owns structural projection and shared section boundaries without naming a parser. Technical Design preserves the named ordinal API and leaves parser and extension choices open. |
+| `### Exact Sections`                       | `interface.md`, `behavior.md`, and `technical-design.md`                                     | Interface owns exact visible-name matching, section boundaries, escaping, missing and duplicate-section outcomes, layer framing, and projection coverage. Behavior owns deterministic section selection from parsed nodes. Technical Design leaves parser and source-range realization open.                  |
+| `### Valid Combinations`                   | `interface.md`                                                                               | Preserve every listed valid combination and every invalid empty, unknown, malformed, or unquoted-list condition. Do not expand compatible combinations into an invented catalogue.                                                                                                                            |
+| `## Explicit Link Expansion`               | `interface.md` and `behavior.md`                                                             | Interface owns the public selection modifier and link-visible findings. Behavior owns bounded traversal, cycle handling, deduplication, containment, and result formation.                                                                                                                                    |
+| `### Flag` under Explicit Link Expansion   | `interface.md`                                                                               | Preserve positive-depth and `all` values, edge counting from pre-expansion seeds, zero invalidity, and omitted-flag meaning.                                                                                                                                                                                  |
+| `### Link Rules`                           | `interface.md` and `behavior.md`                                                             | Interface owns local-only following, external-link recording, overwrite-target framing, outside-`.agents` `ID: none` behavior, and no inference. Behavior owns relative resolution, physical containment, cycle termination, one-emission traversal, and incoming-reason retention.                           |
+| `### Link Findings`                        | `interface.md` and `behavior.md`                                                             | Interface owns visible missing, broken, fragment, case, containment, encoding, and ambiguity findings. Behavior owns the rule that broken edges cannot be silently dropped and that complete status cannot be claimed without the required boundary.                                                          |
+| `## Overwrites`                            | `interface.md` and `behavior.md`                                                             | Interface owns base-first human framing, separate structured layers, and orphan or ambiguous outcomes. Behavior owns logical-source normalization, layer order, and independent-selection prohibition.                                                                                                        |
+| `## Ordering And Deduplication`            | `interface.md` and `behavior.md`                                                             | Interface owns observable startup, operand, breadth-first link, first-canonical-position, all-reasons, and no-duplicate-content rules. Behavior owns deterministic ordering and deduplication mechanics. Technical Design records unresolved cross-platform identity details only.                            |
+| `## Results And Failures`                  | `interface.md` and `behavior.md`                                                             | Interface owns the public status and summary. Behavior owns the conditions that form one typed result without fabricating evidence.                                                                                                                                                                           |
+| `### Semantic Status`                      | `interface.md`, `behavior.md`, and `technical-design.md`                                     | Interface owns all seven semantic meanings and the fact that numeric exits are open. Behavior maps conditions to those names without adding statuses. Technical Design leaves numeric mapping open.                                                                                                           |
+| `### Required Summary`                     | `interface.md` and `behavior.md`                                                             | Interface owns every required workspace, source, closure, flag, count, finding, boundary, view, and content fact. Behavior forms one complete result consumed by both presentations.                                                                                                                          |
+| `### Human-Readable Errors`                | `interface.md` and `behavior.md`                                                             | Interface owns the four required error components. Behavior owns formation from the failed operation and known boundary. Output-stream assignment remains open.                                                                                                                                               |
+| `## Global Flags`                          | `interface.md` and `behavior.md`; link to the current shared Global Flags contracts          | Interface declares applicability and the no-op or terminal relationship. Behavior reuses shared parsing and request semantics without copying them.                                                                                                                                                           |
+| `## Complete Examples`                     | `interface.md`                                                                               | All ten complete examples remain public-interface evidence. Their exact inventory is listed below. Behavior may link to the relevant operation stages but must not duplicate their output prose.                                                                                                              |
+| `## Non-Goals`                             | `interface.md` and `behavior.md`                                                             | Interface owns the caller-visible exclusions. Behavior enforces the no-inference, no-persistence, no-fetch, no-repair, no-mutation, and no-silent-truncation boundaries.                                                                                                                                      |
+| `## Verification Requirements`             | `interface.md`, `behavior.md`, and `technical-design.md`                                     | Interface owns caller-visible coverage. Behavior owns direct and focused semantic conformance. Technical Design owns the source-stated built Native AOT process-evidence boundary and unresolved concrete evidence choices. Preserve `must` versus `should`.                                                  |
+| `## Related Accepted Direction`            | Link-only relationships in the applicable sibling files                                      | Link to the Decision Agenda, Release Plan, Checkpoint, shared contracts, and current CLI Working Documents. Do not copy their authority, status, or technical detail into the context contracts.                                                                                                              |
 
 ### Complete Example Inventory
 
@@ -471,15 +471,15 @@ schema choice.
 The candidate must carry these as visible open choices. Neither file placement
 nor a convenient implementation may resolve them.
 
-| Open question | What is known | What remains open |
-| --- | --- | --- |
-| Output streams | JSON is rendered to stdout by the shared global contract. Human output and ordinary errors have required content. | The normal human-result stream and ordinary-error stream for `context` are not assigned by the source. Do not infer stdout or stderr from convention. |
-| Operation-flag repetition | Repeating `--content` is explicitly invalid. Repeated source operands compose under the source-reference and closure rules. | Repetition of `--additions-only` and `--follow-links`, including conflicting repeated values, is not defined by the source. Global-flag repetition remains owned by the shared contract. |
-| Canonical projection ordering | Parts are composable and flag order does not change canonical output. Paths have a defined operation-level position, and source, layer, and document order remain meaningful. | The complete canonical order for every mixed `metadata`, `paths`, authored part, and multiple `section:<name>` combination is not fully closed. Do not choose requested-part order or a new canonical order. |
-| Link-status combinations | Broken edges remain visible. Safe sources may be returned beside unrelated findings. The result must distinguish `attention`, `incomplete`, and `blocked` when applicable. | Precedence and combined status formation for multiple link findings, link findings plus projection findings, and link findings plus closure failures remain open. |
-| Structured schemas and exits | One typed result supplies human and structured output. All semantic status names are defined. | Exact structured field names, schema version and compatibility, and numeric process-exit mapping remain Gate 3 work. |
-| Parser boundary | Structural headings use parser-provided ATX and Setext nodes, visible text, source forms, levels, and boundaries. Malformed text is not guessed. | The Markdown library, parser extensions, exact source-range representation, and parser-to-command source boundary remain open. |
-| Filesystem and source boundaries | Workspace and local link targets must remain within the selected workspace. Cross-platform physical identity and containment protect safe resolution. | Exact case, Unicode, alias, symlink, hardlink, canonical-identity, filesystem API, graph-builder, result, and command/shared source-module boundaries remain Gate 3 choices. |
+| Open question                    | What is known                                                                                                                                                                 | What remains open                                                                                                                                                                                            |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Output streams                   | JSON is rendered to stdout by the shared global contract. Human output and ordinary errors have required content.                                                             | The normal human-result stream and ordinary-error stream for `context` are not assigned by the source. Do not infer stdout or stderr from convention.                                                        |
+| Operation-flag repetition        | Repeating `--content` is explicitly invalid. Repeated source operands compose under the source-reference and closure rules.                                                   | Repetition of `--additions-only` and `--follow-links`, including conflicting repeated values, is not defined by the source. Global-flag repetition remains owned by the shared contract.                     |
+| Canonical projection ordering    | Parts are composable and flag order does not change canonical output. Paths have a defined operation-level position, and source, layer, and document order remain meaningful. | The complete canonical order for every mixed `metadata`, `paths`, authored part, and multiple `section:<name>` combination is not fully closed. Do not choose requested-part order or a new canonical order. |
+| Link-status combinations         | Broken edges remain visible. Safe sources may be returned beside unrelated findings. The result must distinguish `attention`, `incomplete`, and `blocked` when applicable.    | Precedence and combined status formation for multiple link findings, link findings plus projection findings, and link findings plus closure failures remain open.                                            |
+| Structured schemas and exits     | One typed result supplies human and structured output. All semantic status names are defined.                                                                                 | Exact structured field names, schema version and compatibility, and numeric process-exit mapping remain Gate 3 work.                                                                                         |
+| Parser boundary                  | Structural headings use parser-provided ATX and Setext nodes, visible text, source forms, levels, and boundaries. Malformed text is not guessed.                              | The Markdown library, parser extensions, exact source-range representation, and parser-to-command source boundary remain open.                                                                               |
+| Filesystem and source boundaries | Workspace and local link targets must remain within the selected workspace. Cross-platform physical identity and containment protect safe resolution.                         | Exact case, Unicode, alias, symlink, hardlink, canonical-identity, filesystem API, graph-builder, result, and command/shared source-module boundaries remain Gate 3 choices.                                 |
 
 The Technical Design may list evidence needed to resolve these questions. It
 must not turn a candidate, experiment, or recommendation into a choice.
@@ -530,60 +530,60 @@ must not turn a candidate, experiment, or recommendation into a choice.
 Before any candidate cutover, a reviewer should verify all of the following:
 
 - [ ] The old `commands/context-command.md` is unchanged and still named as the
-  authority.
+      authority.
 - [ ] The candidate state, non-shipping status, and explicit cutover boundary
-  are stated in every contract file that needs them.
+      are stated in every contract file that needs them.
 - [ ] The physical scope is exactly `commands/context/` with `_context.md`,
-  `interface.md`, `behavior.md`, and `technical-design.md`; `_context.md` is
-  route-only.
+      `interface.md`, `behavior.md`, and `technical-design.md`; `_context.md` is
+      route-only.
 - [ ] No requirement IDs or migration labels were added to the context
-  candidate or this synthesis.
+      candidate or this synthesis.
 - [ ] Every source heading and subsection appears in the map, including all
-  ten `Complete Examples` subsections.
+      ten `Complete Examples` subsections.
 - [ ] Every inline command, output, separator, valid-combination, and escaping
-  example is retained under its owning Interface subsection.
+      example is retained under its owning Interface subsection.
 - [ ] Interface contains the complete public syntax, operand grammar, flag
-  values, omission, repetition, ordering, dependencies, errors, outputs,
-  statuses, non-goals, examples, and caller-visible verification.
+      values, omission, repetition, ordering, dependencies, errors, outputs,
+      statuses, non-goals, examples, and caller-visible verification.
 - [ ] Interface preserves the exact distinction between generated metadata,
-  authored frontmatter, authored body, headings, exact sections, and ordered
-  physical paths.
+      authored frontmatter, authored body, headings, exact sections, and ordered
+      physical paths.
 - [ ] Interface preserves source IDs and canonical paths as caller-visible
-  source facts without treating them as migration labels.
+      source facts without treating them as migration labels.
 - [ ] Behavior contains technology-neutral startup and explicit closure,
-  additions difference, graph relationships, link traversal, overwrite
-  layering, projection, completeness, ordering, deduplication, result
-  formation, read-only effects, and safety boundaries.
+      additions difference, graph relationships, link traversal, overwrite
+      layering, projection, completeness, ordering, deduplication, result
+      formation, read-only effects, and safety boundaries.
 - [ ] Behavior forms one typed result and does not rerun work in human or
-  structured rendering.
+      structured rendering.
 - [ ] Behavior does not name a library, runtime API, parser, serializer,
-  private schema, source module, or filesystem implementation.
+      private schema, source module, or filesystem implementation.
 - [ ] Technical Design contains only the source-stated Native AOT context,
-  invocation-local in-memory/shared graph-builder direction, named ordinal API,
-  Native AOT process-evidence boundary, and explicit open Gate 3 choices.
+      invocation-local in-memory/shared graph-builder direction, named ordinal API,
+      Native AOT process-evidence boundary, and explicit open Gate 3 choices.
 - [ ] Technical Design traces each concrete fact to an Interface or Behavior
-  passage and does not settle a library, parser extension, schema, exit, stream,
-  filesystem, or source-boundary question.
+      passage and does not settle a library, parser extension, schema, exit, stream,
+      filesystem, or source-boundary question.
 - [ ] The shared global-flags and source-reference definitions are linked rather
-  than duplicated, while context-specific effects remain visible.
+      than duplicated, while context-specific effects remain visible.
 - [ ] The loading, routing, scope, path, and overwrite Framework sources are
-  linked rather than redefined, and ordinary links are not treated as route or
-  authority edges.
+      linked rather than redefined, and ordinary links are not treated as route or
+      authority edges.
 - [ ] All defaults, invalid states, incomplete coverage, partial safe output,
-  base/overwrite cases, link findings, and semantic statuses compare exactly
-  with the old source.
+      base/overwrite cases, link findings, and semantic statuses compare exactly
+      with the old source.
 - [ ] All preserved unknowns remain visibly open, including streams, operation
-  flag repetition, projection ordering, link-status combinations, schemas,
-  exits, parser boundaries, filesystem boundaries, and source boundaries.
+      flag repetition, projection ordering, link-status combinations, schemas,
+      exits, parser boundaries, filesystem boundaries, and source boundaries.
 - [ ] Verification retains the old requirement strength: mandatory evidence
-  remains mandatory and recommended direct, integration, and Native AOT layers
-  remain recommendations.
+      remains mandatory and recommended direct, integration, and Native AOT layers
+      remain recommendations.
 - [ ] The migration ledger receives a fact-level Context coverage and conflict
-  record before any cutover is considered; this council record is not that
-  ledger update.
+      record before any cutover is considered; this council record is not that
+      ledger update.
 - [ ] Authority review, independent lossless review, conflict review, link and
-  Markdown validation, and the one generated-index cutover occur before the
-  maintainer is asked to accept replacement authority.
+      Markdown validation, and the one generated-index cutover occur before the
+      maintainer is asked to accept replacement authority.
 
 ## Hard Stops
 

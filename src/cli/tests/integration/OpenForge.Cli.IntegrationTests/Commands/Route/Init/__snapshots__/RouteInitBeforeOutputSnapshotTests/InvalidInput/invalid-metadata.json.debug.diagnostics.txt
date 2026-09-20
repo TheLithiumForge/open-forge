@@ -1,0 +1,11 @@
+status=invalid-input
+mode=apply
+target=documents
+scaffold=generic
+completeness=incomplete
+safety=safe
+effects=0
+recovery=not-required
+verification=not-requested
+findings=1
+The Route Init metadata input is invalid for the selected scaffold and target.

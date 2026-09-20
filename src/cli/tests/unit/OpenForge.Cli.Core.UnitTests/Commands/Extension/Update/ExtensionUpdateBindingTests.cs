@@ -11,6 +11,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Update;
 
 public sealed class ExtensionUpdateBindingTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Update binding forms a complete dry-run request with embedded-source default"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void BindingFormsDryRunRequestWithEmbeddedSourceDefault()
     {
@@ -24,13 +25,16 @@ public sealed class ExtensionUpdateBindingTests
             "--automatic",
             "--dry-run",
             "--dry-run",
+            "--allow-path", "docs",
+            "--allow-path", "tools",
         ];
         var parse = symbols.Command.Parse(arguments);
         var request = ExtensionUpdateBinding.BindRequest(
             symbols,
             new CliBindingParse(parse, arguments),
-            Invocation(CliOutputFormat.Human));
+            Invocation(CliFormat.Text));
 
+        Assert.Equal(["docs", "tools"], request.AllowPath);
         Assert.Equal(ExtensionUpdateMode.DryRun, request.Mode);
         Assert.Equal(["toolkit", "base"], request.RequestedIds);
         Assert.Null(request.SourcePath);
@@ -40,6 +44,7 @@ public sealed class ExtensionUpdateBindingTests
         Assert.False(request.AllowInteraction);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Extension Update binding preserves explicit source and human interaction policy"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void BindingPreservesExplicitSourceAndHumanInteractionPolicy()
     {
@@ -49,7 +54,7 @@ public sealed class ExtensionUpdateBindingTests
         var request = ExtensionUpdateBinding.BindRequest(
             symbols,
             new CliBindingParse(parse, arguments),
-            Invocation(CliOutputFormat.Human));
+            Invocation(CliFormat.Text));
 
         Assert.Equal(ExtensionUpdateMode.Apply, request.Mode);
         Assert.Equal(["toolkit"], request.RequestedIds);
@@ -60,12 +65,12 @@ public sealed class ExtensionUpdateBindingTests
         Assert.True(request.AllowInteraction);
     }
 
-    private static CliInvocation Invocation(CliOutputFormat format)
+    private static CliInvocation Invocation(CliFormat format)
     {
         var path = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "extension-update-binding"));
         return new CliInvocation(
             new CliProcessIdentity("open-forge", "0.0.0-dev"),
-            new CliPresentation(format, CliView.Expanded, CliVerbosity.Normal),
+            new CliPresentation(format, CliDetail.Standard, null),
             CliTerminalMode.None,
             new CliWorkspaceRequest(null, path),
             new CliWorkspace(path, path, CliWorkspaceSelectionMethod.CurrentDirectory));

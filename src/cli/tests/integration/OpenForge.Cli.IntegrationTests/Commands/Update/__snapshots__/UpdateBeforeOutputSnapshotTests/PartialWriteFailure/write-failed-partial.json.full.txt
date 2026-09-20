@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 3,
+  "command": "update",
+  "status": "failed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Update stopped after 1 of 2 changes.",
+    "kind": "failed"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "update.write-failed",
+      "title": "Write failed",
+      "message": ".agents/open-forge.lock.json could not be written: filesystem access was denied.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the blocked, unavailable, or incomplete Update facts before rerunning."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "UnauthorizedAccessException (0x80070005): Filesystem access was denied."
+        }
+      ],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": "you had changed it and this release changes it",
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/loader.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "not-started",
+      "reason": "you had changed it and this release changes it",
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "filesReplaced": 2,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 12,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": true,
+    "prune": false,
+    "automatic": true,
+    "previousContent": null,
+    "lockPath": ".agents/open-forge.lock.json",
+    "unchanged": [
+      {
+        "path": ".agents/directives/_directives.md"
+      },
+      {
+        "path": ".agents/maps/_maps.md"
+      },
+      {
+        "path": ".agents/memory/_memory.md"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md"
+      },
+      {
+        "path": ".agents/memory/working/_working.md"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md"
+      },
+      {
+        "path": ".agents/skills/_skills.md"
+      },
+      {
+        "path": ".agents/templates/_templates.md"
+      },
+      {
+        "path": "AGENTS.md"
+      },
+      {
+        "path": "CLAUDE.md"
+      }
+    ],
+    "entriesSections": [],
+    "effects": [
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "sourceAssetPath": ".agents/guidance/_guidance.md",
+        "relation": {
+          "current": "changed",
+          "shipped": "changed"
+        },
+        "source": {
+          "id": "framework",
+          "version": null,
+          "fingerprint": "<sha256>"
+        },
+        "verification": "unknown"
+      },
+      {
+        "path": ".agents/loader.md",
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "sourceAssetPath": ".agents/loader.md",
+        "relation": {
+          "current": "changed",
+          "shipped": "changed"
+        },
+        "source": {
+          "id": "framework",
+          "version": null,
+          "fingerprint": "<sha256>"
+        },
+        "verification": "unknown"
+      }
+    ],
+    "verification": "unknown"
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the blocked, unavailable, or incomplete Update facts before rerunning."
+  }
+}

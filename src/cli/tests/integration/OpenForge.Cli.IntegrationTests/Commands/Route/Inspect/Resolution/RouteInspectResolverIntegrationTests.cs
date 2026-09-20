@@ -5,6 +5,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Resolution;
 
 public sealed class RouteInspectResolverIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect resolves an automatic ID and its exact path to the same graph source")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task IdAndExactPathHaveResolutionParity()
@@ -40,6 +41,7 @@ public sealed class RouteInspectResolverIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect reports a missing exact source as invalid without resolved facts")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task MissingSourceIsInvalid()
@@ -57,6 +59,7 @@ public sealed class RouteInspectResolverIntegrationTests
         Assert.Equal(RouteInspectResolutionIssueCode.MissingSource, Assert.Single(result.Issues).Code);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect rejects malformed traversal references before filesystem resolution")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task MalformedReferenceIsInvalid()
@@ -73,6 +76,7 @@ public sealed class RouteInspectResolverIntegrationTests
         Assert.Null(result.Graph);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect rejects the Loader as a subject rather than exposing a root route")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task LoaderSubjectIsInvalid()
@@ -90,6 +94,7 @@ public sealed class RouteInspectResolverIntegrationTests
         Assert.Null(result.Graph);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect blocks an ambiguous automatic ID with sorted candidate paths")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task AmbiguousIdRetainsSortedCandidates()
@@ -119,6 +124,7 @@ public sealed class RouteInspectResolverIntegrationTests
         Assert.Null(result.Graph);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect exact-path selection resolves one source from a non-unique automatic ID")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task ExactPathDisambiguatesOneSourceIdentity()
@@ -150,6 +156,7 @@ public sealed class RouteInspectResolverIntegrationTests
         Assert.Empty(result.Issues);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect gives ID, base-path, and overwrite-path references one logical source")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task BaseAndOverwriteReferencesHaveParity()

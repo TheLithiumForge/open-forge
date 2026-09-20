@@ -1,26 +1,27 @@
 using OpenForge.Cli.Core.Commands.Status;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Reading;
-using OpenForge.Cli.Core.Framework.Lifecycle;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 
 public sealed class StatusOperationLifecycleSnapshotIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Status forwards one immutable lifecycle observation to both lifecycle contributors and refreshes the next invocation")]
     [Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
     public async Task StatusForwardsOneImmutableLifecycleObservationToBothContributorsAndRefreshesTheNextInvocation()
     {
         using var workspace = StatusIntegrationWorkspace.Create("status-operation-lifecycle-snapshot");
-        var initialBytes = "{\"snapshot\":\"initial\"}"u8.ToArray();
-        var replacementBytes = "{\"snapshot\":\"replacement\"}"u8.ToArray();
-        workspace.WriteBytes(StatusIntegrationWorkspace.LifecyclePath, initialBytes);
+        var initialBytes = "{\"schemaVersion\":1,\"framework\":null,\"extensions\":[],\"libraries\":[],\"snapshot\":\"initial\"}"u8.ToArray();
+        var replacementBytes = "{\"schemaVersion\":1,\"framework\":null,\"extensions\":[],\"libraries\":[],\"snapshot\":\"replacement\"}"u8.ToArray();
+        workspace.WriteBytes(".agents/open-forge.lock.json", initialBytes);
         var recordings = new StatusOperationRecordings(() =>
-            workspace.ReplaceBytes(StatusIntegrationWorkspace.LifecyclePath, replacementBytes));
+            workspace.ReplaceBytes(".agents/open-forge.lock.json", replacementBytes));
         var operation = new StatusOperation(
             recordings.Catalogue,
-            new LifecycleDocumentSnapshotReader(new PhysicalPathResolver()));
+            new PhysicalPathResolver());
         using var firstCancellation = new CancellationTokenSource();
         using var secondCancellation = new CancellationTokenSource();
 
@@ -32,10 +33,10 @@ public sealed class StatusOperationLifecycleSnapshotIntegrationTests
         AssertWorkspaceInvocation(recordings.Routes.Invocations, 0, workspace.Workspace, firstCancellation.Token);
         var firstFramework = Assert.Single(recordings.FrameworkLifecycle.Invocations);
         var firstExtension = Assert.Single(recordings.ExtensionLifecycle.Invocations);
-        Assert.Same(firstFramework.Snapshot, firstExtension.Snapshot);
+        Assert.Same(firstFramework.Ownership, firstExtension.Ownership);
         AssertLifecycleInvocation(firstFramework, workspace.Workspace, firstCancellation.Token, initialBytes);
         AssertLifecycleInvocation(firstExtension, workspace.Workspace, firstCancellation.Token, initialBytes);
-        Assert.Equal(replacementBytes, File.ReadAllBytes(workspace.Combine(StatusIntegrationWorkspace.LifecyclePath)));
+        Assert.Equal(replacementBytes, File.ReadAllBytes(workspace.Combine(".agents/open-forge.lock.json")));
         Assert.Equal(0, recordings.LocalReferences.Calls);
 
         var secondResult = await operation.ExecuteAsync(new(workspace.Workspace), secondCancellation.Token);
@@ -48,11 +49,11 @@ public sealed class StatusOperationLifecycleSnapshotIntegrationTests
         Assert.Equal(2, recordings.ExtensionLifecycle.Invocations.Count);
         var secondFramework = recordings.FrameworkLifecycle.Invocations[1];
         var secondExtension = recordings.ExtensionLifecycle.Invocations[1];
-        Assert.Same(secondFramework.Snapshot, secondExtension.Snapshot);
-        Assert.NotSame(firstFramework.Snapshot, secondFramework.Snapshot);
+        Assert.Same(secondFramework.Ownership, secondExtension.Ownership);
+        Assert.NotSame(firstFramework.Ownership, secondFramework.Ownership);
         AssertLifecycleInvocation(secondFramework, workspace.Workspace, secondCancellation.Token, replacementBytes);
         AssertLifecycleInvocation(secondExtension, workspace.Workspace, secondCancellation.Token, replacementBytes);
-        Assert.NotEqual(firstFramework.Snapshot.File?.ContentHash, secondFramework.Snapshot.File?.ContentHash);
+        Assert.NotEqual(firstFramework.Ownership.Snapshot?.ContentHash, secondFramework.Ownership.Snapshot?.ContentHash);
         Assert.Equal(0, recordings.LocalReferences.Calls);
     }
 
@@ -73,11 +74,11 @@ public sealed class StatusOperationLifecycleSnapshotIntegrationTests
         CancellationToken expectedToken,
         byte[] expectedBytes)
     {
-        Assert.Equal(LifecycleDocumentSnapshotState.Available, invocation.Snapshot.State);
-        Assert.Same(expectedWorkspace, invocation.Snapshot.Workspace);
+        Assert.Equal(WorkspaceOwnershipReadState.Complete, invocation.Ownership.State);
+        Assert.Same(expectedWorkspace, invocation.Workspace);
         Assert.Equal(expectedToken, invocation.CancellationToken);
         var file = Assert.IsType<OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files.FileStateSnapshot>(
-            invocation.Snapshot.File);
+            invocation.Ownership.Snapshot);
         Assert.Equal(expectedBytes, file.Bytes.ToArray());
     }
 }

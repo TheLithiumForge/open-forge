@@ -1,0 +1,4 @@
+Updated 1 Framework file.
+Workspace: <workspace>
+  .agents/loader.md  replaced (you had changed it and this release changes it)
+Next: open-forge doctor

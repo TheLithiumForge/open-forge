@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 3,
+  "command": "extension remove",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Removed the toolkit Extension.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "packagesRemoved": 1,
+    "filesDeleted": 1,
+    "filesKept": 0,
+    "filesReleased": 0,
+    "sectionsUpdated": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "automatic": false,
+    "packages": [
+      {
+        "id": "toolkit"
+      }
+    ],
+    "orphaned": [],
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/toolkit.md",
+        "action": "delete",
+        "outcome": "verified",
+        "owner": "toolkit",
+        "keptFor": []
+      }
+    ]
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge cleanup  (after reviewing the bundle)",
+    "reason": "after reviewing the bundle"
+  }
+}

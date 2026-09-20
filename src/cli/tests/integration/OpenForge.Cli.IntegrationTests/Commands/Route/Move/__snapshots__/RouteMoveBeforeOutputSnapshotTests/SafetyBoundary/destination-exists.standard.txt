@@ -1,0 +1,9 @@
+Cannot move guidance/old guide: .agents/guidance/new guide.md already exists.
+Workspace: <workspace>
+  Error  .agents/guidance/new guide.md  Destination already exists
+         .agents/guidance/new guide.md already exists.
+         choose another destination
+         Choose another destination, then rerun Route Move.
+  files scanned: the reference scan was not completed
+  Choose another destination, then rerun Route Move.
+Next: choose another destination

@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 3,
+  "command": "cleanup",
+  "status": "incomplete",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "The recovery store could not be read completely. Nothing was removed.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "cleanup.catalogue-incomplete",
+      "title": "Recovery store is incomplete",
+      "message": "The recovery store at <recovery-store> could not be read completely.",
+      "subject": {
+        "kind": "identifier",
+        "path": "cleanup",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge doctor",
+          "reason": "Inspect the recovery store before relying on this Cleanup result."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "bundlesRemoved": 0,
+    "draftsRemoved": 0,
+    "itemsLeftInPlace": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "items": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the recovery store before relying on this Cleanup result."
+  }
+}

@@ -1,0 +1,26 @@
+Route move stopped after 5 of 9 changes.
+Workspace: <workspace>
+  Error  .agents/guidance/new guide.md  Write failed [route-move.write-failed]
+         Writing .agents/guidance/new guide.md failed. Stopped after 5 of 9 changes. Recovery data: <recovery-bundle>.
+  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  .agents/guidance/old guide.overwrite.md -> .agents/guidance/new guide.overwrite.md
+  Entry updated in .agents/guidance/_guidance.md
+  Rewrote 5 links that pointed at the old path:
+  .agents/guidance/topics/child.md:8:13  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  .agents/guidance/topics/child.overwrite.md:1:35  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  README.md:3:13  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  README.md:5:23  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  notes.md:3:11  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
+  Effects:
+  .agents/guidance/new guide.md: create file / missing -> file:<sha256> / verified
+  .agents/guidance/new guide.overwrite.md: create file / missing -> file:<sha256> / verified
+  .agents/guidance/_guidance.md: rewrite Entries section / file:<sha256> -> file:<sha256> / verified
+  .agents/guidance/topics/child.md: rewrite link source / file:<sha256> -> file:<sha256> / verified
+  .agents/guidance/topics/child.overwrite.md: rewrite link source / file:<sha256> -> file:<sha256> / verified
+  README.md: rewrite link source / file:<sha256> -> file:<sha256> / not started
+  notes.md: rewrite link source / file:<sha256> -> file:<sha256> / not started
+  .agents/guidance/old guide.md: delete file / file:<sha256> -> missing / not started
+  .agents/guidance/old guide.overwrite.md: delete file / file:<sha256> -> missing / not started
+  12 files scanned; 9 links found.
+  Report the failure and retry the same Route Move request with bounded diagnostics.
+Next: open-forge route move --detail debug

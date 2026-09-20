@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Cleanup;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
+using OpenForge.Cli.Core.Commands.Shared;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
@@ -8,6 +9,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Cleanup;
 
 public sealed class CleanupResultContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup planned effect conditions retain only delete or preserve plan pairs"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void PlannedEffectConditionsAreCoherent()
@@ -38,6 +40,7 @@ public sealed class CleanupResultContractTests
             CleanupEffectResidual.None));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup actual effect outcomes retain monotonic deletion and preserved residual states"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void ActualEffectOutcomesAreMonotonic()
@@ -76,6 +79,7 @@ public sealed class CleanupResultContractTests
             CleanupEffectResidual.None));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup effects and residuals preserve plan identity and reject empty residual evidence"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void EffectsAndResidualsPreservePlanIdentity()
@@ -105,6 +109,7 @@ public sealed class CleanupResultContractTests
             CleanupEffectResidual.None));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup result facts keep effects and residuals ordered and attached to one plan"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void ResultFactsKeepOrderedTypedGraph()
@@ -149,6 +154,7 @@ public sealed class CleanupResultContractTests
         Assert.Equal(CleanupCatalogueComparisonState.Matched, facts.Revalidation.State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup result facts reject duplicate, out-of-order, foreign, and default effect collections"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void ResultFactsRejectInvalidEffectCollections()
@@ -198,18 +204,21 @@ public sealed class CleanupResultContractTests
             []));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup findings preserve derived semantic status and require bounded subjects and causes"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void FindingsPreserveStatusAndCauseBoundary()
     {
+        var subject = Path.GetFullPath(Path.Combine(
+            Path.GetTempPath(), "cleanup-recovery", "operation.zip"));
         var finding = CleanupFinding.Create(
             CleanupFindingCode.RecoveryFinalMalformed,
             "The exact-name final is malformed.",
-            "/tmp/cleanup-recovery/operation.zip");
+            subject);
 
         Assert.Equal(CleanupFindingCode.RecoveryFinalMalformed, finding.Code);
-        Assert.Equal(CliSemanticStatus.Blocked, finding.Status);
-        Assert.Equal("/tmp/cleanup-recovery/operation.zip", finding.Subject);
+        Assert.Equal(CliSemanticStatus.Attention, finding.Status);
+        Assert.Equal(subject, finding.Subject);
         Assert.Equal("The exact-name final is malformed.", finding.Cause);
 
         Assert.Throws<ArgumentException>(() => CleanupFinding.Create(
@@ -224,6 +233,7 @@ public sealed class CleanupResultContractTests
             "The finding code is invalid."));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup result retains one typed fact graph and optional next action"),
      Trait("Feature", "cleanup"), Trait("Evidence", "UnitContract")]
     public void ResultRetainsTypedGraphAndNextAction()
@@ -232,7 +242,7 @@ public sealed class CleanupResultContractTests
         var request = facts.Plan.Request;
         Assert.NotNull(request);
         var next = new CliNextAction(
-            CleanupDefinitions.CleanupCommandLine,
+            CommandLines.Cleanup,
             "Rerun the same Cleanup request.");
         var result = CleanupTestData.Result(
             facts,

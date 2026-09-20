@@ -4,8 +4,6 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
 
 internal sealed partial class RouteUpdateIntegrationWorkspace
 {
-    private const int VerificationBodyLength = 16 * 1024 * 1024;
-
     internal void SeedTargetForm(string path)
     {
         File.Delete(Absolute(TargetPath));
@@ -109,11 +107,6 @@ internal sealed partial class RouteUpdateIntegrationWorkspace
             "---\nopen-forge:\n  description: Before overview\n"
             + "  responsibility: Owns the overview\n"
             + "  tags: [Before, Memory]\n---\n");
-
-    internal void SeedVerificationWindow()
-        => _temporary.ReplaceText(
-            TargetPath,
-            TargetDocument() + new string('x', VerificationBodyLength) + "\n");
 
     internal void SeedAmbiguousTarget()
         => WriteText(

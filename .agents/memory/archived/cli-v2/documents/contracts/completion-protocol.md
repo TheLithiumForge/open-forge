@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Static and bounded dynamic shell-completion candidates, sources, workspace resolution, safety, cost limits, and fallback behavior
+  description: "Historical CLI-v2 source: Static and bounded dynamic shell-completion candidates, sources, workspace resolution, safety, cost limits, and fallback behavior"
   responsibility: Define frequent hidden completion requests without turning suggestions into authority, mutation, unbounded discovery, or another public command
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---

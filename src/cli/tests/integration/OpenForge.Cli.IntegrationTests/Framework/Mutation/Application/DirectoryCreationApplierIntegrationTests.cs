@@ -18,6 +18,7 @@ public sealed class DirectoryCreationApplierIntegrationTests : IDisposable
     private readonly WorkspaceLockTestStore lockStore = WorkspaceLockTestStore.Create(
         "directory-creation-applier-lock-store");
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Directory creation applier creates and exactly verifies one target without support artifacts")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CreatesOneExactDirectoryWithoutRecoveryOrLifecycleArtifacts()
@@ -60,6 +61,7 @@ public sealed class DirectoryCreationApplierIntegrationTests : IDisposable
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Directory creation loop retains a verified parent when a later child stops")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task NestedCreationRetainsFirstResidualWhenLaterTargetStops()
@@ -116,6 +118,7 @@ public sealed class DirectoryCreationApplierIntegrationTests : IDisposable
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Directory creation applier creates an explicit nested plan one target at a time")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CreatesNestedDirectoriesOneAtATime()
@@ -168,6 +171,7 @@ public sealed class DirectoryCreationApplierIntegrationTests : IDisposable
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Directory creation applier rejects disposed and foreign workspace leases")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task RequiresLiveLeaseForTheSelectedWorkspace()
@@ -203,6 +207,7 @@ public sealed class DirectoryCreationApplierIntegrationTests : IDisposable
         Assert.False(Directory.Exists(target));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Directory creation applier observes cancellation before the target effect")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task PreCancellationReturnsNotStartedWithoutCreation()
@@ -230,6 +235,7 @@ public sealed class DirectoryCreationApplierIntegrationTests : IDisposable
         Assert.False(Directory.Exists(target));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Directory creation applier rejects a target collision after planning")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CollisionAfterPlanningReturnsNotStartedAndPreservesOccupant()
@@ -270,6 +276,7 @@ public sealed class DirectoryCreationApplierIntegrationTests : IDisposable
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Directory creation applier rejects a planned target whose parent alias changes identity")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task ParentAliasIdentityChangeReturnsNotStartedWithoutCreation()
@@ -300,6 +307,7 @@ public sealed class DirectoryCreationApplierIntegrationTests : IDisposable
         Assert.False(Directory.Exists(Path.Combine(second, "route")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Directory creation applier rejects a forged matched missing check")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task ForgedMissingPhysicalTargetIsRejectedWithoutEffects()
@@ -330,6 +338,7 @@ public sealed class DirectoryCreationApplierIntegrationTests : IDisposable
         Assert.False(Directory.Exists(forgedTarget));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Directory creation applier rejects a check for a different planned target")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task MismatchedCheckAndCreationAreRejectedWithoutEffects()

@@ -11,6 +11,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.GeneratedNavigation;
 
 public sealed class GeneratedNavigationSkillProjectionTests
 {
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation projects native Skills with one synthetic classification tag in stable order")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void NativeSkillsUseSyntheticClassificationWithoutAuthoredTags()
@@ -67,6 +68,7 @@ public sealed class GeneratedNavigationSkillProjectionTests
         Assert.Equal(region.Change?.ExpectedDocumentBytes, repeatedRegion.Change?.ExpectedDocumentBytes);
     }
 
+    [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Generated navigation blocks absent, missing, and malformed native Skill metadata")]
     [InlineData("absent")]
     [InlineData(nameof(SourceAuthoredMetadataState.Missing))]
@@ -179,11 +181,7 @@ public sealed class GeneratedNavigationSkillProjectionTests
                 # Skills
 
                 ## Entries
-
-                <!-- open-forge:generated-index:start -->
                 {body}
-                <!-- open-forge:generated-index:end -->
-
                 """;
         return new MarkdownDocumentParser().Parse(source);
     }

@@ -1,0 +1,4 @@
+Cannot repair: The link at .agents/docs/source.md:9:10 is not one doctor reports as repairable. Nothing was changed.
+  Warning  .agents/docs/source.md:9:10  Broken link
+         missing.md: Broken link; 4 possible targets
+Next: open-forge doctor --detail standard

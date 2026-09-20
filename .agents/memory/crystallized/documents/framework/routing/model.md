@@ -21,7 +21,7 @@ A `route` identifies a destination and explains why it may matter.
 
 An `entrypoint` is the Markdown file that makes one folder routable. Every folder in a visible `route` chain contains exactly one recognized `entrypoint`. Open Forge authors one canonical filename, while the [compatibility boundary](../markdown/compatibility.md) records input aliases accepted during migration or interoperability.
 
-An `entry` is one generated line under an `entrypoint`'s final `Entries` section. It exposes one direct routed file or direct child `entrypoint` through:
+An `entry` is one generated line under an `entrypoint`'s `Entries` section. It exposes one direct routed file or direct child `entrypoint` through:
 
 - A natural-language `description` sufficient to select or skip the `route`
 - A containing-file-relative Markdown destination

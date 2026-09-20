@@ -1,0 +1,5 @@
+status=blocked
+installed=0
+available=0
+The explicit Extension source overlaps the selected workspace.
+No Extension ownership is recorded; installed packages cannot be established.

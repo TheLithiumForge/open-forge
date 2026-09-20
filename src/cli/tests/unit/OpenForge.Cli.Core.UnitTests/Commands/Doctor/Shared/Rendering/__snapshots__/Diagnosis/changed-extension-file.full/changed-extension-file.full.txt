@@ -1,0 +1,14 @@
+No errors. 1 warning was recorded.
+Extensions
+  Warning  .agents/toolkit/example.md  Extension file changed [extension.managed-changed]
+         .agents/toolkit/example.md changed since it was installed by toolkit.
+         use open-forge extension update toolkit
+         open-forge extension update toolkit
+         Reconcile the Extension files.
+         expected: current-intended-fingerprint
+         actual: current-fingerprint
+         read from .agents/toolkit/example.md
+  21 links and 20 routes checked.
+  1 uses the indicated command.
+  Reconcile the Extension files.
+Next: open-forge extension update toolkit

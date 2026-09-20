@@ -36,7 +36,6 @@ change semantics independently material.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Historical CLI-v2 source: Explicit per-user shell-completion targets, selection, profile ownership, safe mutation, interruption recovery, and Framework-install handoff](completion-lifecycle.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical CLI-v2 source: Static and bounded dynamic shell-completion candidates, sources, workspace resolution, safety, cost limits, and fallback behavior](completion-protocol.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical CLI-v2 source: Explicit domain diagnosis, typed findings, completeness, stable ordering, safe repair projection, conflict handling, and rediagnosis semantics](diagnosis-and-repair.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
@@ -53,4 +52,3 @@ change semantics independently material.
 - [Historical CLI-v2 source: Exact shallow status facts, typed data, semantic outcomes, advisory suggestions, and exhaustive share-safe redaction behavior](status-results.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical CLI-v2 source: Workspace-aligned formatter discovery, trust classification, exact-file post-processing, checksum refresh, and manual follow-up](workspace-formatting.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical CLI-v2 source: Git-first mutation recovery, Gitless sibling backups, in-process reversal, hard-stop evidence, and residual-state behavior](workspace-recovery.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
-<!-- open-forge:generated-index:end -->

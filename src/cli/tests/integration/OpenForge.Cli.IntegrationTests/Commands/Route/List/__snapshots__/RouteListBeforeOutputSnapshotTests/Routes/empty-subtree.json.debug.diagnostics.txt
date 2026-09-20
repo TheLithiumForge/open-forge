@@ -1,0 +1,8 @@
+route-list diagnostics
+status=completed
+workspace.lexical=<workspace>
+selection.kind=source-id
+requested-depth=1
+effective-depth=1
+rows=1
+findings=0

@@ -1,12 +1,15 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
+using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Remove;
 
 public sealed class RouteRemovePlanningProjectionTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove effect facts keep delete and bounded replacement coordinates"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitBehavior")]
     public void EffectFactsKeepDeleteAndReplacementCoordinates()
@@ -42,6 +45,7 @@ public sealed class RouteRemovePlanningProjectionTests
         });
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove plan projection distinguishes an exact no-op from planned effects"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitBehavior")]
     public void PlanProjectionDistinguishesNoOpFromPlannedEffects()
@@ -65,6 +69,30 @@ public sealed class RouteRemovePlanningProjectionTests
         Assert.False(planned.IsNoOp);
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Route Remove review preview projects dry-run mode from retained plan facts"),
+     Trait("Feature", "route-remove"), Trait("Evidence", "UnitBehavior")]
+    public void ReviewPreviewUsesRetainedPlanWithoutChangingThePlan()
+    {
+        var plan = new RouteRemovePlan
+        {
+            Request = RouteRemoveTestData.Request(mode: RouteRemoveMode.Apply),
+            Preview = RouteRemoveTestData.Formation(mode: RouteRemoveMode.Apply),
+            Projection = Projection(),
+        };
+
+        var preview = RouteRemovePlanProjector.CreateDryRunPreview(plan);
+
+        Assert.Equal(RouteRemoveMode.DryRun, preview.Mode);
+        Assert.Equal(RouteRemoveMode.Apply, plan.Preview.Mode);
+        Assert.Same(plan.Preview.Workspace, preview.Workspace);
+        Assert.Same(plan.Preview.Source, preview.Source);
+        Assert.Equal(plan.Preview.Effects, preview.Effects);
+        Assert.Same(plan.Preview.References, preview.References);
+        Assert.Same(plan.Preview.Recovery, preview.Recovery);
+    }
+
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove navigation postcondition retains its failure cause"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void PostconditionsRetainFailureCauses()

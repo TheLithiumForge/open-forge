@@ -1,0 +1,17 @@
+docs/guide  .agents/docs/guide.md
+
+Where this source belongs
+  Route chain: docs -> guide
+  Parent: docs
+  Overwrite file: .agents/docs/guide.overwrite.md
+
+When it is read
+  At task start or resume: no
+  Read automatically after another route: no
+  Read when this route is selected: yes
+  Read automatically when the base source is read
+  May be read again: no
+
+Context size
+  This file: 2 files, 202 B, about 51 tokens
+  Selecting this route adds: 2 files, 202 B, about 51 tokens

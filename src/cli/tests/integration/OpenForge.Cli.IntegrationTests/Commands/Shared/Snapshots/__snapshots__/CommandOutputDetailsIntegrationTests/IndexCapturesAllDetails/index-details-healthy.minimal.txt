@@ -1,0 +1,3 @@
+Would update the Entries section in 1 of 1 file.
+  .agents/root/_root.md  unknown -> 1 entries
+No files were changed.

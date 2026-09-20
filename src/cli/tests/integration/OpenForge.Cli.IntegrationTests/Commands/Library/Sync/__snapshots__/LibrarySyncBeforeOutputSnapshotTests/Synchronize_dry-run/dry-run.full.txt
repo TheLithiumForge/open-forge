@@ -1,0 +1,11 @@
+Would synchronize team-knowledge: 1 link to add.
+Workspace: <workspace>
+  Add      .agents/directives/added.md
+    Target: ../../shared/team-knowledge/.agents/directives/added.md
+  1 link unchanged
+  .agents/open-forge.lock.json  would be updated
+  Inventory: 2 eligible files, 0 excluded items, 0 unavailable paths.
+  Expected state: .agents/directives/added.md is missing.
+  Expected state: .agents/open-forge.lock.json is ordinary-file.
+  Verification: not started; record publication: not started.
+  Recovery: no recovery data was requested.

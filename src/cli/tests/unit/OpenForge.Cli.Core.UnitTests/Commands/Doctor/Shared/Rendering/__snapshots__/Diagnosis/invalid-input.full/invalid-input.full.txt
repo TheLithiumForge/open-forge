@@ -1,0 +1,7 @@
+Cannot run doctor: The selected workspace path is invalid.
+  Workspace checks did not finish: The selected workspace path is invalid.
+  Recovery data was not checked: The selected workspace path is invalid.
+  Routes were not checked: The selected workspace path is invalid.
+  Links were not checked: The selected workspace path is invalid.
+  Framework files were not checked: The selected workspace path is invalid.
+  Extensions were not checked: The selected workspace path is invalid.

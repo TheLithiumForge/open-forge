@@ -1,0 +1,3 @@
+Cannot move guidance/old guide: The source and the destination are the same.
+Workspace: <workspace>
+  files scanned: the reference scan was not completed

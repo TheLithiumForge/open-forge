@@ -1,0 +1,4 @@
+  docs            .agents/docs/_docs.md
+  docs/guide      .agents/docs/guide.md
+  docs/reference  .agents/docs/reference.md
+  loader          .agents/loader.md

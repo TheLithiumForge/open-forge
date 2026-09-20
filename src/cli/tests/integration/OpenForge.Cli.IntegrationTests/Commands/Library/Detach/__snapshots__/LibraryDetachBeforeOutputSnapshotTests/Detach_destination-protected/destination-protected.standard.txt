@@ -1,0 +1,12 @@
+Cannot detach team-knowledge: .agents/loader.md is protected, owned by the source, or registered to another Library. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/loader.md  Library destination is protected
+         .agents/loader.md is protected, owned by the source, or registered to another Library.
+         open-forge library list
+         Choose a registered Library ID.
+  Warning  .agents/loader.md  Registered link is missing
+         .agents/loader.md is already absent, so no file was removed.
+         open-forge library inspect team-knowledge
+         Inspect the Library before changing it.
+  Choose a registered Library ID.
+Next: open-forge library list

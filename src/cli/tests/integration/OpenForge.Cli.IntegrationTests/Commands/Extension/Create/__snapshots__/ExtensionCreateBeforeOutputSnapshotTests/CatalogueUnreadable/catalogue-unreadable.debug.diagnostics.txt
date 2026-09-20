@@ -1,0 +1,9 @@
+status=incomplete
+mode=apply
+id=toolkit
+folder=<extension-source>
+package=<extension-source>/toolkit
+intended=2
+applied=0
+findings=1
+finding=extension-create.catalogue-unavailable:subject=<extension-source>/toolkit:cause=Access to the path '<extension-source>...

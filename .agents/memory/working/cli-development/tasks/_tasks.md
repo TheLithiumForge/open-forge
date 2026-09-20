@@ -1,125 +1,104 @@
 ---
 open-forge:
-  description: Hierarchical implementation Tasks for the complete greenfield replacement CLI
-  tags: [Memory, Working, Contextual, Active, CLI, Task, Architecture, Development]
+  description: Open CLI tasks, the selected migration and on-demand follow-ups
+  tags: [Memory, Working, CLI, Task, Contextual, Active]
 ---
 
-# CLI Development Tasks
+# Open CLI Tasks
 
-Read the [program Task](00-cli-development.md),
-[Architecture](../../../crystallized/documents/cli/architecture.md), and
-[Plan](../plan.md) before selecting a Task group.
+Task 38 planning is the selected work as of 2026-09-19. Its
+[migration packet](task38/_task38.md) owns the accepted structural sequence;
+structural stages 0–4 and G5 are accepted. The maintainer approved F01–F26
+for stages 5–6; Task45 now owns [accepted G6 evidence](task45/_task45.md) and the [flow report](task45/g6-flow-report.md).
+The other open tasks remain available on demand. Completed and superseded
+Task records are preserved under
+[Archived CLI Development](../../../archived/cli-development/_cli-development.md).
 
-## Task Groups
+Read the parent Task before a phase subtask. A subtask carries actionable
+evidence and may narrow, but never broaden, its parent Task.
 
-- [x] [CLI Foundation](foundation/_foundation.md) — Complete — Implementer: Mastermind
-- [x] [Route Discovery](route-discovery/_route-discovery.md) — Complete — Implementer: Mastermind
-- [x] [Generic CLI Improvements](generic-improvements/_generic-improvements.md) — Complete — Implementer: Mastermind
-- [x] [Read-Only Commands](read-only/_read-only.md) — Complete; public Index feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534` is locally squash-integrated at `09aa03eddb97831ff544afe1eac54ad9af501f5c`, whose tree exactly equals final Index closeout tip `2b353c48978ee88e53345be8037776181612222c` — Implementer: Overseer-managed bounded Index owner
-- [x] [Modern C# Improvements](modern-csharp-improvements.md) — Complete; Preflight `55eb82e`, Framework `a90af59`, Shell/root `fe10525`, Route Inspect/family `62a1dd9`, Route List `273eb45`, Tests/support `6af5fb1`, and final managed, Native AOT, package, audit, and public no-write gates accepted in the commit containing this record — Implementer: Mastermind
-- [x] [Repository-root CLI developer workflow](repository-root-developer-workflow.md) — Complete and squash-integrated into local `develop` at `d9e0686` — Implementer: Mastermind
-- [x] [Mutation Foundation](mutation-foundation/_mutation-foundation.md) — Complete at exact production candidate `e7d937f` under authority `01dd552`; final managed/native, static-absence, diff, and independent-review gates pass — Implementer: Overseer-managed Task Mastermind, sequential
-- [x] [Test Architecture And Constants](test-architecture-and-constants.md) — Complete and squash-integrated at `b6ce31f` — Implementer: Overseer
-- [x] [Read-Only CLI Dogfooding Corrections](read-only-dogfooding-corrections.md) — Complete and squash-integrated at `bba84b6` — Implementer: Overseer
-- [x] [Proportional CLI Corrections](proportional-cli-corrections.md) — Complete and squash-integrated through `0d88606`; Mutation Foundation may resume — Implementer: Overseer with bounded Task Masterminds
-- [x] [Next-Wave Shared Foundations](shared-foundations/_shared-foundations.md) — Complete at integrated D0/SF1-SF4 baseline — Implementer: Overseer-managed bounded Task Masterminds
-- [x] [Route Mutation Commands](route-mutation/_route-mutation.md) — Complete: Route Init, Route Create, [CLI Quality Remediation](cli-quality-remediation.md), Task 3 “Route Update”, and Task 4 “Route Move” are Complete; Route Remove is Complete and integrated at `5a2e650a` — Implementer: Overseer-managed command lanes
-- [x] [CLI Quality Remediation](cli-quality-remediation.md) — Complete and squash-integrated at `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate `a4ccf19a`, tree `97254e65`; all thirteen findings/candidates and final `QR-R1-001` are closed — Implementer: Overseer-managed Task Mastermind
-- [x] [CLI Architecture Authority Audit](cli-architecture-authority-audit.md) — Task 9 is Complete and integrated at `e431395a`, exact tree `656cccdf`; twelve location-precise findings are retained for Task 12 — Implementer: Dedicated Task Mastermind
-- [x] [CLI Architecture Authority Remediation](cli-architecture-authority-remediation.md) — Task 12 is Complete after all twelve authority dispositions, one fresh Task review/correction, protected-identity closeout, and two bounded integration findings/correction — Implementer: Dedicated Task Mastermind with one Brilliant Implementer and one fresh review
-- [x] [Root Tooling Placement Remediation](root-tooling-placement.md) — Complete and squash-integrated at `f8377094`, exact tree `c05c2ed6`; dequeued after completion-update grace — Implementer: Task 11 Task Mastermind with one Brilliant Implementer and one fresh review
-- [x] [Lifecycle Commands](lifecycle/_lifecycle.md) — Complete: Extension Create, Extension Install, root Install, root Update, Extension Update, and Extension Remove are integrated — Implementer: Overseer-managed command lanes
-- [x] [Operational Commands](operations/_operations.md) — Complete: Status, Doctor, Repair, and Cleanup are integrated; Task 20 Cleanup completed at phase 5/5, milestone 8/8 in `148d378d` — Implementer: Overseer-managed command lanes
-- [x] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is Complete, phase 3/3, milestone 5/5; integrated at `fbcec295`, seven findings selected for Task 21
-- [x] [CLI Command Surface Remediation](cli-command-surface-remediation.md) — Complete, phase 4/4, milestone 6/6; integrated at `75f6ff49`
-- [x] [C# Structural Streamlining](csharp-structural-streamlining.md) — Task 27 bounded beta complete at phase 4/4, milestone 8/8; integrated at `73ef066a`, exact feature tree. [Changes and remaining work](csharp-beta-closeout.md).
-- [x] [Task 7 ARM64 package expansion](delivery/01-npm-packages.md#arm64-expansion-horizon) — Complete, phase 4/4, milestone 6/6; integrated at `7eeeb19d`
-- [x] [CLI Delivery](delivery/_delivery.md) — Tasks 13 and 22 complete locally, phase 3/3, milestone 6/6; integrated at `3bf03e0e`, with Linux execution and static other-platform review
-- [x] [Framework Release Preparation](source-framework-review.md) — Task 28 accepted for local squash integration; source, Extensions, and public documentation are complete. Follow-up CLI tasks remain separate.
-- [x] [Task 23: Workspace Libraries](workspace-libraries.md) — Complete, phase 5/5, milestone 8/8; Sol return and root placement correction accepted at `25c65bf8`.
-- [x] [Task 24: Extensions Evolution](extensions-evolution.md) — Complete, phase 5/5, milestone 8/8; integrated at `2eedaf87`
-- [x] [Task 25: Workspace Library Destination Projections](workspace-library-destination-projections.md) — Complete, phase 5/5, milestone 8/8; full managed/native acceptance, integrated at `3b4aba9d`
-- [x] [Task 26: Extension Internal Consolidation](extension-internal-consolidation.md) — Complete, phase 4/4, milestone 6/6; full managed/native and differential acceptance, integrated at `aab57058`
+The [Potential CLI Tasks](potential/_potential.md) route is a candidate queue,
+not active execution authority.
 
-- [x] [Task 29: Scoped Continuity Loading](scoped-continuity-loading.md) — Complete, phase 2/2, milestone 3/3; scoped-loading evidence passes, with three reproduced unrelated baseline integration failures recorded.
+## Beta ordering
 
-## Axioms
+Accepted on 2026-09-17. **The bar for beta is that everything a user touches is
+polished and there are no stupid bugs.** Architecture work is explicitly second
+priority, however much it wants doing.
 
-- Read every parent Task before a child Task. Child scope inherits all parent
-  constraints and may only narrow them.
-- The Mastermind owns architecture, cross-cutting contracts, Task state,
-  integration, and acceptance.
-- A leaf Task is delegation-ready only when its decisions, predecessor outputs,
-  class or algorithm model, allowed paths, tests, verification, and stop
-  conditions are closed.
-- An implementer changes only the leaf Task's allowed paths and returns evidence.
-  It does not update Tasks, commit, promote shared code, or resolve architecture.
-- A reviewer receives the accepted parent chain, exact baseline and changed paths,
-  claimed evidence, and one named review horizon.
-- Stop and return to the parent when implementation exposes a public-contract,
-  architecture, dependency, platform, lifecycle, safety, or release choice.
+Read this ordering before picking up unrelated beta work. The later Task 38
+selection above governs the current migration; it does not cancel the beta goals.
 
-## Task State Vocabulary
+**Blocking beta — a user sees this**
 
-- `Planned`: Meaning exists, but a predecessor or design closure still blocks it.
-- `Ready`: Every prerequisite and decision required to start is closed.
-- `Active`: This is the selected implementation or integration Task.
-- `Blocked`: A named unmet condition prevents progress.
-- `Complete`: Acceptance evidence and integration are committed.
-- `Cancelled`: The outcome is no longer required.
+1. [41 Beta journey scenarios](task41-beta-journey-scenarios.md) — nothing else
+   is measurable until we know what a user actually does. Everything below is
+   partly informed by what this finds.
+2. [39 Output audit](task39-output-audit.md) — holds a live regression.
+3. [42 Minimal core](task42-minimal-core.md) and
+   [43 Workflows as a skill](task43-workflows-as-skill.md) — both change what a
+   fresh install contains, so they must land before people install. Settle them
+   together; they overlap on the workflows route.
+4. [46 Routed Skill resources](task46-routed-skill-resources.md) and
+   [47 Entrypoint reachability](task47-entrypoint-reachability.md) — both fall
+   out of 43 landing. Installing any first-party Extension currently makes
+   `doctor` exit 2 with thirteen warnings, so a beta user sees a broken
+   workspace the moment they install one. Settle them together.
+5. [44 Template and core file content](task44-template-content.md) — the prose a
+   user reads most, and it depends on 42 deciding which files survive.
+6. [37 Wording review](task37-wording-review-against-proposals.md) — held by the
+   maintainer directly.
+7. [32 Minimal output sweep](task32-minimal-output-sweep.md) — what shows on
+   screen, and what it costs in tokens.
+8. [34 Interpolated value markup](task34-interpolated-value-markup.md) — small,
+   visible, cheap.
 
-Generated Entries were refreshed after the temporary compatibility-name changes.
-They provide current navigation only; the Task Group list and each Task record
-define execution state.
+**Beta safety net — nothing watches this yet**
+
+9. [45 End-to-end observability](task45-end-to-end-observability.md)
+10. [40 Capture coverage](task40-capture-coverage.md)
+
+Neither changes what a user sees. Both decide whether we would find out when it
+breaks, which is why they sit above the architecture work rather than with it.
+
+**After beta — architecture and behaviour**
+
+11. [48 Scoping for Extension routes](task48-scoping-for-extension-routes.md) —
+    the Core reduction left every nested managed route inside an Extension, and
+    the scaffold cannot see them. Carries the route-init coverage that had to be
+    dropped.
+12. [38 Project and test split](task38-project-and-test-split.md)
+13. [31 Implementation duplication](task31-implementation-duplication.md)
+14. [33 Managed content removal](task33-managed-content-removal.md)
+15. [35 Removal and suppression model](task35-removal-and-suppression-model.md)
+16. [36 Extension merge and guards](task36-extension-merge-and-guards.md)
+
+[Task 30](task30-cli-experience-remediation.md) stays open underneath all of
+this; its remaining phases feed 32, 37 and 39.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
-- [Parent outcome, scope, authority, and acceptance for the complete replacement CLI program](00-cli-development.md) - #Memory #Working #CLI #Task #Program #Architecture #Development #Contextual #Active
-- [Audit the current replacement CLI Architecture authority and route misplaced detail to narrower sources without changing accepted meaning](cli-architecture-authority-audit.md) - #Memory #Working #Contextual #Complete #CLI #Task #Architecture #Audit #Authority #Documentation
-- [Apply the accepted CLI Architecture authority audit without changing product behavior or requirement strength](cli-architecture-authority-remediation.md) - #Memory #Working #Contextual #Complete #CLI #Task #Architecture #Authority #Documentation #Remediation
-- [Review proposed human output examples for all 28 CLI commands before approving presentation changes](cli-command-output-examples.md) - #Memory #Working #Contextual #CLI #Task #Presentation #Examples
-- [Propose compact and expanded output for each of the 28 CLI commands for user review before contract or renderer changes](cli-command-output-proposals.md) - #Memory #Working #Contextual #CLI #Task #Presentation #Proposal
-- [Record the immutable 28-command CLI audit, validated findings, retained boundaries, coverage, and remediation decisions](cli-command-surface-audit-report.md) - #Memory #Working #Contextual #CLI #Audit #Review #Architecture #Refactoring #Testing
-- [Review the complete retained CLI command surface for direct PR-level architecture, design, refactoring, and test-evidence problems](cli-command-surface-audit.md) - #Memory #Working #Contextual #Complete #CLI #Task #Audit #Architecture #Refactoring #Testing #Review
-- [Correct the seven validated CLI audit findings within accepted behavior, test tiers, and local callable ownership](cli-command-surface-remediation.md) - #Memory #Working #Contextual #Complete #CLI #Task #Remediation #Architecture #Refactoring #Testing
-- [Correct false Doctor coverage and source-identity failures before changing its presentation](cli-doctor-correctness.md) - #Memory #Working #Contextual #CLI #Task #Doctor #Refactoring
-- [Fix stale test fixtures, audit manual parsing, and make Doctor diagnostics accurate and understandable in sequential steps](cli-dogfood-follow-up-plan.md) - #Memory #Working #Contextual #CLI #Task #Plan #Testing #Parsing #Doctor #Dogfood
-- [Align Doctor and Status with current generated navigation while preserving real managed-content drift](cli-generated-navigation-alignment.md) - #Memory #Working #Contextual #CLI #Task #Doctor #Status #Alignment
-- [Remove redundant option-delimiter restrictions and use native parser value forms consistently](cli-native-delimiters.md) - #Memory #Working #Contextual #CLI #Task #Parsing #Refactoring
-- [Explain the tag delimiter defect, inventory manual parsing across CLI commands, and propose actionable Doctor diagnostics](cli-parsing-doctor-audit.md) - #Memory #Working #Contextual #CLI #Task #Audit #Parsing #Doctor #Dogfood
-- [Review all CLI presentation surfaces and sequence verified fixes for missing detail, duplication, and unclear writing](cli-presentation-audit.md) - #Memory #Working #Contextual #CLI #Task #Presentation #Writing #Dogfood
-- [Analyze readable command output, category grouping, severity filtering, implementation boundaries, and sequential evidence](cli-presentation-design.md) - #Memory #Working #Contextual #CLI #Task #Presentation #Design
-- [Implement approved compact and expanded command views, compact JSON, automatic colour and reusable CLI guidance in verified sequential sets](cli-presentation-implementation.md) - #Memory #Working #Contextual #CLI #Task #Implementation #Presentation
-- [Remediate the accepted first-pass CLI architecture, C# design, authority, and test-evidence findings after Route Create and before Route Update](cli-quality-remediation.md) - #Memory #Working #CLI #Task #Audit #Architecture #Refactoring #Testing #Review #Contextual
-- [Analyze compact and expanded views for people and AI, JSON detail selection, and terminal colour without changing command behavior](cli-view-format-color-analysis.md) - #Memory #Working #Contextual #CLI #Task #Presentation #JSON #Design
-- [Record the bounded C# beta changes, exact qualification, deferred findings and local integration](csharp-beta-closeout.md) - #Memory #Working #Contextual #CLI #CSharp #Refactoring #Beta #Closeout
-- [Accepted scope, ownership and evidence boundaries for the comprehensive Task 27 continuation](csharp-comprehensive-preflight.md) - #Memory #Working #Contextual #CLI #CSharp #Refactoring #Preflight
-- [Assess remaining C# internals and implement justified simplifications beyond the completed strategic command audit](csharp-structural-streamlining.md) - #Memory #Working #Contextual #CLI #Task #CSharp #Architecture #Refactoring
-- [Package, prove, document, and release the complete native CLI without partial publication](delivery/_delivery.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #SupplyChain #Release #Contextual
-- [Regenerate and verify the native CLI's embedded catalogue from the reviewed first-party Extension sources](extension-catalogue-synchronization.md) - #Memory #Working #Contextual #CLI #Task #Extension #Distribution #Testing
-- [Track accepted Extension manifest consolidation and exact managed/native behavior preservation](extension-internal-consolidation.md) - #Memory #Working #CLI #Task #Extension #Refactoring #Testing #Contextual #Complete
-- [Verify public CLI documentation against the integrated executable and reconcile remaining CLI-owned references](extension-lifecycle-documentation.md) - #Memory #Working #Contextual #CLI #Task #Extension #Documentation
-- [Review the candidate Extension content layout and exact consumer permissions for copied files and Library links](extensions-destination-proposal.md) - #Memory #Working #CLI #Extension #Library #Proposal #Contextual #Candidate
-- [Review the concrete Task 24 content rename, permission contracts, implementation seams and decisive evidence before M1 freeze](extensions-evolution-contract-draft.md) - #Memory #Working #CLI #Extension #Permission #Contract #Design #Contextual #Candidate
-- [Track completed Extension content naming, consumer permission, review corrections and full acceptance](extensions-evolution.md) - #Memory #Working #CLI #Task #Extension #Evolution #Content #Destination #Contextual #Complete
-- [Build and accept the actual command-free C# workspace, Core, host, safety, tests, and Native AOT foundation](foundation/_foundation.md) - #Memory #Working #CLI #Task #Foundation #Architecture #DotNet #NativeAOT #Contextual #Complete
-- [Improve cross-cutting CLI parser, test, callable, and project structure without changing accepted command meaning](generic-improvements/_generic-improvements.md) - #Memory #Working #CLI #Task #Generic #Parser #Testing #Architecture #Contextual #Complete
-- [Implement root and Extension creation, installation, update, and removal lifecycle commands](lifecycle/_lifecycle.md) - #Memory #Working #CLI #Task #Lifecycle #Extension #Install #Update #Contextual
-- [Apply accepted truthful nullability, construction, and modern C# syntax rules across the complete replacement solution](modern-csharp-improvements.md) - #Memory #Working #CLI #Task #CSharp #Nullability #Initialization #Refactoring #Contextual #Complete
-- [Build and accept locking, lifecycle, planning, application, and recovery foundations before mutations](mutation-foundation/_mutation-foundation.md) - #Memory #Working #CLI #Task #Mutation #Lifecycle #Recovery #Contextual
-- [Implement incremental aggregate status and diagnosis, then repair and cleanup after the complete producer inventory](operations/_operations.md) - #Memory #Working #CLI #Task #Status #Doctor #Repair #Cleanup #Contextual
-- [Correct confirmed read-only CLI defects and preserve proportionate architecture findings before Mutation Foundation resumes](proportional-cli-corrections.md) - #Memory #Working #CLI #Task #Audit #Correctness #Architecture #Proportionality #Contextual #Complete
-- [Correct three bounded read-only CLI dogfooding defects before Mutation Foundation resumes](read-only-dogfooding-corrections.md) - #Memory #Working #CLI #Task #ReadOnly #Context #Find #RouteInspect #Dogfooding #Contextual #Complete
-- [Implement retained read-only source, context, extension, and generated-navigation commands](read-only/_read-only.md) - #Memory #Working #CLI #Task #ReadOnly #Source #Extension #Index #Contextual
-- [Move replacement CLI tooling to the repository root and make ordinary test runs publish and discover the local development executable](repository-root-developer-workflow.md) - #Memory #Working #CLI #Task #DotNet #Testing #DeveloperExperience #Contextual #Complete
-- [Place live repository-owned agent tooling in explicit source scopes and remove the unexplained root scripts bucket](root-tooling-placement.md) - #Memory #Working #Contextual #CLI #Task #Tooling #TypeScript #Testing
-- [Implement read-only route discovery, beginning with route list and then route inspect](route-discovery/_route-discovery.md) - #Memory #Working #CLI #Task #Route #Discovery #ReadOnly #Contextual #Complete
-- [Implement retained route mutation commands on the accepted mutation foundation](route-mutation/_route-mutation.md) - #Memory #Working #CLI #Task #Route #Mutation #Contextual
-- [Align CLI context loading, route inspection, and context measurements with scoped KeepInMind behavior](scoped-continuity-loading.md) - #Memory #Working #Contextual #CLI #Task #Loading #Continuity #Testing
-- [Add the interaction, Framework distribution, lifecycle provenance, and directory-create prerequisites for the next command wave](shared-foundations/_shared-foundations.md) - #Memory #Working #CLI #Task #Foundation #Shell #Framework #Lifecycle #Contextual
-- [Prepare Framework, Extension, and public documentation for release and reconcile current non-CLI agent context](source-framework-review.md) - #Memory #Working #Contextual #Task #Framework #Extension #Release #Writing #Review
-- [Audit symbolic constants, generated-region authority, and composable active-test foundations across the replacement CLI](test-architecture-and-constants.md) - #Memory #Working #CLI #Task #Testing #Architecture #Constants #Fixtures #Snapshot #Contextual
-- [Execute the accepted Workspace Libraries contracts through bounded preparation, implementation, evidence, and integration](workspace-libraries.md) - #Memory #Working #CLI #Task #Workspace #Library #Contextual #Active
-- [Track accepted mapped Library leaf projections, scoped permissions, recovery and complete managed/native evidence](workspace-library-destination-projections.md) - #Memory #Working #CLI #Task #Workspace #Library #Destination #Symlink #Contextual #Complete
-<!-- open-forge:generated-index:end -->
+- [Candidate follow-up tasks distilled from the reviewed CLI analyses; not active execution authority](potential/_potential.md) - #Memory #Working #CLI #Task #Potential #Contextual
+- [Open Task 30 for CLI experience remediation, with actionable phase state and evidence carried from Emerging Analysis](task30-cli-experience-remediation.md) - #Memory #Working #CLI #Task #Remediation #Contextual #Active
+- [Task 30 G4 execution packet for the CLI output revamp, with the accepted decisions, the shared rules, the command matrix, the lane order, and one subtask per foundation and per command](task30-g4/_task30-g4.md) - #Memory #Working #CLI #Task #Plan #G4 #Presentation #Contextual #Active
+- [Task 30 phase subtasks carrying actionable evidence from the Emerging CLI analyses](task30/_task30.md) - #Memory #Working #CLI #Task #Subtask #Contextual #Active
+- [Open Task 31 for removing duplicated CLI implementation while preserving command-local contracts](task31-implementation-duplication.md) - #Memory #Working #CLI #Task #Duplication #Refactoring #Contextual #Active
+- [Task 31 phase subtasks carrying duplication measurements, refactoring boundaries, and acceptance evidence](task31/_task31.md) - #Memory #Working #CLI #Task #Subtask #Contextual #Active
+- [Open Task 32 to review whether the Workspace echo and the Next action belong in minimal output across all 28 commands](task32-minimal-output-sweep.md) - #Memory #Working #CLI #Task #Presentation #Minimal #Contextual #Active
+- [Open Task 33 to decide whether individually removing managed Extension and Framework content is supported, and to reconcile the removability promise with what the commands actually allow](task33-managed-content-removal.md) - #Memory #Working #CLI #Task #Removal #Ownership #Extension #Contextual #Active
+- [Open Task 34 to visually distinguish command names, paths, identifiers and arguments interpolated into user-facing sentences, and to establish it as an authoring rule](task34-interpolated-value-markup.md) - #Memory #Working #CLI #Task #Presentation #Wording #Accessibility #Contextual #Active
+- [Open Task 35 to explore a unified removal and suppression model across Routes, Extensions and Libraries, pinning current behaviour with characterization tests before any design is chosen](task35-removal-and-suppression-model.md) - #Memory #Working #CLI #Task #Exploration #Removal #Ownership #Lifecycle #Contextual #Active
+- [Open Task 36 to design partial file merging by Extensions and to replace the comment guards in authored Markdown with a boundary an agent still reads as an instruction](task36-extension-merge-and-guards.md) - #Memory #Working #CLI #Task #Extensions #Markers #Authoring #Contextual #Active
+- [Open Task 37 to compare every shipped CLI sentence against the unaccepted G4 output proposals and adopt, merge or reject each on its merits](task37-wording-review-against-proposals.md) - #Memory #Working #CLI #Task #Wording #Review #Contextual #Active
+- [Task 38 outcome for four libraries, observable test boundaries and typed output text](task38-project-and-test-split.md) - #Memory #Working #CLI #Task #Architecture #Projects #Testing #Contextual #Active
+- [Task 38 step plans, Sol-led Luna swarm batches and shared-worktree handover](task38/_task38.md) - #Memory #Working #CLI #Plan #Contextual #Active
+- [Open Task 39 to audit every CLI output for actionability, confirm the G4 conversion actually improved each command, and find remaining legacy and evidence gaps](task39-output-audit.md) - #Memory #Working #CLI #Task #Output #Audit #Regression #Contextual #Active
+- [Open Task 40 to close the gap between the accepted finding vocabulary and the situations any capture actually exercises, so the output invariants guard more than a quarter of what the CLI can print](task40-capture-coverage.md) - #Memory #Working #CLI #Task #Capture #Coverage #Evidence #Contextual #Active
+- [Open Task 41 to define the user journeys a beta must survive, run them by hand or by agent, and turn the findings into the polish list before release](task41-beta-journey-scenarios.md) - #Memory #Working #CLI #Task #Scenario #Beta #Release #Contextual #Active
+- [Open Task 42 to shrink the installed core to what every workspace needs, moving deeper routes into Extensions a user opts into](task42-minimal-core.md) - #Memory #Working #CLI #Task #Core #Extensions #Routing #Beta #Contextual #Active
+- [Open Task 43 to narrow Workflows and express them through the skill mechanism, so they stop overlapping with Skills and can be selected when they become relevant](task43-workflows-as-skill.md) - #Memory #Working #CLI #Task #Workflows #Skills #Framework #Beta #Contextual #Active
+- [Open Task 44 to fix what the installed templates and core files say, since they are the first Open Forge prose a beta user reads](task44-template-content.md) - #Memory #Working #CLI #Task #Templates #Wording #Beta #Contextual #Active
+- [Open Task 45 to make the end-to-end suite legible about what it covers, then turn the settled beta journey scenarios into reproducible tests](task45-end-to-end-observability.md) - #Memory #Working #CLI #Task #Testing #Observability #EndToEnd #Contextual #Complete
+- [Open Task 46 to let a native Skill's resources be used as routes and to read route metadata from the native SKILL.md frontmatter instead of demanding an Open Forge block](task46-routed-skill-resources.md) - #Memory #Working #CLI #Task #Skills #Routing #Metadata #Beta #Contextual #Active
+- [Open Task 47 to make index and route navigation reach every recognized entrypoint form from the loader, so a catalogue does not need to be named by hand to stay current](task47-entrypoint-reachability.md) - #Memory #Working #CLI #Task #Routing #Navigation #Index #Beta #Contextual #Active
+- [Open Task 48 to extend Framework route scaffolding and scope insertion to routes an Extension created, so scoping is a property of the routing model rather than of whatever Core happens to ship](task48-scoping-for-extension-routes.md) - #Memory #Working #CLI #Task #Routing #Scopes #Extensions #RouteInit #Contextual #Active

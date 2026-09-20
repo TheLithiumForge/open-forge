@@ -19,6 +19,7 @@ public sealed class IndexSelectionResolverTests
     private const string ChildPath = ".agents/root/child/_child.md";
     private const string LeafPath = ".agents/root/leaf.md";
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index selection closes automatic and explicit rooted entrypoints through Loader"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void RootedEntrypointClosureIncludesLoaderAndDescendants()
     {
@@ -56,6 +57,7 @@ public sealed class IndexSelectionResolverTests
         });
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index selection keeps a complete detached entrypoint local when Loader is missing"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void DetachedEntrypointDoesNotInventLoaderOrParent()
     {
@@ -78,6 +80,7 @@ public sealed class IndexSelectionResolverTests
         Assert.True(resolution.IsComplete);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index leaf and overwrite references normalize to one base selection and direct parent target"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void LeafAndOverwriteReferencesSelectOnlyTheDirectParent()
     {
@@ -94,6 +97,7 @@ public sealed class IndexSelectionResolverTests
         Assert.True(resolution.IsComplete);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index overlapping selections union target closure once in canonical order"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void DuplicateAndOverlappingSelectionsDoNotDuplicateTargets()
     {
@@ -112,6 +116,7 @@ public sealed class IndexSelectionResolverTests
             resolution.Selection.Sources.Select(source => source.Path));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index uses compatible physical aliases once and blocks relevant incompatible aliases"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void PhysicalAliasesUseFormationCompatibilityAndAuthoritativePathIdentity()
     {
@@ -139,6 +144,7 @@ public sealed class IndexSelectionResolverTests
         Assert.Equal(IndexFindingCode.SourceUnsafe, Assert.Single(blocked.Findings).Code);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index source ID collisions block IDs while exact paths remain disambiguated"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void ExactPathsDisambiguateSourceIdCollisions()
     {
@@ -158,6 +164,7 @@ public sealed class IndexSelectionResolverTests
             exact.Targets.Select(source => source.Identity.CanonicalBasePath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Index root safety and availability own explicit failure before source resolution"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     [InlineData(SourceCatalogueIssueCode.RootUnsafe, IndexFindingCode.WorkspaceUnsafe)]
     [InlineData(SourceCatalogueIssueCode.RootUnavailable, IndexFindingCode.DiscoveryIncomplete)]
@@ -175,6 +182,7 @@ public sealed class IndexSelectionResolverTests
         Assert.DoesNotContain(resolution.Findings, finding => finding.Code == IndexFindingCode.InvalidSource);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index root missing is an automatic Loader failure but adds no explicit workspace finding"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void RootMissingKeepsAutomaticAndExplicitMeaningsDistinct()
     {
@@ -191,6 +199,7 @@ public sealed class IndexSelectionResolverTests
             finding => finding.Code is IndexFindingCode.WorkspaceUnavailable or IndexFindingCode.DiscoveryIncomplete);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index selection resolution enforces complete and incomplete target coherence"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void ResolutionRejectsNullFindingsAndImpossibleExecutableStates()
     {

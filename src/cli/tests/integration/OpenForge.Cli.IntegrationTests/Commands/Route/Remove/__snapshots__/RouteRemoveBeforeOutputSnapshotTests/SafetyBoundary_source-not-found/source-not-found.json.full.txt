@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Nothing to do for missing.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "filesRemoved": 0,
+    "sectionsUpdated": 0,
+    "linksDetached": 0,
+    "filesScanned": 11
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "route",
+    "source": {
+      "id": "missing",
+      "path": ".agents/missing/_missing.md"
+    },
+    "removed": [],
+    "detachedLinks": [],
+    "scan": {
+      "filesScanned": 11,
+      "occurrences": 3
+    }
+  },
+  "recovery": null,
+  "next": null
+}

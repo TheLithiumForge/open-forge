@@ -1,6 +1,8 @@
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
@@ -16,6 +18,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Create;
 
 public sealed class RouteCreateCompositionIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed Route Create help retains exact grammar without workspace effects"),
      Trait("Feature", "route-create"), Trait("Evidence", "Integration")]
     public async Task HelpRetainsExactGrammarWithoutWorkspaceEffects()
@@ -31,13 +34,14 @@ public sealed class RouteCreateCompositionIntegrationTests
         Assert.Contains("--dry-run", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--automatic", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--force", result.Output, StringComparison.Ordinal);
-        Assert.Contains("open-forge route create <file-target> --description <text> --tag <tag>...", string.Join(" ", result.Output.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)), StringComparison.Ordinal);
+        Assert.Contains("open-forge route create <file-target> [--description <text>] [--tag <tag>...]", string.Join(" ", result.Output.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)), StringComparison.Ordinal);
         Assert.Contains("--description <text>", result.Output, StringComparison.Ordinal);
         Assert.Contains("--tag <tag>", result.Output, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missing));
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed Route Create JSON dry-run keeps bounded diagnostics separate"),
      Trait("Feature", "route-create"), Trait("Evidence", "Integration")]
     public async Task JsonDryRunPreservesPrimaryDocumentWithVerboseDiagnostics()
@@ -48,32 +52,118 @@ public sealed class RouteCreateCompositionIntegrationTests
         string[] arguments =
         [
             "route", "create", RouteCreateIntegrationWorkspace.TargetId,
-            "--description", "Project overview", "--tag=Docs", "--tag=Overview", "--dry-run", "--json",
+            "--description", "Project overview", "--tag=Docs", "--tag=Overview", "--dry-run", "--format", "json",
         ];
 
         var plain = await CliHostCapture.RunAsync(arguments, workspace.Workspace.LexicalRoot);
-        var verbose = await CliHostCapture.RunAsync([.. arguments, "--verbose"], workspace.Workspace.LexicalRoot);
+        var verbose = await CliHostCapture.RunAsync([.. arguments, "--detail", "debug"], workspace.Workspace.LexicalRoot);
 
         Assert.Equal(0, plain.ExitCode);
         Assert.Equal(string.Empty, plain.Error);
         Assert.Equal(plain.ExitCode, verbose.ExitCode);
-        Assert.Equal(plain.Output, verbose.Output);
-        var diagnostic = Assert.Single(verbose.Error.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
-        Assert.InRange(diagnostic.Length, 1, 4095);
-        Assert.DoesNotContain('\r', diagnostic);
-        Assert.DoesNotContain('\n', diagnostic);
+        var diagnostics = verbose.Error.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+        Assert.Equal(9, diagnostics.Length);
+        Assert.InRange(verbose.Error.Length, 1, 4096);
+        Assert.All(diagnostics, diagnostic =>
+        {
+            Assert.InRange(diagnostic.Length, 1, 240);
+            Assert.DoesNotContain('\r', diagnostic);
+            Assert.DoesNotContain('\n', diagnostic);
+        });
         Assert.EndsWith(Environment.NewLine, verbose.Error, StringComparison.Ordinal);
-        Assert.Contains("status=complete; mode=dry-run", diagnostic, StringComparison.Ordinal);
-        Assert.Contains($"target={RouteCreateIntegrationWorkspace.TargetId}", diagnostic, StringComparison.Ordinal);
-        Assert.Contains("effects=2", diagnostic, StringComparison.Ordinal);
+        Assert.Equal("status=completed", diagnostics[0]);
+        Assert.Equal("mode=dry-run", diagnostics[1]);
+        Assert.Contains($"target={RouteCreateIntegrationWorkspace.TargetId}", diagnostics);
+        Assert.Contains("effects=2", diagnostics);
         using var document = System.Text.Json.JsonDocument.Parse(plain.Output);
         var root = document.RootElement;
         Assert.Equal("current-directory", root.GetProperty("workspace").GetProperty("selectedBy").GetString());
-        Assert.Equal([".agents/loader.md", ".agents/templates/_templates.md"],
-            root.GetProperty("result").GetProperty("unchangedPaths").EnumerateArray().Select(path => path.GetString()));
+        Assert.Equal(RouteCreateIntegrationWorkspace.ParentPath,
+            root.GetProperty("data").GetProperty("listedIn").GetString());
+        using var verboseDocument = System.Text.Json.JsonDocument.Parse(verbose.Output);
+        var minimalData = root.GetProperty("data");
+        var debugData = verboseDocument.RootElement.GetProperty("data");
+        Assert.Equal("minimal", root.GetProperty("detail").GetString());
+        Assert.Equal("debug", verboseDocument.RootElement.GetProperty("detail").GetString());
+        Assert.Equal(minimalData.GetProperty("mode").GetString(), debugData.GetProperty("mode").GetString());
+        Assert.Equal(
+            minimalData.GetProperty("target").GetProperty("id").GetString(),
+            debugData.GetProperty("target").GetProperty("id").GetString());
+        Assert.False(minimalData.TryGetProperty("metadata", out _));
+        Assert.False(minimalData.TryGetProperty("content", out _));
+        Assert.False(minimalData.TryGetProperty("sections", out _));
+        Assert.True(debugData.TryGetProperty("metadata", out _));
+        Assert.True(debugData.TryGetProperty("content", out _));
+        Assert.True(debugData.TryGetProperty("sections", out _));
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed Route Create accepts omitted metadata and repeats without writes"),
+        Trait("Feature", "route-create"), Trait("Evidence", "Integration")]
+    public async Task ComposedOptionalMetadataCreateUsesExactBytesAndConverges()
+    {
+        using var workspace = RouteCreateIntegrationWorkspace.Create("create-optional-metadata");
+        workspace.SeedBase();
+        workspace.OwnApplicationCreatedTarget();
+        var before = workspace.SnapshotHashes();
+        var arguments = new[]
+        {
+            "route", "create", RouteCreateIntegrationWorkspace.TargetId,
+            "--format", "json", "--detail", "full",
+        };
+
+        var created = await CliHostCapture.RunAsync(arguments, workspace.Workspace.LexicalRoot);
+
+        Assert.Equal(2, created.ExitCode);
+        Assert.Equal(string.Empty, created.Error);
+        using (var createdDocument = System.Text.Json.JsonDocument.Parse(created.Output))
+        {
+            var root = createdDocument.RootElement;
+            Assert.Equal("completed-with-warnings", root.GetProperty("status").GetString());
+            Assert.Equal(
+                "route-create.optional-metadata",
+                Assert.Single(root.GetProperty("findings").EnumerateArray()).GetProperty("code").GetString());
+            var metadata = root.GetProperty("data").GetProperty("metadata");
+            Assert.Equal(System.Text.Json.JsonValueKind.Null, metadata.GetProperty("description").ValueKind);
+            Assert.Empty(metadata.GetProperty("tags").EnumerateArray());
+            Assert.Equal("removed", root.GetProperty("recovery").GetProperty("disposition").GetString());
+            Assert.Equal(
+                "open-forge route update " + RouteCreateIntegrationWorkspace.TargetId,
+                root.GetProperty("next").GetProperty("command").GetString());
+        }
+
+        var targetBytes = File.ReadAllBytes(workspace.Absolute(RouteCreateIntegrationWorkspace.TargetPath));
+        var expectedTarget = new FrameworkMarkdownDocumentWriter().WriteOptional(
+            new FrameworkDocumentMetadataEmission(null, [], null),
+            string.Empty);
+        Assert.Equal(expectedTarget.ToArray(), targetBytes);
+        var parent = workspace.ReadText(RouteCreateIntegrationWorkspace.ParentPath);
+        Assert.Contains(RouteCreateIntegrationWorkspace.TargetId, parent, StringComparison.Ordinal);
+        Assert.Contains("overview.md", parent, StringComparison.Ordinal);
+        Assert.True(before.ContainsKey(RouteCreateIntegrationWorkspace.ParentPath));
+        Assert.False(before.ContainsKey(RouteCreateIntegrationWorkspace.TargetPath));
+
+        var beforeRepeat = workspace.SnapshotHashes();
+        var repeat = await CliHostCapture.RunAsync(arguments, workspace.Workspace.LexicalRoot);
+
+        Assert.Equal(2, repeat.ExitCode);
+        Assert.Equal(string.Empty, repeat.Error);
+        using (var repeatDocument = System.Text.Json.JsonDocument.Parse(repeat.Output))
+        {
+            var root = repeatDocument.RootElement;
+            Assert.Equal("completed-with-warnings", root.GetProperty("status").GetString());
+            Assert.Equal(
+                "route-create.optional-metadata",
+                Assert.Single(root.GetProperty("findings").EnumerateArray()).GetProperty("code").GetString());
+            Assert.Empty(root.GetProperty("effects").EnumerateArray());
+            Assert.Equal("not-required", root.GetProperty("recovery").GetProperty("disposition").GetString());
+        }
+
+        Assert.Equal(beforeRepeat, workspace.SnapshotHashes());
+    }
+
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed root owns one exact Route Create leaf and binding"), Trait("Feature", "route-create"), Trait("Evidence", "Integration")]
     public void ComposedRootOwnsExactRouteCreateLeafAndBinding()
     {
@@ -98,6 +188,7 @@ public sealed class RouteCreateCompositionIntegrationTests
         Assert.Same(binding, tree.FindBinding(create));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Composed Route group and Create leaf help are direct no-write terminal modes"), Trait("Feature", "route-create"), Trait("Evidence", "Integration")]
     public async Task ComposedRouteHelpIsTruthfulAndWriteFree()
     {

@@ -8,9 +8,6 @@ namespace OpenForge.Cli.EndToEndTests;
 
 internal sealed class PublishedUpdateWorkspace : IDisposable
 {
-    private const string HistoricalSourcePath = "historical/retired-framework.md";
-    private const string PreviousInventoryFingerprint =
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
     private const string HistoricalTargetContents = """
         ---
         open-forge:
@@ -24,12 +21,12 @@ internal sealed class PublishedUpdateWorkspace : IDisposable
     private static readonly UTF8Encoding StrictUtf8NoBom = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
-    private static readonly JsonSerializerOptions LifecycleJsonOptions = new()
+    private static readonly JsonSerializerOptions OwnershipJsonOptions = new()
     {
         WriteIndented = true,
     };
 
-    internal const string LifecyclePath = ".agents/open-forge.lifecycle.json";
+    internal const string OwnershipPath = ".agents/open-forge.lock.json";
     internal const string ManagedPath = ".agents/loader.md";
     internal const string HistoricalTargetPath = ".agents/guidance/retired-framework.md";
 
@@ -62,8 +59,8 @@ internal sealed class PublishedUpdateWorkspace : IDisposable
 
     internal void MutateManagedContent()
     {
-        const string installedToken = "Read this after `AGENTS.md` to enter the workspace.";
-        const string divergentToken = "Read this after `AGENTS.md` to enter one workspace.";
+        const string installedToken = "It defines how to select context, follow applicable rules, and maintain the workspace.";
+        const string divergentToken = "It defines how to select context, follow applicable rules, and maintain one workspace.";
         var installed = ReadText(ManagedPath);
         var occurrence = installed.IndexOf(installedToken, StringComparison.Ordinal);
         if (occurrence < 0
@@ -94,39 +91,11 @@ internal sealed class PublishedUpdateWorkspace : IDisposable
             writer.Write(HistoricalTargetContents);
         }
 
-        var lifecycle = JsonNode.Parse(ReadText(LifecyclePath))?.AsObject()
-            ?? throw new InvalidOperationException("The published Update lifecycle must be a JSON object.");
-        var framework = lifecycle["framework"]?.AsObject()
-            ?? throw new InvalidOperationException("The published Update lifecycle must contain Framework state.");
-        var targets = framework["targets"]?.AsArray()
-            ?? throw new InvalidOperationException("The published Update lifecycle must contain Framework targets.");
-        var bytes = StrictUtf8NoBom.GetBytes(HistoricalTargetContents);
-        targets.Add((JsonNode)new JsonObject
-        {
-            ["path"] = HistoricalTargetPath,
-            ["sourceAssetPath"] = HistoricalSourcePath,
-            ["region"] = null,
-            ["baselineFingerprint"] = Convert.ToHexStringLower(SHA256.HashData(bytes)),
-            ["fingerprintKind"] = "semantic",
-        });
-        var ordered = targets
-            .Select(node => node?.DeepClone()
-                ?? throw new InvalidOperationException("Published Update lifecycle targets cannot be null."))
-            .OrderBy(node => ReadRequiredString(node.AsObject(), "path"), StringComparer.Ordinal)
-            .ThenBy(node => node["region"]?.GetValue<string>(), StringComparer.Ordinal)
-            .ToArray();
-        targets.Clear();
-        foreach (var target in ordered)
-        {
-            targets.Add(target);
-        }
-
-        var source = framework["source"]?.AsObject()
-            ?? throw new InvalidOperationException("The published Update lifecycle must contain Framework source state.");
-        source["inventoryFingerprint"] = PreviousInventoryFingerprint;
-        _installWorkspace.ReplaceInstalledText(
-            LifecyclePath,
-            lifecycle.ToJsonString(LifecycleJsonOptions) + "\n");
+        var ownership = JsonNode.Parse(ReadText(OwnershipPath))!.AsObject();
+        var framework = ownership["framework"]!.AsObject();
+        framework["paths"]!.AsArray().Add((JsonNode?)JsonValue.Create(HistoricalTargetPath));
+        framework["source"]!["version"] = "0.0.1";
+        _installWorkspace.ReplaceInstalledText(OwnershipPath, ownership.ToJsonString(OwnershipJsonOptions));
     }
 
     internal bool HistoricalTargetExists()
@@ -146,10 +115,6 @@ internal sealed class PublishedUpdateWorkspace : IDisposable
         _installWorkspace.Dispose();
         _disposed = true;
     }
-
-    private static string ReadRequiredString(JsonObject value, string propertyName)
-        => value[propertyName]?.GetValue<string>()
-            ?? throw new InvalidOperationException($"The published Update lifecycle requires '{propertyName}'.");
 
     private void DeleteHistoricalTargetIfPresent()
     {

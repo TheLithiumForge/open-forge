@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 3,
+  "command": "route create",
+  "status": "blocked",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot create .agents/memory/project-alpha/overview.md: Another Open Forge command holds the workspace lock. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-create.workspace-lock-unavailable",
+      "title": "Workspace lock is held",
+      "message": "Another Open Forge command holds the workspace lock. Nothing was changed.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/memory/project-alpha/overview.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "IOException (0x80070020): The filesystem operation failed."
+        }
+      ],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents/memory/project-alpha/overview.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/memory/project-alpha/_project-alpha.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "filesCreated": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "memory/project-alpha/overview",
+      "path": ".agents/memory/project-alpha/overview.md"
+    },
+    "listedIn": ".agents/memory/project-alpha/_project-alpha.md",
+    "template": null,
+    "metadata": {
+      "description": "Project overview",
+      "responsibility": "Explains the project",
+      "tags": [
+        "Docs",
+        "Overview"
+      ]
+    },
+    "content": "---\nopen-forge:\n  description: Project overview\n  tags: [Docs, Overview]\n  responsibility: Explains the project\n---\n",
+    "sections": [
+      {
+        "path": ".agents/memory/project-alpha/_project-alpha.md",
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "verification": "not-started"
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route create",
+    "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Create from a fresh plan."
+  }
+}

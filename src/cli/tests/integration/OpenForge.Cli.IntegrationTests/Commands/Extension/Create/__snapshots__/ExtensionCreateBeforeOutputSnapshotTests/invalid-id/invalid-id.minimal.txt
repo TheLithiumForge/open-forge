@@ -1,0 +1,2 @@
+Cannot create the Extension: INVALID ID is not a valid Extension ID. Use lowercase letters, digits and hyphens.
+Next: open-forge extension create --help

@@ -1,0 +1,4 @@
+The toolkit Extension is already installed and matches the package. Nothing to do.
+Workspace: <workspace>
+  Source: <extension-source> (catalogue)
+  .agents/open-forge.lock.json  updated

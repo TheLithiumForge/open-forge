@@ -26,7 +26,7 @@ the accepted shared structured schema and process-status mapping. The [CLI
 Architecture](../../architecture.md) defines source and runtime boundaries,
 BCL-first filesystem structure, the workspace-lock boundary, and recovery
 identity relationships.
-[Task 20: Cleanup](../../../../../working/cli-development/tasks/operations/cleanup.md)
+[Task 20: Cleanup](../../../../../archived/cli-development/tasks/operations/cleanup.md)
 records the development implementation and execution evidence. The shared
 [Global CLI Flags Behavior Contract](../shared/global-flags/behavior.md) owns
 shared request, workspace, presentation, terminal, and repetition meaning.
@@ -75,11 +75,15 @@ The operation satisfies these invariants:
   path-only `Incomplete` support data and never forms preparation; observers do
   not inspect or use its bytes for attribution.
 - The schema discriminator is exactly `1`. A schema-1 final
-  missing or carrying invalid attribution is malformed/unattributed, remains
-  preserved, and blocks deletion; it is never migrated, rewritten, repaired,
-  adopted, or inferred. An unknown schema version is unsupported. Cleanup
-  recognizes only current schema-v1 and has no v2, dual reader, compatibility,
-  or migration path. Attribution is an integrity fact, not deletion authority.
+  missing or carrying invalid attribution is malformed/unattributed and remains
+  preserved; when it is a readable ordinary final, it is a warning preservation
+  entry that may coexist with independently eligible removals, but it is never
+  deleted. An unreadable or non-ordinary malformed final, and every unsupported
+  or unavailable final, remains a blocking preserved candidate. No final is
+  migrated, rewritten, repaired, adopted, or inferred. An unknown schema version
+  is unsupported. Cleanup recognizes only current schema-v1 and has no v2, dual
+  reader, compatibility, or migration path. Attribution is an integrity fact,
+  not deletion authority.
 - The exact schema-v1 attribution vocabulary, valid producer/operation/subject
   combinations, and required non-null workspace identity are defined by the
   [Mutation And Recovery Technical Design](../../technical-designs/mutation-and-recovery.md#schema-v1-attribution-vocabulary).
@@ -90,13 +94,16 @@ The operation satisfies these invariants:
   source path.
 - A suffix, age, extension, location, proximity, temporary-looking name, path,
   or matching bytes alone never establishes provenance or authority.
-- Malformed, unsupported, unavailable, non-ordinary, or unsafe exact-name
-  candidates are reported and preserved and block deletion. Unknown,
-  user-created, or differently named items remain outside the filtered catalogue
-  and its equality checks. If Cleanup cannot acquire the workspace lease because
-  of contention, it performs no deletion.
+- A readable ordinary malformed exact-name final is reported and preserved as a
+  warning and does not block independently eligible deletion. Unsupported,
+  unavailable, unreadable, non-ordinary, or unsafe exact-name candidates are
+  reported and preserved and block deletion. Unknown, user-created, or
+  differently named items remain outside the filtered catalogue and its equality
+  checks. If Cleanup cannot acquire the workspace lease because of contention,
+  it performs no deletion.
 - Workspace files, raw evidence and snapshots, source and managed content,
-  lifecycle documents and receipts, generated navigation, build outputs,
+  workspace settings, ownership locks and receipts, generated navigation,
+  build outputs,
   package caches, logs, unknown support items, and arbitrary filesystem content
   remain outside the catalogue. Cleanup never recursively removes a support
   artifact tree.
@@ -207,9 +214,12 @@ trees.
 
 Unknown or differently named material is preserved and excluded from the
 catalogue and its equality checks. If the selected workspace bucket cannot be
-enumerated, result formation uses `incomplete`. A malformed, unsupported,
-unavailable, non-ordinary, or unsafe exact-name candidate remains in the
-catalogue, is excluded from the deletion plan, and blocks every deletion.
+enumerated, result formation uses `incomplete`. A readable ordinary malformed
+final remains in the catalogue, is excluded from the deletion plan, and is a
+warning preservation entry; independently eligible deletion may continue. An
+unsupported, unavailable, unreadable, non-ordinary, or unsafe exact-name
+candidate remains in the catalogue, is excluded from the deletion plan, and
+blocks every deletion.
 
 Cleanup does not require interpretation of user content. The exact selected
 workspace bucket, deterministic direct-child name, semantic final validation
@@ -221,8 +231,10 @@ ordinary exact-name drafts are eligible.
 ## Selection And Plan Formation
 
 The planner selects every verified final ordinary file and ordinary exact-name
-draft. It does not select a subset to avoid a blocking exact-name candidate, rank
-items by age or name, or treat a recommendation as input.
+draft. It retains a readable ordinary malformed final as a non-deletion warning
+preservation entry so independently eligible items can proceed. It does not
+select a subset to avoid a blocking exact-name candidate, rank items by age or
+name, or treat a recommendation as input.
 
 It forms one deterministic ordered plan containing, for each selected bundle or
 draft:
@@ -239,10 +251,12 @@ only at its exact deterministic path; Cleanup never broadens that boundary to a
 containing directory, follows an entry or link, or removes unknown or
 user-created content.
 
-No exact-name candidate is silently omitted. A malformed, unsupported,
-unavailable, non-ordinary, or unsafe candidate remains reported and preserved,
-is excluded from the deletion plan, and blocks all deletion. A catalogue coverage
-failure before effects is `incomplete` and has no write.
+No exact-name candidate is silently omitted. A readable ordinary malformed final
+remains reported and preserved, is excluded from the deletion plan, and does not
+block independently eligible deletion. An unsupported, unavailable, unreadable,
+non-ordinary, or unsafe candidate remains reported and preserved, is excluded
+from the deletion plan, and blocks all deletion. A catalogue coverage failure
+before effects is `incomplete` and has no write.
 
 ## Preflight And Dry Run
 
@@ -258,7 +272,9 @@ condition. Every planned effect remains contingent on application acquiring the
 same-workspace lease and passing final under-lease validation. Dry-run then stops
 before lease acquisition, deletion, or any persistent effect. It does not create
 a recovery bundle or draft, temporary file, staging copy, receipt, journal,
-tombstone, or residual marker. Its planned deletions do not form `attention`.
+   tombstone, or residual marker. A readable ordinary malformed final remains a
+   warning preservation condition in the result; planned deletions alone do not
+   form `completed-with-warnings`.
 
 ## Application, Revalidation, And Verification
 
@@ -287,7 +303,7 @@ When application is selected:
 Cleanup does not reverse a verified deletion. An unexpected deletion or
 verification failure after effects begin stops further effects and forms
 `failed`; already verified deletions remain desired effects. A caller
-cancellation forms `interrupted` when no stronger unsafe residual condition
+cancellation forms `cancelled` when no stronger unsafe residual condition
 applies, with every verified deletion and every remaining or preserved artifact
 reported. A later invocation never reuses this plan.
 
@@ -320,37 +336,41 @@ content or migration intent.
 Result formation follows the Interface meanings:
 
 - A complete dry-run plan, a complete verified application, and a complete
-  verified empty catalogue are `complete`.
-- `attention` is reserved by the shared vocabulary and is reachable only if a
-  finite condition already required by shared current authority applies. Cleanup
-  has no such accepted finite condition; planned deletions and preserved
-  exclusions do not create it.
+  verified empty catalogue are `completed` unless a retained readable ordinary
+  malformed final supplies the accepted warning condition.
+- A readable ordinary malformed final is preserved and reported as a warning;
+  independently verified eligible removals may complete, producing
+  `completed-with-warnings` (Attention2/exit 2). Planned deletions or other
+  preserved exclusions alone do not create that status.
 - Safe but incomplete required catalogue enumeration is `incomplete` before
   effects.
-- Invalid request input is `invalid` before catalogue work.
-- Failure to acquire the required same-workspace lease; a malformed,
-  unsupported, unavailable, non-ordinary, or unsafe exact-name candidate; or a
+- Invalid request input is `invalid-input` before catalogue work.
+- Failure to acquire the required same-workspace lease; an unsupported,
+  unavailable, unreadable, non-ordinary, or unsafe exact-name candidate; or a
   new, removed, or changed exact-name candidate or relevant fact under lease is
-  `blocked` when safe classification is available.
+  `blocked` when safe classification is available. A readable ordinary
+  malformed final is the narrow warning exception above and is not `blocked` by
+  itself.
 - An unexpected partial deletion or verification event is `failed`.
-- Cancellation without a stronger unsafe residual condition is `interrupted`.
+- Cancellation without a stronger unsafe residual condition is `cancelled`.
 
 For ordinary conditions, precedence from strongest to weakest is `blocked`,
-`incomplete`, `attention`, then `complete`. Invalid input stops first. `failed`
-and `interrupted` retain their event meaning. The shared process-status mapping is
+`incomplete`, `completed-with-warnings`, then `completed`. Invalid input stops
+first. `failed` and `cancelled` retain their event meaning. The shared
+process-status mapping is
 defined by the [Shared Result
 Coordinates](../shared/result-coordinates/interface.md).
 
 ## Presentation Relationship
 
-Human expanded, human compact, and JSON renderers consume the same typed result.
+Minimal, standard, full, debug, and JSON renderers consume the same typed result.
 They do not rerun catalogue enumeration, planning, preflight, deletion, or
 verification. Presentation may change framing or density only; it cannot change
 the selected default-all catalogue, hide an exact effect, change status, or
 erase a remaining or residual item.
 
-Primary human `complete`, `attention`, and `incomplete` results use stdout.
-Primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
+Primary human `completed`, `completed-with-warnings`, and `incomplete` results use stdout.
+Primary human `invalid-input`, `blocked`, `failed`, and `cancelled` results use
 stderr. JSON emits one complete result on stdout for every semantic status, and
 bounded diagnostics use stderr. The exact structured schema is defined by the
 [Shared Result Coordinates](../shared/result-coordinates/interface.md).
@@ -379,7 +399,9 @@ A conforming implementation must demonstrate:
   no extraction, disclosure, retention, or materialization;
 - default-all filtered exact-name catalogue formation, deterministic ordering,
   current-v1 attribution validation, plan eligibility only for verified finals
-  and ordinary drafts, blocking preservation of all invalid exact-name
+  and ordinary drafts, warning preservation of a readable ordinary malformed
+  final alongside independent eligible removal, blocking preservation of
+  unsupported, unavailable, unreadable, non-ordinary, and unsafe exact-name
   candidates, no arbitrary recursive support-artifact cleanup, and no hidden
   command;
 - exact dry-run/application candidate-plan parity and no persistent dry-run
@@ -395,9 +417,9 @@ A conforming implementation must demonstrate:
   verified effects, failure and interruption reporting, residual visibility, and
   fresh-catalogue rerun convergence;
 - complete no-op repetition without deleting a later replacement;
-- all seven statuses, reserved unreachable `attention`, ordinary precedence,
-  stream assignment, one-result JSON, exact effect visibility, and bounded
-  diagnostics; and
+- all seven statuses, the accepted reachable `completed-with-warnings` warning
+  condition, ordinary precedence, stream assignment, one-result JSON, exact
+  effect visibility, and bounded diagnostics; and
 - no Doctor, Repair, Index, Framework or Extension lifecycle, package, build,
   arbitrary filesystem, or Gate 6 documentation/history/release cleanup.
 

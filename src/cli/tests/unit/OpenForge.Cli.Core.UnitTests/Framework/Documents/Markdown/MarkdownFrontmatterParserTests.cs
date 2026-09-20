@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Markdown;
 
 public sealed class MarkdownFrontmatterParserTests
 {
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Shared Markdown frontmatter parsing preserves exact LF and CRLF boundaries"),
         InlineData("---\nkey: value\n---\n# Body\n", 18, 4, 11, 19),
         InlineData("---\r\nkey: value\r\n---\r\n# Body\r\n", 20, 5, 12, 22)]
@@ -26,6 +27,7 @@ public sealed class MarkdownFrontmatterParserTests
         Assert.Equal(boundary, new MarkdownDocumentParser().Parse(source).Frontmatter);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Shared Markdown frontmatter parsing distinguishes missing and unterminated boundaries")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void MissingAndUnterminatedBoundariesRemainDistinct()

@@ -1,0 +1,2 @@
+Cannot attach team-knowledge: Another Open Forge command holds the workspace lock. Nothing was changed.
+Workspace: <workspace>

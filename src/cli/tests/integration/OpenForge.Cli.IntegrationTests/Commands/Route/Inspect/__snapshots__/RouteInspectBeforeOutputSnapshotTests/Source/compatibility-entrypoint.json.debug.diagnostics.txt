@@ -1,0 +1,9 @@
+status=completed
+referenceKind=source-id
+selectionMethod=automatic-id
+requested=legacy
+identity=present
+profile=present
+observations=1
+conditions=0
+next=none

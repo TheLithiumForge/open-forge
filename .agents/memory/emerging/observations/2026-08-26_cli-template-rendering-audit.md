@@ -81,5 +81,5 @@ Without this record, later modernization may either miss the known fixed-templat
 
 - [C# Style](../../../directives/csharp/style.md)
 - [C# Callable Design](../../../directives/csharp/design.md)
-- [Modern C# Improvements](../../working/cli-development/tasks/modern-csharp-improvements.md)
+- [Modern C# Improvements](../../archived/cli-development/tasks/modern-csharp-improvements.md)
 - [CLI Review Rationale And Anomalies](2026-08-18_cli-review-rationale-and-dogfooding-anomalies.md)

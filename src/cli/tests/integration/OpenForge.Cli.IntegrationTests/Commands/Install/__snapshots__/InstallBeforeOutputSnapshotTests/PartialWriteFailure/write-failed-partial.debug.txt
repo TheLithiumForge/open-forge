@@ -1,0 +1,39 @@
+Install stopped after 14 of 25 changes.
+Workspace: <workspace>
+  Error  .agents/memory/_memory.md  Write failed [install.write-failed]
+         Writing .agents/memory/_memory.md failed: filesystem access was denied.
+         open-forge doctor
+         Inspect the reported Install boundary before rerunning it.
+         cause: UnauthorizedAccessException (0x80070005): Filesystem access was denied.
+  .agents/directives                            created
+  .agents/guidance                              created
+  .agents/maps                                  created
+  .agents/patterns                              created
+  .agents/skills                                created
+  .agents/templates                             created
+  .agents/memory/archived                       created
+  .agents/memory/crystallized                   created
+  .agents/memory/emerging                       created
+  .agents/memory/working                        created
+  .agents/directives/_directives.md             created; source: .agents/directives/_directives.md
+  .agents/guidance/_guidance.md                 created; source: .agents/guidance/_guidance.md
+  .agents/loader.md                             created; source: .agents/loader.md
+  .agents/maps/_maps.md                         created; source: .agents/maps/_maps.md
+  .agents/memory/_memory.md                     not started
+  .agents/memory/archived/_archived.md          not started; source: .agents/memory/archived/_archived.md
+  .agents/memory/crystallized/_crystallized.md  not started; source: .agents/memory/crystallized/_crystallized.md
+  .agents/memory/emerging/_emerging.md          not started; source: .agents/memory/emerging/_emerging.md
+  .agents/memory/working/_working.md            not started; source: .agents/memory/working/_working.md
+  .agents/patterns/_patterns.md                 not started; source: .agents/patterns/_patterns.md
+  .agents/skills/_skills.md                     not started; source: .agents/skills/_skills.md
+  .agents/templates/_templates.md               not started; source: .agents/templates/_templates.md
+  AGENTS.md                                     not started; source: AGENTS.md
+  CLAUDE.md                                     not started; source: CLAUDE.md
+  .agents/open-forge.lock.json                  not started
+  14 files and directories were created.
+  Bundled Framework fingerprint: <sha256> (14 assets).
+  Ownership record publication did not start.
+  The recovery bundle was retained at <recovery-bundle>.
+  The final verification state is unknown.
+  Inspect the reported Install boundary before rerunning it.
+Next: open-forge doctor

@@ -1,0 +1,13 @@
+Extension update stopped after 1 of 2 changes.
+Workspace: <workspace>
+  Error  .agents/toolkit.md  Writing failed
+         filesystem access was denied.
+  .agents/aaa.md      replaced (you had changed it and this version changes it)
+  .agents/toolkit.md  not started
+  Previous content: recovery bundle at <recovery-bundle>
+  Source: <extension-source>
+  Dependency closure: toolkit
+  0 files unchanged
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+  Inspect the partial update and its recovery bundle.
+Next: open-forge doctor

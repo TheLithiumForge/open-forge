@@ -1,0 +1,2 @@
+Cannot repair: repair needs to know which repairs to apply, and this session cannot ask. Nothing was changed.
+Next: open-forge repair --automatic

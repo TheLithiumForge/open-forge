@@ -27,11 +27,12 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Index.Shared.Operation;
 public sealed class IndexMutationMapperTests
 {
     private const string RootPath = ".agents/root/_root.md";
-    private const string Prefix = "# Root\n<!-- open-forge:generated-index:start -->\n";
-    private const string Suffix = "<!-- open-forge:generated-index:end -->\nFooter\n";
+    private const string Prefix = "# Root\n";
+    private const string Suffix = "Footer\n";
     private const string BeforeBody = "before\n";
     private const string ExpectedBody = "expected\n";
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index operation events use bounded command-authored causes"),
      Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void OperationEventCausesNeverExposeRawFilesystemFailures()
@@ -67,6 +68,7 @@ public sealed class IndexMutationMapperTests
             IndexMutationMapper.CreateFinding((IndexFindingCode)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index operation retains automatic and explicit cancellation origins"),
      Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void CancelledProjectionReadsRetainRequestOrigin()
@@ -87,6 +89,7 @@ public sealed class IndexMutationMapperTests
             Finding(IndexFindingCode.OperationFailed)));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index operation maps workspace-lock failures and cancellation without inferring contention"),
      Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void WorkspaceLockFailuresAndCancellationUseOnlyTypedFacts()
@@ -116,6 +119,7 @@ public sealed class IndexMutationMapperTests
             IndexMutationMapper.ReadLockFailureCode(Failure(FilesystemFailureKind.InvalidSyntax)));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index operation requires exact ordered whole-plan revalidation"),
      Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void WholePlanValidationMapsEveryTypedStateAndRejectsIncoherentValidChecks()
@@ -209,6 +213,7 @@ public sealed class IndexMutationMapperTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index operation maps nonprepared recovery without claiming artifact presence"),
      Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void NonpreparedRecoveryRetainsOnlyObservedResidualPathTruth()
@@ -268,6 +273,7 @@ public sealed class IndexMutationMapperTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index operation maps every coherent file receipt to its public stop behavior"),
      Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void FileReceiptsMapExactEffectVerificationAndReasonTruth()
@@ -371,6 +377,7 @@ public sealed class IndexMutationMapperTests
             shouldContinue: false));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index operation maps recovery deletion state and disposition independently"),
      Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void RecoveryDeletionMappingsNeverInferRetentionFromUnknown()
@@ -432,6 +439,7 @@ public sealed class IndexMutationMapperTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index fresh verification requires original identity and expected bodies"),
      Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void FreshProjectionProvesExactSelectionTargetsAndOriginalExpectedBodies()
@@ -489,6 +497,29 @@ public sealed class IndexMutationMapperTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Index fresh verification permits only the same skipped metadata boundary")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void FreshProjectionMatchesSkippedMetadataAsCurrentUnsafeFacts()
+    {
+        var original = Plan(
+            IndexMode.Apply,
+            PartialProjection(IndexFindingCode.MetadataSkipped, BeforeBody, ExpectedBody));
+        var fresh = IndexProjectionReadResult.Projected(
+            PartialProjection(IndexFindingCode.MetadataUnsafe, ExpectedBody, ExpectedBody));
+
+        var mapping = IndexMutationMapper.ReadFreshVerification(new IndexFreshVerificationInput
+        {
+            Original = original,
+            Fresh = fresh,
+        });
+
+        Assert.Null(mapping.FindingCode);
+        Assert.Null(mapping.Source);
+        Assert.Null(mapping.Cause);
+    }
+
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index fresh verification maps every projection-read state and rejects undefined values"),
      Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
     public void FreshProjectionReadStateMappingIsExact()
@@ -539,6 +570,54 @@ public sealed class IndexMutationMapperTests
             findings: []);
     }
 
+    private static IndexProjectionFormation PartialProjection(
+        IndexFindingCode skippedCode,
+        string safeBefore,
+        string safeExpected)
+    {
+        var safe = ProjectedRegion(safeBefore, safeExpected);
+        var skippedSource = Source(
+            "workspace/.agents/beta/_beta.md",
+            ".agents/beta/_beta.md");
+        var skippedRegion = GeneratedNavigationRegion.Unavailable(
+            skippedSource,
+            GeneratedNavigationRegionUnavailableReason.MetadataInvalid,
+            "The authored metadata is malformed.");
+        var skipped = new IndexProjectedRegion(
+            region: skippedRegion,
+            source: new IndexLogicalSource(
+                id: skippedSource.Identity.AutomaticId,
+                path: skippedSource.Identity.CanonicalBasePath,
+                scope: IndexLogicalSourceScope.Rooted),
+            beforeEntryCount: null);
+        var projection = new GeneratedNavigationProjection([safe.Region, skipped.Region]);
+        var selection = new IndexSelectionResolution(
+            new IndexSelection(
+                IndexSelectionOrigin.ExplicitSources,
+                IndexSelectionScope.Rooted,
+                [safe.Source, skipped.Source]),
+            [safe.Region.Source, skipped.Region.Source],
+            []);
+        var finding = new IndexFinding(
+            skippedCode,
+            sourceOccurrence: null,
+            source: skipped.Source,
+            cause: "The authored metadata is invalid.",
+            candidates: [])
+        {
+            Details = new IndexFindingDetails
+            {
+                ParentPath = skipped.Source.Path,
+                MetadataProblem = IndexMetadataProblem.Invalid,
+            },
+        };
+        return new IndexProjectionFormation(
+            selection,
+            projection,
+            [skipped, safe],
+            [finding]);
+    }
+
     private static IndexProjectedRegion Update(
         string beforeBody,
         string expectedBody)
@@ -578,15 +657,20 @@ public sealed class IndexMutationMapperTests
     }
 
     private static SourceLogicalSource Source(string physicalPath)
+        => Source(physicalPath, RootPath);
+
+    private static SourceLogicalSource Source(
+        string physicalPath,
+        string canonicalPath)
     {
-        var automaticId = SourceIdentity.DeriveId(RootPath)
+        var automaticId = SourceIdentity.DeriveId(canonicalPath)
             ?? throw new InvalidOperationException("The operation fixture requires a derived source ID.");
         return new SourceLogicalSource(
             new SourceLogicalIdentity(
                 automaticId: automaticId,
-                canonicalBasePath: RootPath),
+                canonicalBasePath: canonicalPath),
             new SourceLayer(
-                canonicalPath: RootPath,
+                canonicalPath: canonicalPath,
                 physicalPath: Physical(physicalPath),
                 form: SourceDocumentForm.CanonicalEntrypoint,
                 kind: SourceLayerKind.Base));

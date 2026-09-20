@@ -1,0 +1,31 @@
+legacy  .agents/legacy/index.md
+Workspace: <workspace>
+  Info  .agents/legacy/index.md  Compatibility entrypoint [route-inspect.compatibility-entrypoint]
+         .agents/legacy/index.md uses the compatibility name index.md; the canonical name is _legacy.md.
+
+Where this source belongs
+  Route chain: legacy
+  Parent: none (Loader root)
+  Entrypoint name: index.md (compatibility name; the canonical name is _legacy.md)
+  Tags: Docs
+
+When it is read
+  At task start or resume: no
+  Read automatically after another route: no
+  Read when this route is selected: yes
+  May be read again: no
+
+Context size
+  This file: 108 B, about 27 tokens
+  Selecting this route adds: 1 file, 108 B, about 27 tokens
+  Selected context: 1 file, 108 B, about 27 tokens
+  Already in startup context: 0 files, 0 B, about 0 tokens
+
+Axioms
+  Inherited rules from: none
+  Local rules: no
+  Why: all applicable route facts are available
+  Selection: source ID; automatic ID; requested "legacy"
+
+Physical layers
+  base .agents/legacy/index.md

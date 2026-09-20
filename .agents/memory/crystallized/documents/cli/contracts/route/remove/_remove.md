@@ -10,7 +10,8 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized entrypoint for `route remove`.
-The command does not ship yet; implementation and executable evidence are tracked in
+The command is implemented in the merged native CLI; implementation and
+executable evidence are tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md). Its sibling [Interface Contract](interface.md) defines what a
 caller may enter and observe. Its sibling [Behavior Contract](behavior.md)
 defines the deterministic, technology-neutral operation behind that interface.
@@ -41,7 +42,5 @@ second source of command meaning or selected-category authority.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted current technology-neutral resolution, effects, safety, recovery, and conformance for `route remove`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Remove #Behavior #Mutation #Reference #Safety #Recovery #CurrentTruth
 - [Accepted current public interface for removing one eligible unmanaged routed leaf or complete routed category](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Remove #Interface #Mutation #Reference #Safety #CurrentTruth
-<!-- open-forge:generated-index:end -->

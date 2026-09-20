@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Cleanup.Shared.Application;
 
 public sealed class CleanupUnattemptedEffectsTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup cannot claim planned candidates remain when no current catalogue was established"), Trait("Feature", "cleanup-unattempted-effects"), Trait("Evidence", "UnitContract")]
     public void MissingCurrentCatalogueDoesNotClaimRetention()
     {
@@ -24,6 +25,7 @@ public sealed class CleanupUnattemptedEffectsTests
         });
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Cleanup distinguishes an observed retained candidate from a stale planned path missing at session opening"),
      Trait("Feature", "cleanup-unattempted-effects"), Trait("Evidence", "UnitContract")]
     public void CurrentObservationSeparatesRetainedAndMissingPlannedPaths()

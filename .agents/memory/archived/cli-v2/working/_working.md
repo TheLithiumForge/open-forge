@@ -15,6 +15,4 @@ deleted implementation's former plan.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Historical CLI-v2 source: Ordered replacement CLI slices, delivery state, and essential authority links for just-in-time Task planning](cli-replacement-backlog.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
-<!-- open-forge:generated-index:end -->

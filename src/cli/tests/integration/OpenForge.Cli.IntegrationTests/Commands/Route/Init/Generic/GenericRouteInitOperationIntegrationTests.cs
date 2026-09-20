@@ -8,6 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init.Generic;
 
 public sealed class GenericRouteInitOperationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init creates a missing chain with parent-first directories and exact draft scaffolds"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task MissingAgentsChainCreatesCanonicalDraftsAndReportsResidualDirectoryEffects()
     {
@@ -17,7 +18,7 @@ public sealed class GenericRouteInitOperationIntegrationTests
             workspace,
             workspace.Request("memory/project-alpha/documents"));
 
-        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Contains(
             result.Findings,
             finding => finding.Code == RouteInitFindingCode.NeedsAuthoring);
@@ -72,6 +73,7 @@ public sealed class GenericRouteInitOperationIntegrationTests
         Assert.Equal(0, await workspace.RecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init emits complete explicit metadata and optional responsibility for a one-segment target"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task ExplicitMetadataCreatesCompleteCanonicalScaffold()
     {
@@ -107,6 +109,7 @@ public sealed class GenericRouteInitOperationIntegrationTests
         Assert.Equal(RouteInitRecoveryState.NotCreated, result.Recovery.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init preserves a canonical parent and only replaces its bounded generated region"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task ExistingCanonicalParentPreservesAuthoredBytesAndUnrelatedFiles()
     {
@@ -117,7 +120,7 @@ public sealed class GenericRouteInitOperationIntegrationTests
                 "Memory",
                 "Memory",
                 "# memory\n\nAuthored prefix must remain.\n\n",
-                "stale generated entry",
+                "- stale generated entry",
                 "\nAuthored suffix must remain."));
         workspace.WriteText("unrelated.txt", "unrelated authored bytes\n");
         var beforeUnrelated = workspace.ReadText("unrelated.txt");
@@ -127,7 +130,7 @@ public sealed class GenericRouteInitOperationIntegrationTests
             workspace,
             workspace.Request("memory/project"));
 
-        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.True(workspace.Exists(".agents/memory/project/_project.md"));
         var after = workspace.ReadText(".agents/memory/_memory.md");
         Assert.StartsWith(
@@ -148,6 +151,7 @@ public sealed class GenericRouteInitOperationIntegrationTests
         Assert.NotEqual(before, after);
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Generic Route Init preserves every accepted compatibility entrypoint without creating a canonical sibling"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     [InlineData("index.md")]
     [InlineData("_index.md")]
@@ -164,15 +168,15 @@ public sealed class GenericRouteInitOperationIntegrationTests
                 "Memory compatibility",
                 "Memory",
                 "# memory\n\nAuthored compatibility content.\n\n",
-                "stale generated entry",
-                "\nCompatibility suffix."));
+                "- stale generated entry",
+                "\n\n## Notes\n\nCompatibility suffix."));
         var before = workspace.ReadText(compatibilityPath);
 
         var result = await ExecuteAsync(
             workspace,
             workspace.Request("memory/project"));
 
-        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
         var existing = Assert.Single(
             result.Entrypoints.Where(entrypoint => entrypoint.Current == RouteInitEntrypointCurrent.Existing));
         Assert.Equal(RouteInitEntrypointForm.Compatibility, existing.Form);
@@ -182,11 +186,12 @@ public sealed class GenericRouteInitOperationIntegrationTests
         Assert.False(workspace.Exists(".agents/memory/_memory.md"));
         Assert.True(workspace.Exists(".agents/memory/project/_project.md"));
         var after = workspace.ReadText(compatibilityPath);
-        Assert.StartsWith(before[..before.IndexOf("<!-- open-forge:generated-index:start -->", StringComparison.Ordinal)], after, StringComparison.Ordinal);
-        Assert.Contains("\nCompatibility suffix.", after, StringComparison.Ordinal);
+        Assert.StartsWith(before[..(before.IndexOf("## Entries", StringComparison.Ordinal) + "## Entries".Length)], after, StringComparison.Ordinal);
+        Assert.Contains("## Notes\n\nCompatibility suffix.", after, StringComparison.Ordinal);
         Assert.Contains("project/_project.md", after, StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init preserves an existing exact compatibility operand without creating a canonical sibling"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task ExistingExactCompatibilityOperandRemainsSelected()
     {
@@ -199,7 +204,7 @@ public sealed class GenericRouteInitOperationIntegrationTests
                 "Memory",
                 "# memory\n\nAuthored compatibility content.\n\n",
                 "- none - No entries - #Empty",
-                "\nCompatibility suffix."));
+                "\n\n## Notes\n\nCompatibility suffix."));
 
         var result = await ExecuteAsync(
             workspace,
@@ -214,6 +219,7 @@ public sealed class GenericRouteInitOperationIntegrationTests
         Assert.True(workspace.Exists(compatibilityPath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init treats Rune-only YAML as absent metadata without writes"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task RuneOnlyYamlIsMetadataIncompleteAndPreserved()
     {
@@ -223,7 +229,7 @@ public sealed class GenericRouteInitOperationIntegrationTests
             ".agents/memory/index.md",
             opaque + "\nOpaque suffix." + OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
             {
-                Entries = "stale generated entry",
+                Entries = "- stale generated entry",
                 Prefix = string.Empty,
             }));
         var before = workspace.SnapshotHashes();
@@ -239,6 +245,7 @@ public sealed class GenericRouteInitOperationIntegrationTests
         Assert.Equal(RouteInitRecoveryState.NotRequired, result.Recovery.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init reads Open Forge and preserves a sibling Rune root as opaque YAML"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task OpenForgeMetadataIgnoresAndPreservesSiblingRuneYaml()
     {
@@ -248,13 +255,13 @@ public sealed class GenericRouteInitOperationIntegrationTests
             ".agents/memory/_memory.md",
             "---\nopen-forge:\n  description: Canonical memory\n  tags: [Memory]\n"
                 + unrelated
-                + "---\n\n# memory\n\n## Entries\n\n<!-- open-forge:generated-index:start -->\n\n- none - No entries - #Empty\n\n<!-- open-forge:generated-index:end -->\n");
+                + "---\n\n# memory\n\n## Entries\n\n\n- none - No entries - #Empty\n\n");
 
         var result = await ExecuteAsync(
             workspace,
             workspace.Request("memory/project"));
 
-        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(RouteInitFindingCode.NeedsAuthoring, Assert.Single(result.Findings).Code);
         Assert.True(workspace.Exists(".agents/memory/project/_project.md"));
         var source = workspace.ReadText(".agents/memory/_memory.md");
@@ -264,6 +271,7 @@ public sealed class GenericRouteInitOperationIntegrationTests
         Assert.Equal(RouteInitRecoveryState.Removed, result.Recovery.State);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init updates a valid Loader generated region for the first new entrypoint without creating a Loader"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task ValidLoaderReceivesFirstNewEntrypointProjection()
     {
@@ -272,14 +280,14 @@ public sealed class GenericRouteInitOperationIntegrationTests
             ".agents/loader.md",
             Loader(
                 "# Loader\n\nLoader authored prefix.\n\n",
-                "stale loader entry",
+                "- stale loader entry",
                 "\nLoader authored suffix."));
 
         var result = await ExecuteAsync(
             workspace,
             workspace.Request("memory/project"));
 
-        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.True(workspace.Exists(".agents/loader.md"));
         Assert.True(workspace.Exists(".agents/memory/_memory.md"));
         var loader = workspace.ReadText(".agents/loader.md");
@@ -325,9 +333,8 @@ public sealed class GenericRouteInitOperationIntegrationTests
             + "## Axioms\n\n"
             + "- inherited - No local axioms; loaded ancestor axioms remain active.\n\n"
             + "## Entries\n\n"
-            + "<!-- open-forge:generated-index:start -->\n"
             + "- none - No entries - #Empty\n"
-            + "<!-- open-forge:generated-index:end -->";
+            + "";
 
     private static string CanonicalEntrypoint(
         string description,

@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Locking;
 
 public sealed class WorkspaceLockContractIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Workspace lock leases require one exact zero-byte external handle"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public void WorkspaceLockLeaseRequiresExactExternalHandle()
     {

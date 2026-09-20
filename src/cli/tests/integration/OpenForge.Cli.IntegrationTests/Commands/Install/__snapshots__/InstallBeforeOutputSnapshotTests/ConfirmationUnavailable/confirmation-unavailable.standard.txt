@@ -1,0 +1,8 @@
+Install needs confirmation, and this session cannot ask.
+Workspace: <workspace>
+  Error  <workspace>  Confirmation is required
+         Install needs confirmation, and this session cannot ask.
+         open-forge install --automatic
+         Rerun the same Install request with explicit automatic mode.
+  Rerun the same Install request with explicit automatic mode.
+Next: open-forge install --automatic

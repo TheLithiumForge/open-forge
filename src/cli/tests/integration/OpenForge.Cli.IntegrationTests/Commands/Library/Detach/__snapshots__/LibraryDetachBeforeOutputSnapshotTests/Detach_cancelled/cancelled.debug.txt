@@ -1,0 +1,11 @@
+Library detach was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  team-knowledge  Library detach was cancelled [library-detach.interrupted]
+         Library detach was cancelled. Nothing was changed.
+         use open-forge library detach team-knowledge
+         open-forge library detach team-knowledge
+         Rerun the same Library detach request.
+  Verification: was not requested; registration was not published.
+  Recovery: no recovery bundle was required; no residual effects.
+  Rerun the same Library detach request.
+Next: open-forge library detach team-knowledge

@@ -1,0 +1,16 @@
+Cannot attach team-knowledge: docs is outside .agents and no grant allows writing there.
+Workspace: <workspace>
+  Error  docs  Permission is required [library-attach.permission-required]
+         docs is outside .agents and no grant allows writing there.
+         use open-forge library attach team-knowledge shared/team-knowledge --to . --allow-path docs
+         open-forge library attach team-knowledge shared/team-knowledge --to . --allow-path docs
+         Allow the destination folder, then rerun the same request.
+  Info  .  Ownership record is missing [library-attach.ownership-observation]
+         No ownership record exists, so the team-knowledge Library cannot be read from it.
+  Permission evaluation: permission is required. Required paths: docs/review.md. Missing paths: docs/review.md. No grant was saved.
+  Expected state: docs/review.md (will be absent)
+  Expected state: .agents/open-forge.lock.json (will be absent)
+  Verification: verification has not started; 0 of 1 links created; the Library was not recorded
+  No recovery data was requested.
+  Allow the destination folder, then rerun the same request.
+Next: open-forge library attach team-knowledge shared/team-knowledge --to . --allow-path docs

@@ -54,7 +54,7 @@ Descriptions and topical tags already provide pre-load selection. Fixed modes an
 ## Authoritative Sources
 
 - [Current Workflow contract](../../documents/framework/primitives/workflows.md)
-- [Installed Workflows entrypoint](../../../../workflows/_workflows.md)
+- [Installed Workflows entrypoint](../../../../skills/use-workflow/references/open-forge/_open-forge.md)
 - [Workflows maintenance contract](../../documents/maintenance/payload/agents/workflows.md)
 
 ## Historical Context

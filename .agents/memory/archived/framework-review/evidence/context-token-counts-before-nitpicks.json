@@ -1,0 +1,259 @@
+{
+  "tokenizer": "tiktoken 0.14.0",
+  "method": "Sum each raw UTF-8 Markdown file independently, including frontmatter and generated Entries; no separators or harness overhead.",
+  "startup_selection": "Canonical AGENTS.md, loader, and exposed LoadNow/KeepInMind entries recursively in listed order; include adjacent overwrites. No project-specific scopes or Extensions.",
+  "startup": {
+    "files": [
+      "AGENTS.md",
+      ".agents/loader.md",
+      ".agents/directives/_directives.md",
+      ".agents/guidance/_guidance.md",
+      ".agents/maps/_maps.md",
+      ".agents/memory/_memory.md",
+      ".agents/memory/crystallized/_crystallized.md",
+      ".agents/memory/crystallized/decisions/_decisions.md",
+      ".agents/memory/crystallized/documents/_documents.md",
+      ".agents/memory/emerging/_emerging.md",
+      ".agents/memory/emerging/analysis/_analysis.md",
+      ".agents/memory/emerging/ideas/_ideas.md",
+      ".agents/memory/emerging/observations/_observations.md",
+      ".agents/memory/working/_working.md",
+      ".agents/memory/working/checkpoints/_checkpoints.md",
+      ".agents/memory/working/handoffs/_handoffs.md",
+      ".agents/patterns/_patterns.md",
+      ".agents/skills/_skills.md",
+      ".agents/workflows/_workflows.md"
+    ],
+    "file_count": 19,
+    "tokens": {
+      "o200k_base": 6809,
+      "cl100k_base": 6849
+    }
+  },
+  "complete_framework": {
+    "files": [
+      ".agents/directives/_directives.md",
+      ".agents/guidance/_guidance.md",
+      ".agents/guidance/adaptive-collaboration.md",
+      ".agents/loader.md",
+      ".agents/maps/_maps.md",
+      ".agents/memory/_memory.md",
+      ".agents/memory/archived/_archived.md",
+      ".agents/memory/crystallized/_crystallized.md",
+      ".agents/memory/crystallized/decisions/_decisions.md",
+      ".agents/memory/crystallized/documents/_documents.md",
+      ".agents/memory/emerging/_emerging.md",
+      ".agents/memory/emerging/analysis/_analysis.md",
+      ".agents/memory/emerging/ideas/_ideas.md",
+      ".agents/memory/emerging/observations/_observations.md",
+      ".agents/memory/working/_working.md",
+      ".agents/memory/working/checkpoints/_checkpoints.md",
+      ".agents/memory/working/handoffs/_handoffs.md",
+      ".agents/patterns/_patterns.md",
+      ".agents/skills/_skills.md",
+      ".agents/templates/_templates.md",
+      ".agents/workflows/_workflows.md",
+      "AGENTS.md",
+      "CLAUDE.md"
+    ],
+    "file_count": 23,
+    "tokens": {
+      "o200k_base": 8253,
+      "cl100k_base": 8295
+    }
+  },
+  "additional_bridge": {
+    "files": ["CLAUDE.md"],
+    "file_count": 1,
+    "tokens": {
+      "o200k_base": 24,
+      "cl100k_base": 23
+    }
+  },
+  "per_file": {
+    ".agents/directives/_directives.md": {
+      "sha256": "cc088b1d369d4f003e5ba5bfaee1d19e525121de0e64ed31762bd13d234e5175",
+      "bytes": 1040,
+      "tokens": {
+        "o200k_base": 215,
+        "cl100k_base": 215
+      }
+    },
+    ".agents/guidance/_guidance.md": {
+      "sha256": "1dc5388c1919eedeb5f29969fc022b0be0e00a442452f66ad9c63c9933c9f332",
+      "bytes": 887,
+      "tokens": {
+        "o200k_base": 192,
+        "cl100k_base": 194
+      }
+    },
+    ".agents/guidance/adaptive-collaboration.md": {
+      "sha256": "ef5c6c96107fbfa4d30b9c8fc2ca95b59669786bec919f3ebfec355cd91c3882",
+      "bytes": 4978,
+      "tokens": {
+        "o200k_base": 902,
+        "cl100k_base": 904
+      }
+    },
+    ".agents/loader.md": {
+      "sha256": "15b2fa7474d89bca16500135be8c5ae72d4d8f3f4076cadfb8cc7ccbea4eeabb",
+      "bytes": 9730,
+      "tokens": {
+        "o200k_base": 2015,
+        "cl100k_base": 2023
+      }
+    },
+    ".agents/maps/_maps.md": {
+      "sha256": "33a6a01c6cb1e16b5dd871345bbc3fa77ffd2d1a0bbae5445c7921a6614fb921",
+      "bytes": 1139,
+      "tokens": {
+        "o200k_base": 236,
+        "cl100k_base": 236
+      }
+    },
+    ".agents/memory/_memory.md": {
+      "sha256": "d14d95e2c66bc30ef5bf7e902dbedf8f7d5527d40bf959d3947419bddafeb80a",
+      "bytes": 3775,
+      "tokens": {
+        "o200k_base": 753,
+        "cl100k_base": 766
+      }
+    },
+    ".agents/memory/archived/_archived.md": {
+      "sha256": "f4d8627ba512da796c60295e6a5f6173b7e7e05d9479ba93f72e0bab157d33bc",
+      "bytes": 1306,
+      "tokens": {
+        "o200k_base": 247,
+        "cl100k_base": 248
+      }
+    },
+    ".agents/memory/crystallized/_crystallized.md": {
+      "sha256": "4bf159b336257ccef59fea0028375b2b05a7ecd459ca24c5ad7bf91bd4db5015",
+      "bytes": 1288,
+      "tokens": {
+        "o200k_base": 273,
+        "cl100k_base": 280
+      }
+    },
+    ".agents/memory/crystallized/decisions/_decisions.md": {
+      "sha256": "fa00eb675d492baec84150356fea4784e047abd6822eaec32d5c9825bbcf0156",
+      "bytes": 1110,
+      "tokens": {
+        "o200k_base": 227,
+        "cl100k_base": 229
+      }
+    },
+    ".agents/memory/crystallized/documents/_documents.md": {
+      "sha256": "e00f1205da0d6ab7e7f235c831df3706d502b8c8290cf3dd29800f84c43747c9",
+      "bytes": 844,
+      "tokens": {
+        "o200k_base": 169,
+        "cl100k_base": 170
+      }
+    },
+    ".agents/memory/emerging/_emerging.md": {
+      "sha256": "6c56db884f4cb1b6c3a713f177945aa65ad7569bbf5c92ae4b5f5f078ef64861",
+      "bytes": 1726,
+      "tokens": {
+        "o200k_base": 362,
+        "cl100k_base": 367
+      }
+    },
+    ".agents/memory/emerging/analysis/_analysis.md": {
+      "sha256": "79d79a64a7533ba72eb37f44d2727a79e3db430d9e82e72ec82e36a3dfba7f6f",
+      "bytes": 732,
+      "tokens": {
+        "o200k_base": 152,
+        "cl100k_base": 153
+      }
+    },
+    ".agents/memory/emerging/ideas/_ideas.md": {
+      "sha256": "2790499363fdd849486fdff6561d09999b28afed7e671438407040dd491997ee",
+      "bytes": 766,
+      "tokens": {
+        "o200k_base": 158,
+        "cl100k_base": 160
+      }
+    },
+    ".agents/memory/emerging/observations/_observations.md": {
+      "sha256": "77c6b5d92afd4632d852c309e61e45ee34b9c6f77a4ddc84d04ca914ff21ca80",
+      "bytes": 1121,
+      "tokens": {
+        "o200k_base": 225,
+        "cl100k_base": 226
+      }
+    },
+    ".agents/memory/working/_working.md": {
+      "sha256": "270e83fa6658d1976c533adce8d66a3847d34c6e69286b6eba8d2b0d357993fa",
+      "bytes": 1220,
+      "tokens": {
+        "o200k_base": 263,
+        "cl100k_base": 263
+      }
+    },
+    ".agents/memory/working/checkpoints/_checkpoints.md": {
+      "sha256": "0b92bbab594cd9016109c382f8e9fa67f1ea6e13777866106ee6a4de04ed46ed",
+      "bytes": 1476,
+      "tokens": {
+        "o200k_base": 323,
+        "cl100k_base": 323
+      }
+    },
+    ".agents/memory/working/handoffs/_handoffs.md": {
+      "sha256": "5672b99d547034192de16179804f66c3e202b05a52bacdcf50f7397e9e3ebb11",
+      "bytes": 1680,
+      "tokens": {
+        "o200k_base": 348,
+        "cl100k_base": 345
+      }
+    },
+    ".agents/patterns/_patterns.md": {
+      "sha256": "1de75723e1b41b756f5b64921ec762ce49e795e33eab2f437ccba68050bc8f61",
+      "bytes": 1442,
+      "tokens": {
+        "o200k_base": 300,
+        "cl100k_base": 300
+      }
+    },
+    ".agents/skills/_skills.md": {
+      "sha256": "6fb7d22db1a07c0ff659876e88bfddefe5212a4a198e69f6f8107d07b2ab87a6",
+      "bytes": 709,
+      "tokens": {
+        "o200k_base": 154,
+        "cl100k_base": 155
+      }
+    },
+    ".agents/templates/_templates.md": {
+      "sha256": "ff9555f19c53b23102e175a12f86faa6af3e6944ac06bb1cdc5438ee6d4006b6",
+      "bytes": 1413,
+      "tokens": {
+        "o200k_base": 271,
+        "cl100k_base": 271
+      }
+    },
+    ".agents/workflows/_workflows.md": {
+      "sha256": "1db19314fcd3dcf7309ff7973cda5aac5fe8c757948b6dd8450df1e9b0f802de",
+      "bytes": 1943,
+      "tokens": {
+        "o200k_base": 384,
+        "cl100k_base": 385
+      }
+    },
+    "AGENTS.md": {
+      "sha256": "6be1083ce5998b089316f6700e4bc03fbf8d2a01b4c327ae87d137438dc28efa",
+      "bytes": 295,
+      "tokens": {
+        "o200k_base": 60,
+        "cl100k_base": 59
+      }
+    },
+    "CLAUDE.md": {
+      "sha256": "d1e8d44d433ada93b2cf35adac0be27d4474f600561db1080e7e34072226892c",
+      "bytes": 81,
+      "tokens": {
+        "o200k_base": 24,
+        "cl100k_base": 23
+      }
+    }
+  }
+}

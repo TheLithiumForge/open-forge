@@ -1,0 +1,11 @@
+=== .agents/docs/guide.md (docs/guide) ===
+---
+open-forge:
+  description: Guide
+  tags: [Docs, Guide]
+---
+# Guide
+
+## Rules
+
+Read the [Reference](reference.md#details).

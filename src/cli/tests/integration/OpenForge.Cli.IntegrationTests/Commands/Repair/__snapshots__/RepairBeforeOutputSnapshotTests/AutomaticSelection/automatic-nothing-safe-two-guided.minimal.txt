@@ -1,0 +1,6 @@
+Nothing could be repaired automatically. 2 problems need a choice.
+  Warning  .agents/docs/source.md:9:10  Broken link
+         missing.md: Broken link; 4 possible targets
+  Warning  .agents/docs/source.md:10:18  Broken link
+         missing.md: Broken link; 4 possible targets
+Next: open-forge repair

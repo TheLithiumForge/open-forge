@@ -1,0 +1,5 @@
+Cannot inspect team-knowledge: .agents/linked/review.md  could not be checked safely: The Library destination parent is not a real ordinary directory.
+Workspace: <workspace>
+  Error  .agents/linked/review.md  Registered link is blocked
+         .agents/linked/review.md  could not be checked safely: The Library destination parent is not a real ordinary directory.
+  .agents/linked/review.md  blocked

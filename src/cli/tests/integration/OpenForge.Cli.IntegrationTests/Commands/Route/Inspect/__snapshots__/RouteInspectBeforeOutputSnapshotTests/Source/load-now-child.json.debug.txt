@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "docs/guide  .agents/docs/guide.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "ownBytes": 73,
+    "ownTokens": 19,
+    "addedFiles": 0,
+    "addedBytes": 0,
+    "addedTokens": 0,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null
+  },
+  "limitations": [],
+  "data": {
+    "id": "docs/guide",
+    "path": ".agents/docs/guide.md",
+    "kind": "markdown",
+    "entrypointForm": "markdown",
+    "overwritePath": null,
+    "belongs": {
+      "routeChain": [
+        "docs",
+        "guide"
+      ],
+      "parent": "docs",
+      "directChildren": {
+        "files": 0,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 0,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": true,
+      "automaticallyWhen": [
+        "docs is read"
+      ],
+      "mayReadAgain": false
+    },
+    "size": {
+      "own": {
+        "files": 1,
+        "bytes": 73,
+        "tokens": 19
+      },
+      "adds": {
+        "files": 0,
+        "bytes": 0,
+        "tokens": 0
+      },
+      "loadNow": null
+    },
+    "axioms": {
+      "inheritedFrom": [],
+      "local": "not applicable"
+    },
+    "tags": [
+      "Docs",
+      "LoadNow"
+    ],
+    "selected": {
+      "closure": {
+        "files": 2,
+        "bytes": 231,
+        "tokens": 58
+      },
+      "startupOverlap": {
+        "files": 2,
+        "bytes": 231,
+        "tokens": 58
+      }
+    },
+    "selection": {
+      "kind": "source-id",
+      "method": "automatic-id",
+      "requested": "docs/guide"
+    },
+    "layers": [
+      {
+        "path": ".agents/docs/guide.md",
+        "kind": "base"
+      }
+    ],
+    "statusReason": "all applicable route facts are available"
+  },
+  "recovery": null,
+  "next": null
+}

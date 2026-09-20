@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Open Forge is not installed in <workspace>.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "status.extension-ownership-observation",
+      "title": "Extension ownership is unavailable",
+      "message": "No ownership record exists, so installed Extensions cannot be listed from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The ownership lock is absent; no Extension ownership claims are recorded."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "status.framework-ownership-observation",
+      "title": "Framework ownership is unavailable",
+      "message": "No ownership record exists, so Framework files cannot be checked against it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The ownership lock is absent; no Framework ownership claims are available."
+        }
+      ],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "status.library-ownership-observation",
+      "title": "Library ownership is unavailable",
+      "message": "No ownership record exists, so Libraries cannot be listed from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "The ownership lock is absent; no Library registrations are recorded."
+        }
+      ],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routedFiles": 1,
+    "startupFiles": null,
+    "startupTokens": null,
+    "mayLoadAgainFiles": null,
+    "mayLoadAgainTokens": null,
+    "allTokens": 3,
+    "startupShare": null,
+    "rootCategories": null,
+    "entriesSectionsCurrent": null,
+    "entriesSectionsStale": null,
+    "entriesSectionsMissing": null,
+    "frameworkFilesCurrent": null,
+    "frameworkFilesChanged": null,
+    "frameworkFilesMissing": null,
+    "extensionsInstalled": null,
+    "librariesRegistered": 0,
+    "libraryLinksCurrent": 0,
+    "libraryLinksMissing": 0,
+    "libraryLinksChanged": 0,
+    "recoveryBundles": 0,
+    "recoveryDrafts": 0,
+    "infos": 3
+  },
+  "limitations": [],
+  "data": {
+    "installation": {
+      "state": "uninstalled",
+      "entryPath": null,
+      "loaderPath": null
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": 11,
+          "characters": 22704,
+          "bytes": 22704,
+          "tokens": 5676
+        },
+        "current": {
+          "files": null,
+          "characters": null,
+          "bytes": null,
+          "tokens": null
+        },
+        "difference": {
+          "files": null,
+          "characters": null,
+          "bytes": null,
+          "tokens": null
+        },
+        "mayLoadAgain": {
+          "files": null,
+          "characters": null,
+          "bytes": null,
+          "tokens": null
+        }
+      },
+      "allRouted": {
+        "files": 1,
+        "characters": 12,
+        "bytes": 12,
+        "tokens": 3
+      },
+      "startupShare": null,
+      "mayLoadAgainSources": []
+    },
+    "structure": {
+      "rootCategories": {
+        "count": null,
+        "added": [],
+        "removed": []
+      }
+    },
+    "frameworkFiles": [],
+    "entriesSections": [
+      {
+        "path": ".agents/directives/_directives.md",
+        "state": "not-applicable"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "state": "not-applicable"
+      },
+      {
+        "path": ".agents/loader.md",
+        "state": "not-applicable"
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "state": "not-applicable"
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "state": "not-applicable"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "state": "not-applicable"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "state": "not-applicable"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "state": "not-applicable"
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "state": "not-applicable"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "state": "not-applicable"
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "state": "not-applicable"
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "state": "not-applicable"
+      }
+    ],
+    "extensions": [],
+    "libraries": [],
+    "recovery": {
+      "candidates": []
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge install --dry-run",
+    "reason": "Preview the installation for this workspace."
+  }
+}

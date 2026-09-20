@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Inspect local Markdown references once, keep traversal separate from loading, and repair only identity-preserving corrections
+  description: "Historical CLI-v2 source: Inspect local Markdown references once, keep traversal separate from loading, and repair only identity-preserving corrections"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

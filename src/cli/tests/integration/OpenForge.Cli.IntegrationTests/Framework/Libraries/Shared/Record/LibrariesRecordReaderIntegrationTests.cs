@@ -1,6 +1,8 @@
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Record;
-using OpenForge.Cli.Core.Framework.Libraries.Shared.Record;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
+using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
+using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
 
@@ -9,27 +11,28 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Libraries.Shared.Record;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibrariesRecordReaderIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library reader distinguishes strict empty record from proven missing without creating state")]
     [InlineData(false), InlineData(true)]
     public static async Task ReadsOnlyExactConsumerRecord(bool present)
     {
         using var temporary = TemporaryWorkspace.Create("library-record");
         temporary.CreateDirectory(".agents");
-        temporary.CreateFile("open-forge.libraries.json", "unrelated root record");
+        temporary.CreateFile("open-forge.lock.json", "unrelated root record");
         const string record = "{\"schemaVersion\":1,\"libraries\":[]}";
         if (present)
         {
-            temporary.CreateFile(".agents/open-forge.libraries.json", record);
+            temporary.CreateFile(".agents/open-forge.lock.json", record);
         }
         var before = temporary.SnapshotHashes();
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
 
-        var result = await LibrariesRecordReader.ReadAsync(new PhysicalPathResolver(), workspace, TestContext.Current.CancellationToken);
+        var result = await LibraryRegistrationReader.ReadAsync(new PhysicalPathResolver(), workspace, TestContext.Current.CancellationToken);
 
-        Assert.Equal(present ? LibrariesRecordReadState.Complete : LibrariesRecordReadState.Missing, result.State);
+        Assert.Equal(present ? LibraryRegistrationReadState.Complete : LibraryRegistrationReadState.Missing, result.State);
         if (present)
         {
-            Assert.Empty(Assert.IsType<LibrariesRecord>(result.Record).Libraries);
+            Assert.Empty(Assert.IsType<LibraryRegistrationSet>(result.Record).Libraries);
             Assert.NotNull(result.Snapshot);
         }
         else
@@ -39,32 +42,35 @@ public sealed class LibrariesRecordReaderIntegrationTests
         Assert.Equal(before, temporary.SnapshotHashes());
     }
 
-    [Theory(DisplayName = "Library record reader blocks linked leaves and linked consumer ancestry without following record bytes")]
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Library lock reader reports nonordinary boundaries without following record bytes")]
     [InlineData("relative"), InlineData("absolute"), InlineData("dangling"), InlineData("directory"), InlineData("parent")]
     public static async Task BlocksNonordinaryRecord(string scenario)
     {
         using var temporary = TemporaryWorkspace.Create("library-record-unsafe");
-        var target = temporary.CreateFile("actual/open-forge.libraries.json", "{\"schemaVersion\":1,\"libraries\":[]}");
+        var target = temporary.CreateFile("actual/open-forge.lock.json", "{\"schemaVersion\":1,\"libraries\":[]}");
         switch (scenario)
         {
-            case "relative": temporary.CreateFileSymbolicLink(".agents/open-forge.libraries.json", "../actual/open-forge.libraries.json"); break;
-            case "absolute": temporary.CreateFileSymbolicLink(".agents/open-forge.libraries.json", target); break;
-            case "dangling": temporary.CreateFileSymbolicLink(".agents/open-forge.libraries.json", "absent.json"); break;
-            case "directory": temporary.CreateDirectory(".agents/open-forge.libraries.json"); break;
+            case "relative": temporary.CreateFileSymbolicLink(".agents/open-forge.lock.json", "../actual/open-forge.lock.json"); break;
+            case "absolute": temporary.CreateFileSymbolicLink(".agents/open-forge.lock.json", target); break;
+            case "dangling": temporary.CreateFileSymbolicLink(".agents/open-forge.lock.json", "absent.json"); break;
+            case "directory": temporary.CreateDirectory(".agents/open-forge.lock.json"); break;
             case "parent": temporary.CreateDirectorySymbolicLink(".agents", "actual"); break;
         }
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
 
-        var result = await LibrariesRecordReader.ReadAsync(new PhysicalPathResolver(), workspace, TestContext.Current.CancellationToken);
+        var result = await LibraryRegistrationReader.ReadAsync(new PhysicalPathResolver(), workspace, TestContext.Current.CancellationToken);
 
-        Assert.Equal(LibrariesRecordReadState.Blocked, result.State);
+        Assert.Equal(LibraryRegistrationReadState.Unavailable, result.State);
+        Assert.NotNull(result.OwnershipObservation);
         Assert.Null(result.Record);
         Assert.Equal("{\"schemaVersion\":1,\"libraries\":[]}", await File.ReadAllTextAsync(target, TestContext.Current.CancellationToken));
     }
-    [Theory(DisplayName = "Library file reader distinguishes ambiguous ownership from malformed ordering")]
-    [InlineData("a", "a", (int)LibrariesRecordReadState.Blocked, "The Library record contains ambiguous duplicate ownership.")]
-    [InlineData("b", "a", (int)LibrariesRecordReadState.Malformed, "The Library record is not exact schema v1.")]
-    public static async Task PreservesDecodedFailureClassification(string firstId, string secondId, int state, string cause)
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Library lock reader declines ambiguous ownership and canonicalizes unordered claims")]
+    [InlineData("a", "a", (int)LibraryRegistrationReadState.Malformed)]
+    [InlineData("b", "a", (int)LibraryRegistrationReadState.Complete)]
+    public static async Task PreservesDecodedFailureClassification(string firstId, string secondId, int state)
     {
         using var temporary = TemporaryWorkspace.Create("library-record-classification");
         var json = $$"""
@@ -72,20 +78,29 @@ public sealed class LibrariesRecordReaderIntegrationTests
              {"id":"{{firstId}}","sourceRoot":"one","destinationRoot":"docs","paths":["a.md"]},
              {"id":"{{secondId}}","sourceRoot":"two","destinationRoot":"other","paths":["a.md"]}]}
             """;
-        temporary.CreateFile(".agents/open-forge.libraries.json", json);
+        temporary.CreateFile(".agents/open-forge.lock.json", json);
         var before = temporary.SnapshotHashes();
         var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
 
-        var result = await LibrariesRecordReader.ReadAsync(new PhysicalPathResolver(), workspace, TestContext.Current.CancellationToken);
+        var result = await LibraryRegistrationReader.ReadAsync(new PhysicalPathResolver(), workspace, TestContext.Current.CancellationToken);
 
-        Assert.Equal((LibrariesRecordReadState)state, result.State);
-        Assert.Null(result.Record);
-        Assert.Equal(cause, result.Cause);
+        Assert.Equal((LibraryRegistrationReadState)state, result.State);
+        if (firstId == secondId)
+        {
+            Assert.Null(result.Record);
+            Assert.NotNull(result.OwnershipObservation);
+        }
+        else
+        {
+            Assert.Equal(new[] { "a", "b" }, result.Record!.Libraries.Select(library => library.Id.Value));
+            Assert.Null(result.OwnershipObservation);
+        }
         Assert.NotNull(result.Snapshot);
         Assert.Equal(System.Text.Encoding.UTF8.GetBytes(json), result.Snapshot.Bytes.ToArray());
         Assert.Equal(before, temporary.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Unreadable existing Library record is unavailable and grants no partial authority")]
     public async Task DistinguishesUnavailableFromMissing()
     {
@@ -95,16 +110,16 @@ public sealed class LibrariesRecordReaderIntegrationTests
             return;
         }
         using var temporary = TemporaryWorkspace.Create("library-record-access");
-        var path = temporary.CreateFile(".agents/open-forge.libraries.json", "{\"schemaVersion\":1,\"libraries\":[]}");
+        var path = temporary.CreateFile(".agents/open-forge.lock.json", "{\"schemaVersion\":1,\"libraries\":[]}");
         var originalMode = File.GetUnixFileMode(path);
         File.SetUnixFileMode(path, UnixFileMode.None);
         try
         {
             var workspace = new CliWorkspace(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
 
-            var result = await LibrariesRecordReader.ReadAsync(new PhysicalPathResolver(), workspace, TestContext.Current.CancellationToken);
+            var result = await LibraryRegistrationReader.ReadAsync(new PhysicalPathResolver(), workspace, TestContext.Current.CancellationToken);
 
-            Assert.Equal(LibrariesRecordReadState.Unavailable, result.State);
+            Assert.Equal(LibraryRegistrationReadState.Unavailable, result.State);
             Assert.Null(result.Record);
             Assert.NotNull(result.Cause);
             Assert.True(File.Exists(path));

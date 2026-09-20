@@ -32,6 +32,7 @@ public sealed class RouteListFilesystemFindingPolicyTests
         { FileReadState.Cancelled, RouteListFindingCode.Interrupted, CliSemanticStatus.Interrupted },
     };
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route-list catalogue finding policy maps every non-contained candidate state"), MemberData(nameof(CandidatePhysicalCases))]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void CatalogueCandidatesHaveFinitePhysicalMappings(
@@ -63,6 +64,7 @@ public sealed class RouteListFilesystemFindingPolicyTests
         Assert.Equal(".agents/subject.md", finding.CanonicalLogicalSubject);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route-list finding policy maps every strict file-read outcome"),
         MemberData(nameof(FileCases))]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
@@ -82,6 +84,7 @@ public sealed class RouteListFilesystemFindingPolicyTests
         Assert.Equal(expectedStatus, finding.Status);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list finding policy emits no finding for a complete file read")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void CompleteFileFactsHaveNoFinding()
@@ -91,6 +94,7 @@ public sealed class RouteListFilesystemFindingPolicyTests
         Assert.Null(RouteListFilesystemFindingPolicy.FromFile(file));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list finding policy keeps metadata and authored-form severities exact")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void CommandLocalFindingsUseExactCodesAndStatuses()
@@ -107,8 +111,8 @@ public sealed class RouteListFilesystemFindingPolicyTests
 
         Assert.Equal(
             [
-                (RouteListFindingCode.MetadataMissing, CliSemanticStatus.Incomplete),
-                (RouteListFindingCode.MetadataMalformed, CliSemanticStatus.Incomplete),
+                (RouteListFindingCode.MetadataMissing, CliSemanticStatus.Attention),
+                (RouteListFindingCode.MetadataMalformed, CliSemanticStatus.Attention),
                 (RouteListFindingCode.AuthoredForm, CliSemanticStatus.Attention),
                 (RouteListFindingCode.AuthoredForm, CliSemanticStatus.Attention),
                 (RouteListFindingCode.IdentityCollision, CliSemanticStatus.Attention),
@@ -117,6 +121,7 @@ public sealed class RouteListFilesystemFindingPolicyTests
             findings.Select(finding => (finding.Code, finding.Status)));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list finding policy bounds direct causes without exception framing")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void DirectCauseIsBoundedAndRemovesExceptionType()
@@ -135,6 +140,7 @@ public sealed class RouteListFilesystemFindingPolicyTests
         Assert.DoesNotContain('\n', finding.Cause);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route-list finding policy rejects Foundation syntax outcomes owned by metadata parsing")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void FoundationInvalidSyntaxDoesNotCollapseIntoReadUnavailable()

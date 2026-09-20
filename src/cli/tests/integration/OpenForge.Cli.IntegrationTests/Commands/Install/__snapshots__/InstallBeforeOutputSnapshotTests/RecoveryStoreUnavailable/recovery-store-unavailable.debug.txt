@@ -1,0 +1,13 @@
+Install could not start: The recovery workspace storage path is not a directory. Nothing was changed.
+Workspace: <workspace>
+  Warning  <workspace>  Recovery data is unavailable [install.recovery-unavailable]
+         Recovery data could not be prepared at <workspace>. Nothing was changed.
+         cannot be fixed automatically
+         open-forge doctor
+         Inspect the reported Install boundary before rerunning it.
+  Bundled Framework fingerprint: <sha256> (14 assets).
+  No ownership record change was requested.
+  No recovery bundle was required.
+  Verification was not requested.
+  Inspect the reported Install boundary before rerunning it.
+Next: open-forge doctor

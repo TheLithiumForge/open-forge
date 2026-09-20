@@ -12,6 +12,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Recovery.Models;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Unit")]
 public sealed class LibraryRecoveryEntryTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Prior-missing Library record create retains intended bytes identity without prior payload")]
     public void ReversibleRecordCreateHasNoPriorPayload()
     {
@@ -36,6 +37,7 @@ public sealed class LibraryRecoveryEntryTests
         Assert.Null(entry.Intended.RelativeFileLink);
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Link recovery entries preserve exact raw target and reject target-byte payloads")]
     [InlineData(false), InlineData(true)]
     public void LinksHaveOnlyTypedObjectIdentity(bool delete)
@@ -58,6 +60,7 @@ public sealed class LibraryRecoveryEntryTests
             prior: intended, intended: prior));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Recovery artifact dispositions distinguish positively retained paths from unknown state")]
     public void RetainedAndUnknownDoNotClaimRemoval()
     {

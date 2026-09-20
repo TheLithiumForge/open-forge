@@ -1,0 +1,14 @@
+status=invalid-input
+mode=apply
+library=team-knowledge
+source-files=0
+links=0
+created=0
+sections=0
+grants=False
+recorded=False
+recovery=not run
+verification=not started
+findings=2
+The ownership lock is absent; no Library registrations are recorded.
+The Library source root is missing, non-directory, or unsafe.

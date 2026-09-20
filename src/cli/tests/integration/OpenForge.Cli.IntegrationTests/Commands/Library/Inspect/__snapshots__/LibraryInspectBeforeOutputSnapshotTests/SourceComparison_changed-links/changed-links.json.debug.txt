@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 3,
+  "command": "library inspect",
+  "status": "completed-with-warnings",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "team-knowledge needs a sync: 1 file differs between shared/team and ..",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "library-inspect.link-changed",
+      "title": "Registered link changed",
+      "message": ".agents/directives/review.md  is no longer the link team-knowledge created",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/directives/review.md",
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sourceFiles": 1,
+    "linksCurrent": 0,
+    "filesAdded": 0,
+    "filesRetired": 0,
+    "linksMissing": 0,
+    "linksChanged": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team",
+    "destinationFolder": ".",
+    "current": false,
+    "files": [
+      {
+        "sourcePath": ".agents/directives/review.md",
+        "destinationPath": ".agents/directives/review.md",
+        "relation": "changed",
+        "expectedTarget": "../../shared/team/.agents/directives/review.md",
+        "observedTarget": null
+      }
+    ],
+    "inventory": {
+      "eligible": 1,
+      "excluded": 0
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "sentence",
+    "command": "fix by hand",
+    "reason": "Repair the destination link manually."
+  }
+}

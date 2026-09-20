@@ -16,6 +16,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.GeneratedNavigation;
 
 public sealed class GeneratedNavigationProspectiveFormationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Prospective generated navigation projects an intended new source through real current files without writes")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Integration")]
     public async Task IntendedSourceProjectsAgainstRealCurrentWorkspaceWithoutWrites()
@@ -25,7 +26,7 @@ public sealed class GeneratedNavigationProspectiveFormationIntegrationTests
             SourceLogicalPath.LoaderPath,
             OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
             {
-                Entries = "stale",
+                Entries = "- stale",
                 Prefix = "# Loader",
             }));
         workspace.Write(
@@ -33,7 +34,7 @@ public sealed class GeneratedNavigationProspectiveFormationIntegrationTests
             OpenForgeDocumentSeed.Metadata(
                 description: "Root",
                 tags: ["Root"],
-                body: OpenForgeDocumentSeed.GeneratedEntries(entries: "stale")));
+                body: OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale")));
         var before = workspace.SnapshotHashes();
         var catalogue = await ReadCatalogueAsync(workspace);
         var root = Assert.IsType<SourceLogicalSource>(catalogue.FindByPath(".agents/root/_root.md"));
@@ -66,7 +67,7 @@ public sealed class GeneratedNavigationProspectiveFormationIntegrationTests
 
         var region = Assert.Single(projection.Regions);
         Assert.Equal(GeneratedNavigationRegionState.Available, region.State);
-        Assert.Equal("\n- [Added](added.md) - #Docs\n", region.ExpectedBody);
+        Assert.Equal("- [Added](added.md) - #Docs\n", region.ExpectedBody);
         Assert.Same(added, Assert.Single(region.Entries).Source);
         Assert.Null(catalogue.FindCandidateByPath(addedPath));
         Assert.Empty(formation.IntendedTargetCollisions);

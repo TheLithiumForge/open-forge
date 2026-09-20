@@ -37,7 +37,6 @@ treating a broken historical link as current navigation.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Historical CLI-v2 rationale kept only as raw input for the new CLI](decisions/_decisions.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical CLI-v2 Directive sources removed from active governance](directives/_directives.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical CLI-v2 architecture, interface, toolchain, and operation contracts](documents/_documents.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
@@ -45,4 +44,3 @@ treating a broken historical link as current navigation.
 - [Historical CLI-v2 implementation tasks, workflow work, evidence, and transfer state](implementation-history/_implementation-history.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical CLI-v2 implementation shapes kept only as raw input for the new CLI](patterns/_patterns.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical CLI-v2 implementation backlog removed from active Working Memory](working/_working.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
-<!-- open-forge:generated-index:end -->

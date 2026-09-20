@@ -1,0 +1,9 @@
+Route move was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  guidance/old guide  Route move was cancelled [route-move.interrupted]
+         Route move was cancelled. Nothing was changed.
+  Effects:
+  0 files scanned; 0 links found.
+  files scanned: the reference scan was not completed
+  Rerun the same Route Move request.
+Next: open-forge route move

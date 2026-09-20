@@ -1,14 +1,14 @@
 using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
-using OpenForge.Cli.Core.Framework.Permissions.Models.Planning;
-using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
+using OpenForge.Cli.Core.Framework.Settings.Models.Permissions;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Permissions;
 
 [Trait("Feature", "library-permissions"), Trait("Evidence", "Unit")]
 public sealed class LibraryPermissionPresentationTests
 {
+    [Trait("Boundary", "Output")]
     [Theory]
     [InlineData((int)WorkspacePermissionOutcome.NotRequested, "not-requested")]
     [InlineData((int)WorkspacePermissionOutcome.Planned, "planned")]
@@ -16,19 +16,17 @@ public sealed class LibraryPermissionPresentationTests
     [InlineData((int)WorkspacePermissionOutcome.Verified, "verified")]
     [InlineData((int)WorkspacePermissionOutcome.VerificationFailed, "verification-failed")]
     [InlineData((int)WorkspacePermissionOutcome.CompletionUnknown, "completion-unknown")]
-    public void ScopeProjectionPreservesSourceAndActualWriteOutcome(int outcome, string expected)
+    public void ScopeProjectionPreservesPathAndActualWriteOutcome(int outcome, string expected)
     {
-        var subject = new LibraryPermissionSubject("team", "shared/team");
-        var leaf = new WorkspacePermissionRequirement(subject, "docs/a.md");
+        var leaf = "docs/a.md";
         var stage = new LibraryPermissionStage
         {
             Observation = null,
             Approval = new()
             {
                 Leaves = new([leaf], [leaf], WorkspacePermissionDecision.Approved),
-                ProposedScopes = [new(subject, LibraryPermissionScopeKind.Directory, "docs")],
-                ApprovedScopes = [new(subject, LibraryPermissionScopeKind.Directory, "docs")],
-                Rebinding = new("shared/old", "shared/team"),
+                ProposedScopes = [new(LibraryPermissionScopeKind.Directory, "docs")],
+                ApprovedScopes = [new(LibraryPermissionScopeKind.Directory, "docs")],
             },
             Result = new([leaf], [leaf], WorkspacePermissionDecision.Approved, WorkspacePermissionAction.Replace, (WorkspacePermissionOutcome)outcome),
             Change = null,
@@ -41,13 +39,12 @@ public sealed class LibraryPermissionPresentationTests
         Assert.Equal("approved", view.Decision);
         Assert.Equal("replace", view.Action);
         Assert.Equal(expected, view.Outcome);
-        Assert.Equal("docs/a.md", Assert.Single(view.Required).Path);
-        Assert.Equal("shared/team", Assert.Single(view.Required).SourceRoot);
+        Assert.Equal("docs/a.md", Assert.Single(view.Required));
         Assert.Equal("directory", Assert.Single(view.ApprovedScopes).Kind);
         Assert.Equal("docs", Assert.Single(view.ApprovedScopes).Path);
-        Assert.Equal(stage.Approval.Rebinding, view.Rebinding);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact]
     public void UnevaluatedPermissionCannotClaimNoPermissionWasRequired()
     {
@@ -59,6 +56,7 @@ public sealed class LibraryPermissionPresentationTests
         Assert.Empty(view.Required);
         Assert.Empty(view.ProposedScopes);
     }
+    [Trait("Boundary", "Output")]
     [Theory]
     [InlineData((int)LibraryPermissionScopeKind.File, "file")]
     [InlineData((int)LibraryPermissionScopeKind.Directory, "directory")]
@@ -70,22 +68,13 @@ public sealed class LibraryPermissionPresentationTests
         Assert.Equal(expected, Assert.Single(view.ProposedScopes).Kind);
     }
 
+    [Trait("Boundary", "Output")]
     [Fact]
     public void UndefinedScopeKindCannotBeRenderedAsAnOrdinaryGrant()
         => Assert.Throws<ArgumentOutOfRangeException>(() =>
             LibraryPermissionPresentation.Project(ScopeStage((LibraryPermissionScopeKind)int.MaxValue)));
 
-    [Theory]
-    [InlineData((int)LibraryPermissionEffect.CreateLink, "create link")]
-    [InlineData((int)LibraryPermissionEffect.RetainLink, "retain link")]
-    [InlineData((int)LibraryPermissionEffect.RemoveLink, "remove link")]
-    public void EveryEffectHasAnExplicitQuestionLabel(int effect, string expected)
-        => Assert.Equal(expected, LibraryPermissionPresentation.ReadEffectName((LibraryPermissionEffect)effect));
-
-    [Fact]
-    public void UndefinedEffectCannotBeDisclosedAsAnOrdinaryOperation()
-        => Assert.Throws<ArgumentOutOfRangeException>(() => LibraryPermissionPresentation.ReadEffectName((LibraryPermissionEffect)int.MaxValue));
-
+    [Trait("Boundary", "Processing")]
     [Theory]
     [InlineData((int)RelativeFileLinkEffectKind.Create, (int)LibraryPermissionEffect.CreateLink)]
     [InlineData((int)RelativeFileLinkEffectKind.Delete, (int)LibraryPermissionEffect.RemoveLink)]
@@ -93,15 +82,15 @@ public sealed class LibraryPermissionPresentationTests
     public void PlannedEffectRetainsItsPermissionMeaning(int? kind, int expected)
         => Assert.Equal((LibraryPermissionEffect)expected, LibraryPermissionPresentation.ReadEffect((RelativeFileLinkEffectKind?)kind));
 
+    [Trait("Boundary", "Processing")]
     [Fact]
     public void UndefinedPlannedEffectCannotBecomeRetention()
         => Assert.Throws<ArgumentOutOfRangeException>(() => LibraryPermissionPresentation.ReadEffect((RelativeFileLinkEffectKind)int.MaxValue));
 
     private static LibraryPermissionStage ScopeStage(LibraryPermissionScopeKind kind)
     {
-        var subject = new LibraryPermissionSubject("team", "shared/team");
-        var leaf = new WorkspacePermissionRequirement(subject, kind == LibraryPermissionScopeKind.Directory ? "docs/a.md" : "docs");
-        var scope = new LibraryPermissionScope(subject, kind, "docs");
+        var leaf = kind == LibraryPermissionScopeKind.Directory ? "docs/a.md" : "docs";
+        var scope = new LibraryPermissionScope(kind, "docs");
         return new()
         {
             Observation = null,
@@ -110,7 +99,6 @@ public sealed class LibraryPermissionPresentationTests
                 Leaves = new([leaf], [leaf], WorkspacePermissionDecision.Approved),
                 ProposedScopes = [scope],
                 ApprovedScopes = [scope],
-                Rebinding = null,
             },
             Result = new([leaf], [leaf], WorkspacePermissionDecision.Approved, WorkspacePermissionAction.Create, WorkspacePermissionOutcome.Planned),
             Change = null,

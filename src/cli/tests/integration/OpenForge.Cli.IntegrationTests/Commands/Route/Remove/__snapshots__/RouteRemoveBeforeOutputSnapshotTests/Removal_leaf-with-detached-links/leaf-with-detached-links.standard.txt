@@ -1,0 +1,7 @@
+Removed .agents/guidance/old guide.md
+Workspace: <workspace>
+  Removed .agents/guidance/old guide.overwrite.md
+  Entry removed from .agents/guidance/_guidance.md
+  Detached 1 link that pointed at it; the link text was kept:
+    README.md:1:8
+    [Old guide](.agents/guidance/old%20guide.md#part) -> Old guide

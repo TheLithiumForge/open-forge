@@ -1,0 +1,11 @@
+status=completed
+mode=dry-run
+source=guidance/old guide
+destination=archive/new guide
+subject=leaf
+completeness=complete
+safety=safe
+effects=10
+recovery=not created
+verification=not run
+findings=0

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: The replacement CLI owns the default entrypoint from the beginning while the frozen MVP remains an explicitly invoked development reference
+  description: "Historical CLI-v2 source: The replacement CLI owns the default entrypoint from the beginning while the frozen MVP remains an explicitly invoked development reference"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

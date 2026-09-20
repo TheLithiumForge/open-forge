@@ -34,7 +34,7 @@ public sealed class PublishedUpdateProcessTests
                 "update",
                 "--workspace", workspace.Path,
                 "--workspace", workspace.Path,
-                "--json",
+                "--format=json",
             ]);
 
         Assert.Equal(4, invalid.ExitCode);
@@ -54,19 +54,19 @@ public sealed class PublishedUpdateProcessTests
                 "--automatic",
                 "--dry-run",
                 "--dry-run",
-                "--json",
+                "--format=json",
             ]);
 
         Assert.Equal(0, repeated.ExitCode);
         Assert.Equal(string.Empty, repeated.StandardError);
         var repeatedRoot = ReadJson(repeated);
-        AssertUpdateEnvelope(repeatedRoot, workspace.Path, "complete");
-        var repeatedResult = repeatedRoot.GetProperty("result");
+        AssertUpdateEnvelope(repeatedRoot, workspace.Path, "completed");
+        var repeatedResult = repeatedRoot.GetProperty("data");
         Assert.Equal("dry-run", repeatedResult.GetProperty("mode").GetString());
         Assert.False(repeatedResult.GetProperty("force").GetBoolean());
         Assert.False(repeatedResult.GetProperty("prune").GetBoolean());
         Assert.True(repeatedResult.GetProperty("automatic").GetBoolean());
-        Assert.Empty(repeatedResult.GetProperty("effects").EnumerateArray());
+        Assert.False(repeatedResult.TryGetProperty("effects", out _));
         Assert.Equal(JsonValueKind.Null, repeatedRoot.GetProperty("next").ValueKind);
     }
 
@@ -87,9 +87,8 @@ public sealed class PublishedUpdateProcessTests
 
         Assert.Equal(4, redirected.ExitCode);
         Assert.Equal(string.Empty, redirected.StandardOutput);
-        Assert.Contains("Status: invalid", redirected.StandardError, StringComparison.Ordinal);
         Assert.Contains(
-            "update.confirmation-required",
+            "Update needs confirmation, and this session cannot ask.",
             redirected.StandardError,
             StringComparison.Ordinal);
         Assert.Contains(
@@ -104,57 +103,57 @@ public sealed class PublishedUpdateProcessTests
         var dryRun = await RunWithoutWritesAsync(
             target,
             workspace,
-            ["update", "--force", "--automatic", "--dry-run", "--json"]);
+            ["update", "--force", "--automatic", "--dry-run", "--detail", "full", "--format=json"]);
 
         Assert.Equal(0, dryRun.ExitCode);
         Assert.Equal(string.Empty, dryRun.StandardError);
         var dryRunRoot = ReadJson(dryRun);
-        AssertUpdateEnvelope(dryRunRoot, workspace.Path, "complete");
-        var dryRunResult = dryRunRoot.GetProperty("result");
+        AssertUpdateEnvelope(dryRunRoot, workspace.Path, "completed");
+        var dryRunResult = dryRunRoot.GetProperty("data");
         Assert.Equal("dry-run", dryRunResult.GetProperty("mode").GetString());
         Assert.True(dryRunResult.GetProperty("force").GetBoolean());
         Assert.True(dryRunResult.GetProperty("automatic").GetBoolean());
-        Assert.NotEmpty(dryRunResult.GetProperty("effects").EnumerateArray());
+        Assert.NotEmpty(dryRunRoot.GetProperty("effects").EnumerateArray());
         Assert.All(
-            dryRunResult.GetProperty("effects").EnumerateArray(),
+            dryRunRoot.GetProperty("effects").EnumerateArray(),
             effect => Assert.Equal("planned", effect.GetProperty("outcome").GetString()));
 
         var applied = await PublishedProcessTestSupport.RunAsync(
             target,
             workspace.Path,
-            ["update", "--force", "--automatic", "--json"],
+            ["update", "--force", "--automatic", "--detail", "full", "--format=json"],
             workspace.ProcessEnvironment);
 
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
         var appliedRoot = ReadJson(applied);
-        AssertUpdateEnvelope(appliedRoot, workspace.Path, "complete");
-        var appliedResult = appliedRoot.GetProperty("result");
+        AssertUpdateEnvelope(appliedRoot, workspace.Path, "completed");
+        var appliedResult = appliedRoot.GetProperty("data");
         Assert.Equal("apply", appliedResult.GetProperty("mode").GetString());
         Assert.True(appliedResult.GetProperty("force").GetBoolean());
         Assert.True(appliedResult.GetProperty("automatic").GetBoolean());
-        Assert.NotEmpty(appliedResult.GetProperty("effects").EnumerateArray());
+        Assert.NotEmpty(appliedRoot.GetProperty("effects").EnumerateArray());
         Assert.Equal("verified", appliedResult.GetProperty("verification").GetString());
         var afterApply = workspace.SnapshotState();
 
         var repeated = await RunWithoutWritesAsync(
             target,
             workspace,
-            ["update", "--force", "--automatic", "--json"]);
+            ["update", "--force", "--automatic", "--detail", "full", "--format=json"]);
 
         Assert.Equal(0, repeated.ExitCode);
         Assert.Equal(string.Empty, repeated.StandardError);
         var repeatedRoot = ReadJson(repeated);
-        AssertUpdateEnvelope(repeatedRoot, workspace.Path, "complete");
-        var repeatedResult = repeatedRoot.GetProperty("result");
+        AssertUpdateEnvelope(repeatedRoot, workspace.Path, "completed");
+        var repeatedResult = repeatedRoot.GetProperty("data");
         Assert.Equal("apply", repeatedResult.GetProperty("mode").GetString());
         Assert.Empty(repeatedResult.GetProperty("effects").EnumerateArray());
         Assert.Equal("verified", repeatedResult.GetProperty("verification").GetString());
         Assert.Equal(afterApply, workspace.SnapshotState());
     }
 
-    [Fact(DisplayName = "Published Update attributes normal divergence and force-prune JSON repeat state through Status and Doctor"), Trait("Feature", "update-command"), Trait("Evidence", "EndToEnd")]
-    public async Task DivergenceForcePruneJsonRepeatStatusDoctorAttributionJourney()
+    [Fact(DisplayName = "Published Update diagnoses edits then overwrites normally and prunes retired ownership"), Trait("Feature", "update-command"), Trait("Evidence", "EndToEnd")]
+    public async Task OrdinaryUpdateAndPruneRetainReviewableRecovery()
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedUpdateWorkspace.Create();
@@ -163,104 +162,96 @@ public sealed class PublishedUpdateProcessTests
         Assert.Equal(string.Empty, installation.StandardError);
         workspace.MutateManagedContent();
 
-        var normal = await RunWithoutWritesAsync(
-            target,
-            workspace,
-            ["update", "--automatic", "--json"]);
-
-        Assert.Equal(2, normal.ExitCode);
-        Assert.Equal(string.Empty, normal.StandardError);
-        var normalRoot = ReadJson(normal);
-        AssertUpdateEnvelope(normalRoot, workspace.Path, "attention");
-        var normalResult = normalRoot.GetProperty("result");
-        Assert.False(normalResult.GetProperty("force").GetBoolean());
-        Assert.False(normalResult.GetProperty("prune").GetBoolean());
-        Assert.True(normalResult.GetProperty("automatic").GetBoolean());
-        Assert.Contains(
-            normalResult.GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("code").GetString() == "update.managed-divergence");
-        Assert.Empty(normalResult.GetProperty("effects").EnumerateArray());
-
         var status = await RunWithoutWritesAsync(
             target,
             workspace,
-            ["status", "--json"]);
+            ["status", "--format=json"]);
 
         Assert.Equal(2, status.ExitCode);
         Assert.Equal(string.Empty, status.StandardError);
         using var statusDocument = JsonDocument.Parse(status.StandardOutput);
         var statusRoot = statusDocument.RootElement;
         Assert.Equal("status", statusRoot.GetProperty("command").GetString());
-        Assert.Equal("attention", statusRoot.GetProperty("status").GetString());
-        var statusFramework = statusRoot
-            .GetProperty("result")
-            .GetProperty("lifecycle")
-            .GetProperty("framework");
-        Assert.Equal("trusted", statusFramework.GetProperty("state").GetString());
+        Assert.Equal("completed-with-warnings", statusRoot.GetProperty("status").GetString());
+        Assert.Equal(
+            "installed",
+            statusRoot.GetProperty("data").GetProperty("installation").GetProperty("state").GetString());
         Assert.Contains(
-            statusRoot.GetProperty("result").GetProperty("findings").EnumerateArray(),
-            finding => finding.GetProperty("code").GetString() == "framework-target-changed");
+            statusRoot.GetProperty("findings").EnumerateArray(),
+            finding => finding.GetProperty("code").GetString() == "status.framework-target-changed");
 
         var doctor = await RunWithoutWritesAsync(
             target,
             workspace,
-            ["doctor", "--json"]);
+            ["doctor", "--format=json", "--detail=standard"]);
 
         Assert.Equal(2, doctor.ExitCode);
         Assert.Equal(string.Empty, doctor.StandardError);
         using var doctorDocument = JsonDocument.Parse(doctor.StandardOutput);
         var doctorRoot = doctorDocument.RootElement;
         Assert.Equal("doctor", doctorRoot.GetProperty("command").GetString());
-        Assert.Equal("attention", doctorRoot.GetProperty("status").GetString());
-        Assert.Equal("complete", doctorRoot.GetProperty("result").GetProperty("coverage").GetString());
-        var domains = doctorRoot
-            .GetProperty("result")
-            .GetProperty("domains")
+        Assert.Equal("completed-with-warnings", doctorRoot.GetProperty("status").GetString());
+        var categories = doctorRoot
+            .GetProperty("data")
+            .GetProperty("categories")
             .EnumerateArray()
             .ToArray();
-        Assert.Equal(6, domains.Length);
+        Assert.Equal(6, categories.Length);
         Assert.Equal(
             [
-                "workspace-entry",
-                "recovery-residuals",
-                "routes-metadata-overwrites-generated-navigation",
-                "local-references",
-                "framework-lifecycle",
-                "extension-lifecycle",
+                "Workspace",
+                "Recovery data",
+                "Routes and Entries",
+                "Links",
+                "Framework files",
+                "Extensions",
             ],
-            domains.Select(domain => domain.GetProperty("domain").GetString()));
-        var frameworkDomain = Assert.Single(
-            domains,
-            domain => domain.GetProperty("domain").GetString() == "framework-lifecycle");
+            categories.Select(category => category.GetProperty("name").GetString()));
+        var frameworkCategory = Assert.Single(
+            categories,
+            category => category.GetProperty("name").GetString() == "Framework files");
+        Assert.Equal("complete", frameworkCategory.GetProperty("coverage").GetString());
         Assert.Contains(
-            frameworkDomain.GetProperty("findings")
+            doctorRoot.GetProperty("findings")
                 .EnumerateArray()
                 .SelectMany(finding => finding.GetProperty("actions").EnumerateArray())
                 .Select(action => action.GetProperty("command").GetString()),
             command => command == "open-forge update");
 
+        var normal = await PublishedProcessTestSupport.RunAsync(target, workspace.Path,
+            ["update", "--automatic", "--detail", "full", "--format=json"], workspace.ProcessEnvironment);
+        Assert.Equal(0, normal.ExitCode);
+        Assert.Equal(string.Empty, normal.StandardError);
+        var normalRoot = ReadJson(normal);
+        AssertUpdateEnvelope(normalRoot, workspace.Path, "completed");
+        var normalResult = normalRoot.GetProperty("data");
+        Assert.False(normalResult.GetProperty("force").GetBoolean());
+        Assert.NotEmpty(normalRoot.GetProperty("effects").EnumerateArray());
+        Assert.Equal("verified", normalResult.GetProperty("verification").GetString());
+        Assert.Equal("retained", normalRoot.GetProperty("recovery").GetProperty("disposition").GetString());
+        Assert.True(File.Exists(normalRoot.GetProperty("recovery").GetProperty("path").GetString()));
+
         workspace.SeedHistoricalRetiredTarget();
         var forced = await PublishedProcessTestSupport.RunAsync(
             target,
             workspace.Path,
-            ["update", "--force", "--prune", "--automatic", "--json"],
+            ["update", "--force", "--prune", "--automatic", "--detail", "full", "--format=json"],
             workspace.ProcessEnvironment);
 
         Assert.Equal(0, forced.ExitCode);
         Assert.Equal(string.Empty, forced.StandardError);
         var forcedRoot = ReadJson(forced);
-        AssertUpdateEnvelope(forcedRoot, workspace.Path, "complete");
-        var forcedResult = forcedRoot.GetProperty("result");
+        AssertUpdateEnvelope(forcedRoot, workspace.Path, "completed");
+        var forcedResult = forcedRoot.GetProperty("data");
         Assert.Equal("apply", forcedResult.GetProperty("mode").GetString());
         Assert.True(forcedResult.GetProperty("force").GetBoolean());
         Assert.True(forcedResult.GetProperty("prune").GetBoolean());
         Assert.True(forcedResult.GetProperty("automatic").GetBoolean());
-        Assert.NotEmpty(forcedResult.GetProperty("effects").EnumerateArray());
+        Assert.NotEmpty(forcedRoot.GetProperty("effects").EnumerateArray());
         Assert.Contains(
-            forcedResult.GetProperty("effects").EnumerateArray()
-                .SelectMany(effect => effect.GetProperty("changes").EnumerateArray())
-                .Select(change => change.GetProperty("action").GetString()),
-            action => action == "delete");
+            forcedRoot.GetProperty("effects").EnumerateArray()
+                .Select(effect => effect.GetProperty("action").GetString()),
+            action => action == "deleted");
         Assert.Equal("verified", forcedResult.GetProperty("verification").GetString());
         Assert.False(workspace.HistoricalTargetExists());
         var afterForcePrune = workspace.SnapshotState();
@@ -268,13 +259,13 @@ public sealed class PublishedUpdateProcessTests
         var repeat = await RunWithoutWritesAsync(
             target,
             workspace,
-            ["update", "--force", "--prune", "--automatic", "--json"]);
+            ["update", "--force", "--prune", "--automatic", "--detail", "full", "--format=json"]);
 
         Assert.Equal(0, repeat.ExitCode);
         Assert.Equal(string.Empty, repeat.StandardError);
         var repeatRoot = ReadJson(repeat);
-        AssertUpdateEnvelope(repeatRoot, workspace.Path, "complete");
-        var repeatResult = repeatRoot.GetProperty("result");
+        AssertUpdateEnvelope(repeatRoot, workspace.Path, "completed");
+        var repeatResult = repeatRoot.GetProperty("data");
         Assert.Empty(repeatResult.GetProperty("effects").EnumerateArray());
         Assert.Equal("verified", repeatResult.GetProperty("verification").GetString());
         Assert.Equal(afterForcePrune, workspace.SnapshotState());
@@ -302,12 +293,12 @@ public sealed class PublishedUpdateProcessTests
         string workspacePath,
         string status)
     {
-        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
         Assert.Equal("update", root.GetProperty("command").GetString());
         Assert.Equal(status, root.GetProperty("status").GetString());
         Assert.Equal(
             workspacePath,
             root.GetProperty("workspace").GetProperty("path").GetString());
-        Assert.Equal(JsonValueKind.Object, root.GetProperty("result").ValueKind);
+        Assert.Equal(JsonValueKind.Object, root.GetProperty("data").ValueKind);
     }
 }

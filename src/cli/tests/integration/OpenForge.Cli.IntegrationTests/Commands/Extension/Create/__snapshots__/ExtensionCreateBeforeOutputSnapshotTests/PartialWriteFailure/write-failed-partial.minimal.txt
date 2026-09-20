@@ -1,0 +1,6 @@
+Extension create stopped after 1 of 2 files.
+  Error  <extension-source>/toolkit/content/.agents/  Writing failed
+         Extension create stopped after 1 of 2 files. Created files were left in place.
+  <extension-source>/toolkit/extension.json    created
+  <extension-source>/toolkit/content/.agents/  not started
+Next: open-forge extension create --detail debug

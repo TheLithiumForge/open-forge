@@ -1,0 +1,12 @@
+Update stopped after 1 of 2 changes.
+Workspace: <workspace>
+  Error  .agents/open-forge.lock.json  Write failed
+         .agents/open-forge.lock.json could not be written: filesystem access was denied.
+         open-forge doctor
+         Inspect the blocked, unavailable, or incomplete Update facts before rerunning.
+  .agents/guidance/_guidance.md  replaced (you had changed it and this release changes it)
+  .agents/loader.md              not started (you had changed it and this release changes it)
+  12 files unchanged
+  Recovery data: <recovery-bundle>
+  Inspect the blocked, unavailable, or incomplete Update facts before rerunning.
+Next: open-forge doctor

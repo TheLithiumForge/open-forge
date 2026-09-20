@@ -1,0 +1,6 @@
+status=completed-with-warnings
+source=Available
+lifecycle=Complete
+comparison=Complete
+The current workspace differs from the selected package.
+The intended source no longer contains a previously managed path.

@@ -12,6 +12,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Init;
 
 public sealed class RouteInitDefinitionsAndBindingTests
 {
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Init definitions expose the frozen command grammar and result identity"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void DefinitionsExposeFrozenCommandGrammarAndResultIdentity()
     {
@@ -32,6 +33,7 @@ public sealed class RouteInitDefinitionsAndBindingTests
             RouteInitDefinitions.FindingCodes.Count);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Init symbols own one optional parser target and exact option arities"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void SymbolsOwnOneOptionalTargetAndExactOptionArities()
     {
@@ -58,6 +60,7 @@ public sealed class RouteInitDefinitionsAndBindingTests
         Assert.Equal(["alpha"], tags);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Init binding forms a generic request with ordered metadata and write policy"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void BindingFormsGenericRequestWithOrderedMetadataAndWritePolicy()
     {
@@ -92,6 +95,7 @@ public sealed class RouteInitDefinitionsAndBindingTests
         Assert.Equal(["Docs", "Public"], request.Metadata.Tags);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Init binding rejects missing targets and unsafe target forms before planning"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void BindingRejectsMissingAndUnsafeTargetsBeforePlanning()
     {
@@ -119,6 +123,7 @@ public sealed class RouteInitDefinitionsAndBindingTests
         }
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Init binding rejects Framework metadata combinations and invalid metadata values"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void BindingRejectsFrameworkMetadataAndInvalidMetadataValues()
     {
@@ -149,6 +154,7 @@ public sealed class RouteInitDefinitionsAndBindingTests
         }
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Init binding accepts idempotent booleans and preserves ordered repeated tags"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void BindingAcceptsIdempotentBooleansAndPreservesOrderedTags()
     {
@@ -177,6 +183,7 @@ public sealed class RouteInitDefinitionsAndBindingTests
         Assert.Empty(request.Metadata.Tags);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Init singleton options reject equal repetition at the parser boundary"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void SingletonOptionsRejectEqualRepetitionAtParserBoundary()
     {
@@ -194,6 +201,7 @@ public sealed class RouteInitDefinitionsAndBindingTests
         Assert.Equal(2, Assert.IsType<OptionResult>(responsibility.GetResult(symbols.Responsibility)).IdentifierTokenCount);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init machine mappings cover every named finite value and reject undefined values"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void MachineMappingsCoverNamedValuesAndRejectUndefinedValues()
     {
@@ -240,6 +248,7 @@ public sealed class RouteInitDefinitionsAndBindingTests
         Assert.Throws<ArgumentOutOfRangeException>(() => RouteInitDefinitions.ReadMachineName((RouteInitVerificationState)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Init finding mappings preserve fixed status order and next-action precedence"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void FindingMappingsPreserveStatusOrderAndNextActionPrecedence()
     {
@@ -278,7 +287,7 @@ public sealed class RouteInitDefinitionsAndBindingTests
             RouteInitDefinitions.ReadNextAction(
                 CliSemanticStatus.Blocked,
                 [RouteInitRedTestData.Finding(RouteInitFindingCode.FrameworkInstallRequired)]),
-            "open-forge install",
+            "open-forge install --dry-run",
             "Establish a trusted current Framework installation before rerunning Route Init in Framework mode.");
         AssertNext(
             RouteInitDefinitions.ReadNextAction(
@@ -310,17 +319,15 @@ public sealed class RouteInitDefinitionsAndBindingTests
                 [RouteInitRedTestData.Finding(RouteInitFindingCode.RecoveryArtifactRetained)]),
             "open-forge cleanup",
             "Review and remove the reported recovery artifact after confirming the verified Route Init result.");
-        AssertNext(
+        Assert.Null(
             RouteInitDefinitions.ReadNextAction(
-                CliSemanticStatus.Attention,
-                [RouteInitRedTestData.Finding(RouteInitFindingCode.NeedsAuthoring)]),
-            "open-forge route update",
-            "Author each reported NeedsAuthoring entrypoint before relying on its description or tags.");
+                CliSemanticStatus.Complete,
+                [RouteInitRedTestData.Finding(RouteInitFindingCode.NeedsAuthoring)]));
         AssertNext(
             RouteInitDefinitions.ReadNextAction(
                 CliSemanticStatus.Failed,
                 [RouteInitRedTestData.Finding(RouteInitFindingCode.WriteFailed)]),
-            "open-forge route init --verbose",
+            "open-forge route init --detail debug",
             "Report the failure and retry the same Route Init request with bounded diagnostics.");
         AssertNext(
             RouteInitDefinitions.ReadNextAction(
@@ -342,7 +349,8 @@ public sealed class RouteInitDefinitionsAndBindingTests
             <= 2 => CliSemanticStatus.Invalid,
             <= 18 => CliSemanticStatus.Blocked,
             <= 24 => CliSemanticStatus.Incomplete,
-            <= 26 => CliSemanticStatus.Attention,
+            25 => CliSemanticStatus.Complete,
+            26 => CliSemanticStatus.Attention,
             <= 32 => CliSemanticStatus.Failed,
             _ => CliSemanticStatus.Interrupted,
         };

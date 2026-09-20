@@ -1,0 +1,11 @@
+status=blocked
+mode=apply
+target=documents
+scaffold=generic
+completeness=complete
+safety=safe
+effects=3
+recovery=not-created
+verification=not-requested
+findings=1
+IOException (0x80070020): The filesystem operation failed.

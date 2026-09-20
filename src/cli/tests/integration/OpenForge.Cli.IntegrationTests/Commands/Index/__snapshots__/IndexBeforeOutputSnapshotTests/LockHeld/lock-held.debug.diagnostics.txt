@@ -1,0 +1,4 @@
+status=blocked
+mode=apply
+regions=1
+The selected workspace lock could not be acquired.

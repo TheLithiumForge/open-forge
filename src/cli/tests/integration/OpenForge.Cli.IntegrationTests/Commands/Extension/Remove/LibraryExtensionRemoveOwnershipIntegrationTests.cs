@@ -1,8 +1,7 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Lifecycle.Models.Ownership;
-using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Remove;
@@ -16,14 +15,21 @@ public sealed class LibraryExtensionRemoveOwnershipIntegrationTests
         {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/toolkit/note.md"]}]}
         """;
 
+    [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
-    [InlineData(false, false), InlineData(true, false), InlineData(false, true)]
-    public static async Task RecordClaimBlocksOrdinaryRemovalPruneAndKeepAsUnmanaged(bool prune, bool changed)
+    [InlineData(false, "."), InlineData(true, ".")]
+    [InlineData(false, ".agents/toolkit"), InlineData(true, ".agents/toolkit")]
+    public static async Task LockLibraryClaimBlocksOrdinaryAndEditedRemoval(bool changed, string destinationRoot)
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("library-extension-remove-record");
         using var source = ExtensionInstallCatalogue.Create("library-extension-remove-source");
         await InstallAsync(workspace, source);
-        workspace.CreateOccupant(".agents/open-forge.libraries.json", Record);
+        var ownership = JsonNode.Parse(workspace.ReadText(".agents/open-forge.lock.json"))!;
+        ownership["libraries"] = JsonNode.Parse(Record)!["libraries"]!.DeepClone();
+        ownership["libraries"]![0]!["destinationRoot"] = destinationRoot;
+        ownership["libraries"]![0]!["paths"] = new JsonArray(JsonValue.Create(
+            destinationRoot == "." ? Target : "note.md"));
+        workspace.ReplaceText(".agents/open-forge.lock.json", ownership.ToJsonString());
         using var entries = new LibraryEntries(workspace);
         entries.CreateSource();
         if (changed)
@@ -33,20 +39,45 @@ public sealed class LibraryExtensionRemoveOwnershipIntegrationTests
 
         var before = workspace.Snapshot();
         var sourceBefore = source.Snapshot();
-        var arguments = prune
-            ? new[] { "extension", "remove", "toolkit", "--prune", "--automatic", "--json" }
-            : ["extension", "remove", "toolkit", "--automatic", "--json"];
-        var run = await workspace.RunAsync(arguments);
+        var run = await workspace.RunAsync(["extension", "remove", "toolkit", "--automatic", "--format", "json"]);
         Assert.True(run.ExitCode == 5, $"Expected Library ownership refusal: {run.ExitCode}; {run.StandardError}; {run.StandardOutput}");
         using var document = JsonDocument.Parse(run.StandardOutput);
         Assert.Equal("blocked", document.RootElement.GetProperty("status").GetString());
-        Assert.Contains(document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray(),
+        Assert.Contains(document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString() == "extension-remove.ownership-conflict");
-        Assert.Empty(document.RootElement.GetProperty("result").GetProperty("effects").EnumerateArray());
+        Assert.Empty(document.RootElement.GetProperty("data").GetProperty("effects").EnumerateArray());
         Assert.Equal(before, workspace.Snapshot());
         Assert.Equal(sourceBefore, source.Snapshot());
     }
 
+    [Trait("Boundary", "Host")]
+    [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
+    [InlineData("../outside"), InlineData(".agents/../toolkit")]
+    public static async Task UninterpretableLibraryMappingPreservesEveryFile(string destinationRoot)
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("library-extension-remove-unsafe-mapping");
+        using var source = ExtensionInstallCatalogue.Create("library-extension-remove-unsafe-source");
+        await InstallAsync(workspace, source);
+        var ownership = JsonNode.Parse(workspace.ReadText(".agents/open-forge.lock.json"))!;
+        ownership["libraries"] = JsonNode.Parse(Record)!["libraries"]!.DeepClone();
+        ownership["libraries"]![0]!["destinationRoot"] = destinationRoot;
+        workspace.ReplaceText(".agents/open-forge.lock.json", ownership.ToJsonString());
+        var before = workspace.Snapshot();
+        var sourceBefore = source.Snapshot();
+
+        var run = await workspace.RunAsync(["extension", "remove", "toolkit", "--automatic", "--format", "json"]);
+
+        Assert.Equal(0, run.ExitCode);
+        using var document = JsonDocument.Parse(run.StandardOutput);
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        Assert.DoesNotContain(document.RootElement.GetProperty("findings").EnumerateArray(),
+            finding => finding.GetProperty("code").GetString() == "extension-remove.ownership-observation");
+        Assert.Empty(document.RootElement.GetProperty("data").GetProperty("effects").EnumerateArray());
+        Assert.Equal(before, workspace.Snapshot());
+        Assert.Equal(sourceBefore, source.Snapshot());
+    }
+
+    [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData("absent"), InlineData("malformed"), InlineData("registered")]
     public static async Task ActualProjectionLinkIsProtectedIndependentlyOfRecordAuthority(string record)
@@ -65,11 +96,11 @@ public sealed class LibraryExtensionRemoveOwnershipIntegrationTests
         entries.CreateProjectionLink("../../shared/team-knowledge/.agents/toolkit/note.md");
         var before = workspace.Snapshot();
         var sourceBefore = source.Snapshot();
-        var run = await workspace.RunAsync(["extension", "remove", "toolkit", "--prune", "--automatic", "--json"]);
+        var run = await workspace.RunAsync(["extension", "remove", "toolkit", "--automatic", "--format", "json"]);
         Assert.True(run.ExitCode == 5, $"Expected no-follow refusal: {run.ExitCode}; {run.StandardError}; {run.StandardOutput}");
         using var document = JsonDocument.Parse(run.StandardOutput);
         Assert.Equal("blocked", document.RootElement.GetProperty("status").GetString());
-        Assert.Empty(document.RootElement.GetProperty("result").GetProperty("effects").EnumerateArray());
+        Assert.Empty(document.RootElement.GetProperty("data").GetProperty("effects").EnumerateArray());
         Assert.Equal("../../shared/team-knowledge/.agents/toolkit/note.md", new FileInfo(workspace.Combine(Target)).LinkTarget);
         Assert.Equal(Body, File.ReadAllText(workspace.Combine(SourceTarget)));
         Assert.Equal(before, workspace.Snapshot());
@@ -80,12 +111,13 @@ public sealed class LibraryExtensionRemoveOwnershipIntegrationTests
     {
         await workspace.SeedFrameworkAsync();
         source.AddPackage("toolkit", [], (Target, Body));
-        var installed = await workspace.RunAsync(["extension", "install", "toolkit", "--source", source.Path, "--automatic", "--json"]);
+        var installed = await workspace.RunAsync(["extension", "install", "toolkit", "--source", source.Path, "--automatic", "--format", "json"]);
         Assert.True(installed.ExitCode == 0, $"Extension fixture installation prerequisite: {installed.ExitCode}; {installed.StandardError}; {installed.StandardOutput}");
-        var ownership = await new LifecycleOwnershipReader(new PhysicalPathResolver()).ReadAsync(workspace.Workspace, TestContext.Current.CancellationToken);
-        Assert.Equal(LifecycleOwnershipReadState.Trusted, ownership.Framework.State);
-        Assert.Equal(LifecycleOwnershipReadState.Trusted, ownership.Extensions.State);
-        Assert.Contains(ownership.Claims, claim => claim.Path == Target && claim.Manager == LifecycleOwnershipManager.Extension && claim.Owner == "toolkit");
+        var ownership = await OpenForge.Cli.Core.Framework.Ownership.Shared.Observation.WorkspaceOwnershipReader.ReadAsync(
+            new PhysicalPathResolver(), workspace.Workspace, TestContext.Current.CancellationToken);
+        Assert.True(ownership.IsTrustworthy);
+        Assert.NotNull(ownership.Document.Framework);
+        Assert.Equal(["toolkit"], ownership.Document.OwnersOf(Target));
     }
 
     private sealed class LibraryEntries(ExtensionInstallIntegrationWorkspace workspace) : IDisposable

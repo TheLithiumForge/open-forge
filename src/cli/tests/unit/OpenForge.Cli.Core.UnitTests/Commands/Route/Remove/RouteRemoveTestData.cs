@@ -245,7 +245,7 @@ internal static class RouteRemoveTestData
             GeneratedNavigation = GeneratedNavigation(),
             Plan = Plan(),
             Effects = [Effect()],
-            UnchangedPaths = [".agents/open-forge.lifecycle.json"],
+            UnchangedPaths = [".agents/open-forge.lock.json"],
             Recovery = Recovery(),
             Verification = RouteRemoveVerificationState.NotRequested,
             Findings = [],

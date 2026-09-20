@@ -1,0 +1,17 @@
+---
+open-forge:
+  description: Review rules
+  tags: [Contextual]
+---
+
+# Rules
+
+Review rules.
+
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
+
+## Entries
+
+- none - No entries - #Empty

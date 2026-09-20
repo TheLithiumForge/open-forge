@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 3,
+  "command": "extension remove",
+  "status": "completed-with-warnings",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Removed the toolkit Extension. base remains installed and is no longer needed by it.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "extension-remove.lifecycle-observation",
+      "title": "Dependency remains installed",
+      "message": "base remains installed and is no longer needed by toolkit.",
+      "subject": {
+        "kind": "file",
+        "path": "base",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge extension remove base",
+          "reason": "Remove the unused dependency when it is no longer needed."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesRemoved": 1,
+    "filesDeleted": 1,
+    "filesKept": 0,
+    "filesReleased": 0,
+    "sectionsUpdated": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "automatic": true,
+    "packages": [
+      {
+        "id": "toolkit"
+      }
+    ],
+    "orphaned": [
+      "base"
+    ],
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/toolkit.md",
+        "action": "delete",
+        "outcome": "verified",
+        "owner": "toolkit",
+        "keptFor": []
+      }
+    ]
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension remove base",
+    "reason": "Remove the unused dependency when it is no longer needed."
+  }
+}

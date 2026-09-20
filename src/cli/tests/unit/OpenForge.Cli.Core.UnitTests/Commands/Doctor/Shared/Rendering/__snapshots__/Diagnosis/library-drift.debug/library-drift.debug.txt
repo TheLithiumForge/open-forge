@@ -1,0 +1,11 @@
+No errors. 1 warning was recorded.
+Workspace
+  Warning  .agents/directives/library.md  Registered Library link is missing [library.projection-missing]
+         .agents/directives/library.md, a link of team-knowledge, is missing.
+         fix by hand
+         open-forge library sync team-knowledge
+         Review the missing Library link.
+         state: missing
+         read from .agents/directives/library.md
+  21 links and 20 routes checked.
+  1 must be fixed by hand.

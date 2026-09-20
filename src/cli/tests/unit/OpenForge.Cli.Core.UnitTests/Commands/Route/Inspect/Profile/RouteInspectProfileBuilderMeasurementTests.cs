@@ -13,6 +13,7 @@ public sealed class RouteInspectProfileBuilderMeasurementTests
 {
     private static readonly Encoding StrictUtf8 = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect measures all five sets with Unicode scalars strict UTF-8 bytes and aggregate token ceiling")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void MeasurementsUseExactScalarsBytesAndAggregateTokens()
@@ -60,6 +61,7 @@ public sealed class RouteInspectProfileBuilderMeasurementTests
             selectedExpected.EstimatedTokens);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect deduplicates repeated logical entries and repeated physical identities")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void MeasurementSetsDeduplicateLogicalAndPhysicalLayers()
@@ -132,6 +134,7 @@ public sealed class RouteInspectProfileBuilderMeasurementTests
             Assert.IsType<RouteInspectMeasurement>(physicalProfile.Measurements.SelectionAddition.Value).PhysicalFileCount);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect selected closure retains base-first overwrites on ancestors and target")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void SelectedClosureIncludesAncestorOverwrites()
@@ -179,6 +182,7 @@ public sealed class RouteInspectProfileBuilderMeasurementTests
             RouteInspectResolutionTestData.Identity(target, RouteInspectRouteState.Routed).PhysicalLayers.Select(layer => layer.Role));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect narrow LoadNow descendants exclude ordinary links on-demand descendants and unrelated global KeepInMind")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void NarrowLoadNowClosureExcludesNonLoadNowSources()
@@ -260,6 +264,7 @@ public sealed class RouteInspectProfileBuilderMeasurementTests
             Assert.IsType<RouteInspectMeasurement>(profile.Measurements.SelectionAddition.Value).PhysicalFileCount);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route inspect preserves measured zero unavailable and not-applicable measurement states")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void MeasurementAvailabilityPreservesZeroUnavailableAndNotApplicable()

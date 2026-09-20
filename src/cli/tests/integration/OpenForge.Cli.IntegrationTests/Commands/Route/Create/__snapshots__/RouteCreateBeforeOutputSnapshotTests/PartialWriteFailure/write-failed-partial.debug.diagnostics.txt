@@ -1,0 +1,10 @@
+status=failed
+mode=apply
+target=memory/project-alpha/overview
+completeness=complete
+safety=safe
+effects=2
+recovery=retained
+verification=unknown
+findings=1
+UnauthorizedAccessException (0x80070005): Filesystem access was denied.

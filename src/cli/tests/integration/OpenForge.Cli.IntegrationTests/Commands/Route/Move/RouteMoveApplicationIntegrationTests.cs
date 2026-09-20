@@ -12,6 +12,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Move;
 
 public sealed class RouteMoveApplicationIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "Composed Route Move invalid operand boundaries retain exact human refusal without writes"),
      InlineData("missing-source"), InlineData("missing-destination"), InlineData("consumed-source"),
      Trait("Feature", "route-move"), Trait("Evidence", "Integration")]
@@ -30,23 +31,36 @@ public sealed class RouteMoveApplicationIntegrationTests
 
         Assert.Equal(4, result.ExitCode);
         Assert.Equal(string.Empty, result.Output);
-        Assert.Contains("Status: invalid", result.Error, StringComparison.Ordinal);
-        Assert.Contains("route-move.", result.Error, StringComparison.Ordinal);
-        Assert.Contains("Next: open-forge route move --help", result.Error, StringComparison.Ordinal);
+        Assert.Contains("Cannot move ", result.Error, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", result.Error, StringComparison.Ordinal);
+        Assert.DoesNotContain("route-move.", result.Error, StringComparison.Ordinal);
+        if (scenario == "consumed-source")
+        {
+            Assert.DoesNotContain("Next:", result.Error, StringComparison.Ordinal);
+        }
+        else
+        {
+            Assert.Contains("Next: open-forge route move --help", result.Error, StringComparison.Ordinal);
+        }
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Theory(DisplayName = "Composed Route Move safety failures retain exact human status and finding"),
-     InlineData("occupied-destination", 5, "blocked", "route-move.destination-occupied"),
-     InlineData("ownership-missing", 5, "blocked", "route-move.ownership-unavailable"),
-     InlineData("invalid-utf8", 3, "incomplete", "route-move.reference-coverage-incomplete"),
+     InlineData("occupied-destination", 5, "Cannot move guidance/old guide: .agents/guidance/new guide.md already exists.", "Next: choose another destination"),
+     InlineData("ownership-missing", 0, "Moved guidance/old guide to .agents/guidance/new guide.md", "Ownership could not be read"),
+     InlineData("invalid-utf8", 3, "guidance/old guide could not be moved: Some files could not be scanned for links to invalid.md", "Next: open-forge doctor"),
      Trait("Feature", "route-move"), Trait("Evidence", "Integration")]
-    public static async Task SafetyFailuresRenderExactStatusAndFinding(string scenario, int expectedExit, string expectedStatus, string expectedCode)
+    public static async Task SafetyFailuresRenderExactStatusAndFinding(
+        string scenario,
+        int expectedExit,
+        string expectedHeadline,
+        string expectedDetail)
     {
         using var workspace = RouteMoveIntegrationWorkspace.Create($"move-human-{scenario}");
         if (scenario == "ownership-missing")
         {
-            File.Delete(workspace.Absolute(RouteMoveIntegrationWorkspace.LifecyclePath));
+            File.Delete(workspace.Absolute(RouteMoveIntegrationWorkspace.OwnershipPath));
         }
         else
         {
@@ -59,12 +73,14 @@ public sealed class RouteMoveApplicationIntegrationTests
             workspace.Workspace.LexicalRoot);
 
         Assert.Equal(expectedExit, result.ExitCode);
-        var primary = expectedStatus == "incomplete" ? result.Output : result.Error;
-        Assert.Contains($"Status: {expectedStatus}", primary, StringComparison.Ordinal);
-        Assert.Contains(expectedCode, primary, StringComparison.Ordinal);
+        var primary = expectedExit is 0 or 3 ? result.Output : result.Error;
+        Assert.Contains(expectedHeadline, primary, StringComparison.Ordinal);
+        Assert.Contains(expectedDetail, primary, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", primary, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed Route Move compact dry-run names every changed path and exact reference"),
      Trait("Feature", "route-move"), Trait("Evidence", "Integration")]
     public async Task CompactDryRunNamesEveryChangedPathAndReference()
@@ -77,25 +93,66 @@ public sealed class RouteMoveApplicationIntegrationTests
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
-        Assert.Contains(".agents/guidance/old guide.md", result.Output, StringComparison.Ordinal);
-        Assert.Contains(".agents/guidance/old guide.overwrite.md", result.Output, StringComparison.Ordinal);
-        Assert.Contains(".agents/archive/new guide.md", result.Output, StringComparison.Ordinal);
-        Assert.Contains(".agents/archive/new guide.overwrite.md", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Would move guidance/old guide to .agents/archive/new guide.md", result.Output, StringComparison.Ordinal);
         Assert.Contains("README.md", result.Output, StringComparison.Ordinal);
         Assert.Contains("notes.md", result.Output, StringComparison.Ordinal);
         Assert.Contains(".agents/guidance/_guidance.md", result.Output, StringComparison.Ordinal);
         Assert.Contains(".agents/archive/_archive.md", result.Output, StringComparison.Ordinal);
-        Assert.Contains(".agents/guidance/old%20guide.md#section", result.Output, StringComparison.Ordinal);
-        Assert.Contains(".agents/archive/new%20guide.md#section", result.Output, StringComparison.Ordinal);
-        Assert.Contains("No files changed (--dry-run).", result.Output, StringComparison.Ordinal);
+        Assert.Contains("README.md:3:13", result.Output, StringComparison.Ordinal);
+        Assert.Contains("notes.md:3:11", result.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("%20", result.Output, StringComparison.Ordinal);
+        Assert.Contains("No files were changed.", result.Output, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Route Move applies and verifies a complete category with exact resource bytes and relative references"),
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route Move applies a logical leaf ID with exact moved and reference bytes"),
      Trait("Feature", "route-move"), Trait("Evidence", "Integration")]
-    public async Task CategoryApplicationPreservesResourcesAndRelativeReferences()
+    public async Task LogicalLeafIdAppliesWithExactMovedAndReferenceBytes()
     {
-        using var workspace = RouteMoveIntegrationWorkspace.Create("move-category-application");
+        using var workspace = RouteMoveIntegrationWorkspace.Create("move-logical-leaf-application");
+        workspace.OwnLeafDestination(crossRoute: true);
+        var sourceBefore = workspace.ReadText(RouteMoveIntegrationWorkspace.LeafPath);
+        var overwriteBefore = workspace.ReadText(RouteMoveIntegrationWorkspace.OverwritePath);
+        var readmeBefore = workspace.ReadText("README.md");
+        var notesBefore = workspace.ReadText("notes.md");
+        var ownershipBefore = workspace.ReadText(RouteMoveIntegrationWorkspace.OwnershipPath);
+
+        var result = await CliHostCapture.RunAsync(
+            ["route", "move", RouteMoveIntegrationWorkspace.LeafId, "archive/new guide"],
+            workspace.Workspace.LexicalRoot);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(string.Empty, result.Error);
+        Assert.Contains("Moved guidance/old guide to .agents/archive/new guide.md", result.Output, StringComparison.Ordinal);
+        Assert.False(File.Exists(workspace.Absolute(RouteMoveIntegrationWorkspace.LeafPath)));
+        Assert.True(File.Exists(workspace.Absolute(".agents/archive/new guide.md")));
+        Assert.True(File.Exists(workspace.Absolute(".agents/archive/new guide.overwrite.md")));
+        Assert.Equal(
+            sourceBefore,
+            workspace.ReadText(".agents/archive/new guide.md"));
+        Assert.Equal(
+            overwriteBefore,
+            workspace.ReadText(".agents/archive/new guide.overwrite.md"));
+        Assert.Equal(
+            readmeBefore.Replace(".agents/guidance/old%20guide.md", ".agents/archive/new%20guide.md", StringComparison.Ordinal),
+            workspace.ReadText("README.md"));
+        Assert.Equal(
+            notesBefore.Replace(".agents/guidance/old%20guide.md", ".agents/archive/new%20guide.md", StringComparison.Ordinal),
+            workspace.ReadText("notes.md"));
+        Assert.Equal(ownershipBefore, workspace.ReadText(RouteMoveIntegrationWorkspace.OwnershipPath));
+    }
+
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Route Move applies and verifies a complete category with exact resource bytes and relative references ({1})"),
+     InlineData(RouteMoveIntegrationWorkspace.CategoryDestination, "physical"),
+     InlineData("archive/topics", "logical"),
+     Trait("Feature", "route-move"), Trait("Evidence", "Integration")]
+    public async Task CategoryApplicationPreservesResourcesAndRelativeReferences(
+        string destinationTarget,
+        string caseName)
+    {
+        using var workspace = RouteMoveIntegrationWorkspace.Create($"move-category-application-{caseName}");
         const string child = ".agents/guidance/topics/child.md";
         workspace.WriteText(child, workspace.ReadText(child) + "\n[Local](notes.md#detail)\n");
         var childBefore = workspace.ReadText(child);
@@ -105,7 +162,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var notesBefore = workspace.ReadText(".agents/guidance/topics/notes.md");
         var nativeBefore = workspace.ReadText(".agents/guidance/topics/native/SKILL.md");
         var build = await RouteMoveIntegrationWorkspace.CreatePlanBuilder().BuildAsync(
-            workspace.Request(RouteMoveIntegrationWorkspace.CategoryPath, RouteMoveIntegrationWorkspace.CategoryDestination,
+            workspace.Request(RouteMoveIntegrationWorkspace.CategoryPath, destinationTarget,
                 OpenForge.Cli.Core.Commands.Route.Move.Models.Request.RouteMoveMode.Apply), TestContext.Current.CancellationToken);
         var plan = Assert.IsType<OpenForge.Cli.Core.Commands.Route.Move.Models.Planning.RouteMovePlan>(build.Plan);
         workspace.OwnCategoryDestination();
@@ -135,6 +192,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         Assert.Contains("notes.md#detail", workspace.ReadText(".agents/archive/topics/child.md"), StringComparison.Ordinal);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed Route Move invalid JSON keeps unresolved facts and the complete empty graph"),
      Trait("Feature", "route-move"), Trait("Evidence", "Integration")]
     public async Task InvalidJsonKeepsUnresolvedFactsAndEmptyGraph()
@@ -143,30 +201,34 @@ public sealed class RouteMoveApplicationIntegrationTests
         var before = workspace.SnapshotHashes();
         const string missing = ".agents/guidance/consumed.md";
         var response = await CliHostCapture.RunAsync(
-            ["route", "move", missing, RouteMoveIntegrationWorkspace.CrossRouteDestination, "--json"], workspace.Workspace.LexicalRoot);
+            ["route", "move", missing, RouteMoveIntegrationWorkspace.CrossRouteDestination, "--format", "json"], workspace.Workspace.LexicalRoot);
 
         Assert.Equal(4, response.ExitCode);
         Assert.Equal(string.Empty, response.Error);
         using var document = JsonDocument.Parse(response.Output);
         var root = document.RootElement;
-        var result = root.GetProperty("result");
-        Assert.Equal("invalid", root.GetProperty("status").GetString());
+        var result = root.GetProperty("data");
+        Assert.Equal("invalid-input", root.GetProperty("status").GetString());
         var source = result.GetProperty("source");
-        Assert.Equal(missing, source.GetProperty("requested").GetString());
-        Assert.Equal("base-path", source.GetProperty("selectedBy").GetString());
-        Assert.All(["id", "path", "form"], name => Assert.Equal(JsonValueKind.Null, source.GetProperty(name).ValueKind));
-        Assert.Empty(result.GetProperty("subject").GetProperty("layers").EnumerateArray());
-        Assert.Empty(result.GetProperty("subject").GetProperty("items").EnumerateArray());
-        Assert.Empty(result.GetProperty("ownership").GetProperty("claims").EnumerateArray());
-        Assert.Empty(result.GetProperty("references").GetProperty("rewrites").EnumerateArray());
-        Assert.Empty(result.GetProperty("generatedNavigation").GetProperty("regions").EnumerateArray());
-        Assert.Empty(result.GetProperty("effects").EnumerateArray());
-        Assert.Empty(result.GetProperty("unchangedPaths").EnumerateArray());
-        Assert.Equal("route-move.source-not-found", Assert.Single(result.GetProperty("findings").EnumerateArray()).GetProperty("code").GetString());
-        Assert.Equal("open-forge route move --help", root.GetProperty("next").GetProperty("command").GetString());
+        Assert.Equal("file", result.GetProperty("subject").GetString());
+        Assert.All(["id", "path"], name => Assert.Equal(JsonValueKind.Null, source.GetProperty(name).ValueKind));
+        var destination = result.GetProperty("destination");
+        if (destination.ValueKind == JsonValueKind.Object)
+        {
+            Assert.All(["id", "path"], name => Assert.Equal(JsonValueKind.Null, destination.GetProperty(name).ValueKind));
+        }
+        else
+        {
+            Assert.Equal(JsonValueKind.Null, destination.ValueKind);
+        }
+        Assert.Empty(result.GetProperty("moved").EnumerateArray());
+        Assert.Empty(result.GetProperty("rewrittenLinks").EnumerateArray());
+        Assert.Equal("route-move.source-not-found", Assert.Single(root.GetProperty("findings").EnumerateArray()).GetProperty("code").GetString());
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed Route Move help retains exact shared exit and stream policy"),
      Trait("Feature", "route-move"), Trait("Evidence", "Integration")]
     public async Task HelpRetainsExactSharedExitAndStreamPolicy()
@@ -185,17 +247,18 @@ public sealed class RouteMoveApplicationIntegrationTests
         Assert.Contains("<source-reference> <destination-target>", result.Output, StringComparison.Ordinal);
         Assert.Contains("Name the intended destination by exact path.", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--recursive", result.Output, StringComparison.Ordinal);
-        Assert.Contains("complete: exit 0 and human stdout.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("attention: exit 2 and human stdout.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("incomplete: exit 3 and human stdout.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("invalid: exit 4 and human stderr.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("blocked: exit 5 and human stderr.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("failed: exit 1 and human stderr.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("interrupted: exit 130 and human stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("completed: exit 0 and text stdout.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("completed-with-warnings: exit 2 and text stdout.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("incomplete: exit 3 and text stdout.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("invalid-input: exit 4 and text stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("blocked: exit 5 and text stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("failed: exit 1 and text stderr.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("cancelled: exit 130 and text stderr.", result.Output, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missing));
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed Route Move JSON dry-run keeps bounded diagnostics separate"),
      Trait("Feature", "route-move"), Trait("Evidence", "Integration")]
     public async Task JsonDryRunPreservesPrimaryDocumentWithVerboseDiagnostics()
@@ -205,53 +268,46 @@ public sealed class RouteMoveApplicationIntegrationTests
         string[] arguments =
         [
             "route", "move", RouteMoveIntegrationWorkspace.LeafId,
-            RouteMoveIntegrationWorkspace.CrossRouteDestination, "--dry-run", "--dry-run", "--json",
+            RouteMoveIntegrationWorkspace.CrossRouteDestination, "--dry-run", "--dry-run", "--format", "json",
         ];
 
-        var plain = await CliHostCapture.RunAsync(arguments, workspace.Workspace.LexicalRoot);
-        var verbose = await CliHostCapture.RunAsync([.. arguments, "--verbose"], workspace.Workspace.LexicalRoot);
+        var plain = await CliHostCapture.RunAsync([.. arguments, "--detail", "full"], workspace.Workspace.LexicalRoot);
+        var verbose = await CliHostCapture.RunAsync([.. arguments, "--detail", "debug"], workspace.Workspace.LexicalRoot);
 
         Assert.Equal(0, plain.ExitCode);
         Assert.Equal(string.Empty, plain.Error);
         Assert.Equal(plain.ExitCode, verbose.ExitCode);
-        Assert.Equal(plain.Output, verbose.Output);
-        var diagnostic = Assert.Single(verbose.Error.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
-        Assert.InRange(diagnostic.Length, 1, 4095);
-        Assert.DoesNotContain('\r', diagnostic);
-        Assert.DoesNotContain('\n', diagnostic);
+        Assert.True(JsonDetailComparison.RetainsDataAcrossDetails(plain.Output, verbose.Output, "full", "debug"));
+        var diagnostics = verbose.Error.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+        Assert.Equal(11, diagnostics.Length);
+        Assert.InRange(verbose.Error.Length, 1, 4096);
+        Assert.All(diagnostics, diagnostic =>
+        {
+            Assert.InRange(diagnostic.Length, 1, 240);
+            Assert.DoesNotContain('\r', diagnostic);
+            Assert.DoesNotContain('\n', diagnostic);
+        });
         Assert.EndsWith(Environment.NewLine, verbose.Error, StringComparison.Ordinal);
-        Assert.Contains("status=complete; mode=dry-run", diagnostic, StringComparison.Ordinal);
+        Assert.Equal("status=completed", diagnostics[0]);
+        Assert.Equal("mode=dry-run", diagnostics[1]);
         using var document = JsonDocument.Parse(plain.Output);
         var root = document.RootElement;
-        var result = root.GetProperty("result");
-        Assert.Equal("complete", root.GetProperty("status").GetString());
+        var result = root.GetProperty("data");
+        Assert.Equal("completed", root.GetProperty("status").GetString());
         Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
         Assert.Equal("dry-run", result.GetProperty("mode").GetString());
-        Assert.NotEmpty(result.GetProperty("subject").GetProperty("layers").EnumerateArray());
-        Assert.Empty(result.GetProperty("subject").GetProperty("items").EnumerateArray());
-        Assert.Equal("unmanaged", result.GetProperty("ownership").GetProperty("state").GetString());
-        Assert.Empty(result.GetProperty("ownership").GetProperty("claims").EnumerateArray());
-        Assert.Equal("complete", result.GetProperty("references").GetProperty("coverage").GetString());
-        Assert.NotEmpty(result.GetProperty("references").GetProperty("rewrites").EnumerateArray());
-        Assert.Equal("complete", result.GetProperty("generatedNavigation").GetProperty("coverage").GetString());
-        Assert.NotEmpty(result.GetProperty("generatedNavigation").GetProperty("regions").EnumerateArray());
-        var effects = result.GetProperty("effects").EnumerateArray().ToArray();
+        Assert.Equal("file", result.GetProperty("subject").GetString());
+        Assert.NotEmpty(result.GetProperty("moved").EnumerateArray());
+        Assert.NotEmpty(result.GetProperty("rewrittenLinks").EnumerateArray());
+        var effects = root.GetProperty("effects").EnumerateArray().ToArray();
         Assert.NotEmpty(effects);
-        Assert.All(effects, effect =>
-        {
-            Assert.Equal("planned", effect.GetProperty("outcome").GetString());
-            Assert.Equal("none", effect.GetProperty("residual").GetString());
-        });
-        Assert.NotEmpty(result.GetProperty("unchangedPaths").EnumerateArray());
-        var recovery = result.GetProperty("recovery");
-        Assert.Equal("not-created", recovery.GetProperty("state").GetString());
-        Assert.NotEmpty(recovery.GetProperty("protectedPaths").EnumerateArray());
-        Assert.Equal(JsonValueKind.Null, recovery.GetProperty("residualPath").ValueKind);
-        Assert.Equal("not-requested", result.GetProperty("verification").GetString());
-        Assert.Empty(result.GetProperty("findings").EnumerateArray());
+        Assert.All(effects, effect => Assert.Equal("planned", effect.GetProperty("outcome").GetString()));
+        Assert.Equal("not-required", root.GetProperty("recovery").GetProperty("disposition").GetString());
+        Assert.Empty(root.GetProperty("findings").EnumerateArray());
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move prepares one external ZIP before effects and rejects its exact collision"),
      Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task ExternalRecoveryPrecedesEffectsAndCollisionStopsEverything()
@@ -262,7 +318,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
         var before = workspace.SnapshotHashes();
-        var lifecycleBytes = workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath);
+        var lifecycleBytes = workspace.ReadText(RouteMoveIntegrationWorkspace.OwnershipPath);
         var input = new RouteMoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease);
 
         var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
@@ -285,9 +341,10 @@ public sealed class RouteMoveApplicationIntegrationTests
         Assert.Equal(RouteMoveFindingCode.RecoveryConflict, collision.Finding?.Code);
         Assert.Equal(CliSemanticStatus.Blocked, collision.Finding?.Status);
         Assert.Equal(before, workspace.SnapshotHashes());
-        Assert.Equal(lifecycleBytes, workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath));
+        Assert.Equal(lifecycleBytes, workspace.ReadText(RouteMoveIntegrationWorkspace.OwnershipPath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move reports unavailable external recovery before any effect"),
      Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task UnavailableRecoveryStopsBeforeEffects()
@@ -314,6 +371,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         Assert.False(Directory.Exists(workspace.Absolute(".agents/archive/application")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move keeps ordered heterogeneous receipts and never rolls back after a concrete failure"),
      Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task ConcreteFailureLeavesPriorEffectAndAllLaterEffectsNotStarted()
@@ -329,7 +387,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         workspace.TrackRecovery(preparation);
         var sourceBefore = workspace.ReadText(RouteMoveIntegrationWorkspace.ApplicationCategoryPath);
-        var lifecycleBefore = workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath);
+        var lifecycleBefore = workspace.ReadText(RouteMoveIntegrationWorkspace.OwnershipPath);
         const string mutatedArchive = "concurrent archive\n";
         workspace.WriteText(".agents/archive/_archive.md", mutatedArchive);
 
@@ -365,9 +423,10 @@ public sealed class RouteMoveApplicationIntegrationTests
             workspace.ReadText(RouteMoveIntegrationWorkspace.ApplicationCategoryDestination));
         Assert.Equal(mutatedArchive, workspace.ReadText(".agents/archive/_archive.md"));
         Assert.Equal(sourceBefore, workspace.ReadText(RouteMoveIntegrationWorkspace.ApplicationCategoryPath));
-        Assert.Equal(lifecycleBefore, workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath));
+        Assert.Equal(lifecycleBefore, workspace.ReadText(RouteMoveIntegrationWorkspace.OwnershipPath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move cancellation leaves every heterogeneous effect not started"),
      Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task CancellationLeavesEveryEffectNotStarted()
@@ -407,6 +466,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         Assert.False(Directory.Exists(workspace.Absolute(".agents/archive/application")));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move post-verification recovery deletion cancelled before candidate selection reports interrupted unknown recovery without inferred retention"),
      Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task PostVerificationRecoveryDeletionCancelledBeforeCandidateSelectionReportsInterruptedUnknownWithoutInferredRetention()
@@ -416,7 +476,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         var plan = await workspace.BuildApplicationPlanAsync();
         var operationId = Guid.NewGuid();
         await using var lease = await workspace.AcquireLeaseAsync(operationId);
-        var lifecycleBefore = workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath);
+        var lifecycleBefore = workspace.ReadText(RouteMoveIntegrationWorkspace.OwnershipPath);
         var prepared = await RouteMoveRecoveryLifecycle.PrepareAsync(
             new RouteMoveHeldApplication(Plan: plan, OperationId: operationId, Lease: lease),
             TestContext.Current.CancellationToken);
@@ -449,7 +509,7 @@ public sealed class RouteMoveApplicationIntegrationTests
             verification.State == RouteMoveAppliedVerificationState.Verified,
             verification.Cause);
         Assert.Null(verification.Cause);
-        Assert.Equal(lifecycleBefore, workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath));
+        Assert.Equal(lifecycleBefore, workspace.ReadText(RouteMoveIntegrationWorkspace.OwnershipPath));
         Assert.True(File.Exists(workspace.Absolute(RouteMoveIntegrationWorkspace.ApplicationCategoryDestination)));
         Assert.False(File.Exists(workspace.Absolute(RouteMoveIntegrationWorkspace.ApplicationCategoryPath)));
         Assert.False(Directory.Exists(workspace.Absolute(".agents/guidance/application")));
@@ -469,9 +529,10 @@ public sealed class RouteMoveApplicationIntegrationTests
         Assert.Equal(RouteMoveFindingCode.Interrupted, deletion.Finding?.Code);
         Assert.Equal(CliSemanticStatus.Interrupted, deletion.Finding?.Status);
         Assert.True(File.Exists(preparation.BundlePath));
-        Assert.Equal(lifecycleBefore, workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath));
+        Assert.Equal(lifecycleBefore, workspace.ReadText(RouteMoveIntegrationWorkspace.OwnershipPath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move final verification rejects lifecycle drift after applied effects"),
      Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task FinalVerificationRejectsChangedLifecycleObservation()
@@ -515,6 +576,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         Assert.True(File.Exists(preparation.BundlePath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move final verification rejects an ambiguous destination topology"),
      Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task FinalVerificationRejectsAmbiguousDestinationTopology()
@@ -571,6 +633,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         }
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move changed recovery identity is a failed unknown disposition"),
      Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
     public async Task ChangedRecoveryIdentityFailsUnknownWithoutDeletingReplacement()
@@ -585,7 +648,7 @@ public sealed class RouteMoveApplicationIntegrationTests
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(prepared.Preparation);
         workspace.ReplaceRecoveryWithDirectory(preparation);
-        var lifecycleBefore = workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath);
+        var lifecycleBefore = workspace.ReadText(RouteMoveIntegrationWorkspace.OwnershipPath);
 
         var deletion = await RouteMoveRecoveryLifecycle.DeleteExactAsync(
             new RouteMoveRecoveryDeletionInput
@@ -600,7 +663,7 @@ public sealed class RouteMoveApplicationIntegrationTests
         Assert.Equal(RouteMoveFindingCode.RecoveryFailed, deletion.Finding?.Code);
         Assert.Equal(CliSemanticStatus.Failed, deletion.Finding?.Status);
         Assert.True(Directory.Exists(preparation.BundlePath));
-        Assert.Equal(lifecycleBefore, workspace.ReadText(RouteMoveIntegrationWorkspace.LifecyclePath));
+        Assert.Equal(lifecycleBefore, workspace.ReadText(RouteMoveIntegrationWorkspace.OwnershipPath));
     }
 
     private static void AssertAllLaterNotStarted(IEnumerable<RouteMoveApplicationReceipt> receipts)

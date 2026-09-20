@@ -1,0 +1,10 @@
+Library attach was cancelled. Stopped after 1 of 1 links were created.
+Workspace: <workspace>
+  Error  .  Library attach was cancelled
+         Library attach was cancelled. Stopped after 1 of 1 links were created.
+         open-forge doctor
+         Inspect the reported Library attach state.
+  .agents/directives/review.md  created
+  The Library was not recorded. Recovery data: <recovery-bundle>
+  Inspect the reported Library attach state.
+Next: open-forge doctor

@@ -7,12 +7,23 @@ open-forge:
 
 # route init Behavior Contract
 
+## Ownership Receipt Formation
+
+Form whole-file and region receipts according to what the operation manages.
+The `open-forge` blocks in root `AGENTS.md` and `CLAUDE.md` produce region
+receipts even when creating a previously missing host requires a physical file
+creation. Generated Entries produce `entries` region receipts. Preserve existing
+verified ownership when a planned no-op leaves its bytes unchanged. Publish the
+ownership lock after the operation's target effects verify; a region-only edit
+never establishes whole-file ownership of its authored host. Skip an unavailable
+lock write without blocking the operation.
+
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the technology-neutral
-Behavior Contract for `route init`. The command does not ship yet. Its local
-implementation and complete executable proof are squash-integrated at
-`cc5085ce`; replacement-CLI delivery remains pending.
+Behavior Contract for `route init`. The command is implemented in the merged
+native CLI. Its local implementation and complete executable proof are
+squash-integrated at `cc5085ce`.
 
 This contract defines only the deterministic, technology-neutral operation behind
 the [Interface Contract](interface.md). The Interface Contract owns the complete
@@ -113,23 +124,18 @@ coincidence.
 
 ### Framework alignment and scope labels
 
-When `--framework` is selected, resolve the complete embedded Framework payload
-and canonical topology through the neutral distribution capability. Require a
-trusted current root Install lifecycle whose source inventory matches the
-running CLI. A missing or untrusted installation blocks; a trusted installation
-from another inventory directs the caller to root Update before scoped
-initialization.
+When `--framework` is selected, resolve the embedded Framework payload and
+canonical topology through the neutral distribution capability. Require the
+actual installed root route, a contained ordinary `.agents` directory, readable
+selected sources, and safe current route/generated-region boundaries. Missing
+or unsafe required workspace structure blocks; stored hashes, release metadata,
+and ownership availability do not establish or deny that physical boundary.
 
-Trust is physical currentness, not merely a structurally valid persisted
-lifecycle record. One neutral Framework currentness reader consumes a validated
-Framework lifecycle state, the running embedded payload, and current contained
-target reads. It returns typed `current`, `source-mismatch`, `changed`,
-`missing`, `unavailable`, `blocked`, or `cancelled` facts. It applies the accepted
-fingerprint policy to source-backed semantic or exact targets, bounded generated
-`entries` interiors, and root `AGENTS.md` and `CLAUDE.md` managed blocks, while
-validating each current `sourceAssetPath` against the running inventory. It has
-no mutation, Update, Install, diagnosis, or command-result policy. Route Init
-maps those neutral facts to its own findings and next actions.
+Read `.agents/open-forge.lock.json` as forgiving ownership evidence. Existing
+whole-file claims distinguish managed entrypoints from user-authored inputs;
+current payload alignment supplies `sourceAssetPath` only for this invocation.
+No earlier record is read, converted, written, or deleted. Missing, malformed,
+or unreadable ownership supplies no claims and does not block safe scaffolding.
 
 One separate neutral embedded-source adapter projects only recognized
 `.agents/...` payload assets into canonical base sources for the supplied
@@ -157,9 +163,9 @@ The intended Framework chain contains only the requested sparse path. Missing
 aligned segments use exact embedded canonical entrypoint assets; missing
 inserted scope segments use the generic draft scaffold. Inserted scope
 entrypoints remain user-owned. Copied Framework entrypoints and derived generated
-regions are the only new Framework lifecycle targets. Each copied target records
-its normalized canonical embedded `sourceAssetPath`; a derived generated-region
-target records `null`. The operation adds no lifecycle instance grouping.
+regions are the only new Framework ownership receipts. Whole-file paths and
+named regions remain distinct; `sourceAssetPath` is current output evidence and
+is not stored in the lock. The operation adds no instance grouping.
 
 ### Chain selection
 
@@ -201,7 +207,7 @@ and assign `NeedsAuthoring`. For a missing final target, resolve explicit
 metadata independently from the ancestor defaults:
 
 - A non-empty description replaces the final draft description in frontmatter and
-  the compact body definition.
+  the minimal-detail body definition.
 - A non-empty responsibility adds the optional frontmatter field. The exact empty
   value omits it.
 - Repeated tags are retained in argument order as the final target's explicit tag
@@ -230,11 +236,13 @@ their bytes. When `open-forge` and `rune` coexist, the reader uses exactly
 
 The resolver records the intended tag list for every new entrypoint. After a safe
 complete plan and preflight, any new entrypoint whose intended tags contain the
-exact `NeedsAuthoring` tag forms `attention`, whether the marker came from the
-draft rule or from explicit input. Existing unchanged entrypoints are not new;
-an unchanged existing `NeedsAuthoring` tag therefore does not change a verified
-no-op from `complete`. Planned changes alone do not form `attention`, and the
-resolver does not score health or semantic quality.
+exact `NeedsAuthoring` tag remains `completed` at exit 0. The
+`route-init.needs-authoring` finding is informational, contributes nothing to
+status or exit code, and renders as the advisory placeholder sentence; JSON
+sets `needsAuthoring: true`. Existing unchanged entrypoints are not new, and an
+unchanged existing `NeedsAuthoring` tag does not change a verified no-op.
+Planned changes alone do not form `completed-with-warnings`, and the resolver
+does not score health or semantic quality.
 
 ## Current Facts And Coverage
 
@@ -242,7 +250,7 @@ The complete current-fact set for one plan includes:
 
 - The selected workspace and the normalized target identity and canonical path.
 - The selected generic or Framework mode and, for Framework mode, exact embedded
-  inventory, canonical topology alignment, trusted root Install lifecycle, and
+  inventory, canonical topology alignment, actual installed root route, and
   source-asset provenance.
 - Every folder in the target chain and its canonical or recognized
   compatibility entrypoint state.
@@ -257,17 +265,14 @@ The complete current-fact set for one plan includes:
 - The expected current source and destination facts needed for collision,
   revalidation, application, and recovery.
 
-Framework-mode current facts include one canonical complete schema-v1 lifecycle
-envelope at `.agents/open-forge.lifecycle.json`. Its standard root keys are
-`schemaVersion`, `fingerprintPolicy`, `workspacePath`, `framework`, and
-`extensions`, in canonical order. An installation with no Extensions still has
-the complete empty section
-`{ coverage: "complete", packages: [], paths: [] }`. A missing, `null`,
-malformed, unsupported, or incomplete standard section is not assigned implicit
-meaning and produces no Route Init write; Update or Doctor owns repair. Route
-Init never creates the lifecycle document and publishes scoped Framework facts
-only after the common envelope and both standard sections are complete and
-trusted.
+Framework-mode ownership observation retains the exact lock snapshot for
+revalidation. Publication preserves unselected Framework receipts and the
+Extension and Library sections. A planned lock write follows verified target
+effects and uses the existing public state-file outcome. Identical ownership
+is preserved; an unavailable write is skipped with no publication claim. No-op
+observations do not invent ownership for files they did not create. Final
+verification checks actual target effects without treating an unrecorded receipt
+as a failed content write.
 
 Selection and projection do not treat current generated lines as an independent
 route inventory or metadata fallback. The complete [Index Behavior Contract](../../index-candidate/behavior.md)
@@ -307,7 +312,7 @@ The generated projection then includes, when applicable:
 - Existing direct routed children in a newly routable folder.
 
 Use the complete [Index Behavior Contract](../../index-candidate/behavior.md) projection for generated
-line shape, destination containment, ordering, marker ownership, and the
+line shape, destination containment, ordering, heading ownership, and the
 verification and recovery-disposition relationship. The route-init operation owns the
 complete intended topology and its combined result; it does not start a hidden
 public `index` command or perform a second independent projection.
@@ -315,21 +320,22 @@ public `index` command or perform a second independent projection.
 Classify the complete intended state as changed or unchanged from current bytes.
 An unchanged complete chain is a verified no-op with no mutation path. A changed
 chain produces one typed result after dry-run preflight, application and final
-verification, or retained partial-state reporting. The semantic conditions for `complete`, `attention`,
-`incomplete`, `invalid`, `blocked`, `failed`, and `interrupted` are exactly those
+verification, or retained partial-state reporting. The semantic conditions for `completed`, `completed-with-warnings`,
+`incomplete`, `invalid-input`, `blocked`, `failed`, and `cancelled` are exactly those
 in the [Interface Contract](interface.md#semantic-results); this Behavior
 Contract does not add another result or choose numeric exits. A complete plan
-with any new exact `NeedsAuthoring` tag forms `attention` for a safe preview or a
-completed and verified application. Post-verification recovery deletion
-`Failed`/positively observed `Retained` also forms `attention`;
+with any new exact `NeedsAuthoring` tag remains `completed` for a safe preview or a
+completed and verified application, carrying the informational finding and
+`needsAuthoring: true`. Post-verification recovery deletion
+`Failed`/positively observed `Retained` also forms `completed-with-warnings`;
 `Failed`/`Unknown` forms `failed`. A complete plan without that marker is
-`complete` when no other status
+`completed` when no other status
 condition applies. Existing unchanged marker content and planned changes alone
-do not change the no-op or successful result to `attention`; an unexpected
+do not change the no-op or successful result to `completed-with-warnings`; an unexpected
 application or verification failure remains `failed`.
 
-Aggregate status precedence is `failed`, `interrupted`, `invalid`, `blocked`,
-`incomplete`, `attention`, then `complete`. Invalid input still stops before
+Aggregate status precedence is `failed`, `cancelled`, `invalid-input`, `blocked`,
+`incomplete`, `completed-with-warnings`, then `completed`. Invalid input still stops before
 operation resolution; the complete precedence governs one formed result when
 several retained conditions coexist.
 
@@ -364,7 +370,7 @@ to directories in the intended route chain. A generic plan that starts without
 After acquiring the external workspace lease, the shared applier confirms the
 path is missing, creates and verifies it, and reports its actual residual state.
 Cancellation or lock contention before acquisition creates nothing. Framework
-mode requires an existing trusted Install state and therefore never creates an
+mode requires an existing safe Framework root and therefore never creates an
 absent `.agents` root.
 
 While holding the workspace lease, apply every explicitly planned missing
@@ -393,7 +399,7 @@ human and structured result exposes every new directory, new entrypoint,
 generated-navigation effect, and exact bounded existing-file change required for
 effect review without exposing unrelated authored bytes or private recovery
 material. It reports complete effects and diffs even when the semantic status is
-`attention`; planned changes alone do not form `attention`.
+`completed-with-warnings`; planned changes alone do not form `completed-with-warnings`.
 
 ### Application
 
@@ -415,11 +421,11 @@ and verifies the separate parent-first directory effects, beginning with missing
 bounded-region effects with their own immediate target revalidation. Bundle
 preparation completes before every workspace effect.
 
-After preflight, the same finite attention rule applies to both modes: a dry-run
-with any new entrypoint with exact `NeedsAuthoring` in its intended tags forms
-`attention`, and an application that creates and verifies such an entrypoint
-forms `attention`. Every new entrypoint with complete intended metadata and no
-exact marker remains `complete` when no other status condition applies.
+After preflight, the same placeholder rule applies to both modes: a dry-run or
+application that creates an entrypoint with exact `NeedsAuthoring` remains
+`completed` and carries the informational finding and `needsAuthoring: true`.
+Every new entrypoint with complete intended metadata and no exact marker also
+remains `completed` when no other status condition applies.
 
 ## Safety And Recovery
 
@@ -435,7 +441,7 @@ Environment.SpecialFolderOption.Create)` and its application-owned
 `incomplete` result. It prepares exactly one immutable ZIP bundle outside
 the workspace. An operation containing only
 Create effects or no-ops creates no bundle. Its source-generated
-schema-v1 `manifest.json` and streamed ordinal payload entries record
+versioned `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
 exact prior bytes/lengths/hashes, and intended final absence or length/hash.
 Directory-create effects, file Create effects, and no-ops have no recovery
@@ -473,9 +479,9 @@ reported as residual state.
 After final verification, delete only the positively recognized bundle created
 by this operation. `Deleted`/`Removed` permits normal completion.
 `Failed`/positively observed `Retained` keeps target effects successful and
-produces `attention`, the exact residual path, and
+produces `completed-with-warnings`, the exact residual path, and
 cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
-provides one. When `Failed`/positively observed `Retained` recovery attention
+provides one. When `Failed`/positively observed `Retained` recovery warning
 coexists with a new-entrypoint `NeedsAuthoring` condition, cleanup guidance owns
 the single next action; the
 `NeedsAuthoring` facts remain visible evidence. Before post-verification deletion
@@ -490,7 +496,7 @@ progress record. When the remaining state is safe, it converges on the intended
 route state and reports a verified no-op.
 
 An unexpected application or post-write verification failure remains `failed`.
-Caller cancellation or interruption is `interrupted` only when no stronger
+Caller cancellation or interruption is `cancelled` only when no stronger
 failure remains. An `incomplete` or `blocked` result never begins a write.
 
 Expected-state revalidation and preservation of unexpected concurrent edits are
@@ -518,18 +524,18 @@ next action once from that ordered finding set. It never broadens nullable
 coordinates, exposes unrelated lifecycle bytes, or reconstructs target
 operand-form provenance.
 
-The [Interface Contract](interface.md) owns the exact human examples, compact and
-expanded presentation requirements, structured facts, semantic statuses, error
-meaning, and stream allocation. Compact rendering retains workspace, selection
+The [Interface Contract](interface.md) owns the exact human examples, minimal-detail and
+full-detail presentation requirements, structured facts, semantic statuses, error
+meaning, and stream allocation. minimal-detail rendering retains workspace, selection
 method, and target identity when available, application or preview, status,
 completeness, safety, created and unchanged paths, generated-navigation effects,
 draft paths, and at most one required `Next:` line from this result. Structured
 rendering retains the same identity and at most one required `Next:` action.
-Verbose or structured presentation may expose bounded planning and preflight
+Debug or structured presentation may expose bounded planning and preflight
 evidence, but default human output does not expose successful internal stage
-names. Primary human complete, attention, and incomplete results use stdout;
-primary human invalid, blocked, failed, and interrupted results use stderr.
-`--json` emits one complete result to stdout for every status, bounded
+names. Primary human completed, completed-with-warnings, and incomplete results use stdout;
+primary human invalid-input, blocked, failed, and cancelled results use stderr.
+`--format json` emits one result to stdout for every status, bounded
 diagnostics use stderr, and human text is not mixed into JSON stdout.
 
 ## Conformance Evidence
@@ -550,13 +556,13 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
 - Scope-label casing, digits, Unicode letters, separator collapse, invalid
   punctuation and path separators, empty output, exact-path non-slugging, and
   post-conversion collision checks.
-- Trusted current root Install and embedded-inventory matching, sparse-chain-only
+- Actual installed-root safety and current embedded-source alignment, sparse-chain-only
   creation, exact managed asset bytes, draft user scope bytes,
   destination-local generated navigation, per-target `sourceAssetPath`, and no
-  Framework lifecycle claim for a scope entrypoint.
-- Canonical complete lifecycle root keys, complete empty Extensions, physical
-  target currentness, and rejection without writes for missing, `null`,
-  malformed, unsupported, or incomplete standard sections.
+  whole-file Framework claim for a scope entrypoint.
+- Forgiving lock reads, preserved unselected receipts, no adoption of existing
+  unowned files, skipped-write truth, and safe scoped creation with missing,
+  malformed, older, or unreadable ownership metadata.
 - Singleton rejection for repeated `--description` and `--responsibility`,
   including equal values; ordered repeated `--tag` values with exact duplicate,
   empty, and syntax validation; idempotent repeated Boolean write-policy flags;
@@ -583,10 +589,11 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
 - Dry-run and application parity for request, current facts, intended state,
   generated projection, ordered plan, preflight, and semantic status conditions;
   complete effects and exact bounded diffs in dry-run with no persistent effects.
-- Finite `attention` formation for draft ancestors, a draft final target,
-  automatically supplied or explicitly retained `NeedsAuthoring`, or
-  `Failed`/positively observed `Retained` recovery, and no attention from planned
-  changes alone or unchanged existing marker content.
+- Informational `NeedsAuthoring` handling for draft ancestors and a draft final
+  target, with `completed` at exit 0 and `needsAuthoring: true`, plus
+  `completed-with-warnings` for `Failed`/positively observed `Retained` recovery
+  only; planned changes alone or unchanged existing marker content do not form
+  `completed-with-warnings`.
 - Complete status when every new entrypoint has complete intended metadata and
   no exact `NeedsAuthoring` marker.
 - Verified no-op formation before recovery-bundle preparation.
@@ -608,16 +615,16 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
   rerun convergence.
 - Seven semantic results, including safe `incomplete` with no write, blocked
   unsafe or ambiguous authority or safety, `Failed`/positively observed
-  `Retained` recovery `attention`, and failed application,
+  `Retained` recovery `completed-with-warnings`, and failed application,
   post-write-verification, or `Failed`/`Unknown` recovery outcomes.
-- Compact retention of workspace and target identity, application or preview,
+- minimal-detail retention of workspace and target identity, application or preview,
   status, completeness, safety, created and unchanged paths, generated effects,
   draft paths, and at most one required `Next:` line.
 - Human stdout/stderr assignment, one complete JSON result on stdout for every
   status, bounded diagnostics on stderr, and no human text in JSON stdout, all
   from one typed result.
 
-The Interface defines the exact Route Init result graph. The [Shared Result
+The Interface defines the exact Route Init native data graph. The [Shared Result
 Coordinates](../../shared/result-coordinates/interface.md) define the shared
 envelope, JSON compatibility, and process-status mapping. The [CLI
 Architecture](../../../architecture.md) defines parser and concrete serialization,
@@ -625,7 +632,7 @@ filesystem identity, concurrency, and source boundaries; exact recovery-bundle
 identity mechanics live in the [Mutation And Recovery Technical
 Design](../../../technical-designs/mutation-and-recovery.md). Gate 5
 executable proof must cover those decisions without weakening the accepted
-repetition, status, stream, attention, dry-run, compact, safety, or recovery
+repetition, status, stream, completed-with-warnings, dry-run, minimal-detail, safety, or recovery
 requirements.
 
 ## Related Current Sources

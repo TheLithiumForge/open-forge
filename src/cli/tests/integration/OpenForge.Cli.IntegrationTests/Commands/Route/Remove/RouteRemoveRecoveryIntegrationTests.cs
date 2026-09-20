@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveRecoveryIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove dry-run does not create or alter an external recovery bundle"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task DryRunLeavesRecoveryBoundaryUntouched()
@@ -18,7 +19,7 @@ public sealed class RouteRemoveRecoveryIntegrationTests
         var error = new StringWriter();
 
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--dry-run", "--json"],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--dry-run", "--format", "json"],
             output,
             error);
 
@@ -26,15 +27,11 @@ public sealed class RouteRemoveRecoveryIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, completion.Status);
         Assert.Equal(string.Empty, error.ToString());
         using var document = JsonDocument.Parse(output.ToString());
-        Assert.Equal(
-            "not-created",
-            document.RootElement.GetProperty("result")
-                .GetProperty("recovery")
-                .GetProperty("state")
-                .GetString());
+        Assert.Equal(JsonValueKind.Null, document.RootElement.GetProperty("recovery").ValueKind);
         Assert.Equal(before, SnapshotRecovery(recoveryDirectory));
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove refuses a pre-existing recovery collision before any workspace effect"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task RecoveryCollisionBlocksBeforeApplication()
@@ -51,7 +48,7 @@ public sealed class RouteRemoveRecoveryIntegrationTests
         var error = new StringWriter();
 
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--automatic", "--detail", "full"],
             output,
             error);
 
@@ -66,6 +63,7 @@ public sealed class RouteRemoveRecoveryIntegrationTests
         Assert.True(File.Exists(candidate));
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove application reports an honest removed recovery state after verified effects"),
      Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
     public async Task ApplicationReportsRemovedRecoveryState()
@@ -75,7 +73,7 @@ public sealed class RouteRemoveRecoveryIntegrationTests
         var error = new StringWriter();
 
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--json"],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--automatic", "--format", "json"],
             output,
             error);
 
@@ -83,11 +81,11 @@ public sealed class RouteRemoveRecoveryIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, completion.Status);
         Assert.Equal(string.Empty, error.ToString());
         using var document = JsonDocument.Parse(output.ToString());
-        var result = document.RootElement.GetProperty("result");
-        Assert.Equal("removed", result.GetProperty("recovery").GetProperty("state").GetString());
-        Assert.Equal("verified", result.GetProperty("verification").GetString());
-        Assert.Empty(result.GetProperty("recovery").GetProperty("protectedPaths").EnumerateArray());
-        Assert.Equal(JsonValueKind.Null, result.GetProperty("recovery").GetProperty("residualPath").ValueKind);
+        var root = document.RootElement;
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("recovery").ValueKind);
+        Assert.Contains(
+            root.GetProperty("data").GetProperty("removed").EnumerateArray(),
+            path => path.GetString() == RouteRemoveIntegrationWorkspace.LeafPath);
     }
 
     private static IReadOnlyDictionary<string, string> SnapshotRecovery(string directory)

@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Sync;
 
 public sealed class LibrarySyncPreparationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Library Sync retains incomplete preparation when its owned recovery bucket is a file"), Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     public async Task RecoveryBucketFileRetainsIncompleteWithoutTargetEffects()
     {

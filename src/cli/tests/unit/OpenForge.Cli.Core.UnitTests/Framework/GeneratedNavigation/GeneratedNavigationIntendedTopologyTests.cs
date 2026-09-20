@@ -9,6 +9,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.GeneratedNavigation;
 
 public sealed class GeneratedNavigationIntendedTopologyTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Intended source move derives its replacement parent and retains the exact replacement reference")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void IntendedMoveReplacesPathAndTopology()
@@ -34,6 +35,7 @@ public sealed class GeneratedNavigationIntendedTopologyTests
         Assert.Same(moved.Identity, movedNode.Identity);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Intended Loader addition and removal change only Loader-root admission")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void IntendedLoaderControlsRootAdmission()
@@ -52,6 +54,7 @@ public sealed class GeneratedNavigationIntendedTopologyTests
         Assert.Same(root, removed.FindSource(root.Identity.CanonicalBasePath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Intended topology does not invent a missing intermediate entrypoint")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void IntendedMissingIntermediateStaysDetached()
@@ -71,6 +74,7 @@ public sealed class GeneratedNavigationIntendedTopologyTests
         Assert.Null(formation.Topology.ReadAbsoluteDepth(detached.Identity.CanonicalBasePath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Intended unobserved entrypoints type root and route-parent ambiguities without fabricated candidates")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void IntendedAmbiguitiesRetainExactSourcesWithoutObservedCandidates()

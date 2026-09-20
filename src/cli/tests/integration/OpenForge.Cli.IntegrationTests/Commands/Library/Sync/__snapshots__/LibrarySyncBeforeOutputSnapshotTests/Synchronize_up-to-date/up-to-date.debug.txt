@@ -1,0 +1,6 @@
+The team-knowledge Library is up to date. Nothing to do.
+Workspace: <workspace>
+  1 link unchanged
+  Inventory: 1 eligible file, 0 excluded items, 0 unavailable paths.
+  Verification: not started; record publication: not started.
+  Recovery: no recovery data was requested.

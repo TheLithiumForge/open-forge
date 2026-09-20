@@ -1,0 +1,39 @@
+Moved the route guidance/topics to .agents/archive/topics  (7 files)
+Workspace: <workspace>
+  .agents/guidance/topics/_topics.md -> .agents/archive/topics/_topics.md
+  .agents/guidance/topics/assets/settings.json -> .agents/archive/topics/assets/settings.json
+  .agents/guidance/topics/child.md -> .agents/archive/topics/child.md
+  .agents/guidance/topics/child.overwrite.md -> .agents/archive/topics/child.overwrite.md
+  .agents/guidance/topics/image.bin -> .agents/archive/topics/image.bin
+  .agents/guidance/topics/native/SKILL.md -> .agents/archive/topics/native/SKILL.md
+  .agents/guidance/topics/notes.md -> .agents/archive/topics/notes.md
+  Entry added to .agents/archive/_archive.md
+  Entry updated in .agents/archive/topics/_topics.md
+  Entry removed from .agents/guidance/_guidance.md
+  Rewrote 2 links that pointed at the old paths:
+  .agents/archive/topics/child.md:8:13  .agents/guidance/old guide.md -> .agents/guidance/old guide.md
+  .agents/archive/topics/child.overwrite.md:1:35  .agents/guidance/old guide.md -> .agents/guidance/old guide.md
+  Effects:
+  .agents/archive/topics: create directory / missing -> directory / verified
+  .agents/archive/topics/assets: create directory / missing -> directory / verified
+  .agents/archive/topics/native: create directory / missing -> directory / verified
+  .agents/archive/topics/_topics.md: create file / missing -> file:<sha256> / verified
+  .agents/archive/topics/assets/settings.json: create file / missing -> file:<sha256> / verified
+  .agents/archive/topics/child.md: create file / missing -> file:<sha256> / verified
+  .agents/archive/topics/child.overwrite.md: create file / missing -> file:<sha256> / verified
+  .agents/archive/topics/image.bin: create file / missing -> file:<sha256> / verified
+  .agents/archive/topics/native/SKILL.md: create file / missing -> file:<sha256> / verified
+  .agents/archive/topics/notes.md: create file / missing -> file:<sha256> / verified
+  .agents/archive/_archive.md: rewrite Entries section / file:<sha256> -> file:<sha256> / verified
+  .agents/guidance/_guidance.md: rewrite Entries section / file:<sha256> -> file:<sha256> / verified
+  .agents/guidance/topics/assets/settings.json: delete file / file:<sha256> -> missing / verified
+  .agents/guidance/topics/native/SKILL.md: delete file / file:<sha256> -> missing / verified
+  .agents/guidance/topics/_topics.md: delete file / file:<sha256> -> missing / verified
+  .agents/guidance/topics/child.md: delete file / file:<sha256> -> missing / verified
+  .agents/guidance/topics/child.overwrite.md: delete file / file:<sha256> -> missing / verified
+  .agents/guidance/topics/image.bin: delete file / file:<sha256> -> missing / verified
+  .agents/guidance/topics/notes.md: delete file / file:<sha256> -> missing / verified
+  .agents/guidance/topics/assets: delete directory / directory -> missing / verified
+  .agents/guidance/topics/native: delete directory / directory -> missing / verified
+  .agents/guidance/topics: delete directory / directory -> missing / verified
+  12 files scanned; 9 links found.

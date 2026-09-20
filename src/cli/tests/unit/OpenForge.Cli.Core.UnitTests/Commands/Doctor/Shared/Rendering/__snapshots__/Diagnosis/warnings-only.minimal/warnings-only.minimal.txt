@@ -1,0 +1,8 @@
+No errors. 2 warnings and 3 info findings were recorded.
+  Warning  .agents/directives/review.md:12:4  Broken link
+         The linked file was not found: ../guidance/testing.md.
+         open-forge repair
+  Warning  .agents/directives/second.md:12:4  Broken link
+         The linked file was not found: missing.md. No possible target was found.
+         Fix the link by hand.
+  To list the info findings: open-forge doctor --detail full

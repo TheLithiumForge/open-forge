@@ -1,0 +1,5 @@
+Cannot repair: Two --relink values name the link at .agents/docs/source.md:9:10 with different targets.
+Workspace: <workspace>
+  Error  .agents/docs/source.md  Contradictory --relink
+         Two --relink values name the link at .agents/docs/source.md:9:10 with different targets.
+1 error.

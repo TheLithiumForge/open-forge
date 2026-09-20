@@ -9,6 +9,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Routing;
 
 public sealed class SourceRouteFactsResolverIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral route facts resolve Loader roots and admitted entrypoint Markdown and Skill topology from real selected sources")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task FullRouteFactsUseOneSelectedRealWorkspace()
@@ -44,6 +45,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral route facts treat a missing Loader as complete empty-root evidence")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task MissingLoaderHasCompleteEmptyRootFacts()
@@ -64,6 +66,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
         Assert.Equal(SourceRouteState.Unrouted, Assert.Single(facts.RouteFacts).State);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral route facts retain unavailable identities when the selected Loader body is unreadable")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task UnreadableLoaderMakesUnprovedRoutesUnavailable()
@@ -101,6 +104,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
                 && fact.State == SourceRouteState.Unavailable);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral route facts retain earlier valid Loader destinations when a later declaration is malformed")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task MalformedLoaderRetainsEarlierSafeRoots()
@@ -128,6 +132,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
             path == ".agents/root/_root.md");
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral route facts detect duplicate canonical Loader roots after destination canonicalization")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task DuplicateLoaderRootsAreMalformedAfterCanonicalResolution()
@@ -153,6 +158,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
         Assert.Single(facts.Topology.LoaderRootPaths);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral route facts classify an unsafe Loader destination without widening physical containment")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task UnsafeLoaderDestinationIsTyped()
@@ -172,6 +178,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
         Assert.Empty(facts.Topology.LoaderRootPaths);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral route facts retain ambiguous authored parentage as an Ambiguous route state")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task AmbiguousEntrypointsProduceAmbiguousFacts()
@@ -210,6 +217,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
         Assert.Contains(facts.Issues, issue => issue.Code == SourceRouteIssueCode.RouteAmbiguous);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral route facts report an excluded Loader as LoaderUnavailable at its exact path")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task FilteredAllowlistReportsExcludedLoaderUnavailable()
@@ -239,6 +247,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
         Assert.All(facts.RouteFacts, fact => Assert.Equal(SourceRouteState.Unavailable, fact.State));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral route facts report an excluded Loader destination as RouteSupportUnavailable without widening the allowlist")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task FilteredAllowlistReportsExcludedRouteSupportUnavailable()
@@ -270,6 +279,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
         Assert.All(facts.RouteFacts, fact => Assert.Equal(SourceRouteState.Unavailable, fact.State));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral route facts retain identity uniqueness separately from structural routed state")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task IdentityCollisionDoesNotEraseStructuralRouteFact()
@@ -308,6 +318,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
         });
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral route facts sort a deterministic sequence of Loader and topology issues")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task RouteFactsIssueOrderingIsExplicitForMultipleIssues()
@@ -362,6 +373,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
             facts.Issues.Select(issue => $"{issue.Code}|{issue.CanonicalPath}"));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Neutral route facts retain a pre-cancelled outcome without reading or writing the workspace")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
     public async Task RouteFactsPreCancellationIsTerminal()

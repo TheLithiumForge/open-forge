@@ -1,0 +1,3 @@
+Registered the team-knowledge Library from shared/team-knowledge.
+  Created 1 link under docs
+  Saved a grant for docs to .agents/open-forge.json

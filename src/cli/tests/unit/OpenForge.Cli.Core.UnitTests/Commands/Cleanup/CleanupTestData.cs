@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Cleanup;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Planning;
-using OpenForge.Cli.Core.Commands.Cleanup.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Request;
 using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
+using OpenForge.Cli.Core.Commands.Shared;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
@@ -36,9 +36,8 @@ internal static class CleanupTestData
         return new CliInvocation(
             new CliProcessIdentity("open-forge", "test"),
             new CliPresentation(
-                CliOutputFormat.Human,
-                CliView.Expanded,
-                CliVerbosity.Normal),
+                CliFormat.Text,
+                CliDetail.Standard, null),
             CliTerminalMode.None,
             new CliWorkspaceRequest(null, selectedWorkspace.LexicalRoot),
             selectedWorkspace);
@@ -250,7 +249,7 @@ internal static class CleanupTestData
             safety = CleanupPlanSafety.NotEstablished;
         }
         else if (selectedCatalogue.Coverage == CleanupCatalogueCoverage.Complete
-            && entries.All(entry => entry.Eligibility == CleanupCandidateEligibility.Eligible))
+            && entries.All(IsSafeEntry))
         {
             safety = CleanupPlanSafety.Safe;
         }
@@ -270,6 +269,18 @@ internal static class CleanupTestData
             deletionEntries,
             safety);
     }
+
+    private static bool IsSafeEntry(CleanupPlanEntry entry)
+        => (entry.Eligibility == CleanupCandidateEligibility.Eligible
+                && entry.Action == CleanupPlanAction.Delete)
+            || (entry.Eligibility == CleanupCandidateEligibility.Blocked
+                && entry.Action == CleanupPlanAction.Preserve
+                && entry.Kind == RecoveryBundleCandidateKind.Final
+                && entry.Integrity == RecoveryBundleIntegrity.Malformed
+                && entry.FileKind == CleanupArtifactFileKind.Ordinary
+                && entry.Verification.State == CleanupVerificationConditionState.SemanticFinal
+                && entry.Verification.ExpectedFileKind == CleanupArtifactFileKind.Ordinary
+                && entry.Verification.ExpectedIntegrity == RecoveryBundleIntegrity.Malformed);
 
     internal static CleanupEffect Effect(
         CleanupPlanEntry entry,
@@ -376,196 +387,6 @@ internal static class CleanupTestData
             Workspace = workspace ?? selectedRequest.Workspace,
             Next = next,
             Facts = selectedFacts,
-        };
-    }
-
-    internal static CleanupJsonDocument JsonSample(
-        bool includeNext = true,
-        bool includeWorkspace = true,
-        bool includeProvenance = true)
-    {
-        const string workspacePath = "/tmp/open-forge-cleanup-json-workspace";
-        const string workspaceKey = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-        const string operationId = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-        var association = new CleanupJsonWorkspaceAssociation
-        {
-            State = "current-workspace",
-            SelectedPhysicalPath = workspacePath,
-            CandidatePhysicalPath = workspacePath,
-            SelectedWorkspaceKey = workspaceKey,
-            CandidateWorkspaceKey = workspaceKey,
-            Cause = null,
-        };
-        var leaseBoundary = new CleanupJsonLeaseBoundary
-        {
-            State = "required",
-            WorkspaceKey = workspaceKey,
-            Command = "cleanup",
-            OperationId = operationId,
-            Cause = null,
-        };
-        var verificationCondition = new CleanupJsonVerificationCondition
-        {
-            State = "semantic-final",
-            ExpectedPath = "/tmp/open-forge-cleanup-json-recovery/operation-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.zip",
-            ExpectedFileKind = "ordinary",
-            ExpectedIntegrity = "verified",
-            Cause = null,
-        };
-        var provenance = includeProvenance
-            ? new CleanupJsonRecoveryProvenance
-            {
-                Producer = "index",
-                Operation = "index",
-                Subject = new CleanupJsonRecoverySubject
-                {
-                    Kind = "workspace",
-                    Identity = workspaceKey,
-                },
-                Command = "index",
-                WorkspacePhysicalPath = workspacePath,
-                WorkspaceKey = workspaceKey,
-                OperationId = operationId,
-            }
-            : null;
-        var candidate = new CleanupJsonCandidate
-        {
-            Path = verificationCondition.ExpectedPath,
-            Kind = "final",
-            Integrity = "verified",
-            FileKind = "ordinary",
-            WorkspaceAssociation = association,
-            LeaseBoundary = leaseBoundary,
-            Provenance = provenance,
-            Verification = verificationCondition,
-            Eligibility = "eligible",
-            Action = "delete",
-            Cause = null,
-        };
-        var planEntry = new CleanupJsonPlanEntry
-        {
-            Ordinal = 0,
-            Path = candidate.Path,
-            Kind = candidate.Kind,
-            Integrity = candidate.Integrity,
-            FileKind = candidate.FileKind,
-            WorkspaceAssociation = association,
-            LeaseBoundary = leaseBoundary,
-            Provenance = provenance,
-            Verification = verificationCondition,
-            Eligibility = candidate.Eligibility,
-            Action = candidate.Action,
-            ResultEffect = new CleanupJsonEffectCondition
-            {
-                Outcome = "planned",
-                Residual = "none",
-            },
-            Cause = null,
-        };
-        var catalogue = new CleanupJsonCatalogue
-        {
-            Coverage = "complete",
-            Candidates = [candidate],
-        };
-        var result = new CleanupJsonResult
-        {
-            Mode = "dry-run",
-            Catalogue = catalogue,
-            Plan = new CleanupJsonPlan
-            {
-                Safety = "safe",
-                Entries = [planEntry],
-            },
-            Preflight = new CleanupJsonPreflight
-            {
-                State = "complete",
-                Cause = null,
-            },
-            Lease = new CleanupJsonLease
-            {
-                State = "not-requested",
-                Cause = null,
-            },
-            Revalidation = new CleanupJsonCatalogueComparison
-            {
-                State = "not-requested",
-                Planned = null,
-                Observed = null,
-                Cause = null,
-            },
-            Effects =
-            [
-                new CleanupJsonEffect
-                {
-                    Path = candidate.Path,
-                    Kind = candidate.Kind,
-                    Integrity = candidate.Integrity,
-                    FileKind = candidate.FileKind,
-                    WorkspaceAssociation = association,
-                    LeaseBoundary = leaseBoundary,
-                    Provenance = provenance,
-                    Verification = verificationCondition,
-                    Action = candidate.Action,
-                    Outcome = "planned",
-                    Residual = "none",
-                    Cause = null,
-                },
-            ],
-            Residuals =
-            [
-                new CleanupJsonResidual
-                {
-                    Path = candidate.Path,
-                    Kind = candidate.Kind,
-                    Integrity = candidate.Integrity,
-                    FileKind = candidate.FileKind,
-                    WorkspaceAssociation = association,
-                    LeaseBoundary = leaseBoundary,
-                    Provenance = provenance,
-                    Verification = verificationCondition,
-                    Action = candidate.Action,
-                    Outcome = "verification-failed",
-                    Residual = "retained",
-                    Cause = "The synthetic Cleanup residual remains observable.",
-                },
-            ],
-            Verification = new CleanupJsonVerification
-            {
-                State = "not-requested",
-                Cause = null,
-            },
-            Findings =
-            [
-                new CleanupJsonFinding
-                {
-                    Code = "cleanup.invalid-input",
-                    Status = "invalid",
-                    Subject = null,
-                    Cause = "The synthetic Cleanup finding is bounded.",
-                },
-            ],
-        };
-
-        return new CleanupJsonDocument
-        {
-            SchemaVersion = CleanupDefinitions.SchemaVersion,
-            Command = CleanupDefinitions.CommandIdentity,
-            Status = "invalid",
-            Workspace = includeWorkspace
-                ? new CleanupJsonWorkspace
-                {
-                    Path = workspacePath,
-                    SelectedBy = "explicit-workspace",
-                }
-                : null,
-            Result = result,
-            Next = includeNext
-                ? new CleanupJsonNext
-                {
-                    Command = CleanupDefinitions.CleanupCommandLine,
-                    Reason = "Rerun the same Cleanup request.",
-                }
-                : null,
         };
     }
 

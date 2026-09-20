@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Create;
 
 public sealed class RouteCreatePureBehaviorTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Create target planner resolves ordinary ID and exact path"), Trait("Feature", "route-create"), Trait("Evidence", "UnitBehavior")]
     public void TargetPlannerResolvesOrdinaryIdAndExactPath()
     {
@@ -40,6 +41,7 @@ public sealed class RouteCreatePureBehaviorTests
         }
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Create plan equivalence rejects a changed plan"), Trait("Feature", "route-create"), Trait("Evidence", "UnitBehavior")]
     public void PlanEquivalenceRejectsChangedPlan()
     {
@@ -52,6 +54,7 @@ public sealed class RouteCreatePureBehaviorTests
         Assert.False(RouteCreatePlanEquivalence.Matches(plan, changed));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Create application result factory preserves plan and progress facts"), Trait("Feature", "route-create"), Trait("Evidence", "UnitBehavior")]
     public void ApplicationResultFactoryPreservesPlanAndProgressFacts()
     {

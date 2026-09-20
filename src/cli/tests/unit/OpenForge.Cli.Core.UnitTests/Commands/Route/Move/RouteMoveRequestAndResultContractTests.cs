@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Move;
 
 public sealed class RouteMoveRequestAndResultContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Move request retains one exact source destination workspace and mode")]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
     public void RequestRetainsCompleteTypedInput()
@@ -18,6 +19,33 @@ public sealed class RouteMoveRequestAndResultContractTests
         Assert.Equal(RouteMoveTestData.Workspace(), request.Workspace);
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Route Move freezes the selected exact source without mutating the requested operand")]
+    [Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
+    public void RequestFreezesSelectedExactSource()
+    {
+        var request = new RouteMoveRequest(
+            RouteMoveTestData.Workspace(),
+            RouteMoveTestData.SourceId,
+            RouteMoveTestData.DestinationPath,
+            RouteMoveMode.Apply,
+            allowInteractiveSourceSelection: true);
+
+        var frozen = request.FreezeSource(RouteMoveTestData.SourcePath);
+
+        Assert.Equal(RouteMoveTestData.SourceId, request.SourceReference);
+        Assert.Null(request.FrozenSourceReference);
+        Assert.Equal(RouteMoveTestData.SourceId, request.ResolutionReference);
+        Assert.Equal(RouteMoveTestData.SourceId, frozen.SourceReference);
+        Assert.Equal(RouteMoveTestData.SourcePath, frozen.FrozenSourceReference);
+        Assert.Equal(RouteMoveTestData.SourcePath, frozen.ResolutionReference);
+        Assert.True(frozen.AllowInteractiveSourceSelection);
+        Assert.Same(request.Workspace, frozen.Workspace);
+        Assert.Equal(request.DestinationTarget, frozen.DestinationTarget);
+        Assert.Equal(request.Mode, frozen.Mode);
+    }
+
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Move request rejects absent and undefined required input")]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
     public void RequestRejectsInvalidRequiredInput()
@@ -41,6 +69,7 @@ public sealed class RouteMoveRequestAndResultContractTests
             (RouteMoveMode)int.MaxValue));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Route Move path state accepts only exact missing file and directory facts"),
         InlineData((int)RouteMovePathStateKind.Missing, null),
         InlineData((int)RouteMovePathStateKind.Directory, null),
@@ -54,6 +83,7 @@ public sealed class RouteMoveRequestAndResultContractTests
         Assert.Equal(fingerprint, state.ContentSha256);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Move result requires initialized ordered unique semantic collections")]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
     public void ResultRejectsDuplicateSemanticPaths()
@@ -69,6 +99,7 @@ public sealed class RouteMoveRequestAndResultContractTests
             next: null));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Move leaf subjects keep complete inventory out of category-only items")]
     [Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
     public void LeafSubjectCarriesLayersWithoutCategoryItems()

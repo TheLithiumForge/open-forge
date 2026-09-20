@@ -5,8 +5,8 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Install.Shared.Permi
 internal static class PermissionFixture
 {
     internal const string ExternalPath = ".apm/agents/team.md";
-    internal const string PermissionPath = ".agents/open-forge.permissions.json";
-    internal const string Grants = """{"schemaVersion":1,"extensions":[{"id":"team","paths":[".apm/agents/team.md"]}],"libraries":[]}""";
+    internal const string PermissionPath = ".agents/open-forge.json";
+    internal const string Grants = """{"allowInstallPaths":[".apm/agents/team.md"]}""";
 
     internal static TemporaryWorkspace CreatePackage(string target = ExternalPath)
     {

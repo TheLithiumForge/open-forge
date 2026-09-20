@@ -1,0 +1,9 @@
+Workspace: <workspace>
+  docs  Documents
+        .agents/docs/_docs.md   #Docs
+  Parent: none
+  Depth: absolute 0; relative 0
+  Kind: entrypoint; direct children: 2
+  Selected as: loader root
+  Overwrite: none
+1 route to depth 0. Deeper routes: open-forge route list --depth=all

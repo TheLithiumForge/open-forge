@@ -8,6 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Filesystem;
 
 public sealed class RouteListInventoryReaderBoundaryIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list inventory accepts a proven workspace-root alias without changing logical identity")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task ProvenWorkspaceRootAliasUsesCanonicalLogicalPaths()
@@ -39,6 +40,7 @@ public sealed class RouteListInventoryReaderBoundaryIntegrationTests
         Assert.Equal(before, temporary.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list inventory retains a bounded read cause for an exclusively locked source")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task LockedSourceRetainsInputOutputOrAccessCause()
@@ -68,6 +70,7 @@ public sealed class RouteListInventoryReaderBoundaryIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route-list inventory blocks an escaping .agents ancestor without outside traversal")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task EscapingAgentsAncestorBlocksBeforeDescendantReads()

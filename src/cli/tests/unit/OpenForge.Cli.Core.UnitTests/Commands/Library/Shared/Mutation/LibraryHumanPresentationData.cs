@@ -45,8 +45,8 @@ internal static class LibraryHumanPresentationData
     internal static LibraryPermissionView GrantedPermission()
         => LibraryPermissionView.NotEvaluated() with
         {
-            Required = [new("team-knowledge", "shared/team-knowledge", "docs/second.md")],
-            ApprovedScopes = [new("team-knowledge", "shared/team-knowledge", "directory", "docs")],
+            Required = ["docs/second.md"],
+            ApprovedScopes = [new("directory", "docs")],
             Decision = "granted",
         };
 
@@ -61,7 +61,7 @@ internal static class LibraryHumanPresentationData
         Assert.True(text.IndexOf("Application: interrupted", StringComparison.Ordinal) < text.IndexOf("Plan: complete", StringComparison.Ordinal));
         Assert.Contains("docs/first.md -> ../shared/first.md", text, StringComparison.Ordinal);
         Assert.Contains("docs/second.md -> ../shared/second.md", text, StringComparison.Ordinal);
-        Assert.Contains("Approved: directory docs; Library team-knowledge; source shared/team-knowledge", text, StringComparison.Ordinal);
+        Assert.Contains("Approved: directory docs", text, StringComparison.Ordinal);
         Assert.Equal(expanded, text.Contains("record-before-hash", StringComparison.Ordinal));
         Assert.DoesNotContain("Application: applied", text, StringComparison.Ordinal);
         Assert.DoesNotContain("verification verified", text, StringComparison.Ordinal);

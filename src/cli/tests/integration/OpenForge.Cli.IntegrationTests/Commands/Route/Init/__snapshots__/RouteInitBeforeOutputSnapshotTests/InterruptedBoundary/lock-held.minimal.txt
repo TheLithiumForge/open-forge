@@ -1,0 +1,4 @@
+Cannot initialize .agents/documents/_documents.md: Another Open Forge command holds the workspace lock. Nothing was changed.
+Workspace: <workspace>
+  Its description and tags are placeholders. Edit them before relying on this route.
+Next: open-forge route init

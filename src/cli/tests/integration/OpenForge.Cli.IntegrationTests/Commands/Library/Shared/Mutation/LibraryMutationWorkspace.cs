@@ -4,9 +4,12 @@ using OpenForge.Cli.Core.Commands.Library.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Request;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
-using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Permissions;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 
@@ -14,7 +17,8 @@ internal sealed class LibraryMutationWorkspace : IDisposable
 {
     internal const string Leaf = ".agents/directives/review.md";
     internal const string SourceRoot = "shared/team-knowledge";
-    internal const string RecordPath = ".agents/open-forge.libraries.json";
+    internal const string RecordPath = ".agents/open-forge.lock.json";
+    internal const string OwnershipPath = ".agents/open-forge.lock.json";
     internal const string SourceBytes = "# Review\n\nRetain source bytes exactly.\n";
     private readonly TemporaryWorkspace _workspace = TemporaryWorkspace.Create("library-mutation");
 
@@ -29,7 +33,8 @@ internal sealed class LibraryMutationWorkspace : IDisposable
     internal CliWorkspace Workspace => new(Path, Path, CliWorkspaceSelectionMethod.CurrentDirectory);
     internal void Write(string path, string text) => _workspace.WriteText(path, text);
     internal void Replace(string path, string text) => _workspace.ReplaceText(path, text);
-    internal void Source(string path = Leaf) => Write($"{SourceRoot}/{path}", SourceBytes);
+    internal void Source(string path = Leaf) => SourceAt(SourceRoot, path);
+    internal void SourceAt(string sourceRoot, string path) => Write($"{sourceRoot}/{path}", SourceBytes);
     internal void Directory(string path) => _workspace.CreateDirectory(path);
     internal void Link(string path = Leaf, string? rawTarget = null)
     {
@@ -44,10 +49,7 @@ internal sealed class LibraryMutationWorkspace : IDisposable
             # Loader
 
             ## Entries
-
-            <!-- open-forge:generated-index:start -->
             - [Directives](directives/_directives.md) - #Directive
-            <!-- open-forge:generated-index:end -->
             """);
         Write(".agents/directives/_directives.md", """
             ---
@@ -58,10 +60,7 @@ internal sealed class LibraryMutationWorkspace : IDisposable
             # Directives
 
             ## Entries
-
-            <!-- open-forge:generated-index:start -->
             - [Review](review.md) - #Directive
-            <!-- open-forge:generated-index:end -->
             """);
     }
 
@@ -81,30 +80,58 @@ internal sealed class LibraryMutationWorkspace : IDisposable
     internal void Record(params string[] paths) => RecordAt(".", paths);
 
     internal void RecordAt(string destinationRoot, params string[] paths)
+        => OwnershipAt(destinationRoot, paths);
+
+    internal void OwnershipAt(string destinationRoot, params string[] paths)
     {
-        var values = string.Join(",", paths.Order(StringComparer.Ordinal).Select(path => $"\"{path}\""));
-        Write(RecordPath, $$"""
-            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":"{{destinationRoot}}","paths":[{{values}}]}]}
-            """);
+        File.WriteAllBytes(_workspace.Combine(OwnershipPath), WorkspaceOwnershipCodec.Write(new WorkspaceOwnershipDocument(
+            WorkspaceOwnershipDefinitions.SchemaVersion,
+            Framework: null,
+            Extensions: [],
+            Libraries:
+            [
+                new LibraryOwnership(
+                    "team-knowledge",
+                    SourceRoot,
+                    destinationRoot,
+                    [.. paths.Order(StringComparer.Ordinal)]),
+            ])));
     }
 
     internal LibraryPermissionOperation Permissions { get; } = new(
-        new CliInteractiveSession(TextReader.Null, TextWriter.Null, canPrompt: false));
+        LibraryPermissionTestPrompt.Create(TextReader.Null, TextWriter.Null, canPrompt: false));
 
     internal LibraryAttachRequest Attach(LibraryMode mode = LibraryMode.DryRun)
+        => Attach("team-knowledge", SourceRoot, ".", mode);
+
+    internal LibraryAttachRequest Attach(
+        string libraryId,
+        string destinationRoot,
+        LibraryMode mode = LibraryMode.DryRun)
+        => Attach(libraryId, SourceRoot, destinationRoot, mode);
+
+    internal LibraryAttachRequest Attach(
+        string libraryId,
+        string sourceRoot,
+        string destinationRoot,
+        LibraryMode mode = LibraryMode.DryRun)
         => new()
         {
             Workspace = Workspace,
-            LibraryId = LibraryId.Create("team-knowledge"),
+            LibraryId = LibraryId.Create(libraryId),
             AllowPrompt = false,
-            SourceRoot = WorkspaceRelativeDirectory.Create(SourceRoot),
-            DestinationRoot = LibraryDestinationRoot.Create("."),
+            Automatic = mode == LibraryMode.Apply,
+            SourceRoot = WorkspaceRelativeDirectory.Create(sourceRoot),
+            DestinationRoot = LibraryDestinationRoot.Create(destinationRoot),
             Mode = mode,
         };
     internal LibrarySyncRequest Sync(LibraryMode mode = LibraryMode.DryRun)
-        => new() { Workspace = Workspace, LibraryId = LibraryId.Create("team-knowledge"), AllowPrompt = false, Mode = mode };
+        => new() { Workspace = Workspace, LibraryId = LibraryId.Create("team-knowledge"), AllowPrompt = false, Automatic = mode == LibraryMode.Apply, Mode = mode };
     internal LibraryDetachRequest Detach(LibraryMode mode = LibraryMode.DryRun)
-        => new() { Workspace = Workspace, LibraryId = LibraryId.Create("team-knowledge"), AllowPrompt = false, Mode = mode };
+        => Detach("team-knowledge", mode);
+
+    internal LibraryDetachRequest Detach(string libraryId, LibraryMode mode = LibraryMode.DryRun)
+        => new() { Workspace = Workspace, LibraryId = LibraryId.Create(libraryId), AllowPrompt = false, Automatic = mode == LibraryMode.Apply, Mode = mode };
 
     internal IReadOnlyDictionary<string, string> Snapshot()
     {
@@ -135,5 +162,20 @@ internal sealed class LibraryMutationWorkspace : IDisposable
         }
     }
 
-    public void Dispose() => _workspace.Dispose();
+    public void Dispose()
+    {
+        var ownershipPath = Absolute(OwnershipPath);
+        if (File.Exists(ownershipPath))
+        {
+            var attributes = File.GetAttributes(ownershipPath);
+            if ((attributes & (FileAttributes.Directory | FileAttributes.ReparsePoint | FileAttributes.Device)) != 0)
+            {
+                throw new InvalidOperationException("The Library ownership cleanup target is not an ordinary file.");
+            }
+
+            File.Delete(ownershipPath);
+        }
+
+        _workspace.Dispose();
+    }
 }

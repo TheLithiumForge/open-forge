@@ -17,8 +17,8 @@ second command contract and no command-local Technical Design file is needed for
 this operation. Implementation and executable evidence are tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md).
 
-The command does not ship yet. It is stateless, read-only, and non-shipping: a
-request may inspect the selected workspace, but it never changes authored files,
+The command is implemented in the merged native CLI. It is stateless and
+read-only: a request may inspect the selected workspace, but it never changes authored files,
 generated `Entries`, or other persistent state.
 
 ## Routing And Help
@@ -34,7 +34,5 @@ not part of route-list enumeration authority.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Technology-neutral behavior and conformance for deterministic routed-topology enumeration](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #List #Behavior #Topology #CurrentTruth
 - [Current public interface and observable result for read-only routed-topology enumeration](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #List #Interface #Topology #CurrentTruth
-<!-- open-forge:generated-index:end -->

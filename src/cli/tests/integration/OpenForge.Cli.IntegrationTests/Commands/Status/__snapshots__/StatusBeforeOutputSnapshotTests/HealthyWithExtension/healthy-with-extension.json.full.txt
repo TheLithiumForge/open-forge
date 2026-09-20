@@ -1,0 +1,443 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Open Forge is installed and current.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "routedFiles": 50,
+    "startupFiles": 11,
+    "startupTokens": 5980,
+    "mayLoadAgainFiles": 1,
+    "mayLoadAgainTokens": 371,
+    "allTokens": 22448,
+    "startupShare": 26.639344262295081967213114754,
+    "rootCategories": 7,
+    "entriesSectionsCurrent": 24,
+    "entriesSectionsStale": 0,
+    "entriesSectionsMissing": 0,
+    "frameworkFilesCurrent": 14,
+    "frameworkFilesChanged": 0,
+    "frameworkFilesMissing": 0,
+    "extensionsInstalled": 5,
+    "librariesRegistered": 0,
+    "libraryLinksCurrent": 0,
+    "libraryLinksMissing": 0,
+    "libraryLinksChanged": 0,
+    "recoveryBundles": 0,
+    "recoveryDrafts": 0
+  },
+  "limitations": [],
+  "data": {
+    "installation": {
+      "state": "installed",
+      "entryPath": "AGENTS.md",
+      "loaderPath": ".agents/loader.md"
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": 11,
+          "characters": 22704,
+          "bytes": 22704,
+          "tokens": 5676
+        },
+        "current": {
+          "files": 11,
+          "characters": 23920,
+          "bytes": 23920,
+          "tokens": 5980
+        },
+        "difference": {
+          "files": 0,
+          "characters": 1216,
+          "bytes": 1216,
+          "tokens": 304
+        },
+        "mayLoadAgain": {
+          "files": 1,
+          "characters": 1484,
+          "bytes": 1484,
+          "tokens": 371
+        }
+      },
+      "allRouted": {
+        "files": 50,
+        "characters": 89792,
+        "bytes": 89792,
+        "tokens": 22448
+      },
+      "startupShare": 26.639344262295081967213114754,
+      "mayLoadAgainSources": [
+        {
+          "sourceId": "memory/emerging",
+          "bytes": 1484,
+          "layers": [
+            {
+              "path": ".agents/memory/emerging/_emerging.md",
+              "bytes": 1484
+            }
+          ]
+        }
+      ]
+    },
+    "structure": {
+      "rootCategories": {
+        "count": 7,
+        "added": [],
+        "removed": []
+      }
+    },
+    "frameworkFiles": [
+      {
+        "path": ".agents/directives/_directives.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/loader.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "state": "current"
+      },
+      {
+        "path": "AGENTS.md",
+        "state": "current"
+      },
+      {
+        "path": "CLAUDE.md",
+        "state": "current"
+      }
+    ],
+    "entriesSections": [
+      {
+        "path": ".agents/directives/_directives.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/loader.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/crystallized/decisions/_decisions.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/crystallized/documents/_documents.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/emerging/analysis/_analysis.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/emerging/ideas/_ideas.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/working/checkpoints/_checkpoints.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/use-workflow/references/_references.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/use-workflow/references/development/_development.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/use-workflow/references/planning/_planning.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/use-workflow/references/project-documents/_project-documents.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/templates/documents/_documents.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/templates/planning/_planning.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/templates/workflows/_workflows.md",
+        "state": "current"
+      }
+    ],
+    "extensions": [
+      {
+        "id": "development",
+        "version": "0.3.0",
+        "files": [
+          {
+            "path": ".agents/skills/use-workflow/references/development/_development.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/skills/use-workflow/references/development/debugging.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/skills/use-workflow/references/development/development.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/skills/use-workflow/references/development/review.md",
+            "state": "current"
+          }
+        ]
+      },
+      {
+        "id": "development-toolkit",
+        "version": "0.3.0",
+        "files": []
+      },
+      {
+        "id": "planning",
+        "version": "0.3.0",
+        "files": [
+          {
+            "path": ".agents/memory/crystallized/decisions/_decisions.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/memory/emerging/analysis/_analysis.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/memory/emerging/ideas/_ideas.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/memory/working/checkpoints/_checkpoints.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/patterns/work-records.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/skills/use-workflow/references/planning/_planning.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/skills/use-workflow/references/planning/planning.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/planning/_planning.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/planning/analysis.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/planning/backlog.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/planning/checkpoint.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/planning/decision.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/planning/idea.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/planning/plan.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/planning/run-record.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/planning/scenario-collection.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/planning/scenario.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/planning/task.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/planning/user-flow.md",
+            "state": "current"
+          }
+        ]
+      },
+      {
+        "id": "project-documents",
+        "version": "0.3.0",
+        "files": [
+          {
+            "path": ".agents/memory/crystallized/documents/_documents.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/skills/use-workflow/references/project-documents/_project-documents.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/skills/use-workflow/references/project-documents/architecture.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/skills/use-workflow/references/project-documents/vision.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/documents/_documents.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/documents/architecture.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/documents/document.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/documents/maintenance-contract.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/documents/principles.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/documents/vision.md",
+            "state": "current"
+          }
+        ]
+      },
+      {
+        "id": "workflows",
+        "version": "0.3.0",
+        "files": [
+          {
+            "path": ".agents/skills/use-workflow/SKILL.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/skills/use-workflow/references/_references.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/workflows/_workflows.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/templates/workflows/workflow.md",
+            "state": "current"
+          }
+        ]
+      }
+    ],
+    "libraries": [],
+    "recovery": {
+      "candidates": []
+    }
+  },
+  "recovery": null,
+  "next": null
+}

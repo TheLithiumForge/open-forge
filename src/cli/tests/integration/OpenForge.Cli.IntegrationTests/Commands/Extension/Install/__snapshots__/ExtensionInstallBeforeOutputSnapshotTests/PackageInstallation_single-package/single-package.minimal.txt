@@ -1,0 +1,2 @@
+Installed the toolkit Extension.
+  Created 1 file under .agents

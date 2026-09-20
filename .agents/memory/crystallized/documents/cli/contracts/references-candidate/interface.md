@@ -87,8 +87,8 @@ read and whose incoming references are sought.
 | `--exclude=<source-reference>` | Exclude eligible incoming-scan sources                                | One shared source reference per occurrence    | Exclude nothing                  | Repeatable; shared filter contract forms the exclusion union and exclusion wins overlap |
 | global flags                   | Select workspace, presentation, diagnostics, or terminal help/version | The six values defined by the shared contract | Shared defaults                  | Shared repetition, terminal, and composition rules apply                                |
 
-The applicable global flags are `--workspace <path>`, `--json`,
-`--view=compact|expanded`, `--verbose`, `--help`, and `--version`. `--view`
+The applicable global flags are `--workspace <path>`, `--format json`,
+`--detail <minimal|standard|full|debug>`, `--detail debug`, `--help`, and `--version`. `--detail`
 selects detail in human and JSON presentation. `--help` and `--version` stop before reference
 inspection under the shared terminal-mode rules.
 
@@ -115,10 +115,10 @@ incomplete section.
 
 With both directions requested, the aggregate invocation is complete only when
 both requested sections are complete. An incomplete, blocked, failed, or
-interrupted requested section prevents a complete aggregate result even if the
+cancelled requested section prevents a complete aggregate result even if the
 other section has safe complete occurrences. If all requested coverage is
 complete but a safe non-blocking finding remains, the shared semantic result may
-be `attention`; a section cannot hide another section's status.
+be `completed-with-warnings`; a section cannot hide another section's status.
 
 An incoming section is complete only after its effective scan universe has been
 inspected completely. A complete incoming result with zero occurrences is valid
@@ -130,7 +130,7 @@ An outgoing section is complete when the selected logical source layers were
 inspected and every direct occurrence was recorded with the available resolution
 fact. An external HTTP or HTTPS occurrence remains an unchecked fact; the absence
 of network access alone does not make an otherwise complete outgoing section
-`attention` or `incomplete`.
+`completed-with-warnings` or `incomplete`.
 
 ## Source And Overwrite Resolution
 
@@ -156,7 +156,7 @@ create a second logical source or a second scan; the entrypoint is processed onc
 by physical identity. Gate 5 executable proof must preserve this regression.
 
 An orphan or ambiguous overwrite cannot become an independent source or target.
-It produces the applicable invalid, blocked, or incomplete evidence rather than
+It produces the applicable invalid-input, blocked, or incomplete evidence rather than
 being silently folded into an unrelated logical source.
 
 ## Incoming Source Universe
@@ -198,7 +198,7 @@ location is safely established outside a proven exclusion boundary and reports
 `references.generated-region-unavailable`. The affected section is `incomplete`
 when a safe no-suppression boundary and some occurrence evidence remain. It is
 `blocked` only when no safe exclusion boundary can be established. The operation
-does not select one marker pair by order, generated content, or likely intent.
+does not select one Entries section by order, generated content, or likely intent.
 
 This boundary is local to one physical layer. A valid region in one layer does
 not exclude authored links in another base or overwrite layer.
@@ -256,384 +256,174 @@ network: network-not-attempted
 
 The command never fetches, follows, resolves, or validates an external URL over
 the network. An otherwise complete outgoing read may therefore contain
-`external-unchecked` occurrences without an `attention` or `incomplete` result
+`external-unchecked` occurrences without an `completed-with-warnings` or `incomplete` result
 merely because no network request was attempted.
 
-## Human And Structured Output
+## Human Output
 
-The default human view is expanded. Both views identify the selected workspace,
-selection method, source and status, then report findings before occurrences.
-“Direct links” states the one-hop boundary. Only requested Incoming links and
-Outgoing links sections appear. Each section retains its own count, status and
-coverage; an incomplete empty section does not establish that no links exist.
-The renderer preserves every physical occurrence and its established order.
+The command uses the shared native report. The default detail is `minimal`; `standard`, `full` and `debug` add the catalogue-defined facts. `--detail-filter <error|warning|info|all>` is repeatable and changes only the rendered detail. Use `--format text` for this text report. Primary result text for `completed`, `completed-with-warnings` and `incomplete` is on stdout; primary errors for `invalid-input`, `blocked`, `failed` and `cancelled` are on stderr. There is no `Status:` line.
 
-### Compact View
+### Statuses and headlines
 
-Compact uses short source-to-target rows. It keeps exact source ID, path and
-line/column, target identity when established, authored destination, resolution,
-and source layer. External URLs remain explicitly unchecked over the network.
-Findings retain status, code, cause, subject, available coordinates and candidates.
-The actual operation Next command appears once when present.
+| Status                  | When                                                                           | Headline                                                                                               | Exit | Stream |
+| ----------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ---: | ------ |
+| completed               | links exist                                                                    | `<path>` then rows                                                                                     |    0 | stdout |
+| completed               | none                                                                           | `<path> has no authored links in or out. Entries links are not counted.` (direction-specific variants) |    0 | stdout |
+| completed-with-warnings | a broken, malformed or unsupported outgoing link                               | `<path>` then rows with their state, then warning rows                                                 |    2 | stdout |
+| incomplete              | a scanned file could not be read, or an Entries section could not be separated | rows plus warning rows; `standard` adds `The scan is incomplete.`                                      |    3 | stdout |
+| invalid-input           | unknown source, bad direction, filters with out-only                           | `Cannot list references: <problem>.`                                                                   |    4 | stderr |
+| blocked                 | ambiguous or unsafe source, selector or target                                 | `Cannot list references: <reason>.`                                                                    |    5 | stderr |
+| failed                  | unexpected error                                                               | `References stopped because of an unexpected error: <reason>.`                                         |    1 | stderr |
+| cancelled               | Ctrl+C                                                                         | `References was cancelled.`                                                                            |  130 | stderr |
 
-Illustrative excerpt:
+### Text by level
 
-```text
-Direct links for directives/review
-Status: complete
-Workspace: /work/demo
-Selected by: current directory
-Source: .agents/directives/review.md
-Direction: out
-Outgoing links: 1; coverage complete; status complete
-  directives/review  .agents/directives/review.md:7:3 -> https://example.com/review
-    Resolution: external URL; not checked over the network; source: base file
-```
-
-### Expanded View
-
-Expanded gives each occurrence a readable source block, followed by its target
-and authored destination. It retains fragment, destination line/column, target
-ID and layer when established, and the actual origin of the scan in plain words.
-Byte offsets and lengths remain in JSON. Fields without applicable local target
-identity do not appear for external URLs. Incoming selection shows supplied
-filters and inspected source layers. The existing Next reason accompanies its
-command. No renderer chooses a candidate or suggests an unsupported repair.
-
-Illustrative occurrence excerpt:
+`minimal`, links:
 
 ```text
-  .agents/workflows/release.md:18:4
-    Source ID: workflows/release
-    Links to: .agents/directives/review.md
-    Target ID: directives/review
-    Written as: ../directives/review.md
-    Resolution: target found; source: base file
-    Found by: default incoming scan
+.agents/memory/_memory.md
+  in   .agents/loader.md:104:3
+  in   .agents/maps/_maps.md:12:3
+  out  :52:3   archived/_archived.md
+  out  :53:3   crystallized/_crystallized.md
+  out  :60:1   https://example.org/guide   not checked
+  out  :61:3   ../old.md   missing
 ```
 
-`--verbose` retains its separate bounded diagnostic meaning. View selection
-changes no occurrence, scan boundary, order, coverage, status or exit code.
+`in` rows name where the link is written. `out` rows give the location inside
+the source and the destination as written, followed by a state word only when
+the link is not fine: `missing`, `heading not found`, `not checked`
+(external), `not followed` (unsupported kind).
 
-### JSON
-
-`--json` emits one complete structured result derived from the same typed result.
-It retains the source identity, requested direction, effective filter selectors,
-per-section coverage and status, inspected-source evidence for incoming work, and
-every typed occurrence with direction, direct level `1`, locations, raw
-destination, resolution, target kind, layer, and provenance. A filtered-out
-direction is absent, not represented as complete.
-JSON view selection follows the compact and expanded projections defined here.
-
-### Exact Schema-v1 Command-Local Result
-
-The [Shared Result Coordinates](../shared/result-coordinates/interface.md)
-schema-v1 envelope wraps this command-local `result` object.
-The envelope is exactly the shared `{ schemaVersion, command, status, workspace,
-result, next }` shape; its `status` is the aggregate semantic result and is not
-duplicated here. The shared `SourceLocation` primitive is the same authority's
-exact `{ line, column, byteOffset, byteLength }` shape. The following grammar
-defines every command-local member in wire order. No member is omitted.
+`minimal`, none:
 
 ```text
-type ReferencesResult = {
-  source: Source | null;
-  requestedDirection: "in" | "out" | "both" | null;
-  incomingSelection: IncomingSelection | null;
-  incoming: ReferenceSection | null;
-  outgoing: ReferenceSection | null;
-  findings: Finding[];
-};
-
-type Source = {
-  id: string;
-  path: string;
-  layers: SourceLayer[];
-};
-
-type SourceIdentity = {
-  id: string;
-  path: string;
-};
-
-type SourceLayer = "base" | "overwrite";
-
-type SelectorOccurrence = {
-  role: "include" | "exclude";
-  value: string;
-};
-
-type IncomingSelection = {
-  mode: "default" | "filtered";
-  supplied: SelectorOccurrence[];
-  resolved: SelectorResolution[];
-  effectiveSources: SourceIdentity[];
-  inspectedSources: SourceLayerEvidence[];
-};
-
-type SelectorResolution = {
-  role: "include" | "exclude";
-  occurrence: positive-integer;
-  supplied: string;
-  form: "source-id" | "source-path";
-  resolution: "resolved" | "invalid" | "unknown" | "ambiguous" | "unsupported" | "unsafe";
-  source: SourceIdentity | null;
-  expansion: "source" | "folder" | null;
-  candidates: SourceIdentity[];
-};
-
-type SourceLayerEvidence = {
-  source: SourceIdentity;
-  layer: SourceLayer;
-  path: string;
-};
-
-type ReferenceSection = {
-  coverage: "complete" | "incomplete" | "blocked";
-  status: SharedStatus;
-  occurrenceCount: nonnegative-integer;
-  occurrences: Occurrence[];
-};
-
-type Occurrence = {
-  direction: "in" | "out";
-  level: 1;
-  source: {
-    id: string | null;
-    path: string;
-    layer: SourceLayer;
-  };
-  location: SourceLocation;
-  destinationLocation: SourceLocation | null;
-  rawDestination: string;
-  fragment: string | null;
-  target: {
-    kind: "local" | "external" | "unsupported";
-    id: string | null;
-    path: string | null;
-    layer: SourceLayer | null;
-    resolution: "complete" | "missing" | "fragment-missing" | "malformed" | "absolute" | "query" | "encoding-unsupported" | "outside-workspace" | "physical-escape" | "ambiguous" | "unreadable" | "unsupported" | "external-unchecked";
-    network: "network-not-attempted" | null;
-  };
-  provenance: "selected-source" | "default-incoming-scan" | "filtered-incoming-scan";
-};
-
-type Finding = {
-  code: ReferencesFindingCode;
-  status: SharedStatus;
-  direction: "in" | "out" | null;
-  subject: string | null;
-  cause: string;
-  selectorRole: "include" | "exclude" | null;
-  selectorOccurrence: positive-integer | null;
-  source: SourceIdentity | null;
-  layer: SourceLayer | null;
-  path: string | null;
-  location: SourceLocation | null;
-  destinationLocation: SourceLocation | null;
-  candidates: SourceIdentity[];
-};
-
-type SharedStatus =
-  "complete" | "attention" | "incomplete" | "invalid" | "blocked" | "failed" | "interrupted";
+.agents/patterns/_patterns.md has no authored links in or out. Entries links are not counted.
 ```
 
-`source` is `null` only when invalid, ambiguous, or unsafe input prevents the
-operation from establishing one selected logical source. The corresponding
-finding retains the supplied operand, cause, and candidates when applicable. For
-an established source, `source.path` is its canonical base path. `layers` is
-always present in physical order and contains `base`, followed by `overwrite`
-when a valid overwrite companion exists. `SourceIdentity.path` has the same
-logical-source meaning. `SourceLayerEvidence.path` and an occurrence source
-`path` are physical layer paths.
+`standard` adds `Workspace:`, the resolved path after each `out` destination
+(`-> .agents/memory/archived/_archived.md`), the counts sentence (`2 in, 4
+out`), and the filters used for the incoming scan.
 
-`requestedDirection` is `null` only when invalid direction input prevents the
-operation from establishing one effective direction. Omission establishes
-`both`. `incomingSelection` is `null` when incoming work is not requested or no
-effective direction was established. Otherwise it is always present. `mode` is
-`default` only when neither filter flag occurs and `filtered` otherwise.
-`supplied` preserves every include and exclude occurrence in global command-line
-order, including duplicates. `resolved` uses that same order; `occurrence` is
-1-based within its role. `form` is classified from the shared source-reference
-spelling even when resolution fails. `candidates` is always present and is empty
-except when ambiguity evidence supplies candidates. `effectiveSources` is a
-deduplicated logical-source set. `inspectedSources` contains one physical-layer
-record for each effective layer whose inspection was established; an unavailable
-layer is represented by its finding instead.
+`full` adds the sources that were scanned for incoming links and the layer
+of each occurrence.
 
-The `incoming` and `outgoing` members are `null` when their direction is not
-requested or invalid input prevents an effective direction from being
-established. Once an effective direction is established, each requested section
-is present even when source or scan resolution blocks it before occurrence
-inspection. A present section uses only the three declared coverage values:
-`complete`, `incomplete`, or `blocked`. `status` uses the shared seven-status
-set, so a section may have `coverage=complete` and `status=attention`. A section
-is never represented as `not-started`. `occurrenceCount` equals the length of
-`occurrences`, including duplicates.
+### Representative transcripts by status
 
-`location` is the exact authored link-use span. It is never omitted from an
-occurrence. For a reference-style link, `destinationLocation` is the separate
-exact span of the destination definition when available, not the link-use span.
-For an inline or explicit autolink, it is the exact destination span when the
-fixed parser exposes one, otherwise `null`. A finding explains an otherwise
-applicable location that could not be established. `rawDestination` preserves
-the authored destination text, including spaces, Unicode, duplicate spelling,
-and fragment text. `fragment` is `null` when no fragment is authored and otherwise
-preserves the authored fragment text without the separating `#`.
+### Transcript — completed
 
-For a local target, `path` is the safe canonical workspace-relative target path
-when established, including a missing contained path. `id` is non-null only for
-an existing unambiguous `.agents` source. A contained target outside `.agents`
-therefore has a null ID and its canonical workspace-relative path. `layer` is
-non-null only when an existing physical base or overwrite target is identified.
-External and unsupported targets have null local identity, path, and layer.
-`network` is `network-not-attempted` only for HTTP or HTTPS
-`external-unchecked` targets and is otherwise `null`.
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#references-candidate-completed).
 
-`provenance` is `selected-source` for outgoing occurrences, and is
-`default-incoming-scan` or `filtered-incoming-scan` according to the incoming
-selection mode. Incoming occurrences include only direct local occurrences that
-resolve to the selected logical source. Findings can additionally preserve safe
-nonmatching malformed, unsupported, unreadable, or boundary evidence from the
-incoming scan without turning it into an incoming occurrence.
+### Transcript — completed-with-warnings
 
-Finding `cause` is always present, and `subject`, selector coordinates, source
-coordinates, locations, and `candidates` are present as typed nullable or array
-members even when they do not apply. `direction` identifies the affected section
-when one exists. `candidates` is always present. The command never emits an
-`external-unchecked` finding: that value is an occurrence resolution, not a
-finding.
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#references-candidate-completed-with-warnings).
 
-There is no graph, transitive-depth, diagnosis, repair, network-checking,
-content-loading, persistent-index, result-cap, or minimal output mode.
+### Transcript — incomplete
 
-## Results And Errors
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#references-candidate-incomplete).
 
-The command uses the shared semantic result and error meanings:
+### Transcript — invalid-input
 
-| Result        | Meaning for `references`                                                                                                                        |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | Every requested section completed its declared direct read or effective incoming scan with no unresolved finding that changes the result        |
-| `attention`   | Requested coverage is complete but a safe non-blocking authored-form or identity finding remains; external no-fetch alone is not such a finding |
-| `incomplete`  | Safe occurrences are available, but requested scan, layer inspection, or local-resolution coverage could not be completed                       |
-| `invalid`     | The source, direction grammar, repetition, filter composition, or other command input is invalid                                                |
-| `blocked`     | An unsafe path, ambiguous identity/target, or unsafe scan boundary prevents safe completion                                                     |
-| `failed`      | An unexpected failure prevented normal completion                                                                                               |
-| `interrupted` | The caller cancelled or interrupted the operation before completion                                                                             |
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#references-candidate-invalid-input).
 
-The aggregate result accounts only for requested directions. With both requested,
-both sections must be complete for aggregate `complete`; a filtered-out direction
-is never counted. Broken, unsupported, unsafe, or ambiguous occurrences remain
-visible when safe to report, with the section and aggregate status explaining
-whether they are attention, incomplete, or blocked.
+### Transcript — blocked
 
-### Finding Codes, Status, And Result Effect
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#references-candidate-blocked).
 
-References has exactly the following finite finding vocabulary. The table order
-is also the primary finding order. A conditional status is part of the mapping,
-not an implementation choice.
+### Transcript — failed
 
-| Finding code                              | Status                                                            | Result effect                                                                                                                         |
-| ----------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `references.invalid-input`                | `invalid`                                                         | The request cannot be interpreted; no result may claim valid domain coverage.                                                         |
-| `references.invalid-source`               | `invalid`                                                         | The required source operand is missing, unknown, or unsupported under the shared source-reference rules.                              |
-| `references.invalid-direction`            | `invalid`                                                         | The direction value or repetition is invalid.                                                                                         |
-| `references.invalid-filter`               | `invalid`                                                         | Include/exclude grammar, applicability, or a selector value is invalid.                                                               |
-| `references.workspace-unavailable`        | `blocked`                                                         | The selected workspace cannot be established safely.                                                                                  |
-| `references.workspace-unsafe`             | `blocked`                                                         | The selected workspace boundary is unsafe.                                                                                            |
-| `references.source-ambiguous`             | `blocked`                                                         | The required source identity has unresolved candidates.                                                                               |
-| `references.source-unsafe`                | `blocked`                                                         | The required source identity or layer boundary is unsafe.                                                                             |
-| `references.selector-ambiguous`           | `blocked`                                                         | A filter selector has unresolved candidates and cannot form a safe effective universe.                                                |
-| `references.selector-unsafe`              | `blocked`                                                         | A filter selector crosses or cannot establish its safe physical boundary.                                                             |
-| `references.identity-collision`           | `attention`                                                       | Exact physical evidence remains usable, but an established source-identity collision prevents an unqualified complete identity claim. |
-| `references.candidate-unsafe`             | `incomplete`                                                      | A candidate boundary cannot be safely inspected while other safe scan evidence remains available.                                     |
-| `references.layer-unresolved`             | `incomplete`                                                      | A base/overwrite relationship cannot be established for a candidate layer.                                                            |
-| `references.inspection-unavailable`       | `incomplete`                                                      | A required source read, enumeration, parser span, or other direct inspection fact is unavailable while a safe boundary remains.       |
-| `references.invalid-encoding`             | `incomplete`                                                      | Encoding prevents safe destination or source-location identity; the affected fact remains unresolved.                                 |
-| `references.generated-region-unavailable` | `incomplete`, or `blocked` when no safe exclusion boundary exists | Generated `Entries` cannot be safely excluded as one valid region. Links are not silently suppressed.                                 |
-| `references.destination-malformed`        | `attention`                                                       | A complete authored occurrence remains visible with resolution `malformed`, `absolute`, or `query`; no target is invented.            |
-| `references.destination-unsupported`      | `attention`                                                       | A complete authored occurrence remains visible with target kind and resolution `unsupported`; it is not resolved or followed.         |
-| `references.target-missing`               | `attention`                                                       | A safely established local target path is absent; the occurrence remains visible with resolution `missing`.                           |
-| `references.fragment-missing`             | `attention`                                                       | The target exists but the authored fragment is absent; the occurrence remains visible with resolution `fragment-missing`.             |
-| `references.target-unsafe`                | `blocked`                                                         | Target containment or physical identity is unsafe; no unsafe target is selected.                                                      |
-| `references.target-ambiguous`             | `blocked`                                                         | More than one target identity remains possible; no target is selected.                                                                |
-| `references.target-unreadable`            | `incomplete`                                                      | Target-read evidence required for local resolution is unavailable; the safe occurrence remains visible when possible.                 |
-| `references.operation-failed`             | `failed`                                                          | An unexpected operation failure stops normal completion and retains only established safe evidence.                                   |
-| `references.interrupted`                  | `interrupted`                                                     | Caller interruption stops the operation; partial evidence never becomes complete.                                                     |
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#references-candidate-failed).
 
-Invalid findings set the aggregate status to `invalid`. Blocked findings set it
-to `blocked`. Incomplete findings set it to `incomplete` when no higher status
-applies. Attention findings leave coverage complete but set the affected section
-and aggregate to `attention` when no invalid, blocked, incomplete, failed, or
-interrupted status applies. The event findings retain `failed` and `interrupted`
-exactly. A malformed generated region is therefore `incomplete` when safely
-bounded evidence remains and `blocked` only when no safe exclusion boundary can
-be established. HTTP/HTTPS no-fetch produces no finding.
+### Transcript — cancelled
 
-Findings sort first by this table's code order. Within one code, request-level
-facts precede selection facts, then incoming before outgoing section facts; source
-identity, canonical physical path, base before overwrite, authored location, and
-destination location provide ordinal tie-breaks. Selector findings use include
-before exclude and then the 1-based occurrence. Event findings follow all
-non-event findings. This order is independent of filesystem, parser, discovery,
-or exception order.
+[Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#references-candidate-cancelled).
 
-### Exact Next Actions
+## Structured Output
 
-The shared envelope's `next` member uses the following command-local contents.
-At most one action is emitted. The first applicable row in this table wins after
-the aggregate status and ordered findings are fixed.
+`--format json` writes one schema-3 envelope to stdout for every report status. It contains the command, status, workspace when applicable, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
 
-| Condition                                                                                                    | `next.command`                    | `next.reason`                                                                                                        |
-| ------------------------------------------------------------------------------------------------------------ | --------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `complete`                                                                                                   | `null`                            | `null`                                                                                                               |
-| `invalid`                                                                                                    | `open-forge references --help`    | `Correct the named References input, then rerun the request.`                                                        |
-| `blocked` with `references.source-ambiguous` or `references.selector-ambiguous` as the first blocked finding | `open-forge references`           | `Replace the ambiguous source or selector with one listed exact path, then rerun the request.`                       |
-| Other `blocked`                                                                                              | `open-forge doctor`               | `Inspect the blocked workspace, source, selector, generated-region, or target boundary before rerunning References.` |
-| `incomplete`                                                                                                 | `open-forge doctor`               | `Inspect the unavailable source, generated-region, or target facts before relying on this References result.`        |
-| `attention`                                                                                                  | `open-forge doctor`               | `Inspect the reported reference or identity findings before relying on this References result.`                      |
-| `failed`                                                                                                     | `open-forge references --verbose` | `Report the failure and retry the same References request with bounded diagnostics.`                                 |
-| `interrupted`                                                                                                | `open-forge references`           | `Rerun the same References request.`                                                                                 |
+### JSON data by level
 
-The JSON `next` object contains those exact strings. Human compact and expanded
-results use the same action as their optional `Next:` line. A renderer does not
-choose or rewrite the action.
+| Level    | `data`                                                                                                                               |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| minimal  | `{ source { id, path }, direction, incoming: [ { path, location } ], outgoing: [ { location, destination, resolvedPath, state } ] }` |
+| standard | + `coverage { incoming, outgoing }`, `filters { include, exclude }`                                                                  |
+| full     | + `scanned: [ { id, path, layer } ]`, per occurrence `layer`                                                                         |
 
-Every human error names the operation, affected source, direction, filter, or
-occurrence when known, the direct cause, and a useful next action. JSON preserves
-the same semantic status and complete safe evidence in one structured result.
+## Semantic Results
 
-## Complete Examples
+The status and exit mapping above are unchanged by detail or format. Root effects and recovery receipts retain their complete result facts at every detail level; command-owned data follows the catalogue's level rows.
 
-Report both direct directions for one source:
+### Counts and limitations
 
-```text
-open-forge references memory
-```
+`incoming`, `outgoing`, `sourcesScanned`.
 
-Report only incoming references after applying the shared source-universe
-filters:
+### Next rules
 
-```text
-open-forge references memory \
-  --direction=in \
-  --include=directives \
-  --include=memory/working \
-  --exclude=memory/working/checkpoints
-```
+Broken links -> `open-forge doctor`; invalid source -> the route list;
+otherwise none.
 
-Report outgoing references, including unchecked external URL facts. Filters are
-not valid in this mode:
+## Errors And Boundaries
 
-```text
-open-forge references .agents/loader.md --direction=out
-```
+The findings catalogue below is the command's finite error and warning vocabulary. Findings keep their code, severity, family, subject and cause; detail filtering affects display only. A blocked, failed or cancelled result prevents further effects according to the catalogue.
 
-Request the complete expanded typed result:
+### Findings catalogue
 
-```text
-open-forge references memory --direction=both --json --view=expanded
-```
+| Code                                    | Severity | Family                | Message                                                                                                                                | Next                                |
+| --------------------------------------- | -------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| references.invalid-input                | error    | invalid-input         |                                                                                                                                        |                                     |
+| references.invalid-source               | error    | unknown-source        | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/References/Shared/Wording/ReferencesWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`references.invalid-source`).                                                                         | `open-forge route list --depth=all` |
+| references.invalid-direction            | error    | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/References/Shared/Wording/ReferencesWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`references.invalid-direction`).                                                                                                | none                                |
+| references.invalid-filter               | error    | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/References/Shared/Wording/ReferencesWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`references.invalid-filter`). | none                                |
+| references.workspace-unavailable        | error    | workspace-unavailable |                                                                                                                                        |                                     |
+| references.workspace-unsafe             | error    | workspace-unsafe      |                                                                                                                                        |                                     |
+| references.source-ambiguous             | error    | source-ambiguous      |                                                                                                                                        |                                     |
+| references.source-unsafe                | error    | source-unsafe         |                                                                                                                                        |                                     |
+| references.selector-ambiguous           | error    | selector-ambiguous    |                                                                                                                                        |                                     |
+| references.selector-unsafe              | error    | selector-unsafe       |                                                                                                                                        |                                     |
+| references.identity-collision           | warning  | identity-collision    |                                                                                                                                        |                                     |
+| references.candidate-unsafe             | warning  | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/References/Shared/Wording/ReferencesWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`references.candidate-unsafe`).                                            | `open-forge doctor`                 |
+| references.layer-unresolved             | warning  | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/References/Shared/Wording/ReferencesWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`references.layer-unresolved`).                                                                            | `open-forge doctor`                 |
+| references.inspection-unavailable       | warning  | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/References/Shared/Wording/ReferencesWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`references.inspection-unavailable`).                                                                                        | `open-forge doctor`                 |
+| references.invalid-encoding             | warning  | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/References/Shared/Wording/ReferencesWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`references.invalid-encoding`).                                                                                    | fix by hand                         |
+| references.link-encoding-invalid        | warning  | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/References/Shared/Wording/ReferencesWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`references.link-encoding-invalid`).                                               | `open-forge doctor`                 |
+| references.generated-region-unavailable | warning  | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/References/Shared/Wording/ReferencesWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`references.generated-region-unavailable`).                     | `open-forge doctor`                 |
+| references.destination-malformed        | warning  | local                 | row state `not a resolvable link`                                                                                                      | fix by hand                         |
+| references.destination-unsupported      | warning  | local                 | row state `not followed`                                                                                                               | none                                |
+| references.target-missing               | warning  | local                 | row state `missing`                                                                                                                    | `open-forge doctor`                 |
+| references.fragment-missing             | warning  | local                 | row state `heading not found`                                                                                                          | `open-forge doctor`                 |
+| references.target-unsafe                | error    | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/References/Shared/Wording/ReferencesWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`references.target-unsafe`).                                                                                 | fix by hand                         |
+| references.target-ambiguous             | error    | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/References/Shared/Wording/ReferencesWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`references.target-ambiguous`).                                                                            | fix by hand                         |
+| references.target-unreadable            | warning  | local                 | row state `target could not be read`                                                                                                   | none                                |
+| references.operation-failed             | error    | operation-failed      |                                                                                                                                        |                                     |
+| references.interrupted                  | error    | cancelled             |                                                                                                                                        |                                     |
+
+Row-state findings are rendered inline on the `out` row at `minimal` and as
+finding rows only at `full`, so the same fact is not printed twice.
+
+## Scenarios
+
+### Catalogue situations
+
+`links-both`, `no-authored-links`, `out-only`, `in-only-with-include`,
+`broken-outgoing`, `external-outgoing`, `unknown-source` (invalid-input),
+`invalid-direction`, `include-with-out-only` (invalid-input), `ambiguous-source`
+(blocked), `unreadable-source` (incomplete).
+
+Each status has one representative native text transcript above. JSON uses the same status and command facts under the schema-3 envelope.
+
+### Open maintainer questions
+
+The native command currently emits `references.identity-collision` with
+`Two sources share an identity` and `Cannot list references: The source
+catalogue retained an unresolved boundary.`, but the catalogue has no wording
+row for that code. The contract records the current output without deciding
+whether to add a row or change the code. **Maintainer decision remains open.**
+
+The catalogue says `standard` adds `The scan is incomplete.` for
+`unreadable-source`, but the native capture omits that sentence. The contract
+records the current output without deciding whether to emit the sentence or
+change the catalogue row. **Maintainer decision remains open.**
 
 ## Non-Goals And Relationships
 
@@ -682,20 +472,20 @@ Conformance evidence must cover:
   local resolution, non-HTTP unsupported schemes, and external HTTP/HTTPS facts
   with no network attempt.
 - Complete outgoing results containing unchecked external facts without a false
-  attention or incomplete result solely for no-fetch.
+  completed-with-warnings or incomplete result solely for no-fetch.
 - Separate incoming/outgoing sections, per-section coverage/status, aggregate
   completeness, absent unevaluated directions, and complete empty incoming scans.
-- Exact schema-v1 member presence, nullability, finite values, finding-code order,
+- Exact schema-3 member presence, nullability, finite values, finding-code order,
   finding status mapping, selector occurrence preservation, and result effects.
 - Incoming default and filtered provenance, source-layer inspection evidence,
   deterministic finding order, and parity of locations between human and JSON
   projections.
 - One-hop-only behavior: no transitive closure, graph merge, result cap, or target
   body loading.
-- Compact, expanded, and JSON parity, including complete typed occurrences and
-  defined compact JSON membership.
-- Stable repeated results and honest complete, attention, incomplete, invalid,
-  blocked, failed, and interrupted outcomes.
+- Minimal, standard, and JSON parity, including complete typed occurrences and
+  defined minimal JSON membership.
+- Stable repeated results and honest completed, completed-with-warnings,
+  incomplete, invalid-input, blocked, failed, and cancelled outcomes.
 
 ## Related Current Sources
 
@@ -706,26 +496,10 @@ Conformance evidence must cover:
 - [Context Interface Contract](../context/interface.md)
 - [CLI Architecture](../../architecture.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-All selection, coverage, status, findings and occurrence counts remain, as
-does every occurrence in its existing order. Occurrences retain direction,
-level, source, rawDestination, fragment and the complete target object.
-Occurrence location contains line and column; its byteOffset and byteLength,
-destinationLocation and provenance are omitted. Finding locations retain their
-full shape. These omissions do not indicate missing locations or incomplete
-inspection; choose expanded on the original call for exact byte spans.
+CLI help syntax: [`references.help.syntax`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/References/ReferencesText.cs).
 
-Compact omissions are defined field membership, distinct from unavailable data,
-null values, empty collections or incomplete inspection. No collection is
-truncated and no finding is filtered. Counts describe the original operation.
-Select expanded on the original invocation when supporting evidence is needed.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef references.help.syntax -->

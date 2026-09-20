@@ -1,0 +1,5 @@
+Cannot create the Extension: no ID was given, and this session cannot ask.
+  Error  <extension-source>  Invalid input
+         no ID was given, and this session cannot ask.
+  Supply the Extension ID and package folder, then rerun the request.
+Next: open-forge extension create <id> --path <folder>

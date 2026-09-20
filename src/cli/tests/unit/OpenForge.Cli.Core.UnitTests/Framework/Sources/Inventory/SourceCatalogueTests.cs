@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Inventory;
 
 public sealed class SourceCatalogueTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source catalogue orders candidates, sources, and issues independently by ordinal facts")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void CatalogueSnapshotsDeterministicCollections()
@@ -29,6 +30,7 @@ public sealed class SourceCatalogueTests
         Assert.False(catalogue.IsCancelled);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source catalogue resolves a candidate by exact canonical path")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void CandidatePathLookupRetainsUnsafeAndContainedCandidateAddressability()
@@ -42,6 +44,7 @@ public sealed class SourceCatalogueTests
         Assert.Equal(SourceDocumentForm.OverwriteCompanion, candidate.Form);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source catalogue finds every candidate with a requested lexical ID including unsafe candidates")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void CandidateIdentityLookupIncludesUnsafeEvidence()
@@ -56,6 +59,7 @@ public sealed class SourceCatalogueTests
         Assert.Contains(candidates, candidate => candidate.PhysicalState == PhysicalPathState.External);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source catalogue resolves retained logical sources by ID and adjacent paths")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void LogicalLookupsPreserveAdjacentOverwriteIdentity()
@@ -73,6 +77,7 @@ public sealed class SourceCatalogueTests
         Assert.Same(source.Overwrite, overwriteSource.Overwrite);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source catalogue full selection projects all candidates, sources, and root issues")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void SelectAllIsTheCompleteReadAllowlist()
@@ -87,6 +92,7 @@ public sealed class SourceCatalogueTests
         Assert.Contains(selection.Issues, issue => issue.Code == SourceCatalogueIssueCode.IdentityCollision);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source catalogue filtered selection retains included physical scopes and removes excluded support")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void SelectProjectsSourcesCandidatesAndScopeDerivedIssues()
@@ -112,6 +118,7 @@ public sealed class SourceCatalogueTests
         Assert.Single(selection.RootIssues);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral filtered selection projects collision and alias participation only while selected paths remain covered")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void SelectProjectsIssueMembershipFromPhysicalScopesAndCandidates()

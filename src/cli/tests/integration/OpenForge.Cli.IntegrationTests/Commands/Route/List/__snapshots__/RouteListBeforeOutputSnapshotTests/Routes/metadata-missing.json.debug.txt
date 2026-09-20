@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 3,
+  "command": "route list",
+  "status": "completed-with-warnings",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "3 routes listed with warnings.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "route-list.metadata-missing",
+      "title": "Description is missing",
+      "message": ".agents/docs/guide.md has no description in its frontmatter.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/guide.md",
+        "id": ".agents/docs/guide.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routes": 3,
+    "roots": 1,
+    "depth": null,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "subject": null,
+    "depth": "all",
+    "rows": [
+      {
+        "id": "docs",
+        "path": ".agents/docs/_docs.md",
+        "description": "Documents",
+        "tags": [
+          "Docs"
+        ],
+        "relativeDepth": 0,
+        "parentId": null,
+        "absoluteDepth": 0,
+        "kind": "entrypoint",
+        "directChildren": 2,
+        "selectedAs": "loader-root",
+        "hasOverwrite": false
+      },
+      {
+        "id": "docs/guide",
+        "path": ".agents/docs/guide.md",
+        "description": "(no description)",
+        "tags": [],
+        "relativeDepth": 1,
+        "parentId": "docs",
+        "absoluteDepth": 1,
+        "kind": "file",
+        "directChildren": null,
+        "selectedAs": "descendant",
+        "hasOverwrite": false
+      },
+      {
+        "id": "docs/reference",
+        "path": ".agents/docs/reference.md",
+        "description": "Reference",
+        "tags": [
+          "Docs"
+        ],
+        "relativeDepth": 1,
+        "parentId": "docs",
+        "absoluteDepth": 1,
+        "kind": "file",
+        "directChildren": null,
+        "selectedAs": "descendant",
+        "hasOverwrite": false
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route update docs/guide --description \"...\"",
+    "reason": "Add the missing route description, then rerun the listing."
+  }
+}

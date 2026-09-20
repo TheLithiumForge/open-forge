@@ -1,0 +1,5 @@
+Extension remove stopped after 1 of 2 changes.
+  .agents/aaa.md      deleted
+  .agents/toolkit.md  deleted
+  The deleted files are kept in a recovery bundle at <recovery-bundle>.
+Next: open-forge cleanup  (after reviewing the bundle)

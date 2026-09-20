@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 3,
+  "command": "extension list",
+  "status": "completed-with-warnings",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Extension list completed with warnings.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "extension-list.installed-source-missing",
+      "title": "Installed Extension source is missing",
+      "message": "The missing-package Extension's source <extension-source>\\missing-source is missing.",
+      "subject": {
+        "kind": "source",
+        "path": "<extension-source>\\missing-source",
+        "id": "missing-package",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge extension inspect missing-package",
+          "reason": "Inspect the installed Extension facts."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "Cause",
+          "value": "The explicit Extension source does not exist."
+        },
+        {
+          "label": "Path",
+          "value": "<extension-source>\\missing-source"
+        }
+      ],
+      "provenance": {
+        "source": "extension list",
+        "path": "<extension-source>\\missing-source",
+        "location": null
+      }
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "installed": 1,
+    "available": 1,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "installed": [
+      {
+        "id": "missing-package",
+        "version": "1.0.0",
+        "note": "source missing",
+        "files": 0,
+        "recordedSource": "<extension-source>\\missing-source",
+        "coverage": "complete"
+      }
+    ],
+    "available": [
+      {
+        "id": "toolkit",
+        "version": "1.0.0",
+        "name": "toolkit",
+        "description": "Extension package toolkit.",
+        "packages": 1,
+        "dependencies": []
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension inspect missing-package",
+    "reason": "Inspect the installed Extension facts."
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Repaired 1 link.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/docs/source.md:9:10",
+      "kind": "link",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": "missing.md -> replacement.md",
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "linksRepaired": 1,
+    "problemsRemaining": 0,
+    "problemsNeedingChoice": 0,
+    "problemsNeedingHand": 0,
+    "librarySteps": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "selection": "relink",
+    "repairs": [
+      {
+        "path": ".agents/docs/source.md",
+        "location": {
+          "line": 9,
+          "column": 10
+        },
+        "from": "missing.md",
+        "to": "replacement.md",
+        "before": "<sha256>",
+        "after": "<sha256>"
+      }
+    ],
+    "remaining": [],
+    "diagnosis": {
+      "workspaceAndPath": "complete",
+      "routeAndHeading": "complete",
+      "localReferences": "complete",
+      "selectedScope": "complete"
+    },
+    "verification": {
+      "targets": "verified",
+      "resultingBytes": "verified",
+      "postConditions": "verified"
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

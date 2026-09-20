@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveRequestAndResultContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove request normalizes the two write modes and preserves the operand"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void RequestPreservesOperandAndWriteMode()
@@ -21,6 +22,34 @@ public sealed class RouteRemoveRequestAndResultContractTests
         Assert.True(dryRun.IsDryRun);
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Route Remove freezes the selected exact source and preserves automatic policy")]
+    [Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
+    public void RequestFreezesSelectedExactSource()
+    {
+        var request = new RouteRemoveRequest(
+            RouteRemoveTestData.Workspace(),
+            RouteRemoveTestData.LeafId,
+            RouteRemoveMode.Apply,
+            automatic: false,
+            allowInteractiveSourceSelection: true,
+            allowInteractiveConfirmation: true);
+
+        var frozen = request.FreezeSource(RouteRemoveTestData.LeafPath);
+
+        Assert.Equal(RouteRemoveTestData.LeafId, request.SourceReference);
+        Assert.Null(request.FrozenSourceReference);
+        Assert.Equal(RouteRemoveTestData.LeafId, request.ResolutionReference);
+        Assert.Equal(RouteRemoveTestData.LeafId, frozen.SourceReference);
+        Assert.Equal(RouteRemoveTestData.LeafPath, frozen.FrozenSourceReference);
+        Assert.Equal(RouteRemoveTestData.LeafPath, frozen.ResolutionReference);
+        Assert.False(frozen.Automatic);
+        Assert.True(frozen.AllowInteractiveSourceSelection);
+        Assert.True(frozen.AllowInteractiveConfirmation);
+        Assert.Equal(request.Mode, frozen.Mode);
+    }
+
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove request rejects blank operands and undefined modes"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void RequestRejectsBlankOperandAndUndefinedMode()
@@ -35,6 +64,7 @@ public sealed class RouteRemoveRequestAndResultContractTests
             () => new RouteRemoveRequest(null!, RouteRemoveTestData.LeafId, RouteRemoveMode.Apply));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove file path state accepts only lowercase SHA-256 fingerprints"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void FilePathStateRequiresLowercaseSha256()
@@ -55,6 +85,7 @@ public sealed class RouteRemoveRequestAndResultContractTests
             () => new RouteRemovePathState((RouteRemovePathStateKind)int.MaxValue, null));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove finding validation keeps non-complete statuses and bounds causes"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void FindingValidationKeepsNonCompleteStatusAndBoundsCause()
@@ -86,6 +117,7 @@ public sealed class RouteRemoveRequestAndResultContractTests
                 cause: " "));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Remove result retains the typed graph and next action without projection loss"),
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void ResultRetainsTypedGraphAndNextAction()

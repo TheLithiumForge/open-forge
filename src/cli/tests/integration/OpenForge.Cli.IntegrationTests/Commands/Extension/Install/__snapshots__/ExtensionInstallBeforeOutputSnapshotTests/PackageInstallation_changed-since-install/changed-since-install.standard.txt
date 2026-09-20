@@ -1,0 +1,9 @@
+Cannot install toolkit: toolkit has changed since it was installed.
+Workspace: <workspace>
+  Error  toolkit  Managed content changed
+         toolkit has changed since it was installed.
+         open-forge extension update toolkit
+         Use Extension Update to reconcile the managed package.
+  Source: <extension-source> (catalogue)
+  Use Extension Update to reconcile the managed package.
+Next: open-forge extension update toolkit

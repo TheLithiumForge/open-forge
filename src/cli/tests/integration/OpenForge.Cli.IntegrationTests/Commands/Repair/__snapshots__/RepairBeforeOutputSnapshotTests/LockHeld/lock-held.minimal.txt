@@ -1,0 +1,5 @@
+Cannot repair: another Open Forge command holds the workspace lock. Nothing was changed.
+  Warning  .agents/docs/source.md:10:10  Broken link
+         missing.md: Broken link; 4 possible targets
+  .agents/docs/source.md:9:8  ./guide.md -> guide.md
+Next: open-forge doctor

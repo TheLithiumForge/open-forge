@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.GeneratedNavigation;
 
 public sealed class GeneratedNavigationIntendedTargetCollisionTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Prospective generated navigation retains truthful observed aliases beside an unrelated intended addition")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void RetainedObservedAliasesRemainTruthful()
@@ -52,6 +53,7 @@ public sealed class GeneratedNavigationIntendedTargetCollisionTests
         Assert.Empty(formation.IntendedTargetCollisions);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Intended target collisions type new-new and new-retained targets without stale removed observations")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void IntendedCollisionsUseExactLayersWithoutFabricatedCandidates()
@@ -97,6 +99,7 @@ public sealed class GeneratedNavigationIntendedTargetCollisionTests
         Assert.Same(reusingRemoved, formation.FindSource(reusingRemoved.Identity.CanonicalBasePath));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "An intended colliding root is not admitted as a Loader root")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void IntendedCollisionPreventsLoaderRootAdmission()
@@ -115,6 +118,7 @@ public sealed class GeneratedNavigationIntendedTargetCollisionTests
         Assert.Empty(formation.Topology.LoaderRootPaths);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Generated-navigation formation owns read-only alias and intended-target collision collections")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void FormationCollisionCollectionsRejectMutation()

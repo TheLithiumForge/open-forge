@@ -1,0 +1,4 @@
+Cannot search: --require must be all or any.
+Workspace: <workspace>
+  Error  find  Invalid input
+         --require must be all or any.

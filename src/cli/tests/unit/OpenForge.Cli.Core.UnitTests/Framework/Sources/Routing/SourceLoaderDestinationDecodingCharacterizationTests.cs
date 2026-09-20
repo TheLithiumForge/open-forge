@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Routing;
 
 public sealed class SourceLoaderDestinationDecodingCharacterizationTests
 {
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Loader destinations retain exact decoding failure causes and first-failure precedence"),
         InlineData("", "A Loader destination cannot be empty."),
         InlineData("space name.md", "Unencoded whitespace is not valid in a Loader destination."),
@@ -39,6 +40,7 @@ public sealed class SourceLoaderDestinationDecodingCharacterizationTests
         Assert.Equal(expectedCause, result.Cause);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Loader destinations preserve mixed literal and escaped Unicode"),
         InlineData("space%C2%A0name.md", "space\u00A0name.md", ".agents/space\u00A0name.md"),
         InlineData("caf%C3%A9-雪-%F0%9F%98%80.md", "café-雪-😀.md", ".agents/café-雪-😀.md"),
@@ -56,6 +58,7 @@ public sealed class SourceLoaderDestinationDecodingCharacterizationTests
         Assert.Null(result.Cause);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Loader destination path rejection retains exact causes after successful decoding"),
         InlineData("./child//../leaf.md", "./child//../leaf.md", "The decoded Loader destination contains an empty or traversal segment."),
         InlineData("%2E%2E/leaf.md", "../leaf.md", "The decoded Loader destination contains an empty or traversal segment."),
@@ -73,6 +76,7 @@ public sealed class SourceLoaderDestinationDecodingCharacterizationTests
         Assert.Equal(expectedCause, result.Cause);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Loader destinations preserve literal unpaired UTF-16 surrogates"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void LiteralSurrogatesAreNotReencoded()
     {
@@ -89,6 +93,7 @@ public sealed class SourceLoaderDestinationDecodingCharacterizationTests
         Assert.Null(low.Cause);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "An encoded space remains a nonempty lexical Loader destination"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void EncodedWhitespaceOnlyRetainsDecodedLexicalDestination()
     {

@@ -1,0 +1,11 @@
+status=cancelled
+mode=apply
+target=documents
+scaffold=generic
+completeness=incomplete
+safety=safe
+effects=0
+recovery=not-required
+verification=not-requested
+findings=1
+Route Init planning was cancelled.

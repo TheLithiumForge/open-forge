@@ -60,10 +60,8 @@ Behavior file for technology-neutral resolution and conformance.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Accepted current shared global-flag Interface and Behavior contract set](global-flags/_global-flags.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Global #Flag #CurrentTruth
 - [Accepted shared CLI result envelope, source-location, status, exit, stream, and compatibility contracts](result-coordinates/_result-coordinates.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #Result #JSON #Status #CurrentTruth
 - [Accepted current shared source-reference Interface and Behavior contract set](source-references/_source-references.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Source #Reference #CurrentTruth
 - [Permanent route for the shared operation-specific source-universe filter contracts](source-universe-filters/_source-universe-filters.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #Source #Universe #Filter #CurrentTruth
-- [Route the accepted consumer-owned exact destination permission contracts](workspace-permissions/_workspace-permissions.md) - #Memory #Crystallized #CLI #Contract #Shared #Permission #CurrentTruth
-<!-- open-forge:generated-index:end -->
+- [Route the accepted shared authored destination permission contracts](workspace-permissions/_workspace-permissions.md) - #Memory #Crystallized #CLI #Contract #Shared #Permission #CurrentTruth

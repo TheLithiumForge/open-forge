@@ -1,0 +1,12 @@
+status=cancelled
+mode=apply
+force=false
+prune=false
+automatic=false
+effects=0
+unchanged=14
+sections=0
+recovery=not-created
+verification=not-requested
+findings=1
+next=present

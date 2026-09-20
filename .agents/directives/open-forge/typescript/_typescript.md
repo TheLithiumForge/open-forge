@@ -12,6 +12,4 @@ open-forge:
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Keep authored TypeScript strict, readable, focused, modular, and reusable without accumulating oversized or generic source files](typescript-source-structure.md) - #LoadNow #Directive #TypeScript #Source #Structure #ESM #Strictness #Modularity #Readability
-<!-- open-forge:generated-index:end -->

@@ -10,6 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
 [Trait("Feature", "library-foundation"), Trait("Evidence", "Integration")]
 public sealed class LibrarySelectedFinalReadIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Selected recovery final readback returns fresh original preparation for exact ordinary and raw-link entries")]
     [InlineData("create"), InlineData("replace"), InlineData("delete"), InlineData("link-create"), InlineData("link-delete")]
     public static async Task ReadsExactOriginalFinal(string kind)
@@ -32,6 +33,7 @@ public sealed class LibrarySelectedFinalReadIntegrationTests
         fixture.AssertUnrelatedPreserved();
     }
 
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Selected final readback rejects missing corrupt linked or changed valid final instead of trusting the old candidate")]
     [InlineData("missing"), InlineData("corrupt"), InlineData("linked"), InlineData("changed-entry")]
     public static async Task RejectsStaleCandidateAuthority(string defect)

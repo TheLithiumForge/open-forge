@@ -35,8 +35,6 @@ The sibling files answer separate questions:
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Current technology-neutral closure, graph, projection, result, safety, and conformance behavior for `context`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Context #Behavior #Determinism #Graph #Projection #CurrentTruth
 - [Current public interface and observable result for stateless ordered `context` resolution, projection, and explicit link expansion](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Context #Interface #Route #Scope #Projection #Graph #CurrentTruth
 - [Accepted context implementation design subordinate to the current CLI Architecture](technical-design.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Context #TechnicalDesign #Implementation #CurrentTruth
-<!-- open-forge:generated-index:end -->

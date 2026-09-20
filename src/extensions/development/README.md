@@ -1,25 +1,30 @@
 # Development
 
-Development offers three recipes to come back to as a project changes. They help you work through an accepted change, investigate a failure, or review the result, using the tools and expectations already defined in your workspace.
+Implement changes, investigate defects, and review results using the project's technologies, rules, and verification tools. No task tracker or record taxonomy is required.
 
-## Contents
+## What You Get
 
-| Workflow | Useful when |
+| Source | Use it to |
 | --- | --- |
-| [Development](content/.agents/workflows/development.md) | An accepted change needs implementation and verification |
-| [Debugging](content/.agents/workflows/debugging.md) | A failure needs investigation before deciding what to change |
-| [Review](content/.agents/workflows/review.md) | A change or design needs prioritized findings grounded in evidence |
+| [Development](content/.agents/skills/use-workflow/references/development/development.md) | Deliver one accepted change with evidence matched to its risk. |
+| [Debugging](content/.agents/skills/use-workflow/references/development/debugging.md) | Connect a symptom to an evidenced cause and an authorized fix. |
+| [Review](content/.agents/skills/use-workflow/references/development/review.md) | Return prioritized, evidence-backed findings without unrequested edits. |
 
-Select the recipe that would help with the work. Your project's applicable scopes supply its actual requirements and verification procedures. The recipes remain optional, and you can work directly when a Workflow would add no value.
+**Direct dependencies:** [Workflow Support](../workflows/README.md)
 
-## Install
+## Start Using It
 
-The [Extension installation guide](../../../docs/extensions.md#install-an-extension) covers setup. Preview this package with the CLI, replacing the example paths with your source catalogue and destination workspace. Keep the source checkout separate from that workspace.
+> Use the development workflow for this change. Follow the repository conventions and verify the final state.
 
-```sh
-open-forge extension install development --source /path/to/open-forge/src/extensions --workspace /path/to/project --dry-run
-```
+## Stay Proportionate
 
-Apply the reviewed plan with the same command without `--dry-run`. Review the resulting files and `.agents/open-forge.lifecycle.json`.
+Development depends only on Workflow Support. It does not install Planning, Project Documents, Observations, or an agent hierarchy. Use those packages only when their additional methods and records help.
 
-For [manual installation](../../../docs/extensions.md#manual-installation), copy this package's `content/` files into the workspace. Update affected `Entries`, check links, and review the assembled files. This package has no Extension dependencies. Manual copying does not create managed lifecycle state.
+The three recipes remain separate methods within the shared selector Skill. They may use multiple configured Skills and tools; they do not replace native harness behavior.
+
+## Install And Customize
+
+Use the complete source catalogue so dependencies resolve together. See the [installation guide](../../../docs/extensions.md) for managed and manual setup.
+
+Keep or remove the methods, categories, and starter files that fit the workspace. Review dependent references and user-created descendants before removal. Template copies remain independent; deleting a starter never means deleting the work created from it.
+

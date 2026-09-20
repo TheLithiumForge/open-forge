@@ -1,0 +1,10 @@
+team-knowledge needs a sync: 1 file differs between shared/team and ..
+Workspace: <workspace>
+  Warning  .agents/directives/review.md  Registered link changed [library-inspect.link-changed]
+         .agents/directives/review.md  is no longer the link team-knowledge created
+  .agents/directives/review.md  changed
+      Expected target: ../../shared/team/.agents/directives/review.md
+      Observed target: unavailable
+Source inventory: 1 eligible file, 0 excluded items.
+  Repair the destination link manually.
+Next: fix by hand

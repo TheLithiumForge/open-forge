@@ -1,0 +1,2 @@
+Cannot list references: Include and exclude filters apply only when incoming work is requested.
+Next: open-forge references --help

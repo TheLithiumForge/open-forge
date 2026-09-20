@@ -1,0 +1,14 @@
+Cannot attach team-knowledge: .agents/directives/review.md already exists and is not a link this Library would create.
+Workspace: <workspace>
+  Error  .agents/directives/review.md  Destination collision [library-attach.destination-collision]
+         .agents/directives/review.md already exists and is not a link this Library would create.
+         needs a choice
+         choose another --to folder
+         Choose another --to folder.
+  Info  .  Ownership record is missing [library-attach.ownership-observation]
+         No ownership record exists, so the team-knowledge Library cannot be read from it.
+  Permission evaluation: permission was not evaluated. Required paths: none. Missing paths: none. No grant was saved.
+  Verification: verification has not started; 0 of 0 links created; the Library was not recorded
+  No recovery data was requested.
+  Choose another --to folder.
+Next: choose another --to folder

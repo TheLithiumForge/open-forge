@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 3,
+  "command": "index",
+  "status": "blocked",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot rebuild the Entries section of .agents/root/_root.md.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "index.metadata-unsafe",
+      "title": "Frontmatter is invalid",
+      "message": "The frontmatter of .agents/root/child.md cannot be used: A direct routed child document cannot be safely decoded for authored metadata.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/root/child.md",
+        "id": "root/child",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesChecked": 0,
+    "filesUpdated": 0,
+    "filesCurrent": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "changes": [],
+    "unchanged": [],
+    "selection": {
+      "origin": "explicit-sources",
+      "scope": "detached",
+      "sources": [
+        {
+          "id": "root",
+          "path": ".agents/root/_root.md"
+        }
+      ]
+    },
+    "regions": [
+      {
+        "path": ".agents/root/_root.md",
+        "action": "not-established",
+        "outcome": "not-established"
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor",
+    "reason": "Inspect the reported problem before rerunning Index."
+  }
+}

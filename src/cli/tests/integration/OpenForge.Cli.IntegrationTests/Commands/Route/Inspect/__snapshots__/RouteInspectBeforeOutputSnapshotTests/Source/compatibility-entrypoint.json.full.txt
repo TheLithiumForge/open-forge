@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "legacy  .agents/legacy/index.md",
+    "kind": "done"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "route-inspect.compatibility-entrypoint",
+      "title": "Compatibility entrypoint",
+      "message": ".agents/legacy/index.md uses the compatibility name index.md; the canonical name is _legacy.md.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/legacy/index.md",
+        "id": ".agents/legacy/index.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "ownBytes": 108,
+    "ownTokens": 27,
+    "addedFiles": 1,
+    "addedBytes": 108,
+    "addedTokens": 27,
+    "loadNowFiles": 0,
+    "loadNowBytes": 0,
+    "loadNowTokens": 0,
+    "directChildren": 0,
+    "descendants": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "legacy",
+    "path": ".agents/legacy/index.md",
+    "kind": "entrypoint",
+    "entrypointForm": "compatibility",
+    "overwritePath": null,
+    "belongs": {
+      "routeChain": [
+        "legacy"
+      ],
+      "parent": null,
+      "directChildren": {
+        "files": 0,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 0,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": false,
+      "automaticallyWhen": [
+        "this route is selected"
+      ],
+      "mayReadAgain": false
+    },
+    "size": {
+      "own": {
+        "files": 1,
+        "bytes": 108,
+        "tokens": 27
+      },
+      "adds": {
+        "files": 1,
+        "bytes": 108,
+        "tokens": 27
+      },
+      "loadNow": {
+        "files": 0,
+        "bytes": 0,
+        "tokens": 0
+      }
+    },
+    "axioms": {
+      "inheritedFrom": [],
+      "local": "no local Axioms section"
+    },
+    "tags": [
+      "Docs"
+    ],
+    "selected": {
+      "closure": {
+        "files": 1,
+        "bytes": 108,
+        "tokens": 27
+      },
+      "startupOverlap": {
+        "files": 0,
+        "bytes": 0,
+        "tokens": 0
+      }
+    },
+    "selection": {
+      "kind": "source-id",
+      "method": "automatic-id",
+      "requested": "legacy"
+    },
+    "layers": [
+      {
+        "path": ".agents/legacy/index.md",
+        "kind": "base"
+      }
+    ],
+    "statusReason": "all applicable route facts are available"
+  },
+  "recovery": null,
+  "next": null
+}

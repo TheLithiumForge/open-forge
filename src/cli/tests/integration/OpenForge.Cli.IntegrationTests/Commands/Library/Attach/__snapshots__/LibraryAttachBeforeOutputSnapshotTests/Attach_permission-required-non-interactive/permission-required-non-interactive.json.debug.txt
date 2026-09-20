@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 3,
+  "command": "library attach",
+  "status": "blocked",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot attach team-knowledge: docs is outside .agents and no grant allows writing there.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-attach.permission-required",
+      "title": "Permission is required",
+      "message": "docs is outside .agents and no grant allows writing there.",
+      "subject": {
+        "kind": "directory",
+        "path": "docs",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge library attach team-knowledge shared/team-knowledge --to . --allow-path docs",
+          "reason": "Allow the destination folder, then rerun the same request."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "library-attach.ownership-observation",
+      "title": "Ownership record is missing",
+      "message": "No ownership record exists, so the team-knowledge Library cannot be read from it.",
+      "subject": {
+        "kind": "file",
+        "path": ".",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": "docs/review.md",
+      "kind": "link",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "linksCreated": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "sourceFiles": 1,
+    "errors": 1,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "recorded": false,
+    "permissions": {
+      "decision": "required",
+      "required": [
+        "docs/review.md"
+      ],
+      "missing": [
+        "docs/review.md"
+      ],
+      "saved": false
+    },
+    "links": [
+      {
+        "path": "docs/review.md",
+        "target": "../shared/team-knowledge/docs/review.md"
+      }
+    ],
+    "inventory": {
+      "eligible": 1,
+      "excluded": 0
+    },
+    "expectedStates": [
+      {
+        "path": "docs/review.md",
+        "kind": "missing",
+        "length": null,
+        "sha256": null,
+        "target": null
+      },
+      {
+        "path": ".agents/open-forge.lock.json",
+        "kind": "missing",
+        "length": null,
+        "sha256": null,
+        "target": null
+      }
+    ],
+    "verification": {
+      "state": "not-started",
+      "linksCreated": 0,
+      "linksExpected": 1,
+      "recorded": false
+    },
+    "recovery": {
+      "state": "not-requested",
+      "path": null,
+      "remaining": []
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge library attach team-knowledge shared/team-knowledge --to . --allow-path docs",
+    "reason": "Allow the destination folder, then rerun the same request."
+  }
+}

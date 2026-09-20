@@ -1,0 +1,4 @@
+No errors. 1 warning was recorded.
+  Warning  .agents/directives/library.md  Registered Library link is missing
+         .agents/directives/library.md, a link of team-knowledge, is missing.
+         open-forge library sync team-knowledge

@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "completed-with-warnings",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Context completed with warnings.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "context.section-missing",
+      "title": "Section is missing",
+      "message": ".agents/docs/_docs.md has no section named Absent.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/_docs.md",
+        "id": "docs",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    },
+    {
+      "severity": "warning",
+      "code": "context.section-missing",
+      "title": "Section is missing",
+      "message": ".agents/docs/guide.md has no section named Absent.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    },
+    {
+      "severity": "warning",
+      "code": "context.section-missing",
+      "title": "Section is missing",
+      "message": ".agents/loader.md has no section named Absent.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/loader.md",
+        "id": "loader",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    },
+    {
+      "severity": "warning",
+      "code": "context.section-missing",
+      "title": "Section is missing",
+      "message": "AGENTS.md has no section named Absent.",
+      "subject": {
+        "kind": "source",
+        "path": "AGENTS.md",
+        "id": "section:Absent",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sources": 4,
+    "tokens": 100,
+    "bytes": 399,
+    "linksFollowed": 0,
+    "linksNotFollowed": 0,
+    "warnings": 4
+  },
+  "limitations": [],
+  "data": {
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "workspace entry"
+        ],
+        "route": null,
+        "scope": null,
+        "parts": [
+          {
+            "part": "section:Absent",
+            "state": "missing"
+          }
+        ]
+      },
+      {
+        "path": ".agents/loader.md",
+        "id": "loader",
+        "layer": "base",
+        "includedBecause": [
+          "Loader"
+        ],
+        "route": null,
+        "scope": null,
+        "parts": [
+          {
+            "part": "section:Absent",
+            "state": "missing"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/_docs.md",
+        "id": "docs",
+        "layer": "base",
+        "includedBecause": [
+          "#LoadNow from .agents/loader.md",
+          "ancestor required from .agents/docs/guide.md for docs/guide"
+        ],
+        "route": "docs",
+        "scope": null,
+        "parts": [
+          {
+            "part": "section:Absent",
+            "state": "missing"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "layer": "base",
+        "includedBecause": [
+          "selected source for docs/guide"
+        ],
+        "route": "docs/guide",
+        "scope": null,
+        "parts": [
+          {
+            "part": "section:Absent",
+            "state": "missing"
+          }
+        ]
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

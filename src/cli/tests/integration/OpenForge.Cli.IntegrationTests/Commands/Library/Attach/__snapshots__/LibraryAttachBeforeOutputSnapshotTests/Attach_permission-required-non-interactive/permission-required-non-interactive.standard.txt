@@ -1,0 +1,8 @@
+Cannot attach team-knowledge: docs is outside .agents and no grant allows writing there.
+Workspace: <workspace>
+  Error  docs  Permission is required
+         docs is outside .agents and no grant allows writing there.
+         open-forge library attach team-knowledge shared/team-knowledge --to . --allow-path docs
+         Allow the destination folder, then rerun the same request.
+  Allow the destination folder, then rerun the same request.
+Next: open-forge library attach team-knowledge shared/team-knowledge --to . --allow-path docs

@@ -42,15 +42,14 @@ public sealed class PublishedExtensionListProcessTests
             target,
             working.Path,
             working.SnapshotState,
-            ["extension", "list", "--json"]);
+            ["extension", "list", "--format=json"]);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
         Assert.Equal("extension list", document.RootElement.GetProperty("command").GetString());
-        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
-        var commandResult = document.RootElement.GetProperty("result");
-        Assert.Equal("trusted", commandResult.GetProperty("coverage").GetProperty("lifecycleTrust").GetString());
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        var commandResult = document.RootElement.GetProperty("data");
         Assert.Equal("development-toolkit", Assert.Single(commandResult.GetProperty("installed").EnumerateArray()).GetProperty("id").GetString());
         Assert.Equal(ExtensionCatalogueSource.PackageIds,
             commandResult.GetProperty("available").EnumerateArray()
@@ -69,12 +68,12 @@ public sealed class PublishedExtensionListProcessTests
             target,
             working.Path,
             working.SnapshotState,
-            ["extension", "list", "--available", "--source", working.SourcePath, "--json"]);
+            ["extension", "list", "--available", "--source", working.SourcePath, "--format=json"]);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
-        var commandResult = document.RootElement.GetProperty("result");
+        var commandResult = document.RootElement.GetProperty("data");
         Assert.Equal("package", commandResult.GetProperty("source").GetProperty("kind").GetString());
         Assert.Equal("local-toolkit", Assert.Single(commandResult.GetProperty("available").EnumerateArray()).GetProperty("id").GetString());
         Assert.Equal(beforeSource, working.SnapshotSource());

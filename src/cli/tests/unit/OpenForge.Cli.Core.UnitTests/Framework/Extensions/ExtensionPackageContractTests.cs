@@ -9,6 +9,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Extensions;
 
 public sealed class ExtensionPackageContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Extension stable IDs accept only lowercase ASCII hyphen segments"), Trait("Feature", "extension-discovery"), Trait("Evidence", "Unit")]
     [InlineData("development-toolkit", true)]
     [InlineData("a1", true)]
@@ -23,6 +24,7 @@ public sealed class ExtensionPackageContractTests
         Assert.Equal(expected, ExtensionIdentity.IsValidStableId(value));
     }
 
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Extension target paths remain portable contained relative paths"), Trait("Feature", "extension-discovery"), Trait("Evidence", "Unit")]
     [InlineData(".agents/workflows/design.md", true)]
     [InlineData("../escape.md", false)]
@@ -57,6 +59,7 @@ public sealed class ExtensionPackageContractTests
         Assert.Equal(expected ? value : string.Empty, normalized);
     }
 
+    [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Strict manifest accepts the complete current package shape"), Trait("Feature", "extension-discovery"), Trait("Evidence", "Unit")]
     public void StrictManifestAcceptsCurrentShape()
     {
@@ -74,6 +77,7 @@ public sealed class ExtensionPackageContractTests
         Assert.Equal(["base"], manifest.Dependencies);
     }
 
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Strict manifest rejects unknown duplicate and ambiguous identity facts"), Trait("Feature", "extension-discovery"), Trait("Evidence", "Unit")]
     [InlineData("unknown", "\"extra\": true,", "toolkit")]
     [InlineData("duplicate", "\"id\": \"other\",", "toolkit")]

@@ -1,0 +1,2 @@
+Installed the toolkit Extension and 1 packages it requires: base.
+  Created 2 files under .agents

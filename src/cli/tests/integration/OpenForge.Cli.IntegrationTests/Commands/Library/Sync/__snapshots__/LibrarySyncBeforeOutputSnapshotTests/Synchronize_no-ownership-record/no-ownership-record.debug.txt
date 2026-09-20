@@ -1,0 +1,8 @@
+No ownership record exists, so team-knowledge cannot be synchronized. Nothing was changed.
+Workspace: <workspace>
+ownership-observation
+  Info  team-knowledge  Ownership record is missing [library-sync.ownership-observation]
+         No ownership record exists.
+  Inventory: 0 eligible files, 0 excluded items, 0 unavailable paths.
+  Verification: not started; record publication: not started.
+  Recovery: no recovery data was requested.

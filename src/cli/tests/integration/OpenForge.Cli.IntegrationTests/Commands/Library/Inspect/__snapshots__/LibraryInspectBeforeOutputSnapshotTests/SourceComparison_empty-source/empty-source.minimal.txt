@@ -1,0 +1,2 @@
+team-knowledge is current. The source folder shared/team has no eligible files and no links are registered.
+Workspace: <workspace>

@@ -3,7 +3,6 @@ using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Selection;
-using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -13,6 +12,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Remove;
 
 public sealed class ExtensionRemoveResultContractTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove result snapshots typed facts and orders findings by stable identity"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void ResultSnapshotsFactsAndOrdersFindings()
     {
@@ -33,7 +33,7 @@ public sealed class ExtensionRemoveResultContractTests
             ["toolkit"]);
         var path = new ExtensionRemovePathPlan(
             ".agents/toolkit.md",
-            ExtensionRemovePathClassification.UnchangedFinalOwner,
+            ExtensionRemovePathClassification.FinalOwner,
             ["toolkit"],
             [],
             ExtensionRemovePathAction.Delete);
@@ -79,15 +79,14 @@ public sealed class ExtensionRemoveResultContractTests
                 "The target is reserved.",
                 ".agents/unsafe.md"),
             new(
-                ExtensionRemoveFindingCode.ManagedDivergence,
-                "The current content differs.",
+                ExtensionRemoveFindingCode.LifecycleObservation,
+                "The package is not recorded as installed.",
                 ".agents/toolkit.md"),
         };
         var result = new ExtensionRemoveResult(new ExtensionRemoveResultFormation
         {
             Workspace = Workspace(),
             Mode = ExtensionRemoveMode.DryRun,
-            Prune = false,
             Automatic = true,
             Facts = facts,
             Findings = findingInput,
@@ -105,31 +104,15 @@ public sealed class ExtensionRemoveResultContractTests
         Assert.NotSame(facts.Effects, result.Effects);
         Assert.Equal(
             [
-                ExtensionRemoveFindingCode.ManagedDivergence,
                 ExtensionRemoveFindingCode.TargetUnsafe,
+                ExtensionRemoveFindingCode.LifecycleObservation,
             ],
             result.Findings.Select(finding => finding.Code));
         Assert.True(result.PackageSourceUnchanged);
         Assert.Null(result.Next);
-        foreach (var view in new[] { CliView.Compact, CliView.Expanded })
-        {
-            var request = new CliPresentationRequest<ExtensionRemoveResult>(result, new(CliOutputFormat.Human, view, CliVerbosity.Normal));
-            var jsonBefore = ExtensionRemoveJsonProjection.RenderJson(request);
-            var rendered = ExtensionRemovePresentation.RenderHuman(request);
-            Assert.Contains("Status: blocked", rendered, StringComparison.Ordinal);
-            Assert.Contains(".agents/unsafe.md", rendered, StringComparison.Ordinal);
-            Assert.Contains(".agents/_index.md", rendered, StringComparison.Ordinal);
-            Assert.Equal(view == CliView.Expanded, rendered.Contains(".agents/unchanged-navigation.md", StringComparison.Ordinal));
-            Assert.Equal(view == CliView.Compact, rendered.Contains("Unchanged navigation paths summarized: 1", StringComparison.Ordinal));
-            Assert.Contains("planned", rendered, StringComparison.Ordinal);
-            Assert.DoesNotContain("verified", rendered, StringComparison.Ordinal);
-            Assert.Contains("Protected paths: .agents/toolkit.md", rendered, StringComparison.Ordinal);
-            Assert.Equal(1, rendered.ReplaceLineEndings("\n").Split('\n').Count(line => line == "  .agents/toolkit.md"));
-            Assert.Equal(jsonBefore, ExtensionRemoveJsonProjection.RenderJson(request));
-        }
-
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove empty result initializes every typed safety fact and next action"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void EmptyResultInitializesTypedFacts()
     {
@@ -137,7 +120,6 @@ public sealed class ExtensionRemoveResultContractTests
         var result = ExtensionRemoveResult.Empty(
             workspace,
             ExtensionRemoveMode.Apply,
-            prune: false,
             automatic: true,
             findings:
             [
@@ -165,12 +147,13 @@ public sealed class ExtensionRemoveResultContractTests
             Assert.IsType<CliNextAction>(result.Next).Command);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove findings derive status and reject undefined or blank facts"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void FindingsValidateTypedFacts()
     {
         var attention = new ExtensionRemoveFinding(
-            ExtensionRemoveFindingCode.ManagedDivergence,
-            "Current bytes differ.",
+            ExtensionRemoveFindingCode.LifecycleObservation,
+            "The package is not recorded as installed.",
             ".agents/toolkit.md");
         var blocked = new ExtensionRemoveFinding(
             ExtensionRemoveFindingCode.TargetUnsafe,
@@ -191,6 +174,7 @@ public sealed class ExtensionRemoveResultContractTests
             string.Empty));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Extension Remove recovery facts require a residual path only for retained bundles"), Trait("Feature", "extension-remove"), Trait("Evidence", "Unit")]
     public void RecoveryFactsRequireRetainedResidualCertainty()
     {

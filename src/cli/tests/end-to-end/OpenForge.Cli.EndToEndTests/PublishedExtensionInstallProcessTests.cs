@@ -32,11 +32,12 @@ public sealed class PublishedExtensionInstallProcessTests
             "extension", "install",
             "--source", working.CataloguePath,
             "--workspace", working.WorkspacePath,
+            "--detail", "full",
         ],
             working.EnvironmentVariables);
         Assert.Equal(4, invalid.ExitCode);
         Assert.Equal(string.Empty, invalid.StandardOutput);
-        Assert.Contains("Status: invalid", invalid.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Cannot install:", invalid.StandardError, StringComparison.Ordinal);
         Assert.Contains("extension-install.selection-required", invalid.StandardError, StringComparison.Ordinal);
 
     }
@@ -61,7 +62,7 @@ public sealed class PublishedExtensionInstallProcessTests
             "extension", "install", "toolkit",
             "--source", working.CataloguePath,
             "--workspace", working.WorkspacePath,
-            "--automatic", "--json",
+            "--automatic", "--format=json", "--detail", "full",
         };
         var applied = await PublishedProcessTestSupport.RunAsync(
             target,
@@ -74,25 +75,30 @@ public sealed class PublishedExtensionInstallProcessTests
         using var document = JsonDocument.Parse(applied.StandardOutput);
         var root = document.RootElement;
         Assert.Equal(
-            ["schemaVersion", "command", "status", "workspace", "result", "next"],
+            ["schemaVersion", "command", "status", "detail", "filter", "workspace", "summary", "findings", "effects", "counts", "limitations", "data", "recovery", "next"],
             root.EnumerateObject().Select(property => property.Name));
         Assert.Equal("extension install", root.GetProperty("command").GetString());
-        Assert.Equal("complete", root.GetProperty("status").GetString());
+        Assert.Equal("completed", root.GetProperty("status").GetString());
         Assert.Equal("explicit-workspace", root.GetProperty("workspace").GetProperty("selectedBy").GetString());
         Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
-        var commandResult = root.GetProperty("result");
+        var commandResult = root.GetProperty("data");
         Assert.Equal(
         [
-            "mode", "force", "automatic", "selection", "source", "packages", "framework",
-            "footprint", "effects", "generatedNavigation", "permissions", "lifecycle", "recovery", "verification", "findings",
+            "mode", "force", "automatic", "source", "packages", "permissions", "selection", "sections",
+            "entriesUnchanged", "frameworkFingerprint", "verification", "recovery",
         ],
             commandResult.EnumerateObject().Select(property => property.Name));
-        Assert.Equal("explicit-ids", commandResult.GetProperty("selection").GetProperty("selectedBy").GetString());
+        Assert.Equal("explicit-ids", commandResult.GetProperty("selection").GetProperty("method").GetString());
+        Assert.Equal(["toolkit"], Strings(commandResult.GetProperty("packages"), "id"));
+        Assert.Equal(["1.0.0"], Strings(commandResult.GetProperty("packages"), "version"));
+        Assert.Equal([true], commandResult.GetProperty("packages").EnumerateArray()
+            .Select(package => package.GetProperty("selected").GetBoolean()));
+        Assert.Empty(commandResult.GetProperty("packages")[0].GetProperty("requiredBy").EnumerateArray());
         Assert.Equal("verified", commandResult.GetProperty("verification").GetProperty("targets").GetString());
         Assert.Equal("verified", commandResult.GetProperty("verification").GetProperty("topology").GetString());
         Assert.Equal("verified", commandResult.GetProperty("verification").GetProperty("extensionsLifecycle").GetString());
         Assert.Equal("verified", commandResult.GetProperty("verification").GetProperty("frameworkLifecycle").GetString());
-        Assert.Empty(commandResult.GetProperty("findings").EnumerateArray());
+        Assert.Empty(root.GetProperty("findings").EnumerateArray());
         Assert.True(File.Exists(working.TargetPath));
         Assert.Equal(working.SourcePayloadBytes(), File.ReadAllBytes(working.TargetPath));
         Assert.Equal(working.SourceSnapshot, working.SnapshotSource());
@@ -108,16 +114,19 @@ public sealed class PublishedExtensionInstallProcessTests
         Assert.Equal(0, noOp.ExitCode);
         Assert.Equal(string.Empty, noOp.StandardError);
         using var noOpDocument = JsonDocument.Parse(noOp.StandardOutput);
-        var noOpResult = noOpDocument.RootElement.GetProperty("result");
-        Assert.Empty(noOpResult.GetProperty("effects").EnumerateArray());
-        Assert.Equal("preserve", noOpResult.GetProperty("lifecycle").GetProperty("action").GetString());
-        Assert.Equal("already-current", noOpResult.GetProperty("lifecycle").GetProperty("outcome").GetString());
+        var noOpResult = noOpDocument.RootElement.GetProperty("data");
+        Assert.Empty(noOpDocument.RootElement.GetProperty("effects").EnumerateArray());
+        Assert.Equal("not-required", noOpDocument.RootElement.GetProperty("recovery").GetProperty("disposition").GetString());
         Assert.Equal(afterApply, working.SnapshotWorkspace());
         Assert.Equal(working.SourceSnapshot, working.SnapshotSource());
         working.AssertPersistentLock();
     }
 
+    private static string?[] Strings(JsonElement array, string property)
+        => [.. array.EnumerateArray().Select(value => value.GetProperty(property).GetString())];
 
+    private static string?[] Strings(JsonElement array)
+        => [.. array.EnumerateArray().Select(value => value.GetString())];
 }
 
 internal sealed class PublishedExtensionInstallWorkspace : IDisposable

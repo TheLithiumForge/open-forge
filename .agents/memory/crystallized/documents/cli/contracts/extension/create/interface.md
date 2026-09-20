@@ -25,7 +25,7 @@ defines group routing only. No Technical Design exists.
 and deterministic manifest under a catalogue parent. It may record explicit
 dependency IDs but does not resolve their availability or install them. It does
 not install files into a workspace, update generated navigation, write the
-lifecycle document, or publish Framework or Extension lifecycle state.
+ownership lock, or publish Framework or Extension lifecycle state.
 
 `extension create` is the accepted no-workspace mutation exception. The catalogue
 destination is the sole operation subject. Because `--workspace` is a no-op for
@@ -69,9 +69,9 @@ The shared flags are:
 
 ```text
 --workspace <path>
---json
---view=compact|expanded
---verbose
+--format <text|json>
+--detail <minimal|standard|full|debug>
+--detail debug
 --help
 --version
 ```
@@ -93,8 +93,8 @@ explicit request asks only for the missing fact, and a complete explicit request
 asks none. Each question gives clear local guidance. A blank or invalid answer
 may be explained and asked again while input remains available; the command has
 no arbitrary attempt limit or shared retry abstraction. End of input leaves a
-required fact missing and returns `invalid` without writes. Caller cancellation
-returns `interrupted` without writes. Explicit operands and `--path` answer the
+required fact missing and returns `invalid-input` without writes. Caller cancellation
+returns `cancelled` without writes. Explicit operands and `--path` answer the
 same questions in one typed request. Conflicting or repeated explicit inputs are
 invalid.
 
@@ -114,7 +114,7 @@ manifest metadata never adds a wizard question. Human planning shows the
 resolved manifest before application.
 
 JSON and other non-interactive modes never prompt. Missing ID or destination is
-`invalid`. `--automatic` suppresses the wizard only after both semantic inputs
+`invalid-input`. `--automatic` suppresses the wizard only after both semantic inputs
 are explicit. It selects no package, source, workspace, dependency, or
 authority by inference. Repeating it is idempotent.
 
@@ -152,104 +152,133 @@ The package remains a separate authored source location.
 `dependencies` in that order. All five are present. The command validates the
 accepted manifest shape but performs no source lookup or dependency closure.
 
-## Output And Results
+## Human Output
 
-Both human views begin with the creation outcome or preview and status, then
-exact catalogue/package destination, stable ID, resolved manifest metadata and
-dependency IDs. Create has no selected workspace: its null workspace does not
-mean that a workspace lookup failed. State that workspace installation/lifecycle
-was unchanged.
+The command uses the shared native report. The default detail is `minimal`; `standard`, `full` and `debug` add the catalogue-defined facts. `--detail-filter <error|warning|info|all>` is repeatable and changes only the rendered detail. Use `--format text` for this text report. Primary result text for `completed`, `completed-with-warnings` and `incomplete` is on stdout; primary errors for `invalid-input`, `blocked`, `failed` and `cancelled` are on stderr. There is no `Status:` line.
 
-Both views retain every planned and applied scaffold path. Group equal effect
-identities and distinguish an intended file from an applied file, especially
-when creation is blocked, fails or is interrupted. Expanded explains the effect
-kind and concrete verification states/cause. Compact uses shorter rows. Findings
-retain status, code, exact subject and cause. Show the actual Next command once
-when supplied; expanded may add its reason. Paths are not truncated. JSON
-emits the complete typed result from the same result as human output.
+### Statuses and headlines
 
-The command-local JSON `result` uses camel-case properties in exactly this order:
+| Status              | When                                                                           | Headline                                                                | Exit | Stream |
+| ------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------- | ---: | ------ |
+| completed           | created                                                                        | `Created the <id> Extension scaffold at <folder>`                       |    0 | stdout |
+| completed           | identical scaffold present                                                     | `The <id> scaffold at <folder> already matches. Nothing to do.`         |    0 | stdout |
+| completed (dry run) | planned                                                                        | `Would create the <id> Extension scaffold at <folder>`                  |    0 | stdout |
+| incomplete          | folder unreadable                                                              | `The scaffold could not be created: <limitation>. Nothing was changed.` |    3 | stdout |
+| invalid-input       | missing ID or folder outside a terminal, invalid ID, bad version               | `Cannot create the Extension: <problem>.`                               |    4 | stderr |
+| blocked             | folder inside the workspace's `.agents`, destination has other content, unsafe | `Cannot create <id> at <folder>: <reason>.`                             |    5 | stderr |
+| failed              | after effects                                                                  | `Extension create stopped after <n> of <m> files.`                      |    1 | stderr |
+| cancelled           | prompt cancelled, end of input                                                 | `Extension create was cancelled. Nothing was changed.`                  |  130 | stderr |
 
-1. `catalogue`;
-2. `destination`;
-3. `id`;
-4. `manifest`, whose members are `name`, `description`, `version`, and
-   `dependencies` in that order;
-5. `mode`;
-6. `intendedEffects`;
-7. `appliedEffects`;
-8. `verification`; and
-9. `workspaceLifecycleChanged`, always `false`.
+### Text by level
 
-The shared envelope already owns command, status, workspace, and next-action
-coordinates; none is duplicated inside this result.
-
-An applied-result excerpt is:
+`minimal`:
 
 ```text
-Extension creation completed.
-Status: complete
-Package: review-tools
-Catalogue: /packages/open-forge
-Destination: /packages/open-forge/review-tools
-Mode: apply
-Scaffold: 2 intended; 2 applied
-  /packages/open-forge/review-tools/extension.json: applied
-  /packages/open-forge/review-tools/content/.agents: applied
-Verification: catalogue verified; destination verified; manifest verified; content verified
-Workspace installation: unchanged
+Created the my-tools Extension scaffold at packages/my-tools
+  packages/my-tools/extension.json
+  packages/my-tools/content/.agents/
+  Edit extension.json, then add files under content/.agents/.
 ```
 
-The full output also includes manifest metadata. Expanded adds effect kinds and
-verification explanations. A verified no-op reports zero applied effects even
-when the intended scaffold is already present. Values are illustrative.
-
-Primary human complete/attention/incomplete results go to stdout. Primary human
-invalid/blocked/failed/interrupted results go to stderr. Bounded diagnostics use
-stderr. JSON uses one result on stdout for every status.
-
-| Result        | Meaning for `create`                                                                                                                               |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | The scaffold was completely applied or previewed, or the exact intended scaffold is already present as a verified no-op.                           |
-| `attention`   | No current finite create attention condition is accepted. This status remains in the shared vocabulary but is not reached by the current contract. |
-| `incomplete`  | Safe catalogue, path, parser, or filesystem coverage is unavailable. No scaffold write occurs.                                                     |
-| `invalid`     | Required ID/path input, value, repetition, operand, or terminal-mode combination is invalid.                                                       |
-| `blocked`     | Catalogue shape, package destination, identity, containment, ownership, or exact create-only collision boundary is unsafe or colliding.            |
-| `failed`      | Scaffold application or verification fails unexpectedly.                                                                                           |
-| `interrupted` | The caller interrupts before completion and no stronger failure remains.                                                                           |
-
-## Errors And Examples
-
-Every error names `extension create`, the stable ID or catalogue path when
-known, the cause, and at most one useful next action. A divergent, partial,
-additional, unknown, or colliding package destination blocks; create never
-overwrites or adopts it. An exact intended scaffold is a verified no-op. A
-missing or non-directory catalogue parent is invalid. Safely unavailable parent
-coverage is incomplete; unsafe or ambiguous identity is blocked.
-
-Wizard form:
+`minimal`, missing ID outside a terminal (stderr):
 
 ```text
-open-forge extension create
+Cannot create the Extension: no ID was given, and this session cannot ask.
+Next: open-forge extension create <id> --path <folder>
 ```
 
-Direct scaffold preview:
+`standard` adds the manifest values written (`name`, `description`,
+`version`, `dependencies`).
 
-```text
-open-forge extension create development-toolkit --path D:/packages/open-forge --automatic --dry-run
-```
+`full` adds the manifest content verbatim.
 
-Direct manifest overrides:
+### Prompts
 
-```text
-open-forge extension create development-toolkit --path D:/packages/open-forge --name "Development Toolkit" --description "Adds development workflows" --package-version 0.2.0 --dependency shared-prompts
-```
+Text input for the ID (`Extension ID (lowercase, digits and hyphens):`) and
+the folder (`Package folder:`) when missing, then plan review and
+`Create these files? [y/N]` unless `--automatic`.
 
-The accepted global no-op remains explicit:
+### Representative transcripts by status
 
-```text
-open-forge extension create development-toolkit --path D:/packages/open-forge --workspace D:/not-used
-```
+### Transcript — completed
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-create-completed). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Create/__snapshots__/ExtensionCreateBeforeOutputSnapshotTests/prompted-id-and-path/prompted-id-and-path.minimal.txt).
+
+### Transcript — incomplete
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-create-incomplete). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Create/__snapshots__/ExtensionCreateBeforeOutputSnapshotTests/CatalogueUnreadable/catalogue-unreadable.minimal.txt).
+
+### Transcript — invalid-input
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-create-invalid-input). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Create/__snapshots__/ExtensionCreateBeforeOutputSnapshotTests/invalid-id/invalid-id.minimal.txt).
+
+### Transcript — blocked
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-create-blocked). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Create/__snapshots__/ExtensionCreateBeforeOutputSnapshotTests/destination-has-other-content/destination-has-other-content.minimal.txt).
+
+### Transcript — failed
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-create-failed). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Create/__snapshots__/ExtensionCreateBeforeOutputSnapshotTests/PartialWriteFailure/write-failed-partial.minimal.txt).
+
+### Transcript — cancelled
+
+[Preserved interface example](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#extension-create-cancelled). [Matching reviewed capture](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Create/__snapshots__/ExtensionCreateBeforeOutputSnapshotTests/cancelled/cancelled.minimal.txt).
+
+## Structured Output
+
+`--format json` writes one schema-3 envelope to stdout for every report status. It contains the command, status, workspace when applicable, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
+
+### JSON data by level
+
+| Level    | `data`                                                         |
+| -------- | -------------------------------------------------------------- |
+| minimal  | `{ mode, id, folder, packagePath, manifestPath, contentPath }` |
+| standard | + `manifest { name, description, version, dependencies }`      |
+| full     | + `manifestContent`                                            |
+
+## Semantic Results
+
+The status and exit mapping above are unchanged by detail or format. Root effects and recovery receipts retain their complete result facts at every detail level; command-owned data follows the catalogue's level rows.
+
+### Effects wording
+
+`<path>  created` / `Would create <path>`; partial: `created`, `not started`.
+
+### Counts and limitations
+
+`filesCreated`, `directoriesCreated`.
+
+## Errors And Boundaries
+
+The findings catalogue below is the command's finite error and warning vocabulary. Findings keep their code, severity, family, subject and cause; detail filtering affects display only. A blocked, failed or cancelled result prevents further effects according to the catalogue.
+
+### Findings catalogue
+
+| Code                                   | Severity | Family              | Message                                                                                                                                                                                                                                                                                     | Next                        |
+| -------------------------------------- | -------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| extension-create.invalid-input         | error    | local               | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Create/Shared/Wording/ExtensionCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-create.invalid-input`). | corrected command           |
+| extension-create.catalogue-unavailable | warning  | local               | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Create/Shared/Wording/ExtensionCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-create.catalogue-unavailable`).                                                                                                                                                                                                                                                               | none                        |
+| extension-create.catalogue-unsafe      | error    | local               | `<folder> cannot be used: <it is inside the workspace's .agents \| it resolves to an unsafe location>.`                                                                                                                                                                                     | choose another folder       |
+| extension-create.destination-collision | error    | local               | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/Create/Shared/Wording/ExtensionCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-create.destination-collision`).                                                                                                                                                                                                                                      | choose another ID or folder |
+| extension-create.destination-changed   | error    | target-changed      |                                                                                                                                                                                                                                                                                             |                             |
+| extension-create.application-failed    | error    | write-failed        | (no recovery bundle: `Extension create stopped after <n> of <m> files. Created files were left in place.`)                                                                                                                                                                                  | none                        |
+| extension-create.verification-failed   | error    | verification-failed | (no recovery bundle)                                                                                                                                                                                                                                                                        |                             |
+| extension-create.interrupted           | error    | cancelled |                                                                                                                                                                                                                                                                                             |                             |
+
+## Scenarios
+
+### Catalogue situations
+
+`created`, `created-with-metadata`, `dry-run`, `already-present` (no-op),
+`destination-has-other-content` (blocked), `missing-id-non-interactive`,
+`prompted-id-and-path`, `invalid-id`, `catalogue-unreadable` (incomplete),
+`write-failed-partial`, `cancelled`.
+
+Each status has one representative native text transcript above. JSON uses the same status and command facts under the schema-3 envelope.
+
+### Open maintainer questions
+
+The catalogue does not specify how malformed versions or unresolvable dependencies are classified, whether creating inside the workspace's `.agents` is allowed, the wording for a completed effect, or the split between the published `folder` and `packagePath` members. The current behavior is recorded without filling those gaps. **Maintainer decisions remain open.**
 
 ## Non-Goals And Public Conformance
 
@@ -260,7 +289,7 @@ run a formatter, or remove the package source.
 
 Conformance must cover zero, one, and all currently missing required human facts;
 command-local correction of blank/invalid input without an attempt limit;
-no-write invalid end of input and interrupted cancellation; direct, JSON,
+no-write end of input and caller cancellation; direct, JSON,
 automatic, and redirected omission states; exact ID
 and catalogue-parent validation, empty and populated marker-free parents,
 unrelated sibling preservation, exact-destination-only inspection, refusal to
@@ -282,23 +311,13 @@ result schema and exit mapping. Gate 5 must prove source-generated serialization
 fixed Markdig where used, real `System.IO`, Native AOT, isolated tests, and
 package journeys.
 
-## Compact JSON Output
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
 
-The compact result retains the complete command-owned result graph defined by
-its structured schema, including every nullable value and ordered collection.
-Its core already carries the facts needed to use the result. For mutation
-commands this includes plans, exact previews, effects, permissions when
-applicable, verification, findings and recovery. Rendering never asks a caller
-to rerun a mutation to recover an omitted receipt.
 
-No collection is truncated and no finding is filtered. Counts describe the
-original operation. Both JSON views retain the same result facts.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+## Executable Wording References
+
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
+
+CLI help syntax: [`extension.create.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Extension/Create/ExtensionCreateText.cs).
+
+<!-- @OpenForgeTextRef extension.create.help.syntax -->

@@ -1,0 +1,8 @@
+Repaired 1 link. 1 problem still needs a choice or a hand.
+Workspace: <workspace>
+  Warning  .agents/directives/review.md  Library diagnosis remains
+         The registered Library projection is not current.
+  .agents/directives/review.md  restored from recovery
+1 link repaired, 1 problem remaining, 1 problem needing a hand, 1 Library recovery step, 1 warning.
+  Inspect remaining Library problems with open-forge doctor.
+Next: open-forge doctor

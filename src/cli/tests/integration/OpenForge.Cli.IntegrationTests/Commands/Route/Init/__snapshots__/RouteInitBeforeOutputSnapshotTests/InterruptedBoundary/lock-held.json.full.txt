@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 3,
+  "command": "route init",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot initialize .agents/documents/_documents.md: Another Open Forge command holds the workspace lock. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-init.workspace-lock-unavailable",
+      "title": "Workspace lock is held",
+      "message": "Another Open Forge command holds the workspace lock. Nothing was changed.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "documents",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge route init",
+          "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [
+    {
+      "path": ".agents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/documents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/documents/_documents.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "---\nopen-forge:\n  description: Draft route for documents; replace this description before relying on it for selection\n  tags: [NeedsAuthoring]\n---\n\n# documents\n\nDraft route for documents; replace this description before relying on it for selection.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- none - No entries - #Empty\n"
+    }
+  ],
+  "counts": {
+    "entrypointsCreated": 0,
+    "entrypointsPresent": 0,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "target": {
+      "id": "documents",
+      "path": ".agents/documents/_documents.md"
+    },
+    "scaffold": "generic",
+    "entrypoints": [
+      {
+        "path": ".agents/documents/_documents.md",
+        "outcome": "not-started",
+        "needsAuthoring": true,
+        "content": "---\nopen-forge:\n  description: Draft route for documents; replace this description before relying on it for selection\n  tags: [NeedsAuthoring]\n---\n\n# documents\n\nDraft route for documents; replace this description before relying on it for selection.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n- none - No entries - #Empty\n"
+      }
+    ],
+    "listedIn": [],
+    "metadata": {
+      "description": "Draft route for documents; replace this description before relying on it for selection",
+      "responsibility": null,
+      "tags": [
+        "NeedsAuthoring"
+      ],
+      "sources": {
+        "description": "draft",
+        "responsibility": "default-omitted",
+        "tags": "draft"
+      }
+    },
+    "sections": [],
+    "verification": "not-requested"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge route init",
+    "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan."
+  }
+}

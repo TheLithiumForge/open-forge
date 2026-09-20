@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Mutation.Validation;
 
 public sealed class MutationPreflightTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Mutation preflight accepts no-op and blocks duplicate target sets")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public async Task PreflightBlocksStructurallyInvalidChangeSetsBeforeObservation()
@@ -26,6 +27,7 @@ public sealed class MutationPreflightTests
         Assert.Equal(MutationValidationState.Blocked, duplicate.State);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Mutation preflight blocks duplicate expected physical identities")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public async Task PreflightBlocksDuplicateExpectedPhysicalIdentityBeforeObservation()
@@ -56,6 +58,7 @@ public sealed class MutationPreflightTests
         Assert.Empty(result.Checks);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Mutation preflight returns cancelled before observing a nonempty plan"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public async Task PreflightReturnsCancelledBeforeObservation()
     {

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 3,
+  "command": "library list",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "1 Library registered.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "libraries": 1,
+    "linksCurrent": 1,
+    "linksMissing": 0,
+    "linksChanged": 0,
+    "linksUnavailable": 0
+  },
+  "limitations": [],
+  "data": {
+    "libraries": [
+      {
+        "id": "team-knowledge",
+        "sourceFolder": "shared/team",
+        "destinationFolder": ".",
+        "links": [
+          {
+            "path": ".agents/directives/review.md",
+            "state": "current",
+            "expectedTarget": "../../shared/team/.agents/directives/review.md",
+            "observedTarget": "../../shared/team/.agents/directives/review.md",
+            "sourceId": "directives/review"
+          }
+        ]
+      }
+    ],
+    "recordCoverage": {
+      "path": ".agents/open-forge.lock.json",
+      "state": "complete",
+      "libraryCount": 1
+    }
+  },
+  "recovery": null,
+  "next": null
+}

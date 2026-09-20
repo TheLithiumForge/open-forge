@@ -49,9 +49,7 @@ Canonical leaf `entrypoints` ship with empty generated `Entries`. The repository
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Current maintenance contract for the installable Archived Memory entrypoint](archived.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Archived #Historical
 - [Current maintenance contracts for the installable Crystallized Memory entrypoint and its Decisions and Documents routes](crystallized/_crystallized.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Crystallized
 - [Current maintenance contracts for the installable Emerging Memory entrypoint and its Analysis, Ideas, and Observations routes](emerging/_emerging.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Emerging #Candidate
 - [Current maintenance contracts for the installable Working Memory entrypoint and its Checkpoints and Handoffs routes](working/_working.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Working
-<!-- open-forge:generated-index:end -->

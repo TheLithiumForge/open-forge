@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Active Task for adding Development Preflight, scoped parallel Bun evidence, isolated test workspaces and builds, and faster phase verification
+  description: "Historical CLI-v2 source: Active Task for adding Development Preflight, scoped parallel Bun evidence, isolated test workspaces and builds, and faster phase verification"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 
@@ -31,7 +31,7 @@ tags, and making replacement tests safe for file-level parallel execution.
 - Branch: `agents/feature/cli-overhaul-development-preflight-test-isolation`
 - Baseline branch: `feature/cli-overhaul`
 - Baseline commit: `dc6005818780b4fcd30239af9b33bba69ef800c9`
-- Worktree: `D:/Repositories/open-forge-worktrees/cli-overhaul-development-preflight-test-isolation`
+- Worktree: `<workspace>/open-forge-worktrees/cli-overhaul-development-preflight-test-isolation`
 - The separate route-inventory Task remains paused on its own continuation
   branch after Review blockers and is not part of this baseline.
 

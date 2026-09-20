@@ -1,11 +1,13 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.List;
-using OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Route.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Presentation.Route.List;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models.Source;
@@ -14,6 +16,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List;
 
 public sealed class RouteListCoverageAndResultTests
 {
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list coverage factories enforce complete and partial boundaries")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void CoverageFactoriesEnforceCompleteAndPartialBoundaries()
@@ -49,6 +52,7 @@ public sealed class RouteListCoverageAndResultTests
             [""]));
     }
 
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route list result factories represent all seven semantic statuses")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ResultFactoriesRepresentAllSemanticStatuses()
@@ -86,7 +90,7 @@ public sealed class RouteListCoverageAndResultTests
                 ["Root confirmed."],
                 ["Descendant coverage is unknown."]),
             [RootRow(RouteListSelectionProvenance.ExplicitRoot, directChildCount: null)],
-            [Finding(RouteListFindingCode.MetadataMissing, CliSemanticStatus.Incomplete)],
+            [Finding(RouteListFindingCode.ReadUnavailable, CliSemanticStatus.Incomplete)],
             next);
         var invalid = RouteListResult.Create(
             CliSemanticStatus.Invalid,
@@ -144,41 +148,30 @@ public sealed class RouteListCoverageAndResultTests
         foreach (var result in results)
         {
             var expectedStatus = CliStatusDefinitions.Read(result.Status).MachineName;
-            var compact = RouteListHumanRenderer.Render(new CliPresentationRequest<RouteListResult>(
+            var compact = CliRenderingStage.Render(new CliPresentationRequest<RouteListResult>(
                 result,
-                new CliPresentation(CliOutputFormat.Human, CliView.Compact, CliVerbosity.Normal)));
-            var expanded = RouteListHumanRenderer.Render(new CliPresentationRequest<RouteListResult>(
+                new CliPresentation(CliFormat.Text, CliDetail.Minimal, null)), RouteListPresentation.Rendering).PrimaryContent;
+            var expanded = CliRenderingStage.Render(new CliPresentationRequest<RouteListResult>(
                 result,
-                new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal)));
-            var json = RouteListJsonRenderer.Render(new CliPresentationRequest<RouteListResult>(
+                new CliPresentation(CliFormat.Text, CliDetail.Standard, null)), RouteListPresentation.Rendering).PrimaryContent;
+            var json = CliRenderingStage.Render(new CliPresentationRequest<RouteListResult>(
                 result,
-                new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal)));
+                new CliPresentation(CliFormat.Json, CliDetail.Standard, null)), RouteListPresentation.Rendering).PrimaryContent;
             using var document = JsonDocument.Parse(json);
 
-            var humanStatus = result.Status == CliSemanticStatus.Attention ? "requires attention" : expectedStatus;
-            Assert.Contains($"Status: {humanStatus}", compact, StringComparison.Ordinal);
-            Assert.Contains($"Status: {humanStatus}", expanded, StringComparison.Ordinal);
+            Assert.DoesNotContain("Status:", compact, StringComparison.Ordinal);
+            Assert.DoesNotContain("Status:", expanded, StringComparison.Ordinal);
             Assert.Equal(expectedStatus, document.RootElement.GetProperty("status").GetString());
-            if (result.Rows.Count > 0 && result.Findings.Count > 0)
-            {
-                var rowText = $"{result.Rows[0].Id}  {result.Rows[0].Path}";
-                Assert.InRange(compact.IndexOf(result.Findings[0].MachineCode, StringComparison.Ordinal), 0, compact.IndexOf(rowText, StringComparison.Ordinal) - 1);
-                Assert.InRange(expanded.IndexOf(result.Findings[0].MachineCode, StringComparison.Ordinal), 0, expanded.IndexOf(rowText, StringComparison.Ordinal) - 1);
-                if (result.Next is not null)
-                {
-                    Assert.InRange(expanded.IndexOf("Next:", StringComparison.Ordinal), 0, expanded.IndexOf(rowText, StringComparison.Ordinal) - 1);
-                }
-                else
-                {
-                    Assert.DoesNotContain("Next:", expanded, StringComparison.Ordinal);
-                }
-            }
+            Assert.DoesNotContain("Coverage:", compact, StringComparison.Ordinal);
+            Assert.DoesNotContain("Selection:", expanded, StringComparison.Ordinal);
+            Assert.DoesNotContain("Confirmed:", expanded, StringComparison.Ordinal);
         }
         Assert.Equal(1, complete.SchemaVersion);
         Assert.Equal("route list", complete.Command);
         Assert.Equal("Review valid route-list input.", invalid.Next?.Reason);
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list result construction rejects inconsistent state")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ResultConstructionRejectsInconsistentState()
@@ -221,7 +214,7 @@ public sealed class RouteListCoverageAndResultTests
                 [],
                 ["Unknown boundary."]),
             [],
-            [Finding(RouteListFindingCode.MetadataMissing, CliSemanticStatus.Incomplete)],
+            [Finding(RouteListFindingCode.ReadUnavailable, CliSemanticStatus.Incomplete)],
             null));
         Assert.Throws<ArgumentException>(() => RouteListResult.Create(
             CliSemanticStatus.Invalid,
@@ -260,6 +253,7 @@ public sealed class RouteListCoverageAndResultTests
             next));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list results reconcile selection roots depth order and child coverage")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void ResultsReconcileSelectionRootsDepthOrderAndChildCoverage()
@@ -436,6 +430,7 @@ public sealed class RouteListCoverageAndResultTests
             null));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list findings enforce status candidates and workspace phase")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void FindingsEnforceStatusCandidatesAndWorkspacePhase()
@@ -484,6 +479,7 @@ public sealed class RouteListCoverageAndResultTests
             next));
     }
 
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route list next-action rules are exhaustive")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void NextActionRulesAreExhaustive()

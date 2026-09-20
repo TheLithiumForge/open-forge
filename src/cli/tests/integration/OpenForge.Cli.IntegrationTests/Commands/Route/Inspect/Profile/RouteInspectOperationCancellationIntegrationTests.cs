@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Profile;
 
 public sealed class RouteInspectOperationCancellationIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route inspect translates a pre-cancelled operation to an interrupted typed result without a profile")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task PreCancelledOperationIsInterrupted()

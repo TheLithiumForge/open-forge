@@ -1,0 +1,11 @@
+Route create was cancelled. Nothing was changed.
+Workspace: <workspace>
+  Error  memory/project-alpha/overview  Route create was cancelled [route-create.interrupted]
+         Route create was cancelled. Nothing was changed.
+         open-forge route create
+         Rerun the same Route Create request.
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project
+  Rerun the same Route Create request.
+Next: open-forge route create

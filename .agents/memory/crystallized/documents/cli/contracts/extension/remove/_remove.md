@@ -2,7 +2,7 @@
 open-forge:
   description: Route the accepted Extension ownership-release and bounded removal contracts
   responsibility: Route Extension remove Interface and Behavior without adding arbitrary cleanup or Framework removal authority
-  tags: [Memory, Crystallized, CLI, Release, Command, Contract, Extension, Remove, Ownership, Prune, CurrentTruth]
+  tags: [Memory, Crystallized, CLI, Release, Command, Contract, Extension, Remove, Ownership, CurrentTruth]
 ---
 
 # extension remove Command
@@ -16,8 +16,8 @@ package source and has no Framework equivalent.
 
 ## Contract Roles
 
-- [`interface.md`](interface.md) defines exact managed-ID selection, human
-  Keep-as-unmanaged/Delete choice, `--prune`, automatic behavior, effects,
+- [`interface.md`](interface.md) defines exact managed-ID selection,
+  final-owner deletion, retained recovery, automatic behavior, effects,
   statuses, output, errors, examples, and public conformance.
 - [`behavior.md`](behavior.md) defines trusted ownership and route resolution,
   dependency and shared-owner checks, removal planning, generated navigation,
@@ -34,7 +34,5 @@ package source and has no Framework equivalent.
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
-- [Accepted technology-neutral Extension removal behavior for ownership release, shared owners, same-request prune, and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Remove #Behavior #Ownership #Prune #Safety #Recovery #CurrentTruth
-- [Accepted Interface for releasing selected Extension ownership with safe final-owner removal and same-request prune](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Remove #Interface #Ownership #Prune #Safety #CurrentTruth
-<!-- open-forge:generated-index:end -->
+- [Accepted technology-neutral Extension removal behavior for ownership release, shared owners, final-owner deletion, and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Remove #Behavior #Ownership #Safety #Recovery #CurrentTruth
+- [Accepted Interface for releasing selected Extension ownership with safe final-owner deletion and retained recovery](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Remove #Interface #Ownership #Safety #CurrentTruth

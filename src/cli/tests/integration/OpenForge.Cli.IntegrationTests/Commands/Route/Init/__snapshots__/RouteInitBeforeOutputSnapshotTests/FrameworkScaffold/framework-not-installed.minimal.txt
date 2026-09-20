@@ -1,0 +1,3 @@
+Cannot initialize .agents/memory/working/_working.md: The Framework scaffold needs an installed Framework.
+Workspace: <workspace>
+Next: open-forge install --dry-run

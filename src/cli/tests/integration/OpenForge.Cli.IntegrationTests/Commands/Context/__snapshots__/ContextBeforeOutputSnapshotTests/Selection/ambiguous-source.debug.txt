@@ -1,0 +1,43 @@
+Cannot read context: docs/guide matches more than one source. Use the exact path.
+Workspace: <workspace>
+  Error  docs/guide  Source is ambiguous [context.source-ambiguous]
+         docs/guide matches more than one source. Use the exact path.
+         .agents/docs/guide.md: 
+         .agents/docs/guide/_guide.md: 
+=== AGENTS.md ===
+included because workspace entry
+order: 1
+layer: base
+# Workspace
+
+Read `.agents/loader.md`.
+
+=== .agents/loader.md (loader) ===
+included because Loader
+order: 2
+layer: base
+# Open Forge Loader
+
+## Entries
+
+- [Documents](docs/_docs.md) - #LoadNow #Docs
+
+=== .agents/docs/_docs.md (docs) ===
+included because #LoadNow from .agents/loader.md
+route: docs
+order: 3
+layer: base
+---
+open-forge:
+  description: Documents
+  tags: [Docs]
+---
+# Documents
+
+## Entries
+
+- [Guide](guide.md) - #Docs #Guide
+- [Reference](reference.md) - #Docs
+  sources: The selected Context sources could not be resolved completely.
+  tokens: The selected Context sources could not be resolved completely.
+  bytes: The selected Context sources could not be resolved completely.

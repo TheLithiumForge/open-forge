@@ -1,0 +1,12 @@
+status=incomplete
+mode=apply
+source=guidance/old guide
+destination=guidance/new guide
+subject=leaf
+completeness=incomplete
+safety=not-established
+effects=0
+recovery=not required
+verification=not run
+findings=1
+finding=route-move.reference-coverage-incomplete:target=invalid.md:cause=Unable to translate bytes [FF] at index 0 from specified code page to Unicode.

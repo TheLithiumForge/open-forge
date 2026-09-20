@@ -1,0 +1,3 @@
+No sources match --tag AbsentTag.
+Workspace: <workspace>
+4 sources inspected, 4 source candidates.

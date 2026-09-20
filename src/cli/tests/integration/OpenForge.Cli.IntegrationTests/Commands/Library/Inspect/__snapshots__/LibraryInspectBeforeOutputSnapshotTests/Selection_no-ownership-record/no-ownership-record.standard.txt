@@ -1,0 +1,2 @@
+No ownership record exists, so team-knowledge cannot be inspected.
+Workspace: <workspace>

@@ -12,8 +12,8 @@ open-forge:
 This is the accepted current Crystallized Interface Contract for `open-forge
 route list`. It owns the public purpose, grammar, route selection, structural depth,
 observable rows, human and structured presentation, semantic results, errors,
-examples, non-goals, and caller-visible verification. The command does not ship
-yet; implementation and executable evidence are tracked in
+examples, non-goals, and caller-visible verification. The command is implemented
+in the merged native CLI; implementation and executable evidence are tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md).
 
 The sibling [Behavior Contract](behavior.md) defines deterministic,
@@ -32,7 +32,7 @@ which routed descendants occur at a requested structural depth. It exposes the
 current authored route topology as deterministic rows that a caller can use to
 choose a later route operation.
 
-The command is read-only, stateless, and non-shipping. Given the same selected
+The command is read-only and stateless. Given the same selected
 workspace bytes and the same request, it returns the same route rows, order,
 coverage, findings, and semantic result. It does not rebuild or trust generated
 `Entries`, load source bodies into context, infer relevance, or mutate the
@@ -61,9 +61,10 @@ no alias. Depth accepts the native value forms `--depth 2`, `--depth=2`, and
 | `--depth=<non-negative-integer\|all>` | Select route descendants by structural edges                          | A decimal non-negative integer or the exact value `all` | `1`                                                                      | One scalar value; repetition is invalid rather than choosing a precedence |
 | global flags                          | Select workspace, presentation, diagnostics, or terminal help/version | The six values defined by the shared contract           | Shared defaults                                                          | Shared repetition, terminal, and composition rules apply                  |
 
-The applicable global flags are `--workspace <path>`, `--json`,
-`--view=compact|expanded`, `--verbose`, `--help`, and `--version`. `--view`
-selects detail in human and JSON presentation. `--help` and `--version` stop before route
+The applicable global flags are `--workspace <path>`, `--format <text|json>`,
+`--detail <minimal|standard|full|debug>`, repeatable
+`--detail-filter <error|warning|info|all>`, `--help`, and `--version`. `--detail`
+selects detail in text and JSON presentation. `--help` and `--version` stop before route
 resolution under the shared terminal-mode rules.
 
 An empty depth value, a negative value, a non-integer value, an unknown value, or
@@ -201,195 +202,221 @@ ordering is deterministic by canonical route/path order from the current authore
 topology. The order is not generated `Entries` order, filesystem enumeration
 order, modification time, or a relevance ranking.
 
-The same row order is used by compact human output, expanded human output, and
+The same row order is used by minimal-detail human output, full-detail human output, and
 structured output. An explicitly selected route does not cause its ancestors to
 be emitted as rows, but its mechanically established parent remains a row fact
 even when that parent is outside the selected result. Detached or genuinely
 parentless selection reports a null parent with the matching provenance.
 
-## Human And Structured Output
+## Human Output
 
-The default human view is expanded. Both views lead with Routes (or Routes under
-the resolved source ID), status, workspace, selection method, coverage, selected
-root count, effective depth and row count. Unresolved boundaries, findings and
-any actual Next command appear before safe rows. An incomplete empty result is
-not described as a complete empty route set.
+Every semantic result is rendered by the shared native report. --format text
+is the default text format. The applicable global flags are --workspace <path>,
+--format <text|json>, --detail <minimal|standard|full|debug>, repeatable
+--detail-filter <error|warning|info|all>, --help, and --version.
+The default detail is minimal; standard adds workspace and tags, full adds row
+provenance and structural facts, and debug adds bounded diagnostics on stderr.
+Detail changes presentation only; it does not change rows, counts, ordering,
+coverage, or status. Filters select finding severities; all is the default
+filter.
 
-### Compact View
+The catalogue text by detail level is:
 
-Compact prints one hierarchically indented ID/path row and one metadata line per
-source, preserving exact authored descriptions, tags and typed row order. It does
-not infer ancestor rows or replace authored metadata with a summary. Structural
-explanation belongs to expanded view.
-
-Illustrative excerpt:
+`minimal`:
 
 ```text
-Routes under guidance
-Status: complete
-Workspace: /work/demo
-Selected by: current directory
-Coverage: complete; roots: 1; depth: 1; routes: 2
-
-guidance  .agents/guidance/_guidance.md
-  Advice for recurring choices; tags: ["Guidance"]
-  guidance/review  .agents/guidance/review.md
-    Review proposed changes; tags: ["Review"]
+directives                       Required instructions loaded through selected routes
+guidance                         Advice for recurring choices, tradeoffs, and work situations
+  guidance/adaptive-collaboration  Explore ideas, match the depth to the decision, integrate accepted outcomes, and offer useful independent review
+maps                             Concise maps to important local and external sources and when to use them
+memory                           Self-growing Markdown memory for active work, coordination, accepted knowledge, candidates, and history
+  memory/archived                Useful history that no longer controls current work
+  memory/crystallized            Accepted knowledge that should remain current
+  memory/emerging                Useful material that is not accepted yet
+  memory/working                 Temporary memory that helps agents continue or resume active work
+patterns                         Reusable default shapes for code, files, APIs, documents, and other work
+skills                           Specialized capabilities provided through native SKILL.md packages
+templates                        Copy-ready files for starting independently maintained workspace content
+workflows                        Repeatable Markdown recipes for reaching a defined goal
+13 routes to depth 1. Deeper routes: open-forge route list --depth=all
 ```
 
-### Expanded View
+Child rows use the full ID so any row can be pasted into `route inspect`.
+Descriptions are authored content and are never shortened. The trailer
+appears only when at least one listed entrypoint has children beyond the
+requested depth; it never states a count of hidden routes.
 
-Expanded adds the actual supplied/resolved selection, requested depth and its
-meaning, and nonempty coverage confirmations. Each row adds its actual parent
-ID/path, absolute and relative depth, kind, applicable direct-child count,
-selection/source facts and overwrite state. Shared facts appear once; absent
-findings or unresolved boundaries do not create empty sections.
+`standard` adds `Workspace:`, then under each row the path and the tags:
 
-Both views preserve every finding's status, code, cause, subject and candidate
-paths. Generated human values are escaped without truncating source identities
-or authored metadata. Next shows the command already formed by the operation;
-expanded includes its reason. No renderer chooses a new action. JSON retains the
-complete typed facts. `--verbose` adds bounded diagnostics without changing rows,
-selection, ordering, coverage or status.
+```text
+guidance                         Advice for recurring choices, tradeoffs, and work situations
+                                 .agents/guidance/_guidance.md   #LoadNow #Core #Guidance
+```
 
-### JSON
+`full` adds per row: parent, depth, kind (`entrypoint` or `file`), direct
+child count, how the row was selected, and whether an overwrite file exists.
 
-`--json` emits one complete structured result derived from the same typed result.
-It retains the selected workspace and root-selection facts, requested and
-effective depth, semantic result, coverage, findings, and every route row with
-all fields listed above. It retains empty result sets and incomplete coverage
-explicitly. JSON view selection follows the compact and expanded projections defined here.
+Warnings, incomplete results, and completed results use stdout. Invalid-input,
+blocked, failed, and cancelled results use stderr. A parser failure is text on
+stderr without a result envelope. Next: is the catalogue's action when one is
+defined.
 
-The camel-case structured shape is fixed for schema version 1:
+## Structured Output
+
+--format json emits one schema-3 envelope on stdout for every semantic result,
+including invalid-input, blocked, failed, and cancelled results formed after
+parsing. It has exactly these top-level fields:
 
 ```text
 {
-  schemaVersion,
+  schemaVersion: 3,
   command,
   status,
-  workspace: { path, selectedBy },
-  result: {
-    selection,
-    requestedDepth,
-    effectiveDepth,
-    coverage,
-    findings,
-    rows
-  },
+  detail,
+  filter,
+  workspace,
+  summary,
+  findings,
+  effects,
+  counts,
+  limitations,
+  data,
+  recovery,
   next
 }
 ```
 
-`command` is exactly `route list`. `selection` distinguishes Loader-root
-selection from one explicit source and retains that source's ID and path when
-present. Each row uses `id`, `path`, `parentId`, `parentPath`, `absoluteDepth`,
-`relativeDepth`, `kind`, `description`, `tags`, `directChildCount`, and
-`provenance`. `next` is one `{ command, reason }` value or null. Status and
-workspace facts are not duplicated inside `result`.
+The command is exactly route list. data follows the catalogue:
 
-There is no minimal projection. `route list` has no `--show`, `--display`,
-metadata filter, literal filter, result cap, graph mode, or semantic query mode.
+| Level    | `data`                                                                                               |
+| -------- | ---------------------------------------------------------------------------------------------------- |
+| minimal  | `{ subject: { id, path } \| null, depth, rows: [ { id, path, description, tags, relativeDepth } ] }` |
+| standard | same (path and tags are already present)                                                             |
+| full     | + per row `parentId`, `absoluteDepth`, `kind`, `directChildren`, `selectedAs`, `hasOverwrite`        |
 
-## Results And Errors
+data is null only for a parser-level failure before command binding. Human and
+JSON results are formed from the same typed result; no alternate projection
+exists.
 
-The command uses the shared semantic result and error meanings:
+## Semantic Results
 
-| Result        | Meaning for `route list`                                                                                                                     |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | The selected roots and requested depth were enumerated completely with no unresolved finding that changes the result                         |
-| `attention`   | Safe route rows and the requested coverage are complete, with a non-blocking identity or authored-form finding that does not weaken coverage |
-| `incomplete`  | Safe confirmed rows are available, but the requested route coverage could not be established completely                                      |
-| `invalid`     | The command grammar, depth, source kind, or routed-subject requirement is not valid                                                          |
-| `blocked`     | An unsafe path, ambiguous identity, ambiguous route structure, or other boundary prevents safe route resolution                              |
-| `failed`      | An unexpected failure prevented normal completion                                                                                            |
-| `interrupted` | The caller cancelled or interrupted the operation before completion                                                                          |
+| Status                  | When                                                          | Text                                                                                   | Exit | Stream |
+| ----------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | rows                                                          | rows, then the depth trailer when depth stopped the listing                            |    0 | stdout |
+| completed               | no routes under the subject                                   | `No routes under <id>.` / `The Loader exposes no routes.`                              |    0 | stdout |
+| completed-with-warnings | metadata missing or malformed on a listed route, ID collision | warning rows, blank line, rows                                                         |    2 | stdout |
+| incomplete              | an entrypoint could not be read                               | warning rows, blank line, the confirmed rows; `standard`: `The listing is incomplete.` |    3 | stdout |
+| invalid-input           | unknown source, bad depth, a second operand                   | `Cannot list routes: <problem>.`                                                       |    4 | stderr |
+| blocked                 | ambiguous source or route, malformed Loader, unsafe path      | `Cannot list routes: <reason>.`                                                        |    5 | stderr |
+| failed                  | unexpected error                                              | `Route list stopped because of an unexpected error: <reason>.`                         |    1 | stderr |
+| cancelled               | Ctrl+C                                                        | `Route list was cancelled.`                                                            |  130 | stderr |
 
-A complete empty root or descendant set is valid after the exact requested
-topology has been inspected completely. A partial list never implies complete
-coverage. Every human error names the operation, affected reference or route
-when known, direct cause, and useful next action. Shared JSON and global-flag
-rules apply to every semantic result.
+### Current merged behavior and open questions
 
-Missing or malformed required route metadata makes the requested coverage
-`incomplete` because a complete row cannot be established. Unsafe identity or
-ambiguous topology is `blocked`. An authored-form finding may be `attention`
-only when every requested row and coverage fact remains complete. Cancellation
-returns `interrupted`, may retain already confirmed safe rows, and never reports
-complete coverage. Cancellation observed after a complete result has been formed
-does not replace that completed result.
+The catalogue assigns unreadable metadata to completed-with-warnings (exit 2)
+with a (no description) row. The merged operation instead returns incomplete
+(exit 3) and omits the unreadable row. Maintainer decision remains open; this
+contract records both the catalogue rule and the observed result.
 
-## Complete Examples
+The catalogue assigns a malformed Loader to blocked (exit 5). The merged
+operation instead returns incomplete (exit 3) with open-forge doctor.
+Maintainer decision remains open; this contract records both outcomes.
 
-List every current Loader-exposed root and its direct routed children:
+## Errors And Boundaries
+
+The finding catalogue is:
+
+| Code                                | Severity | Family                | Message                                                                                           | Next                                               |
+| ----------------------------------- | -------- | --------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| route-list.invalid-source-reference | error    | invalid-input         | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/List/Shared/Wording/RouteListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-list.invalid-source-reference`).                                           | `open-forge route list --depth=all`                |
+| route-list.unknown-source           | error    | unknown-source        |                                                                                                   |                                                    |
+| route-list.invalid-depth            | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/List/Shared/Wording/RouteListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-list.invalid-depth`).                                                          | none                                               |
+| route-list.loader-subject           | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/List/Shared/Wording/RouteListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-list.loader-subject`).                       | `open-forge route list`                            |
+| route-list.invalid-workspace        | error    | workspace-unavailable |                                                                                                   |                                                    |
+| route-list.workspace-unavailable    | error    | workspace-unavailable |                                                                                                   |                                                    |
+| route-list.ambiguous-source         | error    | source-ambiguous      |                                                                                                   |                                                    |
+| route-list.route-ambiguous          | error    | route-ambiguous       |                                                                                                   |                                                    |
+| route-list.unsafe-source            | error    | source-unsafe         |                                                                                                   |                                                    |
+| route-list.physical-boundary        | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/List/Shared/Wording/RouteListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-list.physical-boundary`).                                       | none                                               |
+| route-list.loader-unavailable       | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/List/Shared/Wording/RouteListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-list.loader-unavailable`).                                                            | `open-forge doctor`                                |
+| route-list.loader-malformed         | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/List/Shared/Wording/RouteListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-list.loader-malformed`).                                                | `open-forge doctor`                                |
+| route-list.unsupported-source       | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/List/Shared/Wording/RouteListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-list.unsupported-source`).                                                         | none                                               |
+| route-list.read-unavailable         | warning  | inspection-incomplete | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/List/Shared/Wording/RouteListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-list.read-unavailable`).                                | `open-forge doctor`                                |
+| route-list.metadata-missing         | warning  | local                 | row description shows `(no description)`; finding `<path> has no description in its frontmatter.` | `open-forge route update <id> --description "..."` |
+| route-list.metadata-malformed       | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/List/Shared/Wording/RouteListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-list.metadata-malformed`).                                          | fix by hand                                        |
+| route-list.authored-form            | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/List/Shared/Wording/RouteListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-list.authored-form`).                                           | rename to `_<folder>.md`                           |
+| route-list.identity-collision       | warning  | identity-collision    |                                                                                                   |                                                    |
+| route-list.operation-failed         | error    | operation-failed      |                                                                                                   |                                                    |
+| route-list.interrupted              | error    | interrupted           |                                                                                                   |                                                    |
+
+Findings retain code, severity, family, message, subject, cause, and next action
+when available. Counts are:
+
+`routes`, `roots`, `depth`.
+
+## Scenarios
+
+`roots-depth-1`, `subtree`, `depth-all`, `depth-0`, `empty-subtree`,
+`unknown-source` (invalid), `invalid-depth`, `ambiguous-source` (blocked),
+`metadata-missing` (warnings), `unreadable-entrypoint` (incomplete),
+`loader-malformed` (blocked).
+
+Unknown or invalid source -> `open-forge route list --depth=all`; unreadable
+-> `open-forge doctor`; otherwise none.
+
+## Representative Transcripts
+
+### completed
 
 ```text
-open-forge route list
+  docs              Documents
+    docs/guide      Guide
+    docs/reference  Reference
 ```
 
-List only the current roots:
+Dry run keeps status completed and replaces effects with Would list.
+
+### completed-with-warnings
 
 ```text
-open-forge route list --depth=0
+  Warning  .agents/docs/_docs.md  Route metadata incomplete
+         .agents/docs/_docs.md has no description in its frontmatter.
+  docs              (no description)
 ```
 
-List a selected route's complete subtree by ID:
+### incomplete
 
 ```text
-open-forge route list memory/working/checkpoints --depth=all
+The listing is incomplete.
+  Warning  .agents/docs/_docs.md  Route boundary is unreadable
+         .agents/docs/_docs.md could not be read, so the routes below it are not listed.
+Next: open-forge doctor
 ```
 
-Select an exact detached entrypoint explicitly:
+### invalid-input
 
 ```text
-open-forge route list .agents/workspace/_workspace.md --depth=all
+Cannot list routes: --depth must be a whole number or all.
 ```
 
-The last request is valid only when that exact path is one unambiguous routed
-entrypoint; it does not make `workspace` a Loader root.
-
-Request the compact machine projection:
+### blocked
 
 ```text
-open-forge route list --depth=2 --json --view=compact
+Cannot list routes: docs matches more than one source. Use the exact path.
+Workspace: <workspace>
 ```
 
-## Non-Goals
+### failed
 
-`route list` does not:
+```text
+Route list stopped because of an unexpected error: <reason>.
+```
 
-- Rebuild, validate, repair, or write generated `Entries`.
-- Treat generated navigation as the route inventory or as authority for order.
-- List the Loader as a route row.
-- Discover or include unrouted Markdown merely because it is below a routed
-  folder; use `find` for the flat source universe.
-- Return source bodies or sections; use `context` for content.
-- Explain one route's loading and inherited-rule behavior; use `route inspect`.
-- Search by tag, literal text, heading, fuzzy relevance, or semantic meaning.
-- Follow ordinary links or produce incoming/outgoing reference edges.
-- Build a graph, infer parentage, rank routes, cap results, or mutate files.
-- Diagnose workspace health or perform repair.
+### cancelled
 
-## Verification Requirements
-
-Conformance evidence must demonstrate the public result, not merely a plausible
-filesystem walk. It must cover:
-
-- Operand-free selection from the exact Loader, including workspace-defined roots,
-  no hardcoded standard-root list, and no Loader row.
-- Explicit entrypoint, routed leaf, valid overwrite, unrouted, unknown, unsafe,
-  ambiguous, and detached-tree selections.
-- Omitted depth `1`, explicit `0`, bounded positive depths, and `all`, including
-  root and descendant relative-depth facts.
-- Routed ordinary leaves and routed native sources such as `SKILL.md`; excluded
-  unrouted sources and non-independent overwrite rows.
-- Stale, missing, or reordered generated `Entries` proving that authored topology
-  remains the authority for membership and order.
-- Exact authored descriptions and tags, parent/hierarchy, absolute and relative
-  depths, kind, applicable child counts, and provenance.
-- Parent-before-child deterministic ordering across repeated invocations.
-- Compact, expanded, and JSON core parity with defined supporting-field omissions and complete empty results.
-- Honest `attention`, `incomplete`, `invalid`, `blocked`, `failed`, and
-  `interrupted` outcomes without a silent result cap or false `complete` status.
+```text
+Route list was cancelled.
+```
 
 ## Related Current Sources
 
@@ -401,23 +428,10 @@ filesystem walk. It must cover:
 - [CLI Command Contract Set overview](../../../command-contract-set.md)
 - [CLI Architecture](../../../architecture.md)
 
-## Compact JSON Output
+## Executable Wording References
 
-Normal `--json` uses expanded output and the full schema-v1 document. Explicit
-`--json --view=compact` uses the [shared compact envelope](../../shared/result-coordinates/interface.md#compact-json-envelope):
-`schemaVersion: 2`, `view: "compact"`, then `command`, `status`, `workspace`,
-`result` and `next`.
-It is minified through the serializer. The command/status/workspace/next values
-and process exit remain unchanged; expanded remains the default.
+Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 
-All selection, requested/effective depth, coverage and findings remain.
-Every ordered row retains id, path, parentId, parentPath, absoluteDepth,
-relativeDepth, kind, description, tags and directChildCount. Only each row's
-provenance object is omitted. No row or hierarchy level is filtered.
+CLI help syntax: [`route.list.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/List/RouteListText.cs).
 
-Compact omissions are defined field membership, distinct from unavailable data,
-null values, empty collections or incomplete inspection. No collection is
-truncated and no finding is filtered. Counts describe the original operation.
-Select expanded on the original invocation when supporting evidence is needed.
-The complete structured schema and examples elsewhere in this contract describe
-expanded output unless explicitly labelled compact.
+<!-- @OpenForgeTextRef route.list.help.syntax -->

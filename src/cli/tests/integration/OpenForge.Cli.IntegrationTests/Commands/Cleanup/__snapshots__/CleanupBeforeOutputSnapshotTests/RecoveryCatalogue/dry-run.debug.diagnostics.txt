@@ -1,0 +1,6 @@
+status=completed
+mode=dry-run
+items=3
+findings=0
+lock=not-requested
+final-check=not-requested

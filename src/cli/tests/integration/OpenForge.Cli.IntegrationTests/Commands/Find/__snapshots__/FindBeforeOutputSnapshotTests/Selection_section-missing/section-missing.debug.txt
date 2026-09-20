@@ -1,0 +1,16 @@
+1 source matches.
+Workspace: <workspace>
+  Warning  .agents/docs/guide.md  Section is missing [find.projection-missing]
+         .agents/docs/guide.md has no section named Absent.
+
+  docs/guide  .agents/docs/guide.md  Guide
+
+Search details:
+  Filters: none
+  Require: all
+  Regions searched: frontmatter, body
+  Source set: filtered
+  1 of 1 sources inspected
+
+=== .agents/docs/guide.md (docs/guide) ===
+1 matches, 1 sources inspected, 1 source candidates, 1 warnings.

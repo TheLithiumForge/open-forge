@@ -1,0 +1,4 @@
+Cannot create toolkit at <extension-source>/toolkit: <extension-source>/toolkit already exists with different content.
+  <extension-source>/toolkit/extension.json    not started
+  <extension-source>/toolkit/content/.agents/  not started
+Next: open-forge extension create --dry-run

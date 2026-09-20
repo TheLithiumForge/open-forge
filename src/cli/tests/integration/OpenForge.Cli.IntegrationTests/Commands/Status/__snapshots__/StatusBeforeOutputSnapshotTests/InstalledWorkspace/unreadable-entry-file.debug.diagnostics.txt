@@ -1,0 +1,11 @@
+status=incomplete
+findings=9
+Filesystem access was denied.
+The continuity context measurement is unavailable.
+The Framework lifecycle observation is incomplete.
+The managed lifecycle target is not current.
+The Framework target is unavailable.
+The generated navigation target is not current.
+The generated navigation target is not current.
+The current root-category observation is unavailable.
+The current startup context measurement is unavailable.

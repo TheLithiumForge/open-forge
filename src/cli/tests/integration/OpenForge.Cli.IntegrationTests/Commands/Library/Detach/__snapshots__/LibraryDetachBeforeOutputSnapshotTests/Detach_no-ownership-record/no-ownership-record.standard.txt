@@ -1,0 +1,2 @@
+No ownership record exists, so team-knowledge cannot be detached. Nothing was changed.
+Workspace: <workspace>

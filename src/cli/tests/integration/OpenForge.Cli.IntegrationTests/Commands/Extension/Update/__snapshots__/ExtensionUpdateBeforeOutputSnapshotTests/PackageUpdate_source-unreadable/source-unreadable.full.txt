@@ -1,0 +1,12 @@
+The toolkit Extension could not be updated: The source <extension-source> could not be read. Nothing was changed.
+Workspace: <workspace>
+  Warning  <extension-source>  Source is unavailable [extension-update.source-unavailable]
+         The source <extension-source> could not be read.
+         cause: The process cannot access the file '<extension-source>/toolkit/extension.json' because it is being used by another process.
+         read from <extension-source>
+  Source: <extension-source>
+  Dependency closure: none
+  0 files unchanged
+  Grant: required none; missing none; decision not evaluated; action no action; outcome no outcome recorded
+  No verification was needed.
+  No recovery bundle was needed.

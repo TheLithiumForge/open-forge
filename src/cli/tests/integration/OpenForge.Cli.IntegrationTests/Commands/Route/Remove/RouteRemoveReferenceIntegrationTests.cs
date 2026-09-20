@@ -21,6 +21,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveReferenceIntegrationTests
 {
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove records every external detachment with an independent visible-label oracle"),
      Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task ExternalDetachmentRetainsLocationAndSurroundingProse()
@@ -34,7 +35,7 @@ public sealed class RouteRemoveReferenceIntegrationTests
         var error = new StringWriter();
 
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--dry-run", "--json"],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--dry-run", "--format", "json", "--detail", "standard"],
             output,
             error);
 
@@ -42,25 +43,22 @@ public sealed class RouteRemoveReferenceIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, completion.Status);
         using var document = JsonDocument.Parse(output.ToString());
         var detachments = document.RootElement
-            .GetProperty("result")
-            .GetProperty("references")
-            .GetProperty("detachments")
+            .GetProperty("data")
+            .GetProperty("detachedLinks")
             .EnumerateArray()
             .ToArray();
         var detachment = Assert.Single(
             detachments,
-            candidate => candidate.GetProperty("sourcePath").GetString() == "outside.md");
-        Assert.Equal("Readable guide", detachment.GetProperty("visibleLabel").GetString());
+            candidate => candidate.GetProperty("path").GetString() == "outside.md");
         Assert.Equal(
             "Before [Readable guide](.agents/guidance/old%20guide.md#part), after.",
             detachment.GetProperty("before").GetString());
-        Assert.Equal("Before Readable guide, after.", detachment.GetProperty("expected").GetString());
-        Assert.Equal(
-            ".agents/guidance/old%20guide.md#part",
-            detachment.GetProperty("originalDestination").GetString());
+        Assert.Equal("Before Readable guide, after.", detachment.GetProperty("after").GetString());
+        Assert.Contains(":", detachment.GetProperty("location").GetString(), StringComparison.Ordinal);
         Assert.Equal(before, workspace.ReadText("outside.md"));
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove leaves external URLs and unrelated targets untouched"),
      Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task UnrelatedReferencesRemainByteIdentical()
@@ -73,17 +71,18 @@ public sealed class RouteRemoveReferenceIntegrationTests
         var error = new StringWriter();
 
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--automatic"],
             output,
             error);
 
         Assert.Equal(0, completion.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, completion.Status);
         Assert.Equal(outside, workspace.ReadText("outside.md"));
-        Assert.Equal(before[".agents/open-forge.lifecycle.json"],
-            workspace.SnapshotHashes()[".agents/open-forge.lifecycle.json"]);
+        Assert.Equal(before[".agents/open-forge.lock.json"],
+            workspace.SnapshotHashes()[".agents/open-forge.lock.json"]);
     }
 
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove blocks an unsupported incoming transformation before any write"),
      Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task UnsupportedIncomingTransformationIsWriteFree()
@@ -97,7 +96,7 @@ public sealed class RouteRemoveReferenceIntegrationTests
         var error = new StringWriter();
 
         var completion = await workspace.RunAsync(
-            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId],
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--detail", "full"],
             output,
             error);
 
@@ -108,6 +107,7 @@ public sealed class RouteRemoveReferenceIntegrationTests
         workspace.AssertNoLockInfrastructure();
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove live absence scanning retains cancellation and fresh read failures"), Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task LiveAbsenceScanningRetainsInterruptionAndFreshReadFailure()
     {
@@ -172,6 +172,7 @@ public sealed class RouteRemoveReferenceIntegrationTests
         Assert.Equal(0, incomplete.References.OccurrenceCount);
     }
 
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove live absence planning retains a residual incoming reference cause"), Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task LiveAbsencePlanningRetainsResidualIncomingReferenceCause()
     {
@@ -179,11 +180,14 @@ public sealed class RouteRemoveReferenceIntegrationTests
         var request = new RouteRemoveRequest(workspace.Workspace, "guidance/absent", RouteRemoveMode.DryRun);
         var planner = RouteRemoveOperationFactory.CreatePlanBuilder();
 
-        var complete = await planner.BuildAsync(request, TestContext.Current.CancellationToken);
+        var missing = await planner.BuildAsync(request, TestContext.Current.CancellationToken);
 
-        Assert.Null(complete.Plan);
-        Assert.Empty(complete.Formation.Findings);
-        Assert.Equal(RouteRemoveVerificationState.Verified, complete.Formation.Verification);
+        Assert.Null(missing.Plan);
+        Assert.Empty(missing.Formation.Findings);
+        Assert.Equal(RouteRemovePlanCompleteness.Complete, missing.Formation.Plan.Completeness);
+        Assert.Equal(RouteRemovePlanSafety.Safe, missing.Formation.Plan.Safety);
+        Assert.Equal(RouteRemoveVerificationState.Verified, missing.Formation.Verification);
+        Assert.Empty(missing.Formation.Effects);
         workspace.WriteText("outside.md", "Before [Gone](.agents/guidance/absent/_absent.md), after.\n");
         var before = workspace.SnapshotHashes();
 
@@ -203,6 +207,113 @@ public sealed class RouteRemoveReferenceIntegrationTests
         workspace.AssertNoLockInfrastructure();
     }
 
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Route Remove repeats a verified absence without effects on the owned workspace"),
+     Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
+    public async Task VerifiedAbsenceRepeatsWithoutEffects()
+    {
+        using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-verified-absence-repeat");
+        var request = new RouteRemoveRequest(workspace.Workspace, "guidance/absent", RouteRemoveMode.Apply);
+        var before = workspace.SnapshotHashes();
+        var planner = RouteRemoveOperationFactory.CreatePlanBuilder();
+
+        var first = await planner.BuildAsync(request, TestContext.Current.CancellationToken);
+        var second = await planner.BuildAsync(request, TestContext.Current.CancellationToken);
+
+        foreach (var build in new[] { first, second })
+        {
+            Assert.Null(build.Plan);
+            Assert.Equal(RouteRemovePlanCompleteness.Complete, build.Formation.Plan.Completeness);
+            Assert.Equal(RouteRemovePlanSafety.Safe, build.Formation.Plan.Safety);
+            Assert.Equal(RouteRemoveVerificationState.Verified, build.Formation.Verification);
+            Assert.Equal(RouteRemoveCoverage.Complete, build.Formation.References.Coverage);
+            Assert.Equal(RouteRemoveCoverage.Complete, build.Formation.GeneratedNavigation.Coverage);
+            Assert.Equal(RouteRemoveOwnershipState.Unmanaged, build.Formation.Ownership.State);
+            Assert.Equal(RouteRemoveOwnershipTrust.Trusted, build.Formation.Ownership.Framework);
+            Assert.Equal(RouteRemoveOwnershipTrust.Trusted, build.Formation.Ownership.Extensions);
+            Assert.Empty(build.Formation.Ownership.Claims);
+            Assert.Empty(build.Formation.Findings);
+            Assert.Empty(build.Formation.Effects);
+        }
+
+        Assert.Equal(before, workspace.SnapshotHashes());
+        workspace.AssertNoLockInfrastructure();
+    }
+
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Route Remove ordinary absence proof retains every legacy boundary fact"),
+     Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
+    public async Task OrdinaryAbsenceProofRetainsEveryLegacyBoundaryFact()
+    {
+        (string Name, Action<RouteRemoveIntegrationWorkspace> Seed, RouteRemoveFindingCode Code, CliSemanticStatus Status)[] cases =
+        [
+            (
+                "leaf",
+                workspace => workspace.WriteText(
+                    ".agents/guidance/absent.md",
+                    "# A still-present leaf\n"),
+                RouteRemoveFindingCode.TargetChanged,
+                CliSemanticStatus.Blocked),
+            (
+                "overwrite",
+                workspace => workspace.WriteText(
+                    ".agents/guidance/absent.overwrite.md",
+                    "An overwrite companion remains.\n"),
+                RouteRemoveFindingCode.InvalidSubject,
+                CliSemanticStatus.Invalid),
+            (
+                "reference",
+                workspace => workspace.WriteText(
+                    "outside.md",
+                    "[Absent](.agents/guidance/absent/_absent.md)\n"),
+                RouteRemoveFindingCode.SourceNotFound,
+                CliSemanticStatus.Invalid),
+            (
+                "ownership",
+                workspace => workspace.SeedFrameworkClaim(".agents/guidance/absent.md"),
+                RouteRemoveFindingCode.OwnershipClaimed,
+                CliSemanticStatus.Blocked),
+        ];
+
+        foreach (var (name, seed, code, status) in cases)
+        {
+            using var workspace = RouteRemoveIntegrationWorkspace.Create($"route-remove-ordinary-absence-{name}");
+            seed(workspace);
+            var before = workspace.SnapshotHashes();
+            var sourceReference = name is "leaf" or "overwrite"
+                ? ".agents/guidance/absent/_absent.md"
+                : "guidance/absent";
+
+            var build = await RouteRemoveOperationFactory.CreatePlanBuilder().BuildAsync(
+                new RouteRemoveRequest(workspace.Workspace, sourceReference, RouteRemoveMode.DryRun),
+                TestContext.Current.CancellationToken);
+
+            Assert.Null(build.Plan);
+            var finding = Assert.Single(build.Formation.Findings);
+            Assert.Equal(code, finding.Code);
+            Assert.Equal(status, finding.Status);
+            if (name == "overwrite")
+            {
+                var output = new StringWriter();
+                var error = new StringWriter();
+                var completion = await workspace.RunAsync(
+                    ["route", "remove", sourceReference, "--format", "json"],
+                    output,
+                    error);
+                Assert.Equal(4, completion.ExitCode);
+                using var document = JsonDocument.Parse(output.ToString());
+                var jsonFinding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
+                Assert.Equal("route-remove.invalid-subject", jsonFinding.GetProperty("code").GetString());
+                Assert.Equal(
+                    $"{sourceReference} is an overwrite file; remove its base file.",
+                    jsonFinding.GetProperty("message").GetString());
+            }
+            Assert.Equal(before, workspace.SnapshotHashes());
+            workspace.AssertNoLockInfrastructure();
+        }
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Remove coalesces Unicode references on one CRLF line into exact authored bytes"), Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task SameLineDetachmentsRetainUnicodeAndCrLfBytes()
     {

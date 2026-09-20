@@ -14,9 +14,9 @@ package identities, staging and packing boundary, checksum ownership, proof
 boundary, and complete-publication rule for the non-shipping replacement
 CLI. It does not claim that every accepted target is implemented or released.
 
-[Task 7](../../../working/cli-development/tasks/delivery/01-npm-packages.md)
+[Task 7](../../../archived/cli-development/tasks/delivery/01-npm-packages.md)
 defines package-graph realization, npm release, and explicit local-linking work.
-[Task 13](../../../working/cli-development/tasks/delivery/02-native-ci.md)
+[Task 13](../../../archived/cli-development/tasks/delivery/02-native-ci.md)
 defines native CI and artifact preparation for all six accepted targets. Their records and Git retain
 implementation state and evidence receipts.
 
@@ -212,7 +212,7 @@ maintainer accepts the replacement as shipping.
 ## Related Current Sources
 
 - [Replacement CLI Architecture](architecture.md)
-- [Task 7: npm Package Manager Release and Local Linking](../../../working/cli-development/tasks/delivery/01-npm-packages.md)
-- [Task 13: Native CI and Reproducible Artifacts](../../../working/cli-development/tasks/delivery/02-native-ci.md)
-- [CLI Delivery](../../../working/cli-development/tasks/delivery/_delivery.md)
+- [Task 7: npm Package Manager Release and Local Linking](../../../archived/cli-development/tasks/delivery/01-npm-packages.md)
+- [Task 13: Native CI and Reproducible Artifacts](../../../archived/cli-development/tasks/delivery/02-native-ci.md)
+- [CLI Delivery](../../../archived/cli-development/tasks/delivery/_delivery.md)
 - [Repository-Root CLI Tooling Decision](../../decisions/repository-root-cli-tooling.md)

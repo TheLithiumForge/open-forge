@@ -1,0 +1,3 @@
+Subject: Scenario review
+Decision: Compare the actual file changes before approving the output.
+Next action: Run the same scenario on the corrected build.

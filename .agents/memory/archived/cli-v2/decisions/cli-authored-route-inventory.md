@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical CLI-v2 source: Build replacement CLI routing from authored topology while treating generated Entries as a verified derived projection
+  description: "Historical CLI-v2 source: Build replacement CLI routing from authored topology while treating generated Entries as a verified derived projection"
   tags: [Memory, Archived, Contextual, Historical, CLI, CLIv2, RawData]
 ---
 

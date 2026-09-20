@@ -102,7 +102,7 @@ make a later selection higher authority.
 
 ### Invalid And Blocked Resolution
 
-An unknown source reference forms `invalid`. An ambiguous or unsafe reference
+An unknown source reference forms `invalid-input`. An ambiguous or unsafe reference
 forms `blocked`. A known source with unrelated structural findings may continue
 only when the safe context and the missing boundary can both be stated. Do not
 claim a complete result when an unresolved boundary could change the selected
@@ -117,7 +117,7 @@ result contains only sources added by explicit routes and optional link
 expansion, together with source blocks and findings needed to explain them.
 
 At least one explicit source is required. Without one, `--additions-only` forms
-`invalid` because there is no selected addition.
+`invalid-input` because there is no selected addition.
 
 When link expansion is requested, expand the startup closure alone and the
 startup-plus-route closure with the same depth before subtracting. A source
@@ -125,17 +125,17 @@ reachable from startup remains excluded even when the selected route also links
 to it. Never compare with a previous invocation, receipt, retained caller
 content, or hidden session state.
 
-If the resolved difference contains no added sources, form the explicit complete
-empty result defined by the [Interface Contract](interface.md#status-classification).
+If the resolved difference contains no added sources, form the explicit completed
+empty result defined by the [Interface Contract](interface.md#semantic-results).
 This is valid only after startup and selected-route resolution completes; missing
-all explicit sources with `--additions-only` remains invalid.
+all explicit sources with `--additions-only` remains invalid-input.
 
 ### Operation Flag Repetition
 
 Normalize operation-specific flags before resolving a closure. Repeated
 `--additions-only` occurrences collapse to one enabled selection and are
-idempotent. A repeated `--follow-links` occurrence is invalid even when its value
-matches the first occurrence. A repeated `--content` flag is invalid, while
+idempotent. A repeated `--follow-links` occurrence is invalid-input even when its value
+matches the first occurrence. A repeated `--content` flag is invalid-input, while
 repeated parts inside its single value are deduplicated without changing the
 projection. Shared global flags and source-operand repetition use their linked
 shared contracts. Invalid input stops before operation resolution.
@@ -183,14 +183,14 @@ must preserve enough current facts to establish:
 - Exact authored frontmatter and body bytes when those projections are selected.
 
 Completeness is boundary-specific. A known missing section after every relevant
-layer was inspected completely is a complete selection and inspection with an
-`attention` projection finding. An unreadable required layer, incomplete parse,
+layer was inspected completely is a complete selection and inspection with a
+`completed-with-warnings` result. An unreadable required layer, incomplete parse,
 duplicate matching heading within one layer, missing link target, broken
 fragment, invalid encoding, or ambiguous section prevents the operation from
 claiming more complete coverage than the facts support. Unsafe or ambiguous
 source identity, physical containment, ambiguous local target identity, or
 overwrite identity or boundary prevents a safe boundary and forms `blocked`.
-An exact target case mismatch is a safe `attention` observation. Safe sources
+An exact target case mismatch is a safe `completed-with-warnings` observation. Safe sources
 and independently safe observations may remain in the result beside unrelated
 findings.
 
@@ -200,16 +200,17 @@ sources are safe. The result retains the missing boundary needed to explain why
 continuation is safe, incomplete, or blocked.
 
 When several ordinary conditions occur, safety and coverage take precedence in
-this order: `blocked`, then `incomplete`, then `attention`, then `complete`.
+this order: `blocked`, then `incomplete`, then `completed-with-warnings`, then
+`completed`.
 Invalid input is rejected before operation work. An unexpected failure and a
-caller interruption retain their `failed` and `interrupted` event meanings.
+caller interruption retain their `failed` and `cancelled` event meanings.
 
 ## Selection And Result Formation
 
 ### Closure Before Projection
 
-Complete startup and explicit route resolution before ordinary link expansion.
-Apply `--additions-only` to the appropriately expanded startup and selected sets.
+Complete startup and explicit route resolution before ordinary link following.
+Apply `--additions-only` to the appropriately resolved startup and selected sets.
 Then form one ordered, deduplicated logical result with physical base and
 overwrite layers. Content projection operates on that resolved result; it does
 not rerun route selection, loading, link expansion, or completeness.
@@ -253,7 +254,7 @@ encodings, and ambiguous local targets remain visible findings. Broken edges are
 not silently dropped. Classify unsafe or ambiguous identity and containment as
 `blocked`, missing targets, broken fragments, and invalid encodings as
 `incomplete`, and a safely established exact-target case mismatch as
-`attention`, following the Interface precedence for combinations. Preserve safe
+`completed-with-warnings`, following the Interface precedence for combinations. Preserve safe
 sources and observations where the boundary allows them.
 
 ### Projection
@@ -293,7 +294,7 @@ level, or the document end. Repeated matching headings in one physical layer
 make that layer's projection ambiguous rather than selecting an occurrence. A
 matching base and overwrite section are both valid and remain separate layers.
 When a requested section is proven absent after complete inspection, retain the
-source and form the Interface-defined `attention` finding. An unreadable or
+source and form the Interface-defined `completed-with-warnings` result. An unreadable or
 incompletely parsed layer cannot prove absence and forms `incomplete` coverage.
 Section projection changes only emitted authored content and its own projection
 coverage; it does not change route, loading, or link-expansion completeness.
@@ -312,8 +313,9 @@ independent source.
 
 Use Framework loading order for the startup-required closure. Append explicit
 route closures in operand order, preserving each route's parent, target,
-#LoadNow, #KeepInMind, and overwrite order. Append link-expanded sources in stable breadth-
-first order by link depth, source order, and document link order.
+#LoadNow, #KeepInMind, and overwrite order. Append sources reached by following
+links in stable breadth-first order by link depth, source order, and document
+link order.
 
 For every repeated relationship:
 
@@ -332,18 +334,18 @@ Form one typed result with the exact seven status names and public meanings in
 the [Interface Contract](interface.md#semantic-status). Behavior forms the
 conditions; it does not create another status vocabulary.
 
-- Form `complete` only when resolution, required inspection, requested
+- Form `completed` only when resolution, required inspection, requested
   relationships, and requested projections have no unresolved finding. A fully
   resolved zero-source additions difference and an empty heading outline are
-  explicit complete results.
-- Form `attention` when resolution and inspection are complete but a safe
+  explicit completed results.
+- Form `completed-with-warnings` when resolution and inspection are complete but a safe
   finding remains, including a requested section proven absent from one or more
   completely inspected logical sources or an exact target case mismatch.
 - Form `incomplete` when safe content is available but a requested relationship
   or projection cannot be established completely, including missing local
   targets, broken fragments, invalid link encodings, unreadable required layers,
   incomplete source inspection, or ambiguous sections.
-- Form `invalid` for command input or a selected route outside the accepted
+- Form `invalid-input` for command input or a selected route outside the accepted
   grammar, including an unknown reference, invalid `--content` grammar, invalid
   operation-flag repetition, `--additions-only` without a route, or zero link
   depth. Invalid input stops before operation resolution.
@@ -351,12 +353,12 @@ conditions; it does not create another status vocabulary.
   ambiguous or unsafe source identity, containment, local-target identity, or
   overwrite identity or boundary.
 - Form `failed` when an unexpected internal failure prevents normal completion.
-- Form `interrupted` when the caller cancels or interrupts before completion.
+- Form `cancelled` when the caller cancels or interrupts before completion.
 
 For multiple ordinary conditions, choose the highest applicable safety or
-coverage status in this order: `blocked`, `incomplete`, `attention`, then
-`complete`. Preserve every independently safe source and observation that this
-boundary allows, and never hide a broken edge. Failed and interrupted retain
+coverage status in this order: `blocked`, `incomplete`, `completed-with-warnings`,
+then `completed`. Preserve every independently safe source and observation that this
+boundary allows, and never hide a broken edge. Failed and cancelled retain
 their event meanings rather than being replaced by an ordinary finding status.
 The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
 exact numeric process exits, structured field names, schema version, and
@@ -401,13 +403,13 @@ or choose among ambiguous sections or source identities.
 
 The [Interface Contract](interface.md) is the complete public owner of human
 output, structured output, semantic status, error content, and every example.
-This behavior produces one typed result containing those facts. The default
-expanded and compact human renderers, JSON renderer, and verbose diagnostics
-consume that result; they do not rerun selection, parse different content, or
-change status, completeness, safety, or process meaning. `--view` changes only
-human density, and `--json` uses the complete structured result under the shared
-global contract. Primary human complete, attention, and incomplete results are
-written to stdout; invalid, blocked, failed, and interrupted primary human
+This behavior produces one typed result containing those facts. Minimal,
+standard, full, debug, and JSON renderers consume that result; they do not rerun
+selection, parse different content, or
+change status, completeness, safety, or process meaning. `--detail` changes only
+human density, and `--format json` uses the complete structured result under the shared
+global contract. Primary human completed, completed-with-warnings, and incomplete results are
+written to stdout; invalid-input, blocked, failed, and cancelled primary human
 results are written to stderr. JSON writes one structured result to stdout for
 every status, while bounded diagnostics use stderr and never mix human text into
 JSON stdout.

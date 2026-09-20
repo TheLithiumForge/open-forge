@@ -29,7 +29,5 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 
 ## Entries
 
-<!-- open-forge:generated-index:start -->
 - [Current maintenance contract for the installable Decisions Memory entrypoint](decisions.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Decision #Rationale
 - [Current maintenance contract for the installable Documents Memory entrypoint](documents.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Record
-<!-- open-forge:generated-index:end -->

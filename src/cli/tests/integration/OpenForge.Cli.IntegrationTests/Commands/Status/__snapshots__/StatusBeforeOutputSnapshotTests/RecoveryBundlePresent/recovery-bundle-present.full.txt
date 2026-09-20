@@ -1,0 +1,50 @@
+Open Forge is installed, but 1 thing needs attention.
+Workspace: <workspace>
+  Warning  <recovery-bundle>  Recovery bundle is kept [status.recovery-candidate-verified]
+         A recovery bundle from an earlier command is kept at <recovery-bundle>.
+         use open-forge cleanup
+         open-forge cleanup
+         Review and remove the recovery data.
+         cause: The exact-name recovery candidate requires attention.
+Startup context
+  Shipped by this CLI:   11 files, about 5.7k tokens
+  This workspace:        11 files, about 5.7k tokens
+  May load again later:  1 file, about 0.3k tokens
+All routed files: 13 files, about 6.3k tokens (startup is 90%)
+Routes: 7 root categories, 12 Entries sections current
+Framework files: 14 current
+Largest may-load-again sources
+  memory/emerging  1.1 KiB
+Framework files
+  .agents/directives/_directives.md             current
+  .agents/guidance/_guidance.md                 current
+  .agents/loader.md                             current
+  .agents/maps/_maps.md                         current
+  .agents/memory/_memory.md                     current
+  .agents/memory/archived/_archived.md          current
+  .agents/memory/crystallized/_crystallized.md  current
+  .agents/memory/emerging/_emerging.md          current
+  .agents/memory/working/_working.md            current
+  .agents/patterns/_patterns.md                 current
+  .agents/skills/_skills.md                     current
+  .agents/templates/_templates.md               current
+  AGENTS.md                                     current
+  CLAUDE.md                                     current
+Entries sections
+  .agents/directives/_directives.md             current
+  .agents/guidance/_guidance.md                 current
+  .agents/loader.md                             current
+  .agents/maps/_maps.md                         current
+  .agents/memory/_memory.md                     current
+  .agents/memory/archived/_archived.md          current
+  .agents/memory/crystallized/_crystallized.md  current
+  .agents/memory/emerging/_emerging.md          current
+  .agents/memory/working/_working.md            current
+  .agents/patterns/_patterns.md                 current
+  .agents/skills/_skills.md                     current
+  .agents/templates/_templates.md               current
+Recovery data:
+  <recovery-bundle>  final recovery bundle, verified
+13 routed files, 11 startup files, 5676 startup tokens, 1 may-load-again files, 289 may-load-again tokens, 6337 all routed tokens, 89.57626449932928272705752387 startup share, 7 root categories, 12 current Entries sections, 14 current Framework files, 1 recovery bundles, 1 warnings.
+  Review and remove the recovery data.
+Next: open-forge cleanup

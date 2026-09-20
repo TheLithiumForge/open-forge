@@ -7,6 +7,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Sync;
 
 public sealed class LibrarySyncGeneratedRegionIntegrationTests
 {
+    [Trait("Boundary", "OS")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(true), InlineData(false)]
     public static async Task OnlyExistingUnambiguousConsumerRegionCanBeProjected(bool validRegion)
@@ -24,13 +25,10 @@ public sealed class LibrarySyncGeneratedRegionIntegrationTests
             ---
             # Authored prefix
             ## Entries
-            <!-- open-forge:generated-index:start -->
-
-            <!-- open-forge:generated-index:end -->
             """;
         if (!validRegion)
         {
-            parent = parent.Replace("<!-- open-forge:generated-index:end -->", string.Empty, StringComparison.Ordinal);
+            parent = parent.Replace("## Entries", "## Entries\n\n## Entries", StringComparison.Ordinal);
         }
 
         File.WriteAllText(parentPath, parent);
@@ -46,8 +44,9 @@ public sealed class LibrarySyncGeneratedRegionIntegrationTests
         Assert.Equal(parent, File.ReadAllText(parentPath));
     }
 
+    [Trait("Boundary", "OS")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
-    public async Task AuthoredSuffixAfterGeneratedRegionBlocksWithoutEffects()
+    public async Task FollowingAuthoredSectionRemainsOutsidePlannedBody()
     {
         using var workspace = new LibraryMutationWorkspace();
         workspace.ConsumerRoute();
@@ -62,9 +61,9 @@ public sealed class LibrarySyncGeneratedRegionIntegrationTests
             ---
             # Authored prefix
             ## Entries
-            <!-- open-forge:generated-index:start -->
 
-            <!-- open-forge:generated-index:end -->
+            ## Notes
+
             Authored suffix.
             """;
         File.WriteAllText(parentPath, parent);
@@ -74,8 +73,8 @@ public sealed class LibrarySyncGeneratedRegionIntegrationTests
             workspace.Sync(),
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(CliSemanticStatus.Blocked, result.Status);
-        Assert.Empty(result.Result.Plan.GeneratedRegions);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Single(result.Result.Plan.GeneratedRegions);
         Assert.Equal(LibraryApplicationState.NotStarted, result.Result.Application.State);
         Assert.Equal(before, workspace.Snapshot());
         Assert.Equal(parent, File.ReadAllText(parentPath));

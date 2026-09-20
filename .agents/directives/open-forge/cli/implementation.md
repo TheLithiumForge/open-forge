@@ -32,7 +32,7 @@ open-forge:
 
 ### Per-Task Proportionality And Evidence Applicability
 
-- Before a Task mutates source or Task-owned evidence, record a compact
+- Before a Task mutates source or Task-owned evidence, record a brief
   applicability check in its Execution Capsule. This check selects the
   execution profile and evidence; it is not a second route-loading or
   Directive-scope gate after the CLI scope has been selected.
@@ -154,13 +154,13 @@ open-forge:
   required, tests, documentation impact, responsible Task or role, and removal or
   re-evaluation condition. Surface the exception to the maintainer before relying
   on it. Document it publicly when callers can observe or depend on it.
-- Record unusual inputs and edge cases in the active Task or the [replacement CLI
-  edge-case ledger](../../../memory/working/cli-development/edge-cases.md) before
-  deciding their disposition. An edge case is evidence for triage, not an
-  automatic blocker, defect, or requirement to add special handling. Classify its
-  reproducibility, impact, affected surface, governing contract, and whether
-  standard behavior already gives a safe result. Accepted safety, public-contract,
-  and required-evidence violations remain blockers after triage.
+- Record unusual inputs and edge cases in the active Task or the [active G4 task
+  record](../../../memory/working/cli-development/tasks/task30-g4/_task30-g4.md)
+  before deciding their disposition. An edge case is evidence for triage, not an
+  automatic blocker, defect, or requirement to add special handling. Classify
+  its reproducibility, impact, affected surface, governing contract, and
+  whether standard behavior already gives a safe result. Accepted safety,
+  public-contract, and required-evidence violations remain blockers after triage.
 - Solve the general invariant first. Prefer one typed validation or general
   capability that also covers edge cases over a branch for one spelling, payload,
   path, platform, or fixture. Add a special case only after the general solution
@@ -208,9 +208,9 @@ open-forge:
   process strings. An explicitly accepted typed comma-list value grammar remains
   valid; parse its one typed value rather than rescanning process arguments.
 - Validate the general typed value after parsing, such as a non-negative numeric
-  depth or membership in the accepted view values. When occurrence policy matters,
+  depth or membership in the accepted detail values. When occurrence policy matters,
   use library-owned occurrence information. Do not add handling for one raw
-  pattern, such as `--depth= --json`, when the general typed validation and parser
+  pattern, such as `--depth= --format json`, when the general typed validation and parser
   diagnostics already define a safe result.
 - Form one immutable process-wide invocation and one complete command-local
   request. Do not pass `ParseResult`, writers, service collections, or unrelated
@@ -229,33 +229,47 @@ open-forge:
   original bytes and exact spans where edits require them; that is not authority
   to introduce a second general parser.
 
-### Human Views And Interaction
+### Human Output And Interaction
 
 - Lead with the useful result or outcome. Describe findings with a clear status
   or severity, affected source, available editing location and supported next
   action. Distinguish missing, unreadable and uncertain facts. Apply the Writing
   Standard instead of exposing unexplained implementation vocabulary.
-- Provide compact and expanded renderers for every command and both accepted
-  formats. Follow the shared view contract for defaults and fallback. Compact
-  keeps core facts and required actions; expanded adds relevant explanation.
-  Verbose diagnostics remain separate. Do not add an AI view, change a default
-  or invent filtering and limit behavior through a presentation refactor.
+- Every command renders a complete command-owned report through the shared
+  selection and rendering pipeline. The four detail levels are `minimal`
+  (default), `standard`, `full`, and `debug`; each level adds to the previous
+  level. `--detail-filter <error|warning|info|all>` is repeatable and selects
+  which finding severities are listed without changing counts. `--format
+  text|json` selects the representation and defaults to `text`.
+- `minimal` keeps the smallest useful answer, `standard` adds reasons and
+  per-finding actions, `full` adds evidence, possible targets, provenance,
+  hashes and finding codes, and `debug` keeps the same primary result as `full`
+  while sending bounded diagnostics to stderr. `--detail debug` is the only
+  way to request them; no separate diagnostic flag is present.
+  Diagnostics never change the operation, report, primary output, status or
+  exit.
 - Group repeated supporting details using the result's domain relationships.
   Retain distinct occurrences, findings, evidence and order. Deduplication must
   not change diagnostic kinds, counts, semantic status or operation behavior.
 - Preserve selected authored content exactly. Keep mutation plans, effects,
   retained paths, safety conditions and recovery facts sufficient for review in
-  every view. JSON field omission follows an explicit command schema and view
+  every detail level. JSON field omission follows an explicit command schema and detail
   contract, not an incidental serializer optimization.
 - Apply the shared automatic-colour policy at generated rendering sites using
   typed status or severity. Keep written labels and restore foreground styling
   before source data. The host supplies per-stream capability; Core does not
   discover it from ambient Console state. Test terminal, redirected and plain
   preference behavior. JSON and selected authored content receive no colour.
-- Preserve shared prompt, noninteractive, stream and exit behavior. A view never
-  grants write authority, reruns an operation, changes its result or turns a
-  preview into an effect. Validate public examples against the actual composed
-  CLI, including useful bundled-source and explicit-source journeys.
+- Preserve shared prompt, noninteractive, stream and exit behavior. Detail
+  never grants write authority, reruns an operation, changes its result or turns
+  a preview into an effect. `CliPrompts` uses arrow-key single select and
+  checkbox multi-select with dependency marks and a legend. When keys cannot be
+  read, it uses numbered line-based input. Before every confirmation it renders
+  the already-established plan review at `minimal`; when the terminal cannot
+  prompt, it issues no prompt and reports the required flag or permission
+  finding. `--format json` and `--automatic` never prompt. Validate public
+  examples against the actual composed CLI, including useful bundled-source and
+  explicit-source journeys.
 
 ### Results, Help, Diagnostics, And Serialization
 
@@ -265,9 +279,9 @@ open-forge:
 - Derive standard help from the exact composed symbol tree. Add product sections
   from command bindings. Do not maintain a second command catalogue or
   post-process library help through brittle string replacement.
-- Keep diagnostics bounded, escaped, redacted, and on stderr. Verbose mode must
-  not change operation behavior, result, primary output, status, or exit. JSON
-  stdout remains one document.
+- Keep diagnostics bounded, escaped, redacted, and on stderr. `debug` detail
+  must not change operation behavior, result, primary output, status, or exit.
+  JSON stdout remains one document.
 - Use `System.Text.Json` source generation with reflection disabled. Use one
   source-generated YAML context for accepted metadata models. Do not add dynamic
   resolvers or duplicate command-specific contexts for identical shapes.
@@ -319,6 +333,24 @@ open-forge:
   baseline when its projects, executable, environment, counts, and result are
   recorded. This does not replace a complete managed/AOT gate when the current
   Task reaches one of the recorded triggers.
+- The Unit, Integration and EndToEnd projects are one test population with two
+  runtime targets, and both targets are first class. The managed target runs the
+  built assemblies on the shared runtime. The Native AOT target publishes the
+  Integration and EndToEnd projects themselves as native executables, and also
+  runs the managed EndToEnd project against the native CLI. `npm run test`
+  selects the managed target; `npm run test:built` selects both. Do not author a
+  separate parallel test population for either target, and do not describe the
+  AOT gate as unavailable because its command is not at hand.
+- The managed target is the inner loop: it is the cheapest evidence that a
+  behavior, contract, wording or effect is correct, and a focused managed
+  selection is the default during implementation. The Native AOT target proves a
+  different class of failure — trimming, source-generated serialization,
+  reflection-free composition, embedded resources and the delivered executable —
+  and a managed pass is never evidence for it. Trigger it from the recorded
+  material boundaries, not from every leaf.
+- Every acceptance receipt names its runtime target. A gate that requires the
+  Native AOT target is not satisfied by a managed run of the same tests, and the
+  reverse is equally true; record them as separate results with separate counts.
 - During implementation, run the tests authored by the current Task plus every
   directly affected test boundary. Determine affected tests from changed behavior,
   shared types, consumers, composition, serialization, filesystem capabilities,

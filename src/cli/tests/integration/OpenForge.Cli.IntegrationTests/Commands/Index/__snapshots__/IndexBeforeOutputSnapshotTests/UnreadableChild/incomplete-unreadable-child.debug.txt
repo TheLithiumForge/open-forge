@@ -1,0 +1,9 @@
+The Entries sections could not be rebuilt completely. Nothing was changed.
+Workspace: <workspace>
+  Warning  .agents/root/child.md  Frontmatter could not be read [index.metadata-incomplete]
+         The frontmatter of .agents/root/child.md could not be read completely.
+  .agents/root/_root.md  final state unknown
+Selection: .agents/root/_root.md
+No recovery bundle was needed.
+  Inspect the reported problem before rerunning Index.
+Next: open-forge doctor
