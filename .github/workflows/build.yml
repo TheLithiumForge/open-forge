@@ -57,6 +57,9 @@ jobs:
       run:
         shell: bash
     steps:
+      - name: Enable Windows long paths before checkout
+        if: runner.os == 'Windows'
+        run: git config --global core.longpaths true
       - uses: actions/checkout@v7.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -76,9 +79,33 @@ jobs:
       - name: Show delivery plan
         run: npm run dist -- --rid "$RID" --no-restore --plan
       - name: Build native artifacts
+        id: native-build
         run: |
           mkdir -p "artifacts/delivery/logs/$RID"
           npm run build:native -- --rid "$RID" --no-restore 2>&1 | tee "artifacts/delivery/logs/$RID/build.log"
+      - name: Bundle downloadable CLI binary
+        id: binary-bundle
+        if: ${{ !cancelled() && steps.native-build.outcome == 'success' }}
+        run: |
+          suffix=""
+          if [[ "$RID" == win-* ]]; then suffix=".exe"; fi
+          mkdir -p "artifacts/downloads/$RID/content"
+          cp "artifacts/publish/$RID/open-forge/OpenForge.Cli$suffix" "artifacts/downloads/$RID/content/open-forge$suffix"
+          chmod +x "artifacts/downloads/$RID/content/open-forge$suffix"
+          cp LICENSE "artifacts/downloads/$RID/content/LICENSE"
+          printf 'Development build for %s. Check this workflow run for test results before use.\n' "$RID" > "artifacts/downloads/$RID/content/README.txt"
+          tar -czf "artifacts/downloads/$RID/open-forge-$RID.tar.gz" -C "artifacts/downloads/$RID/content" .
+          (cd "artifacts/downloads/$RID" && sha256sum "open-forge-$RID.tar.gz" > SHA256SUMS)
+      - name: Upload downloadable CLI binary
+        if: ${{ !cancelled() && steps.binary-bundle.outcome == 'success' }}
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: binary-${{ matrix.rid }}
+          path: |
+            artifacts/downloads/${{ matrix.rid }}/*.tar.gz
+            artifacts/downloads/${{ matrix.rid }}/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 14
       - name: Test managed and native suites
         run: npm run test:built -- --rid "$RID" 2>&1 | tee "artifacts/delivery/logs/$RID/test.log"
       - name: Pack and test npm installation

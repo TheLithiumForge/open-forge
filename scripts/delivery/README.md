@@ -160,6 +160,25 @@ offline caches, logs, collected releases and npm links remain. Restore again
 before using `--no-restore`. Run commands sequentially within one worktree;
 builds and packs replace their own output directories.
 
+## Download development binaries
+
+The GitHub Actions **Build** workflow produces a `binary-<RID>` artifact for each
+platform whose native build succeeds. Open the workflow run, choose the artifact
+for your platform, then extract its portable archive. It contains `open-forge`
+(`open-forge.exe` on Windows), the license and a development-build notice.
+The download also includes a SHA-256 checksum. Artifacts remain available for
+14 days; creating them does not publish a release or an npm package.
+
+Binaries are uploaded before the test gate. Check the run's test results before
+using them: an available binary does not mean its tests passed. The separate
+`package-<RID>` artifacts require successful tests and package-install checks.
+
+Dependency setup restores each native executable for its host runtime and
+self-contained configuration before `--no-restore` builds. Integration reports
+allow only explicit exclusions for another operating system. Those exclusions
+remain counted separately from passes; unexpected skips and capability failures
+still fail qualification.
+
 ## Maintain the scripts
 
 [commands.ts](commands.ts) defines commands, options, usage, guidance and examples.

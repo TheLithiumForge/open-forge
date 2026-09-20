@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { SupportedRuntime } from "./package-model.ts";
+import { PlatformPackages, type SupportedRuntime } from "./package-model.ts";
 import { deliveryDirectory, DevelopmentPublish, nativeDirectory, suites } from "./layout.ts";
 import { verifyManifest, type DeliveryManifest } from "./manifest.ts";
 import { sourceIdentity } from "./source.ts";
@@ -54,7 +54,10 @@ export function readBuilt(root: string, rid: SupportedRuntime, tested = false): 
   );
   if (tested) {
     assert.ok(manifest.tested && manifest.reports, "Run npm run test:built before packaging.");
-    for (const suite of suites(rid)) qualifyReport(JSON.parse(readFileSync(join(root, manifest.reports, suite.name, "results.json"), "utf8")));
+    for (const suite of suites(rid)) {
+      const platform = suite.name === "integration" || suite.name === "native-integration" ? PlatformPackages[rid].nodePlatform : undefined;
+      qualifyReport(JSON.parse(readFileSync(join(root, manifest.reports, suite.name, "results.json"), "utf8")), platform);
+    }
   }
   return manifest;
 }

@@ -8,10 +8,6 @@ export interface BuildRestoreOptions {
 }
 
 export function managedBuild(root: string, version: string, options: BuildRestoreOptions): void {
-  if (options.offline) restoreDependencies(root, true);
-  run(
-    "dotnet",
-    ["build", "OpenForge.Cli.slnx", "--configuration", Configuration, ...(options.offline || options["no-restore"] ? ["--no-restore"] : []), `-p:OpenForgeCliVersion=${version}`],
-    root,
-  );
+  if (options.offline || !options["no-restore"]) restoreDependencies(root, options.offline);
+  run("dotnet", ["build", "OpenForge.Cli.slnx", "--configuration", Configuration, "--no-restore", `-p:OpenForgeCliVersion=${version}`], root);
 }
