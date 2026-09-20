@@ -31,16 +31,27 @@ internal static class PublishedJourneyAssertions
                 && current.StartsWith("type=directory;", StringComparison.Ordinal)
                 && permitted.Any(target => IsParent(path, target)))
             {
-                // File creation/replacement can change its containing directory's
-                // write time. Keep directory identity/attributes and every other
-                // observed field; this allowance never applies to read-only calls.
-                Assert.Equal(WithoutWriteTime(previous), WithoutWriteTime(current));
+                Assert.True(DirectoryMetadataMatchesAfterChildMutation(previous, current), $"Directory metadata changed: {path}");
             }
             else
             {
                 Assert.Equal(previous, current);
             }
         }
+    }
+
+    internal static bool DirectoryMetadataMatchesAfterChildMutation(string previous, string current)
+    {
+        if (!previous.StartsWith("type=directory;", StringComparison.Ordinal)
+            || !current.StartsWith("type=directory;", StringComparison.Ordinal)) return false;
+
+        // Creating/replacing children changes the parent write time. On Unix,
+        // runtimes without birth-time support also report that value as creation
+        // time. Exclude it only when both observations identify that fallback.
+        // Callers must first establish that child mutation is permitted here.
+        var creationIsWriteTime = !OperatingSystem.IsWindows()
+            && CreationIsWriteTime(previous) && CreationIsWriteTime(current);
+        return WithoutMutableTimes(previous, creationIsWriteTime) == WithoutMutableTimes(current, creationIsWriteTime);
     }
 
     private static string OrdinaryEntryKind(string description)
@@ -56,7 +67,15 @@ internal static class PublishedJourneyAssertions
                 ? target.StartsWith(directory[..^1], StringComparison.Ordinal)
                 : target.StartsWith(directory + "/", StringComparison.Ordinal));
 
-    private static string WithoutWriteTime(string description)
+    private static bool CreationIsWriteTime(string description)
+    {
+        var fields = description.Split(';');
+        return fields.Single(field => field.StartsWith("creationUtcTicks=", StringComparison.Ordinal)).Split('=')[1]
+            == fields.Single(field => field.StartsWith("lastWriteUtcTicks=", StringComparison.Ordinal)).Split('=')[1];
+    }
+
+    private static string WithoutMutableTimes(string description, bool creationIsWriteTime)
         => string.Join(';', description.Split(';').Where(
-            field => !field.StartsWith("lastWriteUtcTicks=", StringComparison.Ordinal)));
+            field => !field.StartsWith("lastWriteUtcTicks=", StringComparison.Ordinal)
+                && !(creationIsWriteTime && field.StartsWith("creationUtcTicks=", StringComparison.Ordinal))));
 }

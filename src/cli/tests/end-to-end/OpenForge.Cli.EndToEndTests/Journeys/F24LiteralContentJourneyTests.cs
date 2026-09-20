@@ -338,7 +338,7 @@ public sealed class F24LiteralContentJourneyTests
         if (before.TryGetValue(path, out var previous))
         {
             Assert.StartsWith("type=directory;", previous, StringComparison.Ordinal);
-            Assert.Equal(WithoutLastWrite(previous), WithoutLastWrite(current));
+            Assert.True(PublishedJourneyAssertions.DirectoryMetadataMatchesAfterChildMutation(previous, current));
         }
     }
 
@@ -364,10 +364,6 @@ public sealed class F24LiteralContentJourneyTests
         Assert.Equal(previous, current);
         return false;
     }
-
-    private static string WithoutLastWrite(string description)
-        => string.Join(';', description.Split(';').Where(
-            field => !field.StartsWith("lastWriteUtcTicks=", StringComparison.Ordinal)));
 
     private static DocumentSpans LocateDocumentSpans(byte[] bytes)
     {

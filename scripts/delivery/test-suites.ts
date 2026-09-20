@@ -29,7 +29,7 @@ export function runSuites(root: string, selections: readonly { name: string; exe
     const managed = suite.executable.endsWith(".dll");
     const count = runStage(`Test ${suite.name}`, () => {
       run(managed ? "dotnet" : join(root, suite.executable), managed ? [suite.executable, ...args] : args, root, join(output, "execution.log"));
-      const platform = suite.name === "integration" || suite.name === "native-integration" ? process.platform : undefined;
+      const platform = suite.name !== "unit" ? process.platform : undefined;
       return qualifyReport(JSON.parse(readFileSync(join(output, "results.json"), "utf8")), platform);
     });
     process.stdout.write(`${suite.name}: ${count.passed} tests passed; ${count.skipped} platform exclusions.\n`);

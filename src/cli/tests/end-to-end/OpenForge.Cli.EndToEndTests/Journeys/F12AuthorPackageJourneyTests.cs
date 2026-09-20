@@ -210,9 +210,7 @@ public sealed class F12AuthorPackageJourneyTests
                 Assert.StartsWith("type=directory;", beforeDescription, StringComparison.Ordinal);
                 Assert.NotNull(afterDescription);
                 Assert.StartsWith("type=directory;", afterDescription!, StringComparison.Ordinal);
-                Assert.Equal(
-                    WithoutLastWriteTimestamp(beforeDescription),
-                    WithoutLastWriteTimestamp(afterDescription!));
+                Assert.True(PublishedJourneyAssertions.DirectoryMetadataMatchesAfterChildMutation(beforeDescription, afterDescription!));
             }
             else
             {
@@ -234,18 +232,6 @@ public sealed class F12AuthorPackageJourneyTests
         Assert.False(File.Exists(source.Combine(WorkspaceLockTarget)));
         Assert.False(File.Exists(source.Combine(LifecycleTarget)));
         AssertDataHomeUnchanged(source.LockStore, dataHomeBefore);
-    }
-
-    private static string WithoutLastWriteTimestamp(string description)
-    {
-        const string marker = ";lastWriteUtcTicks=";
-        var markerStart = description.IndexOf(marker, StringComparison.Ordinal);
-        Assert.True(markerStart >= 0, $"Directory snapshot has no last-write field: {description}");
-        var afterMarker = markerStart + marker.Length;
-        var nextField = description.IndexOf(';', afterMarker);
-        return nextField < 0
-            ? description[..markerStart]
-            : description[..markerStart] + description[nextField..];
     }
 
     private static DataHomeSnapshot CaptureDataHomeState(PublishedWorkspaceLockStore lockStore)

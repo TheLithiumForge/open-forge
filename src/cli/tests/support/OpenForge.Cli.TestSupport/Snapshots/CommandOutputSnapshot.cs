@@ -42,6 +42,7 @@ public static class CommandOutputSnapshot
             throw new InvalidOperationException($"Command output snapshots require {UpdateVariable}=1 to update.");
         }
 
+        sourceFile = ResolveSourceFile(sourceFile);
         var directory = Path.GetDirectoryName(sourceFile)
             ?? throw new ArgumentException("The snapshot source must have a parent directory.", nameof(sourceFile));
         using var scope = TheLithium.Imprint.Snapshots.Begin(new SnapshotTestOptions
@@ -78,6 +79,7 @@ public static class CommandOutputSnapshot
             throw new InvalidOperationException($"Command output snapshots require {UpdateVariable}=1 to update.");
         }
 
+        sourceFile = ResolveSourceFile(sourceFile);
         var directory = Path.GetDirectoryName(sourceFile)
             ?? throw new ArgumentException("The snapshot source must have a parent directory.", nameof(sourceFile));
         var repositoryRoot = RepositoryRoot(directory);
@@ -100,9 +102,26 @@ public static class CommandOutputSnapshot
                 Format = SnapshotFormat.Text,
                 Update = update ? SnapshotUpdate.All : SnapshotUpdate.Verify,
                 Comparison = OutputComparison,
+                Comparer = new PlatformSnapshotComparer(capture.Key.StartsWith("lock-held.", StringComparison.Ordinal)),
             });
         }
         scope.Complete();
+    }
+
+    private static string ResolveSourceFile(string sourceFile)
+    {
+        const string mappedRoot = "/_/";
+        var normalized = sourceFile.Replace('\\', '/');
+        if (!normalized.StartsWith(mappedRoot, StringComparison.Ordinal))
+        {
+            return sourceFile;
+        }
+
+        // CI maps compiler source paths for reproducibility. Snapshot identities
+        // still point to the existing files beside each test in this checkout.
+        return Path.Combine(
+            RepositoryRoot(AppContext.BaseDirectory),
+            normalized[mappedRoot.Length..].Replace('/', Path.DirectorySeparatorChar));
     }
 
     private static string RepositoryRoot(string sourceDirectory)

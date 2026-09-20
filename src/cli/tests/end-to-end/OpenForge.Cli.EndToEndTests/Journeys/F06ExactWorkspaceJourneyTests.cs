@@ -501,7 +501,7 @@ public sealed class F06ExactWorkspaceJourneyTests
             if (previousExists)
             {
                 Assert.StartsWith("type=directory;", previous!, StringComparison.Ordinal);
-                Assert.Equal(WithoutLastWrite(previous!), WithoutLastWrite(current!));
+                Assert.True(PublishedJourneyAssertions.DirectoryMetadataMatchesAfterChildMutation(previous!, current!));
             }
 
             if (IsRecoveryPath(path, recoveryRoot))
@@ -547,10 +547,6 @@ public sealed class F06ExactWorkspaceJourneyTests
     private static bool IsRecoveryPath(string path, string recoveryRoot)
         => path.Equals(recoveryRoot, StringComparison.Ordinal)
             || path.StartsWith(recoveryRoot + "/", StringComparison.Ordinal);
-
-    private static string WithoutLastWrite(string description)
-        => string.Join(';', description.Split(';').Where(
-            field => !field.StartsWith("lastWriteUtcTicks=", StringComparison.Ordinal)));
 
     private sealed record ByteEntriesRegion(byte[] Prefix, byte[] Body, byte[] Suffix);
 

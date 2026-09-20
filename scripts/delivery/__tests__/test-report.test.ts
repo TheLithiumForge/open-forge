@@ -74,3 +74,16 @@ test("unknown, capability, inconsistent and entirely skipped reports still fail"
   skipped.extra.type = "OpenForge.Cli.EndToEndTests.Journeys";
   assert.throws(() => qualifyReport(wrongSuite, "linux"));
 });
+
+test("public Windows journeys are exclusions only on Unix, never lost required evidence", () => {
+  const report = platformReport("F03 X05 read-denial evidence requires Windows file-sharing semantics.");
+  const skipped = report.results.tests[1];
+  assert.ok(skipped?.extra);
+  skipped.extra.type = "OpenForge.Cli.EndToEndTests.Journeys.F03PlainNoteJourneyTests";
+  assert.deepEqual(qualifyReport(report, "linux"), { passed: 1, skipped: 1 });
+  assert.deepEqual(qualifyReport(report, "darwin"), { passed: 1, skipped: 1 });
+  assert.throws(() => qualifyReport(report, "win32"));
+  skipped.message = "ConPTY failed to initialize on this host.";
+  assert.throws(() => qualifyReport(report, "win32"));
+  assert.throws(() => qualifyReport(report, "linux"));
+});

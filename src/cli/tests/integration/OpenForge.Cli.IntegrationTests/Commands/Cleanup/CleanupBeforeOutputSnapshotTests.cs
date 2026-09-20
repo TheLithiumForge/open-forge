@@ -24,7 +24,17 @@ public sealed class CleanupBeforeOutputSnapshotTests
 {
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Cleanup output preserves empty, applied, preview and damaged recovery catalogues")]
-    public async Task RecoveryCatalogue()
+    public Task RecoveryCatalogue() => CaptureCatalogue(false, nameof(RecoveryCatalogue));
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Cleanup output preserves Windows partial deletion evidence")]
+    public Task PartialDeletionOnWindows()
+    {
+        Assert.SkipWhen(!OperatingSystem.IsWindows(), "This deterministic deletion failure requires Windows file sharing.");
+        return CaptureCatalogue(true, nameof(PartialDeletionOnWindows));
+    }
+
+    private static async Task CaptureCatalogue(bool partialDeletion, string testName)
     {
         var situations = new (string Situation, CliSemanticStatus Status)[]
         {
@@ -35,12 +45,9 @@ public sealed class CleanupBeforeOutputSnapshotTests
             ("lock-held", CliSemanticStatus.Blocked),
             ("deletion-failed-partial", CliSemanticStatus.Failed),
         };
-        if (!OperatingSystem.IsWindows())
-        {
-            situations = situations
-                .Where(situation => situation.Situation != "deletion-failed-partial")
-                .ToArray();
-        }
+        situations = situations
+            .Where(situation => (situation.Situation == "deletion-failed-partial") == partialDeletion)
+            .ToArray();
 
         var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var (situation, status) in situations)
@@ -100,7 +107,7 @@ public sealed class CleanupBeforeOutputSnapshotTests
             renderers.MatchDetails(result, situation, snapshotCollector: snapshots);
         }
 
-        CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots, testName: testName);
     }
 
     [Trait("Boundary", "Output")]

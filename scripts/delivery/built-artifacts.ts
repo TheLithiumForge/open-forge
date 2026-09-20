@@ -55,7 +55,7 @@ export function readBuilt(root: string, rid: SupportedRuntime, tested = false): 
   if (tested) {
     assert.ok(manifest.tested && manifest.reports, "Run npm run test:built before packaging.");
     for (const suite of suites(rid)) {
-      const platform = suite.name === "integration" || suite.name === "native-integration" ? PlatformPackages[rid].nodePlatform : undefined;
+      const platform = suite.name !== "unit" ? PlatformPackages[rid].nodePlatform : undefined;
       qualifyReport(JSON.parse(readFileSync(join(root, manifest.reports, suite.name, "results.json"), "utf8")), platform);
     }
   }

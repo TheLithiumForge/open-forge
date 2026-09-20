@@ -174,10 +174,17 @@ using them: an available binary does not mean its tests passed. The separate
 `package-<RID>` artifacts require successful tests and package-install checks.
 
 Dependency setup restores each native executable for its host runtime and
-self-contained configuration before `--no-restore` builds. Integration reports
+self-contained configuration before `--no-restore` builds. Integration and public reports
 allow only explicit exclusions for another operating system. Those exclusions
 remain counted separately from passes; unexpected skips and capability failures
 still fail qualification.
+
+CI source paths are mapped for reproducibility; snapshot lookup resolves those
+paths back into the checkout. Existing Windows snapshots retain their contents.
+On Unix, comparison adapts expected placeholder-rooted physical path separators
+and the exact held-lock error code for that OS. Received output is never rewritten
+by this comparison, so failure artifacts preserve platform evidence. Windows-only
+cleanup deletion snapshots belong to their own explicitly excluded test.
 
 ## Maintain the scripts
 

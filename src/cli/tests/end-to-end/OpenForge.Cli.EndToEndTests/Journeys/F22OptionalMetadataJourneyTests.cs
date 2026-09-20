@@ -284,10 +284,7 @@ public sealed class F22OptionalMetadataJourneyTests
     {
         if (!before.StartsWith("type=directory;", StringComparison.Ordinal)
             || !after.StartsWith("type=directory;", StringComparison.Ordinal)
-            || !string.Equals(
-                WithoutLastWrite(before),
-                WithoutLastWrite(after),
-                StringComparison.Ordinal))
+            || !PublishedJourneyAssertions.DirectoryMetadataMatchesAfterChildMutation(before, after))
         {
             return false;
         }
@@ -321,10 +318,6 @@ public sealed class F22OptionalMetadataJourneyTests
             ? root
             : Path.Combine(root, relative.Replace('/', Path.DirectorySeparatorChar));
     }
-
-    private static string WithoutLastWrite(string description)
-        => string.Join(';', description.Split(';').Where(
-            field => !field.StartsWith("lastWriteUtcTicks=", StringComparison.Ordinal)));
 
     private static string BodyOf(string document)
     {

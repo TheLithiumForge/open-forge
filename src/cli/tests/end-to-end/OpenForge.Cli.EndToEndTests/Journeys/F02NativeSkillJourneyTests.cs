@@ -362,9 +362,7 @@ public sealed class F02NativeSkillJourneyTests
             {
                 Assert.StartsWith("type=directory;", before[path], StringComparison.Ordinal);
                 Assert.StartsWith("type=directory;", after[path], StringComparison.Ordinal);
-                Assert.Equal(
-                    before[path].Split(';').Where(field => !field.StartsWith("lastWriteUtcTicks=", StringComparison.Ordinal)),
-                    after[path].Split(';').Where(field => !field.StartsWith("lastWriteUtcTicks=", StringComparison.Ordinal)));
+                Assert.True(PublishedJourneyAssertions.DirectoryMetadataMatchesAfterChildMutation(before[path], after[path]));
             }
             else
             {
